@@ -1,0 +1,45 @@
+# ARCHIVE MAISON DES COTES — Sprint 2
+# Capture les prix des marches exotiques que l'Etage 1 a designes.
+# Cout d'un snapshot par match = nb_marches x nb_regions credits.
+# Plan conseille : 20K credits/mois (30$). Garde-fou budget ci-dessous.
+
+sports:                      # code football-data -> sport_key The Odds API
+  F1: soccer_france_ligue_one
+  F2: soccer_france_ligue_two
+  E0: soccer_epl
+  E1: soccer_efl_champ
+  SP1: soccer_spain_la_liga
+  I1: soccer_italy_serie_a
+  D1: soccer_germany_bundesliga
+  N1: soccer_netherlands_eredivisie
+  P1: soccer_portugal_primeira_liga
+
+regions: [eu, fr]            # eu = Pinnacle (juge), fr = Unibet FR + Winamax FR (execution)
+
+marches:                     # 8 marches x 2 regions = 16 credits / snapshot
+  - h2h                      # ancre de-vig
+  - totals
+  - team_totals              # S089 / S005 / S083 / S061
+  - totals_h1                # S049 / S050 / HC-08
+  - h2h_3_way_h1             # MT1_SELF / MT1_ADV
+  - btts                     # S070 / HC-13
+  - double_chance            # tous les marches DC (Etage 2* -> Etage 2)
+  - alternate_totals_cards   # S022 / HC-10
+
+bookmakers_gardes:           # filtre a l'enregistrement (les autres lignes sont jetees)
+  - pinnacle
+  - winamax_fr
+  - unibet_fr
+  - betclic_fr
+  - pmu_fr
+  - netbet_fr
+
+fenetres:
+  j1_heures: [16, 36]        # snapshot "veille" si coup d'envoi dans 16 a 36 h
+  cloture_heures: 2.5        # snapshot "quasi-cloture" si <= 2.5 h
+  cloture_refresh_min: 45    # re-capture cloture si le dernier snapshot date de plus de 45 min
+  h6: false                  # 3e snapshot a H-6 (OFF par defaut = economie budget)
+
+budget:
+  credits_mois_max: 15000    # plafond de securite sous le plan 20K
+  arret_si_restant_sous: 500 # stop immediat si le quota du compte passe sous ce seuil

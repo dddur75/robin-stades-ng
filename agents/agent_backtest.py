@@ -202,8 +202,8 @@ def verdicts(res, q_fdr):
     return res
 
 
-def rapport_markdown(res, chemin, meta):
-    lignes = ["# RAPPORT VAGUE 1 — Robin des Stades NG",
+def rapport_markdown(res, chemin, meta, famille="VAGUE1"):
+    lignes = [f"# RAPPORT {famille} — Robin des Stades NG",
               "", f"_Genere le {pd.Timestamp.now():%Y-%m-%d %H:%M}_", "",
               f"**Perimetre** : {meta['n_matchs']} matchs · {meta['n_ligues']} ligues · "
               f"saisons {meta['saisons']} · holdout exclu : {meta['holdout']} ({meta['n_holdout_exclus']} matchs scelles)",
@@ -245,7 +245,12 @@ def rapport_markdown(res, chemin, meta):
         f.write("\n".join(lignes))
 
 
-def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml"):
+def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
+         spec_module="agents.vague1_spec", famille="VAGUE1"):
+    import importlib
+    global VAGUE1
+    mod = importlib.import_module(spec_module)
+    VAGUE1 = getattr(mod, "VAGUE1", None) or getattr(mod, "VAGUE1B")
     cfg = charger_config(config)
     q_fdr = float(cfg.get("q_fdr", 0.10))
     matchs, feats, holdout, n_exclus = preparer(data_dir, cfg)
@@ -262,11 +267,11 @@ def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml"):
                 holdout=sorted(holdout), n_holdout_exclus=n_exclus,
                 q_fdr=q_fdr, n_tests=n_tests, xg=xg_dispo)
     os.makedirs(rapport_dir, exist_ok=True)
-    res.to_csv(os.path.join(rapport_dir, "resultats_vague1.csv"), index=False)
-    rapport_markdown(res, os.path.join(rapport_dir, "RAPPORT_VAGUE1.md"), meta)
+    res.to_csv(os.path.join(rapport_dir, f"resultats_{famille.lower()}.csv"), index=False)
+    rapport_markdown(res, os.path.join(rapport_dir, f"RAPPORT_{famille}.md"), meta, famille)
     print(f"[backtest] {len(res)} lignes evaluees, {n_tests} tests en famille FDR, "
           f"{int(res['fdr'].sum())} passent la FDR q={q_fdr}")
-    print(f"[backtest] rapport -> {rapport_dir}/RAPPORT_VAGUE1.md")
+    print(f"[backtest] rapport -> {rapport_dir}/RAPPORT_{famille}.md")
     return res
 
 
@@ -275,5 +280,7 @@ if __name__ == "__main__":
     ap.add_argument("--data", default="data")
     ap.add_argument("--rapport", default="rapports")
     ap.add_argument("--config", default="config/ligues.yaml")
+    ap.add_argument("--spec", default="agents.vague1_spec")
+    ap.add_argument("--famille", default="VAGUE1")
     a = ap.parse_args()
-    main(a.data, a.rapport, a.config)
+    main(a.data, a.rapport, a.config, a.spec, a.famille)

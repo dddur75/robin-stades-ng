@@ -52,3 +52,31 @@ Ensuite : le workflow 01 tourne seul chaque lundi matin et relance le backtest.
 ## Prochain sprint (après lecture du rapport)
 
 Archive maison des cotes (Unibet FR + Winamax + Pinnacle via The Odds API) pour pricer les marchés exotiques, agent paper-trading J-1 + Telegram, et lancement de la **vague 2 machine** (exploration combinatoire ≤3 atomes sous FDR) sur la grammaire du registre.
+
+---
+
+# Sprint 2 — Archive maison des cotes + recherche machine
+
+## Nouveautés
+
+| Quoi | Fichier | Déclenchement |
+|---|---|---|
+| **Archive des cotes exotiques** (Pinnacle + Unibet FR + Winamax) | `agents/agent_archive.py` + workflow **03** | cron toutes les 2 h |
+| **Vague 2 — recherche machine** (combinaisons ≤3 atomes, FDR, exotiques) | `agents/agent_vague2.py` + workflow **04** | manuel |
+| **Famille 1B** (3 hypothèses pré-enregistrées post-rapport) | `agents/vague1b_spec.py` | dans le workflow 02 |
+
+## Mise en route Sprint 2 (3 gestes)
+
+1. **Créer les 2 workflows** : voir `workflows_a_copier/LISEZMOI.txt` (même manip que pour 01/02 : *Add file → Create new file* → `.github/workflows/03_archive.yml` puis `04_vague2.yml`, coller le contenu).
+2. **Ajouter le secret** : *Settings → Secrets and variables → Actions → New repository secret* → Nom `ODDS_API_KEY`, valeur = ta clé The Odds API.
+3. **Plan API** : le rythme par défaut (2 snapshots/match : J-1 + quasi-clôture ≤2,5 h) consomme ~11 000 crédits/mois en pleine saison sur 9 ligues → **plan 20K à 30 $/mois** suffit. Garde-fous dans `config/archive.yaml` (plafond mensuel + arrêt d'urgence si quota bas).
+
+## Ce que l'archive capture
+
+8 marchés × Pinnacle (juge) + books FR (exécution) : `h2h`, `totals`, `team_totals`, `totals_h1`, `h2h_3_way_h1`, `btts`, `double_chance`, `alternate_totals_cards`. Chaque ligne = un prix horodaté. Le dernier snapshot ≤2,5 h avant le coup d'envoi = **quasi-clôture maison** (convention assumée, documentée — la vraie clôture seconde-près n'existe nulle part gratuitement).
+
+**Semaine 1 = audit de couverture** : tous les books ne publient pas tous les marchés. Après 7 jours, regarder `data/archive/odds_*.parquet` pour savoir qui price quoi (cartons notamment). On ne promet rien avant cet audit.
+
+## Vague 2 — règles gravées (`config/vague2.yaml`, pré-enregistré)
+
+Mono/duo/trio d'atomes × 17 marchés exotiques uniquement (le 1X2 est efficient, on ne le re-mine pas). N≥300, FDR BH q=0.10 sur **tous** les tests effectués, cohérence de signe sur ≥2/3 blocs chronologiques, holdout 2025-26 toujours scellé. Les survivants = stock d'hypothèses à confronter aux prix de l'archive — **un lift n'est pas un edge**.

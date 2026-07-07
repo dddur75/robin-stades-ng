@@ -1,0 +1,43 @@
+# VAGUE 2 — RECHERCHE MACHINE (protocole PRE-ENREGISTRE, D10 Session 2)
+# La machine explore les combinaisons d'atomes sur les MARCHES EXOTIQUES
+# uniquement (le 1X2 a ete juge efficient par la vague 1 — on ne le re-mine pas).
+# Ce fichier est fige avant le premier run. Toute modification = nouvelle famille.
+
+profondeur_max: 3        # mono, duo, trio (trio limite a self x adv x match)
+n_min: 300               # observations minimum par test
+q_fdr: 0.10              # Benjamini-Hochberg sur TOUS les tests effectues
+tiers_walkforward: 3     # saisons coupees en 3 blocs chronologiques
+tiers_coherents_min: 2   # meme signe d'edge dans >= 2 blocs (n_bloc >= 50)
+
+marches_cibles:          # exotiques ou l'archive maison capturera les prix
+  - O05_MT1
+  - O15_MT1
+  - U05_MT1
+  - MT1_SELF
+  - MT1_ADV
+  - MT2_SELF
+  - MT2_ADV
+  - O35
+  - U15
+  - O45_CARTONS
+  - TEAM_O15_SELF
+  - TEAM_O15_ADV
+  - TEAM_U15_SELF
+  - TEAM_U15_ADV
+  - CS_SELF
+  - CS_ADV
+  - BTTS_Y
+
+atomes_self:             # whitelist (miroir adverse automatique)
+  [SERIE_VICTOIRES, SERIE_V_LONGUE, SERIE_SANS_V, SERIE_NULS, CRISE_OFFENSIVE,
+   ATTAQUE_PROLIFIQUE, DEFENSE_PASSOIRE, REPRISE_FORME, POST_DEFAITE_LOURDE,
+   POST_VICTOIRE_LARGE, POST_VICTOIRE_SURPRISE, FORT_MT1, ENCAISSE_MT1, SOLIDE_MT1,
+   FORT_MT2, O15_MT1_FREQ, U05_MT1_FREQ, SCORING_FOU, U15_FREQ, EQUIPE_CARTONS,
+   FORTERESSE, FAIBLE_DOMICILE, VOYAGEUR_FORT, FAIBLE_EXTERIEUR, STADE_FERME,
+   REPOS_COURT, REPOS_LONG, LUTTE_TITRE, LUTTE_MAINTIEN, SANS_ENJEU,
+   FIN_SAISON_FORTE_HISTO, FAIBLE_VS_TOP, DOMINE_FAIBLES, FAVORI_NET, OUTSIDER,
+   VENUE_DOM, VENUE_EXT]
+
+atomes_match:
+  [DERBY, DERBY_CHAUD, ARBITRE_SEVERE, MATCH_A_ENJEU, FENETRE_FIN_SAISON,
+   H2H_BTTS, H2H_UNDER25]

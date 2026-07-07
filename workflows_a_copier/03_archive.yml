@@ -1,0 +1,30 @@
+name: "03 - Archive cotes (The Odds API)"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */2 * * *"   # toutes les 2 heures
+permissions:
+  contents: write
+concurrency:
+  group: archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: Capture des cotes
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python agents/agent_archive.py
+      - name: Commit
+        run: |
+          git config user.name "robin-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git pull --rebase || true
+          git add data/archive/
+          git diff --cached --quiet || git commit -m "archive: snapshots cotes"
+          git push

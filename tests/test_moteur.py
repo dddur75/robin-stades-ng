@@ -159,3 +159,48 @@ def test_lift_reel_mais_edge_nul(tmp_path):
     lift = fx.loc[fx["SERIE_SANS_V"], "win"].mean() - fx.loc[~fx["SERIE_SANS_V"], "win"].mean()
     assert lift < -0.05, f"le malus implante doit se voir en E1 (obtenu {lift:.3f})"
     assert (tmp_path / "rapports" / "RAPPORT_VAGUE1.md").exists()
+
+
+def test_vague2_trouve_arbitre(tmp_path):
+    """La recherche machine doit retrouver l'effet arbitre implante (cartons)."""
+    import yaml, shutil
+    df = genere()
+    (tmp_path / "data").mkdir(); (tmp_path / "config").mkdir()
+    df.to_parquet(tmp_path / "data" / "matches.parquet", index=False)
+    cfg = dict(saisons=[], holdout_seasons=[], q_fdr=0.10,
+               ligues={"XX": {"nom": "Synth", "zones": {"releg_spots": 3, "promo_spots": 0, "europe_spots": 4}}})
+    yaml.dump(cfg, open(tmp_path / "config" / "ligues.yaml", "w"))
+    racine = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    v2 = yaml.safe_load(open(os.path.join(racine, "config", "vague2.yaml")))
+    v2["n_min"] = 80
+    yaml.dump(v2, open(tmp_path / "config" / "vague2.yaml", "w"))
+    cwd = os.getcwd(); os.chdir(tmp_path)
+    try:
+        from agents.agent_vague2 import main as v2main
+        res = v2main(data_dir="data", rapport_dir="rapports",
+                     config="config/ligues.yaml", config_v2="config/vague2.yaml")
+    finally:
+        os.chdir(cwd)
+    hits = res[(res["combo"].str.contains("ARBITRE_SEVERE")) & (res["marche"] == "O45_CARTONS") & res["fdr"]]
+    assert len(hits) >= 1, "l'effet arbitre implante doit survivre a la FDR"
+    assert (tmp_path / "rapports" / "RAPPORT_VAGUE2.md").exists()
+
+
+def test_vague1b_famille_separee(tmp_path):
+    """La famille annexe 1B tourne avec son propre rapport."""
+    import yaml
+    df = genere()
+    (tmp_path / "data").mkdir(); (tmp_path / "config").mkdir()
+    df.to_parquet(tmp_path / "data" / "matches.parquet", index=False)
+    cfg = dict(saisons=[], holdout_seasons=[], q_fdr=0.10,
+               ligues={"XX": {"nom": "Synth", "zones": {"releg_spots": 3, "promo_spots": 0, "europe_spots": 4}}})
+    yaml.dump(cfg, open(tmp_path / "config" / "ligues.yaml", "w"))
+    cwd = os.getcwd(); os.chdir(tmp_path)
+    try:
+        from agents.agent_backtest import main as btmain
+        res = btmain(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
+                     spec_module="agents.vague1b_spec", famille="VAGUE1B")
+    finally:
+        os.chdir(cwd)
+    assert (tmp_path / "rapports" / "RAPPORT_VAGUE1B.md").exists()
+    assert set(res["id"]) == {"HC-26", "HC-27", "S038b"}

@@ -1,0 +1,9 @@
+Ces deux fichiers doivent etre crees A LA MAIN dans GitHub (les dossiers caches
+sautent au glisser-deposer) :
+
+1. Add file -> Create new file -> nom : .github/workflows/03_archive.yml
+   -> copier-coller le contenu de 03_archive.yml (ouvrir le fichier ici, bouton copie)
+2. Recommencer avec .github/workflows/04_vague2.yml
+
+Puis : Settings -> Secrets and variables -> Actions -> New repository secret
+   Nom : ODDS_API_KEY   Valeur : ta cle The Odds API

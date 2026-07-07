@@ -255,6 +255,7 @@ def calculer_atomes(lg: pd.DataFrame, xg_dispo: bool) -> pd.DataFrame:
     a["STADE_FERME"] = (a["ga_dom_l10"] <= 0.7) & (a["cs_dom_l10"] >= 5)
     a["REPOS_COURT"] = a["repos_jours"] <= 4
     a["REPOS_LONG"] = a["repos_jours"] >= 7
+    a["REPOS_TRES_LONG"] = a["repos_jours"] >= 8
     a["MATCH_A_ENJEU"] = a["MATCH_A_ENJEU_ST"].fillna(False) | a["DERBY"].fillna(False)
     a["FAVORI_NET"] = a["cote_self"] <= 1.60
     a["OUTSIDER"] = a["cote_self"] >= 3.50
