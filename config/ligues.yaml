@@ -1,0 +1,15 @@
+# Perimetre Vague 1 (delta 3 : tiering). Codes football-data.co.uk.
+saisons: ["1516","1617","1718","1819","1920","2021","2122","2223","2324","2425","2526"]
+holdout_seasons: ["2025-26"]     # SCELLEE jusqu'au verdict final (delta 5)
+q_fdr: 0.10
+
+ligues:
+  F1: {nom: "Ligue 1",        zones: {releg_spots: 3, promo_spots: 0, europe_spots: 5}}
+  F2: {nom: "Ligue 2",        zones: {releg_spots: 3, promo_spots: 2, europe_spots: 0}}
+  E0: {nom: "Premier League", zones: {releg_spots: 3, promo_spots: 0, europe_spots: 6}}
+  E1: {nom: "Championship",   zones: {releg_spots: 3, promo_spots: 2, europe_spots: 0}}
+  SP1: {nom: "La Liga",       zones: {releg_spots: 3, promo_spots: 0, europe_spots: 6}}
+  I1: {nom: "Serie A",        zones: {releg_spots: 3, promo_spots: 0, europe_spots: 6}}
+  D1: {nom: "Bundesliga",     zones: {releg_spots: 3, promo_spots: 0, europe_spots: 6}}
+  N1: {nom: "Eredivisie",     zones: {releg_spots: 1, promo_spots: 0, europe_spots: 5}}
+  P1: {nom: "Primeira Liga",  zones: {releg_spots: 2, promo_spots: 0, europe_spots: 5}}

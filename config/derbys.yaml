@@ -1,0 +1,34 @@
+# Liste statique v1 — orthographe football-data.co.uk (verifier au premier run !)
+F1:
+  - ["Paris SG", "Marseille"]
+  - ["Lyon", "St Etienne"]
+  - ["Lens", "Lille"]
+  - ["Nice", "Monaco"]
+E0:
+  - ["Man United", "Liverpool"]
+  - ["Man United", "Man City"]
+  - ["Arsenal", "Tottenham"]
+  - ["Liverpool", "Everton"]
+  - ["Chelsea", "Tottenham"]
+  - ["West Ham", "Tottenham"]
+SP1:
+  - ["Real Madrid", "Barcelona"]
+  - ["Real Madrid", "Ath Madrid"]
+  - ["Sevilla", "Betis"]
+  - ["Ath Bilbao", "Sociedad"]
+I1:
+  - ["Inter", "Milan"]
+  - ["Roma", "Lazio"]
+  - ["Juventus", "Torino"]
+  - ["Genoa", "Sampdoria"]
+D1:
+  - ["Bayern Munich", "Dortmund"]
+  - ["Schalke 04", "Dortmund"]
+  - ["FC Koln", "M'gladbach"]
+N1:
+  - ["Ajax", "Feyenoord"]
+  - ["Ajax", "PSV Eindhoven"]
+P1:
+  - ["Benfica", "Porto"]
+  - ["Benfica", "Sp Lisbon"]
+  - ["Porto", "Sp Lisbon"]

@@ -1,0 +1,488 @@
+# ============================================================
+# REGISTRE_HYPOTHESES v1 — Robin des Stades NG
+# Session 2 du comité — 2026-07-06
+# Statut : PRÉ-ENREGISTRÉ (aucun backtest lancé — anti-overfit delta 5)
+# Règle d'or : toute hypothèse entre NON-TESTÉE. Les "ROI" du
+# catalogue source sont considérés comme fiction jusqu'à preuve.
+# ============================================================
+
+meta:
+  version: 1.0
+  source: "97 stratégies Bloom (fichiers David, ère ChatGPT) + Session 2"
+  manquantes_catalogue: [87, 92, 94]
+  fenetres:
+    L5: "5 derniers matchs de championnat (D2 vote 83%)"
+    L5_vs_prec: "L5 comparé aux matchs 6 à 10"
+    point_in_time: "toute feature calculable à T-1h avec info publique (delta 4)"
+  tiers:
+    A: "football-data.co.uk seul (résultats, mi-temps, cotes, cartons, corners, arbitre) — toutes ligues FD"
+    A*: "A + Understat xG — Ligue 1, PL, Liga, Serie A, Bundesliga, (RFPL exclue)"
+    B: "chantier joueurs/compos/absences/coachs (API-Football + Transfermarkt)"
+    Bm: "météo historique (Open-Meteo archive + coordonnées stades)"
+    C: "PARKING — pas de source propre en v1"
+    D: "REJET — conflit avec les règles opératoires (pas de live)"
+  statuts: [TESTABLE, ATTENTE_DATA, PARKING, REJET, FUSION]
+  marches_etage1: "résultat mesurable dans FD : 1X2, DC, O/U, BTTS, MT, cartons, corners"
+  marches_etage2: "notation ROI/CLV : clôtures archivées (1X2, O/U 2.5, AH) + archive maison dès J1"
+
+# ============================================================
+# 1. ATOMES — conditions élémentaires composables
+#    scope: self = notre équipe, adv = adversaire (miroir auto),
+#           match = contexte de la rencontre
+# ============================================================
+atomes:
+
+  # ---- FORME & SÉRIES (Tier A) ----
+  SERIE_VICTOIRES:        {def: "≥3 victoires consécutives championnat", src: FD, tier: A, scope: [self, adv]}
+  SERIE_V_LONGUE:         {def: "≥4 victoires consécutives ET écart moyen ≥1.5 but", src: FD, tier: A, scope: [self, adv]}
+  SERIE_V_SERREES:        {def: "≥3 victoires consécutives, toutes par 1 but d'écart", src: FD, tier: A, scope: [self, adv]}
+  SERIE_SANS_V:           {def: "≥4 matchs sans victoire", src: FD, tier: A, scope: [self, adv]}
+  SERIE_NULS:             {def: "≥3 nuls consécutifs", src: FD, tier: A, scope: [self, adv]}
+  CRISE_OFFENSIVE:        {def: "≤0.5 but marqué/match sur L5 OU 3 matchs consécutifs sans but", src: FD, tier: A, scope: [self, adv]}
+  ATTAQUE_PROLIFIQUE:     {def: "≥2.0 buts marqués/match sur L5", src: FD, tier: A, scope: [self, adv]}
+  DEFENSE_PASSOIRE:       {def: "≥2.0 buts encaissés/match sur L5 ET ≥3 matchs L5 avec ≥2 encaissés", src: FD, tier: A, scope: [self, adv]}
+  REPRISE_FORME:          {def: "≥2 victoires sur L3 après une série ≥4 sans victoire", src: FD, tier: A, scope: [self, adv]}
+  POST_DEFAITE_LOURDE:    {def: "dernier match = défaite par ≥3 buts d'écart", src: FD, tier: A, scope: [self, adv]}
+  POST_VICTOIRE_LARGE:    {def: "dernier match = victoire par ≥3 buts d'écart", src: FD, tier: A, scope: [self, adv]}
+  POST_VICTOIRE_SURPRISE: {def: "dernier match = victoire avec cote pré-match ≥3.00", src: FD_odds, tier: A, scope: [self, adv]}
+
+  # ---- xG & TENDANCES (Tier A*) ----
+  XG_SURPERF:        {def: "buts−xG ≥ +0.5/match en moyenne sur L5", src: US, tier: "A*", scope: [self, adv]}
+  XG_SOUSPERF:       {def: "buts−xG ≤ −0.5/match sur L5", src: US, tier: "A*", scope: [self, adv]}
+  XG_DIFF_POS:       {def: "xG−xGA ≥ +0.8/match sur L5", src: US, tier: "A*", scope: [self, adv]}
+  XG_DIFF_NEG:       {def: "xG−xGA ≤ −0.8/match sur L5", src: US, tier: "A*", scope: [self, adv]}
+  XG_ELEVE:          {def: "xG moyen ≥1.75 sur L5", src: US, tier: "A*", scope: [self, adv]}
+  XG_FAIBLE:         {def: "xG moyen ≤1.00 sur L5", src: US, tier: "A*", scope: [self, adv]}
+  XG_TREND_UP:       {def: "xG(L5) − xG(6-10) ≥ +0.5", src: US, tier: "A*", scope: [self, adv]}
+  XG_TREND_DOWN:     {def: "xG(L5) − xG(6-10) ≤ −0.5", src: US, tier: "A*", scope: [self, adv]}
+  XGA_TREND_UP:      {def: "xGA(L5) − xGA(6-10) ≥ +0.5 (fragilité croissante)", src: US, tier: "A*", scope: [self, adv]}
+  XGA_TREND_DOWN:    {def: "xGA(L5) − xGA(6-10) ≤ −0.5 (verrou qui se ferme)", src: US, tier: "A*", scope: [self, adv]}
+  RATIO_FINITION_HAUT: {def: "buts/xG ≥ 1.3 sur L5 (xG cumulé ≥5) — surchauffe", src: US, tier: "A*", scope: [self, adv]}
+  RATIO_FINITION_BAS:  {def: "buts/xG ≤ 0.7 sur L5 (xG cumulé ≥5) — froid devant", src: US, tier: "A*", scope: [self, adv]}
+  XG_ELEVE_STABLE:   {def: "xG ≥1.75 ET écart-type xG ≤0.35 sur L5", src: US, tier: "A*", scope: [self, adv]}
+
+  # ---- MI-TEMPS & MINUTES (FD pour scores MT ; US pour minutes) ----
+  FORT_MT1:          {def: "≥3 des 4 derniers avec but marqué MT1 ET moyenne ≥0.9 but MT1", src: FD, tier: A, scope: [self, adv]}
+  ENCAISSE_MT1:      {def: "≥3 des 4 derniers avec but encaissé MT1 ET moyenne ≥0.8", src: FD, tier: A, scope: [self, adv]}
+  SOLIDE_MT1:        {def: "≤1 but encaissé sur les 5 dernières MT1", src: FD, tier: A, scope: [self, adv]}
+  FORT_MT2:          {def: "≥3 des 4 derniers avec but marqué MT2 ET différentiel MT2 ≥ +0.5", src: FD, tier: A, scope: [self, adv]}
+  ENCAISSE_60_90:    {def: "but encaissé entre 60' et 90' dans ≥3 des 4 derniers", src: US_minutes, tier: "A*", scope: [self, adv]}
+  O15_MT1_FREQ:      {def: "Over 1.5 buts MT1 dans ≥3 des 4 derniers matchs", src: FD, tier: A, scope: [self, adv]}
+  U05_MT1_FREQ:      {def: "0 but MT1 dans ≥3 des 4 derniers matchs", src: FD, tier: A, scope: [self, adv]}
+
+  # ---- DOMICILE / EXTÉRIEUR (Tier A) ----
+  FORTERESSE:        {def: "≥70% victoires domicile saison (min 5) ET série ≥3 V domicile", src: FD, tier: A, scope: [self, adv]}
+  FAIBLE_DOMICILE:   {def: "≥4 matchs domicile consécutifs sans victoire", src: FD, tier: A, scope: [self, adv]}
+  VOYAGEUR_FORT:     {def: "≥60% victoires extérieur saison (min 5) ET série ≥2 V ext", src: FD, tier: A, scope: [self, adv]}
+  FAIBLE_EXTERIEUR:  {def: "≥4 déplacements consécutifs sans victoire", src: FD, tier: A, scope: [self, adv]}
+  STADE_FERME:       {def: "≤0.7 but encaissé/match sur les 10 derniers domicile ET ≥5 clean sheets (variante xGA≤1.0 en A*)", src: FD, tier: A, scope: [self, adv]}
+
+  # ---- CALENDRIER & FATIGUE ----
+  REPOS_COURT:       {def: "≤4 jours depuis le dernier match (championnat + Europe)", src: FD+UEFA, tier: A, scope: [self, adv]}
+  REPOS_LONG:        {def: "≥7 jours depuis le dernier match", src: FD+UEFA, tier: A, scope: [self, adv]}
+  POST_EUROPE:       {def: "match UCL/UEL/UECL joué dans les 5 jours précédents", src: UEFA_cal, tier: A, scope: [self, adv]}
+  POST_EUROPE_ECHEC: {def: "défaite ou élimination européenne dans les 7 jours", src: UEFA_cal, tier: A, scope: [self, adv]}
+  DEPLACEMENT_LONG_CUMULE: {def: "≥2 déplacements ≥500 km sur 10 jours (coordonnées stades)", src: FD+GEO, tier: A, scope: [self, adv]}
+  POST_TREVE:        {def: "premier match après une trêve internationale (calendrier FIFA)", src: FIFA_cal, tier: A, scope: [self, adv]}
+
+  # ---- ENJEU — moteur classement point-in-time (Tier A via calcul) ----
+  LUTTE_TITRE:       {def: "écart au 1er ≤ nb_matchs_restants pts ET ≤10 journées restantes", src: ST, tier: A, scope: [self, adv]}
+  LUTTE_MONTEE:      {def: "écart à la zone de montée ≤ nb_matchs_restants pts ET ≤10 journées (D2)", src: ST, tier: A, scope: [self, adv]}
+  LUTTE_MAINTIEN:    {def: "écart à la zone rouge ≤ nb_matchs_restants pts ET ≤10 journées", src: ST, tier: A, scope: [self, adv]}
+  SANS_ENJEU:        {def: "maintien acquis avec marge ≥ pts_restants+3 ET Europe hors d'atteinte avec retard ≥ pts_restants+3", src: ST, tier: A, scope: [self, adv]}
+  RELEGUE_MATH:      {def: "relégation mathématiquement actée", src: ST, tier: A, scope: [self, adv]}
+  MONTEE_ASSUREE:    {def: "montée mathématiquement acquise avant la fin", src: ST, tier: A, scope: [self, adv]}
+  MAINTIEN_ASSURE_RECENT: {def: "maintien mathématique acquis depuis ≤3 journées, aucun autre objectif", src: ST, tier: A, scope: [self, adv]}
+  OBJECTIF_RATE_RECENT:   {def: "élimination mathématique d'un objectif (titre/montée) depuis ≤2 journées", src: ST, tier: A, scope: [self, adv]}
+  FENETRE_FIN_SAISON:     {def: "≤8 journées restantes", src: ST, tier: A, scope: [match]}
+  FIN_SAISON_FORTE_HISTO: {def: "≥65% de victoires sur les 8 derniers matchs dans ≥2 des 3 saisons passées", src: FD, tier: A, scope: [self, adv]}
+  FAIBLE_VS_TOP:     {def: "≤20% de résultats positifs vs moitié haute du classement (saison, min 5 matchs)", src: FD+ST, tier: A, scope: [self, adv]}
+  DOMINE_FAIBLES:    {def: "≥75% victoires vs tiers bas du classement (saison, min 4 matchs)", src: FD+ST, tier: A, scope: [self, adv]}
+  MATCH_A_ENJEU:     {def: "DERBY OU les deux équipes en LUTTE_* OU confrontation directe (écart ≤3 pts, deux équipes top 6)", src: ST, tier: A, scope: [match]}
+
+  # ---- H2H & DERBYS (Tier A) ----
+  H2H_BTTS:          {def: "BTTS dans ≥4 des 5 dernières confrontations directes", src: FD, tier: A, scope: [match]}
+  H2H_UNDER25:       {def: "Under 2.5 dans ≥4 des 5 dernières confrontations", src: FD, tier: A, scope: [match]}
+  H2H_DOMINATION_LOCALE: {def: "local ≥2V/3 dernières réceptions ET visiteur ≤1V/5 dernières visites ici", src: FD, tier: A, scope: [match]}
+  H2H_REVANCHE:      {def: "équipe ayant perdu la dernière confrontation par ≥2 buts", src: FD, tier: A, scope: [self, adv]}
+  DERBY:             {def: "paire présente dans DERBYS.yaml (liste statique à constituer, ~40 paires)", src: static, tier: A, scope: [match]}
+  DERBY_CHAUD:       {def: "DERBY ET moyenne ≥4 cartons sur les 5 derniers face-à-face", src: FD, tier: A, scope: [match]}
+
+  # ---- DISCIPLINE & ARBITRE (Tier A — colonnes FD cartons + Referee) ----
+  EQUIPE_CARTONS:    {def: "moyenne ≥2.5 cartons/match sur L5", src: FD, tier: A, scope: [self, adv]}
+  ARBITRE_SEVERE:    {def: "arbitre désigné avec moyenne ≥5.0 cartons/match sur ≥15 matchs (2 saisons)", src: FD, tier: A, scope: [match]}
+  SCORING_FOU:       {def: "Over 3.5 dans ≥3 des 4 derniers matchs de l'équipe", src: FD, tier: A, scope: [self, adv]}
+  U15_FREQ:          {def: "Under 1.5 dans ≥3 des 4 derniers matchs de l'équipe", src: FD, tier: A, scope: [self, adv]}
+
+  # ---- JOUEURS & STAFF (Tier B — chantier point-in-time) ----
+  ABS_TITULAIRE_CLE: {def: "titulaire clé absent (clé = top-3 minutes du poste OU top-3 valeur marchande équipe)", src: AF+TM, tier: B, scope: [self, adv]}
+  ABS_DC_CLE:        {def: "défenseur central clé absent", src: AF+TM, tier: B, scope: [self, adv]}
+  ABS_2_DEFENSEURS:  {def: "≥2 défenseurs du XI type absents", src: AF+TM, tier: B, scope: [self, adv]}
+  ABS_MDF_CLE:       {def: "milieu récupérateur/sentinelle clé absent", src: AF+TM, tier: B, scope: [self, adv]}
+  ABS_BUTEUR_DEP:    {def: "buteur totalisant ≥40% des buts saison absent ou incertain", src: AF+TM, tier: B, scope: [self, adv]}
+  RETOUR_CLE:        {def: "retour d'un joueur clé après ≥2 matchs d'absence, apte ≥60 min", src: AF+TM, tier: B, scope: [self, adv]}
+  PROFONDEUR_FAIBLE: {def: "≥2 titulaires du XI type absents simultanément", src: AF+TM, tier: B, scope: [self, adv]}
+  BUTEUR_CHAUD:      {def: "joueur avec ≥3 buts sur ses 3 derniers matchs, titulaire probable", src: AF, tier: B, scope: [self, adv]}
+  BUTEUR_FROID:      {def: "buteur principal ≤1 but sur 5 derniers avec xG individuel ≥0.7/match", src: AF+US, tier: B, scope: [self, adv]}
+  GARDIEN_CHAUD:     {def: "≥2 clean sheets sur 3 derniers ET ≥80% d'arrêts sur L5", src: AF, tier: B, scope: [self, adv]}
+  JEUNESSE_XI:       {def: "≥50% du XI probable âgé de moins de 23 ans", src: AF, tier: B, scope: [self, adv]}
+  COACH_NEUF:        {def: "≤3 matchs depuis un changement d'entraîneur", src: AF+TM, tier: B, scope: [self, adv]}
+
+  # ---- MÉTÉO (Tier Bm — Open-Meteo archive + GEO stades, seuils D5) ----
+  METEO_EXTREME:     {def: "à l'heure du match : T ≤0°C ou ≥32°C, OU vent ≥40 km/h, OU pluie ≥8 mm/3h", src: OM+GEO, tier: Bm, scope: [match]}
+
+  # ---- MARCHÉ (contexte, FD odds / archive maison) ----
+  FAVORI_NET:        {def: "cote 1X2 de l'équipe ≤1.60 (clôture ou dernier relevé)", src: FD_odds, tier: A, scope: [self, adv]}
+  OUTSIDER:          {def: "cote 1X2 de l'équipe ≥3.50", src: FD_odds, tier: A, scope: [self, adv]}
+
+# ============================================================
+# 2. MAPPING DES 97 STRATÉGIES SOURCE
+#    (statut TESTABLE = entre en backtest vague 1 selon tier)
+# ============================================================
+mapping_catalogue:
+  S001: {atoms: [SERIE_VICTOIRES, XG_SURPERF], marche: [1X2, DC], tier: "A*", statut: TESTABLE}
+  S002: {atoms: [SERIE_V_LONGUE], marche: [1X2, DC], tier: A, statut: TESTABLE}
+  S003: {atoms: [RETOUR_CLE], marche: [1X2, over_team], tier: B, statut: ATTENTE_DATA}
+  S004: {atoms: [COACH_NEUF, XG_TREND_UP], marche: [1X2], tier: B, statut: ATTENTE_DATA, note: "duel avec S009 — D9"}
+  S005: {atoms: [LUTTE_TITRE|LUTTE_MONTEE|LUTTE_MAINTIEN, SERIE_VICTOIRES], marche: [1X2, over_team], tier: A, statut: TESTABLE}
+  S006: {atoms: [SERIE_SANS_V], marche: [1X2_adv, DC_adv], tier: A, statut: TESTABLE}
+  S007: {atoms: [CRISE_OFFENSIVE, RATIO_FINITION_BAS], marche: [under_team, CS_adv], tier: "A*", statut: TESTABLE}
+  S008: {atoms: [ABS_TITULAIRE_CLE], marche: [1X2_adv], tier: B, statut: ATTENTE_DATA}
+  S009: {atoms: [COACH_NEUF, XG_TREND_DOWN], marche: [1X2_adv], tier: B, statut: ATTENTE_DATA, note: "duel avec S004"}
+  S010: {atoms: [SANS_ENJEU, XG_TREND_DOWN], marche: [1X2_adv], tier: "A*", statut: TESTABLE}
+  S011: {atoms: [XG_SURPERF], marche: [1X2, over_team], tier: "A*", statut: TESTABLE}
+  S012: {atoms: [XG_SOUSPERF], marche: [1X2_adv, under_team], tier: "A*", statut: TESTABLE}
+  S013: {atoms: [XG_DIFF_POS], marche: [1X2, AH-1, CS], tier: "A*", statut: TESTABLE}
+  S014: {atoms: [XG_DIFF_NEG], marche: [1X2_adv, over_adv], tier: "A*", statut: TESTABLE}
+  S015: {atoms: [XG_ELEVE, RATIO_FINITION_BAS], marche: [1X2, over_team, BTTS], tier: "A*", statut: TESTABLE, note: "pari régression positive"}
+  S016: {atoms: [XG_FAIBLE, RATIO_FINITION_HAUT], marche: [1X2_adv, under_team], tier: "A*", statut: TESTABLE, note: "fade la surchauffe"}
+  S017: {atoms: [XG_TREND_UP], marche: [1X2, over_team], tier: "A*", statut: TESTABLE}
+  S018: {atoms: [XG_TREND_DOWN, XGA_TREND_UP], marche: [1X2_adv], tier: "A*", statut: TESTABLE}
+  S019: {atoms: [XGA_TREND_DOWN], marche: [CS, under_adv], tier: "A*", statut: TESTABLE}
+  S020: {atoms: [], marche: [], tier: C, statut: PARKING, note: "pression médiatique — aucune source propre (D6)"}
+  S021: {atoms: [POST_VICTOIRE_SURPRISE, SERIE_VICTOIRES], marche: [1X2, DC], tier: "A*", statut: TESTABLE}
+  S022: {atoms: [DERBY_CHAUD], marche: [over_cartons], tier: A, statut: TESTABLE, note: "Étage 1 (résultat cartons FD), Étage 2 via archive maison"}
+  S023: {atoms: [DERBY, H2H_UNDER25], marche: [U2.5, DC], tier: A, statut: TESTABLE}
+  S024: {atoms: [DERBY, H2H_REVANCHE, SERIE_VICTOIRES], marche: [1X2, over_team], tier: A, statut: TESTABLE, note: "duel avec S044/S045 — D9"}
+  S025: {atoms: [XGA_TREND_UP], marche: [over_adv, 1X2_adv], tier: "A*", statut: TESTABLE}
+  S026: {atoms: [XG_ELEVE_STABLE], marche: [1X2, over_team], tier: "A*", statut: TESTABLE}
+  S027: {atoms: [RATIO_FINITION_HAUT, XG_ELEVE], marche: [1X2], tier: "A*", statut: FUSION, ref: S011}
+  S028: {atoms: [XG_ELEVE, RATIO_FINITION_BAS, DEFENSE_PASSOIRE], marche: [1X2_adv], tier: "A*", statut: TESTABLE}
+  S029: {atoms: [XG_TREND_DOWN, XGA_TREND_UP], marche: [1X2_adv, over_adv], tier: "A*", statut: FUSION, ref: S018}
+  S030: {atoms: [METEO_EXTREME], marche: [1X2, OU], tier: Bm, statut: ATTENTE_DATA, note: "forme sous météo similaire = croisement archive"}
+  S031: {atoms: [METEO_EXTREME], marche: [1X2_adv], tier: Bm, statut: ATTENTE_DATA}
+  S032: {atoms: [DEPLACEMENT_LONG_CUMULE], marche: [1X2_adv, under_team], tier: A, statut: TESTABLE}
+  S033: {atoms: [H2H_DOMINATION_LOCALE], marche: [1, DC, AH-1], tier: A, statut: TESTABLE}
+  S034: {atoms: [], marche: [], tier: C, statut: PARKING, note: "état pelouse — aucune source (D6)"}
+  S035: {atoms: [POST_EUROPE], marche: [1X2], tier: A, statut: TESTABLE, note: "duel avec S036 — D9"}
+  S036: {atoms: [POST_EUROPE_ECHEC], marche: [1X2_adv], tier: A, statut: TESTABLE}
+  S037: {atoms: [REPOS_COURT], marche: [1X2_adv, under_team], tier: A, statut: TESTABLE}
+  S038: {atoms: [REPOS_LONG], marche: [1X2, CS], tier: A, statut: TESTABLE}
+  S039: {atoms: [BUTEUR_CHAUD], marche: [buteur, over_team], tier: B, statut: ATTENTE_DATA, note: "marché buteur = Étage 2 archive maison"}
+  S040: {atoms: [BUTEUR_FROID], marche: [under_team, eviter_buteur], tier: B, statut: ATTENTE_DATA}
+  S041: {atoms: [GARDIEN_CHAUD], marche: [CS, under_adv], tier: B, statut: ATTENTE_DATA}
+  S042: {atoms: [ABS_MDF_CLE], marche: [1X2_adv, over_adv], tier: B, statut: ATTENTE_DATA}
+  S043: {atoms: [ABS_DC_CLE], marche: [over_adv, 1X2_adv], tier: B, statut: ATTENTE_DATA}
+  S044: {atoms: [POST_DEFAITE_LOURDE], marche: [1X2_adv], tier: A, statut: TESTABLE}
+  S045: {atoms: [POST_DEFAITE_LOURDE, DERBY], marche: [1X2_adv, over_adv], tier: A, statut: TESTABLE}
+  S046: {atoms: [ABS_TITULAIRE_CLE], marche: [1X2_adv], tier: B, statut: FUSION, ref: S008, note: "cause suspension = même atome"}
+  S047: {atoms: [JEUNESSE_XI, MATCH_A_ENJEU], marche: [1X2_adv], tier: B, statut: ATTENTE_DATA}
+  S048: {atoms: [RETOUR_CLE], marche: [1X2], tier: B, statut: FUSION, ref: S003}
+  S049: {atoms: [FORT_MT1], marche: [MT1_result, O0.5_MT1], tier: A, statut: TESTABLE}
+  S050: {atoms: [ENCAISSE_MT1], marche: [O0.5_MT1_enc, MT1_adv], tier: A, statut: TESTABLE}
+  S051: {atoms: [SOLIDE_MT1], marche: [U1.5_MT1, CS_MT1], tier: A, statut: TESTABLE}
+  S052: {atoms: [FORT_MT2], marche: [MT2_result, O0.5_MT2], tier: A, statut: TESTABLE}
+  S053: {atoms: [ENCAISSE_MT1], marche: [O0.5_MT1_enc], tier: A, statut: FUSION, ref: S050}
+  S054: {atoms: [FORTERESSE], marche: [1, DC], tier: A, statut: TESTABLE}
+  S055: {atoms: [], marche: [live], tier: D, statut: REJET, note: "live — interdit par règles opératoires (D7)"}
+  S056: {atoms: [MATCH_A_ENJEU, FIN_SAISON_FORTE_HISTO], marche: [1X2, DC, U], tier: A, statut: TESTABLE, note: "def 'enjeu' = D4"}
+  S057: {atoms: [FAIBLE_DOMICILE], marche: [X2, AH+1_adv], tier: A, statut: TESTABLE}
+  S058: {atoms: [VOYAGEUR_FORT], marche: [2, DC_N2], tier: A, statut: TESTABLE}
+  S059: {atoms: [FAIBLE_EXTERIEUR], marche: [1, DC_1N, CS_home], tier: A, statut: TESTABLE}
+  S060: {atoms: [FIN_SAISON_FORTE_HISTO, FENETRE_FIN_SAISON], marche: [1X2, DC, over_team], tier: A, statut: TESTABLE}
+  S061: {atoms: [DEFENSE_PASSOIRE], marche: [over_adv, AH-1_adv, BTTS], tier: A, statut: TESTABLE, note: "critère 'erreur individuelle' élagué (Opta only)"}
+  S062: {atoms: [POST_DEFAITE_LOURDE], marche: [1X2_adv], tier: A, statut: FUSION, ref: S044}
+  S063: {atoms: [SANS_ENJEU, XG_ELEVE], marche: [O2.5, over_team, BTTS], tier: "A*", statut: TESTABLE}
+  S064: {atoms: [SANS_ENJEU, XGA_TREND_UP], marche: [1X2_adv, over_adv], tier: "A*", statut: TESTABLE}
+  S065: {atoms: [MONTEE_ASSUREE, SERIE_VICTOIRES], marche: [1X2, over_team], tier: A, statut: TESTABLE}
+  S066: {atoms: [OBJECTIF_RATE_RECENT], marche: [1X2_adv], tier: A, statut: TESTABLE}
+  S067: {atoms: [SANS_ENJEU], adv_atoms: [LUTTE_MAINTIEN|LUTTE_MONTEE|LUTTE_TITRE], marche: [1X2_adv, DC_adv], tier: A, statut: TESTABLE, note: "→ formalisée HC-03"}
+  S068: {atoms: [SERIE_NULS], marche: [1X2_adv], tier: A, statut: TESTABLE}
+  S069: {atoms: [SERIE_V_SERREES], marche: [1X2, DC, O1.5_team], tier: A, statut: TESTABLE}
+  S070: {atoms: [H2H_BTTS], marche: [BTTS], tier: A, statut: TESTABLE}
+  S071: {atoms: [H2H_UNDER25], marche: [U2.5], tier: A, statut: TESTABLE}
+  S072: {atoms: [STADE_FERME], marche: [1, under_adv, CS], tier: A, statut: FUSION, ref: S033, note: "variante défensive conservée comme atome"}
+  S073: {atoms: [SCORING_FOU], marche: [O3.5, O2.5], tier: A, statut: TESTABLE}
+  S074: {atoms: [U15_FREQ], marche: [U1.5, U2.5], tier: A, statut: TESTABLE}
+  S075: {atoms: [O15_MT1_FREQ], marche: [O1.5_MT1], tier: A, statut: TESTABLE}
+  S076: {atoms: [U05_MT1_FREQ], marche: [U0.5_MT1], tier: A, statut: TESTABLE}
+  S077: {atoms: [LUTTE_TITRE|LUTTE_MONTEE, SERIE_VICTOIRES], marche: [1X2, AH-1], tier: A, statut: TESTABLE}
+  S078: {atoms: [LUTTE_MAINTIEN, SERIE_VICTOIRES], marche: [1X2, DC], tier: A, statut: TESTABLE}
+  S079: {atoms: [RELEGUE_MATH], marche: [1X2_adv], tier: A, statut: TESTABLE, note: "DUEL avec S081 — la donnée tranche (D9)"}
+  S080: {atoms: [MAINTIEN_ASSURE_RECENT], marche: [1X2_adv], tier: A, statut: TESTABLE}
+  S081: {atoms: [RELEGUE_MATH, REPRISE_FORME], marche: [1X2, DC], tier: A, statut: TESTABLE, note: "DUEL avec S079"}
+  S082: {atoms: [REPRISE_FORME], marche: [1X2, DC], tier: A, statut: TESTABLE}
+  S083: {atoms: [FAIBLE_VS_TOP], marche: [1X2_adv, under_team], tier: A, statut: TESTABLE}
+  S084: {atoms: [ENCAISSE_MT1], marche: [O0.5_MT1_enc], tier: A, statut: FUSION, ref: S050}
+  S085: {atoms: [ENCAISSE_60_90], marche: [but_60_90], tier: "A*", statut: TESTABLE, note: "Étage 1 lift ; prix = archive maison"}
+  S086: {atoms: [], marche: [live], tier: D, statut: REJET, note: "live (D7)"}
+  S088: {atoms: [], marche: [live], tier: D, statut: REJET, note: "live (D7)"}
+  S089: {atoms: [DOMINE_FAIBLES], marche: [1X2, AH-1, over_team], tier: A, statut: TESTABLE}
+  S090: {atoms: [POST_TREVE], marche: [1X2, DC], tier: A, statut: TESTABLE, note: "critère 'internationaux sélectionnés' → option Tier B"}
+  S091: {atoms: [POST_VICTOIRE_LARGE, XG_ELEVE], marche: [1X2, DC], tier: "A*", statut: TESTABLE, note: "duel avec S044 en miroir"}
+  S093: {atoms: [MATCH_A_ENJEU, FIN_SAISON_FORTE_HISTO], marche: [1X2, DC], tier: A, statut: FUSION, ref: S056}
+  S095: {atoms: [ABS_BUTEUR_DEP], marche: [under_team, 1X2_adv], tier: B, statut: ATTENTE_DATA}
+  S096: {atoms: [JEUNESSE_XI, FENETRE_FIN_SAISON, MATCH_A_ENJEU], marche: [1X2_adv], tier: B, statut: FUSION, ref: S047}
+  S097: {atoms: [METEO_EXTREME], marche: [1X2, OU], tier: Bm, statut: FUSION, ref: S030}
+  S098: {atoms: [], marche: [], tier: C, statut: FUSION, ref: S034}
+  S099: {atoms: [], marche: [], tier: C, statut: FUSION, ref: S020}
+  S100: {atoms: [PROFONDEUR_FAIBLE], marche: [1X2_adv, over_adv], tier: B, statut: ATTENTE_DATA}
+
+# ============================================================
+# 3. HYPOTHÈSES COMPOSÉES — le croisement self × adv × match
+#    (la couche que le catalogue n'avait pas — Session 2)
+#    priorite: P1 = testable Sprint 1 (A/A*), P2 = chantier joueurs,
+#              P3 = météo/exotiques
+# ============================================================
+hypotheses_composees:
+
+  HC-01:
+    nom: "Fatigue asymétrique"
+    histoire: "Un corps à 3 jours de repos contre un corps à 8 — l'écart se voit au dernier quart d'heure."
+    formule: "REPOS_COURT(self) × REPOS_LONG(adv)"
+    marches: [X2_adv, DC_adv, AH+0.5_adv, but_60_90_adv]
+    tier: A
+    priorite: P1
+    proposeur: archetype_benham
+
+  HC-02:
+    nom: "Gueule de bois européenne"
+    histoire: "Retour d'Europe raté + déplacement = jambes et têtes ailleurs."
+    formule: "POST_EUROPE_ECHEC(self) × EXTERIEUR × non(POST_EUROPE(adv))"
+    marches: [1_adv, DC_adv]
+    tier: A
+    priorite: P1
+    proposeur: quant_clv
+
+  HC-03:
+    nom: "Enjeu asymétrique"
+    histoire: "Celui qui joue sa vie contre celui qui joue au golf mental — S067 formalisée."
+    formule: "SANS_ENJEU(self) × (LUTTE_MAINTIEN|LUTTE_MONTEE|LUTTE_TITRE)(adv) × FENETRE_FIN_SAISON"
+    marches: [1X2_adv, DC_adv]
+    tier: A
+    priorite: P1
+    proposeur: archetype_bloom
+
+  HC-04:
+    nom: "Forteresse contre voyageur malade"
+    histoire: "Le stade qui ne perd pas reçoit l'équipe qui ne gagne jamais dehors."
+    formule: "FORTERESSE(self) × FAIBLE_EXTERIEUR(adv)"
+    marches: [1, AH-1, CS]
+    tier: A
+    priorite: P1
+    proposeur: archetype_bloom
+
+  HC-05:
+    nom: "Régression croisée"
+    histoire: "La surchauffe qui refroidit rencontre la machine qui monte en température."
+    formule: "RATIO_FINITION_HAUT(self) × XG_FAIBLE(self) × XG_TREND_UP(adv)"
+    marches: [2_adv, X2_adv]
+    tier: "A*"
+    priorite: P1
+    proposeur: modelisateur_xg
+
+  HC-06:
+    nom: "Duel de passoires"
+    histoire: "Deux défenses ouvertes = festival probable."
+    formule: "DEFENSE_PASSOIRE(self) × DEFENSE_PASSOIRE(adv)"
+    marches: [O2.5, BTTS, O3.5]
+    tier: A
+    priorite: P1
+    proposeur: market_maker
+
+  HC-07:
+    nom: "Duel de verrous"
+    histoire: "Un verrou qui se ferme contre une attaque en panne sèche."
+    formule: "XGA_TREND_DOWN(self) × CRISE_OFFENSIVE(adv)"
+    marches: [U2.5, CS, under_adv]
+    tier: "A*"
+    priorite: P1
+    proposeur: modelisateur_xg
+
+  HC-08:
+    nom: "Mi-temps 1 croisée"
+    histoire: "Celui qui encaisse tôt reçoit celui qui frappe tôt."
+    formule: "ENCAISSE_MT1(self) × FORT_MT1(adv)"
+    marches: [O0.5_MT1, MT1_adv, O1.5_MT1]
+    tier: A
+    priorite: P1
+    proposeur: quant_clv
+
+  HC-09:
+    nom: "Money-time croisé"
+    histoire: "La défense qui craque après la 60e contre l'équipe qui finit fort."
+    formule: "ENCAISSE_60_90(self) × FORT_MT2(adv)"
+    marches: [but_60_90, MT2_adv]
+    tier: "A*"
+    priorite: P1
+    proposeur: wildcard_von_neumann
+    note: "marché exotique → Étage 1 lift maintenant, prix via archive maison ensuite"
+
+  HC-10:
+    nom: "Derby sous sifflet sévère"
+    histoire: "Rivalité chaude + arbitre qui dégaine = pluie de cartons. Colonne Referee de football-data."
+    formule: "DERBY_CHAUD × ARBITRE_SEVERE"
+    marches: [over_cartons]
+    tier: A
+    priorite: P1
+    proposeur: wildcard_von_neumann
+    note: "Étage 1 (résultats cartons FD) ; Étage 2 quand l'archive maison aura les prix cartons"
+
+  HC-11:
+    nom: "Frustration contre momentum"
+    histoire: "La série de nuls qui ronge contre la série de victoires qui porte."
+    formule: "SERIE_NULS(self) × SERIE_VICTOIRES(adv)"
+    marches: [2_adv, X2_adv]
+    tier: A
+    priorite: P1
+    proposeur: archetype_benham
+
+  HC-12:
+    nom: "Lendemain de fête"
+    histoire: "La victoire surprise se paie souvent au match suivant, surtout en déplacement."
+    formule: "POST_VICTOIRE_SURPRISE(self) × EXTERIEUR"
+    marches: [1_adv, X1_adv]
+    tier: A
+    priorite: P1
+    proposeur: market_maker
+
+  HC-13:
+    nom: "Match de gala bilatéral"
+    histoire: "Deux équipes en vacances mentales = portes ouvertes."
+    formule: "SANS_ENJEU(self) × SANS_ENJEU(adv) × FENETRE_FIN_SAISON"
+    marches: [O2.5, BTTS]
+    tier: A
+    priorite: P1
+    proposeur: archetype_bloom
+
+  HC-14:
+    nom: "Le signal fondateur"
+    histoire: "Ta charnière est à l'infirmerie, leurs attaquants sont en feu. L'hypothèse qui a lancé le projet."
+    formule: "(ABS_DC_CLE|ABS_2_DEFENSEURS)(self) × (BUTEUR_CHAUD|XG_SURPERF)(adv)"
+    marches: [O2.5, BTTS, over_adv]
+    tier: B
+    priorite: P2
+    proposeur: david
+
+  HC-15:
+    nom: "Milieu coupé"
+    histoire: "Sans la sentinelle, le bloc se coupe en deux face à une attaque régulière."
+    formule: "ABS_MDF_CLE(self) × XG_ELEVE_STABLE(adv)"
+    marches: [AH-1_adv, over_adv]
+    tier: B
+    priorite: P2
+    proposeur: archetype_bloom
+
+  HC-16:
+    nom: "Dépendance exposée"
+    histoire: "L'équipe à un seul poumon offensif visite un stade fermé."
+    formule: "ABS_BUTEUR_DEP(self) × STADE_FERME(adv)"
+    marches: [under_team, 2_adv, CS_adv]
+    tier: B
+    priorite: P2
+    proposeur: modelisateur_xg
+
+  HC-17:
+    nom: "Mur chaud contre finition froide"
+    histoire: "Gardien en état de grâce contre attaque qui vendange."
+    formule: "GARDIEN_CHAUD(self) × RATIO_FINITION_BAS(adv)"
+    marches: [CS, under_adv]
+    tier: B
+    priorite: P2
+    proposeur: quant_clv
+
+  HC-18:
+    nom: "Jeunesse en apnée"
+    histoire: "Un XI de gamins qui joue le maintien en avril, loin de ses bases."
+    formule: "JEUNESSE_XI(self) × LUTTE_MAINTIEN(self) × FENETRE_FIN_SAISON × EXTERIEUR"
+    marches: [1_adv, over_adv]
+    tier: B
+    priorite: P2
+    proposeur: archetype_benham
+
+  HC-19:
+    nom: "Coach neuf dans la fosse"
+    histoire: "Trois matchs de banc, et déjà une forteresse à visiter."
+    formule: "COACH_NEUF(self) × FORTERESSE(adv) × EXTERIEUR"
+    marches: [1_adv, AH-1_adv]
+    tier: B
+    priorite: P2
+    proposeur: ingenieur_data
+
+  HC-20:
+    nom: "Effectif court en surrégime"
+    histoire: "Deux titulaires dehors + trois jours de repos = la S100 × la S037."
+    formule: "PROFONDEUR_FAIBLE(self) × REPOS_COURT(self)"
+    marches: [1X2_adv, over_adv]
+    tier: B
+    priorite: P2
+    proposeur: qa_recetteur
+
+  HC-21:
+    nom: "Tempête sur match ouvert"
+    histoire: "Le vent fort tue le jeu long et les centres — deux attaques xG élevées rentrent à vide."
+    formule: "METEO_EXTREME(vent) × XG_ELEVE(self) × XG_ELEVE(adv)"
+    marches: [U2.5]
+    tier: Bm
+    priorite: P3
+    proposeur: wildcard_musk
+
+  HC-22:
+    nom: "Long voyage sous le gel"
+    histoire: "800 km de car pour jouer par -2°C chez un local habitué."
+    formule: "DEPLACEMENT_LONG_CUMULE(self) × METEO_EXTREME(froid)"
+    marches: [1_adv, under_team]
+    tier: Bm
+    priorite: P3
+    proposeur: wildcard_musk
+
+  HC-23:
+    nom: "Buteur chaud contre passoire"
+    histoire: "Le marché buteur est mal pricé sur les books FR — à vérifier contre notre archive."
+    formule: "BUTEUR_CHAUD(self) × DEFENSE_PASSOIRE(adv)"
+    marches: [buteur, over_team]
+    tier: B
+    priorite: P3
+    proposeur: market_maker
+    note: "Étage 2 pur — attend l'archive maison des prix buteurs"
+
+  HC-24:
+    nom: "Trêve internationale à deux vitesses"
+    histoire: "Post-trêve, l'équipe aux 2 internationaux reçoit celle aux 9 sélectionnés."
+    formule: "POST_TREVE × ecart_internationaux(self,adv) ≥ 5"
+    marches: [1X2]
+    tier: B
+    priorite: P2
+    proposeur: archetype_benham
+
+  HC-25:
+    nom: "Duels contradictoires du catalogue"
+    histoire: "Le catalogue affirme A et non-A (S079 vs S081, S035 vs S036, S004 vs S009, S024 vs S044). On ne choisit pas : on backteste les deux et on cherche la condition qui sépare les régimes."
+    formule: "paires opposées testées en miroir"
+    marches: [selon_paire]
+    tier: A
+    priorite: P1
+    proposeur: statisticien_fdr
+
+# ============================================================
+# 4. VAGUE 2 — RECHERCHE MACHINE (pré-cadrée, non lancée)
+# ============================================================
+vague_2_machine:
+  principe: "exploration combinatoire automatique de l'espace des atomes"
+  contraintes:
+    profondeur_max: 3   # atomes par combinaison
+    n_min_out_of_sample: 300
+    correction: "Benjamini-Hochberg, q = 0.10"
+    stabilite: "edge > 0 sur ≥ 3 fenêtres walk-forward"
+    holdout: "saison 2025-26 scellée jusqu'au verdict final"
+  declencheur: "après le rapport de la vague 1 (hypothèses pré-enregistrées ci-dessus)"
