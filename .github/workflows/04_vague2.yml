@@ -1,0 +1,28 @@
+name: "04 - Vague 2 (recherche machine)"
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  vague2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: Tests du moteur
+        run: python -m pytest tests/ -q
+      - name: Recherche machine
+        run: python agents/agent_vague2.py
+      - name: Commit du rapport
+        run: |
+          git config user.name "robin-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add rapports/
+          git diff --cached --quiet || git commit -m "rapport: vague 2 machine"
+          git push
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rapport-vague2
+          path: rapports/
