@@ -1,0 +1,32 @@
+name: "02 - Backtest vague 1"
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["01 - Donnees (football-data + Understat)"]
+    types: [completed]
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: Tests du moteur
+        run: python -m pytest tests/ -q
+      - name: Backtest
+        run: python agents/agent_backtest.py
+      - name: Commit du rapport
+        run: |
+          git config user.name "robin-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add rapports/
+          git diff --cached --quiet || git commit -m "rapport: backtest vague 1"
+          git push
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rapport-vague1
+          path: rapports/
