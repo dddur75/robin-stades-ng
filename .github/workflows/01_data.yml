@@ -1,0 +1,26 @@
+name: "01 - Donnees (football-data + Understat)"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1"   # lundi 04:17 UTC
+permissions:
+  contents: write
+jobs:
+  collecte:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: Collecte football-data
+        run: python agents/agent_collecte.py
+      - name: Understat xG (best effort)
+        run: python agents/agent_understat.py || echo "Understat indisponible - Tier A pur"
+      - name: Commit des donnees
+        run: |
+          git config user.name "robin-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/*.parquet
+          git diff --cached --quiet || git commit -m "data: mise a jour automatique"
+          git push
