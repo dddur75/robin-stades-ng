@@ -346,8 +346,6 @@ def _rapport(rapport_dir, journal, evts, arch, candidats, non_apparies, now):
         f.write("\n".join(L))
 
 
-if __name__ == "__main__":
-    main()
 
 
 # ---------- dashboard GitHub Pages ----------
@@ -446,3 +444,7 @@ def _dashboard(journal, candidats, now, etat, message=""):
     os.makedirs("docs", exist_ok=True)
     with open(os.path.join("docs", "index.html"), "w", encoding="utf-8") as f:
         f.write("\n".join(H))
+
+
+if __name__ == "__main__":
+    main()
