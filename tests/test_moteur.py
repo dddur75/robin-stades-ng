@@ -319,3 +319,29 @@ def test_features_virtuelles_inoffensives():
     a2 = f2[f2["match_id"] == cible].sort_values("side")[atomes].reset_index(drop=True)
     pd.testing.assert_frame_equal(a1, a2)
     assert (f2["match_id"] == "VIRT_test").sum() == 2
+
+
+def test_dashboard_genere(tmp_path):
+    """Le dashboard doit exister dans les deux etats : veille (archive vide) et actif."""
+    import yaml
+    df = genere()
+    racine = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    (tmp_path / "data").mkdir(); (tmp_path / "config").mkdir()
+    df.to_parquet(tmp_path / "data" / "matches.parquet", index=False)
+    cfg = dict(saisons=[], holdout_seasons=[], q_fdr=0.10,
+               ligues={"XX": {"nom": "Synth", "zones": {"releg_spots": 3, "promo_spots": 0, "europe_spots": 4}}})
+    yaml.dump(cfg, open(tmp_path / "config" / "ligues.yaml", "w"))
+    yaml.dump({"sports": {"XX": "soccer_xx"}}, open(tmp_path / "config" / "archive.yaml", "w"))
+    (tmp_path / "config" / "candidats_prix.yaml").write_text(
+        open(os.path.join(racine, "config", "candidats_prix.yaml")).read())
+    cwd = os.getcwd(); os.chdir(tmp_path)
+    try:
+        from agents.agent_confrontation import main as cmain
+        from datetime import datetime, timezone
+        r = cmain(data_dir="data", rapport_dir="rapports",
+                  maintenant=datetime(2026, 7, 10, tzinfo=timezone.utc))
+    finally:
+        os.chdir(cwd)
+    assert r is None
+    html = open(tmp_path / "docs" / "index.html").read()
+    assert "INTERSAISON" in html and "CP-01" in html and "Signaux a venir" in html

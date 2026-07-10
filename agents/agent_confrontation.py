@@ -155,6 +155,9 @@ def main(data_dir="data", rapport_dir="rapports", maintenant=None):
     os.makedirs(rapport_dir, exist_ok=True)
     if not fichiers:
         _rapport_vide(rapport_dir, "Archive vide : verifier le secret ODDS_API_KEY et le workflow 03.")
+        _dashboard(None, candidats, now, etat="veille",
+                   message="Archive en attente de la reprise des championnats (debut aout). "
+                           "Le systeme surveille, zero credit consomme.")
         print("[confrontation] archive vide — rapport diagnostic ecrit")
         return None
     arch = pd.concat([pd.read_parquet(os.path.join(arch_dir, f)) for f in fichiers], ignore_index=True)
@@ -274,6 +277,8 @@ def main(data_dir="data", rapport_dir="rapports", maintenant=None):
     journal.to_parquet(sig_path, index=False)
 
     _rapport(rapport_dir, journal, evts, arch, candidats, non_apparies, now)
+    etat = "actif" if len(journal) or (arch["commence"] > now).any() else "veille"
+    _dashboard(journal, candidats, now, etat=etat)
     print(f"[confrontation] {len(nouveaux)} nouveaux signaux, "
           f"{int(journal['regle'].sum()) if len(journal) else 0} regles au total, "
           f"{len(evts)} evenements archives apparies")
@@ -343,3 +348,101 @@ def _rapport(rapport_dir, journal, evts, arch, candidats, non_apparies, now):
 
 if __name__ == "__main__":
     main()
+
+
+# ---------- dashboard GitHub Pages ----------
+_CSS = """
+:root{--bg:#0d1117;--carte:#161b22;--bord:#30363d;--tx:#e6edf3;--mut:#8b949e;
+--vert:#3fb950;--orange:#d29922;--rouge:#f85149;--bleu:#58a6ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);
+font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif;padding:16px;max-width:960px;margin:auto}
+h1{font-size:1.3rem;margin:.2rem 0}.sous{color:var(--mut);font-size:.85rem;margin-bottom:14px}
+.badge{display:inline-block;padding:3px 12px;border-radius:999px;font-weight:600;font-size:.8rem}
+.b-vert{background:#1a3524;color:var(--vert)}.b-orange{background:#3a2d12;color:var(--orange)}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.carte{background:var(--carte);border:1px solid var(--bord);border-radius:10px;padding:12px 14px}
+.carte .val{font-size:1.7rem;font-weight:700}.carte .lab{color:var(--mut);font-size:.78rem}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin:8px 0 20px}
+th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--bord)}
+th{color:var(--mut);font-weight:600}h2{font-size:1rem;margin:22px 0 4px}
+.pos{color:var(--vert)}.neg{color:var(--rouge)}.mut{color:var(--mut)}
+footer{color:var(--mut);font-size:.75rem;margin-top:26px;border-top:1px solid var(--bord);padding-top:10px}
+"""
+
+
+def _fmt(v, pct=False, signe=False):
+    if v is None or (isinstance(v, float) and np.isnan(v)):
+        return "<span class=mut>—</span>"
+    s = f"{v*100:+.1f}" if signe else f"{v*100:.1f}"
+    cls = "pos" if v > 0 else ("neg" if v < 0 else "mut")
+    return f"<span class={cls}>{s}{'%' if pct else ' pts'}</span>" if signe else f"{s}%"
+
+
+def _dashboard(journal, candidats, now, etat, message=""):
+    fut = pd.DataFrame(); reg = pd.DataFrame()
+    if journal is not None and len(journal):
+        j = journal.copy()
+        j["commence"] = pd.to_datetime(j["commence"], utc=True)
+        fut = j[(j["commence"] > now) & (~j["regle"].astype(bool))].sort_values("commence")
+        reg = j[j["regle"].astype(bool)]
+    n_fut, n_reg = len(fut), len(reg)
+    edge = roi_fr = None
+    if n_reg:
+        ok = reg[reg["juste_pinnacle"].notna()]
+        if len(ok):
+            edge = float(ok["issue"].astype(float).mean() - ok["juste_pinnacle"].mean())
+        g = reg["gain_fr"].dropna()
+        if len(g):
+            roi_fr = float(g.mean())
+    badge = ('<span class="badge b-vert">SYSTEME ACTIF</span>' if etat == "actif"
+             else '<span class="badge b-orange">EN VEILLE — INTERSAISON</span>')
+    H = ["<!doctype html><html lang=fr><head><meta charset=utf-8>",
+         "<meta name=viewport content='width=device-width,initial-scale=1'>",
+         "<title>Robin des Stades NG — Le Juge</title><style>" + _CSS + "</style></head><body>",
+         f"<h1>Robin des Stades NG — Le Juge</h1>",
+         f"<div class=sous>{badge} &nbsp;·&nbsp; genere le {pd.Timestamp.now():%d/%m/%Y %H:%M} UTC"
+         " &nbsp;·&nbsp; PAPIER, aucun pari reel</div>"]
+    if message:
+        H.append(f"<div class=carte style='margin-bottom:14px'>{message}</div>")
+    H.append("<div class=grille>")
+    for lab, val in [("Signaux a venir", str(n_fut)), ("Signaux regles", str(n_reg)),
+                     ("Edge vs Pinnacle", _fmt(edge, signe=True)),
+                     ("ROI papier @book FR", _fmt(roi_fr, pct=True, signe=True))]:
+        H.append(f"<div class=carte><div class=val>{val}</div><div class=lab>{lab}</div></div>")
+    H.append("</div>")
+    if n_fut:
+        H += ["<h2>Prochains signaux</h2><table><tr><th>Date</th><th>Match</th><th>Candidat</th>"
+              "<th>Marche @ ligne</th><th>Pinnacle</th><th>Winamax</th><th>Unibet</th></tr>"]
+        for _, s in fut.head(12).iterrows():
+            pin = f"{s['prix_pinnacle']:.2f}" if pd.notna(s['prix_pinnacle']) else "—"
+            H.append(f"<tr><td>{pd.Timestamp(s['commence']):%d/%m %H:%M}</td>"
+                     f"<td>{s['home_fd']}–{s['away_fd']}{(' ['+s['team_fd']+']') if s['team_fd'] else ''}</td>"
+                     f"<td>{s['candidat']}</td><td>{s['token']} @ {s['ligne'] if pd.notna(s['ligne']) else '—'}</td>"
+                     f"<td>{pin}</td><td>{s['prix_winamax'] if pd.notna(s['prix_winamax']) else '—'}</td>"
+                     f"<td>{s['prix_unibet'] if pd.notna(s['prix_unibet']) else '—'}</td></tr>")
+        H.append("</table>")
+    H += ["<h2>Bilan par candidat</h2><table><tr><th>Candidat</th><th>N</th><th>Hit</th>"
+          "<th>Juste</th><th>Edge</th><th>ROI FR</th><th>Statut</th></tr>"]
+    for c in candidats:
+        g = reg[reg["candidat"] == c["id"]] if n_reg else pd.DataFrame()
+        if not len(g):
+            H.append(f"<tr><td>{c['id']} {c['nom']}</td><td>0</td><td class=mut>—</td>"
+                     f"<td class=mut>—</td><td class=mut>—</td><td class=mut>—</td>"
+                     f"<td class=mut>EN ATTENTE</td></tr>")
+            continue
+        n = len(g); hit = g["issue"].astype(float).mean()
+        ju = g["juste_pinnacle"].dropna().mean()
+        ed = hit - ju if pd.notna(ju) else None
+        rf = g["gain_fr"].dropna().mean() if g["gain_fr"].notna().any() else None
+        statut = "VERDICT POSSIBLE" if n >= N_VERDICT else f"EN COURS {n}/{N_VERDICT}"
+        H.append(f"<tr><td>{c['id']} {c['nom']}</td><td>{n}</td><td>{_fmt(hit)}</td>"
+                 f"<td>{_fmt(ju) if pd.notna(ju) else '<span class=mut>—</span>'}</td>"
+                 f"<td>{_fmt(ed, signe=True)}</td><td>{_fmt(rf, pct=True, signe=True)}</td>"
+                 f"<td>{statut}</td></tr>")
+    H += ["</table>",
+          "<footer>10 candidats pre-enregistres (Vague 2B) · verdict a N ≥ 150 regles · "
+          "holdout 2025-26 scelle · details complets : rapports/RAPPORT_CONFRONTATION.md</footer>",
+          "</body></html>"]
+    os.makedirs("docs", exist_ok=True)
+    with open(os.path.join("docs", "index.html"), "w", encoding="utf-8") as f:
+        f.write("\n".join(H))
