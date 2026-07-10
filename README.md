@@ -80,3 +80,11 @@ Archive maison des cotes (Unibet FR + Winamax + Pinnacle via The Odds API) pour 
 ## Vague 2 — règles gravées (`config/vague2.yaml`, pré-enregistré)
 
 Mono/duo/trio d'atomes × 17 marchés exotiques uniquement (le 1X2 est efficient, on ne le re-mine pas). N≥300, FDR BH q=0.10 sur **tous** les tests effectués, cohérence de signe sur ≥2/3 blocs chronologiques, holdout 2025-26 toujours scellé. Les survivants = stock d'hypothèses à confronter aux prix de l'archive — **un lift n'est pas un edge**.
+
+---
+
+# Sprint 2.1 — Vague 2B : référence ajustée
+
+La vague 2 (v1) comparait chaque signal à la moyenne de la ligue → tout ce qui est corrélé à la **force des équipes** ressortait avec des lifts énormes que le prix connaissait déjà (24 460 « survivants » = artefact). La **vague 2B** corrige : référence = matchs **comparables** (buckets force 1X2 × tempo O2.5 × venue, sur probas de clôture dé-viggées), FAVORI_NET/OUTSIDER/VENUE deviennent des contrôles, grammaire canonique (zéro miroir, zéro complément), seuil de rapport |Δ ajusté| ≥ 3 pts. Le rapport affiche **Δ ajusté vs Δ brut** côte à côte.
+
+**Rien à faire côté workflows** : le 04 détecte `config/vague2b.yaml` et exécute la 2B automatiquement (l'ancienne famille reste exécutable avec `--v1` pour traçabilité). Il suffit de re-uploader les fichiers du zip et de relancer le 04. Le protocole v1 (`config/vague2.yaml`) et son rapport restent dans le repo comme pièces d'archive.
