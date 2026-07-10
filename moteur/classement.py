@@ -10,6 +10,7 @@ Eliminations / securisations mathematiques : criteres exacts fondes sur
 - MONTEE_* : analogues avec promo_spots
 """
 from collections import defaultdict
+import pandas as pd
 
 
 def passe_enjeu(matchs, zones):
@@ -100,8 +101,10 @@ def passe_enjeu(matchs, zones):
         for s in ("home", "away"):
             etat[s]["MATCH_A_ENJEU_ST"] = bool(deux_en_lutte or choc_direct)
         out[m["match_id"]] = etat
-        # mise a jour post-match
+        # mise a jour post-match — sautee pour les matchs A VENIR (scores NaN)
         h, a = m["home"], m["away"]
+        if pd.isna(m["fthg"]) or pd.isna(m["ftag"]):
+            continue
         hg, ag = int(m["fthg"]), int(m["ftag"])
         played[h] += 1; played[a] += 1
         gd[h] += hg - ag; gd[a] += ag - hg

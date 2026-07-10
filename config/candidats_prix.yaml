@@ -1,0 +1,78 @@
+# CANDIDATS PRIX — pre-enregistre le 2026-07-10 apres lecture RAPPORT_VAGUE2B
+# 10 tetes de famille consolidees des 525 survivants 2B. C'est CETTE liste,
+# et elle seule, que l'agent Confrontation suit en prospectif contre les prix
+# de l'archive. Toute modification = nouvelle famille datee.
+# Verdict par candidat : N_regles >= 150, edge vs proba juste Pinnacle > 0.
+# Recouvrements assumes (CP-02 c CP-03, CP-01 c CP-04) : tetes de famille.
+
+candidats:
+  - id: CP-01
+    nom: "Duo indiscipline sous tension"
+    cond: {self_: [EQUIPE_CARTONS], adv: [EQUIPE_CARTONS], match: [MATCH_A_ENJEU]}
+    token: O45_CARTONS
+    marche_api: alternate_totals_cards
+    ligne_cible: 4.5
+    delta_backtest: +29.0
+  - id: CP-02
+    nom: "Derby chaud"
+    cond: {match: [DERBY_CHAUD]}
+    token: O45_CARTONS
+    marche_api: alternate_totals_cards
+    ligne_cible: 4.5
+    delta_backtest: +24.7
+  - id: CP-03
+    nom: "Derby"
+    cond: {match: [DERBY]}
+    token: O45_CARTONS
+    marche_api: alternate_totals_cards
+    ligne_cible: 4.5
+    delta_backtest: +20.6
+  - id: CP-04
+    nom: "Duo indiscipline"
+    cond: {self_: [EQUIPE_CARTONS], adv: [EQUIPE_CARTONS]}
+    token: O45_CARTONS
+    marche_api: alternate_totals_cards
+    ligne_cible: 4.5
+    delta_backtest: +20.4
+  - id: CP-05
+    nom: "Indiscipline a enjeu"
+    cond: {self_: [EQUIPE_CARTONS], match: [MATCH_A_ENJEU]}
+    token: O45_CARTONS
+    marche_api: alternate_totals_cards
+    ligne_cible: 4.5
+    delta_backtest: +19.8
+  - id: CP-06
+    nom: "Frais pour le derby"
+    cond: {self_: [REPOS_LONG], match: [DERBY]}
+    token: O45_CARTONS
+    marche_api: alternate_totals_cards
+    ligne_cible: 4.5
+    delta_backtest: +18.6
+  - id: CP-07
+    nom: "Gala asymetrique"
+    cond: {self_: [SANS_ENJEU], adv: [REPOS_LONG]}
+    token: TEAM_O15_SELF
+    marche_api: team_totals
+    ligne_cible: 1.5
+    delta_backtest: +9.5
+  - id: CP-08
+    nom: "Gala BTTS"
+    cond: {self_: [REPOS_LONG], adv: [SANS_ENJEU]}
+    token: BTTS_Y
+    marche_api: btts
+    ligne_cible: null
+    delta_backtest: +9.3
+  - id: CP-09
+    nom: "Derby offensif MT1"
+    cond: {self_: [ATTAQUE_PROLIFIQUE], match: [DERBY]}
+    token: O15_MT1
+    marche_api: totals_h1
+    ligne_cible: 1.5
+    delta_backtest: +8.7
+  - id: CP-10
+    nom: "Fin de saison, but precoce"
+    cond: {self_: [FORT_MT2], adv: [FIN_SAISON_FORTE_HISTO]}
+    token: O05_MT1
+    marche_api: totals_h1
+    ligne_cible: 0.5
+    delta_backtest: +8.4

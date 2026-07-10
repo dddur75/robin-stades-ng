@@ -243,3 +243,79 @@ def test_vague2b_reference_ajustee(tmp_path):
     assert not res["marche"].str.endswith("_ADV").any()
     assert not res["marche"].isin(["TEAM_U15_SELF", "U05_MT1"]).any()
     assert (tmp_path / "rapports" / "RAPPORT_VAGUE2B.md").exists()
+
+
+def test_confrontation_e2e(tmp_path):
+    """Bout-en-bout du juge en DEUX runs (protocole prospectif) :
+    run 1 avant les matchs -> journalisation des signaux aux prix captures ;
+    run 2 apres -> reglement du match joue, a la ligne capturee."""
+    import yaml
+    from datetime import timedelta
+    df = genere()
+    racine = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    (tmp_path / "data" / "archive").mkdir(parents=True)
+    (tmp_path / "config").mkdir(); (tmp_path / "rapports").mkdir()
+    df.to_parquet(tmp_path / "data" / "matches.parquet", index=False)
+    cfg = dict(saisons=[], holdout_seasons=[], q_fdr=0.10,
+               ligues={"XX": {"nom": "Synth", "zones": {"releg_spots": 3, "promo_spots": 0, "europe_spots": 4}}})
+    yaml.dump(cfg, open(tmp_path / "config" / "ligues.yaml", "w"))
+    yaml.dump({"sports": {"XX": "soccer_xx"}}, open(tmp_path / "config" / "archive.yaml", "w"))
+    (tmp_path / "config" / "candidats_prix.yaml").write_text(
+        open(os.path.join(racine, "config", "candidats_prix.yaml")).read())
+    yaml.dump({"XX": [["T01", "T02"]]}, open(tmp_path / "config" / "derbys.yaml", "w"))
+    passe = df[(df["home"] == "T01") & (df["away"] == "T02")].iloc[-1]
+    t_passe = pd.Timestamp(passe["date"]).tz_localize("UTC")
+    t_futur = (df["date"].max() + pd.Timedelta(days=3)).tz_localize("UTC")
+    lignes = []
+    for eid, commence in [("EVFUTUR", t_futur), ("EVPASSE", t_passe)]:
+        for book, over, under in [("pinnacle", 1.85, 1.95), ("winamax_fr", 1.90, 1.86)]:
+            for outcome, price in [("Over", over), ("Under", under)]:
+                lignes.append(dict(snapshot_ts="2026-01-01T00:00:00", phase="CLOSE",
+                                   event_id=eid, sport_key="soccer_xx",
+                                   commence_time=commence.isoformat(),
+                                   home="T01", away="T02", bookmaker=book,
+                                   market="alternate_totals_cards", outcome=outcome,
+                                   point=4.5, price=price, description=None))
+    pd.DataFrame(lignes).to_parquet(tmp_path / "data" / "archive" / "odds_2026-01.parquet", index=False)
+    cwd = os.getcwd(); os.chdir(tmp_path)
+    try:
+        from agents.agent_confrontation import main as cmain
+        now1 = (t_passe - pd.Timedelta(days=2)).to_pydatetime()
+        j1 = cmain(data_dir="data", rapport_dir="rapports", maintenant=now1)
+        assert (j1["event_id"] == "EVPASSE").any() and (j1["candidat"] == "CP-03").any()
+        now2 = (df["date"].max().tz_localize("UTC") + pd.Timedelta(days=1)).to_pydatetime()
+        j2 = cmain(data_dir="data", rapport_dir="rapports", maintenant=now2)
+    finally:
+        os.chdir(cwd)
+    reg = j2[(j2["event_id"] == "EVPASSE") & (j2["regle"] == True) & (j2["candidat"] == "CP-03")]
+    assert len(reg) >= 1, "le derby passe journalise doit etre regle au run 2"
+    cartons = passe["hy"] + passe["ay"] + passe["hr"] + passe["ar"]
+    attendu = cartons > 4.5
+    r = reg.iloc[0]
+    assert bool(r["issue"]) == bool(attendu)
+    assert abs(r["gain_pin"] - ((1.85 - 1) if attendu else -1.0)) < 1e-9
+    assert abs(r["juste_pinnacle"] - (1/1.85) / (1/1.85 + 1/1.95)) < 1e-6
+    texte = open(tmp_path / "rapports" / "RAPPORT_CONFRONTATION.md").read()
+    assert "Couverture" in texte and "CP-03" in texte
+
+
+def test_features_virtuelles_inoffensives():
+    """Ajouter des matchs a venir (scores NaN) ne change pas les atomes des matchs passes."""
+    import pandas as pd, numpy as np
+    df = genere()
+    derbys = {frozenset(("T01", "T02"))}
+    zones = {"XX": {"releg_spots": 3, "promo_spots": 0, "europe_spots": 4}}
+    f1 = construire(df.copy(), derbys=derbys, zones_par_ligue=zones)
+    virt = df.iloc[-1:].copy()
+    virt["match_id"] = "VIRT_test"
+    virt["date"] = df["date"].max() + pd.Timedelta(days=5)
+    virt["home"], virt["away"] = "T03", "T09"
+    for c in ["fthg", "ftag", "hthg", "htag", "hy", "ay", "hr", "ar", "psh", "psd", "psa"]:
+        virt[c] = np.nan
+    f2 = construire(pd.concat([df, virt], ignore_index=True), derbys=derbys, zones_par_ligue=zones)
+    cible = df.iloc[-1]["match_id"]
+    atomes = [c for c in f1.columns if c.isupper()]
+    a1 = f1[f1["match_id"] == cible].sort_values("side")[atomes].reset_index(drop=True)
+    a2 = f2[f2["match_id"] == cible].sort_values("side")[atomes].reset_index(drop=True)
+    pd.testing.assert_frame_equal(a1, a2)
+    assert (f2["match_id"] == "VIRT_test").sum() == 2

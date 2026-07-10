@@ -1,9 +1,12 @@
-Ces deux fichiers doivent etre crees A LA MAIN dans GitHub (les dossiers caches
-sautent au glisser-deposer) :
+Workflows a creer A LA MAIN dans GitHub (les dossiers caches sautent au
+glisser-deposer). Manip : Add file -> Create new file -> coller le nom exact
+-> coller le contenu du fichier correspondant de ce dossier -> Commit.
 
-1. Add file -> Create new file -> nom : .github/workflows/03_archive.yml
-   -> copier-coller le contenu de 03_archive.yml (ouvrir le fichier ici, bouton copie)
-2. Recommencer avec .github/workflows/04_vague2.yml
+Deja faits (Sprint 2) :
+  .github/workflows/03_archive.yml
+  .github/workflows/04_vague2.yml
 
-Puis : Settings -> Secrets and variables -> Actions -> New repository secret
-   Nom : ODDS_API_KEY   Valeur : ta cle The Odds API
+NOUVEAU (Sprint 3) :
+  .github/workflows/05_confrontation.yml
+
+Secret requis (deja en place si le 03 tourne) : ODDS_API_KEY.

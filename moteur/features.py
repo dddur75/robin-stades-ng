@@ -175,7 +175,9 @@ def _passe_contexte(matchs, derbys, zones_par_ligue):
                     "FAIBLE_VS_TOP": vt[1] >= 5 and (vt[0] / vt[1]) <= 0.20,
                     "DOMINE_FAIBLES": vb[1] >= 4 and (vb[0] / vb[1]) >= 0.75,
                 }
-            # mises a jour post-match
+            # mises a jour post-match — sautees pour les matchs A VENIR (scores NaN)
+            if pd.isna(m["fthg"]) or pd.isna(m["ftag"]):
+                continue
             hg, ag = int(m["fthg"]), int(m["ftag"])
             cartons_tot = int(m["hy"] + m["ay"] + m["hr"] + m["ar"])
             h2h.setdefault(pair, []).append((m["date"], m["home"], hg, ag, cartons_tot))

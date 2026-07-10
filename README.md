@@ -88,3 +88,14 @@ Mono/duo/trio d'atomes × 17 marchés exotiques uniquement (le 1X2 est efficient
 La vague 2 (v1) comparait chaque signal à la moyenne de la ligue → tout ce qui est corrélé à la **force des équipes** ressortait avec des lifts énormes que le prix connaissait déjà (24 460 « survivants » = artefact). La **vague 2B** corrige : référence = matchs **comparables** (buckets force 1X2 × tempo O2.5 × venue, sur probas de clôture dé-viggées), FAVORI_NET/OUTSIDER/VENUE deviennent des contrôles, grammaire canonique (zéro miroir, zéro complément), seuil de rapport |Δ ajusté| ≥ 3 pts. Le rapport affiche **Δ ajusté vs Δ brut** côte à côte.
 
 **Rien à faire côté workflows** : le 04 détecte `config/vague2b.yaml` et exécute la 2B automatiquement (l'ancienne famille reste exécutable avec `--v1` pour traçabilité). Il suffit de re-uploader les fichiers du zip et de relancer le 04. Le protocole v1 (`config/vague2.yaml`) et son rapport restent dans le repo comme pièces d'archive.
+
+---
+
+# Sprint 3 — Agent Confrontation (le juge)
+
+`agents/agent_confrontation.py` + workflow **05** (quotidien, 10:07 UTC). Protocole **purement prospectif** :
+- **Signaux** : pour chaque match à venir présent dans l'archive, les atomes sont calculés point-in-time (mêmes fonctions que le backtest, lignes virtuelles) et les **10 candidats pré-enregistrés** (`config/candidats_prix.yaml`) sont testés. Chaque déclenchement est journalisé avec les prix capturés — Pinnacle (juge, dé-viggé) + Winamax/Unibet FR (exécution) — **à la ligne réelle** (4,5 ou 5,5 cartons, pas une ligne théorique).
+- **Règlement** : après le match, issue à la ligne capturée → edge réalisé vs proba juste + ROI papier à mise plate. Aucun signal rétroactif : ce qui n'a pas été journalisé avant le coup d'envoi n'existe pas.
+- **Rapport** (`rapports/RAPPORT_CONFRONTATION.md`) : signaux à venir, bilan par candidat (verdict à N≥150 réglés), **couverture de l'archive** (qui price quoi, par book et par marché — l'audit automatisé), noms d'équipes non appariés (à ajouter dans `config/alias_equipes.yaml`).
+
+Mise en route : créer `.github/workflows/05_confrontation.yml` (contenu dans `workflows_a_copier/`). Rien d'autre. Intersaison oblige : le rapport restera quasi vide jusqu'à la reprise des championnats (début août), c'est normal.
