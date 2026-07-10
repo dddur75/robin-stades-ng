@@ -147,5 +147,11 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default="data")
     ap.add_argument("--rapport", default="rapports")
+    ap.add_argument("--v1", action="store_true", help="forcer l'ancienne famille v1 (reference ligue)")
     a = ap.parse_args()
-    main(a.data, a.rapport)
+    if not a.v1 and os.path.exists("config/vague2b.yaml"):
+        print("[vague2] famille 2B detectee (reference ajustee) — delegation a agent_vague2b")
+        from agents.agent_vague2b import main as main_2b
+        main_2b(a.data, a.rapport)
+    else:
+        main(a.data, a.rapport)
