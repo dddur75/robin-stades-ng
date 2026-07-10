@@ -1,0 +1,36 @@
+# VAGUE 2B — RECHERCHE MACHINE, REFERENCE AJUSTEE (pre-enregistre 2026-07-07)
+# Remplace la famille 2 (v1) dont la reference ligue-saison-venue mesurait la
+# force des equipes au lieu d'une erreur de prix. Ici :
+# - reference = matchs COMPARABLES : buckets force (proba 1X2 Pinnacle de-viggee)
+#   x tempo (proba O2.5 de cloture) x venue
+# - FAVORI_NET / OUTSIDER / VENUE_* sortent des candidats -> ce sont les CONTROLES
+# - orientation canonique : un phenomene = UNE ligne (zero miroir, zero complement)
+
+reference: buckets
+buckets_force: [0, 0.20, 0.35, 0.50, 0.65, 0.80, 1.0]   # proba juste WIN_SELF
+buckets_tempo: [0, 0.45, 0.55, 0.65, 1.0]                # proba juste O2.5 (+ bucket NA)
+cellule_min: 100          # en dessous : repli sur la moyenne venue globale
+
+profondeur_max: 3
+n_min: 300
+q_fdr: 0.10
+delta_min_rapport: 0.03   # |Δ ajuste| >= 3 pts pour figurer au rapport
+tiers_walkforward: 3
+tiers_coherents_min: 2
+
+marches_canoniques:       # SELF + neutres uniquement (les ADV = miroirs, exclus)
+  self: [TEAM_O15_SELF, CS_SELF, MT1_SELF, MT2_SELF]
+  neutres: [O05_MT1, O15_MT1, O35, U15, O45_CARTONS, BTTS_Y]
+
+atomes_self:              # whitelist SANS les controles (FAVORI_NET/OUTSIDER/VENUE)
+  [SERIE_VICTOIRES, SERIE_V_LONGUE, SERIE_SANS_V, SERIE_NULS, CRISE_OFFENSIVE,
+   ATTAQUE_PROLIFIQUE, DEFENSE_PASSOIRE, REPRISE_FORME, POST_DEFAITE_LOURDE,
+   POST_VICTOIRE_LARGE, POST_VICTOIRE_SURPRISE, FORT_MT1, ENCAISSE_MT1, SOLIDE_MT1,
+   FORT_MT2, O15_MT1_FREQ, U05_MT1_FREQ, SCORING_FOU, U15_FREQ, EQUIPE_CARTONS,
+   FORTERESSE, FAIBLE_DOMICILE, VOYAGEUR_FORT, FAIBLE_EXTERIEUR, STADE_FERME,
+   REPOS_COURT, REPOS_LONG, REPOS_TRES_LONG, LUTTE_TITRE, LUTTE_MAINTIEN, SANS_ENJEU,
+   FIN_SAISON_FORTE_HISTO, FAIBLE_VS_TOP, DOMINE_FAIBLES]
+
+atomes_match:
+  [DERBY, DERBY_CHAUD, ARBITRE_SEVERE, MATCH_A_ENJEU, FENETRE_FIN_SAISON,
+   H2H_BTTS, H2H_UNDER25]
