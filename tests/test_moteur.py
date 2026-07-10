@@ -204,3 +204,42 @@ def test_vague1b_famille_separee(tmp_path):
         os.chdir(cwd)
     assert (tmp_path / "rapports" / "RAPPORT_VAGUE1B.md").exists()
     assert set(res["id"]) == {"HC-26", "HC-27", "S038b"}
+
+
+def test_vague2b_reference_ajustee(tmp_path):
+    """Le coeur du fix 2B : la reference par buckets doit TUER les artefacts de
+    force (le prix savait) et GARDER l'effet arbitre (orthogonal au prix)."""
+    import yaml
+    df = genere()
+    (tmp_path / "data").mkdir(); (tmp_path / "config").mkdir()
+    df.to_parquet(tmp_path / "data" / "matches.parquet", index=False)
+    cfg = dict(saisons=[], holdout_seasons=[], q_fdr=0.10,
+               ligues={"XX": {"nom": "Synth", "zones": {"releg_spots": 3, "promo_spots": 0, "europe_spots": 4}}})
+    yaml.dump(cfg, open(tmp_path / "config" / "ligues.yaml", "w"))
+    racine = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    v2b = yaml.safe_load(open(os.path.join(racine, "config", "vague2b.yaml")))
+    v2b["n_min"] = 80
+    v2b["cellule_min"] = 40
+    yaml.dump(v2b, open(tmp_path / "config" / "vague2b.yaml", "w"))
+    cwd = os.getcwd(); os.chdir(tmp_path)
+    try:
+        from agents.agent_vague2b import main as v2bmain
+        res = v2bmain(data_dir="data", rapport_dir="rapports",
+                      config="config/ligues.yaml", config_v2="config/vague2b.yaml")
+    finally:
+        os.chdir(cwd)
+    # 1. L'artefact de force est tue : SERIE_VICTOIRES x TEAM_O15_SELF avait un
+    #    delta brut enorme ; ajuste, il doit s'effondrer.
+    sv = res[(res["combo"] == "SERIE_VICTOIRES") & (res["marche"] == "TEAM_O15_SELF")]
+    if len(sv):
+        assert abs(sv.iloc[0]["delta"]) < 0.07, f"delta ajuste devrait ~0, obtenu {sv.iloc[0]['delta']:.3f}"
+        assert abs(sv.iloc[0]["delta_brut"]) > abs(sv.iloc[0]["delta"]), "l'ajustement doit reduire le delta"
+    # 2. L'effet arbitre (orthogonal au prix 1X2/O2.5) survit.
+    arb = res[(res["combo"].str.contains("ARBITRE_SEVERE")) & (res["marche"] == "O45_CARTONS") & res["fdr"]]
+    assert len(arb) >= 1, "l'effet arbitre doit survivre a la reference ajustee"
+    # 3. Zero doublon : chaque (combo, marche) apparait une seule fois.
+    assert not res.duplicated(subset=["combo", "marche"]).any()
+    # 4. Aucun marche *_ADV ni complementaire dans les resultats.
+    assert not res["marche"].str.endswith("_ADV").any()
+    assert not res["marche"].isin(["TEAM_U15_SELF", "U05_MT1"]).any()
+    assert (tmp_path / "rapports" / "RAPPORT_VAGUE2B.md").exists()
