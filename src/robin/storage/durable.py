@@ -141,22 +141,7 @@ class DurableRegistry:
         if record.kind not in REGISTRY_TABLES:
             raise ValueError(f"type durable inconnu: {record.kind}")
         table = REGISTRY_TABLES[record.kind]
-        values: dict[str, object] = {
-            "id": record.record_id,
-            "business_key": record.business_key,
-            "content_hash": record.hash,
-            "provider": record.provider,
-            "observed_at": record.observed_at,
-            "ingested_at": record.ingested_at,
-            "schema_version": record.schema_version,
-            "source_run_id": stable_id("ingestion-run", record.source_run_id),
-            "provenance_status": record.provenance_status,
-            "quality_status": record.quality_status,
-            "payload": dict(record.payload),
-            "created_at": record.ingested_at,
-            "last_observed_at": record.observed_at,
-        }
-        values.update(_extra_values(record.kind, record.payload))
+        values = _record_values(record)
         with transaction(self.engine) as session:
             existing = session.execute(
                 select(table.c.id).where(table.c.id == record.record_id)
@@ -170,6 +155,45 @@ class DurableRegistry:
                 return False
             session.execute(insert(table).values(**values))
         return True
+
+    def append_many(self, records: Iterable[DurableRecord]) -> dict[str, int]:
+        """Insérer un lot en conservant l'idempotence par identifiant stable."""
+        grouped: dict[str, dict[str, DurableRecord]] = {}
+        examined = 0
+        for record in records:
+            examined += 1
+            if record.kind not in REGISTRY_TABLES:
+                raise ValueError(f"type durable inconnu: {record.kind}")
+            grouped.setdefault(record.kind, {})[record.record_id] = record
+
+        inserted = 0
+        with transaction(self.engine) as session:
+            for kind, unique_records in grouped.items():
+                table = REGISTRY_TABLES[kind]
+                record_ids = tuple(unique_records)
+                existing: set[str] = set()
+                for offset in range(0, len(record_ids), 500):
+                    existing.update(
+                        str(value)
+                        for value in session.execute(
+                            select(table.c.id).where(
+                                table.c.id.in_(record_ids[offset : offset + 500])
+                            )
+                        ).scalars()
+                    )
+                new_rows = [
+                    _record_values(record)
+                    for record_id, record in unique_records.items()
+                    if record_id not in existing
+                ]
+                if new_rows:
+                    session.execute(insert(table), new_rows)
+                    inserted += len(new_rows)
+        return {
+            "examined": examined,
+            "inserted": inserted,
+            "duplicates": examined - inserted,
+        }
 
     def append_raw_payload(
         self,
@@ -338,6 +362,26 @@ def _extra_values(kind: str, payload: Mapping[str, object]) -> dict[str, object]
         },
     }
     return mapping.get(kind, {})
+
+
+def _record_values(record: DurableRecord) -> dict[str, object]:
+    values: dict[str, object] = {
+        "id": record.record_id,
+        "business_key": record.business_key,
+        "content_hash": record.hash,
+        "provider": record.provider,
+        "observed_at": record.observed_at,
+        "ingested_at": record.ingested_at,
+        "schema_version": record.schema_version,
+        "source_run_id": stable_id("ingestion-run", record.source_run_id),
+        "provenance_status": record.provenance_status,
+        "quality_status": record.quality_status,
+        "payload": dict(record.payload),
+        "created_at": record.ingested_at,
+        "last_observed_at": record.observed_at,
+    }
+    values.update(_extra_values(record.kind, record.payload))
+    return values
 
 
 def _maybe_datetime(value: object) -> datetime | None:

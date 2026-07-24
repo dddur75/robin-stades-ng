@@ -535,20 +535,37 @@ def persist_registry(registry_path: Path, database_url: str) -> dict[str, object
                 schema_version=str(item.get("schema_version") or "unknown"),
             )
         )
-    inserted = duplicates = records_examined = 0
+    records_examined = 0
+    records_to_persist: list[DurableRecord] = []
     for manifest in manifests:
         bundle = read_bundle(registry_path / str(manifest["registry_bundle"]))
+        run = bundle.get("run")
+        if not isinstance(run, Mapping):
+            raise RuntimeError("run absent du bundle durable")
+        durable.ensure_run(
+            run_id=str(run["run_id"]),
+            pipeline_name=str(run.get("pipeline", "replay")),
+            started_at=iso(run.get("started_at"), datetime.now(UTC)),
+            status="REPLAYED",
+            source_version=str(run.get("source_version", "unknown")),
+            backend="POSTGRESQL",
+        )
         records = bundle.get("records", [])
-        records_examined += len(records) if isinstance(records, list) else 0
-        result = durable.replay(bundle)
-        inserted += result["inserted"]
-        duplicates += result["duplicates"]
+        if not isinstance(records, list):
+            raise RuntimeError("records invalides dans le bundle durable")
+        records_examined += len(records)
+        records_to_persist.extend(
+            DurableRecord.from_dict(value)
+            for value in records
+            if isinstance(value, Mapping)
+        )
+    result = durable.append_many(records_to_persist)
     return {
         "status": "POSTGRESQL_PERSISTED",
         "bundles_examined": len(manifests),
         "records_examined": records_examined,
-        "records_inserted": inserted,
-        "duplicates_avoided": duplicates,
+        "records_inserted": result["inserted"],
+        "duplicates_avoided": records_examined - result["inserted"],
         "raw_payloads_examined": len(raw_by_hash),
         "raw_payloads_inserted": raw_inserted,
         "raw_payload_duplicates": len(raw_by_hash) - raw_inserted,
