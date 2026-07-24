@@ -143,3 +143,21 @@ Statut : `SHADOW_BURN_IN_ACTIVE`
 Le burn-in mesure durabilité, complétude, incidents, quota et couverture. Il ne
 permet aucune conclusion statistique avant une période prospective suffisante.
 `PRODUCTION_LOCKED` reste invariant.
+
+## 2026-07-24 — Stockage historique à trois niveaux
+
+Statut : `IMPLEMENTED`
+
+PostgreSQL conserve les métadonnées et résultats synthétiques, Parquet les faits
+volumineux, et les payloads gzip immuables permettent le replay. Le pont
+`shadow-data` est utilisé jusqu’à mesure réelle du pilote ; aucun stockage
+externe payant n’est créé automatiquement.
+
+## 2026-07-24 — Validation temporelle avant sophistication
+
+Statut : `IMPLEMENTED`
+
+La baseline Elo interprétable précède les modèles joueurs et ensembles. Les
+saisons 2024–2025 sont aveugles et ne règlent aucun paramètre. Un échec
+anti-fuite bloque la chaîne ; un résultat historique positif ne peut au mieux
+devenir que `LIVE_SHADOW_CANDIDATE`.

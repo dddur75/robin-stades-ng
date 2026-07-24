@@ -1,5 +1,14 @@
 # Registre des stratégies
 
+## Strategy Factory Jalon 5
+
+| Stratégie | Modèle | Période | N | ROI | Statut |
+|---|---|---|---:|---:|---|
+| Edge 5 %, mise fixe | Elo V1 | OOS 2024–2025 | 4 139 | -8,55 % | `REJECTED` |
+
+Le résultat est négatif et ne déclenche aucune promotion. La stratégie reste
+historique et simulée ; `PRODUCTION_LOCKED` est obligatoire.
+
 | Famille | Version | Usage | Statut |
 |---|---:|---|---|
 | Vague 1 | 1.0 | 66 hypothèses pré-enregistrées | `PARTIAL` |

@@ -1,5 +1,13 @@
 # Dictionnaire de données
 
+## Schéma Jalon 5
+
+La révision `0004_jalon5_deep_data_factory` ajoute 31 tables de contrôle :
+couverture, runs, tâches, référentiels, saisons équipes/joueurs, événements,
+statistiques, compositions, blessures, transferts, feature store, datasets,
+entraînements, modèles, backtests et stratégies. Les faits volumineux restent
+en Parquet ; PostgreSQL conserve leurs manifests, hashes et statuts.
+
 Statut : `VERIFIED` pour les schémas Jalons 1 et 2 ; la provenance historique
 reste `LEGACY SOURCE`.
 

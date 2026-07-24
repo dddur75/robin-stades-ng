@@ -11,7 +11,14 @@ type PageKey =
   | "performance"
   | "quality"
   | "costs"
-  | "explorer";
+  | "explorer"
+  | "deep"
+  | "backfill"
+  | "players"
+  | "featureLab"
+  | "modelLab"
+  | "backtestLab"
+  | "historicalQuality";
 
 const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "command", label: "Command Center", glyph: "⌂" },
@@ -22,6 +29,13 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "quality", label: "Pipeline & Qualité", glyph: "✓" },
   { key: "costs", label: "Coûts & Quotas", glyph: "◒" },
   { key: "explorer", label: "Data Explorer", glyph: "⌘" },
+  { key: "deep", label: "Deep Data Center", glyph: "D" },
+  { key: "backfill", label: "Backfill Monitor", glyph: "B" },
+  { key: "players", label: "Player Explorer", glyph: "P" },
+  { key: "featureLab", label: "Feature Lab", glyph: "F" },
+  { key: "modelLab", label: "Model Lab", glyph: "M" },
+  { key: "backtestLab", label: "Backtest Explorer", glyph: "T" },
+  { key: "historicalQuality", label: "Historical Quality", glyph: "Q" },
 ];
 
 const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> = {
@@ -64,6 +78,41 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     eyebrow: "Données bornées",
     title: "Data Explorer",
     note: "Filtrer, trier, segmenter et exporter la preuve publiée.",
+  },
+  deep: {
+    eyebrow: "Usine historique autonome",
+    title: "Deep Data Command Center",
+    note: "Backfill, quota, couverture et stockage, séparés du shadow prospectif.",
+  },
+  backfill: {
+    eyebrow: "Lots bornés et reprenables",
+    title: "Backfill Monitor",
+    note: "État des tâches, checkpoints et prochaine unité de travail.",
+  },
+  players: {
+    eyebrow: "Données joueurs sourcées",
+    title: "Player Explorer",
+    note: "Profils et statistiques observées, sans zéro inventé.",
+  },
+  featureLab: {
+    eyebrow: "Point-in-time strict",
+    title: "Feature Lab",
+    note: "Définitions, statut, couverture et risque de fuite.",
+  },
+  modelLab: {
+    eyebrow: "Probabilités interprétables",
+    title: "Model Lab",
+    note: "Log Loss, Brier, calibration et modèles bloqués par la couverture.",
+  },
+  backtestLab: {
+    eyebrow: "Discovery · validation · OOS",
+    title: "Backtest Explorer",
+    note: "Résultats historiques séparés du live, sans promotion automatique.",
+  },
+  historicalQuality: {
+    eyebrow: "Qualité historique",
+    title: "Historical Data Quality",
+    note: "Couverture, quarantaines, temporalité et intégrité des partitions.",
   },
 };
 
@@ -315,6 +364,13 @@ export default function Home() {
           {page === "quality" && <PipelineQuality />}
           {page === "costs" && <CostsQuotas />}
           {page === "explorer" && <DataExplorer />}
+          {page === "deep" && <DeepDataCommandCenter />}
+          {page === "backfill" && <BackfillMonitor />}
+          {page === "players" && <PlayerExplorer />}
+          {page === "featureLab" && <FeatureLab />}
+          {page === "modelLab" && <ModelLab />}
+          {page === "backtestLab" && <BacktestExplorer />}
+          {page === "historicalQuality" && <HistoricalDataQuality />}
         </div>
       </section>
     </main>
@@ -739,5 +795,136 @@ function StrategyLab() {
         })}
       </div>
     </section>
+  );
+}
+
+function DeepDataCommandCenter() {
+  const deep = snapshot.deepData;
+  const coverageTotal = Object.values(deep.coverageCounts).reduce(
+    (sum, value) => sum + value,
+    0,
+  );
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric label="API-Football" value={deep.status.replaceAll("_", " ")} detail="clé serveur uniquement" tone="good" />
+        <Metric label="Pilote L1 2025" value={deep.pilotStatus.replaceAll("_", " ")} detail={`${deep.quota.calls} appels`} />
+        <Metric label="Backfill" value={deep.backfillStatus.replaceAll("_", " ")} detail={`${deep.remainingTasks} tâches restantes`} />
+        <Metric label="Couverture" value={`${coverageTotal} scopes`} detail={`${deep.coverageCounts.AVAILABLE ?? 0} disponibles`} />
+        <Metric label="Quota restant" value={deep.quota.remaining == null ? "—" : String(deep.quota.remaining)} detail={`${deep.quota.mode} · réserve ${deep.quota.reserve}`} />
+        <Metric label="Stockage brut" value={`${(deep.storage.rawBytes / 1_048_576).toFixed(1)} MiB`} detail={deep.storage.backend} />
+        <Metric label="Parquet" value={`${(deep.storage.parquetBytes / 1_048_576).toFixed(1)} MiB`} detail="partitions versionnées" />
+        <Metric label="Production" value={deep.productionStatus} detail="aucun pari réel" tone="warning" />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Contrats de provenance</span><h2>Origines strictement séparées</h2></div><StatusPill value="AUDITABLE" /></div>
+        <div className="cost-grid">
+          {deep.origins.map((origin) => <article key={origin}><SourceBadge origin={origin} /><small>Données jamais requalifiées implicitement</small></article>)}
+        </div>
+      </section>
+    </>
+  );
+}
+
+function BackfillMonitor() {
+  const deep = snapshot.deepData;
+  return (
+    <>
+      <section className="metrics-grid">
+        {Object.entries(deep.taskCounts).map(([status, count]) => (
+          <Metric key={status} label={status.replaceAll("_", " ")} value={String(count)} detail="tâches historisées" />
+        ))}
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Ordonnancement</span><h2>Prochaine tâche</h2></div><StatusPill value={deep.backfillStatus} /></div>
+        {deep.nextTask ? (
+          <pre>{JSON.stringify(deep.nextTask, null, 2)}</pre>
+        ) : <EmptyState title="Aucune tâche publiée" text="Le plan sera alimenté après validation live des identifiants fournisseur." label="NO OUTPUT" />}
+      </section>
+    </>
+  );
+}
+
+type PlayerRow = {
+  id: number | null;
+  name: string | null;
+  age: number | null;
+  position: string | null;
+  appearances: number | null;
+  minutes: number | null;
+  rating: string | null;
+  goals: number | null;
+  assists: number | null;
+  origin: string;
+};
+
+function PlayerExplorer() {
+  const [query, setQuery] = useState("");
+  const [position, setPosition] = useState("Toutes");
+  const players = snapshot.deepData.players as PlayerRow[];
+  const positions = ["Toutes", ...new Set(players.map((player) => player.position).filter(Boolean) as string[])];
+  const rows = players.filter((player) =>
+    String(player.name ?? "").toLowerCase().includes(query.toLowerCase()) &&
+    (position === "Toutes" || player.position === position));
+  return (
+    <section className="panel">
+      <div className="panel-head"><div><span>Échantillon du pilote</span><h2>{rows.length} joueurs tracés</h2></div><SourceBadge origin="HISTORICAL POINT-IN-TIME" /></div>
+      <div className="explorer-tools"><input aria-label="Rechercher un joueur" placeholder="Nom du joueur…" value={query} onChange={(event) => setQuery(event.target.value)} /><select value={position} onChange={(event) => setPosition(event.target.value)}>{positions.map((item) => <option key={item}>{item}</option>)}</select></div>
+      {rows.length ? <div className="table-wrap"><table><thead><tr><th>Joueur</th><th>Poste</th><th>Âge</th><th>App.</th><th>Minutes</th><th>Buts</th><th>Passes</th><th>Note</th><th>Source</th></tr></thead><tbody>
+        {rows.map((player) => <tr key={String(player.id)}><td>{player.name}</td><td>{player.position ?? "—"}</td><td>{player.age ?? "—"}</td><td>{player.appearances ?? "—"}</td><td>{player.minutes ?? "—"}</td><td>{player.goals ?? "—"}</td><td>{player.assists ?? "—"}</td><td>{player.rating ?? "—"}</td><td><SourceBadge origin={player.origin} /></td></tr>)}
+      </tbody></table></div> : <EmptyState title="Joueurs en attente" text="Le pilote Ligue 1 2025 alimentera cette vue sans données de démonstration." label="NO OUTPUT" />}
+    </section>
+  );
+}
+
+function FeatureLab() {
+  return (
+    <section className="panel">
+      <div className="panel-head"><div><span>Registre versionné</span><h2>Features point-in-time</h2></div><StatusPill value={snapshot.deepData.dataset.status ?? "WAITING"} /></div>
+      <div className="table-wrap"><table><thead><tr><th>Feature</th><th>Version</th><th>Statut</th><th>Risque de fuite</th><th>Origine</th></tr></thead><tbody>
+        {snapshot.deepData.featureCatalog.map((feature) => <tr key={feature.name}><td>{feature.name}</td><td>{feature.version}</td><td><StatusPill value={feature.status} /></td><td>{feature.leakageRisk}</td><td><SourceBadge origin={feature.origin} /></td></tr>)}
+      </tbody></table></div>
+    </section>
+  );
+}
+
+function ModelLab() {
+  return (
+    <section className="panel">
+      <div className="panel-head"><div><span>Comparaison probabiliste</span><h2>Modèles et couverture</h2></div><StatusPill value="PRODUCTION_LOCKED" /></div>
+      <div className="table-wrap"><table><thead><tr><th>Modèle</th><th>Version</th><th>Log Loss OOS</th><th>Brier OOS</th><th>Statut</th><th>Origine</th></tr></thead><tbody>
+        {snapshot.deepData.models.map((model) => <tr key={model.name}><td>{model.name}</td><td>{model.version}</td><td>{model.logLoss == null ? "—" : model.logLoss.toFixed(4)}</td><td>{model.brier == null ? "—" : model.brier.toFixed(4)}</td><td><StatusPill value={model.status} /></td><td><SourceBadge origin={model.origin} /></td></tr>)}
+      </tbody></table></div>
+    </section>
+  );
+}
+
+function BacktestExplorer() {
+  const rows = snapshot.deepData.backtests;
+  return (
+    <section className="panel">
+      <div className="panel-head"><div><span>Walk-forward historique</span><h2>Résultats OOS séparés</h2></div><StatusPill value="NO_PROMOTION" /></div>
+      {rows.length ? <div className="table-wrap"><table><thead><tr><th>Stratégie</th><th>Marché</th><th>Paris</th><th>ROI</th><th>Drawdown</th><th>Statut</th><th>Origine</th></tr></thead><tbody>
+        {rows.map((row) => <tr key={row.strategy}><td>{row.strategy}</td><td>{row.market}</td><td>{row.bets}</td><td>{row.roi == null ? "—" : `${(row.roi * 100).toFixed(2)} %`}</td><td>{row.max_drawdown_units.toFixed(2)} u</td><td><StatusPill value={row.status} /></td><td><SourceBadge origin={row.origin} /></td></tr>)}
+      </tbody></table></div> : <EmptyState title="Backtest en attente" text="Aucun résultat n'est inventé tant que le dataset temporel n'existe pas." label="NO OUTPUT" />}
+    </section>
+  );
+}
+
+function HistoricalDataQuality() {
+  const deep = snapshot.deepData;
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric label="Qualité globale" value={deep.qualityStatus} detail="Parquet, hashes et temporalité" />
+        <Metric label="Partitions" value={String(deep.quality.parquet_partitions ?? 0)} detail="partitions contrôlées" />
+        <Metric label="Payloads bruts" value={String(deep.quality.raw_observations ?? 0)} detail="observations gzip" />
+        <Metric label="Échecs" value={String(deep.quality.failures?.length ?? 0)} detail="exclus des modèles" />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Matrice fournisseur</span><h2>Couverture par statut</h2></div><SourceBadge origin="HISTORICAL POINT-IN-TIME" /></div>
+        <div className="cost-grid">{Object.entries(deep.coverageCounts).map(([status, count]) => <article key={status}><span>{status}</span><strong>{count}</strong><small>combinaisons compétition · saison · endpoint</small></article>)}</div>
+      </section>
+    </>
   );
 }

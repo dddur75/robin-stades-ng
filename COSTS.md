@@ -1,5 +1,16 @@
 # Suivi des coûts
 
+## Jalon 5 — budget API-Football séparé
+
+Le quota quotidien API-Football n’est jamais mélangé au quota mensuel The Odds
+API. Le mode de backfill est `ACCELERATED`, avec réserve minimale de 100 appels.
+Les bornes initiales vont d’environ 1 300–1 500 appels pour le pilote Ligue 1
+2025 à 50 000–75 000 appels pour six compétitions sur huit saisons. La
+projection sera remplacée par les mesures du pilote.
+
+Le stockage supplémentaire n’est pas acheté automatiquement. Voir
+`docs/costs/API-FOOTBALL-BACKFILL-FORECAST.md`.
+
 Dernière mise à jour : 2026-07-24.
 
 | Poste | Coût observé | Statut |
