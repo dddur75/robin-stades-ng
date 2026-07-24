@@ -1,0 +1,47 @@
+name: "26 - Actualisation Deep Data Cockpit"
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "21 - Backfill historique"
+      - "22 - Qualité historique"
+      - "23 - Feature Factory"
+      - "24 - Model Lab historique"
+      - "25 - Backtest historique V2"
+      - "14 - Sante quotidienne shadow"
+    types: [completed]
+  schedule:
+    - cron: "7 5 * * *"
+permissions:
+  contents: read
+concurrency:
+  group: cockpit-refresh
+  cancel-in-progress: true
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Générer le snapshot sans secret frontend
+        run: python scripts/build_cockpit_snapshot.py
+      - uses: actions/setup-node@v4
+        with: {node-version: "22.13.0"}
+      - uses: pnpm/action-setup@v4
+        with: {version: "11.9.0"}
+      - name: Construire et tester le cockpit
+        working-directory: cockpit
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deep-data-cockpit-${{ github.run_id }}
+          path: cockpit/dist
+          retention-days: 30

@@ -210,6 +210,9 @@ class JsonHttpProvider:
                 raw_observation_id=raw_id,
                 raw_payload_hash=raw_payload_hash,
                 quota=quota,
+                http_status=response.status_code,
+                requested_at=requested_at,
+                received_at=received_at,
                 message=f"HTTP {response.status_code}",
             )
         try:
@@ -217,9 +220,19 @@ class JsonHttpProvider:
         except (ValueError, json.JSONDecodeError) as exc:
             raise TransientProviderError("réponse JSON invalide") from exc
         records: tuple[dict[str, Any], ...]
+        paging_current = 1
+        paging_total = 1
         if isinstance(payload, list):
             records = tuple(item for item in payload if isinstance(item, dict))
         elif isinstance(payload, dict):
+            paging = payload.get("paging")
+            if isinstance(paging, Mapping):
+                try:
+                    paging_current = int(paging.get("current", 1))
+                    paging_total = int(paging.get("total", 1))
+                except (TypeError, ValueError):
+                    paging_current = 0
+                    paging_total = 0
             response_records = payload.get("response")
             if isinstance(response_records, list):
                 records = tuple(
@@ -241,5 +254,10 @@ class JsonHttpProvider:
             raw_observation_id=raw_id,
             raw_payload_hash=raw_payload_hash,
             quota=quota,
+            http_status=response.status_code,
+            requested_at=requested_at,
+            received_at=received_at,
+            paging_current=paging_current,
+            paging_total=paging_total,
             message=None if records else "réponse valide sans donnée",
         )

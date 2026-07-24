@@ -1,0 +1,17 @@
+name: "Restaurer l'état historique"
+description: "Restaurer le registre Jalon 5 depuis la branche shadow-data"
+runs:
+  using: composite
+  steps:
+    - name: Restaurer le registre isolé
+      uses: actions/checkout@v4
+      with:
+        ref: shadow-data
+        path: .historical-registry
+        fetch-depth: 1
+    - name: Restaurer les checkpoints historiques
+      shell: bash
+      run: >-
+        python scripts/manage_historical_state.py restore
+        --registry .historical-registry
+        --destination data/historical

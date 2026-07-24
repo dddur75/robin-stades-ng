@@ -1,0 +1,29 @@
+name: "23 - Feature Factory"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 2 * * 2,5"
+permissions:
+  contents: write
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+jobs:
+  features:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}" features
+      - uses: ./.github/actions/historical-state-persist
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}

@@ -1,0 +1,101 @@
+name: "21 - Backfill historique"
+on:
+  workflow_dispatch:
+    inputs:
+      pilot:
+        description: "Exécuter le pilote Ligue 1 2025"
+        type: boolean
+        default: false
+      dry_run:
+        description: "Planifier sans appel de données"
+        type: boolean
+        default: false
+      competition:
+        description: "Filtre compétition (vide = priorité globale)"
+        type: string
+        default: ""
+      season:
+        description: "Filtre saison"
+        type: string
+        default: ""
+      endpoint:
+        description: "Filtre endpoint"
+        type: string
+        default: ""
+      priority:
+        description: "Priorité A, B, C ou D"
+        type: string
+        default: ""
+      max_calls:
+        description: "Nombre maximal d'appels du lot"
+        type: number
+        default: 1500
+      max_duration_minutes:
+        description: "Durée maximale du lot"
+        type: number
+        default: 110
+      max_tasks:
+        description: "Nombre maximal de tâches"
+        type: number
+        default: 50
+      resume:
+        description: "Reprendre les checkpoints"
+        type: boolean
+        default: true
+  schedule:
+    - cron: "37 */4 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Créer le plan s'il est absent
+        if: inputs.pilot != true
+        run: |
+          if [ ! -f data/historical/tasks/backfill-plan.json ]; then
+            python scripts/run_historical_pipeline.py \
+              --run-id "${{ github.run_id }}" plan
+          fi
+      - name: Exécuter le pilote
+        if: inputs.pilot == true
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: |
+          python scripts/run_historical_pipeline.py \
+            --run-id "${{ github.run_id }}" \
+            --max-calls "${{ inputs.max_calls || 1500 }}" \
+            pilot
+          python scripts/run_historical_pipeline.py \
+            --run-id "${{ github.run_id }}" \
+            plan --include-secondary
+      - name: Exécuter un lot borné
+        if: inputs.pilot != true && inputs.dry_run != true
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}"
+          --max-calls "${{ inputs.max_calls || 1500 }}"
+          backfill
+          --max-tasks "${{ inputs.max_tasks || 50 }}"
+          --max-duration-minutes "${{ inputs.max_duration_minutes || 110 }}"
+          --competition "${{ inputs.competition }}"
+          ${{ inputs.season && format('--season {0}', inputs.season) || '' }}
+          --endpoint "${{ inputs.endpoint }}"
+          --priority "${{ inputs.priority }}"
+      - uses: ./.github/actions/historical-state-persist
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}

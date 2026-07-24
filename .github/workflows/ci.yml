@@ -45,7 +45,7 @@ jobs:
       - name: Linting
         run: >-
           python -m ruff check
-          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4
+          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5
           scripts migrations
       - name: Typage strict
         run: python -m mypy src/robin
@@ -60,12 +60,14 @@ jobs:
           ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
         run: |
           python -m alembic upgrade head
-          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics'} <= names"
+          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs'} <= names"
           python -m alembic downgrade 0002_jalon2_shadow
           python -m alembic upgrade head
           python -m alembic downgrade base
       - name: Executer les tests
         run: python -m pytest -q
+      - name: Tester Parquet et les protections anti-fuite
+        run: python -m pytest -q tests/jalon5
       - name: Tester les configurations et le pipeline mock
         run: |
           python -c "import pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github').rglob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text())"

@@ -1,0 +1,59 @@
+name: "Persister l'état historique"
+description: "Écrire dans shadow-data puis synchroniser les métadonnées Neon"
+inputs:
+  run-id:
+    required: true
+    description: "Identifiant GitHub Actions"
+  database-url:
+    required: false
+    default: ""
+    description: "Connexion PostgreSQL optionnelle"
+runs:
+  using: composite
+  steps:
+    - name: Vérifier et ajouter au pont durable
+      shell: bash
+      run: |
+        python scripts/manage_historical_state.py append \
+          --state data/historical \
+          --registry .historical-registry
+        python scripts/manage_historical_state.py verify \
+          --registry .historical-registry
+    - name: Publier le registre historique
+      shell: bash
+      working-directory: .historical-registry
+      run: |
+        git config user.name "robin-historical-bot"
+        git config user.email "actions@users.noreply.github.com"
+        git add historical
+        if ! git diff --cached --quiet; then
+          git commit -m "historical: persist run ${{ inputs.run-id }}"
+          git push origin HEAD:shadow-data
+        fi
+    - name: Synchroniser PostgreSQL
+      id: postgresql
+      if: inputs.database-url != ''
+      continue-on-error: true
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database-url }}
+        ROBIN_DATABASE_URL: ${{ inputs.database-url }}
+      run: |
+        python -m alembic upgrade head
+        python scripts/run_historical_pipeline.py \
+          --state data/historical \
+          --run-id "${{ inputs.run-id }}" \
+          persist
+    - name: Signaler un replay PostgreSQL nécessaire
+      if: inputs.database-url != '' && steps.postgresql.outcome != 'success'
+      shell: bash
+      run: >-
+        echo "::warning::PostgreSQL indisponible ; les payloads, Parquet et
+        checkpoints restent dans shadow-data et seront rejoués."
+    - name: Conserver une copie de reprise bornée
+      uses: actions/upload-artifact@v4
+      with:
+        name: historical-state-${{ inputs.run-id }}
+        path: data/historical
+        retention-days: 30
+        compression-level: 9
