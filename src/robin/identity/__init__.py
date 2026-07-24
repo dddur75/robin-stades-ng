@@ -1,0 +1,1 @@
+"""Résolution d'identités internes."""

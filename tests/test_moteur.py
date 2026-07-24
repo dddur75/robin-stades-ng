@@ -89,6 +89,58 @@ def test_devig():
     assert abs(p.sum() - 1) < 1e-9 and p[0] > p[1] > 0
 
 
+def test_collecte_preserve_statistiques_manquantes(tmp_path, monkeypatch):
+    """Une statistique absente ne doit jamais etre inventee comme un zero."""
+    from agents.agent_collecte import telecharger
+
+    entete = "Div,Date,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,HY,AY,HR,AR,HC,AC\n"
+    lignes = [
+        f"F1,{i + 1:02d}/08/2025,Equipe {i},Adversaire {i},1,0,,,,,,,,"
+        for i in range(12)
+    ]
+    csv = (entete + "\n".join(lignes)).encode("latin-1")
+
+    class Reponse:
+        status_code = 200
+        content = csv
+
+    monkeypatch.setattr("agents.agent_collecte.requests.get", lambda *args, **kwargs: Reponse())
+    resultat = telecharger("F1", "2526", tmp_path)
+    inconnues = ["hthg", "htag", "hy", "ay", "hr", "ar", "hc", "ac"]
+
+    assert len(resultat) == 12
+    assert resultat[inconnues].isna().all().all()
+
+
+def test_total_cartons_exige_toutes_les_composantes(tmp_path):
+    """Une carte manquante ne doit pas produire un faux total partiel ou nul."""
+    import yaml
+
+    from agents.agent_backtest import preparer
+
+    df = genere(saisons=("2024-25",), n_eq=4)
+    df.loc[0, "hy"] = np.nan
+    (tmp_path / "data").mkdir()
+    df.to_parquet(tmp_path / "data" / "matches.parquet", index=False)
+    cfg = {
+        "holdout_seasons": [],
+        "ligues": {
+            "XX": {
+                "zones": {
+                    "releg_spots": 1,
+                    "promo_spots": 0,
+                    "europe_spots": 1,
+                }
+            }
+        },
+    }
+    yaml.safe_dump(cfg, (tmp_path / "config.yaml").open("w"))
+
+    _, features, _, _ = preparer(tmp_path / "data", cfg)
+
+    assert features.loc[features["match_id"] == df.loc[0, "match_id"], "cartons_tot"].isna().all()
+
+
 def test_enjeu_relegation_math():
     lignes = []
     equipes = ["A", "B", "C", "D"]
@@ -106,6 +158,20 @@ def test_enjeu_relegation_math():
             for _, m in df.iterrows() if "D" in (m["home"], m["away"])]
     assert dern[-1]["RELEGUE_MATH"], "D doit etre mathematiquement relegue avant son dernier match"
     assert not dern[0]["RELEGUE_MATH"]
+
+
+def test_classement_ne_fuit_pas_entre_matchs_de_meme_date():
+    """L'ordre des lignes simultanees ne doit pas changer leur etat pre-match."""
+    lignes = [
+        dict(match_id="m1", date=pd.Timestamp("2025-05-24"), home="A", away="B", fthg=5, ftag=0),
+        dict(match_id="m2", date=pd.Timestamp("2025-05-24"), home="C", away="D", fthg=0, ftag=5),
+    ]
+    zones = {"releg_spots": 1, "promo_spots": 0, "europe_spots": 1}
+
+    direct = passe_enjeu(pd.DataFrame(lignes), zones)
+    inverse = passe_enjeu(pd.DataFrame(list(reversed(lignes))), zones)
+
+    assert direct == inverse
 
 
 def test_anti_lookahead():

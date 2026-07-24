@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-robin}
+      POSTGRES_USER: ${POSTGRES_USER:-robin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-robin_local_only}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-robin} -d ${POSTGRES_DB:-robin}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - robin_postgres:/var/lib/postgresql/data
+
+volumes:
+  robin_postgres:

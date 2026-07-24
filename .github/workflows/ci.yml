@@ -1,0 +1,64 @@
+name: "00 - Qualite continue"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "codex/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: robin_ci
+          POSTGRES_USER: robin
+          POSTGRES_PASSWORD: robin_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U robin -d robin_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer les dependances
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Linting
+        run: python -m ruff check src/robin tests/jalon1 scripts/build_jalon1_notebook.py migrations
+      - name: Typage strict
+        run: python -m mypy src/robin
+      - name: Securite basique
+        run: python -m bandit -q -r src/robin
+      - name: Verifier la syntaxe
+        run: python -m compileall -q agents moteur src tests
+      - name: Tester les migrations
+        env:
+          ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+        run: |
+          python -m alembic upgrade head
+          python -m alembic downgrade base
+      - name: Executer les tests
+        run: python -m pytest -q
+      - name: Smoke test du dashboard de sante
+        run: |
+          python -m robin.quality.report --input data/matches.parquet --output .ci/quality
+          python -c "from pathlib import Path; assert Path('.ci/quality/health.html').stat().st_size > 1000"

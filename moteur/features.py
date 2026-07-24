@@ -195,6 +195,188 @@ def _passe_contexte(matchs, derbys, zones_par_ligue):
     return ctx
 
 
+def _passe_contexte_global(matchs, derbys, zones_par_ligue):
+    """Passe globale sans fuite inter-ligues ni contamination simultanee.
+
+    Le classement est calcule par ligue-saison. Les historiques H2H, arbitre et
+    adversaires sont ensuite parcourus par date, toutes ligues confondues. Les
+    resultats d'un batch quotidien ne deviennent visibles qu'au batch suivant.
+    """
+    ctx = {}
+    h2h = {}
+    arbitre_global = {}
+    arbitre_competition = {}
+    arbitre_saison = {}
+    vs_top = {}
+    vs_bas = {}
+    enjeu = {}
+
+    for (league, _season), grp in matchs.groupby(["league", "season"], sort=False):
+        zones = zones_par_ligue.get(
+            league,
+            {"releg_spots": 3, "promo_spots": 0, "europe_spots": 6},
+        )
+        enjeu.update(passe_enjeu(grp, zones))
+
+    def historique_recent(historique, cle, date, jours=730):
+        return [
+            valeur
+            for observation, valeur in historique.get(cle, [])
+            if observation < date and (date - observation).days <= jours
+        ]
+
+    def severe(valeurs):
+        return len(valeurs) >= 15 and np.mean(valeurs) >= 5.0
+
+    tries = matchs.sort_values(["date", "match_id"])
+    for _, batch in tries.groupby("date", sort=True, dropna=False):
+        lignes = [m for _, m in batch.iterrows()]
+
+        for m in lignes:
+            mid = m["match_id"]
+            league = m["league"]
+            season = m["season"]
+            pair = frozenset((m["home"], m["away"]))
+            rencontres = h2h.get((league, pair), [])
+            l5 = rencontres[-5:]
+            btts5 = sum(1 for r in l5 if r[2] > 0 and r[3] > 0)
+            u25_5 = sum(1 for r in l5 if r[2] + r[3] <= 2)
+            meme_venue = [r for r in rencontres if r[1] == m["home"]][-3:]
+            dom_loc = (
+                len(meme_venue) >= 3
+                and sum(1 for r in meme_venue if r[2] > r[3]) >= 2
+            )
+            visites = [r for r in rencontres if r[1] == m["home"]][-5:]
+            visiteur_faible = (
+                len(visites) >= 3
+                and sum(1 for r in visites if r[3] > r[2]) <= 1
+            )
+            derniere = rencontres[-1] if rencontres else None
+            rev_home = rev_away = False
+            if derniere:
+                dh, da = derniere[2], derniere[3]
+                if da > dh:
+                    perdant, marge = derniere[1], da - dh
+                elif dh > da:
+                    perdant = ({m["home"], m["away"]} - {derniere[1]}).pop()
+                    marge = dh - da
+                else:
+                    perdant, marge = None, 0
+                if perdant and marge >= 2:
+                    rev_home = perdant == m["home"]
+                    rev_away = perdant == m["away"]
+
+            est_derby = pair in derbys
+            cartons_h2h = [
+                r[4] for r in l5 if len(r) > 4 and pd.notna(r[4])
+            ]
+            derby_chaud = (
+                est_derby
+                and len(cartons_h2h) >= 3
+                and np.mean(cartons_h2h) >= 4
+            )
+            ref = m.get("referee")
+            ref_valide = ref is not None and isinstance(ref, str) and bool(ref)
+            hist_global = (
+                historique_recent(arbitre_global, ref, m["date"])
+                if ref_valide
+                else []
+            )
+            hist_comp = (
+                historique_recent(
+                    arbitre_competition,
+                    (ref, league),
+                    m["date"],
+                )
+                if ref_valide
+                else []
+            )
+            hist_saison = (
+                historique_recent(
+                    arbitre_saison,
+                    (ref, league, season),
+                    m["date"],
+                )
+                if ref_valide
+                else []
+            )
+            e = enjeu[mid]
+            for side, team in (("home", m["home"]), ("away", m["away"])):
+                key = (league, team, season)
+                vt = vs_top.get(key, [0, 0])
+                vb = vs_bas.get(key, [0, 0])
+                ctx[(mid, side)] = {
+                    **e[side],
+                    "H2H_BTTS": len(l5) >= 4 and btts5 >= 4,
+                    "H2H_UNDER25": len(l5) >= 4 and u25_5 >= 4,
+                    "H2H_DOMINATION_LOCALE": (
+                        bool(dom_loc and visiteur_faible)
+                        if side == "home"
+                        else False
+                    ),
+                    "H2H_REVANCHE": rev_home if side == "home" else rev_away,
+                    "DERBY": est_derby,
+                    "DERBY_CHAUD": bool(derby_chaud),
+                    # Le legacy ARBITRE_SEVERE est explicitement la portee
+                    # competition. Les deux autres portees restent distinctes.
+                    "ARBITRE_SEVERE": bool(severe(hist_comp)),
+                    "ARBITRE_SEVERE_GLOBAL": bool(severe(hist_global)),
+                    "ARBITRE_SEVERE_COMPETITION": bool(severe(hist_comp)),
+                    "ARBITRE_SEVERE_SAISON": bool(severe(hist_saison)),
+                    "referee_n_global": len(hist_global),
+                    "referee_n_competition": len(hist_comp),
+                    "referee_n_season": len(hist_saison),
+                    "FAIBLE_VS_TOP": vt[1] >= 5 and (vt[0] / vt[1]) <= 0.20,
+                    "DOMINE_FAIBLES": vb[1] >= 4 and (vb[0] / vb[1]) >= 0.75,
+                }
+
+        for m in lignes:
+            if pd.isna(m["fthg"]) or pd.isna(m["ftag"]):
+                continue
+            mid = m["match_id"]
+            league = m["league"]
+            season = m["season"]
+            pair = frozenset((m["home"], m["away"]))
+            hg, ag = int(m["fthg"]), int(m["ftag"])
+            cartes = [m.get(c) for c in ("hy", "ay", "hr", "ar")]
+            cartons_tot = (
+                sum(cartes) if all(pd.notna(value) for value in cartes) else np.nan
+            )
+            h2h.setdefault((league, pair), []).append(
+                (m["date"], m["home"], hg, ag, cartons_tot)
+            )
+            ref = m.get("referee")
+            if (
+                ref is not None
+                and isinstance(ref, str)
+                and ref
+                and pd.notna(cartons_tot)
+            ):
+                arbitre_global.setdefault(ref, []).append(
+                    (m["date"], cartons_tot)
+                )
+                arbitre_competition.setdefault((ref, league), []).append(
+                    (m["date"], cartons_tot)
+                )
+                arbitre_saison.setdefault((ref, league, season), []).append(
+                    (m["date"], cartons_tot)
+                )
+            for side, team in (("home", m["home"]), ("away", m["away"])):
+                e_s = enjeu[mid][side]
+                res_pos = (hg > ag) if side == "home" else (ag > hg)
+                nul = hg == ag
+                key = (league, team, season)
+                if e_s["opp_top_half"]:
+                    valeurs = vs_top.setdefault(key, [0, 0])
+                    valeurs[0] += 1 if (res_pos or nul) else 0
+                    valeurs[1] += 1
+                if e_s["opp_bottom_third"]:
+                    valeurs = vs_bas.setdefault(key, [0, 0])
+                    valeurs[0] += 1 if res_pos else 0
+                    valeurs[1] += 1
+    return ctx
+
+
 def construire(matchs: pd.DataFrame, xg: pd.DataFrame | None = None,
                derbys: set | None = None, zones_par_ligue: dict | None = None) -> pd.DataFrame:
     matchs = matchs.sort_values(["date", "match_id"]).reset_index(drop=True)
@@ -219,7 +401,7 @@ def construire(matchs: pd.DataFrame, xg: pd.DataFrame | None = None,
         prev = [p for p in prev if p is not None]
         return len(prev) >= 2 and sum(1 for p in prev if p >= 0.65) >= 2
     lg["FIN_SAISON_FORTE_HISTO"] = lg.apply(fin_saison_histo, axis=1)
-    ctx = _passe_contexte(matchs, derbys or set(), zones_par_ligue or {})
+    ctx = _passe_contexte_global(matchs, derbys or set(), zones_par_ligue or {})
     ctx_df = pd.DataFrame([{"match_id": k[0], "side": k[1], **v} for k, v in ctx.items()])
     lg = lg.merge(ctx_df, on=["match_id", "side"], how="left")
     return calculer_atomes(lg, xg_dispo)

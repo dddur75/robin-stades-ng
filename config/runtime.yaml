@@ -1,0 +1,12 @@
+mode: SIMULATION
+real_bets_enabled: false
+timezone: UTC
+database_url_env: ROBIN_DATABASE_URL
+raw_store:
+  backend: local
+  root: data/raw
+odds_collection:
+  provider: mock
+  enabled: true
+  frequency_minutes: 120
+  phases: [OPENING, INTERMEDIATE, CLOSING]

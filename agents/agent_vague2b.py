@@ -99,6 +99,25 @@ def generer(feats, cfg2):
                 yield (a, "adv_" + b, m), sab & M[m], toks
 
 
+def canonicaliser_masque_marche(feats, mask, marche, marches_neutres):
+    """Ramener un marche neutre au grain metier ``un fixture = une issue``.
+
+    Les features sont au grain equipe-match. Pour un marche neutre, les deux
+    orientations designent la meme opportunite. La ligne domicile est la
+    representante canonique car elle doit exister exactement une fois par
+    ``match_id`` et l'issue du marche est identique des deux cotes.
+    """
+    brut = np.asarray(mask, dtype=bool)
+    if marche not in marches_neutres:
+        return brut
+    selectionnes = set(feats.loc[brut, "match_id"])
+    canonique = feats["match_id"].isin(selectionnes) & (feats["side"] == "home")
+    comptes = feats.loc[canonique].groupby("match_id").size()
+    if len(comptes) and not (comptes == 1).all():
+        raise ValueError("la cle metier (match_id, marche) n'est pas unique")
+    return canonique.to_numpy(dtype=bool)
+
+
 def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
          config_v2="config/vague2b.yaml"):
     cfg = charger_config(config)
@@ -112,6 +131,7 @@ def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
     feats = calcul_issues_et_prix(feats).reset_index(drop=True)
     cellule, force_ok = assigner_cellules(feats, cfg2)
     tokens = cfg2["marches_canoniques"]["self"] + cfg2["marches_canoniques"]["neutres"]
+    marches_neutres = set(cfg2["marches_canoniques"]["neutres"])
     tokens = [t for t in tokens if "iss__" + t in feats.columns]
     BASE, BRUT, ISS, VALID = references(feats, tokens, cellule, cfg2)
     saisons = sorted(feats["season"].unique())
@@ -127,7 +147,15 @@ def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
         for t in toks:
             if t not in ISS:
                 continue
-            m = mask & VALID[t]
+            m_brut = mask & VALID[t]
+            m = canonicaliser_masque_marche(
+                feats,
+                mask,
+                t,
+                marches_neutres,
+            ) & VALID[t]
+            n_lignes_brutes = int(m_brut.sum())
+            n_matchs_uniques = int(feats.loc[m, "match_id"].nunique())
             n = int(m.sum())
             if n < n_min:
                 continue
@@ -153,7 +181,10 @@ def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
             res.append(dict(combo=" x ".join(combo), profondeur=len(combo), marche=t,
                             n=n, obs=hits / n, ref_aj=mu / n, delta=delta,
                             delta_brut=delta_brut, z=z, p=p_value_bilaterale(z),
-                            blocs_coherents=coh, blocs=blocs))
+                            blocs_coherents=coh, blocs=blocs,
+                            n_lignes_brutes=n_lignes_brutes,
+                            n_matchs_uniques=n_matchs_uniques,
+                            lignes_dedoublonnees=n_lignes_brutes - n))
     res = pd.DataFrame(res)
     if len(res):
         res["fdr"] = benjamini_hochberg(res["p"].to_numpy(), q=q)
