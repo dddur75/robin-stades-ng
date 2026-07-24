@@ -61,6 +61,17 @@ def latest_run(state: Path, current_run_id: str | None) -> dict[str, object]:
         ]
         if matching:
             return matching[-1]
+        if runs:
+            now = datetime.now(UTC).isoformat()
+            return {
+                **runs[-1],
+                "run_id": f"checkpoint-{current_run_id}",
+                "pipeline": "durable-checkpoint",
+                "upstream_run_id": runs[-1].get("run_id"),
+                "started_at": now,
+                "finished_at": now,
+                "status": "DURABLE_WRITE_STAGED",
+            }
     if not runs:
         now = datetime.now(UTC).isoformat()
         return {

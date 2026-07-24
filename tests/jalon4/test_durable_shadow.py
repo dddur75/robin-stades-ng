@@ -591,6 +591,23 @@ def test_daily_health_lit_les_observations_et_produit_trois_rapports(
         assert (state / "reports" / report).exists()
 
 
+def test_checkpoints_sans_run_metier_necrasent_pas_un_ancien_bundle(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    registry = tmp_path / "registry"
+    first_outbox = tmp_path / "outbox-1"
+    second_outbox = tmp_path / "outbox-2"
+    first = stage(state, first_outbox, "health-1")
+    second = stage(state, second_outbox, "health-2")
+    assert first["run_id"] == "checkpoint-health-1"
+    assert second["run_id"] == "checkpoint-health-2"
+    append_bridge(first_outbox, registry)
+    append_bridge(second_outbox, registry)
+    assert verify_registry(registry)["status"] == "PASSED"
+    assert len(list((registry / "bundles").rglob("*.json.gz"))) == 2
+
+
 def test_prediction_bloquee_sans_stockage_durable(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
