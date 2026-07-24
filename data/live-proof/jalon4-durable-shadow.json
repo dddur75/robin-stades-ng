@@ -3,7 +3,7 @@
   "status": "SHADOW_BURN_IN_ACTIVE",
   "production_status": "PRODUCTION_LOCKED",
   "source_branch": "shadow-data",
-  "source_commit": "eae0d3c",
+  "source_commit": "5830784",
   "storage": {
     "target": "POSTGRESQL",
     "target_status": "READY_NO_DATABASE_URL",
@@ -35,10 +35,10 @@
     "bytes_identical": true
   },
   "remote_verification": {
-    "workflow_run": 30101116019,
+    "workflow_run": 30102875755,
     "status": "SUCCESS",
-    "bundles": 2,
-    "objects_verified": 11,
+    "bundles": 3,
+    "objects_verified": 17,
     "errors": 0
   },
   "scheduler": {

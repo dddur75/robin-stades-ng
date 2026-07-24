@@ -19,7 +19,8 @@ expose couverture, mouvements, SLO, incidents, coûts et données filtrables.
 - PR #3 fusionnée, CI verte ;
 - CI Jalon 4 verte sur la branche ;
 - workflow réel fixtures `30101116019` réussi avec écriture durable ;
-- registre distant revérifié : 2 bundles, 11 références d’objets, 0 erreur ;
+- santé quotidienne `30102875755` réussie et rapport de burn-in produit ;
+- registre distant revérifié : 3 bundles, 17 références d’objets, 0 erreur ;
 - 393 enregistrements migrés, 5 observations, 3 objets physiques ;
 - 5/5 hashes valides, 2 doublons évités, 0 erreur ;
 - replay identique, 0 appel et 0 quota ;
