@@ -129,6 +129,7 @@ def compute_daily_metrics(
         "predictions": predictions,
         "decisions": decisions,
         "settlements": settlements,
+        "raw_observations": raw_observations,
         "slo_breaches": breaches,
         "statistical_status": "ÉCHANTILLON INSUFFISANT — AUCUNE CONCLUSION STATISTIQUE",
         "production_status": "PRODUCTION_LOCKED",

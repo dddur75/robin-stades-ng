@@ -47,7 +47,7 @@ from scripts.manage_durable_registry import (
     stage,
     verify_registry,
 )
-from scripts.run_shadow_pipeline import pre_match_shadow
+from scripts.run_shadow_pipeline import daily_health, pre_match_shadow
 
 NOW = datetime(2026, 7, 24, 12, tzinfo=UTC)
 
@@ -578,6 +578,17 @@ def test_rapport_journee_interdit_conclusion() -> None:
     )
     assert "AUCUNE CONCLUSION STATISTIQUE" in report
     assert "PRODUCTION_LOCKED" in report
+
+
+def test_daily_health_lit_les_observations_et_produit_trois_rapports(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    health = daily_health(state)
+    assert health["burn_in"]["raw_observations"] == 1
+    assert health["burn_in"]["provenance_completeness"] == 1.0
+    for report in ("daily.md", "weekly.md", "matchday.md"):
+        assert (state / "reports" / report).exists()
 
 
 def test_prediction_bloquee_sans_stockage_durable(

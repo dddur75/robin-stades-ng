@@ -735,7 +735,7 @@ def daily_health(output: Path) -> dict[str, object]:
     raw_rows = [
         value
         for path in raw_paths
-        for value in [read_json(path)]
+        for value in [read_json(path, {})]
         if isinstance(value, dict)
     ]
     last_run = runs[-1] if runs else {}
