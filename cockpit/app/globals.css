@@ -158,6 +158,16 @@ h1 { margin: 0; font-size: clamp(28px, 3vw, 42px); letter-spacing: -.045em; font
 .empty-mark { width: 56px; height: 56px; display: grid; place-items: center; border: 1px solid #35414d; border-radius: 50%; color: #596674; font-size: 23px; }
 .empty-state h3 { margin: 13px 0 7px; }
 .empty-state p { max-width: 540px; margin: 0; color: var(--muted); line-height: 1.55; }
+.snapshot-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.snapshot-list article { background: #0e151b; border: 1px solid #24413e; border-radius: 5px; padding: 16px; }
+.snapshot-list article > div:first-child { display: flex; justify-content: space-between; align-items: center; }
+.snapshot-list small { color: var(--muted); }
+.snapshot-list h3 { font-size: 16px; margin: 18px 0; }
+.snapshot-list h3 span { color: #475563; font-size: 11px; }
+.snapshot-metrics { display: grid; grid-template-columns: repeat(4, 1fr); background: #151e26; border: 1px solid #222e38; }
+.snapshot-metrics span { padding: 10px; color: var(--muted); font-size: 10px; border-right: 1px solid #222e38; }
+.snapshot-metrics strong { display: block; margin-top: 6px; color: var(--ink); font: 12px var(--font-geist-mono); }
+.snapshot-list code { display: block; margin-top: 12px; color: #70808f; font-size: 9px; }
 .schema-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
 .schema-strip span { font: 9px var(--font-geist-mono); color: #70808f; padding: 5px 7px; background: #111a22; border: 1px solid #26313b; }
 .counter { font: 23px var(--font-geist-mono); color: var(--cyan); }
@@ -202,6 +212,7 @@ td:first-child { color: var(--ink); }
   .mobile-brand span { width: 27px; height: 27px; font-size: 13px; }
   .system-state { display: none; }
   .two-column { grid-template-columns: 1fr; }
+  .snapshot-list { grid-template-columns: 1fr; }
   .guardrails { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
@@ -218,6 +229,7 @@ td:first-child { color: var(--ink); }
   .metric small { white-space: normal; }
   .strategy-grid { grid-template-columns: 1fr; }
   .decision-metrics { grid-template-columns: repeat(2, 1fr); }
+  .snapshot-metrics { grid-template-columns: repeat(2, 1fr); }
   .match-foot { align-items: flex-start; flex-wrap: wrap; }
   .match-foot span:last-child { margin-left: 0; width: 100%; }
   .guardrails { grid-template-columns: 1fr; }

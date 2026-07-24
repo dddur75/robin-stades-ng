@@ -79,6 +79,9 @@ def plan_collection(
     collected: set[tuple[str, CollectionWindow]],
     quota_remaining: int,
     credits_per_snapshot: int = 2,
+    reserve_credits: int = 0,
+    quota_used: int = 0,
+    monthly_operational_ceiling: int | None = None,
 ) -> tuple[CollectionTask, ...]:
     tasks: list[CollectionTask] = []
     for fixture in fixtures:
@@ -101,5 +104,16 @@ def plan_collection(
             )
         )
     tasks.sort(key=lambda task: (task.priority, task.provider_fixture_id))
-    affordable = max(0, quota_remaining // credits_per_snapshot)
+    provider_affordable = max(
+        0,
+        (quota_remaining - reserve_credits) // credits_per_snapshot,
+    )
+    if monthly_operational_ceiling is None:
+        operational_affordable = provider_affordable
+    else:
+        operational_affordable = max(
+            0,
+            (monthly_operational_ceiling - quota_used) // credits_per_snapshot,
+        )
+    affordable = min(provider_affordable, operational_affordable)
     return tuple(tasks[:affordable])

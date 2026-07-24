@@ -11,8 +11,9 @@ on:
     - cron: "23 * * * *"
 permissions:
   contents: read
+  actions: write
 concurrency:
-  group: shadow-predictions
+  group: shadow-state
   cancel-in-progress: false
 jobs:
   predict:
@@ -22,11 +23,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.12", cache: pip}
-      - uses: actions/cache@v4
-        with:
-          path: data/shadow
-          key: shadow-data-${{ github.run_id }}
-          restore-keys: shadow-data-
+      - name: Restaurer l'état shadow durable
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/manage_shadow_state.py restore
+          --repo "${{ github.repository }}"
+          --destination data/shadow
+          --current-run-id "${{ github.run_id }}"
       - run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
@@ -37,8 +41,16 @@ jobs:
           python scripts/run_shadow_pipeline.py pre-match-shadow
           ${{ inputs.mock && '--mock' || '' }}
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: shadow-predictions-${{ github.run_id }}
+          name: shadow-state-${{ github.run_id }}
           path: data/shadow
           retention-days: 30
+          compression-level: 9
+      - name: Conserver seulement les deux états durables les plus récents
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/manage_shadow_state.py prune
+          --repo "${{ github.repository }}"
+          --current-artifact-name "shadow-state-${{ github.run_id }}"
+          --keep 2

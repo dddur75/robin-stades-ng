@@ -14,7 +14,7 @@ Référence CI : Python 3.12. Le mode doit rester `simulation` et
 ## Validation complète
 
 ```powershell
-.\.venv\Scripts\python.exe -m ruff check src/robin tests/jalon1 tests/jalon2 scripts migrations
+.\.venv\Scripts\python.exe -m ruff check src/robin tests/jalon1 tests/jalon2 tests/jalon3 scripts migrations
 .\.venv\Scripts\python.exe -m mypy src/robin
 .\.venv\Scripts\python.exe -m bandit -q -r src/robin
 .\.venv\Scripts\python.exe -m compileall -q agents moteur src tests
@@ -66,7 +66,7 @@ nouvelle observation.
 Les paramètres sont expurgés avant persistance. Ne jamais enregistrer ou afficher
 une clé API dans les logs.
 
-## Collecte prospective Jalon 2
+## Collecte prospective live
 
 Commandes locales sans clé :
 
@@ -81,12 +81,17 @@ Commandes locales sans clé :
 Les workflows canoniques sont `collect-fixtures.yml`, `collect-odds.yml`,
 `pre-match-shadow.yml`, `post-match-settlement.yml` et `daily-health.yml`.
 Le workflow `03_archive.yml` est désormais un diagnostic legacy manuel et
-n'écrit plus dans Git. Un workflow vert sans snapshot réel n'est pas une preuve
-de collecte.
+n'écrit plus dans Git. Un statut `WORKFLOW_SUCCESS_LIVE_DATA` exige au moins une
+donnée réelle ; `WORKFLOW_SUCCESS_NO_DATA` reste une exécution saine sans sortie.
+
+Chaque workflow restaure le dernier artifact `shadow-state-<run_id>`, exécute
+son étape, puis publie un nouvel état. La concurrence globale `shadow-state`
+sérialise les écritures. Deux copies sont conservées pendant 30 jours. Le cache
+GitHub Actions n’est pas la persistance canonique.
 
 ## Diagnostic et reprise
 
-1. télécharger l'artefact du run concerné et lire `runs/*.json` ;
+1. télécharger l'artifact `shadow-state-<run_id>` et lire `runs/*.json` ;
 2. distinguer `READY_NO_KEY`, `ABSENT` et une erreur réseau ;
 3. conserver payloads bruts, ledger et identifiant de run ;
 4. relancer manuellement le workflow avec les mêmes entrées ;
@@ -121,9 +126,10 @@ pnpm test
 pnpm dev
 ```
 
-Ouvrir `http://localhost:3000`. Les badges `DEMO DATA`, `LEGACY SOURCE` et
-`LIVE SOURCE` sont contractuels. Ne pas remplacer une vue vide par des valeurs
-simulées sans badge.
+Ouvrir `http://localhost:3000`. Le cockpit charge la preuve live compacte par
+défaut. Les badges `LIVE SOURCE`, `LEGACY SOURCE`, `DEMO DATA` et `NO OUTPUT`
+sont contractuels. La démo reste opt-in et ne doit jamais remplacer une absence
+de donnée prospective.
 
 ## Incident et reprise
 

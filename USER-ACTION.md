@@ -1,7 +1,7 @@
 # Action utilisateur
 
-AUCUNE ACTION UTILISATEUR REQUISE
+ACTION UNIQUE : valider et fusionner la PR brouillon Jalon 3.
 
-Le secret GitHub `ODDS_API_KEY` existe déjà. La clé `API_FOOTBALL_KEY` n'est pas
-indispensable au périmètre Ligue 1 actuel : son adaptateur est prêt et le système
-se dégrade proprement en son absence.
+Elle déploie sur `main` la persistance explicite par artifacts, l’idempotence
+renforcée et le cockpit live. `ODDS_API_KEY` est déjà présente ;
+`API_FOOTBALL_KEY` reste optionnelle et ne doit pas être créée pour ce jalon.

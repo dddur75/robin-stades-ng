@@ -121,8 +121,8 @@ function dateTime(value: string | null) {
 
 export default function Home() {
   const [page, setPage] = useState<PageKey>("command");
-  const [competition, setCompetition] = useState("Ligue 1");
-  const [period, setPeriod] = useState("7 prochains jours");
+  const [competition, setCompetition] = useState("Ligue 1 - France");
+  const [period, setPeriod] = useState("30 prochains jours");
   const [market, setMarket] = useState("1X2");
   const [strategy, setStrategy] = useState("Toutes");
   const [model, setModel] = useState("Tous");
@@ -295,11 +295,11 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
     <>
       <section className="metric-grid">
         <Metric label="Fixtures suivies" value={String(snapshot.metrics.fixtures)} detail="fenêtre prospective" />
-        <Metric label="Prédictions" value={String(snapshot.metrics.predictions)} detail="consensus Elo–Poisson" />
-        <Metric label="Décisions acceptées" value={String(snapshot.metrics.candidates)} detail="aucune mise réelle" />
-        <Metric label="Rejets explicites" value={String(snapshot.metrics.rejections)} detail="motif normalisé" tone="amber" />
-        <Metric label="Couverture legacy" value={`${snapshot.metrics.migrationCoveragePct} %`} detail="mapping certain" tone="cyan" />
-        <Metric label="P&L shadow" value="0,00 u" detail="ROI 0,00 % · DD 0,00 u" />
+        <Metric label="Snapshots réels" value={String(snapshot.metrics.snapshots)} detail="2 payloads distincts" tone="cyan" />
+        <Metric label="Cotes normalisées" value={String(snapshot.metrics.quotes)} detail="1X2 · Totaux" />
+        <Metric label="Bookmakers" value={String(snapshot.metrics.bookmakers)} detail="agrégés par snapshot" />
+        <Metric label="Prédictions" value={String(snapshot.metrics.predictions)} detail="baseline marché seulement" tone="amber" />
+        <Metric label="Quota restant" value={snapshot.metrics.quotaRemaining.toLocaleString("fr-FR")} detail="sur 20 000 crédits" />
       </section>
 
       <section className="two-column">
@@ -322,7 +322,10 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
             {snapshot.runs.map((run) => (
               <div key={run.id}>
                 <span className="run-dot" />
-                <div><strong>{run.pipeline}</strong><small>{dateTime(run.finishedAt)}</small></div>
+                <div>
+                  <strong>{run.pipeline}</strong>
+                  <small>{dateTime(run.finishedAt)} · {run.records} entrées · coût {run.calls}</small>
+                </div>
                 <SourceBadge origin={run.origin} />
                 <StatusPill value={run.status} />
               </div>
@@ -352,9 +355,9 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
         <div className="guardrails">
           {[
             ["Fuite temporelle", "PASS", "cutoff strict"],
-            ["Collisions UUID", "PASS", "0 collision"],
-            ["Quota mensuel", "PASS", "plafond 450"],
-            ["Cotes réelles", "PENDING", "collecte à confirmer"],
+            ["Persistance runners", "PASS", "artifact restauré"],
+            ["Quota mensuel", "PASS", "19 992 / 20 000"],
+            ["Cotes réelles", "PASS", "2 snapshots · 180 cotes"],
           ].map(([name, status, detail]) => (
             <div key={name}><StatusPill value={status} /><strong>{name}</strong><small>{detail}</small></div>
           ))}
@@ -368,11 +371,15 @@ function MatchCenter({ matches, market }: { matches: typeof snapshot.matches; ma
   return (
     <section className="panel">
       <div className="panel-head">
-        <div><span>{matches.length} fixture affichée</span><h2>Probabilités pré-match · {market}</h2></div>
-        <SourceBadge origin="DEMO DATA" />
+        <div><span>{matches.length} fixtures affichées</span><h2>Probabilités pré-match · {market}</h2></div>
+        <SourceBadge origin="LIVE SOURCE" />
       </div>
       {matches.length === 0 ? (
-        <EmptyState title="Aucun match pour ces filtres" text="Modifiez le modèle ou le niveau de qualité." label="DEMO DATA" />
+        <EmptyState
+          title="EN ATTENTE DE DONNÉES PROSPECTIVES"
+          text="Modifiez le modèle ou le niveau de qualité."
+          label="NO OUTPUT"
+        />
       ) : (
         <div className="match-list">
           {matches.map((match) => (
@@ -385,7 +392,7 @@ function MatchCenter({ matches, market }: { matches: typeof snapshot.matches; ma
                 ))}
               </div>
               <div className="match-foot">
-                <span>xG {match.expectedGoals.home?.toFixed(2)} — {match.expectedGoals.away?.toFixed(2)}</span>
+                <span>Modèle : <b>{match.model}</b></span>
                 <StatusPill value={match.quality} />
                 <span>Décision : <b>{match.decision}</b></span>
               </div>
@@ -400,12 +407,30 @@ function MatchCenter({ matches, market }: { matches: typeof snapshot.matches; ma
 function OddsMonitor() {
   return (
     <section className="panel">
-      <div className="panel-head"><div><span>Snapshots horodatés</span><h2>Marché 1X2 & Totaux</h2></div><StatusPill value="PENDING" /></div>
-      <EmptyState
-        label="DEMO DATA"
-        title="Aucune cote réelle dans cet artefact"
-        text="Le pipeline et le stockage append-only sont prêts. Cette vue restera vide jusqu’à la première collecte authentifiée ; aucune cote synthétique n’est présentée comme réelle."
-      />
+      <div className="panel-head">
+        <div><span>Snapshots horodatés</span><h2>Marché 1X2 & Totaux</h2></div>
+        <StatusPill value="LIVE_PIPELINE_VERIFIED" />
+      </div>
+      <div className="snapshot-list">
+        {snapshot.odds.map((item) => (
+          <article key={item.snapshot_id}>
+            <div>
+              <SourceBadge origin="LIVE SOURCE" />
+              <small>{dateTime(item.observed_at)}</small>
+            </div>
+            <h3>{item.home} <span>—</span> {item.away}</h3>
+            <div className="snapshot-metrics">
+              <span>Cotes<strong>{item.quotes}</strong></span>
+              <span>Bookmakers<strong>{item.bookmakers}</strong></span>
+              <span>Marchés<strong>{item.markets.join(" · ")}</strong></span>
+              <span>Avant match<strong>{(item.time_to_kickoff_seconds / 3600).toFixed(1)} h</strong></span>
+            </div>
+            <code title={item.payload_hash}>
+              payload {item.payload_hash.slice(0, 12)}…
+            </code>
+          </article>
+        ))}
+      </div>
       <div className="schema-strip">
         <span>snapshot_id</span><span>provider_event_id</span><span>bookmaker</span><span>market</span><span>observed_at</span><span>time_to_kickoff</span>
       </div>
@@ -425,7 +450,7 @@ function ShadowBets() {
             <div className="decision-metrics">
               <span>Sélection<strong>{decision.selection}</strong></span>
               <span>Prob. modèle<strong>{pct(decision.model_probability)}</strong></span>
-              <span>Cote<strong>—</strong></span>
+              <span>Cote<strong>{decision.odds_decimal?.toFixed(2) ?? "—"}</strong></span>
               <span>Mise fictive<strong>{decision.suggested_stake.toFixed(1)} u</strong></span>
             </div>
             <div className="reject"><StatusPill value="REJETÉ" /><strong>{decision.primary_reason}</strong><span>{decision.secondary_reasons.join(" · ")}</span></div>
@@ -441,12 +466,12 @@ function DataQuality() {
     <>
       <section className="quality-summary">
         <Metric label="Contrôles au vert" value={`${snapshot.qualityChecks.filter((item) => item.status === "PASS").length}/${snapshot.qualityChecks.length}`} detail="sur l’artefact disponible" tone="cyan" />
-        <Metric label="Mappages legacy" value="37 024" detail="UUID déterministes" />
-        <Metric label="Ambigus / non résolus" value="0" detail="aucun cas masqué" />
+        <Metric label="Snapshots live" value={String(snapshot.metrics.snapshots)} detail="artifact persistant" />
+        <Metric label="Quota restant" value={snapshot.metrics.quotaRemaining.toLocaleString("fr-FR")} detail="réserve 20 %" />
         <Metric label="Alertes critiques" value="0" detail="production verrouillée" />
       </section>
       <section className="panel">
-        <div className="panel-head"><div><span>Contrats de données</span><h2>Contrôles bloquants</h2></div><SourceBadge origin="LEGACY SOURCE" /></div>
+        <div className="panel-head"><div><span>Contrats de données</span><h2>Contrôles bloquants</h2></div><SourceBadge origin="LIVE SOURCE" /></div>
         <div className="table-wrap">
           <table>
             <thead><tr><th>Contrôle</th><th>État</th><th>Valeur</th><th>Seuil</th><th>Origine</th></tr></thead>

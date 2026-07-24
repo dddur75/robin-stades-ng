@@ -18,3 +18,9 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+*.pid
+*.out
+*.err
+.ci/
+data/shadow/
+cockpit/.codex-dev.*
