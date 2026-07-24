@@ -27,6 +27,7 @@ from robin.historical.storage import GzipPayloadBackend, PartitionedParquetStore
 from robin.providers.api_football import ApiFootballProvider
 from robin.providers.contracts import ProviderResult, QuotaState
 from scripts.manage_historical_state import append_state, restore_state, verify_state
+from scripts.run_historical_pipeline import batched_rows
 
 
 def result(
@@ -441,6 +442,9 @@ def test_workflows_jalon5_sont_valides_et_secrets_absents_du_frontend() -> None:
         payload = yaml.safe_load((workflows / name).read_text("utf-8"))
         assert isinstance(payload, dict)
         assert "jobs" in payload
+    backfill_workflow = (workflows / "historical-backfill.yml").read_text("utf-8")
+    assert "first-batch" not in backfill_workflow
+    assert "if [ ! -f data/historical/tasks/backfill-plan.json ]" in backfill_workflow
     frontend = "\n".join(
         path.read_text("utf-8")
         for path in (root / "cockpit").rglob("*")
@@ -449,3 +453,22 @@ def test_workflows_jalon5_sont_valides_et_secrets_absents_du_frontend() -> None:
     assert "API_FOOTBALL_KEY" not in frontend
     assert "DATABASE_URL" not in frontend
     assert "ODDS_API_KEY" not in frontend
+
+
+def test_preuve_postgresql_est_publiee_apres_la_synchronisation() -> None:
+    root = Path(__file__).resolve().parents[2]
+    action = (
+        root / ".github" / "actions" / "historical-state-persist" / "action.yml"
+    ).read_text("utf-8")
+    sync = action.index("name: Synchroniser PostgreSQL")
+    proof = action.index("name: Publier l'accusé PostgreSQL durable")
+    assert sync < proof
+    assert "steps.postgresql.outcome == 'success'" in action
+    assert "historical/proofs/postgresql.json" in action
+
+
+def test_upsert_neon_est_decoupe_sous_la_limite_psycopg() -> None:
+    rows = [{"task_id": str(index)} for index in range(2_501)]
+    batches = batched_rows(rows)
+    assert [len(batch) for batch in batches] == [1_000, 1_000, 501]
+    assert [row for batch in batches for row in batch] == rows

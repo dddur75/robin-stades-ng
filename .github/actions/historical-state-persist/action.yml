@@ -44,6 +44,21 @@ runs:
           --state data/historical \
           --run-id "${{ inputs.run-id }}" \
           persist
+    - name: Publier l'accusé PostgreSQL durable
+      if: inputs.database-url != '' && steps.postgresql.outcome == 'success'
+      shell: bash
+      run: |
+        python scripts/manage_historical_state.py append \
+          --state data/historical \
+          --registry .historical-registry
+        python scripts/manage_historical_state.py verify \
+          --registry .historical-registry
+        cd .historical-registry
+        git add historical/proofs/postgresql.json historical/manifest.json
+        if ! git diff --cached --quiet; then
+          git commit -m "historical: acknowledge PostgreSQL run ${{ inputs.run-id }}"
+          git push origin HEAD:shadow-data
+        fi
     - name: Signaler un replay PostgreSQL nécessaire
       if: inputs.database-url != '' && steps.postgresql.outcome != 'success'
       shell: bash

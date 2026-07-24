@@ -85,14 +85,10 @@ jobs:
             --run-id "${{ github.run_id }}" \
             --max-calls "${{ inputs.max_calls || 1500 }}" \
             pilot
-          python scripts/run_historical_pipeline.py \
-            --run-id "${{ github.run_id }}" \
-            plan --include-secondary
-          if [ "${{ github.event_name }}" = "push" ]; then
+          if [ ! -f data/historical/tasks/backfill-plan.json ]; then
             python scripts/run_historical_pipeline.py \
-              --run-id "${{ github.run_id }}-first-batch" \
-              --max-calls 250 \
-              backfill --max-tasks 25 --priority A
+              --run-id "${{ github.run_id }}" \
+              plan --include-secondary
           fi
       - name: Exécuter un lot borné
         if: github.event_name != 'push' && inputs.pilot != true && inputs.dry_run != true

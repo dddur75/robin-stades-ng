@@ -96,6 +96,18 @@ def parameters_hash(endpoint: str, params: Mapping[str, object]) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def batched_rows(
+    rows: list[dict[str, object]],
+    batch_size: int = 1_000,
+) -> list[list[dict[str, object]]]:
+    if batch_size <= 0:
+        raise ValueError("batch_size doit être strictement positif")
+    return [
+        rows[offset : offset + batch_size]
+        for offset in range(0, len(rows), batch_size)
+    ]
+
+
 class HistoricalRunner:
     def __init__(
         self,
@@ -908,39 +920,42 @@ def command_persist(args: argparse.Namespace) -> None:
         nonlocal inserted, updated
         if not rows:
             return
-        keys = [row[key_column.name] for row in rows]
-        existing = set(
-            connection.execute(
-                select(key_column).where(key_column.in_(keys))
-            ).scalars()
-        )
-        updated += len(existing)
-        inserted += len(rows) - len(existing)
-        if connection.dialect.name == "postgresql":
-            statement = postgresql_insert(table).values(rows)
-        elif connection.dialect.name == "sqlite":
-            statement = sqlite_insert(table).values(rows)
-        else:
-            for row in rows:
-                upsert(
-                    connection,
-                    table,
-                    key_column,
-                    row[key_column.name],
-                    row,
-                )
-            return
-        replacement = {
-            column.name: getattr(statement.excluded, column.name)
-            for column in table.c
-            if column.name != key_column.name
-        }
-        connection.execute(
-            statement.on_conflict_do_update(
-                index_elements=[key_column.name],
-                set_=replacement,
+        # Psycopg refuse une requête dépassant 65 535 paramètres. Un lot de
+        # 1 000 lignes reste borné même pour les tables historiques larges.
+        for batch in batched_rows(rows):
+            keys = [row[key_column.name] for row in batch]
+            existing = set(
+                connection.execute(
+                    select(key_column).where(key_column.in_(keys))
+                ).scalars()
             )
-        )
+            updated += len(existing)
+            inserted += len(batch) - len(existing)
+            if connection.dialect.name == "postgresql":
+                statement: Any = postgresql_insert(table).values(batch)
+            elif connection.dialect.name == "sqlite":
+                statement = sqlite_insert(table).values(batch)
+            else:
+                for row in batch:
+                    upsert(
+                        connection,
+                        table,
+                        key_column,
+                        row[key_column.name],
+                        row,
+                    )
+                continue
+            replacement = {
+                column.name: getattr(statement.excluded, column.name)
+                for column in table.c
+                if column.name != key_column.name
+            }
+            connection.execute(
+                statement.on_conflict_do_update(
+                    index_elements=[key_column.name],
+                    set_=replacement,
+                )
+            )
 
     with engine.begin() as connection:
         matrix = read_json(args.state / "coverage" / "matrix.json", [])
