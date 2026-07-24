@@ -133,8 +133,9 @@ def test_workflows_planifies_sont_idempotents_et_diagnosticables(workflow: str) 
     assert "workflow_dispatch" in content
     assert "schedule:" in content
     assert "concurrency:" in content
-    assert "actions/cache@v4" in content
-    assert "if: always()" in content
+    assert "manage_shadow_state.py restore" in content
+    assert "actions/upload-artifact@v4" in content
+    assert "shadow-state-${{ github.run_id }}" in content
     assert "secrets." not in content or "ODDS_API_KEY" in content
 
 

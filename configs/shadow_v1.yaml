@@ -32,6 +32,11 @@ quality:
   block_on_unresolved_fixture: true
   block_on_suspect_zero_feature: true
 models: [elo-1.0, poisson-1.0, dixon-coles-1.0, consensus-1.0, market-baseline-1.0]
+live_prediction_policy:
+  allowed_model: MARKET_BASELINE_ONLY
+  require_live_odds_snapshot: true
+  use_legacy_history: false
+  block_strategy_decision: true
 strategies: [value-simple-1.0]
 bankroll:
   currency: EUR
@@ -53,6 +58,14 @@ exclusions:
   - missing_odds
   - quality_blocked
 quota:
-  monthly_credit_budget: 450
-  stop_if_remaining_below: 25
+  provider_monthly_limit_observed: 20000
+  monthly_operational_ceiling: 1000
+  reserve_credits: 4000
+  reserve_pct: 20
   credits_per_event_snapshot: 2
+persistence:
+  backend: GITHUB_ARTIFACT_EXPLICIT_RESTORE
+  canonical_artifact_prefix: shadow-state-
+  copies_retained: 2
+  retention_days: 30
+  global_concurrency_group: shadow-state

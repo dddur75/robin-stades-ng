@@ -31,6 +31,7 @@ class ProviderResult(BaseModel):
     observed_at: datetime
     origin: DataOrigin
     raw_observation_id: str | None = None
+    raw_payload_hash: str | None = None
     quota: QuotaState = Field(default_factory=QuotaState)
     message: str | None = None
 

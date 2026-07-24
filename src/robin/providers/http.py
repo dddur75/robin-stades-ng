@@ -167,6 +167,7 @@ class JsonHttpProvider:
             )
         received_at = datetime.now(UTC)
         raw_id: str | None = None
+        raw_payload_hash: str | None = None
         if self.raw_store is not None:
             observation = self.raw_store.store(
                 provider=self.provider_name,
@@ -180,6 +181,7 @@ class JsonHttpProvider:
                 ingestion_run_id=self.ingestion_run_id,
             )
             raw_id = observation.observation_id
+            raw_payload_hash = observation.payload_hash
 
         quota = QuotaState(
             used=_integer_header(
@@ -206,6 +208,7 @@ class JsonHttpProvider:
                 observed_at=received_at,
                 origin=DataOrigin.LIVE_SOURCE,
                 raw_observation_id=raw_id,
+                raw_payload_hash=raw_payload_hash,
                 quota=quota,
                 message=f"HTTP {response.status_code}",
             )
@@ -236,6 +239,7 @@ class JsonHttpProvider:
             observed_at=received_at,
             origin=DataOrigin.LIVE_SOURCE,
             raw_observation_id=raw_id,
+            raw_payload_hash=raw_payload_hash,
             quota=quota,
             message=None if records else "réponse valide sans donnée",
         )

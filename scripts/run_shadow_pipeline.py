@@ -1,4 +1,4 @@
-"""Point d'entrée idempotent des workflows shadow du Jalon 2."""
+"""Point d'entrée idempotent des workflows shadow live."""
 
 from __future__ import annotations
 
@@ -8,20 +8,30 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-from uuid import uuid4
 
 import pandas as pd
 
 from robin.domain.enums import DataOrigin, QualityStatus, QuotePhase
 from robin.domain.odds import stable_internal_id
 from robin.ingestion.raw_store import LocalRawStore
-from robin.ingestion.scheduler import CollectionWindow, FixtureCandidate, plan_collection
+from robin.ingestion.scheduler import (
+    CollectionTask,
+    CollectionWindow,
+    FixtureCandidate,
+    plan_collection,
+)
 from robin.ingestion.snapshot_store import JsonlSnapshotStore
 from robin.modeling.reference import (
     EloModel,
     consensus,
     estimate_expected_goals,
     poisson_probabilities,
+)
+from robin.operations.activation import (
+    WORKFLOW_SUCCESS_LIVE_DATA,
+    WORKFLOW_SUCCESS_NO_DATA,
+    normalized_market_probabilities,
+    workflow_outcome,
 )
 from robin.providers.mock import MockFootballProvider
 from robin.providers.the_odds_api import TheOddsApiProvider, parse_odds_snapshot
@@ -34,6 +44,39 @@ def write_json(path: Path, value: object) -> None:
         json.dumps(value, ensure_ascii=False, indent=2, default=str) + "\n",
         encoding="utf-8",
     )
+
+
+def append_jsonl_once(path: Path, record: dict[str, object], *, key: str) -> bool:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    known = {
+        str(item.get(key))
+        for item in read_jsonl(path)
+        if item.get(key) is not None
+    }
+    if str(record[key]) in known:
+        return False
+    with path.open("a", encoding="utf-8") as stream:
+        stream.write(json.dumps(record, ensure_ascii=False, sort_keys=True, default=str))
+        stream.write("\n")
+    return True
+
+
+def read_jsonl(path: Path) -> list[dict[str, object]]:
+    if not path.exists():
+        return []
+    return [
+        value
+        for line in path.read_text("utf-8").splitlines()
+        if line.strip()
+        for value in [json.loads(line)]
+        if isinstance(value, dict)
+    ]
+
+
+def runtime_run_id(pipeline: str) -> str:
+    github_run_id = (os.getenv("GITHUB_RUN_ID") or "").strip()
+    suffix = github_run_id or datetime.now(UTC).strftime("%Y%m%d%H%M%S%f")
+    return f"{pipeline}-{suffix}"
 
 
 def mock_provider() -> MockFootballProvider:
@@ -67,7 +110,7 @@ def provider(output: Path, run_id: str, mock: bool) -> Any:
 
 
 def collect_fixtures(output: Path, *, mock: bool) -> dict[str, object]:
-    run_id = f"fixtures-{datetime.now(UTC).strftime('%Y%m%d%H')}"
+    run_id = runtime_run_id("fixtures")
     result = provider(output, run_id, mock).get_fixtures()
     fixtures = []
     for record in result.records:
@@ -76,17 +119,33 @@ def collect_fixtures(output: Path, *, mock: bool) -> dict[str, object]:
         item["collected_at"] = result.observed_at.isoformat()
         fixtures.append(item)
     write_json(output / "fixtures" / "latest.json", fixtures)
-    summary = {
+    authenticated = mock or result.message != "credential_absent"
+    summary: dict[str, object] = {
         "run_id": run_id,
         "pipeline": "collect-fixtures",
         "status": (
-            "READY_NO_KEY"
-            if not mock and result.message == "credential_absent"
-            else result.availability.value
+            result.availability.value
+            if mock
+            else workflow_outcome(
+                authenticated=authenticated,
+                records_received=len(fixtures),
+                records_persisted=len(fixtures),
+            )
         ),
-        "origin": result.origin.value,
+        "origin": (
+            result.origin.value
+            if mock or (authenticated and fixtures)
+            else "NO_OUTPUT"
+        ),
+        "provider": result.provider,
+        "endpoint": result.endpoint,
+        "authenticated": authenticated and not mock,
         "records": len(fixtures),
+        "calls_consumed": result.quota.last_cost or 0,
+        "quota_used": result.quota.used,
         "quota_remaining": result.quota.remaining,
+        "raw_observation_id": result.raw_observation_id,
+        "raw_payload_hash": result.raw_payload_hash,
         "finished_at": datetime.now(UTC).isoformat(),
     }
     write_json(output / "runs" / f"{run_id}.json", summary)
@@ -122,7 +181,7 @@ def collect_odds(
     mock: bool,
     diagnostic: bool = False,
 ) -> dict[str, object]:
-    run_id = f"odds-{datetime.now(UTC).strftime('%Y%m%d%H%M')}"
+    run_id = runtime_run_id("odds")
     if mock:
         fixtures_summary = collect_fixtures(output, mock=True)
         return {
@@ -146,42 +205,44 @@ def collect_odds(
     )
     ledger_path = output / "odds" / "collection-ledger.json"
     collected = read_ledger(ledger_path)
-    remaining = fixture_result.quota.remaining or 500
+    remaining = fixture_result.quota.remaining or 0
     tasks = list(
         plan_collection(
             candidates,
             now=now,
             collected=collected,
             quota_remaining=remaining,
+            reserve_credits=4_000,
+            quota_used=fixture_result.quota.used or 0,
+            monthly_operational_ceiling=1_000,
         )
     )
+    diagnostic_outside_window = False
     if diagnostic and not tasks and candidates and remaining >= 2:
         nearest = min(
             candidates,
             key=lambda item: abs((item.kickoff_at - now).total_seconds()),
         )
         tasks = [
-            {
-                "provider_fixture_id": nearest.provider_fixture_id,
-                "window": CollectionWindow.D7,
-            }
+            CollectionTask(
+                provider_fixture_id=nearest.provider_fixture_id,
+                window=CollectionWindow.D7,
+                kickoff_at=nearest.kickoff_at,
+                priority=0,
+                estimated_credits=2,
+            )
         ]
+        diagnostic_outside_window = True
     store = JsonlSnapshotStore(output / "odds")
-    appended = quotes = 0
+    appended = quotes = exact_payloads_deduplicated = 0
+    calls_consumed = fixture_result.quota.last_cost or 0
     last_quota = fixture_result.quota
     for task in tasks:
-        fixture_id = (
-            task.provider_fixture_id
-            if not isinstance(task, dict)
-            else str(task["provider_fixture_id"])
-        )
-        window = (
-            task.window
-            if not isinstance(task, dict)
-            else CollectionWindow(str(task["window"]))
-        )
+        fixture_id = task.provider_fixture_id
+        window = task.window
         result = odds_provider.get_event_odds(fixture_id)
         last_quota = result.quota
+        calls_consumed += result.quota.last_cost or 0
         if not result.records or result.raw_observation_id is None:
             continue
         snapshot = parse_odds_snapshot(
@@ -196,20 +257,41 @@ def collect_odds(
             ),
         )
         quotes += len(snapshot.quotes)
-        appended += int(store.append(snapshot))
-        collected.add((fixture_id, window))
+        was_appended = store.append(
+            snapshot,
+            source_payload_hash=result.raw_payload_hash,
+        )
+        appended += int(was_appended)
+        exact_payloads_deduplicated += int(not was_appended)
+        if not diagnostic_outside_window:
+            collected.add((fixture_id, window))
     write_ledger(ledger_path, collected)
+    authenticated = bool(os.getenv("ODDS_API_KEY"))
     summary = {
         "run_id": run_id,
         "pipeline": "collect-odds",
-        "status": "PASSED" if os.getenv("ODDS_API_KEY") else "READY_NO_KEY",
-        "origin": DataOrigin.LIVE_SOURCE.value,
+        "status": workflow_outcome(
+            authenticated=authenticated,
+            records_received=quotes,
+            records_persisted=appended,
+        ),
+        "origin": (
+            DataOrigin.LIVE_SOURCE.value
+            if authenticated and quotes
+            else "NO_OUTPUT"
+        ),
+        "provider": fixture_result.provider,
+        "authenticated": authenticated,
         "fixtures_visible": len(candidates),
         "tasks_due": len(tasks),
+        "diagnostic_outside_window": diagnostic_outside_window,
         "snapshots_appended": appended,
         "quotes_received": quotes,
+        "exact_payloads_deduplicated": exact_payloads_deduplicated,
+        "calls_consumed": calls_consumed,
         "quota_used": last_quota.used,
         "quota_remaining": last_quota.remaining,
+        "persistence": "GITHUB_ARTIFACT_EXPLICIT_RESTORE",
         "finished_at": datetime.now(UTC).isoformat(),
     }
     write_json(output / "runs" / f"{run_id}.json", summary)
@@ -221,10 +303,14 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
     if not fixtures_path.exists():
         collect_fixtures(output, mock=mock)
     fixtures = json.loads(fixtures_path.read_text("utf-8"))
-    history = pd.read_parquet("data/matches.parquet")
     predictions: list[dict[str, object]] = []
+    blocked: list[dict[str, object]] = []
     journal = DecisionJournal(output / "decisions" / "shadow-decisions.jsonl")
     odds_records = JsonlSnapshotStore(output / "odds").read_all()
+    history = pd.read_parquet("data/matches.parquet") if mock else None
+    predictions_history = output / "predictions" / "history.jsonl"
+    new_predictions = 0
+    new_decisions = 0
     for fixture in fixtures:
         kickoff = datetime.fromisoformat(
             str(fixture["commence_time"]).replace("Z", "+00:00")
@@ -233,71 +319,175 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
             continue
         home = str(fixture["home_team"])
         away = str(fixture["away_team"])
-        expected_home, expected_away = estimate_expected_goals(
-            history,
-            home_team=home,
-            away_team=away,
-            as_of_time=kickoff,
-        )
-        poisson = poisson_probabilities(expected_home, expected_away)
-        elo = EloModel().predict(home, away)
-        combined = consensus(elo, poisson)
         fixture_id = stable_internal_id("fixture", "the-odds-api", str(fixture["id"]))
-        prediction = {
-            "prediction_id": str(uuid4()),
-            "fixture_id": fixture_id,
-            "generated_at": datetime.now(UTC).isoformat(),
-            "as_of_time": datetime.now(UTC).isoformat(),
-            "model_name": "consensus-elo-poisson",
-            "model_version": "1.0",
-            "dataset_version": "matches-parquet-j2",
-            "feature_version": "shadow-v1",
-            "probability_home": combined.home,
-            "probability_draw": combined.draw,
-            "probability_away": combined.away,
-            "expected_home_goals": combined.expected_home_goals,
-            "expected_away_goals": combined.expected_away_goals,
-            "data_quality_status": QualityStatus.DERIVED.value,
-            "uncertainty_status": "HIGH" if mock else "NORMAL",
-            "market_snapshot_id": None,
-            "origin": fixture.get("origin", DataOrigin.DEMO_DATA.value),
-        }
-        predictions.append(prediction)
         fixture_quotes = [
             record for record in odds_records if record.get("fixture_id") == fixture_id
         ]
-        home_odds: float | None = None
-        if fixture_quotes:
-            quote_rows = fixture_quotes[-1].get("quotes", [])
+        if mock:
+            if history is None:
+                raise RuntimeError("historique mock indisponible")
+            expected_home, expected_away = estimate_expected_goals(
+                history,
+                home_team=home,
+                away_team=away,
+                as_of_time=kickoff,
+            )
+            poisson = poisson_probabilities(expected_home, expected_away)
+            elo = EloModel().predict(home, away)
+            probabilities = consensus(elo, poisson)
+            prediction = {
+                "prediction_id": stable_internal_id(
+                    "prediction",
+                    "demo",
+                    f"{fixture_id}:consensus-1.0",
+                ),
+                "fixture_id": fixture_id,
+                "generated_at": datetime.now(UTC).isoformat(),
+                "as_of_time": datetime.now(UTC).isoformat(),
+                "model_name": "consensus-elo-poisson",
+                "model_version": "1.0",
+                "dataset_version": "matches-parquet-j2",
+                "feature_version": "shadow-v1",
+                "probability_home": probabilities.home,
+                "probability_draw": probabilities.draw,
+                "probability_away": probabilities.away,
+                "expected_home_goals": probabilities.expected_home_goals,
+                "expected_away_goals": probabilities.expected_away_goals,
+                "data_quality_status": QualityStatus.DERIVED.value,
+                "uncertainty_status": "HIGH",
+                "market_snapshot_id": None,
+                "origin": DataOrigin.DEMO_DATA.value,
+                "provenance": {"fixture": "DEMO DATA", "history": "LEGACY SOURCE"},
+            }
+            home_odds = None
+            model_disagreement = abs(elo.home - poisson.home) > 0.15
+        elif fixture_quotes:
+            latest = fixture_quotes[-1]
+            quote_rows = latest.get("quotes", [])
+            prices: dict[str, list[float]] = {"HOME": [], "DRAW": [], "AWAY": []}
             for quote in quote_rows if isinstance(quote_rows, list) else []:
                 market = quote.get("market", {})
                 if (
                     isinstance(market, dict)
                     and market.get("market_type") == "1X2"
-                    and market.get("selection") == "HOME"
                 ):
-                    home_odds = float(quote["odds_decimal"])
-                    break
-        journal.append(
-            decide_shadow_bet(
-                fixture_id=fixture_id,
-                market_key="1X2",
-                selection="HOME",
-                odds_decimal=home_odds,
-                model_probability=combined.home,
-                strategy_version="value-simple-1.0",
-                quality_ok=not mock,
-                model_disagreement=abs(elo.home - poisson.home) > 0.15,
+                    selection = str(market.get("selection"))
+                    if selection in prices:
+                        prices[selection].append(float(quote["odds_decimal"]))
+            baseline = normalized_market_probabilities(
+                prices["HOME"],
+                prices["DRAW"],
+                prices["AWAY"],
+            )
+            if baseline is None:
+                blocked.append(
+                    {
+                        "fixture_id": fixture_id,
+                        "reason": "INCOMPLETE_1X2_MARKET",
+                        "origin": DataOrigin.LIVE_SOURCE.value,
+                    }
+                )
+                continue
+            snapshot_id = str(latest.get("snapshot_id"))
+            prediction = {
+                "prediction_id": stable_internal_id(
+                    "prediction",
+                    "market-baseline",
+                    f"{fixture_id}:{snapshot_id}:1.0",
+                ),
+                "fixture_id": fixture_id,
+                "generated_at": datetime.now(UTC).isoformat(),
+                "as_of_time": latest.get("observed_at"),
+                "model_name": "MARKET_BASELINE_ONLY",
+                "model_version": "1.0",
+                "dataset_version": "live-odds-snapshot",
+                "feature_version": "market-1x2-v1",
+                "probability_home": baseline[0],
+                "probability_draw": baseline[1],
+                "probability_away": baseline[2],
+                "expected_home_goals": None,
+                "expected_away_goals": None,
+                "data_quality_status": QualityStatus.OBSERVED.value,
+                "uncertainty_status": "MARKET_CONSENSUS",
+                "market_snapshot_id": snapshot_id,
+                "origin": DataOrigin.LIVE_SOURCE.value,
+                "provenance": {
+                    "fixture": DataOrigin.LIVE_SOURCE.value,
+                    "odds": DataOrigin.LIVE_SOURCE.value,
+                    "sports_history": "NOT_USED",
+                    "source_payload_hash": latest.get("source_payload_hash"),
+                },
+            }
+            home_odds = sum(prices["HOME"]) / len(prices["HOME"])
+            model_disagreement = False
+        else:
+            blocked.append(
+                {
+                    "fixture_id": fixture_id,
+                    "reason": "MISSING_ODDS",
+                    "origin": str(
+                        fixture.get("origin", DataOrigin.DEMO_DATA.value)
+                    ),
+                }
+            )
+            continue
+        predictions.append(prediction)
+        new_predictions += int(
+            append_jsonl_once(
+                predictions_history,
+                prediction,
+                key="prediction_id",
+            )
+        )
+        new_decisions += int(
+            journal.append(
+                decide_shadow_bet(
+                    fixture_id=fixture_id,
+                    market_key="1X2",
+                    selection="HOME",
+                    odds_decimal=home_odds,
+                    model_probability=float(prediction["probability_home"]),
+                    strategy_version="value-simple-1.0",
+                    quality_ok=False,
+                    model_disagreement=model_disagreement,
+                    origin=str(prediction["origin"]),
+                    prediction_id=str(prediction["prediction_id"]),
+                )
             )
         )
     write_json(output / "predictions" / "latest.json", predictions)
+    write_json(output / "predictions" / "blocked.json", blocked)
     summary = {
-        "run_id": f"pre-match-{datetime.now(UTC).strftime('%Y%m%d%H')}",
+        "run_id": runtime_run_id("pre-match"),
         "pipeline": "pre-match-shadow",
-        "status": "PASSED",
+        "status": (
+            "PRESENT"
+            if mock
+            else (
+                WORKFLOW_SUCCESS_LIVE_DATA
+                if predictions
+                else WORKFLOW_SUCCESS_NO_DATA
+            )
+        ),
         "predictions": len(predictions),
+        "predictions_created": new_predictions,
+        "predictions_blocked": len(blocked),
+        "decisions_created": new_decisions,
         "decisions_total": len(journal.read_all()),
-        "origin": DataOrigin.DEMO_DATA.value if mock else DataOrigin.LIVE_SOURCE.value,
+        "origin": (
+            DataOrigin.DEMO_DATA.value
+            if mock
+            else (
+                DataOrigin.LIVE_SOURCE.value
+                if predictions
+                else "NO_OUTPUT"
+            )
+        ),
+        "model_policy": (
+            "DEMO_CONSENSUS"
+            if mock
+            else "MARKET_BASELINE_ONLY_WITH_LIVE_ODDS"
+        ),
         "finished_at": datetime.now(UTC).isoformat(),
     }
     write_json(output / "runs" / f"{summary['run_id']}.json", summary)
@@ -305,7 +495,25 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
 
 
 def post_match_settlement(output: Path, *, mock: bool) -> dict[str, object]:
-    run_id = f"settlement-{datetime.now(UTC).strftime('%Y%m%d%H')}"
+    run_id = runtime_run_id("settlement")
+    decisions = DecisionJournal(
+        output / "decisions" / "shadow-decisions.jsonl"
+    ).read_all()
+    eligible = [item for item in decisions if item.get("accepted") is True]
+    if not eligible:
+        summary = {
+            "run_id": run_id,
+            "pipeline": "post-match-settlement",
+            "status": WORKFLOW_SUCCESS_NO_DATA,
+            "results_received": 0,
+            "settled": 0,
+            "eligible_decisions": 0,
+            "calls_consumed": 0,
+            "message": "aucune décision shadow éligible et terminée",
+            "finished_at": datetime.now(UTC).isoformat(),
+        }
+        write_json(output / "runs" / f"{run_id}.json", summary)
+        return summary
     results = provider(output, run_id, mock).get_results()
     summary = {
         "run_id": run_id,
@@ -313,6 +521,8 @@ def post_match_settlement(output: Path, *, mock: bool) -> dict[str, object]:
         "status": results.availability.value,
         "results_received": len(results.records),
         "settled": 0,
+        "eligible_decisions": len(eligible),
+        "calls_consumed": results.quota.last_cost or 0,
         "message": "aucun pari réel ; règlements shadow uniquement",
         "finished_at": datetime.now(UTC).isoformat(),
     }
@@ -337,13 +547,31 @@ def daily_health(output: Path) -> dict[str, object]:
         "status": "WARNING" if not snapshots else "PASSED",
         "pipeline_runs": len(runs),
         "successful_runs": sum(
-            run.get("status") in {"PASSED", "PRESENT", "ABSENT"} for run in runs
+            run.get("status")
+            in {
+                "PASSED",
+                "PRESENT",
+                "ABSENT",
+                WORKFLOW_SUCCESS_LIVE_DATA,
+                WORKFLOW_SUCCESS_NO_DATA,
+            }
+            for run in runs
         ),
         "snapshots_received": len(snapshots),
         "decisions": len(decisions),
         "rejections_by_reason": rejected,
         "critical_alerts": 0,
         "estimated_cost_eur": 0,
+        "persistence": "GITHUB_ARTIFACT_EXPLICIT_RESTORE",
+        "live_snapshots": sum(
+            record.get("provider") == "the-odds-api"
+            and bool(record.get("source_payload_hash"))
+            for record in snapshots
+        ),
+        "live_predictions": sum(
+            item.get("origin") == DataOrigin.LIVE_SOURCE.value
+            for item in read_jsonl(output / "predictions" / "history.jsonl")
+        ),
         "production_locked": True,
     }
     write_json(output / "health" / "latest.json", health)

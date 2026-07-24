@@ -47,6 +47,8 @@ class ShadowDecision(BaseModel):
     secondary_reasons: tuple[RejectionCode, ...] = ()
     decided_at: datetime
     simulation: bool = True
+    origin: str = "DEMO DATA"
+    prediction_id: str | None = None
 
 
 def decide_shadow_bet(
@@ -63,6 +65,8 @@ def decide_shadow_bet(
     exposure_ok: bool = True,
     min_edge: float = 0.04,
     bankroll: float = 1000.0,
+    origin: str = "DEMO DATA",
+    prediction_id: str | None = None,
 ) -> ShadowDecision:
     reasons: list[RejectionCode] = []
     implied = 1.0 / odds_decimal if odds_decimal else None
@@ -109,6 +113,8 @@ def decide_shadow_bet(
         secondary_reasons=tuple(reasons[1:]),
         decided_at=datetime.now(UTC),
         simulation=True,
+        origin=origin,
+        prediction_id=prediction_id,
     )
 
 
