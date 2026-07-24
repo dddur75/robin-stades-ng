@@ -57,10 +57,8 @@ def telecharger(code, saison, cache_dir):
     df["season"] = saison_label(saison)
     for c in COLS_NUM:
         df[c] = pd.to_numeric(df.get(c), errors="coerce")
-    for c in ("hthg", "htag"):
-        df[c] = df[c].fillna(0)
-    for c in ("hy", "ay", "hr", "ar", "hc", "ac"):
-        df[c] = df[c].fillna(0)
+    # Une statistique absente reste inconnue. La convertir en zero fabriquerait
+    # silencieusement un fait et contaminerait les features historiques.
     if "referee" not in df:
         df["referee"] = None
     garder = ["league", "season", "date", "home", "away", "fthg", "ftag", "hthg", "htag",
