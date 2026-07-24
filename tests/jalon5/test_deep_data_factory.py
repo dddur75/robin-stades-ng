@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from datetime import UTC, datetime
@@ -26,8 +27,11 @@ from robin.historical.pagination import iterate_pages
 from robin.historical.storage import GzipPayloadBackend, PartitionedParquetStore
 from robin.providers.api_football import ApiFootballProvider
 from robin.providers.contracts import ProviderResult, QuotaState
+from robin.storage.database import build_engine
+from robin.storage.models import Base
+from scripts.build_cockpit_snapshot import sanitize_public_snapshot
 from scripts.manage_historical_state import append_state, restore_state, verify_state
-from scripts.run_historical_pipeline import batched_rows
+from scripts.run_historical_pipeline import batched_rows, command_persist
 
 
 def result(
@@ -472,3 +476,37 @@ def test_upsert_neon_est_decoupe_sous_la_limite_psycopg() -> None:
     batches = batched_rows(rows)
     assert [len(batch) for batch in batches] == [1_000, 1_000, 501]
     assert [row for batch in batches for row in batch] == rows
+
+
+def test_snapshot_public_ne_divulgue_pas_les_chemins_de_runner() -> None:
+    value = {
+        "path": (
+            "/home/runner/work/repository/data/historical/parquet/"
+            "competition=Ligue-1/part.parquet"
+        )
+    }
+    assert sanitize_public_snapshot(value) == {
+        "path": "historical/parquet/competition=Ligue-1/part.parquet"
+    }
+
+
+def test_persistance_compte_une_table_sans_colonne_id(
+    tmp_path: Path,
+    monkeypatch: Any,
+) -> None:
+    database_url = f"sqlite:///{tmp_path / 'historical.db'}"
+    engine = build_engine(database_url)
+    Base.metadata.create_all(engine)
+    state = tmp_path / "state"
+    tasks = build_backfill_plan({"Ligue 1": 61})
+    plan_path = state / "tasks" / "backfill-plan.json"
+    plan_path.parent.mkdir(parents=True)
+    plan_path.write_text(
+        json.dumps({"tasks": [task.model_dump(mode="json") for task in tasks]}),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("DATABASE_URL", database_url)
+    command_persist(argparse.Namespace(state=state))
+    proof = json.loads((state / "proofs" / "postgresql.json").read_text("utf-8"))
+    assert proof["status"] == "POSTGRESQL_CONNECTED"
+    assert proof["table_counts"]["historical_backfill_tasks"] == len(tasks)

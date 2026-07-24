@@ -15,7 +15,7 @@ from typing import Any
 from uuid import uuid4
 
 import pandas as pd
-from sqlalchemy import insert, inspect, select, update
+from sqlalchemy import func, insert, inspect, select, update
 from sqlalchemy.dialects.postgresql import insert as postgresql_insert
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
@@ -1081,7 +1081,9 @@ def command_persist(args: argparse.Namespace) -> None:
 
         table_counts = {
             table.name: int(
-                connection.execute(select(table.c.id)).all().__len__()
+                connection.execute(
+                    select(func.count()).select_from(table)
+                ).scalar_one()
             )
             for table in (
                 api_football_coverage,

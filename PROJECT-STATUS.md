@@ -67,7 +67,8 @@ Valider puis fusionner la PR #4.
 
 ## Jalon 5 — Deep Data Factory
 
-Statut courant : `HISTORICAL_PILOT_ACTIVE`.
+Statut courant : `HISTORICAL_PILOT_VERIFIED` et
+`HISTORICAL_BACKFILL_ACTIVE`.
 
 La branche `codex/jalon-5-deep-data-factory` ajoute la migration 0004, le
 pipeline API-Football, la pagination reprenable, le stockage historique à trois
@@ -75,6 +76,14 @@ niveaux, sept workflows, la Feature Factory V1, une baseline Elo OOS et le Deep
 Data Cockpit. Le dataset legacy point-in-time compte 36 423 matchs ; les
 résultats sont étiquetés `LEGACY SOURCE`/`OOS HISTORICAL`, jamais live.
 
-Le pilote API-Football Ligue 1 2025 doit encore être exécuté sur GitHub Actions
-avant de passer à `HISTORICAL_PILOT_VERIFIED`. Le burn-in prospectif continue et
+Le pilote API-Football Ligue 1 2025 a été exécuté sur GitHub Actions : 1 354
+appels, 1 347 pages, 10 868 lignes normalisées, 310 fixtures, 21 équipes,
+1 545 payloads gzip et 38 partitions Parquet. Les six identifiants de
+compétition sont validés par réponse live. Le plan priorisé contient 6 184
+tâches, dont 54 terminées ; les lots suivants restent autonomes.
+
+Le replay du pilote retourne zéro appel fournisseur. Le registre durable
+contient plus de 3 100 fichiers avec hashes vérifiés. La migration Neon
+`0004_jalon5_deep_data_factory` est appliquée et les métadonnées historiques
+sont synchronisées par lots bornés. Le burn-in prospectif continue et
 `PRODUCTION_LOCKED` reste invariant.

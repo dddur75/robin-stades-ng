@@ -26,6 +26,19 @@ def directory_size(path: Path) -> int:
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
 
 
+def sanitize_public_snapshot(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {key: sanitize_public_snapshot(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [sanitize_public_snapshot(item) for item in value]
+    if isinstance(value, str):
+        normalized = value.replace("\\", "/")
+        marker = "/data/historical/"
+        if marker in normalized:
+            return f"historical/{normalized.split(marker, 1)[1]}"
+    return value
+
+
 def build_deep_data() -> dict[str, Any]:
     state = ROOT / "data" / "historical"
     analytics = read_json(
@@ -83,8 +96,24 @@ def build_deep_data() -> dict[str, Any]:
     for row in matrix:
         status = str(row.get("status", "UNKNOWN"))
         coverage_counts[status] = coverage_counts.get(status, 0) + 1
+    endpoint_counts: dict[str, int] = {}
+    for report in pilot.get("endpoints", []):
+        endpoint = str(report.get("endpoint", "UNKNOWN"))
+        endpoint_counts[endpoint] = endpoint_counts.get(endpoint, 0) + 1
+    public_pilot = {
+        key: value for key, value in pilot.items() if key != "endpoints"
+    }
+    public_pilot["endpointCounts"] = endpoint_counts
+    public_dataset = {
+        key: value for key, value in dataset.items() if key != "partitions"
+    }
     players: list[dict[str, Any]] = []
-    for path in sorted((state / "parquet").rglob("entity_type=players/*.parquet")):
+    player_partitions = (
+        path
+        for path in (state / "parquet").rglob("*.parquet")
+        if any(parent.name == "entity_type=players" for parent in path.parents)
+    )
+    for path in sorted(player_partitions):
         for payload in pd.read_parquet(path).get("payload", []).tolist()[:20]:
             record = json.loads(str(payload))
             player = record.get("player", {})
@@ -156,7 +185,7 @@ def build_deep_data() -> dict[str, Any]:
             ),
             None,
         ),
-        "pilot": pilot,
+        "pilot": public_pilot,
         "quota": {
             "remaining": pilot.get("quota_remaining", proof.get("quota_remaining")),
             "calls": pilot.get("provider_calls", proof.get("calls", 0)),
@@ -190,7 +219,7 @@ def build_deep_data() -> dict[str, Any]:
                 "continuite_onze",
             )
         ],
-        "dataset": dataset,
+        "dataset": public_dataset,
         "models": models,
         "backtests": (
             [
@@ -578,8 +607,9 @@ def main() -> None:
         "deepData": deep_data,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    public_snapshot = sanitize_public_snapshot(snapshot)
     OUTPUT.write_text(
-        json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(public_snapshot, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     print(f"Snapshot Cockpit écrit dans {OUTPUT.relative_to(ROOT)}")
