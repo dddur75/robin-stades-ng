@@ -327,9 +327,9 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
       <section className="metric-grid">
         <Metric label="Fixtures suivies" value={String(snapshot.metrics.fixtures)} detail="fenêtre prospective" />
         <Metric label="Snapshots réels" value={String(snapshot.metrics.snapshots)} detail="2 payloads distincts" tone="cyan" />
-        <Metric label="Registre durable" value={String(snapshot.metrics.durableRecords)} detail="enregistrements migrés" />
+        <Metric label="Registre PostgreSQL" value={String(snapshot.metrics.durableRecords)} detail="lignes métier uniques" tone="cyan" />
         <Metric label="Payloads physiques" value={String(snapshot.metrics.rawPayloads)} detail="5 observations · 2 doublons évités" />
-        <Metric label="Burn-in" value="J+1" detail={snapshot.burnIn.health.replaceAll("_", " ")} tone="amber" />
+        <Metric label="Burn-in" value="ACTIF" detail={snapshot.burnIn.health.replaceAll("_", " ")} tone="amber" />
         <Metric label="Quota restant" value={snapshot.metrics.quotaRemaining.toLocaleString("fr-FR")} detail="sur 20 000 crédits" />
       </section>
 
@@ -404,7 +404,13 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
           </div>
           <dl>
             <div><dt>Pont actif</dt><dd>branche orpheline shadow-data</dd></div>
-            <div><dt>Cible</dt><dd>PostgreSQL · adaptateur prêt</dd></div>
+            <div><dt>PostgreSQL</dt><dd>{snapshot.postgresql.status.replaceAll("_", " ")}</dd></div>
+            <div><dt>Dernière écriture</dt><dd>{dateTime(snapshot.postgresql.last_write)}</dd></div>
+            <div><dt>Lignes</dt><dd>{snapshot.postgresql.registry_records} uniques</dd></div>
+            <div><dt>Retard pont</dt><dd>{snapshot.postgresql.bridge_lag_records} ligne</dd></div>
+            <div><dt>Double écriture</dt><dd>{snapshot.doubleWrite.status}</dd></div>
+            <div><dt>Capacité</dt><dd>{snapshot.postgresql.capacity_used_pct.toFixed(2)} % · {(snapshot.postgresql.database_size_bytes / 1_000_000).toFixed(2)} MB</dd></div>
+            <div><dt>Burn-in</dt><dd>{snapshot.burnIn.technical} · {snapshot.burnIn.health.replaceAll("_", " ")}</dd></div>
             <div><dt>Migration</dt><dd>{snapshot.migration.coverage * 100} % · 0 erreur</dd></div>
             <div><dt>Replay</dt><dd>octets identiques · 0 appel API</dd></div>
             <div><dt>Artifacts</dt><dd>journal court uniquement</dd></div>
@@ -636,10 +642,10 @@ function PipelineQuality() {
   return (
     <>
       <section className="quality-summary">
-        <Metric label="Contrôles au vert" value={`${snapshot.qualityChecks.filter((item) => item.status === "PASS").length}/${snapshot.qualityChecks.length}`} detail="sur l’artefact disponible" tone="cyan" />
-        <Metric label="Snapshots live" value={String(snapshot.metrics.snapshots)} detail="artifact persistant" />
-        <Metric label="Quota restant" value={snapshot.metrics.quotaRemaining.toLocaleString("fr-FR")} detail="réserve 20 %" />
-        <Metric label="Alertes critiques" value="0" detail="production verrouillée" />
+        <Metric label="PostgreSQL" value="CONNECTÉ" detail={`${snapshot.postgresql.registry_records} lignes · ${snapshot.postgresql.migration_revision}`} tone="cyan" />
+        <Metric label="Double écriture" value="VÉRIFIÉE" detail="Neon + shadow-data" tone="cyan" />
+        <Metric label="Retard du pont" value={String(snapshot.postgresql.bridge_lag_records)} detail="ligne manquante" />
+        <Metric label="Capacité utilisée" value={`${snapshot.postgresql.capacity_used_pct.toFixed(2)} %`} detail={`${(snapshot.postgresql.database_size_bytes / 1_000_000).toFixed(2)} MB sur 0,5 GB`} />
       </section>
       <section className="panel">
         <div className="panel-head"><div><span>Contrats de données</span><h2>Contrôles bloquants</h2></div><SourceBadge origin="LIVE SOURCE" /></div>

@@ -27,11 +27,13 @@ test("server-renders the Cockpit Live V2 shell", async () => {
   assert.match(html, /Command Center/);
   assert.match(html, /PRODUCTION_LOCKED/);
   assert.match(html, /LIVE SOURCE/);
-  assert.match(html, /SHADOW BURN IN ACTIVE/);
+  assert.match(html, /SHADOW COLLECTION HARDENED/);
   assert.match(html, /Snapshots réels/);
   assert.match(html, /Coverage Explorer/);
-  assert.match(html, /Registre durable/);
-  assert.match(html, /393/);
+  assert.match(html, /Registre PostgreSQL/);
+  assert.match(html, /101/);
+  assert.match(html, /PostgreSQL/);
+  assert.match(html, /DOUBLE ÉCRITURE/i);
   assert.match(html, /19[\s ]992/);
   assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
   assert.doesNotMatch(html, /react-loading-skeleton/);
@@ -57,14 +59,17 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(layout, /lang="fr"/);
   assert.match(layout, /images: \["\/og\.png"\]/);
   assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
-  assert.match(data, /"shadowStatus": "SHADOW_BURN_IN_ACTIVE"/);
+  assert.match(data, /"shadowStatus": "SHADOW_COLLECTION_HARDENED"/);
   assert.match(data, /"origin": "LIVE SOURCE"/);
   assert.match(data, /"origin": "LEGACY SOURCE"/);
   assert.match(data, /"stateArtifact": "shadow-state-30095263615"/);
   assert.match(data, /"snapshots": 2/);
-  assert.match(data, /"durableRecords": 393/);
+  assert.match(data, /"durableRecords": 101/);
   assert.match(data, /"demoModeEnabled": false/);
   assert.match(data, /"bridge_status": "ACTIVE_AND_VERIFIED"/);
+  assert.match(data, /"target_status": "CONNECTED_AND_PERSISTED"/);
+  assert.match(data, /"bridge_lag_records": 0/);
+  assert.match(data, /"capacity_used_pct": 2\.39/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   try {

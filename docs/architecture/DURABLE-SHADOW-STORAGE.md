@@ -37,10 +37,11 @@ et B et ne sont jamais la source de vérité.
 
 1. produire l’état local et le bundle déterministe ;
 2. vérifier hashes, références, unicité et schéma ;
-3. écrire transactionnellement dans PostgreSQL si `DATABASE_URL` existe ;
-4. acquitter l’écriture ;
-5. append dans `shadow-data`, vérifier le registre, puis pousser ;
-6. publier seulement ensuite l’Artifact de journal.
+3. append dans `shadow-data`, vérifier le registre, puis pousser ;
+4. appliquer Alembic et synchroniser transactionnellement PostgreSQL ;
+5. auditer lignes, hashes, provenance et retard entre les deux copies ;
+6. acquitter la double écriture ou journaliser explicitement PostgreSQL en attente ;
+7. publier seulement ensuite l’Artifact de journal.
 
 Une décision shadow est bloquée si le mode durable requis n’obtient aucun accusé
 de réception. Une interruption avant acquittement se reprend avec le même
@@ -52,8 +53,10 @@ de réception. Une interruption avant acquittement se reprend avec le même
 - branche data : checkout, `manage_durable_registry.py verify`, puis replay ;
 - Artifact : reprise rapide uniquement, jamais unique copie.
 
-Perte maximale avec le pont actif : le run non poussé en cours. Perte maximale
-avec PostgreSQL et pont : nulle après double acquittement. Tout le Niveau C est
+Perte maximale avec le pont actif : le run non poussé en cours. Une panne Neon
+après le push ne perd aucune donnée : l’incident reste explicite et le workflow
+suivant rejoue l’intégralité du pont sans appel fournisseur. Perte maximale avec
+PostgreSQL et pont : nulle après double acquittement. Tout le Niveau C est
 reconstructible sans appel fournisseur via `manage_durable_registry.py replay`.
 
 ## Migration Jalon 3
@@ -69,3 +72,16 @@ par fenêtre est de 0,4 à 0,8 Go par saison, index et brut inclus. Le plan Neon
 Free peut amorcer le burn-in ; Launch devient pertinent au-delà de 0,5 Go.
 
 Production : `PRODUCTION_LOCKED`.
+
+## Activation Neon vérifiée
+
+- URL native `postgresql://` normalisée en `postgresql+psycopg://` sans modifier
+  le secret ni ses caractères encodés ;
+- SSL requis et révision Alembic `0003_jalon4_durable_shadow` ;
+- upgrade initial, downgrade contrôlé sur base vide, puis nouvel upgrade avant
+  toute écriture live ;
+- 6 bundles et 2 401 lignes cumulées examinés ;
+- 101 lignes métier uniques, 6 runs et 3 payloads bruts en base ;
+- 40 hashes validés, 0 manque, 0 écart de provenance, 0 démo comme live ;
+- taille : 11 943 936 octets, soit 2,39 % de 0,5 GB ;
+- retard `shadow-data` → PostgreSQL : 0 ligne.

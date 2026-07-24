@@ -8,7 +8,8 @@ Dernière mise à jour : 2026-07-24.
 | Understat | 0 | `UNVERIFIED` |
 | The Odds API | 8 crédits consommés, 19 992 restants | `LIVE_PIPELINE_VERIFIED` |
 | API-Football | adaptateur prêt, aucune souscription | `READY_NO_KEY` |
-| PostgreSQL local/CI | 0, conteneur éphémère | `VERIFIED` |
+| Neon PostgreSQL | 0 USD ; 11 943 936 octets, soit 2,39 % de 0,5 GB | `CONNECTED_AND_PERSISTED` |
+| PostgreSQL local/CI | 0, base SQLite/serveur éphémère | `VERIFIED` |
 | Stockage brut local | coût marginal local | `VERIFIED` |
 | GitHub Actions | 5 tâches bornées, 2 artifacts / 29 939 octets / 30 jours | `VERIFIED` |
 | Cockpit Sites | déploiement privé, aucun achat | `VERIFIED` |
@@ -17,10 +18,11 @@ Dernière mise à jour : 2026-07-24.
 
 ## Décision de stockage Jalon 4
 
-Neon PostgreSQL est recommandé : démarrage gratuit, mise en veille automatique,
-pooling et restauration temporelle. Le plan Free fournit 0,5 Go par projet et
-100 CU-heures mensuelles ; le plan Launch facture à l’usage et représente
-environ 15 USD/mois pour une petite base intermittente autour de 1 Go.
+Neon PostgreSQL est actif sur le plan Free : 0,5 GB par projet et
+100 CU-heures mensuelles selon la
+[tarification Neon](https://neon.com/pricing). Le plan Launch facture à l’usage
+et affiche un exemple typique d’environ 15 USD/mois pour une charge intermittente
+de 1 GB. Aucun passage payant n’est requis au volume actuel.
 
 Volume Ligue 1 estimé : 306 matchs × 9 fenêtres × environ 90 cotes, soit
 0,4–0,8 Go par saison après données brutes, lignes normalisées et index.

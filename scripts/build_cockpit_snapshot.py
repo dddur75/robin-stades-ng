@@ -121,7 +121,26 @@ def main() -> None:
     persistence = live["persistence"]
     idempotence = live["idempotence"]
     health = live["health"]
+    postgresql = durable["postgresql"]
+    double_write = durable["double_write"]
     quality_checks = [
+        {
+            "check": "PostgreSQL Neon",
+            "status": "PASS",
+            "value": (
+                f"{postgresql['registry_records']} lignes · "
+                f"révision {postgresql['migration_revision']}"
+            ),
+            "threshold": "connecté, migré et audité",
+            "origin": "LIVE SOURCE",
+        },
+        {
+            "check": "Double écriture durable",
+            "status": "PASS",
+            "value": double_write["latest_ack_backend"],
+            "threshold": "PostgreSQL + shadow-data",
+            "origin": "LIVE SOURCE",
+        },
         {
             "check": "Authentification The Odds API",
             "status": "PASS",
@@ -213,9 +232,9 @@ def main() -> None:
         "demoModeAvailable": True,
         "demoModeEnabled": False,
         "message": (
-            "Registre append-only actif et burn-in technique démarré. "
-            "PostgreSQL est prêt mais non configuré ; le pont shadow-data "
-            "empêche la dépendance exclusive aux Artifacts."
+            "PostgreSQL Neon et le registre append-only shadow-data sont "
+            "synchronisés. La double écriture et le replay sans fournisseur "
+            "sont vérifiés ; le burn-in reste statistiquement insuffisant."
         ),
         "metrics": {
             "fixtures": len(matches),
@@ -229,7 +248,7 @@ def main() -> None:
             "quotaUsed": quota["used_after_activation"],
             "quotaRemaining": quota["remaining_after_activation"],
             "migrationCoveragePct": round(migration.get("coverage", 0) * 100, 3),
-            "durableRecords": durable["migration"]["records_migrated"],
+            "durableRecords": postgresql["registry_records"],
             "rawPayloads": durable["migration"]["physical_payloads_migrated"],
             "windowCoveragePct": 0,
             "sloBreaches": 0,
@@ -278,6 +297,9 @@ def main() -> None:
         "idempotence": idempotence,
         "providers": live["providers"],
         "durableStorage": durable["storage"],
+        "postgresql": postgresql,
+        "doubleWrite": double_write,
+        "failureRecovery": durable["failure_recovery"],
         "migration": durable["migration"],
         "replay": durable["replay"],
         "burnIn": durable["burn_in"],

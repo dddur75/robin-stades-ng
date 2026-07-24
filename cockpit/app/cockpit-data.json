@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-24T14:27:50Z",
+  "generatedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
-  "shadowStatus": "SHADOW_BURN_IN_ACTIVE",
+  "shadowStatus": "SHADOW_COLLECTION_HARDENED",
   "productionStatus": "PRODUCTION_LOCKED",
   "demoModeAvailable": true,
   "demoModeEnabled": false,
-  "message": "Registre append-only actif et burn-in technique démarré. PostgreSQL est prêt mais non configuré ; le pont shadow-data empêche la dépendance exclusive aux Artifacts.",
+  "message": "PostgreSQL Neon et le registre append-only shadow-data sont synchronisés. La double écriture et le replay sans fournisseur sont vérifiés ; le burn-in reste statistiquement insuffisant.",
   "metrics": {
     "fixtures": 9,
     "snapshots": 2,
@@ -19,7 +19,7 @@
     "quotaUsed": 8,
     "quotaRemaining": 19992,
     "migrationCoveragePct": 98.668,
-    "durableRecords": 393,
+    "durableRecords": 101,
     "rawPayloads": 3,
     "windowCoveragePct": 0,
     "sloBreaches": 0
@@ -286,6 +286,20 @@
     }
   ],
   "qualityChecks": [
+    {
+      "check": "PostgreSQL Neon",
+      "status": "PASS",
+      "value": "101 lignes · révision 0003_jalon4_durable_shadow",
+      "threshold": "connecté, migré et audité",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Double écriture durable",
+      "status": "PASS",
+      "value": "POSTGRESQL_AND_GIT_DATA_BRIDGE",
+      "threshold": "PostgreSQL + shadow-data",
+      "origin": "LIVE SOURCE"
+    },
     {
       "check": "Authentification The Odds API",
       "status": "PASS",
@@ -718,13 +732,46 @@
   ],
   "durableStorage": {
     "target": "POSTGRESQL",
-    "target_status": "READY_NO_DATABASE_URL",
+    "target_status": "CONNECTED_AND_PERSISTED",
     "bridge": "GIT_DATA_BRANCH",
     "bridge_status": "ACTIVE_AND_VERIFIED",
+    "double_write_status": "POSTGRESQL_AND_GIT_DATA_BRIDGE",
     "artifacts_role": "EXECUTION_JOURNAL_AND_SHORT_RECOVERY",
     "bundle_format": "json.gz",
     "raw_object_format": "bin.gz",
     "append_only": true
+  },
+  "postgresql": {
+    "status": "CONNECTED_AND_PERSISTED",
+    "driver": "postgresql+psycopg",
+    "ssl_required": true,
+    "migration_revision": "0003_jalon4_durable_shadow",
+    "controlled_rollback_verified_before_live_writes": true,
+    "last_write": "2026-07-24T17:46:30.846055+00:00",
+    "registry_records": 101,
+    "ingestion_runs": 6,
+    "raw_payloads": 3,
+    "database_size_bytes": 11943936,
+    "free_plan_capacity_bytes": 500000000,
+    "capacity_used_pct": 2.39,
+    "bridge_lag_records": 0,
+    "audit_status": "PASSED"
+  },
+  "doubleWrite": {
+    "status": "DEMONSTRATED",
+    "collection_workflow_run": 30114121615,
+    "collection_records_inserted": 11,
+    "collection_duplicates_avoided": 1986,
+    "latest_ack_backend": "POSTGRESQL_AND_GIT_DATA_BRIDGE",
+    "latest_ack_commit": "d8e9be85b156ac2ca5d757fb7a78c3817f32ea4b"
+  },
+  "failureRecovery": {
+    "status": "PASSED",
+    "bridge_written_before_postgresql": true,
+    "incident_is_explicit": true,
+    "incident_deduplicated": true,
+    "controlled_replay_supported": true,
+    "silent_loss": 0
   },
   "migration": {
     "source_artifact": "shadow-state-30095263615",
@@ -742,6 +789,11 @@
   },
   "replay": {
     "status": "REPLAY_CONFIRMED",
+    "workflow_run": 30114240081,
+    "bundles_examined": 5,
+    "records_examined": 1997,
+    "records_inserted": 0,
+    "duplicates_avoided": 1997,
     "provider_calls": 0,
     "quota_consumed": 0,
     "bytes_identical": true
