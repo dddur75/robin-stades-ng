@@ -75,3 +75,22 @@ def test_doublon_et_donnee_future_echouent_clairement() -> None:
     )
     failed = {check.check_name for check in checks if check.status == CheckStatus.FAILED}
     assert failed == {"match_id_uniqueness", "future_data"}
+
+
+def test_reference_orpheline_est_bloquante_avec_un_registre() -> None:
+    frame = sample_frame()
+    frame["fixture_id"] = [f"fixture-{index}" for index in range(len(frame))]
+    known = set(frame["fixture_id"])
+    known.remove("fixture-4")
+
+    checks = run_match_checks(
+        frame,
+        audit_suspect_zeros(frame, provider="fixture"),
+        known_fixture_ids=known,
+    )
+    by_name = {check.check_name: check for check in checks}
+
+    assert by_name["orphan_fixture_references"].status == CheckStatus.FAILED
+    assert by_name["orphan_fixture_references"].affected_rows == 1
+    assert "score_distribution_anomaly" in by_name
+    assert "dataset_volume" in by_name

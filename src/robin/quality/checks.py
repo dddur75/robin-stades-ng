@@ -75,6 +75,7 @@ def run_match_checks(
     *,
     as_of_time: datetime | None = None,
     evidence_location: Path | None = None,
+    known_fixture_ids: set[str] | None = None,
 ) -> list[QualityCheckResult]:
     run_id = str(uuid4())
     started = datetime.now(UTC)
@@ -123,6 +124,32 @@ def run_match_checks(
         row for row in zero_audit if row.quality_status.value == "SUSPECT_ZERO"
     ]
     suspect_values = sum(row.zeros for row in suspect_segments)
+    if "fixture_id" not in frame.columns:
+        orphan_references = len(frame)
+        orphan_observation = "fixture_id absent du dataset legacy"
+        orphan_status = CheckStatus.WARNING
+    elif known_fixture_ids is None:
+        orphan_references = int(frame["fixture_id"].isna().sum())
+        orphan_observation = (
+            f"{orphan_references} fixture_id nuls ; registre non fourni pour les autres"
+        )
+        orphan_status = (
+            CheckStatus.FAILED if orphan_references else CheckStatus.WARNING
+        )
+    else:
+        fixture_ids = frame["fixture_id"].astype("string")
+        orphan_mask = fixture_ids.isna() | ~fixture_ids.isin(known_fixture_ids)
+        orphan_references = int(orphan_mask.sum())
+        orphan_observation = f"{orphan_references} références fixture orphelines"
+        orphan_status = (
+            CheckStatus.PASSED if orphan_references == 0 else CheckStatus.FAILED
+        )
+    total_goals = pd.to_numeric(frame["fthg"], errors="coerce") + pd.to_numeric(
+        frame["ftag"], errors="coerce"
+    )
+    extreme_score_rows = int((total_goals > 8).sum())
+    extreme_score_ratio = extreme_score_rows / len(frame) if len(frame) else 0.0
+    unusual_volume = len(frame) < 1_000 or len(frame) > 1_000_000
 
     return [
         _result(
@@ -270,6 +297,46 @@ def run_match_checks(
             ),
             expected="provider et observation brute traçables",
             affected=0 if "provider" in frame.columns else len(frame),
+            started=started,
+            evidence=evidence,
+        ),
+        _result(
+            name="orphan_fixture_references",
+            run_id=run_id,
+            status=orphan_status,
+            severity=Severity.CRITICAL,
+            observed=orphan_observation,
+            expected="chaque fixture_id référence une entité interne connue",
+            affected=orphan_references,
+            started=started,
+            evidence=evidence,
+        ),
+        _result(
+            name="score_distribution_anomaly",
+            run_id=run_id,
+            status=(
+                CheckStatus.WARNING
+                if extreme_score_ratio > 0.05
+                else CheckStatus.PASSED
+            ),
+            severity=Severity.MEDIUM,
+            observed=(
+                f"{extreme_score_rows} matchs au-dessus de 8 buts "
+                f"({extreme_score_ratio:.2%})"
+            ),
+            expected="au plus 5 % de scores extrêmes",
+            affected=extreme_score_rows if extreme_score_ratio > 0.05 else 0,
+            started=started,
+            evidence=evidence,
+        ),
+        _result(
+            name="dataset_volume",
+            run_id=run_id,
+            status=CheckStatus.WARNING if unusual_volume else CheckStatus.PASSED,
+            severity=Severity.HIGH,
+            observed=f"{len(frame)} lignes",
+            expected="volume historique compris entre 1 000 et 1 000 000 lignes",
+            affected=len(frame) if unusual_volume else 0,
             started=started,
             evidence=evidence,
         ),

@@ -48,6 +48,9 @@ def write_health_dashboard(
 ) -> None:
     failures = sum(check.status.value == "FAILED" for check in checks)
     warnings = sum(check.status.value == "WARNING" for check in checks)
+    affected_rows = sum(check.affected_rows for check in checks)
+    current_run = checks[0].run_id if checks else "indisponible"
+    current_started = checks[0].started_at.isoformat() if checks else "indisponible"
     rows = []
     for check in checks:
         rows.append(
@@ -84,9 +87,12 @@ th,td{{padding:10px;border-bottom:1px solid var(--line);text-align:left}}th{{col
 section{{margin-top:24px}}@media(max-width:760px){{.grid{{grid-template-columns:1fr}}main{{padding:18px}}}}
 </style></head><body><main><h1>Robin des Stades · Santé Data</h1>
 <div class="sub">Jalon 1 · généré le {datetime.now(UTC).isoformat()} · PRODUCTION_LOCKED</div>
-<div class="grid"><div class="card"><div class="sub">Contrôles</div><div class="metric">{len(checks)}</div></div>
+<div class="grid"><div class="card"><div class="sub">Pipeline qualité</div><div class="metric">{'FAILED' if failures else 'HEALTHY'}</div></div>
 <div class="card"><div class="sub">Échecs critiques</div><div class="metric failed">{failures}</div></div>
-<div class="card"><div class="sub">Alertes</div><div class="metric warning">{warnings}</div></div></div>
+<div class="card"><div class="sub">Alertes / lignes affectées</div><div class="metric warning">{warnings} / {affected_rows:,}</div></div></div>
+<section class="card"><h2>Exécution récente</h2>
+<p><strong>Run</strong> {html.escape(current_run)} · <strong>Démarré</strong> {html.escape(current_started)}
+· <strong>Contrôles</strong> {len(checks)}</p></section>
 <section class="card"><h2>Contrôles</h2><table><thead><tr><th>Contrôle</th><th>Statut</th>
 <th>Sévérité</th><th>Observation</th><th>Lignes</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
 <section class="card"><h2>Zéros suspects</h2><table><thead><tr><th>Compétition</th><th>Saison</th>
@@ -128,4 +134,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
