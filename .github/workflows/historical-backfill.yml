@@ -1,5 +1,13 @@
 name: "21 - Backfill historique"
 on:
+  push:
+    branches:
+      - codex/jalon-5-deep-data-factory
+    paths:
+      - "src/robin/historical/**"
+      - "src/robin/providers/api_football.py"
+      - "scripts/run_historical_pipeline.py"
+      - ".github/workflows/historical-backfill.yml"
   workflow_dispatch:
     inputs:
       pilot:
@@ -47,7 +55,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: historical-state
+  group: shadow-state
   cancel-in-progress: false
 jobs:
   backfill:
@@ -62,14 +70,14 @@ jobs:
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
       - name: Créer le plan s'il est absent
-        if: inputs.pilot != true
+        if: github.event_name != 'push' && inputs.pilot != true
         run: |
           if [ ! -f data/historical/tasks/backfill-plan.json ]; then
             python scripts/run_historical_pipeline.py \
               --run-id "${{ github.run_id }}" plan
           fi
       - name: Exécuter le pilote
-        if: inputs.pilot == true
+        if: github.event_name == 'push' || inputs.pilot == true
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: |
@@ -80,8 +88,14 @@ jobs:
           python scripts/run_historical_pipeline.py \
             --run-id "${{ github.run_id }}" \
             plan --include-secondary
+          if [ "${{ github.event_name }}" = "push" ]; then
+            python scripts/run_historical_pipeline.py \
+              --run-id "${{ github.run_id }}-first-batch" \
+              --max-calls 250 \
+              backfill --max-tasks 25 --priority A
+          fi
       - name: Exécuter un lot borné
-        if: inputs.pilot != true && inputs.dry_run != true
+        if: github.event_name != 'push' && inputs.pilot != true && inputs.dry_run != true
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: >-

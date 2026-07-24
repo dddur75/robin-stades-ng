@@ -1,5 +1,13 @@
 name: "20 - Couverture API-Football"
 on:
+  push:
+    branches:
+      - codex/jalon-5-deep-data-factory
+    paths:
+      - "src/robin/historical/**"
+      - "src/robin/providers/api_football.py"
+      - "scripts/run_historical_pipeline.py"
+      - ".github/workflows/api-football-coverage.yml"
   workflow_dispatch:
     inputs:
       max_calls:
@@ -15,7 +23,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: historical-state
+  group: shadow-state
   cancel-in-progress: false
 jobs:
   coverage:

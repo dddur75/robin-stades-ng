@@ -517,6 +517,28 @@ def command_plan(args: argparse.Namespace) -> None:
         if item.get("provider_id") is not None
     }
     tasks = build_backfill_plan(validated, include_secondary=args.include_secondary)
+    pilot = read_json(args.state / "runs" / "pilot-ligue-1-2025.json", {})
+    pilot_endpoints = {
+        str(report.get("endpoint"))
+        for report in pilot.get("endpoints", [])
+        if report.get("status") == "COMPLETED"
+    }
+    if pilot.get("status") == "HISTORICAL_PILOT_VERIFIED":
+        for index, task in enumerate(tasks):
+            if (
+                task.competition_id == validated.get("Ligue 1")
+                and task.season == 2025
+                and task.endpoint in pilot_endpoints
+            ):
+                tasks[index] = task.model_copy(
+                    update={
+                        "status": "COMPLETED",
+                        "completed_at": datetime.fromisoformat(
+                            str(pilot["finished_at"]).replace("Z", "+00:00")
+                        ),
+                        "coverage_status": "AVAILABLE",
+                    }
+                )
     payload = {
         "generated_at": now_iso(),
         "status": "HISTORICAL_BACKFILL_ACTIVE",
