@@ -1,0 +1,15 @@
+{
+  "observation_id": "0f044ea7-acc0-42a5-883d-3d6ff725ff93",
+  "provider": "api-football",
+  "endpoint": "players/squads",
+  "request_parameters": {
+    "team": 1301
+  },
+  "requested_at": "2026-07-24T22:07:54.133396Z",
+  "received_at": "2026-07-24T22:07:54.272993Z",
+  "http_status": 200,
+  "payload_hash": "bdba9a68ac9d99e98c850c0d05e21fe0bc816253acff18d15f46e89c2b13cf1c",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753",
+  "raw_payload_location": "bd/bdba9a68ac9d99e98c850c0d05e21fe0bc816253acff18d15f46e89c2b13cf1c.bin.gz"
+}

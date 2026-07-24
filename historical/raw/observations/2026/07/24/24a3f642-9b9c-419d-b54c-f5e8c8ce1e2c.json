@@ -1,0 +1,15 @@
+{
+  "observation_id": "24a3f642-9b9c-419d-b54c-f5e8c8ce1e2c",
+  "provider": "api-football",
+  "endpoint": "leagues",
+  "request_parameters": {
+    "search": "Premier League"
+  },
+  "requested_at": "2026-07-24T22:07:38.355398Z",
+  "received_at": "2026-07-24T22:07:38.485392Z",
+  "http_status": 200,
+  "payload_hash": "c382e42beee09c28deba695dd3192474d9f816579551f0e9c18b22264f9994c5",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753",
+  "raw_payload_location": "c3/c382e42beee09c28deba695dd3192474d9f816579551f0e9c18b22264f9994c5.bin.gz"
+}

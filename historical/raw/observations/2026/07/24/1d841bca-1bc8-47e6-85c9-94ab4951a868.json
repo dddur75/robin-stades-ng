@@ -1,0 +1,17 @@
+{
+  "observation_id": "1d841bca-1bc8-47e6-85c9-94ab4951a868",
+  "provider": "api-football",
+  "endpoint": "players",
+  "request_parameters": {
+    "league": 61,
+    "season": 2024,
+    "page": 21
+  },
+  "requested_at": "2026-07-24T22:11:01.807621Z",
+  "received_at": "2026-07-24T22:11:01.984522Z",
+  "http_status": 200,
+  "payload_hash": "901226d5403f466caec02a4dcf1a0de825b3f83697aec8d1e5a7a5f35dc45338",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753-first-batch",
+  "raw_payload_location": "90/901226d5403f466caec02a4dcf1a0de825b3f83697aec8d1e5a7a5f35dc45338.bin.gz"
+}

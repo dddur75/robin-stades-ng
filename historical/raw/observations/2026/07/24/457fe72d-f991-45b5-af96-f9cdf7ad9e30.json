@@ -1,0 +1,16 @@
+{
+  "observation_id": "457fe72d-f991-45b5-af96-f9cdf7ad9e30",
+  "provider": "api-football",
+  "endpoint": "injuries",
+  "request_parameters": {
+    "league": 61,
+    "season": 2023
+  },
+  "requested_at": "2026-07-24T22:11:07.327100Z",
+  "received_at": "2026-07-24T22:11:07.619479Z",
+  "http_status": 200,
+  "payload_hash": "78f47bdc5b9494be69d27321d5e1e589778666f8c161f1782976fa5ba08b66be",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753-first-batch",
+  "raw_payload_location": "78/78f47bdc5b9494be69d27321d5e1e589778666f8c161f1782976fa5ba08b66be.bin.gz"
+}

@@ -1,0 +1,15 @@
+{
+  "observation_id": "7fb93bdb-e469-464b-847f-904eb770bcdd",
+  "provider": "api-football",
+  "endpoint": "fixtures/statistics",
+  "request_parameters": {
+    "fixture": 1387993
+  },
+  "requested_at": "2026-07-24T22:10:46.728036Z",
+  "received_at": "2026-07-24T22:10:46.859204Z",
+  "http_status": 200,
+  "payload_hash": "e07365726240fc54bb3220da0b55098350974202d2485b46d70130f7ff542283",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753",
+  "raw_payload_location": "e0/e07365726240fc54bb3220da0b55098350974202d2485b46d70130f7ff542283.bin.gz"
+}
