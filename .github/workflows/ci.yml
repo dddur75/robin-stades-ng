@@ -74,10 +74,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22.13.0"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.9.0"
       - name: Compiler et tester le Cockpit V1
         working-directory: cockpit
         run: |
-          corepack enable
-          corepack prepare pnpm@11.9.0 --activate
           pnpm install --frozen-lockfile
           pnpm test
