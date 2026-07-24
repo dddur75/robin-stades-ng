@@ -55,7 +55,8 @@ def preparer(data_dir, cfg):
                   "pc_o25", "pc_u25", "p_o25", "p_u25", "hy", "ay", "hr", "ar"]
     cols_match = [c for c in cols_match if c in matchs.columns]
     mm = matchs[cols_match].copy()
-    mm["cartons_tot"] = mm[[c for c in ("hy", "ay", "hr", "ar") if c in mm]].sum(axis=1)
+    card_cols = [c for c in ("hy", "ay", "hr", "ar") if c in mm]
+    mm["cartons_tot"] = mm[card_cols].sum(axis=1, min_count=len(card_cols))
     feats = feats.merge(mm, on="match_id", how="left")
     return matchs, feats, holdout, n_avant - len(matchs)
 

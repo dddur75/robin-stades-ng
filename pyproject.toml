@@ -9,23 +9,47 @@ description = "Laboratoire reproductible d'analyse statistique du football"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+  "alembic>=1.14,<2",
   "numpy>=1.26",
   "pandas>=2.2",
+  "pydantic>=2.9,<3",
+  "psycopg[binary]>=3.2,<4",
   "pyarrow>=15",
   "PyYAML>=6.0",
   "requests>=2.31",
+  "SQLAlchemy>=2.0,<3",
 ]
 
 [project.optional-dependencies]
 dev = [
+  "bandit>=1.8",
+  "ipykernel>=6.29",
+  "mypy>=1.13",
+  "nbclient>=0.10",
+  "nbformat>=5.10",
+  "pandas-stubs>=2.2",
   "pytest>=8.0",
+  "ruff>=0.9",
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["agents*", "moteur*"]
+where = ["src"]
+include = ["robin*"]
 namespaces = true
 
 [tool.pytest.ini_options]
 addopts = "-ra"
 testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["robin"]
+mypy_path = "src"

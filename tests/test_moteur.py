@@ -112,6 +112,35 @@ def test_collecte_preserve_statistiques_manquantes(tmp_path, monkeypatch):
     assert resultat[inconnues].isna().all().all()
 
 
+def test_total_cartons_exige_toutes_les_composantes(tmp_path):
+    """Une carte manquante ne doit pas produire un faux total partiel ou nul."""
+    import yaml
+
+    from agents.agent_backtest import preparer
+
+    df = genere(saisons=("2024-25",), n_eq=4)
+    df.loc[0, "hy"] = np.nan
+    (tmp_path / "data").mkdir()
+    df.to_parquet(tmp_path / "data" / "matches.parquet", index=False)
+    cfg = {
+        "holdout_seasons": [],
+        "ligues": {
+            "XX": {
+                "zones": {
+                    "releg_spots": 1,
+                    "promo_spots": 0,
+                    "europe_spots": 1,
+                }
+            }
+        },
+    }
+    yaml.safe_dump(cfg, (tmp_path / "config.yaml").open("w"))
+
+    _, features, _, _ = preparer(tmp_path / "data", cfg)
+
+    assert features.loc[features["match_id"] == df.loc[0, "match_id"], "cartons_tot"].isna().all()
+
+
 def test_enjeu_relegation_math():
     lignes = []
     equipes = ["A", "B", "C", "D"]
