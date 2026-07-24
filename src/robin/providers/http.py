@@ -219,6 +219,21 @@ class JsonHttpProvider:
             payload = response.json()
         except (ValueError, json.JSONDecodeError) as exc:
             raise TransientProviderError("réponse JSON invalide") from exc
+        if isinstance(payload, dict) and payload.get("errors"):
+            return ProviderResult(
+                provider=self.provider_name,
+                endpoint=endpoint,
+                availability=DataAvailability.ERROR,
+                observed_at=received_at,
+                origin=DataOrigin.LIVE_SOURCE,
+                raw_observation_id=raw_id,
+                raw_payload_hash=raw_payload_hash,
+                quota=quota,
+                http_status=response.status_code,
+                requested_at=requested_at,
+                received_at=received_at,
+                message="provider_response_errors",
+            )
         records: tuple[dict[str, Any], ...]
         paging_current = 1
         paging_total = 1

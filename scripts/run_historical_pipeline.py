@@ -16,6 +16,8 @@ from uuid import uuid4
 
 import pandas as pd
 from sqlalchemy import insert, inspect, select, update
+from sqlalchemy.dialects.postgresql import insert as postgresql_insert
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
 from robin.historical.features import (
     assert_temporal_integrity,
@@ -236,11 +238,7 @@ class HistoricalRunner:
         for target in COMPETITION_TARGETS:
             result = self._fetch(
                 "leagues",
-                {
-                    "search": target.search,
-                    "country": target.country,
-                    "season": 2025,
-                },
+                {"search": target.search},
             )
             selected = select_validated_competition(
                 result.records,
@@ -314,7 +312,11 @@ def command_coverage(args: argparse.Namespace) -> None:
     write_json_atomic(CONTRACT, matrix)
     proof = {
         **authentication,
-        "status": "API_FOOTBALL_LIVE_PIPELINE_VERIFIED",
+        "status": (
+            "API_FOOTBALL_LIVE_PIPELINE_VERIFIED"
+            if len(validated) == len(COMPETITION_TARGETS)
+            else "API_FOOTBALL_AUTHENTICATED"
+        ),
         "validated_competitions": validated,
         "calls": runner.calls,
         "quota_remaining": runner.quota_remaining,
@@ -324,6 +326,8 @@ def command_coverage(args: argparse.Namespace) -> None:
     write_json_atomic(args.state / "proofs" / "api-football-live.json", proof)
     write_json_atomic(PROOF, proof)
     print(json.dumps(proof, ensure_ascii=False, sort_keys=True))
+    if len(validated) != len(COMPETITION_TARGETS):
+        raise RuntimeError("COMPETITION_VALIDATION_FAILED")
 
 
 def command_contract(_: argparse.Namespace) -> None:
@@ -895,8 +899,52 @@ def command_persist(args: argparse.Namespace) -> None:
             )
             updated += 1
 
+    def bulk_upsert(
+        connection: Any,
+        table: Any,
+        key_column: Any,
+        rows: list[dict[str, object]],
+    ) -> None:
+        nonlocal inserted, updated
+        if not rows:
+            return
+        keys = [row[key_column.name] for row in rows]
+        existing = set(
+            connection.execute(
+                select(key_column).where(key_column.in_(keys))
+            ).scalars()
+        )
+        updated += len(existing)
+        inserted += len(rows) - len(existing)
+        if connection.dialect.name == "postgresql":
+            statement = postgresql_insert(table).values(rows)
+        elif connection.dialect.name == "sqlite":
+            statement = sqlite_insert(table).values(rows)
+        else:
+            for row in rows:
+                upsert(
+                    connection,
+                    table,
+                    key_column,
+                    row[key_column.name],
+                    row,
+                )
+            return
+        replacement = {
+            column.name: getattr(statement.excluded, column.name)
+            for column in table.c
+            if column.name != key_column.name
+        }
+        connection.execute(
+            statement.on_conflict_do_update(
+                index_elements=[key_column.name],
+                set_=replacement,
+            )
+        )
+
     with engine.begin() as connection:
         matrix = read_json(args.state / "coverage" / "matrix.json", [])
+        coverage_rows: list[dict[str, object]] = []
         for row in matrix:
             scope = (
                 f"{row['competition']}:{row['season']}:{row['endpoint']}"
@@ -920,7 +968,13 @@ def command_persist(args: argparse.Namespace) -> None:
                     str(row["last_checked_at"]).replace("Z", "+00:00")
                 ),
             }
-            upsert(connection, api_football_coverage, api_football_coverage.c.id, row_id, values)
+            coverage_rows.append(values)
+        bulk_upsert(
+            connection,
+            api_football_coverage,
+            api_football_coverage.c.id,
+            coverage_rows,
+        )
 
         pilot = read_json(args.state / "runs" / "pilot-ligue-1-2025.json", {})
         if pilot:
@@ -951,6 +1005,7 @@ def command_persist(args: argparse.Namespace) -> None:
             )
 
         plan = read_json(args.state / "tasks" / "backfill-plan.json", {})
+        task_rows: list[dict[str, object]] = []
         for task in plan.get("tasks", []):
             task_values = {
                 **task,
@@ -970,13 +1025,13 @@ def command_persist(args: argparse.Namespace) -> None:
                     else None
                 ),
             }
-            upsert(
-                connection,
-                historical_backfill_tasks,
-                historical_backfill_tasks.c.task_id,
-                task["task_id"],
-                task_values,
-            )
+            task_rows.append(task_values)
+        bulk_upsert(
+            connection,
+            historical_backfill_tasks,
+            historical_backfill_tasks.c.task_id,
+            task_rows,
+        )
 
         for path, table in (
             (args.state / "datasets" / "team_baseline_v1.json", dataset_versions),

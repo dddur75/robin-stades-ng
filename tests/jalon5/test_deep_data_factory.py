@@ -102,6 +102,27 @@ def test_adaptateur_api_football_pilote_les_identifiants_reels() -> None:
     assert "secret-test" not in json.dumps(transport.calls)
 
 
+def test_erreur_metier_http_200_est_un_echec_sans_fuite() -> None:
+    class ErrorTransport:
+        def get(self, *_: Any, **__: Any) -> FakeResponse:
+            return FakeResponse(
+                {
+                    "errors": {"season": "combinaison invalide"},
+                    "paging": {"current": 1, "total": 1},
+                    "response": [],
+                }
+            )
+
+    provider = ApiFootballProvider(
+        api_key="secret-invalid",
+        transport=ErrorTransport(),
+    )
+    response = provider.get_competitions(search="Ligue 1", season=2025)
+    assert response.availability == DataAvailability.ERROR
+    assert response.message == "provider_response_errors"
+    assert "secret-invalid" not in response.model_dump_json()
+
+
 def test_pagination_une_et_plusieurs_pages(tmp_path: Path) -> None:
     calls: list[int] = []
 
