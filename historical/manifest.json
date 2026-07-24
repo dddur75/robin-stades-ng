@@ -47,6 +47,7 @@
     "parquet/competition=Ligue-1/season=2025/entity_type=teams_statistics/dataset_version=api-football-v3/part-00000.parquet": "c2c75dc0a38c52ae4b239d7dc130f4f8348f014ff5524fa66734708dc439a4af",
     "proofs/api-football-live.json": "3b5301709bb4fd46159a43e214a542b2602c2cd90929afd5ca4afa1c8feb8474",
     "proofs/authentication.json": "1542e5ba6c4a6398b7a9bece60108b7dccb42a101b91c6b55a90275e2b6c160e",
+    "proofs/postgresql.json": "9baf933d399845b214c938c780ed12932c5d4ba31e5881bd9099a58bc544b224",
     "raw/observations/2026/07/24/0017ecb4-490f-42d3-b0d7-80a0bda610b3.json": "b9ad5a6d6dcba25d96bf96c12098ccedd06aec1760654cbda3a9298bb1bc079b",
     "raw/observations/2026/07/24/0020fe54-5c28-4604-b7af-cca64e2f810e.json": "fc56d4349ca2c6c7f8dd4f25bfb665c968b341bc9890d332b49f0ada5e654588",
     "raw/observations/2026/07/24/0021032a-a9da-4b6e-9603-008494394f31.json": "8b1fbe3edb059a659dd4f1748678fbf94cf24b8fdf4c71f278e8bfba275f9eaf",
