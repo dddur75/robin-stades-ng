@@ -1,0 +1,15 @@
+{
+  "observation_id": "1997b8c4-d31e-4a0c-9284-22a9a1418d6f",
+  "provider": "api-football",
+  "endpoint": "leagues",
+  "request_parameters": {
+    "search": "Champions League"
+  },
+  "requested_at": "2026-07-24T22:12:38.274948Z",
+  "received_at": "2026-07-24T22:12:38.408356Z",
+  "http_status": 200,
+  "payload_hash": "da20ddfd7ddc7224c1e1211db25dc8a1e18bfbfdec575e74a47f5e013ea73999",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958789",
+  "raw_payload_location": "da/da20ddfd7ddc7224c1e1211db25dc8a1e18bfbfdec575e74a47f5e013ea73999.bin.gz"
+}
