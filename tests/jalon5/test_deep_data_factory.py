@@ -31,7 +31,11 @@ from robin.storage.database import build_engine
 from robin.storage.models import Base
 from scripts.build_cockpit_snapshot import sanitize_public_snapshot
 from scripts.manage_historical_state import append_state, restore_state, verify_state
-from scripts.run_historical_pipeline import batched_rows, command_persist
+from scripts.run_historical_pipeline import (
+    batched_rows,
+    command_persist,
+    command_pilot,
+)
 
 
 def result(
@@ -510,3 +514,37 @@ def test_persistance_compte_une_table_sans_colonne_id(
     proof = json.loads((state / "proofs" / "postgresql.json").read_text("utf-8"))
     assert proof["status"] == "POSTGRESQL_CONNECTED"
     assert proof["table_counts"]["historical_backfill_tasks"] == len(tasks)
+
+
+def test_replay_pilote_ne_rappelle_pas_le_fournisseur(
+    tmp_path: Path,
+    monkeypatch: Any,
+) -> None:
+    state = tmp_path / "state"
+    summary = state / "runs" / "pilot-ligue-1-2025.json"
+    summary.parent.mkdir(parents=True)
+    summary.write_text(
+        json.dumps(
+            {
+                "status": "HISTORICAL_PILOT_VERIFIED",
+                "run_id": "live-run",
+                "finished_at": "2026-07-24T22:11:34+00:00",
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.delenv("API_FOOTBALL_KEY", raising=False)
+    command_pilot(
+        argparse.Namespace(
+            state=state,
+            force=False,
+            run_id="replay-run",
+            max_calls=1_500,
+            quota_reserve=100,
+        )
+    )
+    proof = json.loads((state / "proofs" / "pilot-replay.json").read_text("utf-8"))
+    assert proof["status"] == "PILOT_REPLAY_VERIFIED"
+    assert proof["provider_calls"] == 0
+    assert proof["quota_consumed"] == 0
+    assert proof["business_rows_inserted"] == 0

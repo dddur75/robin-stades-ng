@@ -369,13 +369,19 @@ def command_pilot(args: argparse.Namespace) -> None:
     summary_path = args.state / "runs" / "pilot-ligue-1-2025.json"
     previous = read_json(summary_path, {})
     if previous.get("status") == "HISTORICAL_PILOT_VERIFIED" and not args.force:
-        print(
-            json.dumps(
-                {**previous, "replay": True, "provider_calls": 0},
-                ensure_ascii=False,
-                sort_keys=True,
-            )
-        )
+        replay_proof = {
+            "status": "PILOT_REPLAY_VERIFIED",
+            "run_id": args.run_id,
+            "source_run_id": previous.get("run_id"),
+            "source_finished_at": previous.get("finished_at"),
+            "provider_calls": 0,
+            "quota_consumed": 0,
+            "business_rows_inserted": 0,
+            "duplicates_created": 0,
+            "production_status": "PRODUCTION_LOCKED",
+        }
+        write_json_atomic(args.state / "proofs" / "pilot-replay.json", replay_proof)
+        print(json.dumps(replay_proof, ensure_ascii=False, sort_keys=True))
         return
     runner = HistoricalRunner(
         state=args.state,
