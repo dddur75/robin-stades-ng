@@ -1,70 +1,56 @@
 # Sources de données
 
-Audit initial : 2026-07-24.
+Dernière revue : 2026-07-24.
 
 ## Football-Data.co.uk
 
-Statut : `PARTIAL` — source historique principale actuelle.
+Statut : `PARTIAL` — source historique principale.
 
-- Accès : CSV publics gratuits.
-- Usage actuel : résultats, statistiques de match et cotes historiques.
-- Couverture locale observée : 36 423 matchs, 9 ligues, 11 saisons, du
-  2015-07-31 au 2026-05-24.
-- Fraîcheur annoncée par la source : au moins deux mises à jour par semaine.
-- Historique annoncé : résultats depuis 1993/94 selon les compétitions, cotes et
-  statistiques sur une période plus courte.
-- Limite critique : Football-Data signale que les cotes Pinnacle sont devenues
-  systématiquement obsolètes depuis le 2025-07-23 et recommande la prudence.
-- Licence/conditions : accès gratuit annoncé ; droits de redistribution et
-  conservation à clarifier avant toute diffusion publique de données dérivées.
-- Décision : conserver pour le prototype et les baselines historiques, sans
-  considérer Pinnacle comme une clôture fiable après le 2025-07-23.
+- couverture locale : 36 423 matchs, 9 ligues, 11 saisons, du 2015-07-31 au
+  2026-05-24 ;
+- usage : résultats, statistiques de match et cotes historiques ;
+- limite : le dataset legacy ne conserve ni réponse brute, ni heure précise
+  d'observation des cotes, ni provenance par ligne ;
+- risque : 24 segments et 7 936 valeurs sont classés `SUSPECT_ZERO` ;
+- décision : conserver pour audit et baselines, exclure les valeurs suspectes des
+  modèles concernés, puis recollecter via le stockage brut append-only ;
+- vigilance : les cotes Pinnacle sont signalées obsolètes par la source depuis le
+  2025-07-23.
 
-Référence officielle :
-https://www.football-data.co.uk/data.php
+Référence : https://www.football-data.co.uk/data.php
 
 ## Understat
 
-Statut : `UNVERIFIED` — enrichissement xG en mode best effort.
+Statut : `UNVERIFIED` — enrichissement xG best effort.
 
-- Accès actuel : extraction HTML non officielle dans `agents/agent_understat.py`.
-- Couverture visée : cinq grands championnats.
-- Données : xG agrégé au niveau match.
-- Limites : scraping fragile, schéma non contractuel, absence de SLA et conditions
-  de réutilisation non validées dans le dépôt.
-- Décision : ne jamais en faire une dépendance bloquante ; remplacer par une source
-  contractuelle ou ouverte dont la licence est explicite avant production.
+- extraction HTML non officielle dans `agents/agent_understat.py` ;
+- schéma et disponibilité sans contrat ni SLA ;
+- aucune dépendance bloquante ne doit reposer sur cette source ;
+- toute future observation devra respecter le contrat brut immuable.
 
 ## The Odds API
 
-Statut : `PARTIAL` — source prospective déjà configurée.
+Statut : `PARTIAL` — source prospective configurée, sans archive réelle.
 
-- Accès : API JSON v4 ; secret GitHub `ODDS_API_KEY` présent.
-- Usage actuel : événements et snapshots de marchés pour neuf compétitions.
-- Coût officiel observé le 2026-07-24 : gratuit 500 crédits/mois ; 20 000 crédits
-  à 30 USD/mois ; paliers supérieurs disponibles.
-- Comptage officiel : coût principalement déterminé par le nombre de marchés et
-  de régions demandés ; les réponses exposent les crédits utilisés et restants.
-- Garde-fou local : plafond de 15 000 crédits/mois et arrêt si moins de
-  500 crédits restent.
-- État réel : 86 événements figurent dans le ledger, mais aucun snapshot
-  `odds_*.parquet` n'est encore archivé et le compteur local de juillet vaut zéro.
-- Décision : conserver en mode prospectif surveillé ; aucune augmentation de plan
-  sans validation explicite.
+- le secret `ODDS_API_KEY` existe déjà dans GitHub Actions ;
+- 86 événements figurent dans le ledger historique, mais aucun
+  `odds_*.parquet` réel n'est archivé au 2026-07-24 ;
+- plafond local : 15 000 crédits par mois, arrêt sous 500 crédits ;
+- le Jalon 1 fournit le schéma de snapshot, l'interface fournisseur, les règles
+  d'idempotence et un mock complet ; aucune nouvelle clé ou souscription requise ;
+- une clé active débloquera les observations réelles, pas la mise automatique ni
+  la validation d'une stratégie.
 
-Références officielles :
-https://the-odds-api.com/
+Références : https://the-odds-api.com/ et
 https://the-odds-api.com/liveapi/guides/v4/
 
-## Politique d'intégration
+## Contrat commun d'intégration
 
 Toute nouvelle source doit fournir :
 
-- identifiant fournisseur stable ;
-- horodatage de collecte et de validité ;
-- stockage brut immuable ;
-- version du schéma ;
-- licence ou conditions vérifiées ;
-- limites et coût ;
-- table de correspondance des entités ;
-- contrôles de couverture, fraîcheur et cohérence.
+- identifiants fournisseur stables et correspondances vers UUID internes ;
+- `requested_at`, `received_at`, `observed_at`, version de schéma et run ;
+- payload brut immuable, hashé et rejouable ;
+- paramètres expurgés de tout secret ;
+- conditions d'utilisation, limites et coût documentés ;
+- contrôles de volume, fraîcheur, cohérence, conflits et identités non résolues.

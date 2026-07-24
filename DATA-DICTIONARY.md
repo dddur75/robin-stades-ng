@@ -1,55 +1,81 @@
 # Dictionnaire de données
 
-Statut : `PARTIAL`
+Statut : `VERIFIED` pour le schéma Jalon 1 ; `PARTIAL` pour la migration du
+dataset historique.
 
-## Dataset historique actuel — `data/matches.parquet`
+## Instants temporels
 
-Grain : un match terminé par ligne.
-Clé actuelle : `match_id`.
-Couverture auditée : 36 423 lignes, 27 colonnes, 9 ligues, 11 saisons.
+Tous les instants normalisés sont UTC.
 
-| Champ | Sens | Disponibilité temporelle |
-|---|---|---|
-| `match_id` | Identifiant construit du match | après normalisation |
-| `league` | Code Football-Data de la compétition | avant match |
-| `season` | Saison normalisée `YYYY-YY` | avant match |
-| `date` | Date du match | avant match |
-| `home`, `away` | Équipes domicile et extérieur | avant match |
-| `fthg`, `ftag` | Buts fin de match | après match uniquement |
-| `hthg`, `htag` | Buts à la mi-temps | après match uniquement |
-| `referee` | Arbitre | disponibilité variable |
-| `hy`, `ay`, `hr`, `ar` | Cartons | après match uniquement |
-| `hc`, `ac` | Corners | après match uniquement |
-| `psh`, `psd`, `psa` | Cotes 1X2 disponibles | horodatage source insuffisant |
-| `psch`, `pscd`, `psca` | Cotes 1X2 dites de clôture | fiabilité à qualifier |
-| `p_o25`, `p_u25` | Cotes Over/Under 2,5 | horodatage source insuffisant |
-| `pc_o25`, `pc_u25` | Cotes Over/Under 2,5 dites de clôture | fiabilité à qualifier |
-
-Qualité observée au 2026-07-24 :
-
-- arbitre manquant : 71,86 % ;
-- cotes 1X2 manquantes : 4,58 % à 4,80 % selon le snapshot ;
-- cotes Over/Under 2,5 manquantes : 41,76 % à 41,88 % ;
-- mi-temps, cartons et corners affichent 0 % de valeurs manquantes, mais ce taux
-  n'est pas fiable : l'ancienne collecte remplaçait les valeurs absentes par zéro.
-
-Une valeur manquante ne doit jamais être assimilée à zéro sans règle explicite et
-testée. La collecte est corrigée, mais le fichier actuel devra être reconstruit
-après conservation des CSV bruts et ajout d'un manifeste de provenance.
-
-## Métriques existantes
-
-| Métrique | Définition |
+| Champ | Définition |
 |---|---|
-| probabilité dé-viggée | inverse des cotes, puis correction proportionnelle ou Shin |
-| lift | différence entre taux conditionnel et référence choisie |
-| edge | probabilité estimée moins probabilité implicite juste |
-| ROI flat | somme des gains pour des mises unitaires divisée par le nombre de paris |
-| FDR | correction Benjamini-Hochberg sur une famille de tests |
+| `fixture_created_at` | première connaissance interne du match |
+| `fixture_kickoff_at` | coup d'envoi prévu pour la version du fixture |
+| `data_observed_at` | instant où l'information est vraie/observable à la source |
+| `data_ingested_at` | instant de réception dans le système |
+| `prediction_generated_at` | instant immuable de création de la prédiction |
+| `odds_observed_at` | instant de lecture de la cote |
+| `lineup_confirmed_at` | instant de confirmation de composition |
+| `result_confirmed_at` | instant de confirmation du résultat |
 
-## Entités cibles absentes
+Une feature exige `data_observed_at < as_of_time`.
 
-Fournisseur, compétition, saison, équipe, joueur, entraîneur, stade, bookmaker,
-snapshot brut, dataset versionné, modèle, prédiction immuable, explication,
-stratégie versionnée, pari candidat/rejeté/simulé, bankroll, incident et alerte de
-qualité seront introduits par migrations versionnées.
+## Entités et identités
+
+Entités internes : compétition, saison, équipe, joueur, arbitre, fixture,
+bookmaker, marché, sélection, snapshot de cote, prédiction, stratégie et version
+de modèle.
+
+Les correspondances fournisseur portent :
+`internal_entity_id`, `provider_name`, `provider_entity_id`, `valid_from`,
+`valid_to`, `mapping_status`, `mapping_confidence`, `mapping_method` et
+`review_status`.
+
+## Observation brute
+
+Grain : une réponse fournisseur reçue.
+
+Champs contractuels : `provider`, `endpoint`, `request_parameters`,
+`requested_at`, `received_at`, `http_status`, `payload_hash`, `schema_version`,
+`ingestion_run_id` et `raw_payload_location`.
+
+## Feature
+
+Grain : une valeur versionnée pour une entité et un fixture.
+
+Champs contractuels : `feature_name`, `entity_id`, `fixture_id`, `value`,
+`as_of_time`, `calculated_at`, `source_version`, `feature_version` et
+`quality_status`.
+
+## Marchés et paris
+
+Une clé de marché contient `market_type`, `market_scope`, `selection`,
+`line_value`, `period` et `settlement_rule_version`. Une cote ajoute bookmaker,
+format, instant d'observation et phase ouverture/intermédiaire/clôture.
+
+Le cycle métier sépare opportunité, cotation bookmaker, pari sélectionné et pari
+réglé. Les résultats possibles incluent gain, perte, remboursement, annulation et
+non réglé.
+
+## Qualité
+
+Statuts de valeur : `OBSERVED`, `DERIVED`, `MISSING`, `NOT_APPLICABLE`,
+`SUSPECT_ZERO`, `CORRECTED`, `CONFLICTING`.
+
+Un contrôle porte `check_name`, `run_id`, `status`, `severity`, `scope`,
+`observed_value`, `expected_rule`, `affected_rows`, `started_at`, `finished_at`
+et `evidence_location`.
+
+## Dataset historique — `data/matches.parquet`
+
+Grain : un match terminé. Clé legacy : `match_id`.
+
+- 36 423 lignes, 27 colonnes, 9 ligues, 11 saisons ;
+- résultats finaux complets et identifiants uniques ;
+- champs mi-temps, cartons et corners après match : `hthg`, `htag`, `hy`, `ay`,
+  `hr`, `ar`, `hc`, `ac` ;
+- cotes historiques sans horodatage suffisamment précis ;
+- UUID internes et provenance brute absents : migration encore nécessaire.
+
+Une donnée absente n'est jamais convertie en zéro. Les zéros suspects restent
+visibles et sont masqués par défaut pour les modèles concernés.

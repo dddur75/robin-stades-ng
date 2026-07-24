@@ -6,15 +6,17 @@ Dernière mise à jour : 2026-07-24.
 |---|---:|---|
 | Football-Data.co.uk | 0 | `VERIFIED` |
 | Understat | 0 | `UNVERIFIED` |
-| The Odds API | plan exact non observable depuis le dépôt | `PARTIAL` |
-| GitHub Actions | non calculé | `NOT_STARTED` |
-| Stockage Git/GitHub | non calculé | `NOT_STARTED` |
-| Base PostgreSQL | 0, non déployée | `VERIFIED` |
+| The Odds API | aucune nouvelle souscription | `PARTIAL` |
+| PostgreSQL local/CI | 0, conteneur éphémère | `VERIFIED` |
+| Stockage brut local | coût marginal local | `VERIFIED` |
+| GitHub Actions | non calculé, workflow borné à 15 min | `PARTIAL` |
 | Appels IA en production | 0, non intégrés | `VERIFIED` |
-| Développement Codex | compteur financier non exposé au dépôt | `UNVERIFIED` |
+| Paris réels | 0, verrouillés | `PRODUCTION_LOCKED` |
 
-Le paramétrage actuel plafonne l'archive à 15 000 crédits API par mois et impose
-un arrêt sous 500 crédits restants. Le compteur local de juillet vaut zéro.
+Le fournisseur mock, SQLite pour les tests et PostgreSQL 16 en service CI
+permettent de vérifier le Jalon 1 sans service distant payant.
 
-Aucune dépense ou souscription supplémentaire n'est autorisée sans présentation
-préalable du besoin, d'une alternative gratuite, du coût mensuel et du gain attendu.
+L'archive The Odds API conserve un plafond de 15 000 crédits mensuels et s'arrête
+sous 500 crédits restants. Aucune augmentation de plan ni dépense supplémentaire
+n'est autorisée sans décision explicite documentant besoin, alternative gratuite,
+coût mensuel et gain attendu.
