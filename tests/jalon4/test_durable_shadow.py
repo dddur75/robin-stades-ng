@@ -595,6 +595,29 @@ def test_daily_health_lit_les_observations_et_produit_trois_rapports(
         assert (state / "reports" / report).exists()
 
 
+def test_daily_health_conserve_le_dernier_quota_fourni(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    (state / "runs" / "zz-health.json").write_text(
+        json.dumps(
+            {
+                "run_id": "health-456",
+                "pipeline": "daily-health",
+                "status": "PASSED",
+                "finished_at": (NOW + timedelta(minutes=1)).isoformat(),
+            }
+        ),
+        "utf-8",
+    )
+
+    health = daily_health(state)
+
+    assert health["burn_in"]["quota_used"] == 8
+    assert health["burn_in"]["quota_remaining"] == 19_992
+    assert health["burn_in"]["quota_reserve_rate"] == pytest.approx(0.9996)
+
+
 def test_checkpoints_sans_run_metier_necrasent_pas_un_ancien_bundle(
     tmp_path: Path,
 ) -> None:

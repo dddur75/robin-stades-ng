@@ -738,7 +738,17 @@ def daily_health(output: Path) -> dict[str, object]:
         for value in [read_json(path, {})]
         if isinstance(value, dict)
     ]
-    last_run = runs[-1] if runs else {}
+    last_quota_run = next(
+        (
+            run
+            for run in reversed(runs)
+            if run.get("quota_used") is not None
+            and run.get("quota_remaining") is not None
+        ),
+        {},
+    )
+    quota_used = last_quota_run.get("quota_used")
+    quota_remaining = last_quota_run.get("quota_remaining")
     metrics = compute_daily_metrics(
         metric_date=datetime.now(UTC).date(),
         runs=runs,
@@ -760,8 +770,10 @@ def daily_health(output: Path) -> dict[str, object]:
             for run in runs
         ),
         silent_losses=0,
-        quota_used=int(last_run.get("quota_used") or 0),
-        quota_remaining=int(last_run.get("quota_remaining") or 20_000),
+        quota_used=int(quota_used) if quota_used is not None else 0,
+        quota_remaining=(
+            int(quota_remaining) if quota_remaining is not None else 20_000
+        ),
         quota_limit=20_000,
     )
     metrics["metric_id"] = stable_internal_id(
