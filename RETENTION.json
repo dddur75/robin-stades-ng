@@ -1,0 +1,11 @@
+{
+  "schema_version": "shadow-data-policy-v1",
+  "append_only": true,
+  "code_allowed": false,
+  "raw_payload_addressing": "sha256",
+  "bundle_format": "json.gz",
+  "object_format": "bin.gz",
+  "compaction": "manifest-only; never rewrite observations",
+  "target_backend": "PostgreSQL",
+  "production_status": "PRODUCTION_LOCKED"
+}
