@@ -17,19 +17,21 @@ async function render() {
   );
 }
 
-test("server-renders the Cockpit Shadow shell", async () => {
+test("server-renders the Cockpit Live V2 shell", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>Robin des Stades — Cockpit Shadow V1<\/title>/i);
+  assert.match(html, /<title>Robin des Stades — Cockpit Live V2<\/title>/i);
   assert.match(html, /Command Center/);
   assert.match(html, /PRODUCTION_LOCKED/);
   assert.match(html, /LIVE SOURCE/);
-  assert.match(html, /LEGACY SOURCE/);
-  assert.match(html, /SHADOW COLLECTION ACTIVE/);
+  assert.match(html, /SHADOW BURN IN ACTIVE/);
   assert.match(html, /Snapshots réels/);
+  assert.match(html, /Coverage Explorer/);
+  assert.match(html, /Registre durable/);
+  assert.match(html, /393/);
   assert.match(html, /19[\s ]992/);
   assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
   assert.doesNotMatch(html, /react-loading-skeleton/);
@@ -43,20 +45,26 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /Odds Monitor/);
-  assert.match(page, /Shadow Bets/);
-  assert.match(page, /Data Quality/);
-  assert.match(page, /Strategy Lab/);
+  assert.match(page, /Odds Explorer/);
+  assert.match(page, /Coverage Explorer/);
+  assert.match(page, /Shadow Performance/);
+  assert.match(page, /Pipeline & Qualité/);
+  assert.match(page, /Coûts & Quotas/);
+  assert.match(page, /Data Explorer/);
   assert.match(page, /LIVE_PIPELINE_VERIFIED/);
   assert.match(page, /EN ATTENTE DE DONNÉES PROSPECTIVES/);
+  assert.match(page, /AUCUNE CONCLUSION STATISTIQUE|statistical_message/);
   assert.match(layout, /lang="fr"/);
   assert.match(layout, /images: \["\/og\.png"\]/);
   assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
-  assert.match(data, /"shadowStatus": "SHADOW_COLLECTION_ACTIVE"/);
+  assert.match(data, /"shadowStatus": "SHADOW_BURN_IN_ACTIVE"/);
   assert.match(data, /"origin": "LIVE SOURCE"/);
   assert.match(data, /"origin": "LEGACY SOURCE"/);
   assert.match(data, /"stateArtifact": "shadow-state-30095263615"/);
   assert.match(data, /"snapshots": 2/);
+  assert.match(data, /"durableRecords": 393/);
+  assert.match(data, /"demoModeEnabled": false/);
+  assert.match(data, /"bridge_status": "ACTIVE_AND_VERIFIED"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   try {

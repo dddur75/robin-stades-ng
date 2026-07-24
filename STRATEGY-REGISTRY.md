@@ -21,3 +21,9 @@ Règles globales :
 - une stratégie rentable en exploration reste `UNVERIFIED` ;
 - le passage à `PRODUCTION_READY` exige hors échantillon, robustesse, coûts,
   concentration des gains, drawdown et shadow test.
+
+## Burn-in Jalon 4
+
+Zéro stratégie est promue. Une décision live a été rejetée et aucun pari shadow
+n’est accepté ou réglé. Le legacy, l’OOS historique et le prospectif live restent
+trois populations séparées.

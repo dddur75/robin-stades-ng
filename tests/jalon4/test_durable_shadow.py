@@ -27,6 +27,7 @@ from robin.operations.burn_in import (
     IncidentJournal,
     compute_daily_metrics,
     render_daily_report,
+    render_matchday_report,
     render_weekly_report,
 )
 from robin.storage.database import build_engine
@@ -566,6 +567,17 @@ def test_rapport_hebdomadaire_interdit_conclusion() -> None:
     metrics = compute_daily_metrics(**metric_kwargs())  # type: ignore[arg-type]
     report = render_weekly_report([metrics])
     assert "AUCUNE CONCLUSION STATISTIQUE" in report
+
+
+def test_rapport_journee_interdit_conclusion() -> None:
+    metrics = compute_daily_metrics(**metric_kwargs())  # type: ignore[arg-type]
+    report = render_matchday_report(
+        metrics,
+        fixture_count=1,
+        settled_count=0,
+    )
+    assert "AUCUNE CONCLUSION STATISTIQUE" in report
+    assert "PRODUCTION_LOCKED" in report
 
 
 def test_prediction_bloquee_sans_stockage_durable(

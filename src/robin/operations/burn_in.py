@@ -255,6 +255,34 @@ def render_weekly_report(metrics: Sequence[Mapping[str, object]]) -> str:
     )
 
 
+def render_matchday_report(
+    metrics: Mapping[str, object],
+    *,
+    fixture_count: int,
+    settled_count: int,
+) -> str:
+    return "\n".join(
+        [
+            f"# Rapport shadow de journée — {metrics['date']}",
+            "",
+            "Production : `PRODUCTION_LOCKED`",
+            f"Statut opérationnel : `{metrics['health_status']}`",
+            "",
+            f"- fixtures suivies : {fixture_count} ;",
+            f"- fenêtres éligibles : {metrics['windows_eligible']} ;",
+            f"- fenêtres collectées : {metrics['windows_collected']} ;",
+            f"- décisions shadow : {metrics['decisions']} ;",
+            f"- règlements shadow : {settled_count} ;",
+            f"- pertes silencieuses : {metrics['silent_losses']} ;",
+            "",
+            "Ce rapport décrit la complétude de la chaîne, pas une performance sportive.",
+            "",
+            "ÉCHANTILLON INSUFFISANT — AUCUNE CONCLUSION STATISTIQUE",
+            "",
+        ]
+    )
+
+
 def _as_float(value: object) -> float:
     if isinstance(value, bool):
         return float(value)

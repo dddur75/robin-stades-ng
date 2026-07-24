@@ -139,3 +139,34 @@ de donnée prospective.
 4. rejouer avec la même clé d'idempotence ;
 5. versionner toute correction tardive ;
 6. ne jamais réécrire une cote, une prédiction ou un résultat historique.
+
+## Jalon 4 — registre durable et burn-in
+
+Vérifier la branche de données :
+
+```powershell
+python scripts/manage_durable_registry.py verify --registry <checkout-shadow-data>
+python scripts/manage_durable_registry.py replay --registry <checkout-shadow-data> --output <replay>
+```
+
+Le replay n’appelle aucun fournisseur. Après ajout du secret `DATABASE_URL`, les
+workflows appliquent Alembic puis écrivent PostgreSQL avant l’acquittement
+`DURABLE_WRITE_CONFIRMED`. Sans ce secret, `shadow-data` reste le pont durable.
+
+Pour une fenêtre manquée, ne relancer que `MISSED_RECOVERABLE` pendant la marge
+de 120 minutes. Un diagnostic hors fenêtre ne doit pas modifier la couverture.
+Voir `docs/operations/MISSED-WINDOW-RECOVERY.md`.
+
+Les rapports automatiques sont `reports/daily.md`, `reports/weekly.md` et
+`reports/matchday.md`. Un incident critique persistant peut produire une seule
+issue GitHub ; une absence de marché normale ne doit jamais en produire.
+
+## Cockpit Live V2
+
+```powershell
+python scripts/build_cockpit_snapshot.py
+pnpm --dir cockpit test
+```
+
+Le mode démo est désactivé par défaut. Toujours conserver
+`PRODUCTION_LOCKED` et le message d’échantillon insuffisant.

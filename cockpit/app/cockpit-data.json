@@ -1,11 +1,12 @@
 {
-  "generatedAt": "2026-07-24T13:02:09.049424+00:00",
+  "generatedAt": "2026-07-24T14:27:50Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
-  "status": "PARTIAL",
-  "shadowStatus": "SHADOW_COLLECTION_ACTIVE",
+  "status": "INSUFFICIENT_OBSERVATION",
+  "shadowStatus": "SHADOW_BURN_IN_ACTIVE",
   "productionStatus": "PRODUCTION_LOCKED",
   "demoModeAvailable": true,
-  "message": "Collecte authentifiée et persistance inter-runners vérifiées. Une seule baseline marché est scientifiquement autorisée ; huit fixtures restent en attente de cotes.",
+  "demoModeEnabled": false,
+  "message": "Registre append-only actif et burn-in technique démarré. PostgreSQL est prêt mais non configuré ; le pont shadow-data empêche la dépendance exclusive aux Artifacts.",
   "metrics": {
     "fixtures": 9,
     "snapshots": 2,
@@ -17,7 +18,11 @@
     "blockedPredictions": 8,
     "quotaUsed": 8,
     "quotaRemaining": 19992,
-    "migrationCoveragePct": 98.668
+    "migrationCoveragePct": 98.668,
+    "durableRecords": 393,
+    "rawPayloads": 3,
+    "windowCoveragePct": 0,
+    "sloBreaches": 0
   },
   "matches": [
     {
@@ -640,7 +645,7 @@
   "provenance": {
     "demo": "Mode démo disponible uniquement sur activation explicite.",
     "legacy": "data/matches.parquet + rapports/jalon2/oos-results.json",
-    "live": "The Odds API → GitHub Artifact restauré explicitement → preuve compacte Jalon 3",
+    "live": "The Odds API → registre append-only shadow-data → preuve compacte Jalon 4",
     "stateArtifact": "shadow-state-30095263615",
     "sourceCommit": "e32ecfe09987542bba750b766488ddd927b6ea0b"
   },
@@ -709,6 +714,499 @@
       "live_data_received": false,
       "live_data_persisted": false,
       "status": "ADAPTER_ONLY"
+    }
+  ],
+  "durableStorage": {
+    "target": "POSTGRESQL",
+    "target_status": "READY_NO_DATABASE_URL",
+    "bridge": "GIT_DATA_BRANCH",
+    "bridge_status": "ACTIVE_AND_VERIFIED",
+    "artifacts_role": "EXECUTION_JOURNAL_AND_SHORT_RECOVERY",
+    "bundle_format": "json.gz",
+    "raw_object_format": "bin.gz",
+    "append_only": true
+  },
+  "migration": {
+    "source_artifact": "shadow-state-30095263615",
+    "observations_found": 5,
+    "observations_migrated": 5,
+    "payload_references_found": 5,
+    "physical_payloads_migrated": 3,
+    "snapshots_migrated": 2,
+    "records_migrated": 393,
+    "duplicates_avoided": 2,
+    "hashes_validated": 5,
+    "errors": 0,
+    "unrecoverable_rows": 0,
+    "coverage": 1.0
+  },
+  "replay": {
+    "status": "REPLAY_CONFIRMED",
+    "provider_calls": 0,
+    "quota_consumed": 0,
+    "bytes_identical": true
+  },
+  "burnIn": {
+    "technical": "ACTIVE",
+    "coverage": "ACTIVE",
+    "statistical": "DESCRIPTIVE_ONLY",
+    "health": "INSUFFICIENT_OBSERVATION",
+    "calendar_days_observed": 1,
+    "minimum_calendar_days_before_next_jalon": 30,
+    "statistical_message": "ÉCHANTILLON INSUFFISANT — AUCUNE CONCLUSION STATISTIQUE"
+  },
+  "slo": {
+    "provenance_target": 1.0,
+    "provenance_observed": 1.0,
+    "silent_loss_target": 0,
+    "silent_loss_observed": 0,
+    "unresolved_duplicate_target": 0,
+    "unresolved_duplicate_observed": 0,
+    "workflow_success_target": 0.95,
+    "eligible_window_coverage_target": 0.9,
+    "quota_reserve_target": 0.2,
+    "quota_reserve_observed": 0.9996,
+    "secret_exposure_observed": 0,
+    "demo_as_live_observed": 0,
+    "decision_reason_coverage": 1.0,
+    "rejection_code_coverage": 1.0
+  },
+  "scheduler": {
+    "windows": [
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-12",
+      "H-6",
+      "H-3",
+      "H-1",
+      "H-0:30",
+      "H-0:10"
+    ],
+    "recovery_margin_minutes": 120,
+    "simulated_late_window": "J-7",
+    "simulated_late_status_before": "MISSED_RECOVERABLE",
+    "simulated_late_status_after": "COLLECTED_LATE",
+    "evidence_origin": "TEST EVIDENCE"
+  },
+  "funnel": [
+    {
+      "stage": "Fixtures attendues",
+      "count": 9,
+      "loss": 0
+    },
+    {
+      "stage": "Fixtures collectées",
+      "count": 9,
+      "loss": 0
+    },
+    {
+      "stage": "Avec marchés",
+      "count": 1,
+      "loss": 8
+    },
+    {
+      "stage": "Avec snapshots",
+      "count": 1,
+      "loss": 0
+    },
+    {
+      "stage": "Analysables",
+      "count": 1,
+      "loss": 0
+    },
+    {
+      "stage": "Prédictions",
+      "count": 1,
+      "loss": 0
+    },
+    {
+      "stage": "Candidats",
+      "count": 1,
+      "loss": 0
+    },
+    {
+      "stage": "Retenus shadow",
+      "count": 0,
+      "loss": 1
+    },
+    {
+      "stage": "Rejetés / bloqués",
+      "count": 9,
+      "loss": 0
+    },
+    {
+      "stage": "Réglés",
+      "count": 0,
+      "loss": 0
+    }
+  ],
+  "notAnalyzableReasons": [
+    {
+      "reason": "MARKET_NOT_AVAILABLE",
+      "count": 8,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "reason": "QUALITY_BLOCKED",
+      "count": 1,
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "coverage": [
+    {
+      "fixture": "Marseille — Strasbourg",
+      "fixtureId": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "kickoff": "2026-08-21T18:45:00Z",
+      "providerCoverage": 1,
+      "analyticCoverage": 1,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "RC Lens — Auxerre",
+      "fixtureId": "0d809371-7ad1-50d3-800c-4e4d4deed126",
+      "kickoff": "2026-08-22T15:15:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Le Mans FC — Brest",
+      "fixtureId": "ecb33426-b28b-59f7-8114-fb0b3941bcdf",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Nice — Lorient",
+      "fixtureId": "c9f3ab7c-400d-5c52-bbb2-1cbe8db5fb3f",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Toulouse — Lyon",
+      "fixtureId": "c4dc47ec-e2f6-5e94-ab4a-b5ab140c9056",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Troyes — Paris FC",
+      "fixtureId": "c76a7f52-b62f-5de7-922e-fb93db729c49",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Angers — Lille",
+      "fixtureId": "02e7744d-418a-5a0c-b60b-89b328e08515",
+      "kickoff": "2026-08-23T13:00:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Le Havre — AS Monaco",
+      "fixtureId": "6a115cb1-66bd-52a0-befd-721e05708ad0",
+      "kickoff": "2026-08-23T15:15:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Paris Saint Germain — Rennes",
+      "fixtureId": "b624980c-eff7-5269-bc8b-8ab06aef867a",
+      "kickoff": "2026-08-23T18:45:00Z",
+      "providerCoverage": 0,
+      "analyticCoverage": 0,
+      "windows": {
+        "J-7": "PENDING",
+        "J-3": "PENDING",
+        "J-1": "PENDING",
+        "H-12": "PENDING",
+        "H-6": "PENDING",
+        "H-3": "PENDING",
+        "H-1": "PENDING",
+        "H-0:30": "PENDING",
+        "H-0:10": "PENDING"
+      },
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "coverageRates": {
+    "provider": 0.1111,
+    "collection": null,
+    "analytic": 0.1111,
+    "collectionStatus": "INSUFFICIENT_OBSERVATION"
+  },
+  "oddsMovement": [
+    {
+      "fixture": "Marseille — Strasbourg",
+      "observed_at": "2026-07-24T12:57:19.039068Z",
+      "snapshot_id": "b5c4d57c-f592-5353-b357-fa0800aa9547",
+      "home_mean": 1.6236363636,
+      "draw_mean": 4.2872727273,
+      "away_mean": 4.5309090909,
+      "home_best": 1.7,
+      "home_low": 1.54,
+      "bookmakers": 22,
+      "quotes": 90,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Marseille — Strasbourg",
+      "observed_at": "2026-07-24T12:58:55.177251Z",
+      "snapshot_id": "783e5280-cafe-554e-b38c-4cd34f5419df",
+      "home_mean": 1.6236363636,
+      "draw_mean": 4.2872727273,
+      "away_mean": 4.5309090909,
+      "home_best": 1.7,
+      "home_low": 1.54,
+      "bookmakers": 22,
+      "quotes": 90,
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "incidents": [
+    {
+      "code": "ARTIFACT_REDIRECT_AUTH_HEADER",
+      "severity": "WARNING",
+      "status": "RESOLVED",
+      "startedAt": "2026-07-24T12:54:00Z",
+      "endedAt": "2026-07-24T12:56:43Z",
+      "cause": "En-tête GitHub transmis vers une URL signée",
+      "impact": "Un run arrêté avant appel fournisseur",
+      "correction": "Retrait de l’en-tête hors api.github.com",
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "costScenarios": [
+    {
+      "scope": "Rythme actuel",
+      "competitions": 1,
+      "markets": 2,
+      "credits": 720
+    },
+    {
+      "scope": "Deux championnats",
+      "competitions": 2,
+      "markets": 2,
+      "credits": 1440
+    },
+    {
+      "scope": "Cinq championnats",
+      "competitions": 5,
+      "markets": 2,
+      "credits": 3600
+    },
+    {
+      "scope": "Marchés étendus",
+      "competitions": 1,
+      "markets": 4,
+      "credits": 1440
+    }
+  ],
+  "dataExplorer": [
+    {
+      "date": "2026-08-21T18:45:00Z",
+      "fixture": "Marseille — Strasbourg",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 22,
+      "snapshots": 2,
+      "model": "MARKET_BASELINE_ONLY",
+      "decision": "QUALITY_BLOCKED",
+      "quality": "OBSERVED",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-22T15:15:00Z",
+      "fixture": "RC Lens — Auxerre",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-22T18:45:00Z",
+      "fixture": "Le Mans FC — Brest",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-22T18:45:00Z",
+      "fixture": "Nice — Lorient",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-22T18:45:00Z",
+      "fixture": "Toulouse — Lyon",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-22T18:45:00Z",
+      "fixture": "Troyes — Paris FC",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-23T13:00:00Z",
+      "fixture": "Angers — Lille",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-23T15:15:00Z",
+      "fixture": "Le Havre — AS Monaco",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
+    },
+    {
+      "date": "2026-08-23T18:45:00Z",
+      "fixture": "Paris Saint Germain — Rennes",
+      "competition": "Ligue 1 - France",
+      "market": "1X2",
+      "bookmakers": 0,
+      "snapshots": 0,
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "quality": "PENDING",
+      "provenance": "LIVE SOURCE"
     }
   ]
 }

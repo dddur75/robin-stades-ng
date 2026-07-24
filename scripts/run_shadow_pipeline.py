@@ -44,6 +44,7 @@ from robin.operations.burn_in import (
     IncidentJournal,
     compute_daily_metrics,
     render_daily_report,
+    render_matchday_report,
     render_weekly_report,
 )
 from robin.providers.mock import MockFootballProvider
@@ -322,15 +323,16 @@ def collect_odds(
         state_key = (fixture_id, window)
         state = all_states[state_key]
         if not result.records or result.raw_observation_id is None:
-            updated = record_window_result(
-                state,
-                attempted_at=datetime.now(UTC),
-                provider_status="EMPTY",
-                observation_received=False,
-                market_available=False if not result.records else None,
-            )
-            all_states[state_key] = updated
-            append_scheduler_event(output, updated, run_id)
+            if not diagnostic_outside_window:
+                updated = record_window_result(
+                    state,
+                    attempted_at=datetime.now(UTC),
+                    provider_status="EMPTY",
+                    observation_received=False,
+                    market_available=False if not result.records else None,
+                )
+                all_states[state_key] = updated
+                append_scheduler_event(output, updated, run_id)
             continue
         snapshot = parse_odds_snapshot(
             result.records[0],
@@ -350,16 +352,16 @@ def collect_odds(
         )
         appended += int(was_appended)
         exact_payloads_deduplicated += int(not was_appended)
-        updated = record_window_result(
-            state,
-            attempted_at=result.observed_at,
-            provider_status="SUCCESS",
-            observation_received=True,
-            market_available=bool(snapshot.quotes),
-        )
-        all_states[state_key] = updated
-        append_scheduler_event(output, updated, run_id)
         if not diagnostic_outside_window:
+            updated = record_window_result(
+                state,
+                attempted_at=result.observed_at,
+                provider_status="SUCCESS",
+                observation_received=True,
+                market_available=bool(snapshot.quotes),
+            )
+            all_states[state_key] = updated
+            append_scheduler_event(output, updated, run_id)
             collected.add((fixture_id, window))
     planned_keys = {(task.provider_fixture_id, task.window) for task in tasks}
     if budget.level != BudgetLevel.NORMAL:
@@ -782,6 +784,14 @@ def daily_health(output: Path) -> dict[str, object]:
     burn_history = read_jsonl(output / "burn-in" / "daily.jsonl")
     (report_dir / "weekly.md").write_text(
         render_weekly_report(burn_history[-7:]),
+        encoding="utf-8",
+    )
+    (report_dir / "matchday.md").write_text(
+        render_matchday_report(
+            metrics,
+            fixture_count=int(metrics["fixtures"]),
+            settled_count=int(metrics["settlements"]),
+        ),
         encoding="utf-8",
     )
     incidents = IncidentJournal(output / "incidents" / "history.jsonl")

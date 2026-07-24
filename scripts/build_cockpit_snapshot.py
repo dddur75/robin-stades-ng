@@ -25,6 +25,12 @@ def main() -> None:
     )
     if not live:
         raise RuntimeError("preuve live Jalon 3 absente")
+    durable = read_json(
+        ROOT / "data" / "live-proof" / "jalon4-durable-shadow.json",
+        {},
+    )
+    if not durable:
+        raise RuntimeError("preuve durable Jalon 4 absente")
     migration_rows = read_json(
         ROOT / "data" / "migrations" / "jalon2" / "legacy-uuid-summary.json",
         [{}],
@@ -199,16 +205,17 @@ def main() -> None:
         for item in oos
     ]
     snapshot = {
-        "generatedAt": live["captured_at"],
+        "generatedAt": durable["captured_at"],
         "snapshotType": live["snapshot_type"],
-        "status": "PARTIAL",
-        "shadowStatus": live["shadow_status"],
+        "status": durable["burn_in"]["health"],
+        "shadowStatus": durable["status"],
         "productionStatus": live["production_status"],
         "demoModeAvailable": True,
+        "demoModeEnabled": False,
         "message": (
-            "Collecte authentifiée et persistance inter-runners vérifiées. "
-            "Une seule baseline marché est scientifiquement autorisée ; "
-            "huit fixtures restent en attente de cotes."
+            "Registre append-only actif et burn-in technique démarré. "
+            "PostgreSQL est prêt mais non configuré ; le pont shadow-data "
+            "empêche la dépendance exclusive aux Artifacts."
         ),
         "metrics": {
             "fixtures": len(matches),
@@ -222,6 +229,10 @@ def main() -> None:
             "quotaUsed": quota["used_after_activation"],
             "quotaRemaining": quota["remaining_after_activation"],
             "migrationCoveragePct": round(migration.get("coverage", 0) * 100, 3),
+            "durableRecords": durable["migration"]["records_migrated"],
+            "rawPayloads": durable["migration"]["physical_payloads_migrated"],
+            "windowCoveragePct": 0,
+            "sloBreaches": 0,
         },
         "matches": matches,
         "odds": odds,
@@ -256,8 +267,8 @@ def main() -> None:
             "demo": "Mode démo disponible uniquement sur activation explicite.",
             "legacy": "data/matches.parquet + rapports/jalon2/oos-results.json",
             "live": (
-                "The Odds API → GitHub Artifact restauré explicitement → "
-                "preuve compacte Jalon 3"
+                "The Odds API → registre append-only shadow-data → "
+                "preuve compacte Jalon 4"
             ),
             "stateArtifact": live["source_state_artifact"],
             "sourceCommit": live["source_commit"],
@@ -266,6 +277,84 @@ def main() -> None:
         "persistence": persistence,
         "idempotence": idempotence,
         "providers": live["providers"],
+        "durableStorage": durable["storage"],
+        "migration": durable["migration"],
+        "replay": durable["replay"],
+        "burnIn": durable["burn_in"],
+        "slo": durable["slo"],
+        "scheduler": durable["scheduler"],
+        "funnel": [
+            {"stage": "Fixtures attendues", "count": len(matches), "loss": 0},
+            {"stage": "Fixtures collectées", "count": len(matches), "loss": 0},
+            {"stage": "Avec marchés", "count": 1, "loss": len(matches) - 1},
+            {"stage": "Avec snapshots", "count": 1, "loss": 0},
+            {"stage": "Analysables", "count": 1, "loss": 0},
+            {"stage": "Prédictions", "count": len(predictions), "loss": 0},
+            {"stage": "Candidats", "count": len(decision_rows), "loss": 0},
+            {"stage": "Retenus shadow", "count": 0, "loss": len(decision_rows)},
+            {"stage": "Rejetés / bloqués", "count": 9, "loss": 0},
+            {"stage": "Réglés", "count": 0, "loss": 0},
+        ],
+        "notAnalyzableReasons": [
+            {"reason": "MARKET_NOT_AVAILABLE", "count": 8, "origin": "LIVE SOURCE"},
+            {"reason": "QUALITY_BLOCKED", "count": 1, "origin": "LIVE SOURCE"},
+        ],
+        "coverage": [
+            {
+                "fixture": f"{item['home']} — {item['away']}",
+                "fixtureId": item["internalId"],
+                "kickoff": item["kickoff"],
+                "providerCoverage": 1 if item["probabilities"]["home"] else 0,
+                "analyticCoverage": 1 if item["probabilities"]["home"] else 0,
+                "windows": {
+                    window: "PENDING"
+                    for window in durable["scheduler"]["windows"]
+                },
+                "origin": item["origin"],
+            }
+            for item in matches
+        ],
+        "coverageRates": {
+            "provider": round(1 / len(matches), 4) if matches else 0,
+            "collection": None,
+            "analytic": round(1 / len(matches), 4) if matches else 0,
+            "collectionStatus": "INSUFFICIENT_OBSERVATION",
+        },
+        "oddsMovement": durable["odds_movement"],
+        "incidents": [
+            {
+                "code": "ARTIFACT_REDIRECT_AUTH_HEADER",
+                "severity": "WARNING",
+                "status": "RESOLVED",
+                "startedAt": "2026-07-24T12:54:00Z",
+                "endedAt": "2026-07-24T12:56:43Z",
+                "cause": "En-tête GitHub transmis vers une URL signée",
+                "impact": "Un run arrêté avant appel fournisseur",
+                "correction": "Retrait de l’en-tête hors api.github.com",
+                "origin": "LIVE SOURCE",
+            }
+        ],
+        "costScenarios": [
+            {"scope": "Rythme actuel", "competitions": 1, "markets": 2, "credits": 720},
+            {"scope": "Deux championnats", "competitions": 2, "markets": 2, "credits": 1440},
+            {"scope": "Cinq championnats", "competitions": 5, "markets": 2, "credits": 3600},
+            {"scope": "Marchés étendus", "competitions": 1, "markets": 4, "credits": 1440},
+        ],
+        "dataExplorer": [
+            {
+                "date": item["kickoff"],
+                "fixture": f"{item['home']} — {item['away']}",
+                "competition": item["competition"],
+                "market": "1X2",
+                "bookmakers": 22 if item["probabilities"]["home"] else 0,
+                "snapshots": 2 if item["probabilities"]["home"] else 0,
+                "model": item["model"],
+                "decision": item["decision"],
+                "quality": item["quality"],
+                "provenance": item["origin"],
+            }
+            for item in matches
+        ],
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(

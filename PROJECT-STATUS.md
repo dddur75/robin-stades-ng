@@ -2,57 +2,59 @@
 
 Dernière mise à jour : 2026-07-24
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-3-live-shadow-activation`
+Branche : `codex/jalon-4-durable-shadow`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
 ## État global
 
-`PARTIAL` — la collecte prospective authentifiée est active et persistante.
-Cette capacité ne constitue ni une validation de rentabilité, ni une autorisation
-de pari réel. La PR Jalon 3 reste à fusionner dans `main`.
+`SHADOW_BURN_IN_ACTIVE` — la collecte prospective écrit désormais dans un
+registre durable append-only, indépendant de la rétention des GitHub Artifacts.
+Le burn-in technique et de couverture est démarré. Sa composante statistique
+reste strictement descriptive :
+`ÉCHANTILLON INSUFFISANT — AUCUNE CONCLUSION STATISTIQUE`.
 
-Statut shadow : `SHADOW_COLLECTION_ACTIVE`.
+Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 
 ## Jalons
 
 | Jalon | Statut | Preuve principale |
 |---|---|---|
 | 0 — audit initial | `VERIFIED` | `docs/audits/JALON-0-AUDIT.md` |
-| 1 — fondation data temporelle | `VERIFIED` | PR #1 fusionnée par squash |
-| 2 — collecte, migration et shadow | `VERIFIED` | PR #2 fusionnée par squash |
-| 3 — activation live et accumulation | `ACTIVE` | `docs/audits/JALON-3-LIVE-ACTIVATION.md` |
-| 4 à 9 | `NOT_STARTED` | hors périmètre |
+| 1 — fondation data temporelle | `VERIFIED` | PR #1 |
+| 2 — collecte, migration et shadow | `VERIFIED` | PR #2 |
+| 3 — activation live et accumulation | `VERIFIED` | PR #3 fusionnée |
+| 4 — durabilité et burn-in | `VERIFIED` | `docs/audits/JALON-4-REPORT.md` |
+| 5 à 9 | `NOT_STARTED` | hors périmètre |
 
-## Capacités Jalon 3
+## Preuves Jalon 4
 
-- appel authentifié The Odds API et données Ligue 1 2026–2027 réelles ;
-- collecte Ligue 1 selon neuf fenêtres de J-7 à M-10, budget et déduplication ;
-- stockage brut et snapshots append-only, secrets expurgés, hashes de payload ;
-- persistance explicite par GitHub Artifact entre runners éphémères ;
-- cinq workflows GitHub Actions planifiés, manuels et non concurrents ;
-- 37 024 correspondances UUID legacy sans collision ni fichier source réécrit ;
-- prédictions live limitées à `MARKET_BASELINE_ONLY` si une cote existe ;
-- prédictions et décisions immuables et idempotentes ;
-- Cockpit V1 live par défaut avec séparation stricte des origines.
+- branche de données orpheline `shadow-data`, append-only et vérifiée ;
+- migration de 393 enregistrements, 5 observations, 3 objets physiques ;
+- couverture de migration 100 %, 2 doublons physiques évités, 0 erreur ;
+- replay à octets identiques, sans appel fournisseur ni crédit consommé ;
+- 20 tables durables nouvelles, contraintes métier, index et migrations Alembic ;
+- fenêtres J-7 à H-0:10, reprise tardive de 120 minutes et budget adaptatif ;
+- rapports quotidien, hebdomadaire et journée de match ;
+- Cockpit Live V2 avec couverture, cotes, performance séparée, SLO et coûts ;
+- CI de branche et collecte fixtures réelle réussies.
 
-## Résultats mesurés
+## Données live observées
 
-- 9 fixtures Ligue 1 réelles ;
-- 2 snapshots de cotes distincts, 180 quotes, 22 bookmakers ;
-- 1 baseline marché, 1 décision rejetée, 8 sorties bloquées ;
-- 0 doublon exact, second pré-match sans nouvel enregistrement ;
-- quota : 8 consommés, 19 992 restants, prévision 720 crédits/mois ;
-- artifact canonique : `shadow-state-30095263615`.
+- 9 fixtures Ligue 1 ;
+- 2 snapshots distincts, 180 cotes, 22 bookmakers ;
+- prix agrégés identiques entre les deux snapshots : mouvement observé nul ;
+- 1 baseline marché, 1 décision rejetée, 0 pari shadow accepté ou réglé ;
+- quota : 8 crédits consommés, 19 992 restants.
 
-## Verrous maintenus
+## Stockage
 
-- `real_bets_enabled: false` ;
-- aucune connexion bookmaker ni mise financière ;
-- identités `PROBABLE` exclues des modèles exigeant une certitude ;
-- `LIVE_SHADOW_VALIDATED` interdit sans période prospective suffisante.
+La cible permanente recommandée est PostgreSQL managé chez Neon. En attendant
+`DATABASE_URL`, le pont `shadow-data` satisfait la durabilité minimale et les
+Artifacts ne servent plus que de journal court et de reprise rapide. Voir
+`docs/architecture/DURABLE-SHADOW-STORAGE.md`.
 
 ## Action utilisateur
 
-Valider et fusionner la PR brouillon Jalon 3 après revue. Voir
-`USER-ACTION.md`.
+Créer le projet PostgreSQL Neon et enregistrer sa chaîne de connexion dans le
+secret GitHub `DATABASE_URL`. Voir `USER-ACTION.md`.

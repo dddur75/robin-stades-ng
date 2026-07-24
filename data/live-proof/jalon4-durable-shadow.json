@@ -1,0 +1,140 @@
+{
+  "captured_at": "2026-07-24T14:27:50Z",
+  "status": "SHADOW_BURN_IN_ACTIVE",
+  "production_status": "PRODUCTION_LOCKED",
+  "source_branch": "shadow-data",
+  "source_commit": "eae0d3c",
+  "storage": {
+    "target": "POSTGRESQL",
+    "target_status": "READY_NO_DATABASE_URL",
+    "bridge": "GIT_DATA_BRANCH",
+    "bridge_status": "ACTIVE_AND_VERIFIED",
+    "artifacts_role": "EXECUTION_JOURNAL_AND_SHORT_RECOVERY",
+    "bundle_format": "json.gz",
+    "raw_object_format": "bin.gz",
+    "append_only": true
+  },
+  "migration": {
+    "source_artifact": "shadow-state-30095263615",
+    "observations_found": 5,
+    "observations_migrated": 5,
+    "payload_references_found": 5,
+    "physical_payloads_migrated": 3,
+    "snapshots_migrated": 2,
+    "records_migrated": 393,
+    "duplicates_avoided": 2,
+    "hashes_validated": 5,
+    "errors": 0,
+    "unrecoverable_rows": 0,
+    "coverage": 1.0
+  },
+  "replay": {
+    "status": "REPLAY_CONFIRMED",
+    "provider_calls": 0,
+    "quota_consumed": 0,
+    "bytes_identical": true
+  },
+  "remote_verification": {
+    "workflow_run": 30101116019,
+    "status": "SUCCESS",
+    "bundles": 2,
+    "objects_verified": 11,
+    "errors": 0
+  },
+  "scheduler": {
+    "windows": [
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-12",
+      "H-6",
+      "H-3",
+      "H-1",
+      "H-0:30",
+      "H-0:10"
+    ],
+    "recovery_margin_minutes": 120,
+    "simulated_late_window": "J-7",
+    "simulated_late_status_before": "MISSED_RECOVERABLE",
+    "simulated_late_status_after": "COLLECTED_LATE",
+    "evidence_origin": "TEST EVIDENCE"
+  },
+  "quota": {
+    "level": "NORMAL",
+    "used": 8,
+    "remaining": 19992,
+    "operational_ceiling": 1000,
+    "reserve_credits": 4000,
+    "reserve_pct": 20,
+    "forecast_month_end": 720,
+    "cost_per_snapshot": 2,
+    "near_kickoff_reserved_credits": 80
+  },
+  "burn_in": {
+    "technical": "ACTIVE",
+    "coverage": "ACTIVE",
+    "statistical": "DESCRIPTIVE_ONLY",
+    "health": "INSUFFICIENT_OBSERVATION",
+    "calendar_days_observed": 1,
+    "minimum_calendar_days_before_next_jalon": 30,
+    "statistical_message": "ÉCHANTILLON INSUFFISANT — AUCUNE CONCLUSION STATISTIQUE"
+  },
+  "slo": {
+    "provenance_target": 1.0,
+    "provenance_observed": 1.0,
+    "silent_loss_target": 0,
+    "silent_loss_observed": 0,
+    "unresolved_duplicate_target": 0,
+    "unresolved_duplicate_observed": 0,
+    "workflow_success_target": 0.95,
+    "eligible_window_coverage_target": 0.9,
+    "quota_reserve_target": 0.2,
+    "quota_reserve_observed": 0.9996,
+    "secret_exposure_observed": 0,
+    "demo_as_live_observed": 0,
+    "decision_reason_coverage": 1.0,
+    "rejection_code_coverage": 1.0
+  },
+  "providers": [
+    {
+      "name": "The Odds API",
+      "status": "LIVE_PIPELINE_VERIFIED",
+      "secret": "AVAILABLE",
+      "live_data": true
+    },
+    {
+      "name": "API-Football",
+      "status": "ADAPTER_ONLY",
+      "secret": "ABSENT",
+      "live_data": false
+    }
+  ],
+  "odds_movement": [
+    {
+      "fixture": "Marseille — Strasbourg",
+      "observed_at": "2026-07-24T12:57:19.039068Z",
+      "snapshot_id": "b5c4d57c-f592-5353-b357-fa0800aa9547",
+      "home_mean": 1.6236363636,
+      "draw_mean": 4.2872727273,
+      "away_mean": 4.5309090909,
+      "home_best": 1.7,
+      "home_low": 1.54,
+      "bookmakers": 22,
+      "quotes": 90,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "fixture": "Marseille — Strasbourg",
+      "observed_at": "2026-07-24T12:58:55.177251Z",
+      "snapshot_id": "783e5280-cafe-554e-b38c-4cd34f5419df",
+      "home_mean": 1.6236363636,
+      "draw_mean": 4.2872727273,
+      "away_mean": 4.5309090909,
+      "home_best": 1.7,
+      "home_low": 1.54,
+      "bookmakers": 22,
+      "quotes": 90,
+      "origin": "LIVE SOURCE"
+    }
+  ]
+}

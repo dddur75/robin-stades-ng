@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://robin-stades-shadow-cockpit.openai.site"),
-  title: "Robin des Stades — Cockpit Shadow V1",
+  title: "Robin des Stades — Cockpit Live V2",
   description:
     "Pilotage prospectif, qualité des données et décisions simulées pour la Ligue 1.",
   icons: {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     shortcut: "/favicon.svg",
   },
   openGraph: {
-    title: "Robin des Stades — Cockpit Shadow V1",
+    title: "Robin des Stades — Cockpit Live V2",
     description:
       "La chaîne de décision football observable, auditable et verrouillée en simulation.",
     images: ["/og.png"],
