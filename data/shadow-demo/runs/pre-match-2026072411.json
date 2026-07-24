@@ -1,0 +1,9 @@
+{
+  "run_id": "pre-match-2026072411",
+  "pipeline": "pre-match-shadow",
+  "status": "PASSED",
+  "predictions": 1,
+  "decisions_total": 1,
+  "origin": "DEMO DATA",
+  "finished_at": "2026-07-24T11:34:16.213816+00:00"
+}

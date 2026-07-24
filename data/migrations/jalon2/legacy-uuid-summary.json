@@ -1,0 +1,15 @@
+[
+  {
+    "rows_examined":36423,
+    "mappings_total":37024,
+    "exact":9,
+    "provider_confirmed":0,
+    "rule_matched":36522,
+    "probable":493,
+    "ambiguous":0,
+    "unresolved":0,
+    "rejected":0,
+    "collisions":0,
+    "coverage":0.9866843129
+  }
+]

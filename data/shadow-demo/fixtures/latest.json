@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo-fixture-1",
+    "sport_key": "soccer_france_ligue_one",
+    "sport_title": "Ligue 1",
+    "commence_time": "2026-08-16T18:45:00Z",
+    "home_team": "Paris SG",
+    "away_team": "Marseille",
+    "origin": "DEMO DATA",
+    "collected_at": "2026-07-24T00:00:00+00:00"
+  }
+]

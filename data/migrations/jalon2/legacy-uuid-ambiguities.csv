@@ -1,0 +1,494 @@
+internal_entity_id,entity_type,provider_name,provider_entity_id,canonical_key,observed_name,mapping_status,mapping_confidence,model_eligible_identity
+60221060-d19a-56b4-99ca-72ddde5125e6,team,football-data.co.uk-legacy,D1:Augsburg,D1:Augsburg,Augsburg,PROBABLE,0.65,False
+8cceac47-6f5a-57ed-a4c7-86d245e1f67d,team,football-data.co.uk-legacy,D1:Bayern Munich,D1:Bayern Munich,Bayern Munich,PROBABLE,0.65,False
+80339275-c742-5f06-b292-8f6401a2f916,team,football-data.co.uk-legacy,D1:Bielefeld,D1:Bielefeld,Bielefeld,PROBABLE,0.65,False
+b99fa842-03ac-5e75-b3cd-90e119e08a1e,team,football-data.co.uk-legacy,D1:Bochum,D1:Bochum,Bochum,PROBABLE,0.65,False
+10ecb50f-c0f2-57a0-8404-fb11721bb00e,team,football-data.co.uk-legacy,D1:Darmstadt,D1:Darmstadt,Darmstadt,PROBABLE,0.65,False
+2bc8bc69-f987-5fa3-84b7-52e94c0ba711,team,football-data.co.uk-legacy,D1:Dortmund,D1:Dortmund,Dortmund,PROBABLE,0.65,False
+887186dc-9ae9-5a51-99a2-fc4eb309fe4b,team,football-data.co.uk-legacy,D1:Ein Frankfurt,D1:Ein Frankfurt,Ein Frankfurt,PROBABLE,0.65,False
+b4c94308-5602-5d03-853e-709b262c4072,team,football-data.co.uk-legacy,D1:FC Koln,D1:FC Koln,FC Koln,PROBABLE,0.65,False
+5b149e43-c867-534b-a72b-03c4349b650a,team,football-data.co.uk-legacy,D1:Fortuna Dusseldorf,D1:Fortuna Dusseldorf,Fortuna Dusseldorf,PROBABLE,0.65,False
+482f7a41-b8ad-59df-9d08-61f2be3a5053,team,football-data.co.uk-legacy,D1:Freiburg,D1:Freiburg,Freiburg,PROBABLE,0.65,False
+0f77dfe8-24fe-5a10-b215-029e0647d180,team,football-data.co.uk-legacy,D1:Greuther Furth,D1:Greuther Furth,Greuther Furth,PROBABLE,0.65,False
+efa1a1a9-c05f-5261-a49b-34787b9e8ccb,team,football-data.co.uk-legacy,D1:Hamburg,D1:Hamburg,Hamburg,PROBABLE,0.65,False
+3979d545-7201-5735-99b2-0f70e985f01d,team,football-data.co.uk-legacy,D1:Hannover,D1:Hannover,Hannover,PROBABLE,0.65,False
+e3cf2b31-1152-5c54-b3d6-6968d3f3a3bc,team,football-data.co.uk-legacy,D1:Heidenheim,D1:Heidenheim,Heidenheim,PROBABLE,0.65,False
+759ee700-cdba-5a00-9fe6-c84b46024baa,team,football-data.co.uk-legacy,D1:Hertha,D1:Hertha,Hertha,PROBABLE,0.65,False
+19479203-7df2-5d45-87a2-3ecd31611358,team,football-data.co.uk-legacy,D1:Hoffenheim,D1:Hoffenheim,Hoffenheim,PROBABLE,0.65,False
+3b592970-d74a-54aa-b36a-96158366b21c,team,football-data.co.uk-legacy,D1:Holstein Kiel,D1:Holstein Kiel,Holstein Kiel,PROBABLE,0.65,False
+59a78bd8-6ed7-5737-8376-4ef1c41fb99e,team,football-data.co.uk-legacy,D1:Ingolstadt,D1:Ingolstadt,Ingolstadt,PROBABLE,0.65,False
+082d8045-a81f-519a-8a8f-376c5c314ebc,team,football-data.co.uk-legacy,D1:Leverkusen,D1:Leverkusen,Leverkusen,PROBABLE,0.65,False
+c08d5b6c-5df5-5ca1-88bd-986e6992cd57,team,football-data.co.uk-legacy,D1:M'gladbach,D1:M'gladbach,M'gladbach,PROBABLE,0.65,False
+d7c0b76d-2737-52a5-a9c3-b1007dabe74f,team,football-data.co.uk-legacy,D1:Mainz,D1:Mainz,Mainz,PROBABLE,0.65,False
+e1884f99-943c-5b35-8c57-055e8fa2b469,team,football-data.co.uk-legacy,D1:Nurnberg,D1:Nurnberg,Nurnberg,PROBABLE,0.65,False
+54bb5da8-00b2-5894-b43d-91b90630a9b4,team,football-data.co.uk-legacy,D1:Paderborn,D1:Paderborn,Paderborn,PROBABLE,0.65,False
+051b3df5-5bf0-5a60-b92c-8298c3c1a3fd,team,football-data.co.uk-legacy,D1:RB Leipzig,D1:RB Leipzig,RB Leipzig,PROBABLE,0.65,False
+2420e4f0-4e1e-5bd5-a3c8-720289cb608c,team,football-data.co.uk-legacy,D1:Schalke 04,D1:Schalke 04,Schalke 04,PROBABLE,0.65,False
+9a2a64d1-b129-582e-9fdf-cbb23edc494d,team,football-data.co.uk-legacy,D1:St Pauli,D1:St Pauli,St Pauli,PROBABLE,0.65,False
+b636b7d7-fba2-55b4-9106-4c1650ef6ae4,team,football-data.co.uk-legacy,D1:Stuttgart,D1:Stuttgart,Stuttgart,PROBABLE,0.65,False
+7d028fe5-80bb-5220-868c-8ca63dca40b9,team,football-data.co.uk-legacy,D1:Union Berlin,D1:Union Berlin,Union Berlin,PROBABLE,0.65,False
+eb4690ee-b873-52a1-b53a-111661e177d5,team,football-data.co.uk-legacy,D1:Werder Bremen,D1:Werder Bremen,Werder Bremen,PROBABLE,0.65,False
+507dbcd7-9eba-562d-a0cd-99a49923709e,team,football-data.co.uk-legacy,D1:Wolfsburg,D1:Wolfsburg,Wolfsburg,PROBABLE,0.65,False
+e2baf18e-c212-51da-8a2b-eb4aaaaf2ac6,team,football-data.co.uk-legacy,E0:Arsenal,E0:Arsenal,Arsenal,PROBABLE,0.65,False
+745723e1-07f8-5a1f-aacd-51644403d073,team,football-data.co.uk-legacy,E0:Aston Villa,E0:Aston Villa,Aston Villa,PROBABLE,0.65,False
+3d13e3af-61d7-5c03-9f45-36c1d08d0b84,team,football-data.co.uk-legacy,E0:Bournemouth,E0:Bournemouth,Bournemouth,PROBABLE,0.65,False
+9b24d3bb-3b25-5030-a377-04c6d28911f3,team,football-data.co.uk-legacy,E0:Brentford,E0:Brentford,Brentford,PROBABLE,0.65,False
+9822ab5e-ceae-51e1-a994-bf580ac57620,team,football-data.co.uk-legacy,E0:Brighton,E0:Brighton,Brighton,PROBABLE,0.65,False
+a6d31c74-3467-52ed-8d8e-ccff62edd28a,team,football-data.co.uk-legacy,E0:Burnley,E0:Burnley,Burnley,PROBABLE,0.65,False
+ded6abfc-0ecd-5044-9027-b5653065ac02,team,football-data.co.uk-legacy,E0:Cardiff,E0:Cardiff,Cardiff,PROBABLE,0.65,False
+6934df6c-c23b-5137-83af-ac732ed2fcf1,team,football-data.co.uk-legacy,E0:Chelsea,E0:Chelsea,Chelsea,PROBABLE,0.65,False
+eb826a81-e994-5e8a-8db0-1a1da5db1cbb,team,football-data.co.uk-legacy,E0:Crystal Palace,E0:Crystal Palace,Crystal Palace,PROBABLE,0.65,False
+08082420-685e-591e-b9bb-d2aaac211a68,team,football-data.co.uk-legacy,E0:Everton,E0:Everton,Everton,PROBABLE,0.65,False
+2fcbbbf5-f586-5d00-93bc-3a6273fecfb7,team,football-data.co.uk-legacy,E0:Fulham,E0:Fulham,Fulham,PROBABLE,0.65,False
+2856b9f2-1113-5b80-91ed-7c655f562f52,team,football-data.co.uk-legacy,E0:Huddersfield,E0:Huddersfield,Huddersfield,PROBABLE,0.65,False
+0975ecd0-86fe-5152-bdcd-b73e1ba22757,team,football-data.co.uk-legacy,E0:Hull,E0:Hull,Hull,PROBABLE,0.65,False
+4f2c9b6c-dd4b-5a71-a782-a135f68a1297,team,football-data.co.uk-legacy,E0:Ipswich,E0:Ipswich,Ipswich,PROBABLE,0.65,False
+5e6df283-2536-5c1d-86ae-24a7208b9e07,team,football-data.co.uk-legacy,E0:Leeds,E0:Leeds,Leeds,PROBABLE,0.65,False
+ccaef406-b6ed-569e-ab25-fe25afe3091c,team,football-data.co.uk-legacy,E0:Leicester,E0:Leicester,Leicester,PROBABLE,0.65,False
+1c64ba4e-b56d-5c2a-ad98-cf9406d773f8,team,football-data.co.uk-legacy,E0:Liverpool,E0:Liverpool,Liverpool,PROBABLE,0.65,False
+c0a5c440-7c77-5050-b88a-a062992bd3f7,team,football-data.co.uk-legacy,E0:Luton,E0:Luton,Luton,PROBABLE,0.65,False
+2235c691-69de-5020-85f9-12a25c41f998,team,football-data.co.uk-legacy,E0:Man City,E0:Man City,Man City,PROBABLE,0.65,False
+c2d7d9f4-0574-5180-bed7-a47b5633dd24,team,football-data.co.uk-legacy,E0:Man United,E0:Man United,Man United,PROBABLE,0.65,False
+3f54f3dd-4ca8-55cd-ba9b-ac4cef922723,team,football-data.co.uk-legacy,E0:Middlesbrough,E0:Middlesbrough,Middlesbrough,PROBABLE,0.65,False
+565986c8-e602-58fe-822e-abbc8c83d136,team,football-data.co.uk-legacy,E0:Newcastle,E0:Newcastle,Newcastle,PROBABLE,0.65,False
+6f750137-fdc5-576a-9c9c-b76f13e84fe1,team,football-data.co.uk-legacy,E0:Norwich,E0:Norwich,Norwich,PROBABLE,0.65,False
+b0867c8e-d178-5d09-a305-ba16c230a329,team,football-data.co.uk-legacy,E0:Nott'm Forest,E0:Nott'm Forest,Nott'm Forest,PROBABLE,0.65,False
+261504e0-f575-5ba3-a0ac-c878e650374b,team,football-data.co.uk-legacy,E0:Sheffield United,E0:Sheffield United,Sheffield United,PROBABLE,0.65,False
+e17fced2-125a-5980-9543-ab8059a6a010,team,football-data.co.uk-legacy,E0:Southampton,E0:Southampton,Southampton,PROBABLE,0.65,False
+cffc56eb-1d34-5c8f-a9f3-625520a640b3,team,football-data.co.uk-legacy,E0:Stoke,E0:Stoke,Stoke,PROBABLE,0.65,False
+fa4e4f63-34ad-57f4-b72d-06da54eb1c97,team,football-data.co.uk-legacy,E0:Sunderland,E0:Sunderland,Sunderland,PROBABLE,0.65,False
+129f6b12-35dc-5daa-8daa-ec0a65540762,team,football-data.co.uk-legacy,E0:Swansea,E0:Swansea,Swansea,PROBABLE,0.65,False
+fce8bad1-0db0-55ba-b144-739cc9d0d4f2,team,football-data.co.uk-legacy,E0:Tottenham,E0:Tottenham,Tottenham,PROBABLE,0.65,False
+4aacb38e-239a-5c70-a496-be952b281600,team,football-data.co.uk-legacy,E0:Watford,E0:Watford,Watford,PROBABLE,0.65,False
+cdbc3569-28e8-59c2-8517-ac0d354c479b,team,football-data.co.uk-legacy,E0:West Brom,E0:West Brom,West Brom,PROBABLE,0.65,False
+51884cc7-c436-5f75-8b5d-888b922f359f,team,football-data.co.uk-legacy,E0:West Ham,E0:West Ham,West Ham,PROBABLE,0.65,False
+2332150d-8637-590b-a5fe-f1ad9329b1e8,team,football-data.co.uk-legacy,E0:Wolves,E0:Wolves,Wolves,PROBABLE,0.65,False
+04845849-ef21-569c-91be-6c05a45dd29f,team,football-data.co.uk-legacy,E1:Aston Villa,E1:Aston Villa,Aston Villa,PROBABLE,0.65,False
+e38b9484-162b-521e-ba1c-c26f46968617,team,football-data.co.uk-legacy,E1:Barnsley,E1:Barnsley,Barnsley,PROBABLE,0.65,False
+f81d9d45-93fe-5d76-b1d8-c4e500641fef,team,football-data.co.uk-legacy,E1:Birmingham,E1:Birmingham,Birmingham,PROBABLE,0.65,False
+301cd089-f822-5671-b1b2-e92ec2677af2,team,football-data.co.uk-legacy,E1:Blackburn,E1:Blackburn,Blackburn,PROBABLE,0.65,False
+0259bd1c-56a5-586c-bb14-f6215e61a7a8,team,football-data.co.uk-legacy,E1:Blackpool,E1:Blackpool,Blackpool,PROBABLE,0.65,False
+1ee8e42a-3655-5a43-af7c-78d4b0f62749,team,football-data.co.uk-legacy,E1:Bolton,E1:Bolton,Bolton,PROBABLE,0.65,False
+3bd7268f-e1f3-5840-a8db-2c6ca48d5598,team,football-data.co.uk-legacy,E1:Bournemouth,E1:Bournemouth,Bournemouth,PROBABLE,0.65,False
+6b985787-6e9f-55be-acc3-8070877a0bbf,team,football-data.co.uk-legacy,E1:Brentford,E1:Brentford,Brentford,PROBABLE,0.65,False
+0ceee8fb-94bb-5929-aa3a-f2729c0b6111,team,football-data.co.uk-legacy,E1:Brighton,E1:Brighton,Brighton,PROBABLE,0.65,False
+b59396bb-db2b-5c5b-bf37-ed970b243515,team,football-data.co.uk-legacy,E1:Bristol City,E1:Bristol City,Bristol City,PROBABLE,0.65,False
+629fc034-81e2-505d-8fb9-6d243ccbf874,team,football-data.co.uk-legacy,E1:Burnley,E1:Burnley,Burnley,PROBABLE,0.65,False
+319be739-a863-5781-97c6-32db6525ca7c,team,football-data.co.uk-legacy,E1:Burton,E1:Burton,Burton,PROBABLE,0.65,False
+7985c5ea-e9e4-5eca-9ad4-7bbd8ec46128,team,football-data.co.uk-legacy,E1:Cardiff,E1:Cardiff,Cardiff,PROBABLE,0.65,False
+d7bd5957-6667-5fbb-abbc-3c64a02a93a2,team,football-data.co.uk-legacy,E1:Charlton,E1:Charlton,Charlton,PROBABLE,0.65,False
+9a2ad616-fbf3-55f1-8d36-9e540603b762,team,football-data.co.uk-legacy,E1:Coventry,E1:Coventry,Coventry,PROBABLE,0.65,False
+c190a574-531c-5111-ad90-2149205e089b,team,football-data.co.uk-legacy,E1:Derby,E1:Derby,Derby,PROBABLE,0.65,False
+2d46a144-58b6-59a3-a72f-b3061c011040,team,football-data.co.uk-legacy,E1:Fulham,E1:Fulham,Fulham,PROBABLE,0.65,False
+fba3da53-7e0b-5df9-96e8-b2dfa02024bd,team,football-data.co.uk-legacy,E1:Huddersfield,E1:Huddersfield,Huddersfield,PROBABLE,0.65,False
+f0868256-397e-5350-9e75-cf4624f53ccc,team,football-data.co.uk-legacy,E1:Hull,E1:Hull,Hull,PROBABLE,0.65,False
+9ac1dd9b-db7d-5921-8b6e-d9711c8ef29c,team,football-data.co.uk-legacy,E1:Ipswich,E1:Ipswich,Ipswich,PROBABLE,0.65,False
+36828329-d809-502a-9151-dec94f02709c,team,football-data.co.uk-legacy,E1:Leeds,E1:Leeds,Leeds,PROBABLE,0.65,False
+63f296c7-709f-57e1-8722-902770031df1,team,football-data.co.uk-legacy,E1:Leicester,E1:Leicester,Leicester,PROBABLE,0.65,False
+93c88a75-f722-5d09-b570-67695eda62c5,team,football-data.co.uk-legacy,E1:Luton,E1:Luton,Luton,PROBABLE,0.65,False
+bf67a78d-7c71-5b42-ab22-3a2125c68e29,team,football-data.co.uk-legacy,E1:Middlesbrough,E1:Middlesbrough,Middlesbrough,PROBABLE,0.65,False
+564a3ef5-d6c4-58dc-8795-1c83c19cb642,team,football-data.co.uk-legacy,E1:Millwall,E1:Millwall,Millwall,PROBABLE,0.65,False
+64cbe1a0-dd79-5152-8b50-dd684eecce1e,team,football-data.co.uk-legacy,E1:Milton Keynes Dons,E1:Milton Keynes Dons,Milton Keynes Dons,PROBABLE,0.65,False
+f3f38dab-ffc2-5f7f-b716-d80da627ccfd,team,football-data.co.uk-legacy,E1:Newcastle,E1:Newcastle,Newcastle,PROBABLE,0.65,False
+5f9e0d3d-9a91-59ae-b797-9ad25f4efd64,team,football-data.co.uk-legacy,E1:Norwich,E1:Norwich,Norwich,PROBABLE,0.65,False
+fcc5cb3c-ae8f-50e3-a72b-94fec4c19511,team,football-data.co.uk-legacy,E1:Nott'm Forest,E1:Nott'm Forest,Nott'm Forest,PROBABLE,0.65,False
+1e9cb6aa-9562-5e8b-984b-4414045d7f33,team,football-data.co.uk-legacy,E1:Oxford,E1:Oxford,Oxford,PROBABLE,0.65,False
+e9702ae1-b189-55c2-88b1-8d4654fdf2f9,team,football-data.co.uk-legacy,E1:Peterboro,E1:Peterboro,Peterboro,PROBABLE,0.65,False
+b5beac61-adf4-55dc-b610-4be4c8212c62,team,football-data.co.uk-legacy,E1:Plymouth,E1:Plymouth,Plymouth,PROBABLE,0.65,False
+2485734c-2716-52ab-8b57-072fa130ddaa,team,football-data.co.uk-legacy,E1:Portsmouth,E1:Portsmouth,Portsmouth,PROBABLE,0.65,False
+09feae93-d665-5464-a0f2-427255a6436e,team,football-data.co.uk-legacy,E1:Preston,E1:Preston,Preston,PROBABLE,0.65,False
+73bbfd2c-05a4-5fc7-80c5-4e83add91545,team,football-data.co.uk-legacy,E1:QPR,E1:QPR,QPR,PROBABLE,0.65,False
+68197b49-1ae2-592f-ae65-ab897f22a684,team,football-data.co.uk-legacy,E1:Reading,E1:Reading,Reading,PROBABLE,0.65,False
+d0d994e3-65b4-5a5c-8b31-6df4b8572971,team,football-data.co.uk-legacy,E1:Rotherham,E1:Rotherham,Rotherham,PROBABLE,0.65,False
+99a80f0d-e207-509b-80f8-baebad22f304,team,football-data.co.uk-legacy,E1:Sheffield United,E1:Sheffield United,Sheffield United,PROBABLE,0.65,False
+d25f2020-acbb-5799-bbb3-599339c8a7f0,team,football-data.co.uk-legacy,E1:Sheffield Weds,E1:Sheffield Weds,Sheffield Weds,PROBABLE,0.65,False
+21f15174-0b2a-5516-bcf4-ad9b1e1aee3d,team,football-data.co.uk-legacy,E1:Southampton,E1:Southampton,Southampton,PROBABLE,0.65,False
+ea9317e0-b044-536b-8a0e-13494c0be95b,team,football-data.co.uk-legacy,E1:Stoke,E1:Stoke,Stoke,PROBABLE,0.65,False
+7670f8f1-9def-5967-998c-d2a6614dd040,team,football-data.co.uk-legacy,E1:Sunderland,E1:Sunderland,Sunderland,PROBABLE,0.65,False
+5107273b-21e9-52a8-92f0-fd011ca820e1,team,football-data.co.uk-legacy,E1:Swansea,E1:Swansea,Swansea,PROBABLE,0.65,False
+0242b881-77df-58d3-aed3-2ac125e126a7,team,football-data.co.uk-legacy,E1:Watford,E1:Watford,Watford,PROBABLE,0.65,False
+057fb637-0b70-5e99-baea-590ef7f2ad18,team,football-data.co.uk-legacy,E1:West Brom,E1:West Brom,West Brom,PROBABLE,0.65,False
+5806050c-24f0-5c28-b8fd-19c6b6a84b72,team,football-data.co.uk-legacy,E1:Wigan,E1:Wigan,Wigan,PROBABLE,0.65,False
+98ee5cbc-5d3c-5d1a-af46-bafac2177fdc,team,football-data.co.uk-legacy,E1:Wolves,E1:Wolves,Wolves,PROBABLE,0.65,False
+fc832e78-a22d-5057-beb7-d22b7f1e6e7e,team,football-data.co.uk-legacy,E1:Wrexham,E1:Wrexham,Wrexham,PROBABLE,0.65,False
+55858400-0a2d-5d44-a42d-1b065bacc03f,team,football-data.co.uk-legacy,E1:Wycombe,E1:Wycombe,Wycombe,PROBABLE,0.65,False
+5afbc720-181f-562d-9583-4b8c256ed347,team,football-data.co.uk-legacy,F1:Ajaccio,F1:Ajaccio,Ajaccio,PROBABLE,0.65,False
+3a7b6559-bf57-5ae9-bc03-456eb7ef613d,team,football-data.co.uk-legacy,F1:Ajaccio GFCO,F1:Ajaccio GFCO,Ajaccio GFCO,PROBABLE,0.65,False
+1aa1c6fb-f7ab-57ef-9145-a1bc96c2ce4b,team,football-data.co.uk-legacy,F1:Amiens,F1:Amiens,Amiens,PROBABLE,0.65,False
+fa123931-5245-50ef-a852-070e97da3d1e,team,football-data.co.uk-legacy,F1:Angers,F1:Angers,Angers,PROBABLE,0.65,False
+132a9be7-c6c6-50c6-978a-20defac8f090,team,football-data.co.uk-legacy,F1:Auxerre,F1:Auxerre,Auxerre,PROBABLE,0.65,False
+e3e4f811-7408-551d-a4f3-b09b173464b4,team,football-data.co.uk-legacy,F1:Bastia,F1:Bastia,Bastia,PROBABLE,0.65,False
+8923cef5-b6f3-5f21-b55d-ed97fe5c067e,team,football-data.co.uk-legacy,F1:Bordeaux,F1:Bordeaux,Bordeaux,PROBABLE,0.65,False
+b1ce1cc1-62a4-52c7-8388-7fbd26703386,team,football-data.co.uk-legacy,F1:Brest,F1:Brest,Brest,PROBABLE,0.65,False
+6603d3af-ade2-5f45-9a7a-20bed91a2fe3,team,football-data.co.uk-legacy,F1:Caen,F1:Caen,Caen,PROBABLE,0.65,False
+32ad967e-ce71-582b-b17f-6b372d434c6b,team,football-data.co.uk-legacy,F1:Clermont,F1:Clermont,Clermont,PROBABLE,0.65,False
+76eef600-0ee8-59f3-a73c-7388ade6df9b,team,football-data.co.uk-legacy,F1:Dijon,F1:Dijon,Dijon,PROBABLE,0.65,False
+0fa02acb-1da2-598c-99b9-064bbefe8143,team,football-data.co.uk-legacy,F1:Guingamp,F1:Guingamp,Guingamp,PROBABLE,0.65,False
+23edd251-7d12-559f-993b-1b72dc319b57,team,football-data.co.uk-legacy,F1:Le Havre,F1:Le Havre,Le Havre,PROBABLE,0.65,False
+1390fb02-3d98-5b55-9ce8-98540342d1b5,team,football-data.co.uk-legacy,F1:Lens,F1:Lens,Lens,PROBABLE,0.65,False
+c7452f3f-d158-5594-9c44-28c7e84fbb72,team,football-data.co.uk-legacy,F1:Lille,F1:Lille,Lille,PROBABLE,0.65,False
+fe008b0e-0fe9-555f-90b5-bf1ddeb113da,team,football-data.co.uk-legacy,F1:Lorient,F1:Lorient,Lorient,PROBABLE,0.65,False
+38334c30-a7c6-5969-b4eb-63e439a6fe81,team,football-data.co.uk-legacy,F1:Lyon,F1:Lyon,Lyon,PROBABLE,0.65,False
+4c925044-6a3a-5fb4-a1e6-1aed72854ea2,team,football-data.co.uk-legacy,F1:Marseille,F1:Marseille,Marseille,PROBABLE,0.65,False
+2db7d706-92f3-5075-83d0-93447d65a66d,team,football-data.co.uk-legacy,F1:Metz,F1:Metz,Metz,PROBABLE,0.65,False
+53736ec9-2e42-5938-bdb4-8d3337ba518d,team,football-data.co.uk-legacy,F1:Monaco,F1:Monaco,Monaco,PROBABLE,0.65,False
+f0329948-2f42-52ac-9aa5-de3658ec250e,team,football-data.co.uk-legacy,F1:Montpellier,F1:Montpellier,Montpellier,PROBABLE,0.65,False
+8243bb0d-e175-5ce1-ac0b-1864d4bfe76a,team,football-data.co.uk-legacy,F1:Nancy,F1:Nancy,Nancy,PROBABLE,0.65,False
+ecf13836-3a62-5634-bec9-3e5eb5007945,team,football-data.co.uk-legacy,F1:Nantes,F1:Nantes,Nantes,PROBABLE,0.65,False
+81dcc985-cb74-5c81-ba39-a72add9fade7,team,football-data.co.uk-legacy,F1:Nice,F1:Nice,Nice,PROBABLE,0.65,False
+d3a4b00b-c4c0-5afc-80ff-c0966c82323d,team,football-data.co.uk-legacy,F1:Nimes,F1:Nimes,Nimes,PROBABLE,0.65,False
+afc8c5d5-6dd8-5e54-9a6c-82d59a813b95,team,football-data.co.uk-legacy,F1:Paris FC,F1:Paris FC,Paris FC,PROBABLE,0.65,False
+db46b30f-dbe4-5fb5-a810-011db535aaed,team,football-data.co.uk-legacy,F1:Paris SG,F1:Paris SG,Paris SG,PROBABLE,0.65,False
+fa4e8bc1-d87e-5797-9a58-1e112dbc2fbf,team,football-data.co.uk-legacy,F1:Reims,F1:Reims,Reims,PROBABLE,0.65,False
+033c1319-041f-5839-b520-16c1e399802b,team,football-data.co.uk-legacy,F1:Rennes,F1:Rennes,Rennes,PROBABLE,0.65,False
+5c67d830-fb11-5b0e-a67a-e46cf1f4552b,team,football-data.co.uk-legacy,F1:St Etienne,F1:St Etienne,St Etienne,PROBABLE,0.65,False
+1ff989a6-8179-5590-af5d-e2bf84274309,team,football-data.co.uk-legacy,F1:Strasbourg,F1:Strasbourg,Strasbourg,PROBABLE,0.65,False
+c8a0c413-63d6-57bb-9f4a-9d1c9e041920,team,football-data.co.uk-legacy,F1:Toulouse,F1:Toulouse,Toulouse,PROBABLE,0.65,False
+dbf4e892-b085-5392-8c9f-cc5e1ef087d5,team,football-data.co.uk-legacy,F1:Troyes,F1:Troyes,Troyes,PROBABLE,0.65,False
+7ab925d7-d393-52ed-9b20-1f3f0673b8e1,team,football-data.co.uk-legacy,F2:Ajaccio,F2:Ajaccio,Ajaccio,PROBABLE,0.65,False
+4fe83976-9a9a-5e63-bd47-a4c857e0d530,team,football-data.co.uk-legacy,F2:Ajaccio GFCO,F2:Ajaccio GFCO,Ajaccio GFCO,PROBABLE,0.65,False
+b79e3ad1-1699-5873-a829-e9725386d523,team,football-data.co.uk-legacy,F2:Amiens,F2:Amiens,Amiens,PROBABLE,0.65,False
+7430b051-c130-5949-ad36-4fc8a3e06482,team,football-data.co.uk-legacy,F2:Angers,F2:Angers,Angers,PROBABLE,0.65,False
+9d0d88c6-b94c-57cf-95be-b9c174cecc3b,team,football-data.co.uk-legacy,F2:Annecy,F2:Annecy,Annecy,PROBABLE,0.65,False
+70040172-1fca-57d9-b0ed-702696623d25,team,football-data.co.uk-legacy,F2:Auxerre,F2:Auxerre,Auxerre,PROBABLE,0.65,False
+04195f89-e2ce-5cf5-9350-380c2613844d,team,football-data.co.uk-legacy,F2:Bastia,F2:Bastia,Bastia,PROBABLE,0.65,False
+db722d60-8ef5-55d1-b105-fb196b1ad822,team,football-data.co.uk-legacy,F2:Beziers,F2:Beziers,Beziers,PROBABLE,0.65,False
+926c624c-2332-5d40-927d-3f69d0ecf556,team,football-data.co.uk-legacy,F2:Bordeaux,F2:Bordeaux,Bordeaux,PROBABLE,0.65,False
+a9d6d61a-5e2d-5453-b88e-d579bd38e1c4,team,football-data.co.uk-legacy,F2:Boulogne,F2:Boulogne,Boulogne,PROBABLE,0.65,False
+9f3bc7be-896a-576f-863a-c4dc65b1e698,team,football-data.co.uk-legacy,F2:Bourg Peronnas,F2:Bourg Peronnas,Bourg Peronnas,PROBABLE,0.65,False
+b04d6ea5-f16e-5c42-affa-158da3124fb6,team,football-data.co.uk-legacy,F2:Brest,F2:Brest,Brest,PROBABLE,0.65,False
+abac6691-8ee5-50b0-98bc-31b442361bae,team,football-data.co.uk-legacy,F2:Caen,F2:Caen,Caen,PROBABLE,0.65,False
+2c0dc7dc-3a33-5c06-99b5-7833e2f69d27,team,football-data.co.uk-legacy,F2:Chambly,F2:Chambly,Chambly,PROBABLE,0.65,False
+0bb38008-0690-5f4c-91e4-f71fc20b55af,team,football-data.co.uk-legacy,F2:Chateauroux,F2:Chateauroux,Chateauroux,PROBABLE,0.65,False
+d1f80b57-2276-586e-8aea-f6ecba4c00cf,team,football-data.co.uk-legacy,F2:Clermont,F2:Clermont,Clermont,PROBABLE,0.65,False
+ba8825e3-fc11-599a-ba2f-e5ad133dc6e8,team,football-data.co.uk-legacy,F2:Concarneau,F2:Concarneau,Concarneau,PROBABLE,0.65,False
+b1d8d6ce-5849-5332-8d7c-7f152d3fe14c,team,football-data.co.uk-legacy,F2:Creteil,F2:Creteil,Creteil,PROBABLE,0.65,False
+c279dbb9-6309-5563-9903-8103bbdf0910,team,football-data.co.uk-legacy,F2:Dijon,F2:Dijon,Dijon,PROBABLE,0.65,False
+dce49b74-3fa4-52aa-817e-f8078035c146,team,football-data.co.uk-legacy,F2:Dunkerque,F2:Dunkerque,Dunkerque,PROBABLE,0.65,False
+ec04fb1e-75cc-52b7-86d2-955b41a49beb,team,football-data.co.uk-legacy,F2:Evian Thonon Gaillard,F2:Evian Thonon Gaillard,Evian Thonon Gaillard,PROBABLE,0.65,False
+04ebce49-43d4-5d0c-9fa2-85eff2d19d48,team,football-data.co.uk-legacy,F2:Grenoble,F2:Grenoble,Grenoble,PROBABLE,0.65,False
+641781d3-409f-53e1-9e3c-6ecd979b3a74,team,football-data.co.uk-legacy,F2:Guingamp,F2:Guingamp,Guingamp,PROBABLE,0.65,False
+36793de5-f0cc-5963-9f66-9e0a74242951,team,football-data.co.uk-legacy,F2:Laval,F2:Laval,Laval,PROBABLE,0.65,False
+8ace299b-f6b9-5648-89fa-1f8cf80e8f47,team,football-data.co.uk-legacy,F2:Le Havre,F2:Le Havre,Le Havre,PROBABLE,0.65,False
+fb3d725a-c6d0-55a5-9d0b-dd5dd816b452,team,football-data.co.uk-legacy,F2:Le Mans,F2:Le Mans,Le Mans,PROBABLE,0.65,False
+b4888a48-a6ce-5994-8909-b2b1db61b8f0,team,football-data.co.uk-legacy,F2:Lens,F2:Lens,Lens,PROBABLE,0.65,False
+52972e4d-8109-506a-8dfd-3745c27d548b,team,football-data.co.uk-legacy,F2:Lorient,F2:Lorient,Lorient,PROBABLE,0.65,False
+38b1e3f5-05b6-5bd7-ac11-4d6a72163d40,team,football-data.co.uk-legacy,F2:Martigues,F2:Martigues,Martigues,PROBABLE,0.65,False
+4bef150f-eeba-543f-883b-270702df7fb9,team,football-data.co.uk-legacy,F2:Metz,F2:Metz,Metz,PROBABLE,0.65,False
+ee21e4ab-c4de-56e2-a1b4-4588892c68a6,team,football-data.co.uk-legacy,F2:Montpellier,F2:Montpellier,Montpellier,PROBABLE,0.65,False
+6dd8d2ac-8bd5-5186-95b6-f33f55af81f6,team,football-data.co.uk-legacy,F2:Nancy,F2:Nancy,Nancy,PROBABLE,0.65,False
+6d11a2c5-a77b-5de6-83f5-9b53c32ff2ee,team,football-data.co.uk-legacy,F2:Nimes,F2:Nimes,Nimes,PROBABLE,0.65,False
+f5f2bdd7-7d25-5e22-9b68-eedc85bff206,team,football-data.co.uk-legacy,F2:Niort,F2:Niort,Niort,PROBABLE,0.65,False
+b98ef316-0589-56b2-802f-6c5b75eb2f4a,team,football-data.co.uk-legacy,F2:Orleans,F2:Orleans,Orleans,PROBABLE,0.65,False
+a16a5758-cf7a-52dd-b822-f302ad7e5a3f,team,football-data.co.uk-legacy,F2:Paris FC,F2:Paris FC,Paris FC,PROBABLE,0.65,False
+b6fc6ada-b278-556c-b73d-b16752d8b0f7,team,football-data.co.uk-legacy,F2:Pau FC,F2:Pau FC,Pau FC,PROBABLE,0.65,False
+715aab0d-772f-5776-80d4-c651bd24db71,team,football-data.co.uk-legacy,F2:Quevilly Rouen,F2:Quevilly Rouen,Quevilly Rouen,PROBABLE,0.65,False
+81b8ad3f-6da7-5d1a-b962-7965947df931,team,football-data.co.uk-legacy,F2:Red Star,F2:Red Star,Red Star,PROBABLE,0.65,False
+c3a381b5-6dd9-5ac5-ae34-9813b7b25b25,team,football-data.co.uk-legacy,F2:Reims,F2:Reims,Reims,PROBABLE,0.65,False
+350753a7-5ddb-5a1d-8963-0fdfa52b2007,team,football-data.co.uk-legacy,F2:Rodez,F2:Rodez,Rodez,PROBABLE,0.65,False
+5625aab2-a991-500c-b958-308b4a118bf7,team,football-data.co.uk-legacy,F2:Sochaux,F2:Sochaux,Sochaux,PROBABLE,0.65,False
+0fa9d7a4-0fe2-5cad-ab24-7516ddbf4918,team,football-data.co.uk-legacy,F2:St Etienne,F2:St Etienne,St Etienne,PROBABLE,0.65,False
+b3db0237-0eeb-5afa-b2ce-9caf46bc01d2,team,football-data.co.uk-legacy,F2:Strasbourg,F2:Strasbourg,Strasbourg,PROBABLE,0.65,False
+e54a4d49-cd32-5064-95c5-6c1c7edabbf7,team,football-data.co.uk-legacy,F2:Toulouse,F2:Toulouse,Toulouse,PROBABLE,0.65,False
+59ddcf77-b182-5314-b0bd-9806a092f725,team,football-data.co.uk-legacy,F2:Tours,F2:Tours,Tours,PROBABLE,0.65,False
+2b086923-627b-57d6-9516-118b90b0e0d9,team,football-data.co.uk-legacy,F2:Troyes,F2:Troyes,Troyes,PROBABLE,0.65,False
+bdae6cb9-f01e-51cb-8730-9a710a7e6bc9,team,football-data.co.uk-legacy,F2:Valenciennes,F2:Valenciennes,Valenciennes,PROBABLE,0.65,False
+e84d0d82-9ac7-5a23-a376-4deae8ebd7bd,team,football-data.co.uk-legacy,I1:Atalanta,I1:Atalanta,Atalanta,PROBABLE,0.65,False
+6104ae98-ca40-594c-ae56-a0fddbaf221b,team,football-data.co.uk-legacy,I1:Benevento,I1:Benevento,Benevento,PROBABLE,0.65,False
+59c23033-8d6f-5413-9ce4-8d8a63f88781,team,football-data.co.uk-legacy,I1:Bologna,I1:Bologna,Bologna,PROBABLE,0.65,False
+77608c60-0236-5f35-9c46-751439263914,team,football-data.co.uk-legacy,I1:Brescia,I1:Brescia,Brescia,PROBABLE,0.65,False
+bb59a77f-b141-5f69-b21c-dc6b82a9b2fb,team,football-data.co.uk-legacy,I1:Cagliari,I1:Cagliari,Cagliari,PROBABLE,0.65,False
+144105ac-d4d4-5292-bba3-43f17f343217,team,football-data.co.uk-legacy,I1:Carpi,I1:Carpi,Carpi,PROBABLE,0.65,False
+b5878708-e47e-52af-972e-09c312ee7934,team,football-data.co.uk-legacy,I1:Chievo,I1:Chievo,Chievo,PROBABLE,0.65,False
+1e057105-accf-5a71-911e-2096c23799c1,team,football-data.co.uk-legacy,I1:Como,I1:Como,Como,PROBABLE,0.65,False
+d79e40ad-e710-5035-a22d-c3c6c2453ec0,team,football-data.co.uk-legacy,I1:Cremonese,I1:Cremonese,Cremonese,PROBABLE,0.65,False
+652d3e9f-9b28-5971-9bac-057259e31f09,team,football-data.co.uk-legacy,I1:Crotone,I1:Crotone,Crotone,PROBABLE,0.65,False
+77587ba8-eaa3-5572-89d6-2c5efa91a7ca,team,football-data.co.uk-legacy,I1:Empoli,I1:Empoli,Empoli,PROBABLE,0.65,False
+2509ded7-db90-5e14-b144-d3c0a4ee26c0,team,football-data.co.uk-legacy,I1:Fiorentina,I1:Fiorentina,Fiorentina,PROBABLE,0.65,False
+1dfe26c8-1ace-5a82-93ce-32f689123c44,team,football-data.co.uk-legacy,I1:Frosinone,I1:Frosinone,Frosinone,PROBABLE,0.65,False
+b5729b08-6cbd-5483-a352-b23c4b42d521,team,football-data.co.uk-legacy,I1:Genoa,I1:Genoa,Genoa,PROBABLE,0.65,False
+962ba419-792f-5332-9140-b1a66f426c52,team,football-data.co.uk-legacy,I1:Inter,I1:Inter,Inter,PROBABLE,0.65,False
+bb948a5d-648e-5d27-9b7c-9b8d79f236a2,team,football-data.co.uk-legacy,I1:Juventus,I1:Juventus,Juventus,PROBABLE,0.65,False
+a9975087-1231-5902-915c-c5a11a137ef7,team,football-data.co.uk-legacy,I1:Lazio,I1:Lazio,Lazio,PROBABLE,0.65,False
+e14cb77b-d04b-5d5b-a56c-6e4700b99189,team,football-data.co.uk-legacy,I1:Lecce,I1:Lecce,Lecce,PROBABLE,0.65,False
+d049d174-98ed-5c51-9442-5361951988e0,team,football-data.co.uk-legacy,I1:Milan,I1:Milan,Milan,PROBABLE,0.65,False
+1353907c-f463-5865-b18a-a8a90b57cb8d,team,football-data.co.uk-legacy,I1:Monza,I1:Monza,Monza,PROBABLE,0.65,False
+ed061dc4-a109-56ea-a285-94325d059962,team,football-data.co.uk-legacy,I1:Napoli,I1:Napoli,Napoli,PROBABLE,0.65,False
+44e6b2cb-7e31-5794-8190-c5f4c6a2666f,team,football-data.co.uk-legacy,I1:Palermo,I1:Palermo,Palermo,PROBABLE,0.65,False
+4d09b897-8cf0-5886-b548-3f501d3b55d8,team,football-data.co.uk-legacy,I1:Parma,I1:Parma,Parma,PROBABLE,0.65,False
+c040b343-58f2-5593-bf5b-8a5acc25a936,team,football-data.co.uk-legacy,I1:Pescara,I1:Pescara,Pescara,PROBABLE,0.65,False
+c40552a8-05cc-529b-936d-b24903b6e184,team,football-data.co.uk-legacy,I1:Pisa,I1:Pisa,Pisa,PROBABLE,0.65,False
+8906d661-097a-597e-83da-e75957e6866b,team,football-data.co.uk-legacy,I1:Roma,I1:Roma,Roma,PROBABLE,0.65,False
+f3950315-06af-5e87-9ff7-39bcf9b613c4,team,football-data.co.uk-legacy,I1:Salernitana,I1:Salernitana,Salernitana,PROBABLE,0.65,False
+8a80f8e7-d471-512b-aec7-f67ff8232267,team,football-data.co.uk-legacy,I1:Sampdoria,I1:Sampdoria,Sampdoria,PROBABLE,0.65,False
+ac838316-4df2-5b43-9b82-856e9d7304f1,team,football-data.co.uk-legacy,I1:Sassuolo,I1:Sassuolo,Sassuolo,PROBABLE,0.65,False
+b3b7f79a-c8aa-5fcc-a0c0-b56a1a74a61b,team,football-data.co.uk-legacy,I1:Spal,I1:Spal,Spal,PROBABLE,0.65,False
+87bb70db-d471-5d8d-878a-cf83792a7a5c,team,football-data.co.uk-legacy,I1:Spezia,I1:Spezia,Spezia,PROBABLE,0.65,False
+e7f754e4-2b4e-5c34-b947-4e894651abc8,team,football-data.co.uk-legacy,I1:Torino,I1:Torino,Torino,PROBABLE,0.65,False
+347e2edc-1081-598f-8c70-d2b226d8e671,team,football-data.co.uk-legacy,I1:Udinese,I1:Udinese,Udinese,PROBABLE,0.65,False
+9282294f-d915-5e0f-989d-ee8d7c3ab2bd,team,football-data.co.uk-legacy,I1:Venezia,I1:Venezia,Venezia,PROBABLE,0.65,False
+4176eee7-e12f-5401-90f6-644687da3544,team,football-data.co.uk-legacy,I1:Verona,I1:Verona,Verona,PROBABLE,0.65,False
+b4df6188-1033-58e4-8ac4-d5fc77fe2be1,team,football-data.co.uk-legacy,N1:AZ Alkmaar,N1:AZ Alkmaar,AZ Alkmaar,PROBABLE,0.65,False
+21366312-547d-573e-a346-080ae60fdd93,team,football-data.co.uk-legacy,N1:Ajax,N1:Ajax,Ajax,PROBABLE,0.65,False
+eb71f3b1-e37e-5606-a2be-818ce86edcda,team,football-data.co.uk-legacy,N1:Almere City,N1:Almere City,Almere City,PROBABLE,0.65,False
+e25ab9e0-7163-50f3-9b24-3de6f044ae38,team,football-data.co.uk-legacy,N1:Cambuur,N1:Cambuur,Cambuur,PROBABLE,0.65,False
+b51cd2fc-31e3-597a-8987-2f70be6d9e98,team,football-data.co.uk-legacy,N1:Den Haag,N1:Den Haag,Den Haag,PROBABLE,0.65,False
+e89268a2-2b64-55a6-a2cf-10b0d94e33cc,team,football-data.co.uk-legacy,N1:Excelsior,N1:Excelsior,Excelsior,PROBABLE,0.65,False
+7739d4c2-e9fe-575a-a355-892ad09e1a5d,team,football-data.co.uk-legacy,N1:FC Emmen,N1:FC Emmen,FC Emmen,PROBABLE,0.65,False
+3b09bd13-1bea-5a96-aa4f-eea8e532d67d,team,football-data.co.uk-legacy,N1:Feyenoord,N1:Feyenoord,Feyenoord,PROBABLE,0.65,False
+3f21ba0c-b72e-5949-aa9b-d6c76de4d212,team,football-data.co.uk-legacy,N1:For Sittard,N1:For Sittard,For Sittard,PROBABLE,0.65,False
+bc3d1195-e79f-58c7-82cc-ba3f1b849cca,team,football-data.co.uk-legacy,N1:Go Ahead Eagles,N1:Go Ahead Eagles,Go Ahead Eagles,PROBABLE,0.65,False
+9782f569-0b80-55f5-8c21-67b9ab40c29b,team,football-data.co.uk-legacy,N1:Graafschap,N1:Graafschap,Graafschap,PROBABLE,0.65,False
+3da2bb93-7117-5523-b1cd-45e9c41e253c,team,football-data.co.uk-legacy,N1:Groningen,N1:Groningen,Groningen,PROBABLE,0.65,False
+146c65e1-210c-5ce8-84c6-87dcaa7379b3,team,football-data.co.uk-legacy,N1:Heerenveen,N1:Heerenveen,Heerenveen,PROBABLE,0.65,False
+1ecccd3d-acdd-505e-94f0-bae9b1522a47,team,football-data.co.uk-legacy,N1:Heracles,N1:Heracles,Heracles,PROBABLE,0.65,False
+a512440d-5d7d-5486-8293-5f93671e6f40,team,football-data.co.uk-legacy,N1:NAC Breda,N1:NAC Breda,NAC Breda,PROBABLE,0.65,False
+1e78ffaf-9263-53c9-89e4-f6f3d3b253ea,team,football-data.co.uk-legacy,N1:Nijmegen,N1:Nijmegen,Nijmegen,PROBABLE,0.65,False
+792c5af3-d48c-5d9f-b57e-17edc64bbf64,team,football-data.co.uk-legacy,N1:PSV Eindhoven,N1:PSV Eindhoven,PSV Eindhoven,PROBABLE,0.65,False
+2a39fff4-d2e8-5d8c-95aa-8d68b6e9c1b5,team,football-data.co.uk-legacy,N1:Roda,N1:Roda,Roda,PROBABLE,0.65,False
+99c5a7f9-bb40-54f0-bc73-9b59531fd163,team,football-data.co.uk-legacy,N1:Sparta Rotterdam,N1:Sparta Rotterdam,Sparta Rotterdam,PROBABLE,0.65,False
+42fefed5-39b5-555b-8546-528fdc3e1064,team,football-data.co.uk-legacy,N1:Telstar,N1:Telstar,Telstar,PROBABLE,0.65,False
+ad4e3588-060e-5c6d-b1ae-18c83345ffaa,team,football-data.co.uk-legacy,N1:Twente,N1:Twente,Twente,PROBABLE,0.65,False
+77a9ef51-8413-5213-a4fe-b2dc5c3e294f,team,football-data.co.uk-legacy,N1:Utrecht,N1:Utrecht,Utrecht,PROBABLE,0.65,False
+cefc336d-0efd-5913-8305-1fd081a6e86e,team,football-data.co.uk-legacy,N1:VVV Venlo,N1:VVV Venlo,VVV Venlo,PROBABLE,0.65,False
+ab83ff96-b1f1-52e2-b754-b323d4b1febd,team,football-data.co.uk-legacy,N1:Vitesse,N1:Vitesse,Vitesse,PROBABLE,0.65,False
+6ee4dfe5-ab1b-51b4-9cd0-d2f6ebf8907b,team,football-data.co.uk-legacy,N1:Volendam,N1:Volendam,Volendam,PROBABLE,0.65,False
+fd3145aa-6352-5165-b131-24a289623518,team,football-data.co.uk-legacy,N1:Waalwijk,N1:Waalwijk,Waalwijk,PROBABLE,0.65,False
+e805ea71-5799-57a8-8442-1f05d7f04229,team,football-data.co.uk-legacy,N1:Willem II,N1:Willem II,Willem II,PROBABLE,0.65,False
+d2ccf80b-f62b-5aaf-a50f-02dba6ff6af8,team,football-data.co.uk-legacy,N1:Zwolle,N1:Zwolle,Zwolle,PROBABLE,0.65,False
+4317b8c4-6b35-5166-8f18-883b911c3178,team,football-data.co.uk-legacy,P1:AVS,P1:AVS,AVS,PROBABLE,0.65,False
+028e9651-5f61-55ce-97db-5ca93e67fe6c,team,football-data.co.uk-legacy,P1:Academica,P1:Academica,Academica,PROBABLE,0.65,False
+83b2150b-2a2f-52df-bc70-8db6761942fe,team,football-data.co.uk-legacy,P1:Alverca,P1:Alverca,Alverca,PROBABLE,0.65,False
+0f71aed4-4780-5382-b957-5814da163415,team,football-data.co.uk-legacy,P1:Arouca,P1:Arouca,Arouca,PROBABLE,0.65,False
+f12785fa-148d-5f32-913e-5efa77a339a4,team,football-data.co.uk-legacy,P1:Aves,P1:Aves,Aves,PROBABLE,0.65,False
+a31d0fb8-d4b4-5892-beb8-c65340effb67,team,football-data.co.uk-legacy,P1:Belenenses,P1:Belenenses,Belenenses,PROBABLE,0.65,False
+1f40c37f-19cc-56ad-881e-2175f83d717c,team,football-data.co.uk-legacy,P1:Benfica,P1:Benfica,Benfica,PROBABLE,0.65,False
+0808ef5e-56b2-5f55-b234-355325279e3e,team,football-data.co.uk-legacy,P1:Boavista,P1:Boavista,Boavista,PROBABLE,0.65,False
+4fbf6ef7-4108-5b3d-863f-7ce8cda39fbf,team,football-data.co.uk-legacy,P1:Casa Pia,P1:Casa Pia,Casa Pia,PROBABLE,0.65,False
+8e69535d-be53-5891-8e60-f0eeb0ac831d,team,football-data.co.uk-legacy,P1:Chaves,P1:Chaves,Chaves,PROBABLE,0.65,False
+d24ab418-1fba-571b-a214-ed3c4e868bbf,team,football-data.co.uk-legacy,P1:Estoril,P1:Estoril,Estoril,PROBABLE,0.65,False
+eae8c622-8312-57ee-bd74-82053d6863b0,team,football-data.co.uk-legacy,P1:Estrela,P1:Estrela,Estrela,PROBABLE,0.65,False
+46723e9f-a9da-5cb7-9d61-a6a84729dccd,team,football-data.co.uk-legacy,P1:Famalicao,P1:Famalicao,Famalicao,PROBABLE,0.65,False
+85092185-08a5-5b20-ae4a-b3bfe4736f31,team,football-data.co.uk-legacy,P1:Farense,P1:Farense,Farense,PROBABLE,0.65,False
+cb5fe3cd-985b-556a-9208-9d5c25a2e8ff,team,football-data.co.uk-legacy,P1:Feirense,P1:Feirense,Feirense,PROBABLE,0.65,False
+a0540d4d-7caa-5a95-ab63-ed73dd22c4f2,team,football-data.co.uk-legacy,P1:Gil Vicente,P1:Gil Vicente,Gil Vicente,PROBABLE,0.65,False
+c7a929ef-bbca-5db6-9e00-b94b56256bd5,team,football-data.co.uk-legacy,P1:Guimaraes,P1:Guimaraes,Guimaraes,PROBABLE,0.65,False
+17ce83fb-ed1d-53dd-9c46-7609522ad044,team,football-data.co.uk-legacy,P1:Maritimo,P1:Maritimo,Maritimo,PROBABLE,0.65,False
+046fc92b-cdd5-58e0-a864-d78a33bf2796,team,football-data.co.uk-legacy,P1:Moreirense,P1:Moreirense,Moreirense,PROBABLE,0.65,False
+2b39f437-4c74-5fb1-8fa0-741a94f46e5d,team,football-data.co.uk-legacy,P1:Nacional,P1:Nacional,Nacional,PROBABLE,0.65,False
+4637d70e-b754-5f4f-b630-081c3541cbfb,team,football-data.co.uk-legacy,P1:Pacos Ferreira,P1:Pacos Ferreira,Pacos Ferreira,PROBABLE,0.65,False
+8f09f0c4-5ace-529f-a1cf-27028dede3b8,team,football-data.co.uk-legacy,P1:Portimonense,P1:Portimonense,Portimonense,PROBABLE,0.65,False
+47eb4355-1f61-569d-aea1-8e81efb4fbc0,team,football-data.co.uk-legacy,P1:Porto,P1:Porto,Porto,PROBABLE,0.65,False
+b7c3c3f4-d5a5-57bc-bfc2-89dd08daa99d,team,football-data.co.uk-legacy,P1:Rio Ave,P1:Rio Ave,Rio Ave,PROBABLE,0.65,False
+2349365d-d8c5-5ae4-868b-9633537b015d,team,football-data.co.uk-legacy,P1:Santa Clara,P1:Santa Clara,Santa Clara,PROBABLE,0.65,False
+0333bbf8-63f9-5934-9e06-251b2c3b8b8c,team,football-data.co.uk-legacy,P1:Setubal,P1:Setubal,Setubal,PROBABLE,0.65,False
+81bf9437-e624-5623-9562-da76a1e81ea4,team,football-data.co.uk-legacy,P1:Sp Braga,P1:Sp Braga,Sp Braga,PROBABLE,0.65,False
+49c5fdac-d882-5c56-bf41-58e1991f4802,team,football-data.co.uk-legacy,P1:Sp Lisbon,P1:Sp Lisbon,Sp Lisbon,PROBABLE,0.65,False
+c8386ce2-114f-5d39-a149-e0fb200f204b,team,football-data.co.uk-legacy,P1:Tondela,P1:Tondela,Tondela,PROBABLE,0.65,False
+21747009-b827-5278-b751-c27f44925ad9,team,football-data.co.uk-legacy,P1:Uniao Madeira,P1:Uniao Madeira,Uniao Madeira,PROBABLE,0.65,False
+5527aa3c-c991-5506-ad59-a48217ad22b4,team,football-data.co.uk-legacy,P1:Vizela,P1:Vizela,Vizela,PROBABLE,0.65,False
+816eb705-26b3-526b-8eba-3b7a2d360267,team,football-data.co.uk-legacy,SP1:Alaves,SP1:Alaves,Alaves,PROBABLE,0.65,False
+f5a40b33-76c6-583a-a0a3-5ca6c7713119,team,football-data.co.uk-legacy,SP1:Almeria,SP1:Almeria,Almeria,PROBABLE,0.65,False
+5006ce4e-dc52-5f17-a211-2ebd58079eb6,team,football-data.co.uk-legacy,SP1:Ath Bilbao,SP1:Ath Bilbao,Ath Bilbao,PROBABLE,0.65,False
+e3262562-e6e6-5f0c-a009-dc2b4e3114f1,team,football-data.co.uk-legacy,SP1:Ath Madrid,SP1:Ath Madrid,Ath Madrid,PROBABLE,0.65,False
+e38ee2b3-68ce-5e72-b678-016aa6a5752f,team,football-data.co.uk-legacy,SP1:Barcelona,SP1:Barcelona,Barcelona,PROBABLE,0.65,False
+c55c1f78-5c07-5df5-b654-0be812635c10,team,football-data.co.uk-legacy,SP1:Betis,SP1:Betis,Betis,PROBABLE,0.65,False
+53cff1dc-4b4c-55b6-bbea-ad7377811721,team,football-data.co.uk-legacy,SP1:Cadiz,SP1:Cadiz,Cadiz,PROBABLE,0.65,False
+2bf4f080-9cdb-5e35-b948-00b319380414,team,football-data.co.uk-legacy,SP1:Celta,SP1:Celta,Celta,PROBABLE,0.65,False
+899dd82f-8bae-5453-823d-43d2d8dfb1b3,team,football-data.co.uk-legacy,SP1:Eibar,SP1:Eibar,Eibar,PROBABLE,0.65,False
+9d707538-5e6c-5784-a6df-d2e3e63b8f1e,team,football-data.co.uk-legacy,SP1:Elche,SP1:Elche,Elche,PROBABLE,0.65,False
+acd6c142-75ca-5cc7-8499-6968844261f1,team,football-data.co.uk-legacy,SP1:Espanol,SP1:Espanol,Espanol,PROBABLE,0.65,False
+0bfe281c-a9ed-5ea5-8456-3c50876a7551,team,football-data.co.uk-legacy,SP1:Getafe,SP1:Getafe,Getafe,PROBABLE,0.65,False
+32ca1bbc-23f3-5143-8631-7dc6e93fa9a8,team,football-data.co.uk-legacy,SP1:Girona,SP1:Girona,Girona,PROBABLE,0.65,False
+315161c8-8e08-5725-93b0-46e7017ac03f,team,football-data.co.uk-legacy,SP1:Granada,SP1:Granada,Granada,PROBABLE,0.65,False
+a6fb81ce-f3bc-57a2-a9ff-fb424c434c6e,team,football-data.co.uk-legacy,SP1:Huesca,SP1:Huesca,Huesca,PROBABLE,0.65,False
+f28282c7-0841-55a1-9cc6-47df208933ae,team,football-data.co.uk-legacy,SP1:La Coruna,SP1:La Coruna,La Coruna,PROBABLE,0.65,False
+33471690-52c8-54c3-8e7d-156c3dd7d3a2,team,football-data.co.uk-legacy,SP1:Las Palmas,SP1:Las Palmas,Las Palmas,PROBABLE,0.65,False
+e1697750-d432-553c-b127-600dcc64e37b,team,football-data.co.uk-legacy,SP1:Leganes,SP1:Leganes,Leganes,PROBABLE,0.65,False
+6d1dea4e-6600-5fcd-aaca-fbf6571ec713,team,football-data.co.uk-legacy,SP1:Levante,SP1:Levante,Levante,PROBABLE,0.65,False
+340b9071-edde-5806-8f51-e55fdd86f5aa,team,football-data.co.uk-legacy,SP1:Malaga,SP1:Malaga,Malaga,PROBABLE,0.65,False
+3ddfa342-46a1-5d8f-a8e2-20baf8e186de,team,football-data.co.uk-legacy,SP1:Mallorca,SP1:Mallorca,Mallorca,PROBABLE,0.65,False
+f85ee14e-1e2b-5008-b416-17dbadb13f6b,team,football-data.co.uk-legacy,SP1:Osasuna,SP1:Osasuna,Osasuna,PROBABLE,0.65,False
+09e6519b-e68a-5a4e-993e-b16db597d715,team,football-data.co.uk-legacy,SP1:Oviedo,SP1:Oviedo,Oviedo,PROBABLE,0.65,False
+fe9ac176-b157-5279-a67d-7f78da8de945,team,football-data.co.uk-legacy,SP1:Real Madrid,SP1:Real Madrid,Real Madrid,PROBABLE,0.65,False
+90b28ab7-7265-5a6c-830c-70d22468d2b0,team,football-data.co.uk-legacy,SP1:Sevilla,SP1:Sevilla,Sevilla,PROBABLE,0.65,False
+14156ee5-4b40-5c7a-9090-701b1fd99b05,team,football-data.co.uk-legacy,SP1:Sociedad,SP1:Sociedad,Sociedad,PROBABLE,0.65,False
+ab3e5125-b3cd-5374-a249-6d95655e80c3,team,football-data.co.uk-legacy,SP1:Sp Gijon,SP1:Sp Gijon,Sp Gijon,PROBABLE,0.65,False
+36852758-aa33-5a7c-9d4e-209ad2037772,team,football-data.co.uk-legacy,SP1:Valencia,SP1:Valencia,Valencia,PROBABLE,0.65,False
+45ef1ca5-e1e4-5f4d-a810-77a898102ba2,team,football-data.co.uk-legacy,SP1:Valladolid,SP1:Valladolid,Valladolid,PROBABLE,0.65,False
+3bd62c0f-13cd-5c21-857b-68d510d4a4fd,team,football-data.co.uk-legacy,SP1:Vallecano,SP1:Vallecano,Vallecano,PROBABLE,0.65,False
+6a305dd0-584a-54d7-8eb8-80072b46ac68,team,football-data.co.uk-legacy,SP1:Villarreal,SP1:Villarreal,Villarreal,PROBABLE,0.65,False
+034aa97c-4d54-5969-9130-65ee7cfd52c7,referee,football-data.co.uk-legacy,E0:A Kitchen,E0:A Kitchen,A Kitchen,PROBABLE,0.65,False
+cbe3701f-3111-560b-a566-33489da53c6b,referee,football-data.co.uk-legacy,E0:A Madley,E0:A Madley,A Madley,PROBABLE,0.65,False
+dcf4d185-c66e-53dc-8439-f9e4d3179fd6,referee,football-data.co.uk-legacy,E0:A Marriner,E0:A Marriner,A Marriner,PROBABLE,0.65,False
+5fb30a08-b165-5226-934f-26d4d3fdce73,referee,football-data.co.uk-legacy,E0:A Moss,E0:A Moss,A Moss,PROBABLE,0.65,False
+5faf8a37-6989-57eb-9087-1913147ab0b0,referee,football-data.co.uk-legacy,E0:A Taylor,E0:A Taylor,A Taylor,PROBABLE,0.65,False
+4ecb9962-18f1-56b0-b190-8c555b8eb63e,referee,football-data.co.uk-legacy,E0:C Kavanagh,E0:C Kavanagh,C Kavanagh,PROBABLE,0.65,False
+9da132af-4da1-5a0e-bf3b-f91b6dd04f2f,referee,football-data.co.uk-legacy,E0:C Pawson,E0:C Pawson,C Pawson,PROBABLE,0.65,False
+0d81b0f6-9b3a-5f53-a076-158dfb0595ee,referee,football-data.co.uk-legacy,E0:D Bond,E0:D Bond,D Bond,PROBABLE,0.65,False
+c9caaf69-3957-59ee-926f-7d8d79622503,referee,football-data.co.uk-legacy,E0:D Coote,E0:D Coote,D Coote,PROBABLE,0.65,False
+8aea0082-8d02-55c1-87eb-822472974e34,referee,football-data.co.uk-legacy,E0:D England,E0:D England,D England,PROBABLE,0.65,False
+5cf9478b-c94c-5fdd-bc49-dec9f0cd4d0b,referee,football-data.co.uk-legacy,E0:D Webb,E0:D Webb,D Webb,PROBABLE,0.65,False
+a05fc0c7-2362-51be-9944-1e19fa5bf75e,referee,football-data.co.uk-legacy,E0:F Hallam,E0:F Hallam,F Hallam,PROBABLE,0.65,False
+cab84b1c-b959-5a63-9501-fcdc7cdcacd0,referee,football-data.co.uk-legacy,E0:G Scott,E0:G Scott,G Scott,PROBABLE,0.65,False
+cdd021ba-a788-57fd-befa-c3d57541fa0e,referee,football-data.co.uk-legacy,E0:J Brooks,E0:J Brooks,J Brooks,PROBABLE,0.65,False
+3c0785cc-5433-5407-af98-2a2099333d5d,referee,football-data.co.uk-legacy,E0:J Gillett,E0:J Gillett,J Gillett,PROBABLE,0.65,False
+c2a854a2-46d1-5faa-955f-e4d5a51e0885,referee,football-data.co.uk-legacy,E0:J Gillett ,E0:J Gillett ,J Gillett ,PROBABLE,0.65,False
+83695f34-ce8d-52eb-a242-1cf5c27118d4,referee,football-data.co.uk-legacy,E0:J Moss,E0:J Moss,J Moss,PROBABLE,0.65,False
+2e9686aa-dba1-5901-b3f9-c795bec1e3c3,referee,football-data.co.uk-legacy,E0:J Smith,E0:J Smith,J Smith,PROBABLE,0.65,False
+4d0813af-6211-5c74-a0e3-e400ccee8cc5,referee,football-data.co.uk-legacy,E0:K Friend,E0:K Friend,K Friend,PROBABLE,0.65,False
+cbffbf88-04c4-5a59-a70c-b65e9d26d429,referee,football-data.co.uk-legacy,E0:K Kavanagh,E0:K Kavanagh,K Kavanagh,PROBABLE,0.65,False
+9686898e-b655-5379-96a0-eed9ade65b49,referee,football-data.co.uk-legacy,E0:K Stroud,E0:K Stroud,K Stroud,PROBABLE,0.65,False
+c2c621fb-7f5d-5ba0-b408-ee00c40b115b,referee,football-data.co.uk-legacy,E0:L Mason,E0:L Mason,L Mason,PROBABLE,0.65,False
+8bf0e2ca-fb4e-50f6-84de-020c17c078ac,referee,football-data.co.uk-legacy,E0:L Probert,E0:L Probert,L Probert,PROBABLE,0.65,False
+1bd942c5-7a40-5490-a2fa-484c36d4fb52,referee,football-data.co.uk-legacy,E0:L Smith,E0:L Smith,L Smith,PROBABLE,0.65,False
+e9ad364a-f983-571e-9d6e-b8368bdd3c4f,referee,football-data.co.uk-legacy,E0:M Atkinson,E0:M Atkinson,M Atkinson,PROBABLE,0.65,False
+99555276-b8c9-5c32-8a1b-f7c57a87b058,referee,football-data.co.uk-legacy,E0:M Clattenburg,E0:M Clattenburg,M Clattenburg,PROBABLE,0.65,False
+9fe0d7f0-bbc1-5099-9525-9fd9d7c96798,referee,football-data.co.uk-legacy,E0:M Dean,E0:M Dean,M Dean,PROBABLE,0.65,False
+715311e6-d17b-5248-a084-34e1379b0915,referee,football-data.co.uk-legacy,E0:M Donohue,E0:M Donohue,M Donohue,PROBABLE,0.65,False
+d34a7fac-2dd8-5273-80c8-35725a009792,referee,football-data.co.uk-legacy,E0:M Jones,E0:M Jones,M Jones,PROBABLE,0.65,False
+9a00d46c-0405-5dd2-9297-53ea4a424781,referee,football-data.co.uk-legacy,E0:M Oliver,E0:M Oliver,M Oliver,PROBABLE,0.65,False
+e2e3ebfd-ebfb-5239-a8dd-902730b7161f,referee,football-data.co.uk-legacy,E0:M Salisbury,E0:M Salisbury,M Salisbury,PROBABLE,0.65,False
+3f5db739-bca4-568a-850b-5b9db6f08e32,referee,football-data.co.uk-legacy,E0:N Swarbrick,E0:N Swarbrick,N Swarbrick,PROBABLE,0.65,False
+4160c3bb-e04d-5b62-bb39-cf9a0fabe0bc,referee,football-data.co.uk-legacy,E0:O Langford,E0:O Langford,O Langford,PROBABLE,0.65,False
+06f1eec7-50ac-5895-9fae-7e09e8366154,referee,football-data.co.uk-legacy,E0:O Oliver,E0:O Oliver,O Oliver,PROBABLE,0.65,False
+9133d2ed-91a3-53dc-bce3-b6e7094d8d84,referee,football-data.co.uk-legacy,E0:P Bankes,E0:P Bankes,P Bankes,PROBABLE,0.65,False
+0b264808-399d-5af0-b07b-8cd1c75a0d65,referee,football-data.co.uk-legacy,E0:P Tierney,E0:P Tierney,P Tierney,PROBABLE,0.65,False
+1c138371-5b49-532f-88d2-d8b74b7e008e,referee,football-data.co.uk-legacy,E0:R East,E0:R East,R East,PROBABLE,0.65,False
+c0b82e63-7864-53e9-9e43-042845c7073c,referee,football-data.co.uk-legacy,E0:R Jones,E0:R Jones,R Jones,PROBABLE,0.65,False
+b97d7aec-c39a-59cf-8123-6b1a9befbf77,referee,football-data.co.uk-legacy,E0:R Madley,E0:R Madley,R Madley,PROBABLE,0.65,False
+ae4c5840-24d5-574a-a868-58a8d98a58d5,referee,football-data.co.uk-legacy,E0:R Welch,E0:R Welch,R Welch,PROBABLE,0.65,False
+1682d9a8-ed76-58d6-9bfb-098a65972b82,referee,football-data.co.uk-legacy,E0:S Allison,E0:S Allison,S Allison,PROBABLE,0.65,False
+f10a5896-d758-5795-8bc7-edcbe65e28f1,referee,football-data.co.uk-legacy,E0:S Attwell,E0:S Attwell,S Attwell,PROBABLE,0.65,False
+32d70749-daba-5fb3-9171-6af5262b835c,referee,football-data.co.uk-legacy,E0:S Barrott,E0:S Barrott,S Barrott,PROBABLE,0.65,False
+8a4eaef6-61fe-540c-a099-8719ac2cb5f0,referee,football-data.co.uk-legacy,E0:S Hooper,E0:S Hooper,S Hooper,PROBABLE,0.65,False
+a2499160-1c63-5bd1-b5a3-86b027696d80,referee,football-data.co.uk-legacy,E0:S Scott,E0:S Scott,S Scott,PROBABLE,0.65,False
+dc97f47e-12a4-5248-9219-27c7bd92e751,referee,football-data.co.uk-legacy,E0:S Singh,E0:S Singh,S Singh,PROBABLE,0.65,False
+207aa2e4-14de-5d2f-959e-e5176a40c48c,referee,football-data.co.uk-legacy,E0:T Bramall,E0:T Bramall,T Bramall,PROBABLE,0.65,False
+0c31d54a-af23-5459-b218-b929242e5d9d,referee,football-data.co.uk-legacy,E0:T Harrington,E0:T Harrington,T Harrington,PROBABLE,0.65,False
+06428277-1b64-5ab9-92be-d391fd15f832,referee,football-data.co.uk-legacy,E0:T Kirk,E0:T Kirk,T Kirk,PROBABLE,0.65,False
+022d4db9-8b90-5566-8faf-a755b6bdcdce,referee,football-data.co.uk-legacy,E0:T Robinson,E0:T Robinson,T Robinson,PROBABLE,0.65,False
+b599f76f-423f-5eb2-a1eb-35fc17c746cb,referee,football-data.co.uk-legacy,E0:l Mason,E0:l Mason,l Mason,PROBABLE,0.65,False
+ca7777cb-df4a-57b6-a105-6b7706522f4d,referee,football-data.co.uk-legacy,E1:A Backhouse,E1:A Backhouse,A Backhouse,PROBABLE,0.65,False
+4d9c723c-e589-5a45-b374-75f3c1ff5f35,referee,football-data.co.uk-legacy,E1:A Chilowicz,E1:A Chilowicz,A Chilowicz,PROBABLE,0.65,False
+6308ce23-bc22-5eb0-933c-0c3db712c456,referee,football-data.co.uk-legacy,E1:A Coggins,E1:A Coggins,A Coggins,PROBABLE,0.65,False
+f81b4ca3-39cc-58e3-a658-a479d2c61768,referee,football-data.co.uk-legacy,E1:A Davies,E1:A Davies,A Davies,PROBABLE,0.65,False
+f9b5fb71-9415-51f7-852b-d9bd3aa37e1a,referee,football-data.co.uk-legacy,E1:A Gillett,E1:A Gillett,A Gillett,PROBABLE,0.65,False
+5d061a3e-973a-5245-99d9-7519e6fc65ad,referee,football-data.co.uk-legacy,E1:A Haines,E1:A Haines,A Haines,PROBABLE,0.65,False
+6c64a859-b6be-552d-94b4-075032294d13,referee,football-data.co.uk-legacy,E1:A Herczeg,E1:A Herczeg,A Herczeg,PROBABLE,0.65,False
+0aa7659d-0bcf-5a79-b192-eb15b333b3df,referee,football-data.co.uk-legacy,E1:A Kitchen,E1:A Kitchen,A Kitchen,PROBABLE,0.65,False
+b317ef55-8bd0-55ec-aec0-9d633636e453,referee,football-data.co.uk-legacy,E1:A Madley,E1:A Madley,A Madley,PROBABLE,0.65,False
+8cfd8f01-8425-5708-948f-afcab9ded8aa,referee,football-data.co.uk-legacy,E1:A Marriner,E1:A Marriner,A Marriner,PROBABLE,0.65,False
+601af2f7-7034-5ee8-8b84-b39805e895fc,referee,football-data.co.uk-legacy,E1:A Martin,E1:A Martin,A Martin,PROBABLE,0.65,False
+20e65c8b-4858-503b-bd39-baca64dc0133,referee,football-data.co.uk-legacy,E1:A Taylor,E1:A Taylor,A Taylor,PROBABLE,0.65,False
+16bb46cb-93e5-5eba-b877-9fa0992f33c2,referee,football-data.co.uk-legacy,E1:A Woolmer,E1:A Woolmer,A Woolmer,PROBABLE,0.65,False
+cf657f7f-772f-5bfd-beca-901233103c3a,referee,football-data.co.uk-legacy,E1:B Malone,E1:B Malone,B Malone,PROBABLE,0.65,False
+6365cf02-b12f-59f7-93b1-6384f2ba1f72,referee,football-data.co.uk-legacy,E1:B Speedie,E1:B Speedie,B Speedie,PROBABLE,0.65,False
+dc5f0509-780b-5c61-aefa-f4f2adff7ca9,referee,football-data.co.uk-legacy,E1:B Toner,E1:B Toner,B Toner,PROBABLE,0.65,False
+9dcee998-4fef-5362-a9e5-01e8214b8d4f,referee,football-data.co.uk-legacy,E1:C Boyeson,E1:C Boyeson,C Boyeson,PROBABLE,0.65,False
+784a8251-01fc-509f-8b16-1a2f5c12d29b,referee,football-data.co.uk-legacy,E1:C Breakspear,E1:C Breakspear,C Breakspear,PROBABLE,0.65,False
+6fd94436-8e2f-5537-a846-8ec59841890d,referee,football-data.co.uk-legacy,E1:C Hicks,E1:C Hicks,C Hicks,PROBABLE,0.65,False
+b813f9af-f7fa-549c-bcdc-dfb1226e24ac,referee,football-data.co.uk-legacy,E1:C Kavanagh,E1:C Kavanagh,C Kavanagh,PROBABLE,0.65,False
+70a64a58-1cbb-56c2-a93f-bc2abaa3632b,referee,football-data.co.uk-legacy,E1:C Pawson,E1:C Pawson,C Pawson,PROBABLE,0.65,False
+5cedb648-0c7c-5cf5-90b5-577961edff82,referee,football-data.co.uk-legacy,E1:C Sarginson,E1:C Sarginson,C Sarginson,PROBABLE,0.65,False
+f2accbad-5958-5980-b148-e6aac2db8ad8,referee,football-data.co.uk-legacy,E1:D Adcock,E1:D Adcock,D Adcock,PROBABLE,0.65,False
+78e3d5ea-7b09-55ca-bcb5-435748451c6c,referee,football-data.co.uk-legacy,E1:D Bond,E1:D Bond,D Bond,PROBABLE,0.65,False
+57713442-c899-54b9-9824-6eecca9b2853,referee,football-data.co.uk-legacy,E1:D Coote,E1:D Coote,D Coote,PROBABLE,0.65,False
+f8624ced-3194-55a8-96ac-50168b7e94c9,referee,football-data.co.uk-legacy,E1:D Deadman,E1:D Deadman,D Deadman,PROBABLE,0.65,False
+b6cf1438-cb56-576d-b4c2-e8f288a260a1,referee,football-data.co.uk-legacy,E1:D Doughty,E1:D Doughty,D Doughty,PROBABLE,0.65,False
+0f34599c-e5db-5b0f-91ac-ae6f34e6114b,referee,football-data.co.uk-legacy,E1:D Drysdale,E1:D Drysdale,D Drysdale,PROBABLE,0.65,False
+199caa03-3f29-581b-9c33-3f84b3c57806,referee,football-data.co.uk-legacy,E1:D England,E1:D England,D England,PROBABLE,0.65,False
+29650a7f-6fc6-5123-ba58-3782ceb37f31,referee,football-data.co.uk-legacy,E1:D Handley,E1:D Handley,D Handley,PROBABLE,0.65,False
+c4a3f877-8a13-5d61-bc54-cf116f979709,referee,football-data.co.uk-legacy,E1:D Robinson,E1:D Robinson,D Robinson,PROBABLE,0.65,False
+fb338ae1-df91-53b4-bcdc-0a51ed80ceab,referee,football-data.co.uk-legacy,E1:D Webb,E1:D Webb,D Webb,PROBABLE,0.65,False
+5ba8b12a-8f50-54cb-b735-69d73134607b,referee,football-data.co.uk-legacy,E1:D Whitestone,E1:D Whitestone,D Whitestone,PROBABLE,0.65,False
+62481c1a-bb44-5044-9b87-5bf167c15c34,referee,football-data.co.uk-legacy,E1:E Bell,E1:E Bell,E Bell,PROBABLE,0.65,False
+57da4529-483b-5578-a80d-ab51f1f17f2e,referee,football-data.co.uk-legacy,E1:E Duckworth,E1:E Duckworth,E Duckworth,PROBABLE,0.65,False
+4337d0d6-06fb-521c-b011-a8b8f47a26a0,referee,football-data.co.uk-legacy,E1:E Ilderton,E1:E Ilderton,E Ilderton,PROBABLE,0.65,False
+fec799cb-51e5-5358-ad1e-ed8f9ede0a99,referee,football-data.co.uk-legacy,E1:F Graham,E1:F Graham,F Graham,PROBABLE,0.65,False
+69f5a070-63b7-5e76-b559-526a144f79bb,referee,football-data.co.uk-legacy,E1:F Hallam,E1:F Hallam,F Hallam,PROBABLE,0.65,False
+924ec411-9a33-5e02-b478-0a10c1c8428a,referee,football-data.co.uk-legacy,E1:G Eltringham,E1:G Eltringham,G Eltringham,PROBABLE,0.65,False
+707071c5-b750-524d-98e0-2ad9f958ce9b,referee,football-data.co.uk-legacy,E1:G Horwood,E1:G Horwood,G Horwood,PROBABLE,0.65,False
+2d807202-eedc-5554-bb7c-d52139f65289,referee,football-data.co.uk-legacy,E1:G Salisbury,E1:G Salisbury,G Salisbury,PROBABLE,0.65,False
+10e664fd-31b7-5cd5-9d89-a779ad7766b2,referee,football-data.co.uk-legacy,E1:G Scott,E1:G Scott,G Scott,PROBABLE,0.65,False
+0edee57f-2940-5ba7-b1eb-98f6448154c0,referee,football-data.co.uk-legacy,E1:G Ward,E1:G Ward,G Ward,PROBABLE,0.65,False
+66a1ffe7-206a-55ac-ad49-3caf6dc63c98,referee,football-data.co.uk-legacy,E1:G Webb,E1:G Webb,G Webb,PROBABLE,0.65,False
+a5c49709-30f0-5392-982f-2975410db169,referee,football-data.co.uk-legacy,E1:I Williamson,E1:I Williamson,I Williamson,PROBABLE,0.65,False
+3e80d67b-f26d-5aea-94c5-06ccec36eb17,referee,football-data.co.uk-legacy,E1:J Adcock,E1:J Adcock,J Adcock,PROBABLE,0.65,False
+2549ea27-84af-5784-a751-32c0e915518a,referee,football-data.co.uk-legacy,E1:J Bell,E1:J Bell,J Bell,PROBABLE,0.65,False
+ed4305a5-8581-589a-b494-b58e41e0ac08,referee,football-data.co.uk-legacy,E1:J Brooks,E1:J Brooks,J Brooks,PROBABLE,0.65,False
+bf32c468-4fa9-50a6-a277-c8b24a70bd17,referee,football-data.co.uk-legacy,E1:J Busby,E1:J Busby,J Busby,PROBABLE,0.65,False
+f24df5c2-e3f4-59e4-a074-df61831be5dd,referee,football-data.co.uk-legacy,E1:J Duncan,E1:J Duncan,J Duncan,PROBABLE,0.65,False
+79dd91df-e48a-5a09-9efa-28eaf7a6638d,referee,football-data.co.uk-legacy,E1:J Gillett,E1:J Gillett,J Gillett,PROBABLE,0.65,False
+6df3c684-fbe4-5543-a5c6-55180bb88ade,referee,football-data.co.uk-legacy,E1:J Jbrooks,E1:J Jbrooks,J Jbrooks,PROBABLE,0.65,False
+e7d50fd5-fa94-59b8-a389-288b00a68f24,referee,football-data.co.uk-legacy,E1:J Linington,E1:J Linington,J Linington,PROBABLE,0.65,False
+7d3712fc-644e-5b3a-8885-f38e0a90e09e,referee,football-data.co.uk-legacy,E1:J Miles,E1:J Miles,J Miles,PROBABLE,0.65,False
+24274129-ab94-548f-a979-cbecf5d4764b,referee,football-data.co.uk-legacy,E1:J Moss,E1:J Moss,J Moss,PROBABLE,0.65,False
+8fd4aab4-a3a6-5370-82c2-4a2aafdb635e,referee,football-data.co.uk-legacy,E1:J Pawson,E1:J Pawson,J Pawson,PROBABLE,0.65,False
+d3e5891d-ef32-554d-a62b-6be94f917cd0,referee,football-data.co.uk-legacy,E1:J Simpson,E1:J Simpson,J Simpson,PROBABLE,0.65,False
+ae0a64aa-ceb5-51a8-ae78-3a5e93102ac1,referee,football-data.co.uk-legacy,E1:J Smith,E1:J Smith,J Smith,PROBABLE,0.65,False
+3dceca5a-fab9-5f94-9409-a4fec684a3c4,referee,football-data.co.uk-legacy,E1:J jBrooks,E1:J jBrooks,J jBrooks,PROBABLE,0.65,False
+d2ef3a1c-26be-5847-8f59-f083cf5324a0,referee,football-data.co.uk-legacy,E1:Jj Gillett,E1:Jj Gillett,Jj Gillett,PROBABLE,0.65,False
+84817063-f99f-5ce1-943e-c892a6459d15,referee,football-data.co.uk-legacy,E1:K Friend,E1:K Friend,K Friend,PROBABLE,0.65,False
+fc7e33f0-991a-5877-9168-c9fe91559dab,referee,football-data.co.uk-legacy,E1:K Hill,E1:K Hill,K Hill,PROBABLE,0.65,False
+78791fed-817a-5d45-8473-f8b638139df9,referee,football-data.co.uk-legacy,E1:K Johnson,E1:K Johnson,K Johnson,PROBABLE,0.65,False
+88c1cbf8-03da-5663-abee-a96fc5ba7847,referee,football-data.co.uk-legacy,E1:K Stroud,E1:K Stroud,K Stroud,PROBABLE,0.65,False
+bd94defa-5b25-54df-acdf-4938fb42d179,referee,football-data.co.uk-legacy,E1:K Wright,E1:K Wright,K Wright,PROBABLE,0.65,False
+66aea67e-972a-548d-bc52-b989575c0f30,referee,football-data.co.uk-legacy,E1:L Collins,E1:L Collins,L Collins,PROBABLE,0.65,False
+6a99fc85-39d6-5e94-add4-51b31826aa73,referee,football-data.co.uk-legacy,E1:L Doughty,E1:L Doughty,L Doughty,PROBABLE,0.65,False
+4110d969-2702-513a-957f-80f1f214231a,referee,football-data.co.uk-legacy,E1:L Linington,E1:L Linington,L Linington,PROBABLE,0.65,False
+17bf91f9-b8bd-51dd-af71-a1a926c30a16,referee,football-data.co.uk-legacy,E1:L Mason,E1:L Mason,L Mason,PROBABLE,0.65,False
+24dad16c-577e-5b21-90d1-e9395e206a28,referee,football-data.co.uk-legacy,E1:L Probert,E1:L Probert,L Probert,PROBABLE,0.65,False
+5741d09b-e94f-5a18-94e9-5240166bf3b6,referee,football-data.co.uk-legacy,E1:L Smith,E1:L Smith,L Smith,PROBABLE,0.65,False
+a88519db-d817-5f18-b35e-b7cc81a6835b,referee,football-data.co.uk-legacy,E1:L Swabey,E1:L Swabey,L Swabey,PROBABLE,0.65,False
+40af7ddb-2881-5c4e-aacf-4dfb5f2f63cd,referee,football-data.co.uk-legacy,E1:M Atkinson,E1:M Atkinson,M Atkinson,PROBABLE,0.65,False
+92cd58d5-63fa-577d-965c-7718b53773ae,referee,football-data.co.uk-legacy,E1:M Brown,E1:M Brown,M Brown,PROBABLE,0.65,False
+84e8d1f7-75f8-5d38-b768-aaecf4a61066,referee,football-data.co.uk-legacy,E1:M Bull,E1:M Bull,M Bull,PROBABLE,0.65,False
+730c6428-33ae-5974-99c0-485236749f74,referee,football-data.co.uk-legacy,E1:M Buonassisi,E1:M Buonassisi,M Buonassisi,PROBABLE,0.65,False
+1981bb7e-fcca-5e8a-9fea-6a45df75481b,referee,football-data.co.uk-legacy,E1:M Clattenburg,E1:M Clattenburg,M Clattenburg,PROBABLE,0.65,False
+a8816d16-9d3a-52d8-bdbc-0ddf8d960397,referee,football-data.co.uk-legacy,E1:M Corlett,E1:M Corlett,M Corlett,PROBABLE,0.65,False
+3bf9f536-d0e9-59de-a864-e20f8524a516,referee,football-data.co.uk-legacy,E1:M Coy,E1:M Coy,M Coy,PROBABLE,0.65,False
+6daff7d1-7e05-5bdc-af63-a449979d5213,referee,football-data.co.uk-legacy,E1:M Dean,E1:M Dean,M Dean,PROBABLE,0.65,False
+7cffafde-60f8-5960-9e56-0d2d1b22168c,referee,football-data.co.uk-legacy,E1:M Donohue,E1:M Donohue,M Donohue,PROBABLE,0.65,False
+c56a6c41-0e34-5bb2-8d4a-cc481f4b798b,referee,football-data.co.uk-legacy,E1:M Dwyer,E1:M Dwyer,M Dwyer,PROBABLE,0.65,False
+d048ef92-ffd6-5a92-962d-8cce7a6a6ee3,referee,football-data.co.uk-legacy,E1:M Gillett,E1:M Gillett,M Gillett,PROBABLE,0.65,False
+70a8fa03-8f73-56e2-a8fd-d783123d8f79,referee,football-data.co.uk-legacy,E1:M Haywood,E1:M Haywood,M Haywood,PROBABLE,0.65,False
+200589ca-dbc2-552e-880b-96c5c32d0dd4,referee,football-data.co.uk-legacy,E1:M Heywood,E1:M Heywood,M Heywood,PROBABLE,0.65,False
+ea030f57-88bc-58b0-86b9-9295263e3954,referee,football-data.co.uk-legacy,E1:M Jones,E1:M Jones,M Jones,PROBABLE,0.65,False
+36787418-9285-5938-826e-6761335b3d99,referee,football-data.co.uk-legacy,E1:M Oliver,E1:M Oliver,M Oliver,PROBABLE,0.65,False
+00371263-1ff9-5e12-adb4-a955646d5724,referee,football-data.co.uk-legacy,E1:M Salisbury,E1:M Salisbury,M Salisbury,PROBABLE,0.65,False
+d483b623-de33-5d26-bba7-f8a3cc0185b3,referee,football-data.co.uk-legacy,E1:N Miller,E1:N Miller,N Miller,PROBABLE,0.65,False
+4547a6c5-c443-5a34-bc24-85f542a3206b,referee,football-data.co.uk-legacy,E1:N Swarbrick,E1:N Swarbrick,N Swarbrick,PROBABLE,0.65,False
+2cc20ae3-ab04-5d8d-8983-8ed55e514a2e,referee,football-data.co.uk-legacy,E1:O Langford,E1:O Langford,O Langford,PROBABLE,0.65,False
+79007f80-d792-53b0-bbbf-ab551f7423e6,referee,football-data.co.uk-legacy,E1:P Bankes,E1:P Bankes,P Bankes,PROBABLE,0.65,False
+d353b375-e6d2-57e0-9a03-9b24a8f9a39b,referee,football-data.co.uk-legacy,E1:P Gibbs,E1:P Gibbs,P Gibbs,PROBABLE,0.65,False
+8c6ead3b-4f29-5fe2-b083-bf6249832d4d,referee,football-data.co.uk-legacy,E1:P Tierney,E1:P Tierney,P Tierney,PROBABLE,0.65,False
+e35fc2c6-c275-53c0-9ddd-b9c8c2c66e7c,referee,football-data.co.uk-legacy,E1:R Atkin,E1:R Atkin,R Atkin,PROBABLE,0.65,False
+a4928db2-dc49-5f6e-8b44-f33ab4f65806,referee,football-data.co.uk-legacy,E1:R Clark,E1:R Clark,R Clark,PROBABLE,0.65,False
+ab68448c-33aa-5e1b-b495-ee2049a412d8,referee,football-data.co.uk-legacy,E1:R East,E1:R East,R East,PROBABLE,0.65,False
+09c0f042-4112-51cd-bfef-1c32509478b0,referee,football-data.co.uk-legacy,E1:R Jones,E1:R Jones,R Jones,PROBABLE,0.65,False
+ecf6d016-89e0-55ce-ab2d-5e8c7c146e1f,referee,football-data.co.uk-legacy,E1:R Joyce,E1:R Joyce,R Joyce,PROBABLE,0.65,False
+8c68263c-6c05-504a-84fc-d6d7cf044d0e,referee,football-data.co.uk-legacy,E1:R Lewis,E1:R Lewis,R Lewis,PROBABLE,0.65,False
+eb7ce574-0974-5fe4-8c78-9974de573025,referee,football-data.co.uk-legacy,E1:R Madley,E1:R Madley,R Madley,PROBABLE,0.65,False
+f23e6f06-e5a7-51b7-8eac-f59684b49b74,referee,football-data.co.uk-legacy,E1:R Ricardo,E1:R Ricardo,R Ricardo,PROBABLE,0.65,False
+2dbcf9a5-b255-5b60-8ccb-ea7d0069e833,referee,football-data.co.uk-legacy,E1:R Welch,E1:R Welch,R Welch,PROBABLE,0.65,False
+fe0e9bed-6254-5c6d-a2e2-2004afff2418,referee,football-data.co.uk-legacy,E1:S Allison,E1:S Allison,S Allison,PROBABLE,0.65,False
+20ac9e8b-6b13-59f6-8bf7-892904a5c283,referee,football-data.co.uk-legacy,E1:S Attwell,E1:S Attwell,S Attwell,PROBABLE,0.65,False
+bd1407c8-0060-58a2-9a0e-6a21b641e939,referee,football-data.co.uk-legacy,E1:S Atwell,E1:S Atwell,S Atwell,PROBABLE,0.65,False
+e40fb1da-7c77-52ab-b707-38d7f01c5570,referee,football-data.co.uk-legacy,E1:S Barrott,E1:S Barrott,S Barrott,PROBABLE,0.65,False
+aa052323-e265-57c4-81f5-9f97a82ac516,referee,football-data.co.uk-legacy,E1:S Duncan,E1:S Duncan,S Duncan,PROBABLE,0.65,False
+bc517b4f-c414-513d-9d76-f9466b3b4e4c,referee,football-data.co.uk-legacy,E1:S Gill,E1:S Gill,S Gill,PROBABLE,0.65,False
+aa068ce4-84a8-5d87-b287-9f80fa2ee577,referee,football-data.co.uk-legacy,E1:S Hooper,E1:S Hooper,S Hooper,PROBABLE,0.65,False
+c9215a4f-204f-5927-8d85-ce865dd8954e,referee,football-data.co.uk-legacy,E1:S Martin,E1:S Martin,S Martin,PROBABLE,0.65,False
+2a39a548-49f4-534d-b831-4c62c25f717a,referee,football-data.co.uk-legacy,E1:S Oldham,E1:S Oldham,S Oldham,PROBABLE,0.65,False
+ffb7b764-b5d6-56cd-a599-d30c9be96a6f,referee,football-data.co.uk-legacy,E1:S Stockbridge,E1:S Stockbridge,S Stockbridge,PROBABLE,0.65,False
+aea5c443-966a-5bc6-bb64-24cb384e5893,referee,football-data.co.uk-legacy,E1:T Bramall,E1:T Bramall,T Bramall,PROBABLE,0.65,False
+e262595f-fffe-5593-9a70-b191a8a9234c,referee,football-data.co.uk-legacy,E1:T Harrington,E1:T Harrington,T Harrington,PROBABLE,0.65,False
+d890a534-2cff-5329-b1e7-254411a28d97,referee,football-data.co.uk-legacy,E1:T Kettle,E1:T Kettle,T Kettle,PROBABLE,0.65,False
+841d69de-2ea0-5f1c-beb0-672970deef2e,referee,football-data.co.uk-legacy,E1:T Kirk,E1:T Kirk,T Kirk,PROBABLE,0.65,False
+34fa3137-2a9c-5585-b2af-66a2356a752d,referee,football-data.co.uk-legacy,E1:T Nield,E1:T Nield,T Nield,PROBABLE,0.65,False
+250f5540-e085-5d43-8771-a852d82a47d9,referee,football-data.co.uk-legacy,E1:T Parsons,E1:T Parsons,T Parsons,PROBABLE,0.65,False
+0267b95f-d80e-51d5-a158-f8b8d1ce4282,referee,football-data.co.uk-legacy,E1:T Reeves,E1:T Reeves,T Reeves,PROBABLE,0.65,False
+2ac00c06-6172-53a0-b736-9e440b67f4b6,referee,football-data.co.uk-legacy,E1:T Robinson,E1:T Robinson,T Robinson,PROBABLE,0.65,False
+0c15f944-c4fc-58c3-9d3c-d7eba09e345f,referee,football-data.co.uk-legacy,E1:W Finnie,E1:W Finnie,W Finnie,PROBABLE,0.65,False
+0b4a9772-1f79-5667-b61d-4e4bd80d0442,referee,football-data.co.uk-legacy,E1:k Stroud,E1:k Stroud,k Stroud,PROBABLE,0.65,False

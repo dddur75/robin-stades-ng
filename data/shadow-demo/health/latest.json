@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-07-24T11:34:19.205886+00:00",
+  "status": "WARNING",
+  "pipeline_runs": 3,
+  "successful_runs": 3,
+  "snapshots_received": 0,
+  "decisions": 1,
+  "rejections_by_reason": {
+    "MISSING_ODDS": 1
+  },
+  "critical_alerts": 0,
+  "estimated_cost_eur": 0,
+  "production_locked": true
+}

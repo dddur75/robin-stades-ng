@@ -7,6 +7,12 @@
 | Vague 2 | 1.0 | exploration combinatoire brute | `UNVERIFIED` |
 | Vague 2B | 1.0 | référence ajustée par cellules de marché | `PARTIAL` |
 | Confrontation CP-01 à CP-10 | 1.0 | suivi prospectif | `IN_PROGRESS` |
+| Favori marché | J2-OOS | baseline walk-forward | `REJECTED_OOS` |
+| Favori domicile | J2-OOS | baseline walk-forward | `REJECTED_OOS` |
+| Seuil probabilité 55 % | J2-OOS | consensus Elo–Poisson | `REJECTED_OOS` |
+| Value simple edge 4 % | J2-OOS | prix dé-viggé | `REJECTED_OOS` |
+| Over 2,5 value | J2-OOS | Poisson vs marché | `INCONCLUSIVE_OOS` |
+| BTTS | J2-OOS | odds legacy absentes | `INSUFFICIENT_SAMPLE` |
 
 Règles globales :
 

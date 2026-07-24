@@ -14,12 +14,13 @@ Référence CI : Python 3.12. Le mode doit rester `simulation` et
 ## Validation complète
 
 ```powershell
-.\.venv\Scripts\python.exe -m ruff check src/robin tests/jalon1 scripts/build_jalon1_notebook.py migrations
+.\.venv\Scripts\python.exe -m ruff check src/robin tests/jalon1 tests/jalon2 scripts migrations
 .\.venv\Scripts\python.exe -m mypy src/robin
 .\.venv\Scripts\python.exe -m bandit -q -r src/robin
 .\.venv\Scripts\python.exe -m compileall -q agents moteur src tests
 .\.venv\Scripts\python.exe -m pytest -q
 .\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe scripts/check_no_secrets.py
 ```
 
 ## Base de données
@@ -65,18 +66,64 @@ nouvelle observation.
 Les paramètres sont expurgés avant persistance. Ne jamais enregistrer ou afficher
 une clé API dans les logs.
 
-## Collecte prospective
+## Collecte prospective Jalon 2
 
-Le fournisseur mock valide le contrat sans clé. Une future collecte réelle doit :
+Commandes locales sans clé :
 
-1. créer le run idempotent ;
-2. archiver la réponse brute ;
-3. résoudre les identités ;
-4. écrire les snapshots immuables en UTC ;
-5. lancer les contrôles qualité ;
-6. publier volumes, fraîcheur et artefacts.
+```powershell
+.\.venv\Scripts\python.exe scripts/run_shadow_pipeline.py collect-fixtures --mock --output data/shadow-demo
+.\.venv\Scripts\python.exe scripts/run_shadow_pipeline.py collect-odds --mock --output data/shadow-demo
+.\.venv\Scripts\python.exe scripts/run_shadow_pipeline.py pre-match-shadow --mock --output data/shadow-demo
+.\.venv\Scripts\python.exe scripts/run_shadow_pipeline.py post-match-settlement --mock --output data/shadow-demo
+.\.venv\Scripts\python.exe scripts/run_shadow_pipeline.py daily-health --output data/shadow-demo
+```
 
-Un workflow vert sans snapshot réel n'est pas une preuve de collecte.
+Les workflows canoniques sont `collect-fixtures.yml`, `collect-odds.yml`,
+`pre-match-shadow.yml`, `post-match-settlement.yml` et `daily-health.yml`.
+Le workflow `03_archive.yml` est désormais un diagnostic legacy manuel et
+n'écrit plus dans Git. Un workflow vert sans snapshot réel n'est pas une preuve
+de collecte.
+
+## Diagnostic et reprise
+
+1. télécharger l'artefact du run concerné et lire `runs/*.json` ;
+2. distinguer `READY_NO_KEY`, `ABSENT` et une erreur réseau ;
+3. conserver payloads bruts, ledger et identifiant de run ;
+4. relancer manuellement le workflow avec les mêmes entrées ;
+5. laisser l'idempotence empêcher les doublons ;
+6. ne jamais réécrire snapshot, prédiction ou décision.
+
+En cas de quota dépassé, arrêter les appels, conserver l'état du ledger et
+attendre le renouvellement. Ne pas augmenter le plan sans décision documentée.
+
+Pour une rotation de clé, remplacer uniquement le secret GitHub
+`ODDS_API_KEY`, puis exécuter `collect-odds.yml` manuellement en mode diagnostic.
+Ne jamais écrire la clé dans un fichier ou un log.
+
+Pour désactiver un fournisseur, retirer ses marchés de `configs/shadow_v1.yaml`
+ou désactiver le workflow concerné ; conserver ses payloads et mappings.
+
+## Restauration et rollback
+
+- restaurer la base via Alembic vers la révision précédente ;
+- restaurer fichiers analytiques et ledgers depuis un artefact GitHub ;
+- ne pas supprimer les payloads bruts ;
+- si une normalisation est erronée, produire une nouvelle version et rejouer ;
+- le rollback ne déverrouille jamais les paris réels.
+
+## Cockpit V1
+
+```powershell
+.\.venv\Scripts\python.exe scripts/build_cockpit_snapshot.py
+cd cockpit
+pnpm install --frozen-lockfile
+pnpm test
+pnpm dev
+```
+
+Ouvrir `http://localhost:3000`. Les badges `DEMO DATA`, `LEGACY SOURCE` et
+`LIVE SOURCE` sont contractuels. Ne pas remplacer une vue vide par des valeurs
+simulées sans badge.
 
 ## Incident et reprise
 
