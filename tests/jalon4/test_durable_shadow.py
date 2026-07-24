@@ -52,7 +52,11 @@ from scripts.manage_durable_registry import (
     verify_registry,
 )
 from scripts.neon_bootstrap import bootstrap
-from scripts.run_shadow_pipeline import daily_health, pre_match_shadow
+from scripts.run_shadow_pipeline import (
+    daily_health,
+    latest_quota_observation,
+    pre_match_shadow,
+)
 
 NOW = datetime(2026, 7, 24, 12, tzinfo=UTC)
 
@@ -654,6 +658,56 @@ def test_daily_health_utilise_le_quota_les_plus_recent_en_date(
 
     assert health["burn_in"]["quota_used"] == 8
     assert health["burn_in"]["quota_remaining"] == 19_992
+
+
+def test_latest_quota_observation_ignore_invalid_timestamp() -> None:
+    runs = [
+        {
+            "run_id": "invalid-time",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": "not-a-timestamp",
+            "quota_used": 1,
+            "quota_remaining": 19_999,
+        },
+        {
+            "run_id": "valid-time",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": (NOW + timedelta(minutes=10)).isoformat(),
+            "quota_used": 8,
+            "quota_remaining": 19_992,
+        },
+    ]
+    quota_run = latest_quota_observation(runs)
+    assert quota_run is not None
+    assert quota_run["quota_used"] == 8
+    assert quota_run["quota_remaining"] == 19_992
+
+
+def test_latest_quota_observation_tiebreaker_lexicographique_sur_run_id() -> None:
+    runs = [
+        {
+            "run_id": "run-a",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": NOW.isoformat(),
+            "quota_used": 1,
+            "quota_remaining": 19_999,
+        },
+        {
+            "run_id": "run-z",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": NOW.isoformat(),
+            "quota_used": 2,
+            "quota_remaining": 19_998,
+        },
+    ]
+
+    quota_run = latest_quota_observation(runs)
+    assert quota_run is not None
+    assert quota_run["run_id"] == "run-z"
 
 
 def test_checkpoints_sans_run_metier_necrasent_pas_un_ancien_bundle(

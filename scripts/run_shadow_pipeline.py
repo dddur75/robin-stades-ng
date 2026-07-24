@@ -93,6 +93,34 @@ def read_jsonl(path: Path) -> list[dict[str, object]]:
     ]
 
 
+def _parse_run_timestamp(run: dict[str, object]) -> datetime | None:
+    for key in ("finished_at", "started_at"):
+        value = run.get(key)
+        if not isinstance(value, str):
+            continue
+        try:
+            parsed = datetime.fromisoformat(value)
+        except ValueError:
+            continue
+        return parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=UTC)
+    return None
+
+
+def latest_quota_observation(
+    runs: list[dict[str, object]],
+) -> dict[str, object] | None:
+    candidates = [
+        (timestamp, str(run.get("run_id", "")), run)
+        for run in runs
+        if run.get("quota_used") is not None
+        and run.get("quota_remaining") is not None
+        and (timestamp := _parse_run_timestamp(run)) is not None
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda item: (item[0], item[1]))[2]
+
+
 def runtime_run_id(pipeline: str) -> str:
     github_run_id = (os.getenv("GITHUB_RUN_ID") or "").strip()
     suffix = github_run_id or datetime.now(UTC).strftime("%Y%m%d%H%M%S%f")
@@ -738,30 +766,7 @@ def daily_health(output: Path) -> dict[str, object]:
         for value in [read_json(path, {})]
         if isinstance(value, dict)
     ]
-    def _parse_finished_at(run: dict[str, object]) -> datetime:
-        for key in ("finished_at", "started_at"):
-            value = run.get(key)
-            if not isinstance(value, str):
-                continue
-            try:
-                timestamp = datetime.fromisoformat(value)
-            except ValueError:
-                continue
-            if timestamp.tzinfo is None:
-                return timestamp.replace(tzinfo=UTC)
-            return timestamp
-        return datetime.min.replace(tzinfo=UTC)
-
-    last_quota_run = max(
-        (
-            run
-            for run in runs
-            if run.get("quota_used") is not None
-            and run.get("quota_remaining") is not None
-        ),
-        key=_parse_finished_at,
-        default={},
-    )
+    last_quota_run = latest_quota_observation(runs) or {}
     quota_used = last_quota_run.get("quota_used")
     quota_remaining = last_quota_run.get("quota_remaining")
     metrics = compute_daily_metrics(
