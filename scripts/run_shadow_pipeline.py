@@ -738,14 +738,29 @@ def daily_health(output: Path) -> dict[str, object]:
         for value in [read_json(path, {})]
         if isinstance(value, dict)
     ]
-    last_quota_run = next(
+    def _parse_finished_at(run: dict[str, object]) -> datetime:
+        for key in ("finished_at", "started_at"):
+            value = run.get(key)
+            if not isinstance(value, str):
+                continue
+            try:
+                timestamp = datetime.fromisoformat(value)
+            except ValueError:
+                continue
+            if timestamp.tzinfo is None:
+                return timestamp.replace(tzinfo=UTC)
+            return timestamp
+        return datetime.min.replace(tzinfo=UTC)
+
+    last_quota_run = max(
         (
             run
-            for run in reversed(runs)
+            for run in runs
             if run.get("quota_used") is not None
             and run.get("quota_remaining") is not None
         ),
-        {},
+        key=_parse_finished_at,
+        default={},
     )
     quota_used = last_quota_run.get("quota_used")
     quota_remaining = last_quota_run.get("quota_remaining")

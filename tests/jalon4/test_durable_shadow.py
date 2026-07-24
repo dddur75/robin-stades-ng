@@ -21,6 +21,7 @@ from robin.ingestion.scheduler import (
     record_window_result,
     window_states,
 )
+from robin.operations.activation import WORKFLOW_SUCCESS_LIVE_DATA
 from robin.operations.burn_in import (
     AlertSeverity,
     HealthStatus,
@@ -616,6 +617,43 @@ def test_daily_health_conserve_le_dernier_quota_fourni(
     assert health["burn_in"]["quota_used"] == 8
     assert health["burn_in"]["quota_remaining"] == 19_992
     assert health["burn_in"]["quota_reserve_rate"] == pytest.approx(0.9996)
+
+
+def test_daily_health_utilise_le_quota_les_plus_recent_en_date(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    (state / "runs" / "zz-oldest.json").write_text(
+        json.dumps(
+            {
+                "run_id": "fixtures-old",
+                "pipeline": "collect-fixtures",
+                "status": WORKFLOW_SUCCESS_LIVE_DATA,
+                "finished_at": (NOW - timedelta(hours=2)).isoformat(),
+                "quota_used": 1,
+                "quota_remaining": 19_999,
+            }
+        ),
+        "utf-8",
+    )
+    (state / "runs" / "aa-newest.json").write_text(
+        json.dumps(
+            {
+                "run_id": "collect-new",
+                "pipeline": "collect-fixtures",
+                "status": WORKFLOW_SUCCESS_LIVE_DATA,
+                "finished_at": (NOW + timedelta(hours=2)).isoformat(),
+                "quota_used": 8,
+                "quota_remaining": 19_992,
+            }
+        ),
+        "utf-8",
+    )
+
+    health = daily_health(state)
+
+    assert health["burn_in"]["quota_used"] == 8
+    assert health["burn_in"]["quota_remaining"] == 19_992
 
 
 def test_checkpoints_sans_run_metier_necrasent_pas_un_ancien_bundle(
