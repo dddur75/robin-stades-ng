@@ -43,11 +43,13 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
       - name: Linting
-        run: python -m ruff check src/robin tests/jalon1 scripts/build_jalon1_notebook.py migrations
+        run: python -m ruff check src/robin tests/jalon1 tests/jalon2 scripts migrations
       - name: Typage strict
         run: python -m mypy src/robin
       - name: Securite basique
         run: python -m bandit -q -r src/robin
+      - name: Verification des secrets
+        run: python scripts/check_no_secrets.py
       - name: Verifier la syntaxe
         run: python -m compileall -q agents moteur src tests
       - name: Tester les migrations
@@ -58,7 +60,25 @@ jobs:
           python -m alembic downgrade base
       - name: Executer les tests
         run: python -m pytest -q
+      - name: Tester les configurations et le pipeline mock
+        run: |
+          python -c "import pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github/workflows').glob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text())"
+          python scripts/run_shadow_pipeline.py collect-fixtures --mock --output .ci/shadow
+          python scripts/run_shadow_pipeline.py collect-odds --mock --output .ci/shadow
+          python scripts/run_shadow_pipeline.py pre-match-shadow --mock --output .ci/shadow
+          python scripts/run_shadow_pipeline.py daily-health --mock --output .ci/shadow
       - name: Smoke test du dashboard de sante
         run: |
           python -m robin.quality.report --input data/matches.parquet --output .ci/quality
           python -c "from pathlib import Path; assert Path('.ci/quality/health.html').stat().st_size > 1000"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.9.0"
+      - name: Compiler et tester le Cockpit V1
+        working-directory: cockpit
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test

@@ -1,0 +1,21 @@
+[
+  {
+    "prediction_id": "58a1dd71-5472-4a60-a47d-b155d720484d",
+    "fixture_id": "7565ed81-6ad6-58c5-a096-3509b7c9a010",
+    "generated_at": "2026-07-24T11:34:16.210568+00:00",
+    "as_of_time": "2026-07-24T11:34:16.210578+00:00",
+    "model_name": "consensus-elo-poisson",
+    "model_version": "1.0",
+    "dataset_version": "matches-parquet-j2",
+    "feature_version": "shadow-v1",
+    "probability_home": 0.5771423881237422,
+    "probability_draw": 0.19844232059554812,
+    "probability_away": 0.22441529128070964,
+    "expected_home_goals": 1.8864568134563826,
+    "expected_away_goals": 0.9673044003868472,
+    "data_quality_status": "DERIVED",
+    "uncertainty_status": "HIGH",
+    "market_snapshot_id": null,
+    "origin": "DEMO DATA"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "run_id": "fixtures-2026072411",
+  "pipeline": "collect-fixtures",
+  "status": "PRESENT",
+  "origin": "DEMO DATA",
+  "records": 1,
+  "quota_remaining": null,
+  "finished_at": "2026-07-24T11:34:14.729054+00:00"
+}

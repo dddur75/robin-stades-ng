@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
+from uuid import UUID, uuid5
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -14,6 +15,13 @@ from robin.domain.enums import (
     Selection,
 )
 from robin.domain.temporal import require_utc
+
+ROBIN_NAMESPACE = UUID("0f38a474-0f93-4a08-99e6-acde1f0a4935")
+
+
+def stable_internal_id(entity_type: str, provider: str, provider_id: str) -> str:
+    """Identifiant interne stable, distinct de la clé fournisseur exposée."""
+    return str(uuid5(ROBIN_NAMESPACE, f"{entity_type}:{provider}:{provider_id}"))
 
 
 class MarketKey(BaseModel):
@@ -93,6 +101,29 @@ class OddsSnapshot(BaseModel):
     phase: QuotePhase
     quotes: tuple[BookmakerQuoteContract, ...]
     schema_version: str = "1"
+
+    @property
+    def snapshot_id(self) -> str:
+        return str(
+            uuid5(
+                ROBIN_NAMESPACE,
+                "|".join(
+                    (
+                        self.provider,
+                        self.provider_fixture_id,
+                        self.observed_at.isoformat(),
+                    )
+                ),
+            )
+        )
+
+    @property
+    def time_to_kickoff_seconds(self) -> int:
+        return int((self.fixture_kickoff_at - self.observed_at).total_seconds())
+
+    @property
+    def is_live(self) -> bool:
+        return self.time_to_kickoff_seconds <= 0
 
     @model_validator(mode="after")
     def validate_times(self) -> OddsSnapshot:

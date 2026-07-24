@@ -2,6 +2,21 @@
 
 Dernière revue : 2026-07-24.
 
+Décision détaillée : `docs/data-sources/JALON-2-SOURCE-DECISION.md`.
+
+## Décision Jalon 2
+
+| Besoin | Source retenue | État |
+|---|---|---|
+| données sportives profondes | API-Football | adaptateur prêt, clé optionnelle absente |
+| cotes prospectives et fixtures courtes | The Odds API | secret GitHub existant |
+| contrôle historique | Football-Data.co.uk | actif, origine legacy |
+
+La collecte initiale est limitée à la Ligue 1. Aucun abonnement n'a été souscrit.
+Le budget The Odds API est borné à 450 crédits par mois avec arrêt préventif
+sous 25 crédits. Les marchés demandés sont `h2h` et `totals`; les marchés non
+couverts ne sont pas synthétisés.
+
 ## Football-Data.co.uk
 
 Statut : `PARTIAL` — source historique principale.
@@ -30,12 +45,12 @@ Statut : `UNVERIFIED` — enrichissement xG best effort.
 
 ## The Odds API
 
-Statut : `PARTIAL` — source prospective configurée, sans archive réelle.
+Statut : `PARTIAL` — source prospective configurée ; preuve réelle à confirmer.
 
 - le secret `ODDS_API_KEY` existe déjà dans GitHub Actions ;
 - 86 événements figurent dans le ledger historique, mais aucun
   `odds_*.parquet` réel n'est archivé au 2026-07-24 ;
-- plafond local : 15 000 crédits par mois, arrêt sous 500 crédits ;
+- plafond Jalon 2 : 450 crédits par mois, arrêt sous 25 crédits ;
 - le Jalon 1 fournit le schéma de snapshot, l'interface fournisseur, les règles
   d'idempotence et un mock complet ; aucune nouvelle clé ou souscription requise ;
 - une clé active débloquera les observations réelles, pas la mise automatique ni

@@ -1,0 +1,385 @@
+{
+  "generatedAt": "2026-07-24T11:34:19.205886+00:00",
+  "status": "PARTIAL",
+  "shadowStatus": "SHADOW_INFRASTRUCTURE_READY",
+  "productionStatus": "PRODUCTION_LOCKED",
+  "message": "Infrastructure prospective prête. Les données affichées sont explicitement étiquetées par origine ; aucun pari réel n'est autorisé.",
+  "metrics": {
+    "fixtures": 1,
+    "predictions": 1,
+    "candidates": 0,
+    "rejections": 1,
+    "migrationCoveragePct": 98.668,
+    "bankroll": 1000,
+    "profit": 0,
+    "roiPct": 0,
+    "maxDrawdown": 0
+  },
+  "matches": [
+    {
+      "id": "demo-fixture-1",
+      "kickoff": "2026-08-16T18:45:00Z",
+      "competition": "Ligue 1",
+      "home": "Paris SG",
+      "away": "Marseille",
+      "origin": "DEMO DATA",
+      "quality": "DERIVED",
+      "model": "consensus-elo-poisson",
+      "probabilities": {
+        "home": 0.5771423881237422,
+        "draw": 0.19844232059554812,
+        "away": 0.22441529128070964
+      },
+      "expectedGoals": {
+        "home": 1.8864568134563826,
+        "away": 0.9673044003868472
+      },
+      "decision": "MISSING_ODDS",
+      "accepted": false
+    }
+  ],
+  "odds": [],
+  "decisions": [
+    {
+      "decision_id": "7f79eda0-8c41-599e-a86d-994777310fac",
+      "fixture_id": "7565ed81-6ad6-58c5-a096-3509b7c9a010",
+      "market_key": "1X2",
+      "selection": "HOME",
+      "odds_decimal": null,
+      "model_probability": 0.5771423881237422,
+      "implied_probability": null,
+      "edge": null,
+      "strategy_version": "value-simple-1.0",
+      "quality_status": "BLOCKED",
+      "uncertainty_status": "DISAGREEMENT",
+      "suggested_stake": 0.0,
+      "accepted": false,
+      "primary_reason": "MISSING_ODDS",
+      "secondary_reasons": [
+        "QUALITY_BLOCKED",
+        "MODEL_DISAGREEMENT"
+      ],
+      "decided_at": "2026-07-24T11:34:16.210618Z",
+      "simulation": true,
+      "origin": "DEMO DATA",
+      "home": "Paris SG",
+      "away": "Marseille"
+    }
+  ],
+  "qualityChecks": [
+    {
+      "check": "Identifiants UUID déterministes",
+      "status": "PASS",
+      "value": "37 024",
+      "threshold": "100 % des mappings",
+      "origin": "LEGACY SOURCE"
+    },
+    {
+      "check": "Couverture certaine de migration",
+      "status": "PASS",
+      "value": "98.668 %",
+      "threshold": "≥ 98 %",
+      "origin": "LEGACY SOURCE"
+    },
+    {
+      "check": "Collisions UUID",
+      "status": "PASS",
+      "value": "0",
+      "threshold": "0",
+      "origin": "LEGACY SOURCE"
+    },
+    {
+      "check": "Cas ambigus ou non résolus",
+      "status": "PASS",
+      "value": "0",
+      "threshold": "0",
+      "origin": "LEGACY SOURCE"
+    },
+    {
+      "check": "Lignes de revue migration",
+      "status": "WARN",
+      "value": "493",
+      "threshold": "explicites",
+      "origin": "LEGACY SOURCE"
+    },
+    {
+      "check": "Fuite temporelle",
+      "status": "PASS",
+      "value": "cutoff strict",
+      "threshold": "0 événement futur",
+      "origin": "LEGACY SOURCE"
+    },
+    {
+      "check": "Journal shadow immuable",
+      "status": "PASS",
+      "value": "1 décision",
+      "threshold": "append-only",
+      "origin": "DEMO DATA"
+    },
+    {
+      "check": "Snapshots de cotes réels",
+      "status": "PENDING",
+      "value": "0",
+      "threshold": "attente collecte réelle",
+      "origin": "DEMO DATA"
+    }
+  ],
+  "strategies": [
+    {
+      "strategy": "aucun_pari",
+      "bets": 0,
+      "wins": 0,
+      "profit": 0.0,
+      "roi": 0.0,
+      "roi_ci_low": 0.0,
+      "roi_ci_high": 0.0,
+      "max_drawdown": 0.0,
+      "status": "INSUFFICIENT_SAMPLE",
+      "note": "baseline nulle",
+      "origin": "LEGACY SOURCE",
+      "roiPct": 0.0,
+      "ciLowPct": 0.0,
+      "ciHighPct": 0.0
+    },
+    {
+      "strategy": "favori_marche",
+      "bets": 1563,
+      "wins": 810,
+      "profit": -33.26,
+      "roi": -0.0212795905,
+      "roi_ci_low": -0.0707923142,
+      "roi_ci_high": 0.0282331331,
+      "max_drawdown": 60.25,
+      "status": "REJECTED_OOS",
+      "note": "cote de clôture legacy dé-vig non requise",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -2.13,
+      "ciLowPct": -7.08,
+      "ciHighPct": 2.82
+    },
+    {
+      "strategy": "favori_domicile",
+      "bets": 1031,
+      "wins": 554,
+      "profit": -6.32,
+      "roi": -0.0061299709,
+      "roi_ci_low": -0.0658557154,
+      "roi_ci_high": 0.0535957736,
+      "max_drawdown": 46.18,
+      "status": "REJECTED_OOS",
+      "note": "favori uniquement lorsqu'il joue à domicile",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -0.61,
+      "ciLowPct": -6.59,
+      "ciHighPct": 5.36
+    },
+    {
+      "strategy": "aleatoire_controlee",
+      "bets": 1563,
+      "wins": 562,
+      "profit": -13.77,
+      "roi": -0.0088099808,
+      "roi_ci_low": -0.0844671091,
+      "roi_ci_high": 0.0668471475,
+      "max_drawdown": 77.51,
+      "status": "REJECTED_OOS",
+      "note": "tirage déterministe par match_id",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -0.88,
+      "ciLowPct": -8.45,
+      "ciHighPct": 6.68
+    },
+    {
+      "strategy": "seuil_probabilite",
+      "bets": 418,
+      "wins": 283,
+      "profit": -2.41,
+      "roi": -0.0057655502,
+      "roi_ci_low": -0.0750244602,
+      "roi_ci_high": 0.0634933597,
+      "max_drawdown": 13.2,
+      "status": "REJECTED_OOS",
+      "note": "consensus Elo-Poisson >= 55 %",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -0.58,
+      "ciLowPct": -7.5,
+      "ciHighPct": 6.35
+    },
+    {
+      "strategy": "value_betting_simple",
+      "bets": 1250,
+      "wins": 319,
+      "profit": -176.73,
+      "roi": -0.141384,
+      "roi_ci_low": -0.2336100908,
+      "roi_ci_high": -0.0491579092,
+      "max_drawdown": 179.55,
+      "status": "REJECTED_OOS",
+      "note": "edge dé-viggé >= 4%",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -14.14,
+      "ciLowPct": -23.36,
+      "ciHighPct": -4.92
+    },
+    {
+      "strategy": "value_edge_2pct",
+      "bets": 1519,
+      "wins": 398,
+      "profit": -202.69,
+      "roi": -0.1334364714,
+      "roi_ci_low": -0.2172592436,
+      "roi_ci_high": -0.0496136991,
+      "max_drawdown": 203.51,
+      "status": "REJECTED_OOS",
+      "note": "sensibilité edge dé-viggé >= 2 %",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -13.34,
+      "ciLowPct": -21.73,
+      "ciHighPct": -4.96
+    },
+    {
+      "strategy": "value_edge_6pct",
+      "bets": 939,
+      "wins": 234,
+      "profit": -140.43,
+      "roi": -0.1495527157,
+      "roi_ci_low": -0.254522632,
+      "roi_ci_high": -0.0445827993,
+      "max_drawdown": 142.1,
+      "status": "REJECTED_OOS",
+      "note": "sensibilité edge dé-viggé >= 6 %",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -14.96,
+      "ciLowPct": -25.45,
+      "ciHighPct": -4.46
+    },
+    {
+      "strategy": "cote_fixe_1_80_2_20",
+      "bets": 315,
+      "wins": 152,
+      "profit": -10.66,
+      "roi": -0.0338412698,
+      "roi_ci_low": -0.1448961253,
+      "roi_ci_high": 0.0772135856,
+      "max_drawdown": 32.25,
+      "status": "REJECTED_OOS",
+      "note": "domicile dans le segment de cote",
+      "origin": "LEGACY SOURCE",
+      "roiPct": -3.38,
+      "ciLowPct": -14.49,
+      "ciHighPct": 7.72
+    },
+    {
+      "strategy": "over_2_5_value",
+      "bets": 396,
+      "wins": 190,
+      "profit": 11.22,
+      "roi": 0.0283333333,
+      "roi_ci_low": -0.0799501432,
+      "roi_ci_high": 0.1366168098,
+      "max_drawdown": 15.03,
+      "status": "INCONCLUSIVE_OOS",
+      "note": "Poisson vs cote O2,5, edge >= 4%",
+      "origin": "LEGACY SOURCE",
+      "roiPct": 2.83,
+      "ciLowPct": -8.0,
+      "ciHighPct": 13.66
+    },
+    {
+      "strategy": "btts_value",
+      "bets": 0,
+      "wins": 0,
+      "profit": 0.0,
+      "roi": 0.0,
+      "roi_ci_low": 0.0,
+      "roi_ci_high": 0.0,
+      "max_drawdown": 0.0,
+      "status": "INSUFFICIENT_SAMPLE",
+      "note": "bloqué : aucune cote BTTS fiable dans le dataset legacy",
+      "origin": "LEGACY SOURCE",
+      "roiPct": 0.0,
+      "ciLowPct": 0.0,
+      "ciHighPct": 0.0
+    }
+  ],
+  "runs": [
+    {
+      "id": "fixtures-2026072411",
+      "pipeline": "collect-fixtures",
+      "status": "PRESENT",
+      "records": 1,
+      "finishedAt": "2026-07-24T11:34:14.729054+00:00",
+      "origin": "DEMO DATA"
+    },
+    {
+      "id": "pre-match-2026072411",
+      "pipeline": "pre-match-shadow",
+      "status": "PASSED",
+      "records": 1,
+      "finishedAt": "2026-07-24T11:34:16.213816+00:00",
+      "origin": "DEMO DATA"
+    },
+    {
+      "id": "settlement-2026072411",
+      "pipeline": "post-match-settlement",
+      "status": "ABSENT",
+      "records": 0,
+      "finishedAt": "2026-07-24T11:34:17.915850+00:00",
+      "origin": "DEMO DATA"
+    }
+  ],
+  "filters": {
+    "periods": [
+      "7 prochains jours",
+      "30 prochains jours",
+      "Saison 2025–2026"
+    ],
+    "competitions": [
+      "Ligue 1"
+    ],
+    "markets": [
+      "1X2",
+      "Over/Under 2,5"
+    ],
+    "strategies": [
+      "Toutes",
+      "aucun_pari",
+      "favori_marche",
+      "favori_domicile",
+      "aleatoire_controlee",
+      "seuil_probabilite",
+      "value_betting_simple",
+      "value_edge_2pct",
+      "value_edge_6pct",
+      "cote_fixe_1_80_2_20",
+      "over_2_5_value",
+      "btts_value"
+    ],
+    "models": [
+      "consensus-elo-poisson",
+      "Elo",
+      "Poisson",
+      "Dixon-Coles"
+    ],
+    "statuses": [
+      "Tous",
+      "Accepté",
+      "Rejeté",
+      "En attente"
+    ],
+    "qualities": [
+      "Toutes",
+      "PASS",
+      "WARN",
+      "PENDING"
+    ],
+    "bookmakers": [
+      "Tous"
+    ]
+  },
+  "provenance": {
+    "demo": "data/shadow-demo",
+    "legacy": "data/matches.parquet + rapports/jalon2/oos-results.json",
+    "live": "Aucun snapshot réel intégré à cette version."
+  }
+}

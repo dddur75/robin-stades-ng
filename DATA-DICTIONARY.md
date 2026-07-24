@@ -1,7 +1,32 @@
 # Dictionnaire de données
 
-Statut : `VERIFIED` pour le schéma Jalon 1 ; `PARTIAL` pour la migration du
-dataset historique.
+Statut : `VERIFIED` pour les schémas Jalons 1 et 2 ; la provenance historique
+reste `LEGACY SOURCE`.
+
+## Snapshot de cote Jalon 2
+
+Grain : une observation immuable de plusieurs cotations d'un même événement.
+
+Champs minimaux : `snapshot_id`, `fixture_id`, `provider`, `bookmaker_id`,
+`market_type`, `market_scope`, `selection`, `line_value`, `odds_decimal`,
+`observed_at_utc`, `fixture_kickoff_at_utc`, `time_to_kickoff_seconds`,
+`is_live`, `raw_payload_id`, `quality_status` et `ingestion_run_id`.
+
+Une ouverture est la première observation disponible, pas une affirmation sur
+l'ouverture commerciale du bookmaker. Une clôture approchée est la dernière
+observation pré-match disponible dans les fenêtres configurées.
+
+## Prédiction, décision et migration
+
+Une prédiction est immuable et porte `prediction_id`, `fixture_id`,
+`generated_at`, `as_of_time`, versions, probabilités 1N2, buts attendus,
+qualité, incertitude et éventuel `market_snapshot_id`. Une décision ajoute
+sélection, cote, probabilité implicite, edge, stratégie, mise fictive et motifs
+normalisés. `simulation` vaut toujours `true`.
+
+Les statuts de migration sont `EXACT`, `PROVIDER_CONFIRMED`, `RULE_MATCHED`,
+`PROBABLE`, `AMBIGUOUS`, `UNRESOLVED` et `REJECTED`. `PROBABLE` est conservé
+mais exclu par défaut des modèles exigeant une identité certaine.
 
 ## Instants temporels
 
@@ -75,7 +100,10 @@ Grain : un match terminé. Clé legacy : `match_id`.
 - champs mi-temps, cartons et corners après match : `hthg`, `htag`, `hy`, `ay`,
   `hr`, `ar`, `hc`, `ac` ;
 - cotes historiques sans horodatage suffisamment précis ;
-- UUID internes et provenance brute absents : migration encore nécessaire.
+- correspondances UUID produites dans
+  `data/migrations/jalon2/legacy-uuid-mappings.parquet`, sans réécriture du
+  Parquet source ;
+- provenance brute historique toujours absente : origine `LEGACY SOURCE`.
 
 Une donnée absente n'est jamais convertie en zéro. Les zéros suspects restent
 visibles et sont masqués par défaut pour les modèles concernés.

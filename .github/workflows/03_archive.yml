@@ -1,12 +1,10 @@
-name: "03 - Archive cotes (The Odds API)"
+name: "03 - Archive cotes legacy (diagnostic manuel)"
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "23 */2 * * *"   # toutes les 2 heures
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: archive
+  group: archive-legacy-diagnostic
   cancel-in-progress: false
 jobs:
   archive:
@@ -16,15 +14,15 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
       - run: pip install -r requirements.txt
-      - name: Capture des cotes
+      - name: Diagnostic de l'ancien collecteur
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python agents/agent_archive.py
-      - name: Commit
-        run: |
-          git config user.name "robin-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git pull --rebase || true
-          git add data/archive/
-          git diff --cached --quiet || git commit -m "archive: snapshots cotes"
-          git push
+      - name: Publier le diagnostic sans ecriture Git
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: legacy-archive-diagnostic
+          path: data/archive/
+          if-no-files-found: warn
+          retention-days: 7

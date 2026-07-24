@@ -287,3 +287,151 @@ class SettledBet(Base):
     supersedes_settlement_id: Mapped[str | None] = mapped_column(
         ForeignKey("settled_bets.id", ondelete="RESTRICT")
     )
+
+
+class ProviderCallLog(Base):
+    __tablename__ = "provider_call_logs"
+    __table_args__ = (
+        UniqueConstraint(
+            "provider",
+            "endpoint",
+            "requested_at",
+            "ingestion_run_id",
+            name="uq_provider_call",
+        ),
+        Index("ix_provider_call_observed", "provider", "requested_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    provider: Mapped[str] = mapped_column(String(120))
+    endpoint: Mapped[str] = mapped_column(String(500))
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    received_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(30))
+    http_status: Mapped[int | None] = mapped_column(Integer)
+    latency_ms: Mapped[int | None] = mapped_column(Integer)
+    quota_used: Mapped[int | None] = mapped_column(Integer)
+    quota_remaining: Mapped[int | None] = mapped_column(Integer)
+    raw_observation_id: Mapped[str | None] = mapped_column(
+        ForeignKey("raw_observations.id", ondelete="RESTRICT")
+    )
+    ingestion_run_id: Mapped[str] = mapped_column(
+        ForeignKey("pipeline_runs.id", ondelete="CASCADE")
+    )
+    error_code: Mapped[str | None] = mapped_column(String(120))
+
+
+class ShadowPredictionModel(Base):
+    __tablename__ = "shadow_predictions"
+    __table_args__ = (
+        UniqueConstraint(
+            "fixture_id",
+            "model_name",
+            "model_version",
+            "as_of_time",
+            name="uq_shadow_prediction",
+        ),
+        Index("ix_shadow_prediction_time", "generated_at", "as_of_time"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    fixture_id: Mapped[str] = mapped_column(String(36), index=True)
+    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    as_of_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    model_name: Mapped[str] = mapped_column(String(80))
+    model_version: Mapped[str] = mapped_column(String(80))
+    dataset_version: Mapped[str] = mapped_column(String(120))
+    feature_version: Mapped[str] = mapped_column(String(120))
+    probability_home: Mapped[float] = mapped_column(Float)
+    probability_draw: Mapped[float] = mapped_column(Float)
+    probability_away: Mapped[float] = mapped_column(Float)
+    expected_home_goals: Mapped[float] = mapped_column(Float)
+    expected_away_goals: Mapped[float] = mapped_column(Float)
+    data_quality_status: Mapped[str] = mapped_column(String(30))
+    uncertainty_status: Mapped[str] = mapped_column(String(30))
+    market_snapshot_id: Mapped[str | None] = mapped_column(String(36))
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class ShadowDecisionModel(Base):
+    __tablename__ = "shadow_decisions"
+    __table_args__ = (
+        UniqueConstraint(
+            "fixture_id",
+            "market_key",
+            "selection",
+            "strategy_version",
+            name="uq_shadow_decision",
+        ),
+        Index("ix_shadow_decision_accepted", "decided_at", "accepted"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    fixture_id: Mapped[str] = mapped_column(String(36), index=True)
+    market_key: Mapped[str] = mapped_column(String(160))
+    selection: Mapped[str] = mapped_column(String(50))
+    odds_decimal: Mapped[float | None] = mapped_column(Float)
+    model_probability: Mapped[float] = mapped_column(Float)
+    implied_probability: Mapped[float | None] = mapped_column(Float)
+    edge: Mapped[float | None] = mapped_column(Float)
+    strategy_version: Mapped[str] = mapped_column(String(120))
+    quality_status: Mapped[str] = mapped_column(String(30))
+    uncertainty_status: Mapped[str] = mapped_column(String(30))
+    suggested_stake: Mapped[float] = mapped_column(Float)
+    accepted: Mapped[bool] = mapped_column(Boolean)
+    primary_reason: Mapped[str | None] = mapped_column(String(80))
+    secondary_reasons: Mapped[list[str]] = mapped_column(JSON, default=list)
+    decided_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class LegacyMigrationRun(Base):
+    __tablename__ = "legacy_migration_runs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    dataset_version: Mapped[str] = mapped_column(String(120))
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    rows_examined: Mapped[int] = mapped_column(Integer)
+    mappings_total: Mapped[int] = mapped_column(Integer)
+    certain_coverage: Mapped[float] = mapped_column(Float)
+    ambiguous: Mapped[int] = mapped_column(Integer)
+    unresolved: Mapped[int] = mapped_column(Integer)
+    collisions: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(30))
+    report_location: Mapped[str] = mapped_column(String(1000))
+
+
+class OperationalMetric(Base):
+    __tablename__ = "operational_metrics"
+    __table_args__ = (
+        Index("ix_operational_metric_time", "metric_name", "observed_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    metric_name: Mapped[str] = mapped_column(String(160))
+    value: Mapped[float] = mapped_column(Float)
+    unit: Mapped[str] = mapped_column(String(40))
+    dimensions: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    source_run_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pipeline_runs.id", ondelete="SET NULL")
+    )
+
+
+class OperationalAlert(Base):
+    __tablename__ = "operational_alerts"
+    __table_args__ = (
+        Index("ix_operational_alert_time", "severity", "created_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    alert_code: Mapped[str] = mapped_column(String(120))
+    severity: Mapped[str] = mapped_column(String(30))
+    message: Mapped[str] = mapped_column(Text)
+    action_required: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    source_run_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pipeline_runs.id", ondelete="SET NULL")
+    )

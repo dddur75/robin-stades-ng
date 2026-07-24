@@ -1,5 +1,40 @@
 # Registre des décisions
 
+## 2026-07-24 — Verticale initiale Ligue 1 en shadow
+
+Statut : `VERIFIED`
+
+Le Jalon 2 reste limité à la Ligue 1. Les marchés activés sont le 1X2 et
+l'Over/Under 2,5 ; BTTS, double chance et marchés enrichis restent désactivés
+tant que la couverture réelle n'est pas démontrée. La bankroll de 1 000 unités
+est fictive et les mises réelles restent techniquement verrouillées.
+
+## 2026-07-24 — Sources principales et contrôle
+
+Statut : `VERIFIED`
+
+API-Football est retenu comme adaptateur sportif profond, The Odds API comme
+source de fixtures, résultats courts et cotes prospectives immédiatement
+activable, et Football-Data.co.uk comme contrôle historique. Aucun abonnement
+n'a été souscrit. Sans `API_FOOTBALL_KEY`, le périmètre opérationnel utilise
+The Odds API sans masquer la couverture sportive partielle.
+
+## 2026-07-24 — Aucune stratégie promue après recalcul OOS
+
+Statut : `VERIFIED`
+
+Le walk-forward 2025–2026 ne fournit aucune preuve robuste de rentabilité.
+L'Over 2,5 à +2,83 % reste inconclusif car son IC 95 % traverse zéro. Les autres
+stratégies sont rejetées ou insuffisamment documentées.
+
+## 2026-07-24 — Cockpit fondé sur la provenance
+
+Statut : `VERIFIED`
+
+Chaque surface analytique expose l'origine `DEMO DATA`, `LEGACY SOURCE` ou
+`LIVE SOURCE`. Une vue vide explicite est préférée à une cote synthétique
+présentée comme réelle. Le verrou de production reste visible en permanence.
+
 ## 2026-07-24 — Faire évoluer l'existant sans reconstruction destructive
 
 Statut : `VERIFIED`

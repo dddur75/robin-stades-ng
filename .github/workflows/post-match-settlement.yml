@@ -1,0 +1,44 @@
+name: "13 - Reglement post-match shadow"
+on:
+  workflow_dispatch:
+    inputs:
+      mock:
+        description: "Mode DEMO"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "41 5,17 * * *"
+permissions:
+  contents: read
+concurrency:
+  group: shadow-settlement
+  cancel-in-progress: false
+jobs:
+  settle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - uses: actions/cache@v4
+        with:
+          path: data/shadow
+          key: shadow-data-${{ github.run_id }}
+          restore-keys: shadow-data-
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Regler les decisions shadow
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: >-
+          python scripts/run_shadow_pipeline.py post-match-settlement
+          ${{ inputs.mock && '--mock' || '' }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shadow-settlement-${{ github.run_id }}
+          path: data/shadow
+          retention-days: 30

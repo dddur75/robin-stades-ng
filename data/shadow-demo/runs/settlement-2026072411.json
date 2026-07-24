@@ -1,0 +1,9 @@
+{
+  "run_id": "settlement-2026072411",
+  "pipeline": "post-match-settlement",
+  "status": "ABSENT",
+  "results_received": 0,
+  "settled": 0,
+  "message": "aucun pari réel ; règlements shadow uniquement",
+  "finished_at": "2026-07-24T11:34:17.915850+00:00"
+}
