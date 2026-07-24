@@ -1,0 +1,2 @@
+"""Interfaces remplaçables des fournisseurs."""
+
