@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "53 6 * * *"
 permissions:
-  contents: read
+  contents: write
   actions: write
 concurrency:
   group: shadow-state
@@ -29,7 +29,14 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
       - name: Calculer la sante
+        env:
+          DURABLE_STORAGE_REQUIRED: "true"
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python scripts/run_shadow_pipeline.py daily-health
+      - uses: ./.github/actions/durable-shadow
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: shadow-state-${{ github.run_id }}

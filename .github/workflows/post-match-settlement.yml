@@ -10,7 +10,7 @@ on:
   schedule:
     - cron: "41 5,17 * * *"
 permissions:
-  contents: read
+  contents: write
   actions: write
 concurrency:
   group: shadow-state
@@ -37,9 +37,14 @@ jobs:
       - name: Regler les decisions shadow
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          DURABLE_STORAGE_REQUIRED: "true"
         run: >-
           python scripts/run_shadow_pipeline.py post-match-settlement
           ${{ inputs.mock && '--mock' || '' }}
+      - uses: ./.github/actions/durable-shadow
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: shadow-state-${{ github.run_id }}

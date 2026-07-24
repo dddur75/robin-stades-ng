@@ -63,9 +63,43 @@ quota:
   reserve_credits: 4000
   reserve_pct: 20
   credits_per_event_snapshot: 2
+  forecast_monthly_credits: 720
+  near_kickoff_reserved_credits: 80
+  levels:
+    conservative_at_forecast_pct: 80
+    critical_when_usable_credits_lte: 80
 persistence:
   backend: GITHUB_ARTIFACT_EXPLICIT_RESTORE
+  durable_storage_required: true
+  target_backend: POSTGRESQL
+  bridge_backend: GIT_DATA_BRANCH
+  data_branch: shadow-data
+  bundle_format: json.gz
+  raw_object_format: bin.gz
+  append_only: true
+  artifacts_role: EXECUTION_JOURNAL_AND_SHORT_RECOVERY
   canonical_artifact_prefix: shadow-state-
   copies_retained: 2
   retention_days: 30
   global_concurrency_group: shadow-state
+scheduler:
+  early_tolerance_minutes: 20
+  recovery_margin_minutes: 120
+  prioritize_nearest_fixture: true
+  spread_cron_away_from_exact_hour: true
+burn_in:
+  technical: active
+  coverage: active
+  statistical_observation: descriptive_only
+slo:
+  workflow_success_rate: 0.95
+  eligible_window_coverage: 0.90
+  provenance_completeness: 1.0
+  quota_reserve_pct: 0.20
+  silent_data_loss: 0
+  unresolved_business_duplicates: 0
+  temporal_leaks: 0
+  exposed_secrets: 0
+  demo_as_live: 0
+  decision_reason_coverage: 1.0
+  rejection_code_coverage: 1.0
