@@ -21,6 +21,7 @@ from robin.ingestion.scheduler import (
     record_window_result,
     window_states,
 )
+from robin.operations.activation import WORKFLOW_SUCCESS_LIVE_DATA
 from robin.operations.burn_in import (
     AlertSeverity,
     HealthStatus,
@@ -51,7 +52,11 @@ from scripts.manage_durable_registry import (
     verify_registry,
 )
 from scripts.neon_bootstrap import bootstrap
-from scripts.run_shadow_pipeline import daily_health, pre_match_shadow
+from scripts.run_shadow_pipeline import (
+    daily_health,
+    latest_quota_observation,
+    pre_match_shadow,
+)
 
 NOW = datetime(2026, 7, 24, 12, tzinfo=UTC)
 
@@ -593,6 +598,116 @@ def test_daily_health_lit_les_observations_et_produit_trois_rapports(
     assert health["burn_in"]["provenance_completeness"] == 1.0
     for report in ("daily.md", "weekly.md", "matchday.md"):
         assert (state / "reports" / report).exists()
+
+
+def test_daily_health_conserve_le_dernier_quota_fourni(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    (state / "runs" / "zz-health.json").write_text(
+        json.dumps(
+            {
+                "run_id": "health-456",
+                "pipeline": "daily-health",
+                "status": "PASSED",
+                "finished_at": (NOW + timedelta(minutes=1)).isoformat(),
+            }
+        ),
+        "utf-8",
+    )
+
+    health = daily_health(state)
+
+    assert health["burn_in"]["quota_used"] == 8
+    assert health["burn_in"]["quota_remaining"] == 19_992
+    assert health["burn_in"]["quota_reserve_rate"] == pytest.approx(0.9996)
+
+
+def test_daily_health_utilise_le_quota_les_plus_recent_en_date(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    (state / "runs" / "zz-oldest.json").write_text(
+        json.dumps(
+            {
+                "run_id": "fixtures-old",
+                "pipeline": "collect-fixtures",
+                "status": WORKFLOW_SUCCESS_LIVE_DATA,
+                "finished_at": (NOW - timedelta(hours=2)).isoformat(),
+                "quota_used": 1,
+                "quota_remaining": 19_999,
+            }
+        ),
+        "utf-8",
+    )
+    (state / "runs" / "aa-newest.json").write_text(
+        json.dumps(
+            {
+                "run_id": "collect-new",
+                "pipeline": "collect-fixtures",
+                "status": WORKFLOW_SUCCESS_LIVE_DATA,
+                "finished_at": (NOW + timedelta(hours=2)).isoformat(),
+                "quota_used": 8,
+                "quota_remaining": 19_992,
+            }
+        ),
+        "utf-8",
+    )
+
+    health = daily_health(state)
+
+    assert health["burn_in"]["quota_used"] == 8
+    assert health["burn_in"]["quota_remaining"] == 19_992
+
+
+def test_latest_quota_observation_ignore_invalid_timestamp() -> None:
+    runs = [
+        {
+            "run_id": "invalid-time",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": "not-a-timestamp",
+            "quota_used": 1,
+            "quota_remaining": 19_999,
+        },
+        {
+            "run_id": "valid-time",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": (NOW + timedelta(minutes=10)).isoformat(),
+            "quota_used": 8,
+            "quota_remaining": 19_992,
+        },
+    ]
+    quota_run = latest_quota_observation(runs)
+    assert quota_run is not None
+    assert quota_run["quota_used"] == 8
+    assert quota_run["quota_remaining"] == 19_992
+
+
+def test_latest_quota_observation_tiebreaker_lexicographique_sur_run_id() -> None:
+    runs = [
+        {
+            "run_id": "run-a",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": NOW.isoformat(),
+            "quota_used": 1,
+            "quota_remaining": 19_999,
+        },
+        {
+            "run_id": "run-z",
+            "pipeline": "collect-fixtures",
+            "status": WORKFLOW_SUCCESS_LIVE_DATA,
+            "finished_at": NOW.isoformat(),
+            "quota_used": 2,
+            "quota_remaining": 19_998,
+        },
+    ]
+
+    quota_run = latest_quota_observation(runs)
+    assert quota_run is not None
+    assert quota_run["run_id"] == "run-z"
 
 
 def test_checkpoints_sans_run_metier_necrasent_pas_un_ancien_bundle(
