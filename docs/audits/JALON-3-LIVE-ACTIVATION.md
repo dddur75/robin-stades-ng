@@ -1,8 +1,8 @@
 # Rapport d’audit — Jalon 3 · Activation live shadow
 
-Date : 2026-07-24  
-Branche : `codex/jalon-3-live-shadow-activation`  
-Statut shadow : `SHADOW_COLLECTION_ACTIVE`  
+Date : 2026-07-24
+Branche : `codex/jalon-3-live-shadow-activation`
+Statut shadow : `SHADOW_COLLECTION_ACTIVE`
 Paris réels : `PRODUCTION_LOCKED`
 
 ## Résultat

@@ -1,6 +1,6 @@
 # Prévision quota et coût — Live Shadow
 
-Date : 2026-07-24  
+Date : 2026-07-24
 Fournisseur actif : The Odds API
 
 ## Mesure réelle

@@ -1,7 +1,7 @@
 # Rapport de provenance live
 
-Date de capture : 2026-07-24  
-Artefact canonique : `shadow-state-30095263615`  
+Date de capture : 2026-07-24
+Artefact canonique : `shadow-state-30095263615`
 Commit source : `e32ecfe09987542bba750b766488ddd927b6ea0b`
 
 ## Chaîne de preuve

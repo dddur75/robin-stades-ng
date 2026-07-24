@@ -1,7 +1,7 @@
 # Readiness opérationnelle — Live Shadow
 
-Date : 2026-07-24  
-Décision : `SHADOW_COLLECTION_ACTIVE`  
+Date : 2026-07-24
+Décision : `SHADOW_COLLECTION_ACTIVE`
 Production : `PRODUCTION_LOCKED`
 
 | Contrôle | État | Preuve / limite |
