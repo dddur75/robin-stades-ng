@@ -9,7 +9,7 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import MetaData, Table, func, inspect, select, text
+from sqlalchemy import func, inspect, select, text
 
 from robin.storage.database import (
     DatabaseConfigurationError,
@@ -17,7 +17,7 @@ from robin.storage.database import (
     build_engine,
     normalize_database_url,
 )
-from robin.storage.durable_schema import JALON4_TABLES
+from robin.storage.durable_schema import JALON4_TABLES, metadata
 
 if __package__:
     from scripts.manage_durable_registry import audit_database, persist_registry
@@ -40,11 +40,14 @@ def table_row_counts(database_url: str) -> dict[str, int]:
         for name in inspect(engine).get_table_names()
         if name != "alembic_version"
     )
-    metadata = MetaData()
+    unknown_tables = set(names) - set(metadata.tables)
+    if unknown_tables:
+        raise RuntimeError("tables inconnues présentes ; rollback refusé")
     counts: dict[str, int] = {}
     with engine.connect() as connection:
         for name in names:
-            table = Table(name, metadata, autoload_with=engine)
+            table = metadata.tables.get(name)
+            assert table is not None
             counts[name] = int(
                 connection.execute(
                     select(func.count()).select_from(table)

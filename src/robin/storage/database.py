@@ -57,7 +57,11 @@ def alembic_database_url(database_url: str | None) -> str:
 
 def build_engine(database_url: str, *, echo: bool = False) -> Engine:
     url = database_url_object(database_url)
-    connect_args = {"check_same_thread": False} if url.get_backend_name() == "sqlite" else {}
+    connect_args: dict[str, object] = {}
+    if url.get_backend_name() == "sqlite":
+        connect_args["check_same_thread"] = False
+    elif url.get_backend_name() == "postgresql":
+        connect_args["connect_timeout"] = 10
     engine = create_engine(url, echo=echo, future=True, connect_args=connect_args)
     if url.get_backend_name() == "sqlite":
         @event.listens_for(engine, "connect")
