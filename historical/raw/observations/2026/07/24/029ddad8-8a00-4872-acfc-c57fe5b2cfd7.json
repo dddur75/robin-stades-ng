@@ -1,0 +1,17 @@
+{
+  "observation_id": "029ddad8-8a00-4872-acfc-c57fe5b2cfd7",
+  "provider": "api-football",
+  "endpoint": "leagues",
+  "request_parameters": {
+    "search": "Champions League",
+    "country": "World",
+    "season": 2025
+  },
+  "requested_at": "2026-07-24T22:00:59.691338Z",
+  "received_at": "2026-07-24T22:00:59.921846Z",
+  "http_status": 200,
+  "payload_hash": "39f10a3b56fcc4ea8f4fc45589ee9757a5e84859e2601592a8e4744f02e52c17",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129591522",
+  "raw_payload_location": "39/39f10a3b56fcc4ea8f4fc45589ee9757a5e84859e2601592a8e4744f02e52c17.bin.gz"
+}

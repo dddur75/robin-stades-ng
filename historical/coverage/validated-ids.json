@@ -1,0 +1,32 @@
+[
+  {
+    "competition": "Ligue 1",
+    "provider_id": null,
+    "status": "FAILED"
+  },
+  {
+    "competition": "Premier League",
+    "provider_id": null,
+    "status": "FAILED"
+  },
+  {
+    "competition": "La Liga",
+    "provider_id": null,
+    "status": "FAILED"
+  },
+  {
+    "competition": "Bundesliga",
+    "provider_id": null,
+    "status": "FAILED"
+  },
+  {
+    "competition": "Serie A",
+    "provider_id": null,
+    "status": "FAILED"
+  },
+  {
+    "competition": "UEFA Champions League",
+    "provider_id": null,
+    "status": "FAILED"
+  }
+]
