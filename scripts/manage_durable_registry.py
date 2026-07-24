@@ -13,12 +13,19 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from sqlalchemy import func, inspect, select, text
+
 from robin.storage.database import build_engine
 from robin.storage.durable import (
     DurableRecord,
     DurableRegistry,
     read_bundle,
     write_bundle,
+)
+from robin.storage.durable_schema import (
+    REGISTRY_TABLES,
+    ingestion_runs,
+    raw_payloads,
 )
 
 
@@ -481,12 +488,6 @@ def persist(outbox: Path, database_url: str) -> dict[str, int]:
     engine = build_engine(database_url)
     registry = DurableRegistry(engine)
     totals = {"inserted": 0, "duplicates": 0, "raw_payloads": 0}
-    for bundle_path in sorted(outbox.rglob("*.json.gz")):
-        if "objects" in bundle_path.parts:
-            continue
-        result = registry.replay(read_bundle(bundle_path))
-        totals["inserted"] += result["inserted"]
-        totals["duplicates"] += result["duplicates"]
     for manifest_path in sorted(outbox.rglob("*.manifest.json")):
         manifest = read_json(manifest_path, {})
         for item in manifest.get("objects", []):
@@ -501,7 +502,189 @@ def persist(outbox: Path, database_url: str) -> dict[str, int]:
                 schema_version=str(item.get("schema_version") or "unknown"),
             )
             totals["raw_payloads"] += int(added)
+    for bundle_path in sorted(outbox.rglob("*.json.gz")):
+        if "objects" in bundle_path.parts:
+            continue
+        result = registry.replay(read_bundle(bundle_path))
+        totals["inserted"] += result["inserted"]
+        totals["duplicates"] += result["duplicates"]
     return totals
+
+
+def persist_registry(registry_path: Path, database_url: str) -> dict[str, object]:
+    verification = verify_registry(registry_path)
+    if verification["status"] != "PASSED":
+        raise RuntimeError("registre durable invalide, persistance bloquée")
+    engine = build_engine(database_url)
+    durable = DurableRegistry(engine)
+    manifests = read_jsonl(registry_path / "manifests" / "index.jsonl")
+    raw_by_hash: dict[str, dict[str, object]] = {}
+    for manifest in manifests:
+        for item in manifest.get("objects", []):
+            if isinstance(item, dict):
+                raw_by_hash[str(item["content_hash"])] = item
+    raw_inserted = 0
+    for item in raw_by_hash.values():
+        raw_inserted += int(
+            durable.append_raw_payload(
+                payload_hash=str(item["content_hash"]),
+                provider=str(item.get("provider") or "unknown"),
+                object_location=str(item["relative_path"]),
+                byte_size=int(item["bytes"]),
+                observed_at=iso(item.get("observed_at"), datetime.now(UTC)),
+                schema_version=str(item.get("schema_version") or "unknown"),
+            )
+        )
+    inserted = duplicates = records_examined = 0
+    for manifest in manifests:
+        bundle = read_bundle(registry_path / str(manifest["registry_bundle"]))
+        records = bundle.get("records", [])
+        records_examined += len(records) if isinstance(records, list) else 0
+        result = durable.replay(bundle)
+        inserted += result["inserted"]
+        duplicates += result["duplicates"]
+    return {
+        "status": "POSTGRESQL_PERSISTED",
+        "bundles_examined": len(manifests),
+        "records_examined": records_examined,
+        "records_inserted": inserted,
+        "duplicates_avoided": duplicates,
+        "raw_payloads_examined": len(raw_by_hash),
+        "raw_payloads_inserted": raw_inserted,
+        "raw_payload_duplicates": len(raw_by_hash) - raw_inserted,
+        "hashes_validated": verification["objects_verified"],
+    }
+
+
+def audit_database(registry_path: Path, database_url: str) -> dict[str, object]:
+    verification = verify_registry(registry_path)
+    if verification["status"] != "PASSED":
+        raise RuntimeError("registre durable invalide, audit bloqué")
+    engine = build_engine(database_url)
+    database_tables = set(inspect(engine).get_table_names())
+    manifests = read_jsonl(registry_path / "manifests" / "index.jsonl")
+    expected: dict[str, dict[str, str]] = {}
+    raw_hashes: set[str] = set()
+    latest_bridge_at: datetime | None = None
+    demo_as_live = 0
+    for manifest in manifests:
+        bundle = read_bundle(registry_path / str(manifest["registry_bundle"]))
+        run = bundle.get("run")
+        if isinstance(run, Mapping):
+            observed = iso(
+                run.get("finished_at") or run.get("started_at"),
+                datetime.now(UTC),
+            )
+            if latest_bridge_at is None or observed > latest_bridge_at:
+                latest_bridge_at = observed
+        records = bundle.get("records", [])
+        if isinstance(records, list):
+            for value in records:
+                if not isinstance(value, Mapping):
+                    continue
+                kind = str(value["kind"])
+                record_id = str(value["record_id"])
+                provenance = str(value.get("provenance_status", ""))
+                expected.setdefault(kind, {})[record_id] = provenance
+                payload_text = json.dumps(
+                    value.get("payload", {}),
+                    ensure_ascii=False,
+                    sort_keys=True,
+                ).lower()
+                if provenance == "LIVE SOURCE" and "demo data" in payload_text:
+                    demo_as_live += 1
+        for item in manifest.get("objects", []):
+            if isinstance(item, Mapping):
+                raw_hashes.add(str(item["content_hash"]))
+    missing_records = provenance_mismatches = 0
+    table_counts: dict[str, int] = {}
+    with engine.connect() as connection:
+        for kind, expected_rows in expected.items():
+            table = REGISTRY_TABLES[kind]
+            rows = connection.execute(
+                select(table.c.id, table.c.provenance_status).where(
+                    table.c.id.in_(tuple(expected_rows))
+                )
+            ).all()
+            actual = {str(row.id): str(row.provenance_status) for row in rows}
+            missing_records += len(set(expected_rows) - set(actual))
+            provenance_mismatches += sum(
+                actual.get(record_id) != provenance
+                for record_id, provenance in expected_rows.items()
+                if record_id in actual
+            )
+            table_counts[kind] = int(
+                connection.execute(
+                    select(func.count()).select_from(table)
+                ).scalar_one()
+            )
+        known_raw = {
+            str(value)
+            for value in connection.execute(
+                select(raw_payloads.c.content_hash).where(
+                    raw_payloads.c.content_hash.in_(tuple(raw_hashes))
+                )
+            ).scalars()
+        }
+        missing_raw_payloads = len(raw_hashes - known_raw)
+        ingestion_run_count = int(
+            connection.execute(
+                select(func.count()).select_from(ingestion_runs)
+            ).scalar_one()
+        )
+        last_write = connection.execute(
+            select(func.max(ingestion_runs.c.finished_at))
+        ).scalar_one_or_none()
+        revision = (
+            connection.execute(
+                text("SELECT version_num FROM alembic_version")
+            ).scalar_one()
+            if "alembic_version" in database_tables
+            else "UNVERSIONED_TEST_SCHEMA"
+        )
+        database_size_bytes = (
+            int(
+                connection.execute(
+                    text("SELECT pg_database_size(current_database())")
+                ).scalar_one()
+            )
+            if engine.dialect.name == "postgresql"
+            else 0
+        )
+    expected_unique_records = sum(len(items) for items in expected.values())
+    database_registry_records = sum(table_counts.values())
+    return {
+        "status": (
+            "PASSED"
+            if not (
+                missing_records
+                or missing_raw_payloads
+                or provenance_mismatches
+                or demo_as_live
+            )
+            else "FAILED"
+        ),
+        "migration_revision": str(revision),
+        "bundles_examined": len(manifests),
+        "expected_unique_records": expected_unique_records,
+        "database_registry_records": database_registry_records,
+        "ingestion_runs": ingestion_run_count,
+        "raw_payloads": len(known_raw),
+        "missing_records": missing_records,
+        "missing_raw_payloads": missing_raw_payloads,
+        "provenance_mismatches": provenance_mismatches,
+        "demo_as_live": demo_as_live,
+        "hashes_validated": verification["objects_verified"],
+        "last_postgresql_write": (
+            last_write.isoformat() if isinstance(last_write, datetime) else None
+        ),
+        "last_bridge_write": (
+            latest_bridge_at.isoformat() if latest_bridge_at else None
+        ),
+        "bridge_lag_records": missing_records + missing_raw_payloads,
+        "database_size_bytes": database_size_bytes,
+        "table_counts": table_counts,
+    }
 
 
 def replay_to_directory(registry: Path, destination: Path) -> dict[str, object]:
@@ -563,6 +746,18 @@ def main() -> None:
     persist_parser = subparsers.add_parser("persist")
     persist_parser.add_argument("--outbox", type=Path, required=True)
     persist_parser.add_argument("--database-url", default=os.getenv("ROBIN_DATABASE_URL"))
+    persist_registry_parser = subparsers.add_parser("persist-registry")
+    persist_registry_parser.add_argument("--registry", type=Path, required=True)
+    persist_registry_parser.add_argument(
+        "--database-url",
+        default=os.getenv("ROBIN_DATABASE_URL"),
+    )
+    audit_parser = subparsers.add_parser("audit-database")
+    audit_parser.add_argument("--registry", type=Path, required=True)
+    audit_parser.add_argument(
+        "--database-url",
+        default=os.getenv("ROBIN_DATABASE_URL"),
+    )
     replay_parser = subparsers.add_parser("replay")
     replay_parser.add_argument("--registry", type=Path, required=True)
     replay_parser.add_argument("--destination", type=Path, required=True)
@@ -581,6 +776,14 @@ def main() -> None:
         if not args.database_url:
             raise SystemExit("ROBIN_DATABASE_URL absente")
         result = persist(args.outbox, args.database_url)
+    elif args.command == "persist-registry":
+        if not args.database_url:
+            raise SystemExit("ROBIN_DATABASE_URL absente")
+        result = persist_registry(args.registry, args.database_url)
+    elif args.command == "audit-database":
+        if not args.database_url:
+            raise SystemExit("ROBIN_DATABASE_URL absente")
+        result = audit_database(args.registry, args.database_url)
     elif args.command == "replay":
         result = replay_to_directory(args.registry, args.destination)
     else:

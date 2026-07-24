@@ -8,10 +8,18 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 
-from manage_durable_registry import read_json, verify_registry
 from sqlalchemy import inspect, text
 
-from robin.storage.database import build_engine
+from robin.storage.database import (
+    DatabaseConfigurationError,
+    build_engine,
+    normalize_database_url,
+)
+
+if __package__:
+    from scripts.manage_durable_registry import read_json, verify_registry
+else:
+    from manage_durable_registry import read_json, verify_registry
 
 
 def diagnose(state: Path, registry: Path) -> dict[str, object]:
@@ -34,13 +42,21 @@ def diagnose(state: Path, registry: Path) -> dict[str, object]:
         "write_test": "NOT_RUN_READ_ONLY",
     }
     if database_url:
-        engine = build_engine(database_url)
-        with engine.connect() as connection:
-            connection.execute(text("SELECT 1"))
-        database.update(
-            connected=True,
-            tables=len(inspect(engine).get_table_names()),
-        )
+        try:
+            normalized_url = normalize_database_url(database_url)
+            engine = build_engine(normalized_url)
+            with engine.connect() as connection:
+                connection.execute(text("SELECT 1"))
+            database.update(
+                connected=True,
+                tables=len(inspect(engine).get_table_names()),
+                driver="postgresql+psycopg",
+                error_code=None,
+            )
+        except DatabaseConfigurationError:
+            database.update(error_code="INVALID_DATABASE_CONFIGURATION")
+        except Exception:  # diagnostic borné : ne jamais sérialiser l'exception
+            database.update(error_code="DATABASE_UNAVAILABLE")
     registry_result = verify_registry(registry)
     status = (
         "PASSED"

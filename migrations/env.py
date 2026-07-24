@@ -6,15 +6,17 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from robin.storage.database import alembic_database_url
 from robin.storage.models import Base
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-database_url = os.getenv("ROBIN_DATABASE_URL")
-if database_url:
-    config.set_main_option("sqlalchemy.url", database_url)
+database_url = os.getenv("ROBIN_DATABASE_URL") or config.get_main_option(
+    "sqlalchemy.url"
+)
+config.set_main_option("sqlalchemy.url", alembic_database_url(database_url))
 
 target_metadata = Base.metadata
 

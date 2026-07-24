@@ -30,7 +30,7 @@ from robin.operations.burn_in import (
     render_matchday_report,
     render_weekly_report,
 )
-from robin.storage.database import build_engine
+from robin.storage.database import DatabaseConfigurationError, build_engine
 from robin.storage.durable import (
     DurableRecord,
     DurableRegistry,
@@ -40,13 +40,17 @@ from robin.storage.durable import (
     write_bundle,
 )
 from robin.storage.durable_schema import JALON4_TABLES
+from scripts.database_incident import update_incident
 from scripts.manage_durable_registry import (
     acknowledge,
     append_bridge,
+    audit_database,
+    persist_registry,
     replay_to_directory,
     stage,
     verify_registry,
 )
+from scripts.neon_bootstrap import bootstrap
 from scripts.run_shadow_pipeline import daily_health, pre_match_shadow
 
 NOW = datetime(2026, 7, 24, 12, tzinfo=UTC)
@@ -606,6 +610,93 @@ def test_checkpoints_sans_run_metier_necrasent_pas_un_ancien_bundle(
     append_bridge(second_outbox, registry)
     assert verify_registry(registry)["status"] == "PASSED"
     assert len(list((registry / "bundles").rglob("*.json.gz"))) == 2
+
+
+def test_registre_complet_est_persistant_et_idempotent(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    outbox = tmp_path / "outbox"
+    bridge = tmp_path / "registry"
+    stage(state, outbox, "fixtures-123")
+    append_bridge(outbox, bridge)
+    database = tmp_path / "durable.db"
+    url = f"sqlite+pysqlite:///{database.as_posix()}"
+    DurableRegistry(build_engine(url), initialize=True)
+    first = persist_registry(bridge, url)
+    second = persist_registry(bridge, url)
+    audit = audit_database(bridge, url)
+    assert first["records_inserted"] > 0
+    assert first["raw_payloads_inserted"] == 1
+    assert second["records_inserted"] == 0
+    assert second["raw_payloads_inserted"] == 0
+    assert second["duplicates_avoided"] == second["records_examined"]
+    assert audit["status"] == "PASSED"
+    assert audit["missing_records"] == 0
+    assert audit["provenance_mismatches"] == 0
+    assert audit["demo_as_live"] == 0
+
+
+def test_bootstrap_vide_fait_rollback_upgrade_et_double_replay(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("ROBIN_DATABASE_URL", raising=False)
+    state = minimal_state(tmp_path)
+    outbox = tmp_path / "outbox"
+    bridge = tmp_path / "registry"
+    stage(state, outbox, "fixtures-123")
+    append_bridge(outbox, bridge)
+    database = tmp_path / "bootstrap.db"
+    url = f"sqlite+pysqlite:///{database.as_posix()}"
+    result = bootstrap(
+        registry=bridge,
+        database_url=url,
+        controlled_rollback=True,
+    )
+    assert result["status"] == "NEON_BOOTSTRAP_VERIFIED"
+    assert result["controlled_rollback_performed"] is True
+    assert result["second_persistence"]["records_inserted"] == 0
+    assert result["replay"]["provider_calls"] == 0
+    assert result["replay"]["quota_consumed"] == 0
+
+
+def test_indisponibilite_postgresql_ouvre_un_incident_sans_perte(
+    tmp_path: Path,
+) -> None:
+    state = minimal_state(tmp_path)
+    outbox = tmp_path / "outbox"
+    bridge = tmp_path / "registry"
+    stage(state, outbox, "fixtures-123")
+    append_bridge(outbox, bridge)
+    secret_marker = "SECRET_INTERDIT"
+    with pytest.raises(DatabaseConfigurationError) as captured:
+        persist_registry(
+            bridge,
+            f"invalid://robin:{secret_marker}@example.invalid/robin",
+        )
+    failed = update_incident(state, status="FAILED", source_run_id="run-failed")
+    repeated = update_incident(state, status="FAILED", source_run_id="run-failed")
+    recovered = update_incident(state, status="SUCCESS", source_run_id="run-ok")
+    assert failed["status"] == "INCIDENT_OPEN"
+    assert repeated["changed"] is False
+    assert recovered["status"] == "POSTGRESQL_HEALTHY"
+    history = IncidentJournal(state / "incidents" / "history.jsonl").read_all()
+    assert [item["status"] for item in history] == ["OPEN", "RESOLVED"]
+    assert secret_marker not in str(captured.value)
+    assert verify_registry(bridge)["status"] == "PASSED"
+
+
+def test_action_publie_le_pont_avant_postgresql_et_prevoit_le_replay() -> None:
+    root = Path(__file__).resolve().parents[2]
+    text = (root / ".github" / "actions" / "durable-shadow" / "action.yml").read_text()
+    assert text.index("Publier le registre durable") < text.index(
+        "Synchroniser PostgreSQL"
+    )
+    assert "continue-on-error: true" in text
+    assert "persist-registry" in text
+    assert "GIT_DATA_BRIDGE_POSTGRESQL_PENDING" in text
+    assert "database_incident.py" in text
 
 
 def test_prediction_bloquee_sans_stockage_durable(
