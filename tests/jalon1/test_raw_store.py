@@ -74,4 +74,3 @@ def test_secret_imbrique_n_est_jamais_persiste(tmp_path) -> None:
     assert observation.request_parameters["filters"] == {
         "authorization": "[REDACTED]"
     }
-

@@ -79,7 +79,6 @@ def test_historique_global_est_separe_de_la_competition() -> None:
     assert not bool(row["ARBITRE_SEVERE_SAISON"])
     assert not bool(row["ARBITRE_SEVERE"])
 
-
 def test_futur_d_une_autre_ligue_ne_contamine_pas_le_passe() -> None:
     rows = [
         match(
@@ -190,4 +189,3 @@ def test_arbitre_inconnu_reste_sans_signal() -> None:
     )
     assert row["referee_n_global"] == 0
     assert not bool(row["ARBITRE_SEVERE"])
-

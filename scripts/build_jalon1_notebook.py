@@ -112,4 +112,3 @@ pd.DataFrame([check.model_dump(mode="json") for check in checks])[
 
 if __name__ == "__main__":
     print(build())
-

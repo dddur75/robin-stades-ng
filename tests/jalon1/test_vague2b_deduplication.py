@@ -57,4 +57,3 @@ def test_jointure_fournisseur_ambigue_est_rejetee() -> None:
             "O25",
             {"O25"},
         )
-

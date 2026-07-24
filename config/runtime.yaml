@@ -10,4 +10,3 @@ odds_collection:
   enabled: true
   frequency_minutes: 120
   phases: [OPENING, INTERMEDIATE, CLOSING]
-

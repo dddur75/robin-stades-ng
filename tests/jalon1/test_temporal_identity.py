@@ -112,4 +112,3 @@ def test_deux_fournisseurs_ne_sont_fusionnes_que_par_lien_explicite() -> None:
         assert service.resolve(source_b) is None
         service.link_provider(internal_id, source_b)
         assert service.resolve(source_b) == internal_id
-

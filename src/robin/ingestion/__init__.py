@@ -1,2 +1,1 @@
 """Acquisition et conservation brute."""
-

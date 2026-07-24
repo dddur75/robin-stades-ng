@@ -37,7 +37,6 @@ class MarketKey(BaseModel):
         if not requires_line and self.line_value is not None:
             raise ValueError("line_value est interdite pour ce marché")
         return self
-
     def business_key(self) -> tuple[str, str, str, str, str | None, str, str]:
         return (
             self.fixture_id,
@@ -111,4 +110,3 @@ class OddsSnapshot(BaseModel):
         if len(keys) != len(set(keys)):
             raise ValueError("snapshot contenant une cotation dupliquée")
         return self
-

@@ -32,4 +32,3 @@ def test_deux_executions_de_meme_cle_ne_creent_pas_de_doublon() -> None:
         assert created_first
         assert not created_second
         assert session.scalar(select(func.count()).select_from(PipelineRun)) == 1
-

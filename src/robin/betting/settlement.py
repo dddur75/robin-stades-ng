@@ -41,7 +41,6 @@ def _won_one_x_two(selection: Selection, home: int, away: int) -> bool:
         or (selection == Selection.AWAY and away > home)
     )
 
-
 def _won_double_chance(selection: Selection, home: int, away: int) -> bool:
     return (
         (selection == Selection.HOME_OR_DRAW and home >= away)
@@ -115,4 +114,3 @@ def settle_market(
         profit_per_unit=profit,
         reason="règle canonique appliquée",
     )
-

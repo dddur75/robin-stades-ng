@@ -34,4 +34,3 @@ class ProviderIdentity(BaseModel):
                 raise ValueError("valid_to doit suivre valid_from")
             object.__setattr__(self, "valid_to", end)
         return self
-

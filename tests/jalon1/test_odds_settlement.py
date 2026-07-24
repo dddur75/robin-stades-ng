@@ -160,4 +160,3 @@ def test_snapshot_duplique_ou_horodatage_incoherent_est_refuse() -> None:
             phase=QuotePhase.OPENING,
             quotes=(quote, quote),
         )
-

@@ -38,4 +38,3 @@ def start_pipeline_run(
     session.add(run)
     session.flush()
     return run, True
-

@@ -13,4 +13,3 @@ class MockOddsProvider:
 
     def get_odds(self) -> tuple[OddsSnapshot, ...]:
         return self._snapshots
-

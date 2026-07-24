@@ -41,4 +41,3 @@ def test_migration_upgrade_est_idempotente_et_downgrade_fonctionne(tmp_path) -> 
     command.downgrade(config, "base")
     remaining = set(inspect(build_engine(url)).get_table_names())
     assert remaining <= {"alembic_version"}
-

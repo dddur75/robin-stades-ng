@@ -1,2 +1,1 @@
 """Contrôles de qualité observables."""
-

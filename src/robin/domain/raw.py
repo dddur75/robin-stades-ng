@@ -33,4 +33,3 @@ class RawObservation(BaseModel):
         object.__setattr__(self, "requested_at", requested)
         object.__setattr__(self, "received_at", received)
         return self
-

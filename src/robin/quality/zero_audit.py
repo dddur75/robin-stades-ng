@@ -158,4 +158,3 @@ def values_eligible_for_model(
         QualityStatus.CORRECTED.value,
     }
     return values.where(statuses.isin(allowed))
-
