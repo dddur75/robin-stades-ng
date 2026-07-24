@@ -1,7 +1,7 @@
 # Cockpit Shadow V1
 
 Statut produit : `PARTIAL`  
-Statut shadow : `SHADOW_INFRASTRUCTURE_READY`  
+Statut shadow : `SHADOW_COLLECTION_ACTIVE`
 Paris réels : `PRODUCTION_LOCKED`
 
 ## Questions couvertes
@@ -17,9 +17,10 @@ Paris réels : `PRODUCTION_LOCKED`
 
 ## Contrat de provenance
 
-- `DEMO DATA` : fixture et décision synthétiques, uniquement pour valider l'UI ;
+- `DEMO DATA` : mode disponible uniquement sur activation explicite ;
 - `LEGACY SOURCE` : données historiques sans preuve prospective complète ;
-- `LIVE SOURCE` : réservé aux payloads réellement reçus d'un fournisseur.
+- `LIVE SOURCE` : fixtures, snapshots et sorties reçus d’un fournisseur ;
+- `NO OUTPUT` : donnée indisponible, jamais remplacée par une valeur inventée.
 
 Les origines historiques et prospectives ne sont jamais agrégées dans une même
 performance sans distinction. L'absence de snapshot réel produit un état vide

@@ -1,0 +1,302 @@
+{
+  "captured_at": "2026-07-24T13:02:09.049424+00:00",
+  "snapshot_type": "PUBLISHED_OPERATIONAL_PROOF",
+  "source_state_artifact": "shadow-state-30095263615",
+  "source_state_artifact_size_bytes": 15169,
+  "source_commit": "e32ecfe09987542bba750b766488ddd927b6ea0b",
+  "shadow_status": "SHADOW_COLLECTION_ACTIVE",
+  "production_status": "PRODUCTION_LOCKED",
+  "providers": [
+    {
+      "name": "The Odds API",
+      "adapter_ready": true,
+      "secret_present": true,
+      "authenticated": true,
+      "live_data_received": true,
+      "live_data_persisted": true,
+      "status": "LIVE_PIPELINE_VERIFIED"
+    },
+    {
+      "name": "API-Football",
+      "adapter_ready": true,
+      "secret_present": false,
+      "authenticated": false,
+      "live_data_received": false,
+      "live_data_persisted": false,
+      "status": "ADAPTER_ONLY"
+    },
+    {
+      "name": "Football-Data.co.uk",
+      "adapter_ready": true,
+      "secret_present": false,
+      "authenticated": false,
+      "live_data_received": false,
+      "live_data_persisted": false,
+      "status": "ADAPTER_ONLY"
+    }
+  ],
+  "fixtures": [
+    {
+      "provider_fixture_id": "600aeb3560814afc9a02bec5126b249d",
+      "kickoff": "2026-08-21T18:45:00Z",
+      "home": "Marseille",
+      "away": "Strasbourg",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "1835d30f4ac2e1f3462f0654e0ea984a",
+      "kickoff": "2026-08-22T15:15:00Z",
+      "home": "RC Lens",
+      "away": "Auxerre",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "0fe221a0fc71ab3ecfbecf8f1a224b89",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "home": "Le Mans FC",
+      "away": "Brest",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "dd38b144d1f20e8eee148914f68f482c",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "home": "Nice",
+      "away": "Lorient",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "e2b33e2f28135088d12b464684414353",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "home": "Toulouse",
+      "away": "Lyon",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "78431f1842f3312e28537492ec14f081",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "home": "Troyes",
+      "away": "Paris FC",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "48df026b72fffa82898ff0cfcb02878d",
+      "kickoff": "2026-08-23T13:00:00Z",
+      "home": "Angers",
+      "away": "Lille",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "38b23d1127eb086d775f97b935bbf992",
+      "kickoff": "2026-08-23T15:15:00Z",
+      "home": "Le Havre",
+      "away": "AS Monaco",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "provider_fixture_id": "0a88bfab377a4bbddf8aec2983bf4c15",
+      "kickoff": "2026-08-23T18:45:00Z",
+      "home": "Paris Saint Germain",
+      "away": "Rennes",
+      "competition": "Ligue 1 - France",
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "snapshots": [
+    {
+      "snapshot_id": "b5c4d57c-f592-5353-b357-fa0800aa9547",
+      "provider_fixture_id": "600aeb3560814afc9a02bec5126b249d",
+      "internal_fixture_id": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "provider": "the-odds-api",
+      "endpoint": "/sports/soccer_france_ligue_one/events/600aeb3560814afc9a02bec5126b249d/odds",
+      "observed_at": "2026-07-24T12:57:19.039068Z",
+      "payload_hash": "b8d62ce6942f6991a79355c27c2d04b9ff9f6450db46875de8cb2985a7a1efcd",
+      "quotes": 90,
+      "bookmakers": 22,
+      "markets": ["1X2", "TOTAL_GOALS"],
+      "time_to_kickoff_seconds": 2440060,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "snapshot_id": "783e5280-cafe-554e-b38c-4cd34f5419df",
+      "provider_fixture_id": "600aeb3560814afc9a02bec5126b249d",
+      "internal_fixture_id": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "provider": "the-odds-api",
+      "endpoint": "/sports/soccer_france_ligue_one/events/600aeb3560814afc9a02bec5126b249d/odds",
+      "observed_at": "2026-07-24T12:58:55.177251Z",
+      "payload_hash": "866d67f435106f230c51b8efa72403508f8191a1b2f1b29082f1f748af574e2d",
+      "quotes": 90,
+      "bookmakers": 22,
+      "markets": ["1X2", "TOTAL_GOALS"],
+      "time_to_kickoff_seconds": 2439964,
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "predictions": [
+    {
+      "prediction_id": "96dceebe-b640-5537-b4b0-e861dc2c6672",
+      "internal_fixture_id": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "market_snapshot_id": "783e5280-cafe-554e-b38c-4cd34f5419df",
+      "generated_at": "2026-07-24T13:00:07.010096Z",
+      "model": "MARKET_BASELINE_ONLY",
+      "model_version": "1.0",
+      "probability_home": 0.5756861881423538,
+      "probability_draw": 0.2180185606493307,
+      "probability_away": 0.20629525120831538,
+      "quality": "OBSERVED",
+      "sports_history": "NOT_USED",
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "decisions": [
+    {
+      "decision_id": "af9bd2e0-e6a2-5c52-8d16-d99702612fbf",
+      "prediction_id": "96dceebe-b640-5537-b4b0-e861dc2c6672",
+      "internal_fixture_id": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "selection": "HOME",
+      "odds_decimal": 1.6236363636363635,
+      "model_probability": 0.5756861881423538,
+      "accepted": false,
+      "suggested_stake": 0,
+      "primary_reason": "QUALITY_BLOCKED",
+      "secondary_reasons": ["INSUFFICIENT_EDGE"],
+      "simulation": true,
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "runs": [
+    {
+      "id": 30094740235,
+      "pipeline": "collect-fixtures",
+      "commit": "5b711670e90101f8aac0881e1520d3d538055993",
+      "started_at": "2026-07-24T12:53:22Z",
+      "finished_at": "2026-07-24T12:54:05Z",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "provider": "the-odds-api",
+      "calls": 0,
+      "records": 9,
+      "quota_remaining": 19996,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": 30094948631,
+      "pipeline": "collect-odds",
+      "commit": "e32ecfe09987542bba750b766488ddd927b6ea0b",
+      "started_at": "2026-07-24T12:56:43Z",
+      "finished_at": "2026-07-24T12:57:23Z",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "provider": "the-odds-api",
+      "calls": 2,
+      "records": 1,
+      "quota_remaining": 19994,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": 30095046115,
+      "pipeline": "collect-odds",
+      "commit": "e32ecfe09987542bba750b766488ddd927b6ea0b",
+      "started_at": "2026-07-24T12:58:17Z",
+      "finished_at": "2026-07-24T12:58:58Z",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "provider": "the-odds-api",
+      "calls": 2,
+      "records": 1,
+      "quota_remaining": 19992,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": 30095111573,
+      "pipeline": "pre-match-shadow",
+      "commit": "e32ecfe09987542bba750b766488ddd927b6ea0b",
+      "started_at": "2026-07-24T12:59:22Z",
+      "finished_at": "2026-07-24T13:00:11Z",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "provider": "internal",
+      "calls": 0,
+      "records": 1,
+      "quota_remaining": 19992,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": 30095193298,
+      "pipeline": "pre-match-shadow",
+      "commit": "e32ecfe09987542bba750b766488ddd927b6ea0b",
+      "started_at": "2026-07-24T13:00:32Z",
+      "finished_at": "2026-07-24T13:01:10Z",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "provider": "internal",
+      "calls": 0,
+      "records": 0,
+      "quota_remaining": 19992,
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": 30095263615,
+      "pipeline": "daily-health",
+      "commit": "e32ecfe09987542bba750b766488ddd927b6ea0b",
+      "started_at": "2026-07-24T13:01:33Z",
+      "finished_at": "2026-07-24T13:02:12Z",
+      "status": "PASSED",
+      "provider": "internal",
+      "calls": 0,
+      "records": 5,
+      "quota_remaining": 19992,
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "persistence": {
+    "backend": "GITHUB_ARTIFACT_EXPLICIT_RESTORE",
+    "runner_a": 30094740235,
+    "runner_b": 30094948631,
+    "restored_artifact": "shadow-state-30094740235",
+    "files_restored_by_runner_b": 4,
+    "stable_observation_id": "e2bd3923-7c12-41a3-ac1d-cea2780c6e72",
+    "stable_payload_hash": "bfc60c7f941388db32fd4c998cf34ec19dfc328f07987c7d34e4246c637ea3bb",
+    "copies_retained": 2,
+    "retention_days": 30,
+    "latest_artifact_expires_at": "2026-08-23T13:02:09Z"
+  },
+  "idempotence": {
+    "odds_snapshots_before": 1,
+    "odds_snapshots_after": 2,
+    "exact_duplicate_snapshots": 0,
+    "distinct_odds_payload_hashes": 2,
+    "fixture_payload_binary_copies": 1,
+    "fixture_observation_journal_entries": 3,
+    "predictions_before_second_run": 1,
+    "predictions_after_second_run": 1,
+    "decisions_before_second_run": 1,
+    "decisions_after_second_run": 1
+  },
+  "quota": {
+    "provider_limit": 20000,
+    "used_after_activation": 8,
+    "remaining_after_activation": 19992,
+    "credits_per_snapshot": 2,
+    "forecast_matches_per_month": 40,
+    "forecast_windows_per_match": 9,
+    "forecast_credits_per_month": 720,
+    "operational_ceiling": 1000,
+    "reserve_credits": 4000,
+    "reserve_pct": 20,
+    "estimated_provider_cost_eur": 0,
+    "artifact_storage_bytes_retained": 29939
+  },
+  "health": {
+    "status": "PASSED",
+    "pipeline_runs": 5,
+    "successful_runs": 5,
+    "live_snapshots": 2,
+    "live_predictions": 1,
+    "decisions": 1,
+    "blocked_predictions": 8,
+    "critical_alerts": 0
+  }
+}

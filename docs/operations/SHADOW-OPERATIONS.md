@@ -1,6 +1,6 @@
 # Opérations shadow
 
-Statut : `SHADOW_INFRASTRUCTURE_READY`  
+Statut : `SHADOW_COLLECTION_ACTIVE`
 Paris réels : `PRODUCTION_LOCKED`
 
 ## Chaîne autonome
@@ -12,15 +12,15 @@ Paris réels : `PRODUCTION_LOCKED`
 4. `post-match-settlement.yml` récupère les scores et règle uniquement le shadow ;
 5. `daily-health.yml` agrège couverture, fraîcheur, erreurs et motifs de rejet.
 
-Chaque workflow est exécutable manuellement, non concurrent avec lui-même,
-idempotent et publie son état comme artefact même en cas d'échec. Le cache
-`data/shadow` permet la reprise entre exécutions ; les payloads restent
-append-only et adressés par hash.
+Chaque workflow est exécutable manuellement, sérialisé par la concurrence
+globale `shadow-state`, idempotent et publie son état même en cas d’échec.
+Le dernier artifact `shadow-state-<run_id>` est restauré explicitement avant
+l’exécution suivante ; les payloads restent append-only et adressés par hash.
 
 ## Quotas
 
-- budget initial : 450 crédits/mois ;
-- arrêt préventif sous 25 crédits ;
+- plafond logiciel : 1 000 crédits/mois ;
+- arrêt préventif avant la réserve de 4 000 crédits ;
 - un snapshot groupé Ligue 1, région EU, `h2h+totals` coûte au plus 2 crédits ;
 - les endpoints événements sans cote sont privilégiés pour éviter les appels
   inutiles ;

@@ -1,127 +1,355 @@
 {
-  "generatedAt": "2026-07-24T11:34:19.205886+00:00",
+  "generatedAt": "2026-07-24T13:02:09.049424+00:00",
+  "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "PARTIAL",
-  "shadowStatus": "SHADOW_INFRASTRUCTURE_READY",
+  "shadowStatus": "SHADOW_COLLECTION_ACTIVE",
   "productionStatus": "PRODUCTION_LOCKED",
-  "message": "Infrastructure prospective prête. Les données affichées sont explicitement étiquetées par origine ; aucun pari réel n'est autorisé.",
+  "demoModeAvailable": true,
+  "message": "Collecte authentifiée et persistance inter-runners vérifiées. Une seule baseline marché est scientifiquement autorisée ; huit fixtures restent en attente de cotes.",
   "metrics": {
-    "fixtures": 1,
+    "fixtures": 9,
+    "snapshots": 2,
+    "quotes": 180,
+    "bookmakers": 22,
     "predictions": 1,
     "candidates": 0,
     "rejections": 1,
-    "migrationCoveragePct": 98.668,
-    "bankroll": 1000,
-    "profit": 0,
-    "roiPct": 0,
-    "maxDrawdown": 0
+    "blockedPredictions": 8,
+    "quotaUsed": 8,
+    "quotaRemaining": 19992,
+    "migrationCoveragePct": 98.668
   },
   "matches": [
     {
-      "id": "demo-fixture-1",
-      "kickoff": "2026-08-16T18:45:00Z",
-      "competition": "Ligue 1",
-      "home": "Paris SG",
-      "away": "Marseille",
-      "origin": "DEMO DATA",
-      "quality": "DERIVED",
-      "model": "consensus-elo-poisson",
+      "id": "600aeb3560814afc9a02bec5126b249d",
+      "internalId": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "kickoff": "2026-08-21T18:45:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Marseille",
+      "away": "Strasbourg",
+      "origin": "LIVE SOURCE",
+      "quality": "OBSERVED",
+      "model": "MARKET_BASELINE_ONLY",
       "probabilities": {
-        "home": 0.5771423881237422,
-        "draw": 0.19844232059554812,
-        "away": 0.22441529128070964
+        "home": 0.5756861881423538,
+        "draw": 0.2180185606493307,
+        "away": 0.20629525120831538
       },
       "expectedGoals": {
-        "home": 1.8864568134563826,
-        "away": 0.9673044003868472
+        "home": null,
+        "away": null
       },
-      "decision": "MISSING_ODDS",
+      "decision": "QUALITY_BLOCKED",
+      "accepted": false
+    },
+    {
+      "id": "1835d30f4ac2e1f3462f0654e0ea984a",
+      "internalId": "0d809371-7ad1-50d3-800c-4e4d4deed126",
+      "kickoff": "2026-08-22T15:15:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "RC Lens",
+      "away": "Auxerre",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "accepted": false
+    },
+    {
+      "id": "0fe221a0fc71ab3ecfbecf8f1a224b89",
+      "internalId": "ecb33426-b28b-59f7-8114-fb0b3941bcdf",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Le Mans FC",
+      "away": "Brest",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "accepted": false
+    },
+    {
+      "id": "dd38b144d1f20e8eee148914f68f482c",
+      "internalId": "c9f3ab7c-400d-5c52-bbb2-1cbe8db5fb3f",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Nice",
+      "away": "Lorient",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "accepted": false
+    },
+    {
+      "id": "e2b33e2f28135088d12b464684414353",
+      "internalId": "c4dc47ec-e2f6-5e94-ab4a-b5ab140c9056",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Toulouse",
+      "away": "Lyon",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "accepted": false
+    },
+    {
+      "id": "78431f1842f3312e28537492ec14f081",
+      "internalId": "c76a7f52-b62f-5de7-922e-fb93db729c49",
+      "kickoff": "2026-08-22T18:45:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Troyes",
+      "away": "Paris FC",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "accepted": false
+    },
+    {
+      "id": "48df026b72fffa82898ff0cfcb02878d",
+      "internalId": "02e7744d-418a-5a0c-b60b-89b328e08515",
+      "kickoff": "2026-08-23T13:00:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Angers",
+      "away": "Lille",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "accepted": false
+    },
+    {
+      "id": "38b23d1127eb086d775f97b935bbf992",
+      "internalId": "6a115cb1-66bd-52a0-befd-721e05708ad0",
+      "kickoff": "2026-08-23T15:15:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Le Havre",
+      "away": "AS Monaco",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "accepted": false
+    },
+    {
+      "id": "0a88bfab377a4bbddf8aec2983bf4c15",
+      "internalId": "b624980c-eff7-5269-bc8b-8ab06aef867a",
+      "kickoff": "2026-08-23T18:45:00Z",
+      "competition": "Ligue 1 - France",
+      "home": "Paris Saint Germain",
+      "away": "Rennes",
+      "origin": "LIVE SOURCE",
+      "quality": "PENDING",
+      "model": "EN ATTENTE DE DONNÉES PROSPECTIVES",
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "expectedGoals": {
+        "home": null,
+        "away": null
+      },
+      "decision": "EN ATTENTE DE DONNÉES PROSPECTIVES",
       "accepted": false
     }
   ],
-  "odds": [],
+  "odds": [
+    {
+      "snapshot_id": "b5c4d57c-f592-5353-b357-fa0800aa9547",
+      "provider_fixture_id": "600aeb3560814afc9a02bec5126b249d",
+      "internal_fixture_id": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "provider": "the-odds-api",
+      "endpoint": "/sports/soccer_france_ligue_one/events/600aeb3560814afc9a02bec5126b249d/odds",
+      "observed_at": "2026-07-24T12:57:19.039068Z",
+      "payload_hash": "b8d62ce6942f6991a79355c27c2d04b9ff9f6450db46875de8cb2985a7a1efcd",
+      "quotes": 90,
+      "bookmakers": 22,
+      "markets": [
+        "1X2",
+        "TOTAL_GOALS"
+      ],
+      "time_to_kickoff_seconds": 2440060,
+      "origin": "LIVE SOURCE",
+      "home": "Marseille",
+      "away": "Strasbourg"
+    },
+    {
+      "snapshot_id": "783e5280-cafe-554e-b38c-4cd34f5419df",
+      "provider_fixture_id": "600aeb3560814afc9a02bec5126b249d",
+      "internal_fixture_id": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
+      "provider": "the-odds-api",
+      "endpoint": "/sports/soccer_france_ligue_one/events/600aeb3560814afc9a02bec5126b249d/odds",
+      "observed_at": "2026-07-24T12:58:55.177251Z",
+      "payload_hash": "866d67f435106f230c51b8efa72403508f8191a1b2f1b29082f1f748af574e2d",
+      "quotes": 90,
+      "bookmakers": 22,
+      "markets": [
+        "1X2",
+        "TOTAL_GOALS"
+      ],
+      "time_to_kickoff_seconds": 2439964,
+      "origin": "LIVE SOURCE",
+      "home": "Marseille",
+      "away": "Strasbourg"
+    }
+  ],
   "decisions": [
     {
-      "decision_id": "7f79eda0-8c41-599e-a86d-994777310fac",
-      "fixture_id": "7565ed81-6ad6-58c5-a096-3509b7c9a010",
-      "market_key": "1X2",
+      "decision_id": "af9bd2e0-e6a2-5c52-8d16-d99702612fbf",
+      "prediction_id": "96dceebe-b640-5537-b4b0-e861dc2c6672",
+      "internal_fixture_id": "fb9e27ca-a479-5aea-8483-142f0b34bcab",
       "selection": "HOME",
-      "odds_decimal": null,
-      "model_probability": 0.5771423881237422,
-      "implied_probability": null,
-      "edge": null,
-      "strategy_version": "value-simple-1.0",
-      "quality_status": "BLOCKED",
-      "uncertainty_status": "DISAGREEMENT",
-      "suggested_stake": 0.0,
+      "odds_decimal": 1.6236363636363635,
+      "model_probability": 0.5756861881423538,
       "accepted": false,
-      "primary_reason": "MISSING_ODDS",
+      "suggested_stake": 0,
+      "primary_reason": "QUALITY_BLOCKED",
       "secondary_reasons": [
-        "QUALITY_BLOCKED",
-        "MODEL_DISAGREEMENT"
+        "INSUFFICIENT_EDGE"
       ],
-      "decided_at": "2026-07-24T11:34:16.210618Z",
       "simulation": true,
-      "origin": "DEMO DATA",
-      "home": "Paris SG",
-      "away": "Marseille"
+      "origin": "LIVE SOURCE",
+      "home": "Marseille",
+      "away": "Strasbourg",
+      "decided_at": "2026-07-24T13:00:07.010096Z"
     }
   ],
   "qualityChecks": [
     {
-      "check": "Identifiants UUID déterministes",
+      "check": "Authentification The Odds API",
       "status": "PASS",
-      "value": "37 024",
-      "threshold": "100 % des mappings",
-      "origin": "LEGACY SOURCE"
+      "value": "appel HTTP 200, secret non exposé",
+      "threshold": "source authentifiée",
+      "origin": "LIVE SOURCE"
     },
     {
-      "check": "Couverture certaine de migration",
+      "check": "Provenance brute",
+      "status": "PASS",
+      "value": "endpoint + temps + hash + ingestion",
+      "threshold": "champs complets",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Persistance inter-runners",
+      "status": "PASS",
+      "value": "4 fichiers restaurés",
+      "threshold": "observation stable",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Déduplication exacte",
+      "status": "PASS",
+      "value": "0 doublon",
+      "threshold": "0",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Idempotence prédictions",
+      "status": "PASS",
+      "value": "1 → 1 ; décisions 1 → 1",
+      "threshold": "aucun ajout identique",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Réserve quota",
+      "status": "PASS",
+      "value": "20 %",
+      "threshold": "≥ 20 %",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Prédictions sans cote",
+      "status": "WARN",
+      "value": "8 bloquées",
+      "threshold": "jamais synthétisées",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "API-Football",
+      "status": "PENDING",
+      "value": "adaptateur prêt, secret absent",
+      "threshold": "enrichissement optionnel",
+      "origin": "NO OUTPUT"
+    },
+    {
+      "check": "Paris réels",
+      "status": "PASS",
+      "value": "PRODUCTION_LOCKED",
+      "threshold": "aucune exécution financière",
+      "origin": "NO OUTPUT"
+    },
+    {
+      "check": "Couverture UUID legacy",
       "status": "PASS",
       "value": "98.668 %",
       "threshold": "≥ 98 %",
       "origin": "LEGACY SOURCE"
-    },
-    {
-      "check": "Collisions UUID",
-      "status": "PASS",
-      "value": "0",
-      "threshold": "0",
-      "origin": "LEGACY SOURCE"
-    },
-    {
-      "check": "Cas ambigus ou non résolus",
-      "status": "PASS",
-      "value": "0",
-      "threshold": "0",
-      "origin": "LEGACY SOURCE"
-    },
-    {
-      "check": "Lignes de revue migration",
-      "status": "WARN",
-      "value": "493",
-      "threshold": "explicites",
-      "origin": "LEGACY SOURCE"
-    },
-    {
-      "check": "Fuite temporelle",
-      "status": "PASS",
-      "value": "cutoff strict",
-      "threshold": "0 événement futur",
-      "origin": "LEGACY SOURCE"
-    },
-    {
-      "check": "Journal shadow immuable",
-      "status": "PASS",
-      "value": "1 décision",
-      "threshold": "append-only",
-      "origin": "DEMO DATA"
-    },
-    {
-      "check": "Snapshots de cotes réels",
-      "status": "PENDING",
-      "value": "0",
-      "threshold": "attente collecte réelle",
-      "origin": "DEMO DATA"
     }
   ],
   "strategies": [
@@ -304,42 +532,78 @@
   ],
   "runs": [
     {
-      "id": "fixtures-2026072411",
+      "id": "30094740235",
       "pipeline": "collect-fixtures",
-      "status": "PRESENT",
-      "records": 1,
-      "finishedAt": "2026-07-24T11:34:14.729054+00:00",
-      "origin": "DEMO DATA"
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "records": 9,
+      "calls": 0,
+      "quotaRemaining": 19996,
+      "finishedAt": "2026-07-24T12:54:05Z",
+      "origin": "LIVE SOURCE"
     },
     {
-      "id": "pre-match-2026072411",
+      "id": "30094948631",
+      "pipeline": "collect-odds",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "records": 1,
+      "calls": 2,
+      "quotaRemaining": 19994,
+      "finishedAt": "2026-07-24T12:57:23Z",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": "30095046115",
+      "pipeline": "collect-odds",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
+      "records": 1,
+      "calls": 2,
+      "quotaRemaining": 19992,
+      "finishedAt": "2026-07-24T12:58:58Z",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": "30095111573",
       "pipeline": "pre-match-shadow",
-      "status": "PASSED",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
       "records": 1,
-      "finishedAt": "2026-07-24T11:34:16.213816+00:00",
-      "origin": "DEMO DATA"
+      "calls": 0,
+      "quotaRemaining": 19992,
+      "finishedAt": "2026-07-24T13:00:11Z",
+      "origin": "LIVE SOURCE"
     },
     {
-      "id": "settlement-2026072411",
-      "pipeline": "post-match-settlement",
-      "status": "ABSENT",
+      "id": "30095193298",
+      "pipeline": "pre-match-shadow",
+      "status": "WORKFLOW_SUCCESS_LIVE_DATA",
       "records": 0,
-      "finishedAt": "2026-07-24T11:34:17.915850+00:00",
-      "origin": "DEMO DATA"
+      "calls": 0,
+      "quotaRemaining": 19992,
+      "finishedAt": "2026-07-24T13:01:10Z",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "id": "30095263615",
+      "pipeline": "daily-health",
+      "status": "PASSED",
+      "records": 5,
+      "calls": 0,
+      "quotaRemaining": 19992,
+      "finishedAt": "2026-07-24T13:02:12Z",
+      "origin": "LIVE SOURCE"
     }
   ],
   "filters": {
     "periods": [
-      "7 prochains jours",
       "30 prochains jours",
-      "Saison 2025–2026"
+      "7 prochains jours",
+      "Saison 2026–2027"
     ],
     "competitions": [
-      "Ligue 1"
+      "Ligue 1 - France"
     ],
     "markets": [
       "1X2",
-      "Over/Under 2,5"
+      "TOTAL_GOALS"
     ],
     "strategies": [
       "Toutes",
@@ -356,30 +620,95 @@
       "btts_value"
     ],
     "models": [
-      "consensus-elo-poisson",
-      "Elo",
-      "Poisson",
-      "Dixon-Coles"
+      "MARKET_BASELINE_ONLY"
     ],
     "statuses": [
       "Tous",
-      "Accepté",
-      "Rejeté",
+      "Bloqué",
       "En attente"
     ],
     "qualities": [
       "Toutes",
-      "PASS",
-      "WARN",
+      "OBSERVED",
       "PENDING"
     ],
     "bookmakers": [
-      "Tous"
+      "Tous",
+      "22 agrégés"
     ]
   },
   "provenance": {
-    "demo": "data/shadow-demo",
+    "demo": "Mode démo disponible uniquement sur activation explicite.",
     "legacy": "data/matches.parquet + rapports/jalon2/oos-results.json",
-    "live": "Aucun snapshot réel intégré à cette version."
-  }
+    "live": "The Odds API → GitHub Artifact restauré explicitement → preuve compacte Jalon 3",
+    "stateArtifact": "shadow-state-30095263615",
+    "sourceCommit": "e32ecfe09987542bba750b766488ddd927b6ea0b"
+  },
+  "quota": {
+    "provider_limit": 20000,
+    "used_after_activation": 8,
+    "remaining_after_activation": 19992,
+    "credits_per_snapshot": 2,
+    "forecast_matches_per_month": 40,
+    "forecast_windows_per_match": 9,
+    "forecast_credits_per_month": 720,
+    "operational_ceiling": 1000,
+    "reserve_credits": 4000,
+    "reserve_pct": 20,
+    "estimated_provider_cost_eur": 0,
+    "artifact_storage_bytes_retained": 29939
+  },
+  "persistence": {
+    "backend": "GITHUB_ARTIFACT_EXPLICIT_RESTORE",
+    "runner_a": 30094740235,
+    "runner_b": 30094948631,
+    "restored_artifact": "shadow-state-30094740235",
+    "files_restored_by_runner_b": 4,
+    "stable_observation_id": "e2bd3923-7c12-41a3-ac1d-cea2780c6e72",
+    "stable_payload_hash": "bfc60c7f941388db32fd4c998cf34ec19dfc328f07987c7d34e4246c637ea3bb",
+    "copies_retained": 2,
+    "retention_days": 30,
+    "latest_artifact_expires_at": "2026-08-23T13:02:09Z"
+  },
+  "idempotence": {
+    "odds_snapshots_before": 1,
+    "odds_snapshots_after": 2,
+    "exact_duplicate_snapshots": 0,
+    "distinct_odds_payload_hashes": 2,
+    "fixture_payload_binary_copies": 1,
+    "fixture_observation_journal_entries": 3,
+    "predictions_before_second_run": 1,
+    "predictions_after_second_run": 1,
+    "decisions_before_second_run": 1,
+    "decisions_after_second_run": 1
+  },
+  "providers": [
+    {
+      "name": "The Odds API",
+      "adapter_ready": true,
+      "secret_present": true,
+      "authenticated": true,
+      "live_data_received": true,
+      "live_data_persisted": true,
+      "status": "LIVE_PIPELINE_VERIFIED"
+    },
+    {
+      "name": "API-Football",
+      "adapter_ready": true,
+      "secret_present": false,
+      "authenticated": false,
+      "live_data_received": false,
+      "live_data_persisted": false,
+      "status": "ADAPTER_ONLY"
+    },
+    {
+      "name": "Football-Data.co.uk",
+      "adapter_ready": true,
+      "secret_present": false,
+      "authenticated": false,
+      "live_data_received": false,
+      "live_data_persisted": false,
+      "status": "ADAPTER_ONLY"
+    }
+  ]
 }
