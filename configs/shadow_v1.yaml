@@ -1,0 +1,58 @@
+version: shadow-v1
+mode: SHADOW
+real_bets_enabled: false
+data_origin_policy:
+  require_badge: true
+  live: LIVE SOURCE
+  demo: DEMO DATA
+competitions:
+  - name: Ligue 1
+    the_odds_api_key: soccer_france_ligue_one
+    api_football_id: 61
+markets:
+  - market_type: 1X2
+    provider_market: h2h
+    enabled: true
+  - market_type: TOTAL_GOALS
+    line_value: 2.5
+    provider_market: totals
+    enabled: true
+  - market_type: BOTH_TEAMS_TO_SCORE
+    provider_market: null
+    enabled: false
+    reason: non disponible dans l'endpoint groupé retenu
+  - market_type: DOUBLE_CHANCE
+    provider_market: null
+    enabled: false
+    reason: non disponible dans l'endpoint groupé retenu
+collection_windows: [J-7, J-3, J-1, H-12, H-6, H-3, H-1, "H-0:30", "H-0:10"]
+quality:
+  maximum_odds_age_minutes: 75
+  minimum_bookmakers: 2
+  block_on_unresolved_fixture: true
+  block_on_suspect_zero_feature: true
+models: [elo-1.0, poisson-1.0, dixon-coles-1.0, consensus-1.0, market-baseline-1.0]
+strategies: [value-simple-1.0]
+bankroll:
+  currency: EUR
+  fictive_initial: 1000
+  max_stake: 10
+  max_fixture_exposure_pct: 2
+  max_daily_exposure_pct: 8
+frequency:
+  fixtures_cron: "17 4,16 * * *"
+  odds_cron: "11 */3 * * *"
+  pre_match_cron: "23 * * * *"
+  settlement_cron: "41 5,17 * * *"
+  health_cron: "53 6 * * *"
+exclusions:
+  - live_betting
+  - real_money
+  - uncertain_identity
+  - stale_odds
+  - missing_odds
+  - quality_blocked
+quota:
+  monthly_credit_budget: 450
+  stop_if_remaining_below: 25
+  credits_per_event_snapshot: 2

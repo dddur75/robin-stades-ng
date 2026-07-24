@@ -89,3 +89,21 @@ class QuotePhase(StrEnum):
     OPENING = "OPENING"
     INTERMEDIATE = "INTERMEDIATE"
     CLOSING = "CLOSING"
+
+
+class DataAvailability(StrEnum):
+    PRESENT = "PRESENT"
+    ABSENT = "ABSENT"
+    ERROR = "ERROR"
+
+
+class DataOrigin(StrEnum):
+    LIVE_SOURCE = "LIVE SOURCE"
+    DEMO_DATA = "DEMO DATA"
+    LEGACY_SOURCE = "LEGACY SOURCE"
+
+
+class AlertSeverity(StrEnum):
+    INFO = "INFO"
+    WARNING = "WARNING"
+    CRITICAL = "CRITICAL"

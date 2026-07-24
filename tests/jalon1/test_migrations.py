@@ -36,6 +36,12 @@ def test_migration_upgrade_est_idempotente_et_downgrade_fonctionne(tmp_path) -> 
         "settled_bets",
         "quality_checks",
         "pipeline_runs",
+        "provider_call_logs",
+        "shadow_predictions",
+        "shadow_decisions",
+        "legacy_migration_runs",
+        "operational_metrics",
+        "operational_alerts",
     }.issubset(tables)
 
     command.downgrade(config, "base")
