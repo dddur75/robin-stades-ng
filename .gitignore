@@ -23,4 +23,6 @@ Thumbs.db
 *.err
 .ci/
 data/shadow/
+data/robin.db
+data/durable-outbox/
 cockpit/.codex-dev.*

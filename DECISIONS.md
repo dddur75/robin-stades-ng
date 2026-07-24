@@ -118,3 +118,28 @@ Statut : `VERIFIED`
 La CI contrôle installation, lint, typage strict, sécurité, migrations, tests et
 construction du dashboard. La santé data expose volumes, fraîcheur, alertes,
 erreurs, lignes affectées et identifiant du run.
+## 2026-07-24 — PostgreSQL managé comme cible, branche data comme pont
+
+Statut : `VERIFIED`
+
+La cible durable est PostgreSQL managé chez Neon. Tant que `DATABASE_URL` est
+absente, la branche orpheline `shadow-data` conserve bundles et objets bruts
+append-only ; les GitHub Artifacts deviennent un journal court et non la source
+de vérité. Ce pont a été retenu pour démarrer le burn-in sans achat ni perte de
+données.
+
+## 2026-07-24 — Le diagnostic ne compte pas comme couverture
+
+Statut : `VERIFIED`
+
+Un appel manuel hors fenêtre peut vérifier le fournisseur, mais ne passe jamais
+une fenêtre J-7 à H-0:10 en `COLLECTED`. Les taux de couverture ne reposent que
+sur les fenêtres réellement éligibles.
+
+## 2026-07-24 — Burn-in descriptif et verrou de production
+
+Statut : `SHADOW_BURN_IN_ACTIVE`
+
+Le burn-in mesure durabilité, complétude, incidents, quota et couverture. Il ne
+permet aucune conclusion statistique avant une période prospective suffisante.
+`PRODUCTION_LOCKED` reste invariant.

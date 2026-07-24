@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "53 6 * * *"
 permissions:
-  contents: read
+  contents: write
   actions: write
 concurrency:
   group: shadow-state
@@ -12,7 +12,9 @@ concurrency:
 jobs:
   health:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    env:
+      ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,8 +30,27 @@ jobs:
       - run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
+      - uses: actions/checkout@v4
+        if: env.ROBIN_DATABASE_URL != ''
+        with:
+          ref: shadow-data
+          path: .bootstrap-registry
+      - name: Initialiser et synchroniser Neon
+        if: env.ROBIN_DATABASE_URL != ''
+        run: >-
+          python scripts/neon_bootstrap.py
+          --registry .bootstrap-registry
+          --report data/shadow/neon/bootstrap.json
+          --controlled-rollback
       - name: Calculer la sante
+        env:
+          DURABLE_STORAGE_REQUIRED: "true"
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python scripts/run_shadow_pipeline.py daily-health
+      - uses: ./.github/actions/durable-shadow
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: shadow-state-${{ github.run_id }}

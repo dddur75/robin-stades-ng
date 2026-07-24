@@ -2,6 +2,19 @@
 
 Dernière revue : 2026-07-24.
 
+## Situation Jalon 4
+
+| Source | Statut réel | Usage |
+|---|---|---|
+| The Odds API | `LIVE_PIPELINE_VERIFIED` | fixtures et cotes 1X2/totaux |
+| API-Football | `ADAPTER_ONLY` | enrichissement futur, secret absent |
+| Football-Data.co.uk | `LEGACY_SOURCE` | contrôle historique séparé |
+
+The Odds API a produit 9 fixtures et 2 snapshots réels. API-Football n’a produit
+aucune donnée live et n’est jamais présenté autrement. Les payloads live sont
+adressés par SHA-256 et conservés dans `shadow-data`, puis PostgreSQL dès que le
+secret `DATABASE_URL` est disponible.
+
 Décision détaillée : `docs/data-sources/JALON-2-SOURCE-DECISION.md`.
 
 ## Décision Jalon 2

@@ -9,6 +9,7 @@
 | Confrontation | Les candidats conservent-ils un edge prospectif ? | `IN_PROGRESS` |
 | J2 OOS 2025–2026 | Les stratégies simples résistent-elles en walk-forward ? | `VERIFIED_NO_PROMOTION` |
 | Shadow V1 Ligue 1 | Les décisions restent-elles reproductibles prospectivement ? | `INFRASTRUCTURE_READY` |
+| Burn-in Jalon 4 | La chaîne reste-t-elle durable, complète et récupérable ? | `ACTIVE_DESCRIPTIVE_ONLY` |
 
 La distinction obligatoire est :
 

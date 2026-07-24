@@ -15,10 +15,16 @@ from robin.domain.enums import DataOrigin, QualityStatus, QuotePhase
 from robin.domain.odds import stable_internal_id
 from robin.ingestion.raw_store import LocalRawStore
 from robin.ingestion.scheduler import (
+    BudgetLevel,
     CollectionTask,
     CollectionWindow,
     FixtureCandidate,
-    plan_collection,
+    SchedulerWindowState,
+    WindowStatus,
+    adaptive_plan,
+    quota_budget,
+    record_window_result,
+    window_states,
 )
 from robin.ingestion.snapshot_store import JsonlSnapshotStore
 from robin.modeling.reference import (
@@ -33,6 +39,14 @@ from robin.operations.activation import (
     normalized_market_probabilities,
     workflow_outcome,
 )
+from robin.operations.burn_in import (
+    AlertSeverity,
+    IncidentJournal,
+    compute_daily_metrics,
+    render_daily_report,
+    render_matchday_report,
+    render_weekly_report,
+)
 from robin.providers.mock import MockFootballProvider
 from robin.providers.the_odds_api import TheOddsApiProvider, parse_odds_snapshot
 from robin.shadow.decision import DecisionJournal, decide_shadow_bet
@@ -44,6 +58,12 @@ def write_json(path: Path, value: object) -> None:
         json.dumps(value, ensure_ascii=False, indent=2, default=str) + "\n",
         encoding="utf-8",
     )
+
+
+def read_json(path: Path, default: Any) -> Any:
+    if not path.exists():
+        return default
+    return json.loads(path.read_text("utf-8"))
 
 
 def append_jsonl_once(path: Path, record: dict[str, object], *, key: str) -> bool:
@@ -175,6 +195,49 @@ def write_ledger(path: Path, values: set[tuple[str, CollectionWindow]]) -> None:
     )
 
 
+def read_scheduler_states(path: Path) -> dict[tuple[str, CollectionWindow], SchedulerWindowState]:
+    latest: dict[tuple[str, CollectionWindow], SchedulerWindowState] = {}
+    for value in read_jsonl(path):
+        state = SchedulerWindowState.model_validate(value)
+        latest[(state.fixture_id, state.window)] = state
+    return latest
+
+
+def persist_scheduler_states(
+    output: Path,
+    states: dict[tuple[str, CollectionWindow], SchedulerWindowState],
+) -> None:
+    write_json(
+        output / "scheduler" / "latest.json",
+        [
+            state.model_dump(mode="json")
+            for _, state in sorted(
+                states.items(),
+                key=lambda item: (item[0][0], item[0][1].value),
+            )
+        ],
+    )
+
+
+def append_scheduler_event(
+    output: Path,
+    state: SchedulerWindowState,
+    run_id: str,
+) -> None:
+    value = state.model_dump(mode="json")
+    value["run_id"] = run_id
+    value["event_id"] = stable_internal_id(
+        "scheduler-event",
+        "internal",
+        f"{run_id}:{state.fixture_id}:{state.window.value}:{state.attempt_count}:{state.status.value}",
+    )
+    append_jsonl_once(
+        output / "scheduler" / "windows.jsonl",
+        value,
+        key="event_id",
+    )
+
+
 def collect_odds(
     output: Path,
     *,
@@ -206,15 +269,29 @@ def collect_odds(
     ledger_path = output / "odds" / "collection-ledger.json"
     collected = read_ledger(ledger_path)
     remaining = fixture_result.quota.remaining or 0
-    tasks = list(
-        plan_collection(
+    scheduler_path = output / "scheduler" / "windows.jsonl"
+    known_states = read_scheduler_states(scheduler_path)
+    all_states = {
+        (state.fixture_id, state.window): state
+        for state in window_states(
             candidates,
             now=now,
-            collected=collected,
-            quota_remaining=remaining,
-            reserve_credits=4_000,
-            quota_used=fixture_result.quota.used or 0,
-            monthly_operational_ceiling=1_000,
+            known=known_states,
+        )
+    }
+    budget = quota_budget(
+        credits_used_today=0,
+        credits_used_month=fixture_result.quota.used or 0,
+        provider_remaining=remaining,
+        operational_ceiling=1_000,
+        reserve_credits=4_000,
+        forecast_month_end=max(fixture_result.quota.used or 0, 720),
+    )
+    tasks = list(
+        adaptive_plan(
+            tuple(all_states.values()),
+            fixtures={item.provider_fixture_id: item for item in candidates},
+            budget=budget,
         )
     )
     diagnostic_outside_window = False
@@ -243,7 +320,19 @@ def collect_odds(
         result = odds_provider.get_event_odds(fixture_id)
         last_quota = result.quota
         calls_consumed += result.quota.last_cost or 0
+        state_key = (fixture_id, window)
+        state = all_states[state_key]
         if not result.records or result.raw_observation_id is None:
+            if not diagnostic_outside_window:
+                updated = record_window_result(
+                    state,
+                    attempted_at=datetime.now(UTC),
+                    provider_status="EMPTY",
+                    observation_received=False,
+                    market_available=False if not result.records else None,
+                )
+                all_states[state_key] = updated
+                append_scheduler_event(output, updated, run_id)
             continue
         snapshot = parse_odds_snapshot(
             result.records[0],
@@ -264,7 +353,32 @@ def collect_odds(
         appended += int(was_appended)
         exact_payloads_deduplicated += int(not was_appended)
         if not diagnostic_outside_window:
+            updated = record_window_result(
+                state,
+                attempted_at=result.observed_at,
+                provider_status="SUCCESS",
+                observation_received=True,
+                market_available=bool(snapshot.quotes),
+            )
+            all_states[state_key] = updated
+            append_scheduler_event(output, updated, run_id)
             collected.add((fixture_id, window))
+    planned_keys = {(task.provider_fixture_id, task.window) for task in tasks}
+    if budget.level != BudgetLevel.NORMAL:
+        for key, state in tuple(all_states.items()):
+            if (
+                state.status in {WindowStatus.DUE, WindowStatus.MISSED_RECOVERABLE}
+                and key not in planned_keys
+            ):
+                protected = state.model_copy(
+                    update={
+                        "status": WindowStatus.SKIPPED_QUOTA,
+                        "provider_status": "QUOTA_PROTECTED",
+                    }
+                )
+                all_states[key] = protected
+                append_scheduler_event(output, protected, run_id)
+    persist_scheduler_states(output, all_states)
     write_ledger(ledger_path, collected)
     authenticated = bool(os.getenv("ODDS_API_KEY"))
     summary = {
@@ -291,7 +405,25 @@ def collect_odds(
         "calls_consumed": calls_consumed,
         "quota_used": last_quota.used,
         "quota_remaining": last_quota.remaining,
-        "persistence": "GITHUB_ARTIFACT_EXPLICIT_RESTORE",
+        "budget_level": budget.level.value,
+        "budget_explanation": budget.explanation,
+        "windows_recoverable": sum(
+            state.status == WindowStatus.MISSED_RECOVERABLE
+            for state in all_states.values()
+        ),
+        "windows_missed_final": sum(
+            state.status == WindowStatus.MISSED_FINAL
+            for state in all_states.values()
+        ),
+        "next_window": min(
+            (
+                state.scheduled_for.isoformat()
+                for state in all_states.values()
+                if state.status == WindowStatus.PENDING
+            ),
+            default=None,
+        ),
+        "persistence": "DURABLE_WRITE_STAGED",
         "finished_at": datetime.now(UTC).isoformat(),
     }
     write_json(output / "runs" / f"{run_id}.json", summary)
@@ -311,6 +443,12 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
     predictions_history = output / "predictions" / "history.jsonl"
     new_predictions = 0
     new_decisions = 0
+    durable_required = os.getenv("DURABLE_STORAGE_REQUIRED", "").lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+    durable_ready = (output / "durable" / "last-ack.json").exists()
     for fixture in fixtures:
         kickoff = datetime.fromisoformat(
             str(fixture["commence_time"]).replace("Z", "+00:00")
@@ -320,6 +458,15 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
         home = str(fixture["home_team"])
         away = str(fixture["away_team"])
         fixture_id = stable_internal_id("fixture", "the-odds-api", str(fixture["id"]))
+        if not mock and durable_required and not durable_ready:
+            blocked.append(
+                {
+                    "fixture_id": fixture_id,
+                    "reason": "DURABLE_STORAGE_UNAVAILABLE",
+                    "origin": str(fixture.get("origin", DataOrigin.LIVE_SOURCE.value)),
+                }
+            )
+            continue
         fixture_quotes = [
             record for record in odds_records if record.get("fixture_id") == fixture_id
         ]
@@ -488,6 +635,8 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
             if mock
             else "MARKET_BASELINE_ONLY_WITH_LIVE_ODDS"
         ),
+        "durable_storage_required": durable_required,
+        "durable_storage_available": durable_ready,
         "finished_at": datetime.now(UTC).isoformat(),
     }
     write_json(output / "runs" / f"{summary['run_id']}.json", summary)
@@ -537,7 +686,11 @@ def daily_health(output: Path) -> dict[str, object]:
         for path in sorted(run_dir.glob("*.json"))
     ] if run_dir.exists() else []
     snapshots = JsonlSnapshotStore(output / "odds").read_all()
-    decisions = DecisionJournal(output / "decisions" / "shadow-decisions.jsonl").read_all()
+    decisions = DecisionJournal(
+        output / "decisions" / "shadow-decisions.jsonl"
+    ).read_all()
+    predictions = read_jsonl(output / "predictions" / "history.jsonl")
+    scheduler_rows = read_json(output / "scheduler" / "latest.json", [])
     rejected: dict[str, int] = {}
     for decision in decisions:
         reason = str(decision.get("primary_reason") or "ACCEPTED")
@@ -562,7 +715,11 @@ def daily_health(output: Path) -> dict[str, object]:
         "rejections_by_reason": rejected,
         "critical_alerts": 0,
         "estimated_cost_eur": 0,
-        "persistence": "GITHUB_ARTIFACT_EXPLICIT_RESTORE",
+        "persistence": (
+            "DURABLE_WRITE_CONFIRMED"
+            if (output / "durable" / "last-ack.json").exists()
+            else "DURABLE_WRITE_STAGED"
+        ),
         "live_snapshots": sum(
             record.get("provider") == "the-odds-api"
             and bool(record.get("source_payload_hash"))
@@ -570,10 +727,87 @@ def daily_health(output: Path) -> dict[str, object]:
         ),
         "live_predictions": sum(
             item.get("origin") == DataOrigin.LIVE_SOURCE.value
-            for item in read_jsonl(output / "predictions" / "history.jsonl")
+            for item in predictions
         ),
         "production_locked": True,
     }
+    raw_paths = sorted((output / "raw" / "observations").rglob("*.json"))
+    raw_rows = [
+        value
+        for path in raw_paths
+        for value in [read_json(path, {})]
+        if isinstance(value, dict)
+    ]
+    last_run = runs[-1] if runs else {}
+    metrics = compute_daily_metrics(
+        metric_date=datetime.now(UTC).date(),
+        runs=runs,
+        fixtures=len(read_json(output / "fixtures" / "latest.json", [])),
+        snapshots=len(snapshots),
+        windows=scheduler_rows if isinstance(scheduler_rows, list) else [],
+        predictions=len(predictions),
+        decisions=len(decisions),
+        settlements=len(read_jsonl(output / "settlements" / "history.jsonl")),
+        raw_observations=len(raw_rows),
+        provenance_complete=sum(
+            bool(item.get("payload_hash"))
+            and bool(item.get("provider"))
+            and bool(item.get("received_at"))
+            for item in raw_rows
+        ),
+        duplicates=sum(
+            int(run.get("exact_payloads_deduplicated", 0))
+            for run in runs
+        ),
+        silent_losses=0,
+        quota_used=int(last_run.get("quota_used") or 0),
+        quota_remaining=int(last_run.get("quota_remaining") or 20_000),
+        quota_limit=20_000,
+    )
+    metrics["metric_id"] = stable_internal_id(
+        "burn-in-daily",
+        "internal",
+        f"{metrics['date']}:{len(runs)}:{len(snapshots)}",
+    )
+    append_jsonl_once(
+        output / "burn-in" / "daily.jsonl",
+        metrics,
+        key="metric_id",
+    )
+    write_json(output / "burn-in" / "latest.json", metrics)
+    report_dir = output / "reports"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir / "daily.md").write_text(
+        render_daily_report(metrics),
+        encoding="utf-8",
+    )
+    burn_history = read_jsonl(output / "burn-in" / "daily.jsonl")
+    (report_dir / "weekly.md").write_text(
+        render_weekly_report(burn_history[-7:]),
+        encoding="utf-8",
+    )
+    (report_dir / "matchday.md").write_text(
+        render_matchday_report(
+            metrics,
+            fixture_count=int(metrics["fixtures"]),
+            settled_count=int(metrics["settlements"]),
+        ),
+        encoding="utf-8",
+    )
+    incidents = IncidentJournal(output / "incidents" / "history.jsonl")
+    if health["persistence"] != "DURABLE_WRITE_CONFIRMED":
+        incidents.open(
+            code="DURABLE_STORAGE_UNCONFIRMED",
+            severity=AlertSeverity.CRITICAL,
+            cause="aucun accusé de réception durable restauré",
+            impact="décisions shadow bloquées lorsque le mode requis est actif",
+        )
+    else:
+        incidents.resolve(
+            code="DURABLE_STORAGE_UNCONFIRMED",
+            correction="accusé durable restauré",
+        )
+    health["burn_in"] = metrics
     write_json(output / "health" / "latest.json", health)
     return health
 

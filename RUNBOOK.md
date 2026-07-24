@@ -33,6 +33,11 @@ $env:ROBIN_DATABASE_URL = "postgresql+psycopg://robin:robin_local@localhost:5432
 .\.venv\Scripts\python.exe -m alembic upgrade head
 ```
 
+Une URL Neon native `postgresql://...` est acceptée directement et normalisée
+centralement en `postgresql+psycopg://...`. Ne pas décoder ni reconstruire le mot
+de passe ; les caractères spéciaux doivent rester encodés dans l’URL. Les
+paramètres, notamment `sslmode=require`, sont conservés.
+
 Les tests utilisent SQLite sans service payant. La CI démarre PostgreSQL 16 et
 exécute `upgrade head`, puis `downgrade base`.
 
@@ -139,3 +144,50 @@ de donnée prospective.
 4. rejouer avec la même clé d'idempotence ;
 5. versionner toute correction tardive ;
 6. ne jamais réécrire une cote, une prédiction ou un résultat historique.
+
+## Jalon 4 — registre durable et burn-in
+
+Vérifier la branche de données :
+
+```powershell
+python scripts/manage_durable_registry.py verify --registry <checkout-shadow-data>
+python scripts/manage_durable_registry.py replay --registry <checkout-shadow-data> --destination <replay>
+```
+
+Le replay n’appelle aucun fournisseur. Avec `DATABASE_URL`, les workflows
+publient d’abord le bundle dans `shadow-data`, appliquent Alembic, synchronisent
+l’intégralité du registre vers PostgreSQL, auditent les deux copies, puis
+émettent l’acquittement `POSTGRESQL_AND_GIT_DATA_BRIDGE`.
+
+Bootstrap ou rattrapage contrôlé :
+
+```powershell
+.\.venv\Scripts\python.exe scripts/neon_bootstrap.py `
+  --registry <checkout-shadow-data> `
+  --report <rapport-json> `
+  --controlled-rollback
+```
+
+Le rollback contrôlé ne s’exécute que si toutes les tables applicatives sont
+vides. Dès qu’une donnée est présente, aucun downgrade destructif ne doit être
+tenté. En cas d’indisponibilité PostgreSQL, le bundle déjà poussé reste durable,
+un incident `POSTGRESQL_WRITE_FAILED` est ouvert une seule fois et le prochain
+workflow rejoue automatiquement tout le registre sans rappel fournisseur.
+
+Pour une fenêtre manquée, ne relancer que `MISSED_RECOVERABLE` pendant la marge
+de 120 minutes. Un diagnostic hors fenêtre ne doit pas modifier la couverture.
+Voir `docs/operations/MISSED-WINDOW-RECOVERY.md`.
+
+Les rapports automatiques sont `reports/daily.md`, `reports/weekly.md` et
+`reports/matchday.md`. Un incident critique persistant peut produire une seule
+issue GitHub ; une absence de marché normale ne doit jamais en produire.
+
+## Cockpit Live V2
+
+```powershell
+python scripts/build_cockpit_snapshot.py
+pnpm --dir cockpit test
+```
+
+Le mode démo est désactivé par défaut. Toujours conserver
+`PRODUCTION_LOCKED` et le message d’échantillon insuffisant.

@@ -1,0 +1,90 @@
+name: "Confirmer l'écriture durable shadow"
+description: "Double écriture PostgreSQL optionnelle et branche shadow-data"
+inputs:
+  run-id:
+    description: "Identifiant GitHub Actions"
+    required: true
+  database-url:
+    description: "Connexion PostgreSQL optionnelle"
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Préparer le bundle append-only
+      shell: bash
+      run: >-
+        python scripts/manage_durable_registry.py stage
+        --state data/shadow
+        --outbox data/durable-outbox
+        --current-run-id "${{ inputs.run-id }}"
+    - name: Restaurer le registre isolé
+      uses: actions/checkout@v4
+      with:
+        ref: shadow-data
+        path: .durable-registry
+        fetch-depth: 1
+    - name: Vérifier et ajouter au registre
+      shell: bash
+      run: |
+        python scripts/manage_durable_registry.py append \
+          --outbox data/durable-outbox \
+          --registry .durable-registry
+        python scripts/manage_durable_registry.py verify \
+          --registry .durable-registry
+    - name: Publier le registre durable
+      shell: bash
+      working-directory: .durable-registry
+      run: |
+        git config user.name "robin-shadow-bot"
+        git config user.email "actions@users.noreply.github.com"
+        git add bundles objects manifests
+        if ! git diff --cached --quiet; then
+          git commit -m "shadow: persist run ${{ inputs.run-id }}"
+          git push origin HEAD:shadow-data
+        fi
+    - name: Synchroniser PostgreSQL depuis le registre durable
+      id: postgresql
+      if: inputs.database-url != ''
+      continue-on-error: true
+      shell: bash
+      env:
+        ROBIN_DATABASE_URL: ${{ inputs.database-url }}
+      run: |
+        python -m alembic upgrade head
+        python scripts/manage_durable_registry.py persist-registry \
+          --registry .durable-registry
+        python scripts/manage_durable_registry.py audit-database \
+          --registry .durable-registry
+    - name: Journaliser l'état PostgreSQL
+      if: inputs.database-url != ''
+      shell: bash
+      env:
+        POSTGRESQL_OUTCOME: ${{ steps.postgresql.outcome }}
+      run: |
+        status="SUCCESS"
+        if [ "$POSTGRESQL_OUTCOME" != "success" ]; then
+          status="FAILED"
+          echo "::warning::PostgreSQL indisponible ; shadow-data reste durable et sera rejoué."
+        fi
+        python scripts/database_incident.py \
+          --state data/shadow \
+          --status "$status" \
+          --source-run-id "${{ inputs.run-id }}"
+    - name: Accuser réception de la double écriture
+      shell: bash
+      env:
+        DATABASE_CONFIGURED: ${{ inputs.database-url }}
+        POSTGRESQL_OUTCOME: ${{ steps.postgresql.outcome }}
+      run: |
+        backend="GIT_DATA_BRIDGE"
+        if [ -n "$DATABASE_CONFIGURED" ] && [ "$POSTGRESQL_OUTCOME" = "success" ]; then
+          backend="POSTGRESQL_AND_GIT_DATA_BRIDGE"
+        elif [ -n "$DATABASE_CONFIGURED" ]; then
+          backend="GIT_DATA_BRIDGE_POSTGRESQL_PENDING"
+        fi
+        commit="$(git -C .durable-registry rev-parse HEAD)"
+        python scripts/manage_durable_registry.py ack \
+          --state data/shadow \
+          --backend "$backend" \
+          --commit "$commit"

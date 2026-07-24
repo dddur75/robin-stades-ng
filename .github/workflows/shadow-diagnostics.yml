@@ -1,0 +1,44 @@
+name: "15 - Diagnostic shadow durable"
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - name: Restaurer le dernier état court
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/manage_shadow_state.py restore
+          --repo "${{ github.repository }}"
+          --destination data/shadow
+          --current-run-id "${{ github.run_id }}"
+      - uses: actions/checkout@v4
+        with:
+          ref: shadow-data
+          path: .durable-registry
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Diagnostic en lecture seule
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: >-
+          python scripts/shadow_diagnostics.py
+          --state data/shadow
+          --registry .durable-registry
+          --output diagnostics
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shadow-diagnostics-${{ github.run_id }}
+          path: diagnostics
+          retention-days: 30

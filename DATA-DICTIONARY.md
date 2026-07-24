@@ -107,3 +107,30 @@ Grain : un match terminé. Clé legacy : `match_id`.
 
 Une donnée absente n'est jamais convertie en zéro. Les zéros suspects restent
 visibles et sont masqués par défaut pour les modèles concernés.
+# Extensions durables Jalon 4
+
+Le schéma Alembic `0003_jalon4_durable_shadow` ajoute les entités suivantes :
+
+| Entité | Grain | Clé d’idempotence principale |
+|---|---|---|
+| `ingestion_runs` | une exécution de pipeline | `run_id` |
+| `raw_payloads` | un contenu brut unique | `payload_hash` |
+| `provider_requests` | une requête fournisseur | fournisseur + endpoint + temps |
+| `durable_fixtures` | une version de fixture | fixture interne + version |
+| `provider_entity_mappings` | un mapping valide dans le temps | fournisseur + type + id |
+| `odds_snapshots` | une observation de marché | fixture + marché + bookmaker + temps |
+| `prediction_runs` | une exécution de modèle | run + modèle + version |
+| `predictions` | une prédiction immuable | fixture + as-of + modèle |
+| `candidate_bets` | une opportunité évaluée | prédiction + sélection + stratégie |
+| `rejected_bets` | un rejet motivé | candidat + code |
+| `shadow_bets` | un pari simulé accepté | candidat |
+| `settlements` | une version de règlement | pari + version |
+| `quality_runs/results` | un contrôle et ses résultats | run + contrôle |
+| `pipeline_incidents` | une version d’incident | code + instant |
+| `quota_usage` | un relevé fournisseur | fournisseur + période + instant |
+| `scheduler_windows` | une fenêtre par fixture | fixture + code fenêtre |
+| `burn_in_daily_metrics` | un relevé quotidien | date |
+
+Les tables append-only portent `created_at`, les références de run et les
+versions nécessaires. Les payloads bruts sont référencés par SHA-256 ; ils ne
+sont jamais écrasés.

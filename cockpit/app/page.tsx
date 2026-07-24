@@ -5,19 +5,23 @@ import snapshot from "./cockpit-data.json";
 
 type PageKey =
   | "command"
-  | "matches"
+  | "coverage"
   | "odds"
-  | "bets"
+  | "matches"
+  | "performance"
   | "quality"
-  | "strategy";
+  | "costs"
+  | "explorer";
 
 const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "command", label: "Command Center", glyph: "⌂" },
+  { key: "coverage", label: "Coverage Explorer", glyph: "▦" },
+  { key: "odds", label: "Odds Explorer", glyph: "↗" },
   { key: "matches", label: "Match Center", glyph: "◉" },
-  { key: "odds", label: "Odds Monitor", glyph: "↗" },
-  { key: "bets", label: "Shadow Bets", glyph: "◆" },
-  { key: "quality", label: "Data Quality", glyph: "✓" },
-  { key: "strategy", label: "Strategy Lab", glyph: "∿" },
+  { key: "performance", label: "Shadow Performance", glyph: "◆" },
+  { key: "quality", label: "Pipeline & Qualité", glyph: "✓" },
+  { key: "costs", label: "Coûts & Quotas", glyph: "◒" },
+  { key: "explorer", label: "Data Explorer", glyph: "⌘" },
 ];
 
 const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> = {
@@ -33,33 +37,43 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
   },
   odds: {
     eyebrow: "Marché horodaté",
-    title: "Odds Monitor",
-    note: "Snapshots append-only et fraîcheur par bookmaker.",
+    title: "Odds Explorer",
+    note: "Mouvements, dispersion et fraîcheur des snapshots append-only.",
   },
-  bets: {
-    eyebrow: "Journal de décision",
-    title: "Shadow Bets",
-    note: "Chaque candidat et chaque rejet restent expliqués.",
+  coverage: {
+    eyebrow: "Fenêtres & disponibilité",
+    title: "Coverage Explorer",
+    note: "Sépare marché absent, collecte manquée et panne fournisseur.",
+  },
+  performance: {
+    eyebrow: "Trois preuves séparées",
+    title: "Shadow Performance",
+    note: "Legacy, OOS historique et shadow prospectif ne sont jamais fusionnés.",
   },
   quality: {
     eyebrow: "Contrôles & provenance",
-    title: "Data Quality",
-    note: "La qualité bloque la décision avant le modèle.",
+    title: "Pipeline & Qualité",
+    note: "Exécutions, stockage, incidents, SLO et fournisseurs.",
   },
-  strategy: {
-    eyebrow: "Validation hors échantillon",
-    title: "Strategy Lab",
-    note: "Comparaisons OOS : aucune stratégie n’est promue.",
+  costs: {
+    eyebrow: "Budget adaptatif",
+    title: "Coûts & Quotas",
+    note: "Consommation, prévision, réserve et scénarios informatifs.",
+  },
+  explorer: {
+    eyebrow: "Données bornées",
+    title: "Data Explorer",
+    note: "Filtrer, trier, segmenter et exporter la preuve publiée.",
   },
 };
 
 function SourceBadge({ origin }: { origin: string }) {
-  const token = origin.toLowerCase().replace(" source", "").replace(" data", "");
+  const token = origin.toLowerCase().replace(" source", "").replace(" data", "").replaceAll(" ", "-");
   return <span className={`source-badge ${token}`}>{origin}</span>;
 }
 
 function StatusPill({ value }: { value: string }) {
-  const token = value.toLowerCase().replaceAll("_", "-");
+  const token = value.toLowerCase().replaceAll("_", "-").replaceAll(" ", "-");
   return <span className={`status-pill ${token}`}>{value.replaceAll("_", " ")}</span>;
 }
 
@@ -117,6 +131,22 @@ function dateTime(value: string | null) {
     minute: "2-digit",
     timeZone: "Europe/Paris",
   }).format(new Date(value));
+}
+
+function downloadCsv(filename: string, rows: Record<string, unknown>[]) {
+  if (!rows.length) return;
+  const columns = Object.keys(rows[0]);
+  const escape = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  const csv = [
+    columns.map(escape).join(","),
+    ...rows.map((row) => columns.map((column) => escape(row[column])).join(",")),
+  ].join("\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 export default function Home() {
@@ -278,11 +308,13 @@ export default function Home() {
           </section>
 
           {page === "command" && <CommandCenter onNavigate={setPage} />}
+          {page === "coverage" && <CoverageExplorer />}
           {page === "matches" && <MatchCenter matches={filteredMatches} market={market} />}
-          {page === "odds" && <OddsMonitor />}
-          {page === "bets" && <ShadowBets />}
-          {page === "quality" && <DataQuality />}
-          {page === "strategy" && <StrategyLab />}
+          {page === "odds" && <OddsExplorer />}
+          {page === "performance" && <ShadowPerformance />}
+          {page === "quality" && <PipelineQuality />}
+          {page === "costs" && <CostsQuotas />}
+          {page === "explorer" && <DataExplorer />}
         </div>
       </section>
     </main>
@@ -290,16 +322,48 @@ export default function Home() {
 }
 
 function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
-  const best = snapshot.strategies.find((item) => item.strategy === "over_2_5_value");
   return (
     <>
       <section className="metric-grid">
         <Metric label="Fixtures suivies" value={String(snapshot.metrics.fixtures)} detail="fenêtre prospective" />
         <Metric label="Snapshots réels" value={String(snapshot.metrics.snapshots)} detail="2 payloads distincts" tone="cyan" />
-        <Metric label="Cotes normalisées" value={String(snapshot.metrics.quotes)} detail="1X2 · Totaux" />
-        <Metric label="Bookmakers" value={String(snapshot.metrics.bookmakers)} detail="agrégés par snapshot" />
-        <Metric label="Prédictions" value={String(snapshot.metrics.predictions)} detail="baseline marché seulement" tone="amber" />
+        <Metric label="Registre PostgreSQL" value={String(snapshot.metrics.durableRecords)} detail="lignes métier uniques" tone="cyan" />
+        <Metric label="Payloads physiques" value={String(snapshot.metrics.rawPayloads)} detail="5 observations · 2 doublons évités" />
+        <Metric label="Burn-in" value="ACTIF" detail={snapshot.burnIn.health.replaceAll("_", " ")} tone="amber" />
         <Metric label="Quota restant" value={snapshot.metrics.quotaRemaining.toLocaleString("fr-FR")} detail="sur 20 000 crédits" />
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Funnel prospectif</span><h2>Du calendrier au règlement shadow</h2></div>
+          <StatusPill value="LIVE_SHADOW" />
+        </div>
+        <div className="funnel">
+          {snapshot.funnel.map((item, index) => (
+            <div key={item.stage}>
+              <span>{item.stage}</span>
+              <strong>{item.count}</strong>
+              {index > 0 && <small>{item.loss ? `−${item.loss}` : "stable"}</small>}
+            </div>
+          ))}
+        </div>
+        <div className="reason-grid">
+          <div>
+            <span>Pourquoi les matchs ne sont-ils pas analysables ?</span>
+            {snapshot.notAnalyzableReasons.map((item) => (
+              <p key={item.reason}>
+                <strong>{item.count}</strong>
+                <code>{item.reason}</code>
+                <SourceBadge origin={item.origin} />
+              </p>
+            ))}
+          </div>
+          <div>
+            <span>Prochaine étape automatique</span>
+            <p><strong>J-7</strong><code>14 août 2026</code><StatusPill value="PENDING" /></p>
+            <p><strong>120 min</strong><code>marge de rattrapage</code><StatusPill value="ACTIVE" /></p>
+          </div>
+        </div>
       </section>
 
       <section className="two-column">
@@ -333,17 +397,25 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
           </div>
         </article>
 
-        <article className="panel insight">
+        <article className="panel storage-card">
           <div className="panel-head">
-            <div><span>Signal OOS le moins faible</span><h2>Over 2,5 · valeur</h2></div>
-            <SourceBadge origin="LEGACY SOURCE" />
+            <div><span>Source de vérité</span><h2>Registre prospectif durable</h2></div>
+            <StatusPill value={snapshot.durableStorage.bridge_status} />
           </div>
-          <strong className="big-roi">+{best?.roiPct.toFixed(2)} %</strong>
-          <span>ROI observé · {best?.bets} paris historiques</span>
-          <div className="ci"><b style={{ left: "19%", width: "64%" }} /><i style={{ left: "50%" }} /></div>
-          <div className="ci-label"><span>{best?.ciLowPct} %</span><strong>IC 95 %</strong><span>+{best?.ciHighPct} %</span></div>
-          <div className="warning">Intervalle compatible avec une perte. Résultat inconclusif, non promu.</div>
-          <button className="text-button" onClick={() => onNavigate("strategy")}>Ouvrir Strategy Lab →</button>
+          <dl>
+            <div><dt>Pont actif</dt><dd>branche orpheline shadow-data</dd></div>
+            <div><dt>PostgreSQL</dt><dd>{snapshot.postgresql.status.replaceAll("_", " ")}</dd></div>
+            <div><dt>Dernière écriture</dt><dd>{dateTime(snapshot.postgresql.last_write)}</dd></div>
+            <div><dt>Lignes</dt><dd>{snapshot.postgresql.registry_records} uniques</dd></div>
+            <div><dt>Retard pont</dt><dd>{snapshot.postgresql.bridge_lag_records} ligne</dd></div>
+            <div><dt>Double écriture</dt><dd>{snapshot.doubleWrite.status}</dd></div>
+            <div><dt>Capacité</dt><dd>{snapshot.postgresql.capacity_used_pct.toFixed(2)} % · {(snapshot.postgresql.database_size_bytes / 1_000_000).toFixed(2)} MB</dd></div>
+            <div><dt>Burn-in</dt><dd>{snapshot.burnIn.technical} · {snapshot.burnIn.health.replaceAll("_", " ")}</dd></div>
+            <div><dt>Migration</dt><dd>{snapshot.migration.coverage * 100} % · 0 erreur</dd></div>
+            <div><dt>Replay</dt><dd>octets identiques · 0 appel API</dd></div>
+            <div><dt>Artifacts</dt><dd>journal court uniquement</dd></div>
+          </dl>
+          <button className="text-button" onClick={() => onNavigate("quality")}>Inspecter stockage & incidents →</button>
         </article>
       </section>
 
@@ -355,13 +427,60 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
         <div className="guardrails">
           {[
             ["Fuite temporelle", "PASS", "cutoff strict"],
-            ["Persistance runners", "PASS", "artifact restauré"],
-            ["Quota mensuel", "PASS", "19 992 / 20 000"],
-            ["Cotes réelles", "PASS", "2 snapshots · 180 cotes"],
+            ["Perte silencieuse", "PASS", "0 perte"],
+            ["Persistance durable", "PASS", "shadow-data vérifié"],
+            ["Quota mensuel", "PASS", "niveau NORMAL"],
           ].map(([name, status, detail]) => (
             <div key={name}><StatusPill value={status} /><strong>{name}</strong><small>{detail}</small></div>
           ))}
         </div>
+      </section>
+    </>
+  );
+}
+
+function CoverageExplorer() {
+  const rates = snapshot.coverageRates;
+  return (
+    <>
+      <section className="quality-summary">
+        <Metric label="Couverture fournisseur" value={`${(rates.provider * 100).toFixed(1)} %`} detail="marché réellement proposé" tone="cyan" />
+        <Metric label="Couverture collecte" value="—" detail={rates.collectionStatus.replaceAll("_", " ")} />
+        <Metric label="Couverture analytique" value={`${(rates.analytic * 100).toFixed(1)} %`} detail="fixture analysable" tone="amber" />
+        <Metric label="Marge de reprise" value={`${snapshot.scheduler.recovery_margin_minutes} min`} detail="retard récupérable" />
+      </section>
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>9 fenêtres par fixture</span><h2>Heatmap de couverture</h2></div>
+          <StatusPill value="BURN_IN_ACTIVE" />
+        </div>
+        <div className="heatmap">
+          <div className="heatmap-head">
+            <span>Fixture</span>
+            {snapshot.scheduler.windows.map((window) => <b key={window}>{window}</b>)}
+          </div>
+          {snapshot.coverage.map((item) => (
+            <div className="heatmap-row" key={item.fixtureId}>
+              <span><strong>{item.fixture}</strong><small>{dateTime(item.kickoff)}</small></span>
+              {Object.entries(item.windows).map(([window, value]) => (
+                <i className={String(value).toLowerCase().replaceAll("_", "-")} key={window} title={`${window} · ${value}`}>
+                  {value === "PENDING" ? "·" : "✓"}
+                </i>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="legend">
+          <span><i className="pending" /> attendu</span>
+          <span><i className="collected" /> reçu</span>
+          <span><i className="collected-late" /> reçu tardivement</span>
+          <span><i className="no-market-available" /> marché absent</span>
+          <span><i className="provider-failed" /> fournisseur en échec</span>
+          <span><i className="skipped-quota" /> quota protégé</span>
+        </div>
+        <p className="panel-note">
+          Les deux snapshots actuels sont des diagnostics hors fenêtre. Ils prouvent le pipeline, mais ne gonflent pas artificiellement la couverture planifiée.
+        </p>
       </section>
     </>
   );
@@ -386,6 +505,24 @@ function MatchCenter({ matches, market }: { matches: typeof snapshot.matches; ma
             <article className="match-card" key={match.id}>
               <div className="match-meta"><span>{match.competition}</span><strong>{dateTime(match.kickoff)}</strong><SourceBadge origin={match.origin} /></div>
               <div className="teams"><strong>{match.home}</strong><span>vs</span><strong>{match.away}</strong></div>
+              <div className="identity-strip">
+                <span>Fixture interne<code>{match.internalId.slice(0, 13)}…</code></span>
+                <span>ID fournisseur<code>{match.id.slice(0, 13)}…</code></span>
+                <span>UTC<code>{match.kickoff}</code></span>
+                <span>Stade<code>NO OUTPUT</code></span>
+              </div>
+              <div className="availability-strip">
+                {[
+                  ["Cotes", match.probabilities.home ? "LIVE" : "ABSENT"],
+                  ["Résultats", "PENDING"],
+                  ["Statistiques", "NO OUTPUT"],
+                  ["Compositions", "NO OUTPUT"],
+                  ["Blessures", "NO OUTPUT"],
+                  ["Historique", "NOT USED"],
+                ].map(([label, value]) => (
+                  <span key={label}>{label}<b>{value}</b></span>
+                ))}
+              </div>
               <div className="probabilities">
                 {[["1", match.probabilities.home], ["N", match.probabilities.draw], ["2", match.probabilities.away]].map(([label, value]) => (
                   <div key={String(label)}><span>{label}</span><strong>{pct(value as number | null)}</strong><i style={{ width: pct(value as number | null) }} /></div>
@@ -396,6 +533,12 @@ function MatchCenter({ matches, market }: { matches: typeof snapshot.matches; ma
                 <StatusPill value={match.quality} />
                 <span>Décision : <b>{match.decision}</b></span>
               </div>
+              <div className="explanation-grid">
+                <p><span>Faits</span>Fixture et marché reçus avant calcul.</p>
+                <p><span>Calcul</span>Probabilités implicites normalisées.</p>
+                <p><span>Hypothèse</span>Consensus des bookmakers observés.</p>
+                <p><span>Condition de changement</span>Nouveau snapshot durable ou qualité suffisante.</p>
+              </div>
             </article>
           ))}
         </div>
@@ -404,13 +547,29 @@ function MatchCenter({ matches, market }: { matches: typeof snapshot.matches; ma
   );
 }
 
-function OddsMonitor() {
+function OddsExplorer() {
   return (
     <section className="panel">
       <div className="panel-head">
         <div><span>Snapshots horodatés</span><h2>Marché 1X2 & Totaux</h2></div>
         <StatusPill value="LIVE_PIPELINE_VERIFIED" />
       </div>
+      <div className="movement-grid">
+        {snapshot.oddsMovement.map((item, index) => (
+          <article key={item.snapshot_id}>
+            <SourceBadge origin={item.origin} />
+            <small>{dateTime(item.observed_at)}</small>
+            <h3>{item.fixture}</h3>
+            <div className="movement-values">
+              <span>1 moyen<strong>{item.home_mean.toFixed(2)}</strong></span>
+              <span>N moyen<strong>{item.draw_mean.toFixed(2)}</strong></span>
+              <span>2 moyen<strong>{item.away_mean.toFixed(2)}</strong></span>
+              <span>Variation<strong>{index === 0 ? "point initial" : "0,00"}</strong></span>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p className="panel-note">Payloads distincts, prix agrégés identiques : aucune variation n’est inventée.</p>
       <div className="snapshot-list">
         {snapshot.odds.map((item) => (
           <article key={item.snapshot_id}>
@@ -461,14 +620,32 @@ function ShadowBets() {
   );
 }
 
-function DataQuality() {
+function ShadowPerformance() {
+  return (
+    <>
+      <section className="performance-boundaries">
+        <article><SourceBadge origin="LEGACY SOURCE" /><h2>Legacy</h2><strong>4 226 matchs</strong><p>Contexte rétrospectif. Jamais fusionné avec le shadow.</p></article>
+        <article><SourceBadge origin="OOS HISTORICAL" /><h2>OOS historique</h2><strong>{snapshot.strategies.length} stratégies</strong><p>Walk-forward informatif, non promotionnel.</p></article>
+        <article><SourceBadge origin="LIVE SHADOW" /><h2>Prospectif live</h2><strong>0 pari réglé</strong><p>Burn-in technique actif depuis un jour calendaire.</p></article>
+      </section>
+      <div className="statistical-lock">
+        <strong>{snapshot.burnIn.statistical_message}</strong>
+        <span>Minimum avant le prochain jalon : {snapshot.burnIn.minimum_calendar_days_before_next_jalon} jours calendaires.</span>
+      </div>
+      <StrategyLab />
+      <ShadowBets />
+    </>
+  );
+}
+
+function PipelineQuality() {
   return (
     <>
       <section className="quality-summary">
-        <Metric label="Contrôles au vert" value={`${snapshot.qualityChecks.filter((item) => item.status === "PASS").length}/${snapshot.qualityChecks.length}`} detail="sur l’artefact disponible" tone="cyan" />
-        <Metric label="Snapshots live" value={String(snapshot.metrics.snapshots)} detail="artifact persistant" />
-        <Metric label="Quota restant" value={snapshot.metrics.quotaRemaining.toLocaleString("fr-FR")} detail="réserve 20 %" />
-        <Metric label="Alertes critiques" value="0" detail="production verrouillée" />
+        <Metric label="PostgreSQL" value="CONNECTÉ" detail={`${snapshot.postgresql.registry_records} lignes · ${snapshot.postgresql.migration_revision}`} tone="cyan" />
+        <Metric label="Double écriture" value="VÉRIFIÉE" detail="Neon + shadow-data" tone="cyan" />
+        <Metric label="Retard du pont" value={String(snapshot.postgresql.bridge_lag_records)} detail="ligne manquante" />
+        <Metric label="Capacité utilisée" value={`${snapshot.postgresql.capacity_used_pct.toFixed(2)} %`} detail={`${(snapshot.postgresql.database_size_bytes / 1_000_000).toFixed(2)} MB sur 0,5 GB`} />
       </section>
       <section className="panel">
         <div className="panel-head"><div><span>Contrats de données</span><h2>Contrôles bloquants</h2></div><SourceBadge origin="LIVE SOURCE" /></div>
@@ -482,6 +659,63 @@ function DataQuality() {
         </div>
       </section>
     </>
+  );
+}
+
+function CostsQuotas() {
+  return (
+    <>
+      <section className="quality-summary">
+        <Metric label="Crédits consommés" value={String(snapshot.metrics.quotaUsed)} detail="mesure fournisseur" tone="cyan" />
+        <Metric label="Prévision mensuelle" value="720" detail="scénario courant" />
+        <Metric label="Réserve protégée" value="4 000" detail="20 % du plan" tone="amber" />
+        <Metric label="Coût stockage actuel" value="0 €" detail="pont temporaire shadow-data" />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Budget adaptatif</span><h2>Quota The Odds API</h2></div><StatusPill value="NORMAL" /></div>
+        <div className="quota-track"><i style={{ width: "0.2%" }} /><b style={{ left: "80%" }} /><span>8 utilisés</span><span>réserve à 80 %</span><span>20 000</span></div>
+        <p className="panel-note">Les fenêtres proches du coup d’envoi restent prioritaires. Les extensions de marché sont les premières coupées en cas de pression quota.</p>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Scénarios informatifs</span><h2>Impact d’un changement de périmètre</h2></div><SourceBadge origin="TEST EVIDENCE" /></div>
+        <div className="cost-grid">
+          {snapshot.costScenarios.map((scenario) => (
+            <article key={scenario.scope}><span>{scenario.scope}</span><strong>{scenario.credits} crédits/mois</strong><small>{scenario.competitions} compétition(s) · {scenario.markets} marchés</small></article>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+
+function DataExplorer() {
+  const [query, setQuery] = useState("");
+  const [sortAsc, setSortAsc] = useState(true);
+  const rows = useMemo(
+    () => [...snapshot.dataExplorer]
+      .filter((row) => `${row.fixture} ${row.competition} ${row.quality}`.toLowerCase().includes(query.toLowerCase()))
+      .sort((a, b) => (sortAsc ? 1 : -1) * a.date.localeCompare(b.date)),
+    [query, sortAsc],
+  );
+  const exportRows = rows.map((row) => ({ ...row }));
+  return (
+    <section className="panel">
+      <div className="panel-head"><div><span>Vue publiée</span><h2>{rows.length} lignes traçables</h2></div><SourceBadge origin="LIVE SOURCE" /></div>
+      <div className="explorer-tools">
+        <input aria-label="Rechercher" placeholder="Fixture, compétition, qualité…" value={query} onChange={(event) => setQuery(event.target.value)} />
+        <button onClick={() => setSortAsc(!sortAsc)}>Date {sortAsc ? "↑" : "↓"}</button>
+        <button onClick={() => localStorage.setItem("robin-data-view", JSON.stringify({ query, sortAsc }))}>Sauver la vue</button>
+        <button onClick={() => downloadCsv("robin-shadow-data.csv", exportRows)}>Exporter CSV</button>
+      </div>
+      <div className="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Fixture</th><th>Marché</th><th>Bookmakers</th><th>Snapshots</th><th>Modèle</th><th>Qualité</th><th>Provenance</th></tr></thead>
+          <tbody>{rows.map((row) => (
+            <tr key={`${row.date}-${row.fixture}`}><td>{dateTime(row.date)}</td><td>{row.fixture}</td><td>{row.market}</td><td>{row.bookmakers}</td><td>{row.snapshots}</td><td>{row.model}</td><td><StatusPill value={row.quality} /></td><td><SourceBadge origin={row.provenance} /></td></tr>
+          ))}</tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 

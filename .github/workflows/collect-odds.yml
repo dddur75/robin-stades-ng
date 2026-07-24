@@ -15,7 +15,7 @@ on:
   schedule:
     - cron: "11 */3 * * *"
 permissions:
-  contents: read
+  contents: write
   actions: write
 concurrency:
   group: shadow-state
@@ -42,10 +42,15 @@ jobs:
       - name: Collecter les snapshots
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          DURABLE_STORAGE_REQUIRED: "true"
         run: >-
           python scripts/run_shadow_pipeline.py collect-odds
           ${{ inputs.diagnostic && '--diagnostic' || '' }}
           ${{ inputs.mock && '--mock' || '' }}
+      - uses: ./.github/actions/durable-shadow
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: shadow-state-${{ github.run_id }}
