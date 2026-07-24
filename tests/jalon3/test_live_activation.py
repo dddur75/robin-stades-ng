@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import json
+import urllib.request
 import zipfile
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -25,6 +26,7 @@ from robin.operations.activation import (
 )
 from robin.providers.the_odds_api import parse_odds_snapshot
 from scripts.manage_shadow_state import (
+    CrossHostSafeRedirectHandler,
     prune_state_artifacts,
     restore_latest_state,
     safe_extract_zip,
@@ -201,6 +203,24 @@ def test_selection_etat_ignore_run_courant() -> None:
         },
     ]
     assert select_latest_state(artifacts, current_run_id="2")["id"] == 1
+
+
+def test_redirection_externe_supprime_authentification() -> None:
+    handler = CrossHostSafeRedirectHandler()
+    request = urllib.request.Request(
+        "https://api.github.com/repos/owner/repo/actions/artifacts/1/zip",
+        headers={"Authorization": "Bearer secret"},
+    )
+    redirected = handler.redirect_request(
+        request,
+        None,
+        302,
+        "Found",
+        {},
+        "https://signed-storage.example/state.zip",
+    )
+    assert redirected is not None
+    assert redirected.get_header("Authorization") is None
 
 
 def test_extraction_artifact_restaure_fichiers(tmp_path: Path) -> None:

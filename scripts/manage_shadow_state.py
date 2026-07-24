@@ -8,6 +8,7 @@ import json
 import os
 import shutil
 import urllib.error
+import urllib.parse
 import urllib.request
 import zipfile
 from collections.abc import Callable, Mapping
@@ -16,6 +17,39 @@ from typing import Any
 
 API_VERSION = "2022-11-28"
 STATE_PREFIX = "shadow-state-"
+
+
+class CrossHostSafeRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Ne jamais transmettre le jeton GitHub à l'URL de stockage signée."""
+
+    def redirect_request(
+        self,
+        request: urllib.request.Request,
+        file_pointer: Any,
+        code: int,
+        message: str,
+        headers: Any,
+        new_url: str,
+    ) -> urllib.request.Request | None:
+        redirected = super().redirect_request(
+            request,
+            file_pointer,
+            code,
+            message,
+            headers,
+            new_url,
+        )
+        if redirected is None:
+            return None
+        source_host = urllib.parse.urlparse(request.full_url).netloc
+        target_host = urllib.parse.urlparse(new_url).netloc
+        if source_host != target_host:
+            redirected.remove_header("Authorization")
+        return redirected
+
+
+def _default_open(request: urllib.request.Request) -> Any:
+    return urllib.request.build_opener(CrossHostSafeRedirectHandler()).open(request)
 
 
 def _headers(token: str) -> dict[str, str]:
@@ -31,7 +65,7 @@ def _open(
     request: urllib.request.Request,
     opener: Callable[[urllib.request.Request], Any] | None = None,
 ) -> Any:
-    return (opener or urllib.request.urlopen)(request)  # noqa: S310
+    return (opener or _default_open)(request)
 
 
 def list_state_artifacts(
