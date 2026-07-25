@@ -2,6 +2,9 @@
 
 Statut : `PRESEASON_PACKAGE_WAITING_FOR_EXTERNAL_GATES`.
 
+Package durable :
+`464347506cc531de7afe1931dc4d68dbfe08a69f53c539acd6104487142a3e41`.
+
 Le package versionné référence le protocole gelé et les datasets :
 
 - `pl_team_pre_match_v1` ;

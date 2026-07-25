@@ -1,7 +1,7 @@
 # Readiness externe multi-ligues
 
-Mesure initiale : `historical-data@9aa54ef`, cache uniquement, 0 appel et
-0 crédit fournisseur.
+Mesure durable : run `30167355305`, `historical-data@15de864`, cache
+uniquement, 0 appel et 0 crédit fournisseur.
 
 | Compétition | Saisons | Fixtures | Équipes observées | Joueurs roster | TEAM | PLAYER | LINEUP | MARKET |
 |---|---:|---:|---:|---:|---|---|---|---|

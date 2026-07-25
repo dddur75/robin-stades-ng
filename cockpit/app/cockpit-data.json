@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T16:59:19.426763+00:00",
+  "generatedAt": "2026-07-25T17:28:54.014612+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -2700,11 +2700,11 @@
     },
     "externalValidation": {
       "status": "WAITING_FOR_EXTERNAL_GATES",
-      "runId": "local-proof-jalon8",
-      "sourceCommit": "c41a773fadec1082abb3bce0ecf5c33072077650",
+      "runId": "30167355305",
+      "sourceCommit": "959245089d13935e9a6d80b5614f50b98933e8bc",
       "protocol": {
-        "frozen_at": "2026-07-25T16:45:00+00:00",
-        "hash": "e090899f065807cb41cadc6d50067eb7e4d78449d58bdf1ccd5187b28bd46d99",
+        "frozen_at": "2026-07-25T17:20:32.814754+00:00",
+        "hash": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2",
         "status": "EXTERNAL_VALIDATION_PROTOCOL_V1_LOCKED"
       },
       "readiness": [
@@ -3366,8 +3366,8 @@
           "metrics": {
             "accuracy": 0.48408239700374533,
             "brier_score": 0.20629441098352527,
-            "calibration_intercept": -0.050236164985327465,
-            "calibration_slope": 1.140762778421703,
+            "calibration_intercept": -0.05023616498532767,
+            "calibration_slope": 1.1407627784217027,
             "ece": 0.015695303651762683,
             "log_loss": 1.0311716150187518,
             "matches": 2136,
@@ -3381,8 +3381,8 @@
           "metrics": {
             "accuracy": 0.5135767790262172,
             "brier_score": 0.1975806310484061,
-            "calibration_intercept": -0.039951415878852065,
-            "calibration_slope": 1.0552520079562249,
+            "calibration_intercept": -0.03995141587885205,
+            "calibration_slope": 1.0552520079562246,
             "ece": 0.019490646257564193,
             "log_loss": 0.9945416331307865,
             "matches": 2136,
@@ -3396,8 +3396,8 @@
           "metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021200411989e-07,
-            "calibration_slope": 0.9629687389101173,
+            "calibration_intercept": -6.473021201981876e-07,
+            "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796728,
             "log_loss": 0.9982971423875214,
             "matches": 2136,
@@ -3411,8 +3411,8 @@
           "metrics": {
             "accuracy": 0.48174157303370785,
             "brier_score": 0.20632646999032503,
-            "calibration_intercept": -0.0823704977582962,
-            "calibration_slope": 1.18222601081394,
+            "calibration_intercept": -0.08237049775829654,
+            "calibration_slope": 1.1822260108139404,
             "ece": 0.014667937607782785,
             "log_loss": 1.0316794227669985,
             "matches": 2136,
@@ -3426,10 +3426,10 @@
           "metrics": {
             "accuracy": 0.5112359550561798,
             "brier_score": 0.19797843008003416,
-            "calibration_intercept": -0.043903242517988404,
+            "calibration_intercept": -0.043903242517988286,
             "calibration_slope": 1.0370677794687746,
             "ece": 0.026141992803416225,
-            "log_loss": 0.9958391466612697,
+            "log_loss": 0.9958391466612695,
             "matches": 2136,
             "sharpness": 0.1693654874677291,
             "status": "EVALUATED"
@@ -3443,10 +3443,10 @@
           "challenger_metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021202747397e-07,
-            "calibration_slope": 0.9629687389101184,
+            "calibration_intercept": -6.473021202492957e-07,
+            "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796697,
-            "log_loss": 0.9982971423875214,
+            "log_loss": 0.9982971423875217,
             "matches": 2136,
             "sharpness": 0.17167798871470927,
             "status": "EVALUATED"
@@ -3464,13 +3464,13 @@
           "model_a": "bundesliga_specific_v1",
           "model_b": "ligue1_frozen_transfer_v1",
           "paired_fixtures": 2136,
-          "paired_log_loss_delta": 0.003755509256734971,
+          "paired_log_loss_delta": 0.0037555092567349733,
           "production_status": "PRODUCTION_LOCKED",
           "reference_metrics": {
             "accuracy": 0.5135767790262172,
             "brier_score": 0.1975806310484061,
-            "calibration_intercept": -0.03995141587885189,
-            "calibration_slope": 1.055252007956226,
+            "calibration_intercept": -0.039951415878851905,
+            "calibration_slope": 1.055252007956225,
             "ece": 0.019490646257564248,
             "log_loss": 0.9945416331307865,
             "matches": 2136,
@@ -3480,12 +3480,12 @@
           "status": "INCONCLUSIVE",
           "uncertainty": {
             "ci90": [
-              -0.0018672448282433007,
-              0.009646575004382724
+              -0.001867244828243303,
+              0.009646575004382726
             ],
             "ci95": [
-              -0.002878114995781293,
-              0.01078177664469833
+              -0.0028781149957812927,
+              0.010781776644698331
             ],
             "groups": 215,
             "iterations": 5000,
@@ -3497,10 +3497,10 @@
           "challenger_metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021202747397e-07,
-            "calibration_slope": 0.9629687389101184,
+            "calibration_intercept": -6.473021202492957e-07,
+            "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796697,
-            "log_loss": 0.9982971423875214,
+            "log_loss": 0.9982971423875217,
             "matches": 2136,
             "sharpness": 0.17167798871470927,
             "status": "EVALUATED"
@@ -3534,12 +3534,12 @@
           "status": "INCONCLUSIVE",
           "uncertainty": {
             "ci90": [
-              -0.0017054164266271884,
-              0.006784032404360515
+              -0.0017054164266271893,
+              0.006784032404360514
             ],
             "ci95": [
-              -0.002509193697461492,
-              0.007526481307921519
+              -0.002509193697461491,
+              0.007526481307921518
             ],
             "groups": 215,
             "iterations": 5000,
@@ -3551,8 +3551,8 @@
           "challenger_metrics": {
             "accuracy": 0.48408239700374533,
             "brier_score": 0.20629441098352527,
-            "calibration_intercept": -0.050236164985327576,
-            "calibration_slope": 1.1407627784217034,
+            "calibration_intercept": -0.05023616498532781,
+            "calibration_slope": 1.1407627784217025,
             "ece": 0.015695303651762672,
             "log_loss": 1.0311716150187518,
             "matches": 2136,
@@ -3572,13 +3572,13 @@
           "model_a": "bundesliga_dixon_coles_v1",
           "model_b": "bundesliga_poisson_v1",
           "paired_fixtures": 2136,
-          "paired_log_loss_delta": -0.0005078077482467713,
+          "paired_log_loss_delta": -0.0005078077482467707,
           "production_status": "PRODUCTION_LOCKED",
           "reference_metrics": {
             "accuracy": 0.48174157303370785,
             "brier_score": 0.20632646999032503,
-            "calibration_intercept": -0.08237049775829694,
-            "calibration_slope": 1.1822260108139413,
+            "calibration_intercept": -0.08237049775829688,
+            "calibration_slope": 1.182226010813941,
             "ece": 0.014667937607782802,
             "log_loss": 1.0316794227669985,
             "matches": 2136,
@@ -3588,12 +3588,12 @@
           "status": "INCONCLUSIVE",
           "uncertainty": {
             "ci90": [
-              -0.0020292809696808287,
-              0.0010161409376894775
+              -0.002029280969680828,
+              0.0010161409376894782
             ],
             "ci95": [
-              -0.002293734363038419,
-              0.0013181624238046584
+              -0.0022937343630384187,
+              0.0013181624238046594
             ],
             "groups": 215,
             "iterations": 5000,
@@ -3605,8 +3605,8 @@
           "challenger_metrics": {
             "accuracy": 0.48174157303370785,
             "brier_score": 0.20632646999032503,
-            "calibration_intercept": -0.08237049775829694,
-            "calibration_slope": 1.1822260108139413,
+            "calibration_intercept": -0.08237049775829688,
+            "calibration_slope": 1.182226010813941,
             "ece": 0.014667937607782802,
             "log_loss": 1.0316794227669985,
             "matches": 2136,
@@ -3631,10 +3631,10 @@
           "reference_metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021202747397e-07,
-            "calibration_slope": 0.9629687389101184,
+            "calibration_intercept": -6.473021202492957e-07,
+            "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796697,
-            "log_loss": 0.9982971423875214,
+            "log_loss": 0.9982971423875217,
             "matches": 2136,
             "sharpness": 0.17167798871470927,
             "status": "EVALUATED"
@@ -3643,10 +3643,10 @@
           "uncertainty": {
             "ci90": [
               0.02175552020341727,
-              0.0448606695208287
+              0.04486066952082869
             ],
             "ci95": [
-              0.019360902405038353,
+              0.01936090240503835,
               0.04684659374761711
             ],
             "groups": 215,
@@ -3682,13 +3682,13 @@
           "market_comparison": "UNAVAILABLE_MARKET_GATE",
           "metrics": {
             "accuracy": 0.49605263157894736,
-            "brier_score": 0.20208171649561102,
-            "calibration_intercept": -0.01431375105564791,
-            "calibration_slope": 0.9755424330500688,
-            "ece": 0.031604925509953384,
+            "brier_score": 0.20208171649561105,
+            "calibration_intercept": -0.01431375105564785,
+            "calibration_slope": 0.975542433050069,
+            "ece": 0.03160492550995335,
             "log_loss": 1.0104974067498922,
             "matches": 760,
-            "sharpness": 0.1592172437717624,
+            "sharpness": 0.15921724377176238,
             "status": "EVALUATED"
           },
           "paired_fixtures": 760,
@@ -3706,8 +3706,8 @@
           "metrics": {
             "accuracy": 0.5223684210526316,
             "brier_score": 0.1961772753961993,
-            "calibration_intercept": -0.05048857638295177,
-            "calibration_slope": 1.0582948765177316,
+            "calibration_intercept": -0.0504885763829514,
+            "calibration_slope": 1.0582948765177307,
             "ece": 0.02049686050339524,
             "log_loss": 0.9913360571337251,
             "matches": 760,
@@ -3731,7 +3731,7 @@
             "brier_score": 0.197653478787476,
             "calibration_intercept": -0.01936068610468552,
             "calibration_slope": 0.981672994675791,
-            "ece": 0.04199653872653712,
+            "ece": 0.04199653872653711,
             "log_loss": 0.9946561498073714,
             "matches": 616,
             "sharpness": 0.17615867488010248,
@@ -3880,7 +3880,7 @@
         "calibrators": [
           "NONE_FROZEN_EXTERNAL"
         ],
-        "code_revision": "c41a773fadec1082abb3bce0ecf5c33072077650",
+        "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
         "dataset_versions": [
           "pl_team_pre_match_v1",
           "laliga_team_pre_match_v1",
@@ -3893,18 +3893,18 @@
         "feature_versions": [
           "TEAM_FEATURES_V1"
         ],
-        "generated_at": "2026-07-25T16:53:35.221816+00:00",
+        "generated_at": "2026-07-25T17:20:32.814586+00:00",
         "hashes": {
           "datasets": {
             "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
             "laliga_team_pre_match_v1": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
             "pl_team_pre_match_v1": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876"
           },
-          "external_protocol": "e090899f065807cb41cadc6d50067eb7e4d78449d58bdf1ccd5187b28bd46d99"
+          "external_protocol": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2"
         },
         "model_versions": [],
         "package": "PRESEASON_SHADOW_PACKAGE_V1",
-        "package_hash": "6d34d2a80761c0026946d12f9d8686c158aa6b9174e1e4ba2894408314bdfb02",
+        "package_hash": "464347506cc531de7afe1931dc4d68dbfe08a69f53c539acd6104487142a3e41",
         "production_status": "PRODUCTION_LOCKED",
         "quality_gates": [
           "TEAM_GATE",
@@ -3931,9 +3931,9 @@
       "providerCalls": 0,
       "quotaConsumed": 0,
       "storage": {
-        "after_bytes": 364477070,
+        "after_bytes": 383367123,
         "can_write": true,
-        "current_bytes": 361005947,
+        "current_bytes": 379897417,
         "pause_bytes": 900000000,
         "status": "SAFE",
         "warning_bytes": 750000000
@@ -13529,9 +13529,9 @@
       "rawBytes": 0,
       "parquetBytes": 40241636,
       "derivedBytes": 69523587,
-      "totalBytes": 364616667,
-      "fileCount": 597,
-      "bundleCount": 18,
+      "totalBytes": 386904087,
+      "fileCount": 600,
+      "bundleCount": 19,
       "payloadCount": 0,
       "projectedBytes": 2191134164,
       "projectedBytesLow": 1178577815,
@@ -16464,7 +16464,7 @@
       "build": "COCKPIT_BUILD_SUCCESS",
       "artifact": "COCKPIT_ARTIFACT_PUBLISHED",
       "private": "COCKPIT_PRIVATE_STALE",
-      "snapshotGeneratedAt": "2026-07-25T16:59:19.413456+00:00",
+      "snapshotGeneratedAt": "2026-07-25T17:28:54.000940+00:00",
       "currentDataHash": "751dd764738bab89275ca61366ef5563be81877ade329b3cd08f227ab4fb6f35",
       "currentBackfillRunId": "30164238824",
       "deploymentVersion": 8,

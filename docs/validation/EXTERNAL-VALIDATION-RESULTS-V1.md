@@ -3,9 +3,11 @@
 État : `WAITING_FOR_EXTERNAL_GATES`.
 
 Le protocole a été gelé avant mesure sous le hash
-`e090899f065807cb41cadc6d50067eb7e4d78449d58bdf1ccd5187b28bd46d99`.
+`53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2`.
 Trois ligues franchissent TEAM_GATE : Premier League, La Liga et Bundesliga.
 Les évaluations portent sur 2 136 fixtures 2024–2025 exactement appariées.
+Le résultat durable provient du run GitHub `30167355305`, exécuté avec
+`provider_calls = 0` et `quota_consumed = 0`.
 
 | Famille | Log Loss | Brier | ECE | Accuracy |
 |---|---:|---:|---:|---:|
