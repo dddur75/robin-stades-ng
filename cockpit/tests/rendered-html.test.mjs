@@ -60,6 +60,10 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Lineup Explorer/);
   assert.match(page, /Feature Lab/);
   assert.match(page, /Model Lab/);
+  assert.match(page, /Model Arena/);
+  assert.match(page, /Comparaisons appariées/);
+  assert.match(page, /CI 90/);
+  assert.match(page, /CI 95/);
   assert.match(page, /Strategy Lab/);
   assert.match(page, /Backtest Explorer/);
   assert.match(page, /Historical Data Quality/);

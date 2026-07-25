@@ -184,3 +184,14 @@ Le store joueurs conserve les nulls et l'identité fournisseur lors des
 transferts. La composition cible est réservée à `POST_LINEUP_SIMULATED`. Les
 calibrations sont choisies sur Validation seulement. DuckDB 1.5.4 et Polars
 1.43.0 sont épinglés pour la validation croisée des Parquet.
+
+## ADR — Jalon 7
+
+- La comparaison est strictement appariée par fixture, saison, cible, snapshot
+  marché et politique temporelle.
+- La calibration est sélectionnée sur des prédictions cross-fit uniquement.
+- L'incertitude utilise 5 000 bootstraps groupés saison-semaine (CI 90/95 %).
+- 2024–2025 est exposé et interdit à tout nouveau réglage.
+- scikit-learn 1.9.0 est épinglé pour le benchmark
+  `HistGradientBoostingClassifier`.
+- Aucun résultat historique seul ne peut créer un candidat live.

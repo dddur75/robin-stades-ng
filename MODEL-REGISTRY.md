@@ -62,3 +62,12 @@ Mesures initiales OOS : `api_elo_v1` 1,1642 / 0,1986,
 `api_post_lineup_simulated_multinomial_v1` 1,6920 / 0,2108
 (Log Loss / Brier). Le gain joueur est inconclusif car les deux métriques ne
 s'améliorent pas ensemble ; la variante lineup simulée est rejetée.
+
+## Jalon 7
+
+Familles admises dans l'arène : multinomiale, gradient boosting histogramme,
+Poisson, Dixon–Coles, marché déviggué, pré-lineup joueurs et audit post-lineup.
+La preuve appariée confirme le modèle joueurs `INCONCLUSIVE` (Δ Log Loss
++0,00056; CI 95 % croise zéro) et le post-lineup inférieur au pré-lineup
+(Δ +0,03178). Aucun statut `MODEL_VALIDATED` ou `LIVE_SHADOW_CANDIDATE` n'est
+accordé.

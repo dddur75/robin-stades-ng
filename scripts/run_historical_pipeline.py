@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import subprocess
 import time
@@ -19,7 +20,11 @@ from sqlalchemy import func, insert, inspect, select, update
 from sqlalchemy.dialects.postgresql import insert as postgresql_insert
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
-from robin.backtesting.v3 import strategy_sensitivity
+from robin.backtesting.v3 import (
+    StrategyParameters,
+    run_backtest,
+    strategy_sensitivity,
+)
 from robin.historical.canonical import (
     CompetitionFormat,
     canonical_dataset_hash,
@@ -38,7 +43,15 @@ from robin.historical.features import (
     dataset_manifest,
 )
 from robin.historical.forecast import build_complete_forecast
-from robin.historical.model_lab import run_model_lab
+from robin.historical.model_lab import (
+    LINEUP_FEATURES,
+    PLAYER_FEATURES,
+    TEAM_FEATURES,
+    run_model_lab,
+)
+from robin.historical.model_lab import (
+    target as model_target,
+)
 from robin.historical.modeling import backtest_fixed_stake, train_elo_baseline
 from robin.historical.normalization import entity_type_for_endpoint, normalize_records
 from robin.historical.orchestrator import (
@@ -62,6 +75,23 @@ from robin.historical.scheduling import (
     BackfillTelemetry,
     accelerated_safe_plan,
     observed_throughput,
+)
+from robin.historical.scientific_arena import (
+    OOS_GOVERNANCE,
+    ablation_registry,
+    apply_selected_calibration,
+    arena_cache_key,
+    deterministic_permutation_control,
+    external_validation_protocol,
+    feature_stability_audit,
+    freeze_jalon6,
+    paired_model_comparison,
+    random_lineup_control,
+    score_model_predictions,
+    stable_hash,
+    storage_guard,
+    strategy_lab_v2_protocol,
+    temporal_discriminative_predictions,
 )
 from robin.historical.storage import (
     GzipPayloadBackend,
@@ -88,9 +118,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STATE = ROOT / "data" / "historical"
 CONTRACT = ROOT / "data" / "contracts" / "api-football-coverage.json"
 PROOF = ROOT / "data" / "live-proof" / "jalon5-api-football.json"
-DEPENDENCY_REGISTRY = (
-    ROOT / "configs" / "historical_dependency_registry_v1.json"
-)
+DEPENDENCY_REGISTRY = ROOT / "configs" / "historical_dependency_registry_v1.json"
 
 
 def now_iso() -> str:
@@ -128,11 +156,7 @@ def completed_rows_this_run(plan: Mapping[str, object]) -> int:
     completed = int(str(plan.get("completed_this_run", 0)))
     raw_tasks = plan.get("tasks", [])
     task_items = raw_tasks if isinstance(raw_tasks, list) else []
-    tasks = [
-        task
-        for task in task_items
-        if isinstance(task, Mapping) and task.get("completed_at")
-    ]
+    tasks = [task for task in task_items if isinstance(task, Mapping) and task.get("completed_at")]
     latest = sorted(
         tasks,
         key=lambda task: str(task.get("completed_at", "")),
@@ -156,10 +180,7 @@ def batched_rows(
 ) -> list[list[dict[str, object]]]:
     if batch_size <= 0:
         raise ValueError("batch_size doit être strictement positif")
-    return [
-        rows[offset : offset + batch_size]
-        for offset in range(0, len(rows), batch_size)
-    ]
+    return [rows[offset : offset + batch_size] for offset in range(0, len(rows), batch_size)]
 
 
 class HistoricalRunner:
@@ -200,10 +221,7 @@ class HistoricalRunner:
         self.calls += 1
         if result.quota.remaining is not None:
             self.quota_remaining = result.quota.remaining
-        if (
-            self.quota_remaining is not None
-            and self.quota_remaining <= self.quota_reserve
-        ):
+        if self.quota_remaining is not None and self.quota_remaining <= self.quota_reserve:
             raise RuntimeError("QUOTA_RESERVE_REACHED")
         return result
 
@@ -253,9 +271,7 @@ class HistoricalRunner:
             result = self._fetch(clean_endpoint, params)
             records = result.records
             status = (
-                "COMPLETED"
-                if result.http_status is None or result.http_status < 400
-                else "FAILED"
+                "COMPLETED" if result.http_status is None or result.http_status < 400 else "FAILED"
             )
             pages = 1
             raw_payload_hash = result.raw_payload_hash
@@ -467,16 +483,8 @@ def canonicalize_ligue1_2025(state: Path) -> dict[str, object]:
         competition_format=competition_format,
     )
     cardinality = validate_canonical_cardinality(classified, competition_format)
-    canonical = [
-        row
-        for row in classified
-        if row["canonical_scope"] == "REGULAR_SEASON_CANONICAL"
-    ]
-    excluded = [
-        row
-        for row in classified
-        if row["canonical_scope"] != "REGULAR_SEASON_CANONICAL"
-    ]
+    canonical = [row for row in classified if row["canonical_scope"] == "REGULAR_SEASON_CANONICAL"]
+    excluded = [row for row in classified if row["canonical_scope"] != "REGULAR_SEASON_CANONICAL"]
     canonical_storage = PartitionedParquetStore(state / "canonical").write_records(
         canonical,
         competition="Ligue 1",
@@ -540,15 +548,13 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
     throughput["calls_per_minute"] = 60.0 / effective_seconds_per_call
     throughput["calls_per_hour"] = 3600.0 / effective_seconds_per_call
     throughput["recent_calls_per_task"] = (
-        float(plan.get("provider_calls", 0))
-        / max(1, int(plan.get("completed_this_run", 0)))
+        float(plan.get("provider_calls", 0)) / max(1, int(plan.get("completed_this_run", 0)))
         if int(plan.get("provider_calls", 0)) > 0
         else float(throughput["calls_per_task"])
     )
     recent_rows = completed_rows_this_run(plan)
     throughput["recent_rows_per_call"] = (
-        float(recent_rows)
-        / max(1, int(plan.get("provider_calls", 0)))
+        float(recent_rows) / max(1, int(plan.get("provider_calls", 0)))
         if int(plan.get("provider_calls", 0)) > 0
         else float(throughput["rows_per_call"])
     )
@@ -569,8 +575,7 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
     daily_calls = int(complete["calls_per_day"])
     total_call_projection = int(complete["calls_remaining_base"])
     uncompressed_file_projection = int(
-        total_call_projection * max(float(throughput["payloads_per_task"]) / 25.08, 1)
-        * 2
+        total_call_projection * max(float(throughput["payloads_per_task"]) / 25.08, 1) * 2
     )
     compacted_file_projection = max(1, len(plan.get("tasks", [])) // 100) * 3 + 300
     return {
@@ -578,10 +583,7 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
         "observed": throughput,
         "cache_rate": 0.0,
         "unavailable_endpoint_rate": (
-            sum(
-                task.get("coverage_status") == "UNAVAILABLE"
-                for task in plan.get("tasks", [])
-            )
+            sum(task.get("coverage_status") == "UNAVAILABLE" for task in plan.get("tasks", []))
             / max(1, len(plan.get("tasks", [])))
         ),
         "error_rate": 0.0,
@@ -856,9 +858,7 @@ def command_backfill(args: argparse.Namespace) -> None:
     quota_remaining = plan.get("quota_remaining", pilot.get("quota_remaining"))
     adaptive = accelerated_safe_plan(
         BackfillTelemetry(
-            quota_remaining=(
-                int(quota_remaining) if quota_remaining is not None else None
-            ),
+            quota_remaining=(int(quota_remaining) if quota_remaining is not None else None),
             quota_reset_at=None,
             reserve=args.quota_reserve,
             mean_calls_per_task=(
@@ -1042,24 +1042,16 @@ def command_backfill(args: argparse.Namespace) -> None:
             )
         except RuntimeError as exc:
             code = str(exc)
-            task["status"] = (
-                "SKIPPED_QUOTA"
-                if code == "QUOTA_RESERVE_REACHED"
-                else "RETRYABLE"
-            )
+            task["status"] = "SKIPPED_QUOTA" if code == "QUOTA_RESERVE_REACHED" else "RETRYABLE"
             task["error_code"] = code
             stopped_reason = code
             if code in {"MAX_CALLS_REACHED", "QUOTA_RESERVE_REACHED"}:
                 break
             continue
         task["rows_received"] = report["rows_received"]
-        task["status"] = (
-            "COMPLETED" if report["status"] == "COMPLETED" else "PARTIAL"
-        )
+        task["status"] = "COMPLETED" if report["status"] == "COMPLETED" else "PARTIAL"
         task["coverage_status"] = (
-            "AVAILABLE"
-            if int(str(report["rows_received"])) > 0
-            else "UNAVAILABLE"
+            "AVAILABLE" if int(str(report["rows_received"])) > 0 else "UNAVAILABLE"
         )
         if task["coverage_status"] == "UNAVAILABLE":
             unavailable_this_run += 1
@@ -1129,11 +1121,7 @@ def command_backfill(args: argparse.Namespace) -> None:
 
 
 def command_compact(args: argparse.Namespace) -> None:
-    raw_files = [
-        path
-        for path in (args.state / "raw").rglob("*")
-        if path.is_file()
-    ]
+    raw_files = [path for path in (args.state / "raw").rglob("*") if path.is_file()]
     if not raw_files:
         result: dict[str, object] = {
             "status": "NO_RAW_FILES",
@@ -1246,9 +1234,7 @@ def command_datasets(args: argparse.Namespace) -> None:
         write_json_atomic(args.state / "datasets" / f"{name}.json", manifest)
         manifests.append(manifest)
     if isinstance(gate_b, Mapping) and gate_b.get("passed"):
-        player_seasons = tuple(
-            int(value) for value in gate_b.get("eligible_seasons", [])
-        )
+        player_seasons = tuple(int(value) for value in gate_b.get("eligible_seasons", []))
         facts = player_match_facts(args.state, seasons=player_seasons)
         facts_manifest = write_dataset(
             args.state,
@@ -1320,11 +1306,7 @@ def _dataset_rows(state: Path, dataset_name: str) -> list[dict[str, object]]:
         if f"entity_type={dataset_name}" not in path.as_posix():
             continue
         rows.extend(
-            {
-                str(key): value
-                for key, value in record.items()
-                if key != "_record_hash"
-            }
+            {str(key): value for key, value in record.items() if key != "_record_hash"}
             for record in pd.read_parquet(path).to_dict(orient="records")
         )
     return rows
@@ -1336,10 +1318,7 @@ def command_model_lab(args: argparse.Namespace) -> None:
         "api_player_pre_lineup_v1",
         "api_post_lineup_simulated_v1",
     )
-    datasets = {
-        name: _dataset_rows(args.state, name)
-        for name in dataset_names
-    }
+    datasets = {name: _dataset_rows(args.state, name) for name in dataset_names}
     if not datasets["api_team_pre_match_v1"]:
         raise RuntimeError("MODEL_LAB_BLOCKED_GATE_A")
     models, predictions = run_model_lab(datasets)
@@ -1350,18 +1329,12 @@ def command_model_lab(args: argparse.Namespace) -> None:
         )
     store = PartitionedParquetStore(args.state / "derived")
     prediction_partitions: list[dict[str, object]] = []
-    for model_version in sorted(
-        {str(row["model_version"]) for row in predictions}
-    ):
-        model_rows = [
-            row for row in predictions if row["model_version"] == model_version
-        ]
+    for model_version in sorted({str(row["model_version"]) for row in predictions}):
+        model_rows = [row for row in predictions if row["model_version"] == model_version]
         for season in sorted({int(row["season"]) for row in model_rows}):
             prediction_partitions.append(
                 store.write_records(
-                    [
-                        row for row in model_rows if int(row["season"]) == season
-                    ],
+                    [row for row in model_rows if int(row["season"]) == season],
                     competition="Ligue-1",
                     season=season,
                     entity_type="api_model_predictions_v1",
@@ -1394,9 +1367,7 @@ def command_strategy_lab(args: argparse.Namespace) -> None:
     predictions = _dataset_rows(args.state, "api_model_predictions_v1")
     if not predictions:
         raise RuntimeError("STRATEGY_LAB_BLOCKED_MODEL_OUTPUT")
-    model_versions = sorted(
-        {str(row["model_version"]) for row in predictions}
-    )
+    model_versions = sorted({str(row["model_version"]) for row in predictions})
     results: list[dict[str, object]] = []
     for model_version in model_versions:
         results.extend(
@@ -1411,9 +1382,7 @@ def command_strategy_lab(args: argparse.Namespace) -> None:
             args.state / "backtests" / f"{safe_name}.json",
             result,
         )
-        strategy_manifest = {
-            key: value for key, value in result.items() if key != "details"
-        }
+        strategy_manifest = {key: value for key, value in result.items() if key != "details"}
         strategy_manifest["strategy_version"] = result["strategy"]
         write_json_atomic(
             args.state / "strategies" / f"{safe_name}.json",
@@ -1423,15 +1392,322 @@ def command_strategy_lab(args: argparse.Namespace) -> None:
         "status": "INCONCLUSIVE",
         "strategies_tested": len(results),
         "rejected": sum(result["status"] == "REJECTED" for result in results),
-        "inconclusive": sum(
-            result["status"] == "INCONCLUSIVE" for result in results
-        ),
+        "inconclusive": sum(result["status"] == "INCONCLUSIVE" for result in results),
         "live_shadow_candidates": 0,
         "provider_calls": 0,
         "quota_consumed": 0,
         "production_status": "PRODUCTION_LOCKED",
     }
     write_json_atomic(args.state / "strategies" / "jalon6-run.json", summary)
+    print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+
+
+def _market_prediction_rows(
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    predictions: list[dict[str, object]] = []
+    for row in rows:
+        label = model_target(row)
+        season = int(str(row.get("season", 0)))
+        prices = [
+            row.get("odds_home"),
+            row.get("odds_draw"),
+            row.get("odds_away"),
+        ]
+        try:
+            implied = [1.0 / float(str(price)) for price in prices]
+        except (TypeError, ValueError, ZeroDivisionError):
+            continue
+        if (
+            label is None
+            or season not in {2024, 2025}
+            or min(implied) <= 0.0
+            or any(not math.isfinite(value) for value in implied)
+        ):
+            continue
+        total = sum(implied)
+        predictions.append(
+            {
+                "fixture_id": row["fixture_id"],
+                "season": season,
+                "kickoff_at": row["kickoff_at"],
+                "target": label,
+                "model_version": "market_devigged_baseline_v1",
+                "dataset_version": "api_market_baseline_v1",
+                "probability_home": implied[0] / total,
+                "probability_draw": implied[1] / total,
+                "probability_away": implied[2] / total,
+                "market_snapshot": row.get("market_source", ""),
+                "temporal_policy": "PRE_MATCH_CUTOFF",
+                "odds_home": row.get("odds_home"),
+                "odds_draw": row.get("odds_draw"),
+                "odds_away": row.get("odds_away"),
+                "origin": "EXPOSED_HISTORICAL_OOS",
+            }
+        )
+    return predictions
+
+
+def _paired_cutoff(
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    return [
+        {
+            **row,
+            "market_snapshot": str(row.get("market_snapshot", "")),
+            "temporal_policy": "PRE_MATCH_CUTOFF",
+        }
+        for row in rows
+    ]
+
+
+def command_scientific_arena(args: argparse.Namespace) -> None:
+    """Run Jalon 7 without provider calls, using only durable restored datasets."""
+
+    state = args.state
+    manifests = [read_json(path, {}) for path in sorted((state / "datasets").glob("*.json"))]
+    manifests = [item for item in manifests if isinstance(item, Mapping)]
+    cache_key = arena_cache_key(manifests, code_revision=git_revision())
+    run_path = state / "models" / "jalon7-arena-run.json"
+    cached = read_json(run_path, {})
+    if cached.get("cache_key") == cache_key:
+        printable = dict(cached)
+        printable["execution_status"] = "CACHED"
+        printable["provider_calls"] = 0
+        printable["quota_consumed"] = 0
+        print(json.dumps(printable, ensure_ascii=False, sort_keys=True))
+        return
+
+    baseline_spec = read_json(ROOT / "configs" / "jalon6-baseline.json", {})
+    freeze = freeze_jalon6(
+        state,
+        source_commit=str(baseline_spec.get("source_commit", git_revision())),
+    )
+    arena_root = state / "arena"
+    write_json_atomic(arena_root / "oos-governance-v1.json", OOS_GOVERNANCE)
+    external = external_validation_protocol()
+    write_json_atomic(arena_root / "external-validation-protocol-v1.json", external)
+    strategy_protocol = strategy_lab_v2_protocol()
+    write_json_atomic(arena_root / "strategy-lab-v2-protocol.json", strategy_protocol)
+    write_json_atomic(arena_root / "ablation-registry-v1.json", ablation_registry())
+
+    team_rows = _dataset_rows(state, "api_team_pre_match_v1")
+    player_rows = _dataset_rows(state, "api_player_pre_lineup_v1")
+    post_rows = _dataset_rows(state, "api_post_lineup_simulated_v1")
+    if not team_rows:
+        raise RuntimeError("SCIENTIFIC_ARENA_BLOCKED_DATASET_GATE_A")
+
+    model_inputs = {
+        "team_multinomial_crossfit": temporal_discriminative_predictions(
+            team_rows,
+            model_family="MULTINOMIAL",
+            model_version="team_multinomial_crossfit_v1",
+        ),
+        "team_hist_gradient_boosting_crossfit": (
+            temporal_discriminative_predictions(
+                team_rows,
+                model_family="HIST_GRADIENT_BOOSTING",
+                model_version="team_hist_gradient_boosting_crossfit_v1",
+            )
+        ),
+        "team_without_recent_form_crossfit": (
+            temporal_discriminative_predictions(
+                team_rows,
+                model_family="MULTINOMIAL",
+                model_version="team_without_recent_form_crossfit_v1",
+                features=tuple(
+                    feature
+                    for feature in TEAM_FEATURES
+                    if "form" not in feature and "goals_" not in feature
+                ),
+            )
+        ),
+        "poisson_score": score_model_predictions(team_rows, method="POISSON"),
+        "dixon_coles_score": score_model_predictions(team_rows, method="DIXON_COLES"),
+        "market_devigged": _market_prediction_rows(team_rows),
+    }
+    if player_rows:
+        model_inputs["player_pre_lineup_crossfit"] = temporal_discriminative_predictions(
+            player_rows,
+            model_family="MULTINOMIAL",
+            model_version="player_pre_lineup_crossfit_v1",
+            features=(*TEAM_FEATURES, *PLAYER_FEATURES),
+        )
+    if post_rows:
+        model_inputs["post_lineup_audit_crossfit"] = temporal_discriminative_predictions(
+            post_rows,
+            model_family="MULTINOMIAL",
+            model_version="post_lineup_audit_crossfit_v1",
+            features=(*TEAM_FEATURES, *PLAYER_FEATURES, *LINEUP_FEATURES),
+        )
+
+    calibrated: dict[str, list[dict[str, object]]] = {}
+    calibration_audits: dict[str, object] = {}
+    for name, rows in model_inputs.items():
+        development = [row for row in rows if int(str(row.get("season", 0))) <= 2023]
+        evaluation = [row for row in rows if int(str(row.get("season", 0))) >= 2024]
+        if name.endswith("_crossfit") and development and evaluation:
+            calibrated[name], calibration_audits[name] = apply_selected_calibration(
+                development, evaluation
+            )
+        else:
+            calibrated[name] = evaluation or rows
+            calibration_audits[name] = {
+                "method": "NONE",
+                "reason": "FIXED_SCORE_OR_MARKET_BASELINE",
+            }
+
+    comparisons: list[dict[str, object]] = []
+
+    def compare(challenger: str, reference: str) -> None:
+        left = _paired_cutoff(calibrated.get(challenger, []))
+        right = _paired_cutoff(calibrated.get(reference, []))
+        try:
+            result = paired_model_comparison(
+                left,
+                right,
+                comparison_id=f"{challenger}_VS_{reference}",
+            )
+        except ValueError as error:
+            result = {
+                "comparison_id": f"{challenger}_VS_{reference}",
+                "status": "BLOCKED_BY_PAIRING",
+                "reason": str(error),
+                "production_status": "PRODUCTION_LOCKED",
+            }
+        comparisons.append(result)
+
+    compare("team_hist_gradient_boosting_crossfit", "team_multinomial_crossfit")
+    compare("team_without_recent_form_crossfit", "team_multinomial_crossfit")
+    compare("poisson_score", "market_devigged")
+    compare("dixon_coles_score", "poisson_score")
+    if "player_pre_lineup_crossfit" in calibrated:
+        compare("player_pre_lineup_crossfit", "team_multinomial_crossfit")
+    if "post_lineup_audit_crossfit" in calibrated:
+        compare("post_lineup_audit_crossfit", "player_pre_lineup_crossfit")
+
+    controls = [deterministic_permutation_control(team_rows)]
+    if player_rows:
+        controls.append(random_lineup_control(player_rows))
+    all_predictions = [row for rows in calibrated.values() for row in rows]
+    store = PartitionedParquetStore(state / "derived")
+    partitions: list[dict[str, object]] = []
+    for model_version in sorted({str(row["model_version"]) for row in all_predictions}):
+        model_rows = [row for row in all_predictions if str(row["model_version"]) == model_version]
+        for season in sorted({int(str(row["season"])) for row in model_rows}):
+            partitions.append(
+                store.write_records(
+                    [row for row in model_rows if int(str(row["season"])) == season],
+                    competition="Ligue-1",
+                    season=season,
+                    entity_type="scientific_arena_predictions_v1",
+                    dataset_version=model_version,
+                )
+            )
+    guard = storage_guard(directory_size(state))
+    result: dict[str, object] = {
+        "status": "SCIENTIFIC_MODEL_ARENA_ACTIVE",
+        "model_version": "scientific_model_arena_v1",
+        "backtest_version": "scientific_paired_arena_v1",
+        "cache_key": cache_key,
+        "baseline_status": freeze["status"],
+        "baseline_hash": freeze["baseline_hash"],
+        "external_protocol": external["protocol_id"],
+        "model_families": sorted(calibrated),
+        "models_tested": len(calibrated),
+        "predictions": len(all_predictions),
+        "comparisons": comparisons,
+        "calibration_audits": calibration_audits,
+        "negative_controls": controls,
+        "feature_stability": feature_stability_audit(
+            team_rows,
+            features=TEAM_FEATURES,
+        ),
+        "ablation_count": len(ablation_registry()),
+        "ensemble": {
+            "status": "BLOCKED_NO_VALIDATED_COMPONENTS",
+            "components": [],
+        },
+        "external_validation": {
+            "status": "BLOCKED_BY_COVERAGE",
+            "protocol": external["protocol_id"],
+            "results_observed": False,
+        },
+        "partitions": partitions,
+        "storage": guard,
+        "live_candidates": 0,
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "production_status": "PRODUCTION_LOCKED",
+        "run_hash": stable_hash(
+            {
+                "cache_key": cache_key,
+                "comparisons": comparisons,
+                "controls": controls,
+            }
+        ),
+    }
+    write_json_atomic(run_path, result)
+    write_json_atomic(state / "backtests" / "jalon7-paired-comparisons.json", result)
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+
+
+def command_strategy_lab_v2(args: argparse.Namespace) -> None:
+    predictions = _dataset_rows(args.state, "scientific_arena_predictions_v1")
+    if not predictions:
+        raise RuntimeError("STRATEGY_LAB_V2_BLOCKED_ARENA_OUTPUT")
+    protocol = strategy_lab_v2_protocol()
+    results: list[dict[str, object]] = []
+    for model_version in sorted({str(row.get("model_version", "")) for row in predictions}):
+        model_rows = [
+            {**row, "origin": "OOS HISTORICAL"}
+            for row in predictions
+            if str(row.get("model_version", "")) == model_version
+        ]
+        if any(row.get("odds_home") for row in model_rows):
+            results.extend(
+                strategy_sensitivity(
+                    model_rows,
+                    model_version=model_version,
+                    edges=(0.03, 0.05, 0.07),
+                )
+            )
+        if any(
+            row.get("probability_over_25") is not None
+            and row.get("odds_over_25") is not None
+            for row in model_rows
+        ):
+            for edge in (0.03, 0.05, 0.07):
+                results.append(
+                    run_backtest(
+                        model_rows,
+                        StrategyParameters(
+                            name=(
+                                f"{model_version}_over_under_2_5_edge_{edge:.2f}"
+                            ),
+                            market="OVER_UNDER_2_5",
+                            minimum_edge=edge,
+                        ),
+                        hypotheses_tested=3,
+                    )
+                )
+    summary = {
+        "status": "INCONCLUSIVE",
+        "strategy_version": "strategy_lab_v2_protocol",
+        "backtest_version": "strategy_lab_v2_exposed_oos_v1",
+        "protocol": protocol["protocol_id"],
+        "protocol_hash": protocol["protocol_hash"],
+        "strategies_tested": len(results),
+        "evaluation_segment": "EXPOSED_HISTORICAL_OOS",
+        "promoted": 0,
+        "markets_without_usable_prices": ["BTTS"],
+        "live_shadow_candidates": 0,
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "production_status": "PRODUCTION_LOCKED",
+    }
+    write_json_atomic(args.state / "strategies" / "jalon7-run.json", summary)
+    write_json_atomic(args.state / "backtests" / "jalon7-strategy-lab-v2.json", summary)
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
 
 
@@ -1537,9 +1813,7 @@ def command_persist(args: argparse.Namespace) -> None:
             connection.execute(insert(table).values(**values))
             inserted += 1
         else:
-            connection.execute(
-                update(table).where(key_column == key_value).values(**values)
-            )
+            connection.execute(update(table).where(key_column == key_value).values(**values))
             updated += 1
 
     def bulk_upsert(
@@ -1556,9 +1830,7 @@ def command_persist(args: argparse.Namespace) -> None:
         for batch in batched_rows(rows):
             keys = [row[key_column.name] for row in batch]
             existing = set(
-                connection.execute(
-                    select(key_column).where(key_column.in_(keys))
-                ).scalars()
+                connection.execute(select(key_column).where(key_column.in_(keys))).scalars()
             )
             updated += len(existing)
             inserted += len(batch) - len(existing)
@@ -1592,9 +1864,7 @@ def command_persist(args: argparse.Namespace) -> None:
         matrix = read_json(args.state / "coverage" / "matrix.json", [])
         coverage_rows: list[dict[str, object]] = []
         for row in matrix:
-            scope = (
-                f"{row['competition']}:{row['season']}:{row['endpoint']}"
-            )
+            scope = f"{row['competition']}:{row['season']}:{row['endpoint']}"
             row_id = hashlib.sha256(scope.encode("utf-8")).hexdigest()[:36]
             values = {
                 "id": row_id,
@@ -1653,9 +1923,7 @@ def command_persist(args: argparse.Namespace) -> None:
         plan = read_json(args.state / "tasks" / "backfill-plan.json", {})
         last_run_id = str(plan.get("last_run_id", ""))
         if last_run_id:
-            finished_at = datetime.fromisoformat(
-                str(plan["last_run_at"]).replace("Z", "+00:00")
-            )
+            finished_at = datetime.fromisoformat(str(plan["last_run_at"]).replace("Z", "+00:00"))
             started_at = datetime.fromisoformat(
                 str(plan.get("last_run_started_at", plan["last_run_at"])).replace(
                     "Z",
@@ -1666,9 +1934,7 @@ def command_persist(args: argparse.Namespace) -> None:
             backfill_values = {
                 "id": last_run_id[:120],
                 "idempotency_key": backfill_key,
-                "mode": str(
-                    plan.get("scheduler", {}).get("mode", "ACCELERATED_SAFE")
-                ),
+                "mode": str(plan.get("scheduler", {}).get("mode", "ACCELERATED_SAFE")),
                 "status": str(plan.get("status", "HISTORICAL_BACKFILL_ACTIVE")),
                 "started_at": started_at,
                 "finished_at": finished_at,
@@ -1753,9 +2019,7 @@ def command_persist(args: argparse.Namespace) -> None:
                         ).encode("utf-8")
                     ).hexdigest()
                 )
-                row_id = hashlib.sha256(
-                    f"{table.name}:{version}".encode()
-                ).hexdigest()[:36]
+                row_id = hashlib.sha256(f"{table.name}:{version}".encode()).hexdigest()[:36]
                 values = {
                     "id": row_id,
                     "version": version,
@@ -1768,9 +2032,7 @@ def command_persist(args: argparse.Namespace) -> None:
 
         table_counts = {
             table.name: int(
-                connection.execute(
-                    select(func.count()).select_from(table)
-                ).scalar_one()
+                connection.execute(select(func.count()).select_from(table)).scalar_one()
             )
             for table in (
                 api_football_coverage,
@@ -1826,6 +2088,8 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("datasets")
     subparsers.add_parser("model-lab")
     subparsers.add_parser("strategy-lab")
+    subparsers.add_parser("scientific-arena")
+    subparsers.add_parser("strategy-lab-v2")
     subparsers.add_parser("features")
     subparsers.add_parser("train")
     subparsers.add_parser("backtest")
@@ -1852,6 +2116,8 @@ def main() -> None:
         "datasets": command_datasets,
         "model-lab": command_model_lab,
         "strategy-lab": command_strategy_lab,
+        "scientific-arena": command_scientific_arena,
+        "strategy-lab-v2": command_strategy_lab_v2,
         "features": command_features,
         "train": command_train,
         "backtest": command_backtest,

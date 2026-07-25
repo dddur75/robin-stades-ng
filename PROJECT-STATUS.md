@@ -184,3 +184,11 @@ Premier OOS 2024–2025 : équipe multinomiale Log Loss 1,0518 / Brier 0,2012 ;
 pré-lineup 1,0267 / 0,2043 (`INCONCLUSIVE`) ; composition confirmée simulée
 1,6920 / 0,2108 (`REJECTED` face à l'équipe seule). Aucune stratégie n'est
 promue.
+
+## Jalon 7 — Scientific Model Arena
+
+Statut : `SCIENTIFIC_MODEL_ARENA_ACTIVE`. La baseline Jalon 6 est gelée sous
+`JALON6_BASELINE_FROZEN`; 2024–2025 reste `EXPOSED_HISTORICAL_OOS` et ne sert
+plus à sélectionner un paramètre. La preuve sur `historical-data@d25865e`
+produit 4 691 prédictions sur 8 familles, avec comparaisons appariées et 5 000 bootstraps
+groupés. Aucun modèle ni stratégie n'est promu; `PRODUCTION_LOCKED` reste actif.

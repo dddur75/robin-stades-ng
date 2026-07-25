@@ -19,6 +19,7 @@ type PageKey =
   | "lineups"
   | "featureLab"
   | "modelLab"
+  | "modelArena"
   | "strategyLab"
   | "backtestLab"
   | "historicalQuality";
@@ -39,6 +40,7 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "lineups", label: "Lineup Explorer", glyph: "L" },
   { key: "featureLab", label: "Feature Lab", glyph: "F" },
   { key: "modelLab", label: "Model Lab", glyph: "M" },
+  { key: "modelArena", label: "Model Arena", glyph: "A" },
   { key: "strategyLab", label: "Strategy Lab", glyph: "S" },
   { key: "backtestLab", label: "Backtest Explorer", glyph: "T" },
   { key: "historicalQuality", label: "Historical Quality", glyph: "Q" },
@@ -119,6 +121,11 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     eyebrow: "Probabilités interprétables",
     title: "Model Lab",
     note: "Log Loss, Brier, calibration et modèles bloqués par la couverture.",
+  },
+  modelArena: {
+    eyebrow: "Validation appariée · cross-fit · bootstrap",
+    title: "Scientific Model Arena",
+    note: "Comparaisons exactes, intervalles groupés et contrôles négatifs sans promotion automatique.",
   },
   strategyLab: {
     eyebrow: "Hypothèses sous contrôle",
@@ -392,6 +399,7 @@ export default function Home() {
           {page === "lineups" && <LineupExplorer />}
           {page === "featureLab" && <FeatureLab />}
           {page === "modelLab" && <ModelLab />}
+          {page === "modelArena" && <ModelArena />}
           {page === "strategyLab" && <HistoricalStrategyLab />}
           {page === "backtestLab" && <BacktestExplorer />}
           {page === "historicalQuality" && <HistoricalDataQuality />}
@@ -1045,6 +1053,56 @@ function ModelLab() {
         {models.map((model) => <tr key={model.name}><td>{model.name}</td><td>{model.dataset ?? "—"}</td><td>{model.calibration ?? "—"}</td><td>{model.logLoss == null ? "—" : model.logLoss.toFixed(4)}</td><td>{model.brier == null ? "—" : model.brier.toFixed(4)}</td><td>{model.ece == null ? "—" : model.ece.toFixed(4)}</td><td><StatusPill value={model.status} /></td><td><SourceBadge origin={model.origin} /></td></tr>)}
       </tbody></table></div>
     </section>
+  );
+}
+
+function ModelArena() {
+  type ArenaComparison = {
+    comparison_id?: string;
+    paired_fixtures?: number;
+    paired_log_loss_delta?: number;
+    status?: string;
+    uncertainty?: {
+      ci90?: number[];
+      ci95?: number[];
+      probability_challenger_better?: number;
+    };
+  };
+  const arena = (snapshot.deepData as unknown as {
+    modelArena?: {
+      status?: string;
+      baselineStatus?: string;
+      externalProtocol?: string;
+      modelsTested?: number;
+      predictions?: number;
+      comparisons?: ArenaComparison[];
+      strategyStatus?: string;
+      liveCandidates?: number;
+      providerCalls?: number;
+      quotaConsumed?: number;
+      productionStatus?: string;
+    };
+  }).modelArena;
+  const comparisons = arena?.comparisons ?? [];
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric label="Baseline" value={arena?.baselineStatus ?? "NOT FROZEN"} detail={arena?.externalProtocol ?? "protocol pending"} />
+        <Metric label="Modèles testés" value={String(arena?.modelsTested ?? 0)} detail={`${arena?.predictions ?? 0} prédictions`} />
+        <Metric label="Appels fournisseur" value={String(arena?.providerCalls ?? 0)} detail={`${arena?.quotaConsumed ?? 0} crédit consommé`} />
+        <Metric label="Candidats live" value={String(arena?.liveCandidates ?? 0)} detail={arena?.productionStatus ?? "PRODUCTION_LOCKED"} />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Exact fixtures · CI 90/95 %</span><h2>Comparaisons appariées</h2></div><StatusPill value={arena?.status ?? "NOT_RUN"} /></div>
+        {comparisons.length ? <div className="table-wrap"><table><thead><tr><th>Comparaison</th><th>Matchs</th><th>Δ Log Loss</th><th>CI 90 %</th><th>CI 95 %</th><th>P(supériorité)</th><th>Statut</th></tr></thead><tbody>
+          {comparisons.map((row) => <tr key={row.comparison_id}><td>{row.comparison_id}</td><td>{row.paired_fixtures ?? 0}</td><td>{row.paired_log_loss_delta == null ? "—" : row.paired_log_loss_delta.toFixed(4)}</td><td>{row.uncertainty?.ci90?.map((value) => value.toFixed(4)).join(" · ") ?? "—"}</td><td>{row.uncertainty?.ci95?.map((value) => value.toFixed(4)).join(" · ") ?? "—"}</td><td>{row.uncertainty?.probability_challenger_better == null ? "—" : pct(row.uncertainty.probability_challenger_better)}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
+        </tbody></table></div> : <EmptyState title="Arène en attente" text="Aucun résultat n'est inventé avant l'exécution reproductible sur historical-data." label="NO OUTPUT" />}
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Stratégies bornées</span><h2>Strategy Lab V2</h2></div><StatusPill value={arena?.strategyStatus ?? "NOT_RUN"} /></div>
+        <p>Aucune stratégie n'est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
+      </section>
+    </>
   );
 }
 

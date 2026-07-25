@@ -43,3 +43,11 @@ Les seuils d'edge 1X2 2 %, 4 % et 6 % sont testés par modèle avec intervalle
 bootstrap et correction Bonferroni. Les résultats ne peuvent être que
 `INCONCLUSIVE` ou `REJECTED` dans ce cycle. Aucun combiné et aucune stratégie
 réelle ne sont ouverts.
+
+## Strategy Lab V2
+
+Le protocole borné couvre 1X2, Over/Under 2,5 et BTTS, edges 3/5/7 %, mises
+plates ou Kelly 0,10 plafonné à 1 unité et risque quotidien 3 unités. Les
+paramètres sont arrêtés avant lecture des périodes exposées. Aucun prix BTTS
+historique exploitable n'est artificiellement créé et aucune stratégie n'est
+promue.

@@ -318,7 +318,9 @@ def sanitize_public_snapshot(value: Any) -> Any:
 
 
 def build_deep_data() -> dict[str, Any]:
-    state = ROOT / "data" / "historical"
+    state = Path(
+        os.environ.get("HISTORICAL_STATE", str(ROOT / "data" / "historical"))
+    ).resolve()
     analytics = read_json(
         ROOT / "data" / "live-proof" / "jalon5-legacy-analytics.json",
         {},
@@ -455,7 +457,7 @@ def build_deep_data() -> dict[str, Any]:
     model_manifests = [
         read_json(path, {})
         for path in sorted((state / "models").glob("*.json"))
-        if path.name != "jalon6-run.json"
+        if path.name not in {"jalon6-run.json", "jalon7-arena-run.json"}
     ]
     models = [
         {
@@ -517,14 +519,47 @@ def build_deep_data() -> dict[str, Any]:
     backtest_manifests = [
         read_json(path, {})
         for path in sorted((state / "backtests").glob("*.json"))
-        if path.name != "jalon6-run.json"
+        if path.name
+        not in {
+            "jalon6-run.json",
+            "jalon7-paired-comparisons.json",
+            "jalon7-strategy-lab-v2.json",
+        }
     ]
+    arena = read_json(state / "models" / "jalon7-arena-run.json", {})
+    strategy_v2 = read_json(state / "strategies" / "jalon7-run.json", {})
     return {
         "status": proof.get("status", "ADAPTER_ONLY"),
         "pilotStatus": pilot.get("status", "NOT_STARTED"),
         "backfillStatus": plan.get("status", "NOT_STARTED"),
         "qualityStatus": quality.get("status", "NOT_RUN"),
         "productionStatus": "PRODUCTION_LOCKED",
+        "modelArena": {
+            "status": arena.get("status", "NOT_RUN"),
+            "baselineStatus": arena.get(
+                "baseline_status", "JALON6_BASELINE_NOT_FROZEN"
+            ),
+            "baselineHash": arena.get("baseline_hash"),
+            "externalProtocol": arena.get(
+                "external_protocol", "EXTERNAL_VALIDATION_PROTOCOL_V1"
+            ),
+            "modelFamilies": arena.get("model_families", []),
+            "modelsTested": arena.get("models_tested", 0),
+            "predictions": arena.get("predictions", 0),
+            "comparisons": arena.get("comparisons", []),
+            "calibrationAudits": arena.get("calibration_audits", {}),
+            "negativeControls": arena.get("negative_controls", []),
+            "featureStability": arena.get("feature_stability", []),
+            "ensemble": arena.get("ensemble", {}),
+            "externalValidation": arena.get("external_validation", {}),
+            "storage": arena.get("storage", {}),
+            "strategyStatus": strategy_v2.get("status", "NOT_RUN"),
+            "strategiesTested": strategy_v2.get("strategies_tested", 0),
+            "liveCandidates": arena.get("live_candidates", 0),
+            "providerCalls": arena.get("provider_calls", 0),
+            "quotaConsumed": arena.get("quota_consumed", 0),
+            "productionStatus": "PRODUCTION_LOCKED",
+        },
         "coverageCounts": coverage_counts,
         "coverageMatrix": matrix,
         "taskCounts": task_counts,

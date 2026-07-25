@@ -42,3 +42,15 @@ performances shadow.
 
 Le choix des features, calibrations et seuils s'arrête avant l'ouverture de
 2024–2025.
+
+## Jalon 7 — registre préenregistré
+
+| Expérience | Comparateur | Unité | Décision actuelle |
+|---|---|---|---|
+| HGB équipe | multinomiale équipe | fixture exacte | `INCONCLUSIVE` |
+| Poisson | marché déviggué | fixture exacte | à compléter si prix valides |
+| Dixon–Coles | Poisson | fixture exacte | `INCONCLUSIVE` |
+| joueurs pré-lineup | équipe | fixture exacte | `INCONCLUSIVE` |
+| post-lineup | joueurs pré-lineup | fixture exacte | inférieur, non promu |
+
+Les contrôles cibles permutées et lineups aléatoires sont obligatoires.
