@@ -1,7 +1,7 @@
 {
   "migration_revision": "0004_jalon5_deep_data_factory",
-  "rows_inserted": 2,
-  "rows_updated": 58326,
+  "rows_inserted": 0,
+  "rows_updated": 58328,
   "secret_exposed": false,
   "status": "POSTGRESQL_CONNECTED",
   "table_counts": {
