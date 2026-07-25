@@ -24,3 +24,11 @@ Après CI verte de la PR brouillon :
 
 Aucun crédit fournisseur, achat de stockage ou déverrouillage de pari réel
 n’est demandé. Les gates encore en attente progresseront avec le backfill.
+
+## Jalon 9
+
+R2 n’est demandé que si le rapport durable conclut
+`OBJECT_STORAGE_REQUIRED`. L’adaptateur, le dry-run et le workflow sont prêts.
+Les secrets à ajouter dans ce seul cas sont `R2_ACCOUNT_ID`,
+`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` et `R2_BUCKET_NAME`. Leur valeur ne
+doit jamais être publiée.

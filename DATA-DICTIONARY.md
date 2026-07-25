@@ -156,3 +156,16 @@ sont jamais écrasés.
 
 Chaque manifest porte `dataset_version`, saisons, lignes, fixtures, features,
 cibles, couverture, qualité, politique temporelle, révision et SHA-256.
+
+## Datasets Jalon 9
+
+| Dataset | Grain | Temporalité |
+|---|---|---|
+| `historical_market_v1` | fixture × source | prix source documenté |
+| `historical_market_1x2_v1` | fixture × 1X2 | closing sinon pre-closing |
+| `historical_market_totals_v1` | fixture × ligne 2,5 | closing sinon pre-closing |
+| `ucl_main_competition_v1` | fixture UCL principale | post-match |
+| `ucl_qualifying_v1` | fixture UCL qualifications | post-match |
+
+`business_value_priority` est distinct de `priority`. `provider_fixture_id`
+conserve le contexte de requête pour les statistiques joueurs et lineups.

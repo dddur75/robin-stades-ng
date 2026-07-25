@@ -55,9 +55,11 @@ from robin.historical.model_lab import (
 from robin.historical.modeling import backtest_fixed_stake, train_elo_baseline
 from robin.historical.normalization import entity_type_for_endpoint, normalize_records
 from robin.historical.orchestrator import (
+    BUSINESS_PRIORITY_ORDER,
     COMPETITION_TARGETS,
     CORE_ENDPOINTS,
     build_backfill_plan,
+    business_value_priority,
     quota_decision,
     select_validated_competition,
     stable_task_id,
@@ -284,6 +286,7 @@ class HistoricalRunner:
             season=season,
             ingestion_run_id=self.run_id,
             raw_payload_hash=raw_payload_hash,
+            request_params=params,
         )
         storage = self.parquet.write_records(
             normalized,
@@ -915,6 +918,26 @@ def command_backfill(args: argparse.Namespace) -> None:
         request_rate=request_rate,
     )
     tasks: list[dict[str, Any]] = list(plan.get("tasks", []))
+    for task in tasks:
+        task["business_value_priority"] = business_value_priority(
+            competition=names_by_id.get(
+                int(task.get("competition_id", 0)),
+                "UNKNOWN",
+            ),
+            season=int(task.get("season", 0)),
+            endpoint=str(task.get("endpoint", "")),
+        )
+    tasks.sort(
+        key=lambda task: (
+            BUSINESS_PRIORITY_ORDER.get(
+                str(task.get("business_value_priority", "P4_DEFERRED")),
+                99,
+            ),
+            str(task.get("priority", "Z")),
+            -int(task.get("season", 0)),
+            str(task.get("endpoint", "")),
+        )
+    )
     completed = 0
     expanded = 0
     unavailable_this_run = 0
@@ -953,6 +976,11 @@ def command_backfill(args: argparse.Namespace) -> None:
         if args.endpoint and endpoint != args.endpoint.strip("/"):
             continue
         if args.priority and str(task.get("priority")) != args.priority:
+            continue
+        if (
+            args.business_priority
+            and str(task.get("business_value_priority")) != args.business_priority
+        ):
             continue
         fixture_id = task.get("fixture_id")
         team_id = task.get("team_id")
@@ -1062,9 +1090,22 @@ def command_backfill(args: argparse.Namespace) -> None:
         normalized_rows_this_run += int(str(report["normalized_rows"]))
         completed += 1
     unique_tasks = {str(task["task_id"]): task for task in tasks}
+    for task in unique_tasks.values():
+        task["business_value_priority"] = business_value_priority(
+            competition=names_by_id.get(
+                int(task.get("competition_id", 0)),
+                "UNKNOWN",
+            ),
+            season=int(task.get("season", 0)),
+            endpoint=str(task.get("endpoint", "")),
+        )
     tasks = sorted(
         unique_tasks.values(),
         key=lambda task: (
+            BUSINESS_PRIORITY_ORDER.get(
+                str(task.get("business_value_priority", "P4_DEFERRED")),
+                99,
+            ),
             str(task.get("priority", "Z")),
             -int(task.get("season", 0)),
             str(task.get("endpoint", "")),
@@ -2099,7 +2140,7 @@ def command_persist(args: argparse.Namespace) -> None:
         }
     result = {
         "status": "POSTGRESQL_CONNECTED",
-        "migration_revision": "0004_jalon5_deep_data_factory",
+        "migration_revision": "0005_jalon9_critical_closure",
         "tables_verified": len(expected),
         "rows_inserted": inserted,
         "rows_updated": updated,
@@ -2131,6 +2172,7 @@ def build_parser() -> argparse.ArgumentParser:
     backfill.add_argument("--season", type=int)
     backfill.add_argument("--endpoint", default="")
     backfill.add_argument("--priority", default="")
+    backfill.add_argument("--business-priority", default="")
     compact = subparsers.add_parser("compact")
     compact.add_argument("--remove-sources", action="store_true")
     subparsers.add_parser("canonicalize")

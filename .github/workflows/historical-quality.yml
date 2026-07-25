@@ -7,6 +7,11 @@ on:
         required: false
         type: boolean
         default: false
+      run_critical_closure:
+        description: "Exécuter le Jalon 9 depuis une branche pré-fusion"
+        required: false
+        type: boolean
+        default: false
   schedule:
     - cron: "23 2 * * *"
 permissions:
@@ -27,22 +32,22 @@ jobs:
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
       - name: Repair provenance from the durable cache
-        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+        if: github.event_name != 'workflow_dispatch' || (!inputs.run_external_validation && !inputs.run_critical_closure)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
           repair-provenance
-      - if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+      - if: github.event_name != 'workflow_dispatch' || (!inputs.run_external_validation && !inputs.run_critical_closure)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" quality
       - name: Publier les gates factuels
-        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+        if: github.event_name != 'workflow_dispatch' || (!inputs.run_external_validation && !inputs.run_critical_closure)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" readiness
       - name: Recalculate the forecast after quality controls
-        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+        if: github.event_name != 'workflow_dispatch' || (!inputs.run_external_validation && !inputs.run_critical_closure)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
@@ -51,6 +56,13 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.run_external_validation
         run: >-
           python scripts/run_external_validation.py
+          --state data/historical
+          --run-id "${{ github.run_id }}"
+          --source-commit "${{ github.sha }}"
+      - name: Exécuter la fermeture critique pré-fusion
+        if: github.event_name == 'workflow_dispatch' && inputs.run_critical_closure
+        run: >-
+          python scripts/run_critical_closure.py
           --state data/historical
           --run-id "${{ github.run_id }}"
           --source-commit "${{ github.sha }}"

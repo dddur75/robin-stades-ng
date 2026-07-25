@@ -56,3 +56,9 @@ promue.
 13 hypothèses sont préenregistrées. Le `MARKET_GATE` est indisponible :
 0 backtest économique, 0 candidat live, 0 candidat modèle et
 `NO_EXTERNAL_VALIDATED_EDGE`. Aucun test BTTS n’est exécuté sans prix fiable.
+
+## Strategy Lab V4
+
+Hypothèses bornées : 1X2 edges 2/3/5 %, probabilités 55/65 %, accord de modèles;
+totals edges 3/5 % et accord Poisson/Dixon-Coles. Aucun combiné. Les filtres
+joueur exigent PLAYER_GATE READY. `NO_BET_DEFAULT = true`.

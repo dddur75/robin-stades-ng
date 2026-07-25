@@ -64,3 +64,14 @@ Les contrôles cibles permutées et lineups aléatoires sont obligatoires.
 | Poisson vs discriminatif | 2 136 | Poisson inférieur, CI 95 % positive |
 | Leave-one-league-out | 760/760/616 | prêt PL/Liga/Bundesliga |
 | Contrôles négatifs | 15 | aucun signal anormal |
+
+## Expériences Jalon 9
+
+| Expérience | Statut initial |
+|---|---|
+| Football-Data 2020–2025 | pipeline prêt, preuve durable à mesurer |
+| Matching fixture/marché | seuil 98 %, ambiguïtés utilisées = 0 |
+| The Odds API historique | dry-run, 0 crédit |
+| Market paired validation | conditionnée par MARKET_GATE |
+| Strategy Lab V4 | conditionné par MARKET_GATE |
+| Migration R2 | dry-run, suppression interdite |

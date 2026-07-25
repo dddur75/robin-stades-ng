@@ -76,6 +76,7 @@ def normalize_records(
     season: int | None,
     ingestion_run_id: str,
     raw_payload_hash: str | None,
+    request_params: Mapping[str, object] | None = None,
     observed_at: datetime | None = None,
 ) -> list[dict[str, object]]:
     """Conserver le payload utile sans convertir les absences en zéros."""
@@ -85,6 +86,9 @@ def normalize_records(
     availability = availability_for_endpoint(normalized_endpoint)
     timestamp = observed_at or datetime.now(UTC)
     output: list[dict[str, object]] = []
+    parameters = request_params or {}
+    requested_fixture_id = parameters.get("fixture")
+    requested_team_id = parameters.get("team")
     for position, record in enumerate(records):
         provider_id = _provider_id(record, normalized_endpoint)
         canonical = json.dumps(
@@ -101,6 +105,14 @@ def normalize_records(
                 "internal_id": internal_id(entity_type, stable_provider_id),
                 "provider": "api-football",
                 "provider_id": provider_id,
+                "provider_fixture_id": (
+                    requested_fixture_id
+                    if isinstance(requested_fixture_id, int)
+                    else None
+                ),
+                "provider_team_id": (
+                    requested_team_id if isinstance(requested_team_id, int) else None
+                ),
                 "entity_type": entity_type,
                 "competition_id": competition_id,
                 "season": season,

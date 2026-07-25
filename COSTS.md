@@ -130,3 +130,10 @@ les artefacts analytiques font passer le stockage de 361 005 947 à
 
 Warning : 750 000 000 octets. Pause : 900 000 000 octets. Aucun stockage n’est
 acheté automatiquement et aucune cadence fournisseur n’est modifiée.
+
+## Budget Jalon 9
+
+API-Football conserve 30 000 appels/jour et 5 000 de réserve. Football-Data est
+une archive publique sans crédit fournisseur. The Odds API historique est
+plafonnée à 500 crédits et démarre avec un dry-run à zéro crédit. Aucun bucket
+R2 ni abonnement n’est créé automatiquement.

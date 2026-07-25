@@ -326,3 +326,14 @@ définition différente doit devenir une version exploratoire distincte. À
 750 MB, arrêter les artefacts secondaires et compacter. À 900 MB, le workflow
 doit rester en pause. Les statuts `WAITING_FOR_EXTERNAL_GATES` et
 `NO_EXTERNAL_VALIDATED_EDGE` sont normaux.
+
+## Jalon 9
+
+Ne jamais lancer un second backfill si `historical-state` est actif. Pour la
+fermeture critique, utiliser `27 - Backfill des gates critiques`; l’ordonnanceur
+reste responsable du budget et de la réserve. L’ingestion marché utilise
+`28 - Ingestion marchés historiques`; le replay qualité utilise les archives et
+zéro fournisseur.
+
+À `OBJECT_STORAGE_REQUIRED`, suspendre P3/P4 et exécuter d’abord le workflow R2
+en dry-run. Suivre `docs/operations/R2-MIGRATION-RUNBOOK.md`.

@@ -208,3 +208,10 @@ Statut : `MODEL_ARENA_ACTIVE`. La baseline Jalon 6 est gelée sous
 plus à sélectionner un paramètre. La preuve sur `historical-data@d25865e`
 produit 4 691 prédictions sur 8 familles, avec comparaisons appariées et 5 000 bootstraps
 groupés. Aucun modèle ni stratégie n'est promu; `PRODUCTION_LOCKED` reste actif.
+
+## Jalon 9 — Critical Data Closure
+
+La branche Jalon 9 ajoute la priorité `business_value_priority`, la Historical
+Market Factory Football-Data, les gates TEAM/PLAYER/LINEUP/MARKET, le forecast
+object storage et l’adaptateur R2. Le backfill conserve 30 000 appels/jour, une
+réserve de 5 000 et un passage toutes les deux heures. `REAL_BETS = false`.
