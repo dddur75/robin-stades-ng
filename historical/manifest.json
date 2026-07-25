@@ -10,6 +10,9 @@
     "bundles/30145171635/multi/0/multi/f58c09fcfd49e26814cb024d4131a6c5e809a86dcd23153ef343da99c3e418d2.index.json": "9cdcf4e429a9bcd17af443b7dde1530058b3f9c1a62604ee71781692df885044",
     "bundles/30145171635/multi/0/multi/f58c09fcfd49e26814cb024d4131a6c5e809a86dcd23153ef343da99c3e418d2.manifest.json": "57a1b1541773f2aac2f102eb53d56864ca03348e8d30461516a380f08d422efa",
     "bundles/30145171635/multi/0/multi/f58c09fcfd49e26814cb024d4131a6c5e809a86dcd23153ef343da99c3e418d2.tar.gz": "fc3ec99d7da6e123a69fc76e0196e56d6719d0466dcd83e6b7fa733a8eda4188",
+    "bundles/30150002144/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.index.json": "28653cab7f71c4a2d9f942523e1a413cbc683a4922d5443733176013b8340449",
+    "bundles/30150002144/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.manifest.json": "8a1f1e795f75511fa60df6d94abf55bde4258640a427000445eb6711556fb06c",
+    "bundles/30150002144/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.tar.gz": "478013b89ed0b38bfef274445074e0b5df53896c77c0d558e28ca03ec170ad13",
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
     "checkpoints/ligue-1/2021/players.json": "3f1b39507024b376056b6e435763765e84fb3c26fb68516daf6860cff80a0ff2",
     "checkpoints/ligue-1/2022/players.json": "ded74c0cc69578c64f528bc0fbd47023182fd045609f8dc6b55d0cc8735831d2",
@@ -18,7 +21,7 @@
     "checkpoints/ligue-1/2025/players.json": "ea64729abcf8b6855c9253a6b40a1a979633994d55fa67fa8e0231235ab154eb",
     "coverage/matrix.json": "84acd7e53e16d0fdbda4a92084edb8c4499bd073e086caddbca52e249631e8a8",
     "coverage/validated-ids.json": "bb7af51ccae5a9ca4c32c97438188a2196e165491f30ee95cd6e532c7951c73c",
-    "forecasts/accelerated-safe.json": "9a5f7a6df250b73f28d17ce6b17c329b03a24f53fd993a8a27fc2575d409d39d",
+    "forecasts/accelerated-safe.json": "430f13d503b3d2db3f09ae51a54dbf2d2df6a0a865ace7fc0c381f81a56c0bab",
     "parquet/competition=Ligue-1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": "ddbf98e4c0dff0797b67ac4a69626a5c10e8c147ae205147937d88a08c12db62",
     "parquet/competition=Ligue-1/season=2021/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": "74cdd9c4fb60d036d447fdd2a7df40f89607674e6bf9684969fea00531bb4a6c",
     "parquet/competition=Ligue-1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": "dfb4d5a76142d0f8d8d3855a8ec46ca7645031bcf26efcfd9e0f466c567895f6",
@@ -39,6 +42,7 @@
     "parquet/competition=Ligue-1/season=2023/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": "eb03fd7c4c7bc7c64130ccdb5f2ce19b5dc588327763b3abfd88bf0aac8f86f8",
     "parquet/competition=Ligue-1/season=2023/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": "c88fa2cad6c5a417f17c11310d505c06ae76fc2f99184535ba93630e02f9b142",
     "parquet/competition=Ligue-1/season=2024/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": "6880558658590ad3a6e21924617bb50a96ae2b84d591daa59e6fae76565dc538",
+    "parquet/competition=Ligue-1/season=2024/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": "f1f1858890a2a970c316be6afe5955c9ef4c9a316efe295e7b11d68cf30c7c89",
     "parquet/competition=Ligue-1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": "a1ac133428dd6c20e69382795d288acfc307e2a752a54e3a5c16e690e2fc1000",
     "parquet/competition=Ligue-1/season=2024/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": "1926fae0beedc6629d2679c1bc2f304e440bbbf65e64be103c52b9d554575c5e",
     "parquet/competition=Ligue-1/season=2024/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": "fbc501d2dfe89630688b4df156397a536724f9f8988c377e01ba8ad064bc447b",
@@ -62,8 +66,8 @@
     "proofs/pilot-replay.json": "aa613f71d589b0b61d9a3e3e624a0d04361a2ebd80b14cf3e1808296addbe338",
     "proofs/postgresql.json": "e991d98ba2fa65457b507ce37343cdd790a64a7dada9317638596ccab97d53fa",
     "runs/pilot-ligue-1-2025.json": "23772f2a84563f4b9e81577e634b056c7f6fcc367e8389e08200ca35cedc698d",
-    "storage/latest-compaction.json": "02bce9c1ddfa80151d176cda26aafb93c5927f7c17e46f3556e87a714d81e744",
-    "tasks/backfill-plan.json": "b3dc1b20f5523df7332383cee3e88bd35b2f025d0e807c2a4ebb21bcb107c939"
+    "storage/latest-compaction.json": "85ca6501c433576117ef9bd929e6d0d77b0b1067a79524e28ac09eef2d776509",
+    "tasks/backfill-plan.json": "b0c4e37f552444c3decc3d4a6dd2af4b17a16da393a52fde789e7779ed50f3c0"
   },
   "schema_version": "jalon5-historical-v1"
 }
