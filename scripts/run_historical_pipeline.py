@@ -30,6 +30,7 @@ from robin.historical.features import (
     build_team_feature_rows,
     dataset_manifest,
 )
+from robin.historical.forecast import build_complete_forecast
 from robin.historical.modeling import backtest_fixed_stake, train_elo_baseline
 from robin.historical.normalization import entity_type_for_endpoint, normalize_records
 from robin.historical.orchestrator import (
@@ -74,6 +75,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STATE = ROOT / "data" / "historical"
 CONTRACT = ROOT / "data" / "contracts" / "api-football-coverage.json"
 PROOF = ROOT / "data" / "live-proof" / "jalon5-api-football.json"
+DEPENDENCY_REGISTRY = (
+    ROOT / "configs" / "historical_dependency_registry_v1.json"
+)
 
 
 def now_iso() -> str:
@@ -536,38 +540,37 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
         else float(throughput["rows_per_call"])
     )
     remaining_by_priority: dict[str, int] = {}
-    remaining_calls_by_priority: dict[str, int] = {}
     for task in plan.get("tasks", []):
         if task.get("status") not in {"PENDING", "READY", "RETRYABLE", "SKIPPED_QUOTA"}:
             continue
         priority = str(task.get("priority", "UNKNOWN"))
         remaining_by_priority[priority] = remaining_by_priority.get(priority, 0) + 1
-        remaining_calls_by_priority[priority] = (
-            remaining_calls_by_priority.get(priority, 0)
-            + max(1, int(task.get("estimated_calls", 1)))
-        )
     inventory = storage_inventory(state)
-    daily_calls = 30_000
-    total_call_projection = sum(remaining_calls_by_priority.values())
-    priority_a_calls = remaining_calls_by_priority.get("A", 0)
-    priority_b_calls = priority_a_calls + remaining_calls_by_priority.get("B", 0)
-
-    def eta_days(calls: int) -> float:
-        return round(calls / daily_calls, 2) if calls else 0.0
-
-    raw_projection = int(
-        total_call_projection * float(throughput["bytes_per_call"])
-    )
+    complete = build_complete_forecast(state, DEPENDENCY_REGISTRY)
+    scenarios = complete["scenarios"]
+    if not isinstance(scenarios, dict):
+        raise RuntimeError("COMPLETE_FORECAST_SCENARIOS_ABSENT")
+    base = scenarios["base"]
+    if not isinstance(base, dict):
+        raise RuntimeError("COMPLETE_FORECAST_BASE_ABSENT")
+    daily_calls = int(complete["calls_per_day"])
+    total_call_projection = int(complete["calls_remaining_base"])
     uncompressed_file_projection = int(
         total_call_projection * max(float(throughput["payloads_per_task"]) / 25.08, 1)
         * 2
     )
     compacted_file_projection = max(1, len(plan.get("tasks", [])) // 100) * 3 + 300
     return {
-        "status": "MEASURED_PILOT_FORECAST",
+        **complete,
         "observed": throughput,
         "cache_rate": 0.0,
-        "unavailable_endpoint_rate": 0.0,
+        "unavailable_endpoint_rate": (
+            sum(
+                task.get("coverage_status") == "UNAVAILABLE"
+                for task in plan.get("tasks", [])
+            )
+            / max(1, len(plan.get("tasks", [])))
+        ),
         "error_rate": 0.0,
         "calls_per_day": daily_calls,
         "github_actions_hours_per_day": round(
@@ -575,13 +578,13 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
             2,
         ),
         "remaining_by_priority": remaining_by_priority,
-        "remaining_calls_by_priority": remaining_calls_by_priority,
-        "eta_priority_a_days": eta_days(priority_a_calls),
-        "eta_priority_b_days": eta_days(priority_b_calls),
-        "eta_full_scope_days": eta_days(total_call_projection),
+        "remaining_calls_by_priority": base["calls_by_priority"],
+        "eta_priority_a_days": complete["eta_priority_a_base"],
+        "eta_priority_b_days": complete["eta_priority_b_base"],
+        "eta_full_scope_days": complete["eta_full_base"],
         "estimated_calls_full_scope": total_call_projection,
         "storage_current": inventory,
-        "storage_projected_bytes": raw_projection + int(str(inventory["bytes"])),
+        "storage_projected_bytes": complete["storage_projected_base"],
         "files_without_compaction": uncompressed_file_projection,
         "files_after_compaction": compacted_file_projection,
         "storage_warning_bytes": 750_000_000,
@@ -652,7 +655,7 @@ def command_pilot(args: argparse.Namespace) -> None:
     for endpoint, params, paginated in (
         ("standings", {"league": league_id, "season": 2025}, False),
         ("players", {"league": league_id, "season": 2025}, True),
-        ("injuries", {"league": league_id, "season": 2025}, False),
+        ("injuries", {"league": league_id, "season": 2025}, True),
     ):
         runner.ingest(
             endpoint,
@@ -899,6 +902,8 @@ def command_backfill(args: argparse.Namespace) -> None:
     tasks: list[dict[str, Any]] = list(plan.get("tasks", []))
     completed = 0
     expanded = 0
+    unavailable_this_run = 0
+    quarantined_this_run = 0
     normalized_rows_this_run = 0
     stopped_reason: str | None = None
     started_at = now_iso()
@@ -922,6 +927,7 @@ def command_backfill(args: argparse.Namespace) -> None:
         if competition is None:
             task["status"] = "QUARANTINED"
             task["error_code"] = "COMPETITION_ID_NOT_VALIDATED"
+            quarantined_this_run += 1
             continue
         season = int(task["season"])
         endpoint = str(task["endpoint"])
@@ -998,7 +1004,7 @@ def command_backfill(args: argparse.Namespace) -> None:
             task["completed_at"] = now_iso()
             continue
         params: dict[str, object]
-        paginated = endpoint == "players"
+        paginated = endpoint in {"players", "injuries"}
         if endpoint == "leagues":
             params = {"id": competition_id, "season": season}
         elif fixture_id is not None:
@@ -1042,6 +1048,8 @@ def command_backfill(args: argparse.Namespace) -> None:
             if int(str(report["rows_received"])) > 0
             else "UNAVAILABLE"
         )
+        if task["coverage_status"] == "UNAVAILABLE":
+            unavailable_this_run += 1
         task["completed_at"] = now_iso()
         task["error_code"] = None
         normalized_rows_this_run += int(str(report["normalized_rows"]))
@@ -1082,6 +1090,10 @@ def command_backfill(args: argparse.Namespace) -> None:
         ),
         "completed_this_run": completed,
         "expanded_this_run": expanded,
+        "new_latent_tasks_materialized": expanded,
+        "remaining_materialized_tasks": remaining,
+        "unavailable_this_run": unavailable_this_run,
+        "quarantined_this_run": quarantined_this_run,
         "stopped_reason": stopped_reason,
         "quota_remaining": runner.quota_remaining,
         "production_status": "PRODUCTION_LOCKED",

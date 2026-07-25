@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T08:23:21.271215+00:00",
+  "generatedAt": "2026-07-25T11:05:59.573919+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -10778,23 +10778,23 @@
       }
     ],
     "taskCounts": {
-      "COMPLETED": 153,
-      "READY": 5413,
-      "RETRYABLE": 4,
+      "COMPLETED": 2655,
+      "READY": 2951,
+      "RETRYABLE": 2,
       "PENDING": 614
     },
-    "taskTotal": 6184,
-    "taskCompleted": 153,
-    "remainingTasks": 6031,
+    "taskTotal": 6222,
+    "taskCompleted": 2655,
+    "remainingTasks": 3567,
     "nextTask": {
       "attempt_count": 0,
       "competition_id": 61,
       "completed_at": null,
       "coverage_status": "UNKNOWN",
-      "endpoint": "fixtures/events",
+      "endpoint": "players/squads",
       "error_code": null,
       "estimated_calls": 1,
-      "fixture_id": 1214003,
+      "fixture_id": null,
       "last_attempt_at": null,
       "next_retry_at": null,
       "page": 1,
@@ -10805,8 +10805,8 @@
       "rows_received": 0,
       "season": 2024,
       "status": "READY",
-      "task_id": "477784b620db80da168c6d2ba75d540f",
-      "team_id": null
+      "task_id": "015d0fd6685309b23820d12fc2487fab",
+      "team_id": 83
     },
     "pilot": {
       "competition": "Ligue 1",
@@ -10845,22 +10845,25 @@
       }
     },
     "quota": {
-      "remaining": 149895,
-      "calls": 99,
-      "lastRunId": "30150002144",
-      "lastRunAt": "2026-07-25T07:51:52.484534+00:00",
+      "remaining": 147395,
+      "calls": 2500,
+      "lastRunId": "30154099512",
+      "lastRunAt": "2026-07-25T10:55:52.865592+00:00",
       "mode": "ACCELERATED_SAFE",
       "reserve": 5000
     },
     "storage": {
-      "rawBytes": 3587579,
-      "parquetBytes": 7812265,
+      "rawBytes": 7990479,
+      "parquetBytes": 13554164,
       "derivedBytes": 0,
-      "totalBytes": 31061635,
-      "fileCount": 3405,
-      "bundleCount": 4,
-      "payloadCount": 1649,
-      "projectedBytes": 42260965,
+      "totalBytes": 65241027,
+      "fileCount": 8424,
+      "bundleCount": 8,
+      "payloadCount": 4149,
+      "projectedBytes": 427181466,
+      "projectedBytesLow": 227877811,
+      "projectedBytesBase": 427181466,
+      "projectedBytesHigh": 665300478,
       "warningBytes": 750000000,
       "pauseBytes": 900000000,
       "capacityStatus": "OK",
@@ -11291,7 +11294,7 @@
         {
           "check": "RAW_AND_PARQUET_HASHES",
           "status": "PASSED",
-          "value": "27600/27600"
+          "value": "41672/41672"
         },
         {
           "check": "PAGES_COMPLETE_AND_UNIQUE",
@@ -11301,12 +11304,12 @@
         {
           "check": "IDENTITIES_STABLE",
           "status": "PASSED",
-          "value": "27600/27600"
+          "value": "41672/41672"
         },
         {
           "check": "NULLS_PRESERVED_NO_SYNTHETIC_ZERO",
           "status": "PASSED",
-          "value": "27600/27600"
+          "value": "41672/41672"
         },
         {
           "check": "NO_FUTURE_DATA",
@@ -11330,40 +11333,70 @@
         }
       ],
       "failures": [],
-      "generated_at": "2026-07-25T08:15:08.699557+00:00",
-      "normalized_rows": 27600,
-      "parquet_partitions": 39,
+      "generated_at": "2026-07-25T10:58:54.468289+00:00",
+      "normalized_rows": 41672,
+      "parquet_partitions": 47,
       "production_status": "PRODUCTION_LOCKED",
-      "provenance_rows": 27600,
+      "provenance_rows": 41672,
       "quarantined_features": [
         "injury_return",
         "availability",
         "player_fatigue"
       ],
-      "raw_observations": 1685,
+      "raw_observations": 4185,
       "status": "PASSED"
     },
     "progress": {
-      "tasksTotal": 6184,
-      "tasksCompleted": 153,
-      "tasksRemaining": 6031,
-      "callsConsumed": 99,
-      "callsEstimated": 6031,
+      "tasksTotal": 6222,
+      "tasksCompleted": 2655,
+      "tasksRemaining": 3567,
+      "callsConsumed": 2500,
+      "callsEstimated": 63313,
+      "callsRemainingLow": 47417,
+      "callsRemainingBase": 63313,
+      "callsRemainingHigh": 69977,
       "callsPerHour": 3600,
       "callsPerDay": 30000,
-      "etaPriorityADays": 0.18,
-      "etaPriorityBDays": 0.19,
-      "etaFullDays": 0.2,
+      "etaPriorityADays": 0.26,
+      "etaPriorityBDays": 1.16,
+      "etaFullDays": 2.11,
+      "etaPriorityA": {
+        "low": 0.19,
+        "base": 0.26,
+        "high": 0.28
+      },
+      "etaPriorityB": {
+        "low": 0.87,
+        "base": 1.16,
+        "high": 1.28
+      },
+      "etaFull": {
+        "low": 1.58,
+        "base": 2.11,
+        "high": 2.33
+      },
+      "materializedTasksTotal": 6222,
+      "materializedTasksCompleted": 2655,
+      "materializedTasksRemaining": 3567,
+      "materializedCallsRemaining": 3256,
+      "materializedEtaDays": 0.11,
+      "materializedEtaLabel": "MATERIALIZED_TASKS_ONLY",
+      "latentFixtureTasks": 55344,
+      "latentTeamTasks": 3036,
+      "latentPlayerPages": 1677,
+      "completedThisRun": 2500,
+      "expandedThisRun": 38,
+      "newLatentTasksMaterialized": 38,
       "scheduler": {
-        "batch_size": 99,
+        "batch_size": 500,
         "max_calls": 2500,
-        "max_tasks": 99,
+        "max_tasks": 2500,
         "mode": "ACCELERATED_SAFE",
-        "next_run_at": "2026-07-25T09:50:14.305985+00:00",
+        "next_run_at": "2026-07-25T12:14:13.371589+00:00",
         "request_rate": 1.0,
         "stop_reason": null
       },
-      "rowsLastRun": 1597
+      "rowsLastRun": 14072
     },
     "canonicality": {
       "status": "PASSED",
@@ -11398,11 +11431,19 @@
         {
           "name": "Effectifs",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
               2025
             ],
             "seasonCount": 1,
+            "teamCount": 21,
+            "fixtureCount": 0,
+            "playerCount": 0,
             "rows": 21,
+            "nullRate": 0.0714,
             "dependencies": [
               "squads"
             ]
@@ -11412,11 +11453,15 @@
           "temporality": "POINT_IN_TIME_SAFE",
           "status": "BLOCKED_BY_COVERAGE",
           "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Joueurs",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
               2021,
               2022,
@@ -11425,7 +11470,11 @@
               2025
             ],
             "seasonCount": 5,
+            "teamCount": 32,
+            "fixtureCount": 0,
+            "playerCount": 2039,
             "rows": 4132,
+            "nullRate": 0.0,
             "dependencies": [
               "players"
             ]
@@ -11435,16 +11484,26 @@
           "temporality": "POINT_IN_TIME_SAFE",
           "status": "COMPUTABLE",
           "reason": "multi-season player dimension is available",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Minutes",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 614,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 923,
+            "playerCount": 1285,
+            "rows": 1846,
+            "nullRate": 0.0714,
             "dependencies": [
               "fixture_player_statistics"
             ]
@@ -11452,18 +11511,28 @@
           "quality": "PASSED",
           "identities": "VERIFIED",
           "temporality": "POST_MATCH_LAG_REQUIRED",
-          "status": "BLOCKED_BY_COVERAGE",
-          "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "status": "TESTING",
+          "reason": "per-match as-of and identity validation is still required",
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Statistiques joueurs par match",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 614,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 923,
+            "playerCount": 1285,
+            "rows": 1846,
+            "nullRate": 0.0714,
             "dependencies": [
               "fixture_player_statistics"
             ]
@@ -11471,18 +11540,57 @@
           "quality": "PASSED",
           "identities": "VERIFIED",
           "temporality": "POST_MATCH_LAG_REQUIRED",
-          "status": "BLOCKED_BY_COVERAGE",
-          "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "status": "TESTING",
+          "reason": "per-match as-of and identity validation is still required",
+          "estimatedAvailability": "after priority A (~0.26 d)"
+        },
+        {
+          "name": "Compositions",
+          "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
+            "seasons": [
+              2023,
+              2024,
+              2025
+            ],
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 925,
+            "playerCount": 1286,
+            "rows": 1850,
+            "nullRate": 0.0714,
+            "dependencies": [
+              "lineups"
+            ]
+          },
+          "quality": "PASSED",
+          "identities": "VERIFIED",
+          "temporality": "POST_MATCH_LAG_REQUIRED",
+          "status": "TESTING",
+          "reason": "per-match as-of and identity validation is still required",
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Continuite du onze",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 618,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 925,
+            "playerCount": 1286,
+            "rows": 1850,
+            "nullRate": 0.0714,
             "dependencies": [
               "lineups"
             ]
@@ -11490,18 +11598,28 @@
           "quality": "PASSED",
           "identities": "VERIFIED",
           "temporality": "POST_MATCH_LAG_REQUIRED",
-          "status": "BLOCKED_BY_COVERAGE",
-          "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "status": "TESTING",
+          "reason": "per-match as-of and identity validation is still required",
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Formations",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 618,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 925,
+            "playerCount": 1286,
+            "rows": 1850,
+            "nullRate": 0.0714,
             "dependencies": [
               "lineups"
             ]
@@ -11509,13 +11627,17 @@
           "quality": "PASSED",
           "identities": "VERIFIED",
           "temporality": "POST_MATCH_LAG_REQUIRED",
-          "status": "BLOCKED_BY_COVERAGE",
-          "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "status": "TESTING",
+          "reason": "per-match as-of and identity validation is still required",
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Blessures",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
               2021,
               2022,
@@ -11524,7 +11646,11 @@
               2025
             ],
             "seasonCount": 5,
+            "teamCount": 27,
+            "fixtureCount": 1638,
+            "playerCount": 1210,
             "rows": 12801,
+            "nullRate": 0.0714,
             "dependencies": [
               "injuries"
             ]
@@ -11539,11 +11665,21 @@
         {
           "name": "Disponibilite",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 618,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 915,
+            "playerCount": 858,
+            "rows": 1850,
+            "nullRate": 0.0714,
             "dependencies": [
               "injuries",
               "lineups"
@@ -11559,11 +11695,19 @@
         {
           "name": "Force du banc",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
               2025
             ],
             "seasonCount": 1,
+            "teamCount": 21,
+            "fixtureCount": 925,
+            "playerCount": 1286,
             "rows": 21,
+            "nullRate": 0.0714,
             "dependencies": [
               "squads",
               "lineups"
@@ -11574,16 +11718,26 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "BLOCKED_BY_COVERAGE",
           "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Force du onze",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 614,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 922,
+            "playerCount": 1280,
+            "rows": 1846,
+            "nullRate": 0.0714,
             "dependencies": [
               "fixture_player_statistics",
               "lineups"
@@ -11592,18 +11746,28 @@
           "quality": "PASSED",
           "identities": "VERIFIED",
           "temporality": "POST_MATCH_LAG_REQUIRED",
-          "status": "BLOCKED_BY_COVERAGE",
-          "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "status": "TESTING",
+          "reason": "per-match as-of and identity validation is still required",
+          "estimatedAvailability": "after priority A (~0.26 d)"
         },
         {
           "name": "Retour de blessure",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 614,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 913,
+            "playerCount": 859,
+            "rows": 1846,
+            "nullRate": 0.0714,
             "dependencies": [
               "injuries",
               "fixture_player_statistics"
@@ -11619,11 +11783,21 @@
         {
           "name": "Fatigue",
           "coverage": {
+            "competitions": [
+              "Ligue-1"
+            ],
+            "competitionCount": 1,
             "seasons": [
+              2023,
+              2024,
               2025
             ],
-            "seasonCount": 1,
-            "rows": 614,
+            "seasonCount": 3,
+            "teamCount": 24,
+            "fixtureCount": 922,
+            "playerCount": 1280,
+            "rows": 1846,
+            "nullRate": 0.0714,
             "dependencies": [
               "fixture_player_statistics",
               "lineups"
@@ -11632,17 +11806,27 @@
           "quality": "PASSED",
           "identities": "VERIFIED",
           "temporality": "POST_MATCH_LAG_REQUIRED",
-          "status": "BLOCKED_BY_COVERAGE",
-          "reason": "fewer than two verified common seasons",
-          "estimatedAvailability": "after priority A (~0.18 d)"
+          "status": "TESTING",
+          "reason": "per-match as-of and identity validation is still required",
+          "estimatedAvailability": "after priority A (~0.26 d)"
         }
       ]
     },
     "deployment": {
       "build": "COCKPIT_BUILD_SUCCESS",
       "artifact": "COCKPIT_ARTIFACT_PUBLISHED",
-      "private": "COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED",
-      "snapshotGeneratedAt": "2026-07-25T08:23:21.269953+00:00"
+      "private": "COCKPIT_PRIVATE_STALE",
+      "snapshotGeneratedAt": "2026-07-25T11:05:59.572363+00:00",
+      "currentDataHash": "c70946f4adaef49963aedbed1acfbfa3dc33fb9532e1750e6ce981845dc3d7a8",
+      "currentBackfillRunId": "30154099512",
+      "deploymentVersion": 8,
+      "deploymentTime": "2026-07-25T08:39:14.638374+00:00",
+      "deployedSourceCommit": "c4dc959d1ba9b00ec9a55dafcd07a9e92a97cc4a",
+      "deployedSnapshotHash": "853e53c1fbd68482a9c6aacbd1177c442938f921b0cdb767b73ac511c45e007b",
+      "deployedBackfillRunId": "30150002144",
+      "accessMode": "OWNER_ONLY",
+      "automation": "SITES_CONNECTOR_MANUAL_PRIVATE_DEPLOYMENT",
+      "sourceCommit": "LOCAL_WORKTREE"
     },
     "origins": [
       "LIVE SHADOW",

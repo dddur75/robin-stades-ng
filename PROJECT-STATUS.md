@@ -74,7 +74,7 @@ court et de reprise rapide. Voir
 
 ## Action utilisateur
 
-Valider puis fusionner la PR #4.
+PR #4 déjà fusionnée ; cette mention est conservée comme historique du Jalon 4.
 
 ## Jalon 5 — Deep Data Factory
 
@@ -126,3 +126,45 @@ provenance, avec 0 appel fournisseur et 0 ligne non résolue. Neon contient
 désormais deux runs d'ingestion, dont le lot courant, sans nouvel enregistrement
 métier dupliqué. Le Cockpit corrigé est construit par `30151317894`, publié
 comme artefact `8617713588` et réellement déployé en version privée 8.
+
+## Jalon 5.2 — forecast complet
+
+L’ancienne ETA inférieure à une journée est reclassée
+`MATERIALIZED_TASKS_ONLY`. Le forecast complet inclut désormais les enfants
+futurs par fixture, les enfants par équipe et les pages joueurs. Il publie des
+scénarios bas, central et haut, avec ETA A/B/globale et stockage projeté.
+
+Le registre versionné `historical-dependency-registry-v1` conserve les
+cardinalités 18/20 équipes, le format multi-phase de la Ligue des champions et
+l’exclusion des barrages Ligue 1. La cadence reste 30 000 appels/jour, la
+réserve 5 000 et la production `PRODUCTION_LOCKED`.
+
+Le Cockpit privé reste en version 8. Le workflow 26 publie automatiquement le
+build et l’artefact, puis indique `COCKPIT_PRIVATE_STALE` lorsque le dernier
+backfill est plus récent que la version privée réellement déployée.
+
+### Contrôle opérationnel du 25 juillet 2026
+
+Le run planifié `30154099512`, déjà actif au début du contrôle, a été utilisé
+sans lancer de second backfill. Il a consommé 2 500 appels, terminé 2 500 tâches,
+matérialisé 38 enfants, ajouté 14 072 lignes et laissé 147 395 appels de quota.
+Le plan passe de 6 184 à 6 222 tâches, de 153 à 2 655 terminées et de 6 031 à
+3 567 restantes. Il n’a produit ni erreur ni HTTP 429.
+
+Le contrôle qualité `30155383297` valide 41 672/41 672 lignes et leurs
+provenances, avec 0 hash incohérent, 0 ligne non résolue, 0 donnée future et
+0 zéro synthétique. Neon est connecté en SSL à la révision
+`0004_jalon5_deep_data_factory`, avec 6 222 tâches et 3 runs historiques.
+
+Le forecast complet mesure 3 256 appels déjà matérialisés et estime encore
+55 344 enfants fixture, 3 036 enfants équipe et 1 677 pages joueurs. Les
+scénarios bas/central/haut valent 47 417 / 63 313 / 69 977 appels, soit
+1,58 / 2,11 / 2,33 jours à 30 000 appels/jour. Le stockage projeté est
+227,9 / 427,2 / 665,3 MB dans le snapshot restauré, sous le warning de 750 MB.
+
+Le diagnostic live `30155237678` a démarré pendant le verrou historique et a
+réussi : PostgreSQL connecté, 69 tables, registre `shadow-data` vérifié,
+`windows_due=0`, aucun appel The Odds API forcé et `PRODUCTION_LOCKED`.
+Le Cockpit est construit et publié comme artefact ; la version privée Sites 8,
+restée au run `30150002144`, est correctement signalée
+`COCKPIT_PRIVATE_STALE`.

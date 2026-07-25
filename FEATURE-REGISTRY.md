@@ -23,3 +23,39 @@ point-in-time. Aucun modèle joueur n’est entraîné. `team_baseline_v1` demeu
 Les features d’équipe de `team_baseline_v1` sont calculées avant la mise à jour
 du match cible. Une valeur absente reste `null`. Les blessures non point-in-time
 et la composition officielle du match cible sont exclues du mode `PRE_LINEUP`.
+
+## Jalon 5.2 — métriques de readiness
+
+Chaque famille joueurs publie désormais séparément :
+
+- compétitions, saisons, équipes, fixtures et joueurs couverts ;
+- taux de null ;
+- identités ;
+- qualité ;
+- temporalité ;
+- statut et raison du blocage.
+
+`Joueurs` peut être `COMPUTABLE` comme dimension sans rendre un modèle joueurs
+prêt. Minutes, statistiques par match, compositions, formations, continuité,
+forces du onze et du banc, fatigue, blessures, disponibilité et retour de
+blessure conservent leurs propres verrous. Aucun zéro n’est substitué à une
+valeur manquante.
+
+### Mesure après le lot `30154099512`
+
+- `Joueurs` : 5 saisons, 32 équipes, 2 039 joueurs, 4 132 lignes, null 0 %,
+  `COMPUTABLE` comme dimension uniquement ;
+- `Minutes` et `Statistiques joueurs par match` : 3 saisons, 1 285 joueurs,
+  1 846 lignes, `TESTING` avec contrôle as-of encore requis ;
+- `Compositions`, `Formations` et `Continuité du onze` : 3 saisons,
+  1 286 joueurs, 1 850 lignes, `TESTING` ;
+- `Blessures` : 5 saisons, 1 638 fixtures, 1 210 joueurs, mais
+  `BLOCKED_BY_TEMPORALITY` ;
+- `Disponibilité` et `Retour de blessure` :
+  `BLOCKED_BY_TEMPORALITY` ;
+- `Effectifs` et `Force du banc` : une seule saison commune,
+  `BLOCKED_BY_COVERAGE` ;
+- `Force du onze` et `Fatigue` : `TESTING`, jamais promues en modèle.
+
+Le statut global reste `BLOCKED_BY_COVERAGE`. Aucun modèle joueurs n’est
+entraîné ni présenté comme prêt.

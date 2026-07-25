@@ -412,5 +412,7 @@ def test_workflows_isolent_live_et_historique_et_retry_git_est_borne() -> None:
     assert "repair-provenance" in quality
     assert "COCKPIT_BUILD_SUCCESS" in cockpit
     assert "COCKPIT_ARTIFACT_PUBLISHED" in cockpit
-    assert "COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED" in cockpit
+    assert "deployment[\"private\"]" in cockpit
+    assert "deployment_version=" in cockpit
+    assert "current_backfill_run_id=" in cockpit
     assert "cockpit/app/cockpit-data.json" in cockpit

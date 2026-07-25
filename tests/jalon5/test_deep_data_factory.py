@@ -31,6 +31,7 @@ from robin.storage.database import build_engine
 from robin.storage.models import Base
 from scripts.build_cockpit_snapshot import (
     build_player_readiness,
+    private_deployment_status,
     sanitize_public_snapshot,
 )
 from scripts.manage_historical_state import append_state, restore_state, verify_state
@@ -536,8 +537,73 @@ def test_prevision_et_readiness_reposent_sur_letat_courant(
     assert forecast["eta_priority_a_days"] == 0.0
     assert forecast["eta_priority_b_days"] == 0.0
     readiness = build_player_readiness(state, {"status": "PASSED"}, forecast)
-    assert len(readiness["families"]) == 12
+    assert len(readiness["families"]) == 13
     assert readiness["status"] == "BLOCKED_BY_COVERAGE"
+    coverage = readiness["families"][0]["coverage"]
+    assert {
+        "competitions",
+        "competitionCount",
+        "seasons",
+        "seasonCount",
+        "teamCount",
+        "fixtureCount",
+        "playerCount",
+        "nullRate",
+    } <= set(coverage)
+
+
+def test_readiness_relie_la_fixture_aux_parametres_bruts(
+    tmp_path: Path,
+) -> None:
+    state = tmp_path / "historical"
+    partition = (
+        state
+        / "parquet"
+        / "competition=Ligue-1"
+        / "season=2024"
+        / "entity_type=fixture_player_statistics"
+        / "dataset_version=api-football-v3"
+        / "part-00000.parquet"
+    )
+    partition.parent.mkdir(parents=True)
+    pd.DataFrame(
+        [
+            {
+                "payload": json.dumps(
+                    {
+                        "team": {"id": 77},
+                        "players": [{"player": {"id": 22220}}],
+                    }
+                ),
+                "raw_payload_hash": "raw-hash-1",
+            }
+        ]
+    ).to_parquet(partition, index=False)
+    observation = state / "raw" / "observations" / "2026" / "07" / "25" / "one.json"
+    observation.parent.mkdir(parents=True)
+    observation.write_text(
+        json.dumps(
+            {
+                "payload_hash": "raw-hash-1",
+                "request_parameters": {"fixture": 123456},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    readiness = build_player_readiness(
+        state,
+        {"status": "PASSED"},
+        {"eta_priority_a_base": 1.0},
+    )
+    minutes = next(
+        family
+        for family in readiness["families"]
+        if family["name"] == "Minutes"
+    )
+    assert minutes["coverage"]["fixtureCount"] == 1
+    assert minutes["coverage"]["teamCount"] == 1
+    assert minutes["coverage"]["playerCount"] == 1
 
 
 def test_persistance_compte_une_table_sans_colonne_id(
@@ -630,3 +696,34 @@ def test_replay_pilote_ne_rappelle_pas_le_fournisseur(
     assert proof["provider_calls"] == 0
     assert proof["quota_consumed"] == 0
     assert proof["business_rows_inserted"] == 0
+
+
+def test_deploiement_prive_exige_le_meme_run_et_le_meme_hash() -> None:
+    deployed = {
+        "backfill_run_id": "30150002144",
+        "data_hash": "trusted-data-hash",
+    }
+    assert (
+        private_deployment_status(
+            current_backfill_run="30150002144",
+            current_data_hash="trusted-data-hash",
+            deployment_state=deployed,
+        )
+        == "COCKPIT_PRIVATE_DEPLOYED"
+    )
+    assert (
+        private_deployment_status(
+            current_backfill_run="30154099512",
+            current_data_hash="new-data-hash",
+            deployment_state=deployed,
+        )
+        == "COCKPIT_PRIVATE_STALE"
+    )
+    assert (
+        private_deployment_status(
+            current_backfill_run="30150002144",
+            current_data_hash="new-data-hash",
+            deployment_state=deployed,
+        )
+        == "COCKPIT_PRIVATE_STALE"
+    )

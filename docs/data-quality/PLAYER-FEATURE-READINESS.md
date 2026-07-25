@@ -31,3 +31,26 @@ doivent toutes passer avant un entraînement joueur. `team_baseline_v1` reste
 
 Ces statuts ne débloquent aucun modèle joueurs. Les valeurs manquantes restent
 nulles et ne sont jamais converties en zéro.
+
+## Mesure Jalon 5.2 après qualité
+
+| Famille | Comp. | Saisons | Équipes | Fixtures | Joueurs | Lignes | Null | Temporalité | Statut |
+|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| Effectifs | 1 | 1 | 21 | 0 | 0 | 21 | 7,14 % | point-in-time | `BLOCKED_BY_COVERAGE` |
+| Joueurs | 1 | 5 | 32 | 0 | 2 039 | 4 132 | 0 % | point-in-time | `COMPUTABLE` |
+| Minutes | 1 | 3 | 24 | 923 | 1 285 | 1 846 | 7,14 % | lag post-match requis | `TESTING` |
+| Statistiques joueurs/match | 1 | 3 | 24 | 923 | 1 285 | 1 846 | 7,14 % | lag post-match requis | `TESTING` |
+| Compositions | 1 | 3 | 24 | 925 | 1 286 | 1 850 | 7,14 % | lag post-match requis | `TESTING` |
+| Formations | 1 | 3 | 24 | 925 | 1 286 | 1 850 | 7,14 % | lag post-match requis | `TESTING` |
+| Continuité du onze | 1 | 3 | 24 | 925 | 1 286 | 1 850 | 7,14 % | lag post-match requis | `TESTING` |
+| Force du onze | 1 | 3 | 24 | 922 | 1 280 | 1 846 | 7,14 % | lag post-match requis | `TESTING` |
+| Force du banc | 1 | 1 | 21 | 925 | 1 286 | 21 | 7,14 % | lag post-match requis | `BLOCKED_BY_COVERAGE` |
+| Blessures | 1 | 5 | 27 | 1 638 | 1 210 | 12 801 | 7,14 % | non point-in-time | `BLOCKED_BY_TEMPORALITY` |
+| Disponibilité | 1 | 3 | 24 | 915 | 858 | 1 850 | 7,14 % | non point-in-time | `BLOCKED_BY_TEMPORALITY` |
+| Fatigue | 1 | 3 | 24 | 922 | 1 280 | 1 846 | 7,14 % | lag post-match requis | `TESTING` |
+| Retour de blessure | 1 | 3 | 24 | 913 | 859 | 1 846 | 7,14 % | non point-in-time | `BLOCKED_BY_TEMPORALITY` |
+
+La qualité et les identités sont `PASSED`/`VERIFIED` pour les treize familles.
+`COMPUTABLE` pour la dimension joueurs ne signifie pas `PLAYER_MODEL_READY`.
+Les features `TESTING` exigent encore une validation as-of par match ; les
+blessures historiques ne peuvent pas devenir point-in-time par imputation.
