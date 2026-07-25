@@ -1,0 +1,12 @@
+{
+    "status":  "MIGRATED_READ_ONLY",
+    "source_branch":  "shadow-data",
+    "source_commit":  "e56e1aa7f49f561554add7e34de056d1d5229495",
+    "source_historical_tree":  "310e824882b5b59e44a92e7c10a7b8bb76123658",
+    "destination_branch":  "historical-data",
+    "destination_commit":  "cbd42a6aeefae148c7b94b1b6d5e0001d8451936",
+    "provider_calls":  0,
+    "quota_consumed":  0,
+    "deletion_authorized":  false,
+    "migrated_at":  "2026-07-25T04:41:16.6498228Z"
+}
