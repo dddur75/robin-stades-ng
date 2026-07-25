@@ -1061,12 +1061,25 @@ function ModelArena() {
     comparison_id?: string;
     paired_fixtures?: number;
     paired_log_loss_delta?: number;
+    paired_brier_delta?: number;
+    decision?: string;
     status?: string;
+    performance_by_season?: Record<string, { fixtures?: number; log_loss_delta?: number }>;
     uncertainty?: {
       ci90?: number[];
       ci95?: number[];
       probability_challenger_better?: number;
     };
+  };
+  type LeaderboardRow = {
+    model: string;
+    dataset?: string;
+    sample?: number;
+    paired_sample?: number;
+    calibration?: string;
+    metrics?: { log_loss?: number; brier_score?: number; ece?: number };
+    reliability_curve?: Array<{ mean_confidence?: number | null; accuracy?: number | null }>;
+    status?: string;
   };
   const arena = (snapshot.deepData as unknown as {
     modelArena?: {
@@ -1076,7 +1089,13 @@ function ModelArena() {
       modelsTested?: number;
       predictions?: number;
       comparisons?: ArenaComparison[];
+      leaderboard?: LeaderboardRow[];
+      calibrationAudits?: Record<string, { method?: string; leakage_guard?: string; evaluation_labels_used_for_selection?: number }>;
+      featureStability?: Array<{ feature?: string; missing_rate?: number | null; direction_stable?: boolean; status?: string }>;
+      scoreModels?: Array<{ model?: string; fixtures?: number; mean_home_goals?: number; mean_away_goals?: number; markets?: string[]; status?: string }>;
+      oosGovernance?: Array<{ period?: string; seasons?: string }>;
       strategyStatus?: string;
+      strategiesTested?: number;
       liveCandidates?: number;
       providerCalls?: number;
       quotaConsumed?: number;
@@ -1084,6 +1103,18 @@ function ModelArena() {
     };
   }).modelArena;
   const comparisons = arena?.comparisons ?? [];
+  const leaderboard = arena?.leaderboard ?? [];
+  const [challenger, setChallenger] = useState(leaderboard[0]?.model ?? "");
+  const [reference, setReference] = useState(leaderboard[1]?.model ?? "");
+  const selectedComparison = comparisons.find((row) => {
+    const id = row.comparison_id ?? "";
+    return id.includes(challenger) && id.includes(reference);
+  }) ?? comparisons[0];
+  const selectedModel = leaderboard.find((row) => row.model === challenger);
+  const reliabilityPoints = (selectedModel?.reliability_curve ?? [])
+    .filter((point) => point.mean_confidence != null && point.accuracy != null)
+    .map((point) => `${Number(point.mean_confidence) * 100},${100 - Number(point.accuracy) * 100}`)
+    .join(" ");
   return (
     <>
       <section className="metrics-grid">
@@ -1093,14 +1124,50 @@ function ModelArena() {
         <Metric label="Candidats live" value={String(arena?.liveCandidates ?? 0)} detail={arena?.productionStatus ?? "PRODUCTION_LOCKED"} />
       </section>
       <section className="panel">
-        <div className="panel-head"><div><span>Exact fixtures · CI 90/95 %</span><h2>Comparaisons appariées</h2></div><StatusPill value={arena?.status ?? "NOT_RUN"} /></div>
-        {comparisons.length ? <div className="table-wrap"><table><thead><tr><th>Comparaison</th><th>Matchs</th><th>Δ Log Loss</th><th>CI 90 %</th><th>CI 95 %</th><th>P(supériorité)</th><th>Statut</th></tr></thead><tbody>
-          {comparisons.map((row) => <tr key={row.comparison_id}><td>{row.comparison_id}</td><td>{row.paired_fixtures ?? 0}</td><td>{row.paired_log_loss_delta == null ? "—" : row.paired_log_loss_delta.toFixed(4)}</td><td>{row.uncertainty?.ci90?.map((value) => value.toFixed(4)).join(" · ") ?? "—"}</td><td>{row.uncertainty?.ci95?.map((value) => value.toFixed(4)).join(" · ") ?? "—"}</td><td>{row.uncertainty?.probability_challenger_better == null ? "—" : pct(row.uncertainty.probability_challenger_better)}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
+        <div className="panel-head"><div><span>Model Leaderboard</span><h2>Échantillons complets et appariés</h2></div><StatusPill value={arena?.status ?? "NOT_RUN"} /></div>
+        {leaderboard.length ? <div className="table-wrap"><table><thead><tr><th>Modèle</th><th>Dataset</th><th>Complet</th><th>Apparié</th><th>Log Loss</th><th>Brier</th><th>ECE</th><th>Calibration</th><th>Statut</th></tr></thead><tbody>
+          {leaderboard.map((row) => <tr key={row.model}><td>{row.model}</td><td>{row.dataset ?? "—"}</td><td>{row.sample ?? 0}</td><td>{row.paired_sample ?? 0}</td><td>{row.metrics?.log_loss?.toFixed(4) ?? "—"}</td><td>{row.metrics?.brier_score?.toFixed(4) ?? "—"}</td><td>{row.metrics?.ece?.toFixed(4) ?? "—"}</td><td>{row.calibration ?? "NONE"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
         </tbody></table></div> : <EmptyState title="Arène en attente" text="Aucun résultat n'est inventé avant l'exécution reproductible sur historical-data." label="NO OUTPUT" />}
       </section>
       <section className="panel">
+        <div className="panel-head"><div><span>Head-to-Head · exact fixtures</span><h2>Comparaison appariée interactive</h2></div><StatusPill value={selectedComparison?.status ?? "INCONCLUSIVE"} /></div>
+        <div className="explorer-tools">
+          <label>Challenger<select value={challenger} onChange={(event) => setChallenger(event.target.value)}>{leaderboard.map((row) => <option key={row.model}>{row.model}</option>)}</select></label>
+          <label>Référence<select value={reference} onChange={(event) => setReference(event.target.value)}>{leaderboard.map((row) => <option key={row.model}>{row.model}</option>)}</select></label>
+        </div>
+        {selectedComparison ? <div className="cost-grid">
+          <article><span>Fixtures communes</span><strong>{selectedComparison.paired_fixtures ?? 0}</strong><small>{selectedComparison.comparison_id}</small></article>
+          <article><span>Δ Log Loss</span><strong>{selectedComparison.paired_log_loss_delta?.toFixed(4) ?? "—"}</strong><small>Δ Brier {selectedComparison.paired_brier_delta?.toFixed(4) ?? "—"}</small></article>
+          <article><span>CI 90 %</span><strong>{selectedComparison.uncertainty?.ci90?.map((value) => value.toFixed(4)).join(" · ") ?? "—"}</strong><small>CI 95 % {selectedComparison.uncertainty?.ci95?.map((value) => value.toFixed(4)).join(" · ") ?? "—"}</small></article>
+          <article><span>P(supériorité)</span><strong>{selectedComparison.uncertainty?.probability_challenger_better == null ? "—" : pct(selectedComparison.uncertainty.probability_challenger_better)}</strong><small>{selectedComparison.decision ?? "INCONCLUSIVE"}</small></article>
+        </div> : <EmptyState title="Paire non préenregistrée" text="Une paire absente n'est jamais comparée indirectement." label="NO PAIRED OUTPUT" />}
+        {selectedComparison?.performance_by_season && <div className="table-wrap"><table><thead><tr><th>Saison</th><th>Fixtures</th><th>Δ Log Loss</th></tr></thead><tbody>{Object.entries(selectedComparison.performance_by_season).map(([season, row]) => <tr key={season}><td>{season}</td><td>{row.fixtures ?? 0}</td><td>{row.log_loss_delta?.toFixed(4) ?? "—"}</td></tr>)}</tbody></table></div>}
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Calibration Lab</span><h2>Courbe de fiabilité cross-fitted</h2></div><StatusPill value="CROSS_FITTED_CALIBRATION_READY" /></div>
+        <svg viewBox="0 0 100 100" role="img" aria-label={`Courbe de fiabilité ${challenger}`} style={{ width: "100%", maxWidth: 420, height: 220 }}>
+          <line x1="0" y1="100" x2="100" y2="0" stroke="currentColor" strokeDasharray="4 4" />
+          {reliabilityPoints && <polyline points={reliabilityPoints} fill="none" stroke="#35d6a5" strokeWidth="2" />}
+        </svg>
+        <div className="table-wrap"><table><thead><tr><th>Modèle</th><th>Sélection</th><th>Garde anti-fuite</th><th>Labels OOS utilisés</th></tr></thead><tbody>
+          {Object.entries(arena?.calibrationAudits ?? {}).map(([name, audit]) => <tr key={name}><td>{name}</td><td>{audit.method ?? "NONE"}</td><td>{audit.leakage_guard ?? "FIXED_BASELINE"}</td><td>{audit.evaluation_labels_used_for_selection ?? 0}</td></tr>)}
+        </tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Feature Ablation</span><h2>Blocs retirés et stabilité</h2></div><StatusPill value="PLAYER_INCREMENTAL_VALUE_INCONCLUSIVE" /></div>
+        <div className="table-wrap"><table><thead><tr><th>Feature</th><th>Null</th><th>Direction stable</th><th>Statut</th></tr></thead><tbody>{(arena?.featureStability ?? []).map((row) => <tr key={row.feature}><td>{row.feature}</td><td>{row.missing_rate == null ? "—" : pct(row.missing_rate)}</td><td>{row.direction_stable ? "oui" : "non"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}</tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Score Models</span><h2>Poisson · Dixon–Coles</h2></div><StatusPill value="SCORE_MODEL_READY" /></div>
+        <div className="table-wrap"><table><thead><tr><th>Modèle</th><th>Fixtures</th><th>Buts dom.</th><th>Buts ext.</th><th>Marchés</th><th>Statut</th></tr></thead><tbody>{(arena?.scoreModels ?? []).map((row) => <tr key={row.model}><td>{row.model}</td><td>{row.fixtures ?? 0}</td><td>{row.mean_home_goals?.toFixed(3) ?? "—"}</td><td>{row.mean_away_goals?.toFixed(3) ?? "—"}</td><td>{row.markets?.join(" · ")}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}</tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>OOS Governance</span><h2>Périodes irréversibles</h2></div><StatusPill value="PRODUCTION_LOCKED" /></div>
+        <div className="cost-grid">{(arena?.oosGovernance ?? []).map((row) => <article key={row.period}><span>{row.period}</span><strong>{row.seasons}</strong><small>usage gouverné</small></article>)}</div>
+      </section>
+      <section className="panel">
         <div className="panel-head"><div><span>Stratégies bornées</span><h2>Strategy Lab V2</h2></div><StatusPill value={arena?.strategyStatus ?? "NOT_RUN"} /></div>
-        <p>Aucune stratégie n'est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
+        <p>{arena?.strategiesTested ?? 0} hypothèses exécutées. Aucune stratégie n'est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
       </section>
     </>
   );

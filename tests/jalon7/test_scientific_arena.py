@@ -19,6 +19,7 @@ from robin.historical.scientific_arena import (
     grouped_bootstrap,
     paired_model_comparison,
     random_lineup_control,
+    reliability_curve,
     score_distribution,
     score_market_probabilities,
     select_cross_fitted_calibration,
@@ -26,7 +27,9 @@ from robin.historical.scientific_arena import (
     storage_guard,
     strategy_lab_v2_protocol,
     temperature_calibrate,
+    temporal_discriminative_predictions,
     validate_exact_pairing,
+    validated_ensemble,
 )
 
 
@@ -112,6 +115,9 @@ def test_paired_comparison_reports_superiority_probability() -> None:
     assert result["paired_fixtures"] == 12
     assert result["paired_log_loss_delta"] < 0
     assert result["uncertainty"]["probability_challenger_better"] == 1.0
+    assert result["status"] == "PAIRED_EVALUATION_READY"
+    assert result["paired_brier_delta"] < 0
+    assert set(result["performance_by_season"]) == {"2024"}
 
 
 def test_temperature_scaling_preserves_probability_simplex() -> None:
@@ -218,6 +224,51 @@ def test_strategy_protocol_is_bounded_and_locked() -> None:
     assert protocol["production_status"] == "PRODUCTION_LOCKED"
     assert max(protocol["edge_thresholds"]) <= 0.07
     assert protocol["maximum_stake_units"] == 1.0
+
+
+def test_reliability_curve_is_complete_and_does_not_refit() -> None:
+    rows = [
+        prediction(1, (0.7, 0.2, 0.1)),
+        prediction(2, (0.2, 0.6, 0.2), target=1),
+    ]
+    curve = reliability_curve(rows)
+    assert len(curve) == 10
+    assert sum(int(str(bucket["count"])) for bucket in curve) == 2
+
+
+def test_ensemble_is_blocked_without_two_live_validated_components() -> None:
+    result = validated_ensemble(
+        [{"model": "team", "status": "MODEL_ARENA_ACTIVE"}]
+    )
+    assert result["status"] == "INCONCLUSIVE"
+    assert result["reason"] == "BLOCKED_NO_VALIDATED_COMPONENTS"
+
+
+def test_walk_forward_fit_seasons_are_strictly_earlier() -> None:
+    rows = [
+        {
+            "fixture_id": f"{season}-{index}",
+            "season": season,
+            "kickoff_at": f"{season}-01-{index + 1:02d}T12:00:00+00:00",
+            "target_home_goals": 2 if index % 3 == 0 else 1 if index % 3 == 1 else 0,
+            "target_away_goals": 0 if index % 3 == 0 else 1 if index % 3 == 1 else 2,
+            "elo_difference": float(index - 3),
+            "dataset_version": "test_v1",
+        }
+        for season in (2020, 2021, 2022)
+        for index in range(6)
+    ]
+    output = temporal_discriminative_predictions(
+        rows,
+        model_family="MULTINOMIAL",
+        features=("elo_difference",),
+        evaluation_seasons=(2021, 2022),
+    )
+    assert output
+    assert all(
+        max(row["fit_seasons"]) < int(str(row["season"]))
+        for row in output
+    )
 
 
 @pytest.mark.parametrize(

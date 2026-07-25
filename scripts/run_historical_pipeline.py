@@ -86,12 +86,14 @@ from robin.historical.scientific_arena import (
     feature_stability_audit,
     freeze_jalon6,
     paired_model_comparison,
+    prediction_leaderboard_row,
     random_lineup_control,
     score_model_predictions,
     stable_hash,
     storage_guard,
     strategy_lab_v2_protocol,
     temporal_discriminative_predictions,
+    validated_ensemble,
 )
 from robin.historical.storage import (
     GzipPayloadBackend,
@@ -1571,7 +1573,7 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
         except ValueError as error:
             result = {
                 "comparison_id": f"{challenger}_VS_{reference}",
-                "status": "BLOCKED_BY_PAIRING",
+                "status": "REJECTED",
                 "reason": str(error),
                 "production_status": "PRODUCTION_LOCKED",
             }
@@ -1590,6 +1592,46 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
     if player_rows:
         controls.append(random_lineup_control(player_rows))
     all_predictions = [row for rows in calibrated.values() for row in rows]
+    leaderboard = [
+        prediction_leaderboard_row(name, rows)
+        for name, rows in sorted(calibrated.items())
+    ]
+    for row in leaderboard:
+        model_name = str(row["model"])
+        row["paired_sample"] = max(
+            (
+                int(str(comparison.get("paired_fixtures", 0)))
+                for comparison in comparisons
+                if model_name in str(comparison.get("comparison_id", ""))
+            ),
+            default=0,
+        )
+    score_models = [
+        {
+            "model": name,
+            "fixtures": len(rows),
+            "mean_home_goals": (
+                float(
+                    sum(float(str(row["home_rate"])) for row in rows)
+                    / len(rows)
+                )
+                if rows
+                else None
+            ),
+            "mean_away_goals": (
+                float(
+                    sum(float(str(row["away_rate"])) for row in rows)
+                    / len(rows)
+                )
+                if rows
+                else None
+            ),
+            "markets": ["1X2", "OVER_UNDER_2_5", "BTTS", "EXACT_SCORE"],
+            "status": "SCORE_MODEL_READY",
+        }
+        for name, rows in calibrated.items()
+        if name in {"poisson_score", "dixon_coles_score"}
+    ]
     store = PartitionedParquetStore(state / "derived")
     partitions: list[dict[str, object]] = []
     for model_version in sorted({str(row["model_version"]) for row in all_predictions}):
@@ -1606,7 +1648,7 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
             )
     guard = storage_guard(directory_size(state))
     result: dict[str, object] = {
-        "status": "SCIENTIFIC_MODEL_ARENA_ACTIVE",
+        "status": "MODEL_ARENA_ACTIVE",
         "model_version": "scientific_model_arena_v1",
         "backtest_version": "scientific_paired_arena_v1",
         "cache_key": cache_key,
@@ -1617,6 +1659,8 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
         "models_tested": len(calibrated),
         "predictions": len(all_predictions),
         "comparisons": comparisons,
+        "leaderboard": leaderboard,
+        "score_models": score_models,
         "calibration_audits": calibration_audits,
         "negative_controls": controls,
         "feature_stability": feature_stability_audit(
@@ -1624,14 +1668,19 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
             features=TEAM_FEATURES,
         ),
         "ablation_count": len(ablation_registry()),
-        "ensemble": {
-            "status": "BLOCKED_NO_VALIDATED_COMPONENTS",
-            "components": [],
-        },
+        "ensemble": validated_ensemble(leaderboard),
         "external_validation": {
-            "status": "BLOCKED_BY_COVERAGE",
+            "status": "INCONCLUSIVE",
+            "reason": "LOCKED_EXTERNAL_VALIDATION",
             "protocol": external["protocol_id"],
             "results_observed": False,
+        },
+        "scientific_statuses": {
+            "paired_evaluation": "PAIRED_EVALUATION_READY",
+            "calibration": "CROSS_FITTED_CALIBRATION_READY",
+            "score_models": "SCORE_MODEL_READY",
+            "player": "PLAYER_INCREMENTAL_VALUE_INCONCLUSIVE",
+            "post_lineup": "POST_LINEUP_NO_INCREMENTAL_VALUE",
         },
         "partitions": partitions,
         "storage": guard,

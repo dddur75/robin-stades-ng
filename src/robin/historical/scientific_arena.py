@@ -282,17 +282,23 @@ def paired_model_comparison(
     left_probabilities = np.vstack([_probabilities(row) for row in left])
     right_probabilities = np.vstack([_probabilities(row) for row in right])
     delta = _losses(left) - _losses(right)
+    one_hot = np.eye(3)[labels]
+    brier_delta = (
+        np.square(left_probabilities - one_hot).sum(axis=1)
+        - np.square(right_probabilities - one_hot).sum(axis=1)
+    ) / 3.0
     uncertainty = grouped_bootstrap(
         delta,
         [_iso_group(row) for row in left],
         iterations=iterations,
     )
     ci95 = cast(list[float], uncertainty["ci95"])
-    status = (
-        "SUPERIOR"
+    decision = (
+        "CHALLENGER_BETTER_ON_EXPOSED_OOS"
         if ci95[1] < 0.0 and float(str(uncertainty["probability_challenger_better"])) >= 0.95
         else "INCONCLUSIVE"
     )
+    seasons = sorted({int(str(row["season"])) for row in left})
     return {
         "comparison_id": comparison_id,
         "protocol": "EXACT_PAIRED_FIXTURES_V1",
@@ -300,9 +306,116 @@ def paired_model_comparison(
         "challenger_metrics": _metrics(left_probabilities, labels),
         "reference_metrics": _metrics(right_probabilities, labels),
         "paired_log_loss_delta": float(delta.mean()),
+        "paired_brier_delta": float(brier_delta.mean()),
+        "performance_by_season": {
+            str(season): {
+                "fixtures": int(
+                    sum(int(str(row["season"])) == season for row in left)
+                ),
+                "log_loss_delta": float(
+                    np.mean(
+                        [
+                            value
+                            for row, value in zip(left, delta, strict=True)
+                            if int(str(row["season"])) == season
+                        ]
+                    )
+                ),
+            }
+            for season in seasons
+        },
         "uncertainty": uncertainty,
-        "status": status,
+        "status": (
+            "PAIRED_EVALUATION_READY"
+            if decision != "INCONCLUSIVE"
+            else "INCONCLUSIVE"
+        ),
+        "decision": decision,
         "production_status": "PRODUCTION_LOCKED",
+    }
+
+
+def reliability_curve(
+    rows: Sequence[Mapping[str, object]],
+    *,
+    bins: int = 10,
+) -> list[dict[str, object]]:
+    if bins <= 1:
+        raise ValueError("RELIABILITY_BINS_TOO_LOW")
+    buckets: list[list[tuple[float, bool]]] = [[] for _ in range(bins)]
+    for row in rows:
+        probabilities = _probabilities(row)
+        predicted = int(probabilities.argmax())
+        confidence = float(probabilities[predicted])
+        index = min(int(confidence * bins), bins - 1)
+        buckets[index].append(
+            (confidence, predicted == int(str(row["target"])))
+        )
+    output: list[dict[str, object]] = []
+    for index, bucket in enumerate(buckets):
+        lower = index / bins
+        upper = (index + 1) / bins
+        output.append(
+            {
+                "lower": float(lower),
+                "upper": float(min(upper, 1.0)),
+                "count": len(bucket),
+                "mean_confidence": (
+                    float(np.mean([item[0] for item in bucket])) if bucket else None
+                ),
+                "accuracy": (
+                    float(np.mean([item[1] for item in bucket]))
+                    if bucket
+                    else None
+                ),
+            }
+        )
+    return output
+
+
+def prediction_leaderboard_row(
+    name: str,
+    rows: Sequence[Mapping[str, object]],
+) -> dict[str, object]:
+    if not rows:
+        return {"model": name, "status": "BLOCKED_BY_COVERAGE", "sample": 0}
+    probabilities = np.vstack([_probabilities(row) for row in rows])
+    labels = np.asarray(
+        [int(str(row["target"])) for row in rows],
+        dtype=np.int64,
+    )
+    calibrations = sorted(
+        {str(row.get("calibration", "NONE")) for row in rows}
+    )
+    return {
+        "model": name,
+        "dataset": str(rows[0].get("dataset_version", "")),
+        "sample": len(rows),
+        "metrics": _metrics(probabilities, labels),
+        "calibration": ",".join(calibrations),
+        "reliability_curve": reliability_curve(rows),
+        "status": "MODEL_ARENA_ACTIVE",
+    }
+
+
+def validated_ensemble(
+    components: Sequence[Mapping[str, object]],
+) -> dict[str, object]:
+    validated = [
+        component
+        for component in components
+        if component.get("status") == "LIVE_SHADOW_CANDIDATE"
+    ]
+    if len(validated) < 2:
+        return {
+            "status": "INCONCLUSIVE",
+            "reason": "BLOCKED_NO_VALIDATED_COMPONENTS",
+            "components": [],
+        }
+    return {
+        "status": "MODEL_ARENA_ACTIVE",
+        "reason": "ENSEMBLE_COMPONENTS_VALIDATED",
+        "components": [component.get("model") for component in validated],
     }
 
 

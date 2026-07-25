@@ -10,5 +10,5 @@ Dixon–Coles, marché déviggué, joueurs pré-lineup et post-lineup audité. L
 graine est 1707. Le cache dépend des hashes datasets, du protocole et du commit.
 Un replay identique effectue 0 appel et 0 réécriture scientifique.
 
-`SCIENTIFIC_MODEL_ARENA_ACTIVE` signifie que l’outil fonctionne; il ne signifie
+`MODEL_ARENA_ACTIVE` signifie que l’outil fonctionne; il ne signifie
 ni modèle validé, ni stratégie prouvée, ni production ouverte.

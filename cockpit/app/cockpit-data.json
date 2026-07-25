@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T15:19:28.212017+00:00",
+  "generatedAt": "2026-07-25T15:28:59.218801+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -1269,7 +1269,7 @@
     "qualityStatus": "PASSED",
     "productionStatus": "PRODUCTION_LOCKED",
     "modelArena": {
-      "status": "SCIENTIFIC_MODEL_ARENA_ACTIVE",
+      "status": "MODEL_ARENA_ACTIVE",
       "baselineStatus": "JALON6_BASELINE_FROZEN",
       "baselineHash": "668c8fa53950e296b7e6c26b8362f03b541dab675016da3f1a25a4fc12ee65a5",
       "externalProtocol": "EXTERNAL_VALIDATION_PROTOCOL_V1",
@@ -1294,8 +1294,20 @@
             "matches": 612
           },
           "comparison_id": "team_hist_gradient_boosting_crossfit_VS_team_multinomial_crossfit",
+          "decision": "INCONCLUSIVE",
+          "paired_brier_delta": 0.008805315719300376,
           "paired_fixtures": 612,
           "paired_log_loss_delta": 0.03454670489792978,
+          "performance_by_season": {
+            "2024": {
+              "fixtures": 306,
+              "log_loss_delta": 0.04979826742640841
+            },
+            "2025": {
+              "fixtures": 306,
+              "log_loss_delta": 0.019295142369451138
+            }
+          },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
@@ -1328,8 +1340,20 @@
             "matches": 612
           },
           "comparison_id": "team_without_recent_form_crossfit_VS_team_multinomial_crossfit",
+          "decision": "CHALLENGER_BETTER_ON_EXPOSED_OOS",
+          "paired_brier_delta": -0.0008600037728697614,
           "paired_fixtures": 612,
           "paired_log_loss_delta": -0.003698416117336192,
+          "performance_by_season": {
+            "2024": {
+              "fixtures": 306,
+              "log_loss_delta": -0.003432432438058609
+            },
+            "2025": {
+              "fixtures": 306,
+              "log_loss_delta": -0.003964399796613775
+            }
+          },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
@@ -1338,7 +1362,7 @@
             "log_loss": 0.9916071336707102,
             "matches": 612
           },
-          "status": "SUPERIOR",
+          "status": "PAIRED_EVALUATION_READY",
           "uncertainty": {
             "ci90": [
               -0.006589285427158878,
@@ -1362,8 +1386,20 @@
             "matches": 408
           },
           "comparison_id": "poisson_score_VS_market_devigged",
+          "decision": "INCONCLUSIVE",
+          "paired_brier_delta": 0.011659830199575845,
           "paired_fixtures": 408,
           "paired_log_loss_delta": 0.049632122099148766,
+          "performance_by_season": {
+            "2024": {
+              "fixtures": 272,
+              "log_loss_delta": 0.045104171414731
+            },
+            "2025": {
+              "fixtures": 136,
+              "log_loss_delta": 0.05868802346798431
+            }
+          },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
@@ -1396,8 +1432,20 @@
             "matches": 612
           },
           "comparison_id": "dixon_coles_score_VS_poisson_score",
+          "decision": "INCONCLUSIVE",
+          "paired_brier_delta": 0.0003646913529781749,
           "paired_fixtures": 612,
           "paired_log_loss_delta": 0.0019566427743339916,
+          "performance_by_season": {
+            "2024": {
+              "fixtures": 306,
+              "log_loss_delta": 0.0034331036922127804
+            },
+            "2025": {
+              "fixtures": 306,
+              "log_loss_delta": 0.00048018185645520254
+            }
+          },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
@@ -1430,8 +1478,20 @@
             "matches": 612
           },
           "comparison_id": "player_pre_lineup_crossfit_VS_team_multinomial_crossfit",
+          "decision": "INCONCLUSIVE",
+          "paired_brier_delta": 0.0001563040427582476,
           "paired_fixtures": 612,
           "paired_log_loss_delta": 0.0005617372137608741,
+          "performance_by_season": {
+            "2024": {
+              "fixtures": 306,
+              "log_loss_delta": 0.002234773089617468
+            },
+            "2025": {
+              "fixtures": 306,
+              "log_loss_delta": -0.00111129866209572
+            }
+          },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
@@ -1464,8 +1524,20 @@
             "matches": 611
           },
           "comparison_id": "post_lineup_audit_crossfit_VS_player_pre_lineup_crossfit",
+          "decision": "INCONCLUSIVE",
+          "paired_brier_delta": 0.005900269698831436,
           "paired_fixtures": 611,
           "paired_log_loss_delta": 0.03178107523661577,
+          "performance_by_season": {
+            "2024": {
+              "fixtures": 306,
+              "log_loss_delta": 0.03817310198870545
+            },
+            "2025": {
+              "fixtures": 305,
+              "log_loss_delta": 0.02536809101976514
+            }
+          },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
@@ -1489,6 +1561,724 @@
             "probability_challenger_better": 0.0,
             "seed": 1707
           }
+        }
+      ],
+      "leaderboard": [
+        {
+          "calibration": "NONE",
+          "dataset": "api_team_pre_match_v1",
+          "metrics": {
+            "brier_score": 0.2044100949532006,
+            "ece": 0.0366761324168891,
+            "log_loss": 1.0225361451301325,
+            "matches": 612
+          },
+          "model": "dixon_coles_score",
+          "paired_sample": 612,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.4722222222222222,
+              "count": 108,
+              "lower": 0.3,
+              "mean_confidence": 0.38051858531882204,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.46366782006920415,
+              "count": 289,
+              "lower": 0.4,
+              "mean_confidence": 0.44457096407042107,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.5792682926829268,
+              "count": 164,
+              "lower": 0.5,
+              "mean_confidence": 0.5417210323114509,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.6458333333333334,
+              "count": 48,
+              "lower": 0.6,
+              "mean_confidence": 0.6315838952623393,
+              "upper": 0.7
+            },
+            {
+              "accuracy": 0.6666666666666666,
+              "count": 3,
+              "lower": 0.7,
+              "mean_confidence": 0.7270283805302776,
+              "upper": 0.8
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.8,
+              "mean_confidence": null,
+              "upper": 0.9
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.9,
+              "mean_confidence": null,
+              "upper": 1.0
+            }
+          ],
+          "sample": 612,
+          "status": "MODEL_ARENA_ACTIVE"
+        },
+        {
+          "calibration": "NONE",
+          "dataset": "api_market_baseline_v1",
+          "metrics": {
+            "brier_score": 0.1885489327880878,
+            "ece": 0.027798554070178404,
+            "log_loss": 0.9557618320999003,
+            "matches": 408
+          },
+          "model": "market_devigged",
+          "paired_sample": 408,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.3870967741935484,
+              "count": 62,
+              "lower": 0.3,
+              "mean_confidence": 0.3814330683020298,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.4274193548387097,
+              "count": 124,
+              "lower": 0.4,
+              "mean_confidence": 0.44800644069918494,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.5918367346938775,
+              "count": 98,
+              "lower": 0.5,
+              "mean_confidence": 0.54559388763446,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.6666666666666666,
+              "count": 72,
+              "lower": 0.6,
+              "mean_confidence": 0.646518899988807,
+              "upper": 0.7
+            },
+            {
+              "accuracy": 0.8,
+              "count": 40,
+              "lower": 0.7,
+              "mean_confidence": 0.739852513167046,
+              "upper": 0.8
+            },
+            {
+              "accuracy": 0.8333333333333334,
+              "count": 12,
+              "lower": 0.8,
+              "mean_confidence": 0.8374603302260613,
+              "upper": 0.9
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.9,
+              "mean_confidence": null,
+              "upper": 1.0
+            }
+          ],
+          "sample": 408,
+          "status": "MODEL_ARENA_ACTIVE"
+        },
+        {
+          "calibration": "SIGMOID",
+          "dataset": "api_player_pre_lineup_v1",
+          "metrics": {
+            "brier_score": 0.19704591562630158,
+            "ece": 0.025190147239472407,
+            "log_loss": 0.992168870884471,
+            "matches": 612
+          },
+          "model": "player_pre_lineup_crossfit",
+          "paired_sample": 612,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.390625,
+              "count": 64,
+              "lower": 0.3,
+              "mean_confidence": 0.38529623606909535,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.44528301886792454,
+              "count": 265,
+              "lower": 0.4,
+              "mean_confidence": 0.4501544467108185,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.5614973262032086,
+              "count": 187,
+              "lower": 0.5,
+              "mean_confidence": 0.5459585411902095,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.7586206896551724,
+              "count": 87,
+              "lower": 0.6,
+              "mean_confidence": 0.640617791004003,
+              "upper": 0.7
+            },
+            {
+              "accuracy": 0.7777777777777778,
+              "count": 9,
+              "lower": 0.7,
+              "mean_confidence": 0.7097337932744731,
+              "upper": 0.8
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.8,
+              "mean_confidence": null,
+              "upper": 0.9
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.9,
+              "mean_confidence": null,
+              "upper": 1.0
+            }
+          ],
+          "sample": 612,
+          "status": "MODEL_ARENA_ACTIVE"
+        },
+        {
+          "calibration": "NONE",
+          "dataset": "api_team_pre_match_v1",
+          "metrics": {
+            "brier_score": 0.20404540360022236,
+            "ece": 0.030310030330055904,
+            "log_loss": 1.0205795023557986,
+            "matches": 612
+          },
+          "model": "poisson_score",
+          "paired_sample": 612,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.5194805194805194,
+              "count": 77,
+              "lower": 0.3,
+              "mean_confidence": 0.3838590731089543,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.45084745762711864,
+              "count": 295,
+              "lower": 0.4,
+              "mean_confidence": 0.44428612830307684,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.5494505494505495,
+              "count": 182,
+              "lower": 0.5,
+              "mean_confidence": 0.5414239762621147,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.7037037037037037,
+              "count": 54,
+              "lower": 0.6,
+              "mean_confidence": 0.6332040835755108,
+              "upper": 0.7
+            },
+            {
+              "accuracy": 0.5,
+              "count": 4,
+              "lower": 0.7,
+              "mean_confidence": 0.7258698083934536,
+              "upper": 0.8
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.8,
+              "mean_confidence": null,
+              "upper": 0.9
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.9,
+              "mean_confidence": null,
+              "upper": 1.0
+            }
+          ],
+          "sample": 612,
+          "status": "MODEL_ARENA_ACTIVE"
+        },
+        {
+          "calibration": "NONE",
+          "dataset": "api_post_lineup_simulated_v1",
+          "metrics": {
+            "brier_score": 0.2028930698169047,
+            "ece": 0.058281969166670305,
+            "log_loss": 1.0237583669747565,
+            "matches": 611
+          },
+          "model": "post_lineup_audit_crossfit",
+          "paired_sample": 611,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.25,
+              "count": 64,
+              "lower": 0.3,
+              "mean_confidence": 0.38028919609116313,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.3969849246231156,
+              "count": 199,
+              "lower": 0.4,
+              "mean_confidence": 0.4513902298865697,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.5117647058823529,
+              "count": 170,
+              "lower": 0.5,
+              "mean_confidence": 0.5446818808791065,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.673469387755102,
+              "count": 98,
+              "lower": 0.6,
+              "mean_confidence": 0.6461852163334258,
+              "upper": 0.7
+            },
+            {
+              "accuracy": 0.6851851851851852,
+              "count": 54,
+              "lower": 0.7,
+              "mean_confidence": 0.7486472809115617,
+              "upper": 0.8
+            },
+            {
+              "accuracy": 0.6363636363636364,
+              "count": 22,
+              "lower": 0.8,
+              "mean_confidence": 0.8354136673302022,
+              "upper": 0.9
+            },
+            {
+              "accuracy": 1.0,
+              "count": 4,
+              "lower": 0.9,
+              "mean_confidence": 0.907675883921851,
+              "upper": 1.0
+            }
+          ],
+          "sample": 611,
+          "status": "MODEL_ARENA_ACTIVE"
+        },
+        {
+          "calibration": "TEMPERATURE_SCALING",
+          "dataset": "api_team_pre_match_v1",
+          "metrics": {
+            "brier_score": 0.2056949273028437,
+            "ece": 0.0494792544409536,
+            "log_loss": 1.02615383856864,
+            "matches": 612
+          },
+          "model": "team_hist_gradient_boosting_crossfit",
+          "paired_sample": 612,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.4263959390862944,
+              "count": 197,
+              "lower": 0.3,
+              "mean_confidence": 0.3755171014355474,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.4803921568627451,
+              "count": 306,
+              "lower": 0.4,
+              "mean_confidence": 0.44311761878779576,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.6086956521739131,
+              "count": 92,
+              "lower": 0.5,
+              "mean_confidence": 0.5386691353092907,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.7647058823529411,
+              "count": 17,
+              "lower": 0.6,
+              "mean_confidence": 0.6229573824596069,
+              "upper": 0.7
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.7,
+              "mean_confidence": null,
+              "upper": 0.8
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.8,
+              "mean_confidence": null,
+              "upper": 0.9
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.9,
+              "mean_confidence": null,
+              "upper": 1.0
+            }
+          ],
+          "sample": 612,
+          "status": "MODEL_ARENA_ACTIVE"
+        },
+        {
+          "calibration": "SIGMOID",
+          "dataset": "api_team_pre_match_v1",
+          "metrics": {
+            "brier_score": 0.19688961158354334,
+            "ece": 0.02779581565820306,
+            "log_loss": 0.9916071336707102,
+            "matches": 612
+          },
+          "model": "team_multinomial_crossfit",
+          "paired_sample": 612,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.3387096774193548,
+              "count": 62,
+              "lower": 0.3,
+              "mean_confidence": 0.3841871409280112,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.4482758620689655,
+              "count": 261,
+              "lower": 0.4,
+              "mean_confidence": 0.4502286741312545,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.5721925133689839,
+              "count": 187,
+              "lower": 0.5,
+              "mean_confidence": 0.5468252502542257,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.7222222222222222,
+              "count": 90,
+              "lower": 0.6,
+              "mean_confidence": 0.6391478185573439,
+              "upper": 0.7
+            },
+            {
+              "accuracy": 0.8333333333333334,
+              "count": 12,
+              "lower": 0.7,
+              "mean_confidence": 0.7115518362727237,
+              "upper": 0.8
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.8,
+              "mean_confidence": null,
+              "upper": 0.9
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.9,
+              "mean_confidence": null,
+              "upper": 1.0
+            }
+          ],
+          "sample": 612,
+          "status": "MODEL_ARENA_ACTIVE"
+        },
+        {
+          "calibration": "SIGMOID",
+          "dataset": "api_team_pre_match_v1",
+          "metrics": {
+            "brier_score": 0.19602960781067358,
+            "ece": 0.0396348991067846,
+            "log_loss": 0.9879087175533741,
+            "matches": 612
+          },
+          "model": "team_without_recent_form_crossfit",
+          "paired_sample": 612,
+          "reliability_curve": [
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.0,
+              "mean_confidence": null,
+              "upper": 0.1
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.1,
+              "mean_confidence": null,
+              "upper": 0.2
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.2,
+              "mean_confidence": null,
+              "upper": 0.3
+            },
+            {
+              "accuracy": 0.4032258064516129,
+              "count": 62,
+              "lower": 0.3,
+              "mean_confidence": 0.3843335028991761,
+              "upper": 0.4
+            },
+            {
+              "accuracy": 0.4222222222222222,
+              "count": 270,
+              "lower": 0.4,
+              "mean_confidence": 0.45177494756456266,
+              "upper": 0.5
+            },
+            {
+              "accuracy": 0.5670731707317073,
+              "count": 164,
+              "lower": 0.5,
+              "mean_confidence": 0.5487940717156699,
+              "upper": 0.6
+            },
+            {
+              "accuracy": 0.7604166666666666,
+              "count": 96,
+              "lower": 0.6,
+              "mean_confidence": 0.6391955607164808,
+              "upper": 0.7
+            },
+            {
+              "accuracy": 0.75,
+              "count": 20,
+              "lower": 0.7,
+              "mean_confidence": 0.7264499409589399,
+              "upper": 0.8
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.8,
+              "mean_confidence": null,
+              "upper": 0.9
+            },
+            {
+              "accuracy": null,
+              "count": 0,
+              "lower": 0.9,
+              "mean_confidence": null,
+              "upper": 1.0
+            }
+          ],
+          "sample": 612,
+          "status": "MODEL_ARENA_ACTIVE"
+        }
+      ],
+      "scoreModels": [
+        {
+          "fixtures": 612,
+          "markets": [
+            "1X2",
+            "OVER_UNDER_2_5",
+            "BTTS",
+            "EXACT_SCORE"
+          ],
+          "mean_away_goals": 1.4636940424317875,
+          "mean_home_goals": 1.4596577056748625,
+          "model": "poisson_score",
+          "status": "SCORE_MODEL_READY"
+        },
+        {
+          "fixtures": 612,
+          "markets": [
+            "1X2",
+            "OVER_UNDER_2_5",
+            "BTTS",
+            "EXACT_SCORE"
+          ],
+          "mean_away_goals": 1.4636940424317875,
+          "mean_home_goals": 1.4596577056748625,
+          "model": "dixon_coles_score",
+          "status": "SCORE_MODEL_READY"
         }
       ],
       "calibrationAudits": {
@@ -1856,16 +2646,47 @@
       ],
       "ensemble": {
         "components": [],
-        "status": "BLOCKED_NO_VALIDATED_COMPONENTS"
+        "reason": "BLOCKED_NO_VALIDATED_COMPONENTS",
+        "status": "INCONCLUSIVE"
       },
       "externalValidation": {
         "protocol": "EXTERNAL_VALIDATION_PROTOCOL_V1",
+        "reason": "LOCKED_EXTERNAL_VALIDATION",
         "results_observed": false,
-        "status": "BLOCKED_BY_COVERAGE"
+        "status": "INCONCLUSIVE"
       },
+      "scientificStatuses": {
+        "calibration": "CROSS_FITTED_CALIBRATION_READY",
+        "paired_evaluation": "PAIRED_EVALUATION_READY",
+        "player": "PLAYER_INCREMENTAL_VALUE_INCONCLUSIVE",
+        "post_lineup": "POST_LINEUP_NO_INCREMENTAL_VALUE",
+        "score_models": "SCORE_MODEL_READY"
+      },
+      "oosGovernance": [
+        {
+          "period": "DISCOVERY",
+          "seasons": "2020–2022"
+        },
+        {
+          "period": "VALIDATION",
+          "seasons": "2023"
+        },
+        {
+          "period": "EXPOSED_HISTORICAL_OOS",
+          "seasons": "2024–2025"
+        },
+        {
+          "period": "LOCKED_EXTERNAL_VALIDATION",
+          "seasons": "multi-ligues"
+        },
+        {
+          "period": "LIVE_PROSPECTIVE",
+          "seasons": "2026–2027"
+        }
+      ],
       "storage": {
         "can_write": true,
-        "current_bytes": 273503580,
+        "current_bytes": 273530467,
         "pause_bytes": 900000000,
         "status": "SAFE",
         "warning_bytes": 750000000
@@ -11465,8 +12286,8 @@
     "storage": {
       "rawBytes": 0,
       "parquetBytes": 38904362,
-      "derivedBytes": 69498450,
-      "totalBytes": 273556770,
+      "derivedBytes": 69525337,
+      "totalBytes": 273624723,
       "fileCount": 514,
       "bundleCount": 14,
       "payloadCount": 0,
@@ -14382,7 +15203,7 @@
       "build": "COCKPIT_BUILD_SUCCESS",
       "artifact": "COCKPIT_ARTIFACT_PUBLISHED",
       "private": "COCKPIT_PRIVATE_STALE",
-      "snapshotGeneratedAt": "2026-07-25T15:19:28.201383+00:00",
+      "snapshotGeneratedAt": "2026-07-25T15:28:59.205904+00:00",
       "currentDataHash": "47bea1652b39c83119328f4c275d184e7ebb3e05b0b8d7c1c1ba0dc57dbe8b48",
       "currentBackfillRunId": "30161258219",
       "deploymentVersion": 8,
