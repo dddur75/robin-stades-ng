@@ -142,3 +142,17 @@ Le schéma Alembic `0003_jalon4_durable_shadow` ajoute les entités suivantes :
 Les tables append-only portent `created_at`, les références de run et les
 versions nécessaires. Les payloads bruts sont référencés par SHA-256 ; ils ne
 sont jamais écrasés.
+
+## Datasets Jalon 6
+
+| Objet | Grain | Temporalité |
+|---|---|---|
+| `api_team_pre_match_v1` | une fixture | point-in-time avant kickoff |
+| `api_player_match_facts_v1` | joueur × fixture | `POST_MATCH_ONLY` |
+| `player_feature_store_v1` | feature × joueur × fixture | `PRE_LINEUP` |
+| `api_player_pre_lineup_v1` | une fixture | `PRE_LINEUP` |
+| `api_post_lineup_simulated_v1` | une fixture | `POST_LINEUP_SIMULATED` |
+| `api_market_baseline_v1` | fixture × marché | `HISTORICAL_CLOSING_MARKET` |
+
+Chaque manifest porte `dataset_version`, saisons, lignes, fixtures, features,
+cibles, couverture, qualité, politique temporelle, révision et SHA-256.

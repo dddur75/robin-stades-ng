@@ -56,8 +56,11 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Deep Data Command Center/);
   assert.match(page, /Backfill Monitor/);
   assert.match(page, /Player Explorer/);
+  assert.match(page, /Dataset Readiness/);
+  assert.match(page, /Lineup Explorer/);
   assert.match(page, /Feature Lab/);
   assert.match(page, /Model Lab/);
+  assert.match(page, /Strategy Lab/);
   assert.match(page, /Backtest Explorer/);
   assert.match(page, /Historical Data Quality/);
   assert.match(page, /LIVE_PIPELINE_VERIFIED/);
@@ -80,7 +83,10 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"deepData":/);
   assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
   assert.match(data, /"HISTORICAL POINT-IN-TIME"/);
-  assert.match(data, /"OOS_BACKTEST_V1_READY"/);
+  assert.match(
+    data,
+    /"(?:OOS_BACKTEST_V1_READY|API_OOS_BACKTEST_READY)"/,
+  );
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   try {

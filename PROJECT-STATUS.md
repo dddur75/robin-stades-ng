@@ -168,3 +168,19 @@ réussi : PostgreSQL connecté, 69 tables, registre `shadow-data` vérifié,
 Le Cockpit est construit et publié comme artefact ; la version privée Sites 8,
 restée au run `30150002144`, est correctement signalée
 `COCKPIT_PRIVATE_STALE`.
+
+## Jalon 6 — Data Factory analytique
+
+La PR #8 est fusionnée sur `main`. Le Jalon 6 travaille sur
+`codex/jalon-6-player-model-lab` et maintient `PRODUCTION_LOCKED`.
+
+L'audit durable compte 6 242 tâches, 5 156 terminées et 1 086 restantes.
+Les 55 079 lignes restaurées ont une provenance valide. Les Gates A, B et C
+sont ouverts ; le Gate D reste `BLOCKED_BY_TEMPORALITY`. Les datasets équipes,
+joueurs et compositions simulées sont générés sans appel fournisseur. Les
+modèles et stratégies restent `PLAYER_MODEL_TESTING`/`INCONCLUSIVE`.
+
+Premier OOS 2024–2025 : équipe multinomiale Log Loss 1,0518 / Brier 0,2012 ;
+pré-lineup 1,0267 / 0,2043 (`INCONCLUSIVE`) ; composition confirmée simulée
+1,6920 / 0,2108 (`REJECTED` face à l'équipe seule). Aucune stratégie n'est
+promue.

@@ -14,9 +14,12 @@ type PageKey =
   | "explorer"
   | "deep"
   | "backfill"
+  | "datasetReadiness"
   | "players"
+  | "lineups"
   | "featureLab"
   | "modelLab"
+  | "strategyLab"
   | "backtestLab"
   | "historicalQuality";
 
@@ -31,9 +34,12 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "explorer", label: "Data Explorer", glyph: "⌘" },
   { key: "deep", label: "Deep Data Center", glyph: "D" },
   { key: "backfill", label: "Backfill Monitor", glyph: "B" },
+  { key: "datasetReadiness", label: "Dataset Readiness", glyph: "G" },
   { key: "players", label: "Player Explorer", glyph: "P" },
+  { key: "lineups", label: "Lineup Explorer", glyph: "L" },
   { key: "featureLab", label: "Feature Lab", glyph: "F" },
   { key: "modelLab", label: "Model Lab", glyph: "M" },
+  { key: "strategyLab", label: "Strategy Lab", glyph: "S" },
   { key: "backtestLab", label: "Backtest Explorer", glyph: "T" },
   { key: "historicalQuality", label: "Historical Quality", glyph: "Q" },
 ];
@@ -89,10 +95,20 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     title: "Backfill Monitor",
     note: "État des tâches, checkpoints et prochaine unité de travail.",
   },
+  datasetReadiness: {
+    eyebrow: "Gates multi-saisons",
+    title: "Dataset Readiness",
+    note: "Couverture, qualité, temporalité et raisons des blocages.",
+  },
   players: {
     eyebrow: "Données joueurs sourcées",
     title: "Player Explorer",
     note: "Profils et statistiques observées, sans zéro inventé.",
+  },
+  lineups: {
+    eyebrow: "Pré-lineup vs simulé",
+    title: "Lineup Explorer",
+    note: "Onze attendu et composition historique simulée restent séparés.",
   },
   featureLab: {
     eyebrow: "Point-in-time strict",
@@ -103,6 +119,11 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     eyebrow: "Probabilités interprétables",
     title: "Model Lab",
     note: "Log Loss, Brier, calibration et modèles bloqués par la couverture.",
+  },
+  strategyLab: {
+    eyebrow: "Hypothèses sous contrôle",
+    title: "Strategy Lab",
+    note: "Sensibilité, tests multiples et aucune promotion automatique.",
   },
   backtestLab: {
     eyebrow: "Discovery · validation · OOS",
@@ -366,9 +387,12 @@ export default function Home() {
           {page === "explorer" && <DataExplorer />}
           {page === "deep" && <DeepDataCommandCenter />}
           {page === "backfill" && <BackfillMonitor />}
+          {page === "datasetReadiness" && <DatasetReadiness />}
           {page === "players" && <PlayerExplorer />}
+          {page === "lineups" && <LineupExplorer />}
           {page === "featureLab" && <FeatureLab />}
           {page === "modelLab" && <ModelLab />}
+          {page === "strategyLab" && <HistoricalStrategyLab />}
           {page === "backtestLab" && <BacktestExplorer />}
           {page === "historicalQuality" && <HistoricalDataQuality />}
         </div>
@@ -877,6 +901,97 @@ type PlayerRow = {
   origin: string;
 };
 
+type GateRow = {
+  name?: string;
+  status: string;
+  passed: boolean;
+  eligible_seasons?: number[];
+  reason?: string;
+};
+
+type DatasetRow = {
+  name?: string;
+  version?: string;
+  rows?: number;
+  fixtures?: number;
+  coverage?: number;
+  quality?: string;
+  temporalPolicy?: string;
+  status?: string;
+  sha256?: string;
+};
+
+function jalon6Snapshot() {
+  return snapshot.deepData as typeof snapshot.deepData & {
+    datasetReadiness?: {
+      status?: string;
+      gates?: Record<string, GateRow>;
+      seasons?: Array<{
+        season: number;
+        canonical_fixtures: number;
+        fixtures_expected: number;
+        results_coverage: number;
+        status: string;
+      }>;
+    };
+    datasets?: DatasetRow[];
+    strategies?: Array<{
+      strategy_version?: string;
+      strategy?: string;
+      market?: string;
+      bets?: number;
+      roi?: number | null;
+      max_drawdown_units?: number;
+      confidence_interval_per_bet?: Array<number | null>;
+      adjusted_p_value?: number | null;
+      status?: string;
+    }>;
+  };
+}
+
+function DatasetReadiness() {
+  const deep = jalon6Snapshot();
+  const readiness = deep.datasetReadiness;
+  const gates = Object.entries(readiness?.gates ?? {});
+  const seasons = readiness?.seasons ?? [];
+  return (
+    <>
+      <section className="metrics-grid">
+        {gates.map(([name, gate]) => <Metric key={name} label={`Gate ${name}`} value={gate.status.replaceAll("_", " ")} detail={(gate.eligible_seasons ?? []).join(" · ") || gate.reason || "aucune saison"} tone={gate.passed ? "good" : "warning"} />)}
+        <Metric label="Production" value="PRODUCTION_LOCKED" detail="aucune promotion réelle" tone="warning" />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Audit Ligue 1 2018–2025</span><h2>Couverture canonique multi-saison</h2></div><StatusPill value={readiness?.status ?? "NO_OUTPUT"} /></div>
+        {seasons.length ? <div className="table-wrap"><table><thead><tr><th>Saison</th><th>Fixtures</th><th>Attendues</th><th>Résultats</th><th>Statut</th></tr></thead><tbody>
+          {seasons.map((season) => <tr key={season.season}><td>{season.season}</td><td>{season.canonical_fixtures}</td><td>{season.fixtures_expected}</td><td>{pct(season.results_coverage)}</td><td><StatusPill value={season.status} /></td></tr>)}
+        </tbody></table></div> : <EmptyState title="Readiness en attente" text="Le prochain workflow qualité publiera les gates sans appel fournisseur." label="NO OUTPUT" />}
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Manifests versionnés</span><h2>Datasets disponibles</h2></div><SourceBadge origin="HISTORICAL POINT-IN-TIME" /></div>
+        {deep.datasets?.length ? <div className="table-wrap"><table><thead><tr><th>Dataset</th><th>Lignes</th><th>Fixtures</th><th>Temporalité</th><th>Statut</th><th>Hash</th></tr></thead><tbody>
+          {deep.datasets.map((dataset) => <tr key={dataset.version}><td>{dataset.name}</td><td>{dataset.rows ?? "—"}</td><td>{dataset.fixtures ?? "—"}</td><td>{dataset.temporalPolicy ?? "—"}</td><td><StatusPill value={dataset.status ?? "NO_OUTPUT"} /></td><td><code>{dataset.sha256?.slice(0, 12) ?? "—"}</code></td></tr>)}
+        </tbody></table></div> : <EmptyState title="Datasets en attente" text="Aucun dataset incomplet n'est publié silencieusement." label="NO OUTPUT" />}
+      </section>
+    </>
+  );
+}
+
+function LineupExplorer() {
+  const deep = jalon6Snapshot();
+  const expected = deep.datasets?.find((item) => item.name === "api_player_pre_lineup_v1");
+  const confirmed = deep.datasets?.find((item) => item.name === "api_post_lineup_simulated_v1");
+  return (
+    <section className="panel">
+      <div className="panel-head"><div><span>Deux temporalités incompatibles</span><h2>Onze attendu et onze confirmé simulé</h2></div><StatusPill value={confirmed?.status ?? "BLOCKED_BY_COVERAGE"} /></div>
+      <div className="cost-grid">
+        <article><SourceBadge origin="HISTORICAL POINT-IN-TIME" /><strong>{expected?.fixtures ?? 0} fixtures</strong><small>PRE_LINEUP · historique antérieur uniquement</small></article>
+        <article><SourceBadge origin="HISTORICAL SIMULATED" /><strong>{confirmed?.fixtures ?? 0} fixtures</strong><small>POST_LINEUP_SIMULATED · composition cible autorisée</small></article>
+        <article><SourceBadge origin="NO OUTPUT" /><strong>0 mélange</strong><small>La composition cible ne peut jamais entrer dans PRE_LINEUP</small></article>
+      </div>
+    </section>
+  );
+}
+
 function PlayerExplorer() {
   const [query, setQuery] = useState("");
   const [position, setPosition] = useState("Toutes");
@@ -912,12 +1027,35 @@ function FeatureLab() {
 }
 
 function ModelLab() {
+  const models = snapshot.deepData.models as Array<{
+    name: string;
+    version: string;
+    dataset?: string;
+    calibration?: string;
+    logLoss: number | null;
+    brier: number | null;
+    ece?: number | null;
+    status: string;
+    origin: string;
+  }>;
   return (
     <section className="panel">
       <div className="panel-head"><div><span>Comparaison probabiliste</span><h2>Modèles et couverture</h2></div><StatusPill value="PRODUCTION_LOCKED" /></div>
-      <div className="table-wrap"><table><thead><tr><th>Modèle</th><th>Version</th><th>Log Loss OOS</th><th>Brier OOS</th><th>Statut</th><th>Origine</th></tr></thead><tbody>
-        {snapshot.deepData.models.map((model) => <tr key={model.name}><td>{model.name}</td><td>{model.version}</td><td>{model.logLoss == null ? "—" : model.logLoss.toFixed(4)}</td><td>{model.brier == null ? "—" : model.brier.toFixed(4)}</td><td><StatusPill value={model.status} /></td><td><SourceBadge origin={model.origin} /></td></tr>)}
+      <div className="table-wrap"><table><thead><tr><th>Modèle</th><th>Dataset</th><th>Calibration</th><th>Log Loss OOS</th><th>Brier OOS</th><th>ECE</th><th>Statut</th><th>Origine</th></tr></thead><tbody>
+        {models.map((model) => <tr key={model.name}><td>{model.name}</td><td>{model.dataset ?? "—"}</td><td>{model.calibration ?? "—"}</td><td>{model.logLoss == null ? "—" : model.logLoss.toFixed(4)}</td><td>{model.brier == null ? "—" : model.brier.toFixed(4)}</td><td>{model.ece == null ? "—" : model.ece.toFixed(4)}</td><td><StatusPill value={model.status} /></td><td><SourceBadge origin={model.origin} /></td></tr>)}
       </tbody></table></div>
+    </section>
+  );
+}
+
+function HistoricalStrategyLab() {
+  const rows = jalon6Snapshot().strategies ?? [];
+  return (
+    <section className="panel">
+      <div className="panel-head"><div><span>Bonferroni · sensibilité des seuils</span><h2>Stratégies historiques candidates</h2></div><StatusPill value="NO_PROMOTION" /></div>
+      {rows.length ? <div className="table-wrap"><table><thead><tr><th>Hypothèse</th><th>Marché</th><th>Paris</th><th>ROI</th><th>Drawdown</th><th>p ajustée</th><th>Statut</th></tr></thead><tbody>
+        {rows.map((row) => <tr key={row.strategy_version ?? row.strategy}><td>{row.strategy_version ?? row.strategy}</td><td>{row.market}</td><td>{row.bets ?? 0}</td><td>{row.roi == null ? "—" : pct(row.roi)}</td><td>{row.max_drawdown_units?.toFixed(2) ?? "—"} u</td><td>{row.adjusted_p_value?.toFixed(4) ?? "—"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
+      </tbody></table></div> : <EmptyState title="Strategy Lab en attente" text="Aucune stratégie n'est promue sans OOS, volume et robustesse." label="NO OUTPUT" />}
     </section>
   );
 }

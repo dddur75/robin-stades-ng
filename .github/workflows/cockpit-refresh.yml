@@ -7,7 +7,7 @@ on:
       - "22 - Qualité historique"
       - "23 - Feature Factory"
       - "24 - Model Lab historique"
-      - "25 - Backtest historique V2"
+      - "25 - Backtest historique V3"
       - "14 - Sante quotidienne shadow"
     types: [completed]
   schedule:

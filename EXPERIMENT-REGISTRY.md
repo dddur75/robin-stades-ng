@@ -29,3 +29,16 @@ La distinction obligatoire est :
 Le dépôt ne fournit encore aucun résultat au stade `PRODUCTION`. Le résultat
 Over 2,5 observé en OOS reste inconclusif et n'est pas mélangé aux futures
 performances shadow.
+
+## Expériences Jalon 6
+
+| Expérience | Comparaison | Décision possible |
+|---|---|---|
+| A | legacy/team baseline vs API équipe | retained/inconclusive/rejected |
+| B | API équipe vs joueur pré-lineup | incrémental uniquement |
+| C | pré-lineup vs composition simulée | historique simulé |
+| D | statistique vs marché dévigué | OOS uniquement |
+| E | individuel vs ensemble | différé jusqu'aux modèles validés |
+
+Le choix des features, calibrations et seuils s'arrête avant l'ouverture de
+2024–2025.

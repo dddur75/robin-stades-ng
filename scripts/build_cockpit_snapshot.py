@@ -335,18 +335,25 @@ def build_deep_data() -> dict[str, Any]:
         {},
     )
     forecast = read_json(state / "forecasts" / "accelerated-safe.json", {})
+    readiness = read_json(
+        state / "readiness" / "ligue1-multiseason-v1.json",
+        {},
+    )
     deployment_state = read_json(PRIVATE_DEPLOYMENT, {})
     compaction = read_json(state / "storage" / "latest-compaction.json", {})
     dataset = read_json(
-        state / "datasets" / "team_baseline_v1.json",
-        (
-            {
-                **analytics.get("dataset", {}),
-                "dataset_version": analytics.get("dataset", {}).get("name"),
-                "status": "FEATURE_FACTORY_ACTIVE",
-            }
-            if analytics
-            else {}
+        state / "datasets" / "api_team_pre_match_v1.json",
+        read_json(
+            state / "datasets" / "team_baseline_v1.json",
+            (
+                {
+                    **analytics.get("dataset", {}),
+                    "dataset_version": analytics.get("dataset", {}).get("name"),
+                    "status": "FEATURE_FACTORY_ACTIVE",
+                }
+                if analytics
+                else {}
+            ),
         ),
     )
     model = read_json(
@@ -445,16 +452,43 @@ def build_deep_data() -> dict[str, Any]:
             )
         if players:
             break
+    model_manifests = [
+        read_json(path, {})
+        for path in sorted((state / "models").glob("*.json"))
+        if path.name != "jalon6-run.json"
+    ]
     models = [
         {
-            "name": "Elo",
-            "version": model.get("model_version", "elo_v1"),
-            "status": model.get("status", "WAITING_FOR_DATASET"),
-            "logLoss": model.get("oos_metrics", {}).get("log_loss"),
-            "brier": model.get("oos_metrics", {}).get("brier_score"),
-            "origin": "OOS HISTORICAL" if model else "NO OUTPUT",
+            "name": manifest.get("model_name"),
+            "version": manifest.get("model_version"),
+            "dataset": manifest.get("dataset"),
+            "status": manifest.get("status"),
+            "calibration": manifest.get("selected_calibration"),
+            "logLoss": manifest.get("oos_metrics", {}).get("log_loss"),
+            "brier": manifest.get("oos_metrics", {}).get("brier_score"),
+            "ece": manifest.get("oos_metrics", {}).get("ece"),
+            "incremental": manifest.get("incremental_vs_team"),
+            "origin": "OOS HISTORICAL",
         }
-    ] + [
+        for manifest in model_manifests
+        if manifest.get("model_version")
+    ]
+    if not models and model:
+        models.append(
+            {
+                "name": "Elo",
+                "version": model.get("model_version", "elo_v1"),
+                "dataset": "team_baseline_v1",
+                "status": model.get("status", "WAITING_FOR_DATASET"),
+                "calibration": model.get("calibration"),
+                "logLoss": model.get("oos_metrics", {}).get("log_loss"),
+                "brier": model.get("oos_metrics", {}).get("brier_score"),
+                "ece": None,
+                "incremental": None,
+                "origin": "OOS HISTORICAL",
+            }
+        )
+    models.extend(
         {
             "name": name,
             "version": "planned_v1",
@@ -466,13 +500,24 @@ def build_deep_data() -> dict[str, Any]:
         for name in (
             "Poisson",
             "Dixon-Coles",
-            "Régression logistique",
             "Gradient boosting",
-            "Force joueurs",
-            "Composition",
-            "Baseline marché",
             "Ensemble calibré",
         )
+    )
+    dataset_manifests = [
+        read_json(path, {})
+        for path in sorted((state / "datasets").glob("*.json"))
+        if path.name != "jalon6-run.json"
+    ]
+    strategy_manifests = [
+        read_json(path, {})
+        for path in sorted((state / "strategies").glob("*.json"))
+        if path.name != "jalon6-run.json"
+    ]
+    backtest_manifests = [
+        read_json(path, {})
+        for path in sorted((state / "backtests").glob("*.json"))
+        if path.name != "jalon6-run.json"
     ]
     return {
         "status": proof.get("status", "ADAPTER_ONLY"),
@@ -536,12 +581,31 @@ def build_deep_data() -> dict[str, Any]:
             "backend": "POSTGRESQL + PARQUET + HISTORICAL-DATA",
         },
         "players": players,
+        "datasetReadiness": readiness,
+        "datasets": [
+            {
+                "name": manifest.get("dataset_name"),
+                "version": manifest.get("dataset_version"),
+                "rows": manifest.get("rows"),
+                "fixtures": manifest.get("fixtures"),
+                "coverage": manifest.get("coverage"),
+                "quality": manifest.get("quality"),
+                "temporalPolicy": manifest.get("temporal_policy"),
+                "status": manifest.get("status"),
+                "sha256": manifest.get("sha256"),
+            }
+            for manifest in dataset_manifests
+            if manifest.get("dataset_version")
+        ],
         "featureCatalog": [
             {
                 "name": name,
                 "version": "v1",
                 "status": (
-                    "BLOCKED_BY_COVERAGE"
+                    "PLAYER_FEATURE_FACTORY_ACTIVE"
+                    if readiness.get("gates", {}).get("B", {}).get("passed")
+                    and name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
+                    else "BLOCKED_BY_COVERAGE"
                     if name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
                     else "LEGACY_SOURCE_ONLY"
                     if dataset
@@ -549,7 +613,10 @@ def build_deep_data() -> dict[str, Any]:
                 ),
                 "leakageRisk": "LOW",
                 "origin": (
-                    "NO OUTPUT"
+                    "HISTORICAL POINT-IN-TIME"
+                    if readiness.get("gates", {}).get("B", {}).get("passed")
+                    and name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
+                    else "NO OUTPUT"
                     if name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
                     else "LEGACY SOURCE"
                 ),
@@ -568,7 +635,19 @@ def build_deep_data() -> dict[str, Any]:
         ],
         "dataset": public_dataset,
         "models": models,
-        "backtests": (
+        "backtests": [
+            {
+                **{
+                    key: value
+                    for key, value in manifest.items()
+                    if key != "details"
+                },
+                "origin": "OOS HISTORICAL",
+            }
+            for manifest in backtest_manifests
+            if manifest.get("backtest_version")
+        ]
+        or (
             [
                 {
                     **{key: value for key, value in backtest.items() if key != "details"},
@@ -578,6 +657,7 @@ def build_deep_data() -> dict[str, Any]:
             if backtest
             else []
         ),
+        "strategies": strategy_manifests,
         "quality": quality,
         "progress": {
             "tasksTotal": len(plan.get("tasks", [])),
