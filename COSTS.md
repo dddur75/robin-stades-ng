@@ -67,8 +67,8 @@ gain attendu.
 
 - lot `30150002144` : 99 appels API-Football, 0 erreur, 0 HTTP 429 ;
 - quota restant observé : 149 895, réserve protégée : 5 000 ;
-- stockage `historical-data` après lot : 27 127 859 octets ;
-- projection recalculée après expansion des tâches : environ 42,3 MB ;
+- stockage `historical-data` après réparation et qualité : 34 657 495 octets ;
+- projection recalculée après expansion des tâches : environ 45,7 MB ;
 - seuil warning : 750 MB ; seuil de pause : 900 MB ;
 - cadence conservée : 30 000 appels/jour, sans montée automatique ;
 - coût additionnel facturé par le système : 0 ;

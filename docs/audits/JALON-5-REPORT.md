@@ -76,3 +76,9 @@ du Jalon 5. Aucun résultat local ou legacy n’est présenté comme live.
   blocages temporels ;
 - Cockpit `30150283344` : build et artefact réussis ; la version privée
   antérieure au lot a été identifiée comme non redéployée automatiquement.
+
+La correction est vérifiée par le run `30151227188` : 27 600/27 600 lignes
+reliées à un payload brut, 0 appel, 0 crédit, qualité `PASSED`, révision Neon
+`0004`, un run d'ingestion ajouté puis protégé par une clé idempotente. Le
+Cockpit `30151317894` publie l'artefact `8617713588` et la version privée Sites
+8 a été déployée avec le snapshot du 25 juillet 2026 à 08:34 UTC.

@@ -37,3 +37,7 @@ Le quota, les appels, les lignes et l'horodatage viennent désormais du dernier
 lot historique, pas du pilote. Les ETA sont recalculées depuis les tâches et
 appels réellement restants. La readiness est publiée séparément pour chaque
 famille de données joueurs.
+
+Preuve d'activation : le workflow `30151317894` a produit l'artefact
+`8617713588`, puis le snapshot a été déployé sur le Cockpit privé Sites en
+version 8. L'accès reste limité au propriétaire.

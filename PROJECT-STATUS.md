@@ -120,3 +120,9 @@ explicites, historique du lot dans PostgreSQL, cadence recalculée après
 expansion des tâches, readiness joueurs par famille et séparation explicite
 entre build, artefact et déploiement privé du Cockpit. La production reste
 `PRODUCTION_LOCKED`.
+
+Le run qualité correctif `30151227188` valide 27 600/27 600 lignes de
+provenance, avec 0 appel fournisseur et 0 ligne non résolue. Neon contient
+désormais deux runs d'ingestion, dont le lot courant, sans nouvel enregistrement
+métier dupliqué. Le Cockpit corrigé est construit par `30151317894`, publié
+comme artefact `8617713588` et réellement déployé en version privée 8.
