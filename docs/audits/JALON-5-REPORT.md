@@ -56,3 +56,23 @@ stratégie est `REJECTED`, sans promotion.
 
 Le backfill massif continue par lots bornés ; il n’est pas un blocage de sortie
 du Jalon 5. Aucun résultat local ou legacy n’est présenté comme live.
+
+## Activation post-fusion
+
+- PR #6 fusionnée et fermée ; `main` au commit `9726ea9` ;
+- backfill `30150002144` : 99 appels, 99 tâches, 1 597 lignes, 0 erreur,
+  0 HTTP 429, quota restant 149 895 ;
+- progression : 54 → 153 tâches terminées, 6 130 → 6 031 restantes ;
+- nouvelle partition `fixture_events` Ligue 1 2024 ;
+- branche `historical-data` : 65 → 69 fichiers physiques et
+  23 152 551 → 27 127 859 octets après le lot ;
+- archive du lot : 3 334 objets, SHA-256 vérifié ;
+- Neon : SSL, révision `0004`, 6 713 upserts, 0 insert dupliqué ;
+- replay : 0 appel, 0 crédit, 0 doublon, 40 fichiers Parquet stables ;
+- diagnostic live concurrent `30150014764` : `PASSED`, `windows_due=0`,
+  `PRODUCTION_LOCKED` ;
+- qualité initiale `30150214587` verte mais trop étroite ; la correction dédiée
+  ajoute provenance, pages, identités, nulls, données futures, cardinalité et
+  blocages temporels ;
+- Cockpit `30150283344` : build et artefact réussis ; la version privée
+  antérieure au lot a été identifiée comme non redéployée automatiquement.

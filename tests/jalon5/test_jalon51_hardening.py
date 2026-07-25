@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import gzip
+import hashlib
 import json
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import pytest
 import yaml
 
@@ -15,11 +18,16 @@ from robin.historical.canonical import (
     canonicalize_fixtures,
     validate_canonical_cardinality,
 )
+from robin.historical.normalization import normalize_records
+from robin.historical.quality import (
+    historical_quality_report,
+    repair_raw_hash_provenance,
+)
 from robin.historical.scheduling import (
     BackfillTelemetry,
     accelerated_safe_plan,
 )
-from robin.historical.storage import HistoricalBundleStore
+from robin.historical.storage import HistoricalBundleStore, PartitionedParquetStore
 from robin.providers.api_football import ApiFootballProvider
 from robin.providers.contracts import RateLimitError, TransientProviderError
 from scripts.manage_historical_state import append_state, restore_state, verify_state
@@ -156,6 +164,16 @@ def test_plan_accelerated_safe_protege_quota_erreurs_429_et_stockage() -> None:
     assert 0 < active.max_calls <= 2_500
     assert active.max_tasks > 0
     assert active.next_run_at > now
+    expanded = accelerated_safe_plan(
+        BackfillTelemetry(
+            quota_remaining=148_439,
+            mean_calls_per_task=1.0,
+            mean_seconds_per_call=1.0,
+        ),
+        now=now,
+    )
+    assert expanded.max_calls == 2_500
+    assert expanded.max_tasks == 2_500
     assert accelerated_safe_plan(
         BackfillTelemetry(quota_remaining=5_000),
         now=now,
@@ -220,6 +238,88 @@ def test_pont_migre_les_bundles_sans_perte_et_les_restaure(tmp_path: Path) -> No
     proof = restore_state(registry, restored)
     assert proof["bundle_files_replayed"] == 1
     assert (restored / "raw" / "observations" / "one.json").read_bytes() == b"payload"
+
+
+def test_repare_la_provenance_depuis_le_cache_sans_appel_fournisseur(
+    tmp_path: Path,
+) -> None:
+    state = tmp_path / "state"
+    record = {
+        "fixture": {"id": 7},
+        "time": {"elapsed": 10},
+        "comments": None,
+    }
+    raw = json.dumps({"response": [record]}, sort_keys=True).encode()
+    digest = hashlib.sha256(raw).hexdigest()
+    payload = state / "raw" / "payloads" / digest[:2] / f"{digest}.bin.gz"
+    payload.parent.mkdir(parents=True)
+    payload.write_bytes(gzip.compress(raw, mtime=0))
+    observation = state / "raw" / "observations" / "observation.json"
+    observation.parent.mkdir(parents=True)
+    observation.write_text(
+        json.dumps(
+            {
+                "observation_id": "observation",
+                "provider": "api-football",
+                "endpoint": "fixtures/events",
+                "request_parameters": {"fixture": 7},
+                "requested_at": "2026-07-25T08:00:00+00:00",
+                "received_at": "2026-07-25T08:00:01+00:00",
+                "http_status": 200,
+                "payload_hash": digest,
+                "schema_version": "j2-v1",
+                "ingestion_run_id": "run-1",
+                "raw_payload_location": f"{digest[:2]}/{digest}.bin.gz",
+            }
+        ),
+        encoding="utf-8",
+    )
+    rows = normalize_records(
+        "fixtures/events",
+        [record],
+        competition_id=61,
+        season=2025,
+        ingestion_run_id="run-1",
+        raw_payload_hash=None,
+        observed_at=datetime(2026, 7, 25, 8, 0, 1, tzinfo=UTC),
+    )
+    store = PartitionedParquetStore(state / "parquet")
+    result = store.write_records(
+        rows,
+        competition="Ligue 1",
+        season=2025,
+        entity_type="fixture_events",
+        dataset_version="api-football-v3",
+    )
+    audit = state / "audits" / "ligue1-2025-canonicalization.json"
+    audit.parent.mkdir(parents=True)
+    audit.write_text(
+        json.dumps(
+            {
+                "status": "PASSED",
+                "canonical_fixtures": 306,
+                "expected_fixtures": 306,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    repair = repair_raw_hash_provenance(state)
+    assert repair == {
+        "status": "REPAIRED",
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "files_rewritten": 1,
+        "rows_repaired": 1,
+        "rows_unresolved": 0,
+        "rows_ambiguous": 0,
+    }
+    restored = pd.read_parquet(result["path"])
+    assert restored.iloc[0]["raw_payload_hash"] == digest
+    assert json.loads(restored.iloc[0]["payload"])["comments"] is None
+    quality = historical_quality_report(state)
+    assert quality["status"] == "PASSED"
+    assert quality["provenance_rows"] == 1
 
 
 class ErrorResponse:
@@ -299,3 +399,18 @@ def test_workflows_isolent_live_et_historique_et_retry_git_est_borne() -> None:
     assert "HEAD:historical-data" in persist
     assert "for attempt in 1 2 3" in persist
     assert "git rebase origin/historical-data" in persist
+    backfill = (
+        root / ".github" / "workflows" / "historical-backfill.yml"
+    ).read_text("utf-8")
+    quality = (
+        root / ".github" / "workflows" / "historical-quality.yml"
+    ).read_text("utf-8")
+    cockpit = (
+        root / ".github" / "workflows" / "cockpit-refresh.yml"
+    ).read_text("utf-8")
+    assert "repair-provenance" in backfill
+    assert "repair-provenance" in quality
+    assert "COCKPIT_BUILD_SUCCESS" in cockpit
+    assert "COCKPIT_ARTIFACT_PUBLISHED" in cockpit
+    assert "COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED" in cockpit
+    assert "cockpit/app/cockpit-data.json" in cockpit

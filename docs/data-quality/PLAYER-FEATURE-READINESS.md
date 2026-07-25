@@ -15,3 +15,19 @@ Les identités, cardinalités, temporalités et plusieurs saisons exploitables
 doivent toutes passer avant un entraînement joueur. `team_baseline_v1` reste
 `LEGACY SOURCE`; Elo V1 reste `LEGACY/OOS HISTORICAL`; le ROI de -8,55 % reste
 `REJECTED`.
+
+## Mesure post-fusion
+
+- dimension joueurs : 5 saisons et 4 132 lignes, `COMPUTABLE` comme dimension
+  seulement ;
+- statistiques joueurs par match et minutes : une saison, donc
+  `BLOCKED_BY_COVERAGE` ;
+- compositions, continuité, formations, force du banc et force du onze : une
+  saison commune, donc `BLOCKED_BY_COVERAGE` ;
+- blessures : 5 saisons mais source historique non point-in-time, donc
+  `BLOCKED_BY_TEMPORALITY` ;
+- disponibilité et retour de blessure : `BLOCKED_BY_TEMPORALITY` ;
+- fatigue : `BLOCKED_BY_COVERAGE`.
+
+Ces statuts ne débloquent aucun modèle joueurs. Les valeurs manquantes restent
+nulles et ne sont jamais converties en zéro.

@@ -105,6 +105,12 @@ jobs:
           ${{ inputs.season && format('--season {0}', inputs.season) || '' }}
           --endpoint "${{ inputs.endpoint }}"
           --priority "${{ inputs.priority }}"
+      - name: Rattacher les lignes aux payloads bruts sans fournisseur
+        if: github.event_name != 'push' && inputs.pilot != true && inputs.dry_run != true
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}"
+          repair-provenance
       - name: Actualiser la canonicalité et la prévision mesurée
         run: |
           python scripts/run_historical_pipeline.py \

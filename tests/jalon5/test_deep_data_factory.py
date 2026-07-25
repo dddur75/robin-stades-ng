@@ -29,10 +29,14 @@ from robin.providers.api_football import ApiFootballProvider
 from robin.providers.contracts import ProviderResult, QuotaState
 from robin.storage.database import build_engine
 from robin.storage.models import Base
-from scripts.build_cockpit_snapshot import sanitize_public_snapshot
+from scripts.build_cockpit_snapshot import (
+    build_player_readiness,
+    sanitize_public_snapshot,
+)
 from scripts.manage_historical_state import append_state, restore_state, verify_state
 from scripts.run_historical_pipeline import (
     batched_rows,
+    build_observed_forecast,
     command_persist,
     command_pilot,
 )
@@ -494,6 +498,48 @@ def test_snapshot_public_ne_divulgue_pas_les_chemins_de_runner() -> None:
     }
 
 
+def test_prevision_et_readiness_reposent_sur_letat_courant(
+    tmp_path: Path,
+) -> None:
+    state = tmp_path / "historical"
+    run_path = state / "runs" / "pilot-ligue-1-2025.json"
+    run_path.parent.mkdir(parents=True)
+    run_path.write_text(
+        json.dumps(
+            {
+                "started_at": "2026-07-25T07:00:00+00:00",
+                "finished_at": "2026-07-25T07:01:40+00:00",
+                "provider_calls": 100,
+                "fixtures": 20,
+                "normalized_rows": 800,
+                "raw_compressed_bytes": 100_000,
+            }
+        ),
+        encoding="utf-8",
+    )
+    plan_path = state / "tasks" / "backfill-plan.json"
+    plan_path.parent.mkdir(parents=True)
+    plan_path.write_text(
+        json.dumps(
+            {
+                "tasks": [
+                    {"status": "READY", "priority": "A", "estimated_calls": 1},
+                    {"status": "READY", "priority": "A", "estimated_calls": 1},
+                    {"status": "READY", "priority": "B", "estimated_calls": 2},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    forecast = build_observed_forecast(state)
+    assert forecast["estimated_calls_full_scope"] == 4
+    assert forecast["eta_priority_a_days"] == 0.0
+    assert forecast["eta_priority_b_days"] == 0.0
+    readiness = build_player_readiness(state, {"status": "PASSED"}, forecast)
+    assert len(readiness["families"]) == 12
+    assert readiness["status"] == "BLOCKED_BY_COVERAGE"
+
+
 def test_persistance_compte_une_table_sans_colonne_id(
     tmp_path: Path,
     monkeypatch: Any,
@@ -514,6 +560,42 @@ def test_persistance_compte_une_table_sans_colonne_id(
     proof = json.loads((state / "proofs" / "postgresql.json").read_text("utf-8"))
     assert proof["status"] == "POSTGRESQL_CONNECTED"
     assert proof["table_counts"]["historical_backfill_tasks"] == len(tasks)
+
+
+def test_persistance_enregistre_le_lot_courant_et_reste_idempotente(
+    tmp_path: Path,
+    monkeypatch: Any,
+) -> None:
+    database_url = f"sqlite:///{tmp_path / 'historical-runs.db'}"
+    engine = build_engine(database_url)
+    Base.metadata.create_all(engine)
+    state = tmp_path / "state"
+    plan_path = state / "tasks" / "backfill-plan.json"
+    plan_path.parent.mkdir(parents=True)
+    plan_path.write_text(
+        json.dumps(
+            {
+                "tasks": [],
+                "last_run_id": "run-current",
+                "last_run_started_at": "2026-07-25T07:50:13+00:00",
+                "last_run_at": "2026-07-25T07:51:52+00:00",
+                "provider_calls": 99,
+                "normalized_rows_this_run": 1597,
+                "quota_remaining": 149895,
+                "status": "HISTORICAL_BACKFILL_ACTIVE",
+                "stopped_reason": None,
+                "scheduler": {"mode": "ACCELERATED_SAFE"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("DATABASE_URL", database_url)
+    command_persist(argparse.Namespace(state=state))
+    command_persist(argparse.Namespace(state=state))
+    proof = json.loads((state / "proofs" / "postgresql.json").read_text("utf-8"))
+    assert proof["table_counts"]["historical_ingestion_runs"] == 1
+    assert proof["rows_inserted"] == 0
+    assert proof["rows_updated"] == 1
 
 
 def test_replay_pilote_ne_rappelle_pas_le_fournisseur(

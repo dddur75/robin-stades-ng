@@ -22,3 +22,18 @@ Le snapshot est généré côté workflow. Aucun secret Neon ou fournisseur n’
 dans le bundle frontend. Les origines `LIVE SHADOW`, `HISTORICAL POINT-IN-TIME`,
 `HISTORICAL SIMULATED`, `OOS HISTORICAL`, `LEGACY SOURCE`, `DEMO DATA` et
 `NO OUTPUT` restent contractuellement distinctes.
+
+## Frontière de publication post-fusion
+
+Le workflow 26 construit et teste le Cockpit, publie l'artefact et inclut le
+snapshot JSON nettoyé. Il publie trois états distincts :
+
+- `COCKPIT_BUILD_SUCCESS` ;
+- `COCKPIT_ARTIFACT_PUBLISHED` ;
+- `COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED` tant que la version Sites privée n'a
+  pas été déployée.
+
+Le quota, les appels, les lignes et l'horodatage viennent désormais du dernier
+lot historique, pas du pilote. Les ETA sont recalculées depuis les tâches et
+appels réellement restants. La readiness est publiée séparément pour chaque
+famille de données joueurs.

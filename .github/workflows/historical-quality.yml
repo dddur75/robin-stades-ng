@@ -20,9 +20,19 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
+      - name: Repair provenance from the durable cache
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}"
+          repair-provenance
       - run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" quality
+      - name: Recalculate the forecast after quality controls
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}"
+          forecast
       - uses: ./.github/actions/historical-state-persist
         with:
           run-id: ${{ github.run_id }}
