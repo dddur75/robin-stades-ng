@@ -1,6 +1,12 @@
 name: "24 - Scientific Model Arena"
 on:
   workflow_dispatch:
+    inputs:
+      run-external-validation:
+        description: "Exécuter aussi le Jalon 8 depuis une branche pré-fusion"
+        required: false
+        type: boolean
+        default: false
   workflow_run:
     workflows:
       - "23 - Feature Factory"
@@ -40,6 +46,13 @@ jobs:
           python scripts/run_historical_pipeline.py \
             --max-calls 0 \
             --run-id "${{ github.run_id }}" scientific-arena
+      - name: Exécuter la validation externe pré-fusion sans fournisseur
+        if: github.event_name == 'workflow_dispatch' && inputs.run-external-validation
+        run: >-
+          python scripts/run_external_validation.py
+          --state data/historical
+          --run-id "${{ github.run_id }}"
+          --source-commit "${{ github.sha }}"
       - uses: ./.github/actions/historical-state-persist
         with:
           run-id: ${{ github.run_id }}

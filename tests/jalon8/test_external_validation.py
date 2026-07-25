@@ -367,12 +367,17 @@ def test_workflow_is_isolated_cache_only_and_cockpit_triggered() -> None:
     cockpit = (
         ROOT / ".github" / "workflows" / "cockpit-refresh.yml"
     ).read_text(encoding="utf-8")
+    arena = (
+        ROOT / ".github" / "workflows" / "model-training.yml"
+    ).read_text(encoding="utf-8")
     ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
     assert "group: historical-state" in workflow
     assert "run_external_validation.py" in workflow
     assert "API_FOOTBALL_KEY" not in workflow
     assert "ODDS_API_KEY" not in workflow
     assert "27 - Validation externe multi-ligues" in cockpit
+    assert "run-external-validation" in arena
+    assert "inputs.run-external-validation" in arena
     assert "tests/jalon8" in ci
 
 
