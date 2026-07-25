@@ -1,0 +1,14 @@
+{
+  "endpoint": "injuries",
+  "parameters_hash": "017477b2551a152f85bc981f180146c218250619a521fb34ffd12e95a933bb1d",
+  "status": "FAILED",
+  "started_at": "2026-07-25T14:47:33.900892Z",
+  "finished_at": "2026-07-25T14:47:34.902041Z",
+  "next_page": 1,
+  "expected_total_pages": null,
+  "pages": [],
+  "calls": 1,
+  "rows": 0,
+  "error_code": "HTTP_200",
+  "replayed": false
+}
