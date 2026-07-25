@@ -13,6 +13,9 @@
     "bundles/30150002144/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.index.json": "28653cab7f71c4a2d9f942523e1a413cbc683a4922d5443733176013b8340449",
     "bundles/30150002144/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.manifest.json": "8a1f1e795f75511fa60df6d94abf55bde4258640a427000445eb6711556fb06c",
     "bundles/30150002144/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.tar.gz": "478013b89ed0b38bfef274445074e0b5df53896c77c0d558e28ca03ec170ad13",
+    "bundles/30150214587/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.index.json": "28653cab7f71c4a2d9f942523e1a413cbc683a4922d5443733176013b8340449",
+    "bundles/30150214587/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.manifest.json": "4dfc0e271ede66e16aed6ed7a8d8893ad8103fc24aac84c0f0a404a670335573",
+    "bundles/30150214587/multi/0/multi/e114cb998297deebc5dfc1736d48721a71562ee0995f80bc5173e17555b7de74.tar.gz": "5cefaa3b62e26bae6af6023765340299e7aa92f403a557775144ff32afe82788",
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
     "checkpoints/ligue-1/2021/players.json": "3f1b39507024b376056b6e435763765e84fb3c26fb68516daf6860cff80a0ff2",
     "checkpoints/ligue-1/2022/players.json": "ded74c0cc69578c64f528bc0fbd47023182fd045609f8dc6b55d0cc8735831d2",
@@ -65,8 +68,9 @@
     "proofs/authentication.json": "2e3039e538d250316cb59bd62a30d4d501c01f07ab1d08ff617b7ee7bf9c0300",
     "proofs/pilot-replay.json": "aa613f71d589b0b61d9a3e3e624a0d04361a2ebd80b14cf3e1808296addbe338",
     "proofs/postgresql.json": "e991d98ba2fa65457b507ce37343cdd790a64a7dada9317638596ccab97d53fa",
+    "quality/latest.json": "3259ab6072bc3566fbb20019e851262e6022e24618f2b97f0cffbc38feeed31c",
     "runs/pilot-ligue-1-2025.json": "23772f2a84563f4b9e81577e634b056c7f6fcc367e8389e08200ca35cedc698d",
-    "storage/latest-compaction.json": "85ca6501c433576117ef9bd929e6d0d77b0b1067a79524e28ac09eef2d776509",
+    "storage/latest-compaction.json": "5f899fa67f6c7af03bd51772cc05ed1ad3c942df557b4eff4625d7d4a5477c82",
     "tasks/backfill-plan.json": "b0c4e37f552444c3decc3d4a6dd2af4b17a16da393a52fde789e7779ed50f3c0"
   },
   "schema_version": "jalon5-historical-v1"
