@@ -1,0 +1,109 @@
+{
+  "code_revision": "ac8773e02ea5598ffca94d5d53c7aa5a5eb3695f",
+  "competitions": [
+    "Ligue 1"
+  ],
+  "coverage": 1.0,
+  "dataset_name": "api_market_baseline_v1",
+  "dataset_version": "api_market_baseline_v1",
+  "excluded_rows": 0,
+  "exclusions": [],
+  "features": [
+    "as_of_time",
+    "availability_status",
+    "bookmaker_margin",
+    "competition",
+    "dataset_name",
+    "dataset_version",
+    "fixture_id",
+    "implied_away",
+    "implied_draw",
+    "implied_home",
+    "kickoff_at",
+    "market",
+    "odds_away",
+    "odds_draw",
+    "odds_home",
+    "quality_status",
+    "season",
+    "source"
+  ],
+  "fixtures": 1534,
+  "generated_at": "2026-07-25T13:55:32.379065+00:00",
+  "matches": 1534,
+  "odds_availability": 1534,
+  "origin": [
+    "Football-Data.co.uk / LEGACY SOURCE"
+  ],
+  "partitions": [
+    {
+      "bytes": 57490,
+      "duplicates_avoided": 0,
+      "inserted": 342,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2020/entity_type=api_market_baseline_v1/dataset_version=api_market_baseline_v1/part-00000.parquet",
+      "rows": 342,
+      "sha256": "9dac12ede43376c08c9f90381a5a2a324c7f692f16721759159050db144e3a61"
+    },
+    {
+      "bytes": 48629,
+      "duplicates_avoided": 0,
+      "inserted": 272,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2021/entity_type=api_market_baseline_v1/dataset_version=api_market_baseline_v1/part-00000.parquet",
+      "rows": 272,
+      "sha256": "759a3a1729db1da41a18d28676387525201e9a9573156e22df04ee752f2d6cd9"
+    },
+    {
+      "bytes": 48808,
+      "duplicates_avoided": 0,
+      "inserted": 272,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2022/entity_type=api_market_baseline_v1/dataset_version=api_market_baseline_v1/part-00000.parquet",
+      "rows": 272,
+      "sha256": "60471e4e29221c972725c4a4c593f5ae434e321cc5481498d8a8381cb34674a5"
+    },
+    {
+      "bytes": 44568,
+      "duplicates_avoided": 0,
+      "inserted": 240,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2023/entity_type=api_market_baseline_v1/dataset_version=api_market_baseline_v1/part-00000.parquet",
+      "rows": 240,
+      "sha256": "531728c6681ba52049dc46e1718a4edb7ba61cf018dd7c08bf0e51de717cb531"
+    },
+    {
+      "bytes": 48977,
+      "duplicates_avoided": 0,
+      "inserted": 272,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=api_market_baseline_v1/dataset_version=api_market_baseline_v1/part-00000.parquet",
+      "rows": 272,
+      "sha256": "f98a59a953fd08856c4019526e8fe0bb0f32aa85ec3b3f6cef5504276e3c9f3b"
+    },
+    {
+      "bytes": 30881,
+      "duplicates_avoided": 0,
+      "inserted": 136,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=api_market_baseline_v1/dataset_version=api_market_baseline_v1/part-00000.parquet",
+      "rows": 136,
+      "sha256": "81d422d3019ac7f7ee7bc3fd8d98089c6d193c75fbd1878f65934f89b16616d2"
+    }
+  ],
+  "quality": "PASSED",
+  "rows": 1534,
+  "seasons": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "sha256": "367f8d3f70d5bde8c693da71e5608019435ffe81c277615ca10c99d8499f188a",
+  "source": [
+    "Football-Data.co.uk / LEGACY SOURCE"
+  ],
+  "status": "API_MARKET_BASELINE_READY",
+  "target": "1X2_AND_TOTAL_2_5",
+  "targets": [
+    "1X2",
+    "OVER_UNDER_2_5"
+  ],
+  "temporal_policy": "HISTORICAL_CLOSING_MARKET"
+}

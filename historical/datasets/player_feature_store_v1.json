@@ -1,0 +1,87 @@
+{
+  "code_revision": "ac8773e02ea5598ffca94d5d53c7aa5a5eb3695f",
+  "competitions": [
+    "Ligue 1"
+  ],
+  "coverage": 1.0,
+  "dataset_name": "player_feature_store_v1",
+  "dataset_version": "player_feature_store_v1",
+  "excluded_rows": 0,
+  "exclusions": [],
+  "features": [
+    "as_of_time",
+    "availability_status",
+    "calculated_at",
+    "competition",
+    "feature_name",
+    "feature_version",
+    "fixture_id",
+    "leakage_risk",
+    "player_id",
+    "quality_status",
+    "season",
+    "source",
+    "team_id",
+    "value"
+  ],
+  "fixtures": 1288,
+  "generated_at": "2026-07-25T13:56:24.870819+00:00",
+  "matches": 905344,
+  "odds_availability": 0,
+  "origin": [
+    "API-FOOTBALL HISTORICAL"
+  ],
+  "partitions": [
+    {
+      "bytes": 17790852,
+      "duplicates_avoided": 0,
+      "inserted": 260480,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2022/entity_type=player_feature_store_v1/dataset_version=player_feature_store_v1/part-00000.parquet",
+      "rows": 260480,
+      "sha256": "29fc129b123b9ca27c71adcdade3c97191652e0c61f0f84b6a154b15d91df7b4"
+    },
+    {
+      "bytes": 14658375,
+      "duplicates_avoided": 0,
+      "inserted": 214720,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2023/entity_type=player_feature_store_v1/dataset_version=player_feature_store_v1/part-00000.parquet",
+      "rows": 214720,
+      "sha256": "22964696fa1f863966dfdf87be47b21b6ec73615e76fa995db40c9d0cc2715a3"
+    },
+    {
+      "bytes": 14745110,
+      "duplicates_avoided": 0,
+      "inserted": 215072,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=player_feature_store_v1/dataset_version=player_feature_store_v1/part-00000.parquet",
+      "rows": 215072,
+      "sha256": "a7b93584f7380ecf72dc725a57021372739abc189dbb7a7d538288b5191b281f"
+    },
+    {
+      "bytes": 14695345,
+      "duplicates_avoided": 0,
+      "inserted": 215072,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=player_feature_store_v1/dataset_version=player_feature_store_v1/part-00000.parquet",
+      "rows": 215072,
+      "sha256": "a326bcb95454a4800c7c6a127f6161899efe96fa3b88b71234f822e9737c1071"
+    }
+  ],
+  "quality": "PASSED",
+  "rows": 905344,
+  "seasons": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "sha256": "32ee24fdc6541829c0ed126604db2de405c9b1983477641462955afbe21f58ec",
+  "source": [
+    "API-FOOTBALL HISTORICAL"
+  ],
+  "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+  "target": "1X2_AND_TOTAL_2_5",
+  "targets": [
+    "1X2",
+    "OVER_UNDER_2_5"
+  ],
+  "temporal_policy": "PRE_LINEUP"
+}
