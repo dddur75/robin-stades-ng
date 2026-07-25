@@ -293,3 +293,18 @@ Après restauration de `historical-data` :
 Ces commandes ont `provider_calls=0`. Un gate bloqué produit un statut explicite
 et ne doit jamais être contourné. La cadence backfill reste inchangée et le
 verrou `historical-state` empêche deux runs simultanés.
+
+## Jalon 7
+
+Après restauration de `historical-data` :
+
+```bash
+python scripts/run_historical_pipeline.py --max-calls 0 scientific-arena
+python scripts/run_historical_pipeline.py --max-calls 0 strategy-lab-v2
+python scripts/build_cockpit_snapshot.py
+```
+
+Le second passage de `scientific-arena` doit retourner `execution_status=CACHED`.
+Ne jamais contourner `storage.status=PAUSED`, modifier le gel Jalon 6 ou
+relancer un fournisseur pour cette chaîne. Les workflows 24 et 25 partagent
+`historical-state`; le live reste sur `shadow-state`.

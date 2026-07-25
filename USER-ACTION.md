@@ -8,3 +8,10 @@ Une fois la PR brouillon déclarée prête et verte, l'unique action sera :
 `Valider puis fusionner la PR du Jalon 6.`
 
 Aucune dépense, permission de pari réel ou migration de stockage n'est demandée.
+
+## Jalon 7
+
+Après CI verte : `Valider puis fusionner la PR du Jalon 7.`
+
+Aucun crédit fournisseur, déverrouillage de production ou abonnement de
+stockage n'est requis.

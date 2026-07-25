@@ -112,3 +112,11 @@ Le store long est borné à 16 joueurs par équipe et par cutoff ; les agrégats
 d'équipe conservent 18 candidats pour le onze et le banc. Les seuils restent
 750 MB warning et 900 MB pause. Le scénario haut doit inclure les artefacts
 dérivés avant toute poursuite ; aucun stockage n'est acheté automatiquement.
+
+## Coût du Jalon 7
+
+L'arène, le replay, la calibration, le bootstrap, les ablations et le cockpit
+consomment `0` appel fournisseur et `0` crédit. La preuve durable reste
+`SAFE` à environ 273,5 MB; warning 750 MB, pause 900 MB. La projection centrale
+est ~892,5 MB et la haute ~1 311,9 MB : le garde-fou
+stoppera les nouvelles écritures avant ce seuil, sans achat automatique.

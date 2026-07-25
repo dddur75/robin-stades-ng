@@ -6,8 +6,8 @@ on:
       - "21 - Backfill historique"
       - "22 - Qualité historique"
       - "23 - Feature Factory"
-      - "24 - Model Lab historique"
-      - "25 - Backtest historique V3"
+      - "24 - Scientific Model Arena"
+      - "25 - Strategy Lab V2"
       - "14 - Sante quotidienne shadow"
     types: [completed]
   schedule:

@@ -1,0 +1,42 @@
+{
+  "status": "JALON6_BASELINE_FROZEN",
+  "source_commit": "608654b81ac1910ccb72bf8604aaeec788fb5a2c",
+  "oos_period": [2024, 2025],
+  "metrics": {
+    "api_elo_v1": {
+      "matches": 612,
+      "log_loss": 1.164156,
+      "brier_score": 0.198573,
+      "ece": 0.020585
+    },
+    "market_devigged_baseline_v1": {
+      "matches": 408,
+      "log_loss": 1.517693,
+      "brier_score": 0.193406,
+      "ece": 0.050497
+    },
+    "api_team_multinomial_v1": {
+      "matches": 612,
+      "log_loss": 1.05177,
+      "brier_score": 0.201214,
+      "ece": 0.042347
+    },
+    "api_player_pre_lineup_multinomial_v1": {
+      "matches": 612,
+      "log_loss": 1.026686,
+      "brier_score": 0.204256,
+      "ece": 0.022654,
+      "status": "INCONCLUSIVE"
+    },
+    "api_post_lineup_simulated_multinomial_v1": {
+      "matches": 611,
+      "log_loss": 1.692004,
+      "brier_score": 0.210775,
+      "ece": 0.02569,
+      "status": "REJECTED"
+    }
+  },
+  "strategies_tested": 15,
+  "live_candidates": 0,
+  "production_status": "PRODUCTION_LOCKED"
+}

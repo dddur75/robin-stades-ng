@@ -45,7 +45,7 @@ jobs:
       - name: Linting
         run: >-
           python -m ruff check
-          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6
+          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7
           scripts migrations
       - name: Typage strict
         run: python -m mypy src/robin
@@ -69,7 +69,7 @@ jobs:
       - name: Executer les tests
         run: python -m pytest -q
       - name: Tester Parquet et les protections anti-fuite
-        run: python -m pytest -q tests/jalon5 tests/jalon6
+        run: python -m pytest -q tests/jalon5 tests/jalon6 tests/jalon7
       - name: Tester les configurations et le pipeline mock
         run: |
           python -c "import pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github').rglob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text())"

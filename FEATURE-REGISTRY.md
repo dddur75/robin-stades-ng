@@ -72,3 +72,10 @@ entraîné ni présenté comme prêt.
 
 Les features du match cible sont interdites. Les nulls restent nulls et chaque
 score joueur expose son support en minutes et son incertitude.
+
+## Jalon 7 — ablations
+
+Les groupes `TEAM_FORM`, `PLAYER_PRE_LINEUP`, `CONFIRMED_LINEUP` et `MARKET`
+sont préenregistrés pour retrait unitaire. Chaque ablation garde exactement les
+mêmes fixtures et cutoffs. Une importance instable entre saisons ou ligues est
+marquée `INCONCLUSIVE`; elle ne débloque pas de feature.
