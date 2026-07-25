@@ -1,0 +1,15 @@
+{
+  "observation_id": "ace7b567-857c-485b-8d37-2d6c0d1aa621",
+  "provider": "api-football",
+  "endpoint": "leagues",
+  "request_parameters": {
+    "search": "Bundesliga"
+  },
+  "requested_at": "2026-07-24T22:28:33.613317Z",
+  "received_at": "2026-07-24T22:28:33.797566Z",
+  "http_status": 200,
+  "payload_hash": "8cd43a89a0508c172a3c634bbbbecd668dcde2c4b9f73702c07f312b4731c918",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30131008207",
+  "raw_payload_location": "8c/8cd43a89a0508c172a3c634bbbbecd668dcde2c4b9f73702c07f312b4731c918.bin.gz"
+}

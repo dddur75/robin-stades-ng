@@ -1,0 +1,11 @@
+{
+  "business_rows_inserted": 0,
+  "duplicates_created": 0,
+  "production_status": "PRODUCTION_LOCKED",
+  "provider_calls": 0,
+  "quota_consumed": 0,
+  "run_id": "30131348201",
+  "source_finished_at": "2026-07-24T22:10:55.568109+00:00",
+  "source_run_id": "30129958753",
+  "status": "PILOT_REPLAY_VERIFIED"
+}

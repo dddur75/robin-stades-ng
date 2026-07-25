@@ -1,0 +1,15 @@
+{
+  "observation_id": "1f4e5efa-9172-41c1-95bd-f94ddee702f6",
+  "provider": "api-football",
+  "endpoint": "coachs",
+  "request_parameters": {
+    "team": 84
+  },
+  "requested_at": "2026-07-24T22:07:48.186238Z",
+  "received_at": "2026-07-24T22:07:48.317678Z",
+  "http_status": 200,
+  "payload_hash": "ea3c05acbdeb52219be4603965a33cc670a1d0bfe5687227506ac17ad113e410",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753",
+  "raw_payload_location": "ea/ea3c05acbdeb52219be4603965a33cc670a1d0bfe5687227506ac17ad113e410.bin.gz"
+}

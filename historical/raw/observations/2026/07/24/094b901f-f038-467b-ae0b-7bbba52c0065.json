@@ -1,0 +1,15 @@
+{
+  "observation_id": "094b901f-f038-467b-ae0b-7bbba52c0065",
+  "provider": "api-football",
+  "endpoint": "fixtures/lineups",
+  "request_parameters": {
+    "fixture": 1387897
+  },
+  "requested_at": "2026-07-24T22:09:49.839257Z",
+  "received_at": "2026-07-24T22:09:49.977866Z",
+  "http_status": 200,
+  "payload_hash": "f8abd56490ba67f56c6b5c452c122ee9670a42dc4c14fd998d230178273046e2",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753",
+  "raw_payload_location": "f8/f8abd56490ba67f56c6b5c452c122ee9670a42dc4c14fd998d230178273046e2.bin.gz"
+}

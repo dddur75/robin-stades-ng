@@ -1,0 +1,15 @@
+{
+  "observation_id": "adbd912b-f0ca-4eb9-b37e-5f438a6f3aa0",
+  "provider": "api-football",
+  "endpoint": "fixtures/players",
+  "request_parameters": {
+    "fixture": 1387955
+  },
+  "requested_at": "2026-07-24T22:10:24.467653Z",
+  "received_at": "2026-07-24T22:10:24.597650Z",
+  "http_status": 200,
+  "payload_hash": "3bc65c6ea682dd4b49b25c07fe66b118ba83e1da6bbc9ce4a0d7a0547ed88da1",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753",
+  "raw_payload_location": "3b/3bc65c6ea682dd4b49b25c07fe66b118ba83e1da6bbc9ce4a0d7a0547ed88da1.bin.gz"
+}

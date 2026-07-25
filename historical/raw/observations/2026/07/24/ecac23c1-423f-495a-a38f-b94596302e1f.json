@@ -1,0 +1,17 @@
+{
+  "observation_id": "ecac23c1-423f-495a-a38f-b94596302e1f",
+  "provider": "api-football",
+  "endpoint": "teams/statistics",
+  "request_parameters": {
+    "league": 61,
+    "season": 2025,
+    "team": 111
+  },
+  "requested_at": "2026-07-24T22:07:52.190615Z",
+  "received_at": "2026-07-24T22:07:52.314724Z",
+  "http_status": 200,
+  "payload_hash": "456d053be56be1c330b57d72f84448c478db68a8fcf9963a086dbdf5fcf47a48",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753",
+  "raw_payload_location": "45/456d053be56be1c330b57d72f84448c478db68a8fcf9963a086dbdf5fcf47a48.bin.gz"
+}

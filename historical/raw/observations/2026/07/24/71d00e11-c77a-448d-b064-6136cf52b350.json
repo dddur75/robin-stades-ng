@@ -1,0 +1,17 @@
+{
+  "observation_id": "71d00e11-c77a-448d-b064-6136cf52b350",
+  "provider": "api-football",
+  "endpoint": "leagues",
+  "request_parameters": {
+    "search": "La Liga",
+    "country": "Spain",
+    "season": 2025
+  },
+  "requested_at": "2026-07-24T22:00:58.994998Z",
+  "received_at": "2026-07-24T22:00:59.225160Z",
+  "http_status": 200,
+  "payload_hash": "b293985ba657895133b0e0aa545278567525fd045a2c2fb9ed1f140112289bb3",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129591522",
+  "raw_payload_location": "b2/b293985ba657895133b0e0aa545278567525fd045a2c2fb9ed1f140112289bb3.bin.gz"
+}

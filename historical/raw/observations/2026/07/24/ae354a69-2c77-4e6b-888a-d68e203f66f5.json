@@ -1,0 +1,16 @@
+{
+  "observation_id": "ae354a69-2c77-4e6b-888a-d68e203f66f5",
+  "provider": "api-football",
+  "endpoint": "teams",
+  "request_parameters": {
+    "league": 61,
+    "season": 2023
+  },
+  "requested_at": "2026-07-24T22:11:16.048043Z",
+  "received_at": "2026-07-24T22:11:16.177564Z",
+  "http_status": 200,
+  "payload_hash": "f7c0a185b2b47e385b2ba1d6ce447c99ffb46a316dd7596ad00b5bb2618474c6",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753-first-batch",
+  "raw_payload_location": "f7/f7c0a185b2b47e385b2ba1d6ce447c99ffb46a316dd7596ad00b5bb2618474c6.bin.gz"
+}

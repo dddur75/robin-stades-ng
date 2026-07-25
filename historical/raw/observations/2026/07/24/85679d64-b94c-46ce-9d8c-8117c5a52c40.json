@@ -1,0 +1,15 @@
+{
+  "observation_id": "85679d64-b94c-46ce-9d8c-8117c5a52c40",
+  "provider": "api-football",
+  "endpoint": "leagues",
+  "request_parameters": {
+    "search": "Serie A"
+  },
+  "requested_at": "2026-07-24T22:12:38.144609Z",
+  "received_at": "2026-07-24T22:12:38.273237Z",
+  "http_status": 200,
+  "payload_hash": "7396a9b9a5cac1ed07d736c96faa0d23b6020eabd3ef500ec5fa0d5100e6b4af",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958789",
+  "raw_payload_location": "73/7396a9b9a5cac1ed07d736c96faa0d23b6020eabd3ef500ec5fa0d5100e6b4af.bin.gz"
+}

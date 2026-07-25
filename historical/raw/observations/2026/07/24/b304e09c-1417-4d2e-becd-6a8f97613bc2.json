@@ -1,0 +1,16 @@
+{
+  "observation_id": "b304e09c-1417-4d2e-becd-6a8f97613bc2",
+  "provider": "api-football",
+  "endpoint": "injuries",
+  "request_parameters": {
+    "league": 61,
+    "season": 2024
+  },
+  "requested_at": "2026-07-24T22:10:57.708802Z",
+  "received_at": "2026-07-24T22:10:57.868755Z",
+  "http_status": 200,
+  "payload_hash": "c3e045b67cc81164ae79f5b37f80f2a95be2b53c9aeca58a5443ee3adc35b681",
+  "schema_version": "j2-v1",
+  "ingestion_run_id": "30129958753-first-batch",
+  "raw_payload_location": "c3/c3e045b67cc81164ae79f5b37f80f2a95be2b53c9aeca58a5443ee3adc35b681.bin.gz"
+}

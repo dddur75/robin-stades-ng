@@ -1,0 +1,27 @@
+{
+  "calls": 7,
+  "coverage_status": "AVAILABLE",
+  "endpoint": "status",
+  "http_status": 200,
+  "ingestion_run_id": "30131249586",
+  "normalized_rows": 1,
+  "payload_hash": "b61aafd448d7f7a5636dd1f12b11533c8e20dd664bdcd28fe195670cdd85153e",
+  "production_status": "PRODUCTION_LOCKED",
+  "provider": "api-football",
+  "quota_limit": 150000,
+  "quota_remaining": 148433,
+  "raw_payload_location": "36491c42-e4e6-4fce-ac7b-12ef4f2698f5",
+  "received_at": "2026-07-24T22:33:45.441323+00:00",
+  "requested_at": "2026-07-24T22:33:45.292761+00:00",
+  "secret_exposed": false,
+  "source_revision": "45440f0f1374864d3f7dd3a322208b46d792e73a",
+  "status": "API_FOOTBALL_LIVE_PIPELINE_VERIFIED",
+  "validated_competitions": {
+    "Bundesliga": 78,
+    "La Liga": 140,
+    "Ligue 1": 61,
+    "Premier League": 39,
+    "Serie A": 135,
+    "UEFA Champions League": 2
+  }
+}
