@@ -20,6 +20,7 @@ type PageKey =
   | "featureLab"
   | "modelLab"
   | "modelArena"
+  | "externalValidation"
   | "strategyLab"
   | "backtestLab"
   | "historicalQuality";
@@ -41,6 +42,7 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "featureLab", label: "Feature Lab", glyph: "F" },
   { key: "modelLab", label: "Model Lab", glyph: "M" },
   { key: "modelArena", label: "Model Arena", glyph: "A" },
+  { key: "externalValidation", label: "External Validation", glyph: "X" },
   { key: "strategyLab", label: "Strategy Lab", glyph: "S" },
   { key: "backtestLab", label: "Backtest Explorer", glyph: "T" },
   { key: "historicalQuality", label: "Historical Quality", glyph: "Q" },
@@ -126,6 +128,11 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     eyebrow: "Validation appariée · cross-fit · bootstrap",
     title: "Scientific Model Arena",
     note: "Comparaisons exactes, intervalles groupés et contrôles négatifs sans promotion automatique.",
+  },
+  externalValidation: {
+    eyebrow: "Multi-ligues · protocole gelé · aucun retuning",
+    title: "External Validation",
+    note: "Transfert, modèles spécifiques, pooled et leave-one-league-out, strictement conditionnés par les gates.",
   },
   strategyLab: {
     eyebrow: "Hypothèses sous contrôle",
@@ -400,6 +407,7 @@ export default function Home() {
           {page === "featureLab" && <FeatureLab />}
           {page === "modelLab" && <ModelLab />}
           {page === "modelArena" && <ModelArena />}
+          {page === "externalValidation" && <ExternalValidation />}
           {page === "strategyLab" && <HistoricalStrategyLab />}
           {page === "backtestLab" && <BacktestExplorer />}
           {page === "historicalQuality" && <HistoricalDataQuality />}
@@ -1168,6 +1176,134 @@ function ModelArena() {
       <section className="panel">
         <div className="panel-head"><div><span>Stratégies bornées</span><h2>Strategy Lab V2</h2></div><StatusPill value={arena?.strategyStatus ?? "NOT_RUN"} /></div>
         <p>{arena?.strategiesTested ?? 0} hypothèses exécutées. Aucune stratégie n'est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
+      </section>
+    </>
+  );
+}
+
+function ExternalValidation() {
+  type MetricBundle = {
+    matches?: number;
+    log_loss?: number;
+    brier_score?: number;
+    ece?: number;
+    accuracy?: number;
+    status?: string;
+  };
+  type ExternalGate = {
+    status?: string;
+    fixtures?: number;
+    coverage?: number;
+  };
+  type ReadinessRow = {
+    competition: string;
+    seasons?: Array<{ season?: number; fixtures_canonical?: number; status?: string }>;
+    teams?: number;
+    players?: number;
+    gates?: Record<string, ExternalGate>;
+  };
+  type ComparisonRow = {
+    comparison_id?: string;
+    paired_fixtures?: number;
+    paired_log_loss_delta?: number;
+    uncertainty?: { ci95?: number[]; probability_challenger_better?: number };
+    status?: string;
+    reason?: string;
+  };
+  type LoloRow = {
+    held_out_competition?: string;
+    paired_fixtures?: number;
+    metrics?: MetricBundle;
+    market_comparison?: string;
+    status?: string;
+  };
+  const external = (snapshot.deepData as unknown as {
+    externalValidation?: {
+      status?: string;
+      protocol?: { status?: string; hash?: string; frozen_at?: string };
+      readiness?: ReadinessRow[];
+      datasets?: Array<{
+        name?: string;
+        competition?: string;
+        seasons?: number[];
+        fixtures?: number;
+        rows?: number;
+        status?: string;
+      }>;
+      models?: Record<string, { status?: string; predictions?: number; metrics?: MetricBundle }>;
+      comparisons?: ComparisonRow[];
+      leaveOneLeagueOut?: LoloRow[];
+      playerGeneralization?: Array<{ competition?: string; status?: string; reason?: string }>;
+      strategies?: {
+        status?: string;
+        hypotheses?: number;
+        backtests?: number;
+        live_shadow_candidates?: number;
+      };
+      package?: {
+        package?: string;
+        status?: string;
+        NO_BET_DEFAULT?: boolean;
+        REAL_BETS?: boolean;
+        PRODUCTION_LOCKED?: boolean;
+        package_hash?: string;
+      };
+      predictions?: number;
+      providerCalls?: number;
+      quotaConsumed?: number;
+      productionStatus?: string;
+    };
+  }).externalValidation;
+  const readiness = external?.readiness ?? [];
+  const models = Object.entries(external?.models ?? {});
+  const comparisons = external?.comparisons ?? [];
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric label="Protocole externe" value={external?.protocol?.status ?? "NOT_LOCKED"} detail={(external?.protocol?.hash ?? "—").slice(0, 16)} />
+        <Metric label="Prédictions" value={String(external?.predictions ?? 0)} detail="cache durable uniquement" />
+        <Metric label="Appels fournisseur" value={String(external?.providerCalls ?? 0)} detail={`${external?.quotaConsumed ?? 0} crédit consommé`} />
+        <Metric label="Package pré-saison" value={external?.package?.status ?? "WAITING"} detail={external?.package?.NO_BET_DEFAULT ? "NO_BET_DEFAULT" : "non gelé"} />
+        <Metric label="Production" value={external?.productionStatus ?? "PRODUCTION_LOCKED"} detail="REAL_BETS = false" tone="warning" />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>External Readiness</span><h2>Gates par compétition</h2></div><StatusPill value={external?.status ?? "WAITING_FOR_EXTERNAL_GATES"} /></div>
+        <div className="table-wrap"><table><thead><tr><th>Compétition</th><th>Saisons</th><th>Fixtures</th><th>Équipes</th><th>Joueurs roster</th><th>TEAM</th><th>PLAYER</th><th>LINEUP</th><th>MARKET</th><th>EXTERNAL</th></tr></thead><tbody>
+          {readiness.map((row) => <tr key={row.competition}><td>{row.competition}</td><td>{row.seasons?.length ?? 0}</td><td>{row.gates?.TEAM_GATE?.fixtures ?? 0}</td><td>{row.teams ?? 0}</td><td>{row.players ?? 0}</td><td><StatusPill value={row.gates?.TEAM_GATE?.status ?? "UNAVAILABLE"} /></td><td><StatusPill value={row.gates?.PLAYER_GATE?.status ?? "UNAVAILABLE"} /></td><td><StatusPill value={row.gates?.LINEUP_GATE?.status ?? "UNAVAILABLE"} /></td><td><StatusPill value={row.gates?.MARKET_GATE?.status ?? "UNAVAILABLE"} /></td><td><StatusPill value={row.gates?.EXTERNAL_VALIDATION_GATE?.status ?? "UNAVAILABLE"} /></td></tr>)}
+        </tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>League Transfer Matrix</span><h2>Transfert · spécifique · pooled · score</h2></div><StatusPill value="NO_RETUNING" /></div>
+        <div className="table-wrap"><table><thead><tr><th>Famille</th><th>Prédictions</th><th>Log Loss</th><th>Brier</th><th>ECE</th><th>Accuracy</th><th>Statut</th></tr></thead><tbody>
+          {models.map(([name, row]) => <tr key={name}><td>{name.replaceAll("_", " ")}</td><td>{row.predictions ?? 0}</td><td>{row.metrics?.log_loss?.toFixed(4) ?? "—"}</td><td>{row.metrics?.brier_score?.toFixed(4) ?? "—"}</td><td>{row.metrics?.ece?.toFixed(4) ?? "—"}</td><td>{row.metrics?.accuracy == null ? "—" : pct(row.metrics.accuracy)}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
+        </tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Leave-One-League-Out</span><h2>Généralisation football</h2></div><StatusPill value="LEAVE_ONE_LEAGUE_OUT_READY" /></div>
+        <div className="table-wrap"><table><thead><tr><th>Ligue tenue à l'écart</th><th>Fixtures</th><th>Log Loss</th><th>Brier</th><th>ECE</th><th>Marché</th><th>Statut</th></tr></thead><tbody>
+          {(external?.leaveOneLeagueOut ?? []).map((row) => <tr key={row.held_out_competition}><td>{row.held_out_competition}</td><td>{row.paired_fixtures ?? 0}</td><td>{row.metrics?.log_loss?.toFixed(4) ?? "—"}</td><td>{row.metrics?.brier_score?.toFixed(4) ?? "—"}</td><td>{row.metrics?.ece?.toFixed(4) ?? "—"}</td><td>{row.market_comparison ?? "UNAVAILABLE"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
+        </tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Player Generalization</span><h2>Valeur incrémentale par ligue</h2></div><StatusPill value="PLAYER_GENERALIZATION_INCONCLUSIVE" /></div>
+        <div className="table-wrap"><table><thead><tr><th>Compétition</th><th>Statut</th><th>Raison factuelle</th></tr></thead><tbody>
+          {(external?.playerGeneralization ?? []).map((row) => <tr key={row.competition}><td>{row.competition}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td><td>{row.reason ?? "—"}</td></tr>)}
+        </tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Strategy External Validation</span><h2>Comparaisons appariées et marché</h2></div><StatusPill value={external?.strategies?.status ?? "NO_EXTERNAL_VALIDATED_EDGE"} /></div>
+        <div className="table-wrap"><table><thead><tr><th>Comparaison</th><th>Fixtures appariées</th><th>Δ Log Loss</th><th>CI 95 %</th><th>P supériorité</th><th>Statut</th></tr></thead><tbody>
+          {comparisons.map((row) => <tr key={row.comparison_id}><td>{row.comparison_id}</td><td>{row.paired_fixtures ?? 0}</td><td>{row.paired_log_loss_delta?.toFixed(4) ?? "—"}</td><td>{row.uncertainty?.ci95?.map((value) => value.toFixed(4)).join(" · ") ?? row.reason ?? "—"}</td><td>{row.uncertainty?.probability_challenger_better == null ? "—" : pct(row.uncertainty.probability_challenger_better)}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
+        </tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Preseason Package</span><h2>{external?.package?.package ?? "PRESEASON_SHADOW_PACKAGE_V1"}</h2></div><StatusPill value={external?.package?.status ?? "WAITING"} /></div>
+        <div className="cost-grid">
+          <article><span>NO_BET_DEFAULT</span><strong>{external?.package?.NO_BET_DEFAULT ? "true" : "false"}</strong><small>politique par défaut</small></article>
+          <article><span>REAL_BETS</span><strong>{external?.package?.REAL_BETS ? "true" : "false"}</strong><small>reste désactivé</small></article>
+          <article><span>PRODUCTION_LOCKED</span><strong>{external?.package?.PRODUCTION_LOCKED ? "true" : "false"}</strong><small>aucune promotion</small></article>
+          <article><span>Hash</span><strong>{(external?.package?.package_hash ?? "—").slice(0, 16)}</strong><small>package versionné</small></article>
+        </div>
       </section>
     </>
   );

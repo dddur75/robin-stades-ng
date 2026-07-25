@@ -15,3 +15,12 @@ Après CI verte : `Valider puis fusionner la PR du Jalon 7.`
 
 Aucun crédit fournisseur, déverrouillage de production ou abonnement de
 stockage n'est requis.
+
+## Jalon 8
+
+Après CI verte de la PR brouillon :
+
+`Valider puis fusionner la PR du Jalon 8.`
+
+Aucun crédit fournisseur, achat de stockage ou déverrouillage de pari réel
+n’est demandé. Les gates encore en attente progresseront avec le backfill.

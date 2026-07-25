@@ -195,3 +195,12 @@ calibrations sont choisies sur Validation seulement. DuckDB 1.5.4 et Polars
 - scikit-learn 1.9.0 est épinglé pour le benchmark
   `HistGradientBoostingClassifier`.
 - Aucun résultat historique seul ne peut créer un candidat live.
+## 2026-07-25 — Validation externe par gates
+
+- geler `EXTERNAL_VALIDATION_PROTOCOL_V1` avant ouverture des résultats ;
+- évaluer uniquement les ligues dont TEAM_GATE passe ;
+- ne pas assimiler les effectifs à des statistiques joueurs par match ;
+- ne jamais inventer un marché historique absent ;
+- conserver `NO_EXTERNAL_VALIDATED_EDGE` et `NO_BET_DEFAULT` tant que les gates
+  externes ne sont pas complets ;
+- standardiser par ligue pour le pooled et interdire tout retuning externe.

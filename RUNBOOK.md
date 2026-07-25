@@ -308,3 +308,21 @@ Le second passage de `scientific-arena` doit retourner `execution_status=CACHED`
 Ne jamais contourner `storage.status=PAUSED`, modifier le gel Jalon 6 ou
 relancer un fournisseur pour cette chaîne. Les workflows 24 et 25 partagent
 `historical-state`; le live reste sur `shadow-state`.
+## Validation externe multi-ligues
+
+Le workflow `27 - Validation externe multi-ligues` restaure `historical-data`,
+verrouille ou vérifie le protocole V1, recalcule les gates, construit seulement
+les datasets autorisés puis exécute les évaluations sans fournisseur :
+
+```bash
+python scripts/run_external_validation.py \
+  --state data/historical \
+  --run-id "$GITHUB_RUN_ID" \
+  --source-commit "$GITHUB_SHA"
+```
+
+Ne jamais supprimer le protocole verrouillé pour changer des paramètres. Une
+définition différente doit devenir une version exploratoire distincte. À
+750 MB, arrêter les artefacts secondaires et compacter. À 900 MB, le workflow
+doit rester en pause. Les statuts `WAITING_FOR_EXTERNAL_GATES` et
+`NO_EXTERNAL_VALIDATED_EDGE` sont normaux.

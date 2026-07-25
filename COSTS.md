@@ -120,3 +120,13 @@ consomment `0` appel fournisseur et `0` crédit. La preuve durable reste
 `SAFE` à environ 273,5 MB; warning 750 MB, pause 900 MB. La projection centrale
 est ~892,5 MB et la haute ~1 311,9 MB : le garde-fou
 stoppera les nouvelles écritures avant ce seuil, sans achat automatique.
+
+## Coût du Jalon 8
+
+La validation externe relit exclusivement `historical-data` :
+0 appel API-Football, 0 crédit The Odds API. Sur la preuve locale réelle,
+les artefacts analytiques font passer le stockage de 361 005 947 à
+364 477 070 octets, soit +3 471 123 octets. Le statut reste `SAFE`.
+
+Warning : 750 000 000 octets. Pause : 900 000 000 octets. Aucun stockage n’est
+acheté automatiquement et aucune cadence fournisseur n’est modifiée.

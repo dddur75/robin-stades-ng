@@ -61,6 +61,15 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Feature Lab/);
   assert.match(page, /Model Lab/);
   assert.match(page, /Model Arena/);
+  assert.match(page, /External Validation/);
+  assert.match(page, /External Readiness/);
+  assert.match(page, /League Transfer Matrix/);
+  assert.match(page, /Leave-One-League-Out/);
+  assert.match(page, /Player Generalization/);
+  assert.match(page, /Strategy External Validation/);
+  assert.match(page, /Preseason Package/);
+  assert.match(page, /NO_BET_DEFAULT/);
+  assert.match(page, /REAL_BETS/);
   assert.match(page, /Comparaison appariée/);
   assert.match(page, /CI 90/);
   assert.match(page, /CI 95/);

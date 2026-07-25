@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T15:28:59.218801+00:00",
+  "generatedAt": "2026-07-25T16:59:19.426763+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -1271,7 +1271,7 @@
     "modelArena": {
       "status": "MODEL_ARENA_ACTIVE",
       "baselineStatus": "JALON6_BASELINE_FROZEN",
-      "baselineHash": "668c8fa53950e296b7e6c26b8362f03b541dab675016da3f1a25a4fc12ee65a5",
+      "baselineHash": "e1f50e9a30d5e1ef3883a6d7455320dd6b94da3d4715b9370eb9c8bd074e4d3e",
       "externalProtocol": "EXTERNAL_VALIDATION_PROTOCOL_V1",
       "modelFamilies": [
         "dixon_coles_score",
@@ -1295,36 +1295,36 @@
           },
           "comparison_id": "team_hist_gradient_boosting_crossfit_VS_team_multinomial_crossfit",
           "decision": "INCONCLUSIVE",
-          "paired_brier_delta": 0.008805315719300376,
+          "paired_brier_delta": 0.008805315719300374,
           "paired_fixtures": 612,
-          "paired_log_loss_delta": 0.03454670489792978,
+          "paired_log_loss_delta": 0.03454670489792976,
           "performance_by_season": {
             "2024": {
               "fixtures": 306,
-              "log_loss_delta": 0.04979826742640841
+              "log_loss_delta": 0.049798267426408395
             },
             "2025": {
               "fixtures": 306,
-              "log_loss_delta": 0.019295142369451138
+              "log_loss_delta": 0.01929514236945114
             }
           },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
             "brier_score": 0.19688961158354334,
-            "ece": 0.02779581565820307,
+            "ece": 0.027795815658203035,
             "log_loss": 0.9916071336707102,
             "matches": 612
           },
           "status": "INCONCLUSIVE",
           "uncertainty": {
             "ci90": [
-              0.01669040827567885,
+              0.016690408275678848,
               0.05244452587715622
             ],
             "ci95": [
-              0.01310859510385733,
-              0.05567585498750564
+              0.013108595103857324,
+              0.05567585498750562
             ],
             "groups": 68,
             "iterations": 5000,
@@ -1335,42 +1335,42 @@
         {
           "challenger_metrics": {
             "brier_score": 0.19602960781067358,
-            "ece": 0.03963489910678462,
+            "ece": 0.0396348991067846,
             "log_loss": 0.9879087175533741,
             "matches": 612
           },
           "comparison_id": "team_without_recent_form_crossfit_VS_team_multinomial_crossfit",
           "decision": "CHALLENGER_BETTER_ON_EXPOSED_OOS",
-          "paired_brier_delta": -0.0008600037728697614,
+          "paired_brier_delta": -0.0008600037728697655,
           "paired_fixtures": 612,
-          "paired_log_loss_delta": -0.003698416117336192,
+          "paired_log_loss_delta": -0.003698416117336204,
           "performance_by_season": {
             "2024": {
               "fixtures": 306,
-              "log_loss_delta": -0.003432432438058609
+              "log_loss_delta": -0.0034324324380586337
             },
             "2025": {
               "fixtures": 306,
-              "log_loss_delta": -0.003964399796613775
+              "log_loss_delta": -0.0039643997966137745
             }
           },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
             "brier_score": 0.19688961158354334,
-            "ece": 0.02779581565820307,
+            "ece": 0.027795815658203035,
             "log_loss": 0.9916071336707102,
             "matches": 612
           },
           "status": "PAIRED_EVALUATION_READY",
           "uncertainty": {
             "ci90": [
-              -0.006589285427158878,
-              -0.00090128326954929
+              -0.006589285427158891,
+              -0.0009012832695493028
             ],
             "ci95": [
-              -0.007088605063437509,
-              -0.00033055000111614183
+              -0.007088605063437528,
+              -0.0003305500011161585
             ],
             "groups": 68,
             "iterations": 5000,
@@ -1397,7 +1397,7 @@
             },
             "2025": {
               "fixtures": 136,
-              "log_loss_delta": 0.05868802346798431
+              "log_loss_delta": 0.0586880234679843
             }
           },
           "production_status": "PRODUCTION_LOCKED",
@@ -1435,7 +1435,7 @@
           "decision": "INCONCLUSIVE",
           "paired_brier_delta": 0.0003646913529781749,
           "paired_fixtures": 612,
-          "paired_log_loss_delta": 0.0019566427743339916,
+          "paired_log_loss_delta": 0.0019566427743339925,
           "performance_by_season": {
             "2024": {
               "fixtures": 306,
@@ -1443,7 +1443,7 @@
             },
             "2025": {
               "fixtures": 306,
-              "log_loss_delta": 0.00048018185645520254
+              "log_loss_delta": 0.00048018185645520395
             }
           },
           "production_status": "PRODUCTION_LOCKED",
@@ -1457,12 +1457,12 @@
           "status": "INCONCLUSIVE",
           "uncertainty": {
             "ci90": [
-              -0.0004479284736046615,
+              -0.00044792847360466097,
               0.004439727827999305
             ],
             "ci95": [
-              -0.0008626256423276287,
-              0.004842683095466943
+              -0.0008626256423276282,
+              0.004842683095466944
             ],
             "groups": 68,
             "iterations": 5000,
@@ -1473,42 +1473,42 @@
         {
           "challenger_metrics": {
             "brier_score": 0.19704591562630158,
-            "ece": 0.02519014723947238,
+            "ece": 0.025190147239472407,
             "log_loss": 0.992168870884471,
             "matches": 612
           },
           "comparison_id": "player_pre_lineup_crossfit_VS_team_multinomial_crossfit",
           "decision": "INCONCLUSIVE",
-          "paired_brier_delta": 0.0001563040427582476,
+          "paired_brier_delta": 0.00015630404275824506,
           "paired_fixtures": 612,
-          "paired_log_loss_delta": 0.0005617372137608741,
+          "paired_log_loss_delta": 0.0005617372137608709,
           "performance_by_season": {
             "2024": {
               "fixtures": 306,
-              "log_loss_delta": 0.002234773089617468
+              "log_loss_delta": 0.002234773089617456
             },
             "2025": {
               "fixtures": 306,
-              "log_loss_delta": -0.00111129866209572
+              "log_loss_delta": -0.0011112986620957146
             }
           },
           "production_status": "PRODUCTION_LOCKED",
           "protocol": "EXACT_PAIRED_FIXTURES_V1",
           "reference_metrics": {
             "brier_score": 0.19688961158354334,
-            "ece": 0.02779581565820307,
+            "ece": 0.027795815658203035,
             "log_loss": 0.9916071336707102,
             "matches": 612
           },
           "status": "INCONCLUSIVE",
           "uncertainty": {
             "ci90": [
-              -0.00215252245139483,
-              0.0032583918199721082
+              -0.0021525224513948326,
+              0.003258391819972098
             ],
             "ci95": [
-              -0.0026685713317591044,
-              0.0037235841045123387
+              -0.0026685713317591148,
+              0.0037235841045123405
             ],
             "groups": 68,
             "iterations": 5000,
@@ -1519,7 +1519,7 @@
         {
           "challenger_metrics": {
             "brier_score": 0.2028930698169047,
-            "ece": 0.058281969166670285,
+            "ece": 0.05828196916667029,
             "log_loss": 1.0237583669747565,
             "matches": 611
           },
@@ -1531,7 +1531,7 @@
           "performance_by_season": {
             "2024": {
               "fixtures": 306,
-              "log_loss_delta": 0.03817310198870545
+              "log_loss_delta": 0.038173101988705445
             },
             "2025": {
               "fixtures": 305,
@@ -1549,11 +1549,11 @@
           "status": "INCONCLUSIVE",
           "uncertainty": {
             "ci90": [
-              0.017920795271977104,
-              0.04562535657852268
+              0.0179207952719771,
+              0.04562535657852269
             ],
             "ci95": [
-              0.01556524273488311,
+              0.015565242734883095,
               0.04784415340981468
             ],
             "groups": 68,
@@ -1741,7 +1741,7 @@
           "dataset": "api_player_pre_lineup_v1",
           "metrics": {
             "brier_score": 0.19704591562630158,
-            "ece": 0.025190147239472407,
+            "ece": 0.02519014723947242,
             "log_loss": 0.992168870884471,
             "matches": 612
           },
@@ -1773,14 +1773,14 @@
               "accuracy": 0.390625,
               "count": 64,
               "lower": 0.3,
-              "mean_confidence": 0.38529623606909535,
+              "mean_confidence": 0.3852962360690954,
               "upper": 0.4
             },
             {
               "accuracy": 0.44528301886792454,
               "count": 265,
               "lower": 0.4,
-              "mean_confidence": 0.4501544467108185,
+              "mean_confidence": 0.45015444671081856,
               "upper": 0.5
             },
             {
@@ -1913,7 +1913,7 @@
           "dataset": "api_post_lineup_simulated_v1",
           "metrics": {
             "brier_score": 0.2028930698169047,
-            "ece": 0.058281969166670305,
+            "ece": 0.05828196916667029,
             "log_loss": 1.0237583669747565,
             "matches": 611
           },
@@ -1973,14 +1973,14 @@
               "accuracy": 0.6851851851851852,
               "count": 54,
               "lower": 0.7,
-              "mean_confidence": 0.7486472809115617,
+              "mean_confidence": 0.7486472809115616,
               "upper": 0.8
             },
             {
               "accuracy": 0.6363636363636364,
               "count": 22,
               "lower": 0.8,
-              "mean_confidence": 0.8354136673302022,
+              "mean_confidence": 0.835413667330202,
               "upper": 0.9
             },
             {
@@ -2085,7 +2085,7 @@
           "dataset": "api_team_pre_match_v1",
           "metrics": {
             "brier_score": 0.19688961158354334,
-            "ece": 0.02779581565820306,
+            "ece": 0.027795815658203053,
             "log_loss": 0.9916071336707102,
             "matches": 612
           },
@@ -2117,7 +2117,7 @@
               "accuracy": 0.3387096774193548,
               "count": 62,
               "lower": 0.3,
-              "mean_confidence": 0.3841871409280112,
+              "mean_confidence": 0.38418714092801115,
               "upper": 0.4
             },
             {
@@ -2231,7 +2231,7 @@
               "accuracy": 0.75,
               "count": 20,
               "lower": 0.7,
-              "mean_confidence": 0.7264499409589399,
+              "mean_confidence": 0.72644994095894,
               "upper": 0.8
             },
             {
@@ -2293,7 +2293,7 @@
         "player_pre_lineup_crossfit": {
           "cross_fitted_log_loss": {
             "ISOTONIC": 1.3819153811028717,
-            "NONE": 1.0525224802119824,
+            "NONE": 1.0525224802119826,
             "SIGMOID": 1.0325791484162679,
             "TEMPERATURE_SCALING": 1.0445862659708565
           },
@@ -2362,9 +2362,9 @@
         "team_without_recent_form_crossfit": {
           "cross_fitted_log_loss": {
             "ISOTONIC": 1.556911027509946,
-            "NONE": 1.0377077273431998,
-            "SIGMOID": 1.0298752023149913,
-            "TEMPERATURE_SCALING": 1.030770467508622
+            "NONE": 1.0377077273432,
+            "SIGMOID": 1.0298752023149915,
+            "TEMPERATURE_SCALING": 1.0307704675086218
           },
           "evaluation_labels_used_for_selection": 0,
           "evaluation_rows": 612,
@@ -2384,8 +2384,8 @@
           "control": "PERMUTED_TARGET",
           "expected_result": "NO_RELIABLE_SIGNAL",
           "metrics": {
-            "brier_score": 0.22497330555416725,
-            "ece": 0.07882429597615519,
+            "brier_score": 0.22497330555416728,
+            "ece": 0.07882429597615516,
             "log_loss": 1.1252409820186398,
             "matches": 618
           },
@@ -2405,12 +2405,12 @@
       "featureStability": [
         {
           "correlation_by_season": {
-            "2020": -0.2941168239291148,
-            "2021": -0.3120023899578101,
-            "2022": -0.4017979121637149,
-            "2023": -0.3332322472297514,
-            "2024": -0.3837417443649695,
-            "2025": -0.36161999085308827
+            "2020": -0.294116823929115,
+            "2021": -0.31200238995781027,
+            "2022": -0.40179791216371497,
+            "2023": -0.33323224722975137,
+            "2024": -0.38374174436496944,
+            "2025": -0.3616199908530885
           },
           "direction_stable": true,
           "feature": "elo_difference",
@@ -2422,11 +2422,11 @@
         {
           "correlation_by_season": {
             "2020": -0.1751630992007785,
-            "2021": -0.14023465819994937,
-            "2022": -0.24673229551699213,
-            "2023": -0.11554859227153061,
-            "2024": -0.12298618044597188,
-            "2025": -0.1720795769421798
+            "2021": -0.14023465819994932,
+            "2022": -0.2467322955169925,
+            "2023": -0.11554859227153048,
+            "2024": -0.12298618044597191,
+            "2025": -0.17207957694217987
           },
           "direction_stable": true,
           "feature": "home_form_5",
@@ -2437,12 +2437,12 @@
         },
         {
           "correlation_by_season": {
-            "2020": 0.14280300619868586,
-            "2021": 0.12458436924084185,
-            "2022": 0.20821016949700344,
-            "2023": 0.11778765313373836,
-            "2024": 0.18617986474859738,
-            "2025": 0.11010643624011092
+            "2020": 0.14280300619868574,
+            "2021": 0.12458436924084189,
+            "2022": 0.20821016949700336,
+            "2023": 0.1177876531337385,
+            "2024": 0.18617986474859755,
+            "2025": 0.11010643624011084
           },
           "direction_stable": true,
           "feature": "away_form_5",
@@ -2454,10 +2454,10 @@
         {
           "correlation_by_season": {
             "2020": -0.1483139743473666,
-            "2021": -0.15662956635380001,
-            "2022": -0.19106339674827155,
-            "2023": -0.10922879969468348,
-            "2024": -0.22014862371417263,
+            "2021": -0.15662956635379996,
+            "2022": -0.19106339674827172,
+            "2023": -0.10922879969468338,
+            "2024": -0.2201486237141727,
             "2025": -0.17512278490334893
           },
           "direction_stable": true,
@@ -2469,12 +2469,12 @@
         },
         {
           "correlation_by_season": {
-            "2020": 0.12353528402169389,
+            "2020": 0.12353528402169393,
             "2021": 0.10033239715884291,
-            "2022": 0.19434609142195325,
-            "2023": 0.15560444491899353,
-            "2024": 0.14298228306639488,
-            "2025": 0.08156414445983176
+            "2022": 0.1943460914219533,
+            "2023": 0.15560444491899347,
+            "2024": 0.14298228306639485,
+            "2025": 0.08156414445983169
           },
           "direction_stable": true,
           "feature": "away_goals_for_5",
@@ -2485,12 +2485,12 @@
         },
         {
           "correlation_by_season": {
-            "2020": 0.15222252011431794,
-            "2021": 0.16604749453264792,
-            "2022": 0.1944927327905132,
-            "2023": 0.1091578166838452,
-            "2024": 0.03633802407453365,
-            "2025": 0.0815238027283125
+            "2020": 0.15222252011431808,
+            "2021": 0.16604749453264797,
+            "2022": 0.1944927327905131,
+            "2023": 0.10915781668384525,
+            "2024": 0.036338024074533654,
+            "2025": 0.08152380272831254
           },
           "direction_stable": true,
           "feature": "home_goals_against_5",
@@ -2501,12 +2501,12 @@
         },
         {
           "correlation_by_season": {
-            "2020": -0.10075917118619897,
-            "2021": -0.09006989188314037,
-            "2022": -0.180315088653441,
-            "2023": 0.006439743435517773,
-            "2024": -0.21341563718389014,
-            "2025": -0.1278502538027587
+            "2020": -0.10075917118619898,
+            "2021": -0.09006989188314042,
+            "2022": -0.18031508865344084,
+            "2023": 0.006439743435517757,
+            "2024": -0.21341563718389023,
+            "2025": -0.12785025380275872
           },
           "direction_stable": true,
           "feature": "away_goals_against_5",
@@ -2517,12 +2517,12 @@
         },
         {
           "correlation_by_season": {
-            "2020": 0.007877567729877284,
-            "2021": 0.08248492666347124,
-            "2022": -0.01679763640384265,
-            "2023": -0.018385424987632806,
-            "2024": 0.016013970225122284,
-            "2025": 0.07473537293148401
+            "2020": 0.007877567729877251,
+            "2021": 0.08248492666347126,
+            "2022": -0.016797636403842686,
+            "2023": -0.01838542498763279,
+            "2024": 0.01601397022512229,
+            "2025": 0.07473537293148406
           },
           "direction_stable": true,
           "feature": "home_rest_days",
@@ -2533,12 +2533,12 @@
         },
         {
           "correlation_by_season": {
-            "2020": 0.006054944016971709,
-            "2021": 0.08000090254589197,
-            "2022": 0.018626888630517733,
+            "2020": 0.006054944016971768,
+            "2021": 0.08000090254589198,
+            "2022": 0.018626888630517736,
             "2023": -0.0551477021178876,
-            "2024": -0.03925739047466551,
-            "2025": -0.014466836679351537
+            "2024": -0.03925739047466553,
+            "2025": -0.01446683667935153
           },
           "direction_stable": false,
           "feature": "away_rest_days",
@@ -2551,10 +2551,10 @@
           "correlation_by_season": {
             "2020": null,
             "2021": null,
-            "2022": -0.16389178724790365,
-            "2023": -0.15725730710682073,
-            "2024": -0.22306682582617757,
-            "2025": -0.25611411478019946
+            "2022": -0.1638917872479036,
+            "2023": -0.15725730710682065,
+            "2024": -0.2230668258261776,
+            "2025": -0.25611411478019963
           },
           "direction_stable": true,
           "feature": "home_shots_5",
@@ -2567,10 +2567,10 @@
           "correlation_by_season": {
             "2020": null,
             "2021": null,
-            "2022": 0.1843357427176592,
+            "2022": 0.18433574271765926,
             "2023": 0.09940066275580837,
-            "2024": 0.16953509665146413,
-            "2025": 0.15067541749474844
+            "2024": 0.16953509665146424,
+            "2025": 0.1506754174947484
           },
           "direction_stable": true,
           "feature": "away_shots_5",
@@ -2583,10 +2583,10 @@
           "correlation_by_season": {
             "2020": null,
             "2021": null,
-            "2022": -0.13595578668877167,
-            "2023": -0.17883553505414768,
-            "2024": -0.27534923898421837,
-            "2025": -0.2630608565732807
+            "2022": -0.13595578668877162,
+            "2023": -0.17883553505414765,
+            "2024": -0.2753492389842186,
+            "2025": -0.26306085657328077
           },
           "direction_stable": true,
           "feature": "home_shots_on_goal_5",
@@ -2599,10 +2599,10 @@
           "correlation_by_season": {
             "2020": null,
             "2021": null,
-            "2022": 0.21139238905051955,
-            "2023": 0.12451476772310087,
-            "2024": 0.16580204554748418,
-            "2025": 0.17159452833610173
+            "2022": 0.21139238905051946,
+            "2023": 0.12451476772310088,
+            "2024": 0.16580204554748423,
+            "2025": 0.17159452833610175
           },
           "direction_stable": true,
           "feature": "away_shots_on_goal_5",
@@ -2615,10 +2615,10 @@
           "correlation_by_season": {
             "2020": null,
             "2021": null,
-            "2022": -0.2639074561658285,
-            "2023": -0.23980526227371735,
-            "2024": -0.26476517806042765,
-            "2025": -0.1879117636715889
+            "2022": -0.2639074561658286,
+            "2023": -0.23980526227371718,
+            "2024": -0.2647651780604276,
+            "2025": -0.18791176367158896
           },
           "direction_stable": true,
           "feature": "home_possession_5",
@@ -2632,9 +2632,9 @@
             "2020": null,
             "2021": null,
             "2022": 0.16445171323831692,
-            "2023": 0.1798061155581102,
-            "2024": 0.18489215489117553,
-            "2025": 0.2543836608760759
+            "2023": 0.17980611555811032,
+            "2024": 0.1848921548911757,
+            "2025": 0.25438366087607583
           },
           "direction_stable": true,
           "feature": "away_possession_5",
@@ -2686,7 +2686,7 @@
       ],
       "storage": {
         "can_write": true,
-        "current_bytes": 273530467,
+        "current_bytes": 291843724,
         "pause_bytes": 900000000,
         "status": "SAFE",
         "warning_bytes": 750000000
@@ -2696,6 +2696,1248 @@
       "liveCandidates": 0,
       "providerCalls": 0,
       "quotaConsumed": 0,
+      "productionStatus": "PRODUCTION_LOCKED"
+    },
+    "externalValidation": {
+      "status": "WAITING_FOR_EXTERNAL_GATES",
+      "runId": "local-proof-jalon8",
+      "sourceCommit": "c41a773fadec1082abb3bce0ecf5c33072077650",
+      "protocol": {
+        "frozen_at": "2026-07-25T16:45:00+00:00",
+        "hash": "e090899f065807cb41cadc6d50067eb7e4d78449d58bdf1ccd5187b28bd46d99",
+        "status": "EXTERNAL_VALIDATION_PROTOCOL_V1_LOCKED"
+      },
+      "readiness": [
+        {
+          "competition": "Premier League",
+          "events": 0,
+          "gates": {
+            "EXTERNAL_VALIDATION_GATE": {
+              "blocked_components": [
+                "PLAYER",
+                "LINEUP",
+                "MARKET"
+              ],
+              "ready_components": [
+                "TEAM"
+              ],
+              "status": "PARTIAL"
+            },
+            "LINEUP_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "resolved_starting_xi_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "MARKET_GATE": {
+              "fixtures_1x2": 0,
+              "fixtures_over_under_25": 0,
+              "invented_prices": 0,
+              "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+              "status": "UNAVAILABLE"
+            },
+            "PLAYER_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "identity_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "TEAM_GATE": {
+              "canonical_rate": 1.0,
+              "fixtures": 2660,
+              "provenance_rate": 1.0,
+              "seasons": 7,
+              "status": "READY",
+              "team_identity_rate": 1.0,
+              "temporal_errors": 0
+            }
+          },
+          "market_1x2": 0,
+          "market_over_under_25": 0,
+          "null_rate": 0.0,
+          "players": 5216,
+          "quality": "PASSED",
+          "seasons": [
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2019,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2020,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2021,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2022,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2023,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2024,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2025,
+              "status": "READY"
+            }
+          ],
+          "team_statistics": 0,
+          "teams": 28,
+          "temporality": "PASSED"
+        },
+        {
+          "competition": "La Liga",
+          "events": 0,
+          "gates": {
+            "EXTERNAL_VALIDATION_GATE": {
+              "blocked_components": [
+                "PLAYER",
+                "LINEUP",
+                "MARKET"
+              ],
+              "ready_components": [
+                "TEAM"
+              ],
+              "status": "PARTIAL"
+            },
+            "LINEUP_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "resolved_starting_xi_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "MARKET_GATE": {
+              "fixtures_1x2": 0,
+              "fixtures_over_under_25": 0,
+              "invented_prices": 0,
+              "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+              "status": "UNAVAILABLE"
+            },
+            "PLAYER_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "identity_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "TEAM_GATE": {
+              "canonical_rate": 1.0,
+              "fixtures": 2660,
+              "provenance_rate": 1.0,
+              "seasons": 7,
+              "status": "READY",
+              "team_identity_rate": 1.0,
+              "temporal_errors": 0
+            }
+          },
+          "market_1x2": 0,
+          "market_over_under_25": 0,
+          "null_rate": 0.0,
+          "players": 5042,
+          "quality": "PASSED",
+          "seasons": [
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2019,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2020,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2021,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2022,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2023,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2024,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2025,
+              "status": "READY"
+            }
+          ],
+          "team_statistics": 0,
+          "teams": 28,
+          "temporality": "PASSED"
+        },
+        {
+          "competition": "Bundesliga",
+          "events": 0,
+          "gates": {
+            "EXTERNAL_VALIDATION_GATE": {
+              "blocked_components": [
+                "PLAYER",
+                "LINEUP",
+                "MARKET"
+              ],
+              "ready_components": [
+                "TEAM"
+              ],
+              "status": "PARTIAL"
+            },
+            "LINEUP_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "resolved_starting_xi_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "MARKET_GATE": {
+              "fixtures_1x2": 0,
+              "fixtures_over_under_25": 0,
+              "invented_prices": 0,
+              "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+              "status": "UNAVAILABLE"
+            },
+            "PLAYER_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "identity_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "TEAM_GATE": {
+              "canonical_rate": 1.0,
+              "fixtures": 2156,
+              "provenance_rate": 1.0,
+              "seasons": 7,
+              "status": "READY",
+              "team_identity_rate": 1.0,
+              "temporal_errors": 0
+            }
+          },
+          "market_1x2": 0,
+          "market_over_under_25": 0,
+          "null_rate": 0.0,
+          "players": 4178,
+          "quality": "PASSED",
+          "seasons": [
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 308,
+              "fixtures_expected": 306,
+              "fixtures_received": 308,
+              "results": 308,
+              "season": 2019,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 308,
+              "fixtures_expected": 306,
+              "fixtures_received": 308,
+              "results": 308,
+              "season": 2020,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 308,
+              "fixtures_expected": 306,
+              "fixtures_received": 308,
+              "results": 308,
+              "season": 2021,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 308,
+              "fixtures_expected": 306,
+              "fixtures_received": 308,
+              "results": 308,
+              "season": 2022,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 308,
+              "fixtures_expected": 306,
+              "fixtures_received": 308,
+              "results": 308,
+              "season": 2023,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 308,
+              "fixtures_expected": 306,
+              "fixtures_received": 308,
+              "results": 308,
+              "season": 2024,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 308,
+              "fixtures_expected": 306,
+              "fixtures_received": 308,
+              "results": 308,
+              "season": 2025,
+              "status": "READY"
+            }
+          ],
+          "team_statistics": 0,
+          "teams": 28,
+          "temporality": "PASSED"
+        },
+        {
+          "competition": "Serie A",
+          "events": 0,
+          "gates": {
+            "EXTERNAL_VALIDATION_GATE": {
+              "blocked_components": [
+                "PLAYER",
+                "LINEUP",
+                "MARKET"
+              ],
+              "ready_components": [],
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "LINEUP_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "resolved_starting_xi_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "MARKET_GATE": {
+              "fixtures_1x2": 0,
+              "fixtures_over_under_25": 0,
+              "invented_prices": 0,
+              "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+              "status": "UNAVAILABLE"
+            },
+            "PLAYER_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "identity_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "TEAM_GATE": {
+              "canonical_rate": 1.0,
+              "fixtures": 2661,
+              "provenance_rate": 1.0,
+              "seasons": 7,
+              "status": "BLOCKED_BY_COVERAGE",
+              "team_identity_rate": 0.9354838709677419,
+              "temporal_errors": 0
+            }
+          },
+          "market_1x2": 0,
+          "market_over_under_25": 0,
+          "null_rate": 0.0,
+          "players": 5530,
+          "quality": "PARTIAL",
+          "seasons": [
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2019,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2020,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2021,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 381,
+              "fixtures_expected": 380,
+              "fixtures_received": 381,
+              "results": 381,
+              "season": 2022,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2023,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2024,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 380,
+              "fixtures_expected": 380,
+              "fixtures_received": 380,
+              "results": 380,
+              "season": 2025,
+              "status": "READY"
+            }
+          ],
+          "team_statistics": 0,
+          "teams": 31,
+          "temporality": "PASSED"
+        },
+        {
+          "competition": "UEFA Champions League",
+          "events": 0,
+          "gates": {
+            "EXTERNAL_VALIDATION_GATE": {
+              "blocked_components": [
+                "PLAYER",
+                "LINEUP",
+                "MARKET"
+              ],
+              "ready_components": [],
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "LINEUP_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "resolved_starting_xi_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "MARKET_GATE": {
+              "fixtures_1x2": 0,
+              "fixtures_over_under_25": 0,
+              "invented_prices": 0,
+              "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+              "status": "UNAVAILABLE"
+            },
+            "PLAYER_GATE": {
+              "coverage": 0.0,
+              "fixtures": 0,
+              "identity_rate": null,
+              "rows": 0,
+              "status": "BLOCKED_BY_COVERAGE"
+            },
+            "TEAM_GATE": {
+              "canonical_rate": 1.0,
+              "fixtures": 1594,
+              "provenance_rate": 1.0,
+              "seasons": 7,
+              "status": "BLOCKED_BY_COVERAGE",
+              "team_identity_rate": 0.9521531100478469,
+              "temporal_errors": 0
+            }
+          },
+          "market_1x2": 0,
+          "market_over_under_25": 0,
+          "null_rate": 0.0,
+          "players": 14392,
+          "quality": "PARTIAL",
+          "seasons": [
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 210,
+              "fixtures_expected": null,
+              "fixtures_received": 210,
+              "results": 210,
+              "season": 2019,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 178,
+              "fixtures_expected": null,
+              "fixtures_received": 178,
+              "results": 178,
+              "season": 2020,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 218,
+              "fixtures_expected": null,
+              "fixtures_received": 218,
+              "results": 218,
+              "season": 2021,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 214,
+              "fixtures_expected": null,
+              "fixtures_received": 214,
+              "results": 214,
+              "season": 2022,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 214,
+              "fixtures_expected": null,
+              "fixtures_received": 214,
+              "results": 214,
+              "season": 2023,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 279,
+              "fixtures_expected": null,
+              "fixtures_received": 279,
+              "results": 279,
+              "season": 2024,
+              "status": "READY"
+            },
+            {
+              "fixture_coverage": 1.0,
+              "fixtures_canonical": 281,
+              "fixtures_expected": null,
+              "fixtures_received": 281,
+              "results": 281,
+              "season": 2025,
+              "status": "READY"
+            }
+          ],
+          "team_statistics": 0,
+          "teams": 209,
+          "temporality": "PASSED"
+        }
+      ],
+      "datasets": [
+        {
+          "name": "pl_team_pre_match_v1",
+          "version": "pl_team_pre_match_v1",
+          "competition": "Premier League",
+          "seasons": [
+            2019,
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "fixtures": 2660,
+          "rows": 2660,
+          "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
+          "status": "EXTERNAL_DATASET_READY"
+        },
+        {
+          "name": "laliga_team_pre_match_v1",
+          "version": "laliga_team_pre_match_v1",
+          "competition": "La Liga",
+          "seasons": [
+            2019,
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "fixtures": 2660,
+          "rows": 2660,
+          "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
+          "status": "EXTERNAL_DATASET_READY"
+        },
+        {
+          "name": "bundesliga_team_pre_match_v1",
+          "version": "bundesliga_team_pre_match_v1",
+          "competition": "Bundesliga",
+          "seasons": [
+            2019,
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "fixtures": 2156,
+          "rows": 2156,
+          "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
+          "status": "EXTERNAL_DATASET_READY"
+        }
+      ],
+      "models": {
+        "dixon_coles": {
+          "metrics": {
+            "accuracy": 0.48408239700374533,
+            "brier_score": 0.20629441098352527,
+            "calibration_intercept": -0.050236164985327465,
+            "calibration_slope": 1.140762778421703,
+            "ece": 0.015695303651762683,
+            "log_loss": 1.0311716150187518,
+            "matches": 2136,
+            "sharpness": 0.11455780801450983,
+            "status": "EVALUATED"
+          },
+          "predictions": 2136,
+          "status": "EVALUATED"
+        },
+        "frozen_transfer": {
+          "metrics": {
+            "accuracy": 0.5135767790262172,
+            "brier_score": 0.1975806310484061,
+            "calibration_intercept": -0.039951415878852065,
+            "calibration_slope": 1.0552520079562249,
+            "ece": 0.019490646257564193,
+            "log_loss": 0.9945416331307865,
+            "matches": 2136,
+            "sharpness": 0.16277437533684563,
+            "status": "EVALUATED"
+          },
+          "predictions": 2136,
+          "status": "FROZEN_TRANSFER_EVALUATED"
+        },
+        "league_specific": {
+          "metrics": {
+            "accuracy": 0.5173220973782772,
+            "brier_score": 0.19802208649452005,
+            "calibration_intercept": -6.473021200411989e-07,
+            "calibration_slope": 0.9629687389101173,
+            "ece": 0.026226616056796728,
+            "log_loss": 0.9982971423875214,
+            "matches": 2136,
+            "sharpness": 0.17167798871470927,
+            "status": "EVALUATED"
+          },
+          "predictions": 2136,
+          "status": "LEAGUE_SPECIFIC_EVALUATED"
+        },
+        "poisson": {
+          "metrics": {
+            "accuracy": 0.48174157303370785,
+            "brier_score": 0.20632646999032503,
+            "calibration_intercept": -0.0823704977582962,
+            "calibration_slope": 1.18222601081394,
+            "ece": 0.014667937607782785,
+            "log_loss": 1.0316794227669985,
+            "matches": 2136,
+            "sharpness": 0.12049168107672568,
+            "status": "EVALUATED"
+          },
+          "predictions": 2136,
+          "status": "EVALUATED"
+        },
+        "pooled": {
+          "metrics": {
+            "accuracy": 0.5112359550561798,
+            "brier_score": 0.19797843008003416,
+            "calibration_intercept": -0.043903242517988404,
+            "calibration_slope": 1.0370677794687746,
+            "ece": 0.026141992803416225,
+            "log_loss": 0.9958391466612697,
+            "matches": 2136,
+            "sharpness": 0.1693654874677291,
+            "status": "EVALUATED"
+          },
+          "predictions": 2136,
+          "status": "POOLED_MODEL_EVALUATED"
+        }
+      },
+      "comparisons": [
+        {
+          "challenger_metrics": {
+            "accuracy": 0.5173220973782772,
+            "brier_score": 0.19802208649452005,
+            "calibration_intercept": -6.473021202747397e-07,
+            "calibration_slope": 0.9629687389101184,
+            "ece": 0.026226616056796697,
+            "log_loss": 0.9982971423875214,
+            "matches": 2136,
+            "sharpness": 0.17167798871470927,
+            "status": "EVALUATED"
+          },
+          "comparison_id": "LEAGUE_SPECIFIC_VS_FROZEN_TRANSFER",
+          "competitions": [
+            "Bundesliga",
+            "La Liga",
+            "Premier League"
+          ],
+          "excluded_fixtures": 0,
+          "exclusion_reasons": [],
+          "fixtures_a": 2136,
+          "fixtures_b": 2136,
+          "model_a": "bundesliga_specific_v1",
+          "model_b": "ligue1_frozen_transfer_v1",
+          "paired_fixtures": 2136,
+          "paired_log_loss_delta": 0.003755509256734971,
+          "production_status": "PRODUCTION_LOCKED",
+          "reference_metrics": {
+            "accuracy": 0.5135767790262172,
+            "brier_score": 0.1975806310484061,
+            "calibration_intercept": -0.03995141587885189,
+            "calibration_slope": 1.055252007956226,
+            "ece": 0.019490646257564248,
+            "log_loss": 0.9945416331307865,
+            "matches": 2136,
+            "sharpness": 0.16277437533684563,
+            "status": "EVALUATED"
+          },
+          "status": "INCONCLUSIVE",
+          "uncertainty": {
+            "ci90": [
+              -0.0018672448282433007,
+              0.009646575004382724
+            ],
+            "ci95": [
+              -0.002878114995781293,
+              0.01078177664469833
+            ],
+            "groups": 215,
+            "iterations": 5000,
+            "probability_challenger_better": 0.137,
+            "seed": 1707
+          }
+        },
+        {
+          "challenger_metrics": {
+            "accuracy": 0.5173220973782772,
+            "brier_score": 0.19802208649452005,
+            "calibration_intercept": -6.473021202747397e-07,
+            "calibration_slope": 0.9629687389101184,
+            "ece": 0.026226616056796697,
+            "log_loss": 0.9982971423875214,
+            "matches": 2136,
+            "sharpness": 0.17167798871470927,
+            "status": "EVALUATED"
+          },
+          "comparison_id": "LEAGUE_SPECIFIC_VS_POOLED",
+          "competitions": [
+            "Bundesliga",
+            "La Liga",
+            "Premier League"
+          ],
+          "excluded_fixtures": 0,
+          "exclusion_reasons": [],
+          "fixtures_a": 2136,
+          "fixtures_b": 2136,
+          "model_a": "bundesliga_specific_v1",
+          "model_b": "pooled_multileague_v1",
+          "paired_fixtures": 2136,
+          "paired_log_loss_delta": 0.0024579957262518388,
+          "production_status": "PRODUCTION_LOCKED",
+          "reference_metrics": {
+            "accuracy": 0.5112359550561798,
+            "brier_score": 0.19797843008003416,
+            "calibration_intercept": -0.0439032425179883,
+            "calibration_slope": 1.0370677794687744,
+            "ece": 0.026141992803416222,
+            "log_loss": 0.9958391466612697,
+            "matches": 2136,
+            "sharpness": 0.1693654874677291,
+            "status": "EVALUATED"
+          },
+          "status": "INCONCLUSIVE",
+          "uncertainty": {
+            "ci90": [
+              -0.0017054164266271884,
+              0.006784032404360515
+            ],
+            "ci95": [
+              -0.002509193697461492,
+              0.007526481307921519
+            ],
+            "groups": 215,
+            "iterations": 5000,
+            "probability_challenger_better": 0.166,
+            "seed": 1707
+          }
+        },
+        {
+          "challenger_metrics": {
+            "accuracy": 0.48408239700374533,
+            "brier_score": 0.20629441098352527,
+            "calibration_intercept": -0.050236164985327576,
+            "calibration_slope": 1.1407627784217034,
+            "ece": 0.015695303651762672,
+            "log_loss": 1.0311716150187518,
+            "matches": 2136,
+            "sharpness": 0.11455780801450983,
+            "status": "EVALUATED"
+          },
+          "comparison_id": "DIXON_COLES_VS_POISSON",
+          "competitions": [
+            "Bundesliga",
+            "La Liga",
+            "Premier League"
+          ],
+          "excluded_fixtures": 0,
+          "exclusion_reasons": [],
+          "fixtures_a": 2136,
+          "fixtures_b": 2136,
+          "model_a": "bundesliga_dixon_coles_v1",
+          "model_b": "bundesliga_poisson_v1",
+          "paired_fixtures": 2136,
+          "paired_log_loss_delta": -0.0005078077482467713,
+          "production_status": "PRODUCTION_LOCKED",
+          "reference_metrics": {
+            "accuracy": 0.48174157303370785,
+            "brier_score": 0.20632646999032503,
+            "calibration_intercept": -0.08237049775829694,
+            "calibration_slope": 1.1822260108139413,
+            "ece": 0.014667937607782802,
+            "log_loss": 1.0316794227669985,
+            "matches": 2136,
+            "sharpness": 0.12049168107672568,
+            "status": "EVALUATED"
+          },
+          "status": "INCONCLUSIVE",
+          "uncertainty": {
+            "ci90": [
+              -0.0020292809696808287,
+              0.0010161409376894775
+            ],
+            "ci95": [
+              -0.002293734363038419,
+              0.0013181624238046584
+            ],
+            "groups": 215,
+            "iterations": 5000,
+            "probability_challenger_better": 0.7058,
+            "seed": 1707
+          }
+        },
+        {
+          "challenger_metrics": {
+            "accuracy": 0.48174157303370785,
+            "brier_score": 0.20632646999032503,
+            "calibration_intercept": -0.08237049775829694,
+            "calibration_slope": 1.1822260108139413,
+            "ece": 0.014667937607782802,
+            "log_loss": 1.0316794227669985,
+            "matches": 2136,
+            "sharpness": 0.12049168107672568,
+            "status": "EVALUATED"
+          },
+          "comparison_id": "POISSON_VS_LEAGUE_SPECIFIC",
+          "competitions": [
+            "Bundesliga",
+            "La Liga",
+            "Premier League"
+          ],
+          "excluded_fixtures": 0,
+          "exclusion_reasons": [],
+          "fixtures_a": 2136,
+          "fixtures_b": 2136,
+          "model_a": "bundesliga_poisson_v1",
+          "model_b": "bundesliga_specific_v1",
+          "paired_fixtures": 2136,
+          "paired_log_loss_delta": 0.033382280379477,
+          "production_status": "PRODUCTION_LOCKED",
+          "reference_metrics": {
+            "accuracy": 0.5173220973782772,
+            "brier_score": 0.19802208649452005,
+            "calibration_intercept": -6.473021202747397e-07,
+            "calibration_slope": 0.9629687389101184,
+            "ece": 0.026226616056796697,
+            "log_loss": 0.9982971423875214,
+            "matches": 2136,
+            "sharpness": 0.17167798871470927,
+            "status": "EVALUATED"
+          },
+          "status": "EXTERNAL_VALIDATION_FAILED",
+          "uncertainty": {
+            "ci90": [
+              0.02175552020341727,
+              0.0448606695208287
+            ],
+            "ci95": [
+              0.019360902405038353,
+              0.04684659374761711
+            ],
+            "groups": 215,
+            "iterations": 5000,
+            "probability_challenger_better": 0.0,
+            "seed": 1707
+          }
+        },
+        {
+          "comparison_id": "FROZEN_TRANSFER_VS_MARKET",
+          "paired_fixtures": 0,
+          "reason": "MARKET_GATE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "comparison_id": "LEAGUE_SPECIFIC_VS_MARKET",
+          "paired_fixtures": 0,
+          "reason": "MARKET_GATE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "comparison_id": "POOLED_VS_MARKET",
+          "paired_fixtures": 0,
+          "reason": "MARKET_GATE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        }
+      ],
+      "leaveOneLeagueOut": [
+        {
+          "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+          "feature_stability": "MEASURED",
+          "held_out_competition": "Premier League",
+          "market_comparison": "UNAVAILABLE_MARKET_GATE",
+          "metrics": {
+            "accuracy": 0.49605263157894736,
+            "brier_score": 0.20208171649561102,
+            "calibration_intercept": -0.01431375105564791,
+            "calibration_slope": 0.9755424330500688,
+            "ece": 0.031604925509953384,
+            "log_loss": 1.0104974067498922,
+            "matches": 760,
+            "sharpness": 0.1592172437717624,
+            "status": "EVALUATED"
+          },
+          "paired_fixtures": 760,
+          "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+          "training_competitions": [
+            "Bundesliga",
+            "La Liga"
+          ]
+        },
+        {
+          "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+          "feature_stability": "MEASURED",
+          "held_out_competition": "La Liga",
+          "market_comparison": "UNAVAILABLE_MARKET_GATE",
+          "metrics": {
+            "accuracy": 0.5223684210526316,
+            "brier_score": 0.1961772753961993,
+            "calibration_intercept": -0.05048857638295177,
+            "calibration_slope": 1.0582948765177316,
+            "ece": 0.02049686050339524,
+            "log_loss": 0.9913360571337251,
+            "matches": 760,
+            "sharpness": 0.1746281456581208,
+            "status": "EVALUATED"
+          },
+          "paired_fixtures": 760,
+          "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+          "training_competitions": [
+            "Bundesliga",
+            "Premier League"
+          ]
+        },
+        {
+          "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+          "feature_stability": "MEASURED",
+          "held_out_competition": "Bundesliga",
+          "market_comparison": "UNAVAILABLE_MARKET_GATE",
+          "metrics": {
+            "accuracy": 0.512987012987013,
+            "brier_score": 0.197653478787476,
+            "calibration_intercept": -0.01936068610468552,
+            "calibration_slope": 0.981672994675791,
+            "ece": 0.04199653872653712,
+            "log_loss": 0.9946561498073714,
+            "matches": 616,
+            "sharpness": 0.17615867488010248,
+            "status": "EVALUATED"
+          },
+          "paired_fixtures": 616,
+          "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+          "training_competitions": [
+            "La Liga",
+            "Premier League"
+          ]
+        }
+      ],
+      "playerGeneralization": [
+        {
+          "competition": "Premier League",
+          "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+          "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "competition": "La Liga",
+          "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+          "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "competition": "Bundesliga",
+          "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+          "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+          "status": "INCONCLUSIVE"
+        }
+      ],
+      "negativeControls": [
+        {
+          "competition": "Premier League",
+          "control": "TARGET_PERMUTATION",
+          "metrics": {
+            "brier_score": 0.21802054478301014,
+            "ece": 0.0,
+            "log_loss": 1.079799282333215,
+            "matches": 760
+          },
+          "status": "PASSED"
+        },
+        {
+          "competition": "Premier League",
+          "control": "PLAYER_FEATURE_PERMUTATION",
+          "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+        },
+        {
+          "competition": "Premier League",
+          "control": "CONSTANT_PLAYER_FEATURES",
+          "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+        },
+        {
+          "competition": "Premier League",
+          "control": "RANDOM_LINEUPS",
+          "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+        },
+        {
+          "competition": "Premier League",
+          "control": "SYNTHETIC_FUTURE_FEATURE",
+          "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+        },
+        {
+          "competition": "La Liga",
+          "control": "TARGET_PERMUTATION",
+          "metrics": {
+            "brier_score": 0.2130944136657433,
+            "ece": 0.0,
+            "log_loss": 1.0593400582518078,
+            "matches": 760
+          },
+          "status": "PASSED"
+        },
+        {
+          "competition": "La Liga",
+          "control": "PLAYER_FEATURE_PERMUTATION",
+          "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+        },
+        {
+          "competition": "La Liga",
+          "control": "CONSTANT_PLAYER_FEATURES",
+          "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+        },
+        {
+          "competition": "La Liga",
+          "control": "RANDOM_LINEUPS",
+          "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+        },
+        {
+          "competition": "La Liga",
+          "control": "SYNTHETIC_FUTURE_FEATURE",
+          "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+        },
+        {
+          "competition": "Bundesliga",
+          "control": "TARGET_PERMUTATION",
+          "metrics": {
+            "brier_score": 0.2179945325237533,
+            "ece": 5.551115123125783e-17,
+            "log_loss": 1.0792756090717992,
+            "matches": 616
+          },
+          "status": "PASSED"
+        },
+        {
+          "competition": "Bundesliga",
+          "control": "PLAYER_FEATURE_PERMUTATION",
+          "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+        },
+        {
+          "competition": "Bundesliga",
+          "control": "CONSTANT_PLAYER_FEATURES",
+          "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+        },
+        {
+          "competition": "Bundesliga",
+          "control": "RANDOM_LINEUPS",
+          "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+        },
+        {
+          "competition": "Bundesliga",
+          "control": "SYNTHETIC_FUTURE_FEATURE",
+          "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+        }
+      ],
+      "strategies": {
+        "backtests": 0,
+        "hypotheses": 13,
+        "live_shadow_candidates": 0,
+        "production_status": "PRODUCTION_LOCKED",
+        "protocol": "STRATEGY_LAB_V3_PREREGISTERED",
+        "protocol_hash": "38a539aa32588057c8250bd63d15576fb24c1fc8a9aca6aa3e6a0968cab1be95",
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "reason": "MARKET_GATE_UNAVAILABLE",
+        "shadow_model_candidates": 0,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      "package": {
+        "NO_BET_DEFAULT": true,
+        "PRODUCTION_LOCKED": true,
+        "REAL_BETS": false,
+        "calibrators": [
+          "NONE_FROZEN_EXTERNAL"
+        ],
+        "code_revision": "c41a773fadec1082abb3bce0ecf5c33072077650",
+        "dataset_versions": [
+          "pl_team_pre_match_v1",
+          "laliga_team_pre_match_v1",
+          "bundesliga_team_pre_match_v1"
+        ],
+        "decision_rules": [
+          "MARKET_BASELINE_MONITORING",
+          "NO_EXTERNAL_VALIDATED_EDGE"
+        ],
+        "feature_versions": [
+          "TEAM_FEATURES_V1"
+        ],
+        "generated_at": "2026-07-25T16:53:35.221816+00:00",
+        "hashes": {
+          "datasets": {
+            "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
+            "laliga_team_pre_match_v1": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
+            "pl_team_pre_match_v1": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876"
+          },
+          "external_protocol": "e090899f065807cb41cadc6d50067eb7e4d78449d58bdf1ccd5187b28bd46d99"
+        },
+        "model_versions": [],
+        "package": "PRESEASON_SHADOW_PACKAGE_V1",
+        "package_hash": "6d34d2a80761c0026946d12f9d8686c158aa6b9174e1e4ba2894408314bdfb02",
+        "production_status": "PRODUCTION_LOCKED",
+        "quality_gates": [
+          "TEAM_GATE",
+          "PLAYER_GATE",
+          "LINEUP_GATE",
+          "MARKET_GATE",
+          "EXTERNAL_VALIDATION_GATE"
+        ],
+        "rejection_rules": [
+          "UNPAIRED_SAMPLE",
+          "TEMPORAL_LEAKAGE",
+          "POOR_CALIBRATION",
+          "PROFIT_CONCENTRATION",
+          "NEGATIVE_CONTROL_FAILURE"
+        ],
+        "status": "PRESEASON_PACKAGE_WAITING_FOR_EXTERNAL_GATES",
+        "strategy_versions": [],
+        "thresholds": {
+          "external_ci": 0.95,
+          "minimum_competitions": 3
+        }
+      },
+      "predictions": 12816,
+      "providerCalls": 0,
+      "quotaConsumed": 0,
+      "storage": {
+        "after_bytes": 364477070,
+        "can_write": true,
+        "current_bytes": 361005947,
+        "pause_bytes": 900000000,
+        "status": "SAFE",
+        "warning_bytes": 750000000
+      },
       "productionStatus": "PRODUCTION_LOCKED"
     },
     "coverageCounts": {
@@ -12208,24 +13450,24 @@
       }
     ],
     "taskCounts": {
-      "COMPLETED": 5954,
-      "READY": 51513,
+      "COMPLETED": 6637,
+      "READY": 50830,
       "PARTIAL": 38,
       "RETRYABLE": 34,
       "PENDING": 216
     },
     "taskTotal": 57755,
-    "taskCompleted": 5954,
-    "remainingTasks": 51763,
+    "taskCompleted": 6637,
+    "remainingTasks": 51080,
     "nextTask": {
       "attempt_count": 0,
       "competition_id": 61,
       "completed_at": null,
       "coverage_status": "UNKNOWN",
-      "endpoint": "players/squads",
+      "endpoint": "fixtures/lineups",
       "error_code": null,
       "estimated_calls": 1,
-      "fixture_id": null,
+      "fixture_id": 571662,
       "last_attempt_at": null,
       "next_retry_at": null,
       "page": 1,
@@ -12234,10 +13476,10 @@
       "priority": "A",
       "provider": "api-football",
       "rows_received": 0,
-      "season": 2021,
+      "season": 2020,
       "status": "READY",
-      "task_id": "04ced115975b12e80d4b3f3acb2abdfd",
-      "team_id": 99
+      "task_id": "b9ad4ae53cd8a0889678489cb3f8d4fb",
+      "team_id": null
     },
     "pilot": {
       "competition": "Ligue 1",
@@ -12276,25 +13518,25 @@
       }
     },
     "quota": {
-      "remaining": 142455,
-      "calls": 2500,
-      "lastRunId": "30161258219",
-      "lastRunAt": "2026-07-25T14:58:04.133766+00:00",
+      "remaining": 141712,
+      "calls": 683,
+      "lastRunId": "30164238824",
+      "lastRunAt": "2026-07-25T15:59:49.960250+00:00",
       "mode": "ACCELERATED_SAFE",
       "reserve": 5000
     },
     "storage": {
       "rawBytes": 0,
-      "parquetBytes": 38904362,
-      "derivedBytes": 69525337,
-      "totalBytes": 273624723,
-      "fileCount": 514,
-      "bundleCount": 14,
+      "parquetBytes": 40241636,
+      "derivedBytes": 69523587,
+      "totalBytes": 364616667,
+      "fileCount": 597,
+      "bundleCount": 18,
       "payloadCount": 0,
-      "projectedBytes": 1213236399,
-      "projectedBytesLow": 692231328,
-      "projectedBytesBase": 1213236399,
-      "projectedBytesHigh": 1852479662,
+      "projectedBytes": 2191134164,
+      "projectedBytesLow": 1178577815,
+      "projectedBytesBase": 2191134164,
+      "projectedBytesHigh": 3434014334,
       "warningBytes": 750000000,
       "pauseBytes": 900000000,
       "capacityStatus": "OK",
@@ -13694,7 +14936,7 @@
           -0.16346465968586388,
           0.15983965968586375
         ],
-        "generated_at": "2026-07-25T14:04:43.446387+00:00",
+        "generated_at": "2026-07-25T15:40:16.999428+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 42.60000000000002,
@@ -13725,7 +14967,7 @@
           -0.20074634502923983,
           0.15047002923976605
         ],
-        "generated_at": "2026-07-25T14:04:43.458378+00:00",
+        "generated_at": "2026-07-25T15:40:17.011185+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 43.140000000000015,
@@ -13756,7 +14998,7 @@
           -0.22200769230769232,
           0.1972201923076922
         ],
-        "generated_at": "2026-07-25T14:04:43.467152+00:00",
+        "generated_at": "2026-07-25T15:40:17.019751+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 31.480000000000032,
@@ -13787,7 +15029,7 @@
           -0.2561578282828283,
           0.07771148989898985
         ],
-        "generated_at": "2026-07-25T14:04:43.478269+00:00",
+        "generated_at": "2026-07-25T15:40:17.030829+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 45.120000000000005,
@@ -13818,7 +15060,7 @@
           -0.3031668975069252,
           0.061837950138504114
         ],
-        "generated_at": "2026-07-25T14:04:43.487682+00:00",
+        "generated_at": "2026-07-25T15:40:17.040156+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 48.51999999999998,
@@ -13849,7 +15091,7 @@
           -0.2916653094462541,
           0.111269543973941
         ],
-        "generated_at": "2026-07-25T14:04:43.496421+00:00",
+        "generated_at": "2026-07-25T15:40:17.048912+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 44.349999999999994,
@@ -13880,7 +15122,7 @@
           -0.30761726804123707,
           0.0358923969072164
         ],
-        "generated_at": "2026-07-25T14:04:43.506358+00:00",
+        "generated_at": "2026-07-25T15:40:17.058806+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 61.86000000000004,
@@ -13911,7 +15153,7 @@
           -0.3528293201133144,
           0.005309490084985762
         ],
-        "generated_at": "2026-07-25T14:04:43.515447+00:00",
+        "generated_at": "2026-07-25T15:40:17.067864+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 68.88000000000002,
@@ -13942,7 +15184,7 @@
           -0.3510871710526316,
           0.051450657894736816
         ],
-        "generated_at": "2026-07-25T14:04:43.523998+00:00",
+        "generated_at": "2026-07-25T15:40:17.076360+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 53.91000000000005,
@@ -13973,7 +15215,7 @@
           -0.20066666666666663,
           0.10683333333333324
         ],
-        "generated_at": "2026-07-25T14:04:43.534209+00:00",
+        "generated_at": "2026-07-25T15:40:17.086500+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 44.36999999999999,
@@ -14004,7 +15246,7 @@
           -0.18290680473372778,
           0.16133579881656804
         ],
-        "generated_at": "2026-07-25T14:04:43.544958+00:00",
+        "generated_at": "2026-07-25T15:40:17.097092+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 38.610000000000014,
@@ -14035,7 +15277,7 @@
           -0.23367066420664206,
           0.16789852398523986
         ],
-        "generated_at": "2026-07-25T14:04:43.553297+00:00",
+        "generated_at": "2026-07-25T15:40:17.105540+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 35.36,
@@ -14066,7 +15308,7 @@
           -0.24083702064896753,
           0.05951474926253677
         ],
-        "generated_at": "2026-07-25T14:04:43.560843+00:00",
+        "generated_at": "2026-07-25T15:40:17.113146+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 46.90000000000006,
@@ -14097,7 +15339,7 @@
           -0.21817432950191568,
           0.12816666666666662
         ],
-        "generated_at": "2026-07-25T14:04:43.567444+00:00",
+        "generated_at": "2026-07-25T15:40:17.119770+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 29.360000000000014,
@@ -14128,7 +15370,7 @@
           -0.23270125,
           0.13379374999999977
         ],
-        "generated_at": "2026-07-25T14:04:43.573488+00:00",
+        "generated_at": "2026-07-25T15:40:17.125756+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 26.959999999999994,
@@ -14161,7 +15403,7 @@
           -0.16346465968586388,
           0.15983965968586375
         ],
-        "generated_at": "2026-07-25T14:04:43.446387+00:00",
+        "generated_at": "2026-07-25T15:40:16.999428+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 42.60000000000002,
@@ -14192,7 +15434,7 @@
           -0.20074634502923983,
           0.15047002923976605
         ],
-        "generated_at": "2026-07-25T14:04:43.458378+00:00",
+        "generated_at": "2026-07-25T15:40:17.011185+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 43.140000000000015,
@@ -14223,7 +15465,7 @@
           -0.22200769230769232,
           0.1972201923076922
         ],
-        "generated_at": "2026-07-25T14:04:43.467152+00:00",
+        "generated_at": "2026-07-25T15:40:17.019751+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 31.480000000000032,
@@ -14254,7 +15496,7 @@
           -0.2561578282828283,
           0.07771148989898985
         ],
-        "generated_at": "2026-07-25T14:04:43.478269+00:00",
+        "generated_at": "2026-07-25T15:40:17.030829+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 45.120000000000005,
@@ -14285,7 +15527,7 @@
           -0.3031668975069252,
           0.061837950138504114
         ],
-        "generated_at": "2026-07-25T14:04:43.487682+00:00",
+        "generated_at": "2026-07-25T15:40:17.040156+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 48.51999999999998,
@@ -14316,7 +15558,7 @@
           -0.2916653094462541,
           0.111269543973941
         ],
-        "generated_at": "2026-07-25T14:04:43.496421+00:00",
+        "generated_at": "2026-07-25T15:40:17.048912+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 44.349999999999994,
@@ -14347,7 +15589,7 @@
           -0.30761726804123707,
           0.0358923969072164
         ],
-        "generated_at": "2026-07-25T14:04:43.506358+00:00",
+        "generated_at": "2026-07-25T15:40:17.058806+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 61.86000000000004,
@@ -14378,7 +15620,7 @@
           -0.3528293201133144,
           0.005309490084985762
         ],
-        "generated_at": "2026-07-25T14:04:43.515447+00:00",
+        "generated_at": "2026-07-25T15:40:17.067864+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 68.88000000000002,
@@ -14409,7 +15651,7 @@
           -0.3510871710526316,
           0.051450657894736816
         ],
-        "generated_at": "2026-07-25T14:04:43.523998+00:00",
+        "generated_at": "2026-07-25T15:40:17.076360+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 53.91000000000005,
@@ -14440,7 +15682,7 @@
           -0.20066666666666663,
           0.10683333333333324
         ],
-        "generated_at": "2026-07-25T14:04:43.534209+00:00",
+        "generated_at": "2026-07-25T15:40:17.086500+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 44.36999999999999,
@@ -14471,7 +15713,7 @@
           -0.18290680473372778,
           0.16133579881656804
         ],
-        "generated_at": "2026-07-25T14:04:43.544958+00:00",
+        "generated_at": "2026-07-25T15:40:17.097092+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 38.610000000000014,
@@ -14502,7 +15744,7 @@
           -0.23367066420664206,
           0.16789852398523986
         ],
-        "generated_at": "2026-07-25T14:04:43.553297+00:00",
+        "generated_at": "2026-07-25T15:40:17.105540+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 35.36,
@@ -14543,6 +15785,19 @@
         "strategy_version": "strategy_lab_v2_protocol"
       },
       {
+        "backtests": 0,
+        "hypotheses": 13,
+        "live_shadow_candidates": 0,
+        "production_status": "PRODUCTION_LOCKED",
+        "protocol": "STRATEGY_LAB_V3_PREREGISTERED",
+        "protocol_hash": "38a539aa32588057c8250bd63d15576fb24c1fc8a9aca6aa3e6a0968cab1be95",
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "reason": "MARKET_GATE_UNAVAILABLE",
+        "shadow_model_candidates": 0,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
         "adjusted_p_value": 0.6656913401899025,
         "backtest_version": "api_football_backtest_v3",
         "bets": 339,
@@ -14550,7 +15805,7 @@
           -0.24083702064896753,
           0.05951474926253677
         ],
-        "generated_at": "2026-07-25T14:04:43.560843+00:00",
+        "generated_at": "2026-07-25T15:40:17.113146+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 46.90000000000006,
@@ -14581,7 +15836,7 @@
           -0.21817432950191568,
           0.12816666666666662
         ],
-        "generated_at": "2026-07-25T14:04:43.567444+00:00",
+        "generated_at": "2026-07-25T15:40:17.119770+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 29.360000000000014,
@@ -14612,7 +15867,7 @@
           -0.23270125,
           0.13379374999999977
         ],
-        "generated_at": "2026-07-25T14:04:43.573488+00:00",
+        "generated_at": "2026-07-25T15:40:17.125756+00:00",
         "hypotheses_tested": 3,
         "market": "1X2",
         "max_drawdown_units": 26.959999999999994,
@@ -14695,55 +15950,55 @@
     },
     "progress": {
       "tasksTotal": 57755,
-      "tasksCompleted": 5954,
-      "tasksRemaining": 51763,
-      "callsConsumed": 2500,
-      "callsEstimated": 61314,
-      "callsRemainingLow": 45755,
-      "callsRemainingBase": 61314,
-      "callsRemainingHigh": 68573,
+      "tasksCompleted": 6637,
+      "tasksRemaining": 51080,
+      "callsConsumed": 683,
+      "callsEstimated": 60631,
+      "callsRemainingLow": 45243,
+      "callsRemainingBase": 60631,
+      "callsRemainingHigh": 67822,
       "callsPerHour": 3600,
       "callsPerDay": 30000,
-      "etaPriorityADays": 0.16,
-      "etaPriorityBDays": 1.07,
-      "etaFullDays": 2.04,
+      "etaPriorityADays": 0.13,
+      "etaPriorityBDays": 1.05,
+      "etaFullDays": 2.02,
       "etaPriorityA": {
-        "low": 0.12,
-        "base": 0.16,
-        "high": 0.17
+        "low": 0.1,
+        "base": 0.13,
+        "high": 0.15
       },
       "etaPriorityB": {
-        "low": 0.81,
-        "base": 1.07,
-        "high": 1.18
+        "low": 0.79,
+        "base": 1.05,
+        "high": 1.16
       },
       "etaFull": {
-        "low": 1.53,
-        "base": 2.04,
-        "high": 2.29
+        "low": 1.51,
+        "base": 2.02,
+        "high": 2.26
       },
       "materializedTasksTotal": 57755,
-      "materializedTasksCompleted": 5954,
-      "materializedTasksRemaining": 51801,
-      "materializedCallsRemaining": 51644,
-      "materializedEtaDays": 1.72,
+      "materializedTasksCompleted": 6637,
+      "materializedTasksRemaining": 51118,
+      "materializedCallsRemaining": 50961,
+      "materializedEtaDays": 1.7,
       "materializedEtaLabel": "MATERIALIZED_TASKS_ONLY",
       "latentFixtureTasks": 6284,
       "latentTeamTasks": 2996,
       "latentPlayerPages": 390,
       "completedThisRun": 683,
-      "expandedThisRun": 51513,
-      "newLatentTasksMaterialized": 51513,
+      "expandedThisRun": 0,
+      "newLatentTasksMaterialized": 0,
       "scheduler": {
         "batch_size": 500,
         "max_calls": 2500,
-        "max_tasks": 2500,
+        "max_tasks": 683,
         "mode": "ACCELERATED_SAFE",
-        "next_run_at": "2026-07-25T16:16:24.462846+00:00",
+        "next_run_at": "2026-07-25T17:48:27.648153+00:00",
         "request_rate": 1.0,
         "stop_reason": null
       },
-      "rowsLastRun": 50900
+      "rowsLastRun": 6446
     },
     "canonicality": {
       "status": "PASSED",
@@ -14783,16 +16038,17 @@
             ],
             "competitionCount": 1,
             "seasons": [
+              2021,
               2022,
               2023,
               2024,
               2025
             ],
-            "seasonCount": 4,
-            "teamCount": 26,
+            "seasonCount": 5,
+            "teamCount": 27,
             "fixtureCount": 0,
             "playerCount": 0,
-            "rows": 79,
+            "rows": 100,
             "nullRate": 0.0714,
             "dependencies": [
               "squads"
@@ -14803,7 +16059,7 @@
           "temporality": "POINT_IN_TIME_SAFE",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Joueurs",
@@ -14842,7 +16098,7 @@
           "temporality": "POINT_IN_TIME_SAFE",
           "status": "COMPUTABLE",
           "reason": "multi-season player dimension is available",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Minutes",
@@ -14873,7 +16129,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Statistiques joueurs par match",
@@ -14904,7 +16160,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Compositions",
@@ -14914,17 +16170,18 @@
             ],
             "competitionCount": 1,
             "seasons": [
+              2020,
               2021,
               2022,
               2023,
               2024,
               2025
             ],
-            "seasonCount": 5,
-            "teamCount": 27,
+            "seasonCount": 6,
+            "teamCount": 29,
             "fixtureCount": 0,
-            "playerCount": 1836,
-            "rows": 3374,
+            "playerCount": 2057,
+            "rows": 3934,
             "nullRate": 0.0714,
             "dependencies": [
               "lineups"
@@ -14935,7 +16192,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Continuite du onze",
@@ -14945,17 +16202,18 @@
             ],
             "competitionCount": 1,
             "seasons": [
+              2020,
               2021,
               2022,
               2023,
               2024,
               2025
             ],
-            "seasonCount": 5,
-            "teamCount": 27,
+            "seasonCount": 6,
+            "teamCount": 29,
             "fixtureCount": 0,
-            "playerCount": 1836,
-            "rows": 3374,
+            "playerCount": 2057,
+            "rows": 3934,
             "nullRate": 0.0714,
             "dependencies": [
               "lineups"
@@ -14966,7 +16224,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Formations",
@@ -14976,17 +16234,18 @@
             ],
             "competitionCount": 1,
             "seasons": [
+              2020,
               2021,
               2022,
               2023,
               2024,
               2025
             ],
-            "seasonCount": 5,
-            "teamCount": 27,
+            "seasonCount": 6,
+            "teamCount": 29,
             "fixtureCount": 0,
-            "playerCount": 1836,
-            "rows": 3374,
+            "playerCount": 2057,
+            "rows": 3934,
             "nullRate": 0.0714,
             "dependencies": [
               "lineups"
@@ -14997,7 +16256,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Blessures",
@@ -15046,17 +16305,18 @@
             ],
             "competitionCount": 1,
             "seasons": [
+              2020,
               2021,
               2022,
               2023,
               2024,
               2025
             ],
-            "seasonCount": 5,
+            "seasonCount": 6,
             "teamCount": 27,
             "fixtureCount": 1638,
-            "playerCount": 1183,
-            "rows": 3374,
+            "playerCount": 1185,
+            "rows": 3934,
             "nullRate": 0.0714,
             "dependencies": [
               "injuries",
@@ -15078,16 +16338,17 @@
             ],
             "competitionCount": 1,
             "seasons": [
+              2021,
               2022,
               2023,
               2024,
               2025
             ],
-            "seasonCount": 4,
-            "teamCount": 26,
+            "seasonCount": 5,
+            "teamCount": 27,
             "fixtureCount": 0,
-            "playerCount": 1836,
-            "rows": 79,
+            "playerCount": 2057,
+            "rows": 100,
             "nullRate": 0.0714,
             "dependencies": [
               "squads",
@@ -15099,7 +16360,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Force du onze",
@@ -15131,7 +16392,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         },
         {
           "name": "Retour de blessure",
@@ -15195,7 +16456,7 @@
           "temporality": "POST_MATCH_LAG_REQUIRED",
           "status": "TESTING",
           "reason": "per-match as-of and identity validation is still required",
-          "estimatedAvailability": "after priority A (~0.16 d)"
+          "estimatedAvailability": "after priority A (~0.13 d)"
         }
       ]
     },
@@ -15203,9 +16464,9 @@
       "build": "COCKPIT_BUILD_SUCCESS",
       "artifact": "COCKPIT_ARTIFACT_PUBLISHED",
       "private": "COCKPIT_PRIVATE_STALE",
-      "snapshotGeneratedAt": "2026-07-25T15:28:59.205904+00:00",
-      "currentDataHash": "47bea1652b39c83119328f4c275d184e7ebb3e05b0b8d7c1c1ba0dc57dbe8b48",
-      "currentBackfillRunId": "30161258219",
+      "snapshotGeneratedAt": "2026-07-25T16:59:19.413456+00:00",
+      "currentDataHash": "751dd764738bab89275ca61366ef5563be81877ade329b3cd08f227ab4fb6f35",
+      "currentBackfillRunId": "30164238824",
       "deploymentVersion": 8,
       "deploymentTime": "2026-07-25T08:39:14.638374+00:00",
       "deployedSourceCommit": "c4dc959d1ba9b00ec9a55dafcd07a9e92a97cc4a",

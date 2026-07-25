@@ -528,6 +528,18 @@ def build_deep_data() -> dict[str, Any]:
     ]
     arena = read_json(state / "models" / "jalon7-arena-run.json", {})
     strategy_v2 = read_json(state / "strategies" / "jalon7-run.json", {})
+    external = read_json(
+        state / "external" / "runs" / "jalon8-latest.json",
+        {},
+    )
+    external_readiness = external.get("readiness", {})
+    external_competitions = (
+        external_readiness.get("competitions", [])
+        if isinstance(external_readiness, dict)
+        else []
+    )
+    external_package = external.get("preseason_package", {})
+    external_strategies = external.get("strategies", {})
     return {
         "status": proof.get("status", "ADAPTER_ONLY"),
         "pilotStatus": pilot.get("status", "NOT_STARTED"),
@@ -574,6 +586,42 @@ def build_deep_data() -> dict[str, Any]:
             "liveCandidates": arena.get("live_candidates", 0),
             "providerCalls": arena.get("provider_calls", 0),
             "quotaConsumed": arena.get("quota_consumed", 0),
+            "productionStatus": "PRODUCTION_LOCKED",
+        },
+        "externalValidation": {
+            "status": external.get("status", "WAITING_FOR_EXTERNAL_GATES"),
+            "runId": external.get("run_id"),
+            "sourceCommit": external.get("source_commit"),
+            "protocol": external.get("protocol", {}),
+            "readiness": external_competitions,
+            "datasets": [
+                {
+                    "name": item.get("dataset_name"),
+                    "version": item.get("dataset_version"),
+                    "competition": item.get("competition"),
+                    "seasons": item.get("seasons", []),
+                    "fixtures": item.get("fixtures", 0),
+                    "rows": item.get("rows", 0),
+                    "hash": item.get("hash"),
+                    "status": item.get("status"),
+                }
+                for item in external.get("datasets", [])
+                if isinstance(item, dict)
+            ],
+            "models": external.get("models", {}),
+            "comparisons": external.get("comparisons", []),
+            "leaveOneLeagueOut": external.get("leave_one_league_out", []),
+            "playerGeneralization": external.get(
+                "player_generalization",
+                [],
+            ),
+            "negativeControls": external.get("negative_controls", []),
+            "strategies": external_strategies,
+            "package": external_package,
+            "predictions": external.get("predictions", 0),
+            "providerCalls": external.get("provider_calls", 0),
+            "quotaConsumed": external.get("quota_consumed", 0),
+            "storage": external.get("storage", {}),
             "productionStatus": "PRODUCTION_LOCKED",
         },
         "coverageCounts": coverage_counts,

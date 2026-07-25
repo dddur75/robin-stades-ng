@@ -71,3 +71,14 @@ La preuve appariée confirme le modèle joueurs `INCONCLUSIVE` (Δ Log Loss
 +0,00056; CI 95 % croise zéro) et le post-lineup inférieur au pré-lineup
 (Δ +0,03178). Aucun statut `MODEL_VALIDATED` ou `LIVE_SHADOW_CANDIDATE` n'est
 accordé.
+## Jalon 8 — arène externe
+
+| Famille | Fixtures appariées | Log Loss | Statut |
+|---|---:|---:|---|
+| Ligue 1 frozen transfer | 2 136 | 0,9945 | `FROZEN_TRANSFER_EVALUATED` |
+| League-specific | 2 136 | 0,9983 | `LEAGUE_SPECIFIC_EVALUATED` |
+| Pooled | 2 136 | 0,9958 | `POOLED_MODEL_EVALUATED` |
+| Poisson | 2 136 | 1,0317 | `EXTERNAL_VALIDATION_FAILED` face au discriminatif |
+| Dixon–Coles | 2 136 | 1,0312 | `INCONCLUSIVE` face à Poisson |
+
+Aucun modèle n’est `PRODUCTION_READY`; aucun candidat shadow n’est promu.
