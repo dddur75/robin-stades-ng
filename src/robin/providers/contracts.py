@@ -33,6 +33,11 @@ class ProviderResult(BaseModel):
     raw_observation_id: str | None = None
     raw_payload_hash: str | None = None
     quota: QuotaState = Field(default_factory=QuotaState)
+    http_status: int | None = None
+    requested_at: datetime | None = None
+    received_at: datetime | None = None
+    paging_current: int = 1
+    paging_total: int = 1
     message: str | None = None
 
 

@@ -1,5 +1,18 @@
 # Sources de données
 
+## API-Football v3 — Jalon 5
+
+Statut : `ADAPTER_ONLY` avant exécution live de la branche.
+
+L’API officielle `https://v3.football.api-sports.io` est appelée avec
+`x-apisports-key`. Les endpoints intégrés incluent leagues, teams, players,
+squads, fixtures, events, statistics, lineups, standings, injuries, coaches et
+transfers. La pagination utilise `paging.current`, `paging.total` et `page`.
+
+Les identifiants des six compétitions sont validés par réponse `/leagues`; ils
+ne sont pas supposés dans la matrice. Voir
+`docs/data-sources/API-FOOTBALL-COVERAGE-MATRIX.md`.
+
 Dernière revue : 2026-07-24.
 
 ## Situation Jalon 4

@@ -1,5 +1,17 @@
 # Registre des modèles
 
+## Model Lab Jalon 5
+
+| Modèle | Version | Dataset | OOS | Statut |
+|---|---:|---|---|---|
+| Elo interprétable | `elo_v1` | `team_baseline_v1` | Log Loss 1,0075 ; Brier 0,2010 ; N=6 443 | `OOS_BACKTEST_V1_READY` |
+| Poisson / Dixon-Coles | v1 planifié | API-Football | — | `BLOCKED_BY_COVERAGE` |
+| Force joueurs / composition | v1 planifié | `team_player_v1` | — | `BLOCKED_BY_COVERAGE` |
+| Logistique / gradient boosting | v1 planifié | datasets versionnés | — | `BLOCKED_BY_COVERAGE` |
+| Marché / ensemble calibré | v1 planifié | odds réconciliées | — | `BLOCKED_BY_COVERAGE` |
+
+L’Elo est une preuve historique legacy, pas une preuve prospective live.
+
 ## Baselines existantes
 
 | Modèle | Version | Statut | Preuve |

@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 from robin.domain.odds import stable_internal_id
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +18,313 @@ def read_json(path: Path, default: Any) -> Any:
     if not path.exists():
         return default
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def directory_size(path: Path) -> int:
+    if not path.exists():
+        return 0
+    return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
+
+
+def sanitize_public_snapshot(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {key: sanitize_public_snapshot(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [sanitize_public_snapshot(item) for item in value]
+    if isinstance(value, str):
+        normalized = value.replace("\\", "/")
+        marker = "/data/historical/"
+        if marker in normalized:
+            return f"historical/{normalized.split(marker, 1)[1]}"
+    return value
+
+
+def build_deep_data() -> dict[str, Any]:
+    state = ROOT / "data" / "historical"
+    analytics = read_json(
+        ROOT / "data" / "live-proof" / "jalon5-legacy-analytics.json",
+        {},
+    )
+    matrix = read_json(
+        state / "coverage" / "matrix.json",
+        read_json(ROOT / "data" / "contracts" / "api-football-coverage.json", []),
+    )
+    pilot = read_json(state / "runs" / "pilot-ligue-1-2025.json", {})
+    plan = read_json(state / "tasks" / "backfill-plan.json", {})
+    quality = read_json(state / "quality" / "latest.json", {})
+    canonical = read_json(
+        state / "audits" / "ligue1-2025-canonicalization.json",
+        {},
+    )
+    forecast = read_json(state / "forecasts" / "accelerated-safe.json", {})
+    compaction = read_json(state / "storage" / "latest-compaction.json", {})
+    dataset = read_json(
+        state / "datasets" / "team_baseline_v1.json",
+        (
+            {
+                **analytics.get("dataset", {}),
+                "dataset_version": analytics.get("dataset", {}).get("name"),
+                "status": "FEATURE_FACTORY_ACTIVE",
+            }
+            if analytics
+            else {}
+        ),
+    )
+    model = read_json(
+        state / "models" / "elo_v1.json",
+        (
+            {
+                **analytics.get("model", {}),
+                "model_version": analytics.get("model", {}).get("version"),
+                "oos_metrics": {
+                    "matches": analytics.get("model", {}).get("oos_matches"),
+                    "log_loss": analytics.get("model", {}).get("oos_log_loss"),
+                    "brier_score": analytics.get("model", {}).get("oos_brier_score"),
+                },
+            }
+            if analytics
+            else {}
+        ),
+    )
+    backtest = read_json(
+        state / "backtests" / "elo_edge_5pct_oos.json",
+        analytics.get("backtest", {}),
+    )
+    proof = read_json(
+        state / "proofs" / "api-football-live.json",
+        read_json(ROOT / "data" / "live-proof" / "jalon5-api-football.json", {}),
+    )
+    task_counts: dict[str, int] = {}
+    for task in plan.get("tasks", []):
+        status = str(task.get("status", "UNKNOWN"))
+        task_counts[status] = task_counts.get(status, 0) + 1
+    coverage_counts: dict[str, int] = {}
+    for row in matrix:
+        status = str(row.get("status", "UNKNOWN"))
+        coverage_counts[status] = coverage_counts.get(status, 0) + 1
+    endpoint_counts: dict[str, int] = {}
+    for report in pilot.get("endpoints", []):
+        endpoint = str(report.get("endpoint", "UNKNOWN"))
+        endpoint_counts[endpoint] = endpoint_counts.get(endpoint, 0) + 1
+    public_pilot = {
+        key: value for key, value in pilot.items() if key != "endpoints"
+    }
+    public_pilot["endpointCounts"] = endpoint_counts
+    public_dataset = {
+        key: value for key, value in dataset.items() if key != "partitions"
+    }
+    players: list[dict[str, Any]] = []
+    player_partitions = (
+        path
+        for path in (state / "parquet").rglob("*.parquet")
+        if any(parent.name == "entity_type=players" for parent in path.parents)
+    )
+    for path in sorted(player_partitions):
+        for payload in pd.read_parquet(path).get("payload", []).tolist()[:20]:
+            record = json.loads(str(payload))
+            player = record.get("player", {})
+            statistics = record.get("statistics", [])
+            stat = statistics[0] if statistics else {}
+            games = stat.get("games", {})
+            goals = stat.get("goals", {})
+            players.append(
+                {
+                    "id": player.get("id"),
+                    "name": player.get("name"),
+                    "age": player.get("age"),
+                    "position": games.get("position"),
+                    "appearances": games.get("appearences"),
+                    "minutes": games.get("minutes"),
+                    "rating": games.get("rating"),
+                    "goals": goals.get("total"),
+                    "assists": goals.get("assists"),
+                    "origin": "HISTORICAL POINT-IN-TIME",
+                }
+            )
+        if players:
+            break
+    models = [
+        {
+            "name": "Elo",
+            "version": model.get("model_version", "elo_v1"),
+            "status": model.get("status", "WAITING_FOR_DATASET"),
+            "logLoss": model.get("oos_metrics", {}).get("log_loss"),
+            "brier": model.get("oos_metrics", {}).get("brier_score"),
+            "origin": "OOS HISTORICAL" if model else "NO OUTPUT",
+        }
+    ] + [
+        {
+            "name": name,
+            "version": "planned_v1",
+            "status": "BLOCKED_BY_COVERAGE",
+            "logLoss": None,
+            "brier": None,
+            "origin": "NO OUTPUT",
+        }
+        for name in (
+            "Poisson",
+            "Dixon-Coles",
+            "Régression logistique",
+            "Gradient boosting",
+            "Force joueurs",
+            "Composition",
+            "Baseline marché",
+            "Ensemble calibré",
+        )
+    ]
+    return {
+        "status": proof.get("status", "ADAPTER_ONLY"),
+        "pilotStatus": pilot.get("status", "NOT_STARTED"),
+        "backfillStatus": plan.get("status", "NOT_STARTED"),
+        "qualityStatus": quality.get("status", "NOT_RUN"),
+        "productionStatus": "PRODUCTION_LOCKED",
+        "coverageCounts": coverage_counts,
+        "coverageMatrix": matrix,
+        "taskCounts": task_counts,
+        "taskTotal": len(plan.get("tasks", [])),
+        "taskCompleted": task_counts.get("COMPLETED", 0),
+        "remainingTasks": plan.get("remaining_tasks", 0),
+        "nextTask": next(
+            (
+                task
+                for task in plan.get("tasks", [])
+                if task.get("status")
+                in {"PENDING", "READY", "RETRYABLE", "SKIPPED_QUOTA"}
+            ),
+            None,
+        ),
+        "pilot": public_pilot,
+        "quota": {
+            "remaining": pilot.get("quota_remaining", proof.get("quota_remaining")),
+            "calls": pilot.get("provider_calls", proof.get("calls", 0)),
+            "mode": "ACCELERATED_SAFE",
+            "reserve": 5_000,
+        },
+        "storage": {
+            "rawBytes": directory_size(state / "raw"),
+            "parquetBytes": directory_size(state / "parquet"),
+            "derivedBytes": directory_size(state / "derived"),
+            "totalBytes": directory_size(state),
+            "fileCount": len([path for path in state.rglob("*") if path.is_file()]),
+            "bundleCount": len(
+                list((state / "bundles").rglob("*.manifest.json"))
+            ),
+            "payloadCount": len(list((state / "raw" / "payloads").rglob("*.gz"))),
+            "projectedBytes": forecast.get("storage_projected_bytes"),
+            "warningBytes": forecast.get("storage_warning_bytes"),
+            "pauseBytes": forecast.get("storage_pause_bytes"),
+            "capacityStatus": (
+                "PAUSE"
+                if directory_size(state)
+                >= int(forecast.get("storage_pause_bytes", 900_000_000))
+                else "WARNING"
+                if directory_size(state)
+                >= int(forecast.get("storage_warning_bytes", 750_000_000))
+                else "OK"
+            ),
+            "lastCompaction": compaction.get("status", "NOT_RUN"),
+            "backend": "POSTGRESQL + PARQUET + HISTORICAL-DATA",
+        },
+        "players": players,
+        "featureCatalog": [
+            {
+                "name": name,
+                "version": "v1",
+                "status": (
+                    "BLOCKED_BY_COVERAGE"
+                    if name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
+                    else "LEGACY_SOURCE_ONLY"
+                    if dataset
+                    else "CANDIDATE"
+                ),
+                "leakageRisk": "LOW",
+                "origin": (
+                    "NO OUTPUT"
+                    if name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
+                    else "LEGACY SOURCE"
+                ),
+            }
+            for name in (
+                "elo_global",
+                "forme_5",
+                "forme_10",
+                "buts_marques_5",
+                "buts_encaisses_5",
+                "jours_repos",
+                "minutes_joueur_5",
+                "force_onze",
+                "continuite_onze",
+            )
+        ],
+        "dataset": public_dataset,
+        "models": models,
+        "backtests": (
+            [
+                {
+                    **{key: value for key, value in backtest.items() if key != "details"},
+                    "origin": "OOS HISTORICAL",
+                }
+            ]
+            if backtest
+            else []
+        ),
+        "quality": quality,
+        "progress": {
+            "tasksTotal": len(plan.get("tasks", [])),
+            "tasksCompleted": task_counts.get("COMPLETED", 0),
+            "tasksRemaining": plan.get("remaining_tasks", 0),
+            "callsConsumed": pilot.get("provider_calls", 0),
+            "callsEstimated": forecast.get("estimated_calls_full_scope"),
+            "callsPerHour": (
+                round(3600 / forecast["observed"]["seconds_per_call"])
+                if forecast.get("observed", {}).get("seconds_per_call")
+                else None
+            ),
+            "callsPerDay": forecast.get("calls_per_day"),
+            "etaPriorityADays": forecast.get("eta_priority_a_days"),
+            "etaPriorityBDays": forecast.get("eta_priority_b_days"),
+            "etaFullDays": forecast.get("eta_full_scope_days"),
+        },
+        "canonicality": {
+            key: canonical.get(key)
+            for key in (
+                "status",
+                "received_fixtures",
+                "canonical_fixtures",
+                "received_teams",
+                "canonical_teams",
+                "classifications",
+                "dataset_hash",
+            )
+        },
+        "isolation": {
+            "status": "LIVE_HISTORICAL_ISOLATED",
+            "liveActive": True,
+            "historicalActive": plan.get("status") == "HISTORICAL_BACKFILL_ACTIVE",
+            "liveBranch": "shadow-data",
+            "historicalBranch": "historical-data",
+            "liveConcurrency": "shadow-state",
+            "historicalConcurrency": "historical-state",
+            "lastConflict": None,
+            "lag": 0,
+        },
+        "playerReadiness": {
+            "coverage": "INSUFFICIENT",
+            "quality": "PARTIAL",
+            "temporality": "PENDING_MULTI_SEASON",
+            "status": "BLOCKED_BY_COVERAGE",
+            "estimatedFirstModel": "après priorité A et seuils multi-saisons",
+        },
+        "origins": [
+            "LIVE SHADOW",
+            "HISTORICAL POINT-IN-TIME",
+            "HISTORICAL SIMULATED",
+            "OOS HISTORICAL",
+            "LEGACY SOURCE",
+            "DEMO DATA",
+            "NO OUTPUT",
+        ],
+    }
 
 
 def main() -> None:
@@ -223,6 +532,7 @@ def main() -> None:
         }
         for item in oos
     ]
+    deep_data = build_deep_data()
     snapshot = {
         "generatedAt": durable["captured_at"],
         "snapshotType": live["snapshot_type"],
@@ -377,10 +687,12 @@ def main() -> None:
             }
             for item in matches
         ],
+        "deepData": deep_data,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    public_snapshot = sanitize_public_snapshot(snapshot)
     OUTPUT.write_text(
-        json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(public_snapshot, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     print(f"Snapshot Cockpit écrit dans {OUTPUT.relative_to(ROOT)}")

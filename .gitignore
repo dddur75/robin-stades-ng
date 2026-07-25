@@ -24,5 +24,8 @@ Thumbs.db
 .ci/
 data/shadow/
 data/robin.db
+data/*.db
 data/durable-outbox/
+data/historical/
+.historical-registry/
 cockpit/.codex-dev.*

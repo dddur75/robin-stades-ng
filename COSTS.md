@@ -1,5 +1,26 @@
 # Suivi des coûts
 
+## Jalon 5.1 — cadence mesurée
+
+Le pilote a consommé 1 354 appels sans achat supplémentaire. La cible
+`ACCELERATED_SAFE` est 30 000 appels/jour avec 5 000 appels de réserve. Les ETA
+opérationnelles sont trois jours pour la priorité A, huit jours pour la
+priorité B et dix jours pour le périmètre complet. GitHub Actions reste dans
+les capacités incluses ; aucun stockage objet n’est souscrit automatiquement.
+
+## Jalon 5 — budget API-Football séparé
+
+Le quota quotidien API-Football n’est jamais mélangé au quota mensuel The Odds
+API. Le mode de backfill est `ACCELERATED_SAFE`, avec réserve minimale de 5 000 appels.
+Le pilote Ligue 1 2025 a consommé 1 354 appels et conservé une réserve très
+supérieure aux 100 appels configurés. Une extrapolation volontairement simple
+donne environ 10 832 appels pour huit saisons de Ligue 1, 32 496 pour six
+compétitions sur quatre saisons et 64 992 pour six compétitions sur huit
+saisons. Le plan réel et le cache réduiront ces bornes.
+
+Le stockage supplémentaire n’est pas acheté automatiquement. Voir
+`docs/costs/API-FOOTBALL-BACKFILL-FORECAST.md`.
+
 Dernière mise à jour : 2026-07-24.
 
 | Poste | Coût observé | Statut |
@@ -7,7 +28,7 @@ Dernière mise à jour : 2026-07-24.
 | Football-Data.co.uk | 0 | `VERIFIED` |
 | Understat | 0 | `UNVERIFIED` |
 | The Odds API | 8 crédits consommés, 19 992 restants | `LIVE_PIPELINE_VERIFIED` |
-| API-Football | adaptateur prêt, aucune souscription | `READY_NO_KEY` |
+| API-Football | 1 354 appels pilote ; quota quotidien 150 000 ; coût additionnel 0 | `LIVE_PIPELINE_VERIFIED` |
 | Neon PostgreSQL | 0 USD ; 11 943 936 octets, soit 2,39 % de 0,5 GB | `CONNECTED_AND_PERSISTED` |
 | PostgreSQL local/CI | 0, base SQLite/serveur éphémère | `VERIFIED` |
 | Stockage brut local | coût marginal local | `VERIFIED` |

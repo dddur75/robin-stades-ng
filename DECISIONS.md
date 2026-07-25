@@ -1,5 +1,16 @@
 # Registre des décisions
 
+## 2026-07-25 — Isolation et accélération historique
+
+Statut : `VERIFIED`.
+
+Le live conserve `shadow-data` / `shadow-state`; l’historique utilise
+`historical-data` / `historical-state`. Le backfill passe à
+`ACCELERATED_SAFE`, toutes les deux heures, avec cible 30 000 appels/jour,
+réserve 5 000, seuil d’erreur 5 %, alerte stockage 750 MB et pause 900 MB.
+La saison régulière est définie par un contrat de format versionné, jamais par
+une constante globale 18/306.
+
 ## 2026-07-24 — Verticale initiale Ligue 1 en shadow
 
 Statut : `VERIFIED`
@@ -143,3 +154,21 @@ Statut : `SHADOW_BURN_IN_ACTIVE`
 Le burn-in mesure durabilité, complétude, incidents, quota et couverture. Il ne
 permet aucune conclusion statistique avant une période prospective suffisante.
 `PRODUCTION_LOCKED` reste invariant.
+
+## 2026-07-24 — Stockage historique à trois niveaux
+
+Statut : `IMPLEMENTED`
+
+PostgreSQL conserve les métadonnées et résultats synthétiques, Parquet les faits
+volumineux, et les payloads gzip immuables permettent le replay. Le pont
+`shadow-data` est utilisé jusqu’à mesure réelle du pilote ; aucun stockage
+externe payant n’est créé automatiquement.
+
+## 2026-07-24 — Validation temporelle avant sophistication
+
+Statut : `IMPLEMENTED`
+
+La baseline Elo interprétable précède les modèles joueurs et ensembles. Les
+saisons 2024–2025 sont aveugles et ne règlent aucun paramètre. Un échec
+anti-fuite bloque la chaîne ; un résultat historique positif ne peut au mieux
+devenir que `LIVE_SHADOW_CANDIDATE`.

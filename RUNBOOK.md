@@ -1,5 +1,25 @@
 # Runbook
 
+## Jalon 5.1
+
+Les restaurations historiques lisent `historical-data`; les publications
+utilisent trois essais fetch/rebase/push. Ne jamais rediriger ces actions vers
+`shadow-data`. En cas de quota, 429, erreurs > 5 %, temporalité critique ou
+stockage ≥ 900 MB, conserver le checkpoint et arrêter proprement. Les quatre
+fixtures de barrage L1 2025 restent auditables mais sont exclues de
+`ligue1_2025_regular_season`.
+
+## Deep Data Factory
+
+Les opérations historiques sont décrites dans
+`docs/operations/API-FOOTBALL-BACKFILL-RUNBOOK.md`. Les workflows 20 à 26
+valident la couverture, reprennent le backfill, contrôlent la qualité,
+recalculent features/modèles/backtests et reconstruisent le cockpit.
+
+En replay, un checkpoint `COMPLETED` interdit tout nouvel appel fournisseur. Si
+Neon échoue, `shadow-data` reste la source de reprise et la synchronisation
+PostgreSQL est retentée sans perdre les payloads.
+
 ## Installation locale
 
 ```powershell

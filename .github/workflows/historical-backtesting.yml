@@ -1,0 +1,38 @@
+name: "25 - Backtest historique V2"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "43 3 * * 3"
+permissions:
+  contents: write
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Garantir les dépendances puis backtester
+        run: |
+          if [ ! -f data/historical/datasets/team_baseline_v1.json ]; then
+            python scripts/run_historical_pipeline.py \
+              --run-id "${{ github.run_id }}" features
+          fi
+          if [ ! -f data/historical/models/elo_v1.json ]; then
+            python scripts/run_historical_pipeline.py \
+              --run-id "${{ github.run_id }}" train
+          fi
+          python scripts/run_historical_pipeline.py \
+            --run-id "${{ github.run_id }}" backtest
+      - uses: ./.github/actions/historical-state-persist
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}

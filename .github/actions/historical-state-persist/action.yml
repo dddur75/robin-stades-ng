@@ -1,0 +1,98 @@
+name: "Persister l'état historique"
+description: "Écrire dans historical-data puis synchroniser les métadonnées Neon"
+inputs:
+  run-id:
+    required: true
+    description: "Identifiant GitHub Actions"
+  database-url:
+    required: false
+    default: ""
+    description: "Connexion PostgreSQL optionnelle"
+runs:
+  using: composite
+  steps:
+    - name: Vérifier et ajouter au pont durable
+      shell: bash
+      run: |
+        python scripts/run_historical_pipeline.py \
+          --state data/historical \
+          --run-id "${{ inputs.run-id }}" \
+          compact --remove-sources
+        python scripts/manage_historical_state.py append \
+          --state data/historical \
+          --registry .historical-registry
+        python scripts/manage_historical_state.py verify \
+          --registry .historical-registry
+    - name: Publier le registre historique
+      shell: bash
+      working-directory: .historical-registry
+      run: |
+        git config user.name "robin-historical-bot"
+        git config user.email "actions@users.noreply.github.com"
+        git add -A historical
+        if ! git diff --cached --quiet; then
+          git commit -m "historical: persist run ${{ inputs.run-id }}"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:historical-data; then
+              break
+            fi
+            if [ "$attempt" = "3" ]; then
+              echo "::error::publication historical-data non-fast-forward après 3 essais"
+              exit 1
+            fi
+            git fetch origin historical-data
+            git rebase origin/historical-data
+          done
+        fi
+    - name: Synchroniser PostgreSQL
+      id: postgresql
+      if: inputs.database-url != ''
+      continue-on-error: true
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database-url }}
+        ROBIN_DATABASE_URL: ${{ inputs.database-url }}
+      run: |
+        python -m alembic upgrade head
+        python scripts/run_historical_pipeline.py \
+          --state data/historical \
+          --run-id "${{ inputs.run-id }}" \
+          persist
+    - name: Publier l'accusé PostgreSQL durable
+      if: inputs.database-url != '' && steps.postgresql.outcome == 'success'
+      shell: bash
+      run: |
+        python scripts/manage_historical_state.py append \
+          --state data/historical \
+          --registry .historical-registry
+        python scripts/manage_historical_state.py verify \
+          --registry .historical-registry
+        cd .historical-registry
+        git add -A historical/proofs/postgresql.json historical/manifest.json
+        if ! git diff --cached --quiet; then
+          git commit -m "historical: acknowledge PostgreSQL run ${{ inputs.run-id }}"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:historical-data; then
+              break
+            fi
+            if [ "$attempt" = "3" ]; then
+              echo "::error::accusé historical-data non publié après 3 essais"
+              exit 1
+            fi
+            git fetch origin historical-data
+            git rebase origin/historical-data
+          done
+        fi
+    - name: Signaler un replay PostgreSQL nécessaire
+      if: inputs.database-url != '' && steps.postgresql.outcome != 'success'
+      shell: bash
+      run: >-
+        echo "::warning::PostgreSQL indisponible ; les payloads, Parquet et
+        checkpoints restent dans historical-data et seront rejoués."
+    - name: Conserver une copie de reprise bornée
+      uses: actions/upload-artifact@v4
+      with:
+        name: historical-state-${{ inputs.run-id }}
+        path: data/historical
+        retention-days: 30
+        compression-level: 9

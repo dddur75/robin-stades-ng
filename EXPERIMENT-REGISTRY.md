@@ -1,5 +1,16 @@
 # Registre des expériences
 
+## Jalon 5
+
+| Expérience | Question | État |
+|---|---|---|
+| J5 Dataset Factory V1 | Les features d’équipe sont-elles reproductibles sans fuite ? | `VERIFIED_LEGACY` |
+| J5 Elo OOS | La baseline reste-t-elle calibrée sur 2024–2025 ? | `OOS_BACKTEST_V1_READY` |
+| J5 API-Football pilote | La Ligue 1 2025 est-elle profondément couverte ? | `HISTORICAL_PILOT_ACTIVE` |
+| J5 Player lift | Les variables joueurs améliorent-elles l’OOS ? | `BLOCKED_BY_COVERAGE` |
+
+## Expériences antérieures
+
 | Expérience | Question | État |
 |---|---|---|
 | Vague 1 | Les hypothèses pré-enregistrées battent-elles le prix ? | `PARTIAL` |

@@ -1,10 +1,21 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-24
+Dernière mise à jour : 2026-07-25
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-4-durable-shadow`
+Branche : `codex/jalon-5-deep-data-factory`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
+
+## Jalon 5.1 — revue pré-fusion
+
+`historical-data` est séparée de `shadow-data` avec 3 180 fichiers et
+16 184 894 octets migrés à hash identique. Les sept workflows historiques
+utilisent `historical-state`; le live conserve `shadow-state`.
+
+Le pilote Ligue 1 2025 est canonicalisé : 306 fixtures et 18 clubs entrent dans
+`ligue1_2025_regular_season`; quatre fixtures de barrage et Red Star, Rodez,
+Saint-Étienne sont conservés mais exclus. Le backfill reste
+`HISTORICAL_BACKFILL_ACTIVE` en mode `ACCELERATED_SAFE`.
 
 ## État global
 
@@ -64,3 +75,26 @@ court et de reprise rapide. Voir
 ## Action utilisateur
 
 Valider puis fusionner la PR #4.
+
+## Jalon 5 — Deep Data Factory
+
+Statut courant : `HISTORICAL_PILOT_VERIFIED` et
+`HISTORICAL_BACKFILL_ACTIVE`.
+
+La branche `codex/jalon-5-deep-data-factory` ajoute la migration 0004, le
+pipeline API-Football, la pagination reprenable, le stockage historique à trois
+niveaux, sept workflows, la Feature Factory V1, une baseline Elo OOS et le Deep
+Data Cockpit. Le dataset legacy point-in-time compte 36 423 matchs ; les
+résultats sont étiquetés `LEGACY SOURCE`/`OOS HISTORICAL`, jamais live.
+
+Le pilote API-Football Ligue 1 2025 a été exécuté sur GitHub Actions : 1 354
+appels, 1 347 pages, 10 868 lignes normalisées, 310 fixtures, 21 équipes,
+1 545 payloads gzip et 38 partitions Parquet. Les six identifiants de
+compétition sont validés par réponse live. Le plan priorisé contient 6 184
+tâches, dont 54 terminées ; les lots suivants restent autonomes.
+
+Le replay du pilote retourne zéro appel fournisseur. Le registre durable
+contient plus de 3 100 fichiers avec hashes vérifiés. La migration Neon
+`0004_jalon5_deep_data_factory` est appliquée et les métadonnées historiques
+sont synchronisées par lots bornés. Le burn-in prospectif continue et
+`PRODUCTION_LOCKED` reste invariant.

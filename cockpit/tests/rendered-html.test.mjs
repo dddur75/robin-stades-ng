@@ -53,6 +53,13 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Pipeline & Qualité/);
   assert.match(page, /Coûts & Quotas/);
   assert.match(page, /Data Explorer/);
+  assert.match(page, /Deep Data Command Center/);
+  assert.match(page, /Backfill Monitor/);
+  assert.match(page, /Player Explorer/);
+  assert.match(page, /Feature Lab/);
+  assert.match(page, /Model Lab/);
+  assert.match(page, /Backtest Explorer/);
+  assert.match(page, /Historical Data Quality/);
   assert.match(page, /LIVE_PIPELINE_VERIFIED/);
   assert.match(page, /EN ATTENTE DE DONNÉES PROSPECTIVES/);
   assert.match(page, /AUCUNE CONCLUSION STATISTIQUE|statistical_message/);
@@ -70,6 +77,10 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"target_status": "CONNECTED_AND_PERSISTED"/);
   assert.match(data, /"bridge_lag_records": 0/);
   assert.match(data, /"capacity_used_pct": 2\.39/);
+  assert.match(data, /"deepData":/);
+  assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
+  assert.match(data, /"HISTORICAL POINT-IN-TIME"/);
+  assert.match(data, /"OOS_BACKTEST_V1_READY"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   try {

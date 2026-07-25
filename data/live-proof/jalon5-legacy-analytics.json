@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-07-24T21:54:23.236408+00:00",
+  "source": "data/matches.parquet",
+  "origin": "LEGACY SOURCE",
+  "dataset": {
+    "name": "team_baseline_v1",
+    "rows": 36423,
+    "seasons": [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+    "sha256": "0bdca4d171422a6da27c59fc8fa19d5ab10f585ac278f5e1299adf1cb9256f5e",
+    "temporal_policy": "PRE_LINEUP",
+    "quality_status": "PASSED"
+  },
+  "model": {
+    "name": "elo",
+    "version": "elo_v1",
+    "artifact_hash": "2d65b444177236c24bf8f6bd570fa95aae4411637c335d95aba1ae84f5a9271f",
+    "oos_matches": 6443,
+    "oos_log_loss": 1.007484940308626,
+    "oos_brier_score": 0.2009601455135415,
+    "status": "OOS_BACKTEST_V1_READY"
+  },
+  "backtest": {
+    "version": "historical_backtest_v2",
+    "strategy": "elo_edge_5pct_fixed_stake",
+    "oos_period": [2024, 2025],
+    "bets": 4139,
+    "roi": -0.08549649673834263,
+    "profit_units": -353.8700000000001,
+    "max_drawdown_units": 414.7600000000002,
+    "status": "REJECTED"
+  },
+  "api_football_live": false,
+  "production_status": "PRODUCTION_LOCKED"
+}

@@ -1,0 +1,44 @@
+name: "20 - Couverture API-Football"
+on:
+  workflow_dispatch:
+    inputs:
+      max_calls:
+        description: "Nombre maximal d'appels"
+        type: number
+        default: 25
+      quota_reserve:
+        description: "Réserve quotidienne minimale"
+        type: number
+        default: 5000
+  schedule:
+    - cron: "11 1 * * 1"
+permissions:
+  contents: write
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Vérifier la couverture réelle
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}"
+          --max-calls "${{ inputs.max_calls || 25 }}"
+          --quota-reserve "${{ inputs.quota_reserve || 5000 }}"
+          coverage
+      - uses: ./.github/actions/historical-state-persist
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
