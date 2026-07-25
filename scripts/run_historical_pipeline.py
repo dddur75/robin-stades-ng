@@ -1672,15 +1672,19 @@ def command_strategy_lab_v2(args: argparse.Namespace) -> None:
                     edges=(0.03, 0.05, 0.07),
                 )
             )
-        if any(
-            row.get("probability_over_25") is not None
-            and row.get("odds_over_25") is not None
+        over_under_rows = [
+            row
             for row in model_rows
-        ):
+            if str(row.get("target_over_25")) in {"0", "1", "0.0", "1.0"}
+            and row.get("probability_over_25") is not None
+            and row.get("odds_over_25") is not None
+            and row.get("odds_under_25") is not None
+        ]
+        if over_under_rows:
             for edge in (0.03, 0.05, 0.07):
                 results.append(
                     run_backtest(
-                        model_rows,
+                        over_under_rows,
                         StrategyParameters(
                             name=(
                                 f"{model_version}_over_under_2_5_edge_{edge:.2f}"

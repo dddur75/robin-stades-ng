@@ -526,8 +526,19 @@ def temporal_discriminative_predictions(
         test_rows = [row for row in eligible if int(str(row.get("season", 0))) == season]
         if not train_rows or not test_rows:
             continue
-        train_matrix, imputation = _matrix(train_rows, features)
-        test_matrix, _ = _matrix(test_rows, features, imputation=imputation)
+        active_features = tuple(
+            feature
+            for feature in features
+            if any(_number(row.get(feature)) is not None for row in train_rows)
+        )
+        if not active_features:
+            continue
+        train_matrix, imputation = _matrix(train_rows, active_features)
+        test_matrix, _ = _matrix(
+            test_rows,
+            active_features,
+            imputation=imputation,
+        )
         train_labels = np.asarray([cast(int, target(row)) for row in train_rows], dtype=np.int64)
         if model_family == "MULTINOMIAL":
             weights, mean, scale = _fit_multinomial(train_matrix, train_labels)
@@ -566,6 +577,7 @@ def temporal_discriminative_predictions(
                     "odds_draw": row.get("odds_draw"),
                     "odds_away": row.get("odds_away"),
                     "fit_seasons": sorted({int(str(item.get("season", 0))) for item in train_rows}),
+                    "active_features": list(active_features),
                     "origin": (
                         "EXPOSED_HISTORICAL_OOS"
                         if season in {2024, 2025}
