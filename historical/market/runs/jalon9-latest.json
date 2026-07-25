@@ -1,0 +1,3060 @@
+{
+  "completed_at": "2026-07-25T18:35:24.308721+00:00",
+  "football_data_files_available": 30,
+  "football_data_files_downloaded": 30,
+  "lineup_gates": [
+    {
+      "competition": "Ligue 1",
+      "complete_lineups": 1305,
+      "coverage": 0.9992343032159265,
+      "datasets": [
+        "PRE_LINEUP",
+        "POST_LINEUP_SIMULATED"
+      ],
+      "finished_fixtures": 1306,
+      "fixtures_with_lineups": 1305,
+      "seasons": 4,
+      "status": "READY"
+    },
+    {
+      "competition": "Premier League",
+      "complete_lineups": 0,
+      "coverage": 0.0,
+      "datasets": [
+        "PRE_LINEUP",
+        "POST_LINEUP_SIMULATED"
+      ],
+      "finished_fixtures": 1520,
+      "fixtures_with_lineups": 0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE"
+    },
+    {
+      "competition": "La Liga",
+      "complete_lineups": 0,
+      "coverage": 0.0,
+      "datasets": [
+        "PRE_LINEUP",
+        "POST_LINEUP_SIMULATED"
+      ],
+      "finished_fixtures": 1520,
+      "fixtures_with_lineups": 0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE"
+    },
+    {
+      "competition": "Bundesliga",
+      "complete_lineups": 0,
+      "coverage": 0.0,
+      "datasets": [
+        "PRE_LINEUP",
+        "POST_LINEUP_SIMULATED"
+      ],
+      "finished_fixtures": 1232,
+      "fixtures_with_lineups": 0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE"
+    },
+    {
+      "competition": "Serie A",
+      "complete_lineups": 0,
+      "coverage": 0.0,
+      "datasets": [
+        "PRE_LINEUP",
+        "POST_LINEUP_SIMULATED"
+      ],
+      "finished_fixtures": 1521,
+      "fixtures_with_lineups": 0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE"
+    },
+    {
+      "competition": "UEFA Champions League",
+      "complete_lineups": 0,
+      "coverage": 0.0,
+      "datasets": [
+        "PRE_LINEUP",
+        "POST_LINEUP_SIMULATED"
+      ],
+      "finished_fixtures": 988,
+      "fixtures_with_lineups": 0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE"
+    }
+  ],
+  "market_dataset_rows": 10732,
+  "market_dataset_writes": [
+    {
+      "bytes": 70473,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "fcea7c9fbfa406ad235c9bc850ba596029cdcdfd9c4942cf4db9c8d39034eb7c"
+    },
+    {
+      "bytes": 62244,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "fd095ab4332b33eb9f51d6833771698db71fee255ef74c142d11f7a84e77fe81"
+    },
+    {
+      "bytes": 40210,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "ca5cc2e4a5a09fc91da490090a58a4ae51f50b8a5557e74dfe24b3ddb2254525"
+    },
+    {
+      "bytes": 70587,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "7102e665e3728d0fcb2e02719371a46cf528fe7b8fc1f4a78011521ef11f953a"
+    },
+    {
+      "bytes": 62086,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "5684fef3ea103bd9ca7061eb757364394015fff511169ce6e7e4912a8d8d2e26"
+    },
+    {
+      "bytes": 40160,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "3e75a7e17dd54ec2ca368070dc54a19bc5a46bcd573a29f1287dad021fc1c355"
+    },
+    {
+      "bytes": 70586,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "4adfd571facbb812ba5ce768b4738b603910ec068c9dfab3aed3892a9017d929"
+    },
+    {
+      "bytes": 62228,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "372dccc10086886efcb9b149a446e8594322582cdee1110a8160e8f3544d2114"
+    },
+    {
+      "bytes": 39459,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "9ef9d2c1970a3e084ebb4faa7d132aa99eb10218bc617551da07ab56a9923802"
+    },
+    {
+      "bytes": 71014,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "606bada245f6177ddab04a27f8af1d98e37468d7830adb63f5e81e2f1c3bca89"
+    },
+    {
+      "bytes": 61475,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "365219016bb5e4819e17a61298cb3e38d793d324dd551a95cb371859fee8f714"
+    },
+    {
+      "bytes": 40690,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "046d6a5861c34261adcf584650fe5d1432ffff82e0d603e8367587870a8b2635"
+    },
+    {
+      "bytes": 69860,
+      "duplicates_avoided": 0,
+      "inserted": 305,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 305,
+      "sha256": "eb9d24b4f7c496552f3147bce2ca2e13d2062baf3b9e86eb3bf839716e502cca"
+    },
+    {
+      "bytes": 61696,
+      "duplicates_avoided": 0,
+      "inserted": 305,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 305,
+      "sha256": "1aac8ddc890aa5054b7badfc456ecb099b4010eb9d2fac5176241b4e1e2869f1"
+    },
+    {
+      "bytes": 39855,
+      "duplicates_avoided": 0,
+      "inserted": 305,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 305,
+      "sha256": "4eb58940fd6f4b8adc8d897feb781ec65bfed7f32d9bb64d36a501dc9e581f97"
+    },
+    {
+      "bytes": 70326,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "6097a786149b8cdb306c34c9bd6889444fc180ae95016ae469d3aed9ecdbba4f"
+    },
+    {
+      "bytes": 62182,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "07f33523f8f61d20eff2194982912c8140ff80ea28b197c47ae3968e8e4dfbdb"
+    },
+    {
+      "bytes": 39227,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Bundesliga/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "a4fb218a826d7e40ec23794fc4e735f9b67e80ebca4ffa88a246c7e3255d39f1"
+    },
+    {
+      "bytes": 81744,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "357806cce28352594edec1baf4e8e97fb6a4bca3e01d77a84019e0c8b1402b54"
+    },
+    {
+      "bytes": 72211,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "a02eaac16cffef0fdad53a29affc0c05e2d1aead1193a03a6658643d61375a4a"
+    },
+    {
+      "bytes": 47719,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "615405fa27927f361b16bde0c28a84b9c61ff4be24cf5768b5b45ef39dadeb2d"
+    },
+    {
+      "bytes": 80432,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "307301378df58e3aad0751e10da82695f1d8b3e309f8c0445baaf410a3379d2d"
+    },
+    {
+      "bytes": 72289,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "1e3ede1bb9271fac4c1c0489b1b66f9332b1f96887a8b47e7226bc6b4b9482a1"
+    },
+    {
+      "bytes": 46650,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "b9a97766c59040b8258fbe42ef6440fb8432976f6bcca53e20ca6ab48767f7d9"
+    },
+    {
+      "bytes": 81529,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "89cd61b7a9383194cc64d5be3e0f82aeebc4bf87219a98ff8a5c171758581931"
+    },
+    {
+      "bytes": 72596,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "bfa60d77893935635156c2c0552639a15ec3588ece516677df367eda7284d5e1"
+    },
+    {
+      "bytes": 46373,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "16ce4f320c02f18be03a6657d5901b681c8e27e081069a27a9fa1413bfa29c2c"
+    },
+    {
+      "bytes": 82235,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "ef1d84da487af979793d4c9d2b2e2c8027f3c1b11c3393ec33b00d1f576ab075"
+    },
+    {
+      "bytes": 72647,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "ea6678bb8d4193a47932c48f7fee491f96644d42ac3e27470464fcf0da57cda7"
+    },
+    {
+      "bytes": 48346,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "bff05bc3cb45335aa324d4fcb2ccef9420af7ce83296a232df171d31a161e53c"
+    },
+    {
+      "bytes": 83121,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "18f59700706bfeb217bc5bd2741372c78488dd5056dfc18c80362c57ba76901c"
+    },
+    {
+      "bytes": 71947,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "0609a9e6b504513ee386841cc92cc0e1f420cbebec4b6bee4e8085456931c9f0"
+    },
+    {
+      "bytes": 49039,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "efd553f8255ae07535f8d845a9fc60864f23a7a019982d641737416b0451fda3"
+    },
+    {
+      "bytes": 81607,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "0945a9b74604ac043190553610d0cfdb2934d1d5b551c81cdfff3cc07ed69c5d"
+    },
+    {
+      "bytes": 72529,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "b8abccd10fadb62941ea816251a13278c6af1b98cedf83f68839047611f5a67d"
+    },
+    {
+      "bytes": 47904,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=La-Liga/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "2bebe7698fd4bf8fd902d31afe76a750c13dff24e8bcbe03ace8aa100c598f21"
+    },
+    {
+      "bytes": 80165,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "54105d63171a1d6e120423e499058e4183ee3733ce1498495727f7b86fb54794"
+    },
+    {
+      "bytes": 71489,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "884d59fdf18c65c589382b956dbc019ab7a6e3946005c08ba5a5a467319996fd"
+    },
+    {
+      "bytes": 46459,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "65faa3bdce62a8156068944cdc089b39296f7420f6b919f2646856f23229a3c9"
+    },
+    {
+      "bytes": 79813,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "d7c5211130c1a4227eb13c2893683415c13b220b70d5377ceb8c5cf29b55f6fb"
+    },
+    {
+      "bytes": 71357,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "4545ad1d96c782ca0f71f7e873723fe5f9137aa8be640ed2cd4d33e87cf0f232"
+    },
+    {
+      "bytes": 46171,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "0636475eb21cca201ad7e45321cccfaad5deeac21b435cdd0c72ef0ba9d731cc"
+    },
+    {
+      "bytes": 80647,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "be2b3cad5f626c89ec88de2255a207469a022c92c6c78e8dabf7a0415cdfa9e2"
+    },
+    {
+      "bytes": 70282,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "42f4f95db0e5ab14e96b3d8e60a204a6b2fe86fab85e0d8b2f791223e7a366e1"
+    },
+    {
+      "bytes": 46889,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "d80059b1556f4556a9a3a5e2dc29b67126fd8c56597ab16cca844d1dda223b47"
+    },
+    {
+      "bytes": 69971,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "797b4da610f754116b11ca0d57724874cd232d329214753a857de54e17380f64"
+    },
+    {
+      "bytes": 61980,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "4eee086ce593ef2075931cb995162681a65840ac353a90f1535fbdf9ff2aa197"
+    },
+    {
+      "bytes": 40037,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "fb026485cdf2f41453b6493ded6555263c95bf3e352a452e0218c5bd3c56ddf6"
+    },
+    {
+      "bytes": 70656,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "958553691b90810a89893a88f95c9061507354437e802a2d193a9d183ee16e8f"
+    },
+    {
+      "bytes": 62464,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "91ab89bbd4368663447fb81b27c7b7a3c65ba4b52ea502fa610623018fd96628"
+    },
+    {
+      "bytes": 40463,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "93f9782cb7e8623388de95f79064f68d5399913d5bd573d5f1133c23b36c8d65"
+    },
+    {
+      "bytes": 69999,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "2251bd0d3ae8e239deb170fd6df6df74fe9b0a9befd7af0ad846d0e28e135846"
+    },
+    {
+      "bytes": 62119,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "5b4192bb48186acab093c077d21337e9a4cc67ed9503291414044276ffe31557"
+    },
+    {
+      "bytes": 38918,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Ligue-1/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "72317e6c3cbb49857f278bfe7eba78fd377a3323c5011d0b5556ca1479ae2a64"
+    },
+    {
+      "bytes": 81180,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "e4623c478fd4a90b8ba45ce45919649672a3ff74e46c2612a8a5f4a45c082267"
+    },
+    {
+      "bytes": 71757,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "3f016d1a01eddeb1e12f0c9dddd2381f118c486d791ef85adcb849a519b4493c"
+    },
+    {
+      "bytes": 47116,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "577f05d7907af2fee263b4c100fb2820aa8fade2067885e7461b4210cdef54fb"
+    },
+    {
+      "bytes": 80302,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "4629fffe188a784d2f9f26b45c06198f550375554a5d9b833a5f6d47493889c5"
+    },
+    {
+      "bytes": 71703,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "ba764e6a23d7e0fb1668aaafd9e799af1532fe6ea826361fefefaf328eca3f19"
+    },
+    {
+      "bytes": 45600,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "4ecb6c4753c9bfb2b65980f0875cc7631c3e87b535614b72121a5d9a5673db3c"
+    },
+    {
+      "bytes": 80815,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "625c1ba715d0eee415702a59c4e6fa65dea0f202fc36b456326729085ebecd67"
+    },
+    {
+      "bytes": 72431,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "80d0edeee5b07edb0d246c26f7c5c98382ef125d283a807fcaab8908400dfeb4"
+    },
+    {
+      "bytes": 45532,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "03a003632fc90824ecb00eba71f93fe6089f6e2094910c038318a303540f0fbf"
+    },
+    {
+      "bytes": 82106,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "61a32953bdc128bee0410a6d850f53d53763ba27d4a01eabbf631ea279e2bce6"
+    },
+    {
+      "bytes": 72632,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "dd49a271333ff6819291e643616ae5b2a42ee11f66fbec2d6703de0f7bb851a1"
+    },
+    {
+      "bytes": 47906,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "6d0eae08a5bb4c972f9ecb5431cc8f25d7299d543324f2f90db41f1ff55677b6"
+    },
+    {
+      "bytes": 81209,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "2ee7d32b997e624d077d168339dba7d85497b272939c98d982e1b1b20d9333c0"
+    },
+    {
+      "bytes": 72259,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "aa62c8c2a5508b8ec8e5aa587a50c90efc11bb78ae708b37ff5655160eda1180"
+    },
+    {
+      "bytes": 47476,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "d18da821cc5d58d6df272638e4c1370911072e3f4e22b05434ceaed171475654"
+    },
+    {
+      "bytes": 80324,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "2b260344b89bcd5ac5008ec75f0ef71a87fa7f75ff46a8e45277f05044776e4f"
+    },
+    {
+      "bytes": 70937,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "9a4de916128ea4369106d95d6bff93c39462cc21065374c851810c7b2680d0ce"
+    },
+    {
+      "bytes": 46475,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Premier-League/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "7d00e9bee086253090f7a1f31443b7db903b72ebf7b1506dd08d1925ec529c3b"
+    },
+    {
+      "bytes": 79189,
+      "duplicates_avoided": 0,
+      "inserted": 379,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 379,
+      "sha256": "6516b8cd587763933668d12c0ce2d838e5b93838953ac130015d18e7d77d0809"
+    },
+    {
+      "bytes": 72017,
+      "duplicates_avoided": 0,
+      "inserted": 379,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 379,
+      "sha256": "645bbbdd81a5063ee41d987c502374fb159cd462dffd089d0cfe405387e693ed"
+    },
+    {
+      "bytes": 46089,
+      "duplicates_avoided": 0,
+      "inserted": 379,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 379,
+      "sha256": "4f1eceed352ecd520539663a978a6d4cb9e2aaf8857197bed6aae2013adf2061"
+    },
+    {
+      "bytes": 80317,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "480ba3cc913303343a123960dee0d4682ea87bf4f74f71aebd72fd6491747196"
+    },
+    {
+      "bytes": 72006,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "f9f558f6b1f2df920919364edf69f484d446e2fe2ca2a995cdd0aedca10c9508"
+    },
+    {
+      "bytes": 46379,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "105ed3b2739b8674bd93cceb6ccae47572a3e8f1ca4bca791e10af1bf2445b99"
+    },
+    {
+      "bytes": 80761,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "0a730c2795d77a0fdcc3ddf812125947b9a73815d1a19f562a045564b18a4fd0"
+    },
+    {
+      "bytes": 72110,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "b79e87f0315f08ddfe7cf49eaa7df1e512d65823c1489914383fa9d19fbf7612"
+    },
+    {
+      "bytes": 45640,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "e7a70335999b2599caf5e4ab65d540f93cd98d60c09e8de592c6fff85d7a2269"
+    },
+    {
+      "bytes": 81349,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "086e8fa06d3bc23700988c438c55366c2b92d8f165fd02fad9da167cffa189ca"
+    },
+    {
+      "bytes": 72322,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "99aa614c41d31ed84370c2f19f34ba370439da2ac8c668fb7ad92afff941cc3b"
+    },
+    {
+      "bytes": 47418,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "8c310356784e9b73e5bebea001ca3f33500d1e5f8725daabbdb54b5dfd8d450d"
+    },
+    {
+      "bytes": 81328,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "e01aaa5b1477ff5992f48751ed862bbb6ab46e5dee0b9d33c8574f1e1fe1d7e5"
+    },
+    {
+      "bytes": 71868,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "51a31018c86161325c6f966febc77929558922b37919c0fc0c70fc12c4d366a0"
+    },
+    {
+      "bytes": 47360,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "45e447eefccfda8871abd21027e6b7f0b1fad638f5de5c2eb92637ca2f0838dd"
+    },
+    {
+      "bytes": 80449,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "e6f4790e9c4a1ee36ddff49477027bc76162e8e4f0e224c02de986f18ddbfc96"
+    },
+    {
+      "bytes": 71031,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "9ab881582e428f5d528e2a60d6cbac7e95498b3b1209547110abec7704a8d914"
+    },
+    {
+      "bytes": 46502,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/parquet/competition=Serie-A/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "b5eb6a14837627bf77443fd1a5c6183b9347db3a83f3ca9b7057521975fc8661"
+    }
+  ],
+  "market_gates": [
+    {
+      "ambiguities": 0,
+      "competition": "Ligue 1",
+      "fixtures_expected": 2070,
+      "fixtures_mapped": 2058,
+      "mapping_rate": 0.9942028985507246,
+      "one_x_two_coverage": 0.9942028985507246,
+      "one_x_two_status": "READY",
+      "seasons": 6,
+      "status": "READY",
+      "totals_coverage": 0.9942028985507246,
+      "totals_status": "READY"
+    },
+    {
+      "ambiguities": 0,
+      "competition": "Premier League",
+      "fixtures_expected": 2280,
+      "fixtures_mapped": 2280,
+      "mapping_rate": 1.0,
+      "one_x_two_coverage": 1.0,
+      "one_x_two_status": "READY",
+      "seasons": 6,
+      "status": "READY",
+      "totals_coverage": 1.0,
+      "totals_status": "READY"
+    },
+    {
+      "ambiguities": 0,
+      "competition": "La Liga",
+      "fixtures_expected": 2280,
+      "fixtures_mapped": 2280,
+      "mapping_rate": 1.0,
+      "one_x_two_coverage": 1.0,
+      "one_x_two_status": "READY",
+      "seasons": 6,
+      "status": "READY",
+      "totals_coverage": 1.0,
+      "totals_status": "READY"
+    },
+    {
+      "ambiguities": 0,
+      "competition": "Bundesliga",
+      "fixtures_expected": 1848,
+      "fixtures_mapped": 1835,
+      "mapping_rate": 0.9929653679653679,
+      "one_x_two_coverage": 0.9929653679653679,
+      "one_x_two_status": "READY",
+      "seasons": 6,
+      "status": "READY",
+      "totals_coverage": 0.9929653679653679,
+      "totals_status": "READY"
+    },
+    {
+      "ambiguities": 0,
+      "competition": "Serie A",
+      "fixtures_expected": 2281,
+      "fixtures_mapped": 2279,
+      "mapping_rate": 0.9991231915826392,
+      "one_x_two_coverage": 0.9991231915826392,
+      "one_x_two_status": "READY",
+      "seasons": 6,
+      "status": "READY",
+      "totals_coverage": 0.9991231915826392,
+      "totals_status": "READY"
+    }
+  ],
+  "market_paired_validation": {
+    "comparisons": [
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.03911438593088778,
+          0.07658197790729601
+        ],
+        "ci95": [
+          0.035138342350517514,
+          0.07919885381816746
+        ],
+        "competition": "Bundesliga",
+        "market_brier": 0.57481667344411,
+        "market_log_loss": 0.9677519495443764,
+        "model": "bundesliga_dixon_coles_v1",
+        "model_brier": 0.6143579606384227,
+        "model_log_loss": 1.0255154425227515,
+        "paired_fixtures": 611,
+        "paired_log_loss_delta": 0.05776349297837513,
+        "probability_model_better": 0.37970540098199673,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.04007281481921383,
+          0.07766698987839249
+        ],
+        "ci95": [
+          0.036943047651503816,
+          0.08030396479337769
+        ],
+        "competition": "Bundesliga",
+        "market_brier": 0.57481667344411,
+        "market_log_loss": 0.9677519495443764,
+        "model": "bundesliga_poisson_v1",
+        "model_brier": 0.6148251967525976,
+        "model_log_loss": 1.0267006339498175,
+        "paired_fixtures": 611,
+        "paired_log_loss_delta": 0.058948684405441,
+        "probability_model_better": 0.35515548281505727,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.018522489313800725,
+          0.04474027194789803
+        ],
+        "ci95": [
+          0.014574755818213131,
+          0.047625204706643026
+        ],
+        "competition": "Bundesliga",
+        "market_brier": 0.57481667344411,
+        "market_log_loss": 0.9677519495443764,
+        "model": "bundesliga_specific_v1",
+        "model_brier": 0.595321473437073,
+        "model_log_loss": 1.0000497339673433,
+        "paired_fixtures": 611,
+        "paired_log_loss_delta": 0.03229778442296673,
+        "probability_model_better": 0.4369885433715221,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.010993897009367168,
+          0.03734094091255624
+        ],
+        "ci95": [
+          0.007586438251731686,
+          0.04018315787312635
+        ],
+        "competition": "Bundesliga",
+        "market_brier": 0.57481667344411,
+        "market_log_loss": 0.9677519495443764,
+        "model": "ligue1_frozen_transfer_v1",
+        "model_brier": 0.590878128566054,
+        "model_log_loss": 0.9922436310344303,
+        "paired_fixtures": 611,
+        "paired_log_loss_delta": 0.024491681490053804,
+        "probability_model_better": 0.4500818330605565,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.010885078560241046,
+          0.03797484909695962
+        ],
+        "ci95": [
+          0.008349367309340872,
+          0.040593636089495906
+        ],
+        "competition": "Bundesliga",
+        "market_brier": 0.57481667344411,
+        "market_log_loss": 0.9677519495443764,
+        "model": "lolo_without_bundesliga_v1",
+        "model_brier": 0.5913580153269901,
+        "model_log_loss": 0.9925728391370103,
+        "paired_fixtures": 611,
+        "paired_log_loss_delta": 0.02482088959263396,
+        "probability_model_better": 0.48117839607201307,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.011899536935744392,
+          0.037645813975235656
+        ],
+        "ci95": [
+          0.009506274293052733,
+          0.03954162439937132
+        ],
+        "competition": "Bundesliga",
+        "market_brier": 0.57481667344411,
+        "market_log_loss": 0.9677519495443764,
+        "model": "pooled_multileague_v1",
+        "model_brier": 0.5915152851134537,
+        "model_log_loss": 0.9929498691047179,
+        "paired_fixtures": 611,
+        "paired_log_loss_delta": 0.025197919560341505,
+        "probability_model_better": 0.46153846153846156,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.05629632645777647,
+          0.09121809068767249
+        ],
+        "ci95": [
+          0.05375768606718814,
+          0.09432604627744194
+        ],
+        "competition": "La Liga",
+        "market_brier": 0.5655483427358704,
+        "market_log_loss": 0.9556079819188288,
+        "model": "la_liga_dixon_coles_v1",
+        "model_brier": 0.6177154109514371,
+        "model_log_loss": 1.0293059113759326,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.07369792945710378,
+        "probability_model_better": 0.3539473684210526,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.05497682071516232,
+          0.08991072365690467
+        ],
+        "ci95": [
+          0.05275315554706155,
+          0.09379845561838411
+        ],
+        "competition": "La Liga",
+        "market_brier": 0.5655483427358704,
+        "market_log_loss": 0.9556079819188288,
+        "model": "la_liga_poisson_v1",
+        "model_brier": 0.6170219256085115,
+        "model_log_loss": 1.0284294806107037,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.07282149869187486,
+        "probability_model_better": 0.31973684210526315,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.011359258459672408,
+          0.03844724623307172
+        ],
+        "ci95": [
+          0.008750424535330757,
+          0.041180592077197216
+        ],
+        "competition": "La Liga",
+        "market_brier": 0.5655483427358704,
+        "market_log_loss": 0.9556079819188288,
+        "model": "la_liga_specific_v1",
+        "model_brier": 0.5784893677871896,
+        "model_log_loss": 0.9799285283554289,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.02432054643660004,
+        "probability_model_better": 0.49078947368421055,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.017161247261874464,
+          0.04022796357767825
+        ],
+        "ci95": [
+          0.015466576260957984,
+          0.04364393497136467
+        ],
+        "competition": "La Liga",
+        "market_brier": 0.5655483427358704,
+        "market_log_loss": 0.9556079819188288,
+        "model": "ligue1_frozen_transfer_v1",
+        "model_brier": 0.5832562677782728,
+        "model_log_loss": 0.9841649698998874,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.028556987981058622,
+        "probability_model_better": 0.43026315789473685,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.024046687839799085,
+          0.048084375905732134
+        ],
+        "ci95": [
+          0.02200187929889969,
+          0.05070280637576145
+        ],
+        "competition": "La Liga",
+        "market_brier": 0.5655483427358704,
+        "market_log_loss": 0.9556079819188288,
+        "model": "lolo_without_la_liga_v1",
+        "model_brier": 0.588531826188598,
+        "model_log_loss": 0.9913360571337251,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.03572807521489631,
+        "probability_model_better": 0.41578947368421054,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.017245421428404573,
+          0.04034538376081196
+        ],
+        "ci95": [
+          0.015164503841889318,
+          0.04242957297500653
+        ],
+        "competition": "La Liga",
+        "market_brier": 0.5655483427358704,
+        "market_log_loss": 0.9556079819188288,
+        "model": "pooled_multileague_v1",
+        "model_brier": 0.5832606530864962,
+        "model_log_loss": 0.983959279112203,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.028351297193374345,
+        "probability_model_better": 0.4263157894736842,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.005921444163051935,
+          0.027965427608912807
+        ],
+        "ci95": [
+          0.00361569981061643,
+          0.02985465114626923
+        ],
+        "competition": "Premier League",
+        "market_brier": 0.5914623829020672,
+        "market_log_loss": 0.9892501430756204,
+        "model": "ligue1_frozen_transfer_v1",
+        "model_brier": 0.603062313178673,
+        "model_log_loss": 1.0059127664569034,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.01666262338128311,
+        "probability_model_better": 0.4842105263157895,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.00933978208582505,
+          0.03319455102149126
+        ],
+        "ci95": [
+          0.007155188993240444,
+          0.034394126835143125
+        ],
+        "competition": "Premier League",
+        "market_brier": 0.5914623829020672,
+        "market_log_loss": 0.9892501430756204,
+        "model": "lolo_without_premier_league_v1",
+        "model_brier": 0.6062451494868332,
+        "model_log_loss": 1.0104974067498922,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.021247263674271787,
+        "probability_model_better": 0.46578947368421053,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.007770188030481008,
+          0.029649523410024435
+        ],
+        "ci95": [
+          0.006179964195260147,
+          0.031317448185588535
+        ],
+        "competition": "Premier League",
+        "market_brier": 0.5914623829020672,
+        "market_log_loss": 0.9892501430756204,
+        "model": "pooled_multileague_v1",
+        "model_brier": 0.6048553688578926,
+        "model_log_loss": 1.0077474921396004,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.01849734906397989,
+        "probability_model_better": 0.45526315789473687,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.02761029835596439,
+          0.06540279074091282
+        ],
+        "ci95": [
+          0.023524263930945474,
+          0.06858927164087927
+        ],
+        "competition": "Premier League",
+        "market_brier": 0.5914623829020672,
+        "market_log_loss": 0.9892501430756204,
+        "model": "premier_league_dixon_coles_v1",
+        "model_brier": 0.6223244071222529,
+        "model_log_loss": 1.0357244753173893,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.046474332241768924,
+        "probability_model_better": 0.42894736842105263,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.02953555213994771,
+          0.0658590445153106
+        ],
+        "ci95": [
+          0.0257751058113064,
+          0.06958243627089244
+        ],
+        "competition": "Premier League",
+        "market_brier": 0.5914623829020672,
+        "market_log_loss": 0.9892501430756204,
+        "model": "premier_league_poisson_v1",
+        "model_brier": 0.622787690694838,
+        "model_log_loss": 1.0368705567418715,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.04762041366625097,
+        "probability_model_better": 0.37894736842105264,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      },
+      {
+        "calibration_intercept": null,
+        "calibration_slope": null,
+        "ci90": [
+          0.009066460296842346,
+          0.03374821509093582
+        ],
+        "ci95": [
+          0.006759131209781394,
+          0.035650218198126
+        ],
+        "competition": "Premier League",
+        "market_brier": 0.5914623829020672,
+        "market_log_loss": 0.9892501430756204,
+        "model": "premier_league_specific_v1",
+        "model_brier": 0.6062893786908067,
+        "model_log_loss": 1.0101097845470053,
+        "paired_fixtures": 760,
+        "paired_log_loss_delta": 0.02085964147138487,
+        "probability_model_better": 0.45789473684210524,
+        "retuned": false,
+        "status": "NO_EXTERNAL_VALIDATED_EDGE"
+      }
+    ],
+    "live_shadow_candidates": [],
+    "paired_predictions": 12786,
+    "production_status": "PRODUCTION_LOCKED",
+    "protocol": "MARKET_PAIRED_VALIDATION_V1_FROZEN",
+    "real_bets": false,
+    "shadow_model_candidates": [],
+    "status": "NO_EXTERNAL_VALIDATED_EDGE"
+  },
+  "matching": {
+    "ambiguous": 0,
+    "conflicting": 2,
+    "mapping_rate": 0.999813676169182,
+    "market_rows": 10734,
+    "matched": 10732,
+    "statuses": {
+      "AMBIGUOUS": 0,
+      "CONFLICTING": 2,
+      "EXACT_CANONICAL_MATCH": 10732,
+      "UNRESOLVED": 0
+    },
+    "unresolved": 0
+  },
+  "milestone": "JALON_9",
+  "odds_api_credits_consumed": 0,
+  "odds_api_historical_pilot": {
+    "budget": 500,
+    "credits_consumed": 0,
+    "estimated_credits": 0,
+    "markets": [
+      "h2h",
+      "totals"
+    ],
+    "mode": "DRY_RUN",
+    "provider_calls": 0,
+    "regions": [
+      "eu"
+    ],
+    "snapshots": 0
+  },
+  "player_gates": [
+    {
+      "competition": "Ligue 1",
+      "coverage": 0.9977029096477795,
+      "finished_fixtures": 1306,
+      "fixtures_with_player_stats": 1303,
+      "identity_rate": 1.0,
+      "minutes_coherence": 1.0,
+      "seasons": 4,
+      "status": "READY",
+      "temporality": "POST_MATCH_ONLY"
+    },
+    {
+      "competition": "Premier League",
+      "coverage": 0.0,
+      "finished_fixtures": 1520,
+      "fixtures_with_player_stats": 0,
+      "identity_rate": 0.0,
+      "minutes_coherence": 0.0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE",
+      "temporality": "POST_MATCH_ONLY"
+    },
+    {
+      "competition": "La Liga",
+      "coverage": 0.0,
+      "finished_fixtures": 1520,
+      "fixtures_with_player_stats": 0,
+      "identity_rate": 0.0,
+      "minutes_coherence": 0.0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE",
+      "temporality": "POST_MATCH_ONLY"
+    },
+    {
+      "competition": "Bundesliga",
+      "coverage": 0.0,
+      "finished_fixtures": 1232,
+      "fixtures_with_player_stats": 0,
+      "identity_rate": 0.0,
+      "minutes_coherence": 0.0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE",
+      "temporality": "POST_MATCH_ONLY"
+    },
+    {
+      "competition": "Serie A",
+      "coverage": 0.0,
+      "finished_fixtures": 1521,
+      "fixtures_with_player_stats": 0,
+      "identity_rate": 0.0,
+      "minutes_coherence": 0.0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE",
+      "temporality": "POST_MATCH_ONLY"
+    },
+    {
+      "competition": "UEFA Champions League",
+      "coverage": 0.0,
+      "finished_fixtures": 988,
+      "fixtures_with_player_stats": 0,
+      "identity_rate": 0.0,
+      "minutes_coherence": 0.0,
+      "seasons": 0,
+      "status": "BLOCKED_BY_COVERAGE",
+      "temporality": "POST_MATCH_ONLY"
+    }
+  ],
+  "preseason_package": {
+    "NO_BET_DEFAULT": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "code_revision": "c82c3ad9a4e591321b3eb2be08f36ad450059023",
+    "datasets": [
+      "fcea7c9fbfa406ad235c9bc850ba596029cdcdfd9c4942cf4db9c8d39034eb7c",
+      "fd095ab4332b33eb9f51d6833771698db71fee255ef74c142d11f7a84e77fe81",
+      "ca5cc2e4a5a09fc91da490090a58a4ae51f50b8a5557e74dfe24b3ddb2254525",
+      "7102e665e3728d0fcb2e02719371a46cf528fe7b8fc1f4a78011521ef11f953a",
+      "5684fef3ea103bd9ca7061eb757364394015fff511169ce6e7e4912a8d8d2e26",
+      "3e75a7e17dd54ec2ca368070dc54a19bc5a46bcd573a29f1287dad021fc1c355",
+      "4adfd571facbb812ba5ce768b4738b603910ec068c9dfab3aed3892a9017d929",
+      "372dccc10086886efcb9b149a446e8594322582cdee1110a8160e8f3544d2114",
+      "9ef9d2c1970a3e084ebb4faa7d132aa99eb10218bc617551da07ab56a9923802",
+      "606bada245f6177ddab04a27f8af1d98e37468d7830adb63f5e81e2f1c3bca89",
+      "365219016bb5e4819e17a61298cb3e38d793d324dd551a95cb371859fee8f714",
+      "046d6a5861c34261adcf584650fe5d1432ffff82e0d603e8367587870a8b2635",
+      "eb9d24b4f7c496552f3147bce2ca2e13d2062baf3b9e86eb3bf839716e502cca",
+      "1aac8ddc890aa5054b7badfc456ecb099b4010eb9d2fac5176241b4e1e2869f1",
+      "4eb58940fd6f4b8adc8d897feb781ec65bfed7f32d9bb64d36a501dc9e581f97",
+      "6097a786149b8cdb306c34c9bd6889444fc180ae95016ae469d3aed9ecdbba4f",
+      "07f33523f8f61d20eff2194982912c8140ff80ea28b197c47ae3968e8e4dfbdb",
+      "a4fb218a826d7e40ec23794fc4e735f9b67e80ebca4ffa88a246c7e3255d39f1",
+      "357806cce28352594edec1baf4e8e97fb6a4bca3e01d77a84019e0c8b1402b54",
+      "a02eaac16cffef0fdad53a29affc0c05e2d1aead1193a03a6658643d61375a4a",
+      "615405fa27927f361b16bde0c28a84b9c61ff4be24cf5768b5b45ef39dadeb2d",
+      "307301378df58e3aad0751e10da82695f1d8b3e309f8c0445baaf410a3379d2d",
+      "1e3ede1bb9271fac4c1c0489b1b66f9332b1f96887a8b47e7226bc6b4b9482a1",
+      "b9a97766c59040b8258fbe42ef6440fb8432976f6bcca53e20ca6ab48767f7d9",
+      "89cd61b7a9383194cc64d5be3e0f82aeebc4bf87219a98ff8a5c171758581931",
+      "bfa60d77893935635156c2c0552639a15ec3588ece516677df367eda7284d5e1",
+      "16ce4f320c02f18be03a6657d5901b681c8e27e081069a27a9fa1413bfa29c2c",
+      "ef1d84da487af979793d4c9d2b2e2c8027f3c1b11c3393ec33b00d1f576ab075",
+      "ea6678bb8d4193a47932c48f7fee491f96644d42ac3e27470464fcf0da57cda7",
+      "bff05bc3cb45335aa324d4fcb2ccef9420af7ce83296a232df171d31a161e53c",
+      "18f59700706bfeb217bc5bd2741372c78488dd5056dfc18c80362c57ba76901c",
+      "0609a9e6b504513ee386841cc92cc0e1f420cbebec4b6bee4e8085456931c9f0",
+      "efd553f8255ae07535f8d845a9fc60864f23a7a019982d641737416b0451fda3",
+      "0945a9b74604ac043190553610d0cfdb2934d1d5b551c81cdfff3cc07ed69c5d",
+      "b8abccd10fadb62941ea816251a13278c6af1b98cedf83f68839047611f5a67d",
+      "2bebe7698fd4bf8fd902d31afe76a750c13dff24e8bcbe03ace8aa100c598f21",
+      "54105d63171a1d6e120423e499058e4183ee3733ce1498495727f7b86fb54794",
+      "884d59fdf18c65c589382b956dbc019ab7a6e3946005c08ba5a5a467319996fd",
+      "65faa3bdce62a8156068944cdc089b39296f7420f6b919f2646856f23229a3c9",
+      "d7c5211130c1a4227eb13c2893683415c13b220b70d5377ceb8c5cf29b55f6fb",
+      "4545ad1d96c782ca0f71f7e873723fe5f9137aa8be640ed2cd4d33e87cf0f232",
+      "0636475eb21cca201ad7e45321cccfaad5deeac21b435cdd0c72ef0ba9d731cc",
+      "be2b3cad5f626c89ec88de2255a207469a022c92c6c78e8dabf7a0415cdfa9e2",
+      "42f4f95db0e5ab14e96b3d8e60a204a6b2fe86fab85e0d8b2f791223e7a366e1",
+      "d80059b1556f4556a9a3a5e2dc29b67126fd8c56597ab16cca844d1dda223b47",
+      "797b4da610f754116b11ca0d57724874cd232d329214753a857de54e17380f64",
+      "4eee086ce593ef2075931cb995162681a65840ac353a90f1535fbdf9ff2aa197",
+      "fb026485cdf2f41453b6493ded6555263c95bf3e352a452e0218c5bd3c56ddf6",
+      "958553691b90810a89893a88f95c9061507354437e802a2d193a9d183ee16e8f",
+      "91ab89bbd4368663447fb81b27c7b7a3c65ba4b52ea502fa610623018fd96628",
+      "93f9782cb7e8623388de95f79064f68d5399913d5bd573d5f1133c23b36c8d65",
+      "2251bd0d3ae8e239deb170fd6df6df74fe9b0a9befd7af0ad846d0e28e135846",
+      "5b4192bb48186acab093c077d21337e9a4cc67ed9503291414044276ffe31557",
+      "72317e6c3cbb49857f278bfe7eba78fd377a3323c5011d0b5556ca1479ae2a64",
+      "e4623c478fd4a90b8ba45ce45919649672a3ff74e46c2612a8a5f4a45c082267",
+      "3f016d1a01eddeb1e12f0c9dddd2381f118c486d791ef85adcb849a519b4493c",
+      "577f05d7907af2fee263b4c100fb2820aa8fade2067885e7461b4210cdef54fb",
+      "4629fffe188a784d2f9f26b45c06198f550375554a5d9b833a5f6d47493889c5",
+      "ba764e6a23d7e0fb1668aaafd9e799af1532fe6ea826361fefefaf328eca3f19",
+      "4ecb6c4753c9bfb2b65980f0875cc7631c3e87b535614b72121a5d9a5673db3c",
+      "625c1ba715d0eee415702a59c4e6fa65dea0f202fc36b456326729085ebecd67",
+      "80d0edeee5b07edb0d246c26f7c5c98382ef125d283a807fcaab8908400dfeb4",
+      "03a003632fc90824ecb00eba71f93fe6089f6e2094910c038318a303540f0fbf",
+      "61a32953bdc128bee0410a6d850f53d53763ba27d4a01eabbf631ea279e2bce6",
+      "dd49a271333ff6819291e643616ae5b2a42ee11f66fbec2d6703de0f7bb851a1",
+      "6d0eae08a5bb4c972f9ecb5431cc8f25d7299d543324f2f90db41f1ff55677b6",
+      "2ee7d32b997e624d077d168339dba7d85497b272939c98d982e1b1b20d9333c0",
+      "aa62c8c2a5508b8ec8e5aa587a50c90efc11bb78ae708b37ff5655160eda1180",
+      "d18da821cc5d58d6df272638e4c1370911072e3f4e22b05434ceaed171475654",
+      "2b260344b89bcd5ac5008ec75f0ef71a87fa7f75ff46a8e45277f05044776e4f",
+      "9a4de916128ea4369106d95d6bff93c39462cc21065374c851810c7b2680d0ce",
+      "7d00e9bee086253090f7a1f31443b7db903b72ebf7b1506dd08d1925ec529c3b",
+      "6516b8cd587763933668d12c0ce2d838e5b93838953ac130015d18e7d77d0809",
+      "645bbbdd81a5063ee41d987c502374fb159cd462dffd089d0cfe405387e693ed",
+      "4f1eceed352ecd520539663a978a6d4cb9e2aaf8857197bed6aae2013adf2061",
+      "480ba3cc913303343a123960dee0d4682ea87bf4f74f71aebd72fd6491747196",
+      "f9f558f6b1f2df920919364edf69f484d446e2fe2ca2a995cdd0aedca10c9508",
+      "105ed3b2739b8674bd93cceb6ccae47572a3e8f1ca4bca791e10af1bf2445b99",
+      "0a730c2795d77a0fdcc3ddf812125947b9a73815d1a19f562a045564b18a4fd0",
+      "b79e87f0315f08ddfe7cf49eaa7df1e512d65823c1489914383fa9d19fbf7612",
+      "e7a70335999b2599caf5e4ab65d540f93cd98d60c09e8de592c6fff85d7a2269",
+      "086e8fa06d3bc23700988c438c55366c2b92d8f165fd02fad9da167cffa189ca",
+      "99aa614c41d31ed84370c2f19f34ba370439da2ac8c668fb7ad92afff941cc3b",
+      "8c310356784e9b73e5bebea001ca3f33500d1e5f8725daabbdb54b5dfd8d450d",
+      "e01aaa5b1477ff5992f48751ed862bbb6ab46e5dee0b9d33c8574f1e1fe1d7e5",
+      "51a31018c86161325c6f966febc77929558922b37919c0fc0c70fc12c4d366a0",
+      "45e447eefccfda8871abd21027e6b7f0b1fad638f5de5c2eb92637ca2f0838dd",
+      "e6f4790e9c4a1ee36ddff49477027bc76162e8e4f0e224c02de986f18ddbfc96",
+      "9ab881582e428f5d528e2a60d6cbac7e95498b3b1209547110abec7704a8d914",
+      "b5eb6a14837627bf77443fd1a5c6183b9347db3a83f3ca9b7057521975fc8661"
+    ],
+    "decision_rules": [
+      "NO_BET_DEFAULT"
+    ],
+    "market_source": "FOOTBALL_DATA",
+    "package": "PRESEASON_SHADOW_PACKAGE_V2",
+    "price_policy": "CLOSING_ELSE_PRE_CLOSING_NO_SYNTHETIC_TIMESTAMP",
+    "quality_gates": [
+      "Ligue 1",
+      "Premier League",
+      "La Liga",
+      "Bundesliga",
+      "Serie A"
+    ],
+    "rejection_rules": [
+      "AMBIGUOUS_MAPPING",
+      "DEGRADED_PINNACLE"
+    ],
+    "status": "PRESEASON_SHADOW_PACKAGE_V2_FROZEN",
+    "strategies": "NO_EXTERNAL_VALIDATED_EDGE"
+  },
+  "production_status": "PRODUCTION_LOCKED",
+  "provider_calls": 0,
+  "raw_market_rows": 10734,
+  "real_bets": false,
+  "run_id": "30169811244",
+  "source_commit": "c82c3ad9a4e591321b3eb2be08f36ad450059023",
+  "started_at": "2026-07-25T18:34:27.973070+00:00",
+  "storage": {
+    "actual_bytes": 474143947,
+    "critical_gates_only": 634143947,
+    "current_full_plan": 894143947,
+    "current_full_plan_plus_market": 939143947,
+    "p3_p4_allowed": false,
+    "pause_bytes": 900000000,
+    "status": "OBJECT_STORAGE_REQUIRED",
+    "warning_bytes": 750000000
+  },
+  "strategy_lab_v4": {
+    "hypotheses": 10,
+    "live_shadow_candidates": 0,
+    "production_status": "PRODUCTION_LOCKED",
+    "protocol": "strategy-lab-v4-preregistered",
+    "ready_competitions": [
+      "Ligue 1",
+      "Premier League",
+      "La Liga",
+      "Bundesliga",
+      "Serie A"
+    ],
+    "real_bets": false,
+    "shadow_model_candidates": 0,
+    "status": "NO_EXTERNAL_VALIDATED_EDGE"
+  },
+  "team_gates": {
+    "Serie A": {
+      "aliases": [
+        {
+          "alias": "Parma",
+          "canonical_name": "Parma",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "3c675d08a06c558bc6be499a7e47d098",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 523,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Juventus",
+          "canonical_name": "Juventus",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "1cefb6098cbf115ecbfdfd96c5513e31",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 496,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Fiorentina",
+          "canonical_name": "Fiorentina",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "d858b1766a583a0a9fef93e7217f9c1b",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 502,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Napoli",
+          "canonical_name": "Napoli",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "98a0e93c56d222094731e2729b7c0a09",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 492,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Udinese",
+          "canonical_name": "Udinese",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "26a8c137cb4337e5bd9e88e0d457c937",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 494,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "AC Milan",
+          "canonical_name": "AC Milan",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "c1d9b63895a35190c975ac991c082688",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 489,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Cagliari",
+          "canonical_name": "Cagliari",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "151d70b3f27792ff387ab76e9db34fa6",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 490,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Brescia",
+          "canonical_name": "Brescia",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "2eaffb479758c45e40d1dd06435cd23c",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 518,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Spal",
+          "canonical_name": "Spal",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "7a12d53378604e66c5a239d2205cae1b",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 493,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Atalanta",
+          "canonical_name": "Atalanta",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "6dd376e390ad499a1dedad192ed44c7e",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 499,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "AS Roma",
+          "canonical_name": "AS Roma",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "ed3670d94708118ea13f14c5df917908",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 497,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Genoa",
+          "canonical_name": "Genoa",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "8c0ad72e5ce2b0896d94f13a76a75a9b",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 495,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Sampdoria",
+          "canonical_name": "Sampdoria",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "415c09973fd1a8d1f9b7327b1fe8b5cc",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 498,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Lazio",
+          "canonical_name": "Lazio",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "919b46a346b5f56eacd1023cf09db708",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 487,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Torino",
+          "canonical_name": "Torino",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "947b0fdb08969f9ad1591719e81c4d02",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 503,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Sassuolo",
+          "canonical_name": "Sassuolo",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "c45043eefd19c1d721ca6568b9bc880f",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 488,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Hellas Verona",
+          "canonical_name": "Hellas Verona",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "64e2956cb39f5b795f0ace18c78e96a0",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 504,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Bologna",
+          "canonical_name": "Bologna",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "e4ce19d85b4966a274157717967234fc",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 500,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Inter",
+          "canonical_name": "Inter",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "84da0e75bb317ca71fd1df7cd406007a",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 505,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Lecce",
+          "canonical_name": "Lecce",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "e70edabc2501f13408cd1701f4dac9a7",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 867,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Crotone",
+          "canonical_name": "Crotone",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "9fcb135d4fbb780003d8cff5da2a4a60",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 501,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Benevento",
+          "canonical_name": "Benevento",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "0057dd0cf575fb85f124a3eaeda17f84",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 506,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Spezia",
+          "canonical_name": "Spezia",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "039d6a930c24a210ceb3ade894adda46",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 515,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Empoli",
+          "canonical_name": "Empoli",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "a9b2774b296425671833f9248942f6f5",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 511,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Salernitana",
+          "canonical_name": "Salernitana",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "b5820de3f957a28aa61e6d8cf3ade93c",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 514,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Venezia",
+          "canonical_name": "Venezia",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "f54a51498e6c1953514f90d7b5543b13",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 517,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Monza",
+          "canonical_name": "Monza",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "d86dbf7de8c0130253503b4d775f97e2",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 1579,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Cremonese",
+          "canonical_name": "Cremonese",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "98029b63bc7d2fff2d867e6012cc8909",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 520,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Frosinone",
+          "canonical_name": "Frosinone",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "c37e0d7cc8808b41c2b421b2564ba78c",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 512,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Como",
+          "canonical_name": "Como",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "4f5491d84fd0a78cdc5da1a5fc3810d0",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 895,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Pisa",
+          "canonical_name": "Pisa",
+          "competition": "Serie A",
+          "confidence": 1.0,
+          "internal_team_id": "6e5c6039d87dc904edcaf84a342bfe7a",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 801,
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "competition": "Serie A",
+      "coverage": 1.0,
+      "identities_resolved": 31,
+      "identities_unresolved": 0,
+      "status": "READY",
+      "teams_canonical": 31,
+      "teams_observed": 31
+    },
+    "UEFA Champions League": {
+      "aliases": [
+        {
+          "alias": "Lyon",
+          "canonical_name": "Lyon",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "27a57722a6195d2540dcb1371666d725",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 80,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Zenit Saint Petersburg",
+          "canonical_name": "Zenit Saint Petersburg",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "521ff7d599f651e37b01b9225ae25e3c",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 596,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Inter",
+          "canonical_name": "Inter",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "84da0e75bb317ca71fd1df7cd406007a",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 505,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Slavia Praha",
+          "canonical_name": "Slavia Praha",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "32016471044ccb5af082c1f3544f6db9",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 560,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Chelsea",
+          "canonical_name": "Chelsea",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "1a9370266a4f295a7c524dae3d6f6186",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 49,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Valencia",
+          "canonical_name": "Valencia",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "7e4cb26b34440486db5492707790e10d",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 532,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Borussia Dortmund",
+          "canonical_name": "Borussia Dortmund",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "edf38e1226a7a5fb17174c4d494c72f0",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 165,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Barcelona",
+          "canonical_name": "Barcelona",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "9cd33d7a7c12fd08b47b65817f15419f",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 529,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Ajax",
+          "canonical_name": "Ajax",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "090da66283c90eb4796ebe12b22cc0ba",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 194,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Lille",
+          "canonical_name": "Lille",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "8c58513d2ea22a54985d5f6376eb4f74",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 79,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Benfica",
+          "canonical_name": "Benfica",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "e5a79048dd185283302aa482eeb1b218",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 211,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "RB Leipzig",
+          "canonical_name": "RB Leipzig",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "bddf29a2a5e8f4a3fc056e3f5fa9d404",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 173,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Napoli",
+          "canonical_name": "Napoli",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "98a0e93c56d222094731e2729b7c0a09",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 492,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Liverpool",
+          "canonical_name": "Liverpool",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "17df8b260faeba9b499979134a3cf593",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 40,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Red Bull Salzburg",
+          "canonical_name": "Red Bull Salzburg",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "9ea1ea1838256ad0ebd3a19bd7fe7116",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 571,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Genk",
+          "canonical_name": "Genk",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "567895458a2a4fd170113bdbfa4f5776",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 742,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Olympiakos Piraeus",
+          "canonical_name": "Olympiakos Piraeus",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "bf11080b042c44b9c566719f42f6abc1",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 553,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Tottenham",
+          "canonical_name": "Tottenham",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "6f1ecc2cc4b12efaa7c2231187301573",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 47,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Club Brugge KV",
+          "canonical_name": "Club Brugge KV",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "b49110ceb8a8cf2975cac42b102cd85d",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 569,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Galatasaray",
+          "canonical_name": "Galatasaray",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "5bb3e8726490eaa98e609e73e6502978",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 645,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Paris Saint Germain",
+          "canonical_name": "Paris Saint Germain",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "a840b1d4eba2db255f86dea84d1700c4",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 85,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Real Madrid",
+          "canonical_name": "Real Madrid",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "6a8e59d8fe79cedd980213b4d70a35eb",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 541,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Bayern Munich",
+          "canonical_name": "Bayern Munich",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "57f0be45372c30fab9b85675c8f19232",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 157,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Bayern München",
+          "canonical_name": "Bayern Munich",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "57f0be45372c30fab9b85675c8f19232",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 157,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "FK Crvena Zvezda",
+          "canonical_name": "FK Crvena Zvezda",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "2897b9e48f8c98e410334c7124ecb302",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 598,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Bayer Leverkusen",
+          "canonical_name": "Bayer Leverkusen",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "f1f17b63014d4a7339f14a03bf09b8da",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 168,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Lokomotiv Moscow",
+          "canonical_name": "Lokomotiv Moscow",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "956971fc79df925248096a1653ef9aca",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 597,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Atletico Madrid",
+          "canonical_name": "Atletico Madrid",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "b1e473020b731a70207679f81b5a46d3",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 530,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Juventus",
+          "canonical_name": "Juventus",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "1cefb6098cbf115ecbfdfd96c5513e31",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 496,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Shakhtar Donetsk",
+          "canonical_name": "Shakhtar Donetsk",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "08746766bcf3aa72b2bf57bbef0153d4",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 550,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Manchester City",
+          "canonical_name": "Manchester City",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "1fd49ce79f23132e8817ff3f61d1ea02",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 50,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Dinamo Zagreb",
+          "canonical_name": "Dinamo Zagreb",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "fac5a1dad759d520fac19ca96d3e6d07",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 620,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Atalanta",
+          "canonical_name": "Atalanta",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "6dd376e390ad499a1dedad192ed44c7e",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 499,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Dynamo Kyiv",
+          "canonical_name": "Dynamo Kyiv",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "30b305a793ed6dbfbd5c9f87a28f9ce8",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 572,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Sevilla",
+          "canonical_name": "Sevilla",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "8bba75b19890fb9d804c934d9418a553",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 536,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Manchester United",
+          "canonical_name": "Manchester United",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "0bc70ecf1990875a6c369ff9a4cd03df",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 33,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Rennes",
+          "canonical_name": "Rennes",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "a2ce2b7dee14876c517675d876373158",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 94,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Krasnodar",
+          "canonical_name": "Krasnodar",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "c1aed7d2aa90fc8ff8fdedee06f44d98",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 621,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Başakşehir",
+          "canonical_name": "Başakşehir",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "bc0396faa555fef2094409278f68926d",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 564,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Lazio",
+          "canonical_name": "Lazio",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "919b46a346b5f56eacd1023cf09db708",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 487,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Ferencvarosi TC",
+          "canonical_name": "Ferencvarosi TC",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "9c42e097e3a0caf1fd1ed1912182132b",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 651,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "FC Porto",
+          "canonical_name": "FC Porto",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "00ee46105fcdde922541fbe03203005c",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 212,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "FC Midtjylland",
+          "canonical_name": "FC Midtjylland",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "bc3e828707b044135941e08a1c3cec93",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 397,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Borussia Monchengladbach",
+          "canonical_name": "Borussia Monchengladbach",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "e3d60dc14bd1c0ed63f001cbc5b1fc1b",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 163,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Marseille",
+          "canonical_name": "Marseille",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "73da9065585997c1fef79a45b860f1eb",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 81,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "BSC Young Boys",
+          "canonical_name": "BSC Young Boys",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "1627ec76fd391e3a3ced1328f2a9e5ec",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 565,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "VfL Wolfsburg",
+          "canonical_name": "VfL Wolfsburg",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "d82f38398538db5b10a2df20b6fa185d",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 161,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Malmo FF",
+          "canonical_name": "Malmo FF",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "48708f98beeb5a0675bb5df07abb5561",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 375,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Villarreal",
+          "canonical_name": "Villarreal",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "4a0f7ff32bd726b84c7c5e1dc97900a6",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 533,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Beşiktaş",
+          "canonical_name": "Beşiktaş",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "669126b8685a626f44edcb0318fbcebe",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 549,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Sheriff Tiraspol",
+          "canonical_name": "Sheriff Tiraspol",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "ef5b5f803a93fefe4a46ec129047d0e9",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 568,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "AC Milan",
+          "canonical_name": "AC Milan",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "c1d9b63895a35190c975ac991c082688",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 489,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Sporting CP",
+          "canonical_name": "Sporting CP",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "120412c45266853760ab821815cafb8f",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 228,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "FC Copenhagen",
+          "canonical_name": "FC Copenhagen",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "87f6a16c909e27a5d80fb2b91aba63b8",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 400,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Maccabi Haifa",
+          "canonical_name": "Maccabi Haifa",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "7127c10d80faf7e2675e79ad1e58663e",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 4195,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Celtic",
+          "canonical_name": "Celtic",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "1f1893db4c9a92b4e14be2548ffbb928",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 247,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Eintracht Frankfurt",
+          "canonical_name": "Eintracht Frankfurt",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "10aa8f3433ec0b6a156f121c05810822",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 169,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Rangers",
+          "canonical_name": "Rangers",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "8771bcf2d3dc88edec1875821b869070",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 257,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Plzen",
+          "canonical_name": "Plzen",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "4e2e439fa68eb8cd930e79c80367ba13",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 567,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Newcastle",
+          "canonical_name": "Newcastle",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "b65906d11dd69358b82dc92e8dace964",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 34,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Feyenoord",
+          "canonical_name": "Feyenoord",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "43008a05daf9adefa9c7cb8331225ccd",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 209,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Antwerp",
+          "canonical_name": "Antwerp",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "cf4861ebd272b98605b07113a9811761",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 740,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Union Berlin",
+          "canonical_name": "Union Berlin",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "f97e43131f34f86476f85807ebf642e7",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 182,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Arsenal",
+          "canonical_name": "Arsenal",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "1966f3ac7f3fc020fa65dce6cd946597",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 42,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "PSV Eindhoven",
+          "canonical_name": "PSV Eindhoven",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "4d8bbfeb4a0076c6a2b4f1c41aba50c1",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 197,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "SC Braga",
+          "canonical_name": "SC Braga",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "07c2299c9d6df3fa9e68d0320b181507",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 217,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Lens",
+          "canonical_name": "Lens",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "6dd341f61075652249b692ed39eca3c5",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 116,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Real Sociedad",
+          "canonical_name": "Real Sociedad",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "9c9334a640453b00d0801ae5d014186b",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 548,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Aston Villa",
+          "canonical_name": "Aston Villa",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "e47450b57a9a64f6d683b27fa2f69e5c",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 66,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "VfB Stuttgart",
+          "canonical_name": "VfB Stuttgart",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "f469eb59d8fb88c7a96617c623fa434d",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 172,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Bologna",
+          "canonical_name": "Bologna",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "e4ce19d85b4966a274157717967234fc",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 500,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Sparta Praha",
+          "canonical_name": "Sparta Praha",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "c01d7becf2da9587f0befb97f2029507",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 628,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Girona",
+          "canonical_name": "Girona",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "e391233db01b3b1524315aeecaaafdd0",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 547,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Slovan Bratislava",
+          "canonical_name": "Slovan Bratislava",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "1d242d7078e1d52fcc6788dfa8b1a353",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 656,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Monaco",
+          "canonical_name": "Monaco",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "ce1f19a25db4f6810a8c7ffb09bb3b21",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 91,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Stade Brestois 29",
+          "canonical_name": "Stade Brestois 29",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "6b8849ea6648d41a46507be74e7882f4",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 106,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Sturm Graz",
+          "canonical_name": "Sturm Graz",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "7d55c2c15c10acc8340b20a9f608a91a",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 637,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Union St. Gilloise",
+          "canonical_name": "Union St. Gilloise",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "e036e77f6597bea9d83194e6c784f98f",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 1393,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Athletic Club",
+          "canonical_name": "Athletic Club",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "8c268fb57464ef38e47879605c89e4b8",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 531,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Qarabag",
+          "canonical_name": "Qarabag",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "c1b0b9d77bc117986a84313d9bbbd5e8",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 556,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Pafos",
+          "canonical_name": "Pafos",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "01d2f9c2110b08a009e57da5ee54c6be",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 3403,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Bodo/Glimt",
+          "canonical_name": "Bodo/Glimt",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "0eacd2c744c4ac49e7964417e9db3e07",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 327,
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "alias": "Kairat Almaty",
+          "canonical_name": "Kairat Almaty",
+          "competition": "UEFA Champions League",
+          "confidence": 1.0,
+          "internal_team_id": "e3a14d582198040c8e115dcf3a7c6934",
+          "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
+          "mapping_status": "RESOLVED",
+          "provider": "api-football",
+          "provider_team_id": 664,
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "competition": "UEFA Champions League",
+      "coverage": 1.0,
+      "identities_resolved": 82,
+      "identities_unresolved": 0,
+      "status": "READY",
+      "teams_canonical": 82,
+      "teams_observed": 82
+    }
+  },
+  "ucl_phases": {
+    "main": 981,
+    "qualifying": 613,
+    "unknown": 0
+  }
+}
