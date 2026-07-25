@@ -1,0 +1,31 @@
+{
+  "adjusted_p_value": 0.3447746561706254,
+  "backtest_version": "api_football_backtest_v3",
+  "bets": 388,
+  "confidence_interval_per_bet": [
+    -0.30761726804123707,
+    0.0358923969072164
+  ],
+  "generated_at": "2026-07-25T14:04:43.506358+00:00",
+  "hypotheses_tested": 3,
+  "market": "1X2",
+  "max_drawdown_units": 61.86000000000004,
+  "max_loss_streak": 21,
+  "multiple_testing_method": "BONFERRONI",
+  "parameters": {
+    "kelly_fraction": 0.25,
+    "minimum_edge": 0.02,
+    "minimum_probability": 0.0,
+    "stake_cap": 2.0,
+    "staking": "FIXED"
+  },
+  "production_status": "PRODUCTION_LOCKED",
+  "profit_units": -54.33,
+  "promotion": "NO_PROMOTION",
+  "roi": -0.10296207857183468,
+  "segment": "BLIND_OOS",
+  "status": "INCONCLUSIVE",
+  "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.02",
+  "strategy_version": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.02",
+  "yield": -0.14002577319587628
+}

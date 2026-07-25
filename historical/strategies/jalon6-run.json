@@ -1,0 +1,10 @@
+{
+  "inconclusive": 15,
+  "live_shadow_candidates": 0,
+  "production_status": "PRODUCTION_LOCKED",
+  "provider_calls": 0,
+  "quota_consumed": 0,
+  "rejected": 0,
+  "status": "INCONCLUSIVE",
+  "strategies_tested": 15
+}
