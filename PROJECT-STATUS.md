@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 2026-07-25
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-5-deep-data-factory`
+Branche : `codex/jalon-8-external-validation`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -37,7 +37,11 @@ Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 | 2 — collecte, migration et shadow | `VERIFIED` | PR #2 |
 | 3 — activation live et accumulation | `VERIFIED` | PR #3 fusionnée |
 | 4 — durabilité et burn-in | `VERIFIED` | `docs/audits/JALON-4-REPORT.md` |
-| 5 à 9 | `NOT_STARTED` | hors périmètre |
+| 5 — Deep Data Factory | `HISTORICAL_BACKFILL_ACTIVE` | PR #6 fusionnée |
+| 6 — dataset et Player Feature Factory | `VERIFIED` | PR #9 fusionnée |
+| 7 — Scientific Model Arena | `VERIFIED` | PR #10 fusionnée |
+| 8 — validation externe | `WAITING_FOR_EXTERNAL_GATES` | `docs/audits/JALON-8-REPORT.md` |
+| 9 | `NOT_STARTED` | hors périmètre |
 
 ## Preuves Jalon 4
 
@@ -77,6 +81,18 @@ court et de reprise rapide. Voir
 PR #4 déjà fusionnée ; cette mention est conservée comme historique du Jalon 4.
 
 ## Jalon 5 — Deep Data Factory
+
+## Jalon 8 — validation externe
+
+Le protocole V1 est gelé. Premier League, La Liga et Bundesliga franchissent
+TEAM_GATE et produisent 3 datasets canoniques, 2 136 fixtures d’évaluation et
+12 816 prédictions sans fournisseur. Serie A et UCL attendent la complétion des
+identités équipe ; joueurs, lineups et marchés attendent le backfill.
+
+Transfert Ligue 1, modèles spécifiques, pooled, score models et
+leave-one-league-out sont évalués sans retuning. Aucun edge externe n’est
+validé, aucun candidat n’est promu et le package reste
+`PRESEASON_PACKAGE_WAITING_FOR_EXTERNAL_GATES`. `PRODUCTION_LOCKED`.
 
 Statut courant : `HISTORICAL_PILOT_VERIFIED` et
 `HISTORICAL_BACKFILL_ACTIVE`.

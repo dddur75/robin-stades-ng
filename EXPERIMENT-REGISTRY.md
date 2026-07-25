@@ -54,3 +54,13 @@ Le choix des features, calibrations et seuils s'arrête avant l'ouverture de
 | post-lineup | joueurs pré-lineup | fixture exacte | inférieur, non promu |
 
 Les contrôles cibles permutées et lineups aléatoires sont obligatoires.
+## Jalon 8
+
+| Expérience | Échantillon | Résultat |
+|---|---:|---|
+| Transfert vs league-specific | 2 136 | inconclusif, CI 95 % traverse zéro |
+| League-specific vs pooled | 2 136 | inconclusif, CI 95 % traverse zéro |
+| Dixon–Coles vs Poisson | 2 136 | inconclusif |
+| Poisson vs discriminatif | 2 136 | Poisson inférieur, CI 95 % positive |
+| Leave-one-league-out | 760/760/616 | prêt PL/Liga/Bundesliga |
+| Contrôles négatifs | 15 | aucun signal anormal |

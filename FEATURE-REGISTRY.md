@@ -79,3 +79,15 @@ Les groupes `TEAM_FORM`, `PLAYER_PRE_LINEUP`, `CONFIRMED_LINEUP` et `MARKET`
 sont préenregistrés pour retrait unitaire. Chaque ablation garde exactement les
 mêmes fixtures et cutoffs. Une importance instable entre saisons ou ligues est
 marquée `INCONCLUSIVE`; elle ne débloque pas de feature.
+## Jalon 8 — généralisation
+
+| Bloc | Portée externe | Statut |
+|---|---|---|
+| Team pré-match V1 | PL, Liga, Bundesliga | `EXTERNAL_DATASET_READY` |
+| Team pré-match V1 | Serie A, UCL | `BLOCKED_BY_COVERAGE` |
+| Player pré-lineup | cinq ligues | `PLAYER_GENERALIZATION_INCONCLUSIVE` |
+| Post-lineup simulé | cinq ligues | `BLOCKED_BY_COVERAGE` |
+| Blessures | cinq ligues | `BLOCKED_BY_TEMPORALITY` |
+
+Aucune cible, donnée future ou valeur manquante convertie en zéro n’est
+autorisée.

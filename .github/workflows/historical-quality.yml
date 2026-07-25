@@ -1,6 +1,12 @@
 name: "22 - Qualité historique"
 on:
   workflow_dispatch:
+    inputs:
+      run_external_validation:
+        description: "Exécuter le Jalon 8 depuis une branche pré-fusion"
+        required: false
+        type: boolean
+        default: false
   schedule:
     - cron: "23 2 * * *"
 permissions:
@@ -21,22 +27,33 @@ jobs:
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
       - name: Repair provenance from the durable cache
+        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
           repair-provenance
-      - run: >-
+      - if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+        run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" quality
       - name: Publier les gates factuels
+        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" readiness
       - name: Recalculate the forecast after quality controls
+        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
           forecast
+      - name: Exécuter la validation externe pré-fusion sans fournisseur
+        if: github.event_name == 'workflow_dispatch' && inputs.run_external_validation
+        run: >-
+          python scripts/run_external_validation.py
+          --state data/historical
+          --run-id "${{ github.run_id }}"
+          --source-commit "${{ github.sha }}"
       - uses: ./.github/actions/historical-state-persist
         with:
           run-id: ${{ github.run_id }}

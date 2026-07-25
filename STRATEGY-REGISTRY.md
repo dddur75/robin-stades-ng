@@ -51,3 +51,8 @@ plates ou Kelly 0,10 plafonné à 1 unité et risque quotidien 3 unités. Les
 paramètres sont arrêtés avant lecture des périodes exposées. Aucun prix BTTS
 historique exploitable n'est artificiellement créé et aucune stratégie n'est
 promue.
+## Strategy Lab V3 externe
+
+13 hypothèses sont préenregistrées. Le `MARKET_GATE` est indisponible :
+0 backtest économique, 0 candidat live, 0 candidat modèle et
+`NO_EXTERNAL_VALIDATED_EDGE`. Aucun test BTTS n’est exécuté sans prix fiable.

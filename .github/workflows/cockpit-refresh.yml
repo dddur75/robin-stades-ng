@@ -8,6 +8,7 @@ on:
       - "23 - Feature Factory"
       - "24 - Scientific Model Arena"
       - "25 - Strategy Lab V2"
+      - "27 - Validation externe multi-ligues"
       - "14 - Sante quotidienne shadow"
     types: [completed]
   schedule:

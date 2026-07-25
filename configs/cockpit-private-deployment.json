@@ -1,11 +1,11 @@
 {
   "status": "COCKPIT_PRIVATE_DEPLOYED",
-  "deployment_version": 8,
-  "deployment_time": "2026-07-25T08:39:14.638374+00:00",
-  "source_commit": "c4dc959d1ba9b00ec9a55dafcd07a9e92a97cc4a",
-  "snapshot_hash": "853e53c1fbd68482a9c6aacbd1177c442938f921b0cdb767b73ac511c45e007b",
-  "data_hash": "8ac24370d366a65cb1ae480602493b19daa4853eee7c197e8ba5d8f27470cdfa",
-  "backfill_run_id": "30150002144",
+  "deployment_version": 10,
+  "deployment_time": "2026-07-25T17:34:55.145343+00:00",
+  "source_commit": "a2daa4b4db30387b89ca9c387442a5452c4bc8f6",
+  "snapshot_hash": "d26b06d3eda781a4d3c6bba5f843487e060cbf7847af0793bc9e03dd0498ba38",
+  "data_hash": "751dd764738bab89275ca61366ef5563be81877ade329b3cd08f227ab4fb6f35",
+  "backfill_run_id": "30164238824",
   "access_mode": "OWNER_ONLY",
   "deployment_url": "https://robin-stades-shadow-cockpit.dddur.chatgpt.site",
   "automation": "SITES_CONNECTOR_MANUAL_PRIVATE_DEPLOYMENT"

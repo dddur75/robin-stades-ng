@@ -1,0 +1,71 @@
+name: "27 - Validation externe multi-ligues"
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "21 - Backfill historique"
+      - "22 - Qualité historique"
+    types: [completed]
+  schedule:
+    - cron: "11 4 * * 3"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+
+jobs:
+  external-validation:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer les dépendances
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Valider les ligues externes sans fournisseur ni retuning
+        run: >-
+          python scripts/run_external_validation.py
+          --state data/historical
+          --run-id "${{ github.run_id }}"
+          --source-commit "${{ github.sha }}"
+      - name: Publier une synthèse sans secret
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+
+          result = json.loads(
+              Path("data/historical/external/runs/jalon8-latest.json").read_text()
+          )
+          print(f"status={result['status']}")
+          print(f"protocol={result['protocol']['status']}")
+          print(f"predictions={result['predictions']}")
+          print(f"provider_calls={result['provider_calls']}")
+          print(f"quota_consumed={result['quota_consumed']}")
+          print(f"package={result['preseason_package']['status']}")
+          print(f"production={result['production_status']}")
+          for item in result["readiness"]["competitions"]:
+              gates = item["gates"]
+              print(
+                  f"{item['competition']}:"
+                  f"team={gates['TEAM_GATE']['status']},"
+                  f"player={gates['PLAYER_GATE']['status']},"
+                  f"lineup={gates['LINEUP_GATE']['status']},"
+                  f"market={gates['MARKET_GATE']['status']}"
+              )
+          PY
+      - uses: ./.github/actions/historical-state-persist
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
