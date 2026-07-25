@@ -1,0 +1,17 @@
+{
+  "backtest_version": "strategy_lab_v2_exposed_oos_v1",
+  "evaluation_segment": "EXPOSED_HISTORICAL_OOS",
+  "live_shadow_candidates": 0,
+  "markets_without_usable_prices": [
+    "BTTS"
+  ],
+  "production_status": "PRODUCTION_LOCKED",
+  "promoted": 0,
+  "protocol": "STRATEGY_LAB_V2_PREREGISTERED",
+  "protocol_hash": "f7be9012ded15d67ce36f663e5d0df8aaaf5ace6f522f7a53b1b49faf2bff245",
+  "provider_calls": 0,
+  "quota_consumed": 0,
+  "status": "INCONCLUSIVE",
+  "strategies_tested": 30,
+  "strategy_version": "strategy_lab_v2_protocol"
+}
