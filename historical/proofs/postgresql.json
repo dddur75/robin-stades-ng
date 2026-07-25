@@ -1,13 +1,13 @@
 {
   "migration_revision": "0004_jalon5_deep_data_factory",
-  "rows_inserted": 0,
+  "rows_inserted": 6,
   "rows_updated": 6772,
   "secret_exposed": false,
   "status": "POSTGRESQL_CONNECTED",
   "table_counts": {
     "api_football_coverage": 528,
     "backtest_runs": 0,
-    "dataset_versions": 0,
+    "dataset_versions": 6,
     "historical_backfill_tasks": 6242,
     "historical_ingestion_runs": 4,
     "model_versions": 0,
