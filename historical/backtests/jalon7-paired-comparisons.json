@@ -1,0 +1,1541 @@
+{
+  "ablation_count": 4,
+  "backtest_version": "scientific_paired_arena_v1",
+  "baseline_hash": "e1f50e9a30d5e1ef3883a6d7455320dd6b94da3d4715b9370eb9c8bd074e4d3e",
+  "baseline_status": "JALON6_BASELINE_FROZEN",
+  "cache_key": "4ab7c4fd866ac2dcc886c6408285a17efa8bf7d5194e864532102eab695b9cfd",
+  "calibration_audits": {
+    "dixon_coles_score": {
+      "method": "NONE",
+      "reason": "FIXED_SCORE_OR_MARKET_BASELINE"
+    },
+    "market_devigged": {
+      "method": "NONE",
+      "reason": "FIXED_SCORE_OR_MARKET_BASELINE"
+    },
+    "player_pre_lineup_crossfit": {
+      "cross_fitted_log_loss": {
+        "ISOTONIC": 1.3819153811028717,
+        "NONE": 1.0525224802119826,
+        "SIGMOID": 1.0325791484162679,
+        "TEMPERATURE_SCALING": 1.0445862659708565
+      },
+      "evaluation_labels_used_for_selection": 0,
+      "evaluation_rows": 612,
+      "fit_rows": 1066,
+      "folds": [
+        2021,
+        2022,
+        2023
+      ],
+      "leakage_guard": "CALIBRATOR_FIT_ONLY_ON_STRICTLY_EARLIER_FOLDS",
+      "method": "SIGMOID",
+      "temperature": null
+    },
+    "poisson_score": {
+      "method": "NONE",
+      "reason": "FIXED_SCORE_OR_MARKET_BASELINE"
+    },
+    "post_lineup_audit_crossfit": {
+      "evaluation_labels_used_for_selection": 0,
+      "evaluation_rows": 611,
+      "fit_rows": 306,
+      "method": "NONE",
+      "reason": "INSUFFICIENT_TEMPORAL_FOLDS",
+      "temperature": null
+    },
+    "team_hist_gradient_boosting_crossfit": {
+      "cross_fitted_log_loss": {
+        "ISOTONIC": 1.0886382250482902,
+        "NONE": 1.2514285543203498,
+        "SIGMOID": 8.472772744282349,
+        "TEMPERATURE_SCALING": 1.06437260251978
+      },
+      "evaluation_labels_used_for_selection": 0,
+      "evaluation_rows": 612,
+      "fit_rows": 1066,
+      "folds": [
+        2021,
+        2022,
+        2023
+      ],
+      "leakage_guard": "CALIBRATOR_FIT_ONLY_ON_STRICTLY_EARLIER_FOLDS",
+      "method": "TEMPERATURE_SCALING",
+      "temperature": 3.0
+    },
+    "team_multinomial_crossfit": {
+      "cross_fitted_log_loss": {
+        "ISOTONIC": 1.3691046656231562,
+        "NONE": 1.0394536265745864,
+        "SIGMOID": 1.0228917521932501,
+        "TEMPERATURE_SCALING": 1.0342467780145754
+      },
+      "evaluation_labels_used_for_selection": 0,
+      "evaluation_rows": 612,
+      "fit_rows": 1066,
+      "folds": [
+        2021,
+        2022,
+        2023
+      ],
+      "leakage_guard": "CALIBRATOR_FIT_ONLY_ON_STRICTLY_EARLIER_FOLDS",
+      "method": "SIGMOID",
+      "temperature": null
+    },
+    "team_without_recent_form_crossfit": {
+      "cross_fitted_log_loss": {
+        "ISOTONIC": 1.556911027509946,
+        "NONE": 1.0377077273432,
+        "SIGMOID": 1.0298752023149915,
+        "TEMPERATURE_SCALING": 1.0307704675086218
+      },
+      "evaluation_labels_used_for_selection": 0,
+      "evaluation_rows": 612,
+      "fit_rows": 1066,
+      "folds": [
+        2021,
+        2022,
+        2023
+      ],
+      "leakage_guard": "CALIBRATOR_FIT_ONLY_ON_STRICTLY_EARLIER_FOLDS",
+      "method": "SIGMOID",
+      "temperature": null
+    }
+  },
+  "comparisons": [
+    {
+      "challenger_metrics": {
+        "brier_score": 0.2056949273028437,
+        "ece": 0.04947925444095355,
+        "log_loss": 1.02615383856864,
+        "matches": 612
+      },
+      "comparison_id": "team_hist_gradient_boosting_crossfit_VS_team_multinomial_crossfit",
+      "decision": "INCONCLUSIVE",
+      "paired_brier_delta": 0.008805315719300374,
+      "paired_fixtures": 612,
+      "paired_log_loss_delta": 0.03454670489792976,
+      "performance_by_season": {
+        "2024": {
+          "fixtures": 306,
+          "log_loss_delta": 0.049798267426408395
+        },
+        "2025": {
+          "fixtures": 306,
+          "log_loss_delta": 0.01929514236945114
+        }
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "protocol": "EXACT_PAIRED_FIXTURES_V1",
+      "reference_metrics": {
+        "brier_score": 0.19688961158354334,
+        "ece": 0.027795815658203035,
+        "log_loss": 0.9916071336707102,
+        "matches": 612
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          0.016690408275678848,
+          0.05244452587715622
+        ],
+        "ci95": [
+          0.013108595103857324,
+          0.05567585498750562
+        ],
+        "groups": 68,
+        "iterations": 5000,
+        "probability_challenger_better": 0.0004,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "brier_score": 0.19602960781067358,
+        "ece": 0.0396348991067846,
+        "log_loss": 0.9879087175533741,
+        "matches": 612
+      },
+      "comparison_id": "team_without_recent_form_crossfit_VS_team_multinomial_crossfit",
+      "decision": "CHALLENGER_BETTER_ON_EXPOSED_OOS",
+      "paired_brier_delta": -0.0008600037728697655,
+      "paired_fixtures": 612,
+      "paired_log_loss_delta": -0.003698416117336204,
+      "performance_by_season": {
+        "2024": {
+          "fixtures": 306,
+          "log_loss_delta": -0.0034324324380586337
+        },
+        "2025": {
+          "fixtures": 306,
+          "log_loss_delta": -0.0039643997966137745
+        }
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "protocol": "EXACT_PAIRED_FIXTURES_V1",
+      "reference_metrics": {
+        "brier_score": 0.19688961158354334,
+        "ece": 0.027795815658203035,
+        "log_loss": 0.9916071336707102,
+        "matches": 612
+      },
+      "status": "PAIRED_EVALUATION_READY",
+      "uncertainty": {
+        "ci90": [
+          -0.006589285427158891,
+          -0.0009012832695493028
+        ],
+        "ci95": [
+          -0.007088605063437528,
+          -0.0003305500011161585
+        ],
+        "groups": 68,
+        "iterations": 5000,
+        "probability_challenger_better": 0.985,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "brier_score": 0.20020876298766363,
+        "ece": 0.05006147176619753,
+        "log_loss": 1.0053939541990489,
+        "matches": 408
+      },
+      "comparison_id": "poisson_score_VS_market_devigged",
+      "decision": "INCONCLUSIVE",
+      "paired_brier_delta": 0.011659830199575845,
+      "paired_fixtures": 408,
+      "paired_log_loss_delta": 0.049632122099148766,
+      "performance_by_season": {
+        "2024": {
+          "fixtures": 272,
+          "log_loss_delta": 0.045104171414731
+        },
+        "2025": {
+          "fixtures": 136,
+          "log_loss_delta": 0.0586880234679843
+        }
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "protocol": "EXACT_PAIRED_FIXTURES_V1",
+      "reference_metrics": {
+        "brier_score": 0.1885489327880878,
+        "ece": 0.027798554070178432,
+        "log_loss": 0.9557618320999001,
+        "matches": 408
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          0.029719452767787518,
+          0.06986271363493847
+        ],
+        "ci95": [
+          0.025792747600679507,
+          0.07355380202345257
+        ],
+        "groups": 51,
+        "iterations": 5000,
+        "probability_challenger_better": 0.0,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "brier_score": 0.2044100949532006,
+        "ece": 0.036676132416889114,
+        "log_loss": 1.0225361451301325,
+        "matches": 612
+      },
+      "comparison_id": "dixon_coles_score_VS_poisson_score",
+      "decision": "INCONCLUSIVE",
+      "paired_brier_delta": 0.0003646913529781749,
+      "paired_fixtures": 612,
+      "paired_log_loss_delta": 0.0019566427743339925,
+      "performance_by_season": {
+        "2024": {
+          "fixtures": 306,
+          "log_loss_delta": 0.0034331036922127804
+        },
+        "2025": {
+          "fixtures": 306,
+          "log_loss_delta": 0.00048018185645520395
+        }
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "protocol": "EXACT_PAIRED_FIXTURES_V1",
+      "reference_metrics": {
+        "brier_score": 0.20404540360022239,
+        "ece": 0.030310030330055894,
+        "log_loss": 1.0205795023557984,
+        "matches": 612
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.00044792847360466097,
+          0.004439727827999305
+        ],
+        "ci95": [
+          -0.0008626256423276282,
+          0.004842683095466944
+        ],
+        "groups": 68,
+        "iterations": 5000,
+        "probability_challenger_better": 0.093,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "brier_score": 0.19704591562630158,
+        "ece": 0.025190147239472407,
+        "log_loss": 0.992168870884471,
+        "matches": 612
+      },
+      "comparison_id": "player_pre_lineup_crossfit_VS_team_multinomial_crossfit",
+      "decision": "INCONCLUSIVE",
+      "paired_brier_delta": 0.00015630404275824506,
+      "paired_fixtures": 612,
+      "paired_log_loss_delta": 0.0005617372137608709,
+      "performance_by_season": {
+        "2024": {
+          "fixtures": 306,
+          "log_loss_delta": 0.002234773089617456
+        },
+        "2025": {
+          "fixtures": 306,
+          "log_loss_delta": -0.0011112986620957146
+        }
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "protocol": "EXACT_PAIRED_FIXTURES_V1",
+      "reference_metrics": {
+        "brier_score": 0.19688961158354334,
+        "ece": 0.027795815658203035,
+        "log_loss": 0.9916071336707102,
+        "matches": 612
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.0021525224513948326,
+          0.003258391819972098
+        ],
+        "ci95": [
+          -0.0026685713317591148,
+          0.0037235841045123405
+        ],
+        "groups": 68,
+        "iterations": 5000,
+        "probability_challenger_better": 0.3662,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "brier_score": 0.2028930698169047,
+        "ece": 0.05828196916667029,
+        "log_loss": 1.0237583669747565,
+        "matches": 611
+      },
+      "comparison_id": "post_lineup_audit_crossfit_VS_player_pre_lineup_crossfit",
+      "decision": "INCONCLUSIVE",
+      "paired_brier_delta": 0.005900269698831436,
+      "paired_fixtures": 611,
+      "paired_log_loss_delta": 0.03178107523661577,
+      "performance_by_season": {
+        "2024": {
+          "fixtures": 306,
+          "log_loss_delta": 0.038173101988705445
+        },
+        "2025": {
+          "fixtures": 305,
+          "log_loss_delta": 0.02536809101976514
+        }
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "protocol": "EXACT_PAIRED_FIXTURES_V1",
+      "reference_metrics": {
+        "brier_score": 0.1969928001180732,
+        "ece": 0.02454226362205762,
+        "log_loss": 0.9919772917381408,
+        "matches": 611
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          0.0179207952719771,
+          0.04562535657852269
+        ],
+        "ci95": [
+          0.015565242734883095,
+          0.04784415340981468
+        ],
+        "groups": 68,
+        "iterations": 5000,
+        "probability_challenger_better": 0.0,
+        "seed": 1707
+      }
+    }
+  ],
+  "ensemble": {
+    "components": [],
+    "reason": "BLOCKED_NO_VALIDATED_COMPONENTS",
+    "status": "INCONCLUSIVE"
+  },
+  "external_protocol": "EXTERNAL_VALIDATION_PROTOCOL_V1",
+  "external_validation": {
+    "protocol": "EXTERNAL_VALIDATION_PROTOCOL_V1",
+    "reason": "LOCKED_EXTERNAL_VALIDATION",
+    "results_observed": false,
+    "status": "INCONCLUSIVE"
+  },
+  "feature_stability": [
+    {
+      "correlation_by_season": {
+        "2020": -0.294116823929115,
+        "2021": -0.31200238995781027,
+        "2022": -0.40179791216371497,
+        "2023": -0.33323224722975137,
+        "2024": -0.38374174436496944,
+        "2025": -0.3616199908530885
+      },
+      "direction_stable": true,
+      "feature": "elo_difference",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.0,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": -0.1751630992007785,
+        "2021": -0.14023465819994932,
+        "2022": -0.2467322955169925,
+        "2023": -0.11554859227153048,
+        "2024": -0.12298618044597191,
+        "2025": -0.17207957694217987
+      },
+      "direction_stable": true,
+      "feature": "home_form_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.0058309037900874635,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": 0.14280300619868574,
+        "2021": 0.12458436924084189,
+        "2022": 0.20821016949700336,
+        "2023": 0.1177876531337385,
+        "2024": 0.18617986474859755,
+        "2025": 0.11010643624011084
+      },
+      "direction_stable": true,
+      "feature": "away_form_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.007288629737609329,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": -0.1483139743473666,
+        "2021": -0.15662956635379996,
+        "2022": -0.19106339674827172,
+        "2023": -0.10922879969468338,
+        "2024": -0.2201486237141727,
+        "2025": -0.17512278490334893
+      },
+      "direction_stable": true,
+      "feature": "home_goals_for_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.0058309037900874635,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": 0.12353528402169393,
+        "2021": 0.10033239715884291,
+        "2022": 0.1943460914219533,
+        "2023": 0.15560444491899347,
+        "2024": 0.14298228306639485,
+        "2025": 0.08156414445983169
+      },
+      "direction_stable": true,
+      "feature": "away_goals_for_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.007288629737609329,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": 0.15222252011431808,
+        "2021": 0.16604749453264797,
+        "2022": 0.1944927327905131,
+        "2023": 0.10915781668384525,
+        "2024": 0.036338024074533654,
+        "2025": 0.08152380272831254
+      },
+      "direction_stable": true,
+      "feature": "home_goals_against_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.0058309037900874635,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": -0.10075917118619898,
+        "2021": -0.09006989188314042,
+        "2022": -0.18031508865344084,
+        "2023": 0.006439743435517757,
+        "2024": -0.21341563718389023,
+        "2025": -0.12785025380275872
+      },
+      "direction_stable": true,
+      "feature": "away_goals_against_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.007288629737609329,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": 0.007877567729877251,
+        "2021": 0.08248492666347126,
+        "2022": -0.016797636403842686,
+        "2023": -0.01838542498763279,
+        "2024": 0.01601397022512229,
+        "2025": 0.07473537293148406
+      },
+      "direction_stable": true,
+      "feature": "home_rest_days",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.0058309037900874635,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": 0.006054944016971768,
+        "2021": 0.08000090254589198,
+        "2022": 0.018626888630517736,
+        "2023": -0.0551477021178876,
+        "2024": -0.03925739047466553,
+        "2025": -0.01446683667935153
+      },
+      "direction_stable": false,
+      "feature": "away_rest_days",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.007288629737609329,
+      "promotion_use": "FORBIDDEN",
+      "status": "UNSTABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": null,
+        "2021": null,
+        "2022": -0.1638917872479036,
+        "2023": -0.15725730710682065,
+        "2024": -0.2230668258261776,
+        "2025": -0.25611411478019963
+      },
+      "direction_stable": true,
+      "feature": "home_shots_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.3741496598639456,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": null,
+        "2021": null,
+        "2022": 0.18433574271765926,
+        "2023": 0.09940066275580837,
+        "2024": 0.16953509665146424,
+        "2025": 0.1506754174947484
+      },
+      "direction_stable": true,
+      "feature": "away_shots_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.3760932944606414,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": null,
+        "2021": null,
+        "2022": -0.13595578668877162,
+        "2023": -0.17883553505414765,
+        "2024": -0.2753492389842186,
+        "2025": -0.26306085657328077
+      },
+      "direction_stable": true,
+      "feature": "home_shots_on_goal_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.3741496598639456,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": null,
+        "2021": null,
+        "2022": 0.21139238905051946,
+        "2023": 0.12451476772310088,
+        "2024": 0.16580204554748423,
+        "2025": 0.17159452833610175
+      },
+      "direction_stable": true,
+      "feature": "away_shots_on_goal_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.3760932944606414,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": null,
+        "2021": null,
+        "2022": -0.2639074561658286,
+        "2023": -0.23980526227371718,
+        "2024": -0.2647651780604276,
+        "2025": -0.18791176367158896
+      },
+      "direction_stable": true,
+      "feature": "home_possession_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.3741496598639456,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    },
+    {
+      "correlation_by_season": {
+        "2020": null,
+        "2021": null,
+        "2022": 0.16445171323831692,
+        "2023": 0.17980611555811032,
+        "2024": 0.1848921548911757,
+        "2025": 0.25438366087607583
+      },
+      "direction_stable": true,
+      "feature": "away_possession_5",
+      "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
+      "missing_rate": 0.3760932944606414,
+      "promotion_use": "FORBIDDEN",
+      "status": "STABLE"
+    }
+  ],
+  "leaderboard": [
+    {
+      "calibration": "NONE",
+      "dataset": "api_team_pre_match_v1",
+      "metrics": {
+        "brier_score": 0.2044100949532006,
+        "ece": 0.0366761324168891,
+        "log_loss": 1.0225361451301325,
+        "matches": 612
+      },
+      "model": "dixon_coles_score",
+      "paired_sample": 612,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.4722222222222222,
+          "count": 108,
+          "lower": 0.3,
+          "mean_confidence": 0.38051858531882204,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.46366782006920415,
+          "count": 289,
+          "lower": 0.4,
+          "mean_confidence": 0.44457096407042107,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.5792682926829268,
+          "count": 164,
+          "lower": 0.5,
+          "mean_confidence": 0.5417210323114509,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.6458333333333334,
+          "count": 48,
+          "lower": 0.6,
+          "mean_confidence": 0.6315838952623393,
+          "upper": 0.7
+        },
+        {
+          "accuracy": 0.6666666666666666,
+          "count": 3,
+          "lower": 0.7,
+          "mean_confidence": 0.7270283805302776,
+          "upper": 0.8
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.8,
+          "mean_confidence": null,
+          "upper": 0.9
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.9,
+          "mean_confidence": null,
+          "upper": 1.0
+        }
+      ],
+      "sample": 612,
+      "status": "MODEL_ARENA_ACTIVE"
+    },
+    {
+      "calibration": "NONE",
+      "dataset": "api_market_baseline_v1",
+      "metrics": {
+        "brier_score": 0.1885489327880878,
+        "ece": 0.027798554070178404,
+        "log_loss": 0.9557618320999003,
+        "matches": 408
+      },
+      "model": "market_devigged",
+      "paired_sample": 408,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.3870967741935484,
+          "count": 62,
+          "lower": 0.3,
+          "mean_confidence": 0.3814330683020298,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.4274193548387097,
+          "count": 124,
+          "lower": 0.4,
+          "mean_confidence": 0.44800644069918494,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.5918367346938775,
+          "count": 98,
+          "lower": 0.5,
+          "mean_confidence": 0.54559388763446,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.6666666666666666,
+          "count": 72,
+          "lower": 0.6,
+          "mean_confidence": 0.646518899988807,
+          "upper": 0.7
+        },
+        {
+          "accuracy": 0.8,
+          "count": 40,
+          "lower": 0.7,
+          "mean_confidence": 0.739852513167046,
+          "upper": 0.8
+        },
+        {
+          "accuracy": 0.8333333333333334,
+          "count": 12,
+          "lower": 0.8,
+          "mean_confidence": 0.8374603302260613,
+          "upper": 0.9
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.9,
+          "mean_confidence": null,
+          "upper": 1.0
+        }
+      ],
+      "sample": 408,
+      "status": "MODEL_ARENA_ACTIVE"
+    },
+    {
+      "calibration": "SIGMOID",
+      "dataset": "api_player_pre_lineup_v1",
+      "metrics": {
+        "brier_score": 0.19704591562630158,
+        "ece": 0.02519014723947242,
+        "log_loss": 0.992168870884471,
+        "matches": 612
+      },
+      "model": "player_pre_lineup_crossfit",
+      "paired_sample": 612,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.390625,
+          "count": 64,
+          "lower": 0.3,
+          "mean_confidence": 0.3852962360690954,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.44528301886792454,
+          "count": 265,
+          "lower": 0.4,
+          "mean_confidence": 0.45015444671081856,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.5614973262032086,
+          "count": 187,
+          "lower": 0.5,
+          "mean_confidence": 0.5459585411902095,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.7586206896551724,
+          "count": 87,
+          "lower": 0.6,
+          "mean_confidence": 0.640617791004003,
+          "upper": 0.7
+        },
+        {
+          "accuracy": 0.7777777777777778,
+          "count": 9,
+          "lower": 0.7,
+          "mean_confidence": 0.7097337932744731,
+          "upper": 0.8
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.8,
+          "mean_confidence": null,
+          "upper": 0.9
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.9,
+          "mean_confidence": null,
+          "upper": 1.0
+        }
+      ],
+      "sample": 612,
+      "status": "MODEL_ARENA_ACTIVE"
+    },
+    {
+      "calibration": "NONE",
+      "dataset": "api_team_pre_match_v1",
+      "metrics": {
+        "brier_score": 0.20404540360022236,
+        "ece": 0.030310030330055904,
+        "log_loss": 1.0205795023557986,
+        "matches": 612
+      },
+      "model": "poisson_score",
+      "paired_sample": 612,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.5194805194805194,
+          "count": 77,
+          "lower": 0.3,
+          "mean_confidence": 0.3838590731089543,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.45084745762711864,
+          "count": 295,
+          "lower": 0.4,
+          "mean_confidence": 0.44428612830307684,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.5494505494505495,
+          "count": 182,
+          "lower": 0.5,
+          "mean_confidence": 0.5414239762621147,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.7037037037037037,
+          "count": 54,
+          "lower": 0.6,
+          "mean_confidence": 0.6332040835755108,
+          "upper": 0.7
+        },
+        {
+          "accuracy": 0.5,
+          "count": 4,
+          "lower": 0.7,
+          "mean_confidence": 0.7258698083934536,
+          "upper": 0.8
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.8,
+          "mean_confidence": null,
+          "upper": 0.9
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.9,
+          "mean_confidence": null,
+          "upper": 1.0
+        }
+      ],
+      "sample": 612,
+      "status": "MODEL_ARENA_ACTIVE"
+    },
+    {
+      "calibration": "NONE",
+      "dataset": "api_post_lineup_simulated_v1",
+      "metrics": {
+        "brier_score": 0.2028930698169047,
+        "ece": 0.05828196916667029,
+        "log_loss": 1.0237583669747565,
+        "matches": 611
+      },
+      "model": "post_lineup_audit_crossfit",
+      "paired_sample": 611,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.25,
+          "count": 64,
+          "lower": 0.3,
+          "mean_confidence": 0.38028919609116313,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.3969849246231156,
+          "count": 199,
+          "lower": 0.4,
+          "mean_confidence": 0.4513902298865697,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.5117647058823529,
+          "count": 170,
+          "lower": 0.5,
+          "mean_confidence": 0.5446818808791065,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.673469387755102,
+          "count": 98,
+          "lower": 0.6,
+          "mean_confidence": 0.6461852163334258,
+          "upper": 0.7
+        },
+        {
+          "accuracy": 0.6851851851851852,
+          "count": 54,
+          "lower": 0.7,
+          "mean_confidence": 0.7486472809115616,
+          "upper": 0.8
+        },
+        {
+          "accuracy": 0.6363636363636364,
+          "count": 22,
+          "lower": 0.8,
+          "mean_confidence": 0.835413667330202,
+          "upper": 0.9
+        },
+        {
+          "accuracy": 1.0,
+          "count": 4,
+          "lower": 0.9,
+          "mean_confidence": 0.907675883921851,
+          "upper": 1.0
+        }
+      ],
+      "sample": 611,
+      "status": "MODEL_ARENA_ACTIVE"
+    },
+    {
+      "calibration": "TEMPERATURE_SCALING",
+      "dataset": "api_team_pre_match_v1",
+      "metrics": {
+        "brier_score": 0.2056949273028437,
+        "ece": 0.0494792544409536,
+        "log_loss": 1.02615383856864,
+        "matches": 612
+      },
+      "model": "team_hist_gradient_boosting_crossfit",
+      "paired_sample": 612,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.4263959390862944,
+          "count": 197,
+          "lower": 0.3,
+          "mean_confidence": 0.3755171014355474,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.4803921568627451,
+          "count": 306,
+          "lower": 0.4,
+          "mean_confidence": 0.44311761878779576,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.6086956521739131,
+          "count": 92,
+          "lower": 0.5,
+          "mean_confidence": 0.5386691353092907,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.7647058823529411,
+          "count": 17,
+          "lower": 0.6,
+          "mean_confidence": 0.6229573824596069,
+          "upper": 0.7
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.7,
+          "mean_confidence": null,
+          "upper": 0.8
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.8,
+          "mean_confidence": null,
+          "upper": 0.9
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.9,
+          "mean_confidence": null,
+          "upper": 1.0
+        }
+      ],
+      "sample": 612,
+      "status": "MODEL_ARENA_ACTIVE"
+    },
+    {
+      "calibration": "SIGMOID",
+      "dataset": "api_team_pre_match_v1",
+      "metrics": {
+        "brier_score": 0.19688961158354334,
+        "ece": 0.027795815658203053,
+        "log_loss": 0.9916071336707102,
+        "matches": 612
+      },
+      "model": "team_multinomial_crossfit",
+      "paired_sample": 612,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.3387096774193548,
+          "count": 62,
+          "lower": 0.3,
+          "mean_confidence": 0.38418714092801115,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.4482758620689655,
+          "count": 261,
+          "lower": 0.4,
+          "mean_confidence": 0.4502286741312545,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.5721925133689839,
+          "count": 187,
+          "lower": 0.5,
+          "mean_confidence": 0.5468252502542257,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.7222222222222222,
+          "count": 90,
+          "lower": 0.6,
+          "mean_confidence": 0.6391478185573439,
+          "upper": 0.7
+        },
+        {
+          "accuracy": 0.8333333333333334,
+          "count": 12,
+          "lower": 0.7,
+          "mean_confidence": 0.7115518362727237,
+          "upper": 0.8
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.8,
+          "mean_confidence": null,
+          "upper": 0.9
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.9,
+          "mean_confidence": null,
+          "upper": 1.0
+        }
+      ],
+      "sample": 612,
+      "status": "MODEL_ARENA_ACTIVE"
+    },
+    {
+      "calibration": "SIGMOID",
+      "dataset": "api_team_pre_match_v1",
+      "metrics": {
+        "brier_score": 0.19602960781067358,
+        "ece": 0.0396348991067846,
+        "log_loss": 0.9879087175533741,
+        "matches": 612
+      },
+      "model": "team_without_recent_form_crossfit",
+      "paired_sample": 612,
+      "reliability_curve": [
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.0,
+          "mean_confidence": null,
+          "upper": 0.1
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.1,
+          "mean_confidence": null,
+          "upper": 0.2
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.2,
+          "mean_confidence": null,
+          "upper": 0.3
+        },
+        {
+          "accuracy": 0.4032258064516129,
+          "count": 62,
+          "lower": 0.3,
+          "mean_confidence": 0.3843335028991761,
+          "upper": 0.4
+        },
+        {
+          "accuracy": 0.4222222222222222,
+          "count": 270,
+          "lower": 0.4,
+          "mean_confidence": 0.45177494756456266,
+          "upper": 0.5
+        },
+        {
+          "accuracy": 0.5670731707317073,
+          "count": 164,
+          "lower": 0.5,
+          "mean_confidence": 0.5487940717156699,
+          "upper": 0.6
+        },
+        {
+          "accuracy": 0.7604166666666666,
+          "count": 96,
+          "lower": 0.6,
+          "mean_confidence": 0.6391955607164808,
+          "upper": 0.7
+        },
+        {
+          "accuracy": 0.75,
+          "count": 20,
+          "lower": 0.7,
+          "mean_confidence": 0.72644994095894,
+          "upper": 0.8
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.8,
+          "mean_confidence": null,
+          "upper": 0.9
+        },
+        {
+          "accuracy": null,
+          "count": 0,
+          "lower": 0.9,
+          "mean_confidence": null,
+          "upper": 1.0
+        }
+      ],
+      "sample": 612,
+      "status": "MODEL_ARENA_ACTIVE"
+    }
+  ],
+  "live_candidates": 0,
+  "model_families": [
+    "dixon_coles_score",
+    "market_devigged",
+    "player_pre_lineup_crossfit",
+    "poisson_score",
+    "post_lineup_audit_crossfit",
+    "team_hist_gradient_boosting_crossfit",
+    "team_multinomial_crossfit",
+    "team_without_recent_form_crossfit"
+  ],
+  "model_version": "scientific_model_arena_v1",
+  "models_tested": 8,
+  "negative_controls": [
+    {
+      "control": "PERMUTED_TARGET",
+      "expected_result": "NO_RELIABLE_SIGNAL",
+      "metrics": {
+        "brier_score": 0.22497330555416728,
+        "ece": 0.07882429597615516,
+        "log_loss": 1.1252409820186398,
+        "matches": 618
+      },
+      "seed": 1707,
+      "status": "PASSED"
+    },
+    {
+      "control": "RANDOM_LINEUP_ASSIGNMENT",
+      "dataset_hash": "35ad8177b43c927bc0499c633e467a6194678de3bf728603e02226fb7fa2c738",
+      "expected_result": "NO_PLAYER_UPLIFT",
+      "permuted_features": 16,
+      "rows": 2058,
+      "seed": 1707,
+      "status": "CONTROL_DATASET_READY"
+    }
+  ],
+  "partitions": [
+    {
+      "bytes": 62462,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=dixon_coles_score_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "72010d3a8b000998cadb8aecaadfdb8be6a48d109baac54271201540107c50d0"
+    },
+    {
+      "bytes": 60508,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=dixon_coles_score_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "a3f8638314dde99a10a83f094560107bc274b8c1fc22cb3ab2e38d5eccbf821f"
+    },
+    {
+      "bytes": 43259,
+      "duplicates_avoided": 0,
+      "inserted": 272,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=market_devigged_baseline_v1/part-00000.parquet",
+      "rows": 272,
+      "sha256": "39b10bbff541902340aef8a57a8de5a01aed187b5ed816ff7ad9c72bceb77dae"
+    },
+    {
+      "bytes": 27101,
+      "duplicates_avoided": 0,
+      "inserted": 136,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=market_devigged_baseline_v1/part-00000.parquet",
+      "rows": 136,
+      "sha256": "4e8d920dde664f1aac208a2e9cff7b2e3ac6d1012889ae5476e3b6cd2e068ac3"
+    },
+    {
+      "bytes": 51430,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=player_pre_lineup_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "dbcd082cae76a51d4528cb0eeb8edfe917fd7e6dca7e887ecd115b5c7b3ff318"
+    },
+    {
+      "bytes": 48937,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=player_pre_lineup_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "7a35da372d3ec0a5c4944665f46632a091852f09038814402f44b8163e17bb3f"
+    },
+    {
+      "bytes": 62422,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=poisson_score_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "8e9f303aa15a16362ceca7a3cff6bd245c9488aa8b00d02d33d5317b872e5885"
+    },
+    {
+      "bytes": 60469,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=poisson_score_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "0b10213d883966ba0dd6baa3db8bec3eaeb5a445ca9e388105bb50d3b040b0e7"
+    },
+    {
+      "bytes": 52537,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=post_lineup_audit_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "5c6434e00ee585ebdbbc4f61da0f1167e77a246bfee91cb8b75ec9168729fd55"
+    },
+    {
+      "bytes": 50890,
+      "duplicates_avoided": 0,
+      "inserted": 305,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=post_lineup_audit_crossfit_v1/part-00000.parquet",
+      "rows": 305,
+      "sha256": "4328e5144f7597a7541975375468656c1801c967297ff415254d4d32e2ed5779"
+    },
+    {
+      "bytes": 50296,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=team_hist_gradient_boosting_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "2b739b2cb12b38c7aaa34b77e9bce77c2d9466a840477535b06930c12d145729"
+    },
+    {
+      "bytes": 47997,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=team_hist_gradient_boosting_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "5d6a776406b8f347e6fe561e91ecaacc3e479446e044e9dcd7222370e5e38241"
+    },
+    {
+      "bytes": 49885,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=team_multinomial_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "9b4d13715cef4d9b49ab89241e6ee7922c464dd81049ffac2ef7bcc0ddf72fd9"
+    },
+    {
+      "bytes": 47661,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=team_multinomial_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "aa497abcbd05c22b839a3ef7a853674954e1b9ea798404fdfeaf10e926753272"
+    },
+    {
+      "bytes": 49712,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=scientific_arena_predictions_v1/dataset_version=team_without_recent_form_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "b7635f36f9a2c26c315f8665c2f618be58aaf54f33b0d3365454381d51076274"
+    },
+    {
+      "bytes": 47933,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=team_without_recent_form_crossfit_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "b8c62929237619af8bde9fe8e073f7366cb1ddaeac355177c9706bbe6670aca9"
+    }
+  ],
+  "predictions": 4691,
+  "production_status": "PRODUCTION_LOCKED",
+  "provider_calls": 0,
+  "quota_consumed": 0,
+  "run_hash": "1485a2112eea20d279e3fa44e2f7a22dc59bbedf4364d1169fe7aa6743c6643e",
+  "scientific_statuses": {
+    "calibration": "CROSS_FITTED_CALIBRATION_READY",
+    "paired_evaluation": "PAIRED_EVALUATION_READY",
+    "player": "PLAYER_INCREMENTAL_VALUE_INCONCLUSIVE",
+    "post_lineup": "POST_LINEUP_NO_INCREMENTAL_VALUE",
+    "score_models": "SCORE_MODEL_READY"
+  },
+  "score_models": [
+    {
+      "fixtures": 612,
+      "markets": [
+        "1X2",
+        "OVER_UNDER_2_5",
+        "BTTS",
+        "EXACT_SCORE"
+      ],
+      "mean_away_goals": 1.4636940424317875,
+      "mean_home_goals": 1.4596577056748625,
+      "model": "poisson_score",
+      "status": "SCORE_MODEL_READY"
+    },
+    {
+      "fixtures": 612,
+      "markets": [
+        "1X2",
+        "OVER_UNDER_2_5",
+        "BTTS",
+        "EXACT_SCORE"
+      ],
+      "mean_away_goals": 1.4636940424317875,
+      "mean_home_goals": 1.4596577056748625,
+      "model": "dixon_coles_score",
+      "status": "SCORE_MODEL_READY"
+    }
+  ],
+  "status": "MODEL_ARENA_ACTIVE",
+  "storage": {
+    "can_write": true,
+    "current_bytes": 291843724,
+    "pause_bytes": 900000000,
+    "status": "SAFE",
+    "warning_bytes": 750000000
+  }
+}

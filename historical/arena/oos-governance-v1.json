@@ -1,0 +1,22 @@
+{
+  "periods": {
+    "DISCOVERY": [
+      2020,
+      2021,
+      2022
+    ],
+    "EXPOSED_HISTORICAL_OOS": [
+      2024,
+      2025
+    ],
+    "LIVE_PROSPECTIVE": [
+      2026,
+      2027
+    ],
+    "VALIDATION": [
+      2023
+    ]
+  },
+  "protocol": "OOS_GOVERNANCE_V1",
+  "selection_rule": "No parameter, feature, calibration or strategy threshold may be selected from EXPOSED_HISTORICAL_OOS or LIVE_PROSPECTIVE."
+}

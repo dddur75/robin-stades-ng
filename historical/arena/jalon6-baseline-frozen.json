@@ -1,0 +1,251 @@
+{
+  "artifact_count": 44,
+  "artifacts": [
+    {
+      "bytes": 3701,
+      "path": "datasets/api_market_baseline_v1.json",
+      "sha256": "e68c9c4cd0ff0132eb26e5672735ed7e17598514f66e048d8c44fd2b70d0b371"
+    },
+    {
+      "bytes": 2986,
+      "path": "datasets/api_player_match_facts_v1.json",
+      "sha256": "0690d1804cf96020331450b1bde326c5fbe17ec118a6d8efe55ac0c162c8b4c9"
+    },
+    {
+      "bytes": 5311,
+      "path": "datasets/api_player_pre_lineup_v1.json",
+      "sha256": "61fbc643b8f99fab0c932e27560c20a179e8a9a3d1e676dddaa1f5a66568cfa7"
+    },
+    {
+      "bytes": 5122,
+      "path": "datasets/api_post_lineup_simulated_v1.json",
+      "sha256": "548d8f076f0d5e861923416322d1ef5604cefa2f2fce23bce87e389707ed492f"
+    },
+    {
+      "bytes": 4761,
+      "path": "datasets/api_team_pre_match_v1.json",
+      "sha256": "bf19862692d9e5bdd3089b964df53d1d05c8c9091d2b0d130ba06de62c9c7e2e"
+    },
+    {
+      "bytes": 1517,
+      "path": "datasets/jalon6-run.json",
+      "sha256": "d17521a7aa4c4cb15483659a66751d582904bfd3994e771de87482b8f80847c3"
+    },
+    {
+      "bytes": 2798,
+      "path": "datasets/player_feature_store_v1.json",
+      "sha256": "412dab9c307ee33fcdf81658132eda32c2c57fbe857230ffec6d0461eda10909"
+    },
+    {
+      "bytes": 1268,
+      "path": "models/api_elo_v1.json",
+      "sha256": "aa88e59b1f98f82a251b9286c9ded2f1072fa40c11c1e2cf9f2863e9404d756d"
+    },
+    {
+      "bytes": 6783,
+      "path": "models/api_player_pre_lineup_multinomial_v1.json",
+      "sha256": "6bd12f3df7756979da5797eb5c98d7d56fb99b158fcba185acef5814e3916672"
+    },
+    {
+      "bytes": 8665,
+      "path": "models/api_post_lineup_simulated_multinomial_v1.json",
+      "sha256": "eb7f88596ad1ec1363da612c22c93ebf25670427bb739f6be273c042e036428c"
+    },
+    {
+      "bytes": 4944,
+      "path": "models/api_team_multinomial_v1.json",
+      "sha256": "2ffc67e2c4f80b68cf831b8ecf04a7732296470dd8539650bdd436951e083633"
+    },
+    {
+      "bytes": 6181,
+      "path": "models/jalon6-run.json",
+      "sha256": "51925a58cb6802c3550a2d301ab074ff6001cbeebb890dc295d6b56ddb764a3f"
+    },
+    {
+      "bytes": 1301,
+      "path": "models/market_devigged_baseline_v1.json",
+      "sha256": "e189236053f15e3bc5518c24b2b2f1c584668ca42c7d619d524ee1bea1d2a957"
+    },
+    {
+      "bytes": 122165,
+      "path": "backtests/api_elo_v1_1x2_edge_0_02.json",
+      "sha256": "1c102e1267ddb0c2c7882195c50338cddf08ef84e4c5dcf51f72fb9410bacfa2"
+    },
+    {
+      "bytes": 108903,
+      "path": "backtests/api_elo_v1_1x2_edge_0_04.json",
+      "sha256": "b22fca280922f3157d4a6b4d48158944a9673da2a91bf951aada4da0bcc05efb"
+    },
+    {
+      "bytes": 82707,
+      "path": "backtests/api_elo_v1_1x2_edge_0_06.json",
+      "sha256": "a73c8d62d20bf93c47e2094169d2da3518d9e35453cc366c88e4fd9b737ae0fe"
+    },
+    {
+      "bytes": 126916,
+      "path": "backtests/api_player_pre_lineup_multinomial_v1_1x2_edge_0_02.json",
+      "sha256": "9a1201d14b1327f43f9ae9af1f9539a76fc5b6fd341022c706ed89ac30d8082b"
+    },
+    {
+      "bytes": 115633,
+      "path": "backtests/api_player_pre_lineup_multinomial_v1_1x2_edge_0_04.json",
+      "sha256": "3e59144bd7b0e89dceba331ebe09bed83c44bdb636fe499d3bc0d40556a29491"
+    },
+    {
+      "bytes": 97547,
+      "path": "backtests/api_player_pre_lineup_multinomial_v1_1x2_edge_0_06.json",
+      "sha256": "073492c1750e04582d0e756034ee6268db050f7490ccd798bd0f5a4bfcf62c5f"
+    },
+    {
+      "bytes": 123253,
+      "path": "backtests/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_02.json",
+      "sha256": "6ca4db58a737994d9f3c8e173da1d519cc762fba62fec17809f958c738ebe496"
+    },
+    {
+      "bytes": 112332,
+      "path": "backtests/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_04.json",
+      "sha256": "d49d878cd8cc16799766955fafcbc375014aa3fb42a602b7e6244c0e6c211edb"
+    },
+    {
+      "bytes": 96969,
+      "path": "backtests/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_06.json",
+      "sha256": "f38c78401f24d48435ae84dc60de74a0fbc78d0a83c938c77c1449bc91a2f670"
+    },
+    {
+      "bytes": 126262,
+      "path": "backtests/api_team_multinomial_v1_1x2_edge_0_02.json",
+      "sha256": "c8c2c3d8c7d86b64aa22cfc4a2f590a6a97843f55506f339e137a87c51514b80"
+    },
+    {
+      "bytes": 108606,
+      "path": "backtests/api_team_multinomial_v1_1x2_edge_0_04.json",
+      "sha256": "279903d01b8955291531a94ea96a021bc289d34dbd0ed6c907472bbfc153083c"
+    },
+    {
+      "bytes": 87349,
+      "path": "backtests/api_team_multinomial_v1_1x2_edge_0_06.json",
+      "sha256": "674af267651c0cb1cffb27ad0a67cb64a1ff7678a0146958a9108e5d9f93a40b"
+    },
+    {
+      "bytes": 109249,
+      "path": "backtests/market_devigged_baseline_v1_1x2_edge_0_02.json",
+      "sha256": "8970ac56be8ec1a16fd9ce701320ebb3f1303c9a2fa9aa19977f951abe5358ab"
+    },
+    {
+      "bytes": 83069,
+      "path": "backtests/market_devigged_baseline_v1_1x2_edge_0_04.json",
+      "sha256": "094cdf1d33d6604e31aed32d845eafe4c723247fb214cd7aee3be7d6bd287e53"
+    },
+    {
+      "bytes": 63070,
+      "path": "backtests/market_devigged_baseline_v1_1x2_edge_0_06.json",
+      "sha256": "2e54b4d8835e0d89aadea1c7e769a7d4186c30682bd3c6849ad06d05cf71fc52"
+    },
+    {
+      "bytes": 877,
+      "path": "strategies/api_elo_v1_1x2_edge_0_02.json",
+      "sha256": "15a3d2eba21812cde15d17856e5f1e678b9fdab7a3b4d321125702d861fb8f9e"
+    },
+    {
+      "bytes": 873,
+      "path": "strategies/api_elo_v1_1x2_edge_0_04.json",
+      "sha256": "10eef56c9d65d43399e53d581c3b639e740a1206f81f192e4869e4d350297ca0"
+    },
+    {
+      "bytes": 873,
+      "path": "strategies/api_elo_v1_1x2_edge_0_06.json",
+      "sha256": "393ffeff4b354ef841110f0610f44b05c5bde663c669f34812aca9bb85bd5a50"
+    },
+    {
+      "bytes": 927,
+      "path": "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_02.json",
+      "sha256": "b25f2da5d10c621ff8785ab69d97fae1032687b2899bd8de0b42bce89655bc4c"
+    },
+    {
+      "bytes": 927,
+      "path": "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_04.json",
+      "sha256": "7c81b43abbac767e5c6395ca04da1097c2c0c870977a57b089411250775b935c"
+    },
+    {
+      "bytes": 908,
+      "path": "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_06.json",
+      "sha256": "f2c54394119b7805652f0fd4d0c718aa06983818d2696d79ced3c1267c4a4b7d"
+    },
+    {
+      "bytes": 934,
+      "path": "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_02.json",
+      "sha256": "91b3926fe8b8486ca82ab4fa8c2391c25640c34e8531fbc0f00c34b836e9b0a0"
+    },
+    {
+      "bytes": 936,
+      "path": "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_04.json",
+      "sha256": "11c93757e5553245c8ad59d70ac39581c51736635fcdd8076f42c8f18e79705c"
+    },
+    {
+      "bytes": 935,
+      "path": "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_06.json",
+      "sha256": "dfeb54cd2f3ec3233414cf718852576af5efef27caf00b9cc02483cdbd8a1f0e"
+    },
+    {
+      "bytes": 884,
+      "path": "strategies/api_team_multinomial_v1_1x2_edge_0_02.json",
+      "sha256": "bf6fa0de86434328d204efe7e6bd7d3139405d822c1c7636495a44e7d1e3010d"
+    },
+    {
+      "bytes": 888,
+      "path": "strategies/api_team_multinomial_v1_1x2_edge_0_04.json",
+      "sha256": "313e5292529dc428ad678231d26659d3641cc0983895d0b91349d4a047edca57"
+    },
+    {
+      "bytes": 889,
+      "path": "strategies/api_team_multinomial_v1_1x2_edge_0_06.json",
+      "sha256": "e96ec15917306390ba89677bf140762a6a190b881c7904fceca98fac6eca3c9b"
+    },
+    {
+      "bytes": 218,
+      "path": "strategies/jalon6-run.json",
+      "sha256": "7a4e5c219bc6dd8176653a0ca5d919c4c40f300941784ecb17e6114d9e09d44d"
+    },
+    {
+      "bytes": 907,
+      "path": "strategies/market_devigged_baseline_v1_1x2_edge_0_02.json",
+      "sha256": "b40be0c2e5c7744c0a7392bf81bf5d85780611846b7d673436757b78cd661b98"
+    },
+    {
+      "bytes": 895,
+      "path": "strategies/market_devigged_baseline_v1_1x2_edge_0_04.json",
+      "sha256": "c6b0bcc0af9a0c91e4bbcc2e99fa219d2d140baae1f88eafd6d7b086ebe3dc2e"
+    },
+    {
+      "bytes": 898,
+      "path": "strategies/market_devigged_baseline_v1_1x2_edge_0_06.json",
+      "sha256": "0fd2d3a613eac39e3ba3ea04f5a6d54c4c467d3a9792357d50c65bd0ccdc5d61"
+    }
+  ],
+  "baseline_hash": "e1f50e9a30d5e1ef3883a6d7455320dd6b94da3d4715b9370eb9c8bd074e4d3e",
+  "oos_governance": {
+    "periods": {
+      "DISCOVERY": [
+        2020,
+        2021,
+        2022
+      ],
+      "EXPOSED_HISTORICAL_OOS": [
+        2024,
+        2025
+      ],
+      "LIVE_PROSPECTIVE": [
+        2026,
+        2027
+      ],
+      "VALIDATION": [
+        2023
+      ]
+    },
+    "protocol": "OOS_GOVERNANCE_V1",
+    "selection_rule": "No parameter, feature, calibration or strategy threshold may be selected from EXPOSED_HISTORICAL_OOS or LIVE_PROSPECTIVE."
+  },
+  "production_status": "PRODUCTION_LOCKED",
+  "source_commit": "608654b81ac1910ccb72bf8604aaeec788fb5a2c",
+  "status": "JALON6_BASELINE_FROZEN"
+}

@@ -1,0 +1,31 @@
+{
+  "daily_risk_limit_units": 3.0,
+  "edge_thresholds": [
+    0.03,
+    0.05,
+    0.07
+  ],
+  "markets": [
+    "1X2",
+    "OVER_UNDER_2_5",
+    "BTTS"
+  ],
+  "maximum_odds": [
+    3.5,
+    5.0
+  ],
+  "maximum_stake_units": 1.0,
+  "minimum_odds": [
+    1.5,
+    1.7
+  ],
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_rule": "No promotion without positive paired 95% interval, adequate sample, external validation and independent LIVE_PROSPECTIVE confirmation.",
+  "protocol_hash": "f7be9012ded15d67ce36f663e5d0df8aaaf5ace6f522f7a53b1b49faf2bff245",
+  "protocol_id": "STRATEGY_LAB_V2_PREREGISTERED",
+  "selection_period": "DISCOVERY_AND_VALIDATION_ONLY",
+  "staking": [
+    "FLAT_1_UNIT",
+    "FRACTIONAL_KELLY_0_10"
+  ]
+}

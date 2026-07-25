@@ -1,0 +1,64 @@
+[
+  {
+    "ablation_id": "WITHOUT_TEAM_FORM",
+    "comparison": "EXACT_PAIRED_FIXTURES_V1",
+    "removed_features": [
+      "elo_difference",
+      "home_form_5",
+      "away_form_5",
+      "home_goals_for_5",
+      "away_goals_for_5",
+      "home_goals_against_5",
+      "away_goals_against_5",
+      "home_rest_days",
+      "away_rest_days",
+      "home_shots_5",
+      "away_shots_5",
+      "home_shots_on_goal_5",
+      "away_shots_on_goal_5",
+      "home_possession_5",
+      "away_possession_5"
+    ],
+    "status": "PREREGISTERED"
+  },
+  {
+    "ablation_id": "WITHOUT_PLAYER_PRE_LINEUP",
+    "comparison": "EXACT_PAIRED_FIXTURES_V1",
+    "removed_features": [
+      "home_expected_starting_xi_strength",
+      "away_expected_starting_xi_strength",
+      "home_expected_bench_strength",
+      "away_expected_bench_strength",
+      "home_expected_lineup_continuity",
+      "away_expected_lineup_continuity",
+      "home_expected_lineup_uncertainty",
+      "away_expected_lineup_uncertainty"
+    ],
+    "status": "PREREGISTERED"
+  },
+  {
+    "ablation_id": "WITHOUT_CONFIRMED_LINEUP",
+    "comparison": "EXACT_PAIRED_FIXTURES_V1",
+    "removed_features": [
+      "home_confirmed_starting_xi_strength",
+      "away_confirmed_starting_xi_strength",
+      "home_confirmed_bench_strength",
+      "away_confirmed_bench_strength",
+      "home_confirmed_lineup_continuity",
+      "away_confirmed_lineup_continuity",
+      "home_difference_vs_expected",
+      "away_difference_vs_expected"
+    ],
+    "status": "PREREGISTERED"
+  },
+  {
+    "ablation_id": "WITHOUT_MARKET",
+    "comparison": "EXACT_PAIRED_FIXTURES_V1",
+    "removed_features": [
+      "odds_home",
+      "odds_draw",
+      "odds_away"
+    ],
+    "status": "PREREGISTERED"
+  }
+]

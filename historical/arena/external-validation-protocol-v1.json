@@ -1,0 +1,35 @@
+{
+  "bootstrap_iterations": 5000,
+  "bootstrap_unit": "season_and_iso_week",
+  "competitions": [
+    "Premier League",
+    "La Liga",
+    "Bundesliga",
+    "Serie A",
+    "UEFA Champions League"
+  ],
+  "confidence_intervals": [
+    0.9,
+    0.95
+  ],
+  "failure_rule": "No promotion; retain as research result.",
+  "minimum_seasons": 3,
+  "pairing_key": [
+    "fixture_id",
+    "season",
+    "target",
+    "market_snapshot",
+    "temporal_policy"
+  ],
+  "primary_metric": "paired_log_loss_delta",
+  "production_status": "PRODUCTION_LOCKED",
+  "protocol_hash": "0ac9f1fb4464a9a19fbce3d4a9db6f94faad406b538638ee92972495a2d8c59f",
+  "protocol_id": "EXTERNAL_VALIDATION_PROTOCOL_V1",
+  "registered_before_results": true,
+  "secondary_metrics": [
+    "brier_score",
+    "ece",
+    "accuracy"
+  ],
+  "success_rule": "95% interval excludes zero in the favourable direction and P(superiority)>=0.95 on at least three competitions."
+}
