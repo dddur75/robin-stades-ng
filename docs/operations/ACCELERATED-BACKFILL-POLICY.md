@@ -19,3 +19,8 @@ qualité temporelle critique ou seuil de stockage.
 Les reprises HTTP utilisent backoff exponentiel avec jitter, débit configurable
 et circuit breaker. Une indisponibilité permanente devient
 `SKIPPED_UNAVAILABLE` ou `QUARANTINED`; elle n’est pas rappelée indéfiniment.
+
+La couverture ne se déclenche pas en parallèle de chaque push : elle reste
+hebdomadaire et manuelle. Le backfill est ainsi le seul run historique
+automatique susceptible d’attendre le verrou, ce qui évite le remplacement
+d’un run GitHub en attente.

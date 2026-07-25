@@ -278,6 +278,12 @@ def test_workflows_isolent_live_et_historique_et_retry_git_est_borne() -> None:
         )
         assert workflow["concurrency"]["group"] == "historical-state"
         assert workflow["concurrency"]["cancel-in-progress"] is False
+    coverage = yaml.safe_load(
+        (root / ".github" / "workflows" / "api-football-coverage.yml").read_text(
+            "utf-8"
+        )
+    )
+    assert "push" not in coverage[True]
     for name in ("collect-fixtures.yml", "collect-odds.yml", "daily-health.yml"):
         workflow = yaml.safe_load(
             (root / ".github" / "workflows" / name).read_text("utf-8")

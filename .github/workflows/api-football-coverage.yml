@@ -1,13 +1,5 @@
 name: "20 - Couverture API-Football"
 on:
-  push:
-    branches:
-      - codex/jalon-5-deep-data-factory
-    paths:
-      - "src/robin/historical/**"
-      - "src/robin/providers/api_football.py"
-      - "scripts/run_historical_pipeline.py"
-      - ".github/workflows/api-football-coverage.yml"
   workflow_dispatch:
     inputs:
       max_calls:
@@ -17,7 +9,7 @@ on:
       quota_reserve:
         description: "Réserve quotidienne minimale"
         type: number
-        default: 100
+        default: 5000
   schedule:
     - cron: "11 1 * * 1"
 permissions:
@@ -44,7 +36,7 @@ jobs:
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
           --max-calls "${{ inputs.max_calls || 25 }}"
-          --quota-reserve "${{ inputs.quota_reserve || 100 }}"
+          --quota-reserve "${{ inputs.quota_reserve || 5000 }}"
           coverage
       - uses: ./.github/actions/historical-state-persist
         with:
