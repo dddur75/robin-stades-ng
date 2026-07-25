@@ -12,7 +12,7 @@ lignes, matching et stockage viennent exclusivement de ce rapport durable.
 The Odds API historique reste en dry-run à zéro crédit. La production reste
 `PRODUCTION_LOCKED` et `REAL_BETS = false`.
 
-## Preuve réelle sur historical-data@1f3b606
+## Preuve durable sur historical-data@518cb4b
 
 - 30 CSV archivés, 10 734 matchs source et 10 732 appariés;
 - mapping global 99,981 %, zéro ambiguïté, zéro non-résolu, deux conflits de
@@ -22,9 +22,9 @@ The Odds API historique reste en dry-run à zéro crédit. La production reste
 - le marché présente un Log Loss inférieur dans les 18 comparaisons;
 - zéro candidat shadow, `NO_EXTERNAL_VALIDATED_EDGE`;
 - zéro appel API-Football et zéro crédit The Odds API;
-- stockage mesuré 421,2 MB, projection centrale 841,2 MB, projection haute
-  886,2 MB : `OBJECT_STORAGE_RECOMMENDED`.
+- stockage mesuré 474,1 MB, projection centrale 894,1 MB, projection haute
+  939,1 MB : `OBJECT_STORAGE_REQUIRED`.
 
-Cette preuve locale détachée ne concurrence pas le backfill actif. Sa
-persistance sur `historical-data` est effectuée par le workflow pré-fusion dès
-que le verrou `historical-state` est libre.
+Le workflow pré-fusion `30169811244` a persisté cette preuve avec zéro appel
+API-Football et zéro crédit The Odds API. P3/P4 restent suspendus; seules les
+tâches critiques continuent jusqu’à activation R2.

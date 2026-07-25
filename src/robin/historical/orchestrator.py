@@ -113,6 +113,18 @@ def business_value_priority(
     return "P4_DEFERRED"
 
 
+def storage_allows_business_priority(
+    storage_status: str,
+    business_priority: str,
+) -> bool:
+    """Suspendre P3/P4 quand la projection haute franchit la pause."""
+
+    return not (
+        storage_status == "OBJECT_STORAGE_REQUIRED"
+        and business_priority in {"P3_SECONDARY", "P4_DEFERRED"}
+    )
+
+
 def stable_task_id(
     competition_id: int,
     season: int,

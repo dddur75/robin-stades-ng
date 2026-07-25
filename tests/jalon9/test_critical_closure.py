@@ -29,6 +29,7 @@ from robin.historical.orchestrator import (
     BUSINESS_PRIORITY_ORDER,
     build_backfill_plan,
     business_value_priority,
+    storage_allows_business_priority,
 )
 
 
@@ -62,6 +63,21 @@ def test_plan_contains_business_priority_and_no_task_is_removed() -> None:
     assert all(task.business_value_priority in BUSINESS_PRIORITY_ORDER for task in plan)
     assert any(task.business_value_priority == "P4_DEFERRED" for task in plan)
     assert any(task.endpoint == "transfers" for task in plan)
+
+
+def test_required_storage_suspends_only_p3_p4() -> None:
+    assert storage_allows_business_priority(
+        "OBJECT_STORAGE_REQUIRED", "P1_PLAYER_MATCH_STATS"
+    )
+    assert not storage_allows_business_priority(
+        "OBJECT_STORAGE_REQUIRED", "P3_SECONDARY"
+    )
+    assert not storage_allows_business_priority(
+        "OBJECT_STORAGE_REQUIRED", "P4_DEFERRED"
+    )
+    assert storage_allows_business_priority(
+        "OBJECT_STORAGE_RECOMMENDED", "P4_DEFERRED"
+    )
 
 
 def test_fixture_request_context_is_normalized() -> None:

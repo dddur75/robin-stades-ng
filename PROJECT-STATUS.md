@@ -215,3 +215,8 @@ La branche Jalon 9 ajoute la priorité `business_value_priority`, la Historical
 Market Factory Football-Data, les gates TEAM/PLAYER/LINEUP/MARKET, le forecast
 object storage et l’adaptateur R2. Le backfill conserve 30 000 appels/jour, une
 réserve de 5 000 et un passage toutes les deux heures. `REAL_BETS = false`.
+
+La preuve durable `historical-data@518cb4b` mesure 474,1 MB, 894,1 MB de
+projection centrale et 939,1 MB de projection haute :
+`OBJECT_STORAGE_REQUIRED`. P3/P4 sont suspendus; les gates critiques restent
+autorisés.

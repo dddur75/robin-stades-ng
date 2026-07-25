@@ -137,3 +137,7 @@ API-Football conserve 30 000 appels/jour et 5 000 de réserve. Football-Data est
 une archive publique sans crédit fournisseur. The Odds API historique est
 plafonnée à 500 crédits et démarre avec un dry-run à zéro crédit. Aucun bucket
 R2 ni abonnement n’est créé automatiquement.
+
+Mesure durable Jalon 9 : 474 143 947 octets; projection gates critiques
+634 143 947; plan complet 894 143 947; plan complet avec marché 939 143 947.
+Le seuil haut de 900 MB impose `OBJECT_STORAGE_REQUIRED`.

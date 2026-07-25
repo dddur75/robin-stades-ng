@@ -31,6 +31,7 @@ from robin.historical.canonical import (
     canonicalize_fixtures,
     validate_canonical_cardinality,
 )
+from robin.historical.critical_closure import storage_readiness
 from robin.historical.dataset_factory import (
     build_api_team_pre_match,
     build_player_feature_datasets,
@@ -63,6 +64,7 @@ from robin.historical.orchestrator import (
     quota_decision,
     select_validated_competition,
     stable_task_id,
+    storage_allows_business_priority,
 )
 from robin.historical.pagination import iterate_pages
 from robin.historical.quality import (
@@ -938,6 +940,8 @@ def command_backfill(args: argparse.Namespace) -> None:
             str(task.get("endpoint", "")),
         )
     )
+    storage_guard = storage_readiness(args.state)
+    deferred_by_storage = 0
     completed = 0
     expanded = 0
     unavailable_this_run = 0
@@ -956,6 +960,12 @@ def command_backfill(args: argparse.Namespace) -> None:
             "RETRYABLE",
             "SKIPPED_QUOTA",
         }:
+            continue
+        if not storage_allows_business_priority(
+            str(storage_guard["status"]),
+            str(task.get("business_value_priority", "P4_DEFERRED")),
+        ):
+            deferred_by_storage += 1
             continue
         if time.monotonic() - started_monotonic >= args.max_duration_minutes * 60:
             stopped_reason = "MAX_DURATION_REACHED"
@@ -1143,6 +1153,8 @@ def command_backfill(args: argparse.Namespace) -> None:
         "unavailable_this_run": unavailable_this_run,
         "quarantined_this_run": quarantined_this_run,
         "stopped_reason": stopped_reason,
+        "storage_guard": storage_guard,
+        "deferred_by_storage": deferred_by_storage,
         "quota_remaining": runner.quota_remaining,
         "production_status": "PRODUCTION_LOCKED",
         "scheduler": {
