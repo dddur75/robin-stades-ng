@@ -1,10 +1,21 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-24
+Dernière mise à jour : 2026-07-25
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-4-durable-shadow`
+Branche : `codex/jalon-5-deep-data-factory`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
+
+## Jalon 5.1 — revue pré-fusion
+
+`historical-data` est séparée de `shadow-data` avec 3 180 fichiers et
+16 184 894 octets migrés à hash identique. Les sept workflows historiques
+utilisent `historical-state`; le live conserve `shadow-state`.
+
+Le pilote Ligue 1 2025 est canonicalisé : 306 fixtures et 18 clubs entrent dans
+`ligue1_2025_regular_season`; quatre fixtures de barrage et Red Star, Rodez,
+Saint-Étienne sont conservés mais exclus. Le backfill reste
+`HISTORICAL_BACKFILL_ACTIVE` en mode `ACCELERATED_SAFE`.
 
 ## État global
 

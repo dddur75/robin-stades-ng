@@ -1,12 +1,12 @@
 name: "Restaurer l'état historique"
-description: "Restaurer le registre Jalon 5 depuis la branche shadow-data"
+description: "Restaurer le registre Jalon 5 depuis la branche historical-data"
 runs:
   using: composite
   steps:
     - name: Restaurer le registre isolé
       uses: actions/checkout@v4
       with:
-        ref: shadow-data
+        ref: historical-data
         path: .historical-registry
         fetch-depth: 1
     - name: Restaurer les checkpoints historiques

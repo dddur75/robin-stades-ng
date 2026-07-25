@@ -1,4 +1,4 @@
-"""Pont durable append-only du backfill historique vers ``shadow-data``."""
+"""Pont durable append-only du backfill historique vers ``historical-data``."""
 
 from __future__ import annotations
 
@@ -8,6 +8,8 @@ import hashlib
 import json
 import shutil
 from pathlib import Path
+
+from robin.historical.storage import HistoricalBundleStore
 
 
 def file_hash(path: Path) -> str:
@@ -38,6 +40,18 @@ def append_state(state: Path, registry: Path) -> dict[str, object]:
                 raise RuntimeError(f"payload brut immuable altéré: {relative}")
         shutil.copy2(source, target)
         copied += 1
+    compacted = 0
+    for bundle_manifest in sorted((state / "bundles").rglob("*.manifest.json")):
+        manifest = json.loads(bundle_manifest.read_text("utf-8"))
+        if not manifest.get("sources_removed"):
+            continue
+        index_path = state / str(manifest["index"])
+        index = json.loads(index_path.read_text("utf-8"))
+        for entry in index.get("entries", []):
+            target = safe_target(destination, Path(str(entry["path"])))
+            if target.exists():
+                target.unlink()
+                compacted += 1
     manifest = {
         "schema_version": "jalon5-historical-v1",
         "files": {
@@ -51,7 +65,12 @@ def append_state(state: Path, registry: Path) -> dict[str, object]:
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    return {"status": "APPENDED", "copied": copied, "unchanged": unchanged}
+    return {
+        "status": "APPENDED",
+        "copied": copied,
+        "unchanged": unchanged,
+        "compacted_sources_removed": compacted,
+    }
 
 
 def verify_state(registry: Path) -> dict[str, object]:
@@ -90,7 +109,20 @@ def restore_state(registry: Path, destination: Path) -> dict[str, object]:
         if not target.exists() or file_hash(target) != file_hash(path):
             shutil.copy2(path, target)
             restored += 1
-    return {"status": "RESTORED", "files": restored}
+    replayed = 0
+    bundle_store = HistoricalBundleStore(destination)
+    for manifest_path in sorted((destination / "bundles").rglob("*.manifest.json")):
+        manifest = json.loads(manifest_path.read_text("utf-8"))
+        index = json.loads((destination / str(manifest["index"])).read_text("utf-8"))
+        for entry in index.get("entries", []):
+            relative = str(entry["path"])
+            target = safe_target(destination, Path(relative))
+            if target.exists() and file_hash(target) == entry["sha256"]:
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(bundle_store.replay_file(manifest_path, relative))
+            replayed += 1
+    return {"status": "RESTORED", "files": restored, "bundle_files_replayed": replayed}
 
 
 def main() -> None:

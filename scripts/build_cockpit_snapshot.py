@@ -52,6 +52,12 @@ def build_deep_data() -> dict[str, Any]:
     pilot = read_json(state / "runs" / "pilot-ligue-1-2025.json", {})
     plan = read_json(state / "tasks" / "backfill-plan.json", {})
     quality = read_json(state / "quality" / "latest.json", {})
+    canonical = read_json(
+        state / "audits" / "ligue1-2025-canonicalization.json",
+        {},
+    )
+    forecast = read_json(state / "forecasts" / "accelerated-safe.json", {})
+    compaction = read_json(state / "storage" / "latest-compaction.json", {})
     dataset = read_json(
         state / "datasets" / "team_baseline_v1.json",
         (
@@ -175,6 +181,8 @@ def build_deep_data() -> dict[str, Any]:
         "coverageCounts": coverage_counts,
         "coverageMatrix": matrix,
         "taskCounts": task_counts,
+        "taskTotal": len(plan.get("tasks", [])),
+        "taskCompleted": task_counts.get("COMPLETED", 0),
         "remainingTasks": plan.get("remaining_tasks", 0),
         "nextTask": next(
             (
@@ -189,23 +197,52 @@ def build_deep_data() -> dict[str, Any]:
         "quota": {
             "remaining": pilot.get("quota_remaining", proof.get("quota_remaining")),
             "calls": pilot.get("provider_calls", proof.get("calls", 0)),
-            "mode": "ACCELERATED",
-            "reserve": 100,
+            "mode": "ACCELERATED_SAFE",
+            "reserve": 5_000,
         },
         "storage": {
             "rawBytes": directory_size(state / "raw"),
             "parquetBytes": directory_size(state / "parquet"),
             "derivedBytes": directory_size(state / "derived"),
-            "backend": "POSTGRESQL + PARQUET + SHADOW-DATA",
+            "totalBytes": directory_size(state),
+            "fileCount": len([path for path in state.rglob("*") if path.is_file()]),
+            "bundleCount": len(
+                list((state / "bundles").rglob("*.manifest.json"))
+            ),
+            "payloadCount": len(list((state / "raw" / "payloads").rglob("*.gz"))),
+            "projectedBytes": forecast.get("storage_projected_bytes"),
+            "warningBytes": forecast.get("storage_warning_bytes"),
+            "pauseBytes": forecast.get("storage_pause_bytes"),
+            "capacityStatus": (
+                "PAUSE"
+                if directory_size(state)
+                >= int(forecast.get("storage_pause_bytes", 900_000_000))
+                else "WARNING"
+                if directory_size(state)
+                >= int(forecast.get("storage_warning_bytes", 750_000_000))
+                else "OK"
+            ),
+            "lastCompaction": compaction.get("status", "NOT_RUN"),
+            "backend": "POSTGRESQL + PARQUET + HISTORICAL-DATA",
         },
         "players": players,
         "featureCatalog": [
             {
                 "name": name,
                 "version": "v1",
-                "status": "COMPUTABLE" if dataset else "CANDIDATE",
+                "status": (
+                    "BLOCKED_BY_COVERAGE"
+                    if name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
+                    else "LEGACY_SOURCE_ONLY"
+                    if dataset
+                    else "CANDIDATE"
+                ),
                 "leakageRisk": "LOW",
-                "origin": "HISTORICAL POINT-IN-TIME",
+                "origin": (
+                    "NO OUTPUT"
+                    if name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
+                    else "LEGACY SOURCE"
+                ),
             }
             for name in (
                 "elo_global",
@@ -232,6 +269,52 @@ def build_deep_data() -> dict[str, Any]:
             else []
         ),
         "quality": quality,
+        "progress": {
+            "tasksTotal": len(plan.get("tasks", [])),
+            "tasksCompleted": task_counts.get("COMPLETED", 0),
+            "tasksRemaining": plan.get("remaining_tasks", 0),
+            "callsConsumed": pilot.get("provider_calls", 0),
+            "callsEstimated": forecast.get("estimated_calls_full_scope"),
+            "callsPerHour": (
+                round(3600 / forecast["observed"]["seconds_per_call"])
+                if forecast.get("observed", {}).get("seconds_per_call")
+                else None
+            ),
+            "callsPerDay": forecast.get("calls_per_day"),
+            "etaPriorityADays": forecast.get("eta_priority_a_days"),
+            "etaPriorityBDays": forecast.get("eta_priority_b_days"),
+            "etaFullDays": forecast.get("eta_full_scope_days"),
+        },
+        "canonicality": {
+            key: canonical.get(key)
+            for key in (
+                "status",
+                "received_fixtures",
+                "canonical_fixtures",
+                "received_teams",
+                "canonical_teams",
+                "classifications",
+                "dataset_hash",
+            )
+        },
+        "isolation": {
+            "status": "LIVE_HISTORICAL_ISOLATED",
+            "liveActive": True,
+            "historicalActive": plan.get("status") == "HISTORICAL_BACKFILL_ACTIVE",
+            "liveBranch": "shadow-data",
+            "historicalBranch": "historical-data",
+            "liveConcurrency": "shadow-state",
+            "historicalConcurrency": "historical-state",
+            "lastConflict": None,
+            "lag": 0,
+        },
+        "playerReadiness": {
+            "coverage": "INSUFFICIENT",
+            "quality": "PARTIAL",
+            "temporality": "PENDING_MULTI_SEASON",
+            "status": "BLOCKED_BY_COVERAGE",
+            "estimatedFirstModel": "après priorité A et seuils multi-saisons",
+        },
         "origins": [
             "LIVE SHADOW",
             "HISTORICAL POINT-IN-TIME",

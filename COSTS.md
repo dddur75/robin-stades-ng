@@ -1,9 +1,17 @@
 # Suivi des coûts
 
+## Jalon 5.1 — cadence mesurée
+
+Le pilote a consommé 1 354 appels sans achat supplémentaire. La cible
+`ACCELERATED_SAFE` est 30 000 appels/jour avec 5 000 appels de réserve. Les ETA
+opérationnelles sont trois jours pour la priorité A, huit jours pour la
+priorité B et dix jours pour le périmètre complet. GitHub Actions reste dans
+les capacités incluses ; aucun stockage objet n’est souscrit automatiquement.
+
 ## Jalon 5 — budget API-Football séparé
 
 Le quota quotidien API-Football n’est jamais mélangé au quota mensuel The Odds
-API. Le mode de backfill est `ACCELERATED`, avec réserve minimale de 100 appels.
+API. Le mode de backfill est `ACCELERATED_SAFE`, avec réserve minimale de 5 000 appels.
 Le pilote Ligue 1 2025 a consommé 1 354 appels et conservé une réserve très
 supérieure aux 100 appels configurés. Une extrapolation volontairement simple
 donne environ 10 832 appels pour huit saisons de Ligue 1, 32 496 pour six

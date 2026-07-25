@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: shadow-state
+  group: historical-state
   cancel-in-progress: false
 jobs:
   features:

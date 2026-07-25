@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import random
 import time
 from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
@@ -84,7 +85,11 @@ class JsonHttpProvider:
         ingestion_run_id: str = "manual",
         transport: Transport | None = None,
         sleeper: Callable[[float], None] = time.sleep,
+        randomizer: Callable[[], float] = random.random,
         max_retries: int = 2,
+        request_rate_per_second: float | None = None,
+        circuit_failure_threshold: int = 3,
+        circuit_cooldown_seconds: float = 60.0,
         offline: bool = False,
     ) -> None:
         self.provider_name = provider_name
@@ -96,8 +101,39 @@ class JsonHttpProvider:
         self.ingestion_run_id = ingestion_run_id
         self.transport = transport or RequestsTransport()
         self.sleeper = sleeper
+        self.randomizer = randomizer
         self.max_retries = max_retries
+        self.request_rate_per_second = request_rate_per_second
+        self.circuit_failure_threshold = circuit_failure_threshold
+        self.circuit_cooldown_seconds = circuit_cooldown_seconds
+        self._consecutive_failures = 0
+        self._circuit_opened_at: float | None = None
+        self._last_request_at: float | None = None
         self.offline = offline
+
+    def _wait_for_rate_limit(self) -> None:
+        if not self.request_rate_per_second or self.request_rate_per_second <= 0:
+            return
+        now = time.monotonic()
+        interval = 1.0 / self.request_rate_per_second
+        if self._last_request_at is not None:
+            delay = interval - (now - self._last_request_at)
+            if delay > 0:
+                self.sleeper(delay)
+        self._last_request_at = time.monotonic()
+
+    def _record_failure(self) -> None:
+        self._consecutive_failures += 1
+        if self._consecutive_failures >= self.circuit_failure_threshold:
+            self._circuit_opened_at = time.monotonic()
+
+    def _assert_circuit_closed(self) -> None:
+        if self._circuit_opened_at is None:
+            return
+        if time.monotonic() - self._circuit_opened_at < self.circuit_cooldown_seconds:
+            raise TransientProviderError(f"{self.provider_name}: circuit_open")
+        self._circuit_opened_at = None
+        self._consecutive_failures = 0
 
     def _request(
         self,
@@ -124,6 +160,7 @@ class JsonHttpProvider:
                 origin=DataOrigin.LIVE_SOURCE,
                 message="credential_absent",
             )
+        self._assert_circuit_closed()
         query = dict(params or {})
         headers: dict[str, str] = {"accept": "application/json"}
         if self.credential_param:
@@ -135,6 +172,7 @@ class JsonHttpProvider:
         response: ResponseLike | None = None
         requested_at = datetime.now(UTC)
         for attempt in range(self.max_retries + 1):
+            self._wait_for_rate_limit()
             try:
                 response = self.transport.get(
                     url,
@@ -144,27 +182,33 @@ class JsonHttpProvider:
                 )
             except requests.RequestException as exc:
                 if attempt == self.max_retries:
+                    self._record_failure()
                     raise TransientProviderError(str(exc)) from exc
-                self.sleeper(2**attempt)
+                self.sleeper(2**attempt + self.randomizer())
                 continue
             if response.status_code == 429:
                 if attempt == self.max_retries:
+                    self._record_failure()
                     raise RateLimitError(f"{self.provider_name}: quota HTTP 429")
-                self.sleeper(2**attempt)
+                self.sleeper(2**attempt + self.randomizer())
                 continue
             if response.status_code >= 500:
                 if attempt == self.max_retries:
+                    self._record_failure()
                     raise TransientProviderError(
                         f"{self.provider_name}: HTTP {response.status_code}"
                     )
-                self.sleeper(2**attempt)
+                self.sleeper(2**attempt + self.randomizer())
                 continue
             break
 
         if response is None:
+            self._record_failure()
             raise TransientProviderError(
                 f"{self.provider_name}: aucune réponse après les reprises"
             )
+        self._consecutive_failures = 0
+        self._circuit_opened_at = None
         received_at = datetime.now(UTC)
         raw_id: str | None = None
         raw_payload_hash: str | None = None

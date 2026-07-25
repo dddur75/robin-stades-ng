@@ -6,6 +6,7 @@ import gzip
 import hashlib
 import json
 import re
+import tarfile
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
@@ -155,3 +156,137 @@ def write_json_atomic(path: Path, value: Any) -> None:
         encoding="utf-8",
     )
     temporary.replace(path)
+
+
+class HistoricalBundleStore:
+    """Bundles immuables et rejouables, avec index et hashes par fichier."""
+
+    SCHEMA_VERSION = "historical-bundle-v1"
+
+    def __init__(self, state_root: Path) -> None:
+        self.state_root = state_root.resolve()
+        self.bundle_root = self.state_root / "bundles"
+        self.bundle_root.mkdir(parents=True, exist_ok=True)
+
+    def create_bundle(
+        self,
+        files: Iterable[Path],
+        *,
+        run_id: str,
+        competition: str,
+        season: int,
+        endpoint: str,
+        remove_sources: bool = False,
+    ) -> dict[str, object]:
+        entries: list[dict[str, object]] = []
+        sources: list[Path] = []
+        for source in sorted({path.resolve() for path in files}):
+            if self.state_root not in source.parents or not source.is_file():
+                raise ValueError(f"fichier hors état historique: {source}")
+            relative = source.relative_to(self.state_root).as_posix()
+            if relative.startswith("bundles/"):
+                continue
+            sources.append(source)
+            entries.append(
+                {
+                    "path": relative,
+                    "size": source.stat().st_size,
+                    "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                }
+            )
+        global_hash = hashlib.sha256(
+            json.dumps(entries, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        directory = (
+            self.bundle_root
+            / _safe_partition(run_id)
+            / _safe_partition(competition)
+            / str(season)
+            / _safe_partition(endpoint)
+        )
+        directory.mkdir(parents=True, exist_ok=True)
+        archive = directory / f"{global_hash}.tar.gz"
+        index_path = directory / f"{global_hash}.index.json"
+        manifest_path = directory / f"{global_hash}.manifest.json"
+        if not archive.exists():
+            with tarfile.open(archive, "w:gz", compresslevel=9) as bundle:
+                for source, entry in zip(sources, entries, strict=True):
+                    bundle.add(source, arcname=str(entry["path"]), recursive=False)
+        archive_hash = hashlib.sha256(archive.read_bytes()).hexdigest()
+        index = {
+            "schema_version": self.SCHEMA_VERSION,
+            "entries": entries,
+        }
+        manifest = {
+            "schema_version": self.SCHEMA_VERSION,
+            "run_id": run_id,
+            "competition": competition,
+            "season": season,
+            "endpoint": endpoint,
+            "payload_count": len(entries),
+            "global_hash": global_hash,
+            "archive_sha256": archive_hash,
+            "archive_bytes": archive.stat().st_size,
+            "index": index_path.relative_to(self.state_root).as_posix(),
+            "archive": archive.relative_to(self.state_root).as_posix(),
+            "sources_removed": remove_sources,
+        }
+        write_json_atomic(index_path, index)
+        write_json_atomic(manifest_path, manifest)
+        self.verify_bundle(manifest_path)
+        if remove_sources:
+            for source in sources:
+                source.unlink()
+        return manifest
+
+    def verify_bundle(self, manifest_path: Path) -> dict[str, object]:
+        manifest = json.loads(manifest_path.read_text("utf-8"))
+        archive = self.state_root / str(manifest["archive"])
+        index_path = self.state_root / str(manifest["index"])
+        if hashlib.sha256(archive.read_bytes()).hexdigest() != manifest["archive_sha256"]:
+            raise RuntimeError("hash global d'archive historique invalide")
+        index = json.loads(index_path.read_text("utf-8"))
+        expected = {
+            str(entry["path"]): str(entry["sha256"])
+            for entry in index.get("entries", [])
+        }
+        found: dict[str, str] = {}
+        with tarfile.open(archive, "r:gz") as bundle:
+            for member in bundle.getmembers():
+                if not member.isfile():
+                    continue
+                stream = bundle.extractfile(member)
+                if stream is None:
+                    raise RuntimeError(f"entrée illisible: {member.name}")
+                found[member.name] = hashlib.sha256(stream.read()).hexdigest()
+        if found != expected:
+            raise RuntimeError("index de bundle historique incohérent")
+        return {"status": "VERIFIED", "files": len(found)}
+
+    def replay_file(self, manifest_path: Path, relative: str) -> bytes:
+        self.verify_bundle(manifest_path)
+        manifest = json.loads(manifest_path.read_text("utf-8"))
+        archive = self.state_root / str(manifest["archive"])
+        with tarfile.open(archive, "r:gz") as bundle:
+            try:
+                member = bundle.getmember(relative)
+            except KeyError as exc:
+                raise FileNotFoundError(relative) from exc
+            stream = bundle.extractfile(member)
+            if stream is None:
+                raise FileNotFoundError(relative)
+            return stream.read()
+
+
+def storage_inventory(root: Path) -> dict[str, object]:
+    files = [path for path in root.rglob("*") if path.is_file()]
+    bundles = [path for path in files if path.name.endswith(".manifest.json")]
+    payloads = [path for path in files if "payloads" in path.parts and path.suffix == ".gz"]
+    parquet = [path for path in files if path.suffix == ".parquet"]
+    return {
+        "files": len(files),
+        "bytes": sum(path.stat().st_size for path in files),
+        "bundles": len(bundles),
+        "payloads": len(payloads),
+        "parquet": len(parquet),
+    }

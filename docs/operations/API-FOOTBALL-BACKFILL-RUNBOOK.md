@@ -1,5 +1,16 @@
 # Runbook — Backfill API-Football
 
+## Cadence Jalon 5.1
+
+Le cron s’exécute à `37 */2 * * *`. Laisser `max_calls=0` et `max_tasks=0`
+active le calcul `ACCELERATED_SAFE`. Les limites explicites de dispatch restent
+des plafonds opérateur. Un seul run historique est actif. Le live utilise une
+autre clé de concurrence et ne doit jamais attendre ce run.
+
+Raisons d’arrêt enregistrées : `QUOTA_PROTECTED`, `MAX_DURATION_REACHED`,
+`HTTP_429_CIRCUIT_OPEN`, `ERROR_RATE_ABOVE_5_PERCENT`,
+`TEMPORAL_QUALITY_CRITICAL`, `STORAGE_PAUSE_THRESHOLD` ou absence de tâche.
+
 ## Ordre autonome
 
 1. `20 - Couverture API-Football` valide l’authentification et les identifiants.
@@ -21,4 +32,3 @@ python scripts/run_historical_pipeline.py features
 python scripts/run_historical_pipeline.py train
 python scripts/run_historical_pipeline.py backtest
 ```
-

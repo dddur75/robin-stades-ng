@@ -10782,6 +10782,8 @@
       "RETRYABLE": 4,
       "PENDING": 614
     },
+    "taskTotal": 6184,
+    "taskCompleted": 54,
     "remainingTasks": 6130,
     "nextTask": {
       "attempt_count": 0,
@@ -10844,14 +10846,23 @@
     "quota": {
       "remaining": 148648,
       "calls": 1354,
-      "mode": "ACCELERATED",
-      "reserve": 100
+      "mode": "ACCELERATED_SAFE",
+      "reserve": 5000
     },
     "storage": {
       "rawBytes": 3427731,
       "parquetBytes": 7436787,
       "derivedBytes": 4672644,
-      "backend": "POSTGRESQL + PARQUET + SHADOW-DATA"
+      "totalBytes": 25219989,
+      "fileCount": 3167,
+      "bundleCount": 1,
+      "payloadCount": 1545,
+      "projectedBytes": 139827339,
+      "warningBytes": 750000000,
+      "pauseBytes": 900000000,
+      "capacityStatus": "OK",
+      "lastCompaction": "COMPACTED_AND_VERIFIED",
+      "backend": "POSTGRESQL + PARQUET + HISTORICAL-DATA"
     },
     "players": [
       {
@@ -11099,65 +11110,65 @@
       {
         "name": "elo_global",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "LEGACY_SOURCE_ONLY",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "LEGACY SOURCE"
       },
       {
         "name": "forme_5",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "LEGACY_SOURCE_ONLY",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "LEGACY SOURCE"
       },
       {
         "name": "forme_10",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "LEGACY_SOURCE_ONLY",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "LEGACY SOURCE"
       },
       {
         "name": "buts_marques_5",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "LEGACY_SOURCE_ONLY",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "LEGACY SOURCE"
       },
       {
         "name": "buts_encaisses_5",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "LEGACY_SOURCE_ONLY",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "LEGACY SOURCE"
       },
       {
         "name": "jours_repos",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "LEGACY_SOURCE_ONLY",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "LEGACY SOURCE"
       },
       {
         "name": "minutes_joueur_5",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "BLOCKED_BY_COVERAGE",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "NO OUTPUT"
       },
       {
         "name": "force_onze",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "BLOCKED_BY_COVERAGE",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "NO OUTPUT"
       },
       {
         "name": "continuite_onze",
         "version": "v1",
-        "status": "COMPUTABLE",
+        "status": "BLOCKED_BY_COVERAGE",
         "leakageRisk": "LOW",
-        "origin": "HISTORICAL POINT-IN-TIME"
+        "origin": "NO OUTPUT"
       }
     ],
     "dataset": {
@@ -11334,6 +11345,48 @@
       "production_status": "PRODUCTION_LOCKED",
       "raw_observations": 0,
       "status": "PASSED"
+    },
+    "progress": {
+      "tasksTotal": 6184,
+      "tasksCompleted": 54,
+      "tasksRemaining": 6130,
+      "callsConsumed": 1354,
+      "callsEstimated": 63638,
+      "callsPerHour": 24658,
+      "callsPerDay": 30000,
+      "etaPriorityADays": 3.0,
+      "etaPriorityBDays": 8.0,
+      "etaFullDays": 10.0
+    },
+    "canonicality": {
+      "status": "PASSED",
+      "received_fixtures": 310,
+      "canonical_fixtures": 306,
+      "received_teams": 21,
+      "canonical_teams": 18,
+      "classifications": {
+        "REGULAR_SEASON_CANONICAL": 306,
+        "RELEGATION_PLAYOFF": 4
+      },
+      "dataset_hash": "e876d705d4272163a6499464f3ea220853654e3a3714de28d8c2da7617a633c0"
+    },
+    "isolation": {
+      "status": "LIVE_HISTORICAL_ISOLATED",
+      "liveActive": true,
+      "historicalActive": true,
+      "liveBranch": "shadow-data",
+      "historicalBranch": "historical-data",
+      "liveConcurrency": "shadow-state",
+      "historicalConcurrency": "historical-state",
+      "lastConflict": null,
+      "lag": 0
+    },
+    "playerReadiness": {
+      "coverage": "INSUFFICIENT",
+      "quality": "PARTIAL",
+      "temporality": "PENDING_MULTI_SEASON",
+      "status": "BLOCKED_BY_COVERAGE",
+      "estimatedFirstModel": "après priorité A et seuils multi-saisons"
     },
     "origins": [
       "LIVE SHADOW",

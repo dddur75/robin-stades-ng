@@ -1,5 +1,12 @@
 # Registre des features
 
+## Jalon 5.1 — verrou joueurs
+
+Toutes les features joueurs restent `BLOCKED_BY_COVERAGE`. Une saison pilote
+ne satisfait pas les seuils multi-saisons, identité, cardinalité et
+point-in-time. Aucun modèle joueur n’est entraîné. `team_baseline_v1` demeure
+`LEGACY SOURCE`, et Elo V1 demeure `LEGACY/OOS HISTORICAL`.
+
 ## Jalon 5 — Feature Factory V1
 
 | Feature | Version | Disponibilité | Statut | Risque de fuite |
@@ -16,4 +23,3 @@
 Les features d’équipe de `team_baseline_v1` sont calculées avant la mise à jour
 du match cible. Une valeur absente reste `null`. Les blessures non point-in-time
 et la composition officielle du match cible sont exclues du mode `PRE_LINEUP`.
-

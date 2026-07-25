@@ -37,7 +37,7 @@ on:
       max_calls:
         description: "Nombre maximal d'appels du lot"
         type: number
-        default: 1500
+        default: 0
       max_duration_minutes:
         description: "Durée maximale du lot"
         type: number
@@ -45,17 +45,17 @@ on:
       max_tasks:
         description: "Nombre maximal de tâches"
         type: number
-        default: 50
+        default: 0
       resume:
         description: "Reprendre les checkpoints"
         type: boolean
         default: true
   schedule:
-    - cron: "37 */4 * * *"
+    - cron: "37 */2 * * *"
 permissions:
   contents: write
 concurrency:
-  group: shadow-state
+  group: historical-state
   cancel-in-progress: false
 jobs:
   backfill:
@@ -97,14 +97,20 @@ jobs:
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
-          --max-calls "${{ inputs.max_calls || 1500 }}"
+          --max-calls "${{ inputs.max_calls || 0 }}"
           backfill
-          --max-tasks "${{ inputs.max_tasks || 50 }}"
+          --max-tasks "${{ inputs.max_tasks || 0 }}"
           --max-duration-minutes "${{ inputs.max_duration_minutes || 110 }}"
           --competition "${{ inputs.competition }}"
           ${{ inputs.season && format('--season {0}', inputs.season) || '' }}
           --endpoint "${{ inputs.endpoint }}"
           --priority "${{ inputs.priority }}"
+      - name: Actualiser la canonicalité et la prévision mesurée
+        run: |
+          python scripts/run_historical_pipeline.py \
+            --run-id "${{ github.run_id }}" canonicalize
+          python scripts/run_historical_pipeline.py \
+            --run-id "${{ github.run_id }}" forecast
       - uses: ./.github/actions/historical-state-persist
         with:
           run-id: ${{ github.run_id }}

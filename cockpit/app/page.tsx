@@ -814,6 +814,12 @@ function DeepDataCommandCenter() {
         <Metric label="Quota restant" value={deep.quota.remaining == null ? "—" : String(deep.quota.remaining)} detail={`${deep.quota.mode} · réserve ${deep.quota.reserve}`} />
         <Metric label="Stockage brut" value={`${(deep.storage.rawBytes / 1_048_576).toFixed(1)} MiB`} detail={deep.storage.backend} />
         <Metric label="Parquet" value={`${(deep.storage.parquetBytes / 1_048_576).toFixed(1)} MiB`} detail="partitions versionnées" />
+        <Metric label="ETA priorité A" value={`${deep.progress.etaPriorityADays ?? "—"} jours`} detail={`${deep.progress.callsPerDay ?? "—"} appels/jour`} />
+        <Metric label="ETA priorité B" value={`${deep.progress.etaPriorityBDays ?? "—"} jours`} detail={`globale ${deep.progress.etaFullDays ?? "—"} jours`} />
+        <Metric label="Canonicalité L1" value={`${deep.canonicality.canonical_fixtures ?? 0}/${deep.canonicality.received_fixtures ?? 0}`} detail={`${deep.canonicality.canonical_teams ?? 0}/${deep.canonicality.received_teams ?? 0} équipes`} />
+        <Metric label="Isolation" value={deep.isolation.status.replaceAll("_", " ")} detail={`${deep.isolation.liveBranch} / ${deep.isolation.historicalBranch}`} tone="good" />
+        <Metric label="Bundles" value={String(deep.storage.bundleCount)} detail={`${deep.storage.fileCount} fichiers · ${deep.storage.capacityStatus}`} />
+        <Metric label="Features joueurs" value={deep.playerReadiness.status.replaceAll("_", " ")} detail={deep.playerReadiness.temporality} tone="warning" />
         <Metric label="Production" value={deep.productionStatus} detail="aucun pari réel" tone="warning" />
       </section>
       <section className="panel">

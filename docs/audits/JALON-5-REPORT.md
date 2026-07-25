@@ -1,5 +1,16 @@
 # Audit Jalon 5 — Deep Data Factory
 
+## Addendum Jalon 5.1
+
+- registre historique isolé : 3 180/3 180 fichiers, 16 184 894 octets,
+  0 hash modifié, 0 appel fournisseur ;
+- pilote canonicalisé : 310 reçues, 306 régulières, 4 barrages ;
+- équipes : 21 reçues, 18 régulières, Red Star/Rodez/Saint-Étienne hors phase ;
+- débit observé : 0,146 s/appel, 8,027 lignes/appel, 1 857 octets/appel ;
+- cadence : `ACCELERATED_SAFE`, 30 000 appels/jour, réserve 5 000 ;
+- stockage projeté : 139 827 339 octets, alerte 750 MB, pause 900 MB ;
+- production : `PRODUCTION_LOCKED`.
+
 Statut courant : `VERIFIED` — backfill `HISTORICAL_BACKFILL_ACTIVE`.
 
 ## Preuves acquises
