@@ -112,16 +112,7 @@ def restore_state(registry: Path, destination: Path) -> dict[str, object]:
     replayed = 0
     bundle_store = HistoricalBundleStore(destination)
     for manifest_path in sorted((destination / "bundles").rglob("*.manifest.json")):
-        manifest = json.loads(manifest_path.read_text("utf-8"))
-        index = json.loads((destination / str(manifest["index"])).read_text("utf-8"))
-        for entry in index.get("entries", []):
-            relative = str(entry["path"])
-            target = safe_target(destination, Path(relative))
-            if target.exists() and file_hash(target) == entry["sha256"]:
-                continue
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(bundle_store.replay_file(manifest_path, relative))
-            replayed += 1
+        replayed += bundle_store.restore_bundle(manifest_path, destination)
     return {"status": "RESTORED", "files": restored, "bundle_files_replayed": replayed}
 
 

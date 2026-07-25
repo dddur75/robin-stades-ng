@@ -277,6 +277,43 @@ class HistoricalBundleStore:
                 raise FileNotFoundError(relative)
             return stream.read()
 
+    def restore_bundle(self, manifest_path: Path, destination: Path) -> int:
+        """Valider une fois puis restaurer toutes les entrées en un seul parcours."""
+
+        self.verify_bundle(manifest_path)
+        manifest = json.loads(manifest_path.read_text("utf-8"))
+        archive = self.state_root / str(manifest["archive"])
+        index = json.loads(
+            (self.state_root / str(manifest["index"])).read_text("utf-8")
+        )
+        expected = {
+            str(entry["path"]): str(entry["sha256"])
+            for entry in index.get("entries", [])
+        }
+        root = destination.resolve()
+        restored = 0
+        with tarfile.open(archive, "r:gz") as bundle:
+            for member in bundle.getmembers():
+                if not member.isfile() or member.name not in expected:
+                    continue
+                target = (root / member.name).resolve()
+                if root not in target.parents:
+                    raise ValueError(f"entrée de bundle interdite: {member.name}")
+                stream = bundle.extractfile(member)
+                if stream is None:
+                    raise RuntimeError(f"entrée illisible: {member.name}")
+                data = stream.read()
+                if hashlib.sha256(data).hexdigest() != expected[member.name]:
+                    raise RuntimeError(f"hash individuel invalide: {member.name}")
+                if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest() == (
+                    expected[member.name]
+                ):
+                    continue
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(data)
+                restored += 1
+        return restored
+
 
 def storage_inventory(root: Path) -> dict[str, object]:
     files = [path for path in root.rglob("*") if path.is_file()]
