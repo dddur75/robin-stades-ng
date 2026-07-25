@@ -1,8 +1,57 @@
 {
+  "checks": [
+    {
+      "check": "RAW_AND_PARQUET_HASHES",
+      "status": "PASSED",
+      "value": "27600/27600"
+    },
+    {
+      "check": "PAGES_COMPLETE_AND_UNIQUE",
+      "status": "PASSED",
+      "value": 5
+    },
+    {
+      "check": "IDENTITIES_STABLE",
+      "status": "PASSED",
+      "value": "27600/27600"
+    },
+    {
+      "check": "NULLS_PRESERVED_NO_SYNTHETIC_ZERO",
+      "status": "PASSED",
+      "value": "27600/27600"
+    },
+    {
+      "check": "NO_FUTURE_DATA",
+      "status": "PASSED",
+      "value": 0
+    },
+    {
+      "check": "CANONICAL_CARDINALITY",
+      "status": "PASSED",
+      "value": "306/306"
+    },
+    {
+      "check": "PLAYER_TARGET_LEAKAGE",
+      "status": "BLOCKED_BY_COVERAGE",
+      "value": "NO_PLAYER_FEATURE_OR_MODEL_BUILT"
+    },
+    {
+      "check": "INJURY_POINT_IN_TIME",
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "value": "HISTORICAL_NON_POINT_IN_TIME"
+    }
+  ],
   "failures": [],
-  "generated_at": "2026-07-25T07:57:21.418478+00:00",
+  "generated_at": "2026-07-25T08:31:31.457722+00:00",
+  "normalized_rows": 27600,
   "parquet_partitions": 39,
   "production_status": "PRODUCTION_LOCKED",
+  "provenance_rows": 27600,
+  "quarantined_features": [
+    "injury_return",
+    "availability",
+    "player_fatigue"
+  ],
   "raw_observations": 1685,
   "status": "PASSED"
 }

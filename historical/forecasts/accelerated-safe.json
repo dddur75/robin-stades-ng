@@ -2,18 +2,23 @@
   "cache_rate": 0.0,
   "calls_per_day": 30000,
   "error_rate": 0.0,
-  "estimated_calls_full_scope": 63638,
-  "eta_full_scope_days": 10.0,
-  "eta_priority_a_days": 3.0,
-  "eta_priority_b_days": 8.0,
+  "estimated_calls_full_scope": 6031,
+  "eta_full_scope_days": 0.2,
+  "eta_priority_a_days": 0.18,
+  "eta_priority_b_days": 0.19,
   "files_after_compaction": 483,
-  "files_without_compaction": 154969,
-  "github_actions_hours_per_day": 22.0,
+  "files_without_compaction": 14686,
+  "github_actions_hours_per_day": 8.33,
   "observed": {
     "bytes_per_call": 1856.9630723781388,
     "calls_per_fixture": 4.367741935483871,
+    "calls_per_hour": 3600.0,
+    "calls_per_minute": 60.0,
     "calls_per_task": 25.074074074074073,
+    "effective_seconds_per_call": 1.0,
     "payloads_per_task": 30.537037037037038,
+    "recent_calls_per_task": 1.0,
+    "recent_rows_per_call": 16.13131313131313,
     "rows_per_call": 8.02658788774003,
     "seconds_per_call": 0.1459992237813885,
     "seconds_per_task": 3.660795351851852
@@ -24,16 +29,22 @@
     "C": 220,
     "D": 142
   },
+  "remaining_calls_by_priority": {
+    "A": 5449,
+    "B": 220,
+    "C": 220,
+    "D": 142
+  },
   "status": "MEASURED_PILOT_FORECAST",
   "storage_current": {
-    "bundles": 3,
-    "bytes": 26996928,
-    "files": 3399,
+    "bundles": 5,
+    "bytes": 34525830,
+    "files": 3407,
     "parquet": 40,
     "payloads": 1649
   },
   "storage_pause_bytes": 900000000,
-  "storage_projected_bytes": 145170344,
+  "storage_projected_bytes": 45725174,
   "storage_warning_bytes": 750000000,
   "unavailable_endpoint_rate": 0.0
 }
