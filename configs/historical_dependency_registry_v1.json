@@ -1,0 +1,233 @@
+{
+  "version": "historical-dependency-registry-v1",
+  "scenario_policy": {
+    "calls_per_day": 30000,
+    "cache_rate_low": 0.25,
+    "cache_rate_base": 0.0,
+    "cache_rate_high": 0.0,
+    "storage_bytes_per_call_observed": 5716.8,
+    "storage_multiplier_low": 0.6,
+    "storage_multiplier_base": 1.0,
+    "storage_multiplier_high": 1.5
+  },
+  "endpoints": [
+    {
+      "endpoint": "fixtures/events",
+      "dependency_type": "FIXTURE_DEPENDENT",
+      "parent_entity": "fixtures",
+      "expected_child_tasks": "CANONICAL_FIXTURES",
+      "observed_child_tasks": "MATERIALIZED_FIXTURE_CHILDREN",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED"
+    },
+    {
+      "endpoint": "fixtures/statistics",
+      "dependency_type": "FIXTURE_DEPENDENT",
+      "parent_entity": "fixtures",
+      "expected_child_tasks": "CANONICAL_FIXTURES",
+      "observed_child_tasks": "MATERIALIZED_FIXTURE_CHILDREN",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED"
+    },
+    {
+      "endpoint": "fixtures/players",
+      "dependency_type": "FIXTURE_DEPENDENT",
+      "parent_entity": "fixtures",
+      "expected_child_tasks": "CANONICAL_FIXTURES",
+      "observed_child_tasks": "MATERIALIZED_FIXTURE_CHILDREN",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED"
+    },
+    {
+      "endpoint": "fixtures/lineups",
+      "dependency_type": "FIXTURE_DEPENDENT",
+      "parent_entity": "fixtures",
+      "expected_child_tasks": "CANONICAL_FIXTURES",
+      "observed_child_tasks": "MATERIALIZED_FIXTURE_CHILDREN",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED"
+    },
+    {
+      "endpoint": "players/squads",
+      "dependency_type": "TEAM_DEPENDENT",
+      "parent_entity": "teams",
+      "expected_child_tasks": "CANONICAL_TEAMS",
+      "observed_child_tasks": "MATERIALIZED_TEAM_CHILDREN",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED"
+    },
+    {
+      "endpoint": "teams/statistics",
+      "dependency_type": "TEAM_DEPENDENT",
+      "parent_entity": "teams",
+      "expected_child_tasks": "CANONICAL_TEAMS",
+      "observed_child_tasks": "MATERIALIZED_TEAM_CHILDREN",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED"
+    },
+    {
+      "endpoint": "coachs",
+      "dependency_type": "TEAM_DEPENDENT",
+      "parent_entity": "teams",
+      "expected_child_tasks": "CANONICAL_TEAMS",
+      "observed_child_tasks": "MATERIALIZED_TEAM_CHILDREN",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED"
+    },
+    {
+      "endpoint": "players",
+      "dependency_type": "PAGINATED",
+      "parent_entity": "league_season",
+      "expected_child_tasks": "OBSERVED_PLAYER_PAGES",
+      "observed_child_tasks": "CHECKPOINT_PAGES",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "VERIFIED",
+      "default_pages_low": 39,
+      "default_pages_base": 40,
+      "default_pages_high": 46
+    },
+    {
+      "endpoint": "injuries",
+      "dependency_type": "PAGINATED",
+      "parent_entity": "league_season",
+      "expected_child_tasks": "PROVIDER_PAGES",
+      "observed_child_tasks": "CHECKPOINT_PAGES",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "ADVERTISED",
+      "default_pages_low": 1,
+      "default_pages_base": 1,
+      "default_pages_high": 2
+    },
+    {
+      "endpoint": "leagues",
+      "dependency_type": "DIRECT",
+      "parent_entity": "league_season",
+      "expected_child_tasks": 1,
+      "observed_child_tasks": "MATERIALIZED_TASK",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "VERIFIED"
+    },
+    {
+      "endpoint": "teams",
+      "dependency_type": "DIRECT",
+      "parent_entity": "league_season",
+      "expected_child_tasks": 1,
+      "observed_child_tasks": "MATERIALIZED_TASK",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "VERIFIED"
+    },
+    {
+      "endpoint": "fixtures",
+      "dependency_type": "DIRECT",
+      "parent_entity": "league_season",
+      "expected_child_tasks": 1,
+      "observed_child_tasks": "MATERIALIZED_TASK",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "VERIFIED"
+    },
+    {
+      "endpoint": "standings",
+      "dependency_type": "DIRECT",
+      "parent_entity": "league_season",
+      "expected_child_tasks": 1,
+      "observed_child_tasks": "MATERIALIZED_TASK",
+      "calls_per_child_low": 1.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "VERIFIED"
+    },
+    {
+      "endpoint": "transfers",
+      "dependency_type": "DIRECT",
+      "parent_entity": "league_season",
+      "expected_child_tasks": 1,
+      "observed_child_tasks": "MATERIALIZED_TASK",
+      "calls_per_child_low": 0.0,
+      "calls_per_child_base": 1.0,
+      "calls_per_child_high": 1.1,
+      "coverage_status": "UNKNOWN"
+    }
+  ],
+  "competition_profiles": [
+    {
+      "competition": "Ligue 1",
+      "provider_id": 61,
+      "multi_phase": false,
+      "playoffs_excluded": true,
+      "periods": [
+        {"from_season": 2018, "to_season": 2022, "teams": 20, "canonical_fixtures": 380},
+        {"from_season": 2023, "to_season": 2025, "teams": 18, "canonical_fixtures": 306}
+      ]
+    },
+    {
+      "competition": "Premier League",
+      "provider_id": 39,
+      "multi_phase": false,
+      "playoffs_excluded": true,
+      "periods": [
+        {"from_season": 2018, "to_season": 2025, "teams": 20, "canonical_fixtures": 380}
+      ]
+    },
+    {
+      "competition": "La Liga",
+      "provider_id": 140,
+      "multi_phase": false,
+      "playoffs_excluded": true,
+      "periods": [
+        {"from_season": 2018, "to_season": 2025, "teams": 20, "canonical_fixtures": 380}
+      ]
+    },
+    {
+      "competition": "Bundesliga",
+      "provider_id": 78,
+      "multi_phase": false,
+      "playoffs_excluded": true,
+      "periods": [
+        {"from_season": 2018, "to_season": 2025, "teams": 18, "canonical_fixtures": 306}
+      ]
+    },
+    {
+      "competition": "Serie A",
+      "provider_id": 135,
+      "multi_phase": false,
+      "playoffs_excluded": true,
+      "periods": [
+        {"from_season": 2018, "to_season": 2025, "teams": 20, "canonical_fixtures": 380}
+      ]
+    },
+    {
+      "competition": "UEFA Champions League",
+      "provider_id": 2,
+      "multi_phase": true,
+      "playoffs_excluded": false,
+      "periods": [
+        {"from_season": 2018, "to_season": 2023, "teams": 32, "canonical_fixtures": 125},
+        {"from_season": 2024, "to_season": 2025, "teams": 36, "canonical_fixtures": 189}
+      ]
+    }
+  ]
+}

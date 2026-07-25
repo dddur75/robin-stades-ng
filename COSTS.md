@@ -73,3 +73,30 @@ gain attendu.
 - cadence conservée : 30 000 appels/jour, sans montée automatique ;
 - coût additionnel facturé par le système : 0 ;
 - aucun achat de stockage ni changement de plan.
+
+## Forecast complet Jalon 5.2
+
+La projection budgétaire inclut maintenant les appels latents par fixture,
+équipe et page, en plus des tâches déjà matérialisées. Les scénarios bas,
+central et haut utilisent les cardinalités de compétition et les pages
+réellement observées.
+
+La cadence reste 30 000 appels/jour avec une réserve incompressible de 5 000.
+Une hausse à 45 000 ou 60 000 nécessite une PR distincte, zéro HTTP 429, moins
+de 1 % d’erreurs, une qualité temporelle verte, aucun impact live et un gain
+calendaire démontré. Aucun achat ni hausse n’est automatique.
+
+Mesure Jalon 5.2 : le lot `30154099512` a consommé 2 500 appels et laissé
+147 395 appels, sans HTTP 429 ni erreur. La croissance physique durable
+observée est de 14 292 000 octets, soit 5 716,8 octets par appel. Ce taux sert
+de plancher au forecast de capacité.
+
+| Scénario | Appels restants | ETA | Stockage projeté restauré |
+|---|---:|---:|---:|
+| Bas | 47 417 | 1,58 j | 227 877 811 octets |
+| Central | 63 313 | 2,11 j | 427 181 466 octets |
+| Haut | 69 977 | 2,33 j | 665 300 478 octets |
+
+La cadence reste 30 000 appels/jour. Le scénario haut demeure sous 750 MB ;
+aucun achat, changement de plan ou hausse de cadence n’est autorisé
+automatiquement.

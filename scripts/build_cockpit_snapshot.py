@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from datetime import UTC, datetime
@@ -14,6 +15,8 @@ from robin.domain.odds import stable_internal_id
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cockpit" / "app" / "cockpit-data.json"
+OUTPUT_HASH = ROOT / "cockpit" / "app" / "cockpit-data.sha256"
+PRIVATE_DEPLOYMENT = ROOT / "configs" / "cockpit-private-deployment.json"
 
 
 def read_json(path: Path, default: Any) -> Any:
@@ -26,6 +29,26 @@ def directory_size(path: Path) -> int:
     if not path.exists():
         return 0
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
+
+
+def private_deployment_status(
+    *,
+    current_backfill_run: str,
+    current_data_hash: str,
+    deployment_state: dict[str, Any],
+) -> str:
+    """Refuser le statut déployé dès que les données privées ont divergé."""
+
+    deployed_backfill_run = str(deployment_state.get("backfill_run_id", ""))
+    deployed_data_hash = str(deployment_state.get("data_hash", ""))
+    if (
+        current_backfill_run
+        and current_backfill_run == deployed_backfill_run
+        and current_data_hash
+        and current_data_hash == deployed_data_hash
+    ):
+        return "COCKPIT_PRIVATE_DEPLOYED"
+    return "COCKPIT_PRIVATE_STALE"
 
 
 def completed_rows_this_run(plan: dict[str, Any]) -> int:
@@ -51,9 +74,40 @@ def build_player_readiness(
     quality: dict[str, Any],
     forecast: dict[str, Any],
 ) -> dict[str, Any]:
-    entity_seasons: dict[str, set[int]] = {}
-    entity_rows: dict[str, int] = {}
+    entity_metrics: dict[str, dict[str, Any]] = {}
+    observation_dimensions: dict[str, dict[str, int]] = {}
+
+    for observation_path in sorted((state / "raw" / "observations").rglob("*.json")):
+        observation = read_json(observation_path, {})
+        payload_hash = str(observation.get("payload_hash", ""))
+        parameters = observation.get("request_parameters", {})
+        if not payload_hash or not isinstance(parameters, dict):
+            continue
+        dimensions: dict[str, int] = {}
+        for key in ("fixture", "team"):
+            value = parameters.get(key)
+            if isinstance(value, int):
+                dimensions[key] = value
+        observation_dimensions[payload_hash] = dimensions
+
+    def payload_ids(value: Any, wrapper: str) -> set[int]:
+        found: set[int] = set()
+        if isinstance(value, dict):
+            wrapped = value.get(wrapper)
+            if isinstance(wrapped, dict) and isinstance(wrapped.get("id"), int):
+                found.add(int(wrapped["id"]))
+            for nested in value.values():
+                found.update(payload_ids(nested, wrapper))
+        elif isinstance(value, list):
+            for nested in value:
+                found.update(payload_ids(nested, wrapper))
+        return found
+
     for path in sorted((state / "parquet").rglob("*.parquet")):
+        competition_part = next(
+            (part for part in path.parts if part.startswith("competition=")),
+            "competition=unknown",
+        )
         entity_part = next(
             (part for part in path.parts if part.startswith("entity_type=")),
             "entity_type=unknown",
@@ -62,13 +116,57 @@ def build_player_readiness(
             (part for part in path.parts if part.startswith("season=")),
             "season=0",
         )
+        competition = competition_part.split("=", 1)[1]
         entity = entity_part.split("=", 1)[1]
         season = int(season_part.split("=", 1)[1])
-        entity_seasons.setdefault(entity, set()).add(season)
-        entity_rows[entity] = entity_rows.get(entity, 0) + len(pd.read_parquet(path))
+        frame = pd.read_parquet(path)
+        metrics = entity_metrics.setdefault(
+            entity,
+            {
+                "competitions": set(),
+                "seasons": set(),
+                "teams": set(),
+                "fixtures": set(),
+                "players": set(),
+                "rows": 0,
+                "nullCells": 0,
+                "cells": 0,
+            },
+        )
+        metrics["competitions"].add(competition)
+        metrics["seasons"].add(season)
+        metrics["rows"] += len(frame)
+        metrics["nullCells"] += int(frame.isna().sum().sum())
+        metrics["cells"] += int(frame.shape[0] * frame.shape[1])
+        if "payload" not in frame.columns:
+            continue
+        raw_hashes = (
+            frame["raw_payload_hash"].tolist()
+            if "raw_payload_hash" in frame.columns
+            else [None] * len(frame)
+        )
+        for raw_payload, raw_hash in zip(
+            frame["payload"].tolist(),
+            raw_hashes,
+            strict=True,
+        ):
+            try:
+                payload = json.loads(str(raw_payload))
+            except json.JSONDecodeError:
+                continue
+            metrics["teams"].update(payload_ids(payload, "team"))
+            metrics["fixtures"].update(payload_ids(payload, "fixture"))
+            metrics["players"].update(payload_ids(payload, "player"))
+            dimensions = observation_dimensions.get(str(raw_hash), {})
+            fixture_id = dimensions.get("fixture")
+            team_id = dimensions.get("team")
+            if fixture_id is not None:
+                metrics["fixtures"].add(fixture_id)
+            if team_id is not None:
+                metrics["teams"].add(team_id)
 
     quality_status = str(quality.get("status", "NOT_RUN"))
-    eta_a = forecast.get("eta_priority_a_days")
+    eta_a = forecast.get("eta_priority_a_base", forecast.get("eta_priority_a_days"))
     after_priority_a = (
         f"after priority A (~{eta_a} d)"
         if eta_a is not None
@@ -83,6 +181,7 @@ def build_player_readiness(
             ("fixture_player_statistics",),
             "POST_MATCH_LAG_REQUIRED",
         ),
+        ("Compositions", ("lineups",), "POST_MATCH_LAG_REQUIRED"),
         ("Continuite du onze", ("lineups",), "POST_MATCH_LAG_REQUIRED"),
         ("Formations", ("lineups",), "POST_MATCH_LAG_REQUIRED"),
         ("Blessures", ("injuries",), "HISTORICAL_NON_POINT_IN_TIME"),
@@ -110,9 +209,45 @@ def build_player_readiness(
     ]
     families: list[dict[str, Any]] = []
     for name, dependencies, temporality in specifications:
-        season_sets = [entity_seasons.get(entity, set()) for entity in dependencies]
-        seasons = sorted(set.intersection(*season_sets) if season_sets else set())
-        rows = min((entity_rows.get(entity, 0) for entity in dependencies), default=0)
+        dependency_metrics = [
+            entity_metrics.get(
+                entity,
+                {
+                    "competitions": set(),
+                    "seasons": set(),
+                    "teams": set(),
+                    "fixtures": set(),
+                    "players": set(),
+                    "rows": 0,
+                    "nullCells": 0,
+                    "cells": 0,
+                },
+            )
+            for entity in dependencies
+        ]
+
+        def common_values(key: str) -> set[Any]:
+            populated = [
+                set(metrics[key])
+                for metrics in dependency_metrics
+                if metrics[key]
+            ]
+            return set.intersection(*populated) if populated else set()
+
+        competitions = sorted(common_values("competitions"))
+        seasons = sorted(common_values("seasons"))
+        teams = common_values("teams")
+        fixtures = common_values("fixtures")
+        players_covered = common_values("players")
+        rows = min(
+            (int(metrics["rows"]) for metrics in dependency_metrics),
+            default=0,
+        )
+        cells = sum(int(metrics["cells"]) for metrics in dependency_metrics)
+        null_cells = sum(
+            int(metrics["nullCells"]) for metrics in dependency_metrics
+        )
+        null_rate = round(null_cells / cells, 4) if cells else None
         if quality_status not in {"PASSED", "WARNING"}:
             status = "BLOCKED_BY_QUALITY"
             reason = f"historical quality is {quality_status}"
@@ -132,9 +267,15 @@ def build_player_readiness(
             {
                 "name": name,
                 "coverage": {
+                    "competitions": competitions,
+                    "competitionCount": len(competitions),
                     "seasons": seasons,
                     "seasonCount": len(seasons),
+                    "teamCount": len(teams),
+                    "fixtureCount": len(fixtures),
+                    "playerCount": len(players_covered),
                     "rows": rows,
+                    "nullRate": null_rate,
                     "dependencies": list(dependencies),
                 },
                 "quality": quality_status,
@@ -194,6 +335,7 @@ def build_deep_data() -> dict[str, Any]:
         {},
     )
     forecast = read_json(state / "forecasts" / "accelerated-safe.json", {})
+    deployment_state = read_json(PRIVATE_DEPLOYMENT, {})
     compaction = read_json(state / "storage" / "latest-compaction.json", {})
     dataset = read_json(
         state / "datasets" / "team_baseline_v1.json",
@@ -251,6 +393,25 @@ def build_deep_data() -> dict[str, Any]:
         key: value for key, value in dataset.items() if key != "partitions"
     }
     player_readiness = build_player_readiness(state, quality, forecast)
+    current_backfill_run = str(plan.get("last_run_id", ""))
+    current_data_hash = hashlib.sha256(
+        json.dumps(
+            {
+                "backfill_run_id": current_backfill_run,
+                "forecast": forecast,
+                "quality_generated_at": quality.get("generated_at"),
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    private_status = private_deployment_status(
+        current_backfill_run=current_backfill_run,
+        current_data_hash=current_data_hash,
+        deployment_state=deployment_state,
+    )
+    private_status = os.environ.get("COCKPIT_PRIVATE_STATUS", private_status)
     players: list[dict[str, Any]] = []
     player_partitions = (
         path
@@ -357,6 +518,9 @@ def build_deep_data() -> dict[str, Any]:
             ),
             "payloadCount": len(list((state / "raw" / "payloads").rglob("*.gz"))),
             "projectedBytes": forecast.get("storage_projected_bytes"),
+            "projectedBytesLow": forecast.get("storage_projected_low"),
+            "projectedBytesBase": forecast.get("storage_projected_base"),
+            "projectedBytesHigh": forecast.get("storage_projected_high"),
             "warningBytes": forecast.get("storage_warning_bytes"),
             "pauseBytes": forecast.get("storage_pause_bytes"),
             "capacityStatus": (
@@ -421,6 +585,9 @@ def build_deep_data() -> dict[str, Any]:
             "tasksRemaining": plan.get("remaining_tasks", 0),
             "callsConsumed": plan.get("provider_calls", 0),
             "callsEstimated": forecast.get("estimated_calls_full_scope"),
+            "callsRemainingLow": forecast.get("calls_remaining_low"),
+            "callsRemainingBase": forecast.get("calls_remaining_base"),
+            "callsRemainingHigh": forecast.get("calls_remaining_high"),
             "callsPerHour": (
                 round(float(plan["scheduler"]["request_rate"]) * 3600)
                 if plan.get("scheduler", {}).get("request_rate")
@@ -430,6 +597,41 @@ def build_deep_data() -> dict[str, Any]:
             "etaPriorityADays": forecast.get("eta_priority_a_days"),
             "etaPriorityBDays": forecast.get("eta_priority_b_days"),
             "etaFullDays": forecast.get("eta_full_scope_days"),
+            "etaPriorityA": {
+                "low": forecast.get("eta_priority_a_low"),
+                "base": forecast.get("eta_priority_a_base"),
+                "high": forecast.get("eta_priority_a_high"),
+            },
+            "etaPriorityB": {
+                "low": forecast.get("eta_priority_b_low"),
+                "base": forecast.get("eta_priority_b_base"),
+                "high": forecast.get("eta_priority_b_high"),
+            },
+            "etaFull": {
+                "low": forecast.get("eta_full_low"),
+                "base": forecast.get("eta_full_base"),
+                "high": forecast.get("eta_full_high"),
+            },
+            "materializedTasksTotal": forecast.get("materialized_tasks_total"),
+            "materializedTasksCompleted": forecast.get(
+                "materialized_tasks_completed"
+            ),
+            "materializedTasksRemaining": forecast.get(
+                "materialized_tasks_remaining"
+            ),
+            "materializedCallsRemaining": forecast.get(
+                "materialized_calls_remaining"
+            ),
+            "materializedEtaDays": forecast.get("materialized_eta_days"),
+            "materializedEtaLabel": forecast.get("materialized_eta_label"),
+            "latentFixtureTasks": forecast.get("latent_fixture_tasks"),
+            "latentTeamTasks": forecast.get("latent_team_tasks"),
+            "latentPlayerPages": forecast.get("latent_player_pages"),
+            "completedThisRun": forecast.get("completed_this_run"),
+            "expandedThisRun": forecast.get("expanded_this_run"),
+            "newLatentTasksMaterialized": forecast.get(
+                "new_latent_tasks_materialized"
+            ),
             "scheduler": plan.get("scheduler", {}),
             "rowsLastRun": completed_rows_this_run(plan),
         },
@@ -460,11 +662,18 @@ def build_deep_data() -> dict[str, Any]:
         "deployment": {
             "build": "COCKPIT_BUILD_SUCCESS",
             "artifact": "COCKPIT_ARTIFACT_PUBLISHED",
-            "private": os.environ.get(
-                "COCKPIT_PRIVATE_STATUS",
-                "COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED",
-            ),
+            "private": private_status,
             "snapshotGeneratedAt": datetime.now(UTC).isoformat(),
+            "currentDataHash": current_data_hash,
+            "currentBackfillRunId": current_backfill_run,
+            "deploymentVersion": deployment_state.get("deployment_version"),
+            "deploymentTime": deployment_state.get("deployment_time"),
+            "deployedSourceCommit": deployment_state.get("source_commit"),
+            "deployedSnapshotHash": deployment_state.get("snapshot_hash"),
+            "deployedBackfillRunId": deployment_state.get("backfill_run_id"),
+            "accessMode": deployment_state.get("access_mode"),
+            "automation": deployment_state.get("automation"),
+            "sourceCommit": os.environ.get("GITHUB_SHA", "LOCAL_WORKTREE"),
         },
         "origins": [
             "LIVE SHADOW",
@@ -846,6 +1055,10 @@ def main() -> None:
     OUTPUT.write_text(
         json.dumps(public_snapshot, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
+    )
+    OUTPUT_HASH.write_text(
+        hashlib.sha256(OUTPUT.read_bytes()).hexdigest() + "\n",
+        encoding="ascii",
     )
     try:
         label = OUTPUT.relative_to(ROOT)

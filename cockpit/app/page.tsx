@@ -814,13 +814,14 @@ function DeepDataCommandCenter() {
         <Metric label="Quota restant" value={deep.quota.remaining == null ? "—" : String(deep.quota.remaining)} detail={`${deep.quota.mode} · réserve ${deep.quota.reserve}`} />
         <Metric label="Stockage brut" value={`${(deep.storage.rawBytes / 1_048_576).toFixed(1)} MiB`} detail={deep.storage.backend} />
         <Metric label="Parquet" value={`${(deep.storage.parquetBytes / 1_048_576).toFixed(1)} MiB`} detail="partitions versionnées" />
-        <Metric label="ETA priorité A" value={`${deep.progress.etaPriorityADays ?? "—"} jours`} detail={`${deep.progress.callsPerDay ?? "—"} appels/jour`} />
-        <Metric label="ETA priorité B" value={`${deep.progress.etaPriorityBDays ?? "—"} jours`} detail={`globale ${deep.progress.etaFullDays ?? "—"} jours`} />
+        <Metric label="ETA priorité A" value={`${deep.progress.etaPriorityA.base ?? "—"} jours`} detail={`${deep.progress.etaPriorityA.low ?? "—"} → ${deep.progress.etaPriorityA.high ?? "—"} jours`} />
+        <Metric label="ETA priorité B" value={`${deep.progress.etaPriorityB.base ?? "—"} jours`} detail={`${deep.progress.etaPriorityB.low ?? "—"} → ${deep.progress.etaPriorityB.high ?? "—"} jours`} />
+        <Metric label="ETA globale" value={`${deep.progress.etaFull.base ?? "—"} jours`} detail={`${deep.progress.etaFull.low ?? "—"} → ${deep.progress.etaFull.high ?? "—"} jours`} />
         <Metric label="Canonicalité L1" value={`${deep.canonicality.canonical_fixtures ?? 0}/${deep.canonicality.received_fixtures ?? 0}`} detail={`${deep.canonicality.canonical_teams ?? 0}/${deep.canonicality.received_teams ?? 0} équipes`} />
         <Metric label="Isolation" value={deep.isolation.status.replaceAll("_", " ")} detail={`${deep.isolation.liveBranch} / ${deep.isolation.historicalBranch}`} tone="good" />
         <Metric label="Bundles" value={String(deep.storage.bundleCount)} detail={`${deep.storage.fileCount} fichiers · ${deep.storage.capacityStatus}`} />
         <Metric label="Features joueurs" value={deep.playerReadiness.status.replaceAll("_", " ")} detail={deep.playerReadiness.temporality} tone="warning" />
-        <Metric label="Cockpit privé" value={deep.deployment.private.replaceAll("_", " ")} detail={deep.deployment.snapshotGeneratedAt} tone="warning" />
+        <Metric label="Cockpit privé" value={deep.deployment.private.replaceAll("_", " ")} detail={`v${deep.deployment.deploymentVersion ?? "—"} · ${deep.deployment.deploymentTime ?? "jamais"}`} tone="warning" />
         <Metric label="Production" value={deep.productionStatus} detail="aucun pari réel" tone="warning" />
       </section>
       <section className="panel">
@@ -841,6 +842,17 @@ function BackfillMonitor() {
         {Object.entries(deep.taskCounts).map(([status, count]) => (
           <Metric key={status} label={status.replaceAll("_", " ")} value={String(count)} detail="tâches historisées" />
         ))}
+        <Metric label="Matérialisées restantes" value={String(deep.progress.materializedTasksRemaining ?? 0)} detail={`${deep.progress.materializedCallsRemaining ?? 0} appels`} />
+        <Metric label="Latentes fixtures" value={String(deep.progress.latentFixtureTasks ?? 0)} detail="enfants non matérialisés" />
+        <Metric label="Latentes équipes" value={String(deep.progress.latentTeamTasks ?? 0)} detail="enfants non matérialisés" />
+        <Metric label="Pages joueurs latentes" value={String(deep.progress.latentPlayerPages ?? 0)} detail="pagination estimée" />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Forecast complet</span><h2>Bas, central et haut</h2></div><StatusPill value="MATERIALIZED_PLUS_LATENT" /></div>
+        <div className="table-wrap"><table><thead><tr><th>Scénario</th><th>Appels</th><th>ETA A</th><th>ETA B</th><th>ETA globale</th><th>Stockage projeté</th></tr></thead><tbody>
+          {(["low", "base", "high"] as const).map((scenario) => <tr key={scenario}><td>{scenario.toUpperCase()}</td><td>{deep.progress[scenario === "low" ? "callsRemainingLow" : scenario === "base" ? "callsRemainingBase" : "callsRemainingHigh"]}</td><td>{deep.progress.etaPriorityA[scenario]} j</td><td>{deep.progress.etaPriorityB[scenario]} j</td><td>{deep.progress.etaFull[scenario]} j</td><td>{((deep.storage[scenario === "low" ? "projectedBytesLow" : scenario === "base" ? "projectedBytesBase" : "projectedBytesHigh"] ?? 0) / 1_048_576).toFixed(1)} MiB</td></tr>)}
+        </tbody></table></div>
+        <p className="muted">{deep.progress.materializedEtaLabel} : {deep.progress.materializedEtaDays ?? "—"} jour. Cette valeur n’est pas l’ETA complète.</p>
       </section>
       <section className="panel">
         <div className="panel-head"><div><span>Ordonnancement</span><h2>Prochaine tâche</h2></div><StatusPill value={deep.backfillStatus} /></div>
@@ -881,8 +893,8 @@ function PlayerExplorer() {
         {rows.map((player) => <tr key={String(player.id)}><td>{player.name}</td><td>{player.position ?? "—"}</td><td>{player.age ?? "—"}</td><td>{player.appearances ?? "—"}</td><td>{player.minutes ?? "—"}</td><td>{player.goals ?? "—"}</td><td>{player.assists ?? "—"}</td><td>{player.rating ?? "—"}</td><td><SourceBadge origin={player.origin} /></td></tr>)}
       </tbody></table></div> : <EmptyState title="Joueurs en attente" text="Le pilote Ligue 1 2025 alimentera cette vue sans données de démonstration." label="NO OUTPUT" />}
       <div className="panel-head"><div><span>Readiness joueurs</span><h2>Garde-fous par famille</h2></div><StatusPill value={snapshot.deepData.playerReadiness.status} /></div>
-      <div className="table-wrap"><table><thead><tr><th>Famille</th><th>Saisons</th><th>Lignes</th><th>Qualité</th><th>Temporalité</th><th>Statut</th><th>Blocage</th></tr></thead><tbody>
-        {snapshot.deepData.playerReadiness.families.map((family) => <tr key={family.name}><td>{family.name}</td><td>{family.coverage.seasonCount}</td><td>{family.coverage.rows}</td><td>{family.quality}</td><td>{family.temporality}</td><td><StatusPill value={family.status} /></td><td>{family.reason}</td></tr>)}
+      <div className="table-wrap"><table><thead><tr><th>Famille</th><th>Comp.</th><th>Saisons</th><th>Équipes</th><th>Fixtures</th><th>Joueurs</th><th>Null</th><th>Qualité</th><th>Temporalité</th><th>Statut</th><th>Blocage</th></tr></thead><tbody>
+        {snapshot.deepData.playerReadiness.families.map((family) => <tr key={family.name}><td>{family.name}</td><td>{family.coverage.competitionCount}</td><td>{family.coverage.seasonCount}</td><td>{family.coverage.teamCount}</td><td>{family.coverage.fixtureCount}</td><td>{family.coverage.playerCount}</td><td>{family.coverage.nullRate == null ? "—" : `${(family.coverage.nullRate * 100).toFixed(1)} %`}</td><td>{family.quality}</td><td>{family.temporality}</td><td><StatusPill value={family.status} /></td><td>{family.reason}</td></tr>)}
       </tbody></table></div>
     </section>
   );

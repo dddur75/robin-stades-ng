@@ -45,17 +45,35 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm test
-      - name: Publier les statuts sans confondre artefact et déploiement
-        run: |
-          {
-            echo "COCKPIT_BUILD_SUCCESS"
-            echo "COCKPIT_ARTIFACT_PUBLISHED"
-            echo "COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED"
-          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: deep-data-cockpit-${{ github.run_id }}
           path: |
             cockpit/dist
             cockpit/app/cockpit-data.json
+            cockpit/app/cockpit-data.sha256
           retention-days: 30
+      - name: Publier les statuts sans confondre artefact et déploiement
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+
+          snapshot = json.loads(
+              Path("cockpit/app/cockpit-data.json").read_text(encoding="utf-8")
+          )
+          deployment = snapshot["deepData"]["deployment"]
+          print("COCKPIT_BUILD_SUCCESS")
+          print("COCKPIT_ARTIFACT_PUBLISHED")
+          print(deployment["private"])
+          print(f"snapshot_generated_at={deployment['snapshotGeneratedAt']}")
+          print(f"current_backfill_run_id={deployment['currentBackfillRunId']}")
+          print(f"deployment_version={deployment['deploymentVersion']}")
+          print(f"deployment_time={deployment['deploymentTime']}")
+          print(f"source_commit={deployment['sourceCommit']}")
+          print(f"current_data_hash={deployment['currentDataHash']}")
+          print(
+              "snapshot_hash="
+              + Path("cockpit/app/cockpit-data.sha256").read_text().strip()
+          )
+          PY

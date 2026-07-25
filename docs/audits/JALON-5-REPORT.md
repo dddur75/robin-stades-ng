@@ -82,3 +82,36 @@ reliées à un payload brut, 0 appel, 0 crédit, qualité `PASSED`, révision Ne
 `0004`, un run d'ingestion ajouté puis protégé par une clé idempotente. Le
 Cockpit `30151317894` publie l'artefact `8617713588` et la version privée Sites
 8 a été déployée avec le snapshot du 25 juillet 2026 à 08:34 UTC.
+
+## Contrôle Jalon 5.2
+
+- PR #7 fusionnée et fermée ; `main` au commit
+  `0b72fcb6db4af304edad95d76a26db217eb84568` ; CI `30153554924` verte ;
+- backfill planifié réutilisé, sans doublon de run : `30154099512`, 2 500
+  appels, 2 500 tâches terminées, 38 enfants matérialisés, 14 072 lignes,
+  quota restant 147 395, 0 erreur et 0 HTTP 429 ;
+- progression : 6 184 → 6 222 tâches, 153 → 2 655 terminées,
+  6 031 → 3 567 restantes, 1 649 → 4 149 payloads,
+  27 600 → 41 672 lignes et 40 → 48 partitions Parquet ;
+- `historical-data` : registre de 90 objets vérifié, 57 258 793 octets
+  physiques après qualité, bundles et hashes valides ;
+- Neon : SSL, Alembic `0004_jalon5_deep_data_factory`, 6 222 tâches,
+  3 runs historiques ; lot initial 39 insertions/6 713 mises à jour, puis
+  replay qualité 0 insertion/6 752 mises à jour ;
+- qualité `30155383297` : 41 672/41 672 provenances, hashes et identités,
+  0 ligne non résolue, 0 donnée future, 0 zéro synthétique ;
+- replay depuis le cache : 0 appel fournisseur, 0 crédit, 0 perte ;
+- diagnostic live concurrent `30155237678` : `PASSED`, 69 tables Neon,
+  26 bundles shadow, 0 retard, `windows_due=0`, `PRODUCTION_LOCKED` ;
+- Cockpit `main` après qualité : run `30155451951`, build vert et artefact
+  `8618862988` ; la version privée 8 est inchangée et donc en retard.
+
+Le forecast corrigé distingue 3 256 appels matérialisés de 60 057 appels
+latents centraux. Les scénarios bas/central/haut sont 47 417 / 63 313 /
+69 977 appels, avec ETA globale 1,58 / 2,11 / 2,33 jours et stockage restauré
+projeté 227,9 / 427,2 / 665,3 MB. La cadence reste 30 000 appels/jour.
+
+Statuts maintenus : `API_FOOTBALL_LIVE_PIPELINE_VERIFIED`,
+`HISTORICAL_BACKFILL_ACTIVE`, `SHADOW_COLLECTION_HARDENED` et
+`PRODUCTION_LOCKED`. Aucun modèle joueur, marché, stratégie ou pari réel n’est
+promu.

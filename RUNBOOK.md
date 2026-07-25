@@ -241,3 +241,41 @@ Le workflow Cockpit doit distinguer :
 Un artefact GitHub n'est jamais présenté comme un déploiement privé. Le snapshot
 frontend reste statique et nettoyé ; Neon et les secrets ne sont jamais
 accessibles au navigateur.
+
+### Forecast complet et tâches latentes
+
+Après chaque lot :
+
+```powershell
+python scripts/run_historical_pipeline.py forecast
+```
+
+Vérifier séparément :
+
+- `materialized_tasks_remaining` et `materialized_calls_remaining` ;
+- `latent_fixture_tasks` ;
+- `latent_team_tasks` ;
+- `latent_player_pages` ;
+- `calls_remaining_low/base/high` ;
+- `storage_projected_low/base/high`.
+
+Une ETA `MATERIALIZED_TASKS_ONLY` n’est jamais utilisée comme ETA complète.
+Les scénarios doivent converger lors de l’expansion d’un parent sans tomber
+artificiellement à zéro.
+
+Ne pas augmenter la cadence si le scénario haut approche 750 MB, si une erreur
+temporelle apparaît, si le taux d’erreur atteint 1 %, si un HTTP 429 survient
+ou si le live attend `historical-state`.
+
+### Fraîcheur du Cockpit privé
+
+Comparer `currentBackfillRunId` à `deployedBackfillRunId` et
+`currentDataHash` au hash de données déployé. Un écart de run ou de hash impose
+`COCKPIT_PRIVATE_STALE`. GitHub Actions continue à publier l’artefact ; il ne
+prétend pas déployer Sites. La version privée existante et son accès
+propriétaire sont conservés.
+
+Le run de référence Jalon 5.2 est `30154099512`. Après restauration et avant
+publication, exécuter `repair-provenance`, `quality`, `forecast`, puis le build
+du Cockpit. Les valeurs attendues à cette preuve sont 41 672 lignes de
+provenance, 0 ligne non résolue et la révision Neon `0004`.
