@@ -1,0 +1,789 @@
+{
+  "competition": "Ligue 1",
+  "gates": {
+    "A": {
+      "canonical_seasons": 6,
+      "critical_business_duplicates": 0,
+      "eligible_seasons": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "name": "API_TEAM_DATASET",
+      "passed": true,
+      "provenance_complete": true,
+      "status": "API_TEAM_DATASET_READY",
+      "team_identity_rate": 1.0,
+      "temporal_errors": 0
+    },
+    "B": {
+      "eligible_seasons": [
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "exploitable_seasons": 4,
+      "minutes_coherence_rate": 1.0,
+      "name": "API_PLAYER_DATASET",
+      "passed": true,
+      "player_identity_rate": 1.0,
+      "status": "API_PLAYER_DATASET_READY"
+    },
+    "C": {
+      "eligible_seasons": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "exact_starting_xi_rate": 1.0,
+      "exploitable_seasons": 5,
+      "lineup_identity_rate": 1.0,
+      "name": "POST_LINEUP_SIMULATED",
+      "passed": true,
+      "status": "POST_LINEUP_SIMULATED_READY"
+    },
+    "D": {
+      "name": "INJURY_AVAILABILITY",
+      "passed": false,
+      "reason": "Les blessures historiques sont observées rétrospectivement sans preuve de disponibilité avant le coup d'envoi cible.",
+      "status": "BLOCKED_BY_TEMPORALITY"
+    }
+  },
+  "generated_at": "2026-07-25T13:51:56.915411+00:00",
+  "normalized_rows": 55079,
+  "production_status": "PRODUCTION_LOCKED",
+  "provenance_rows": 55079,
+  "quality_status": "PASSED",
+  "schema_version": "jalon6-readiness-v1",
+  "seasons": [
+    {
+      "canonical_fixtures": 0,
+      "endpoints": {},
+      "fixtures_expected": 0,
+      "fixtures_received": 0,
+      "results_received": 0,
+      "season": 2018,
+      "status": "UNAVAILABLE",
+      "team_identity_rate": null
+    },
+    {
+      "canonical_fixtures": 0,
+      "endpoints": {},
+      "fixtures_expected": 0,
+      "fixtures_received": 0,
+      "results_received": 0,
+      "season": 2019,
+      "status": "UNAVAILABLE",
+      "team_identity_rate": null
+    },
+    {
+      "canonical_fixtures": 380,
+      "classifications": {
+        "ABANDONED": 0,
+        "CANCELLED": 0,
+        "DUPLICATE": 0,
+        "PLAYOFF_EXCLUDED": 2,
+        "REGULAR_SEASON_CANONICAL": 380,
+        "UNAVAILABLE": 0
+      },
+      "endpoints": {
+        "fixture_events": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "fixture_player_statistics": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "fixture_team_statistics": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "injuries": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "lineups": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "players": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "squads": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "standings_snapshots": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "teams": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        }
+      },
+      "fixture_coverage": 1.0,
+      "fixtures_expected": 380,
+      "fixtures_received": 382,
+      "results_coverage": 1.0,
+      "results_received": 380,
+      "season": 2020,
+      "status": "REGULAR_SEASON_CANONICAL",
+      "team_identity_rate": 1.0,
+      "teams_received": 20
+    },
+    {
+      "canonical_fixtures": 380,
+      "classifications": {
+        "ABANDONED": 0,
+        "CANCELLED": 0,
+        "DUPLICATE": 0,
+        "PLAYOFF_EXCLUDED": 2,
+        "REGULAR_SEASON_CANONICAL": 380,
+        "UNAVAILABLE": 0
+      },
+      "endpoints": {
+        "fixture_events": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 380,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.196521,
+          "rows_received": 5979,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_player_statistics": {
+          "coverage": 0.821053,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 312,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": 1.0,
+          "null_rate": 0.446142,
+          "rows_received": 626,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_team_statistics": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "injuries": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 2681,
+          "status": "AVAILABLE",
+          "temporality": "HISTORICAL_NON_POINT_IN_TIME"
+        },
+        "lineups": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": 1.0,
+          "fixtures_received": 380,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.079117,
+          "rows_received": 764,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "players": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.226735,
+          "rows_received": 784,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "squads": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "standings_snapshots": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.018771,
+          "rows_received": 1,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "teams": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 21,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        }
+      },
+      "fixture_coverage": 1.0,
+      "fixtures_expected": 380,
+      "fixtures_received": 382,
+      "results_coverage": 1.0,
+      "results_received": 380,
+      "season": 2021,
+      "status": "REGULAR_SEASON_CANONICAL",
+      "team_identity_rate": 1.0,
+      "teams_received": 20
+    },
+    {
+      "canonical_fixtures": 380,
+      "classifications": {
+        "ABANDONED": 0,
+        "CANCELLED": 0,
+        "DUPLICATE": 0,
+        "PLAYOFF_EXCLUDED": 0,
+        "REGULAR_SEASON_CANONICAL": 380,
+        "UNAVAILABLE": 0
+      },
+      "endpoints": {
+        "fixture_events": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 380,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.196712,
+          "rows_received": 5758,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_player_statistics": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 380,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": 1.0,
+          "null_rate": 0.441608,
+          "rows_received": 760,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_team_statistics": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 380,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.024927,
+          "rows_received": 760,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "injuries": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 2717,
+          "status": "AVAILABLE",
+          "temporality": "HISTORICAL_NON_POINT_IN_TIME"
+        },
+        "lineups": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": 1.0,
+          "fixtures_received": 380,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.08161,
+          "rows_received": 760,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "players": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.249468,
+          "rows_received": 788,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "squads": {
+          "coverage": 0.0,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "null_rate": null,
+          "rows_received": 0,
+          "status": "UNAVAILABLE",
+          "temporality": "NOT_OBSERVED"
+        },
+        "standings_snapshots": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.017065,
+          "rows_received": 1,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "teams": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 20,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        }
+      },
+      "fixture_coverage": 1.0,
+      "fixtures_expected": 380,
+      "fixtures_received": 380,
+      "results_coverage": 1.0,
+      "results_received": 380,
+      "season": 2022,
+      "status": "REGULAR_SEASON_CANONICAL",
+      "team_identity_rate": 1.0,
+      "teams_received": 20
+    },
+    {
+      "canonical_fixtures": 306,
+      "classifications": {
+        "ABANDONED": 0,
+        "CANCELLED": 0,
+        "DUPLICATE": 0,
+        "PLAYOFF_EXCLUDED": 2,
+        "REGULAR_SEASON_CANONICAL": 306,
+        "UNAVAILABLE": 0
+      },
+      "endpoints": {
+        "fixture_events": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 306,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.195266,
+          "rows_received": 4901,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_player_statistics": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 306,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": 1.0,
+          "null_rate": 0.440821,
+          "rows_received": 616,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_team_statistics": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 306,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.02461,
+          "rows_received": 616,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "injuries": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 2078,
+          "status": "AVAILABLE",
+          "temporality": "HISTORICAL_NON_POINT_IN_TIME"
+        },
+        "lineups": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": 1.0,
+          "fixtures_received": 306,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.080049,
+          "rows_received": 616,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "players": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.278289,
+          "rows_received": 860,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "squads": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.002597,
+          "rows_received": 19,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "standings_snapshots": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.015152,
+          "rows_received": 1,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "teams": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 19,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        }
+      },
+      "fixture_coverage": 1.0,
+      "fixtures_expected": 306,
+      "fixtures_received": 308,
+      "results_coverage": 1.0,
+      "results_received": 306,
+      "season": 2023,
+      "status": "REGULAR_SEASON_CANONICAL",
+      "team_identity_rate": 1.0,
+      "teams_received": 18
+    },
+    {
+      "canonical_fixtures": 306,
+      "classifications": {
+        "ABANDONED": 0,
+        "CANCELLED": 0,
+        "DUPLICATE": 0,
+        "PLAYOFF_EXCLUDED": 2,
+        "REGULAR_SEASON_CANONICAL": 306,
+        "UNAVAILABLE": 0
+      },
+      "endpoints": {
+        "fixture_events": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 306,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.19605,
+          "rows_received": 5034,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_player_statistics": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 306,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": 1.0,
+          "null_rate": 0.423342,
+          "rows_received": 616,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_team_statistics": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 306,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.024059,
+          "rows_received": 616,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "injuries": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 2460,
+          "status": "AVAILABLE",
+          "temporality": "HISTORICAL_NON_POINT_IN_TIME"
+        },
+        "lineups": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": 1.0,
+          "fixtures_received": 306,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.079922,
+          "rows_received": 616,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "players": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.310481,
+          "rows_received": 920,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "squads": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.002233,
+          "rows_received": 19,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "standings_snapshots": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.015152,
+          "rows_received": 1,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "teams": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 19,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        }
+      },
+      "fixture_coverage": 1.0,
+      "fixtures_expected": 306,
+      "fixtures_received": 308,
+      "results_coverage": 1.0,
+      "results_received": 306,
+      "season": 2024,
+      "status": "REGULAR_SEASON_CANONICAL",
+      "team_identity_rate": 1.0,
+      "teams_received": 18
+    },
+    {
+      "canonical_fixtures": 306,
+      "classifications": {
+        "ABANDONED": 0,
+        "CANCELLED": 0,
+        "DUPLICATE": 0,
+        "PLAYOFF_EXCLUDED": 4,
+        "REGULAR_SEASON_CANONICAL": 306,
+        "UNAVAILABLE": 0
+      },
+      "endpoints": {
+        "fixture_events": {
+          "coverage": 0.990196,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 303,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.196347,
+          "rows_received": 4936,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_player_statistics": {
+          "coverage": 0.990196,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 303,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": 1.0,
+          "null_rate": 0.426049,
+          "rows_received": 614,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "fixture_team_statistics": {
+          "coverage": 0.996732,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 305,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.023649,
+          "rows_received": 618,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "injuries": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 2865,
+          "status": "AVAILABLE",
+          "temporality": "HISTORICAL_NON_POINT_IN_TIME"
+        },
+        "lineups": {
+          "coverage": 0.996732,
+          "exact_starting_xi_rate": 1.0,
+          "fixtures_received": 305,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.079435,
+          "rows_received": 618,
+          "status": "AVAILABLE",
+          "temporality": "POST_MATCH_LAG_REQUIRED"
+        },
+        "players": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": 1.0,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.213123,
+          "rows_received": 780,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "squads": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.000596,
+          "rows_received": 21,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "standings_snapshots": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.015152,
+          "rows_received": 1,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        },
+        "teams": {
+          "coverage": 1.0,
+          "exact_starting_xi_rate": null,
+          "fixtures_received": 0,
+          "identity_rate": null,
+          "minutes_coherence_rate": null,
+          "null_rate": 0.0,
+          "rows_received": 21,
+          "status": "AVAILABLE",
+          "temporality": "POINT_IN_TIME_SAFE"
+        }
+      },
+      "fixture_coverage": 1.0,
+      "fixtures_expected": 306,
+      "fixtures_received": 310,
+      "results_coverage": 1.0,
+      "results_received": 306,
+      "season": 2025,
+      "status": "REGULAR_SEASON_CANONICAL",
+      "team_identity_rate": 1.0,
+      "teams_received": 18
+    }
+  ],
+  "status": "DATA_FACTORY_READY"
+}

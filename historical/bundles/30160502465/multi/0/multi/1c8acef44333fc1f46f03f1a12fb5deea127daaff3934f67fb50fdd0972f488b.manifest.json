@@ -10,6 +10,5 @@
   "run_id": "30160502465",
   "schema_version": "historical-bundle-v1",
   "season": 0,
-  "sources_removed": true,
-  "status": "COMPACTED_AND_VERIFIED"
+  "sources_removed": true
 }

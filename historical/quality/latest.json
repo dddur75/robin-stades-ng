@@ -3,7 +3,7 @@
     {
       "check": "RAW_AND_PARQUET_HASHES",
       "status": "PASSED",
-      "value": "41672/41672"
+      "value": "55079/55079"
     },
     {
       "check": "PAGES_COMPLETE_AND_UNIQUE",
@@ -13,12 +13,12 @@
     {
       "check": "IDENTITIES_STABLE",
       "status": "PASSED",
-      "value": "41672/41672"
+      "value": "55079/55079"
     },
     {
       "check": "NULLS_PRESERVED_NO_SYNTHETIC_ZERO",
       "status": "PASSED",
-      "value": "41672/41672"
+      "value": "55079/55079"
     },
     {
       "check": "NO_FUTURE_DATA",
@@ -42,16 +42,16 @@
     }
   ],
   "failures": [],
-  "generated_at": "2026-07-25T10:58:54.468289+00:00",
-  "normalized_rows": 41672,
-  "parquet_partitions": 47,
+  "generated_at": "2026-07-25T13:51:46.945147+00:00",
+  "normalized_rows": 55079,
+  "parquet_partitions": 55,
   "production_status": "PRODUCTION_LOCKED",
-  "provenance_rows": 41672,
+  "provenance_rows": 55079,
   "quarantined_features": [
     "injury_return",
     "availability",
     "player_fatigue"
   ],
-  "raw_observations": 4185,
+  "raw_observations": 6685,
   "status": "PASSED"
 }
