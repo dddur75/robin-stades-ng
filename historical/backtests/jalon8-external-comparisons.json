@@ -1,0 +1,239 @@
+{
+  "comparisons": [
+    {
+      "challenger_metrics": {
+        "accuracy": 0.5173220973782772,
+        "brier_score": 0.19802208649452005,
+        "calibration_intercept": -6.473021202492957e-07,
+        "calibration_slope": 0.9629687389101174,
+        "ece": 0.026226616056796697,
+        "log_loss": 0.9982971423875217,
+        "matches": 2136,
+        "sharpness": 0.17167798871470927,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "LEAGUE_SPECIFIC_VS_FROZEN_TRANSFER",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_specific_v1",
+      "model_b": "ligue1_frozen_transfer_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": 0.0037555092567349733,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.5135767790262172,
+        "brier_score": 0.1975806310484061,
+        "calibration_intercept": -0.039951415878851905,
+        "calibration_slope": 1.055252007956225,
+        "ece": 0.019490646257564248,
+        "log_loss": 0.9945416331307865,
+        "matches": 2136,
+        "sharpness": 0.16277437533684563,
+        "status": "EVALUATED"
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.001867244828243303,
+          0.009646575004382726
+        ],
+        "ci95": [
+          -0.0028781149957812927,
+          0.010781776644698331
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.137,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "accuracy": 0.5173220973782772,
+        "brier_score": 0.19802208649452005,
+        "calibration_intercept": -6.473021202492957e-07,
+        "calibration_slope": 0.9629687389101174,
+        "ece": 0.026226616056796697,
+        "log_loss": 0.9982971423875217,
+        "matches": 2136,
+        "sharpness": 0.17167798871470927,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "LEAGUE_SPECIFIC_VS_POOLED",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_specific_v1",
+      "model_b": "pooled_multileague_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": 0.0024579957262518388,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.5112359550561798,
+        "brier_score": 0.19797843008003416,
+        "calibration_intercept": -0.0439032425179883,
+        "calibration_slope": 1.0370677794687744,
+        "ece": 0.026141992803416222,
+        "log_loss": 0.9958391466612697,
+        "matches": 2136,
+        "sharpness": 0.1693654874677291,
+        "status": "EVALUATED"
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.0017054164266271893,
+          0.006784032404360514
+        ],
+        "ci95": [
+          -0.002509193697461491,
+          0.007526481307921518
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.166,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "accuracy": 0.48408239700374533,
+        "brier_score": 0.20629441098352527,
+        "calibration_intercept": -0.05023616498532781,
+        "calibration_slope": 1.1407627784217025,
+        "ece": 0.015695303651762672,
+        "log_loss": 1.0311716150187518,
+        "matches": 2136,
+        "sharpness": 0.11455780801450983,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "DIXON_COLES_VS_POISSON",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_dixon_coles_v1",
+      "model_b": "bundesliga_poisson_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": -0.0005078077482467707,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.48174157303370785,
+        "brier_score": 0.20632646999032503,
+        "calibration_intercept": -0.08237049775829688,
+        "calibration_slope": 1.182226010813941,
+        "ece": 0.014667937607782802,
+        "log_loss": 1.0316794227669985,
+        "matches": 2136,
+        "sharpness": 0.12049168107672568,
+        "status": "EVALUATED"
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.002029280969680828,
+          0.0010161409376894782
+        ],
+        "ci95": [
+          -0.0022937343630384187,
+          0.0013181624238046594
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.7058,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "accuracy": 0.48174157303370785,
+        "brier_score": 0.20632646999032503,
+        "calibration_intercept": -0.08237049775829688,
+        "calibration_slope": 1.182226010813941,
+        "ece": 0.014667937607782802,
+        "log_loss": 1.0316794227669985,
+        "matches": 2136,
+        "sharpness": 0.12049168107672568,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "POISSON_VS_LEAGUE_SPECIFIC",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_poisson_v1",
+      "model_b": "bundesliga_specific_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": 0.033382280379477,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.5173220973782772,
+        "brier_score": 0.19802208649452005,
+        "calibration_intercept": -6.473021202492957e-07,
+        "calibration_slope": 0.9629687389101174,
+        "ece": 0.026226616056796697,
+        "log_loss": 0.9982971423875217,
+        "matches": 2136,
+        "sharpness": 0.17167798871470927,
+        "status": "EVALUATED"
+      },
+      "status": "EXTERNAL_VALIDATION_FAILED",
+      "uncertainty": {
+        "ci90": [
+          0.02175552020341727,
+          0.04486066952082869
+        ],
+        "ci95": [
+          0.01936090240503835,
+          0.04684659374761711
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.0,
+        "seed": 1707
+      }
+    },
+    {
+      "comparison_id": "FROZEN_TRANSFER_VS_MARKET",
+      "paired_fixtures": 0,
+      "reason": "MARKET_GATE_UNAVAILABLE",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "comparison_id": "LEAGUE_SPECIFIC_VS_MARKET",
+      "paired_fixtures": 0,
+      "reason": "MARKET_GATE_UNAVAILABLE",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "comparison_id": "POOLED_VS_MARKET",
+      "paired_fixtures": 0,
+      "reason": "MARKET_GATE_UNAVAILABLE",
+      "status": "UNAVAILABLE"
+    }
+  ],
+  "production_status": "PRODUCTION_LOCKED"
+}

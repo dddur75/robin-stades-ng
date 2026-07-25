@@ -1,0 +1,13 @@
+{
+  "backtests": 0,
+  "hypotheses": 13,
+  "live_shadow_candidates": 0,
+  "production_status": "PRODUCTION_LOCKED",
+  "protocol": "STRATEGY_LAB_V3_PREREGISTERED",
+  "protocol_hash": "38a539aa32588057c8250bd63d15576fb24c1fc8a9aca6aa3e6a0968cab1be95",
+  "provider_calls": 0,
+  "quota_consumed": 0,
+  "reason": "MARKET_GATE_UNAVAILABLE",
+  "shadow_model_candidates": 0,
+  "status": "NO_EXTERNAL_VALIDATED_EDGE"
+}

@@ -1,0 +1,603 @@
+{
+  "competitions": [
+    {
+      "competition": "Premier League",
+      "events": 0,
+      "gates": {
+        "EXTERNAL_VALIDATION_GATE": {
+          "blocked_components": [
+            "PLAYER",
+            "LINEUP",
+            "MARKET"
+          ],
+          "ready_components": [
+            "TEAM"
+          ],
+          "status": "PARTIAL"
+        },
+        "LINEUP_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "resolved_starting_xi_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "MARKET_GATE": {
+          "fixtures_1x2": 0,
+          "fixtures_over_under_25": 0,
+          "invented_prices": 0,
+          "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+          "status": "UNAVAILABLE"
+        },
+        "PLAYER_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "identity_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "TEAM_GATE": {
+          "canonical_rate": 1.0,
+          "fixtures": 2660,
+          "provenance_rate": 1.0,
+          "seasons": 7,
+          "status": "READY",
+          "team_identity_rate": 1.0,
+          "temporal_errors": 0
+        }
+      },
+      "market_1x2": 0,
+      "market_over_under_25": 0,
+      "null_rate": 0.0,
+      "players": 5216,
+      "quality": "PASSED",
+      "seasons": [
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2019,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2020,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2021,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2022,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2023,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2024,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2025,
+          "status": "READY"
+        }
+      ],
+      "team_statistics": 0,
+      "teams": 28,
+      "temporality": "PASSED"
+    },
+    {
+      "competition": "La Liga",
+      "events": 0,
+      "gates": {
+        "EXTERNAL_VALIDATION_GATE": {
+          "blocked_components": [
+            "PLAYER",
+            "LINEUP",
+            "MARKET"
+          ],
+          "ready_components": [
+            "TEAM"
+          ],
+          "status": "PARTIAL"
+        },
+        "LINEUP_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "resolved_starting_xi_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "MARKET_GATE": {
+          "fixtures_1x2": 0,
+          "fixtures_over_under_25": 0,
+          "invented_prices": 0,
+          "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+          "status": "UNAVAILABLE"
+        },
+        "PLAYER_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "identity_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "TEAM_GATE": {
+          "canonical_rate": 1.0,
+          "fixtures": 2660,
+          "provenance_rate": 1.0,
+          "seasons": 7,
+          "status": "READY",
+          "team_identity_rate": 1.0,
+          "temporal_errors": 0
+        }
+      },
+      "market_1x2": 0,
+      "market_over_under_25": 0,
+      "null_rate": 0.0,
+      "players": 5042,
+      "quality": "PASSED",
+      "seasons": [
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2019,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2020,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2021,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2022,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2023,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2024,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2025,
+          "status": "READY"
+        }
+      ],
+      "team_statistics": 0,
+      "teams": 28,
+      "temporality": "PASSED"
+    },
+    {
+      "competition": "Bundesliga",
+      "events": 0,
+      "gates": {
+        "EXTERNAL_VALIDATION_GATE": {
+          "blocked_components": [
+            "PLAYER",
+            "LINEUP",
+            "MARKET"
+          ],
+          "ready_components": [
+            "TEAM"
+          ],
+          "status": "PARTIAL"
+        },
+        "LINEUP_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "resolved_starting_xi_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "MARKET_GATE": {
+          "fixtures_1x2": 0,
+          "fixtures_over_under_25": 0,
+          "invented_prices": 0,
+          "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+          "status": "UNAVAILABLE"
+        },
+        "PLAYER_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "identity_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "TEAM_GATE": {
+          "canonical_rate": 1.0,
+          "fixtures": 2156,
+          "provenance_rate": 1.0,
+          "seasons": 7,
+          "status": "READY",
+          "team_identity_rate": 1.0,
+          "temporal_errors": 0
+        }
+      },
+      "market_1x2": 0,
+      "market_over_under_25": 0,
+      "null_rate": 0.0,
+      "players": 4178,
+      "quality": "PASSED",
+      "seasons": [
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 308,
+          "fixtures_expected": 306,
+          "fixtures_received": 308,
+          "results": 308,
+          "season": 2019,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 308,
+          "fixtures_expected": 306,
+          "fixtures_received": 308,
+          "results": 308,
+          "season": 2020,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 308,
+          "fixtures_expected": 306,
+          "fixtures_received": 308,
+          "results": 308,
+          "season": 2021,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 308,
+          "fixtures_expected": 306,
+          "fixtures_received": 308,
+          "results": 308,
+          "season": 2022,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 308,
+          "fixtures_expected": 306,
+          "fixtures_received": 308,
+          "results": 308,
+          "season": 2023,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 308,
+          "fixtures_expected": 306,
+          "fixtures_received": 308,
+          "results": 308,
+          "season": 2024,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 308,
+          "fixtures_expected": 306,
+          "fixtures_received": 308,
+          "results": 308,
+          "season": 2025,
+          "status": "READY"
+        }
+      ],
+      "team_statistics": 0,
+      "teams": 28,
+      "temporality": "PASSED"
+    },
+    {
+      "competition": "Serie A",
+      "events": 0,
+      "gates": {
+        "EXTERNAL_VALIDATION_GATE": {
+          "blocked_components": [
+            "PLAYER",
+            "LINEUP",
+            "MARKET"
+          ],
+          "ready_components": [],
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "LINEUP_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "resolved_starting_xi_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "MARKET_GATE": {
+          "fixtures_1x2": 0,
+          "fixtures_over_under_25": 0,
+          "invented_prices": 0,
+          "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+          "status": "UNAVAILABLE"
+        },
+        "PLAYER_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "identity_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "TEAM_GATE": {
+          "canonical_rate": 1.0,
+          "fixtures": 2661,
+          "provenance_rate": 1.0,
+          "seasons": 7,
+          "status": "BLOCKED_BY_COVERAGE",
+          "team_identity_rate": 0.9354838709677419,
+          "temporal_errors": 0
+        }
+      },
+      "market_1x2": 0,
+      "market_over_under_25": 0,
+      "null_rate": 0.0,
+      "players": 5530,
+      "quality": "PARTIAL",
+      "seasons": [
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2019,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2020,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2021,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 381,
+          "fixtures_expected": 380,
+          "fixtures_received": 381,
+          "results": 381,
+          "season": 2022,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2023,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2024,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 380,
+          "fixtures_expected": 380,
+          "fixtures_received": 380,
+          "results": 380,
+          "season": 2025,
+          "status": "READY"
+        }
+      ],
+      "team_statistics": 0,
+      "teams": 31,
+      "temporality": "PASSED"
+    },
+    {
+      "competition": "UEFA Champions League",
+      "events": 0,
+      "gates": {
+        "EXTERNAL_VALIDATION_GATE": {
+          "blocked_components": [
+            "PLAYER",
+            "LINEUP",
+            "MARKET"
+          ],
+          "ready_components": [],
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "LINEUP_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "resolved_starting_xi_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "MARKET_GATE": {
+          "fixtures_1x2": 0,
+          "fixtures_over_under_25": 0,
+          "invented_prices": 0,
+          "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+          "status": "UNAVAILABLE"
+        },
+        "PLAYER_GATE": {
+          "coverage": 0.0,
+          "fixtures": 0,
+          "identity_rate": null,
+          "rows": 0,
+          "status": "BLOCKED_BY_COVERAGE"
+        },
+        "TEAM_GATE": {
+          "canonical_rate": 1.0,
+          "fixtures": 1594,
+          "provenance_rate": 1.0,
+          "seasons": 7,
+          "status": "BLOCKED_BY_COVERAGE",
+          "team_identity_rate": 0.9521531100478469,
+          "temporal_errors": 0
+        }
+      },
+      "market_1x2": 0,
+      "market_over_under_25": 0,
+      "null_rate": 0.0,
+      "players": 14392,
+      "quality": "PARTIAL",
+      "seasons": [
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 210,
+          "fixtures_expected": null,
+          "fixtures_received": 210,
+          "results": 210,
+          "season": 2019,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 178,
+          "fixtures_expected": null,
+          "fixtures_received": 178,
+          "results": 178,
+          "season": 2020,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 218,
+          "fixtures_expected": null,
+          "fixtures_received": 218,
+          "results": 218,
+          "season": 2021,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 214,
+          "fixtures_expected": null,
+          "fixtures_received": 214,
+          "results": 214,
+          "season": 2022,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 214,
+          "fixtures_expected": null,
+          "fixtures_received": 214,
+          "results": 214,
+          "season": 2023,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 279,
+          "fixtures_expected": null,
+          "fixtures_received": 279,
+          "results": 279,
+          "season": 2024,
+          "status": "READY"
+        },
+        {
+          "fixture_coverage": 1.0,
+          "fixtures_canonical": 281,
+          "fixtures_expected": null,
+          "fixtures_received": 281,
+          "results": 281,
+          "season": 2025,
+          "status": "READY"
+        }
+      ],
+      "team_statistics": 0,
+      "teams": 209,
+      "temporality": "PASSED"
+    }
+  ],
+  "generated_at": "2026-07-25T17:20:34.527024+00:00",
+  "production_status": "PRODUCTION_LOCKED",
+  "schema_version": "external-league-readiness-v1"
+}

@@ -1,0 +1,1789 @@
+{
+  "comparisons": [
+    {
+      "challenger_metrics": {
+        "accuracy": 0.5173220973782772,
+        "brier_score": 0.19802208649452005,
+        "calibration_intercept": -6.473021202492957e-07,
+        "calibration_slope": 0.9629687389101174,
+        "ece": 0.026226616056796697,
+        "log_loss": 0.9982971423875217,
+        "matches": 2136,
+        "sharpness": 0.17167798871470927,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "LEAGUE_SPECIFIC_VS_FROZEN_TRANSFER",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_specific_v1",
+      "model_b": "ligue1_frozen_transfer_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": 0.0037555092567349733,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.5135767790262172,
+        "brier_score": 0.1975806310484061,
+        "calibration_intercept": -0.039951415878851905,
+        "calibration_slope": 1.055252007956225,
+        "ece": 0.019490646257564248,
+        "log_loss": 0.9945416331307865,
+        "matches": 2136,
+        "sharpness": 0.16277437533684563,
+        "status": "EVALUATED"
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.001867244828243303,
+          0.009646575004382726
+        ],
+        "ci95": [
+          -0.0028781149957812927,
+          0.010781776644698331
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.137,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "accuracy": 0.5173220973782772,
+        "brier_score": 0.19802208649452005,
+        "calibration_intercept": -6.473021202492957e-07,
+        "calibration_slope": 0.9629687389101174,
+        "ece": 0.026226616056796697,
+        "log_loss": 0.9982971423875217,
+        "matches": 2136,
+        "sharpness": 0.17167798871470927,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "LEAGUE_SPECIFIC_VS_POOLED",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_specific_v1",
+      "model_b": "pooled_multileague_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": 0.0024579957262518388,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.5112359550561798,
+        "brier_score": 0.19797843008003416,
+        "calibration_intercept": -0.0439032425179883,
+        "calibration_slope": 1.0370677794687744,
+        "ece": 0.026141992803416222,
+        "log_loss": 0.9958391466612697,
+        "matches": 2136,
+        "sharpness": 0.1693654874677291,
+        "status": "EVALUATED"
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.0017054164266271893,
+          0.006784032404360514
+        ],
+        "ci95": [
+          -0.002509193697461491,
+          0.007526481307921518
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.166,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "accuracy": 0.48408239700374533,
+        "brier_score": 0.20629441098352527,
+        "calibration_intercept": -0.05023616498532781,
+        "calibration_slope": 1.1407627784217025,
+        "ece": 0.015695303651762672,
+        "log_loss": 1.0311716150187518,
+        "matches": 2136,
+        "sharpness": 0.11455780801450983,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "DIXON_COLES_VS_POISSON",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_dixon_coles_v1",
+      "model_b": "bundesliga_poisson_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": -0.0005078077482467707,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.48174157303370785,
+        "brier_score": 0.20632646999032503,
+        "calibration_intercept": -0.08237049775829688,
+        "calibration_slope": 1.182226010813941,
+        "ece": 0.014667937607782802,
+        "log_loss": 1.0316794227669985,
+        "matches": 2136,
+        "sharpness": 0.12049168107672568,
+        "status": "EVALUATED"
+      },
+      "status": "INCONCLUSIVE",
+      "uncertainty": {
+        "ci90": [
+          -0.002029280969680828,
+          0.0010161409376894782
+        ],
+        "ci95": [
+          -0.0022937343630384187,
+          0.0013181624238046594
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.7058,
+        "seed": 1707
+      }
+    },
+    {
+      "challenger_metrics": {
+        "accuracy": 0.48174157303370785,
+        "brier_score": 0.20632646999032503,
+        "calibration_intercept": -0.08237049775829688,
+        "calibration_slope": 1.182226010813941,
+        "ece": 0.014667937607782802,
+        "log_loss": 1.0316794227669985,
+        "matches": 2136,
+        "sharpness": 0.12049168107672568,
+        "status": "EVALUATED"
+      },
+      "comparison_id": "POISSON_VS_LEAGUE_SPECIFIC",
+      "competitions": [
+        "Bundesliga",
+        "La Liga",
+        "Premier League"
+      ],
+      "excluded_fixtures": 0,
+      "exclusion_reasons": [],
+      "fixtures_a": 2136,
+      "fixtures_b": 2136,
+      "model_a": "bundesliga_poisson_v1",
+      "model_b": "bundesliga_specific_v1",
+      "paired_fixtures": 2136,
+      "paired_log_loss_delta": 0.033382280379477,
+      "production_status": "PRODUCTION_LOCKED",
+      "reference_metrics": {
+        "accuracy": 0.5173220973782772,
+        "brier_score": 0.19802208649452005,
+        "calibration_intercept": -6.473021202492957e-07,
+        "calibration_slope": 0.9629687389101174,
+        "ece": 0.026226616056796697,
+        "log_loss": 0.9982971423875217,
+        "matches": 2136,
+        "sharpness": 0.17167798871470927,
+        "status": "EVALUATED"
+      },
+      "status": "EXTERNAL_VALIDATION_FAILED",
+      "uncertainty": {
+        "ci90": [
+          0.02175552020341727,
+          0.04486066952082869
+        ],
+        "ci95": [
+          0.01936090240503835,
+          0.04684659374761711
+        ],
+        "groups": 215,
+        "iterations": 5000,
+        "probability_challenger_better": 0.0,
+        "seed": 1707
+      }
+    },
+    {
+      "comparison_id": "FROZEN_TRANSFER_VS_MARKET",
+      "paired_fixtures": 0,
+      "reason": "MARKET_GATE_UNAVAILABLE",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "comparison_id": "LEAGUE_SPECIFIC_VS_MARKET",
+      "paired_fixtures": 0,
+      "reason": "MARKET_GATE_UNAVAILABLE",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "comparison_id": "POOLED_VS_MARKET",
+      "paired_fixtures": 0,
+      "reason": "MARKET_GATE_UNAVAILABLE",
+      "status": "UNAVAILABLE"
+    }
+  ],
+  "completed_at": "2026-07-25T17:23:26.233441+00:00",
+  "datasets": [
+    {
+      "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+      "competition": "Premier League",
+      "coverage": 1.0,
+      "dataset_name": "pl_team_pre_match_v1",
+      "dataset_version": "pl_team_pre_match_v1",
+      "excluded_rows": 0,
+      "features": [
+        "elo_difference",
+        "home_form_5",
+        "away_form_5",
+        "home_goals_for_5",
+        "away_goals_for_5",
+        "home_goals_against_5",
+        "away_goals_against_5",
+        "home_rest_days",
+        "away_rest_days"
+      ],
+      "fixtures": 2660,
+      "generated_at": "2026-07-25T17:20:34.892694+00:00",
+      "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
+      "partitions": [
+        {
+          "bytes": 72268,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2019/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "609ddc7519e617bdb83f345f7fde90e64d77154d4a5cb22a0da06a43a74ec051"
+        },
+        {
+          "bytes": 73874,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2020/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "1f404216169731df2dc3d7a3928975e721a2be0ae3a6f438968f4ebd8655ab8e"
+        },
+        {
+          "bytes": 71328,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2021/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "ae8e9a0e82736e3d01c54ee6a98a056526da736cf38f7f504a6946e85372be37"
+        },
+        {
+          "bytes": 71227,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2022/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "70c19f2de3b72a10ca0edece17dabf65cdc5a6cc4c6ad606df8843bcc7e22551"
+        },
+        {
+          "bytes": 72340,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2023/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "c4b415f7b2f6c4779f5dbe7de88dd4d544b62b5b21aeaee36508fcd65fbdb9b1"
+        },
+        {
+          "bytes": 72059,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2024/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "919afdbe0beb62488ccafafcbf8be4ab23d7b82170e18a35d9001a823669d8e9"
+        },
+        {
+          "bytes": 72261,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2025/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "507a59bfca244bb5e266bbcfb3eb02c7944cfc3ce4c0f17375cc0dee7fcd7dde"
+        }
+      ],
+      "production_status": "PRODUCTION_LOCKED",
+      "quality": "PASSED",
+      "rows": 2660,
+      "seasons": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "source": [
+        "API-FOOTBALL HISTORICAL"
+      ],
+      "status": "EXTERNAL_DATASET_READY",
+      "targets": [
+        "1X2",
+        "OVER_UNDER_2_5"
+      ],
+      "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
+    },
+    {
+      "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+      "competition": "La Liga",
+      "coverage": 1.0,
+      "dataset_name": "laliga_team_pre_match_v1",
+      "dataset_version": "laliga_team_pre_match_v1",
+      "excluded_rows": 0,
+      "features": [
+        "elo_difference",
+        "home_form_5",
+        "away_form_5",
+        "home_goals_for_5",
+        "away_goals_for_5",
+        "home_goals_against_5",
+        "away_goals_against_5",
+        "home_rest_days",
+        "away_rest_days"
+      ],
+      "fixtures": 2660,
+      "generated_at": "2026-07-25T17:20:35.261858+00:00",
+      "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
+      "partitions": [
+        {
+          "bytes": 72317,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2019/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "2af21d9be6c9190da9140332034768f962ce763084d0720d060a15ffc138814d"
+        },
+        {
+          "bytes": 73497,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2020/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "1d6cff2dcb24aa832722a69a5a2884f12ae23f729178993d295e91b5c3bfb2de"
+        },
+        {
+          "bytes": 71771,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2021/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "b361e5a37adfa53d958a46d7b76d4b53b4e617fb1874ea6f5ae3928115fbb001"
+        },
+        {
+          "bytes": 72859,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2022/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "4969332ac74f6f3ee2dd73653e6520e50d64134cbbfc9da7405a2c852a71f61d"
+        },
+        {
+          "bytes": 73049,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2023/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "a817095f06c3b3ce80b40f1205d423e949709896a54c4c6b30e099acee22ee32"
+        },
+        {
+          "bytes": 73162,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2024/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "5f8293a1160e191d0efbd981083391a5667ed4eba74f42dc1e9b5f1b0f2a5c13"
+        },
+        {
+          "bytes": 73220,
+          "duplicates_avoided": 0,
+          "inserted": 380,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2025/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 380,
+          "sha256": "7cdb88c158f5c57629426b160b61e14bf8ac8c0c4e00ac48fceb3f328fb7dddb"
+        }
+      ],
+      "production_status": "PRODUCTION_LOCKED",
+      "quality": "PASSED",
+      "rows": 2660,
+      "seasons": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "source": [
+        "API-FOOTBALL HISTORICAL"
+      ],
+      "status": "EXTERNAL_DATASET_READY",
+      "targets": [
+        "1X2",
+        "OVER_UNDER_2_5"
+      ],
+      "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
+    },
+    {
+      "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+      "competition": "Bundesliga",
+      "coverage": 1.0,
+      "dataset_name": "bundesliga_team_pre_match_v1",
+      "dataset_version": "bundesliga_team_pre_match_v1",
+      "excluded_rows": 0,
+      "features": [
+        "elo_difference",
+        "home_form_5",
+        "away_form_5",
+        "home_goals_for_5",
+        "away_goals_for_5",
+        "home_goals_against_5",
+        "away_goals_against_5",
+        "home_rest_days",
+        "away_rest_days"
+      ],
+      "fixtures": 2156,
+      "generated_at": "2026-07-25T17:20:35.579786+00:00",
+      "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
+      "partitions": [
+        {
+          "bytes": 63610,
+          "duplicates_avoided": 0,
+          "inserted": 308,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2019/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 308,
+          "sha256": "fa50f0d3167354a0d54d20b750688c5a71fc85e5641137027234b54e460adf15"
+        },
+        {
+          "bytes": 63452,
+          "duplicates_avoided": 0,
+          "inserted": 308,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2020/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 308,
+          "sha256": "535ff15065417ae2cf18940ea618aff941c2e79a5c40bc239c059d802624c056"
+        },
+        {
+          "bytes": 62723,
+          "duplicates_avoided": 0,
+          "inserted": 308,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2021/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 308,
+          "sha256": "f3b238b69c9edae279d02cd47c76f559936741f1d3b95b331af3b03b1755f15f"
+        },
+        {
+          "bytes": 62351,
+          "duplicates_avoided": 0,
+          "inserted": 308,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2022/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 308,
+          "sha256": "803cfee0b11871df5f86f9b8160516e94d616829178df8d32e73394cf501dcbf"
+        },
+        {
+          "bytes": 62545,
+          "duplicates_avoided": 0,
+          "inserted": 308,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2023/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 308,
+          "sha256": "3cf027a6a4ce8745a4bff72a0f73ec4cbb26ac3ca0094595e1abe5d2e2f2b16d"
+        },
+        {
+          "bytes": 63595,
+          "duplicates_avoided": 0,
+          "inserted": 308,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2024/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 308,
+          "sha256": "3448cae918ee14c8b620f0458194c36457f14991a6ecfa7979d25536e737d02c"
+        },
+        {
+          "bytes": 63374,
+          "duplicates_avoided": 0,
+          "inserted": 308,
+          "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2025/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
+          "rows": 308,
+          "sha256": "1246382cf033d567dd70510042f3a4fc38e7970997956ac38b463432dfb38002"
+        }
+      ],
+      "production_status": "PRODUCTION_LOCKED",
+      "quality": "PASSED",
+      "rows": 2156,
+      "seasons": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "source": [
+        "API-FOOTBALL HISTORICAL"
+      ],
+      "status": "EXTERNAL_DATASET_READY",
+      "targets": [
+        "1X2",
+        "OVER_UNDER_2_5"
+      ],
+      "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
+    }
+  ],
+  "leave_one_league_out": [
+    {
+      "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+      "feature_stability": "MEASURED",
+      "held_out_competition": "Premier League",
+      "market_comparison": "UNAVAILABLE_MARKET_GATE",
+      "metrics": {
+        "accuracy": 0.49605263157894736,
+        "brier_score": 0.20208171649561105,
+        "calibration_intercept": -0.01431375105564785,
+        "calibration_slope": 0.975542433050069,
+        "ece": 0.03160492550995335,
+        "log_loss": 1.0104974067498922,
+        "matches": 760,
+        "sharpness": 0.15921724377176238,
+        "status": "EVALUATED"
+      },
+      "paired_fixtures": 760,
+      "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+      "training_competitions": [
+        "Bundesliga",
+        "La Liga"
+      ]
+    },
+    {
+      "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+      "feature_stability": "MEASURED",
+      "held_out_competition": "La Liga",
+      "market_comparison": "UNAVAILABLE_MARKET_GATE",
+      "metrics": {
+        "accuracy": 0.5223684210526316,
+        "brier_score": 0.1961772753961993,
+        "calibration_intercept": -0.0504885763829514,
+        "calibration_slope": 1.0582948765177307,
+        "ece": 0.02049686050339524,
+        "log_loss": 0.9913360571337251,
+        "matches": 760,
+        "sharpness": 0.1746281456581208,
+        "status": "EVALUATED"
+      },
+      "paired_fixtures": 760,
+      "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+      "training_competitions": [
+        "Bundesliga",
+        "Premier League"
+      ]
+    },
+    {
+      "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+      "feature_stability": "MEASURED",
+      "held_out_competition": "Bundesliga",
+      "market_comparison": "UNAVAILABLE_MARKET_GATE",
+      "metrics": {
+        "accuracy": 0.512987012987013,
+        "brier_score": 0.197653478787476,
+        "calibration_intercept": -0.01936068610468552,
+        "calibration_slope": 0.981672994675791,
+        "ece": 0.04199653872653711,
+        "log_loss": 0.9946561498073714,
+        "matches": 616,
+        "sharpness": 0.17615867488010248,
+        "status": "EVALUATED"
+      },
+      "paired_fixtures": 616,
+      "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+      "training_competitions": [
+        "La Liga",
+        "Premier League"
+      ]
+    }
+  ],
+  "models": {
+    "dixon_coles": {
+      "metrics": {
+        "accuracy": 0.48408239700374533,
+        "brier_score": 0.20629441098352527,
+        "calibration_intercept": -0.05023616498532767,
+        "calibration_slope": 1.1407627784217027,
+        "ece": 0.015695303651762683,
+        "log_loss": 1.0311716150187518,
+        "matches": 2136,
+        "sharpness": 0.11455780801450983,
+        "status": "EVALUATED"
+      },
+      "predictions": 2136,
+      "status": "EVALUATED"
+    },
+    "frozen_transfer": {
+      "metrics": {
+        "accuracy": 0.5135767790262172,
+        "brier_score": 0.1975806310484061,
+        "calibration_intercept": -0.03995141587885205,
+        "calibration_slope": 1.0552520079562246,
+        "ece": 0.019490646257564193,
+        "log_loss": 0.9945416331307865,
+        "matches": 2136,
+        "sharpness": 0.16277437533684563,
+        "status": "EVALUATED"
+      },
+      "predictions": 2136,
+      "status": "FROZEN_TRANSFER_EVALUATED"
+    },
+    "league_specific": {
+      "metrics": {
+        "accuracy": 0.5173220973782772,
+        "brier_score": 0.19802208649452005,
+        "calibration_intercept": -6.473021201981876e-07,
+        "calibration_slope": 0.9629687389101174,
+        "ece": 0.026226616056796728,
+        "log_loss": 0.9982971423875214,
+        "matches": 2136,
+        "sharpness": 0.17167798871470927,
+        "status": "EVALUATED"
+      },
+      "predictions": 2136,
+      "status": "LEAGUE_SPECIFIC_EVALUATED"
+    },
+    "poisson": {
+      "metrics": {
+        "accuracy": 0.48174157303370785,
+        "brier_score": 0.20632646999032503,
+        "calibration_intercept": -0.08237049775829654,
+        "calibration_slope": 1.1822260108139404,
+        "ece": 0.014667937607782785,
+        "log_loss": 1.0316794227669985,
+        "matches": 2136,
+        "sharpness": 0.12049168107672568,
+        "status": "EVALUATED"
+      },
+      "predictions": 2136,
+      "status": "EVALUATED"
+    },
+    "pooled": {
+      "metrics": {
+        "accuracy": 0.5112359550561798,
+        "brier_score": 0.19797843008003416,
+        "calibration_intercept": -0.043903242517988286,
+        "calibration_slope": 1.0370677794687746,
+        "ece": 0.026141992803416225,
+        "log_loss": 0.9958391466612695,
+        "matches": 2136,
+        "sharpness": 0.1693654874677291,
+        "status": "EVALUATED"
+      },
+      "predictions": 2136,
+      "status": "POOLED_MODEL_EVALUATED"
+    }
+  },
+  "negative_controls": [
+    {
+      "competition": "Premier League",
+      "control": "TARGET_PERMUTATION",
+      "metrics": {
+        "brier_score": 0.21802054478301014,
+        "ece": 0.0,
+        "log_loss": 1.079799282333215,
+        "matches": 760
+      },
+      "status": "PASSED"
+    },
+    {
+      "competition": "Premier League",
+      "control": "PLAYER_FEATURE_PERMUTATION",
+      "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+    },
+    {
+      "competition": "Premier League",
+      "control": "CONSTANT_PLAYER_FEATURES",
+      "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+    },
+    {
+      "competition": "Premier League",
+      "control": "RANDOM_LINEUPS",
+      "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+    },
+    {
+      "competition": "Premier League",
+      "control": "SYNTHETIC_FUTURE_FEATURE",
+      "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+    },
+    {
+      "competition": "La Liga",
+      "control": "TARGET_PERMUTATION",
+      "metrics": {
+        "brier_score": 0.2130944136657433,
+        "ece": 0.0,
+        "log_loss": 1.0593400582518078,
+        "matches": 760
+      },
+      "status": "PASSED"
+    },
+    {
+      "competition": "La Liga",
+      "control": "PLAYER_FEATURE_PERMUTATION",
+      "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+    },
+    {
+      "competition": "La Liga",
+      "control": "CONSTANT_PLAYER_FEATURES",
+      "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+    },
+    {
+      "competition": "La Liga",
+      "control": "RANDOM_LINEUPS",
+      "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+    },
+    {
+      "competition": "La Liga",
+      "control": "SYNTHETIC_FUTURE_FEATURE",
+      "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+    },
+    {
+      "competition": "Bundesliga",
+      "control": "TARGET_PERMUTATION",
+      "metrics": {
+        "brier_score": 0.2179945325237533,
+        "ece": 5.551115123125783e-17,
+        "log_loss": 1.0792756090717992,
+        "matches": 616
+      },
+      "status": "PASSED"
+    },
+    {
+      "competition": "Bundesliga",
+      "control": "PLAYER_FEATURE_PERMUTATION",
+      "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+    },
+    {
+      "competition": "Bundesliga",
+      "control": "CONSTANT_PLAYER_FEATURES",
+      "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+    },
+    {
+      "competition": "Bundesliga",
+      "control": "RANDOM_LINEUPS",
+      "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+    },
+    {
+      "competition": "Bundesliga",
+      "control": "SYNTHETIC_FUTURE_FEATURE",
+      "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+    }
+  ],
+  "player_generalization": [
+    {
+      "competition": "Premier League",
+      "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+      "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+      "status": "INCONCLUSIVE"
+    },
+    {
+      "competition": "La Liga",
+      "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+      "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+      "status": "INCONCLUSIVE"
+    },
+    {
+      "competition": "Bundesliga",
+      "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+      "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+      "status": "INCONCLUSIVE"
+    }
+  ],
+  "prediction_partitions": [
+    {
+      "bytes": 58984,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_dixon_coles_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "5fdc299ab7f9e5693c4d0463de885ed3e48dc912402872b6a0ff8b5618b90357"
+    },
+    {
+      "bytes": 58984,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_poisson_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "cd85204e847b6d0fc21556acf33d25f6741aa6c77d5df39d13bc47d58ed6015d"
+    },
+    {
+      "bytes": 45361,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_specific_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "5b15aab625e20d7cfeb18dd94f6f52ba0488a8542d46b9159931d31370c8536d"
+    },
+    {
+      "bytes": 45659,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "31c853e349a124fbdd83a3e32339cda49e03362316d486acb33e96e78faaaabd"
+    },
+    {
+      "bytes": 45619,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_bundesliga_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "013e3080ce53d07dc190a80f74bdfc1ee185877732fc97e286f64d3d24aaae13"
+    },
+    {
+      "bytes": 45673,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "5930b9940cbbe57ed5e37fde0424b1ab14599aedd2e0671d93054245bf3703fa"
+    },
+    {
+      "bytes": 57072,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_dixon_coles_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "c8ee4272137eab8927a2436082e85f711edf9387ba8f6cdd79b01bc1ce2c31c7"
+    },
+    {
+      "bytes": 58104,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_poisson_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "55f36eee2e58c6a524edc9e912985021b8aab9481adebd7eb6123748852f8250"
+    },
+    {
+      "bytes": 45575,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_specific_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "fd420f4ede12900628bc63eb7cceeb77e50e0349b8858ab5f54189db230783f5"
+    },
+    {
+      "bytes": 44586,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "799f514ad59bf3476cdf3e27a6fc4490033487cdaf746585fc5459606233d23f"
+    },
+    {
+      "bytes": 45603,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_bundesliga_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "8fe58d7d4e5f132006fb0619ec26be3301a9bdb0332346c49c89c6d3d79448ee"
+    },
+    {
+      "bytes": 45656,
+      "duplicates_avoided": 0,
+      "inserted": 308,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
+      "rows": 308,
+      "sha256": "dd9c523bcf7c7dc12ff77569acff1a9ffcf070d2cccc1b6a41cfac1831d02ee3"
+    },
+    {
+      "bytes": 67209,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_dixon_coles_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "5358bd7cf362d0f573bc47aff20b792d43d4506885790606a9088e9afe8af8fa"
+    },
+    {
+      "bytes": 67359,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_poisson_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "b9d96b53a79e45cb44575c7b1f3c5abd1aad2c57fc155131be7fe2032cb841e7"
+    },
+    {
+      "bytes": 52957,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_specific_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "85aa5378102053d78b0b9be76359bbacb915e923e14e928af4b42f9be27175d4"
+    },
+    {
+      "bytes": 53910,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "e472764fd82561d79e8dbdb6cb2c74f09c5ac3a89eaaa82de60309d9f741c363"
+    },
+    {
+      "bytes": 52532,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_la_liga_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "392a3e0b2dd89bf9f24167e52cbcd78c85d2f5b9bceb742d747c0596eae82d42"
+    },
+    {
+      "bytes": 53923,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "ae1e074d264fe31bdca2da3d4c5872a26fe79d1b60570bc2bad14f50ebdd3cfd"
+    },
+    {
+      "bytes": 66614,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_dixon_coles_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "84a590b2910de58c9a523d40613db080b6689762d0e14d1f026ab0aaa155b09e"
+    },
+    {
+      "bytes": 66594,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_poisson_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "4a70db28ba959639048e354d5ecf9d7d47c6410f056faa98509633d4a9d2d893"
+    },
+    {
+      "bytes": 53901,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_specific_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "490af6f7ee6544c219163323da5730421f3d869520b8e92564639270ec0b9d17"
+    },
+    {
+      "bytes": 52675,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "7fb18c1bade0f896979b2891d78373ba0c5b24a19af06fe4dc17650b1ca94b31"
+    },
+    {
+      "bytes": 53913,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_la_liga_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "c9bec2914105a59b360eac52f7b03c724d37fb2097c53628285fbd7cceaecbb4"
+    },
+    {
+      "bytes": 53681,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "b84970380f4f7a095ca08d1e1b43feba65626fce77f60584b10b2859119ce68d"
+    },
+    {
+      "bytes": 53306,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "bf9f1564750ab7612522518221d3225175ac2ec5245cefd437568e8317838cee"
+    },
+    {
+      "bytes": 53306,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_premier_league_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "197da58d2ef28806bdb3556ab7bf9faa498d7260d8f4f57b2ae6b017eba6bc7c"
+    },
+    {
+      "bytes": 53317,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "d6d53008cdd8c1de9ab90835f0025f59e371e26ba3c5c0ff7a6f69ee470e5861"
+    },
+    {
+      "bytes": 66235,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_dixon_coles_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "a6258944a666b83d7bdf60088bfe8e6d0ce190513bfd9cb93f09d8f0e85e041e"
+    },
+    {
+      "bytes": 67426,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_poisson_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "05f350c985d51cae7098a63c5f08c1b1436fbf58b370e7da910ce01e9349f6db"
+    },
+    {
+      "bytes": 52380,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_specific_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "2b4d82aedfa7ee3652a6e0ad377b63c398eb41444f49039ced5b1fdf3cd5182b"
+    },
+    {
+      "bytes": 52312,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "c4a7a87d257b7b68e7ac85ffafeed1c71a9aa3b9d30bc2a1edef483d354fa6fc"
+    },
+    {
+      "bytes": 52431,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_premier_league_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "acf340b1aeca5815666d15190bd2a899c900c61c33a7ef3993b3b3e0c1475fe4"
+    },
+    {
+      "bytes": 53162,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "88c7f553a1bc628a2d8a5a104c25a81f16e01e73cfb4c424fcae2d1a5a653650"
+    },
+    {
+      "bytes": 64924,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_dixon_coles_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "1ae9f61932e9e16831eeb28d9274f1483102ec4d8f4744c5b1a64d21c6040f38"
+    },
+    {
+      "bytes": 64914,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_poisson_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "604241cd4bc4a664acc1d07a80081a57a6b1899346ff87c4733854a1c7c61af9"
+    },
+    {
+      "bytes": 53411,
+      "duplicates_avoided": 0,
+      "inserted": 380,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_specific_v1/part-00000.parquet",
+      "rows": 380,
+      "sha256": "c3010071523eac607275dd4aafe0266e316cadfc8d9b9df57be3fe2515a5be6b"
+    }
+  ],
+  "predictions": 12816,
+  "preseason_package": {
+    "NO_BET_DEFAULT": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "calibrators": [
+      "NONE_FROZEN_EXTERNAL"
+    ],
+    "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+    "dataset_versions": [
+      "pl_team_pre_match_v1",
+      "laliga_team_pre_match_v1",
+      "bundesliga_team_pre_match_v1"
+    ],
+    "decision_rules": [
+      "MARKET_BASELINE_MONITORING",
+      "NO_EXTERNAL_VALIDATED_EDGE"
+    ],
+    "feature_versions": [
+      "TEAM_FEATURES_V1"
+    ],
+    "generated_at": "2026-07-25T17:20:32.814586+00:00",
+    "hashes": {
+      "datasets": {
+        "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
+        "laliga_team_pre_match_v1": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
+        "pl_team_pre_match_v1": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876"
+      },
+      "external_protocol": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2"
+    },
+    "model_versions": [],
+    "package": "PRESEASON_SHADOW_PACKAGE_V1",
+    "package_hash": "464347506cc531de7afe1931dc4d68dbfe08a69f53c539acd6104487142a3e41",
+    "production_status": "PRODUCTION_LOCKED",
+    "quality_gates": [
+      "TEAM_GATE",
+      "PLAYER_GATE",
+      "LINEUP_GATE",
+      "MARKET_GATE",
+      "EXTERNAL_VALIDATION_GATE"
+    ],
+    "rejection_rules": [
+      "UNPAIRED_SAMPLE",
+      "TEMPORAL_LEAKAGE",
+      "POOR_CALIBRATION",
+      "PROFIT_CONCENTRATION",
+      "NEGATIVE_CONTROL_FAILURE"
+    ],
+    "status": "PRESEASON_PACKAGE_WAITING_FOR_EXTERNAL_GATES",
+    "strategy_versions": [],
+    "thresholds": {
+      "external_ci": 0.95,
+      "minimum_competitions": 3
+    }
+  },
+  "production_status": "PRODUCTION_LOCKED",
+  "protocol": {
+    "frozen_at": "2026-07-25T17:20:32.814754+00:00",
+    "hash": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2",
+    "status": "EXTERNAL_VALIDATION_PROTOCOL_V1_LOCKED"
+  },
+  "provider_calls": 0,
+  "quota_consumed": 0,
+  "readiness": {
+    "competitions": [
+      {
+        "competition": "Premier League",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [
+              "TEAM"
+            ],
+            "status": "PARTIAL"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1.0,
+            "fixtures": 2660,
+            "provenance_rate": 1.0,
+            "seasons": 7,
+            "status": "READY",
+            "team_identity_rate": 1.0,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0.0,
+        "players": 5216,
+        "quality": "PASSED",
+        "seasons": [
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 28,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "La Liga",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [
+              "TEAM"
+            ],
+            "status": "PARTIAL"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1.0,
+            "fixtures": 2660,
+            "provenance_rate": 1.0,
+            "seasons": 7,
+            "status": "READY",
+            "team_identity_rate": 1.0,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0.0,
+        "players": 5042,
+        "quality": "PASSED",
+        "seasons": [
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 28,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "Bundesliga",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [
+              "TEAM"
+            ],
+            "status": "PARTIAL"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1.0,
+            "fixtures": 2156,
+            "provenance_rate": 1.0,
+            "seasons": 7,
+            "status": "READY",
+            "team_identity_rate": 1.0,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0.0,
+        "players": 4178,
+        "quality": "PASSED",
+        "seasons": [
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 28,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "Serie A",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [],
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1.0,
+            "fixtures": 2661,
+            "provenance_rate": 1.0,
+            "seasons": 7,
+            "status": "BLOCKED_BY_COVERAGE",
+            "team_identity_rate": 0.9354838709677419,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0.0,
+        "players": 5530,
+        "quality": "PARTIAL",
+        "seasons": [
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 381,
+            "fixtures_expected": 380,
+            "fixtures_received": 381,
+            "results": 381,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 31,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "UEFA Champions League",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [],
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0.0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1.0,
+            "fixtures": 1594,
+            "provenance_rate": 1.0,
+            "seasons": 7,
+            "status": "BLOCKED_BY_COVERAGE",
+            "team_identity_rate": 0.9521531100478469,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0.0,
+        "players": 14392,
+        "quality": "PARTIAL",
+        "seasons": [
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 210,
+            "fixtures_expected": null,
+            "fixtures_received": 210,
+            "results": 210,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 178,
+            "fixtures_expected": null,
+            "fixtures_received": 178,
+            "results": 178,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 218,
+            "fixtures_expected": null,
+            "fixtures_received": 218,
+            "results": 218,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 214,
+            "fixtures_expected": null,
+            "fixtures_received": 214,
+            "results": 214,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 214,
+            "fixtures_expected": null,
+            "fixtures_received": 214,
+            "results": 214,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 279,
+            "fixtures_expected": null,
+            "fixtures_received": 279,
+            "results": 279,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1.0,
+            "fixtures_canonical": 281,
+            "fixtures_expected": null,
+            "fixtures_received": 281,
+            "results": 281,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 209,
+        "temporality": "PASSED"
+      }
+    ],
+    "generated_at": "2026-07-25T17:20:34.527024+00:00",
+    "production_status": "PRODUCTION_LOCKED",
+    "schema_version": "external-league-readiness-v1"
+  },
+  "real_bets": false,
+  "run_id": "30167355305",
+  "source_commit": "959245089d13935e9a6d80b5614f50b98933e8bc",
+  "started_at": "2026-07-25T17:20:32.814586+00:00",
+  "status": "WAITING_FOR_EXTERNAL_GATES",
+  "storage": {
+    "after_bytes": 383367123,
+    "can_write": true,
+    "current_bytes": 379897417,
+    "pause_bytes": 900000000,
+    "status": "SAFE",
+    "warning_bytes": 750000000
+  },
+  "strategies": {
+    "backtests": 0,
+    "hypotheses": 13,
+    "live_shadow_candidates": 0,
+    "production_status": "PRODUCTION_LOCKED",
+    "protocol": "STRATEGY_LAB_V3_PREREGISTERED",
+    "protocol_hash": "38a539aa32588057c8250bd63d15576fb24c1fc8a9aca6aa3e6a0968cab1be95",
+    "provider_calls": 0,
+    "quota_consumed": 0,
+    "reason": "MARKET_GATE_UNAVAILABLE",
+    "shadow_model_candidates": 0,
+    "status": "NO_EXTERNAL_VALIDATED_EDGE"
+  }
+}

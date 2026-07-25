@@ -1,0 +1,54 @@
+{
+  "NO_BET_DEFAULT": true,
+  "PRODUCTION_LOCKED": true,
+  "REAL_BETS": false,
+  "calibrators": [
+    "NONE_FROZEN_EXTERNAL"
+  ],
+  "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+  "dataset_versions": [
+    "pl_team_pre_match_v1",
+    "laliga_team_pre_match_v1",
+    "bundesliga_team_pre_match_v1"
+  ],
+  "decision_rules": [
+    "MARKET_BASELINE_MONITORING",
+    "NO_EXTERNAL_VALIDATED_EDGE"
+  ],
+  "feature_versions": [
+    "TEAM_FEATURES_V1"
+  ],
+  "generated_at": "2026-07-25T17:20:32.814586+00:00",
+  "hashes": {
+    "datasets": {
+      "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
+      "laliga_team_pre_match_v1": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
+      "pl_team_pre_match_v1": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876"
+    },
+    "external_protocol": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2"
+  },
+  "model_versions": [],
+  "package": "PRESEASON_SHADOW_PACKAGE_V1",
+  "package_hash": "464347506cc531de7afe1931dc4d68dbfe08a69f53c539acd6104487142a3e41",
+  "production_status": "PRODUCTION_LOCKED",
+  "quality_gates": [
+    "TEAM_GATE",
+    "PLAYER_GATE",
+    "LINEUP_GATE",
+    "MARKET_GATE",
+    "EXTERNAL_VALIDATION_GATE"
+  ],
+  "rejection_rules": [
+    "UNPAIRED_SAMPLE",
+    "TEMPORAL_LEAKAGE",
+    "POOR_CALIBRATION",
+    "PROFIT_CONCENTRATION",
+    "NEGATIVE_CONTROL_FAILURE"
+  ],
+  "status": "PRESEASON_PACKAGE_WAITING_FOR_EXTERNAL_GATES",
+  "strategy_versions": [],
+  "thresholds": {
+    "external_ci": 0.95,
+    "minimum_competitions": 3
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "hypotheses": [
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "EDGE",
+      "threshold": 0.02
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "EDGE",
+      "threshold": 0.03
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "EDGE",
+      "threshold": 0.05
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "MIN_PROBABILITY",
+      "threshold": 0.55
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "MIN_PROBABILITY",
+      "threshold": 0.65
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "MODEL_AGREEMENT",
+      "threshold": null
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "OVER_UNDER_2_5",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "EDGE",
+      "threshold": 0.03
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "OVER_UNDER_2_5",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "EDGE",
+      "threshold": 0.05
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "OVER_UNDER_2_5",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "POISSON_DIXON_COLES_AGREEMENT",
+      "threshold": null
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "OVER_UNDER_2_5",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "LOW_UNCERTAINTY",
+      "threshold": null
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "LOW_LINEUP_UNCERTAINTY",
+      "threshold": null
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "STARTING_XI_STRENGTH_GAP",
+      "threshold": null
+    },
+    {
+      "dataset": "EXTERNAL_CANONICAL_DATASET",
+      "decision_criteria": "GROUPED_CI95_AND_NEIGHBOUR_STABILITY",
+      "market": "1X2",
+      "minimum_volume": 100,
+      "model": "BEST_EXTERNALLY_VALIDATED_MODEL",
+      "rule": "HIGH_LINEUP_CONTINUITY",
+      "threshold": null
+    }
+  ],
+  "maximum_hypotheses": 13,
+  "production_status": "PRODUCTION_LOCKED",
+  "protocol_hash": "38a539aa32588057c8250bd63d15576fb24c1fc8a9aca6aa3e6a0968cab1be95",
+  "protocol_id": "STRATEGY_LAB_V3_PREREGISTERED",
+  "real_bets": false
+}

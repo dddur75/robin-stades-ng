@@ -1,0 +1,152 @@
+{
+  "bootstrap": {
+    "confidence_intervals": [
+      0.9,
+      0.95
+    ],
+    "groups": [
+      "competition",
+      "season",
+      "iso_week"
+    ],
+    "iterations": 5000,
+    "seed": 1707
+  },
+  "calibrations": {
+    "allowed": [
+      "NONE",
+      "SIGMOID",
+      "TEMPERATURE_SCALING",
+      "ISOTONIC"
+    ],
+    "external_labels_used_for_selection": 0,
+    "selection": "DEVELOPMENT_AND_VALIDATION_ONLY_CROSS_FITTED"
+  },
+  "comparisons": [
+    "FROZEN_TRANSFER_VS_MARKET",
+    "LEAGUE_SPECIFIC_VS_MARKET",
+    "POOLED_VS_MARKET",
+    "FROZEN_TRANSFER_VS_LEAGUE_SPECIFIC",
+    "LEAGUE_SPECIFIC_VS_POOLED",
+    "TEAM_VS_PLAYER",
+    "POISSON_VS_DIXON_COLES",
+    "BEST_SCORE_VS_BEST_DISCRIMINATIVE"
+  ],
+  "competitions": [
+    "Premier League",
+    "La Liga",
+    "Bundesliga",
+    "Serie A",
+    "UEFA Champions League"
+  ],
+  "datasets": {
+    "market": "historical prices joined by fixture identity only",
+    "player": "*_player_pre_lineup_v1",
+    "post_lineup": "*_post_lineup_simulated_v1",
+    "team": "*_team_pre_match_v1"
+  },
+  "decision_criteria": {
+    "candidate": "CALIBRATED_PAIRED_NO_LEAKAGE_MULTI_LEAGUE_OR_JUSTIFIED_LEAGUE_SPECIFIC",
+    "external_success": "FAVOURABLE_ON_AT_LEAST_THREE_COMPETITIONS",
+    "no_result": "NO_EXTERNAL_VALIDATED_EDGE",
+    "superiority": "CI95_EXCLUDES_ZERO_AND_P_SUPERIORITY_GTE_0_95"
+  },
+  "definition_hash": "8ab70c2386aa3c14d7ac39dadb55c174ac9092592e51a03f3813521adb14ad05",
+  "features": {
+    "forbidden": [
+      "target_home_goals",
+      "target_away_goals",
+      "future_match_information",
+      "retrospective_injury_state"
+    ],
+    "player": "JALON6_PLAYER_FEATURES_IF_PLAYER_GATE_READY",
+    "post_lineup": "JALON6_LINEUP_FEATURES_IF_LINEUP_GATE_READY",
+    "team": [
+      "elo_difference",
+      "home_form_5",
+      "away_form_5",
+      "home_goals_for_5",
+      "away_goals_for_5",
+      "home_goals_against_5",
+      "away_goals_against_5",
+      "home_rest_days",
+      "away_rest_days",
+      "home_shots_5",
+      "away_shots_5",
+      "home_shots_on_goal_5",
+      "away_shots_on_goal_5",
+      "home_possession_5",
+      "away_possession_5"
+    ]
+  },
+  "frozen_at": "2026-07-25T17:20:32.814754+00:00",
+  "metrics": [
+    "LOG_LOSS",
+    "BRIER_SCORE",
+    "ECE",
+    "ACCURACY",
+    "SHARPNESS",
+    "CALIBRATION_SLOPE",
+    "CALIBRATION_INTERCEPT"
+  ],
+  "models": {
+    "ensemble": [
+      "SIMPLE_MEAN",
+      "VALIDATION_WEIGHTED",
+      "REGULARIZED_STACKING"
+    ],
+    "frozen_transfer": [
+      "MULTINOMIAL_REGULARIZED"
+    ],
+    "league_specific": [
+      "MULTINOMIAL_REGULARIZED"
+    ],
+    "pooled": [
+      "MULTINOMIAL_REGULARIZED"
+    ],
+    "score": [
+      "POISSON",
+      "DIXON_COLES"
+    ]
+  },
+  "pairing_key": [
+    "competition",
+    "fixture_id",
+    "season",
+    "target",
+    "market_snapshot",
+    "temporal_policy"
+  ],
+  "parameters": {
+    "grid_policy": "NO_EXTERNAL_HYPERPARAMETER_SEARCH",
+    "learning_rate": 0.08,
+    "multinomial_iterations": 300,
+    "regularization": 0.01,
+    "score_rho": -0.08,
+    "seed": 1707
+  },
+  "periods": {
+    "discovery": [
+      2019,
+      2020,
+      2021,
+      2022
+    ],
+    "external_test": [
+      2024,
+      2025
+    ],
+    "validation": [
+      2023
+    ]
+  },
+  "post_external_changes": "POST_EXTERNAL_EXPLORATORY",
+  "production_status": "PRODUCTION_LOCKED",
+  "protocol_hash": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2",
+  "protocol_id": "EXTERNAL_VALIDATION_PROTOCOL_V1",
+  "real_bets": false,
+  "registered_before_results": true,
+  "retuning_policy": "FORBIDDEN_AFTER_EXTERNAL_RESULTS",
+  "source_commit": "959245089d13935e9a6d80b5614f50b98933e8bc",
+  "status": "EXTERNAL_VALIDATION_PROTOCOL_V1_LOCKED"
+}
