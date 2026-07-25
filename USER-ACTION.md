@@ -2,8 +2,9 @@
 
 Action après validation verte de la PR #6 :
 
-`Valider puis fusionner la PR #6.`
+Le Jalon 6 ne demande aucune manipulation pendant la construction et la CI.
+Une fois la PR brouillon déclarée prête et verte, l'unique action sera :
 
-Le pilote et les premiers lots de backfill sont déclenchés et suivis par les
-workflows du Jalon 5.1. Une autre action ne sera demandée qu’en cas de permission
-manquante, dépense supplémentaire ou capacité de stockage réellement dépassée.
+`Valider puis fusionner la PR du Jalon 6.`
+
+Aucune dépense, permission de pari réel ou migration de stockage n'est demandée.

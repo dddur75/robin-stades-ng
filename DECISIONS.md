@@ -172,3 +172,15 @@ La baseline Elo interprétable précède les modèles joueurs et ensembles. Les
 saisons 2024–2025 sont aveugles et ne règlent aucun paramètre. Un échec
 anti-fuite bloque la chaîne ; un résultat historique positif ne peut au mieux
 devenir que `LIVE_SHADOW_CANDIDATE`.
+
+## ADR Jalon 6 — Gates avant calcul
+
+Les datasets sont produits uniquement après readiness explicite. Le rapprochement
+des endpoints fixture-scoped utilise le hash du payload et les paramètres de
+l'observation brute. Discovery devient 2020–2022, Validation 2023 et Blind OOS
+2024–2025, car 2018–2019 ne sont pas encore disponibles.
+
+Le store joueurs conserve les nulls et l'identité fournisseur lors des
+transferts. La composition cible est réservée à `POST_LINEUP_SIMULATED`. Les
+calibrations sont choisies sur Validation seulement. DuckDB 1.5.4 et Polars
+1.43.0 sont épinglés pour la validation croisée des Parquet.

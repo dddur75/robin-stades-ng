@@ -19,11 +19,18 @@ from sqlalchemy import func, insert, inspect, select, update
 from sqlalchemy.dialects.postgresql import insert as postgresql_insert
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
+from robin.backtesting.v3 import strategy_sensitivity
 from robin.historical.canonical import (
     CompetitionFormat,
     canonical_dataset_hash,
     canonicalize_fixtures,
     validate_canonical_cardinality,
+)
+from robin.historical.dataset_factory import (
+    build_api_team_pre_match,
+    build_player_feature_datasets,
+    player_match_facts,
+    write_dataset,
 )
 from robin.historical.features import (
     assert_temporal_integrity,
@@ -31,6 +38,7 @@ from robin.historical.features import (
     dataset_manifest,
 )
 from robin.historical.forecast import build_complete_forecast
+from robin.historical.model_lab import run_model_lab
 from robin.historical.modeling import backtest_fixed_stake, train_elo_baseline
 from robin.historical.normalization import entity_type_for_endpoint, normalize_records
 from robin.historical.orchestrator import (
@@ -45,6 +53,10 @@ from robin.historical.pagination import iterate_pages
 from robin.historical.quality import (
     historical_quality_report,
     repair_raw_hash_provenance,
+)
+from robin.historical.readiness import (
+    build_multiseason_readiness,
+    readiness_markdown,
 )
 from robin.historical.scheduling import (
     BackfillTelemetry,
@@ -69,6 +81,7 @@ from robin.storage.historical_schema import (
     historical_backfill_tasks,
     historical_ingestion_runs,
     model_versions,
+    strategy_versions,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1165,6 +1178,263 @@ def command_repair_provenance(args: argparse.Namespace) -> None:
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
 
 
+def command_readiness(args: argparse.Namespace) -> None:
+    report = build_multiseason_readiness(args.state)
+    write_json_atomic(
+        args.state / "readiness" / "ligue1-multiseason-v1.json",
+        report,
+    )
+    markdown = readiness_markdown(report)
+    report_path = args.state / "reports" / "ligue1-multiseason-readiness.md"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(markdown, encoding="utf-8")
+    printable = {
+        "status": report["status"],
+        "gates": report["gates"],
+        "normalized_rows": report["normalized_rows"],
+        "provenance_rows": report["provenance_rows"],
+        "production_status": "PRODUCTION_LOCKED",
+    }
+    print(json.dumps(printable, ensure_ascii=False, sort_keys=True))
+
+
+def command_datasets(args: argparse.Namespace) -> None:
+    readiness_path = args.state / "readiness" / "ligue1-multiseason-v1.json"
+    readiness = read_json(readiness_path, {})
+    if not readiness:
+        readiness = build_multiseason_readiness(args.state)
+        write_json_atomic(readiness_path, readiness)
+    gates = readiness.get("gates", {})
+    gate_a = gates.get("A", {}) if isinstance(gates, Mapping) else {}
+    gate_b = gates.get("B", {}) if isinstance(gates, Mapping) else {}
+    gate_c = gates.get("C", {}) if isinstance(gates, Mapping) else {}
+    result: dict[str, object] = {
+        "status": "WAITING_FOR_BACKFILL_GATES",
+        "datasets": [],
+        "production_status": "PRODUCTION_LOCKED",
+    }
+    if not isinstance(gate_a, Mapping) or not gate_a.get("passed"):
+        write_json_atomic(args.state / "datasets" / "jalon6-run.json", result)
+        print(json.dumps(result, sort_keys=True))
+        return
+    seasons = tuple(int(value) for value in gate_a.get("eligible_seasons", []))
+    team_rows, market_rows = build_api_team_pre_match(
+        args.state,
+        seasons=seasons,
+        legacy_matches=ROOT / "data" / "matches.parquet",
+    )
+    manifests: list[dict[str, object]] = []
+    for name, rows, policy in (
+        (
+            "api_team_pre_match_v1",
+            team_rows,
+            "HISTORICAL POINT-IN-TIME",
+        ),
+        (
+            "api_market_baseline_v1",
+            market_rows,
+            "HISTORICAL_CLOSING_MARKET",
+        ),
+    ):
+        manifest = write_dataset(
+            args.state,
+            name=name,
+            rows=rows,
+            code_revision=git_revision(),
+            temporal_policy=policy,
+        )
+        write_json_atomic(args.state / "datasets" / f"{name}.json", manifest)
+        manifests.append(manifest)
+    if isinstance(gate_b, Mapping) and gate_b.get("passed"):
+        player_seasons = tuple(
+            int(value) for value in gate_b.get("eligible_seasons", [])
+        )
+        facts = player_match_facts(args.state, seasons=player_seasons)
+        facts_manifest = write_dataset(
+            args.state,
+            name="api_player_match_facts_v1",
+            rows=facts,
+            code_revision=git_revision(),
+            temporal_policy="POST_MATCH_ONLY",
+        )
+        write_json_atomic(
+            args.state / "datasets" / "api_player_match_facts_v1.json",
+            facts_manifest,
+        )
+        manifests.append(facts_manifest)
+        feature_rows, pre_rows, post_rows = build_player_feature_datasets(
+            args.state,
+            team_rows=team_rows,
+            seasons=player_seasons,
+        )
+        for name, rows, policy in (
+            ("player_feature_store_v1", feature_rows, "PRE_LINEUP"),
+            ("api_player_pre_lineup_v1", pre_rows, "PRE_LINEUP"),
+        ):
+            manifest = write_dataset(
+                args.state,
+                name=name,
+                rows=rows,
+                code_revision=git_revision(),
+                temporal_policy=policy,
+            )
+            write_json_atomic(args.state / "datasets" / f"{name}.json", manifest)
+            manifests.append(manifest)
+        if isinstance(gate_c, Mapping) and gate_c.get("passed"):
+            post_manifest = write_dataset(
+                args.state,
+                name="api_post_lineup_simulated_v1",
+                rows=post_rows,
+                code_revision=git_revision(),
+                temporal_policy="POST_LINEUP_SIMULATED",
+            )
+            write_json_atomic(
+                args.state / "datasets" / "api_post_lineup_simulated_v1.json",
+                post_manifest,
+            )
+            manifests.append(post_manifest)
+    result = {
+        "status": "DATA_FACTORY_READY",
+        "datasets": [
+            {
+                "name": manifest["dataset_name"],
+                "rows": manifest["rows"],
+                "fixtures": manifest["fixtures"],
+                "sha256": manifest["sha256"],
+                "status": manifest["status"],
+            }
+            for manifest in manifests
+        ],
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "production_status": "PRODUCTION_LOCKED",
+    }
+    write_json_atomic(args.state / "datasets" / "jalon6-run.json", result)
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+
+
+def _dataset_rows(state: Path, dataset_name: str) -> list[dict[str, object]]:
+    root = state / "derived"
+    rows: list[dict[str, object]] = []
+    for path in sorted(root.rglob("*.parquet")):
+        if f"entity_type={dataset_name}" not in path.as_posix():
+            continue
+        rows.extend(
+            {
+                str(key): value
+                for key, value in record.items()
+                if key != "_record_hash"
+            }
+            for record in pd.read_parquet(path).to_dict(orient="records")
+        )
+    return rows
+
+
+def command_model_lab(args: argparse.Namespace) -> None:
+    dataset_names = (
+        "api_team_pre_match_v1",
+        "api_player_pre_lineup_v1",
+        "api_post_lineup_simulated_v1",
+    )
+    datasets = {
+        name: _dataset_rows(args.state, name)
+        for name in dataset_names
+    }
+    if not datasets["api_team_pre_match_v1"]:
+        raise RuntimeError("MODEL_LAB_BLOCKED_GATE_A")
+    models, predictions = run_model_lab(datasets)
+    for model in models:
+        write_json_atomic(
+            args.state / "models" / f"{model['model_version']}.json",
+            model,
+        )
+    store = PartitionedParquetStore(args.state / "derived")
+    prediction_partitions: list[dict[str, object]] = []
+    for model_version in sorted(
+        {str(row["model_version"]) for row in predictions}
+    ):
+        model_rows = [
+            row for row in predictions if row["model_version"] == model_version
+        ]
+        for season in sorted({int(row["season"]) for row in model_rows}):
+            prediction_partitions.append(
+                store.write_records(
+                    [
+                        row for row in model_rows if int(row["season"]) == season
+                    ],
+                    competition="Ligue-1",
+                    season=season,
+                    entity_type="api_model_predictions_v1",
+                    dataset_version=model_version,
+                )
+            )
+    result = {
+        "status": "PLAYER_MODEL_TESTING",
+        "models": [
+            {
+                "model_version": model["model_version"],
+                "dataset": model["dataset"],
+                "status": model["status"],
+                "selected_calibration": model.get("selected_calibration"),
+                "oos_metrics": model.get("oos_metrics"),
+            }
+            for model in models
+        ],
+        "predictions": len(predictions),
+        "partitions": prediction_partitions,
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "production_status": "PRODUCTION_LOCKED",
+    }
+    write_json_atomic(args.state / "models" / "jalon6-run.json", result)
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+
+
+def command_strategy_lab(args: argparse.Namespace) -> None:
+    predictions = _dataset_rows(args.state, "api_model_predictions_v1")
+    if not predictions:
+        raise RuntimeError("STRATEGY_LAB_BLOCKED_MODEL_OUTPUT")
+    model_versions = sorted(
+        {str(row["model_version"]) for row in predictions}
+    )
+    results: list[dict[str, object]] = []
+    for model_version in model_versions:
+        results.extend(
+            strategy_sensitivity(
+                predictions,
+                model_version=model_version,
+            )
+        )
+    for result in results:
+        safe_name = str(result["strategy"]).replace(".", "_")
+        write_json_atomic(
+            args.state / "backtests" / f"{safe_name}.json",
+            result,
+        )
+        strategy_manifest = {
+            key: value for key, value in result.items() if key != "details"
+        }
+        strategy_manifest["strategy_version"] = result["strategy"]
+        write_json_atomic(
+            args.state / "strategies" / f"{safe_name}.json",
+            strategy_manifest,
+        )
+    summary = {
+        "status": "INCONCLUSIVE",
+        "strategies_tested": len(results),
+        "rejected": sum(result["status"] == "REJECTED" for result in results),
+        "inconclusive": sum(
+            result["status"] == "INCONCLUSIVE" for result in results
+        ),
+        "live_shadow_candidates": 0,
+        "provider_calls": 0,
+        "quota_consumed": 0,
+        "production_status": "PRODUCTION_LOCKED",
+    }
+    write_json_atomic(args.state / "strategies" / "jalon6-run.json", summary)
+    print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+
+
 def command_features(args: argparse.Namespace) -> None:
     canonical_audit = read_json(
         args.state / "audits" / "ligue1-2025-canonicalization.json",
@@ -1244,6 +1514,7 @@ def command_persist(args: argparse.Namespace) -> None:
         "dataset_versions",
         "model_versions",
         "backtest_runs",
+        "strategy_versions",
     }
     missing = sorted(expected - tables)
     if missing:
@@ -1442,36 +1713,58 @@ def command_persist(args: argparse.Namespace) -> None:
             task_rows,
         )
 
-        for path, table in (
-            (args.state / "datasets" / "team_baseline_v1.json", dataset_versions),
-            (args.state / "models" / "elo_v1.json", model_versions),
-            (args.state / "backtests" / "elo_edge_5pct_oos.json", backtest_runs),
-        ):
-            manifest = read_json(path, {})
-            if not manifest:
-                continue
-            version = str(
-                manifest.get("dataset_version")
-                or manifest.get("model_version")
-                or manifest.get("backtest_version")
-            )
-            artifact_hash = str(
-                manifest.get("sha256")
-                or manifest.get("artifact_hash")
-                or hashlib.sha256(
-                    json.dumps(manifest, sort_keys=True, default=str).encode("utf-8")
-                ).hexdigest()
-            )
-            row_id = hashlib.sha256(f"{table.name}:{version}".encode()).hexdigest()[:36]
-            values = {
-                "id": row_id,
-                "version": version,
-                "status": str(manifest.get("status", "RECORDED")),
-                "manifest": manifest,
-                "artifact_hash": artifact_hash,
-                "created_at": datetime.now(UTC),
-            }
-            upsert(connection, table, table.c.version, version, values)
+        registry_sources = (
+            (
+                sorted((args.state / "datasets").glob("*.json")),
+                dataset_versions,
+                "dataset_version",
+            ),
+            (
+                sorted((args.state / "models").glob("*.json")),
+                model_versions,
+                "model_version",
+            ),
+            (
+                sorted((args.state / "backtests").glob("*.json")),
+                backtest_runs,
+                "backtest_version",
+            ),
+            (
+                sorted((args.state / "strategies").glob("*.json")),
+                strategy_versions,
+                "strategy_version",
+            ),
+        )
+        for paths, table, version_key in registry_sources:
+            for path in paths:
+                manifest = read_json(path, {})
+                version_value = manifest.get(version_key)
+                if not manifest or not version_value:
+                    continue
+                version = str(version_value)
+                artifact_hash = str(
+                    manifest.get("sha256")
+                    or manifest.get("artifact_hash")
+                    or hashlib.sha256(
+                        json.dumps(
+                            manifest,
+                            sort_keys=True,
+                            default=str,
+                        ).encode("utf-8")
+                    ).hexdigest()
+                )
+                row_id = hashlib.sha256(
+                    f"{table.name}:{version}".encode()
+                ).hexdigest()[:36]
+                values = {
+                    "id": row_id,
+                    "version": version,
+                    "status": str(manifest.get("status", "RECORDED")),
+                    "manifest": manifest,
+                    "artifact_hash": artifact_hash,
+                    "created_at": datetime.now(UTC),
+                }
+                upsert(connection, table, table.c.version, version, values)
 
         table_counts = {
             table.name: int(
@@ -1486,6 +1779,7 @@ def command_persist(args: argparse.Namespace) -> None:
                 dataset_versions,
                 model_versions,
                 backtest_runs,
+                strategy_versions,
             )
         }
     result = {
@@ -1528,6 +1822,10 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("forecast")
     subparsers.add_parser("quality")
     subparsers.add_parser("repair-provenance")
+    subparsers.add_parser("readiness")
+    subparsers.add_parser("datasets")
+    subparsers.add_parser("model-lab")
+    subparsers.add_parser("strategy-lab")
     subparsers.add_parser("features")
     subparsers.add_parser("train")
     subparsers.add_parser("backtest")
@@ -1550,6 +1848,10 @@ def main() -> None:
         "forecast": command_forecast,
         "quality": command_quality,
         "repair-provenance": command_repair_provenance,
+        "readiness": command_readiness,
+        "datasets": command_datasets,
+        "model-lab": command_model_lab,
+        "strategy-lab": command_strategy_lab,
         "features": command_features,
         "train": command_train,
         "backtest": command_backtest,

@@ -100,3 +100,15 @@ de plancher au forecast de capacité.
 La cadence reste 30 000 appels/jour. Le scénario haut demeure sous 750 MB ;
 aucun achat, changement de plan ou hausse de cadence n’est autorisé
 automatiquement.
+
+## Coût marginal Jalon 6
+
+La Data Factory, les calibrations et les backtests relisent le cache durable :
+0 appel API-Football et 0 crédit The Odds API. DuckDB, Polars et NumPy tournent
+dans des jobs GitHub bornés. Les artefacts régénérables sont bornés afin de
+contenir les petits fichiers et le stockage dérivé.
+
+Le store long est borné à 16 joueurs par équipe et par cutoff ; les agrégats
+d'équipe conservent 18 candidats pour le onze et le banc. Les seuils restent
+750 MB warning et 900 MB pause. Le scénario haut doit inclure les artefacts
+dérivés avant toute poursuite ; aucun stockage n'est acheté automatiquement.

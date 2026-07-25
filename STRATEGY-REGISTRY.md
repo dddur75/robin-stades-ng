@@ -36,3 +36,10 @@ Règles globales :
 Zéro stratégie est promue. Une décision live a été rejetée et aucun pari shadow
 n’est accepté ou réglé. Le legacy, l’OOS historique et le prospectif live restent
 trois populations séparées.
+
+## Strategy Lab V1
+
+Les seuils d'edge 1X2 2 %, 4 % et 6 % sont testés par modèle avec intervalle
+bootstrap et correction Bonferroni. Les résultats ne peuvent être que
+`INCONCLUSIVE` ou `REJECTED` dans ce cycle. Aucun combiné et aucune stratégie
+réelle ne sont ouverts.

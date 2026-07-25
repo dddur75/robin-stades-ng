@@ -279,3 +279,17 @@ Le run de référence Jalon 5.2 est `30154099512`. Après restauration et avant
 publication, exécuter `repair-provenance`, `quality`, `forecast`, puis le build
 du Cockpit. Les valeurs attendues à cette preuve sont 41 672 lignes de
 provenance, 0 ligne non résolue et la révision Neon `0004`.
+
+## Chaîne Jalon 6 sans fournisseur
+
+Après restauration de `historical-data` :
+
+1. `repair-provenance`, `quality`, puis `readiness` ;
+2. `datasets` si les gates l'autorisent ;
+3. `model-lab` si `api_team_pre_match_v1` existe ;
+4. `strategy-lab` si des prédictions OOS existent ;
+5. `persist`, compactage, append durable et Cockpit.
+
+Ces commandes ont `provider_calls=0`. Un gate bloqué produit un statut explicite
+et ne doit jamais être contourné. La cadence backfill reste inchangée et le
+verrou `historical-state` empêche deux runs simultanés.

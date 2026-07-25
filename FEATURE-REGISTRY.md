@@ -59,3 +59,16 @@ valeur manquante.
 
 Le statut global reste `BLOCKED_BY_COVERAGE`. Aucun modèle joueurs n’est
 entraîné ni présenté comme prêt.
+
+## Jalon 6
+
+- `api_team_pre_match_v1` : `API_TEAM_DATASET_READY`.
+- charge, forme, contributions et rôle joueurs :
+  `PLAYER_FEATURE_FACTORY_ACTIVE`.
+- onze attendu : `API_PLAYER_DATASET_READY`.
+- onze confirmé historique : `POST_LINEUP_SIMULATED_READY`.
+- blessures, disponibilité et retour de blessure :
+  `BLOCKED_BY_TEMPORALITY`.
+
+Les features du match cible sont interdites. Les nulls restent nulls et chaque
+score joueur expose son support en minutes et son incertitude.

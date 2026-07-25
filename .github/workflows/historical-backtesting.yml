@@ -1,6 +1,10 @@
-name: "25 - Backtest historique V2"
+name: "25 - Backtest historique V3"
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "24 - Model Lab historique"
+    types: [completed]
   schedule:
     - cron: "43 3 * * 3"
 permissions:
@@ -10,6 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   backtest:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -20,18 +25,20 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
-      - name: Garantir les dépendances puis backtester
+      - name: Backtester et protéger contre le data mining
         run: |
-          if [ ! -f data/historical/datasets/team_baseline_v1.json ]; then
+          if [ ! -f data/historical/datasets/api_team_pre_match_v1.json ]; then
             python scripts/run_historical_pipeline.py \
-              --run-id "${{ github.run_id }}" features
+              --run-id "${{ github.run_id }}" readiness
+            python scripts/run_historical_pipeline.py \
+              --run-id "${{ github.run_id }}" datasets
           fi
-          if [ ! -f data/historical/models/elo_v1.json ]; then
+          if [ ! -f data/historical/models/api_team_multinomial_v1.json ]; then
             python scripts/run_historical_pipeline.py \
-              --run-id "${{ github.run_id }}" train
+              --run-id "${{ github.run_id }}" model-lab
           fi
           python scripts/run_historical_pipeline.py \
-            --run-id "${{ github.run_id }}" backtest
+            --run-id "${{ github.run_id }}" strategy-lab
       - uses: ./.github/actions/historical-state-persist
         with:
           run-id: ${{ github.run_id }}

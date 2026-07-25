@@ -42,3 +42,23 @@ Tous appliquent un cutoff temporel strict et enregistrent `as_of_time`.
 Seul `MARKET_BASELINE_ONLY` a produit une prédiction live, faute de données
 sportives profondes API-Football. Elle reste `SHADOW_ONLY`, versionnée et
 rejouable. Aucun modèle n’est promu pendant le burn-in.
+
+## Model Lab API-Football
+
+| Modèle | Dataset | Statut |
+|---|---|---|
+| `api_elo_v1` | équipe | `API_OOS_BACKTEST_READY` |
+| `api_team_multinomial_v1` | équipe | `API_OOS_BACKTEST_READY` |
+| `api_player_pre_lineup_multinomial_v1` | équipe + attendu | `PLAYER_MODEL_TESTING` |
+| `api_post_lineup_simulated_multinomial_v1` | équipe + confirmé simulé | `PLAYER_MODEL_TESTING` |
+| `market_devigged_baseline_v1` | marché | `API_OOS_BACKTEST_READY` |
+
+Poisson, Dixon-Coles, gradient boosting et ensemble restent planifiés. Aucun
+modèle n'est `PRODUCTION_READY`.
+
+Mesures initiales OOS : `api_elo_v1` 1,1642 / 0,1986,
+`api_team_multinomial_v1` 1,0518 / 0,2012,
+`api_player_pre_lineup_multinomial_v1` 1,0267 / 0,2043 et
+`api_post_lineup_simulated_multinomial_v1` 1,6920 / 0,2108
+(Log Loss / Brier). Le gain joueur est inconclusif car les deux métriques ne
+s'améliorent pas ensemble ; la variante lineup simulée est rejetée.

@@ -28,6 +28,10 @@ jobs:
       - run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" quality
+      - name: Publier les gates factuels
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}" readiness
       - name: Recalculate the forecast after quality controls
         run: >-
           python scripts/run_historical_pipeline.py

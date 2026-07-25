@@ -1,6 +1,10 @@
 name: "23 - Feature Factory"
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "22 - Qualité historique"
+    types: [completed]
   schedule:
     - cron: "41 2 * * 2,5"
 permissions:
@@ -10,6 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   features:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -20,9 +25,12 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
-      - run: >-
-          python scripts/run_historical_pipeline.py
-          --run-id "${{ github.run_id }}" features
+      - name: Évaluer les gates puis construire uniquement les datasets autorisés
+        run: |
+          python scripts/run_historical_pipeline.py \
+            --run-id "${{ github.run_id }}" readiness
+          python scripts/run_historical_pipeline.py \
+            --run-id "${{ github.run_id }}" datasets
       - uses: ./.github/actions/historical-state-persist
         with:
           run-id: ${{ github.run_id }}
