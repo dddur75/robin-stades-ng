@@ -1,0 +1,318 @@
+{
+  "artifact": {
+    "features": [
+      "elo_difference",
+      "home_form_5",
+      "away_form_5",
+      "home_goals_for_5",
+      "away_goals_for_5",
+      "home_goals_against_5",
+      "away_goals_against_5",
+      "home_rest_days",
+      "away_rest_days",
+      "home_shots_5",
+      "away_shots_5",
+      "home_shots_on_goal_5",
+      "away_shots_on_goal_5",
+      "home_possession_5",
+      "away_possession_5",
+      "home_expected_starting_xi_strength",
+      "away_expected_starting_xi_strength",
+      "home_expected_bench_strength",
+      "away_expected_bench_strength",
+      "home_expected_lineup_continuity",
+      "away_expected_lineup_continuity",
+      "home_expected_lineup_uncertainty",
+      "away_expected_lineup_uncertainty"
+    ],
+    "imputation": [
+      -0.06834464000507978,
+      1.4,
+      1.4,
+      1.2,
+      1.2,
+      1.4,
+      1.4,
+      7.0,
+      7.0,
+      12.0,
+      12.2,
+      4.4,
+      4.45,
+      48.8,
+      49.2,
+      12.96011394234872,
+      12.94983493245418,
+      5.479636245434065,
+      5.546398008482308,
+      1.0,
+      1.0,
+      0.451995635369969,
+      0.4553357202931693
+    ],
+    "mean": [
+      1.101355725378,
+      1.367485380117,
+      1.381476608187,
+      1.377953216374,
+      1.406038011696,
+      1.392295321637,
+      1.380555555556,
+      8.490350877193,
+      8.387719298246,
+      12.060570175439,
+      12.249108187134,
+      4.446944444444,
+      4.486052631579,
+      49.140628654971,
+      49.513874269006,
+      12.653756335283,
+      12.632521353746,
+      5.464794586499,
+      5.516498143442,
+      1.0,
+      1.0,
+      0.466481984755,
+      0.469110686602
+    ],
+    "scale": [
+      98.277000612813,
+      0.692390280455,
+      0.711567068464,
+      0.639253113892,
+      0.670685143646,
+      0.632740446186,
+      0.624189207686,
+      9.894393852149,
+      9.660401542187,
+      1.572457760273,
+      1.582354093613,
+      0.867657536821,
+      0.811101646078,
+      4.128018553482,
+      4.239425124902,
+      2.20788923858,
+      2.213041407878,
+      1.574369705542,
+      1.54752370398,
+      1.0,
+      1.0,
+      0.093363251381,
+      0.092740143263
+    ],
+    "weights": [
+      [
+        0.203096556867,
+        -0.212524683628,
+        0.009428126761
+      ],
+      [
+        0.334471757612,
+        0.02005681034,
+        -0.354528567953
+      ],
+      [
+        -0.021605734972,
+        -0.035524112134,
+        0.057129847106
+      ],
+      [
+        -0.049536375333,
+        0.108533926935,
+        -0.058997551602
+      ],
+      [
+        0.11353470864,
+        -0.047533944077,
+        -0.066000764562
+      ],
+      [
+        -0.002958981318,
+        -0.037608968041,
+        0.040567949359
+      ],
+      [
+        -0.089872782479,
+        -0.025295877624,
+        0.115168660103
+      ],
+      [
+        0.050174688542,
+        -0.020609703926,
+        -0.029564984616
+      ],
+      [
+        0.012289677153,
+        -0.011904422806,
+        -0.000385254347
+      ],
+      [
+        -0.082589609342,
+        0.092666802891,
+        -0.010077193549
+      ],
+      [
+        0.016618173619,
+        -0.07485891706,
+        0.058240743441
+      ],
+      [
+        -0.072908864378,
+        0.123260731429,
+        -0.05035186705
+      ],
+      [
+        -0.124242259214,
+        0.110041852515,
+        0.014200406699
+      ],
+      [
+        -0.012528825668,
+        -0.112694636385,
+        0.125223462054
+      ],
+      [
+        0.137466126027,
+        -0.102193472308,
+        -0.03527265372
+      ],
+      [
+        0.049122939058,
+        0.001455876335,
+        -0.050578815393
+      ],
+      [
+        0.022920178723,
+        -0.055298275803,
+        0.03237809708
+      ],
+      [
+        0.058778012959,
+        -0.039789408113,
+        -0.018988604846
+      ],
+      [
+        -0.075111779379,
+        -0.014254994864,
+        0.089366774243
+      ],
+      [
+        0.057405221728,
+        0.038552427107,
+        -0.095957648834
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0415424068,
+        -0.022510377099,
+        -0.019032029701
+      ],
+      [
+        -0.006926884633,
+        0.014488572261,
+        -0.007561687628
+      ]
+    ]
+  },
+  "artifact_hash": "6420924e3e1b874d5b510eb2fa6f8a732300c1a1b0a73fe69f83899f84ea4afa",
+  "dataset": "api_player_pre_lineup_v1",
+  "discovery_period": [
+    2020,
+    2021,
+    2022
+  ],
+  "features": [
+    "elo_difference",
+    "home_form_5",
+    "away_form_5",
+    "home_goals_for_5",
+    "away_goals_for_5",
+    "home_goals_against_5",
+    "away_goals_against_5",
+    "home_rest_days",
+    "away_rest_days",
+    "home_shots_5",
+    "away_shots_5",
+    "home_shots_on_goal_5",
+    "away_shots_on_goal_5",
+    "home_possession_5",
+    "away_possession_5",
+    "home_expected_starting_xi_strength",
+    "away_expected_starting_xi_strength",
+    "home_expected_bench_strength",
+    "away_expected_bench_strength",
+    "home_expected_lineup_continuity",
+    "away_expected_lineup_continuity",
+    "home_expected_lineup_uncertainty",
+    "away_expected_lineup_uncertainty"
+  ],
+  "incremental_vs_team": {
+    "brier_improvement": -0.0030417445793987363,
+    "decision": "INCONCLUSIVE",
+    "log_loss_improvement": 0.02508441281477891
+  },
+  "missing_policy": "DISCOVERY_MEDIAN_IMPUTATION",
+  "model_name": "api_player_pre_lineup_multinomial",
+  "model_version": "api_player_pre_lineup_multinomial_v1",
+  "oos_metrics": {
+    "brier_score": 0.20425602559939304,
+    "ece": 0.022654356852120177,
+    "log_loss": 1.0266857765396575,
+    "matches": 612
+  },
+  "oos_period": [
+    2024,
+    2025
+  ],
+  "performance_by_oos_season": {
+    "2024": {
+      "brier_score": 0.2020972775909751,
+      "ece": 0.013548662862379284,
+      "log_loss": 1.0169842353075882,
+      "matches": 306
+    },
+    "2025": {
+      "brier_score": 0.20641477360781094,
+      "ece": 0.04509891746933399,
+      "log_loss": 1.0363873177717264,
+      "matches": 306
+    }
+  },
+  "production_status": "PRODUCTION_LOCKED",
+  "selected_calibration": "isotonic",
+  "selection_period": "DISCOVERY_AND_VALIDATION_ONLY",
+  "status": "API_OOS_BACKTEST_READY",
+  "trained_at": "2026-07-25T14:00:17.484177+00:00",
+  "validation_calibration_metrics": {
+    "isotonic": {
+      "brier_score": 0.20581361149497893,
+      "ece": 0.02924155263807031,
+      "log_loss": 1.0191529112002211,
+      "matches": 306
+    },
+    "none": {
+      "brier_score": 0.21839028426364118,
+      "ece": 0.07802728888934547,
+      "log_loss": 1.0976788486077764,
+      "matches": 306
+    },
+    "sigmoid": {
+      "brier_score": 0.21170297885798015,
+      "ece": 0.024910934498674476,
+      "log_loss": 1.051984096213543,
+      "matches": 306
+    }
+  },
+  "validation_period": [
+    2023
+  ]
+}

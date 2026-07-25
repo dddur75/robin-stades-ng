@@ -1,0 +1,48 @@
+{
+  "artifact_hash": "392518c7dc4001bc99354e2ce6e34d9d695086bf524227e9ee15786058e022bc",
+  "dataset": "api_team_pre_match_v1",
+  "incremental_vs_team": {
+    "brier_improvement": 0.00780792538102873,
+    "decision": "INCONCLUSIVE",
+    "log_loss_improvement": -0.4659223909177297
+  },
+  "model_name": "market_devigged_baseline",
+  "model_version": "market_devigged_baseline_v1",
+  "oos_metrics": {
+    "brier_score": 0.19340635563896558,
+    "ece": 0.050496572110169946,
+    "log_loss": 1.5176925802721661,
+    "matches": 408
+  },
+  "oos_period": [
+    2024,
+    2025
+  ],
+  "production_status": "PRODUCTION_LOCKED",
+  "selected_calibration": "isotonic",
+  "status": "API_OOS_BACKTEST_READY",
+  "trained_at": "2026-07-25T14:00:17.321946+00:00",
+  "validation_calibration_metrics": {
+    "isotonic": {
+      "brier_score": 0.19438843280923324,
+      "ece": 0.07607593005755346,
+      "log_loss": 0.9564933352284404,
+      "matches": 240
+    },
+    "none": {
+      "brier_score": 0.2046337252808255,
+      "ece": 0.0366430588949236,
+      "log_loss": 1.0201228860795504,
+      "matches": 240
+    },
+    "sigmoid": {
+      "brier_score": 0.20320036495010396,
+      "ece": 0.009363554825260188,
+      "log_loss": 1.0115235375073914,
+      "matches": 240
+    }
+  },
+  "validation_period": [
+    2023
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "artifact_hash": "46ae4e0d61f95f4cd6e070d3b215aa897604a1701c23fa0f24bc19185bfd6627",
+  "dataset": "api_team_pre_match_v1",
+  "incremental_vs_team": {
+    "brier_improvement": 0.0026411081306691453,
+    "decision": "INCONCLUSIVE",
+    "log_loss_improvement": -0.11238628447848065
+  },
+  "model_name": "api_elo",
+  "model_version": "api_elo_v1",
+  "oos_metrics": {
+    "brier_score": 0.19857317288932516,
+    "ece": 0.020584987018334017,
+    "log_loss": 1.164156473832917,
+    "matches": 612
+  },
+  "oos_period": [
+    2024,
+    2025
+  ],
+  "production_status": "PRODUCTION_LOCKED",
+  "selected_calibration": "isotonic",
+  "status": "API_OOS_BACKTEST_READY",
+  "trained_at": "2026-07-25T14:00:17.309818+00:00",
+  "validation_calibration_metrics": {
+    "isotonic": {
+      "brier_score": 0.20001532604320982,
+      "ece": 0.0098485175390719,
+      "log_loss": 0.9956850768163454,
+      "matches": 306
+    },
+    "none": {
+      "brier_score": 0.20735721411163854,
+      "ece": 0.0505923298791828,
+      "log_loss": 1.0337242642744542,
+      "matches": 306
+    },
+    "sigmoid": {
+      "brier_score": 0.20570513954911587,
+      "ece": 0.026456942414827874,
+      "log_loss": 1.025064042674605,
+      "matches": 306
+    }
+  },
+  "validation_period": [
+    2023
+  ]
+}

@@ -1,0 +1,398 @@
+{
+  "artifact": {
+    "features": [
+      "elo_difference",
+      "home_form_5",
+      "away_form_5",
+      "home_goals_for_5",
+      "away_goals_for_5",
+      "home_goals_against_5",
+      "away_goals_against_5",
+      "home_rest_days",
+      "away_rest_days",
+      "home_shots_5",
+      "away_shots_5",
+      "home_shots_on_goal_5",
+      "away_shots_on_goal_5",
+      "home_possession_5",
+      "away_possession_5",
+      "home_expected_starting_xi_strength",
+      "away_expected_starting_xi_strength",
+      "home_expected_bench_strength",
+      "away_expected_bench_strength",
+      "home_expected_lineup_continuity",
+      "away_expected_lineup_continuity",
+      "home_expected_lineup_uncertainty",
+      "away_expected_lineup_uncertainty",
+      "home_confirmed_starting_xi_strength",
+      "away_confirmed_starting_xi_strength",
+      "home_confirmed_bench_strength",
+      "away_confirmed_bench_strength",
+      "home_confirmed_lineup_continuity",
+      "away_confirmed_lineup_continuity",
+      "home_difference_vs_expected",
+      "away_difference_vs_expected"
+    ],
+    "imputation": [
+      -0.6168810323990783,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      7.0,
+      7.0,
+      12.0,
+      12.2,
+      4.4,
+      4.45,
+      48.8,
+      49.2,
+      12.96011394234872,
+      12.94983493245418,
+      5.479636245434065,
+      5.546398008482308,
+      1.0,
+      1.0,
+      0.451995635369969,
+      0.4553357202931693,
+      11.374747070587858,
+      11.273536129286578,
+      4.612511251128481,
+      4.373305579242723,
+      1.0,
+      1.0,
+      -1.1539808280750314,
+      -1.1343488226882457
+    ],
+    "mean": [
+      1.60173156127,
+      1.382938596491,
+      1.370701754386,
+      1.419692982456,
+      1.426973684211,
+      1.419649122807,
+      1.416578947368,
+      9.418421052632,
+      9.218421052632,
+      12.181710526316,
+      12.347324561404,
+      4.540833333333,
+      4.558157894737,
+      49.821885964912,
+      50.141622807018,
+      12.041041121151,
+      11.997894196331,
+      5.435111268629,
+      5.456698413363,
+      1.0,
+      1.0,
+      0.495454683525,
+      0.496660619218,
+      10.662360626923,
+      10.578213368105,
+      4.698791214748,
+      4.551402632273,
+      0.967224880383,
+      0.97009569378,
+      -1.36732822992,
+      -1.405418986634
+    ],
+    "scale": [
+      126.129882852056,
+      0.730129958613,
+      0.730986939146,
+      0.676881432004,
+      0.696033914284,
+      0.670406086883,
+      0.638049149715,
+      12.474655469626,
+      12.00776843423,
+      2.719532633857,
+      2.738076651312,
+      1.498421208613,
+      1.402090898391,
+      7.101087539958,
+      7.302538861826,
+      3.749825965171,
+      3.753468978898,
+      2.726645972646,
+      2.679388891439,
+      1.0,
+      1.0,
+      0.1577687048,
+      0.157046822115,
+      3.482351717056,
+      3.476589658672,
+      2.266456275944,
+      2.285343473905,
+      0.161388595329,
+      0.160461056766,
+      1.070329087558,
+      1.16040479361
+    ],
+    "weights": [
+      [
+        0.264487674934,
+        -0.269384578098,
+        0.004896903164
+      ],
+      [
+        0.369333701324,
+        0.017892656501,
+        -0.387226357824
+      ],
+      [
+        0.13738791162,
+        -0.15111729453,
+        0.013729382909
+      ],
+      [
+        -0.020798981307,
+        0.147084302881,
+        -0.126285321574
+      ],
+      [
+        0.059178106051,
+        0.045319991255,
+        -0.104498097306
+      ],
+      [
+        -0.002942343179,
+        -0.095575261678,
+        0.098517604857
+      ],
+      [
+        -0.062482654777,
+        0.002287678591,
+        0.060194976186
+      ],
+      [
+        0.223079852304,
+        -0.219427697672,
+        -0.003652154632
+      ],
+      [
+        0.139040020463,
+        -0.126214536595,
+        -0.012825483869
+      ],
+      [
+        -0.122362477825,
+        0.114056603544,
+        0.008305874281
+      ],
+      [
+        0.013848631385,
+        -0.100271905599,
+        0.086423274214
+      ],
+      [
+        -0.09348699189,
+        0.178088661451,
+        -0.084601669561
+      ],
+      [
+        -0.2287014868,
+        0.161080392012,
+        0.067621094787
+      ],
+      [
+        -0.056248884079,
+        -0.179169567628,
+        0.235418451707
+      ],
+      [
+        0.251590040144,
+        -0.171741991428,
+        -0.079848048716
+      ],
+      [
+        0.092392998087,
+        -0.052321118215,
+        -0.040071879872
+      ],
+      [
+        0.043297811186,
+        -0.069127952126,
+        0.02583014094
+      ],
+      [
+        0.07384027782,
+        -0.021809272914,
+        -0.052031004906
+      ],
+      [
+        -0.09482656035,
+        -0.011527869097,
+        0.106354429447
+      ],
+      [
+        0.095643997119,
+        0.117292029185,
+        -0.212936026305
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.054861406438,
+        -0.073118468225,
+        0.018257061787
+      ],
+      [
+        0.009825912453,
+        -0.02905300593,
+        0.019227093477
+      ],
+      [
+        0.071312115694,
+        -0.081238408169,
+        0.009926292475
+      ],
+      [
+        0.048954193893,
+        0.010037821472,
+        -0.058992015364
+      ],
+      [
+        -0.016651763704,
+        -0.172014401921,
+        0.188666165625
+      ],
+      [
+        -0.101424163483,
+        -0.05120016978,
+        0.152624333263
+      ],
+      [
+        0.025600734029,
+        0.02446886626,
+        -0.050069600288
+      ],
+      [
+        -0.019715376765,
+        -0.018425616363,
+        0.038140993129
+      ],
+      [
+        0.082443281413,
+        -0.022573495483,
+        -0.059869785929
+      ],
+      [
+        -0.089723630311,
+        0.100100515562,
+        -0.010376885251
+      ]
+    ]
+  },
+  "artifact_hash": "70e95491ed16cdae4b2208fde9c18fb481a98003f88776de943742e939e1a2be",
+  "dataset": "api_post_lineup_simulated_v1",
+  "discovery_period": [
+    2020,
+    2021,
+    2022
+  ],
+  "features": [
+    "elo_difference",
+    "home_form_5",
+    "away_form_5",
+    "home_goals_for_5",
+    "away_goals_for_5",
+    "home_goals_against_5",
+    "away_goals_against_5",
+    "home_rest_days",
+    "away_rest_days",
+    "home_shots_5",
+    "away_shots_5",
+    "home_shots_on_goal_5",
+    "away_shots_on_goal_5",
+    "home_possession_5",
+    "away_possession_5",
+    "home_expected_starting_xi_strength",
+    "away_expected_starting_xi_strength",
+    "home_expected_bench_strength",
+    "away_expected_bench_strength",
+    "home_expected_lineup_continuity",
+    "away_expected_lineup_continuity",
+    "home_expected_lineup_uncertainty",
+    "away_expected_lineup_uncertainty",
+    "home_confirmed_starting_xi_strength",
+    "away_confirmed_starting_xi_strength",
+    "home_confirmed_bench_strength",
+    "away_confirmed_bench_strength",
+    "home_confirmed_lineup_continuity",
+    "away_confirmed_lineup_continuity",
+    "home_difference_vs_expected",
+    "away_difference_vs_expected"
+  ],
+  "incremental_vs_team": {
+    "brier_improvement": -0.009560289934761546,
+    "decision": "REJECTED",
+    "log_loss_improvement": -0.640233424904407
+  },
+  "missing_policy": "DISCOVERY_MEDIAN_IMPUTATION",
+  "model_name": "api_post_lineup_simulated_multinomial",
+  "model_version": "api_post_lineup_simulated_multinomial_v1",
+  "oos_metrics": {
+    "brier_score": 0.21077457095475585,
+    "ece": 0.02568995934295436,
+    "log_loss": 1.6920036142588435,
+    "matches": 611
+  },
+  "oos_period": [
+    2024,
+    2025
+  ],
+  "performance_by_oos_season": {
+    "2024": {
+      "brier_score": 0.21012283870849638,
+      "ece": 0.028846599475230612,
+      "log_loss": 1.6100284007064862,
+      "matches": 306
+    },
+    "2025": {
+      "brier_score": 0.21142844002805228,
+      "ece": 0.040554922765974215,
+      "log_loss": 1.774247599003176,
+      "matches": 305
+    }
+  },
+  "production_status": "PRODUCTION_LOCKED",
+  "selected_calibration": "isotonic",
+  "selection_period": "DISCOVERY_AND_VALIDATION_ONLY",
+  "status": "API_OOS_BACKTEST_READY",
+  "trained_at": "2026-07-25T14:00:17.552594+00:00",
+  "validation_calibration_metrics": {
+    "isotonic": {
+      "brier_score": 0.20811046315487747,
+      "ece": 0.023958005203675036,
+      "log_loss": 1.030312072553766,
+      "matches": 306
+    },
+    "none": {
+      "brier_score": 0.22909162747053047,
+      "ece": 0.11909697856365965,
+      "log_loss": 1.1547401743450394,
+      "matches": 306
+    },
+    "sigmoid": {
+      "brier_score": 0.21344198152345126,
+      "ece": 0.013565945050896241,
+      "log_loss": 1.059156056688199,
+      "matches": 306
+    }
+  },
+  "validation_period": [
+    2023
+  ]
+}

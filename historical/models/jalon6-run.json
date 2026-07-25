@@ -1,0 +1,151 @@
+{
+  "models": [
+    {
+      "dataset": "api_team_pre_match_v1",
+      "model_version": "api_elo_v1",
+      "oos_metrics": {
+        "brier_score": 0.19857317288932516,
+        "ece": 0.020584987018334017,
+        "log_loss": 1.164156473832917,
+        "matches": 612
+      },
+      "selected_calibration": "isotonic",
+      "status": "API_OOS_BACKTEST_READY"
+    },
+    {
+      "dataset": "api_team_pre_match_v1",
+      "model_version": "market_devigged_baseline_v1",
+      "oos_metrics": {
+        "brier_score": 0.19340635563896558,
+        "ece": 0.050496572110169946,
+        "log_loss": 1.5176925802721661,
+        "matches": 408
+      },
+      "selected_calibration": "isotonic",
+      "status": "API_OOS_BACKTEST_READY"
+    },
+    {
+      "dataset": "api_team_pre_match_v1",
+      "model_version": "api_team_multinomial_v1",
+      "oos_metrics": {
+        "brier_score": 0.2012142810199943,
+        "ece": 0.04234711798509103,
+        "log_loss": 1.0517701893544364,
+        "matches": 612
+      },
+      "selected_calibration": "isotonic",
+      "status": "API_OOS_BACKTEST_READY"
+    },
+    {
+      "dataset": "api_player_pre_lineup_v1",
+      "model_version": "api_player_pre_lineup_multinomial_v1",
+      "oos_metrics": {
+        "brier_score": 0.20425602559939304,
+        "ece": 0.022654356852120177,
+        "log_loss": 1.0266857765396575,
+        "matches": 612
+      },
+      "selected_calibration": "isotonic",
+      "status": "API_OOS_BACKTEST_READY"
+    },
+    {
+      "dataset": "api_post_lineup_simulated_v1",
+      "model_version": "api_post_lineup_simulated_multinomial_v1",
+      "oos_metrics": {
+        "brier_score": 0.21077457095475585,
+        "ece": 0.02568995934295436,
+        "log_loss": 1.6920036142588435,
+        "matches": 611
+      },
+      "selected_calibration": "isotonic",
+      "status": "API_OOS_BACKTEST_READY"
+    }
+  ],
+  "partitions": [
+    {
+      "bytes": 41781,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=api_model_predictions_v1/dataset_version=api_elo_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "eded9654905c4cf20b65f37a7c643b0d78a461ef0e1249db043a903940ac2970"
+    },
+    {
+      "bytes": 39642,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=api_model_predictions_v1/dataset_version=api_elo_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "6c9a90d901a4bf56ba6a3bf1d49bca210e2ee975a2b593c5ae86033b1954b017"
+    },
+    {
+      "bytes": 42684,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=api_model_predictions_v1/dataset_version=api_player_pre_lineup_multinomial_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "95459e261b0f2d115998b1076dc982b0b7ddb9733e74d8706b121058a6e7f306"
+    },
+    {
+      "bytes": 40475,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=api_model_predictions_v1/dataset_version=api_player_pre_lineup_multinomial_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "abb435938bc0fea151ead4f00ac25554aeebedd6ec90813444660442af064a4f"
+    },
+    {
+      "bytes": 43355,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=api_model_predictions_v1/dataset_version=api_post_lineup_simulated_multinomial_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "4e2b4259dc4c21b4b9bfd85918655a4f0f16cae1ac8ea33deca5592d53920cdc"
+    },
+    {
+      "bytes": 40781,
+      "duplicates_avoided": 0,
+      "inserted": 305,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=api_model_predictions_v1/dataset_version=api_post_lineup_simulated_multinomial_v1/part-00000.parquet",
+      "rows": 305,
+      "sha256": "49b6fa0dbcde1487cf44950bb0251a907343ecf89c46b0c01b916bebc41ef589"
+    },
+    {
+      "bytes": 41823,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=api_model_predictions_v1/dataset_version=api_team_multinomial_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "f941b2c2610d60ae17caf261e3186ff694196cdfce55d92e4d5216b9f4857540"
+    },
+    {
+      "bytes": 40632,
+      "duplicates_avoided": 0,
+      "inserted": 306,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=api_model_predictions_v1/dataset_version=api_team_multinomial_v1/part-00000.parquet",
+      "rows": 306,
+      "sha256": "db6777c5e2d6fd93905ae0056d4fa631095d9491bb08b465e6deccefc30d0979"
+    },
+    {
+      "bytes": 39080,
+      "duplicates_avoided": 0,
+      "inserted": 272,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2024/entity_type=api_model_predictions_v1/dataset_version=market_devigged_baseline_v1/part-00000.parquet",
+      "rows": 272,
+      "sha256": "612f194cdc61a95c213d4486889b9cd0912b128c6267552f484b42a03b2c59d9"
+    },
+    {
+      "bytes": 25674,
+      "duplicates_avoided": 0,
+      "inserted": 136,
+      "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/derived/competition=Ligue-1/season=2025/entity_type=api_model_predictions_v1/dataset_version=market_devigged_baseline_v1/part-00000.parquet",
+      "rows": 136,
+      "sha256": "cf76c10cdf43a6a6dcb1bade7ee28edb56a9a790b18d2e9b070e36e2839c4c4e"
+    }
+  ],
+  "predictions": 2855,
+  "production_status": "PRODUCTION_LOCKED",
+  "provider_calls": 0,
+  "quota_consumed": 0,
+  "status": "PLAYER_MODEL_TESTING"
+}
