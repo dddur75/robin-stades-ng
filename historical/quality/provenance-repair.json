@@ -1,9 +1,9 @@
 {
-  "files_rewritten": 33,
+  "files_rewritten": 0,
   "provider_calls": 0,
   "quota_consumed": 0,
   "rows_ambiguous": 0,
-  "rows_repaired": 36403,
+  "rows_repaired": 0,
   "rows_unresolved": 0,
   "status": "REPAIRED"
 }
