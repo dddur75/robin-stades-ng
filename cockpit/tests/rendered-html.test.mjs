@@ -83,7 +83,10 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"deepData":/);
   assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
   assert.match(data, /"HISTORICAL POINT-IN-TIME"/);
-  assert.match(data, /"OOS_BACKTEST_V1_READY"/);
+  assert.match(
+    data,
+    /"(?:OOS_BACKTEST_V1_READY|API_OOS_BACKTEST_READY)"/,
+  );
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   try {
