@@ -211,3 +211,33 @@ pnpm --dir cockpit test
 
 Le mode démo est désactivé par défaut. Toujours conserver
 `PRODUCTION_LOCKED` et le message d’échantillon insuffisant.
+
+### Activation post-fusion Jalon 5
+
+Avant un lot, vérifier quota, réserve de 5 000 appels, stockage inférieur à
+900 MB, migration `0004`, qualité temporelle et accessibilité de
+`historical-data`. Laisser `max_calls=0` et `max_tasks=0` pour que le
+planificateur adapte le lot.
+
+Après un lot :
+
+```powershell
+python scripts/run_historical_pipeline.py repair-provenance
+python scripts/run_historical_pipeline.py quality
+python scripts/run_historical_pipeline.py forecast
+```
+
+Ces commandes n'appellent pas le fournisseur. La réparation rattache les lignes
+Parquet aux payloads bruts immuables, puis la qualité bloque les features
+concernées en cas de hash, pagination, identité, temporalité ou cardinalité
+incohérente.
+
+Le workflow Cockpit doit distinguer :
+
+- `COCKPIT_BUILD_SUCCESS` ;
+- `COCKPIT_ARTIFACT_PUBLISHED` ;
+- `COCKPIT_PRIVATE_DEPLOYED`.
+
+Un artefact GitHub n'est jamais présenté comme un déploiement privé. Le snapshot
+frontend reste statique et nettoyé ; Neon et les secrets ne sont jamais
+accessibles au navigateur.

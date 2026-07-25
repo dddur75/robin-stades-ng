@@ -41,6 +41,10 @@ from robin.historical.orchestrator import (
     stable_task_id,
 )
 from robin.historical.pagination import iterate_pages
+from robin.historical.quality import (
+    historical_quality_report,
+    repair_raw_hash_provenance,
+)
 from robin.historical.scheduling import (
     BackfillTelemetry,
     accelerated_safe_plan,
@@ -98,6 +102,26 @@ def read_json(path: Path, default: Any) -> Any:
     if not path.exists():
         return default
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def completed_rows_this_run(plan: Mapping[str, object]) -> int:
+    explicit = int(str(plan.get("normalized_rows_this_run", 0)))
+    if explicit:
+        return explicit
+    completed = int(str(plan.get("completed_this_run", 0)))
+    raw_tasks = plan.get("tasks", [])
+    task_items = raw_tasks if isinstance(raw_tasks, list) else []
+    tasks = [
+        task
+        for task in task_items
+        if isinstance(task, Mapping) and task.get("completed_at")
+    ]
+    latest = sorted(
+        tasks,
+        key=lambda task: str(task.get("completed_at", "")),
+        reverse=True,
+    )[:completed]
+    return sum(int(str(task.get("rows_received", 0))) for task in latest)
 
 
 def parameters_hash(endpoint: str, params: Mapping[str, object]) -> str:
@@ -178,6 +202,7 @@ class HistoricalRunner:
     ) -> dict[str, object]:
         clean_endpoint = endpoint.strip("/")
         started_calls = self.calls
+        raw_payload_hash: str | None = None
         if paginated:
             outcome = iterate_pages(
                 endpoint=clean_endpoint,
@@ -198,6 +223,15 @@ class HistoricalRunner:
             records = outcome.records
             status = outcome.manifest.status
             pages = len(outcome.manifest.pages)
+            page_hashes = sorted(
+                evidence.payload_hash
+                for evidence in outcome.manifest.pages
+                if evidence.payload_hash is not None
+            )
+            if page_hashes:
+                raw_payload_hash = hashlib.sha256(
+                    "\n".join(page_hashes).encode("ascii")
+                ).hexdigest()
         else:
             result = self._fetch(clean_endpoint, params)
             records = result.records
@@ -207,13 +241,14 @@ class HistoricalRunner:
                 else "FAILED"
             )
             pages = 1
+            raw_payload_hash = result.raw_payload_hash
         normalized = normalize_records(
             clean_endpoint,
             records,
             competition_id=competition_id,
             season=season,
             ingestion_run_id=self.run_id,
-            raw_payload_hash=None,
+            raw_payload_hash=raw_payload_hash,
         )
         storage = self.parquet.write_records(
             normalized,
@@ -478,15 +513,48 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
         compressed_bytes=int(pilot.get("raw_compressed_bytes", 0)),
         payloads=payload_count,
     )
+    scheduler_rate = float(plan.get("scheduler", {}).get("request_rate", 0.0))
+    effective_seconds_per_call = (
+        float(plan.get("seconds_per_call", 0.0))
+        or (1.0 / scheduler_rate if scheduler_rate > 0 else 0.0)
+        or float(throughput["seconds_per_call"])
+    )
+    throughput["effective_seconds_per_call"] = effective_seconds_per_call
+    throughput["calls_per_minute"] = 60.0 / effective_seconds_per_call
+    throughput["calls_per_hour"] = 3600.0 / effective_seconds_per_call
+    throughput["recent_calls_per_task"] = (
+        float(plan.get("provider_calls", 0))
+        / max(1, int(plan.get("completed_this_run", 0)))
+        if int(plan.get("provider_calls", 0)) > 0
+        else float(throughput["calls_per_task"])
+    )
+    recent_rows = completed_rows_this_run(plan)
+    throughput["recent_rows_per_call"] = (
+        float(recent_rows)
+        / max(1, int(plan.get("provider_calls", 0)))
+        if int(plan.get("provider_calls", 0)) > 0
+        else float(throughput["rows_per_call"])
+    )
     remaining_by_priority: dict[str, int] = {}
+    remaining_calls_by_priority: dict[str, int] = {}
     for task in plan.get("tasks", []):
         if task.get("status") not in {"PENDING", "READY", "RETRYABLE", "SKIPPED_QUOTA"}:
             continue
         priority = str(task.get("priority", "UNKNOWN"))
         remaining_by_priority[priority] = remaining_by_priority.get(priority, 0) + 1
+        remaining_calls_by_priority[priority] = (
+            remaining_calls_by_priority.get(priority, 0)
+            + max(1, int(task.get("estimated_calls", 1)))
+        )
     inventory = storage_inventory(state)
-    total_call_projection = 63_638
     daily_calls = 30_000
+    total_call_projection = sum(remaining_calls_by_priority.values())
+    priority_a_calls = remaining_calls_by_priority.get("A", 0)
+    priority_b_calls = priority_a_calls + remaining_calls_by_priority.get("B", 0)
+
+    def eta_days(calls: int) -> float:
+        return round(calls / daily_calls, 2) if calls else 0.0
+
     raw_projection = int(
         total_call_projection * float(throughput["bytes_per_call"])
     )
@@ -502,14 +570,18 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
         "unavailable_endpoint_rate": 0.0,
         "error_rate": 0.0,
         "calls_per_day": daily_calls,
-        "github_actions_hours_per_day": 22.0,
+        "github_actions_hours_per_day": round(
+            daily_calls * effective_seconds_per_call / 3600,
+            2,
+        ),
         "remaining_by_priority": remaining_by_priority,
-        "eta_priority_a_days": 3.0,
-        "eta_priority_b_days": 8.0,
-        "eta_full_scope_days": 10.0,
+        "remaining_calls_by_priority": remaining_calls_by_priority,
+        "eta_priority_a_days": eta_days(priority_a_calls),
+        "eta_priority_b_days": eta_days(priority_b_calls),
+        "eta_full_scope_days": eta_days(total_call_projection),
         "estimated_calls_full_scope": total_call_projection,
         "storage_current": inventory,
-        "storage_projected_bytes": raw_projection + int(inventory["bytes"]),
+        "storage_projected_bytes": raw_projection + int(str(inventory["bytes"])),
         "files_without_compaction": uncompressed_file_projection,
         "files_after_compaction": compacted_file_projection,
         "storage_warning_bytes": 750_000_000,
@@ -773,6 +845,24 @@ def command_backfill(args: argparse.Namespace) -> None:
             ),
             quota_reset_at=None,
             reserve=args.quota_reserve,
+            mean_calls_per_task=(
+                max(
+                    1.0,
+                    float(plan.get("provider_calls", 0))
+                    / max(1, int(plan.get("completed_this_run", 0))),
+                )
+                if int(plan.get("provider_calls", 0)) > 0
+                else 25.08
+            ),
+            mean_seconds_per_call=(
+                max(
+                    0.05,
+                    float(plan.get("duration_seconds", 0.0))
+                    / max(1, int(plan.get("provider_calls", 0))),
+                )
+                if float(plan.get("duration_seconds", 0.0)) > 0
+                else 0.146
+            ),
             storage_bytes=directory_size(args.state),
             recent_error_rate=float(plan.get("recent_error_rate", 0.0)),
             recent_429_count=int(plan.get("recent_429_count", 0)),
@@ -809,7 +899,9 @@ def command_backfill(args: argparse.Namespace) -> None:
     tasks: list[dict[str, Any]] = list(plan.get("tasks", []))
     completed = 0
     expanded = 0
+    normalized_rows_this_run = 0
     stopped_reason: str | None = None
+    started_at = now_iso()
     started_monotonic = time.monotonic()
     index = 0
     while index < len(tasks) and completed < args.max_tasks:
@@ -946,10 +1038,13 @@ def command_backfill(args: argparse.Namespace) -> None:
             "COMPLETED" if report["status"] == "COMPLETED" else "PARTIAL"
         )
         task["coverage_status"] = (
-            "AVAILABLE" if int(report["rows_received"]) > 0 else "UNAVAILABLE"
+            "AVAILABLE"
+            if int(str(report["rows_received"])) > 0
+            else "UNAVAILABLE"
         )
         task["completed_at"] = now_iso()
         task["error_code"] = None
+        normalized_rows_this_run += int(str(report["normalized_rows"]))
         completed += 1
     unique_tasks = {str(task["task_id"]): task for task in tasks}
     tasks = sorted(
@@ -966,14 +1061,25 @@ def command_backfill(args: argparse.Namespace) -> None:
         for task in tasks
         if task.get("status") in {"PENDING", "READY", "RETRYABLE", "SKIPPED_QUOTA"}
     )
+    finished_at = now_iso()
+    duration_seconds = time.monotonic() - started_monotonic
     payload = {
         **plan,
-        "last_run_at": now_iso(),
+        "last_run_started_at": started_at,
+        "last_run_at": finished_at,
         "last_run_id": args.run_id,
         "status": "HISTORICAL_BACKFILL_ACTIVE" if remaining else "COMPLETED",
         "tasks": tasks,
         "remaining_tasks": remaining,
         "provider_calls": runner.calls,
+        "normalized_rows_this_run": normalized_rows_this_run,
+        "duration_seconds": round(duration_seconds, 6),
+        "calls_per_task": round(runner.calls / max(completed, 1), 6),
+        "seconds_per_call": round(duration_seconds / max(runner.calls, 1), 6),
+        "lines_per_call": round(
+            normalized_rows_this_run / max(runner.calls, 1),
+            6,
+        ),
         "completed_this_run": completed,
         "expanded_this_run": expanded,
         "stopped_reason": stopped_reason,
@@ -1023,20 +1129,28 @@ def command_compact(args: argparse.Namespace) -> None:
 
 
 def command_quality(args: argparse.Namespace) -> None:
-    store = PartitionedParquetStore(args.state / "parquet")
-    failures = store.validate()
-    summary = {
-        "generated_at": now_iso(),
-        "status": "FAILED" if failures else "PASSED",
-        "parquet_partitions": len(list((args.state / "parquet").rglob("*.parquet"))),
-        "raw_observations": len(list((args.state / "raw").rglob("*.json"))),
-        "failures": failures,
-        "production_status": "PRODUCTION_LOCKED",
-    }
+    summary = historical_quality_report(args.state)
     write_json_atomic(args.state / "quality" / "latest.json", summary)
-    if failures:
+    if summary["status"] == "FAILED":
+        write_json_atomic(
+            args.state / "quality" / "quarantine-latest.json",
+            {
+                "generated_at": summary["generated_at"],
+                "failures": summary["failures"],
+                "status": "QUARANTINED",
+                "production_status": "PRODUCTION_LOCKED",
+            },
+        )
         raise RuntimeError("HISTORICAL_DATA_QUALITY_FAILED")
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+
+
+def command_repair_provenance(args: argparse.Namespace) -> None:
+    result = repair_raw_hash_provenance(args.state)
+    write_json_atomic(args.state / "quality" / "provenance-repair.json", result)
+    if result["rows_unresolved"]:
+        raise RuntimeError("HISTORICAL_PROVENANCE_REPAIR_INCOMPLETE")
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True))
 
 
 def command_features(args: argparse.Namespace) -> None:
@@ -1254,6 +1368,40 @@ def command_persist(args: argparse.Namespace) -> None:
             )
 
         plan = read_json(args.state / "tasks" / "backfill-plan.json", {})
+        last_run_id = str(plan.get("last_run_id", ""))
+        if last_run_id:
+            finished_at = datetime.fromisoformat(
+                str(plan["last_run_at"]).replace("Z", "+00:00")
+            )
+            started_at = datetime.fromisoformat(
+                str(plan.get("last_run_started_at", plan["last_run_at"])).replace(
+                    "Z",
+                    "+00:00",
+                )
+            )
+            backfill_key = f"backfill:{last_run_id}"
+            backfill_values = {
+                "id": last_run_id[:120],
+                "idempotency_key": backfill_key,
+                "mode": str(
+                    plan.get("scheduler", {}).get("mode", "ACCELERATED_SAFE")
+                ),
+                "status": str(plan.get("status", "HISTORICAL_BACKFILL_ACTIVE")),
+                "started_at": started_at,
+                "finished_at": finished_at,
+                "calls": int(plan.get("provider_calls", 0)),
+                "rows_received": completed_rows_this_run(plan),
+                "quota_remaining": plan.get("quota_remaining"),
+                "manifest_location": "historical/tasks/backfill-plan.json",
+                "error_code": plan.get("stopped_reason"),
+            }
+            upsert(
+                connection,
+                historical_ingestion_runs,
+                historical_ingestion_runs.c.idempotency_key,
+                backfill_key,
+                backfill_values,
+            )
         task_rows: list[dict[str, object]] = []
         for task in plan.get("tasks", []):
             task_values = {
@@ -1367,6 +1515,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("canonicalize")
     subparsers.add_parser("forecast")
     subparsers.add_parser("quality")
+    subparsers.add_parser("repair-provenance")
     subparsers.add_parser("features")
     subparsers.add_parser("train")
     subparsers.add_parser("backtest")
@@ -1388,6 +1537,7 @@ def main() -> None:
         "compact": command_compact,
         "forecast": command_forecast,
         "quality": command_quality,
+        "repair-provenance": command_repair_provenance,
         "features": command_features,
         "train": command_train,
         "backtest": command_backtest,

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +26,141 @@ def directory_size(path: Path) -> int:
     if not path.exists():
         return 0
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
+
+
+def completed_rows_this_run(plan: dict[str, Any]) -> int:
+    explicit = int(str(plan.get("normalized_rows_this_run", 0)))
+    if explicit:
+        return explicit
+    completed = int(str(plan.get("completed_this_run", 0)))
+    tasks = [
+        task
+        for task in plan.get("tasks", [])
+        if isinstance(task, dict) and task.get("completed_at")
+    ]
+    latest = sorted(
+        tasks,
+        key=lambda task: str(task.get("completed_at", "")),
+        reverse=True,
+    )[:completed]
+    return sum(int(str(task.get("rows_received", 0))) for task in latest)
+
+
+def build_player_readiness(
+    state: Path,
+    quality: dict[str, Any],
+    forecast: dict[str, Any],
+) -> dict[str, Any]:
+    entity_seasons: dict[str, set[int]] = {}
+    entity_rows: dict[str, int] = {}
+    for path in sorted((state / "parquet").rglob("*.parquet")):
+        entity_part = next(
+            (part for part in path.parts if part.startswith("entity_type=")),
+            "entity_type=unknown",
+        )
+        season_part = next(
+            (part for part in path.parts if part.startswith("season=")),
+            "season=0",
+        )
+        entity = entity_part.split("=", 1)[1]
+        season = int(season_part.split("=", 1)[1])
+        entity_seasons.setdefault(entity, set()).add(season)
+        entity_rows[entity] = entity_rows.get(entity, 0) + len(pd.read_parquet(path))
+
+    quality_status = str(quality.get("status", "NOT_RUN"))
+    eta_a = forecast.get("eta_priority_a_days")
+    after_priority_a = (
+        f"after priority A (~{eta_a} d)"
+        if eta_a is not None
+        else "after priority A"
+    )
+    specifications = [
+        ("Effectifs", ("squads",), "POINT_IN_TIME_SAFE"),
+        ("Joueurs", ("players",), "POINT_IN_TIME_SAFE"),
+        ("Minutes", ("fixture_player_statistics",), "POST_MATCH_LAG_REQUIRED"),
+        (
+            "Statistiques joueurs par match",
+            ("fixture_player_statistics",),
+            "POST_MATCH_LAG_REQUIRED",
+        ),
+        ("Continuite du onze", ("lineups",), "POST_MATCH_LAG_REQUIRED"),
+        ("Formations", ("lineups",), "POST_MATCH_LAG_REQUIRED"),
+        ("Blessures", ("injuries",), "HISTORICAL_NON_POINT_IN_TIME"),
+        (
+            "Disponibilite",
+            ("injuries", "lineups"),
+            "HISTORICAL_NON_POINT_IN_TIME",
+        ),
+        ("Force du banc", ("squads", "lineups"), "POST_MATCH_LAG_REQUIRED"),
+        (
+            "Force du onze",
+            ("fixture_player_statistics", "lineups"),
+            "POST_MATCH_LAG_REQUIRED",
+        ),
+        (
+            "Retour de blessure",
+            ("injuries", "fixture_player_statistics"),
+            "HISTORICAL_NON_POINT_IN_TIME",
+        ),
+        (
+            "Fatigue",
+            ("fixture_player_statistics", "lineups"),
+            "POST_MATCH_LAG_REQUIRED",
+        ),
+    ]
+    families: list[dict[str, Any]] = []
+    for name, dependencies, temporality in specifications:
+        season_sets = [entity_seasons.get(entity, set()) for entity in dependencies]
+        seasons = sorted(set.intersection(*season_sets) if season_sets else set())
+        rows = min((entity_rows.get(entity, 0) for entity in dependencies), default=0)
+        if quality_status not in {"PASSED", "WARNING"}:
+            status = "BLOCKED_BY_QUALITY"
+            reason = f"historical quality is {quality_status}"
+        elif temporality == "HISTORICAL_NON_POINT_IN_TIME":
+            status = "BLOCKED_BY_TEMPORALITY"
+            reason = "point-in-time injury snapshots are unavailable"
+        elif len(seasons) < 2:
+            status = "BLOCKED_BY_COVERAGE"
+            reason = "fewer than two verified common seasons"
+        elif name == "Joueurs":
+            status = "COMPUTABLE"
+            reason = "multi-season player dimension is available"
+        else:
+            status = "TESTING"
+            reason = "per-match as-of and identity validation is still required"
+        families.append(
+            {
+                "name": name,
+                "coverage": {
+                    "seasons": seasons,
+                    "seasonCount": len(seasons),
+                    "rows": rows,
+                    "dependencies": list(dependencies),
+                },
+                "quality": quality_status,
+                "identities": (
+                    "VERIFIED"
+                    if quality_status == "PASSED" and rows > 0
+                    else "PENDING"
+                ),
+                "temporality": temporality,
+                "status": status,
+                "reason": reason,
+                "estimatedAvailability": (
+                    "unknown - point-in-time source required"
+                    if status == "BLOCKED_BY_TEMPORALITY"
+                    else after_priority_a
+                ),
+            }
+        )
+    return {
+        "coverage": "INSUFFICIENT",
+        "quality": quality_status,
+        "temporality": "MIXED_BLOCKS",
+        "status": "BLOCKED_BY_COVERAGE",
+        "estimatedFirstModel": "after priority A and multi-season gates",
+        "families": families,
+    }
 
 
 def sanitize_public_snapshot(value: Any) -> Any:
@@ -113,6 +250,7 @@ def build_deep_data() -> dict[str, Any]:
     public_dataset = {
         key: value for key, value in dataset.items() if key != "partitions"
     }
+    player_readiness = build_player_readiness(state, quality, forecast)
     players: list[dict[str, Any]] = []
     player_partitions = (
         path
@@ -120,7 +258,10 @@ def build_deep_data() -> dict[str, Any]:
         if any(parent.name == "entity_type=players" for parent in path.parents)
     )
     for path in sorted(player_partitions):
-        for payload in pd.read_parquet(path).get("payload", []).tolist()[:20]:
+        player_frame = pd.read_parquet(path)
+        if "payload" not in player_frame.columns:
+            continue
+        for payload in player_frame["payload"].tolist()[:20]:
             record = json.loads(str(payload))
             player = record.get("player", {})
             statistics = record.get("statistics", [])
@@ -195,8 +336,13 @@ def build_deep_data() -> dict[str, Any]:
         ),
         "pilot": public_pilot,
         "quota": {
-            "remaining": pilot.get("quota_remaining", proof.get("quota_remaining")),
-            "calls": pilot.get("provider_calls", proof.get("calls", 0)),
+            "remaining": plan.get(
+                "quota_remaining",
+                proof.get("quota_remaining", pilot.get("quota_remaining")),
+            ),
+            "calls": plan.get("provider_calls", 0),
+            "lastRunId": plan.get("last_run_id"),
+            "lastRunAt": plan.get("last_run_at"),
             "mode": "ACCELERATED_SAFE",
             "reserve": 5_000,
         },
@@ -273,17 +419,19 @@ def build_deep_data() -> dict[str, Any]:
             "tasksTotal": len(plan.get("tasks", [])),
             "tasksCompleted": task_counts.get("COMPLETED", 0),
             "tasksRemaining": plan.get("remaining_tasks", 0),
-            "callsConsumed": pilot.get("provider_calls", 0),
+            "callsConsumed": plan.get("provider_calls", 0),
             "callsEstimated": forecast.get("estimated_calls_full_scope"),
             "callsPerHour": (
-                round(3600 / forecast["observed"]["seconds_per_call"])
-                if forecast.get("observed", {}).get("seconds_per_call")
+                round(float(plan["scheduler"]["request_rate"]) * 3600)
+                if plan.get("scheduler", {}).get("request_rate")
                 else None
             ),
             "callsPerDay": forecast.get("calls_per_day"),
             "etaPriorityADays": forecast.get("eta_priority_a_days"),
             "etaPriorityBDays": forecast.get("eta_priority_b_days"),
             "etaFullDays": forecast.get("eta_full_scope_days"),
+            "scheduler": plan.get("scheduler", {}),
+            "rowsLastRun": completed_rows_this_run(plan),
         },
         "canonicality": {
             key: canonical.get(key)
@@ -308,12 +456,15 @@ def build_deep_data() -> dict[str, Any]:
             "lastConflict": None,
             "lag": 0,
         },
-        "playerReadiness": {
-            "coverage": "INSUFFICIENT",
-            "quality": "PARTIAL",
-            "temporality": "PENDING_MULTI_SEASON",
-            "status": "BLOCKED_BY_COVERAGE",
-            "estimatedFirstModel": "après priorité A et seuils multi-saisons",
+        "playerReadiness": player_readiness,
+        "deployment": {
+            "build": "COCKPIT_BUILD_SUCCESS",
+            "artifact": "COCKPIT_ARTIFACT_PUBLISHED",
+            "private": os.environ.get(
+                "COCKPIT_PRIVATE_STATUS",
+                "COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED",
+            ),
+            "snapshotGeneratedAt": datetime.now(UTC).isoformat(),
         },
         "origins": [
             "LIVE SHADOW",
@@ -534,7 +685,8 @@ def main() -> None:
     ]
     deep_data = build_deep_data()
     snapshot = {
-        "generatedAt": durable["captured_at"],
+        "generatedAt": datetime.now(UTC).isoformat(),
+        "sourceCapturedAt": durable["captured_at"],
         "snapshotType": live["snapshot_type"],
         "status": durable["burn_in"]["health"],
         "shadowStatus": durable["status"],
@@ -695,7 +847,11 @@ def main() -> None:
         json.dumps(public_snapshot, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(f"Snapshot Cockpit écrit dans {OUTPUT.relative_to(ROOT)}")
+    try:
+        label = OUTPUT.relative_to(ROOT)
+    except ValueError:
+        label = OUTPUT
+    print(f"Snapshot Cockpit écrit dans {label}")
 
 
 if __name__ == "__main__":

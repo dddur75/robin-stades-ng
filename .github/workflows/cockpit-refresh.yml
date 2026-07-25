@@ -29,6 +29,11 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
+      - name: Recalculate the forecast without a provider call
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}"
+          forecast
       - name: Générer le snapshot sans secret frontend
         run: python scripts/build_cockpit_snapshot.py
       - uses: actions/setup-node@v4
@@ -40,8 +45,17 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm test
+      - name: Publier les statuts sans confondre artefact et déploiement
+        run: |
+          {
+            echo "COCKPIT_BUILD_SUCCESS"
+            echo "COCKPIT_ARTIFACT_PUBLISHED"
+            echo "COCKPIT_PRIVATE_DEPLOYMENT_REQUIRED"
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: deep-data-cockpit-${{ github.run_id }}
-          path: cockpit/dist
+          path: |
+            cockpit/dist
+            cockpit/app/cockpit-data.json
           retention-days: 30

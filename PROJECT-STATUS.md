@@ -98,3 +98,31 @@ contient plus de 3 100 fichiers avec hashes vérifiés. La migration Neon
 `0004_jalon5_deep_data_factory` est appliquée et les métadonnées historiques
 sont synchronisées par lots bornés. Le burn-in prospectif continue et
 `PRODUCTION_LOCKED` reste invariant.
+
+## Activation post-fusion du Jalon 5
+
+La PR #6 est fusionnée sur `main` au commit
+`9726ea9ded1b8a96b5ac6f280a22c24af563241a`.
+
+Le premier lot accéléré exécuté depuis `main` est le run `30150002144` :
+99 appels, 99 tâches terminées, 1 597 lignes normalisées, 0 erreur, 0 HTTP 429
+et quota restant 149 895. Le plan passe de 54/6 184 à 153/6 184 tâches
+terminées. `historical-data` conserve le bundle vérifié et Neon reste à la
+révision `0004_jalon5_deep_data_factory`.
+
+Le diagnostic live `30150014764` a démarré pendant le backfill et a réussi avec
+`windows_due=0`, démontrant l'indépendance de `shadow-state` et
+`historical-state`. Le replay local a consommé 0 appel et 0 crédit.
+
+Une correction post-fusion est isolée dans une PR dédiée : provenance Parquet
+réparée depuis les payloads durables sans fournisseur, contrôles qualité
+explicites, historique du lot dans PostgreSQL, cadence recalculée après
+expansion des tâches, readiness joueurs par famille et séparation explicite
+entre build, artefact et déploiement privé du Cockpit. La production reste
+`PRODUCTION_LOCKED`.
+
+Le run qualité correctif `30151227188` valide 27 600/27 600 lignes de
+provenance, avec 0 appel fournisseur et 0 ligne non résolue. Neon contient
+désormais deux runs d'ingestion, dont le lot courant, sans nouvel enregistrement
+métier dupliqué. Le Cockpit corrigé est construit par `30151317894`, publié
+comme artefact `8617713588` et réellement déployé en version privée 8.

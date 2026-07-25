@@ -820,6 +820,7 @@ function DeepDataCommandCenter() {
         <Metric label="Isolation" value={deep.isolation.status.replaceAll("_", " ")} detail={`${deep.isolation.liveBranch} / ${deep.isolation.historicalBranch}`} tone="good" />
         <Metric label="Bundles" value={String(deep.storage.bundleCount)} detail={`${deep.storage.fileCount} fichiers · ${deep.storage.capacityStatus}`} />
         <Metric label="Features joueurs" value={deep.playerReadiness.status.replaceAll("_", " ")} detail={deep.playerReadiness.temporality} tone="warning" />
+        <Metric label="Cockpit privé" value={deep.deployment.private.replaceAll("_", " ")} detail={deep.deployment.snapshotGeneratedAt} tone="warning" />
         <Metric label="Production" value={deep.productionStatus} detail="aucun pari réel" tone="warning" />
       </section>
       <section className="panel">
@@ -879,6 +880,10 @@ function PlayerExplorer() {
       {rows.length ? <div className="table-wrap"><table><thead><tr><th>Joueur</th><th>Poste</th><th>Âge</th><th>App.</th><th>Minutes</th><th>Buts</th><th>Passes</th><th>Note</th><th>Source</th></tr></thead><tbody>
         {rows.map((player) => <tr key={String(player.id)}><td>{player.name}</td><td>{player.position ?? "—"}</td><td>{player.age ?? "—"}</td><td>{player.appearances ?? "—"}</td><td>{player.minutes ?? "—"}</td><td>{player.goals ?? "—"}</td><td>{player.assists ?? "—"}</td><td>{player.rating ?? "—"}</td><td><SourceBadge origin={player.origin} /></td></tr>)}
       </tbody></table></div> : <EmptyState title="Joueurs en attente" text="Le pilote Ligue 1 2025 alimentera cette vue sans données de démonstration." label="NO OUTPUT" />}
+      <div className="panel-head"><div><span>Readiness joueurs</span><h2>Garde-fous par famille</h2></div><StatusPill value={snapshot.deepData.playerReadiness.status} /></div>
+      <div className="table-wrap"><table><thead><tr><th>Famille</th><th>Saisons</th><th>Lignes</th><th>Qualité</th><th>Temporalité</th><th>Statut</th><th>Blocage</th></tr></thead><tbody>
+        {snapshot.deepData.playerReadiness.families.map((family) => <tr key={family.name}><td>{family.name}</td><td>{family.coverage.seasonCount}</td><td>{family.coverage.rows}</td><td>{family.quality}</td><td>{family.temporality}</td><td><StatusPill value={family.status} /></td><td>{family.reason}</td></tr>)}
+      </tbody></table></div>
     </section>
   );
 }
