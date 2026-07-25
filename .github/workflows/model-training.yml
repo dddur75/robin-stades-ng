@@ -32,6 +32,7 @@ jobs:
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
       - name: Geler Jalon 6 et exécuter l'arène sans fournisseur
+        if: github.event_name != 'workflow_dispatch' || !inputs.run-external-validation
         run: |
           if [ ! -f data/historical/datasets/api_team_pre_match_v1.json ]; then
             python scripts/run_historical_pipeline.py \

@@ -378,6 +378,7 @@ def test_workflow_is_isolated_cache_only_and_cockpit_triggered() -> None:
     assert "27 - Validation externe multi-ligues" in cockpit
     assert "run-external-validation" in arena
     assert "inputs.run-external-validation" in arena
+    assert "!inputs.run-external-validation" in arena
     assert "tests/jalon8" in ci
 
 
