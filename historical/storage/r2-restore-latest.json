@@ -1,0 +1,27 @@
+{
+  "bundle_replay_files": 3128,
+  "business_duplicates": 0,
+  "categories": {
+    "checkpoint": "checkpoints/bundesliga/2019/injuries.json",
+    "csv": "market/raw/Bundesliga/2020/48ec5d53d2452b6ebdbc07bd78a836d6a4686f99fc020439ee3292e685315e61.csv",
+    "json": "arena/ablation-registry-v1.json",
+    "manifest": "bundles/30144872834/multi/0/multi/7c82ce7a84c0e4dae3c978f28c90c7b813db159f95da786bf00492a48e87c6d5.manifest.json",
+    "parquet": "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet"
+  },
+  "data_loss": 0,
+  "deletions": 0,
+  "duration_seconds": 18.99469462899998,
+  "hash_mismatches": 0,
+  "parquet_readable": 1,
+  "provider_calls": 0,
+  "registry_verified": true,
+  "remote_verified": 7,
+  "replayed": 6,
+  "restored_files": 7,
+  "schema_version": "r2-restore-report-v1",
+  "selected_files": 7,
+  "size_mismatches": 0,
+  "source_mutations": 0,
+  "status": "RESTORE_VERIFIED",
+  "uploaded": 1
+}

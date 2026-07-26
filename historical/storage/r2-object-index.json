@@ -5,7 +5,7 @@
       "sha256": "8d1f2b92def645ef19ac1e8c82f40018efa003f48128feeb2bf495ca0ee83191",
       "size": 1740,
       "status": "verified",
-      "verified_at": "2026-07-26T12:48:48.334458+00:00"
+      "verified_at": "2026-07-26T13:06:27.332296+00:00"
     },
     "arena/external-validation-protocol-v1.json": {
       "last_action": "replayed",
@@ -173,21 +173,21 @@
       "sha256": "4ab5dbce187e7ba4e43c4d1e754d977593bf97080769945031fc0035b90d14f3",
       "size": 660674,
       "status": "verified",
-      "verified_at": "2026-07-26T12:48:59.662238+00:00"
+      "verified_at": "2026-07-26T13:06:27.933770+00:00"
     },
     "bundles/30144872834/multi/0/multi/7c82ce7a84c0e4dae3c978f28c90c7b813db159f95da786bf00492a48e87c6d5.manifest.json": {
       "last_action": "replayed",
       "sha256": "e7dfe17708f3c592b73be32d1786015fa318897c275c56ff53bd0a5c71894db0",
       "size": 637,
       "status": "verified",
-      "verified_at": "2026-07-26T12:49:00.191321+00:00"
+      "verified_at": "2026-07-26T13:06:26.022187+00:00"
     },
     "bundles/30144872834/multi/0/multi/7c82ce7a84c0e4dae3c978f28c90c7b813db159f95da786bf00492a48e87c6d5.tar.gz": {
       "last_action": "replayed",
       "sha256": "c966817e7ad9092fed79629ecbe38e5e2fdb7543839a48aa3d06c5643c318eb7",
       "size": 2878938,
       "status": "verified",
-      "verified_at": "2026-07-26T12:49:00.753366+00:00"
+      "verified_at": "2026-07-26T13:06:28.600036+00:00"
     },
     "bundles/30145120932/multi/0/multi/7c82ce7a84c0e4dae3c978f28c90c7b813db159f95da786bf00492a48e87c6d5.index.json": {
       "last_action": "replayed",
@@ -803,14 +803,14 @@
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
       "size": 48120,
       "status": "verified",
-      "verified_at": "2026-07-26T12:50:12.727216+00:00"
+      "verified_at": "2026-07-26T13:06:24.071030+00:00"
     },
     "checkpoints/bundesliga/2019/injuries.json": {
       "last_action": "replayed",
       "sha256": "082abd55e3b63243992c47a8fc817b18f4c6f42af4106792bb08d9420f5b1026",
       "size": 376,
       "status": "verified",
-      "verified_at": "2026-07-26T12:50:13.242991+00:00"
+      "verified_at": "2026-07-26T13:06:26.790638+00:00"
     },
     "checkpoints/bundesliga/2019/players.json": {
       "last_action": "replayed",
@@ -1749,8 +1749,15 @@
       "size": 100450,
       "status": "verified",
       "verified_at": "2026-07-26T12:51:31.504643+00:00"
+    },
+    "market/raw/Bundesliga/2020/48ec5d53d2452b6ebdbc07bd78a836d6a4686f99fc020439ee3292e685315e61.csv": {
+      "last_action": "uploaded",
+      "sha256": "48ec5d53d2452b6ebdbc07bd78a836d6a4686f99fc020439ee3292e685315e61",
+      "size": 139075,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:06:25.461907+00:00"
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-26T12:51:31.504659+00:00"
+  "updated_at": "2026-07-26T13:06:28.600052+00:00"
 }
