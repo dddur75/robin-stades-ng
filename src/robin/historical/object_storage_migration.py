@@ -796,7 +796,31 @@ def run_continuous_replication(
         "duration_seconds": 0.0,
         "status": "RUNNING",
     }
-    client, bucket = client_factory(environment if environment is not None else os.environ)
+    try:
+        client, bucket = client_factory(
+            environment if environment is not None else os.environ
+        )
+    except Exception:
+        after = source_snapshot(state)
+        before_keys = set(before)
+        after_keys = set(after)
+        report["deletions"] = len(before_keys - after_keys)
+        report["source_mutations"] = sum(
+            1
+            for key in before_keys | after_keys
+            if before.get(key) != after.get(key)
+        )
+        report["source_preserved"] = (
+            report["deletions"] == 0 and report["source_mutations"] == 0
+        )
+        report["errors"] = 1
+        report["circuit_breaker"] = "OPEN"
+        report["status"] = "CIRCUIT_OPEN"
+        report["client_initialization_failed"] = True
+        report["duration_seconds"] = perf_counter() - started
+        report["completed_at"] = _utc_now()
+        write_json_atomic(state / REPLICATION_REPORT_RELATIVE_PATH, report)
+        raise
     adapter = ObjectStorageAdapter(client, bucket)
     consecutive_failures = 0
     for key in selected:

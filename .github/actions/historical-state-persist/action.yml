@@ -83,12 +83,13 @@ runs:
         R2_ACCESS_KEY_ID: ${{ inputs.r2-access-key-id }}
         R2_SECRET_ACCESS_KEY: ${{ inputs.r2-secret-access-key }}
         R2_BUCKET_NAME: ${{ inputs.r2-bucket-name }}
-      run: >-
-        python scripts/replicate_object_storage.py
-        --state data/historical
-        --max-files "${{ inputs.r2-replication-max-files }}"
-        --max-retries 2
-        --circuit-breaker-failures 3
+      run: |
+        python -m pip install boto3
+        python scripts/replicate_object_storage.py \
+          --state data/historical \
+          --max-files "${{ inputs.r2-replication-max-files }}" \
+          --max-retries 2 \
+          --circuit-breaker-failures 3
     - name: Publier l'accusé R2 durable
       if: >-
         always() &&

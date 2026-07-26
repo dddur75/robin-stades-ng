@@ -633,6 +633,34 @@ def test_replication_continue_retry_borne_et_circuit_breaker(tmp_path: Path) -> 
     assert report["lag_objects"] == 3
 
 
+def test_replication_publie_un_incident_si_le_client_ne_demarre_pas(
+    tmp_path: Path,
+) -> None:
+    write_files(tmp_path, 2)
+
+    def unavailable(environment: Mapping[str, str]) -> tuple[Any, str]:
+        raise RuntimeError("SIMULATED_R2_UNAVAILABLE")
+
+    with pytest.raises(RuntimeError, match="SIMULATED_R2_UNAVAILABLE"):
+        run_continuous_replication(
+            state=tmp_path,
+            max_files=2,
+            environment={},
+            client_factory=unavailable,
+        )
+
+    report = yaml.safe_load(
+        (tmp_path / "storage" / "r2-replication-latest.json").read_text("utf-8")
+    )
+    assert report["status"] == "CIRCUIT_OPEN"
+    assert report["circuit_breaker"] == "OPEN"
+    assert report["client_initialization_failed"] is True
+    assert report["errors"] == 1
+    assert report["lag_objects"] == 2
+    assert report["source_preserved"] is True
+    assert "SIMULATED_R2_UNAVAILABLE" not in str(report)
+
+
 def test_restauration_r2_representative_est_isolee_et_rejouable(
     tmp_path: Path,
 ) -> None:
@@ -810,6 +838,7 @@ def test_persistances_historiques_activent_le_delta_r2_sans_bloquer_git() -> Non
     ).read_text("utf-8")
     assert yaml.safe_load(action)
     assert "scripts/replicate_object_storage.py" in action
+    assert "python -m pip install boto3" in action
     assert "continue-on-error: true" in action
     assert "Signaler un replay R2 nécessaire" in action
     assert "r2-replication-enabled" in action
