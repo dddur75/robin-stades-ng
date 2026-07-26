@@ -1,13 +1,13 @@
 {
   "bootstrapped_from_index": 324,
   "failed": 0,
-  "last_key": "raw/payloads/fe/fe5575c32cc937d9505cda26d1501b29b6700ca8f9698cd76d48591c65efa124.bin.gz",
-  "next_index": 25324,
-  "replayed": 448,
+  "last_key": "tasks/backfill-plan.json",
+  "next_index": 25422,
+  "replayed": 471,
   "schema_version": "r2-migration-checkpoint-v1",
   "scope_hash": "8687a80087576711e309d01a2a9758937b78fc914660c6db77c838ae59754b7f",
-  "status": "IN_PROGRESS",
-  "updated_at": "2026-07-26T22:28:15.443476+00:00",
-  "uploaded": 24552,
-  "verified": 25347
+  "status": "COMPLETE",
+  "updated_at": "2026-07-26T23:29:08.537814+00:00",
+  "uploaded": 24627,
+  "verified": 25422
 }
