@@ -137,6 +137,27 @@ def _scope_keys(scope: Mapping[str, object]) -> list[str]:
     return keys
 
 
+def _scope_snapshot(scope: Mapping[str, object]) -> Snapshot:
+    entries = scope.get("entries")
+    if not isinstance(entries, list):
+        raise RuntimeError("INVALID_R2_MIGRATION_SCOPE_ENTRIES")
+    snapshot: Snapshot = {}
+    for entry in entries:
+        if not isinstance(entry, Mapping):
+            raise RuntimeError("INVALID_R2_MIGRATION_SCOPE_ENTRY")
+        key = entry.get("key")
+        size = entry.get("size")
+        digest = entry.get("sha256")
+        if (
+            not isinstance(key, str)
+            or not isinstance(size, int)
+            or not isinstance(digest, str)
+        ):
+            raise RuntimeError("INVALID_R2_MIGRATION_SCOPE_ENTRY")
+        snapshot[key] = (size, digest)
+    return snapshot
+
+
 def load_object_index(state: Path) -> dict[str, object]:
     path = state / INDEX_RELATIVE_PATH
     if not path.exists():
@@ -421,8 +442,10 @@ def run_migration(
     initial_scan_seconds = perf_counter() - scan_started
     scope = load_or_create_scope(state, before)
     scope_keys = _scope_keys(scope)
+    scope_snapshot = _scope_snapshot(scope)
     scope_hash = str(scope["scope_hash"])
     checkpoint = load_checkpoint(state, scope_hash=scope_hash)
+    object_index = load_object_index(state)
     start_index = 0
     if start_after is not None:
         try:
@@ -434,6 +457,23 @@ def run_migration(
         if not isinstance(checkpoint_index, int) or checkpoint_index < 0:
             raise RuntimeError("INVALID_R2_MIGRATION_CHECKPOINT_CURSOR")
         start_index = checkpoint_index
+        if checkpoint.get("updated_at") is None:
+            objects = object_index.get("objects")
+            if not isinstance(objects, Mapping):
+                raise RuntimeError("INVALID_R2_OBJECT_INDEX_OBJECTS")
+            while start_index < len(scope_keys):
+                key = scope_keys[start_index]
+                size, digest = scope_snapshot[key]
+                if not _index_record_matches(
+                    objects.get(key),
+                    size=size,
+                    digest=digest,
+                ):
+                    break
+                start_index += 1
+            checkpoint["next_index"] = start_index
+            checkpoint["verified"] = start_index
+            checkpoint["bootstrapped_from_index"] = start_index
     selected = scope_keys[start_index : start_index + max(max_files, 0)]
     missing_scope_sources = [key for key in selected if key not in before]
     if missing_scope_sources:
@@ -454,7 +494,6 @@ def run_migration(
     report["selection_start_index"] = start_index
     report["selection_end_index"] = start_index + len(selected)
     report["start_after"] = start_after
-    object_index = load_object_index(state)
     failure: Exception | None = None
     current_key: str | None = None
     try:

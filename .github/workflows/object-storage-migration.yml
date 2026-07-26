@@ -17,6 +17,10 @@ on:
         description: "Clé exacte après laquelle reprendre (optionnel)"
         type: string
         default: ""
+      max_batches_per_run:
+        description: "Nombre maximal de lots enchaînés sous le même verrou"
+        type: number
+        default: 1
 permissions:
   contents: write
 concurrency:
@@ -34,6 +38,11 @@ jobs:
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
+      - name: Valider le mode d'enchaînement
+        if: inputs.max_batches_per_run > 1 && !inputs.resume
+        run: |
+          echo "::error::max_batches_per_run > 1 exige resume=true"
+          exit 1
       - name: Migration bornée sans suppression
         id: object_storage_migration
         continue-on-error: true
@@ -44,20 +53,26 @@ jobs:
           R2_BUCKET_NAME: ${{ inputs.execute && secrets.R2_BUCKET_NAME || '' }}
           R2_MIGRATION_START_AFTER: ${{ inputs.start_after }}
         run: |
-          args=(
-            --state data/historical
-            --max-files "${{ inputs.max_files }}"
-          )
-          if [ "${{ inputs.resume }}" = "true" ]; then
-            args+=(--resume)
-          fi
-          if [ -n "$R2_MIGRATION_START_AFTER" ]; then
-            args+=(--start-after "$R2_MIGRATION_START_AFTER")
-          fi
-          if [ "${{ inputs.execute }}" = "true" ]; then
-            args+=(--execute)
-          fi
-          python scripts/migrate_object_storage.py "${args[@]}"
+          for ((batch=1; batch<=${{ inputs.max_batches_per_run }}; batch++)); do
+            args=(
+              --state data/historical
+              --max-files "${{ inputs.max_files }}"
+            )
+            if [ "${{ inputs.resume }}" = "true" ]; then
+              args+=(--resume)
+            fi
+            if [ "$batch" = "1" ] && [ -n "$R2_MIGRATION_START_AFTER" ]; then
+              args+=(--start-after "$R2_MIGRATION_START_AFTER")
+            fi
+            if [ "${{ inputs.execute }}" = "true" ]; then
+              args+=(--execute)
+            fi
+            python scripts/migrate_object_storage.py "${args[@]}"
+            complete="$(python -c "import json; print(str(json.load(open('data/historical/storage/r2-migration-latest.json'))['complete']).lower())")"
+            if [ "$complete" = "true" ]; then
+              break
+            fi
+          done
       - uses: ./.github/actions/historical-r2-control-persist
         with:
           run-id: ${{ github.run_id }}

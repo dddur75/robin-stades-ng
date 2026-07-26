@@ -366,6 +366,39 @@ def test_progression_cumulative_de_25_a_250(tmp_path: Path) -> None:
     assert report["complete"] is False
 
 
+def test_reprise_s_amorce_depuis_le_prefixe_deja_verifie(tmp_path: Path) -> None:
+    write_files(tmp_path, 5)
+    client = FakeS3()
+    initial = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=2,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    resumed = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=2,
+        resume=True,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    assert initial["uploaded"] == 2
+    assert resumed["selection_start_index"] == 2
+    assert resumed["selection_end_index"] == 4
+    assert resumed["uploaded"] == 2
+    assert resumed["replayed"] == 0
+    assert client.put_calls == 4
+    checkpoint = yaml.safe_load(
+        (tmp_path / "storage" / "r2-migration-checkpoint.json").read_text("utf-8")
+    )
+    assert checkpoint["bootstrapped_from_index"] == 2
+    assert checkpoint["next_index"] == 4
+
+
 def test_migration_segmentee_reprend_sans_retraiter_les_premiers_fichiers(
     tmp_path: Path,
 ) -> None:
@@ -641,6 +674,18 @@ def test_workflow_22_valide_yaml_et_exclusivite_des_modes() -> None:
     assert "timeout-minutes: 120" in text
     assert "API_FOOTBALL_KEY" not in text
     assert "ODDS_API_KEY" not in text
+
+
+def test_workflow_30_enchaine_uniquement_des_lots_reprenables() -> None:
+    path = ROOT / ".github" / "workflows" / "object-storage-migration.yml"
+    text = path.read_text("utf-8")
+
+    assert yaml.safe_load(text)
+    assert "max_batches_per_run" in text
+    assert "inputs.max_batches_per_run > 1 && !inputs.resume" in text
+    assert "exige resume=true" in text
+    assert "for ((batch=1;" in text
+    assert "['complete']" in text
 
 
 def test_persistances_historiques_activent_le_delta_r2_sans_bloquer_git() -> None:
