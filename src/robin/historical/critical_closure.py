@@ -983,6 +983,44 @@ class ObjectStorageAdapter:
             **verification,
         }
 
+    def verify(self, key: str, payload: bytes) -> dict[str, object]:
+        """Relire un objet existant sans jamais le créer ni le modifier."""
+
+        digest = _sha256(payload)
+        head_started = perf_counter()
+        try:
+            existing = self.client.head_object(Bucket=self.bucket, Key=key)
+        except (ClientError, KeyError, FileNotFoundError) as error:
+            if isinstance(error, ClientError) and not _is_missing_s3_object(error):
+                raise
+            raise ObjectStorageIntegrityError(
+                "OBJECT_STORAGE_REMOTE_MISSING",
+                key=key,
+                missing_remote_object=True,
+            ) from error
+        head_seconds = perf_counter() - head_started
+        metadata = existing.get("Metadata", {})
+        if not isinstance(metadata, Mapping) or metadata.get("sha256") != digest:
+            raise ObjectStorageIntegrityError(
+                "OBJECT_STORAGE_METADATA_HASH_MISMATCH",
+                key=key,
+                hash_mismatch=True,
+            )
+        verification = self._verify_remote(key, payload)
+        return {
+            "key": key,
+            "sha256": digest,
+            "size": len(payload),
+            "uploaded": False,
+            "remote_verified": True,
+            "head_seconds": head_seconds,
+            "upload_seconds": 0.0,
+            "head_operations": 1,
+            "put_operations": 0,
+            "get_operations": 1,
+            **verification,
+        }
+
     def _verify_remote(self, key: str, expected: bytes) -> dict[str, object]:
         download_started = perf_counter()
         try:

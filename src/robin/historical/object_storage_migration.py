@@ -26,6 +26,7 @@ REPORT_RELATIVE_PATH = Path("storage/r2-migration-latest.json")
 SCOPE_RELATIVE_PATH = Path("storage/r2-migration-scope.json")
 INDEX_RELATIVE_PATH = Path("storage/r2-object-index.json")
 CHECKPOINT_RELATIVE_PATH = Path("storage/r2-migration-checkpoint.json")
+AUDIT_CHECKPOINT_RELATIVE_PATH = Path("storage/r2-audit-checkpoint.json")
 REPLICATION_REPORT_RELATIVE_PATH = Path("storage/r2-replication-latest.json")
 Snapshot = dict[str, tuple[int, str]]
 ClientFactory = Callable[[Mapping[str, str]], tuple[S3CompatibleClient, str]]
@@ -206,11 +207,17 @@ def load_checkpoint(
     state: Path,
     *,
     scope_hash: str,
+    audit: bool = False,
 ) -> dict[str, object]:
-    path = state / CHECKPOINT_RELATIVE_PATH
+    path = state / (
+        AUDIT_CHECKPOINT_RELATIVE_PATH if audit else CHECKPOINT_RELATIVE_PATH
+    )
+    schema_version = (
+        "r2-audit-checkpoint-v1" if audit else "r2-migration-checkpoint-v1"
+    )
     if not path.exists():
         return {
-            "schema_version": "r2-migration-checkpoint-v1",
+            "schema_version": schema_version,
             "scope_hash": scope_hash,
             "next_index": 0,
             "last_key": None,
@@ -222,17 +229,27 @@ def load_checkpoint(
             "updated_at": None,
         }
     loaded = json.loads(path.read_text("utf-8"))
-    if not isinstance(loaded, dict) or loaded.get("schema_version") != (
-        "r2-migration-checkpoint-v1"
-    ):
-        raise RuntimeError("INVALID_R2_MIGRATION_CHECKPOINT")
+    if not isinstance(loaded, dict) or loaded.get("schema_version") != schema_version:
+        raise RuntimeError(
+            "INVALID_R2_AUDIT_CHECKPOINT"
+            if audit
+            else "INVALID_R2_MIGRATION_CHECKPOINT"
+        )
     if loaded.get("scope_hash") != scope_hash:
         raise RuntimeError("R2_MIGRATION_CHECKPOINT_SCOPE_MISMATCH")
     return loaded
 
 
-def save_checkpoint(state: Path, checkpoint: Mapping[str, object]) -> None:
-    write_json_atomic(state / CHECKPOINT_RELATIVE_PATH, checkpoint)
+def save_checkpoint(
+    state: Path,
+    checkpoint: Mapping[str, object],
+    *,
+    audit: bool = False,
+) -> None:
+    relative_path = (
+        AUDIT_CHECKPOINT_RELATIVE_PATH if audit else CHECKPOINT_RELATIVE_PATH
+    )
+    write_json_atomic(state / relative_path, checkpoint)
 
 
 def _scope_index_counts(
@@ -429,6 +446,7 @@ def run_migration(
     execute: bool,
     max_files: int,
     resume: bool = False,
+    audit: bool = False,
     start_after: str | None = None,
     environment: Mapping[str, str] | None = None,
     client_factory: ClientFactory = create_r2_client,
@@ -444,7 +462,9 @@ def run_migration(
     scope_keys = _scope_keys(scope)
     scope_snapshot = _scope_snapshot(scope)
     scope_hash = str(scope["scope_hash"])
-    checkpoint = load_checkpoint(state, scope_hash=scope_hash)
+    if audit and not resume:
+        raise ValueError("R2_AUDIT_REQUIRES_RESUME")
+    checkpoint = load_checkpoint(state, scope_hash=scope_hash, audit=audit)
     object_index = load_object_index(state)
     start_index = 0
     if start_after is not None:
@@ -457,7 +477,7 @@ def run_migration(
         if not isinstance(checkpoint_index, int) or checkpoint_index < 0:
             raise RuntimeError("INVALID_R2_MIGRATION_CHECKPOINT_CURSOR")
         start_index = checkpoint_index
-        if checkpoint.get("updated_at") is None:
+        if not audit and checkpoint.get("updated_at") is None:
             objects = object_index.get("objects")
             if not isinstance(objects, Mapping):
                 raise RuntimeError("INVALID_R2_OBJECT_INDEX_OBJECTS")
@@ -491,6 +511,7 @@ def run_migration(
     report["scope_files"] = scope["source_files"]
     report["scope_bytes"] = scope["source_bytes"]
     report["resume"] = resume
+    report["audit"] = audit
     report["selection_start_index"] = start_index
     report["selection_end_index"] = start_index + len(selected)
     report["start_after"] = start_after
@@ -511,7 +532,11 @@ def run_migration(
                 expected_size, expected_hash = before[key]
                 if len(payload) != expected_size or _sha256(payload) != expected_hash:
                     raise RuntimeError(f"SOURCE_MUTATED_DURING_MIGRATION:{key}")
-                outcome = adapter.upload(key, payload)
+                outcome = (
+                    adapter.verify(key, payload)
+                    if audit
+                    else adapter.upload(key, payload)
+                )
                 counter = "uploaded" if outcome["uploaded"] else "replayed"
                 _increment(report, counter)
                 _increment(report, "remote_verified")
@@ -542,7 +567,9 @@ def run_migration(
             )
             scope_counts = _scope_index_counts(scope_keys, object_index)
             report["status"] = (
-                "COMPLETE_VERIFIED"
+                "AUDIT_BATCH_VERIFIED"
+                if audit
+                else "COMPLETE_VERIFIED"
                 if scope_counts["verified"] == len(scope_keys)
                 else "PARTIAL_VERIFIED"
             )
@@ -607,6 +634,7 @@ def run_migration(
             if failure is None:
                 failure = RuntimeError("SOURCE_MUTATION")
         scope_counts = _scope_index_counts(scope_keys, object_index)
+        report["mirror_verified_objects"] = scope_counts["verified"]
         report["pending"] = scope_counts["pending"]
         report["verified"] = scope_counts["verified"]
         report["failed"] = scope_counts["failed"]
@@ -629,21 +657,51 @@ def run_migration(
             checkpoint["replayed"] = _report_int(
                 checkpoint, "replayed"
             ) + _report_int(report, "replayed")
-            checkpoint["verified"] = scope_counts["verified"]
-            checkpoint["failed"] = scope_counts["failed"]
+            progress_verified = (
+                _report_int(checkpoint, "next_index")
+                if audit
+                else scope_counts["verified"]
+            )
+            progress_failed = (
+                _report_int(checkpoint, "failed")
+                + _report_int(report, "hash_mismatches")
+                + _report_int(report, "size_mismatches")
+                + _report_int(report, "missing_remote_objects")
+                if audit
+                else scope_counts["failed"]
+            )
+            checkpoint["verified"] = progress_verified
+            checkpoint["failed"] = progress_failed
             checkpoint["status"] = (
                 "COMPLETE"
-                if scope_counts["verified"] == len(scope_keys)
+                if progress_verified == len(scope_keys) and progress_failed == 0
                 else "FAILED"
                 if failure is not None
                 else "IN_PROGRESS"
             )
             checkpoint["updated_at"] = _utc_now()
-            save_checkpoint(state, checkpoint)
+            save_checkpoint(state, checkpoint, audit=audit)
+            if audit:
+                report["pending"] = len(scope_keys) - progress_verified
+                report["verified"] = progress_verified
+                report["failed"] = progress_failed
+                report["status"] = (
+                    "AUDIT_COMPLETE_VERIFIED"
+                    if progress_verified == len(scope_keys) and progress_failed == 0
+                    else "AUDIT_PARTIAL_VERIFIED"
+                    if failure is None
+                    else report["status"]
+                )
         report["complete"] = (
             execute
-            and report["status"] == "COMPLETE_VERIFIED"
-            and scope_counts["verified"] == len(scope_keys)
+            and report["status"]
+            == ("AUDIT_COMPLETE_VERIFIED" if audit else "COMPLETE_VERIFIED")
+            and (
+                _report_int(report, "verified")
+                if audit
+                else scope_counts["verified"]
+            )
+            == len(scope_keys)
             and report["hash_mismatches"] == 0
             and report["size_mismatches"] == 0
             and report["missing_remote_objects"] == 0

@@ -15,6 +15,7 @@ def main() -> None:
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--max-files", type=int, default=25)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--audit", action="store_true")
     parser.add_argument("--start-after")
     args = parser.parse_args()
     report = run_migration(
@@ -22,6 +23,7 @@ def main() -> None:
         execute=args.execute,
         max_files=args.max_files,
         resume=args.resume,
+        audit=args.audit,
         start_after=args.start_after,
     )
     print(json.dumps(report, sort_keys=True))

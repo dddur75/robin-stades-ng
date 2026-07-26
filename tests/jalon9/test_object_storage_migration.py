@@ -213,6 +213,17 @@ def test_replay_est_relu_et_verifie() -> None:
     assert client.get_calls == reads_before + 1
 
 
+def test_audit_d_un_objet_absent_echoue_sans_le_creer() -> None:
+    client = FakeS3()
+    adapter = ObjectStorageAdapter(client, "private")
+
+    with pytest.raises(ObjectStorageIntegrityError) as raised:
+        adapter.verify("raw/a", b"payload")
+
+    assert raised.value.missing_remote_object is True
+    assert client.put_calls == 0
+
+
 def test_hash_distant_incorrect_fait_echouer_le_replay() -> None:
     client = FakeS3()
     expected = b"payload"
@@ -455,6 +466,58 @@ def test_migration_segmentee_reprend_sans_retraiter_les_premiers_fichiers(
     assert {entry["status"] for entry in index["objects"].values()} == {"verified"}
 
 
+def test_audit_integral_est_segmente_et_n_ecrit_aucun_objet(tmp_path: Path) -> None:
+    write_files(tmp_path, 5)
+    client = FakeS3()
+    migration = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=5,
+        environment={},
+        client_factory=factory(client),
+    )
+    puts_before_audit = client.put_calls
+
+    first = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=2,
+        resume=True,
+        audit=True,
+        environment={},
+        client_factory=factory(client),
+    )
+    second = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=3,
+        resume=True,
+        audit=True,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    assert migration["complete"] is True
+    assert first["status"] == "AUDIT_PARTIAL_VERIFIED"
+    assert first["verified"] == 2
+    assert first["pending"] == 3
+    assert first["uploaded"] == 0
+    assert first["replayed"] == 2
+    assert first["complete"] is False
+    assert second["status"] == "AUDIT_COMPLETE_VERIFIED"
+    assert second["verified"] == 5
+    assert second["pending"] == 0
+    assert second["uploaded"] == 0
+    assert second["replayed"] == 3
+    assert second["complete"] is True
+    assert client.put_calls == puts_before_audit
+    checkpoint = yaml.safe_load(
+        (tmp_path / "storage" / "r2-audit-checkpoint.json").read_text("utf-8")
+    )
+    assert checkpoint["next_index"] == 5
+    assert checkpoint["status"] == "COMPLETE"
+
+
 def test_replication_continue_envoie_uniquement_le_delta(tmp_path: Path) -> None:
     write_files(tmp_path, 3)
     client = FakeS3()
@@ -682,8 +745,9 @@ def test_workflow_30_enchaine_uniquement_des_lots_reprenables() -> None:
 
     assert yaml.safe_load(text)
     assert "max_batches_per_run" in text
-    assert "inputs.max_batches_per_run > 1 && !inputs.resume" in text
-    assert "exige resume=true" in text
+    assert "(inputs.max_batches_per_run > 1 || inputs.audit) && !inputs.resume" in text
+    assert "audit exigent resume=true" in text
+    assert "args+=(--audit)" in text
     assert "for ((batch=1;" in text
     assert "['complete']" in text
 

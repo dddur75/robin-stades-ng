@@ -21,6 +21,10 @@ on:
         description: "Nombre maximal de lots enchaînés sous le même verrou"
         type: number
         default: 1
+      audit:
+        description: "Relire sans écriture tout le périmètre avec un checkpoint séparé"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -39,9 +43,9 @@ jobs:
           python -m pip install --no-deps -e .
       - uses: ./.github/actions/historical-state-restore
       - name: Valider le mode d'enchaînement
-        if: inputs.max_batches_per_run > 1 && !inputs.resume
+        if: (inputs.max_batches_per_run > 1 || inputs.audit) && !inputs.resume
         run: |
-          echo "::error::max_batches_per_run > 1 exige resume=true"
+          echo "::error::L'enchaînement et l'audit exigent resume=true"
           exit 1
       - name: Migration bornée sans suppression
         id: object_storage_migration
@@ -60,6 +64,9 @@ jobs:
             )
             if [ "${{ inputs.resume }}" = "true" ]; then
               args+=(--resume)
+            fi
+            if [ "${{ inputs.audit }}" = "true" ]; then
+              args+=(--audit)
             fi
             if [ "$batch" = "1" ] && [ -n "$R2_MIGRATION_START_AFTER" ]; then
               args+=(--start-after "$R2_MIGRATION_START_AFTER")
