@@ -13,6 +13,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
+from time import perf_counter
 from typing import Any, Protocol, cast
 
 import pandas as pd
@@ -933,6 +934,7 @@ class ObjectStorageAdapter:
 
     def upload(self, key: str, payload: bytes) -> dict[str, object]:
         digest = _sha256(payload)
+        head_started = perf_counter()
         try:
             existing = self.client.head_object(Bucket=self.bucket, Key=key)
         except ClientError as error:
@@ -941,6 +943,7 @@ class ObjectStorageAdapter:
             existing = {}
         except (KeyError, FileNotFoundError):
             existing = {}
+        head_seconds = perf_counter() - head_started
         metadata = existing.get("Metadata", {})
         if isinstance(metadata, Mapping) and metadata.get("sha256") == digest:
             verification = self._verify_remote(key, payload)
@@ -950,14 +953,21 @@ class ObjectStorageAdapter:
                 "size": len(payload),
                 "uploaded": False,
                 "remote_verified": True,
+                "head_seconds": head_seconds,
+                "upload_seconds": 0.0,
+                "head_operations": 1,
+                "put_operations": 0,
+                "get_operations": 1,
                 **verification,
             }
+        upload_started = perf_counter()
         self.client.put_object(
             Bucket=self.bucket,
             Key=key,
             Body=payload,
             Metadata={"sha256": digest},
         )
+        upload_seconds = perf_counter() - upload_started
         verification = self._verify_remote(key, payload)
         return {
             "key": key,
@@ -965,10 +975,16 @@ class ObjectStorageAdapter:
             "size": len(payload),
             "uploaded": True,
             "remote_verified": True,
+            "head_seconds": head_seconds,
+            "upload_seconds": upload_seconds,
+            "head_operations": 1,
+            "put_operations": 1,
+            "get_operations": 1,
             **verification,
         }
 
     def _verify_remote(self, key: str, expected: bytes) -> dict[str, object]:
+        download_started = perf_counter()
         try:
             remote = self.download(key)
         except ClientError as error:
@@ -979,6 +995,7 @@ class ObjectStorageAdapter:
                     missing_remote_object=True,
                 ) from error
             raise
+        download_seconds = perf_counter() - download_started
         expected_hash = _sha256(expected)
         remote_hash = _sha256(remote)
         size_mismatch = len(remote) != len(expected)
@@ -997,7 +1014,11 @@ class ObjectStorageAdapter:
                 hash_mismatch=hash_mismatch,
                 size_mismatch=size_mismatch,
             )
-        return {"remote_sha256": remote_hash, "remote_size": len(remote)}
+        return {
+            "remote_sha256": remote_hash,
+            "remote_size": len(remote),
+            "download_seconds": download_seconds,
+        }
 
     def download(self, key: str) -> bytes:
         response = self.client.get_object(Bucket=self.bucket, Key=key)

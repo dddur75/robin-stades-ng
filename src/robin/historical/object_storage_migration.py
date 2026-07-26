@@ -8,6 +8,7 @@ import os
 from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
 from pathlib import Path
+from time import perf_counter
 from typing import Any, cast
 
 from botocore.exceptions import ClientError  # type: ignore[import-untyped]
@@ -99,6 +100,7 @@ def _initial_report(
     before: Snapshot,
     selected: list[str],
     started_at: str,
+    initial_scan_seconds: float,
 ) -> dict[str, object]:
     return {
         "mode": "EXECUTE" if execute else "DRY_RUN",
@@ -122,6 +124,21 @@ def _initial_report(
         "bucket_hash": None,
         "started_at": started_at,
         "completed_at": None,
+        "initial_scan_seconds": initial_scan_seconds,
+        "final_scan_seconds": 0.0,
+        "scan_seconds": initial_scan_seconds,
+        "head_seconds": 0.0,
+        "upload_seconds": 0.0,
+        "download_seconds": 0.0,
+        "object_processing_seconds": 0.0,
+        "duration_seconds": 0.0,
+        "files_per_minute": 0.0,
+        "bytes_per_minute": 0.0,
+        "head_operations": 0,
+        "put_operations": 0,
+        "get_operations": 0,
+        "r2_operations": 0,
+        "retry_count": 0,
     }
 
 
@@ -134,6 +151,19 @@ def _report_int(report: Mapping[str, object], key: str) -> int:
 
 def _increment(report: dict[str, object], key: str, amount: int = 1) -> None:
     report[key] = _report_int(report, key) + amount
+
+
+def _report_float(report: Mapping[str, object], key: str) -> float:
+    value = report[key]
+    if not isinstance(value, (int, float)):
+        raise TypeError(f"INVALID_REPORT_DURATION:{key}")
+    return float(value)
+
+
+def _add_duration(report: dict[str, object], key: str, amount: object) -> None:
+    if not isinstance(amount, (int, float)):
+        raise TypeError(f"INVALID_OUTCOME_DURATION:{key}")
+    report[key] = _report_float(report, key) + float(amount)
 
 
 def _finalize_source_proof(
@@ -175,14 +205,18 @@ def run_migration(
 ) -> dict[str, object]:
     """Exécuter un lot cumulatif et persister le rapport même en cas d'échec."""
 
+    total_started = perf_counter()
     started_at = _utc_now()
+    scan_started = perf_counter()
     before = source_snapshot(state)
+    initial_scan_seconds = perf_counter() - scan_started
     selected = list(before)[: max(max_files, 0)]
     report = _initial_report(
         execute=execute,
         before=before,
         selected=selected,
         started_at=started_at,
+        initial_scan_seconds=initial_scan_seconds,
     )
     failure: Exception | None = None
     try:
@@ -192,6 +226,7 @@ def run_migration(
             client, bucket = client_factory(environment if environment is not None else os.environ)
             report["bucket_hash"] = _sha256(bucket.encode())
             adapter = ObjectStorageAdapter(client, bucket)
+            object_processing_started = perf_counter()
             for key in selected:
                 path = state / Path(key)
                 payload = path.read_bytes()
@@ -202,6 +237,24 @@ def run_migration(
                 counter = "uploaded" if outcome["uploaded"] else "replayed"
                 _increment(report, counter)
                 _increment(report, "remote_verified")
+                for duration_key in (
+                    "head_seconds",
+                    "upload_seconds",
+                    "download_seconds",
+                ):
+                    _add_duration(report, duration_key, outcome[duration_key])
+                for operation_key in (
+                    "head_operations",
+                    "put_operations",
+                    "get_operations",
+                ):
+                    operation_count = outcome[operation_key]
+                    if not isinstance(operation_count, int):
+                        raise TypeError(f"INVALID_OUTCOME_COUNTER:{operation_key}")
+                    _increment(report, operation_key, operation_count)
+            report["object_processing_seconds"] = (
+                perf_counter() - object_processing_started
+            )
             report["status"] = (
                 "COMPLETE_VERIFIED"
                 if len(selected) == len(before)
@@ -227,7 +280,11 @@ def run_migration(
         )
         failure = error
     finally:
+        final_scan_started = perf_counter()
         after = source_snapshot(state)
+        final_scan_seconds = perf_counter() - final_scan_started
+        report["final_scan_seconds"] = final_scan_seconds
+        report["scan_seconds"] = initial_scan_seconds + final_scan_seconds
         _finalize_source_proof(report, before=before, after=after)
         if _report_int(report, "source_mutations") > 0:
             report["status"] = "SOURCE_MUTATION"
@@ -242,6 +299,25 @@ def run_migration(
             and report["missing_remote_objects"] == 0
             and report["double_write"] is True
         )
+        object_processing_seconds = _report_float(
+            report, "object_processing_seconds"
+        )
+        if object_processing_seconds > 0:
+            report["files_per_minute"] = (
+                _report_int(report, "remote_verified")
+                * 60
+                / object_processing_seconds
+            )
+            report["bytes_per_minute"] = (
+                _report_int(report, "selected_bytes")
+                * 60
+                / object_processing_seconds
+            )
+        report["r2_operations"] = sum(
+            _report_int(report, key)
+            for key in ("head_operations", "put_operations", "get_operations")
+        )
+        report["duration_seconds"] = perf_counter() - total_started
         report["completed_at"] = _utc_now()
         write_json_atomic(state / REPORT_RELATIVE_PATH, report)
     if failure is not None:

@@ -299,9 +299,24 @@ def test_lot_25_est_idempotent_et_rejoue_par_lecture_distante(tmp_path: Path) ->
     assert first["uploaded"] == 25
     assert first["replayed"] == 0
     assert first["remote_verified"] == 25
+    assert first["head_operations"] == 25
+    assert first["put_operations"] == 25
+    assert first["get_operations"] == 25
+    assert first["r2_operations"] == 75
+    assert first["retry_count"] == 0
+    assert float(first["scan_seconds"]) >= 0
+    assert float(first["head_seconds"]) >= 0
+    assert float(first["upload_seconds"]) >= 0
+    assert float(first["download_seconds"]) >= 0
+    assert float(first["files_per_minute"]) > 0
+    assert float(first["bytes_per_minute"]) > 0
     assert second["uploaded"] == 0
     assert second["replayed"] == 25
     assert second["remote_verified"] == 25
+    assert second["head_operations"] == 25
+    assert second["put_operations"] == 0
+    assert second["get_operations"] == 25
+    assert second["r2_operations"] == 50
     assert second["complete"] is False
 
 
