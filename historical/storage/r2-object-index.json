@@ -798,6 +798,48 @@
       "status": "verified",
       "verified_at": "2026-07-26T12:50:12.219802+00:00"
     },
+    "bundles/30203417286/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:36.619968+00:00"
+    },
+    "bundles/30203417286/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "c3318c07b581dcd106fbac4ae96240244c1689c36a7f013cdcef577b9f79222b",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:37.949580+00:00"
+    },
+    "bundles/30203417286/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "6f6e908dd39e79df05c3b8b5d82142caf78a44b002560810e93df5957f8d8e08",
+      "size": 20999351,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:39.948846+00:00"
+    },
+    "bundles/30203825233/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:42.060685+00:00"
+    },
+    "bundles/30203825233/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "44179842e3ac693caf59a9b209321111ba276cfb761af99130501ecaea8653e7",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:42.705895+00:00"
+    },
+    "bundles/30203825233/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "e627c09bea90cc3543ee4d79646fd2add4cc2aa1c9b53321fcac1fd65ac28d4b",
+      "size": 20999587,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:44.750634+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -1750,14 +1792,3472 @@
       "status": "verified",
       "verified_at": "2026-07-26T12:51:31.504643+00:00"
     },
+    "derived/competition=Ligue-1/season=2025/entity_type=player_feature_store_v1/dataset_version=player_feature_store_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a326bcb95454a4800c7c6a127f6161899efe96fa3b88b71234f822e9737c1071",
+      "size": 14695345,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:48.041675+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=dixon_coles_score_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a3f8638314dde99a10a83f094560107bc274b8c1fc22cb3ab2e38d5eccbf821f",
+      "size": 60508,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:48.715615+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=market_devigged_baseline_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4e8d920dde664f1aac208a2e9cff7b2e3ac6d1012889ae5476e3b6cd2e068ac3",
+      "size": 27101,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:49.439499+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=player_pre_lineup_crossfit_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7a35da372d3ec0a5c4944665f46632a091852f09038814402f44b8163e17bb3f",
+      "size": 48937,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:50.132404+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=poisson_score_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0b10213d883966ba0dd6baa3db8bec3eaeb5a445ca9e388105bb50d3b040b0e7",
+      "size": 60469,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:50.795040+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=post_lineup_audit_crossfit_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4328e5144f7597a7541975375468656c1801c967297ff415254d4d32e2ed5779",
+      "size": 50890,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:51.513073+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=team_hist_gradient_boosting_crossfit_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5d6a776406b8f347e6fe561e91ecaacc3e479446e044e9dcd7222370e5e38241",
+      "size": 47997,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:52.161182+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=team_multinomial_crossfit_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "aa497abcbd05c22b839a3ef7a853674954e1b9ea798404fdfeaf10e926753272",
+      "size": 47661,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:52.811542+00:00"
+    },
+    "derived/competition=Ligue-1/season=2025/entity_type=scientific_arena_predictions_v1/dataset_version=team_without_recent_form_crossfit_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b8c62929237619af8bde9fe8e073f7366cb1ddaeac355177c9706bbe6670aca9",
+      "size": 47933,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:53.453189+00:00"
+    },
+    "external/datasets/bundesliga_team_pre_match_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "45d76f00949528f56f6d370265aae0031811e919b1becb15bc4b0e46534e3f62",
+      "size": 4030,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:54.132995+00:00"
+    },
+    "external/datasets/laliga_team_pre_match_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "2485e7a75a04e61c6fa5785f29aaeb589779d82a2046ee62763facf737b65977",
+      "size": 3942,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:54.820144+00:00"
+    },
+    "external/datasets/pl_team_pre_match_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "8d983ece337335f18a8cd8cb9a112c03636b0c02976cc954b5698a75082b8fed",
+      "size": 3934,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:55.496534+00:00"
+    },
+    "external/derived/competition=Bundesliga/season=2019/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "fa50f0d3167354a0d54d20b750688c5a71fc85e5641137027234b54e460adf15",
+      "size": 63610,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:56.144401+00:00"
+    },
+    "external/derived/competition=Bundesliga/season=2020/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "535ff15065417ae2cf18940ea618aff941c2e79a5c40bc239c059d802624c056",
+      "size": 63452,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:56.794567+00:00"
+    },
+    "external/derived/competition=Bundesliga/season=2021/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f3b238b69c9edae279d02cd47c76f559936741f1d3b95b331af3b03b1755f15f",
+      "size": 62723,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:57.455856+00:00"
+    },
+    "external/derived/competition=Bundesliga/season=2022/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "803cfee0b11871df5f86f9b8160516e94d616829178df8d32e73394cf501dcbf",
+      "size": 62351,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:58.467773+00:00"
+    },
+    "external/derived/competition=Bundesliga/season=2023/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3cf027a6a4ce8745a4bff72a0f73ec4cbb26ac3ca0094595e1abe5d2e2f2b16d",
+      "size": 62545,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:25:59.154272+00:00"
+    },
+    "external/derived/competition=Bundesliga/season=2024/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3448cae918ee14c8b620f0458194c36457f14991a6ecfa7979d25536e737d02c",
+      "size": 63595,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:00.255308+00:00"
+    },
+    "external/derived/competition=Bundesliga/season=2025/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1246382cf033d567dd70510042f3a4fc38e7970997956ac38b463432dfb38002",
+      "size": 63374,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:00.950404+00:00"
+    },
+    "external/derived/competition=La-Liga/season=2019/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2af21d9be6c9190da9140332034768f962ce763084d0720d060a15ffc138814d",
+      "size": 72317,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:01.589491+00:00"
+    },
+    "external/derived/competition=La-Liga/season=2020/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1d6cff2dcb24aa832722a69a5a2884f12ae23f729178993d295e91b5c3bfb2de",
+      "size": 73497,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:02.310929+00:00"
+    },
+    "external/derived/competition=La-Liga/season=2021/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b361e5a37adfa53d958a46d7b76d4b53b4e617fb1874ea6f5ae3928115fbb001",
+      "size": 71771,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:03.144488+00:00"
+    },
+    "external/derived/competition=La-Liga/season=2022/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4969332ac74f6f3ee2dd73653e6520e50d64134cbbfc9da7405a2c852a71f61d",
+      "size": 72859,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:03.864433+00:00"
+    },
+    "external/derived/competition=La-Liga/season=2023/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a817095f06c3b3ce80b40f1205d423e949709896a54c4c6b30e099acee22ee32",
+      "size": 73049,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:04.533133+00:00"
+    },
+    "external/derived/competition=La-Liga/season=2024/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5f8293a1160e191d0efbd981083391a5667ed4eba74f42dc1e9b5f1b0f2a5c13",
+      "size": 73162,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:05.173266+00:00"
+    },
+    "external/derived/competition=La-Liga/season=2025/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7cdb88c158f5c57629426b160b61e14bf8ac8c0c4e00ac48fceb3f328fb7dddb",
+      "size": 73220,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:05.893211+00:00"
+    },
+    "external/derived/competition=Premier-League/season=2019/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "609ddc7519e617bdb83f345f7fde90e64d77154d4a5cb22a0da06a43a74ec051",
+      "size": 72268,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:06.577199+00:00"
+    },
+    "external/derived/competition=Premier-League/season=2020/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1f404216169731df2dc3d7a3928975e721a2be0ae3a6f438968f4ebd8655ab8e",
+      "size": 73874,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:07.381311+00:00"
+    },
+    "external/derived/competition=Premier-League/season=2021/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ae8e9a0e82736e3d01c54ee6a98a056526da736cf38f7f504a6946e85372be37",
+      "size": 71328,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:08.021701+00:00"
+    },
+    "external/derived/competition=Premier-League/season=2022/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "70c19f2de3b72a10ca0edece17dabf65cdc5a6cc4c6ad606df8843bcc7e22551",
+      "size": 71227,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:08.788223+00:00"
+    },
+    "external/derived/competition=Premier-League/season=2023/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c4b415f7b2f6c4779f5dbe7de88dd4d544b62b5b21aeaee36508fcd65fbdb9b1",
+      "size": 72340,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:09.511417+00:00"
+    },
+    "external/derived/competition=Premier-League/season=2024/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "919afdbe0beb62488ccafafcbf8be4ab23d7b82170e18a35d9001a823669d8e9",
+      "size": 72059,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:10.348540+00:00"
+    },
+    "external/derived/competition=Premier-League/season=2025/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "507a59bfca244bb5e266bbcfb3eb02c7944cfc3ce4c0f17375cc0dee7fcd7dde",
+      "size": 72261,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:11.046779+00:00"
+    },
+    "external/packages/preseason-shadow-package-v1.json": {
+      "last_action": "uploaded",
+      "sha256": "943c77a613cf2237f76e70a231166c2f09da043756ed6863f3e8d93a9475b566",
+      "size": 1611,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:11.966948+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_dixon_coles_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5fdc299ab7f9e5693c4d0463de885ed3e48dc912402872b6a0ff8b5618b90357",
+      "size": 58984,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:12.875701+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_poisson_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "cd85204e847b6d0fc21556acf33d25f6741aa6c77d5df39d13bc47d58ed6015d",
+      "size": 58984,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:13.552307+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_specific_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5b15aab625e20d7cfeb18dd94f6f52ba0488a8542d46b9159931d31370c8536d",
+      "size": 45361,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:14.208685+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "31c853e349a124fbdd83a3e32339cda49e03362316d486acb33e96e78faaaabd",
+      "size": 45659,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:14.898911+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_bundesliga_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "013e3080ce53d07dc190a80f74bdfc1ee185877732fc97e286f64d3d24aaae13",
+      "size": 45619,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:15.618566+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5930b9940cbbe57ed5e37fde0424b1ab14599aedd2e0671d93054245bf3703fa",
+      "size": 45673,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:16.342932+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_dixon_coles_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c8ee4272137eab8927a2436082e85f711edf9387ba8f6cdd79b01bc1ce2c31c7",
+      "size": 57072,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:17.036128+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_poisson_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "55f36eee2e58c6a524edc9e912985021b8aab9481adebd7eb6123748852f8250",
+      "size": 58104,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:18.097772+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_specific_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "fd420f4ede12900628bc63eb7cceeb77e50e0349b8858ab5f54189db230783f5",
+      "size": 45575,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:18.824074+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "799f514ad59bf3476cdf3e27a6fc4490033487cdaf746585fc5459606233d23f",
+      "size": 44586,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:19.474032+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_bundesliga_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8fe58d7d4e5f132006fb0619ec26be3301a9bdb0332346c49c89c6d3d79448ee",
+      "size": 45603,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:20.157436+00:00"
+    },
+    "external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "dd9c523bcf7c7dc12ff77569acff1a9ffcf070d2cccc1b6a41cfac1831d02ee3",
+      "size": 45656,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:21.243924+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_dixon_coles_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5358bd7cf362d0f573bc47aff20b792d43d4506885790606a9088e9afe8af8fa",
+      "size": 67209,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:21.978417+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_poisson_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b9d96b53a79e45cb44575c7b1f3c5abd1aad2c57fc155131be7fe2032cb841e7",
+      "size": 67359,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:22.661716+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_specific_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "85aa5378102053d78b0b9be76359bbacb915e923e14e928af4b42f9be27175d4",
+      "size": 52957,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:23.322980+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e472764fd82561d79e8dbdb6cb2c74f09c5ac3a89eaaa82de60309d9f741c363",
+      "size": 53910,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:24.051616+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_la_liga_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "392a3e0b2dd89bf9f24167e52cbcd78c85d2f5b9bceb742d747c0596eae82d42",
+      "size": 52532,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:24.751756+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ae1e074d264fe31bdca2da3d4c5872a26fe79d1b60570bc2bad14f50ebdd3cfd",
+      "size": 53923,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:26.048114+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_dixon_coles_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "84a590b2910de58c9a523d40613db080b6689762d0e14d1f026ab0aaa155b09e",
+      "size": 66614,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:26.745122+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_poisson_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4a70db28ba959639048e354d5ecf9d7d47c6410f056faa98509633d4a9d2d893",
+      "size": 66594,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:27.413904+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_specific_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "490af6f7ee6544c219163323da5730421f3d869520b8e92564639270ec0b9d17",
+      "size": 53901,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:28.156228+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7fb18c1bade0f896979b2891d78373ba0c5b24a19af06fe4dc17650b1ca94b31",
+      "size": 52675,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:29.373302+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_la_liga_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c9bec2914105a59b360eac52f7b03c724d37fb2097c53628285fbd7cceaecbb4",
+      "size": 53913,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:30.156421+00:00"
+    },
+    "external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b84970380f4f7a095ca08d1e1b43feba65626fce77f60584b10b2859119ce68d",
+      "size": 53681,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:30.834722+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "bf9f1564750ab7612522518221d3225175ac2ec5245cefd437568e8317838cee",
+      "size": 53306,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:31.579063+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_premier_league_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "197da58d2ef28806bdb3556ab7bf9faa498d7260d8f4f57b2ae6b017eba6bc7c",
+      "size": 53306,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:32.344857+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d6d53008cdd8c1de9ab90835f0025f59e371e26ba3c5c0ff7a6f69ee470e5861",
+      "size": 53317,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:32.994028+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_dixon_coles_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a6258944a666b83d7bdf60088bfe8e6d0ce190513bfd9cb93f09d8f0e85e041e",
+      "size": 66235,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:33.648800+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_poisson_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "05f350c985d51cae7098a63c5f08c1b1436fbf58b370e7da910ce01e9349f6db",
+      "size": 67426,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:34.360135+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_specific_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2b4d82aedfa7ee3652a6e0ad377b63c398eb41444f49039ced5b1fdf3cd5182b",
+      "size": 52380,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:34.988731+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c4a7a87d257b7b68e7ac85ffafeed1c71a9aa3b9d30bc2a1edef483d354fa6fc",
+      "size": 52312,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:35.749016+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_premier_league_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "acf340b1aeca5815666d15190bd2a899c900c61c33a7ef3993b3b3e0c1475fe4",
+      "size": 52431,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:36.415924+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "88c7f553a1bc628a2d8a5a104c25a81f16e01e73cfb4c424fcae2d1a5a653650",
+      "size": 53162,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:37.152273+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_dixon_coles_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1ae9f61932e9e16831eeb28d9274f1483102ec4d8f4744c5b1a64d21c6040f38",
+      "size": 64924,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:38.013355+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_poisson_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "604241cd4bc4a664acc1d07a80081a57a6b1899346ff87c4733854a1c7c61af9",
+      "size": 64914,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:38.758085+00:00"
+    },
+    "external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_specific_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c3010071523eac607275dd4aafe0266e316cadfc8d9b9df57be3fe2515a5be6b",
+      "size": 53411,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:39.442165+00:00"
+    },
+    "external/protocol/external-validation-protocol-v1-locked.json": {
+      "last_action": "uploaded",
+      "sha256": "9101c272c7dce2cb94cc9ef50ffd3d6945a95181cba2f1c228babbf5a70441d7",
+      "size": 3711,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:40.212776+00:00"
+    },
+    "external/protocol/strategy-lab-v3-preregistered.json": {
+      "last_action": "uploaded",
+      "sha256": "5c5488993b873fcc501db3744d921064060024005ce2d18b9c805edd9b4f3d61",
+      "size": 4000,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:41.038445+00:00"
+    },
+    "external/readiness/external-league-readiness-v1.json": {
+      "last_action": "uploaded",
+      "sha256": "072e9e100937d33ab43991e0454ca56858cbad2d5f77a2b406df17554ecdab11",
+      "size": 16039,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:42.124250+00:00"
+    },
+    "external/runs/jalon8-latest.json": {
+      "last_action": "uploaded",
+      "sha256": "52262854da829685e6d529f9aef1a5c15497680640f141dc1163879342b254a2",
+      "size": 64113,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:42.796730+00:00"
+    },
+    "forecasts/accelerated-safe.json": {
+      "last_action": "uploaded",
+      "sha256": "5ddf09368715c1a3d6ebb2959f0ddd4269b668d024d3c2cd70437e5def8f93c4",
+      "size": 8398,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:43.492620+00:00"
+    },
+    "identity/team-alias-registry-v1.json": {
+      "last_action": "uploaded",
+      "sha256": "0cf1e68ca3f322c06f49ddea527c88bb182e8408d685d8578ee4e7e02104eb2a",
+      "size": 47596,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:44.177918+00:00"
+    },
+    "market/manifests/football-data-files.json": {
+      "last_action": "uploaded",
+      "sha256": "5c08a2de62b671a26a5522d6ce6007f47f65604854f14065b18c8ce5b55f716f",
+      "size": 72769,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:45.303916+00:00"
+    },
     "market/raw/Bundesliga/2020/48ec5d53d2452b6ebdbc07bd78a836d6a4686f99fc020439ee3292e685315e61.csv": {
       "last_action": "uploaded",
       "sha256": "48ec5d53d2452b6ebdbc07bd78a836d6a4686f99fc020439ee3292e685315e61",
       "size": 139075,
       "status": "verified",
       "verified_at": "2026-07-26T13:06:25.461907+00:00"
+    },
+    "market/raw/Bundesliga/2020/48ec5d53d2452b6ebdbc07bd78a836d6a4686f99fc020439ee3292e685315e61.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "8280578a81c3a42822a3261878418a80a432655a66b341f6b6d67b9c0cac32d9",
+      "size": 1835,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:46.435276+00:00"
+    },
+    "market/raw/Bundesliga/2021/034d0e1296e944dddf25e3c91b85ef5bd1ad25661b89d73878f5c73bfea4b9fc.csv": {
+      "last_action": "uploaded",
+      "sha256": "034d0e1296e944dddf25e3c91b85ef5bd1ad25661b89d73878f5c73bfea4b9fc",
+      "size": 139177,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:47.145984+00:00"
+    },
+    "market/raw/Bundesliga/2021/034d0e1296e944dddf25e3c91b85ef5bd1ad25661b89d73878f5c73bfea4b9fc.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "01d4b27d93f1b25470c238f3fb6cadad9cd15ed4c3e1c8886961cd65b24f4334",
+      "size": 1835,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:47.952009+00:00"
+    },
+    "market/raw/Bundesliga/2022/b716517b25033ce8e0243e967aa961876425a4c41e97c8aa8fa59f2aca061341.csv": {
+      "last_action": "uploaded",
+      "sha256": "b716517b25033ce8e0243e967aa961876425a4c41e97c8aa8fa59f2aca061341",
+      "size": 139302,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:48.661830+00:00"
+    },
+    "market/raw/Bundesliga/2022/b716517b25033ce8e0243e967aa961876425a4c41e97c8aa8fa59f2aca061341.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "a563b268596e66e7c8e5d4eaede06bd172e7e38aa5b160d41e1ebade8f76d2d9",
+      "size": 1835,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:49.308654+00:00"
+    },
+    "market/raw/Bundesliga/2023/1de8bc12a133dbbf71bc6ffda62082642f087f61b1b7c15ae9f2d320876fb07e.csv": {
+      "last_action": "uploaded",
+      "sha256": "1de8bc12a133dbbf71bc6ffda62082642f087f61b1b7c15ae9f2d320876fb07e",
+      "size": 135825,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:49.963487+00:00"
+    },
+    "market/raw/Bundesliga/2023/1de8bc12a133dbbf71bc6ffda62082642f087f61b1b7c15ae9f2d320876fb07e.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "719b11de74ef7ec6aef3adee7371dafc4db2ae59c616ca402c6174e04bcfa0e7",
+      "size": 1835,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:50.877671+00:00"
+    },
+    "market/raw/Bundesliga/2024/a295c58033cfe6393cbbc28f7db85671839b960c5f1153fd3678e20ad2adb92e.csv": {
+      "last_action": "uploaded",
+      "sha256": "a295c58033cfe6393cbbc28f7db85671839b960c5f1153fd3678e20ad2adb92e",
+      "size": 156414,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:51.711647+00:00"
+    },
+    "market/raw/Bundesliga/2024/a295c58033cfe6393cbbc28f7db85671839b960c5f1153fd3678e20ad2adb92e.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "3c8c027d946019dfc50ecfe906527b938ee3f83a0fe31ed1d520a9a13fa4eab3",
+      "size": 2036,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:52.619055+00:00"
+    },
+    "market/raw/Bundesliga/2025/618301a4b39918225a8ccc57f0f839d675e1abd92fa3a3ccd9a67acd7c79dd7f.csv": {
+      "last_action": "uploaded",
+      "sha256": "618301a4b39918225a8ccc57f0f839d675e1abd92fa3a3ccd9a67acd7c79dd7f",
+      "size": 159944,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:53.343580+00:00"
+    },
+    "market/raw/Bundesliga/2025/618301a4b39918225a8ccc57f0f839d675e1abd92fa3a3ccd9a67acd7c79dd7f.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "3b19fde2354f3f067faaf9b1f99e5b59142933ec1a5b0e0cd2f294f557df37a9",
+      "size": 2186,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:53.977257+00:00"
+    },
+    "market/raw/La-Liga/2020/b4137db923101f464e8403c4973acbfaf7d71724ce93b4336fad580e894d9591.csv": {
+      "last_action": "uploaded",
+      "sha256": "b4137db923101f464e8403c4973acbfaf7d71724ce93b4336fad580e894d9591",
+      "size": 171721,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:55.311468+00:00"
+    },
+    "market/raw/La-Liga/2020/b4137db923101f464e8403c4973acbfaf7d71724ce93b4336fad580e894d9591.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "8a0cdf544c44eb22f180e725349b92710f8c0e959f9651b4124d458a5d58f015",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:56.040535+00:00"
+    },
+    "market/raw/La-Liga/2021/2d9e619700712823d15716c07715133f8c3b1a09046930dcfc785a38633dee2e.csv": {
+      "last_action": "uploaded",
+      "sha256": "2d9e619700712823d15716c07715133f8c3b1a09046930dcfc785a38633dee2e",
+      "size": 172174,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:56.823088+00:00"
+    },
+    "market/raw/La-Liga/2021/2d9e619700712823d15716c07715133f8c3b1a09046930dcfc785a38633dee2e.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "b2979eb0f0a7ae6fa94bcd41c7fb894308c344c4a2c352f4ed2c1b0c7a7f0c8f",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:57.471430+00:00"
+    },
+    "market/raw/La-Liga/2022/53348112526b5165539df240be350083989bb258f30c0ff7cacbc0165ca7e4b3.csv": {
+      "last_action": "uploaded",
+      "sha256": "53348112526b5165539df240be350083989bb258f30c0ff7cacbc0165ca7e4b3",
+      "size": 172199,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:58.251186+00:00"
+    },
+    "market/raw/La-Liga/2022/53348112526b5165539df240be350083989bb258f30c0ff7cacbc0165ca7e4b3.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "134380d5c649c33acc07c3955cad26b48efd7386128c4d7e11e93f5e467e30f9",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:26:59.507667+00:00"
+    },
+    "market/raw/La-Liga/2023/5323f596c7ed318e4bce95557a369d809d98501fa499ea5f41350cd45cf3c7d9.csv": {
+      "last_action": "uploaded",
+      "sha256": "5323f596c7ed318e4bce95557a369d809d98501fa499ea5f41350cd45cf3c7d9",
+      "size": 168164,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:00.198398+00:00"
+    },
+    "market/raw/La-Liga/2023/5323f596c7ed318e4bce95557a369d809d98501fa499ea5f41350cd45cf3c7d9.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "75bdd454cf6007d0d748b7955b36043934977129cd2df36378ec7ac9e3ef5cba",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:00.858233+00:00"
+    },
+    "market/raw/La-Liga/2024/c086e96d6a53f6e6c0fce4e35db0d1728c773b4362323da0161a34769e315a36.csv": {
+      "last_action": "uploaded",
+      "sha256": "c086e96d6a53f6e6c0fce4e35db0d1728c773b4362323da0161a34769e315a36",
+      "size": 192863,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:01.539543+00:00"
+    },
+    "market/raw/La-Liga/2024/c086e96d6a53f6e6c0fce4e35db0d1728c773b4362323da0161a34769e315a36.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "93f758b1eb44c1ba9b8fe2b33c04a5c64bf1d95527a6c770302598a669d1a20d",
+      "size": 2030,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:02.662203+00:00"
+    },
+    "market/raw/La-Liga/2025/4ca2e285f3ee0702f6bc55fcaa4f5a15cb3aef6220735a1d15398131e21d63f5.csv": {
+      "last_action": "uploaded",
+      "sha256": "4ca2e285f3ee0702f6bc55fcaa4f5a15cb3aef6220735a1d15398131e21d63f5",
+      "size": 197653,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:03.383974+00:00"
+    },
+    "market/raw/La-Liga/2025/4ca2e285f3ee0702f6bc55fcaa4f5a15cb3aef6220735a1d15398131e21d63f5.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "99d6e05dedfe0115e77a7462ebc9dd687f01a2640282b950a2ebd10d46006405",
+      "size": 2180,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:04.024026+00:00"
+    },
+    "market/raw/Ligue-1/2020/124560ab39a1c256eb6ee5ad2dd1eed250c9780d0cbb34525d9abee41fbf7f70.csv": {
+      "last_action": "uploaded",
+      "sha256": "124560ab39a1c256eb6ee5ad2dd1eed250c9780d0cbb34525d9abee41fbf7f70",
+      "size": 170539,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:04.734600+00:00"
+    },
+    "market/raw/Ligue-1/2020/124560ab39a1c256eb6ee5ad2dd1eed250c9780d0cbb34525d9abee41fbf7f70.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "0420d0ce535e2e10f3c939a4849ec20274ad6ba91cf9d97bfec901ff02a40267",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:05.575480+00:00"
+    },
+    "market/raw/Ligue-1/2021/9e9eaefb8704264f8d55a718a119d940de4af7d7b4217ac4097b957406e16213.csv": {
+      "last_action": "uploaded",
+      "sha256": "9e9eaefb8704264f8d55a718a119d940de4af7d7b4217ac4097b957406e16213",
+      "size": 171274,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:06.395860+00:00"
+    },
+    "market/raw/Ligue-1/2021/9e9eaefb8704264f8d55a718a119d940de4af7d7b4217ac4097b957406e16213.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "8626c8abb3e97152cdb9026ecb554f79f1e8c56044449b72007b2d55c6002ed5",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:07.967629+00:00"
+    },
+    "market/raw/Ligue-1/2022/18ea07d922e8b6360b81189637efd5aaf44779765db856bff208d5b1acf69b2f.csv": {
+      "last_action": "uploaded",
+      "sha256": "18ea07d922e8b6360b81189637efd5aaf44779765db856bff208d5b1acf69b2f",
+      "size": 171165,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:08.722327+00:00"
+    },
+    "market/raw/Ligue-1/2022/18ea07d922e8b6360b81189637efd5aaf44779765db856bff208d5b1acf69b2f.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "6595902c3a6b7cad34894201f90f61ff55f902bbe26b27147e5d00edb8035a01",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:09.400552+00:00"
+    },
+    "market/raw/Ligue-1/2023/ca0a4bf51d5b1ccfd0e1558ea41de6bb829df6c96c759888a87248d296d5adb7.csv": {
+      "last_action": "uploaded",
+      "sha256": "ca0a4bf51d5b1ccfd0e1558ea41de6bb829df6c96c759888a87248d296d5adb7",
+      "size": 135000,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:10.110007+00:00"
+    },
+    "market/raw/Ligue-1/2023/ca0a4bf51d5b1ccfd0e1558ea41de6bb829df6c96c759888a87248d296d5adb7.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "cb7609b94a1152f5763a0767fb481b870bfeb670118b1cc32e7004c9bd87c870",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:10.780936+00:00"
+    },
+    "market/raw/Ligue-1/2024/fe6ae6a0c30d05f0ac88e0fc4a31452c7203e2b444703dfa941e22f38f20ab63.csv": {
+      "last_action": "uploaded",
+      "sha256": "fe6ae6a0c30d05f0ac88e0fc4a31452c7203e2b444703dfa941e22f38f20ab63",
+      "size": 154703,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:11.433418+00:00"
+    },
+    "market/raw/Ligue-1/2024/fe6ae6a0c30d05f0ac88e0fc4a31452c7203e2b444703dfa941e22f38f20ab63.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "d26010bbee23c0f64e46f535559f780d5c41e9f906068899a48c4dc90bbbae32",
+      "size": 2030,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:12.151651+00:00"
+    },
+    "market/raw/Ligue-1/2025/898b7ddcd373cfe955ae353b1a98cf7f1c8757ca10b69d53039f4e098e88f192.csv": {
+      "last_action": "uploaded",
+      "sha256": "898b7ddcd373cfe955ae353b1a98cf7f1c8757ca10b69d53039f4e098e88f192",
+      "size": 158471,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:12.890405+00:00"
+    },
+    "market/raw/Ligue-1/2025/898b7ddcd373cfe955ae353b1a98cf7f1c8757ca10b69d53039f4e098e88f192.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "bcd1b930b37cc3d2d166a84f2571f3d51386d191fbb202ccbffc4a500e3008ca",
+      "size": 2180,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:13.567824+00:00"
+    },
+    "market/raw/Premier-League/2020/5afe63f69401457b8354eaacee24f9a3e520b3c3af6329564a9783e20d789c62.csv": {
+      "last_action": "uploaded",
+      "sha256": "5afe63f69401457b8354eaacee24f9a3e520b3c3af6329564a9783e20d789c62",
+      "size": 175815,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:14.274122+00:00"
+    },
+    "market/raw/Premier-League/2020/5afe63f69401457b8354eaacee24f9a3e520b3c3af6329564a9783e20d789c62.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "c1618597789177210c90a8f5392d8e43f837b686b381f258728b71d2bb137f8c",
+      "size": 1858,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:14.923742+00:00"
+    },
+    "market/raw/Premier-League/2021/335afcbabeb2939fa10ab39ba3e8215072d0b577cb8d0705c1e44c56e934e703.csv": {
+      "last_action": "uploaded",
+      "sha256": "335afcbabeb2939fa10ab39ba3e8215072d0b577cb8d0705c1e44c56e934e703",
+      "size": 175363,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:16.072186+00:00"
+    },
+    "market/raw/Premier-League/2021/335afcbabeb2939fa10ab39ba3e8215072d0b577cb8d0705c1e44c56e934e703.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "d97206196319cfc20485505753da0055d0b9d722b8d6f292fd7e1b9378d41e67",
+      "size": 1858,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:16.727957+00:00"
+    },
+    "market/raw/Premier-League/2022/8442792d3b614c94ea3cf381bd2736805889cc1713169035368fff19c3d02380.csv": {
+      "last_action": "uploaded",
+      "sha256": "8442792d3b614c94ea3cf381bd2736805889cc1713169035368fff19c3d02380",
+      "size": 176180,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:17.603107+00:00"
+    },
+    "market/raw/Premier-League/2022/8442792d3b614c94ea3cf381bd2736805889cc1713169035368fff19c3d02380.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "4ee87eaaff191230571d96b09c8f10b170f1dda078f3a55ea191d3f7dc796c3b",
+      "size": 1858,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:18.258536+00:00"
+    },
+    "market/raw/Premier-League/2023/b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3.csv": {
+      "last_action": "uploaded",
+      "sha256": "b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3",
+      "size": 172196,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:19.550746+00:00"
+    },
+    "market/raw/Premier-League/2023/b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "6a7aab01dcc06fc72e826783d8d0b7be5150fe8350d3b9e71fda5abe315f8a12",
+      "size": 1858,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:20.649938+00:00"
+    },
+    "market/raw/Premier-League/2024/d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4.csv": {
+      "last_action": "uploaded",
+      "sha256": "d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4",
+      "size": 197110,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:21.397175+00:00"
+    },
+    "market/raw/Premier-League/2024/d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "63e9a0a17c6e84083d35274fc99b088d6a228e9ab2ba52176753767dc4ec560e",
+      "size": 2059,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:22.123166+00:00"
+    },
+    "market/raw/Premier-League/2025/3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62.csv": {
+      "last_action": "uploaded",
+      "sha256": "3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62",
+      "size": 203438,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:22.898739+00:00"
+    },
+    "market/raw/Premier-League/2025/3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "ee329837482b491966cfd2f2953ef5eec41d57944e5e2ed68eb03b2229e95b96",
+      "size": 2209,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:23.617980+00:00"
+    },
+    "market/raw/Serie-A/2020/c09196fa18877547442807d375317299947abdd6d51a5e0df044cc6026e13f36.csv": {
+      "last_action": "uploaded",
+      "sha256": "c09196fa18877547442807d375317299947abdd6d51a5e0df044cc6026e13f36",
+      "size": 170667,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:24.359006+00:00"
+    },
+    "market/raw/Serie-A/2020/c09196fa18877547442807d375317299947abdd6d51a5e0df044cc6026e13f36.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "a9417161b7381b0c6818ac792dd6b04d7722060d8dd5989618de049fd2bfd9ba",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:25.055499+00:00"
+    },
+    "market/raw/Serie-A/2021/6a9555d5a90e652a883fd2862a52545c06e264016cd770347c067a6d7c993170.csv": {
+      "last_action": "uploaded",
+      "sha256": "6a9555d5a90e652a883fd2862a52545c06e264016cd770347c067a6d7c993170",
+      "size": 171204,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:25.862481+00:00"
+    },
+    "market/raw/Serie-A/2021/6a9555d5a90e652a883fd2862a52545c06e264016cd770347c067a6d7c993170.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "d708d62d8dda0fe91efa3291074c229a72ede2132e6bb0276022747b2d52bd06",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:26.550731+00:00"
+    },
+    "market/raw/Serie-A/2022/9960837f37a97ae700f876c87b85a8b7a2f5a5d05a53077830c21b9db8880c45.csv": {
+      "last_action": "uploaded",
+      "sha256": "9960837f37a97ae700f876c87b85a8b7a2f5a5d05a53077830c21b9db8880c45",
+      "size": 171573,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:27.447944+00:00"
+    },
+    "market/raw/Serie-A/2022/9960837f37a97ae700f876c87b85a8b7a2f5a5d05a53077830c21b9db8880c45.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "caa2663d39d1408b5b7a56e4e5410cc44b220a35fcd4936da5bd92a96f5a74bd",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:28.145239+00:00"
+    },
+    "market/raw/Serie-A/2023/343a89db026fe4204ebeabd663cdfee8d02a45457828fc1cb63fa630ca170723.csv": {
+      "last_action": "uploaded",
+      "sha256": "343a89db026fe4204ebeabd663cdfee8d02a45457828fc1cb63fa630ca170723",
+      "size": 167015,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:28.806227+00:00"
+    },
+    "market/raw/Serie-A/2023/343a89db026fe4204ebeabd663cdfee8d02a45457828fc1cb63fa630ca170723.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "900cbf3ba26b50f893145ffd7aa5b7813fdc7e0cbb38a9802d8eb4c09a9f7b3d",
+      "size": 1829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:29.579754+00:00"
+    },
+    "market/raw/Serie-A/2024/79d87a5b18771e066ac7419b7876bfd9771a68ca117a9712375d6bc9685abee3.csv": {
+      "last_action": "uploaded",
+      "sha256": "79d87a5b18771e066ac7419b7876bfd9771a68ca117a9712375d6bc9685abee3",
+      "size": 191722,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:30.277535+00:00"
+    },
+    "market/raw/Serie-A/2024/79d87a5b18771e066ac7419b7876bfd9771a68ca117a9712375d6bc9685abee3.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "cb2db906f813d8985001098183b1a7a86dbbfa6f2d1f4cb7048a7dced70724fe",
+      "size": 2030,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:31.840804+00:00"
+    },
+    "market/raw/Serie-A/2025/709ae279617d16af226312bcceac941e71241745ddaf950bdac2b83afad4fcbb.csv": {
+      "last_action": "uploaded",
+      "sha256": "709ae279617d16af226312bcceac941e71241745ddaf950bdac2b83afad4fcbb",
+      "size": 196217,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:32.765466+00:00"
+    },
+    "market/raw/Serie-A/2025/709ae279617d16af226312bcceac941e71241745ddaf950bdac2b83afad4fcbb.metadata.json": {
+      "last_action": "uploaded",
+      "sha256": "d4957abe71c1095be9987b7cf3efd2140866a1409e504669aedc030efba3d22f",
+      "size": 2180,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:33.441967+00:00"
+    },
+    "market/runs/jalon9-latest.json": {
+      "last_action": "uploaded",
+      "sha256": "16ad4d79a9868ac40686b3a2f46361a7d53c008b1837f936a1751f650ff502e6",
+      "size": 119504,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:34.149682+00:00"
+    },
+    "models/api_elo_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "aa88e59b1f98f82a251b9286c9ded2f1072fa40c11c1e2cf9f2863e9404d756d",
+      "size": 1268,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:35.366018+00:00"
+    },
+    "models/api_player_pre_lineup_multinomial_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "6bd12f3df7756979da5797eb5c98d7d56fb99b158fcba185acef5814e3916672",
+      "size": 6783,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:36.084389+00:00"
+    },
+    "models/api_post_lineup_simulated_multinomial_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "eb7f88596ad1ec1363da612c22c93ebf25670427bb739f6be273c042e036428c",
+      "size": 8665,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:36.781115+00:00"
+    },
+    "models/api_team_multinomial_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "2ffc67e2c4f80b68cf831b8ecf04a7732296470dd8539650bdd436951e083633",
+      "size": 4944,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:37.478966+00:00"
+    },
+    "models/jalon6-run.json": {
+      "last_action": "uploaded",
+      "sha256": "51925a58cb6802c3550a2d301ab074ff6001cbeebb890dc295d6b56ddb764a3f",
+      "size": 6181,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:38.560982+00:00"
+    },
+    "models/jalon7-arena-run.json": {
+      "last_action": "uploaded",
+      "sha256": "d4fbe07be25b5fc9247625bcb27176a15866c7ea0e6e8939287f198577499e4f",
+      "size": 45103,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:39.659114+00:00"
+    },
+    "models/jalon8-external-validation.json": {
+      "last_action": "uploaded",
+      "sha256": "52262854da829685e6d529f9aef1a5c15497680640f141dc1163879342b254a2",
+      "size": 64113,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:40.369711+00:00"
+    },
+    "models/market_devigged_baseline_v1.json": {
+      "last_action": "uploaded",
+      "sha256": "e189236053f15e3bc5518c24b2b2f1c584668ca42c7d619d524ee1bea1d2a957",
+      "size": 1301,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:41.131794+00:00"
+    },
+    "packages/preseason-shadow-package-v2.json": {
+      "last_action": "uploaded",
+      "sha256": "d220725308ac1fb81f017ce78244e5680fe8f65f4928a216b8d907d4a36995d3",
+      "size": 7123,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:41.857134+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2019/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "68925769b9eb1715ec7aae3ca7e5a352c34a08c8cc66f76daf88e0b6f7a3a44c",
+      "size": 12260,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:42.567146+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2019/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "07e9076a3254fec1a32849b9c755452a41152bf8169ee6dd3bd92e965e6fd75b",
+      "size": 88277,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:43.230537+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2019/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:43.894065+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1380fa5bd508dbe5e4730048c613aea5fbd90dc9170632c236b2a546f4857d22",
+      "size": 12258,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:44.642035+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "da74290e17542876c348e2eebace28c6f519cd016788dbb3afecd690b712800b",
+      "size": 88295,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:45.370448+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "fcea7c9fbfa406ad235c9bc850ba596029cdcdfd9c4942cf4db9c8d39034eb7c",
+      "size": 70473,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:46.018832+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "fd095ab4332b33eb9f51d6833771698db71fee255ef74c142d11f7a84e77fe81",
+      "size": 62244,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:46.709137+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ca5cc2e4a5a09fc91da490090a58a4ae51f50b8a5557e74dfe24b3ddb2254525",
+      "size": 40210,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:47.358475+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:48.148145+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5eb08ae7e726a32c3511a3ca50451fc00dc6750f0c8c0cc7b0495c39a12c59ee",
+      "size": 254681,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:49.067781+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "12f2d19bab9169795b3daf9403fb8ffe406c0fc71df9491387cfa62660ec7f1a",
+      "size": 12045,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:49.708830+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2020/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2197888eaa64178ac349f636ddee7a6d2325a677de51fb5bd6065a519135a813",
+      "size": 15493,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:50.363830+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2c3dff4b4b5e09deba71c7afe6cc377f0a825c4ff7e89d437ca5f8375dac824a",
+      "size": 12257,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:51.016564+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8e669e102925049f1aab8030570f7c2d40575a565edcc77cbcbc9ab6e39470a0",
+      "size": 87780,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:51.701206+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7102e665e3728d0fcb2e02719371a46cf528fe7b8fc1f4a78011521ef11f953a",
+      "size": 70587,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:52.398285+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5684fef3ea103bd9ca7061eb757364394015fff511169ce6e7e4912a8d8d2e26",
+      "size": 62086,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:53.048365+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3e75a7e17dd54ec2ca368070dc54a19bc5a46bcd573a29f1287dad021fc1c355",
+      "size": 40160,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:54.041051+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:54.697412+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "eca19855d8de1d3780910afc586dce9294650501ca6bc5d5892d75d883a00274",
+      "size": 266829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:56.242010+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e60f556fba66eb66e81b0b9e5b4bee72d925b1f2dfc502b474cbe4815cfc5d4d",
+      "size": 12089,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:56.918862+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2021/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "92865afbd7d038b66e0aa129319fdc34e548231afb95b49b5f27985ed88bbe68",
+      "size": 15500,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:57.581549+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c6e75df2a67ab4248c8cec0f34a47dd0408498fb56afb0fb04a2948254ecd5ab",
+      "size": 12255,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:58.265580+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6ee42080ca5bc247be5d7ebaeeb4ca6c358477884e8329123a3a1ff8352a5b8f",
+      "size": 88553,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:58.983742+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4adfd571facbb812ba5ce768b4738b603910ec068c9dfab3aed3892a9017d929",
+      "size": 70586,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:27:59.724966+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "372dccc10086886efcb9b149a446e8594322582cdee1110a8160e8f3544d2114",
+      "size": 62228,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:00.407281+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9ef9d2c1970a3e084ebb4faa7d132aa99eb10218bc617551da07ab56a9923802",
+      "size": 39459,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:01.323150+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:01.959193+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "70273caa0a4c18a1956dbfbaca58a9e5f015e9dece824dadde1c46ea8ba27240",
+      "size": 273001,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:02.623218+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b34cfd50aeda72f9704c2657d9acfcad4367510caecb6e8ef88dfda58afccf09",
+      "size": 12036,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:03.255021+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2022/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f4d13f6cd76e7ab2a37de66eb74fc5d61ab8c0aeabc5fba705e10008218de380",
+      "size": 15487,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:04.613536+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f1b86202f67c2a76b53c992d146f8c34143d718f88952e132eea23f741360ca5",
+      "size": 12258,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:05.269638+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "da961442ec3a794d771353b0d491dc59272c29b8b85c4181015a926f82677ca6",
+      "size": 88917,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:06.018646+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "606bada245f6177ddab04a27f8af1d98e37468d7830adb63f5e81e2f1c3bca89",
+      "size": 71014,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:06.763668+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "365219016bb5e4819e17a61298cb3e38d793d324dd551a95cb371859fee8f714",
+      "size": 61475,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:07.512363+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "046d6a5861c34261adcf584650fe5d1432ffff82e0d603e8367587870a8b2635",
+      "size": 40690,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:08.437960+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:09.773925+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f628913304eb3c1c332497b1aef7589d45e6d0bc1dacb3a1b3607c55886d642f",
+      "size": 296228,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:10.473829+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "512a5ee293b6c1b96bdd5b60a27bb73e416c4a80d001602ddc9e208a950e8c2c",
+      "size": 12094,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:11.115817+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2023/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d0f428a32f7de9cb10ebffcd68c739a7a5f1c68dbbc65159f8cac592f0e6cdb2",
+      "size": 15501,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:11.868496+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b1c70b5ba8ec90d762128d9adeccfbabe86f887271fa3f3a772d5f1b4b6c0fd3",
+      "size": 12258,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:13.405531+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "19c77a6ea2f067139ba1c3b58c29c9913f78091cf99f42894dbe07e2a5585519",
+      "size": 87965,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:14.142656+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "eb9d24b4f7c496552f3147bce2ca2e13d2062baf3b9e86eb3bf839716e502cca",
+      "size": 69860,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:14.829123+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1aac8ddc890aa5054b7badfc456ecb099b4010eb9d2fac5176241b4e1e2869f1",
+      "size": 61696,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:15.759159+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4eb58940fd6f4b8adc8d897feb781ec65bfed7f32d9bb64d36a501dc9e581f97",
+      "size": 39855,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:16.825775+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:17.480109+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1d2dba89d25dba0078224405795e26a0d03fba1365bf8f3b4b8e985cfa5665bc",
+      "size": 290395,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:18.211240+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d95bde15b2586cda5614d842ac8a62766e07692b26bd7f6db665c3515492b9da",
+      "size": 12020,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:18.897548+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2024/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4729ad798fcf8310822561709c9763a1b00db166affc3e7c9002c98a848b436a",
+      "size": 15509,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:19.543064+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4dd77a923b42fd68a6a10a7912c6810f06bf9f65fbcab8886c5ee415ba7bb69e",
+      "size": 12258,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:20.181894+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "20e0b403e15524506be9a218b2068d8536e6c1226639e942c02306bf556a688f",
+      "size": 89864,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:20.976672+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6097a786149b8cdb306c34c9bd6889444fc180ae95016ae469d3aed9ecdbba4f",
+      "size": 70326,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:21.659734+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "07f33523f8f61d20eff2194982912c8140ff80ea28b197c47ae3968e8e4dfbdb",
+      "size": 62182,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:22.335787+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a4fb218a826d7e40ec23794fc4e735f9b67e80ebca4ffa88a246c7e3255d39f1",
+      "size": 39227,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:23.014766+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:23.662380+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7d194ec6273fc31510ec50e20402b7388d413dd27638dd87c761606eabbfaa0a",
+      "size": 261069,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:24.364923+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a300d7a0dc5f8dd47e30b0a86f494b5758993f56f6f9b1d6cbdedc4ce5e2aa25",
+      "size": 11986,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:25.076040+00:00"
+    },
+    "parquet/competition=Bundesliga/season=2025/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c7a86336c4198fbf02eb6a382d01fd62164baa4a4d7909020316fdaa326c0230",
+      "size": 15495,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:25.744704+00:00"
+    },
+    "parquet/competition=La-Liga/season=2019/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ad32b7eb2cf3632ad2c9c21b57614bd41b75b77cc977b78562251cbfdaa83b55",
+      "size": 12245,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:26.398132+00:00"
+    },
+    "parquet/competition=La-Liga/season=2019/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9700cc006b35c47255625d5644bece2811e9d222d6415516dd2fac2a78597600",
+      "size": 109405,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:27.088029+00:00"
+    },
+    "parquet/competition=La-Liga/season=2019/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:28.080069+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "dc29be9162020466aa263f52647ee2b660af877200d54199364f74e4a57327a7",
+      "size": 12242,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:28.855529+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c9747f3cad4252010b9b802b3a41c4e0c9cf2e1a63abac391ce9feabf6935547",
+      "size": 109420,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:29.582383+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "357806cce28352594edec1baf4e8e97fb6a4bca3e01d77a84019e0c8b1402b54",
+      "size": 81744,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:30.268703+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a02eaac16cffef0fdad53a29affc0c05e2d1aead1193a03a6658643d61375a4a",
+      "size": 72211,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:30.938801+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "615405fa27927f361b16bde0c28a84b9c61ff4be24cf5768b5b45ef39dadeb2d",
+      "size": 47719,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:32.055727+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:32.838139+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "173a0ffdf427db832fd07ceb974977a0a885b1350e4b13c3e202052be97bbea9",
+      "size": 292373,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:33.902522+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "dddb46a13658a12a5a2d52cab889dfc7fb59fcc031237061a8b80e974d7bd690",
+      "size": 12119,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:34.627206+00:00"
+    },
+    "parquet/competition=La-Liga/season=2020/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "49c5577c3500d13f692418b255ffb23f19b0b51c231e1a3a44081508b8153302",
+      "size": 15699,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:35.321776+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4916047bf199966fc59b477142ab99e35547e648a6ab27b80504238da4847671",
+      "size": 12242,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:35.973170+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "dabed02f76d88f1fdea6b3859fbbc740ed1fa79b0e5dc96c17e14ed4c7f9f900",
+      "size": 109451,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:36.629223+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "307301378df58e3aad0751e10da82695f1d8b3e309f8c0445baaf410a3379d2d",
+      "size": 80432,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:37.328431+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1e3ede1bb9271fac4c1c0489b1b66f9332b1f96887a8b47e7226bc6b4b9482a1",
+      "size": 72289,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:37.965470+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b9a97766c59040b8258fbe42ef6440fb8432976f6bcca53e20ca6ab48767f7d9",
+      "size": 46650,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:38.661467+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:39.356322+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b5c17e597f8544d274b0fa4ce3318c8906282ffa5b1379a539a91047537d0061",
+      "size": 311115,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:40.048564+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e2b0ba86c1470983d622977ff995b9ccc00e7c29a5b93e465724e846c30090ca",
+      "size": 12208,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:40.756383+00:00"
+    },
+    "parquet/competition=La-Liga/season=2021/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0d2393f236eb387f10d094e2813553cddac96e94763282c4dd5d0931516d5535",
+      "size": 15745,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:41.718491+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b225c6fa7c18ba2a444aeca1c07fe1f7c7e79a9a01748a738275b6f58a7df775",
+      "size": 12242,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:42.407386+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "45798e936c83706c5f43c94fce05ddf4678f4e1bbebaa6ab57aab73051dd2da1",
+      "size": 108683,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:43.111938+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "89cd61b7a9383194cc64d5be3e0f82aeebc4bf87219a98ff8a5c171758581931",
+      "size": 81529,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:44.092517+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "bfa60d77893935635156c2c0552639a15ec3588ece516677df367eda7284d5e1",
+      "size": 72596,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:45.138406+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "16ce4f320c02f18be03a6657d5901b681c8e27e081069a27a9fa1413bfa29c2c",
+      "size": 46373,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:45.800118+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:46.700710+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "52319a173a5f8b8346c1dbb7c1dfc2b69cf269d8e7d4368cdfffb60d74589b48",
+      "size": 313660,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:47.407047+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "af0e9761574800a39c930fb77c7b21dc71c91e4fbb16ce6ac70f4bf7e1411123",
+      "size": 12201,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:48.134892+00:00"
+    },
+    "parquet/competition=La-Liga/season=2022/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "429f73c0de5ae0b9974a53a1d2d52eeb3bc6ed978d6b673d8620d80dd47e0b6e",
+      "size": 15817,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:49.232117+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "677070d7787bbfbda3672092ac2b7c38cbd5353a9970d337769f86d68bea9b06",
+      "size": 12242,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:50.032704+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0ef452e891bc5ca46eda8b91a6918a683410b19ef0be3acfaf33af10a16e20de",
+      "size": 111938,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:50.709522+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ef1d84da487af979793d4c9d2b2e2c8027f3c1b11c3393ec33b00d1f576ab075",
+      "size": 82235,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:51.605489+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ea6678bb8d4193a47932c48f7fee491f96644d42ac3e27470464fcf0da57cda7",
+      "size": 72647,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:52.290304+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "bff05bc3cb45335aa324d4fcb2ccef9420af7ce83296a232df171d31a161e53c",
+      "size": 48346,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:53.040401+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:54.095330+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "20d685d9666188d2c99697868e56636182e852b24213f4c632a028943f3c0fc3",
+      "size": 346314,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:55.006577+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "63fea688e2804ac2462cdea00d993ecccbdc0d0572d78b248ec2060809079c18",
+      "size": 12268,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:55.769500+00:00"
+    },
+    "parquet/competition=La-Liga/season=2023/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "cc6230d36833d3ccbca4c955a1056f021e20524888eda7ff2256eac1c72f6b0d",
+      "size": 15768,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:56.615777+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "20c6490b5f36fad924efdf6a09bbc7584995be1d377f51b640ed03150553b2a2",
+      "size": 12241,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:57.254368+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "35689db74c65f999ceb83b4f42e06ad52562014801279c9c799f798cae778853",
+      "size": 109168,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:58.090288+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "18f59700706bfeb217bc5bd2741372c78488dd5056dfc18c80362c57ba76901c",
+      "size": 83121,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:58.845304+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0609a9e6b504513ee386841cc92cc0e1f420cbebec4b6bee4e8085456931c9f0",
+      "size": 71947,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:28:59.500702+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "efd553f8255ae07535f8d845a9fc60864f23a7a019982d641737416b0451fda3",
+      "size": 49039,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:00.669123+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:02.229075+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "cba724223c4ba0f32fa31ca77bbd3baa53561a483ad52db126ee18311324e9fe",
+      "size": 400520,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:03.125536+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c47b849c0f16f4b56918675d3e8af53ec3fee393f29f7691deb9b40ebd555d7e",
+      "size": 12091,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:03.775766+00:00"
+    },
+    "parquet/competition=La-Liga/season=2024/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d7b2dbf8606158f0bc86c56e8cec9091ffc911530b6f5dc87f1bc46779e4078f",
+      "size": 15739,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:05.036218+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "031e8cd86145b496a751a9a0170bd428637a18c489fc988011c1d7a274ec7151",
+      "size": 12242,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:05.763991+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f62dfe787132396f2ff49e3a2ddca6d0f486ce4b21e4fab43758593d389d03cc",
+      "size": 110657,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:06.472668+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0945a9b74604ac043190553610d0cfdb2934d1d5b551c81cdfff3cc07ed69c5d",
+      "size": 81607,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:07.202400+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b8abccd10fadb62941ea816251a13278c6af1b98cedf83f68839047611f5a67d",
+      "size": 72529,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:08.426620+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2bebe7698fd4bf8fd902d31afe76a750c13dff24e8bcbe03ace8aa100c598f21",
+      "size": 47904,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:09.128055+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:09.820485+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8089724f221cee0f90d95ef9186ceb0710e8e89a53a0e4ed03b27a91761ae718",
+      "size": 305829,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:11.138697+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6782dfe374694936aaa0bfe6e956f763afe7dfa40fa6766b25023c9ab08ae289",
+      "size": 12215,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:11.793390+00:00"
+    },
+    "parquet/competition=La-Liga/season=2025/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6b4469f57081df095e0da5eee400384501a34d448229138db22ff4cd2227cfa3",
+      "size": 15734,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:12.486186+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2018/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9c455f12b26bc76a2aef81590ad7e828ec6c668b503ad7a2137324252b6a1709",
+      "size": 12237,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:13.177996+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2018/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "901bbbd503f7c627c7197eefdb93fc2f8a047cf4dc09e93936a27e4cc5cc80d0",
+      "size": 236987,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:14.534338+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2018/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f12b02251c1ea7910d9b7077fded4bf22d9f9022918b74a4c1284b90f7682e43",
+      "size": 106338,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:15.502740+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2018/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:16.903513+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2018/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "40388f7bbfc501956dc9eed3e6493c2c3a8394310d069e790cd04df10c0d588e",
+      "size": 270184,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:17.937075+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2018/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c52817c40cafaa3fc623a8e2fa61f94edf90eea7495564a896f9e6a217578f01",
+      "size": 12181,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:18.648526+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2018/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "aa3eb2c2f9b05fcfa9598388a55fdce63fb5a92ef3389163a828023371ab93a0",
+      "size": 15781,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:19.329167+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "13084a1d45c11946d3d5d818d79f820c86cb9ec33c788a00f7fa05dc7e61bfcf",
+      "size": 12239,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:20.392206+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3839b274c4f0dd17ffb66e1d3c6c1948767835d78d4f557ee28dec9776311402",
+      "size": 550054,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:21.117020+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=fixture_player_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5788017eaaba3fcd9a55f282f3373bcd57e4f5557d7d786a997d6beb299e0da9",
+      "size": 917837,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:21.865183+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=fixture_team_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b10451f1bcf54bb8b47247ac8a648b38b938b443c12fe2184a0ebe30ce7470c2",
+      "size": 155696,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:22.570035+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a939cc2cec4123d5235d13ba5056735e8e455d7bc4c629c79726d8b6c7e3bb12",
+      "size": 103374,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:23.842003+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:24.532471+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6fa75291e43c7e48b9a1ac550bf8625ac747f4a036e737d85ba302afe199aea4",
+      "size": 317584,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:25.250200+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "46eff48dba7eae3f1a11516507e1a4ec4e6f41333407f69e60b85995609f60ee",
+      "size": 256595,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:25.911089+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3ba88bb4c35049ceea1e43dade96b76723063562e441aeeaae77263aec534170",
+      "size": 12067,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:27.045375+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2019/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "40fdd7113d8738d07da83f97092f938ff8b5d04bb5432d40f134005f917baae0",
+      "size": 15783,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:27.726416+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "067ccf61695bbbf1c1d7b771cd90d10454b52c8e11fe68f35f7d7ac99875e20a",
+      "size": 12235,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:28.421217+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "318bb3a8d48b66999f1c57614253fc371f3684ed65f657b1ae8901b178a50bc6",
+      "size": 937810,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:29.173047+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=fixture_player_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "da2710b16432f8166cf67166047075f23764878cc02caf2408818b866a081c24",
+      "size": 1758025,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:29.926694+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=fixture_team_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a94355215613bba6a7f07be534036232e5b5419de8b12576a975fd074d3fa4f5",
+      "size": 209694,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:30.659713+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f6cb9da5ba7bfdb29740bdce2994c6fc77403482ec22658febece09ec8fea5c8",
+      "size": 107282,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:31.554960+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "54105d63171a1d6e120423e499058e4183ee3733ce1498495727f7b86fb54794",
+      "size": 80165,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:32.664129+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "884d59fdf18c65c589382b956dbc019ab7a6e3946005c08ba5a5a467319996fd",
+      "size": 71489,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:33.533498+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "65faa3bdce62a8156068944cdc089b39296f7420f6b919f2646856f23229a3c9",
+      "size": 46459,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:34.226179+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:34.965715+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4e5fba014867cefe1e8f631358196289537d4a9dc27dcdfeb2461e94a7c90850",
+      "size": 485303,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:35.806821+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e3278343d3c55e856c90b2bfd100153fc735e26320bf96026dfd417676d28cb3",
+      "size": 293416,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:36.768243+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "615991371ffdd500a6a8edf201e218a75daf89b00a8f2ce9801394052ae20524",
+      "size": 12245,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:37.440711+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2020/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ac6a34eb06e18b7aab08bd03643fc373c54cb5d0e5fcb043b057ccaa95160171",
+      "size": 16024,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:38.091973+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "84cd1118d30fd60849237c7b933fcfaf29038eeb483e60f469b042944acbac33",
+      "size": 12300,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:38.764896+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f364b04f49b29c0daa54dc5a5920250cf464d3f6dd1dc5cf47a155449574a8d1",
+      "size": 969926,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:40.065697+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=fixture_player_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7e646b443f850e155f80b2bd4af600f5f44a2c37001e2b8bab705708235cf27b",
+      "size": 1773382,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:41.384292+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=fixture_team_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "091650f325dd4fcab65f51da3391e4ceed5844e71a3b58a4d38c398c3792d8c3",
+      "size": 210022,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:42.108039+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b7cbe62d95587366b074dd637c100e9a8394cc9b6393e04248912aef94cb54f9",
+      "size": 107594,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:43.661080+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d7c5211130c1a4227eb13c2893683415c13b220b70d5377ceb8c5cf29b55f6fb",
+      "size": 79813,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:44.321372+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4545ad1d96c782ca0f71f7e873723fe5f9137aa8be640ed2cd4d33e87cf0f232",
+      "size": 71357,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:44.974464+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0636475eb21cca201ad7e45321cccfaad5deeac21b435cdd0c72ef0ba9d731cc",
+      "size": 46171,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:45.612498+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a25371ceec9f14327bce638d7ab3300ec71f9f9df23ee6f203a40c2274b8aabe",
+      "size": 464949,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:46.369766+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b5b682401a31661f299674835b6970ab8758bfcd1d587f45e0c07f35567696e0",
+      "size": 504770,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:47.063160+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3be06e2b2a223b5de2fb1db88a1c2e232b0a67e915fb009f384ac79fb52a7f6b",
+      "size": 306266,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:47.750178+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=squads/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "734e9b02de770e0fb1288d7b455bc9800f3a7877f5cde56abf44673f564d237e",
+      "size": 39779,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:48.441957+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9647da2cdcbb1448630970c4321352d412dedb50e88a0e4abd7c2ddffe780215",
+      "size": 12297,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:49.096932+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2021/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a73dcfa76d2faa6498a17e4196baddda54444b43b7b10f137014c29d5303ea9c",
+      "size": 16266,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:49.750658+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0c29b969c2a4673155ffcdd00edaeb08d116e9e2cadd96acf9c790f980fb52eb",
+      "size": 12300,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:50.397836+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "67c379697ba8a748ff6587d09191598233306c12701a5b3290452d5d93eedc4c",
+      "size": 933967,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:51.260288+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=fixture_player_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c0b0073ef25231518d494216ec8410def0a69937eb9c23c629b25b749dadcfca",
+      "size": 1770996,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:52.902999+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=fixture_team_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "75e7eebc38e4eba8d92d8132ab6363fd1441291bf7cb3d4aa0d723232198514e",
+      "size": 213056,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:53.692040+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9248532e1483d91ea8e2d62bcb59f3fecbd28624c891ecbe88a031fbb89751cf",
+      "size": 106411,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:54.512063+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "be2b3cad5f626c89ec88de2255a207469a022c92c6c78e8dabf7a0415cdfa9e2",
+      "size": 80647,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:55.192828+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "42f4f95db0e5ab14e96b3d8e60a204a6b2fe86fab85e0d8b2f791223e7a366e1",
+      "size": 70282,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:55.896212+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d80059b1556f4556a9a3a5e2dc29b67126fd8c56597ab16cca844d1dda223b47",
+      "size": 46889,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:56.953807+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6c346aeb207d45f61aef20b33498460e4cd75f699f6df569283acbed79e8a9cc",
+      "size": 470762,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:58.162436+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ed5c483d08bc7412abc78c962d6219948074c61f558f1e94c0dcb1a6d30c099a",
+      "size": 499890,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:58.864083+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "057800902656a0463aaa730ec58ac2b21fe2a7e677dc92ee8ded4f1961502753",
+      "size": 313491,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:29:59.508970+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=squads/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d08be00e9919b3770aaebd38346e7ad7605217a1649c2b374715146c06f06e6f",
+      "size": 38225,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:00.235618+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "77ac60d5ba2e9c995784f0a2ac5f02a6977ac69432673965f1659f064494762f",
+      "size": 12337,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:00.922882+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2022/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7c849cab599f4dadc27ca84222557427d8833dc231e1501079b118ecd68d79da",
+      "size": 16036,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:01.595322+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "39e3da3756a41b69d7a2f7dd05a8e1b6f9e364cd61d8acf5b2cb3398c7fa8403",
+      "size": 12299,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:02.256186+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "491d5c51afc3338144fb82965aab612b73f01c27fc056960fdfde4ab0d9ebfe6",
+      "size": 800149,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:03.522624+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=fixture_player_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d6de11a87ea119e67f50329ad35f655ab695d90a22e908dfac962ab264c99ad7",
+      "size": 1440227,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:04.269726+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=fixture_team_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9d901671e99196d06546c663af3ad36a79e75feec633a7cfa12a08ccf1bb80f2",
+      "size": 176923,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:04.999939+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8a46cc93a64184e1c17d4f0726a6351db9f0f0312ebb1558128aee416146debe",
+      "size": 88514,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:06.187855+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "797b4da610f754116b11ca0d57724874cd232d329214753a857de54e17380f64",
+      "size": 69971,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:06.911817+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4eee086ce593ef2075931cb995162681a65840ac353a90f1535fbdf9ff2aa197",
+      "size": 61980,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:07.801915+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "fb026485cdf2f41453b6493ded6555263c95bf3e352a452e0218c5bd3c56ddf6",
+      "size": 40037,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:08.488472+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8d3396d8a6c110b287187a3dbde0d027df38e4d891fbb1aaa160359d553e4692",
+      "size": 364408,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:09.299962+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "22e13f345f6761fec08a1723619a02a79a50cfaf842f07fb2fff26781997a96f",
+      "size": 407362,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:10.214533+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "07606ca26e465201319d5ecc2606c8848268cd13febfcda8b9ab15685f800a64",
+      "size": 326444,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:10.881733+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=squads/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "a269449d69c33003a09fa843e7e24b680a5c3732d52cee33d2baeac4ff7ed19e",
+      "size": 37836,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:11.611587+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "935dc98d9ab81f9cb84b301a0059356a7c2270c3b8c076e235b5fb10b61f4d61",
+      "size": 12088,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:12.314895+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2023/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0b24e2b9fc95d979e25cf4acdc653d2fb58ff9d335b1bb22c8987ae4c0c6eb8f",
+      "size": 15763,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:13.698710+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d4077b7b2290dafa424481619b47ed26fae3868fa9624d9767a35f0af820a346",
+      "size": 12300,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:14.393909+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "389080d1d09865b9804f54d7f64004af7c7af32189403365d13d87bfa415c32e",
+      "size": 813682,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:15.102566+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=fixture_player_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "74fa11e63d0fca5ab2ebe26194403e76140c8e031b3f77f89bc453414da8e73d",
+      "size": 1436484,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:15.874688+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=fixture_team_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b89fb05110ec47bc42c0ee2577eea137ab2024982c2d5ce21851d04d49ddca0f",
+      "size": 180850,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:17.476480+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e888e2d7465229a89fe9466409157122110a022ed719baf40d875a684970e70a",
+      "size": 89762,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:18.411481+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "958553691b90810a89893a88f95c9061507354437e802a2d193a9d183ee16e8f",
+      "size": 70656,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:19.343200+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "91ab89bbd4368663447fb81b27c7b7a3c65ba4b52ea502fa610623018fd96628",
+      "size": 62464,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:20.427625+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "93f9782cb7e8623388de95f79064f68d5399913d5bd573d5f1133c23b36c8d65",
+      "size": 40463,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:21.100679+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0bf6ce00360508363e6dce6d80f16f78dd902b1f306ab688d4232e0fa829a81e",
+      "size": 427998,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:21.836829+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "39055fb9731eaa642ff3aa8a534e4aef2271b60c8ff543aef102193c058c6f96",
+      "size": 411968,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:22.518664+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4a433769a6831973c9bb662faf1d25dbe59cbe3669d6f5cb15b3f4f75cb4f9fa",
+      "size": 346400,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:23.382765+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=squads/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "377b2c90d86daf2eb46ca05d2b062b2faf46a1a04e7794742c06c0e9e966f1ec",
+      "size": 38253,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:24.040577+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f88554d2b1d87683bcfc1387e4c46db8ccb9437008a5fa1c750d705add465c37",
+      "size": 12052,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:24.790027+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2024/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "877b3caf4f54b0f4b5f5e085e43f52051a4d8f3cc9b0ada633fcd3bea75a524a",
+      "size": 15633,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:25.527027+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=coaches/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5249a40377699fa96918db7f661565aae2d870ca6001c2acbcd46bbf2f52ea04",
+      "size": 35097,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:26.426493+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1bf31979f1040453384a93498520baa00b8a868dd1954902f1e1ca25e27086b9",
+      "size": 12238,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:27.270716+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=fixture_events/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5fc9b3340e42906e9e1f894ff39c18cc516d0cac9524c91af9e27f89933d5487",
+      "size": 796589,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:27.959362+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=fixture_player_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "386064b39caebe4effd0bbb07d4d875a0d75cb0059c1c40bfad08fe4f3e0474a",
+      "size": 1436424,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:28.963416+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=fixture_team_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f59421ec4b7f4a74d62222dbae1ee6a87687cedba70226910cff951727128333",
+      "size": 180992,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:29.771689+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1a990efa71832eaf39a55e6f25ad7d0d3c126cbe827660531c659f76a8fec719",
+      "size": 88732,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:31.076564+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2251bd0d3ae8e239deb170fd6df6df74fe9b0a9befd7af0ad846d0e28e135846",
+      "size": 69999,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:31.716354+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "5b4192bb48186acab093c077d21337e9a4cc67ed9503291414044276ffe31557",
+      "size": 62119,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:32.430155+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "72317e6c3cbb49857f278bfe7eba78fd377a3323c5011d0b5556ca1479ae2a64",
+      "size": 38918,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:33.560811+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f7cb98233d05e8acdc690dd8a17e64d3292fa8b4ff498d01a18f9ab8c319cdf1",
+      "size": 488813,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:34.281913+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e18609b2b79606504b71a4eb7a97e3799e711d34117315035d72243b439fa02b",
+      "size": 417454,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:34.932360+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3ed29297496598d89e888f9b87ac3527a9dad275e61397e710eff772b9c95342",
+      "size": 299448,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:35.642523+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=squads/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6f9776ea970fa7a86f32e6567dd7d3813a7b53b6bcd62518b249734c9f58bcf2",
+      "size": 39751,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:36.664355+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4d56968b118f3125ad500956f98381cf83e700c54dd1fb63900579d18d2fe59a",
+      "size": 11985,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:37.417847+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d69308fd93fa75ec03563130fd6c6a24a1471dbab56f1601a040d11d729e4d72",
+      "size": 16026,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:38.107086+00:00"
+    },
+    "parquet/competition=Ligue-1/season=2025/entity_type=teams_statistics/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "25b1da9c02d5d682af310c23b70a4b89051c9bc4625b7d2cdfbc2b742819e8e8",
+      "size": 41586,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:38.957162+00:00"
+    },
+    "parquet/competition=Premier-League/season=2019/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "97d1433c480602f5f48143b3416dd74af5b04bb31b88cf8c756f2e721297772a",
+      "size": 12318,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:39.602554+00:00"
+    },
+    "parquet/competition=Premier-League/season=2019/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "893c8df664c5dd86d0ad7784b7ac868363dc4f602d30c879e5adeb9eac504572",
+      "size": 106791,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:40.277666+00:00"
+    },
+    "parquet/competition=Premier-League/season=2019/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:40.961879+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "95e26eaf577fc31440c6aee62cae8afbb2aebedf7c560fb1c692b2df45998deb",
+      "size": 12315,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:41.624434+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7bed0376df8046387bfb392b3db2861b8dbfcff2a8cfdac5c71b423cc5121fdb",
+      "size": 108845,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:42.343602+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e4623c478fd4a90b8ba45ce45919649672a3ff74e46c2612a8a5f4a45c082267",
+      "size": 81180,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:43.044012+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3f016d1a01eddeb1e12f0c9dddd2381f118c486d791ef85adcb849a519b4493c",
+      "size": 71757,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:43.744416+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "577f05d7907af2fee263b4c100fb2820aa8fade2067885e7461b4210cdef54fb",
+      "size": 47116,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:44.817246+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:45.504281+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "78b6b9f2e9f33ae79f8d6c36adbd4f7d3cda313bbba8ec6491c6ad053b6c6091",
+      "size": 288273,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:46.198728+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7938bf5cf37500eaab0606e45f216b2910d3901b7a1926677f33f93a3b892129",
+      "size": 12184,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:47.112766+00:00"
+    },
+    "parquet/competition=Premier-League/season=2020/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "556736c7bd4516e4adcf5b7871028cc515e3e13fd2426796beadcff23cc8af52",
+      "size": 15470,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:47.812998+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "79f5163168100e00a025d6f5da566d2a8fa61d99965fa8445811c36b1f56d999",
+      "size": 12315,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:49.252289+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7e859407e42bee0e6d47fcee3919a8e098d8c201d79ffd0730841706c9e6fcdb",
+      "size": 106768,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:50.234306+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4629fffe188a784d2f9f26b45c06198f550375554a5d9b833a5f6d47493889c5",
+      "size": 80302,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:50.879795+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ba764e6a23d7e0fb1668aaafd9e799af1532fe6ea826361fefefaf328eca3f19",
+      "size": 71703,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:51.547893+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4ecb6c4753c9bfb2b65980f0875cc7631c3e87b535614b72121a5d9a5673db3c",
+      "size": 45600,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:52.256326+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:53.225166+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "aae136a4f6e5fb1792a914d9d4319dcbdf381135400ac12ff314efecd152228c",
+      "size": 308041,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:53.939388+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e6541006a83907ba828cb7e9b5e92fac3ca5b3c50c3749bcb6e5c9fb7fc13314",
+      "size": 12213,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:54.594021+00:00"
+    },
+    "parquet/competition=Premier-League/season=2021/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6cd698ebe368424dff0c3a85913517d335046ab174a6ea42c96e42c9e0511075",
+      "size": 15501,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:55.240126+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "09846d304a089c6efc3ce3d8dc3a8df33a88a0d8509299b834845ee870b61b3e",
+      "size": 12315,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:55.963815+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ff534f58838c47b2e6178cf0def32a0be481538ec28169276ecb529e6f56eebc",
+      "size": 107226,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:56.668584+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "625c1ba715d0eee415702a59c4e6fa65dea0f202fc36b456326729085ebecd67",
+      "size": 80815,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:57.322096+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "80d0edeee5b07edb0d246c26f7c5c98382ef125d283a807fcaab8908400dfeb4",
+      "size": 72431,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:58.050730+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "03a003632fc90824ecb00eba71f93fe6089f6e2094910c038318a303540f0fbf",
+      "size": 45532,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:58.697444+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:30:59.432952+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "77aa8499f148c59e907f79b13f4c34b6db7b7336aebbfd0c579670d058cada22",
+      "size": 336523,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:00.182431+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "85498afd2c4d41285aa21dfb8fe56fa7b5f075a68339a4cd30006309fd52ee49",
+      "size": 12250,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:00.839669+00:00"
+    },
+    "parquet/competition=Premier-League/season=2022/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "dc5b0ecac4d1e8b3aad5e36718634375ecfd62bb97df1c909dbe095fffd590d6",
+      "size": 15533,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:01.543739+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c2264dbf57541f60bd212304319b4b682f2d56884e0f1ba9f1b15748ea6e16ef",
+      "size": 12315,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:02.201848+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "df9b7c070308c90e0cca6fa8d727f8d9840223daa7f1c845d5b8ab99dc292d1a",
+      "size": 107040,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:02.969292+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "61a32953bdc128bee0410a6d850f53d53763ba27d4a01eabbf631ea279e2bce6",
+      "size": 82106,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:03.691009+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "dd49a271333ff6819291e643616ae5b2a42ee11f66fbec2d6703de0f7bb851a1",
+      "size": 72632,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:04.448247+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6d0eae08a5bb4c972f9ecb5431cc8f25d7299d543324f2f90db41f1ff55677b6",
+      "size": 47906,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:05.135628+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:05.924090+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3172d7a2090c8041f86ef5c1e8360056976b8600f9eff230b71272021cfc6404",
+      "size": 380051,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:06.697578+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6d05772c63d5be3c98dd6b309f96340e29fd3320dca603fe67922bb9bb3f004e",
+      "size": 12207,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:08.299090+00:00"
+    },
+    "parquet/competition=Premier-League/season=2023/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8a29c5e4e615974807cc23c8b07b4a648d94c0fd97b33f55442bda6f6dbe43f7",
+      "size": 15531,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:09.010404+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4894bbaa2bde226b3dfdc99a4d6354addd50b7e7406be71c74386a7d94f23ba4",
+      "size": 12315,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:09.656844+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7e35e497521d5c37f7abfd336d5229498f3287ca0dce0f36f0f78e4a693c5eed",
+      "size": 105916,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:10.352283+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2ee7d32b997e624d077d168339dba7d85497b272939c98d982e1b1b20d9333c0",
+      "size": 81209,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:11.094747+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "aa62c8c2a5508b8ec8e5aa587a50c90efc11bb78ae708b37ff5655160eda1180",
+      "size": 72259,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:11.763835+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d18da821cc5d58d6df272638e4c1370911072e3f4e22b05434ceaed171475654",
+      "size": 47476,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:12.469303+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:13.687605+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "00a40a915d3ef7e69245ddb553ab9a590c18966d60de7143ab0a10853c43710c",
+      "size": 420213,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:14.623224+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "fad344026493215da091019ea33d799005d1bc7056516ae1fea816f9a30b5623",
+      "size": 12149,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:15.297727+00:00"
+    },
+    "parquet/competition=Premier-League/season=2024/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d48e6b17d8e1562f818334ba40ea9829a33c6c0e65b598bcce98a34e710085e0",
+      "size": 15537,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:15.947816+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4433619fc8934cc21eb2364c5653830fcdcefc7c19f97ce637c4cee868737bef",
+      "size": 12315,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:16.774012+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "210c775511980b033e13d9ae5d7cb2bf1bb8e53e8645f36b917f77a23047e675",
+      "size": 105896,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:17.560140+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2b260344b89bcd5ac5008ec75f0ef71a87fa7f75ff46a8e45277f05044776e4f",
+      "size": 80324,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:18.281544+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9a4de916128ea4369106d95d6bff93c39462cc21065374c851810c7b2680d0ce",
+      "size": 70937,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:19.000208+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7d00e9bee086253090f7a1f31443b7db903b72ebf7b1506dd08d1925ec529c3b",
+      "size": 46475,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:19.670627+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:20.775901+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "08fbb481b83a466b8ce0f7a15ae5e01e525f024a0f99b789de3f2167f7d32e24",
+      "size": 270436,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:21.653855+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e83cd75dc1332974f82103bca473406c12872b1a4968a3c83c6adc0f70d1fb9c",
+      "size": 12234,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:22.863971+00:00"
+    },
+    "parquet/competition=Premier-League/season=2025/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9c164acd474898fcce1d8eaf9ddad8b463b684f3aea22d5b911c6c9732279f6a",
+      "size": 15540,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:23.852350+00:00"
+    },
+    "parquet/competition=Serie-A/season=2019/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4ad59a5d7e23e9b9c6c63868ddbcf7b7d865017d4842a7f71da9d22ca67ddf83",
+      "size": 12243,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:24.563056+00:00"
+    },
+    "parquet/competition=Serie-A/season=2019/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "bf1b1ea8764d2f5b64f66b809885f923ae866c370cb8fb1b64e14826b7e027d5",
+      "size": 106961,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:25.239035+00:00"
+    },
+    "parquet/competition=Serie-A/season=2019/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:25.966044+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d64ef4f92bfc34835c1c2365cc477df787227df67e53a7a8483d8186291f6ff3",
+      "size": 12241,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:26.682390+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e77930fb5de8e606dfadc7d514bac80982306c7309cb16199928d574ac74c037",
+      "size": 106900,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:27.728572+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6516b8cd587763933668d12c0ce2d838e5b93838953ac130015d18e7d77d0809",
+      "size": 79189,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:28.539591+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "645bbbdd81a5063ee41d987c502374fb159cd462dffd089d0cfe405387e693ed",
+      "size": 72017,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:29.244501+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f1eceed352ecd520539663a978a6d4cb9e2aaf8857197bed6aae2013adf2061",
+      "size": 46089,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:29.960965+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:30.635344+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "773c715956f14bbb8ac5c461aeeb4f7f30419a9bc574197d36844e07174bdd04",
+      "size": 336165,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:31.326289+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6fcc9f4df65b8e1dad768b96b638e980c2f6c868b90c2f257f65038bbbf7a107",
+      "size": 12180,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:32.051008+00:00"
+    },
+    "parquet/competition=Serie-A/season=2020/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4c0727126be915f6c5633084471aae6e21f6f296a21db3da96e819e29f9a31be",
+      "size": 15607,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:32.706316+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d50bd0293302b2c9370054078c146b43175582ca19eecc4ea0c9968baac67462",
+      "size": 12241,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:33.437971+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "253a3b63f52aa39079a454e13078c0ebf2fd533f0f0b12d6b9a40eff8d4c00ca",
+      "size": 108054,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:34.141635+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "480ba3cc913303343a123960dee0d4682ea87bf4f74f71aebd72fd6491747196",
+      "size": 80317,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:35.420393+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f9f558f6b1f2df920919364edf69f484d446e2fe2ca2a995cdd0aedca10c9508",
+      "size": 72006,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:36.086739+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "105ed3b2739b8674bd93cceb6ccae47572a3e8f1ca4bca791e10af1bf2445b99",
+      "size": 46379,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:36.876494+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:37.533508+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c49e46cc68226029fca59be7912e2579fee12c34caf32085b9fa1146a893b027",
+      "size": 337349,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:38.215604+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "bc2ebfb8b517c1483c566227e75adb73047f4115f4790f187fc755ae322ef53c",
+      "size": 12162,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:38.989955+00:00"
+    },
+    "parquet/competition=Serie-A/season=2021/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "04f7e6c25d78eb78d2e05a88480ff5ebe6862f526a5b7aed387b81bb21b17d41",
+      "size": 15629,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:39.639355+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "15f78adcaac22b4117092431a5669d844adf11e87d98ffe4e6d3570b9e52cc9a",
+      "size": 12241,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:40.309724+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "802b8099dac12f2d594a633a53fe32f49e774cc39b25ed03c85d361ab7e8a695",
+      "size": 108396,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:41.261100+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0a730c2795d77a0fdcc3ddf812125947b9a73815d1a19f562a045564b18a4fd0",
+      "size": 80761,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:42.062741+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b79e87f0315f08ddfe7cf49eaa7df1e512d65823c1489914383fa9d19fbf7612",
+      "size": 72110,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:42.746633+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e7a70335999b2599caf5e4ab65d540f93cd98d60c09e8de592c6fff85d7a2269",
+      "size": 45640,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:43.407907+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:44.070241+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e674d946d688039ed6ee4f64d0e4ec6d0e3c25dce8fc149393e5cb43d756bc36",
+      "size": 334869,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:44.865855+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f131e7e82e1011cb97e417676499db492c9d5326a317654d9cf30c9e1fadca6c",
+      "size": 12191,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:45.507426+00:00"
+    },
+    "parquet/competition=Serie-A/season=2022/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "454f66b4924e1214b02f459d90d6ac361b0869362a1d498ef99b58a746496398",
+      "size": 15664,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:46.446340+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7985561b2fd67184cada4e8a63d20633ea50584f0debd0883fdfb9774da13ccb",
+      "size": 12241,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:47.141201+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6da04038ef2c02fd8c3d44450a44e882d1b7ee9ce83bc1559f01d3a20f95d6e2",
+      "size": 108588,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:47.819785+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "086e8fa06d3bc23700988c438c55366c2b92d8f165fd02fad9da167cffa189ca",
+      "size": 81349,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:49.096916+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "99aa614c41d31ed84370c2f19f34ba370439da2ac8c668fb7ad92afff941cc3b",
+      "size": 72322,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:49.867972+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8c310356784e9b73e5bebea001ca3f33500d1e5f8725daabbdb54b5dfd8d450d",
+      "size": 47418,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:50.537161+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:51.194732+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "cf8304d93e54576f0c72cc4545ff2f2a636461ecaceadc834486722aa0fec826",
+      "size": 400263,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:52.273078+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1b04d6ef183e6e28cb9b9449ec8618771e7f2a323b13823bd17672ff46f00810",
+      "size": 12168,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:52.930694+00:00"
+    },
+    "parquet/competition=Serie-A/season=2023/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b958f9a6f136fe87b24539bb0accf1ce5252fa70d1210caf1bd1092f6fa2d430",
+      "size": 15626,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:53.614170+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9fea5e3131214b583b69a813f11aa9ba36f36c3c429bf8d7949a91d773655a72",
+      "size": 12241,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:54.309672+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "53e0a911e70e8f7c742eb9dbdd2558de917d053ee0e917697a742e76f5b1e39b",
+      "size": 107860,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:54.964217+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e01aaa5b1477ff5992f48751ed862bbb6ab46e5dee0b9d33c8574f1e1fe1d7e5",
+      "size": 81328,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:55.640153+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "51a31018c86161325c6f966febc77929558922b37919c0fc0c70fc12c4d366a0",
+      "size": 71868,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:56.308484+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "45e447eefccfda8871abd21027e6b7f0b1fad638f5de5c2eb92637ca2f0838dd",
+      "size": 47360,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:56.995312+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:57.660387+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "319d3f289c76febcf783de6d9ef808fa5f20f19b18653fb5fee10d5943537173",
+      "size": 399217,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:58.394322+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "60ceb884a6460d83eb5deb20e08bfcd1f64cebd96e1384c436d0194141735b36",
+      "size": 12179,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:59.179137+00:00"
+    },
+    "parquet/competition=Serie-A/season=2024/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0bf5859a48ffad127ca0330b41e5f5c93c65d11003bbc4a87acb55270ddecbfc",
+      "size": 15613,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:31:59.858179+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "64a8aa56c5faa1c2bd065d2a851c798af5d1b07b7cc5bc3a43ed87b042973930",
+      "size": 12241,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:00.751253+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "0dd9ae5026c3ccda3521e0a430568240fa8836e4a0ce4de18713cca43d939755",
+      "size": 109213,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:01.410733+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e6f4790e9c4a1ee36ddff49477027bc76162e8e4f0e224c02de986f18ddbfc96",
+      "size": 80449,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:02.061751+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9ab881582e428f5d528e2a60d6cbac7e95498b3b1209547110abec7704a8d914",
+      "size": 71031,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:02.784013+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=historical_market_totals/dataset_version=historical_market_totals_v1/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b5eb6a14837627bf77443fd1a5c6183b9347db3a83f3ca9b7057521975fc8661",
+      "size": 46502,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:03.622494+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:04.280013+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2a443363a2b4d122cfc07fcdf715fa0589d57c4b4c94e606f0e4f49b003c1f44",
+      "size": 320143,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:05.038537+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "8b7bb6368402c68c92164cbcc1cf642ed4a526f57370bb673d58f866dcec2b05",
+      "size": 12170,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:05.712335+00:00"
+    },
+    "parquet/competition=Serie-A/season=2025/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f7c0cbda650b4040e779dab9d95385ce433c8be464e1c65d3d3facd9df915c54",
+      "size": 15609,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:06.439262+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2019/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9f8dbdb74473bad0749559395b4b17ddf94ddc95372eb410ca202cd79feb606d",
+      "size": 12119,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:07.157061+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2019/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "07a015850d7959089e14103f5732627d278d468a0b60307fbacfcad80a22c98a",
+      "size": 68653,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:07.846031+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2019/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:08.533713+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2020/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b377d6c0f7a8f36cc134c22497c6168983f6a2359a6d683ed7dd8c9a644b9159",
+      "size": 12116,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:09.665291+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "3cb1eebc189da178255c0acaa174b847757e585db605c4743fa8aeeded10a486",
+      "size": 59944,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:10.667758+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2020/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:11.390998+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2020/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "c3debd0dbfa65d94dd6e29b4f61d94c2f84879127ab0901fe09d2e1fe0f5aef3",
+      "size": 830518,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:12.284677+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2020/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "bed82fe218e7ccb273b602d593d549bda348faac74f502aa27df0e751758f6ad",
+      "size": 13339,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:13.034057+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2020/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "035cd8d2305287849d946424ab3d2e30be49471f4deba2b55cef3858978f9a15",
+      "size": 29932,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:13.679347+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2021/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2f851fcd7ead91834d33c6b9a8282c9921187b871b5a1d215ba9309823a50027",
+      "size": 12114,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:14.420783+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2021/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "1c89d3bb9ea0b480bf2d5d88442fa7e8d0383724eb4c79cbf085c0152f296d46",
+      "size": 69711,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:15.142477+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2021/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:16.078021+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2021/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ac89ddc79e82b97894b9e0990f7b185f5009b3251e674d18e33877c160249c1e",
+      "size": 901601,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:16.878734+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2021/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e9fadcc434e1f198766dd315bad368619303b63465d1896b6a3f52cbd4649413",
+      "size": 13098,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:17.530384+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2021/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "cec62172a206bc47330f3a815e79cd45c00da9e90c1f0b556a0a9dfa865f4221",
+      "size": 30173,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:18.590038+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2022/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "342cf1a8811c149a36d63deb3424a617ea7bde9da89a314f305181b5ca7ecd49",
+      "size": 12115,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:19.747575+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2022/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d7d45aac00649325f8897a80ec77cb2ae19bfdd88b5384f6ebd084544a3cc559",
+      "size": 69618,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:20.493302+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2022/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:32:21.582643+00:00"
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-26T13:06:28.600052+00:00"
+  "updated_at": "2026-07-26T13:32:21.582659+00:00"
 }
