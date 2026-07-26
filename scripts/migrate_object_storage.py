@@ -14,11 +14,15 @@ def main() -> None:
     parser.add_argument("--state", type=Path, default=Path("data/historical"))
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--max-files", type=int, default=25)
+    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--start-after")
     args = parser.parse_args()
     report = run_migration(
         state=args.state,
         execute=args.execute,
         max_files=args.max_files,
+        resume=args.resume,
+        start_after=args.start_after,
     )
     print(json.dumps(report, sort_keys=True))
 

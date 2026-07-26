@@ -9,6 +9,14 @@ on:
       max_files:
         type: number
         default: 25
+      resume:
+        description: "Reprendre depuis le checkpoint durable"
+        type: boolean
+        default: false
+      start_after:
+        description: "Clé exacte après laquelle reprendre (optionnel)"
+        type: string
+        default: ""
 permissions:
   contents: write
 concurrency:
@@ -34,11 +42,22 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ inputs.execute && secrets.R2_ACCESS_KEY_ID || '' }}
           R2_SECRET_ACCESS_KEY: ${{ inputs.execute && secrets.R2_SECRET_ACCESS_KEY || '' }}
           R2_BUCKET_NAME: ${{ inputs.execute && secrets.R2_BUCKET_NAME || '' }}
-        run: >-
-          python scripts/migrate_object_storage.py
-          --state data/historical
-          --max-files "${{ inputs.max_files }}"
-          ${{ inputs.execute && '--execute' || '' }}
+          R2_MIGRATION_START_AFTER: ${{ inputs.start_after }}
+        run: |
+          args=(
+            --state data/historical
+            --max-files "${{ inputs.max_files }}"
+          )
+          if [ "${{ inputs.resume }}" = "true" ]; then
+            args+=(--resume)
+          fi
+          if [ -n "$R2_MIGRATION_START_AFTER" ]; then
+            args+=(--start-after "$R2_MIGRATION_START_AFTER")
+          fi
+          if [ "${{ inputs.execute }}" = "true" ]; then
+            args+=(--execute)
+          fi
+          python scripts/migrate_object_storage.py "${args[@]}"
       - uses: ./.github/actions/historical-state-persist
         with:
           run-id: ${{ github.run_id }}

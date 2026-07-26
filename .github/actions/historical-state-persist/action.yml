@@ -8,6 +8,30 @@ inputs:
     required: false
     default: ""
     description: "Connexion PostgreSQL optionnelle"
+  r2-account-id:
+    required: false
+    default: ""
+    description: "Compte Cloudflare R2"
+  r2-access-key-id:
+    required: false
+    default: ""
+    description: "Identifiant du jeton R2"
+  r2-secret-access-key:
+    required: false
+    default: ""
+    description: "Secret du jeton R2"
+  r2-bucket-name:
+    required: false
+    default: ""
+    description: "Bucket miroir R2"
+  r2-replication-max-files:
+    required: false
+    default: "500"
+    description: "Delta maximal répliqué par persistance"
+  r2-replication-enabled:
+    required: false
+    default: "false"
+    description: "Activer le miroir incrémental après la persistance Git"
 runs:
   using: composite
   steps:
@@ -44,6 +68,64 @@ runs:
             git rebase origin/historical-data
           done
         fi
+    - name: Répliquer le delta historique vers R2
+      id: r2_replication
+      if: >-
+        inputs.r2-replication-enabled == 'true' &&
+        inputs.r2-account-id != '' &&
+        inputs.r2-access-key-id != '' &&
+        inputs.r2-secret-access-key != '' &&
+        inputs.r2-bucket-name != ''
+      continue-on-error: true
+      shell: bash
+      env:
+        R2_ACCOUNT_ID: ${{ inputs.r2-account-id }}
+        R2_ACCESS_KEY_ID: ${{ inputs.r2-access-key-id }}
+        R2_SECRET_ACCESS_KEY: ${{ inputs.r2-secret-access-key }}
+        R2_BUCKET_NAME: ${{ inputs.r2-bucket-name }}
+      run: >-
+        python scripts/replicate_object_storage.py
+        --state data/historical
+        --max-files "${{ inputs.r2-replication-max-files }}"
+        --max-retries 2
+        --circuit-breaker-failures 3
+    - name: Publier l'accusé R2 durable
+      if: >-
+        always() &&
+        inputs.r2-replication-enabled == 'true' &&
+        inputs.r2-account-id != '' &&
+        inputs.r2-access-key-id != '' &&
+        inputs.r2-secret-access-key != '' &&
+        inputs.r2-bucket-name != ''
+      shell: bash
+      run: |
+        python scripts/manage_historical_state.py append \
+          --state data/historical \
+          --registry .historical-registry
+        python scripts/manage_historical_state.py verify \
+          --registry .historical-registry
+        cd .historical-registry
+        git add -A historical/storage historical/manifest.json
+        if ! git diff --cached --quiet; then
+          git commit -m "historical: acknowledge R2 run ${{ inputs.run-id }}"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:historical-data; then
+              break
+            fi
+            if [ "$attempt" = "3" ]; then
+              echo "::error::accusé R2 non publié après 3 essais"
+              exit 1
+            fi
+            git fetch origin historical-data
+            git rebase origin/historical-data
+          done
+        fi
+    - name: Signaler un replay R2 nécessaire
+      if: steps.r2_replication.outcome == 'failure'
+      shell: bash
+      run: >-
+        echo "::warning::R2 indisponible ou circuit ouvert ; historical-data
+        reste la source principale et le lag durable sera rejoué."
     - name: Synchroniser PostgreSQL
       id: postgresql
       if: inputs.database-url != ''

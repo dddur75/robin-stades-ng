@@ -7,6 +7,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import pytest
 import yaml
 from botocore.exceptions import ClientError
@@ -18,9 +19,12 @@ from robin.historical.critical_closure import (
 )
 from robin.historical.object_storage_migration import (
     create_r2_client,
+    run_continuous_replication,
     run_migration,
     source_snapshot,
 )
+from robin.historical.object_storage_restore import run_representative_restore
+from robin.historical.storage import HistoricalBundleStore
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -69,6 +73,19 @@ class FakeS3:
         if self.missing_after_put or Key not in self.objects:
             raise client_error("NoSuchKey", "GetObject")
         return {"Body": BytesIO(self.objects[Key])}
+
+
+class FlakyS3(FakeS3):
+    def __init__(self, failures: int, code: str = "503") -> None:
+        super().__init__()
+        self.failures = failures
+        self.code = code
+
+    def head_object(self, *, Bucket: str, Key: str) -> dict[str, object]:
+        if self.failures > 0:
+            self.failures -= 1
+            raise client_error(self.code)
+        return super().head_object(Bucket=Bucket, Key=Key)
 
 
 def factory(client: FakeS3) -> Any:
@@ -348,6 +365,182 @@ def test_progression_cumulative_de_25_a_250(tmp_path: Path) -> None:
     assert report["complete"] is False
 
 
+def test_migration_segmentee_reprend_sans_retraiter_les_premiers_fichiers(
+    tmp_path: Path,
+) -> None:
+    write_files(tmp_path, 5)
+    client = FakeS3()
+
+    first = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=2,
+        resume=True,
+        environment={},
+        client_factory=factory(client),
+    )
+    second = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=2,
+        resume=True,
+        environment={},
+        client_factory=factory(client),
+    )
+    third = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=2,
+        resume=True,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    assert first["selection_start_index"] == 0
+    assert first["selection_end_index"] == 2
+    assert second["selection_start_index"] == 2
+    assert second["selection_end_index"] == 4
+    assert second["uploaded"] == 2
+    assert second["replayed"] == 0
+    assert third["selection_start_index"] == 4
+    assert third["uploaded"] == 1
+    assert third["verified"] == 5
+    assert third["pending"] == 0
+    assert third["complete"] is True
+    assert client.put_calls == 5
+
+    checkpoint = yaml.safe_load(
+        (tmp_path / "storage" / "r2-migration-checkpoint.json").read_text("utf-8")
+    )
+    assert checkpoint["next_index"] == 5
+    assert checkpoint["status"] == "COMPLETE"
+    index = yaml.safe_load(
+        (tmp_path / "storage" / "r2-object-index.json").read_text("utf-8")
+    )
+    assert len(index["objects"]) == 5
+    assert {entry["status"] for entry in index["objects"].values()} == {"verified"}
+
+
+def test_replication_continue_envoie_uniquement_le_delta(tmp_path: Path) -> None:
+    write_files(tmp_path, 3)
+    client = FakeS3()
+    run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=1,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    report = run_continuous_replication(
+        state=tmp_path,
+        max_files=10,
+        environment={},
+        client_factory=factory(client),
+        retry_sleep=lambda seconds: None,
+    )
+
+    assert report["expected_objects"] == 3
+    assert report["selected_files"] == 2
+    assert report["uploaded"] == 2
+    assert report["replayed"] == 0
+    assert report["remote_verified"] == 2
+    assert report["verified_objects"] == 3
+    assert report["lag_objects"] == 0
+    assert report["status"] == "SYNCED"
+    assert report["source_preserved"] is True
+
+
+def test_replication_continue_retry_borne_et_circuit_breaker(tmp_path: Path) -> None:
+    write_files(tmp_path, 3)
+    recovering = FlakyS3(1)
+
+    recovered = run_continuous_replication(
+        state=tmp_path,
+        max_files=1,
+        max_retries=2,
+        environment={},
+        client_factory=factory(recovering),
+        retry_sleep=lambda seconds: None,
+    )
+
+    assert recovered["retry_count"] == 1
+    assert recovered["uploaded"] == 1
+    assert recovered["errors"] == 0
+    assert recovered["circuit_breaker"] == "CLOSED"
+
+    blocked_root = tmp_path / "blocked"
+    write_files(blocked_root, 3)
+    blocked = FlakyS3(20)
+    report = run_continuous_replication(
+        state=blocked_root,
+        max_files=3,
+        max_retries=0,
+        circuit_breaker_failures=2,
+        environment={},
+        client_factory=factory(blocked),
+        retry_sleep=lambda seconds: None,
+    )
+
+    assert report["errors"] == 2
+    assert report["remote_verified"] == 0
+    assert report["circuit_breaker"] == "OPEN"
+    assert report["status"] == "CIRCUIT_OPEN"
+    assert report["lag_objects"] == 3
+
+
+def test_restauration_r2_representative_est_isolee_et_rejouable(
+    tmp_path: Path,
+) -> None:
+    state = tmp_path / "state"
+    json_path = state / "raw" / "sample.json"
+    csv_path = state / "tables" / "sample.csv"
+    parquet_path = state / "parquet" / "sample.parquet"
+    checkpoint_path = state / "checkpoints" / "backfill-checkpoint.json"
+    for path in (json_path, csv_path, parquet_path, checkpoint_path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text('{"ok": true}', encoding="utf-8")
+    csv_path.write_text("id,value\n1,ok\n", encoding="utf-8")
+    pd.DataFrame(
+        [
+            {"id": 1, "_record_hash": "hash-1"},
+            {"id": 2, "_record_hash": "hash-2"},
+        ]
+    ).to_parquet(parquet_path, index=False)
+    checkpoint_path.write_text('{"cursor": 2}', encoding="utf-8")
+    HistoricalBundleStore(state).create_bundle(
+        [json_path],
+        run_id="restore-test",
+        competition="multi",
+        season=0,
+        endpoint="sample",
+    )
+    client = FakeS3()
+    destination = tmp_path / "restored"
+
+    report = run_representative_restore(
+        state=state,
+        destination=destination,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    assert report["status"] == "RESTORE_VERIFIED"
+    assert report["uploaded"] == report["selected_files"]
+    assert report["remote_verified"] == report["selected_files"]
+    assert report["restored_files"] == report["selected_files"]
+    assert report["hash_mismatches"] == 0
+    assert report["size_mismatches"] == 0
+    assert report["data_loss"] == 0
+    assert report["business_duplicates"] == 0
+    assert report["parquet_readable"] == 1
+    assert report["bundle_replay_files"] == 1
+    assert report["registry_verified"] is True
+    assert report["provider_calls"] == 0
+    assert report["source_mutations"] == 0
+    assert report["deletions"] == 0
+
+
 def test_lot_superieur_au_perimetre_produit_une_preuve_complete(tmp_path: Path) -> None:
     write_files(tmp_path, 3)
     client = FakeS3()
@@ -412,3 +605,30 @@ def test_workflow_22_valide_yaml_et_exclusivite_des_modes() -> None:
     assert "timeout-minutes: 120" in text
     assert "API_FOOTBALL_KEY" not in text
     assert "ODDS_API_KEY" not in text
+
+
+def test_persistances_historiques_activent_le_delta_r2_sans_bloquer_git() -> None:
+    action = (
+        ROOT / ".github" / "actions" / "historical-state-persist" / "action.yml"
+    ).read_text("utf-8")
+    assert yaml.safe_load(action)
+    assert "scripts/replicate_object_storage.py" in action
+    assert "continue-on-error: true" in action
+    assert "Signaler un replay R2 nécessaire" in action
+    assert "r2-replication-enabled" in action
+
+    excluded = {
+        "historical-quality.yml",
+        "object-storage-migration.yml",
+        "object-storage-restore.yml",
+    }
+    for workflow in (ROOT / ".github" / "workflows").glob("*.yml"):
+        text = workflow.read_text("utf-8")
+        if "uses: ./.github/actions/historical-state-persist" not in text:
+            continue
+        if workflow.name in excluded:
+            assert "r2-replication-enabled: \"true\"" not in text
+            continue
+        assert "r2-replication-enabled: \"true\"" in text, workflow.name
+        assert "r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}" in text
+        assert "r2-bucket-name: ${{ secrets.R2_BUCKET_NAME }}" in text
