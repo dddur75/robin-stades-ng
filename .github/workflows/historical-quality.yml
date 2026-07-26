@@ -114,11 +114,52 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ inputs.execute_object_storage_migration && secrets.R2_ACCESS_KEY_ID || '' }}
           R2_SECRET_ACCESS_KEY: ${{ inputs.execute_object_storage_migration && secrets.R2_SECRET_ACCESS_KEY || '' }}
           R2_BUCKET_NAME: ${{ inputs.execute_object_storage_migration && secrets.R2_BUCKET_NAME || '' }}
-        run: >-
-          python scripts/migrate_object_storage.py
-          --state data/historical
-          --max-files "${{ inputs.object_storage_max_files }}"
-          ${{ inputs.execute_object_storage_migration && '--execute' || '' }}
+        run: |
+          requested="${{ inputs.object_storage_max_files }}"
+          if [ "$requested" -eq 0 ]; then
+            if [ "${{ inputs.execute_object_storage_migration }}" != "true" ]; then
+              echo "::error::La restauration R2 exige execute=true"
+              exit 1
+            fi
+            restore_root="$(mktemp -d)"
+            python scripts/restore_object_storage.py \
+              --state data/historical \
+              --destination "$restore_root"
+            exit 0
+          fi
+
+          args=(--state data/historical)
+          if [ "${{ inputs.execute_object_storage_migration }}" = "true" ]; then
+            args+=(--execute)
+          fi
+          if [ "$requested" -gt 0 ] && [ "$requested" -le 250 ]; then
+            python scripts/migrate_object_storage.py \
+              "${args[@]}" --max-files "$requested"
+            exit 0
+          fi
+
+          audit=false
+          if [ "$requested" -lt 0 ]; then
+            audit=true
+            requested=$((-requested))
+          fi
+          remaining="$requested"
+          while [ "$remaining" -gt 0 ]; do
+            batch=1000
+            if [ "$remaining" -lt "$batch" ]; then
+              batch="$remaining"
+            fi
+            batch_args=("${args[@]}" --max-files "$batch" --resume)
+            if [ "$audit" = "true" ]; then
+              batch_args+=(--audit)
+            fi
+            python scripts/migrate_object_storage.py "${batch_args[@]}"
+            remaining=$((remaining-batch))
+            complete="$(python -c "import json; print(str(json.load(open('data/historical/storage/r2-migration-latest.json'))['complete']).lower())")"
+            if [ "$complete" = "true" ]; then
+              break
+            fi
+          done
       - uses: ./.github/actions/historical-state-persist
         if: >-
           github.event_name != 'workflow_dispatch' ||

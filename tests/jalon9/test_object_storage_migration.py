@@ -778,6 +778,11 @@ def test_workflow_22_valide_yaml_et_exclusivite_des_modes() -> None:
     assert "region_name" not in text
     assert "historical-state-restore" in text
     assert "scripts/migrate_object_storage.py" in text
+    assert "scripts/restore_object_storage.py" in text
+    assert 'if [ "$requested" -eq 0 ]' in text
+    assert 'if [ "$requested" -lt 0 ]' in text
+    assert "batch_args+=(--audit)" in text
+    assert "batch_args=(\"${args[@]}\" --max-files \"$batch\" --resume)" in text
     assert "historical-state-persist" in text
     assert "continue-on-error: true" in text
     assert "steps.object_storage_migration.outcome == 'failure'" in text
