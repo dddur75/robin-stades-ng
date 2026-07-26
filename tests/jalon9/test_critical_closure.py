@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from botocore.exceptions import ClientError
 
 from robin.historical.critical_closure import (
     FootballDataFile,
@@ -335,7 +336,10 @@ class FakeS3:
 
     def head_object(self, *, Bucket: str, Key: str) -> dict[str, object]:
         if Key not in self.objects:
-            raise FileNotFoundError(Key)
+            raise ClientError(
+                {"Error": {"Code": "404", "Message": "Not Found"}},
+                "HeadObject",
+            )
         return {"Metadata": self.metadata[Key]}
 
     def put_object(

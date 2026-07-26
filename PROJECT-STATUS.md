@@ -1,8 +1,8 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-25
+Dernière mise à jour : 2026-07-26
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-8-external-validation`
+Branche : `codex/jalon-9-market-player-storage`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -41,7 +41,7 @@ Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 | 6 — dataset et Player Feature Factory | `VERIFIED` | PR #9 fusionnée |
 | 7 — Scientific Model Arena | `VERIFIED` | PR #10 fusionnée |
 | 8 — validation externe | `WAITING_FOR_EXTERNAL_GATES` | `docs/audits/JALON-8-REPORT.md` |
-| 9 | `NOT_STARTED` | hors périmètre |
+| 9 | `PRE_MERGE_R2_VALIDATION` | PR #12 |
 
 ## Preuves Jalon 4
 
@@ -220,3 +220,17 @@ La preuve durable `historical-data@518cb4b` mesure 474,1 MB, 894,1 MB de
 projection centrale et 939,1 MB de projection haute :
 `OBJECT_STORAGE_REQUIRED`. P3/P4 sont suspendus; les gates critiques restent
 autorisés.
+
+### Correctif pré-migration R2
+
+Le workflow existant `22 - Qualité historique` expose désormais un mode
+pré-fusion exclusif pour la migration R2 sur la branche de la PR #12. Il
+restaure et persiste `historical-state`, accepte un dry-run sans secret, puis
+des lots cumulatifs de 25, 250 et du périmètre complet.
+
+La preuve exige une lecture distante après chaque upload et chaque replay,
+vérifie SHA-256 et taille, exclut ses propres rapports, conserve toutes les
+sources et ne fournit aucune suppression. Le client utilise la région `auto`
+et l'endpoint Cloudflare R2 global. La migration réelle reste à exécuter par
+l'utilisateur avant fusion. `PRODUCTION_LOCKED`, `REAL_BETS = false` et
+`NO_BET_DEFAULT = true`.

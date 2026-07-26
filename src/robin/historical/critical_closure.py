@@ -17,6 +17,7 @@ from typing import Any, Protocol, cast
 
 import pandas as pd
 import requests
+from botocore.exceptions import ClientError  # type: ignore[import-untyped]
 
 from robin.historical.readiness import observation_dimensions
 from robin.historical.storage import (
@@ -894,6 +895,33 @@ class S3CompatibleClient(Protocol):
     def get_object(self, *, Bucket: str, Key: str) -> Mapping[str, object]: ...
 
 
+class ObjectStorageIntegrityError(RuntimeError):
+    """Erreur d'intégrité distante avec compteurs exploitables par la migration."""
+
+    def __init__(
+        self,
+        code: str,
+        *,
+        key: str,
+        hash_mismatch: bool = False,
+        size_mismatch: bool = False,
+        missing_remote_object: bool = False,
+    ) -> None:
+        super().__init__(f"{code}:{key}")
+        self.code = code
+        self.key = key
+        self.hash_mismatch = hash_mismatch
+        self.size_mismatch = size_mismatch
+        self.missing_remote_object = missing_remote_object
+
+
+def _is_missing_s3_object(error: ClientError) -> bool:
+    details = error.response.get("Error", {})
+    if not isinstance(details, Mapping):
+        return False
+    return str(details.get("Code", "")) in {"404", "NoSuchKey", "NotFound"}
+
+
 class ObjectStorageAdapter:
     """Adaptateur privé S3/R2: écritures idempotentes, aucune suppression."""
 
@@ -907,20 +935,69 @@ class ObjectStorageAdapter:
         digest = _sha256(payload)
         try:
             existing = self.client.head_object(Bucket=self.bucket, Key=key)
+        except ClientError as error:
+            if not _is_missing_s3_object(error):
+                raise
+            existing = {}
         except (KeyError, FileNotFoundError):
             existing = {}
         metadata = existing.get("Metadata", {})
         if isinstance(metadata, Mapping) and metadata.get("sha256") == digest:
-            return {"key": key, "sha256": digest, "uploaded": False}
+            verification = self._verify_remote(key, payload)
+            return {
+                "key": key,
+                "sha256": digest,
+                "size": len(payload),
+                "uploaded": False,
+                "remote_verified": True,
+                **verification,
+            }
         self.client.put_object(
             Bucket=self.bucket,
             Key=key,
             Body=payload,
             Metadata={"sha256": digest},
         )
-        if self.download(key) != payload:
-            raise RuntimeError("OBJECT_STORAGE_HASH_MISMATCH")
-        return {"key": key, "sha256": digest, "uploaded": True}
+        verification = self._verify_remote(key, payload)
+        return {
+            "key": key,
+            "sha256": digest,
+            "size": len(payload),
+            "uploaded": True,
+            "remote_verified": True,
+            **verification,
+        }
+
+    def _verify_remote(self, key: str, expected: bytes) -> dict[str, object]:
+        try:
+            remote = self.download(key)
+        except ClientError as error:
+            if _is_missing_s3_object(error):
+                raise ObjectStorageIntegrityError(
+                    "OBJECT_STORAGE_REMOTE_MISSING",
+                    key=key,
+                    missing_remote_object=True,
+                ) from error
+            raise
+        expected_hash = _sha256(expected)
+        remote_hash = _sha256(remote)
+        size_mismatch = len(remote) != len(expected)
+        hash_mismatch = remote_hash != expected_hash
+        if hash_mismatch or size_mismatch:
+            code = (
+                "OBJECT_STORAGE_HASH_AND_SIZE_MISMATCH"
+                if hash_mismatch and size_mismatch
+                else "OBJECT_STORAGE_HASH_MISMATCH"
+                if hash_mismatch
+                else "OBJECT_STORAGE_SIZE_MISMATCH"
+            )
+            raise ObjectStorageIntegrityError(
+                code,
+                key=key,
+                hash_mismatch=hash_mismatch,
+                size_mismatch=size_mismatch,
+            )
+        return {"remote_sha256": remote_hash, "remote_size": len(remote)}
 
     def download(self, key: str) -> bytes:
         response = self.client.get_object(Bucket=self.bucket, Key=key)
