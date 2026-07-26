@@ -18,7 +18,7 @@
   "feature_versions": [
     "TEAM_FEATURES_V1"
   ],
-  "generated_at": "2026-07-26T09:54:49.991439+00:00",
+  "generated_at": "2026-07-26T11:02:48.607291+00:00",
   "hashes": {
     "datasets": {
       "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
@@ -29,7 +29,7 @@
   },
   "model_versions": [],
   "package": "PRESEASON_SHADOW_PACKAGE_V1",
-  "package_hash": "b9b9e3cfcf07853fc7029a55a8d37e6f9590b50e71e5166ef8ef5bb17b838f94",
+  "package_hash": "1ca2b415529a1cb6d4f2ea684eca953185424ff90bcd21c1516e05dc59f29458",
   "production_status": "PRODUCTION_LOCKED",
   "quality_gates": [
     "TEAM_GATE",
