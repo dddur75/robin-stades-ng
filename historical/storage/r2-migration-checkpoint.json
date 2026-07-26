@@ -1,13 +1,13 @@
 {
   "bootstrapped_from_index": 324,
   "failed": 0,
-  "last_key": "raw/observations/2026/07/25/bbf8a663-9105-4fdd-854c-64fac85eb414.json",
-  "next_index": 10324,
+  "last_key": "raw/payloads/2e/2e1f6a6822d18d543491030776103e7dd7904a013e6c29a8d669ede295c5ff26.bin.gz",
+  "next_index": 15324,
   "replayed": 448,
   "schema_version": "r2-migration-checkpoint-v1",
   "scope_hash": "8687a80087576711e309d01a2a9758937b78fc914660c6db77c838ae59754b7f",
   "status": "IN_PROGRESS",
-  "updated_at": "2026-07-26T17:27:02.046495+00:00",
-  "uploaded": 9552,
-  "verified": 10347
+  "updated_at": "2026-07-26T19:15:23.540801+00:00",
+  "uploaded": 14552,
+  "verified": 15347
 }
