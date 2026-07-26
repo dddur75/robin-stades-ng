@@ -106,7 +106,7 @@ jobs:
           --endpoint "${{ inputs.endpoint }}"
           --priority "${{ inputs.priority }}"
       - name: Rattacher les lignes aux payloads bruts sans fournisseur
-        if: github.event_name != 'push' && inputs.pilot != true && inputs.dry_run != true
+        if: github.event_name != 'push' && inputs.pilot != true
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"

@@ -488,6 +488,13 @@ def test_workflows_isolent_live_et_historique_et_retry_git_est_borne() -> None:
         root / ".github" / "workflows" / "cockpit-refresh.yml"
     ).read_text("utf-8")
     assert "repair-provenance" in backfill
+    assert (
+        "if: github.event_name != 'push' && inputs.pilot != true\n"
+        "        run: >-\n"
+        "          python scripts/run_historical_pipeline.py\n"
+        '          --run-id "${{ github.run_id }}"\n'
+        "          repair-provenance"
+    ) in backfill
     assert "repair-provenance" in quality
     assert "COCKPIT_BUILD_SUCCESS" in cockpit
     assert "COCKPIT_ARTIFACT_PUBLISHED" in cockpit
