@@ -840,6 +840,27 @@
       "status": "verified",
       "verified_at": "2026-07-26T13:25:44.750634+00:00"
     },
+    "bundles/30204422350/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:11.470888+00:00"
+    },
+    "bundles/30204422350/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "ed68758f62119b1b3af4f2a8d52470cc70a11a021928ca6c2ef02c64d5bc1ce4",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:12.450243+00:00"
+    },
+    "bundles/30204422350/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "ab8842d91c1c8e485671c76563c236f0e32b8acb4f281457c971be3a8ad840ee",
+      "size": 20991689,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:16.204917+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -2312,10 +2333,10 @@
     },
     "forecasts/accelerated-safe.json": {
       "last_action": "uploaded",
-      "sha256": "5ddf09368715c1a3d6ebb2959f0ddd4269b668d024d3c2cd70437e5def8f93c4",
+      "sha256": "a377a6f3a185ee0eb1fc3e9a7713bc65d1d17847f8cdf08734c3aca23d1f3a7b",
       "size": 8398,
       "status": "verified",
-      "verified_at": "2026-07-26T13:26:43.492620+00:00"
+      "verified_at": "2026-07-26T13:42:17.135459+00:00"
     },
     "identity/team-alias-registry-v1.json": {
       "last_action": "uploaded",
@@ -5256,8 +5277,358 @@
       "size": 636,
       "status": "verified",
       "verified_at": "2026-07-26T13:32:21.582643+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2022/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2271af134164d488f0c1fc55f394075de33e390f8cf3c793a3a05f3bd464d589",
+      "size": 855693,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:18.511404+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2022/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "ecad73911fec445ef7abb9e7645c7b8e7bd1f70df2725e908b7b77351863e854",
+      "size": 13288,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:19.895334+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2022/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "2dbfe007e2d22035937447ab9b183dfe494ce995951b70761a163fed03953a24",
+      "size": 29710,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:20.968946+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2023/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e177fcfefdcd65f33f68b0e26eed76acb2e71b645bf4e55372f9ab8d0f97e826",
+      "size": 12115,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:22.079251+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2023/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "9dae27a0b2a515eaa93d96f86626e8c6b0081fae9af0345331f20c7d2cdab016",
+      "size": 69926,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:23.413006+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2023/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:24.837897+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2023/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "7be6b28a7cc2eac18e10d8e8a14140772915ea5b9a15f4789440006898bc6536",
+      "size": 873459,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:25.783801+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2023/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4bf0680e9efae8bac6aeeceeb80878287d00ca4540c1c8212a042c25c5057768",
+      "size": 13362,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:26.611858+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2023/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e52337b8e8ecf6a166fef3e370541c3064e82837e68e0fbc367a32022fbef982",
+      "size": 29671,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:27.498586+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2024/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4dbdd482cff37a4d92e7331c3b3139cb22da3e3331df6d286af451969304f7c0",
+      "size": 12116,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:28.392476+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2024/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "500172e8a07c19fff09acc7b51a145b0960714c8723a509a328429f65f272682",
+      "size": 86542,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:29.556263+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2024/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:30.446027+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2024/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "00d15ef882f644836861d8db43093014251aea75a85a01c2a7247115ac0d09ac",
+      "size": 964247,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:32.099162+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2024/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "575f94c0502daaf61b60eeb58794fc770a9c01de9c0575b287f7de83f9fd36c6",
+      "size": 13406,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:33.291292+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2024/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b0c28708ced8e751d332ef45af64c41e71cd85bc39abe8195e7b5a50c3bdb551",
+      "size": 30341,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:34.128496+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2025/entity_type=competitions/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "e51ebcfc76083c66b0f9ff5a6de3adc09ed585552359d6174ca2cc709649fd7a",
+      "size": 12116,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:35.229680+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2025/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "6de47888afcf843afd3c7fd6f6b364d7621ddb7beeb0c8fdbd90f921caea0ce9",
+      "size": 85548,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:36.487920+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2025/entity_type=injuries/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "4f2104c0ab435e42cc5194c124be60dc6b9ab89095f4647767d644264f776b7b",
+      "size": 636,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:37.839030+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2025/entity_type=players/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "f77ad51d3bd989a659373518969efdee844e22bafb247509eb695b5e5f87a7f3",
+      "size": 597955,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:39.435226+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2025/entity_type=standings_snapshots/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "51faf095c5ea5927d31f60c7c12b24ee1e4e0fd4319d261f80bee659ad5d2932",
+      "size": 13429,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:40.326714+00:00"
+    },
+    "parquet/competition=UEFA-Champions-League/season=2025/entity_type=teams/dataset_version=api-football-v3/part-00000.parquet": {
+      "last_action": "uploaded",
+      "sha256": "b8d57acda3e0c5bfbbe07471ad485d5bef409168fe389f169a97ae06068d847e",
+      "size": 30678,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:41.545573+00:00"
+    },
+    "proofs/api-football-live.json": {
+      "last_action": "uploaded",
+      "sha256": "69f61238eed886d9166bf96875c00c66ee72bfbd046642e8777da6f37ba18bc0",
+      "size": 861,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:42.651653+00:00"
+    },
+    "proofs/authentication.json": {
+      "last_action": "uploaded",
+      "sha256": "2e3039e538d250316cb59bd62a30d4d501c01f07ab1d08ff617b7ee7bf9c0300",
+      "size": 556,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:43.563368+00:00"
+    },
+    "proofs/pilot-replay.json": {
+      "last_action": "uploaded",
+      "sha256": "aa613f71d589b0b61d9a3e3e624a0d04361a2ebd80b14cf3e1808296addbe338",
+      "size": 309,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:44.420038+00:00"
+    },
+    "proofs/postgresql.json": {
+      "last_action": "uploaded",
+      "sha256": "3ead1ee76d056bdd8c964015b4803241a3120360793070471ffd4b97c5ebc009",
+      "size": 432,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:45.267387+00:00"
+    },
+    "quality/latest.json": {
+      "last_action": "uploaded",
+      "sha256": "4f92fdfc81210ed4431b3d136711bf721eb4b3fe493ded2a29b47fe765f1f203",
+      "size": 1274,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:46.421714+00:00"
+    },
+    "quality/provenance-repair.json": {
+      "last_action": "uploaded",
+      "sha256": "58db2aa848e0a1fca89e0fc05485929f7418634631bc4e7ba4740a018d0d57a8",
+      "size": 166,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:47.592595+00:00"
+    },
+    "readiness/ligue1-multiseason-v1.json": {
+      "last_action": "uploaded",
+      "sha256": "551816f773473d244b68232be1885ef4d6828968ff362c348880ccd85733f3f9",
+      "size": 31722,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:48.752738+00:00"
+    },
+    "reports/ligue1-multiseason-readiness.md": {
+      "last_action": "uploaded",
+      "sha256": "55d6933c6e7a31c44f7ce56a859c57952f22e40794053f0c4469a5e78faee824",
+      "size": 1537,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:49.934165+00:00"
+    },
+    "runs/pilot-ligue-1-2025.json": {
+      "last_action": "uploaded",
+      "sha256": "23772f2a84563f4b9e81577e634b056c7f6fcc367e8389e08200ca35cedc698d",
+      "size": 816893,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:50.971148+00:00"
+    },
+    "storage/latest-compaction.json": {
+      "last_action": "uploaded",
+      "sha256": "fea505768649da5ef099739bb6ceccb0d29c2bddeba340fcf7f7efa8599331ca",
+      "size": 677,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:52.178214+00:00"
+    },
+    "strategies/api_elo_v1_1x2_edge_0_02.json": {
+      "last_action": "uploaded",
+      "sha256": "f94ca604a166ccc758cd1dc241fcb8655213986a1d6efb12962d8b3289a77920",
+      "size": 877,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:53.048040+00:00"
+    },
+    "strategies/api_elo_v1_1x2_edge_0_04.json": {
+      "last_action": "uploaded",
+      "sha256": "e5da7fa68ece1a8f61b567309426ee893548c161b26485ecef1f1d840e5c54f2",
+      "size": 873,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:54.149480+00:00"
+    },
+    "strategies/api_elo_v1_1x2_edge_0_06.json": {
+      "last_action": "uploaded",
+      "sha256": "36cb290c0545e60aba42c110307b26ba7d0903368ecb0490058936800005c496",
+      "size": 873,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:55.105958+00:00"
+    },
+    "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_02.json": {
+      "last_action": "uploaded",
+      "sha256": "22e2b4d1ec6e612c9c65770c5c75a3c66fb034a247c653053cdf3a804dd82600",
+      "size": 927,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:56.028478+00:00"
+    },
+    "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_04.json": {
+      "last_action": "uploaded",
+      "sha256": "2750851705b7d485ce7e70dc3787a615d061c7b0972964e63725fb77bcfaac7c",
+      "size": 927,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:57.205330+00:00"
+    },
+    "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_06.json": {
+      "last_action": "uploaded",
+      "sha256": "e4c0cefa47d6b8aee8ee01fb30dfa53832a6060b8f9f4c6a6ca93be797ac4289",
+      "size": 908,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:58.190341+00:00"
+    },
+    "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_02.json": {
+      "last_action": "uploaded",
+      "sha256": "3bb007755ce19e71110e174762ed8167f520bc920170eb3fa4f26dfbe89241ef",
+      "size": 934,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:42:59.361238+00:00"
+    },
+    "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_04.json": {
+      "last_action": "uploaded",
+      "sha256": "1c4adab6f055b9a0d41fab51191f50dd2411044ab26f190648c886d8214ec65c",
+      "size": 936,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:00.396512+00:00"
+    },
+    "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_06.json": {
+      "last_action": "uploaded",
+      "sha256": "4228cb453a31bb70238adaa9db585477f20cebe7c6e19c7873ab5d3a837cf0d8",
+      "size": 935,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:01.561457+00:00"
+    },
+    "strategies/api_team_multinomial_v1_1x2_edge_0_02.json": {
+      "last_action": "uploaded",
+      "sha256": "ce5337d0c8b2678f5b6b54d28927835166b473ed49644f089375f5e13fce039f",
+      "size": 884,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:02.890083+00:00"
+    },
+    "strategies/api_team_multinomial_v1_1x2_edge_0_04.json": {
+      "last_action": "uploaded",
+      "sha256": "4a63a5a79057e67361a06327a00731635920e328cb4b350a323ebb398debb629",
+      "size": 888,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:03.934739+00:00"
+    },
+    "strategies/api_team_multinomial_v1_1x2_edge_0_06.json": {
+      "last_action": "uploaded",
+      "sha256": "1f14271cf3f0ea62c9f4c216fbe1f8c2dc0a701739c11804b962855dcba4b30b",
+      "size": 889,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:05.119180+00:00"
+    },
+    "strategies/jalon6-run.json": {
+      "last_action": "uploaded",
+      "sha256": "7a4e5c219bc6dd8176653a0ca5d919c4c40f300941784ecb17e6114d9e09d44d",
+      "size": 218,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:06.193303+00:00"
+    },
+    "strategies/jalon7-run.json": {
+      "last_action": "uploaded",
+      "sha256": "a2066fb107aa91db4e6138b37db55599e6d73edba5be49449aa3f3b12fb72ea7",
+      "size": 539,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:07.388870+00:00"
+    },
+    "strategies/jalon8-strategy-lab-v3.json": {
+      "last_action": "uploaded",
+      "sha256": "505d6b4b80e43f198bd46049ae6a79f2903f5f97e2f6c7d9f3e22cdea0d3d38f",
+      "size": 409,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:08.735082+00:00"
+    },
+    "strategies/market_devigged_baseline_v1_1x2_edge_0_02.json": {
+      "last_action": "uploaded",
+      "sha256": "6dffa23155f8f60b6bab486ef19a220e2ab6c7fea3fb5f25b5833ca9b61856e6",
+      "size": 907,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:09.896895+00:00"
+    },
+    "strategies/market_devigged_baseline_v1_1x2_edge_0_04.json": {
+      "last_action": "uploaded",
+      "sha256": "f9b4b9a772317c078060f68590e2169de60cfb274667055da737ff7d6f2cee9f",
+      "size": 895,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:10.789077+00:00"
+    },
+    "strategies/market_devigged_baseline_v1_1x2_edge_0_06.json": {
+      "last_action": "uploaded",
+      "sha256": "9f0e99f292d41c6a69f5a463433550fd38a8d357e8da9b0f917b56270461aaad",
+      "size": 898,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:11.886104+00:00"
+    },
+    "tasks/backfill-plan.json": {
+      "last_action": "uploaded",
+      "sha256": "5fca2ff49d0524120b0953e33148df9def4e2d69a674d109e066652ec9fea73b",
+      "size": 34532914,
+      "status": "verified",
+      "verified_at": "2026-07-26T13:43:16.411772+00:00"
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-26T13:32:21.582659+00:00"
+  "updated_at": "2026-07-26T13:43:16.411816+00:00"
 }
