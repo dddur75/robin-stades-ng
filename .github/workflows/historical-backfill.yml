@@ -106,18 +106,24 @@ jobs:
           --endpoint "${{ inputs.endpoint }}"
           --priority "${{ inputs.priority }}"
       - name: Rattacher les lignes aux payloads bruts sans fournisseur
+        id: provenance_repair
         if: github.event_name != 'push' && inputs.pilot != true
+        continue-on-error: true
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
           repair-provenance
       - name: Actualiser la canonicalité et la prévision mesurée
+        if: >-
+          (github.event_name == 'push' || inputs.pilot == true) ||
+          steps.provenance_repair.outcome == 'success'
         run: |
           python scripts/run_historical_pipeline.py \
             --run-id "${{ github.run_id }}" canonicalize
           python scripts/run_historical_pipeline.py \
             --run-id "${{ github.run_id }}" forecast
       - uses: ./.github/actions/historical-state-persist
+        if: always()
         with:
           run-id: ${{ github.run_id }}
           database-url: ${{ secrets.DATABASE_URL }}
@@ -126,3 +132,8 @@ jobs:
           r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2-bucket-name: ${{ secrets.R2_BUCKET_NAME }}
+      - name: Échouer après conservation d'une provenance incomplète
+        if: steps.provenance_repair.outcome == 'failure'
+        run: |
+          echo "::error::Provenance incomplète; données conservées dans le pont durable."
+          exit 1
