@@ -518,6 +518,53 @@ def test_audit_integral_est_segmente_et_n_ecrit_aucun_objet(tmp_path: Path) -> N
     assert checkpoint["status"] == "COMPLETE"
 
 
+def test_audit_reprend_le_meme_objet_apres_un_incident_resolu(
+    tmp_path: Path,
+) -> None:
+    write_files(tmp_path, 2)
+    client = FakeS3()
+    run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=1,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    with pytest.raises(ObjectStorageIntegrityError):
+        run_migration(
+            state=tmp_path,
+            execute=True,
+            max_files=2,
+            resume=True,
+            audit=True,
+            environment={},
+            client_factory=factory(client),
+        )
+    failed_checkpoint = yaml.safe_load(
+        (tmp_path / "storage" / "r2-audit-checkpoint.json").read_text("utf-8")
+    )
+    assert failed_checkpoint["next_index"] == 1
+    assert failed_checkpoint["failed"] == 1
+
+    second_payload = (tmp_path / "raw" / "0001.json").read_bytes()
+    ObjectStorageAdapter(client, "private").upload("raw/0001.json", second_payload)
+    recovered = run_migration(
+        state=tmp_path,
+        execute=True,
+        max_files=2,
+        resume=True,
+        audit=True,
+        environment={},
+        client_factory=factory(client),
+    )
+
+    assert recovered["status"] == "AUDIT_COMPLETE_VERIFIED"
+    assert recovered["verified"] == 2
+    assert recovered["failed"] == 0
+    assert recovered["complete"] is True
+
+
 def test_replication_continue_envoie_uniquement_le_delta(tmp_path: Path) -> None:
     write_files(tmp_path, 3)
     client = FakeS3()

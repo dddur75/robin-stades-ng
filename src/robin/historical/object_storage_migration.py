@@ -663,10 +663,7 @@ def run_migration(
                 else scope_counts["verified"]
             )
             progress_failed = (
-                _report_int(checkpoint, "failed")
-                + _report_int(report, "hash_mismatches")
-                + _report_int(report, "size_mismatches")
-                + _report_int(report, "missing_remote_objects")
+                int(failure is not None)
                 if audit
                 else scope_counts["failed"]
             )
