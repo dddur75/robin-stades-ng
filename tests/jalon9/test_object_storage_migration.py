@@ -25,6 +25,7 @@ from robin.historical.object_storage_migration import (
 )
 from robin.historical.object_storage_restore import run_representative_restore
 from robin.historical.storage import HistoricalBundleStore
+from scripts.manage_historical_state import append_r2_controls
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -539,6 +540,41 @@ def test_restauration_r2_representative_est_isolee_et_rejouable(
     assert report["provider_calls"] == 0
     assert report["source_mutations"] == 0
     assert report["deletions"] == 0
+
+
+def test_persistance_r2_legere_ne_republie_pas_les_sources(
+    tmp_path: Path,
+) -> None:
+    state = tmp_path / "state"
+    registry = tmp_path / "registry"
+    raw = state / "raw" / "payload.json"
+    control = state / "storage" / "r2-migration-latest.json"
+    raw.parent.mkdir(parents=True)
+    control.parent.mkdir(parents=True)
+    raw.write_text('{"source": true}', encoding="utf-8")
+    control.write_text('{"status": "PARTIAL_VERIFIED"}', encoding="utf-8")
+
+    result = append_r2_controls(state, registry)
+
+    assert result["status"] == "R2_CONTROLS_APPENDED"
+    assert (
+        registry / "historical" / "storage" / "r2-migration-latest.json"
+    ).exists()
+    assert not (registry / "historical" / "raw" / "payload.json").exists()
+    manifest = yaml.safe_load(
+        (registry / "historical" / "manifest.json").read_text("utf-8")
+    )
+    assert "storage/r2-migration-latest.json" in manifest["files"]
+    action = (
+        ROOT
+        / ".github"
+        / "actions"
+        / "historical-r2-control-persist"
+        / "action.yml"
+    ).read_text("utf-8")
+    assert yaml.safe_load(action)
+    assert "append-r2-controls" in action
+    assert "historical-state-persist" not in action
 
 
 def test_lot_superieur_au_perimetre_produit_une_preuve_complete(tmp_path: Path) -> None:

@@ -1,0 +1,45 @@
+name: "Persister les contrôles R2"
+description: "Publier uniquement manifestes, checkpoints, index et rapports R2"
+inputs:
+  run-id:
+    required: true
+    description: "Identifiant GitHub Actions"
+runs:
+  using: composite
+  steps:
+    - name: Ajouter les contrôles R2 au registre
+      shell: bash
+      run: |
+        python scripts/manage_historical_state.py append-r2-controls \
+          --state data/historical \
+          --registry .historical-registry
+        python scripts/manage_historical_state.py verify \
+          --registry .historical-registry
+    - name: Publier les contrôles R2
+      shell: bash
+      working-directory: .historical-registry
+      run: |
+        git config user.name "robin-historical-bot"
+        git config user.email "actions@users.noreply.github.com"
+        git add -A historical/storage historical/manifest.json
+        if ! git diff --cached --quiet; then
+          git commit -m "historical: persist R2 controls ${{ inputs.run-id }}"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:historical-data; then
+              break
+            fi
+            if [ "$attempt" = "3" ]; then
+              echo "::error::publication des contrôles R2 non-fast-forward"
+              exit 1
+            fi
+            git fetch origin historical-data
+            git rebase origin/historical-data
+          done
+        fi
+    - name: Conserver la preuve R2 bornée
+      uses: actions/upload-artifact@v4
+      with:
+        name: r2-controls-${{ inputs.run-id }}
+        path: data/historical/storage/r2-*.json
+        retention-days: 30
+        compression-level: 9

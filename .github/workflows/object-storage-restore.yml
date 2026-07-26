@@ -31,10 +31,9 @@ jobs:
           python scripts/restore_object_storage.py \
             --state data/historical \
             --destination "$restore_root"
-      - uses: ./.github/actions/historical-state-persist
+      - uses: ./.github/actions/historical-r2-control-persist
         with:
           run-id: ${{ github.run_id }}
-          database-url: ${{ secrets.DATABASE_URL }}
       - name: Échouer après persistance d'un rapport de restauration en erreur
         if: steps.r2_restore.outcome == 'failure'
         run: |

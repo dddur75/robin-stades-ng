@@ -120,9 +120,18 @@ jobs:
           --max-files "${{ inputs.object_storage_max_files }}"
           ${{ inputs.execute_object_storage_migration && '--execute' || '' }}
       - uses: ./.github/actions/historical-state-persist
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          !inputs.run_object_storage_migration
         with:
           run-id: ${{ github.run_id }}
           database-url: ${{ secrets.DATABASE_URL }}
+      - uses: ./.github/actions/historical-r2-control-persist
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.run_object_storage_migration
+        with:
+          run-id: ${{ github.run_id }}
       - name: Échouer après persistance d'un rapport R2 en erreur
         if: >-
           github.event_name == 'workflow_dispatch' &&

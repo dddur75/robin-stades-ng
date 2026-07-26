@@ -58,10 +58,9 @@ jobs:
             args+=(--execute)
           fi
           python scripts/migrate_object_storage.py "${args[@]}"
-      - uses: ./.github/actions/historical-state-persist
+      - uses: ./.github/actions/historical-r2-control-persist
         with:
           run-id: ${{ github.run_id }}
-          database-url: ${{ secrets.DATABASE_URL }}
       - name: Échouer après persistance d'un rapport R2 en erreur
         if: steps.object_storage_migration.outcome == 'failure'
         run: |
