@@ -640,7 +640,7 @@ def test_restauration_r2_representative_est_isolee_et_rejouable(
     json_path = state / "raw" / "sample.json"
     csv_path = state / "tables" / "sample.csv"
     parquet_path = state / "parquet" / "sample.parquet"
-    checkpoint_path = state / "checkpoints" / "backfill-checkpoint.json"
+    checkpoint_path = state / "checkpoints" / "fixtures-events.json"
     for path in (json_path, csv_path, parquet_path, checkpoint_path):
         path.parent.mkdir(parents=True, exist_ok=True)
     json_path.write_text('{"ok": true}', encoding="utf-8")

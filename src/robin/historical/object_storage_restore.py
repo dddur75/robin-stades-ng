@@ -58,7 +58,10 @@ def select_representative_keys(state: Path) -> dict[str, str]:
         "manifest": _first_matching(keys, lambda key: key.endswith(".manifest.json")),
         "checkpoint": _first_matching(
             keys,
-            lambda key: "checkpoint" in Path(key).name.lower(),
+            lambda key: (
+                "checkpoints" in Path(key).parts
+                or "checkpoint" in Path(key).name.lower()
+            ),
         ),
     }
     used = {key for key in selected.values() if key is not None}
