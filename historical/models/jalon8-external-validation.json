@@ -235,10 +235,10 @@
       "status": "UNAVAILABLE"
     }
   ],
-  "completed_at": "2026-07-25T17:23:26.233441+00:00",
+  "completed_at": "2026-07-26T09:57:31.745189+00:00",
   "datasets": [
     {
-      "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+      "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
       "competition": "Premier League",
       "coverage": 1.0,
       "dataset_name": "pl_team_pre_match_v1",
@@ -256,61 +256,61 @@
         "away_rest_days"
       ],
       "fixtures": 2660,
-      "generated_at": "2026-07-25T17:20:34.892694+00:00",
+      "generated_at": "2026-07-26T09:54:51.984939+00:00",
       "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
       "partitions": [
         {
           "bytes": 72268,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2019/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "609ddc7519e617bdb83f345f7fde90e64d77154d4a5cb22a0da06a43a74ec051"
         },
         {
           "bytes": 73874,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2020/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "1f404216169731df2dc3d7a3928975e721a2be0ae3a6f438968f4ebd8655ab8e"
         },
         {
           "bytes": 71328,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2021/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "ae8e9a0e82736e3d01c54ee6a98a056526da736cf38f7f504a6946e85372be37"
         },
         {
           "bytes": 71227,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2022/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "70c19f2de3b72a10ca0edece17dabf65cdc5a6cc4c6ad606df8843bcc7e22551"
         },
         {
           "bytes": 72340,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2023/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "c4b415f7b2f6c4779f5dbe7de88dd4d544b62b5b21aeaee36508fcd65fbdb9b1"
         },
         {
           "bytes": 72059,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2024/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "919afdbe0beb62488ccafafcbf8be4ab23d7b82170e18a35d9001a823669d8e9"
         },
         {
           "bytes": 72261,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2025/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "507a59bfca244bb5e266bbcfb3eb02c7944cfc3ce4c0f17375cc0dee7fcd7dde"
@@ -339,7 +339,7 @@
       "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
     },
     {
-      "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+      "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
       "competition": "La Liga",
       "coverage": 1.0,
       "dataset_name": "laliga_team_pre_match_v1",
@@ -357,61 +357,61 @@
         "away_rest_days"
       ],
       "fixtures": 2660,
-      "generated_at": "2026-07-25T17:20:35.261858+00:00",
+      "generated_at": "2026-07-26T09:54:52.337114+00:00",
       "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
       "partitions": [
         {
           "bytes": 72317,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2019/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "2af21d9be6c9190da9140332034768f962ce763084d0720d060a15ffc138814d"
         },
         {
           "bytes": 73497,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2020/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "1d6cff2dcb24aa832722a69a5a2884f12ae23f729178993d295e91b5c3bfb2de"
         },
         {
           "bytes": 71771,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2021/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "b361e5a37adfa53d958a46d7b76d4b53b4e617fb1874ea6f5ae3928115fbb001"
         },
         {
           "bytes": 72859,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2022/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "4969332ac74f6f3ee2dd73653e6520e50d64134cbbfc9da7405a2c852a71f61d"
         },
         {
           "bytes": 73049,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2023/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "a817095f06c3b3ce80b40f1205d423e949709896a54c4c6b30e099acee22ee32"
         },
         {
           "bytes": 73162,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2024/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "5f8293a1160e191d0efbd981083391a5667ed4eba74f42dc1e9b5f1b0f2a5c13"
         },
         {
           "bytes": 73220,
-          "duplicates_avoided": 0,
-          "inserted": 380,
+          "duplicates_avoided": 380,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2025/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
           "rows": 380,
           "sha256": "7cdb88c158f5c57629426b160b61e14bf8ac8c0c4e00ac48fceb3f328fb7dddb"
@@ -440,7 +440,7 @@
       "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
     },
     {
-      "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+      "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
       "competition": "Bundesliga",
       "coverage": 1.0,
       "dataset_name": "bundesliga_team_pre_match_v1",
@@ -458,61 +458,61 @@
         "away_rest_days"
       ],
       "fixtures": 2156,
-      "generated_at": "2026-07-25T17:20:35.579786+00:00",
+      "generated_at": "2026-07-26T09:54:52.641808+00:00",
       "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
       "partitions": [
         {
           "bytes": 63610,
-          "duplicates_avoided": 0,
-          "inserted": 308,
+          "duplicates_avoided": 308,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2019/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
           "rows": 308,
           "sha256": "fa50f0d3167354a0d54d20b750688c5a71fc85e5641137027234b54e460adf15"
         },
         {
           "bytes": 63452,
-          "duplicates_avoided": 0,
-          "inserted": 308,
+          "duplicates_avoided": 308,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2020/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
           "rows": 308,
           "sha256": "535ff15065417ae2cf18940ea618aff941c2e79a5c40bc239c059d802624c056"
         },
         {
           "bytes": 62723,
-          "duplicates_avoided": 0,
-          "inserted": 308,
+          "duplicates_avoided": 308,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2021/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
           "rows": 308,
           "sha256": "f3b238b69c9edae279d02cd47c76f559936741f1d3b95b331af3b03b1755f15f"
         },
         {
           "bytes": 62351,
-          "duplicates_avoided": 0,
-          "inserted": 308,
+          "duplicates_avoided": 308,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2022/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
           "rows": 308,
           "sha256": "803cfee0b11871df5f86f9b8160516e94d616829178df8d32e73394cf501dcbf"
         },
         {
           "bytes": 62545,
-          "duplicates_avoided": 0,
-          "inserted": 308,
+          "duplicates_avoided": 308,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2023/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
           "rows": 308,
           "sha256": "3cf027a6a4ce8745a4bff72a0f73ec4cbb26ac3ca0094595e1abe5d2e2f2b16d"
         },
         {
           "bytes": 63595,
-          "duplicates_avoided": 0,
-          "inserted": 308,
+          "duplicates_avoided": 308,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2024/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
           "rows": 308,
           "sha256": "3448cae918ee14c8b620f0458194c36457f14991a6ecfa7979d25536e737d02c"
         },
         {
           "bytes": 63374,
-          "duplicates_avoided": 0,
-          "inserted": 308,
+          "duplicates_avoided": 308,
+          "inserted": 0,
           "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2025/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
           "rows": 308,
           "sha256": "1246382cf033d567dd70510042f3a4fc38e7970997956ac38b463432dfb38002"
@@ -807,288 +807,288 @@
   "prediction_partitions": [
     {
       "bytes": 58984,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_dixon_coles_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "5fdc299ab7f9e5693c4d0463de885ed3e48dc912402872b6a0ff8b5618b90357"
     },
     {
       "bytes": 58984,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_poisson_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "cd85204e847b6d0fc21556acf33d25f6741aa6c77d5df39d13bc47d58ed6015d"
     },
     {
       "bytes": 45361,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_specific_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "5b15aab625e20d7cfeb18dd94f6f52ba0488a8542d46b9159931d31370c8536d"
     },
     {
       "bytes": 45659,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "31c853e349a124fbdd83a3e32339cda49e03362316d486acb33e96e78faaaabd"
     },
     {
       "bytes": 45619,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_bundesliga_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "013e3080ce53d07dc190a80f74bdfc1ee185877732fc97e286f64d3d24aaae13"
     },
     {
       "bytes": 45673,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "5930b9940cbbe57ed5e37fde0424b1ab14599aedd2e0671d93054245bf3703fa"
     },
     {
       "bytes": 57072,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_dixon_coles_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "c8ee4272137eab8927a2436082e85f711edf9387ba8f6cdd79b01bc1ce2c31c7"
     },
     {
       "bytes": 58104,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_poisson_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "55f36eee2e58c6a524edc9e912985021b8aab9481adebd7eb6123748852f8250"
     },
     {
       "bytes": 45575,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=bundesliga_specific_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "fd420f4ede12900628bc63eb7cceeb77e50e0349b8858ab5f54189db230783f5"
     },
     {
       "bytes": 44586,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "799f514ad59bf3476cdf3e27a6fc4490033487cdaf746585fc5459606233d23f"
     },
     {
       "bytes": 45603,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_bundesliga_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "8fe58d7d4e5f132006fb0619ec26be3301a9bdb0332346c49c89c6d3d79448ee"
     },
     {
       "bytes": 45656,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Bundesliga/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "dd9c523bcf7c7dc12ff77569acff1a9ffcf070d2cccc1b6a41cfac1831d02ee3"
     },
     {
       "bytes": 67209,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_dixon_coles_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "5358bd7cf362d0f573bc47aff20b792d43d4506885790606a9088e9afe8af8fa"
     },
     {
       "bytes": 67359,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_poisson_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "b9d96b53a79e45cb44575c7b1f3c5abd1aad2c57fc155131be7fe2032cb841e7"
     },
     {
       "bytes": 52957,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=la_liga_specific_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "85aa5378102053d78b0b9be76359bbacb915e923e14e928af4b42f9be27175d4"
     },
     {
       "bytes": 53910,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "e472764fd82561d79e8dbdb6cb2c74f09c5ac3a89eaaa82de60309d9f741c363"
     },
     {
       "bytes": 52532,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_la_liga_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "392a3e0b2dd89bf9f24167e52cbcd78c85d2f5b9bceb742d747c0596eae82d42"
     },
     {
       "bytes": 53923,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "ae1e074d264fe31bdca2da3d4c5872a26fe79d1b60570bc2bad14f50ebdd3cfd"
     },
     {
       "bytes": 66614,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_dixon_coles_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "84a590b2910de58c9a523d40613db080b6689762d0e14d1f026ab0aaa155b09e"
     },
     {
       "bytes": 66594,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_poisson_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "4a70db28ba959639048e354d5ecf9d7d47c6410f056faa98509633d4a9d2d893"
     },
     {
       "bytes": 53901,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=la_liga_specific_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "490af6f7ee6544c219163323da5730421f3d869520b8e92564639270ec0b9d17"
     },
     {
       "bytes": 52675,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "7fb18c1bade0f896979b2891d78373ba0c5b24a19af06fe4dc17650b1ca94b31"
     },
     {
       "bytes": 53913,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_la_liga_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "c9bec2914105a59b360eac52f7b03c724d37fb2097c53628285fbd7cceaecbb4"
     },
     {
       "bytes": 53681,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=La-Liga/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "b84970380f4f7a095ca08d1e1b43feba65626fce77f60584b10b2859119ce68d"
     },
     {
       "bytes": 53306,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "bf9f1564750ab7612522518221d3225175ac2ec5245cefd437568e8317838cee"
     },
     {
       "bytes": 53306,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=lolo_without_premier_league_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "197da58d2ef28806bdb3556ab7bf9faa498d7260d8f4f57b2ae6b017eba6bc7c"
     },
     {
       "bytes": 53317,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "d6d53008cdd8c1de9ab90835f0025f59e371e26ba3c5c0ff7a6f69ee470e5861"
     },
     {
       "bytes": 66235,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_dixon_coles_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "a6258944a666b83d7bdf60088bfe8e6d0ce190513bfd9cb93f09d8f0e85e041e"
     },
     {
       "bytes": 67426,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_poisson_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "05f350c985d51cae7098a63c5f08c1b1436fbf58b370e7da910ce01e9349f6db"
     },
     {
       "bytes": 52380,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2024/entity_type=external_model_predictions_v1/dataset_version=premier_league_specific_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "2b4d82aedfa7ee3652a6e0ad377b63c398eb41444f49039ced5b1fdf3cd5182b"
     },
     {
       "bytes": 52312,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=ligue1_frozen_transfer_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "c4a7a87d257b7b68e7ac85ffafeed1c71a9aa3b9d30bc2a1edef483d354fa6fc"
     },
     {
       "bytes": 52431,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=lolo_without_premier_league_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "acf340b1aeca5815666d15190bd2a899c900c61c33a7ef3993b3b3e0c1475fe4"
     },
     {
       "bytes": 53162,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=pooled_multileague_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "88c7f553a1bc628a2d8a5a104c25a81f16e01e73cfb4c424fcae2d1a5a653650"
     },
     {
       "bytes": 64924,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_dixon_coles_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "1ae9f61932e9e16831eeb28d9274f1483102ec4d8f4744c5b1a64d21c6040f38"
     },
     {
       "bytes": 64914,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_poisson_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "604241cd4bc4a664acc1d07a80081a57a6b1899346ff87c4733854a1c7c61af9"
     },
     {
       "bytes": 53411,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/predictions/competition=Premier-League/season=2025/entity_type=external_model_predictions_v1/dataset_version=premier_league_specific_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "c3010071523eac607275dd4aafe0266e316cadfc8d9b9df57be3fe2515a5be6b"
@@ -1102,7 +1102,7 @@
     "calibrators": [
       "NONE_FROZEN_EXTERNAL"
     ],
-    "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+    "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
     "dataset_versions": [
       "pl_team_pre_match_v1",
       "laliga_team_pre_match_v1",
@@ -1115,7 +1115,7 @@
     "feature_versions": [
       "TEAM_FEATURES_V1"
     ],
-    "generated_at": "2026-07-25T17:20:32.814586+00:00",
+    "generated_at": "2026-07-26T09:54:49.991439+00:00",
     "hashes": {
       "datasets": {
         "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
@@ -1126,7 +1126,7 @@
     },
     "model_versions": [],
     "package": "PRESEASON_SHADOW_PACKAGE_V1",
-    "package_hash": "464347506cc531de7afe1931dc4d68dbfe08a69f53c539acd6104487142a3e41",
+    "package_hash": "b9b9e3cfcf07853fc7029a55a8d37e6f9590b50e71e5166ef8ef5bb17b838f94",
     "production_status": "PRODUCTION_LOCKED",
     "quality_gates": [
       "TEAM_GATE",
@@ -1756,19 +1756,19 @@
         "temporality": "PASSED"
       }
     ],
-    "generated_at": "2026-07-25T17:20:34.527024+00:00",
+    "generated_at": "2026-07-26T09:54:51.631441+00:00",
     "production_status": "PRODUCTION_LOCKED",
     "schema_version": "external-league-readiness-v1"
   },
   "real_bets": false,
-  "run_id": "30167355305",
-  "source_commit": "959245089d13935e9a6d80b5614f50b98933e8bc",
-  "started_at": "2026-07-25T17:20:32.814586+00:00",
+  "run_id": "30197241110",
+  "source_commit": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+  "started_at": "2026-07-26T09:54:49.991439+00:00",
   "status": "WAITING_FOR_EXTERNAL_GATES",
   "storage": {
-    "after_bytes": 383367123,
+    "after_bytes": 526673107,
     "can_write": true,
-    "current_bytes": 379897417,
+    "current_bytes": 526673107,
     "pause_bytes": 900000000,
     "status": "SAFE",
     "warning_bytes": 750000000

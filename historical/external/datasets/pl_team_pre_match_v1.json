@@ -1,5 +1,5 @@
 {
-  "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+  "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
   "competition": "Premier League",
   "coverage": 1.0,
   "dataset_name": "pl_team_pre_match_v1",
@@ -17,61 +17,61 @@
     "away_rest_days"
   ],
   "fixtures": 2660,
-  "generated_at": "2026-07-25T17:20:34.892694+00:00",
+  "generated_at": "2026-07-26T09:54:51.984939+00:00",
   "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
   "partitions": [
     {
       "bytes": 72268,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2019/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "609ddc7519e617bdb83f345f7fde90e64d77154d4a5cb22a0da06a43a74ec051"
     },
     {
       "bytes": 73874,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2020/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "1f404216169731df2dc3d7a3928975e721a2be0ae3a6f438968f4ebd8655ab8e"
     },
     {
       "bytes": 71328,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2021/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "ae8e9a0e82736e3d01c54ee6a98a056526da736cf38f7f504a6946e85372be37"
     },
     {
       "bytes": 71227,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2022/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "70c19f2de3b72a10ca0edece17dabf65cdc5a6cc4c6ad606df8843bcc7e22551"
     },
     {
       "bytes": 72340,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2023/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "c4b415f7b2f6c4779f5dbe7de88dd4d544b62b5b21aeaee36508fcd65fbdb9b1"
     },
     {
       "bytes": 72059,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2024/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "919afdbe0beb62488ccafafcbf8be4ab23d7b82170e18a35d9001a823669d8e9"
     },
     {
       "bytes": 72261,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Premier-League/season=2025/entity_type=pl_team_pre_match_v1/dataset_version=pl_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "507a59bfca244bb5e266bbcfb3eb02c7944cfc3ce4c0f17375cc0dee7fcd7dde"

@@ -1,5 +1,5 @@
 {
-  "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+  "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
   "competition": "La Liga",
   "coverage": 1.0,
   "dataset_name": "laliga_team_pre_match_v1",
@@ -17,61 +17,61 @@
     "away_rest_days"
   ],
   "fixtures": 2660,
-  "generated_at": "2026-07-25T17:20:35.261858+00:00",
+  "generated_at": "2026-07-26T09:54:52.337114+00:00",
   "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
   "partitions": [
     {
       "bytes": 72317,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2019/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "2af21d9be6c9190da9140332034768f962ce763084d0720d060a15ffc138814d"
     },
     {
       "bytes": 73497,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2020/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "1d6cff2dcb24aa832722a69a5a2884f12ae23f729178993d295e91b5c3bfb2de"
     },
     {
       "bytes": 71771,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2021/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "b361e5a37adfa53d958a46d7b76d4b53b4e617fb1874ea6f5ae3928115fbb001"
     },
     {
       "bytes": 72859,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2022/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "4969332ac74f6f3ee2dd73653e6520e50d64134cbbfc9da7405a2c852a71f61d"
     },
     {
       "bytes": 73049,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2023/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "a817095f06c3b3ce80b40f1205d423e949709896a54c4c6b30e099acee22ee32"
     },
     {
       "bytes": 73162,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2024/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "5f8293a1160e191d0efbd981083391a5667ed4eba74f42dc1e9b5f1b0f2a5c13"
     },
     {
       "bytes": 73220,
-      "duplicates_avoided": 0,
-      "inserted": 380,
+      "duplicates_avoided": 380,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=La-Liga/season=2025/entity_type=laliga_team_pre_match_v1/dataset_version=laliga_team_pre_match_v1/part-00000.parquet",
       "rows": 380,
       "sha256": "7cdb88c158f5c57629426b160b61e14bf8ac8c0c4e00ac48fceb3f328fb7dddb"

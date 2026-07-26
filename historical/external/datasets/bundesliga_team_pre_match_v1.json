@@ -1,5 +1,5 @@
 {
-  "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+  "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
   "competition": "Bundesliga",
   "coverage": 1.0,
   "dataset_name": "bundesliga_team_pre_match_v1",
@@ -17,61 +17,61 @@
     "away_rest_days"
   ],
   "fixtures": 2156,
-  "generated_at": "2026-07-25T17:20:35.579786+00:00",
+  "generated_at": "2026-07-26T09:54:52.641808+00:00",
   "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
   "partitions": [
     {
       "bytes": 63610,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2019/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "fa50f0d3167354a0d54d20b750688c5a71fc85e5641137027234b54e460adf15"
     },
     {
       "bytes": 63452,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2020/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "535ff15065417ae2cf18940ea618aff941c2e79a5c40bc239c059d802624c056"
     },
     {
       "bytes": 62723,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2021/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "f3b238b69c9edae279d02cd47c76f559936741f1d3b95b331af3b03b1755f15f"
     },
     {
       "bytes": 62351,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2022/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "803cfee0b11871df5f86f9b8160516e94d616829178df8d32e73394cf501dcbf"
     },
     {
       "bytes": 62545,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2023/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "3cf027a6a4ce8745a4bff72a0f73ec4cbb26ac3ca0094595e1abe5d2e2f2b16d"
     },
     {
       "bytes": 63595,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2024/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "3448cae918ee14c8b620f0458194c36457f14991a6ecfa7979d25536e737d02c"
     },
     {
       "bytes": 63374,
-      "duplicates_avoided": 0,
-      "inserted": 308,
+      "duplicates_avoided": 308,
+      "inserted": 0,
       "path": "/home/runner/work/robin-stades-ng/robin-stades-ng/data/historical/external/derived/competition=Bundesliga/season=2025/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet",
       "rows": 308,
       "sha256": "1246382cf033d567dd70510042f3a4fc38e7970997956ac38b463432dfb38002"
