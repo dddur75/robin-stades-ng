@@ -18,6 +18,7 @@ from robin.historical.storage import canonical_record_hash
 
 RawKey = tuple[str, str, str]
 HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+API_FOOTBALL_DATASET_PART = "dataset_version=api-football-v3"
 
 
 def _canonical_payload(value: object) -> str:
@@ -93,6 +94,20 @@ def _row_without_hash(row: dict[str, object]) -> dict[str, object]:
     }
 
 
+def _api_football_parquet_files(state: Path) -> list[Path]:
+    """Return only partitions governed by the API-Football raw contract.
+
+    Other providers, notably the historical market factory, keep their own
+    provenance manifests and must not be matched against API-Football payloads.
+    """
+
+    return sorted(
+        path
+        for path in (state / "parquet").rglob("*.parquet")
+        if API_FOOTBALL_DATASET_PART in path.parts
+    )
+
+
 def repair_raw_hash_provenance(state: Path) -> dict[str, object]:
     """Rattacher chaque ligne normalisée à un payload brut déjà conservé.
 
@@ -107,7 +122,7 @@ def repair_raw_hash_provenance(state: Path) -> dict[str, object]:
     unresolved_rows = 0
     ambiguous_rows = 0
     files_rewritten = 0
-    for path in sorted((state / "parquet").rglob("*.parquet")):
+    for path in _api_football_parquet_files(state):
         frame = pd.read_parquet(path)
         changed = False
         for index, row in frame.iterrows():
@@ -188,10 +203,12 @@ def historical_quality_report(state: Path) -> dict[str, object]:
     null_preservation_failures = 0
     duplicate_hashes = 0
     now = datetime.now(UTC)
-    for path in sorted((state / "parquet").rglob("*.parquet")):
+    for path in _api_football_parquet_files(state):
         partitions += 1
         frame = pd.read_parquet(path)
         normalized_rows += len(frame)
+        if frame.empty:
+            continue
         if "_record_hash" not in frame.columns:
             failures.append(f"{path}:record_hash_missing")
             continue

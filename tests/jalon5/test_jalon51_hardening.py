@@ -322,6 +322,85 @@ def test_repare_la_provenance_depuis_le_cache_sans_appel_fournisseur(
     assert quality["provenance_rows"] == 1
 
 
+def test_provenance_ignores_external_market_partitions(tmp_path: Path) -> None:
+    state = tmp_path / "historical"
+    external = PartitionedParquetStore(state / "parquet").write_records(
+        [
+            {
+                "provider": "football-data",
+                "fixture_id": 42,
+                "odds_home": 2.0,
+                "quality_status": "OBSERVED",
+            }
+        ],
+        competition="Ligue 1",
+        season=2024,
+        entity_type="historical_market",
+        dataset_version="historical_market_v1",
+    )
+    external_path = Path(str(external["path"]))
+    before = external_path.read_bytes()
+    audit = state / "audits" / "ligue1-2025-canonicalization.json"
+    audit.parent.mkdir(parents=True)
+    audit.write_text(
+        json.dumps(
+            {
+                "status": "PASSED",
+                "canonical_fixtures": 306,
+                "expected_fixtures": 306,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    repair = repair_raw_hash_provenance(state)
+    quality = historical_quality_report(state)
+
+    assert repair["status"] == "REPAIRED"
+    assert repair["rows_unresolved"] == 0
+    assert repair["files_rewritten"] == 0
+    assert quality["status"] == "PASSED"
+    assert quality["parquet_partitions"] == 0
+    assert quality["normalized_rows"] == 0
+    assert external_path.read_bytes() == before
+
+
+def test_quality_accepts_empty_api_partition_without_record_schema(
+    tmp_path: Path,
+) -> None:
+    state = tmp_path / "historical"
+    path = (
+        state
+        / "parquet"
+        / "competition=Ligue-1"
+        / "season=2024"
+        / "entity_type=injuries"
+        / "dataset_version=api-football-v3"
+        / "part-00000.parquet"
+    )
+    path.parent.mkdir(parents=True)
+    pd.DataFrame().to_parquet(path, index=False)
+    audit = state / "audits" / "ligue1-2025-canonicalization.json"
+    audit.parent.mkdir(parents=True)
+    audit.write_text(
+        json.dumps(
+            {
+                "status": "PASSED",
+                "canonical_fixtures": 306,
+                "expected_fixtures": 306,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    quality = historical_quality_report(state)
+
+    assert quality["status"] == "PASSED"
+    assert quality["parquet_partitions"] == 1
+    assert quality["normalized_rows"] == 0
+    assert quality["failures"] == []
+
+
 class ErrorResponse:
     def __init__(self, status: int) -> None:
         self.status_code = status
