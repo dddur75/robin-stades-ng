@@ -235,7 +235,7 @@
       "status": "UNAVAILABLE"
     }
   ],
-  "completed_at": "2026-07-27T02:15:01.389634+00:00",
+  "completed_at": "2026-07-27T03:02:22.567611+00:00",
   "datasets": [
     {
       "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
@@ -256,7 +256,7 @@
         "away_rest_days"
       ],
       "fixtures": 2660,
-      "generated_at": "2026-07-27T02:12:22.817371+00:00",
+      "generated_at": "2026-07-27T02:59:35.082298+00:00",
       "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
       "partitions": [
         {
@@ -357,7 +357,7 @@
         "away_rest_days"
       ],
       "fixtures": 2660,
-      "generated_at": "2026-07-27T02:12:23.172436+00:00",
+      "generated_at": "2026-07-27T02:59:35.465999+00:00",
       "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
       "partitions": [
         {
@@ -458,7 +458,7 @@
         "away_rest_days"
       ],
       "fixtures": 2156,
-      "generated_at": "2026-07-27T02:12:23.478923+00:00",
+      "generated_at": "2026-07-27T02:59:35.796465+00:00",
       "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
       "partitions": [
         {
@@ -1115,7 +1115,7 @@
     "feature_versions": [
       "TEAM_FEATURES_V1"
     ],
-    "generated_at": "2026-07-27T02:12:20.790013+00:00",
+    "generated_at": "2026-07-27T02:59:32.899711+00:00",
     "hashes": {
       "datasets": {
         "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
@@ -1126,7 +1126,7 @@
     },
     "model_versions": [],
     "package": "PRESEASON_SHADOW_PACKAGE_V1",
-    "package_hash": "5a4312809f4df22def2a467798a2923add0758b70c1856f0bd52c4dab21d6942",
+    "package_hash": "37a38566828deaeffff2427b1d8da2cc778896b0d85b7d1e616bb634ba5ea459",
     "production_status": "PRODUCTION_LOCKED",
     "quality_gates": [
       "TEAM_GATE",
@@ -1756,19 +1756,19 @@
         "temporality": "PASSED"
       }
     ],
-    "generated_at": "2026-07-27T02:12:22.461315+00:00",
+    "generated_at": "2026-07-27T02:59:34.690638+00:00",
     "production_status": "PRODUCTION_LOCKED",
     "schema_version": "external-league-readiness-v1"
   },
   "real_bets": false,
-  "run_id": "30231446075",
+  "run_id": "30233306063",
   "source_commit": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
-  "started_at": "2026-07-27T02:12:20.790013+00:00",
+  "started_at": "2026-07-27T02:59:32.899711+00:00",
   "status": "WAITING_FOR_EXTERNAL_GATES",
   "storage": {
-    "after_bytes": 802083283,
+    "after_bytes": 828284488,
     "can_write": true,
-    "current_bytes": 802083283,
+    "current_bytes": 828284488,
     "pause_bytes": 900000000,
     "status": "WARNING",
     "warning_bytes": 750000000
