@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 2026-07-27
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-10-pattern-research-ledger`
+Branche : `codex/jalon-11-deep-football-matchups`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -43,6 +43,7 @@ Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 | 8 — validation externe | `WAITING_FOR_EXTERNAL_GATES` | `docs/audits/JALON-8-REPORT.md` |
 | 9 | `MERGED_AND_POST_MERGE_VERIFIED` | PR #12 |
 | 10 — Pattern Research / Public Ledger | `JALON_10_NO_ROBUST_PATTERN_FOUND` | `docs/pattern-research/JALON-10-REPORT.md` |
+| 11 — Deep Football / Matchup Arena | `JALON_11_BLOCKED_BY_DATA_GATES` | `docs/deep-football/JALON-11-REPORT.md` |
 
 ## Preuves Jalon 4
 
@@ -389,3 +390,46 @@ NO_BET_DEFAULT=true
 SOCIAL_PUBLISHING_ENABLED=false
 DEMO_MODE_ENABLED=false
 ```
+
+## Jalon 11 — Deep Football et Matchup Arena
+
+La fabrique `TEAM_PREMATCH` matérialise 10 732 fixtures exactement appariées au
+marché dans cinq ligues, saisons 2020–2025. L'évaluation walk-forward
+2022–2025 porte sur 7 081 fixtures. `TEAM_GATE=PARTIAL` : le target est exclu
+par ordre algorithmique, mais la temporalité source ligne par ligne n'est pas
+prouvée. L'usage reste descriptif et non promouvable.
+
+Le test principal compare le marché recalibré train-only au modèle incrémental :
+
+| Modèle | Log Loss | Brier |
+|---|---:|---:|
+| B0 marché recalibré train-only | 0,968936 | 0,192127 |
+| B1 marché + équipe multinomiale | 0,970638 | 0,192468 |
+
+Le delta Log Loss est `+0,001702211`, le delta Brier `+0,000340731`, l'IC 95 %
+`[-0,000242884 ; +0,003901782]`, p CR1 `0,9638269` et q globale `1,0`.
+Aucun gain n'est établi. Quatre challengers team-only et un gradient boosting
+incrémental sont des diagnostics post-contrat non promouvables.
+
+11E est terminée comme évaluation de gates : H11-001 à H11-008 restent toutes
+bloquées. 11F exécute cinq rotations descriptives rétrospectives, avec zéro
+direction positive et zéro survivante. 11B, 11C, 11D et 11G restent
+`DATA_GATE_BLOCKED`.
+
+Les données joueurs/lineups profondes sont limitées à la Ligue 1 et marquées
+`POST_MATCH_ONLY`; les 12 801 blessures ne sont pas point-in-time et aucun pied
+fort sourcé n'est disponible.
+
+Le replay complet vérifie à l'identique les hashes campagne, dataset, Parquet et
+ledger, sans doublon, perte, mismatch, appel fournisseur ni crédit. Watchlist,
+candidat, décision et mise restent à zéro ; la bankroll shadow reste à
+1 000 unités. Hash campagne :
+`ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe`.
+Révision autoritative :
+`bff3c672c279a94ed97e5a7de0ce0d9b9c56883e`; tête ledger :
+`8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8`.
+Le contrôle `impossible_condition` a réellement examiné 7 081 lignes avec le
+prédicat `OUTCOME_IS_HOME_AND_AWAY` : support 0,
+`EXECUTED_ZERO_SUPPORT_NO_PROMOTION`.
+Voir
+`docs/deep-football/JALON-11-SCIENTIFIC-CONTRACT.md`.

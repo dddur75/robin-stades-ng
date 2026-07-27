@@ -199,9 +199,47 @@ ne modifie jamais la décision.
 | Dataset logique | Lignes strictes | Temporalité |
 |---|---:|---|
 | `historical_market_v1` apparié | 10 732 | `DISCOVERY_EXPOSED` |
-| 1X2 strict | 10 731 | `SOURCE_PRICE_CLASS_ONLY` |
+| 1X2 strict courant | 10 732 | `SOURCE_PRICE_CLASS_ONLY` |
 | Over/Under 2,5 | 10 732 | `SOURCE_PRICE_CLASS_ONLY` |
 
-La marge négative exclue du 1X2 strict reste auditable. Il n’existe pas de
-timestamp intrajournalier fiable pour ces prix. Aucun BTTS, handicap, corner,
-carton, buteur ou prop joueur n’est créé sans cote historique observée.
+Le snapshot de cache courant contient 10 732 lignes 1X2 strictes. Il n’existe
+pas de timestamp intrajournalier fiable pour ces prix. Aucun BTTS, handicap,
+corner, carton, buteur ou prop joueur n’est créé sans cote historique observée.
+
+## Entités Jalon 11
+
+La révision Alembic `0008_jalon11_deep_football` définit :
+
+Il s'agit de la révision cible présente dans le code. La dernière preuve Neon
+préflight reste `0007_jalon10_immutable_evidence`; cette section ne revendique
+pas l'application live de 0008.
+
+| Entité | Grain | Rôle |
+|---|---|---|
+| `deep_feature_definitions` | contrat de feature versionné | schéma, cutoff, gate et hash |
+| `deep_feature_observations` | valeur feature × entité × fixture | observation point-in-time |
+| `coverage_gates` | gate × périmètre × dataset | preuve de disponibilité |
+| `matchup_hypotheses` | hypothèse préenregistrée | mécanisme, marchés, support, hash |
+| `matchup_evaluations` | hypothèse × campagne/fold | métriques et décision scientifique |
+| `prospective_watchlist` | version de règle surveillée | suivi sans pari ni mise |
+| `shadow_candidate_versions` | package candidat immuable | décision fail-closed |
+
+Tous les objets portent version de dataset, révision de code, timestamps UTC et
+hashes. Les preuves sont append-only et idempotentes.
+
+## Dataset `TEAM_PREMATCH`
+
+Grain : une fixture avec état domicile/extérieur émis avant la mise à jour par
+le résultat du match cible. La frontière de matérialisation est égale au
+kickoff ; le `source_observed_at` ligne par ligne n'est pas prouvé. Champs
+principaux : identifiants ligue/saison/fixture, kickoff, labels de résultat
+séparés, probabilités de marché, différence Elo, formes 5/10, buts pour/contre
+5, repos et indicateurs de missingness.
+
+Le dataset courant contient 10 732 lignes ; son hash est
+`2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6`.
+Son SHA-256 Parquet est
+`d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673`.
+`TEAM_GATE=PARTIAL` limite ce dataset aux diagnostics rétrospectifs.
+Les datasets joueurs, lineup, formation et pied fort restent bloqués et
+n'existent pas sous une forme artificiellement complétée.

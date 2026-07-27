@@ -54,7 +54,7 @@ pré-match. En Ligue 1, ces observations sont `POST_MATCH_ONLY`.
 
 | Gate | Statut | Preuve ou blocage |
 |---|---|---|
-| `TEAM_GATE` | `READY` | 10 732 / 10 732 fixtures marché exactement appariées |
+| `TEAM_GATE` | `PARTIAL` | 10 732 / 10 732 appariées, cible exclue par ordre algorithmique, `observed_at` source non prouvé |
 | `MARKET_GATE` | `READY` historique seulement | prix 1X2/O-U présents ; `observed_at` exact absent |
 | `PLAYER_GATE` | `BLOCKED_BY_TEMPORALITY` | profondeur Ligue 1 seulement, observations post-match |
 | `PLAYER_FORM_GATE` | `BLOCKED_BY_TEMPORALITY` | fenêtres V1 mêlent remplaçants non utilisés ; null/zero buts ambigu |
@@ -68,10 +68,11 @@ pré-match. En Ligue 1, ces observations sont `POST_MATCH_ONLY`.
 
 Une couverture de contenu élevée ne ferme pas un gate temporel. Les 4 138 XI
 exacts et les 12 801 blessures ne peuvent pas être requalifiés en information
-connue avant match. Les ligues hors Ligue 1 sont prêtes uniquement pour les
-features équipe/calendrier et le benchmark marché.
+connue avant match. Les ligues hors Ligue 1 sont disponibles uniquement pour
+les diagnostics descriptifs équipe/calendrier et le benchmark marché
+historique.
 
-Verdict de couverture : `TEAM_FEATURES_READY`,
+Verdict de couverture : `TEAM_FEATURES_PARTIAL_DESCRIPTIVE_ONLY`,
 `PLAYER_FEATURES_BLOCKED`, `ABSENCE_FEATURES_BLOCKED`,
 `LINEUP_FEATURES_BLOCKED`, `FORMATION_MATCHUPS_BLOCKED` et
 `FOOTEDNESS_MATCHUPS_BLOCKED`.

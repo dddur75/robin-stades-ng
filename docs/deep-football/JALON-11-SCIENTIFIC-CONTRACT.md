@@ -14,9 +14,11 @@ prospectivement.
 
 - cinq ligues : Ligue 1, Premier League, La Liga, Bundesliga et Serie A ;
 - saisons disponibles 2020 à 2025, sans supposer leur complétude ;
-- baseline principale `B0_MARKET` ;
-- modèles d'équipe `B1_REGULARIZED_MULTINOMIAL` et
-  `B1_BOUNDED_GRADIENT_BOOSTING` ;
+- baseline principale `B0_MARKET_RECALIBRATED_TRAIN_ONLY` ;
+- test principal
+  `B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL` ;
+- quatre challengers team-only et un gradient boosting incrémental conservés
+  uniquement comme diagnostics post-contrat non promouvables ;
 - campagnes préenregistrées 11A à 11G ;
 - hypothèses du propriétaire H11-001 à H11-008 ;
 - calcul cache-only, avec `API_FOOTBALL_CALLS_ALLOWED=0` et
@@ -65,6 +67,12 @@ marché, sans doublon ni attrition du périmètre marché. L'évaluation
 chronologique 2022–2025 porte sur 7 081 fixtures ; les saisons 2020–2021 servent
 au premier entraînement.
 
+La ligne cible est émise avant la mise à jour par son propre résultat, mais les
+frontières de matérialisation sont égales au kickoff et la temporalité
+`observed_at` des sources n'est pas prouvée ligne par ligne. Ce contrat autorise
+un diagnostic rétrospectif et impose `TEAM_GATE=PARTIAL`; il interdit toute
+promotion.
+
 ## Décision statistique
 
 Une amélioration correspond à un delta de Log Loss ou de Brier négatif par
@@ -76,12 +84,17 @@ Les résultats actuels sont défavorables :
 
 | Modèle | N évaluation | Log Loss | Brier | Δ Log Loss vs B0 | Δ Brier vs B0 |
 |---|---:|---:|---:|---:|---:|
-| B0 marché | 7 081 | 0,966773 | 0,191619 | — | — |
-| B1 multinomiale régularisée | 7 081 | 0,988918 | 0,196458 | +0,022145 | +0,004839 |
-| B1 gradient boosting borné | 7 081 | 0,998024 | 0,198176 | +0,031251 | +0,006557 |
+| B0 marché recalibré train-only | 7 081 | 0,968936 | 0,192127 | — | — |
+| B1 marché + équipe multinomiale | 7 081 | 0,970638 | 0,192468 | +0,001702 | +0,000341 |
 
-Les p-values et q-values principales valent 1. Aucun incrément au-delà du
-marché n'est démontré.
+L'IC bootstrap 95 % du delta Log Loss vaut
+`[-0,000242884 ; +0,003901782]`. La p-value CR1 est `0,9638269`, la
+q-value famille `0,9638269` et la q-value globale `1,0`. Aucun incrément au-delà
+du marché recalibré n'est démontré.
+
+Les diagnostics post-contrat sont enregistrés pour la falsification, mais ne
+peuvent modifier ce test principal : team-only multinomiale, gradient boosting,
+Poisson et Dixon–Coles, ainsi que marché + équipe gradient boosting.
 
 ## Promotion fail-closed
 

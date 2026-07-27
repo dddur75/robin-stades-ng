@@ -45,5 +45,9 @@ la Ligue 1 et les observations sont `POST_MATCH_ONLY`.
 
 - `PLAYER_PRELINEUP` n'est pas construit avec un onze futur ;
 - `POST_LINEUP` n'est pas évalué ;
-- les campagnes 11C, 11D, 11E, 11F et 11G qui dépendent du gate sont bloquées ;
+- les campagnes 11C, 11D et 11G restent bloquées ;
+- 11E est terminée comme évaluation de gates : ses huit hypothèses restent
+  bloquées individuellement ;
+- 11F n'utilise que la baseline équipe dans un diagnostic descriptif
+  rétrospectif non promouvable ;
 - une lineup post-kickoff est rejetée par le garde temporel.

@@ -5,21 +5,21 @@ ci-dessous sont simultanément vrais.
 
 | # | Critère | 11A |
 |---:|---|---|
-| 1 | data gate `READY` | oui, équipe seulement |
-| 2 | aucune fuite | oui |
+| 1 | data gate `READY` | non, `TEAM_GATE=PARTIAL` |
+| 2 | aucune fuite | non prouvée au niveau `observed_at` source |
 | 3 | support préenregistré | oui |
 | 4 | au moins trois périodes éligibles | oui |
 | 5 | direction stable | non |
 | 6 | dernier fold positif | non |
-| 7 | BH famille sous seuil | non, q = 1 |
+| 7 | BH famille sous seuil | non, q = 0,9638269 |
 | 8 | contrôle global acceptable | non, q = 1 |
-| 9 | permutation acceptable | non, p = 1 |
+| 9 | permutation acceptable | non, p = 0,961 |
 | 10 | borne bootstrap cohérente | non |
 | 11 | concentration acceptable | non démontrée |
 | 12 | score incrémental positif vs marché | non |
 | 13 | ROI historique observé non artificiel | non calculé |
 | 14 | règle compréhensible | oui |
-| 15 | information disponible en live | oui pour équipe/calendrier |
+| 15 | information disponible en live | non prouvée |
 | 16 | marché live avec `observed_at` exact | non |
 | 17 | décision reproductible avant kickoff | non |
 
@@ -34,9 +34,9 @@ ci-dessous sont simultanément vrais.
 
 ## État courant
 
-11 critères échouent. Le résultat d'équipe est dominé par le marché, et le
-prix historique est `SOURCE_PRICE_CLASS_ONLY` sans `observed_at` exact pour une
-décision live.
+14 critères échouent. Le test principal ne démontre aucun gain contre le marché
+recalibré ; `TEAM_GATE` est partiel et le prix historique est
+`SOURCE_PRICE_CLASS_ONLY` sans `observed_at` exact pour une décision live.
 
 ```text
 LIVE_SHADOW_CANDIDATE=0

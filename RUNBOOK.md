@@ -431,3 +431,71 @@ Pour le ledger :
 Une incohérence de hash bloque Robin Live. Un artifact construit n’est pas
 qualifié de déploiement privé. Les exports sociaux peuvent être construits,
 mais `SOCIAL_PUBLISHING_ENABLED=false` interdit tout envoi externe.
+
+## Jalon 11 — Deep Football
+
+Le moteur démarre toujours en cache-only :
+
+```powershell
+$out = Join-Path $env:TEMP "robin-jalon11"
+.\.venv\Scripts\python.exe scripts\run_deep_football.py all `
+  --state data\historical `
+  --output $out `
+  --source-commit (git rev-parse historical-data) `
+  --main-commit (git rev-parse HEAD) `
+  --main-ci-run-id <RUN_ID>
+```
+
+Le replay utilise exactement le même répertoire et doit reproduire le hash :
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_deep_football.py all `
+  --state data\historical `
+  --output $out `
+  --source-commit (git rev-parse historical-data) `
+  --main-commit (git rev-parse HEAD) `
+  --main-ci-run-id <RUN_ID> `
+  --replay
+```
+
+Avant exécution, confirmer :
+
+```text
+API_FOOTBALL_CALLS_ALLOWED=0
+ODDS_API_CREDITS_ALLOWED=0
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```
+
+Dans les rapports JSON, le verrou `P3/P4_PAUSED` est sérialisé sous
+`P3_P4_PAUSED=true`.
+
+Vérifier ensuite `dataset-manifest.json`, `campaign-11a-summary.json`,
+`red-team-report.json`, `replay.json`, `prospective-watchlist.json`,
+`shadow-candidate-decision.json` et `ledger-audit.json`. Un replay valide exige
+le même hash, zéro doublon, zéro perte, zéro mismatch, zéro appel et zéro
+crédit.
+
+Ne jamais exécuter une campagne joueurs, absence, lineup, formation ou pied
+fort si son gate n'est pas `READY`. Une couverture de contenu post-match ne
+ferme pas un gate pré-match. Les sorties lourdes vont vers R2/PostgreSQL ; Git
+ne conserve que contrats, rapports compacts, hashes et checkpoints.
+
+`TEAM_GATE=PARTIAL` autorise uniquement `DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC`.
+Le test principal est la multinomiale marché + équipe contre le marché
+recalibré train-only. Les quatre challengers team-only, le gradient boosting
+incrémental et les cinq rotations 11F sont post-contrat, descriptifs et
+non promouvables. 11E peut terminer comme évaluation de gates même lorsque ses
+huit hypothèses sont bloquées.
+
+PostgreSQL reste documenté à la révision préflight `0007`. `0008` est une cible
+et ne doit être déclaré appliqué qu'après un upgrade Neon live vérifié.
+
+Le gate de décision shadow exige un candidat et un prix live avec
+`observed_at` exact. À défaut, le résultat normal est
+`NO_DECISION_NO_CANDIDATE`, avec 0 unité mise et une bankroll inchangée.

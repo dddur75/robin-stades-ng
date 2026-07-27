@@ -48,10 +48,25 @@ train. La seed de campagne est 11011.
 
 ## Résultat 11A
 
-Le marché domine les deux modèles d'équipe. Le delta Log Loss est positif dans
-les quatre folds pour la multinomiale : +0,015248, +0,028365, +0,025426 et
-+0,019833. Les tests CR1, permutation, BH famille et BH global donnent 1.
+Le test principal compare
+`B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL` à
+`B0_MARKET_RECALIBRATED_TRAIN_ONLY`. Le delta Log Loss agrégé est
+`+0,001702211` et le delta Brier `+0,000340731`. L'IC bootstrap 95 %
+`[-0,000242884 ; +0,003901782]` traverse zéro ; p CR1 vaut `0,9638269` et
+q globale `1,0`.
 
 Ce résultat n'autorise ni ROI, ni stratégie, ni watchlist. Les campagnes de
 matchups joueurs/lineups/formations sont bloquées par leurs gates et ne sont pas
 remplacées par des analyses rétrospectives trompeuses.
+
+`TEAM_GATE=PARTIAL` : le target est exclu par ordre algorithmique, mais le
+`source_observed_at` ligne par ligne n'est pas établi. Quatre modèles team-only
+et un gradient boosting incrémental sont donc documentés seulement comme
+diagnostics post-contrat non promouvables.
+
+## Diagnostic 11F
+
+Les cinq rotations inter-ligues sont descriptives, rétrospectives et
+chevauchantes. Elles produisent zéro direction positive et zéro survivante.
+Le déplacement temporel et le déplacement de ligue restent confondus ; aucune
+rotation n'est éligible à une promotion.

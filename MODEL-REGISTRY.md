@@ -105,3 +105,42 @@ Sous-verdict :
 700 règles portent uniquement sur des tranches de cote, marge, catégorie de
 prix et compétition. Les modèles et features d’équipe, calendrier, joueurs et
 tactiques n’ont pas été testés par cette campagne.
+
+## Jalon 11 — Deep Football Arena
+
+Échantillon strictement apparié : 7 081 fixtures, folds 2022–2025.
+`TEAM_GATE=PARTIAL`; toutes les métriques restent historiques descriptives.
+
+### Test principal
+
+| Modèle | Features | Log Loss | Brier | Δ LL | Statut |
+|---|---|---:|---:|---:|---|
+| `B0_MARKET_RECALIBRATED_TRAIN_ONLY` | marché recalibré sur train | 0,968936 | 0,192127 | — | `REFERENCE` |
+| `B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL` | marché + équipe/calendrier | 0,970638 | 0,192468 | +0,001702 | `PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL` |
+
+IC 95 % du delta Log Loss :
+`[-0,000242884 ; +0,003901782]`; p CR1 `0,9638269`; q globale `1,0`.
+
+### Diagnostics post-contrat
+
+| Modèle | Log Loss | Brier | Δ LL | Statut |
+|---|---:|---:|---:|---|
+| `B0_MARKET` brut | 0,966773 | 0,191619 | — | diagnostic |
+| `B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL` | 0,988918 | 0,196458 | +0,022145 | non promouvable |
+| `B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING` | 0,998024 | 0,198176 | +0,031251 | non promouvable |
+| `B1_TEAM_ONLY_POISSON` | 1,046019 | 0,209819 | +0,079246 | non promouvable |
+| `B1_TEAM_ONLY_DIXON_COLES` | 1,046626 | 0,209863 | +0,079853 | non promouvable |
+| `B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING` | 0,978452 | 0,193938 | +0,009516 | non promouvable |
+
+Les quatre modèles team-only sont comparés au marché brut ; le gradient
+boosting incrémental est comparé au marché recalibré. Aucune sélection n'utilise
+les labels du test.
+
+| Famille profonde | Statut |
+|---|---|
+| B2 joueurs pré-lineup | `DATA_GATE_BLOCKED` |
+| B3 lineup confirmée | `DATA_GATE_BLOCKED` |
+| B4 matchups | `DATA_GATE_BLOCKED` |
+
+Aucun modèle n'est promu, calibré pour une décision live ou déclaré
+`MODEL_VALIDATED`.

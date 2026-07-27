@@ -119,3 +119,28 @@ futures produisent `LEAKAGE_REJECTED`. Une valeur manquante reste `null`.
 Les concentrations équipe et bookmaker doivent être rapportées avant toute
 promotion. La sensibilité bookmaker n’est pas démontrable à partir du seul prix
 moyen actuel et échoue fermée.
+
+## Jalon 11 — Feature Contract V2
+
+| Famille | Dataset | Cutoff | Statut |
+|---|---|---|---|
+| Elo, forme 5/10, buts 5, repos | `TEAM_PREMATCH` v2 | target exclu avant update, frontière = kickoff | `TEAM_FEATURES_PARTIAL_DESCRIPTIVE_ONLY` |
+| forme joueur par apparitions | `PLAYER_PRELINEUP` | pré-lineup | `PLAYER_FEATURES_BLOCKED` |
+| titulaire/central/gardien habituel | joueur/lineup | antérieur au match cible | `BLOCKED_BY_TEMPORALITY` |
+| absences et spine disruption | joueur/équipe | annonce pré-match | `ABSENCE_FEATURES_BLOCKED` |
+| continuité et duo central | `POST_LINEUP` | annonce officielle avant kickoff | `LINEUP_FEATURES_BLOCKED` |
+| formation et interactions | `FORMATION_MATCHUP` | post-lineup avant kickoff | `FORMATION_MATCHUPS_BLOCKED` |
+| pied fort | `FOOTEDNESS_MATCHUP` | valeur sourcée | `FOOTEDNESS_MATCHUPS_BLOCKED` |
+
+`TEAM_PREMATCH` compte 10 732 lignes et porte le hash
+`2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6`.
+Les features manquantes restent nulles ; les indicateurs de missingness sont
+séparés et les imputations sont apprises sur chaque train.
+
+Le target est exclu de ses propres agrégats, mais la temporalité
+`source_observed_at` n'est pas prouvée ligne par ligne. Le dataset n'est ni
+promotion-ready ni live-ready.
+
+Les seuils joueurs sont gelés : 2 buts/3 apparitions, 3 buts/5 apparitions,
+4 implications/5 apparitions et 180 minutes/3 apparitions. Ils ne sont pas
+exécutés tant que `PLAYER_FORM_GATE` n'est pas prêt.

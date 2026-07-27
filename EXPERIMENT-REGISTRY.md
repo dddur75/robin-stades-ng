@@ -48,7 +48,7 @@ Le choix des features, calibrations et seuils s'arrête avant l'ouverture de
 | Expérience | Comparateur | Unité | Décision actuelle |
 |---|---|---|---|
 | HGB équipe | multinomiale équipe | fixture exacte | `INCONCLUSIVE` |
-| Poisson | marché déviggué | fixture exacte | à compléter si prix valides |
+| Poisson | marché déviggué | fixture exacte | non complété dans le Jalon 7 |
 | Dixon–Coles | Poisson | fixture exacte | `INCONCLUSIVE` |
 | joueurs pré-lineup | équipe | fixture exacte | `INCONCLUSIVE` |
 | post-lineup | joueurs pré-lineup | fixture exacte | inférieur, non promu |
@@ -102,3 +102,35 @@ Sous-verdict :
 familles équipe, calendrier/repos, joueurs, tactique et autres marchés ne font
 pas partie des 700 règles. Le contrôle Bundesliga/Serie A réutilise le corpus
 exposé et ne constitue pas un holdout externe indépendant.
+
+## Expériences Jalon 11
+
+| Expérience | Question | Échantillon | Résultat |
+|---|---|---:|---|
+| 11A primaire | marché + équipe améliore-t-il le marché recalibré train-only ? | 7 081 | Δ LL +0,001702 ; IC traverse zéro |
+| 11A diagnostics post-contrat | les challengers team-only ou GBT incrémental falsifient-ils le résultat ? | 7 081 | 5 diagnostics, tous non promouvables |
+| 11B disponibilité | les absences apportent-elles un résidu ? | 0 | `DATA_GATE_BLOCKED` |
+| 11C lineup | la continuité apporte-t-elle un résidu ? | 0 | `DATA_GATE_BLOCKED` |
+| 11D formations | les interactions tactiques sont-elles stables ? | 0 | `DATA_GATE_BLOCKED` |
+| 11E H11-001…008 | les intuitions propriétaire sont-elles éligibles ? | 0 | gate evaluation terminée, huit bloquées |
+| 11F transfert équipe | l'effet équipe se transfère-t-il entre ligues ? | 5 rotations, N 2 743–3 040 | descriptif, 0 positive, 0 survivante |
+| 11G intégrée | B2–B4 améliorent-ils B0/B1 ? | 0 | `DATA_GATE_BLOCKED` |
+| contrôles négatifs | un faux edge peut-il être promu ? | 12 contrôles | aucun faux edge promu |
+| replay | les résultats sont-ils déterministes ? | 1 replay | hash identique |
+
+Paramètres : seed 11011, expanding walk-forward, 999 permutations, 729 dates
+clusterisées, BH par famille et globale. Le primaire donne p CR1 `0,9638269`,
+q famille `0,9638269` et q globale `1,0`. Huit hypothèses bloquées sont incluses
+dans la multiplicité.
+
+Le contrôle `impossible_condition` est réellement calculé sur 7 081 lignes :
+le prédicat `OUTCOME_IS_HOME_AND_AWAY` a un support nul et le statut
+`EXECUTED_ZERO_SUPPORT_NO_PROMOTION`.
+
+Le replay complet conserve le hash
+`ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe`
+et vérifie les quatre hashes campagne, dataset, Parquet et ledger avec zéro
+doublon, perte, mismatch, appel et crédit.
+
+Verdict : `JALON_11_BLOCKED_BY_DATA_GATES`. Aucun résultat historique n'est
+qualifié de `VALIDATED`.

@@ -35,13 +35,19 @@ missingness peut être construit ; la valeur source ne devient jamais zéro.
 
 - 10 732 lignes ;
 - cinq ligues et saisons 2020–2025 ;
-- cutoff `STRICTLY_BEFORE_TARGET_KICKOFF` ;
+- cutoff `TARGET_KICKOFF_EXCLUSIVE_STATE_BEFORE_UPDATE` ;
 - mode `PRE_LINEUP` ;
 - hash logique
-  `af9421281a71a8d936bfec8596fce5d2945b35f84948d92eb35a7bf435f7dd00` ;
+  `2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6` ;
 - SHA-256 Parquet
-  `4b77f4703ff40adf700aa0be6325b23028fa6a71b0b2ec4fd1b1fb1d9d5d46d1` ;
-- 2 000 085 octets, stockés hors Git.
+  `d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673` ;
+- 2 000 155 octets, stockés hors Git.
+
+Le target n'entre pas dans sa propre rolling window : la ligne est émise avant
+la mise à jour par le résultat cible. En revanche, les 10 732 frontières sont
+égales au kickoff et la preuve `source_observed_at` n'existe pas ligne par
+ligne. Le contrat est donc `TEAM_GATE=PARTIAL`, utilisable seulement en
+diagnostic descriptif.
 
 Features produites :
 
