@@ -966,6 +966,27 @@
       "status": "verified",
       "verified_at": "2026-07-27T07:56:11.050485+00:00"
     },
+    "bundles/30263816431/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T12:03:10.146769+00:00"
+    },
+    "bundles/30263816431/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "941e2a864444d0d34e8820f9e5b9cb726e3c683590e8d4f44037fa7ed7c35829",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T12:03:11.265655+00:00"
+    },
+    "bundles/30263816431/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "a02e385ffcc470fde9b5e1790a227f5e120d09c7e0e8ca8edd12546725292475",
+      "size": 21000995,
+      "status": "verified",
+      "verified_at": "2026-07-27T12:03:13.318197+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -177984,10 +178005,10 @@
     },
     "storage/latest-compaction.json": {
       "last_action": "uploaded",
-      "sha256": "385512c0aa182336a755842dc3b9a968906d72f810ebf0ffab52683523915cd2",
+      "sha256": "db732b24a206ad055f8ea2e714d99eed4db7537573d3d5cc52cbc7000d94e14b",
       "size": 677,
       "status": "verified",
-      "verified_at": "2026-07-27T07:56:14.652038+00:00"
+      "verified_at": "2026-07-27T12:03:13.982277+00:00"
     },
     "strategies/api_elo_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
@@ -178116,13 +178137,13 @@
       "verified_at": "2026-07-27T05:34:34.507211+00:00"
     },
     "tasks/backfill-plan.json": {
-      "last_action": "replayed",
-      "sha256": "5fca2ff49d0524120b0953e33148df9def4e2d69a674d109e066652ec9fea73b",
-      "size": 34532914,
+      "last_action": "uploaded",
+      "sha256": "b25b76538dca33dee4711ee7b66e6418a1f3d78b5df602a78e49f5c80a31ec53",
+      "size": 34532938,
       "status": "verified",
-      "verified_at": "2026-07-27T05:34:35.059874+00:00"
+      "verified_at": "2026-07-27T12:03:17.176711+00:00"
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-27T07:56:14.652054+00:00"
+  "updated_at": "2026-07-27T12:03:17.176737+00:00"
 }
