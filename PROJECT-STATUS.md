@@ -409,7 +409,14 @@ Le test principal compare le marché recalibré train-only au modèle incrément
 Le delta Log Loss est `+0,001702211`, le delta Brier `+0,000340731`, l'IC 95 %
 `[-0,000242884 ; +0,003901782]`, p CR1 `0,9638269` et q globale `1,0`.
 Aucun gain n'est établi. Quatre challengers team-only et un gradient boosting
-incrémental sont des diagnostics post-contrat non promouvables.
+incrémental sont des diagnostics post-contrat initial, antérieurs à
+l'amendement et non promouvables.
+
+Ce test principal n'est pas qualifié de préenregistré. Il appartient à
+`1.0.0-amendment-1`, amendement correctif enregistré après les diagnostics
+team-only et avant le run autoritatif, sous le hash
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`.
+Il reste descriptif et non promouvable.
 
 11E est terminée comme évaluation de gates : H11-001 à H11-008 restent toutes
 bloquées. 11F exécute cinq rotations descriptives rétrospectives, avec zéro
@@ -420,14 +427,26 @@ Les données joueurs/lineups profondes sont limitées à la Ligue 1 et marquées
 `POST_MATCH_ONLY`; les 12 801 blessures ne sont pas point-in-time et aucun pied
 fort sourcé n'est disponible.
 
+Le run opérationnel autoritatif `30282406035` est vert sur le commit
+`1b74e94d38038b566e14f21ff2c852230cf046fa`, avec la source
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`. Le snapshot
+preflight reste une preuve historique de l'état antérieur à 0008.
+
+Neon est désormais vérifié à `0008_jalon11_deep_football`. Chacun des deux
+passages PostgreSQL a examiné 304 preuves compactes, inséré 0 ligne et évité
+304 doublons ; six évaluations legacy ont été reconnues comme équivalentes
+numériquement par le contrat strict
+(`legacy_numeric_equivalent_evaluations=6`). R2 a vérifié 25 453 / 25 453
+objets, téléversé le seul Parquet Jalon 11 de 2 000 155 octets, avec lag 0,
+aucune suppression et aucune mutation source.
+
 Le replay complet vérifie à l'identique les hashes campagne, dataset, Parquet et
 ledger, sans doublon, perte, mismatch, appel fournisseur ni crédit. Watchlist,
 candidat, décision et mise restent à zéro ; la bankroll shadow reste à
 1 000 unités. Hash campagne :
-`ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe`.
-Révision autoritative :
-`bff3c672c279a94ed97e5a7de0ce0d9b9c56883e`; tête ledger :
-`8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8`.
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`.
+Tête ledger :
+`90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`.
 Le contrôle `impossible_condition` a réellement examiné 7 081 lignes avec le
 prédicat `OUTCOME_IS_HOME_AND_AWAY` : support 0,
 `EXECUTED_ZERO_SUPPORT_NO_PROMOTION`.

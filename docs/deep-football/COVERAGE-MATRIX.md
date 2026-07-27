@@ -76,3 +76,8 @@ Verdict de couverture : `TEAM_FEATURES_PARTIAL_DESCRIPTIVE_ONLY`,
 `PLAYER_FEATURES_BLOCKED`, `ABSENCE_FEATURES_BLOCKED`,
 `LINEUP_FEATURES_BLOCKED`, `FORMATION_MATCHUPS_BLOCKED` et
 `FOOTEDNESS_MATCHUPS_BLOCKED`.
+
+Le run autoritatif `30282406035` a relu
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`, persisté
+270 gates sous PostgreSQL `0008` et vérifié le Parquet dans R2 à lag nul. Cette
+preuve opérationnelle ne change aucun statut de couverture.

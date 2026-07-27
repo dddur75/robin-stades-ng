@@ -36,3 +36,7 @@ H11-003 et la campagne de matchup de latéralité sont bloquées. Le contrôle
 `false_footedness` est enregistré mais ne produit aucun faux edge. Le coût
 fournisseur potentiel reste non estimé tant qu'une source licite et
 point-in-time n'est pas identifiée ; aucun appel n'est autorisé dans ce jalon.
+
+Le run cache-only autoritatif `30282406035` confirme une couverture sourcée
+nulle, le gate fermé et 0 appel fournisseur. La source auditée est
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.

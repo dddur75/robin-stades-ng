@@ -144,3 +144,10 @@ promotion-ready ni live-ready.
 Les seuils joueurs sont gelés : 2 buts/3 apparitions, 3 buts/5 apparitions,
 4 implications/5 apparitions et 180 minutes/3 apparitions. Ils ne sont pas
 exécutés tant que `PLAYER_FORM_GATE` n'est pas prêt.
+
+Preuve opérationnelle : le run `30282406035`, source
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`, a persisté sous
+Alembic `0008_jalon11_deep_football` le contrat compact de 11 définitions et
+270 gates. Les deux passages ont inséré 0 objet et évité les mêmes doublons ;
+le Parquet hashé est vérifié dans R2 avec lag nul. Aucun gate profond n'a été
+ouvert par cette validation d'infrastructure.

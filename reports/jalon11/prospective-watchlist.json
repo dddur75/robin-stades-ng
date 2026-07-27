@@ -1,0 +1,9 @@
+{
+  "schema_version": "deep-football-watchlist-v1",
+  "status": "EMPTY_NO_ROBUST_DEEP_MATCHUP",
+  "campaign_result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+  "count": 0,
+  "entries": [],
+  "not_a_bet": true,
+  "production_status": "PRODUCTION_LOCKED"
+}

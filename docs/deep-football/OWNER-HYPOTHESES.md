@@ -78,3 +78,8 @@ réellement disponibles.
 
 Le blocage n'est pas converti en résultat négatif ou positif. Aucun appel
 fournisseur n'a été engagé pour fermer artificiellement les gates.
+
+Le préenregistrement décrit ici concerne uniquement H11-001 à H11-008. Il ne
+qualifie pas le test principal correctif 11A, défini ultérieurement par
+`1.0.0-amendment-1`. Le run `30282406035` confirme les huit hypothèses bloquées
+et 0 appel fournisseur.

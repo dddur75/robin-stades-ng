@@ -1,6 +1,7 @@
 # Jalon 11 — contrat scientifique
 
-Version gelée : `deep-football-scientific-contract-v1`
+Version de base gelée : `deep-football-scientific-contract-v1`
+Amendement correctif : `1.0.0-amendment-1`
 Verdict autorisé au vu des preuves : `JALON_11_BLOCKED_BY_DATA_GATES`
 
 ## Question
@@ -18,11 +19,18 @@ prospectivement.
 - test principal
   `B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL` ;
 - quatre challengers team-only et un gradient boosting incrémental conservés
-  uniquement comme diagnostics post-contrat non promouvables ;
-- campagnes préenregistrées 11A à 11G ;
+  uniquement comme diagnostics post-contrat initial, antérieurs à l'amendement
+  et non promouvables ;
+- cadre des campagnes 11A à 11G enregistré avant exécution ;
 - hypothèses du propriétaire H11-001 à H11-008 ;
 - calcul cache-only, avec `API_FOOTBALL_CALLS_ALLOWED=0` et
   `ODDS_API_CREDITS_ALLOWED=0`.
+
+Le test principal marché + équipe n'est pas préenregistré. Après l'examen des
+diagnostics team-only, un amendement correctif a fixé ce comparateur avant le
+run autoritatif. L'amendement porte le hash
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`.
+Cette chronologie impose un usage descriptif, non promouvable.
 
 ## Hiérarchie des preuves
 
@@ -92,9 +100,10 @@ L'IC bootstrap 95 % du delta Log Loss vaut
 q-value famille `0,9638269` et la q-value globale `1,0`. Aucun incrément au-delà
 du marché recalibré n'est démontré.
 
-Les diagnostics post-contrat sont enregistrés pour la falsification, mais ne
-peuvent modifier ce test principal : team-only multinomiale, gradient boosting,
-Poisson et Dixon–Coles, ainsi que marché + équipe gradient boosting.
+Les diagnostics post-contrat initial sont enregistrés pour la falsification :
+team-only multinomiale, gradient boosting, Poisson et Dixon–Coles, ainsi que
+marché + équipe gradient boosting. Ils ont précédé l'amendement correctif du
+test principal ; aucun de ces résultats ni le test amendé ne peut être promu.
 
 ## Promotion fail-closed
 
@@ -126,3 +135,15 @@ DEMO_MODE_ENABLED=false
 Les données lourdes restent hors Git. Aucun résultat de ce jalon n'autorise une
 collecte fournisseur, une publication sociale automatique ou une fusion
 automatique.
+
+## Preuve opérationnelle autoritative
+
+Le run vert `30282406035`, commit
+`1b74e94d38038b566e14f21ff2c852230cf046fa`, relit
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`. Il vérifie
+PostgreSQL `0008_jalon11_deep_football`, deux passages idempotents de
+304 preuves compactes, R2 à 25 453 / 25 453 objets avec lag nul, le hash
+campagne
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`
+et la tête ledger
+`90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`.

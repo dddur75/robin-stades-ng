@@ -722,10 +722,17 @@ def build_matchup_lab() -> dict[str, Any]:
         if isinstance(final.get("audit"), dict)
         else {}
     )
+    operational = first_report("operational-validation.json")
+    operational_audit = (
+        operational.get("audit", {})
+        if isinstance(operational.get("audit"), dict)
+        else {}
+    )
     detailed_audit = first_report("audit-summary.json", "preflight-summary.json")
     audit = {
         **detailed_audit,
         **final_audit,
+        **operational_audit,
     }
     campaign = (
         final.get("campaign", {})
@@ -924,6 +931,7 @@ def build_matchup_lab() -> dict[str, Any]:
             ledger,
             coverage_report,
             feature_contract,
+            operational,
         )
     )
     invariants: dict[str, Any] = {}
@@ -1818,6 +1826,16 @@ def build_matchup_lab() -> dict[str, Any]:
                 audit.get("source_commit", red_team.get("audit_source_commit", ""))
             ),
             "mainCommit": str(audit.get("main_commit", "")),
+            "codeRevision": str(
+                audit.get(
+                    "code_revision",
+                    (
+                        operational.get("github", {}).get("code_revision", "")
+                        if isinstance(operational.get("github"), dict)
+                        else ""
+                    ),
+                )
+            ),
             "datasetHash": str(dataset.get("dataset_hash", "")),
             "campaignResultHash": str(campaign.get("result_hash", "")),
             "ledgerHeadHash": str(ledger.get("head_hash", "")),
@@ -2464,7 +2482,36 @@ def build_deep_data() -> dict[str, Any]:
     }
 
 
+def write_snapshot(snapshot: dict[str, Any]) -> None:
+    """Écrire un snapshot public et son hash."""
+
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    public_snapshot = sanitize_public_snapshot(snapshot)
+    OUTPUT.write_text(
+        json.dumps(public_snapshot, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    OUTPUT_HASH.write_text(
+        hashlib.sha256(OUTPUT.read_bytes()).hexdigest() + "\n",
+        encoding="ascii",
+    )
+    try:
+        label = OUTPUT.relative_to(ROOT)
+    except ValueError:
+        label = OUTPUT
+    print(f"Snapshot Cockpit écrit dans {label}")
+
+
 def main() -> None:
+    if os.environ.get("COCKPIT_MATCHUP_ONLY") == "1":
+        snapshot = read_json(OUTPUT, {})
+        if not isinstance(snapshot, dict) or not snapshot:
+            raise RuntimeError("snapshot Cockpit existant absent")
+        snapshot["generatedAt"] = datetime.now(UTC).isoformat()
+        snapshot["matchupLab"] = build_matchup_lab()
+        write_snapshot(snapshot)
+        return
+
     live = read_json(
         ROOT / "data" / "live-proof" / "jalon3-activation.json",
         {},
@@ -2831,21 +2878,7 @@ def main() -> None:
         "patternResearch": pattern_research,
         "matchupLab": matchup_lab,
     }
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    public_snapshot = sanitize_public_snapshot(snapshot)
-    OUTPUT.write_text(
-        json.dumps(public_snapshot, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    OUTPUT_HASH.write_text(
-        hashlib.sha256(OUTPUT.read_bytes()).hexdigest() + "\n",
-        encoding="ascii",
-    )
-    try:
-        label = OUTPUT.relative_to(ROOT)
-    except ValueError:
-        label = OUTPUT
-    print(f"Snapshot Cockpit écrit dans {label}")
+    write_snapshot(snapshot)
 
 
 if __name__ == "__main__":

@@ -54,3 +54,7 @@ compte de victoires est interdit.
 pré-kickoff n'est pas prouvé. `FORMATION_GATE=BLOCKED_BY_TEMPORALITY`.
 H11-002, H11-007 et H11-008 ne sont donc pas exécutées. Le contrôle de
 formation décalée reste lui aussi `DATA_GATE_BLOCKED`.
+
+Le run autoritatif `30282406035` confirme ce gate sans requalifier le contenu
+post-match. La source auditée est
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.

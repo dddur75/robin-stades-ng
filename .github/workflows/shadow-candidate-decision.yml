@@ -70,20 +70,30 @@ jobs:
               "deep-football-shadow-decision-v1"
           )
           assert decision["status"] == "NO_DECISION_NO_CANDIDATE"
-          assert decision["candidate_count"] == 0
-          assert decision["decisions"] == 0
-          assert decision["stake_units"] == 0
-          assert decision["provider_calls"] == 0
-          assert decision["odds_api_credits"] == 0
+          assert decision["candidate_count"] == (
+              promotion["shadow_candidates"]
+          )
+          assert decision["decisions"] == promotion["decisions"] == 0
+          assert decision["stake_units"] == promotion["stake_units"] == 0
+          assert decision["provider_calls"] == campaign["provider_calls"] == 0
+          assert (
+              decision["odds_api_credits"]
+              == campaign["odds_api_credits"]
+              == 0
+          )
           assert decision["shadow_bankroll_before"] == (
               promotion["shadow_bankroll"]
           )
           assert decision["shadow_bankroll_after"] == (
               promotion["shadow_bankroll"]
           )
+          assert promotion["shadow_bankroll"] == 1000.0
           assert decision["exact_observed_at_required"] is True
+          assert decision["production_status"] == (
+              campaign["production_status"]
+          )
           assert decision["production_status"] == "PRODUCTION_LOCKED"
-          assert decision["real_bets"] is False
+          assert decision["real_bets"] is campaign["real_bets"] is False
           PY
       - uses: actions/upload-artifact@v4
         with:

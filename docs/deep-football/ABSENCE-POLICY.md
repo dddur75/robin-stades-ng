@@ -52,3 +52,7 @@ Conséquences :
 - aucun contrôle « absence décalée » n'est utilisé pour promouvoir un signal ;
 - aucun appel fournisseur n'est autorisé pour combler ce gate ;
 - aucune collecte P3/P4 n'est relancée.
+
+Le run cache-only autoritatif `30282406035`, source
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`, confirme ce
+blocage avec 0 appel fournisseur et sans construire d'absence artificielle.

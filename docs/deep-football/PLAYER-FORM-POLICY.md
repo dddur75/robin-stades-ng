@@ -49,3 +49,7 @@ Les données profondes sont limitées à la Ligue 1 et marquées
 `POST_MATCH_ONLY`. Les fenêtres V1 incluent des remplaçants non utilisés et le
 champ de buts présente une ambiguïté null/zéro. Aucune hypothèse de forme joueur
 n'est donc exécutée ni promue dans le Jalon 11.
+
+Le run autoritatif `30282406035` confirme ce statut depuis
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`, sans imputation
+artificielle, appel fournisseur ni ouverture du gate.

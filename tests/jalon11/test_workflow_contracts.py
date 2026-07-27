@@ -44,15 +44,31 @@ def test_watchlist_and_decision_workflows_use_the_canonical_engine_contract() ->
     assert "run_deep_football.py watchlist" in watchlist
     assert 'campaign["promotion"]["watchlist"] == 0' in watchlist
     assert 'campaign["promotion"]["shadow_candidates"] == 0' in watchlist
+    assert 'campaign["provider_calls"] == 0' in watchlist
+    assert 'campaign["odds_api_credits"] == 0' in watchlist
+    assert 'watchlist["schema_version"] == "deep-football-watchlist-v1"' in watchlist
+    assert 'watchlist["campaign_result_hash"] == campaign["result_hash"]' in watchlist
     assert "prospective-watchlist.json" in watchlist
 
     assert "run_deep_football.py decision" in decision
     assert "shadow-candidate-decision.json" in decision
     assert "deep-football-shadow-decision-v1" in decision
     assert "artifacts/shadow-candidate-decision/decision.json" not in decision
-    assert 'decision["provider_calls"] == 0' in decision
-    assert 'decision["odds_api_credits"] == 0' in decision
-    assert 'decision["stake_units"] == 0' in decision
+    assert (
+        'decision["decisions"] == promotion["decisions"] == 0'
+        in decision
+    )
+    assert (
+        'decision["stake_units"] == promotion["stake_units"] == 0'
+        in decision
+    )
+    assert (
+        'decision["provider_calls"] == campaign["provider_calls"] == 0'
+        in decision
+    )
+    assert '== campaign["odds_api_credits"]' in decision
+    assert 'promotion["shadow_bankroll"] == 1000.0' in decision
+    assert 'decision["real_bets"] is campaign["real_bets"] is False' in decision
 
 
 def test_deep_feature_build_checks_primary_inference_fidelity_in_postgresql() -> None:

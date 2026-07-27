@@ -55,6 +55,12 @@ Le test principal compare
 `[-0,000242884 ; +0,003901782]` traverse zéro ; p CR1 vaut `0,9638269` et
 q globale `1,0`.
 
+Ce comparateur est un test principal correctif, pas un test préenregistré.
+L'amendement `1.0.0-amendment-1` a été enregistré après l'examen des
+diagnostics team-only et avant le run autoritatif. Son hash est
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`;
+aucune promotion n'est autorisée sur cette base.
+
 Ce résultat n'autorise ni ROI, ni stratégie, ni watchlist. Les campagnes de
 matchups joueurs/lineups/formations sont bloquées par leurs gates et ne sont pas
 remplacées par des analyses rétrospectives trompeuses.
@@ -62,7 +68,8 @@ remplacées par des analyses rétrospectives trompeuses.
 `TEAM_GATE=PARTIAL` : le target est exclu par ordre algorithmique, mais le
 `source_observed_at` ligne par ligne n'est pas établi. Quatre modèles team-only
 et un gradient boosting incrémental sont donc documentés seulement comme
-diagnostics post-contrat non promouvables.
+diagnostics post-contrat initial, antérieurs à l'amendement et non
+promouvables.
 
 ## Diagnostic 11F
 
@@ -70,3 +77,7 @@ Les cinq rotations inter-ligues sont descriptives, rétrospectives et
 chevauchantes. Elles produisent zéro direction positive et zéro survivante.
 Le déplacement temporel et le déplacement de ligue restent confondus ; aucune
 rotation n'est éligible à une promotion.
+
+Preuve autoritative : run `30282406035`, source
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`, hash campagne
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`.

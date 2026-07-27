@@ -3,7 +3,9 @@
 Date de preuve : 27 juillet 2026
 Branche : `codex/jalon-11-deep-football-matchups`
 Base intégrée : `6bfa906d6ea69183a9d2ce251ddffd0d9bda5c17`
-Révision du run autoritatif : `bff3c672c279a94ed97e5a7de0ce0d9b9c56883e`
+Run autoritatif : `30282406035`
+Révision exécutée : `1b74e94d38038b566e14f21ff2c852230cf046fa`
+Source historique : `033a98b11b80c059f8986c33c69f1401ce8cf05c`
 
 ## Verdict
 
@@ -29,14 +31,25 @@ Il ne signifie ni échec d'infrastructure, ni stratégie validée.
 
 ## Infrastructure et sources
 
-- source historique auditée : commit
-  `8f59b5c985b705d1434b4b6a85061b535efcbb0d` ;
-- PostgreSQL : dernière preuve préflight à la révision 0007 ; la révision 0008
-  reste uniquement la cible Jalon 11 jusqu'à son exécution live vérifiée ;
-- R2 : 822 / 822 objets vérifiés, lag 0, 920 725 165 octets attendus ;
-- état historique local : 939 552 887 octets ;
+Le snapshot preflight, capturé avant l'exécution, reste une preuve historique :
+source `8f59b5c985b705d1434b4b6a85061b535efcbb0d`, PostgreSQL 0007,
+822 / 822 objets R2 et 920 725 165 octets attendus. Il n'est ni écrasé ni
+présenté comme l'état post-run.
+
+Preuve opérationnelle du run `30282406035` :
+
+- source historique :
+  `033a98b11b80c059f8986c33c69f1401ce8cf05c` ;
+- PostgreSQL : `0008_jalon11_deep_football` vérifiée en live ;
+- PostgreSQL primaire puis replay : 304 preuves examinées, 0 insertion et
+  304 doublons évités à chaque passage ;
+- fidélité scientifique : six évaluations legacy reconnues comme équivalentes
+  numériquement sous `j11-scientific-float15-v1`
+  (`legacy_numeric_equivalent_evaluations=6`) ;
+- R2 : 25 453 / 25 453 objets vérifiés, un upload de 2 000 155 octets, lag 0 ;
 - stockage : `STORAGE_PAUSED`, seuil de pause 900 000 000 octets ;
 - suppression R2 : 0 ;
+- mutation source R2 : 0 ;
 - appels API-Football : 0 ;
 - crédits The Odds API : 0.
 
@@ -76,7 +89,7 @@ observé.
 
 Échantillon apparié d'évaluation : 7 081 fixtures.
 
-Test principal préenregistré :
+Test principal correctif :
 
 | Modèle | Log Loss | Brier | Conclusion |
 |---|---:|---:|---|
@@ -88,7 +101,15 @@ Brier. L'IC bootstrap 95 % du delta Log Loss est
 `[-0,000242884 ; +0,003901782]`, p CR1 vaut `0,9638269`, q famille
 `0,9638269` et q globale `1,0`. Le test principal ne démontre aucun incrément.
 
-Diagnostics post-contrat non promouvables :
+Ce test n'est pas préenregistré. Il est défini par
+`1.0.0-amendment-1`, amendement correctif enregistré après l'examen des
+diagnostics team-only et avant le run autoritatif. Son hash est
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`.
+La chronologie de cet amendement et `TEAM_GATE=PARTIAL` interdisent toute
+promotion.
+
+Diagnostics post-contrat initial, antérieurs à l'amendement et non
+promouvables :
 
 | Diagnostic | Log Loss | Brier | Référence |
 |---|---:|---:|---|
@@ -100,8 +121,10 @@ Diagnostics post-contrat non promouvables :
 | marché + équipe, gradient boosting | 0,978452 | 0,193938 | marché recalibré |
 
 Les quatre challengers team-only et le diagnostic incrémental gradient boosting
-ont été ajoutés après le contrat principal. Ils servent à la falsification, pas
-à la sélection ou à la promotion.
+ont été ajoutés après le contrat initial. Ils ont été examinés avant
+l'enregistrement de l'amendement correctif et restent non promouvables. Cette
+chronologie est explicitement conservée ; elle n'est pas requalifiée en
+préenregistrement.
 
 La campagne 11F est un diagnostic rétrospectif descriptif : cinq rotations,
 supports 2 743 à 3 040, zéro direction positive, zéro survivante et
@@ -131,13 +154,13 @@ Le red-team confirme :
 ## Replay et preuve publique
 
 - hash primaire et replay :
-  `ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe` ;
+  `437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355` ;
 - dataset :
   `2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6` ;
 - Parquet :
   `d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673` ;
 - tête ledger :
-  `8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8` ;
+  `90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8` ;
 - replay complet : hashes campagne, dataset, Parquet et ledger identiques ;
 - doublons métier, pertes et mismatches : 0 ;
 - ledger V2 : 24 événements, chaîne de hashes vérifiée ;
@@ -150,9 +173,9 @@ Le red-team confirme :
 ## Robin Live et social
 
 Le résultat attendu dans Matchup Lab est un résultat nul explicite : test
-principal sans gain contre le marché recalibré, diagnostics post-contrat
-clairement étiquetés, familles profondes bloquées, zéro watchlist et zéro
-candidat. Aucune donnée démo ne doit apparaître comme live.
+principal sans gain contre le marché recalibré, diagnostics antérieurs à
+l'amendement clairement étiquetés, familles profondes bloquées, zéro watchlist
+et zéro candidat. Aucune donnée démo ne doit apparaître comme live.
 
 Les cinq exports sociaux sont des fichiers statiques pédagogiques. Ils portent
 `publishing_enabled=false` et ne sont reliés à aucun réseau.
@@ -164,7 +187,10 @@ Les cinq exports sociaux sont des fichiers statiques pédagogiques. Ils portent
 - collecte P3/P4 : 0 ;
 - publication sociale : 0 ;
 - données lourdes ajoutées à Git : 0 ;
-- suppression et perte : 0.
+- suppression et perte : 0 ;
+- fenêtre opérationnelle du run GitHub : 1 543 s (25 min 43 s), somme des
+  jobs : 1 526 s (25 min 26 s) ;
+- upload R2 : 1 objet, 2 000 155 octets.
 
 ```text
 STORAGE_PAUSED

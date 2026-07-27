@@ -210,9 +210,14 @@ corner, carton, buteur ou prop joueur n’est créé sans cote historique observ
 
 La révision Alembic `0008_jalon11_deep_football` définit :
 
-Il s'agit de la révision cible présente dans le code. La dernière preuve Neon
-préflight reste `0007_jalon10_immutable_evidence`; cette section ne revendique
-pas l'application live de 0008.
+Le snapshot preflight du 27 juillet 2026 conserve historiquement
+`0007_jalon10_immutable_evidence`. Le run opérationnel `30282406035` a ensuite
+vérifié l'application live de `0008_jalon11_deep_football`. La persistance
+compacte porte sur 11 définitions de features, 270 gates de couverture,
+9 hypothèses et 14 évaluations, soit 304 objets examinés. Les passages primaire
+et replay ont chacun inséré 0 objet et évité 304 doublons. Six évaluations
+legacy ont été reliées par équivalence numérique stricte
+(`legacy_numeric_equivalent_evaluations=6`).
 
 | Entité | Grain | Rôle |
 |---|---|---|
@@ -240,6 +245,9 @@ Le dataset courant contient 10 732 lignes ; son hash est
 `2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6`.
 Son SHA-256 Parquet est
 `d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673`.
+La source autoritative est
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`. Le Parquet de
+2 000 155 octets est vérifié dans R2 parmi 25 453 / 25 453 objets, lag 0.
 `TEAM_GATE=PARTIAL` limite ce dataset aux diagnostics rétrospectifs.
 Les datasets joueurs, lineup, formation et pied fort restent bloqués et
 n'existent pas sous une forme artificiellement complétée.

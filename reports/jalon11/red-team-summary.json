@@ -1,7 +1,7 @@
 {
   "schema_version": "jalon11-red-team-v1",
-  "campaign_result_hash": "ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe",
-  "audit_source_commit": "8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+  "campaign_result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+  "audit_source_commit": "033a98b11b80c059f8986c33c69f1401ce8cf05c",
   "objections": {
     "chance": "CONTROLLED_WITH_CR1_CLUSTER_SIGN_FLIP_CLUSTER_BOOTSTRAP_AND_BH",
     "leakage": "TARGET_EXCLUDED_BUT_TEAM_SOURCE_OBSERVED_AT_UNPROVEN_GATE_PARTIAL",
@@ -23,7 +23,7 @@
     "shuffled_labels_stratified": {
       "status": "EXECUTED_NO_PROMOTION",
       "support": 7081,
-      "delta_log_loss": 0.008475126700262736
+      "delta_log_loss": 0.00847512670026274
     },
     "formation_shifted_one_match": "DATA_GATE_BLOCKED",
     "absence_shifted": "DATA_GATE_BLOCKED",
@@ -40,7 +40,7 @@
     "home_team_systematic": {
       "status": "EXECUTED_NO_PROMOTION",
       "support": 7081,
-      "delta_log_loss": 6.804118970403029
+      "delta_log_loss": 6.80411897040303
     },
     "post_result_rule": {"status": "REJECTED_BY_FEATURE_ALLOWLIST", "support": 1},
     "false_centre_back_pair": "DATA_GATE_BLOCKED",

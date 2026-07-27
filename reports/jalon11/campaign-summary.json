@@ -1,8 +1,9 @@
 {
   "schema_version": "jalon11-campaign-summary-v1",
+  "numeric_evidence_contract": "j11-scientific-float15-v1",
   "verdict": "JALON_11_BLOCKED_BY_DATA_GATES",
   "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
-  "result_hash": "ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe",
+  "result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
   "team_gate": "PARTIAL",
   "promotion_eligible": false,
   "campaigns": {
@@ -34,69 +35,69 @@
   },
   "models": {
     "B0_MARKET": {
-      "log_loss": 0.9667732056631618,
-      "brier": 0.19161913389909357,
-      "calibration_error": 0.02155294644400855,
+      "log_loss": 0.966773205663162,
+      "brier": 0.191619133899094,
+      "calibration_error": 0.0215529464440085,
       "calibration_status": "RAW_DEVIGGED_MARKET"
     },
     "B0_MARKET_RECALIBRATED_TRAIN_ONLY": {
-      "log_loss": 0.9689357191797792,
-      "brier": 0.1921268948053238,
+      "log_loss": 0.968935719179779,
+      "brier": 0.192126894805324,
       "calibration_error": 0.0123863884894918,
-      "delta_log_loss_vs_raw_market": 0.002162513516617337,
-      "delta_brier_vs_raw_market": 0.0005077609062302257,
+      "delta_log_loss_vs_raw_market": 0.00216251351661734,
+      "delta_brier_vs_raw_market": 0.000507760906230226,
       "calibration_status": "TRAIN_ONLY_MULTINOMIAL_LOG_ODDS"
     },
     "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL": {
-      "log_loss": 0.9706379303393002,
-      "brier": 0.19246762623008903,
-      "delta_log_loss": 0.001702211159521072,
-      "delta_brier": 0.00034073142476523377,
-      "delta_log_loss_vs_raw_market": 0.003864724676138409,
-      "delta_brier_vs_raw_market": 0.0008484923309954595,
-      "calibration_error": 0.009652438899583718,
+      "log_loss": 0.9706379303393,
+      "brier": 0.192467626230089,
+      "delta_log_loss": 0.00170221115952107,
+      "delta_brier": 0.000340731424765234,
+      "delta_log_loss_vs_raw_market": 0.00386472467613841,
+      "delta_brier_vs_raw_market": 0.00084849233099546,
+      "calibration_error": 0.00965243889958372,
       "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
       "status": "PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL"
     },
     "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING": {
-      "log_loss": 0.9784516899958932,
-      "brier": 0.19393773105633308,
-      "delta_log_loss": 0.009515970816113994,
-      "delta_brier": 0.001810836251009279,
-      "calibration_error": 0.009348923174883422,
+      "log_loss": 0.978451689995893,
+      "brier": 0.193937731056333,
+      "delta_log_loss": 0.00951597081611399,
+      "delta_brier": 0.00181083625100928,
+      "calibration_error": 0.00934892317488342,
       "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
       "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
     "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL": {
-      "log_loss": 0.9889178514466714,
-      "brier": 0.19645788901396544,
-      "delta_log_loss": 0.02214464578350961,
-      "delta_brier": 0.004838755114871862,
-      "calibration_error": 0.018341806852224807,
+      "log_loss": 0.988917851446671,
+      "brier": 0.196457889013965,
+      "delta_log_loss": 0.0221446457835096,
+      "delta_brier": 0.00483875511487186,
+      "calibration_error": 0.0183418068522248,
       "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
     "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING": {
       "log_loss": 0.998023824196153,
-      "brier": 0.1981756811903527,
-      "delta_log_loss": 0.03125061853299116,
-      "delta_brier": 0.006556547291259124,
-      "calibration_error": 0.016539054691398387,
+      "brier": 0.198175681190353,
+      "delta_log_loss": 0.0312506185329912,
+      "delta_brier": 0.00655654729125912,
+      "calibration_error": 0.0165390546913984,
       "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
     "B1_TEAM_ONLY_POISSON": {
-      "log_loss": 1.046018927343817,
+      "log_loss": 1.04601892734382,
       "brier": 0.209819162318555,
-      "delta_log_loss": 0.07924572168065513,
-      "delta_brier": 0.018200028419461417,
-      "calibration_error": 0.027092726399363127,
+      "delta_log_loss": 0.0792457216806551,
+      "delta_brier": 0.0182000284194614,
+      "calibration_error": 0.0270927263993631,
       "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
     "B1_TEAM_ONLY_DIXON_COLES": {
-      "log_loss": 1.0466263470697117,
+      "log_loss": 1.04662634706971,
       "brier": 0.209862662711249,
-      "delta_log_loss": 0.07985314140654987,
-      "delta_brier": 0.018243528812155435,
-      "calibration_error": 0.02080499588785642,
+      "delta_log_loss": 0.0798531414065499,
+      "delta_brier": 0.0182435288121554,
+      "calibration_error": 0.0208049958878564,
       "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
     "primary_for_inference": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
@@ -106,48 +107,48 @@
     {
       "season": 2022,
       "matches": 1826,
-      "primary_delta_log_loss": -0.0001726766165610627,
-      "incremental_boosting_delta_log_loss": 0.01771249615439041,
-      "team_only_logit_delta_log_loss": 0.015248009009884322
+      "primary_delta_log_loss": -0.000172676616561063,
+      "incremental_boosting_delta_log_loss": 0.0177124961543904,
+      "team_only_logit_delta_log_loss": 0.0152480090098843
     },
     {
       "season": 2023,
       "matches": 1752,
-      "primary_delta_log_loss": 0.004014814543203071,
-      "incremental_boosting_delta_log_loss": 0.005941810887135857,
-      "team_only_logit_delta_log_loss": 0.02836454815353462
+      "primary_delta_log_loss": 0.00401481454320307,
+      "incremental_boosting_delta_log_loss": 0.00594181088713586,
+      "team_only_logit_delta_log_loss": 0.0283645481535346
     },
     {
       "season": 2024,
       "matches": 1751,
-      "primary_delta_log_loss": 0.0020546354131343314,
+      "primary_delta_log_loss": 0.00205463541313433,
       "incremental_boosting_delta_log_loss": 0.00962408123674241,
-      "team_only_logit_delta_log_loss": 0.02542619186191042
+      "team_only_logit_delta_log_loss": 0.0254261918619104
     },
     {
       "season": 2025,
       "matches": 1752,
-      "primary_delta_log_loss": 0.0009914629191316582,
-      "incremental_boosting_delta_log_loss": 0.004439356421911067,
-      "team_only_logit_delta_log_loss": 0.01983300343937533
+      "primary_delta_log_loss": 0.000991462919131658,
+      "incremental_boosting_delta_log_loss": 0.00443935642191107,
+      "team_only_logit_delta_log_loss": 0.0198330034393753
     }
   ],
   "statistics": {
     "cr1_cluster": "MATCH_DATE",
     "clusters": 729,
-    "cr1_one_sided_p": 0.9638269233447452,
+    "cr1_one_sided_p": 0.963826923344745,
     "sign_flip_permutations": 999,
     "sign_flip_unit": "MATCH_DATE",
     "sign_flip_p": 0.961,
-    "family_q": 0.9638269233447452,
+    "family_q": 0.963826923344745,
     "global_q": 1.0,
     "tested_hypotheses": 1,
     "blocked_hypotheses_as_p1": 8,
     "multiplicity_hypotheses": 9,
     "bootstrap_unit": "MATCH_DATE",
     "delta_log_loss_bootstrap_ci95": [
-      -0.00024288426175629246,
-      0.003901781760755334
+      -0.000242884261756291,
+      0.00390178176075534
     ]
   },
   "cross_league": {
@@ -159,8 +160,8 @@
     "minimum_support": 2743,
     "maximum_support": 3040,
     "delta_log_loss_range": [
-      0.0033953873651650923,
-      0.008942064913464054
+      0.00339538736516509,
+      0.00894206491346405
     ],
     "provider_calls": 0,
     "odds_api_credits": 0

@@ -7,7 +7,7 @@ ci-dessous sont simultanément vrais.
 |---:|---|---|
 | 1 | data gate `READY` | non, `TEAM_GATE=PARTIAL` |
 | 2 | aucune fuite | non prouvée au niveau `observed_at` source |
-| 3 | support préenregistré | oui |
+| 3 | support fixé avant le run autoritatif | oui, dans l'amendement correctif |
 | 4 | au moins trois périodes éligibles | oui |
 | 5 | direction stable | non |
 | 6 | dernier fold positif | non |
@@ -38,6 +38,11 @@ ci-dessous sont simultanément vrais.
 recalibré ; `TEAM_GATE` est partiel et le prix historique est
 `SOURCE_PRICE_CLASS_ONLY` sans `observed_at` exact pour une décision live.
 
+Le critère 3 ne qualifie pas le test principal de préenregistré. Le comparateur
+principal est issu de `1.0.0-amendment-1`, enregistré après les diagnostics
+team-only et avant le run `30282406035`. Il est non promouvable, indépendamment
+des 14 autres échecs.
+
 ```text
 LIVE_SHADOW_CANDIDATE=0
 PROSPECTIVE_WATCHLIST=0
@@ -47,4 +52,5 @@ STAKE_UNITS=0
 
 La valeur interne d'un objet d'évaluation ne crée pas à elle seule une entrée
 de watchlist : seule la sortie matérialisée et enregistrée compte. Cette sortie
-est vide.
+est vide. Le run autoritatif confirme zéro watchlist, candidat, décision et
+mise, avec `PRODUCTION_LOCKED`.

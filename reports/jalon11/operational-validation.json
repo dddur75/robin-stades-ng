@@ -1,0 +1,205 @@
+{
+  "schema_version": "jalon11-operational-validation-v1",
+  "captured_at": "2026-07-27T16:32:38Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": {
+    "number": 14,
+    "state": "OPEN",
+    "draft": true,
+    "merged": false
+  },
+  "verdict": "OPERATIONAL_VALIDATION_VERIFIED",
+  "audit": {
+    "source_commit": "033a98b11b80c059f8986c33c69f1401ce8cf05c",
+    "main_commit": "6bfa906d6ea69183a9d2ce251ddffd0d9bda5c17",
+    "code_revision": "1b74e94d38038b566e14f21ff2c852230cf046fa",
+    "historical_head_commit": "f1b437dd87b4674fd51530ea12575800324cde62",
+    "invariants": {
+      "STORAGE_PAUSED": true,
+      "P3_P4_PAUSED": true,
+      "PRODUCTION_LOCKED": true,
+      "REAL_BETS": false,
+      "NO_BET_DEFAULT": true,
+      "SOCIAL_PUBLISHING_ENABLED": false,
+      "DEMO_MODE_ENABLED": false,
+      "provider_calls": 0,
+      "odds_api_credits": 0,
+      "secret_values_exposed": false
+    },
+    "storage": {
+      "historical_bytes": 985499179,
+      "status": "STORAGE_PAUSED",
+      "p3_p4": "P3_P4_PAUSED",
+      "warning_bytes": 750000000,
+      "pause_bytes": 900000000,
+      "r2": {
+        "status": "SYNCED",
+        "uploaded": 1,
+        "expected_objects": 25453,
+        "verified_objects": 25453,
+        "lag_objects": 0,
+        "expected_bytes": 974079201,
+        "replayed": 0,
+        "deletions": 0,
+        "source_mutations": 0,
+        "errors": 0
+      }
+    },
+    "database": {
+      "status": "CONNECTED_SSL_AND_VERIFIED",
+      "expected_alembic_revision": "0008_jalon11_deep_football",
+      "observed_alembic_revision": "0008_jalon11_deep_football",
+      "latest_verified_size_bytes": 47366144,
+      "latest_verified_size_basis": "last_verified_preflight"
+    }
+  },
+  "github": {
+    "run_id": 30282406035,
+    "conclusion": "success",
+    "code_revision": "1b74e94d38038b566e14f21ff2c852230cf046fa",
+    "started_at": "2026-07-27T15:56:56Z",
+    "completed_at": "2026-07-27T16:22:39Z",
+    "wall_seconds": 1543,
+    "total_job_seconds": 1526,
+    "ci": {
+      "push_run_id": 30282405748,
+      "push_conclusion": "success",
+      "pull_request_run_id": 30282408983,
+      "pull_request_conclusion": "success"
+    },
+    "jobs": [
+      {
+        "name": "deep-feature-audit",
+        "job_id": 90031814030,
+        "duration_seconds": 303,
+        "conclusion": "success"
+      },
+      {
+        "name": "deep-feature-build",
+        "job_id": 90033190524,
+        "duration_seconds": 408,
+        "conclusion": "success"
+      },
+      {
+        "name": "matchup-campaign",
+        "job_id": 90035011574,
+        "duration_seconds": 327,
+        "conclusion": "success"
+      },
+      {
+        "name": "matchup-validation",
+        "job_id": 90036456383,
+        "duration_seconds": 384,
+        "conclusion": "success"
+      },
+      {
+        "name": "prospective-watchlist",
+        "job_id": 90038117421,
+        "duration_seconds": 54,
+        "conclusion": "success"
+      },
+      {
+        "name": "shadow-candidate-decision",
+        "job_id": 90038362978,
+        "duration_seconds": 50,
+        "conclusion": "success"
+      }
+    ],
+    "artifacts": {
+      "deep_feature_audit": 8659518795,
+      "deep_feature_build": 8659735535,
+      "r2_controls": 8659735124,
+      "matchup_campaign": 8659904517,
+      "matchup_validation": 8660108129,
+      "prospective_watchlist": 8660137468,
+      "shadow_candidate_decision": 8660165291
+    }
+  },
+  "secrets": {
+    "DATABASE_URL": "AVAILABLE_NAME_ONLY",
+    "ODDS_API_KEY": "AVAILABLE_NAME_ONLY",
+    "API_FOOTBALL_KEY": "AVAILABLE_NAME_ONLY",
+    "R2_ACCOUNT_ID": "AVAILABLE_NAME_ONLY",
+    "R2_ACCESS_KEY_ID": "AVAILABLE_NAME_ONLY",
+    "R2_SECRET_ACCESS_KEY": "AVAILABLE_NAME_ONLY",
+    "R2_BUCKET_NAME": "AVAILABLE_NAME_ONLY",
+    "values_read_or_logged": false
+  },
+  "historical_data": {
+    "source_commit": "033a98b11b80c059f8986c33c69f1401ce8cf05c",
+    "head_commit": "f1b437dd87b4674fd51530ea12575800324cde62"
+  },
+  "scientific_evidence": {
+    "numeric_contract": "j11-scientific-float15-v1",
+    "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+    "campaign_result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+    "immutable_legacy_campaign_result_hash": "cbd0dfde77b7603c818a662652d92389fa400175bd941e7a0525fd6b0d3fe9a4",
+    "ledger_head_hash": "90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8",
+    "parquet_sha256": "d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673",
+    "parquet_bytes": 2000155
+  },
+  "postgresql": {
+    "status": "CONNECTED_SSL_AND_VERIFIED",
+    "alembic_revision": "0008_jalon11_deep_football",
+    "examined": {
+      "feature_definitions": 11,
+      "coverage_gates": 270,
+      "hypotheses": 9,
+      "evaluations": 14,
+      "total": 304
+    },
+    "inserted": {
+      "feature_definitions": 0,
+      "coverage_gates": 0,
+      "hypotheses": 0,
+      "evaluations": 0,
+      "total": 0
+    },
+    "duplicates_avoided": {
+      "feature_definitions": 11,
+      "coverage_gates": 270,
+      "hypotheses": 9,
+      "evaluations": 14,
+      "total": 304
+    },
+    "legacy_numeric_equivalent_evaluations": 6,
+    "immutable_rows_mutated": 0
+  },
+  "r2": {
+    "status": "SYNCED",
+    "uploaded": 1,
+    "expected_objects": 25453,
+    "verified_objects": 25453,
+    "lag_objects": 0,
+    "expected_bytes": 974079201,
+    "object_sha256": "d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673",
+    "object_bytes": 2000155,
+    "replayed": 0,
+    "deletions": 0,
+    "source_mutations": 0,
+    "errors": 0
+  },
+  "replay": {
+    "status": "REPLAY_FULL_HASH_VERIFIED",
+    "identical": true,
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "business_duplicates": 0,
+    "data_loss": 0,
+    "hash_mismatches": 0,
+    "postgresql_rows_inserted": 0,
+    "r2_objects_replayed": 0
+  },
+  "invariants": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false,
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "secret_values_exposed": false
+  }
+}

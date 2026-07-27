@@ -111,7 +111,14 @@ tactiques n’ont pas été testés par cette campagne.
 Échantillon strictement apparié : 7 081 fixtures, folds 2022–2025.
 `TEAM_GATE=PARTIAL`; toutes les métriques restent historiques descriptives.
 
-### Test principal
+### Test principal correctif
+
+Ce comparateur principal n'est pas préenregistré. La version
+`1.0.0-amendment-1` a été enregistrée après l'exécution des diagnostics
+team-only, mais avant le run autoritatif `30282406035`. L'amendement est
+traçable par le hash
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`
+et reste explicitement non promouvable.
 
 | Modèle | Features | Log Loss | Brier | Δ LL | Statut |
 |---|---|---:|---:|---:|---|
@@ -121,7 +128,7 @@ tactiques n’ont pas été testés par cette campagne.
 IC 95 % du delta Log Loss :
 `[-0,000242884 ; +0,003901782]`; p CR1 `0,9638269`; q globale `1,0`.
 
-### Diagnostics post-contrat
+### Diagnostics post-contrat initial, antérieurs à l'amendement
 
 | Modèle | Log Loss | Brier | Δ LL | Statut |
 |---|---:|---:|---:|---|
@@ -144,3 +151,8 @@ les labels du test.
 
 Aucun modèle n'est promu, calibré pour une décision live ou déclaré
 `MODEL_VALIDATED`.
+
+La preuve autoritative porte le hash campagne
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`
+et la source
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.

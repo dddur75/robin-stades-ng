@@ -174,3 +174,23 @@ La campagne réelle et son replay ont mesuré :
 Le temps de la CI GitHub est mesuré par le run associé à la PR et n’est pas
 réinjecté dans le commit afin d’éviter une boucle de nouveaux runs. Aucun achat
 ni changement de plan n’est autorisé automatiquement.
+
+## Coût opérationnel du Jalon 11
+
+Le run GitHub `30282406035` est vert sur six jobs séquentiels. Sa fenêtre
+opérationnelle va de 15:56:56 à 16:22:39 UTC, soit 1 543 s (25 min 43 s) ;
+la somme des jobs est de 1 526 s (25 min 26 s). Il a utilisé exclusivement les
+données en cache :
+
+- 0 appel API-Football et 0 crédit The Odds API ;
+- 0 pari réel et 0 publication sociale ;
+- deux passages PostgreSQL sur 304 preuves compactes, 0 insertion et
+  304 doublons évités à chaque passage ;
+- six équivalences numériques legacy reconnues, sans nouvelle ligne ;
+- un upload R2 de 2 000 155 octets ;
+- 25 453 / 25 453 objets R2 vérifiés, lag 0 ;
+- 0 suppression, 0 mutation source, 0 perte et 0 mismatch ;
+- 0 copie du Parquet lourd dans Git.
+
+Cette exécution n'ouvre aucun abonnement ni achat. `STORAGE_PAUSED` et P3/P4
+restent suspendus.

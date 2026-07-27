@@ -51,3 +51,7 @@ la Ligue 1 et les observations sont `POST_MATCH_ONLY`.
 - 11F n'utilise que la baseline équipe dans un diagnostic descriptif
   rétrospectif non promouvable ;
 - une lineup post-kickoff est rejetée par le garde temporel.
+
+Le run autoritatif `30282406035` confirme ces séparations depuis
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c` ; aucun gate
+lineup n'est ouvert et aucune décision shadow n'est produite.

@@ -107,8 +107,8 @@ exposé et ne constitue pas un holdout externe indépendant.
 
 | Expérience | Question | Échantillon | Résultat |
 |---|---|---:|---|
-| 11A primaire | marché + équipe améliore-t-il le marché recalibré train-only ? | 7 081 | Δ LL +0,001702 ; IC traverse zéro |
-| 11A diagnostics post-contrat | les challengers team-only ou GBT incrémental falsifient-ils le résultat ? | 7 081 | 5 diagnostics, tous non promouvables |
+| 11A principal correctif, amendement 1 | marché + équipe améliore-t-il le marché recalibré train-only ? | 7 081 | Δ LL +0,001702 ; IC traverse zéro ; non promouvable |
+| 11A diagnostics post-contrat initial | les challengers team-only ou GBT incrémental falsifient-ils le résultat ? | 7 081 | 5 diagnostics antérieurs à l'amendement, tous non promouvables |
 | 11B disponibilité | les absences apportent-elles un résidu ? | 0 | `DATA_GATE_BLOCKED` |
 | 11C lineup | la continuité apporte-t-elle un résidu ? | 0 | `DATA_GATE_BLOCKED` |
 | 11D formations | les interactions tactiques sont-elles stables ? | 0 | `DATA_GATE_BLOCKED` |
@@ -123,14 +123,25 @@ clusterisées, BH par famille et globale. Le primaire donne p CR1 `0,9638269`,
 q famille `0,9638269` et q globale `1,0`. Huit hypothèses bloquées sont incluses
 dans la multiplicité.
 
+Le test principal n'est pas préenregistré : l'amendement correctif
+`1.0.0-amendment-1` a été enregistré après les diagnostics team-only et avant
+le run autoritatif `30282406035`. Son hash est
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`;
+il ne peut servir à une promotion.
+
 Le contrôle `impossible_condition` est réellement calculé sur 7 081 lignes :
 le prédicat `OUTCOME_IS_HOME_AND_AWAY` a un support nul et le statut
 `EXECUTED_ZERO_SUPPORT_NO_PROMOTION`.
 
 Le replay complet conserve le hash
-`ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe`
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`
 et vérifie les quatre hashes campagne, dataset, Parquet et ledger avec zéro
 doublon, perte, mismatch, appel et crédit.
+
+La tête ledger est
+`90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`.
+Le même run valide PostgreSQL `0008` en deux passages idempotents de 304 objets
+et R2 à 25 453 / 25 453 objets, lag nul.
 
 Verdict : `JALON_11_BLOCKED_BY_DATA_GATES`. Aucun résultat historique n'est
 qualifié de `VALIDATED`.

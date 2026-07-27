@@ -1,0 +1,14 @@
+{
+  "schema_version": "deep-football-shadow-decision-v1",
+  "status": "NO_DECISION_NO_CANDIDATE",
+  "candidate_count": 0,
+  "decisions": 0,
+  "stake_units": 0,
+  "shadow_bankroll_before": 1000.0,
+  "shadow_bankroll_after": 1000.0,
+  "exact_observed_at_required": true,
+  "provider_calls": 0,
+  "odds_api_credits": 0,
+  "production_status": "PRODUCTION_LOCKED",
+  "real_bets": false
+}

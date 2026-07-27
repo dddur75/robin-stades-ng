@@ -18,7 +18,7 @@ est `REVISED_AND_FAIL_CLOSED`.
 | dépendance | 729 dates de match clusterisées | dépendance sérielle équipe non multiway restante |
 | mauvaise cote | appariement exact par fixture | 10 732 paires, 0 doublon |
 | mauvais cutoff marché | classe de prix sans instant exact | historique seulement, live bloqué |
-| seuil/modèle choisi après résultat | primaire fixé | aucune sélection sur le test |
+| seuil/modèle choisi après résultat | amendement après diagnostics team-only, avant run autoritatif | non préenregistré, donc non promouvable |
 | échantillon incomplet | égalité des clés exigée | 0 attrition du périmètre marché |
 | confusion | baseline marché + facteurs antérieurs | aucune affirmation causale |
 | join erroné | jointure bijective | garde activée |
@@ -48,17 +48,23 @@ Les contrôles bloqués ne sont pas qualifiés de « passés » : leur gate emp�
 simplement une exécution scientifiquement recevable.
 
 Six contrôles sont exécutés ou rejetés par un garde et six restent data-gated.
-Les diagnostics post-contrat — quatre challengers team-only, un gradient
-boosting incrémental et les cinq rotations 11F — sont tous explicitement
-non promouvables.
+Les diagnostics post-contrat initial — quatre challengers team-only, un gradient
+boosting incrémental et les cinq rotations 11F — sont antérieurs à l'amendement
+et tous explicitement non promouvables.
 
 ## Replay
 
 Le replay cache-only reproduit le hash de campagne
-`ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe`.
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`.
 Les hashes campagne, dataset, Parquet et chaîne ledger sont identiques, avec
 zéro doublon, perte, mismatch, appel fournisseur et crédit. La tête ledger est
-`8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8`.
+`90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`.
+
+La chronologie scientifique est scellée par
+`1.0.0-amendment-1` et le hash
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`.
+Le run `30282406035` est vert sur la source
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.
 
 ## Décision
 

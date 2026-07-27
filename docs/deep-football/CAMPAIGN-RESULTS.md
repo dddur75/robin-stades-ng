@@ -22,7 +22,13 @@ les 10 732 frontières de matérialisation sont égales au kickoff et le
 `observed_at` ligne par ligne des sources n'est pas prouvé. Ces résultats sont
 donc descriptifs et non promouvables.
 
-### Test principal préenregistré
+### Test principal correctif
+
+Ce test n'est pas préenregistré. L'amendement `1.0.0-amendment-1` a été
+enregistré après l'examen des diagnostics team-only et avant le run
+autoritatif `30282406035`. Son hash est
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`.
+Il reste descriptif et non promouvable.
 
 | Modèle | Log Loss | Brier | ECE | Référence |
 |---|---:|---:|---:|---|
@@ -43,10 +49,11 @@ Delta primaire B1 − B0 recalibré :
 Le delta positif est défavorable et l'intervalle traverse zéro. Aucun incrément
 au-delà du marché recalibré n'est démontré.
 
-### Diagnostics post-contrat non promouvables
+### Diagnostics post-contrat initial, antérieurs à l'amendement
 
 Ces résultats complètent le diagnostic ; ils ne sont pas des tests principaux
-et ne peuvent pas produire un candidat :
+et ne peuvent pas produire un candidat. Ils ont précédé l'enregistrement de
+l'amendement correctif :
 
 | Modèle | Log Loss | Brier | Δ Log Loss | Δ Brier |
 |---|---:|---:|---:|---:|
@@ -107,18 +114,23 @@ Tests applicables au primaire marché + équipe :
   `OUTCOME_IS_HOME_AND_AWAY` réellement calculé sur 7 081 lignes, support 0,
   `EXECUTED_ZERO_SUPPORT_NO_PROMOTION` ;
 - hash de campagne :
-  `ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe` ;
+  `437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355` ;
 - hash dataset :
   `2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6` ;
 - SHA-256 Parquet :
   `d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673` ;
 - tête ledger :
-  `8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8` ;
+  `90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8` ;
 - replay complet : quatre hashes identiques ;
 - doublons métier : 0 ;
 - perte : 0 ;
 - mismatch de hash : 0 ;
 - appels fournisseur et crédits au replay : 0.
+
+Le run autoritatif utilise
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`. Il vérifie
+PostgreSQL `0008` avec 304 preuves examinées et 304 doublons évités sur chacun
+des deux passages, ainsi que R2 à 25 453 / 25 453 objets, lag 0.
 
 ## Verdict
 

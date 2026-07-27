@@ -91,3 +91,12 @@ accompagnées d'indicateurs de valeur manquante.
 
 Un dataset bloqué n'est ni construit artificiellement ni substitué par une
 simulation présentée comme observation.
+
+## Preuve de matérialisation
+
+Le run `30282406035` a construit ce contrat depuis
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`. PostgreSQL
+`0008_jalon11_deep_football` a examiné les 11 définitions et 270 gates sans
+nouvelle insertion au replay. Le Parquet de 2 000 155 octets est l'unique objet
+Jalon 11 téléversé pendant le run ; son SHA-256 est vérifié dans R2 parmi
+25 453 / 25 453 objets, lag 0.

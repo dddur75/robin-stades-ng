@@ -1,6 +1,6 @@
 {
   "schema_version": "jalon11-coverage-matrix-v1",
-  "source_commit": "8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+  "source_commit": "033a98b11b80c059f8986c33c69f1401ce8cf05c",
   "market_rows": 10732,
   "strict_1x2_rows": 10732,
   "market_time_class": "SOURCE_PRICE_CLASS_ONLY",

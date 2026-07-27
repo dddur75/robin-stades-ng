@@ -488,13 +488,42 @@ ne conserve que contrats, rapports compacts, hashes et checkpoints.
 
 `TEAM_GATE=PARTIAL` autorise uniquement `DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC`.
 Le test principal est la multinomiale marché + équipe contre le marché
-recalibré train-only. Les quatre challengers team-only, le gradient boosting
-incrémental et les cinq rotations 11F sont post-contrat, descriptifs et
-non promouvables. 11E peut terminer comme évaluation de gates même lorsque ses
-huit hypothèses sont bloquées.
+recalibré train-only. Il relève de l'amendement correctif
+`1.0.0-amendment-1`, enregistré après les diagnostics team-only et avant le run
+autoritatif ; ne jamais le qualifier de préenregistré ni de promouvable. Son
+hash est
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`.
+Les quatre challengers team-only, le gradient boosting incrémental et les cinq
+rotations 11F restent descriptifs et non promouvables. 11E peut terminer comme
+évaluation de gates même lorsque ses huit hypothèses sont bloquées.
 
-PostgreSQL reste documenté à la révision préflight `0007`. `0008` est une cible
-et ne doit être déclaré appliqué qu'après un upgrade Neon live vérifié.
+Le snapshot preflight conserve historiquement la révision `0007`. Le run
+opérationnel `30282406035` a ensuite vérifié l'upgrade Neon live vers
+`0008_jalon11_deep_football` : 304 preuves examinées deux fois, 0 insertion et
+304 doublons évités à chaque passage, avec six équivalences numériques legacy.
+Le même run a vérifié 25 453 objets R2, un upload du Parquet de 2 000 155
+octets, lag 0, aucune suppression et aucune mutation. La source est
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.
+
+Pour auditer ce run, exiger le hash campagne
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`,
+la tête ledger
+`90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`
+et `REPLAY_FULL_HASH_VERIFIED`.
+
+Lorsque seuls les rapports Jalon 11 sont disponibles, rafraîchir uniquement le
+volet Matchup du Cockpit afin de préserver les autres preuves :
+
+```powershell
+$env:COCKPIT_MATCHUP_ONLY = "1"
+python scripts/build_cockpit_snapshot.py
+```
+
+Sous un shell POSIX, l'équivalent est :
+
+```bash
+COCKPIT_MATCHUP_ONLY=1 python scripts/build_cockpit_snapshot.py
+```
 
 Le gate de décision shadow exige un candidat et un prix live avec
 `observed_at` exact. À défaut, le résultat normal est

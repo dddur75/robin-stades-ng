@@ -53,8 +53,15 @@ jobs:
           )
           assert campaign["promotion"]["watchlist"] == 0
           assert campaign["promotion"]["shadow_candidates"] == 0
+          assert campaign["provider_calls"] == 0
+          assert campaign["odds_api_credits"] == 0
+          assert campaign["production_status"] == "PRODUCTION_LOCKED"
+          assert campaign["real_bets"] is False
+          assert watchlist["schema_version"] == "deep-football-watchlist-v1"
           assert watchlist["campaign_result_hash"] == campaign["result_hash"]
+          assert watchlist["entries"] == []
           assert watchlist["count"] == 0
+          assert watchlist["status"] == "EMPTY_NO_ROBUST_DEEP_MATCHUP"
           assert watchlist["not_a_bet"] is True
           assert watchlist["production_status"] == "PRODUCTION_LOCKED"
           assert not (root / "shadow-candidate-decision.json").exists()

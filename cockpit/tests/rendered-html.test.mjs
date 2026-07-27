@@ -143,7 +143,7 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   });
   assert.equal(
     matchup.results.pairedComparator.deltaLogLoss,
-    0.001702211159521072,
+    0.00170221115952107,
   );
   assert.equal(matchup.results.folds.length, 4);
   assert.equal(
@@ -162,6 +162,31 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.ok(matchup.replay.hashComparisons.every((item) => item.matched));
   assert.equal(matchup.replay.providerCalls, 0);
   assert.equal(matchup.replay.oddsApiCredits, 0);
+  assert.equal(
+    matchup.results.resultHash,
+    "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+  );
+  assert.equal(matchup.replay.resultHash, matchup.results.resultHash);
+  assert.equal(
+    matchup.ledger.headHash,
+    "90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8",
+  );
+  assert.equal(
+    matchup.provenance.sourceCommit,
+    "033a98b11b80c059f8986c33c69f1401ce8cf05c",
+  );
+  assert.equal(
+    matchup.provenance.mainCommit,
+    "6bfa906d6ea69183a9d2ce251ddffd0d9bda5c17",
+  );
+  assert.equal(
+    matchup.provenance.codeRevision,
+    "1b74e94d38038b566e14f21ff2c852230cf046fa",
+  );
+  assert.equal(matchup.costs.historicalBytes, 985499179);
+  assert.equal(matchup.costs.databaseBytes, 47366144);
+  assert.equal(matchup.costs.r2ExpectedBytes, 974079201);
+  assert.equal(matchup.costs.r2LagObjects, 0);
   assert.equal(matchup.ledger.status, "HASH_CHAIN_VERIFIED");
   assert.ok(matchup.ledger.events >= 24);
   assert.ok(deep.datasets.length >= 6);

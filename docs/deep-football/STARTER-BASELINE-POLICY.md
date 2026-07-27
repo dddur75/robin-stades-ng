@@ -45,3 +45,7 @@ sourcée, club valide et aucune déduction depuis le onze cible.
 La version historique V1 utilise une récence du dernier enregistrement plutôt
 que du dernier départ et ne prouve pas complètement l'expiration des rosters
 ni la lignée source-time. H11-001, H11-004 et H11-005 restent donc bloquées.
+
+Le run autoritatif `30282406035` confirme le blocage temporel sans reconstruire
+de titulaire. La source auditée est
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.

@@ -74,8 +74,14 @@ gates avec huit hypothèses bloquées. Les familles profondes restent honnêteme
 bloquées.
 
 Le replay vérifie les quatre hashes campagne, dataset, Parquet et ledger sans
-écart. PostgreSQL reste prouvé en préflight à 0007 ; 0008 est seulement la cible
-tant qu'un upgrade Neon live n'est pas vérifié.
+écart. Le preflight à 0007 reste conservé comme photographie historique. Le run
+vert `30282406035` vérifie désormais Neon à
+`0008_jalon11_deep_football`, deux passages idempotents de 304 preuves
+compactes et R2 à 25 453 / 25 453 objets avec lag nul.
+
+Le test principal est un amendement correctif non promouvable, enregistré après
+les diagnostics team-only et avant ce run autoritatif ; il n'est pas présenté
+comme préenregistré. Le verdict reste `JALON_11_BLOCKED_BY_DATA_GATES`.
 
 Tant que la PR brouillon n'est pas complète et verte :
 
