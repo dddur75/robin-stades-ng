@@ -248,12 +248,19 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(Object.keys(observatory.captures.by_family).length, 9);
   assert.equal(Object.keys(observatory.gates.by_name).length, 5);
   assert.equal(observatory.hypotheses.length, 8);
+  const hypothesisStatuses = new Set([
+    "WAITING_FOR_OBSERVATIONS",
+    "DATA_CAPTURE_ACTIVE",
+    "MINIMUM_SAMPLE_NOT_REACHED",
+    "ELIGIBLE_FOR_EXPLORATORY_ANALYSIS",
+  ]);
   assert.ok(
     observatory.hypotheses.every(
       (hypothesis) =>
         hypothesis.frozen === true &&
-        hypothesis.observations === 0 &&
-        hypothesis.status === "WAITING_FOR_OBSERVATIONS",
+        hypothesis.observations >= 0 &&
+        hypothesis.minimum_support > 0 &&
+        hypothesisStatuses.has(hypothesis.status),
     ),
   );
   assert.ok(observatory.providers.api_football_calls >= 0);
@@ -262,6 +269,13 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.ok(observatory.providers.odds_api_credits <= 250);
   if (observatory.origin === "NO_PROSPECTIVE_CAPTURE_YET") {
     assert.equal(observatory.captures.hashes, 0);
+    assert.ok(
+      observatory.hypotheses.every(
+        (hypothesis) =>
+          hypothesis.observations === 0 &&
+          hypothesis.status === "WAITING_FOR_OBSERVATIONS",
+      ),
+    );
   } else {
     assert.ok(observatory.captures.hashes > 0);
   }

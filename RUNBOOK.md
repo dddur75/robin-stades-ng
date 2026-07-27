@@ -590,3 +590,20 @@ pnpm --dir cockpit test
 Le builder refuse toute source sans `PRODUCTION_LOCKED`, avec pari réel,
 publication sociale, démo active ou décision non nulle. Voir
 `docs/prospective-observatory/OBSERVATORY-OPERATIONS.md`.
+
+### Validation pré-fusion sans fournisseur
+
+Le pont CI de la branche Jalon 12 accepte deux modes mutuellement exclusifs :
+
+- `[run-j12-pilot]` autorise le pilote borné après la CI ;
+- `[run-j12-replay-only]` migre Neon, rejoue tout R2, recalcule les gates et
+  teste Robin Live, avec les credentials fournisseur vidés et les plafonds
+  d’appel à zéro.
+
+Un commit contenant les deux marqueurs échoue avant toute étape réseau. En
+mode replay-only, vérifier dans le run GitHub que les étapes registre,
+scheduler et captures sont toutes `skipped`. Ne jamais utiliser le replay-only
+pour simuler une capture : il ne fait que reconstruire l’état déjà durable.
+
+Preuve de référence : run `30306515056`, 18 objets R2 examinés, 9 payloads
+rejoués, 0 appel fournisseur, 0 crédit, 0 mismatch et 0 perte.

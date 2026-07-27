@@ -103,3 +103,17 @@ explicitement reliée au dépôt, le statut exact reste
 Préserver reçus, payloads R2, tentatives et run id. Ne pas relancer hors fenêtre.
 Rejouer depuis R2 pour PostgreSQL. Une panne durable ouvre un incident
 explicite ; aucune perte silencieuse ni suppression corrective n’est permise.
+
+## Récupération CI replay-only
+
+Sur la branche de pré-fusion Jalon 12, le marqueur
+`[run-j12-replay-only]` autorise uniquement :
+
+1. la vérification de présence des secrets sans affichage ;
+2. `alembic upgrade head` jusqu’à `0009_jalon12_observatory` ;
+3. le replay intégral R2 avec credentials fournisseur vides ;
+4. les gates, le ledger, le snapshot Robin Live et son artefact.
+
+Les étapes fixture-registry, scheduler et captures doivent apparaître
+`skipped`. Le marqueur `[run-j12-pilot]` ne doit jamais être présent sur le
+même commit ; le workflow rejette ce double mode avant tout appel.

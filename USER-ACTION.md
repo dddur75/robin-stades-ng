@@ -118,3 +118,13 @@ verts :
 
 Une demande de fusion éventuelle appartiendra à une mission distincte après
 revue des preuves.
+
+Le pilote borné et le replay-only sont désormais vérifiés par le run
+`30306515056`. Le verdict reste `JALON_12_PARTIAL_CAPTURE_READY` parce qu’aucune
+fenêtre critique joueur, blessure, lineup, formation ou cote n’était due.
+Cette couverture partielle est attendue et ne justifie ni appel forcé ni
+fusion automatique.
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Ne pas fusionner la PR #17 dans cette mission.

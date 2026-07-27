@@ -503,3 +503,28 @@ DEMO_MODE_ENABLED=false
 
 Aucun verdict de readiness final n’est déclaré avant pilote réel, projection,
 replay R2 et CI verte.
+
+### Pilote réel et validation pré-fusion
+
+Le pilote Ligue 1 a enregistré 9 fixtures et 531 fenêtres sur l’horizon de
+30 jours. Au moment du contrôle, `windows_due=0` : seules les 9 captures
+`FIXTURE` réelles sont présentes, pour 11 691 octets et 9 hashes. Le coût
+cumulé est de 3 appels API-Football et 0 crédit The Odds API, sans erreur ni
+retry.
+
+Le run replay-only `30306515056` a migré Neon en
+`0009_jalon12_observatory`, ignoré explicitement les trois étapes fournisseur,
+examiné les 18 objets R2, reconstruit les 9 fixtures et confirmé 0 mismatch,
+0 perte, 0 appel, 0 crédit, 0 suppression et 9 doublons évités au second
+passage. PostgreSQL expose 12 tables et aucun corps de payload. Le ledger V3
+compte 586 événements avec chaîne vérifiée.
+
+Robin Live a été construit et testé avec le snapshot opérationnel
+`LIVE_PROSPECTIVE_CAPTURE`; l’artefact `jalon12-pilot-30306515056` est publié.
+Il ne s’agit pas d’un déploiement privé. Les CI push `30306515056` et PR
+`30306519612` sont vertes sur `fb55817`.
+
+Le verdict factuel est `JALON_12_PARTIAL_CAPTURE_READY` : l’infrastructure,
+R2, Neon et le replay sont verts, tandis que les gates joueur, blessure,
+lineup, formation et marché restent bloqués par couverture jusqu’aux fenêtres
+réellement dues. La PR #17 reste brouillon et non fusionnée.

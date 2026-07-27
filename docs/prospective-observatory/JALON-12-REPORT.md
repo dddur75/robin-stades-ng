@@ -97,3 +97,85 @@ Elles n’affichent aucune conclusion.
 - à quelle date chaque hypothèse atteint-elle son minimum préenregistré ?
 
 Ces questions sont des objectifs de mesure, pas des résultats.
+
+## Preuve opérationnelle du 27 juillet 2026
+
+Le pilote réel borné a été exécuté sur la Ligue 1 par le run GitHub
+`30304339733`. Toutes les étapes opérationnelles — migration Neon, registre,
+scheduler, captures dues, replay R2 et gates — ont réussi. Le run global a
+ensuite révélé une assertion frontend qui supposait encore le snapshot initial.
+Le correctif n’a pas relancé le fournisseur : le run replay-only
+`30306515056`, sur `fb55817d2b8e09958a120898ffff8e8dda77e9fa`, a explicitement
+ignoré les trois étapes réseau, puis a validé replay, gates, Robin Live et
+l’artefact `jalon12-pilot-30306515056`.
+
+### Fixtures, fenêtres et captures
+
+| Mesure | Valeur vérifiée |
+|---|---:|
+| Fixtures Ligue 1 suivies | 9 |
+| Horizon | 30 jours, 3 journées maximum |
+| Fenêtres planifiées | 531 |
+| Fenêtres dues au contrôle | 0 |
+| Captures `FIXTURE` | 9 |
+| Captures des huit autres familles | 0 |
+| Octets bruts R2 | 11 691 |
+| Hashes de payload | 9 |
+| Captures tardives / rejetées / invalides / manquées | 0 / 0 / 0 / 0 |
+
+Les neuf reçus `FIXTURE` sont antérieurs au cutoff. Aucune lineup, blessure,
+formation, donnée joueur ou cote n’est revendiquée : leurs fenêtres n’étaient
+pas dues.
+
+### Fournisseurs et budgets
+
+| Mesure | Valeur vérifiée |
+|---|---:|
+| Appels API-Football du pilote | 3 |
+| Crédits The Odds API | 0 |
+| Erreurs / retries | 0 / 0 |
+| Plafond API-Football | 5 000 |
+| Plafond The Odds API | 250 |
+| Réserves externes | 5 000 / 4 000 |
+| Réserve Odds proche kickoff | 80 |
+| Appels et crédits du replay | 0 / 0 |
+
+### R2, PostgreSQL et ledger
+
+- R2 : 18 objets — 9 payloads et 9 reçus —, 11 691 octets, 18 vérifiés,
+  lag 0, suppression 0 ;
+- replay complet : 18 objets examinés, 9 payloads reconstruits, sélection non
+  tronquée, 0 mismatch, 0 perte, 0 appel, 0 crédit ;
+- second passage : 0 insert, 9 doublons évités ;
+- PostgreSQL : migration `0009_jalon12_observatory`, 12 tables, 54 écritures
+  compactes du gate report, aucun corps de payload, reconstruction
+  `RECONSTRUCTIBLE_FROM_R2` ;
+- temporalité : 9 preuves avant cutoff, 45 évaluations de gate, 0 tardive,
+  0 rejet ;
+- ledger V3 : 586 événements, chaîne
+  `HASH_CHAIN_VERIFIED`, 0 décision de pari.
+
+Les cinq gates restent `BLOCKED_BY_COVERAGE` sur les neuf fixtures. H11-001 à
+H11-008 restent gelées, avec 0 observation et
+`WAITING_FOR_OBSERVATIONS`. Il s’agit du résultat attendu avant les premières
+fenêtres critiques.
+
+### Robin Live et verdict
+
+Le snapshot du run `30306515056` porte
+`origin=LIVE_PROSPECTIVE_CAPTURE`, `PROSPECTIVE_GATES_ACCUMULATING`, les neuf
+fixtures, les compteurs fournisseur et les preuves R2/Neon. Son SHA-256 est
+`0c919c3062d4ec98a4d9a6fb7cb62b18674c9c97cb082506d959f699e157fbde`.
+Le build 5/5 et les quatre tests frontend sont verts. L’artefact est publié ;
+aucun déploiement privé n’est revendiqué.
+
+Verdict pré-fusion :
+
+```text
+JALON_12_PARTIAL_CAPTURE_READY
+```
+
+Le qualificatif `PARTIAL` décrit seulement l’absence normale de fenêtres
+joueur, blessure, lineup, formation et cote dues. Il ne constitue ni un échec
+du pipeline ni une validation d’hypothèse. La PR #17 reste brouillon et non
+fusionnée.

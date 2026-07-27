@@ -239,3 +239,13 @@ PostgreSQL payload body storage = 0
 Git conserve seulement code, migration, contrats, reçus agrégés, hashes,
 rapports compacts et tests. Aucun achat ni changement de plan n’est autorisé
 automatiquement. `STORAGE_PAUSED` et `P3/P4_PAUSED` restent actifs.
+
+### Consommation vérifiée du pilote
+
+Le pilote Ligue 1 du 27 juillet 2026 a consommé 3 appels API-Football pour
+enregistrer 9 fixtures. Aucune fenêtre de cote n’était due : The Odds API a
+consommé 0 crédit. Les replays de récupération ont exécuté 0 appel et consommé
+0 crédit ; les trois étapes fournisseur étaient explicitement `skipped` dans
+le run final `30306515056`.
+
+Aucun achat, changement d’abonnement ou coût de pari n’a été engagé.
