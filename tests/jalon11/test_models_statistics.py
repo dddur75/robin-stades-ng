@@ -7,6 +7,10 @@ from datetime import UTC, datetime
 
 import pytest
 
+from robin.deep_football.contracts import (
+    normalize_scientific_evidence,
+    scientific_evidence_hash,
+)
 from robin.deep_football.models import (
     devig_1x2,
     flat_stake_roi,
@@ -50,11 +54,7 @@ def _difference_in_means(
     labels: Sequence[int],
 ) -> float:
     positive = [value for value, label in zip(values, labels, strict=True) if label]
-    negative = [
-        value
-        for value, label in zip(values, labels, strict=True)
-        if not label
-    ]
+    negative = [value for value, label in zip(values, labels, strict=True) if not label]
     return statistics.fmean(positive) - statistics.fmean(negative)
 
 
@@ -301,3 +301,62 @@ def test_impossible_condition_control_evaluates_the_paired_sample() -> None:
         "predicate": "OUTCOME_IS_HOME_AND_AWAY",
         "promotion_eligible": False,
     }
+
+
+def test_scientific_hash_removes_only_insignificant_float_noise() -> None:
+    first = {
+        "calibration_error": 0.0096524388995837176,
+        "bootstrap": [
+            -0.00024288426175629057,
+            0.0039017817607553402,
+        ],
+        "support": 7_081,
+        "locked": True,
+    }
+    equivalent = {
+        "calibration_error": 0.0096524388995837245,
+        "bootstrap": [
+            -0.000242884261756291,
+            0.0039017817607553389,
+        ],
+        "support": 7_081,
+        "locked": True,
+    }
+    material_drift = {
+        **equivalent,
+        "calibration_error": 0.0096524389995837245,
+    }
+
+    assert normalize_scientific_evidence(first) == (normalize_scientific_evidence(equivalent))
+    assert scientific_evidence_hash(first) == (
+        "52d948358230fca470066d07bad51370ad988b19bbdfaf81ea1666f81cdda950"
+    )
+    assert scientific_evidence_hash(first) == scientific_evidence_hash(equivalent)
+    assert scientific_evidence_hash(first) != scientific_evidence_hash(material_drift)
+
+
+@pytest.mark.parametrize("value", [math.inf, -math.inf, math.nan])
+def test_scientific_evidence_rejects_non_finite_numbers(value: float) -> None:
+    with pytest.raises(
+        ValueError,
+        match="SCIENTIFIC_EVIDENCE_REQUIRES_FINITE_FLOATS",
+    ):
+        normalize_scientific_evidence({"metric": value})
+
+
+def test_scientific_evidence_rejects_non_json_types_and_keys() -> None:
+    with pytest.raises(
+        TypeError,
+        match="SCIENTIFIC_EVIDENCE_REQUIRES_JSON_TYPES",
+    ):
+        normalize_scientific_evidence({"metric": object()})
+    with pytest.raises(
+        TypeError,
+        match="SCIENTIFIC_EVIDENCE_REQUIRES_JSON_TYPES",
+    ):
+        normalize_scientific_evidence({"metrics": (1.0, 2.0)})
+    with pytest.raises(
+        TypeError,
+        match="SCIENTIFIC_EVIDENCE_REQUIRES_STRING_KEYS",
+    ):
+        normalize_scientific_evidence({1: "not-a-json-object-key"})

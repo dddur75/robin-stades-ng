@@ -9,16 +9,22 @@ import pytest
 from sqlalchemy import Engine, func, select
 from sqlalchemy.orm import Session
 
-from robin.deep_football.contracts import canonical_hash
+from robin.deep_football.contracts import (
+    SCIENTIFIC_FLOAT_CONTRACT_VERSION,
+    canonical_hash,
+    scientific_evidence_hash,
+)
 from robin.deep_football.persistence import (
     AUTHORITATIVE_EVIDENCE_PUBLISHED_AT,
     AUTHORITATIVE_EVIDENCE_SOURCE_COMMIT,
     DATASET_VERSION,
     FROZEN_AT,
+    LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES,
     PROTOCOL_AMENDMENT_HASH,
     PROTOCOL_AMENDMENT_PUBLISHED_AT,
     PROTOCOL_AMENDMENT_SOURCE_COMMIT,
     TEAM_HYPOTHESIS_VERSION,
+    _legacy_hash_metrics,
     persist_deep_football_evidence,
 )
 from robin.storage.database import build_engine
@@ -62,11 +68,58 @@ def _utc(value: datetime) -> datetime:
     return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
 
+def _evaluation_snapshot(row: MatchupEvaluationModel) -> str:
+    return json.dumps(
+        {
+            column.name: getattr(row, column.name)
+            for column in MatchupEvaluationModel.__table__.columns
+        },
+        default=str,
+        sort_keys=True,
+    )
+
+
+def _primary_evaluation(session: Session) -> MatchupEvaluationModel:
+    row = session.scalar(
+        select(MatchupEvaluationModel).where(
+            MatchupEvaluationModel.model_key == "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL"
+        )
+    )
+    assert row is not None
+    return row
+
+
+def _set_legacy_campaign_hash(
+    row: MatchupEvaluationModel,
+    campaign_result_hash: str,
+) -> None:
+    metrics = cast(
+        dict[str, object],
+        json.loads(json.dumps(row.metrics)),
+    )
+    authoritative = cast(
+        dict[str, object],
+        metrics["authoritative_evidence"],
+    )
+    authoritative["campaign_result_hash"] = campaign_result_hash
+    evaluation_hash = _legacy_hash_metrics(
+        {
+            "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+            "model_key": row.model_key,
+            "metrics": metrics,
+            "dataset_hash": row.dataset_hash,
+        }
+    )
+    row.metrics = metrics
+    row.evaluation_hash = evaluation_hash
+    row.idempotency_key = f"j11:evaluation:{evaluation_hash}"
+
+
 def _write(path: Path, value: object) -> None:
     path.write_text(json.dumps(value), encoding="utf-8")
 
 
-def _artifacts(root: Path) -> None:
+def _artifacts(root: Path) -> str:
     _write(
         root / "audit-summary.json",
         {
@@ -112,80 +165,81 @@ def _artifacts(root: Path) -> None:
             "features": ["elo_difference", "home_form_5"],
         },
     )
-    _write(
-        root / "campaign-11a-summary.json",
-        {
-            "production_status": "PRODUCTION_LOCKED",
-            "paired_1x2_rows": 200,
-            "result_hash": "b" * 64,
-            "folds": [],
-            "models": {
-                "B0_MARKET": {"log_loss": 1.0, "brier": 0.2},
-                "B0_MARKET_RECALIBRATED_TRAIN_ONLY": {
-                    "log_loss": 1.01,
-                    "brier": 0.201,
-                },
-                "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL": {
-                    "log_loss": 1.1,
-                    "brier": 0.21,
-                    "delta_log_loss": 0.1,
-                    "delta_brier": 0.01,
-                    "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
-                },
-                "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING": {
-                    "log_loss": 1.2,
-                    "brier": 0.22,
-                    "delta_log_loss": 0.2,
-                    "delta_brier": 0.02,
-                    "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
-                },
-                "B1_TEAM_ONLY_POISSON": {
-                    "log_loss": 1.3,
-                    "brier": 0.23,
-                    "delta_log_loss": 0.3,
-                    "delta_brier": 0.03,
-                    "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
-                },
-                "B1_TEAM_ONLY_DIXON_COLES": {
-                    "log_loss": 1.4,
-                    "brier": 0.24,
-                    "delta_log_loss": 0.4,
-                    "delta_brier": 0.04,
-                    "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
-                },
-                "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL": {
-                    "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
-                    "log_loss": 1.02,
-                    "brier": 0.202,
-                    "delta_log_loss": 0.01,
-                    "delta_brier": 0.001,
-                    "status": ("PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL"),
-                },
-                "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING": {
-                    "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
-                    "log_loss": 1.03,
-                    "brier": 0.203,
-                    "delta_log_loss": 0.02,
-                    "delta_brier": 0.002,
-                    "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
-                },
-                "primary_for_inference": ("B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL"),
+    campaign: dict[str, object] = {
+        "numeric_evidence_contract": SCIENTIFIC_FLOAT_CONTRACT_VERSION,
+        "production_status": "PRODUCTION_LOCKED",
+        "paired_1x2_rows": 200,
+        "folds": [],
+        "models": {
+            "B0_MARKET": {"log_loss": 1.0, "brier": 0.2},
+            "B0_MARKET_RECALIBRATED_TRAIN_ONLY": {
+                "log_loss": 1.01,
+                "brier": 0.201,
             },
-            "statistics": {
-                "cr1_one_sided_p": 0.9638269233447452,
-                "sign_flip_p": 0.961,
-                "family_q": 0.9638269233447452,
-                "global_q": 1.0,
+            "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL": {
+                "log_loss": 1.1,
+                "brier": 0.21,
+                "delta_log_loss": 0.1,
+                "delta_brier": 0.01,
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
             },
-            "promotion": {"promoted": False, "status": "REJECTED"},
+            "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING": {
+                "log_loss": 1.2,
+                "brier": 0.22,
+                "delta_log_loss": 0.2,
+                "delta_brier": 0.02,
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+            },
+            "B1_TEAM_ONLY_POISSON": {
+                "log_loss": 1.3,
+                "brier": 0.23,
+                "delta_log_loss": 0.3,
+                "delta_brier": 0.03,
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+            },
+            "B1_TEAM_ONLY_DIXON_COLES": {
+                "log_loss": 1.4,
+                "brier": 0.24,
+                "delta_log_loss": 0.4,
+                "delta_brier": 0.04,
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+            },
+            "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL": {
+                "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+                "log_loss": 1.02,
+                "brier": 0.202,
+                "delta_log_loss": 0.01,
+                "delta_brier": 0.001,
+                "status": ("PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL"),
+            },
+            "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING": {
+                "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+                "log_loss": 1.03,
+                "brier": 0.203,
+                "delta_log_loss": 0.02,
+                "delta_brier": 0.002,
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+            },
+            "primary_for_inference": ("B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL"),
         },
-    )
+        "statistics": {
+            "cr1_one_sided_p": 0.9638269233447452,
+            "sign_flip_p": 0.961,
+            "family_q": 0.9638269233447452,
+            "global_q": 1.0,
+        },
+        "promotion": {"promoted": False, "status": "REJECTED"},
+    }
+    campaign_result_hash = scientific_evidence_hash(campaign)
+    campaign["result_hash"] = campaign_result_hash
+    _write(root / "campaign-11a-summary.json", campaign)
+    return campaign_result_hash
 
 
 def test_compact_projection_is_idempotent_and_keeps_heavy_rows_out(
     tmp_path: Path,
 ) -> None:
-    _artifacts(tmp_path)
+    campaign_result_hash = _artifacts(tmp_path)
     engine = build_engine(f"sqlite:///{tmp_path / 'j11.db'}")
     Base.metadata.create_all(engine)
 
@@ -265,7 +319,7 @@ def test_compact_projection_is_idempotent_and_keeps_heavy_rows_out(
         assert primary.metrics["authoritative_evidence"] == {
             "source_commit": AUTHORITATIVE_EVIDENCE_SOURCE_COMMIT,
             "published_at": AUTHORITATIVE_EVIDENCE_PUBLISHED_AT.isoformat(),
-            "campaign_result_hash": "b" * 64,
+            "campaign_result_hash": campaign_result_hash,
             "dataset_hash": HASH,
         }
         diagnostics = [row for row in model_evaluations if row.id != primary.id]
@@ -436,3 +490,216 @@ def test_protocol_amendment_provenance_is_validated(
                 tzinfo=UTC,
             ),
         )
+
+
+def test_known_legacy_float_noise_replays_without_mutating_rows(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-legacy-numeric.db'}")
+    Base.metadata.create_all(engine)
+    _persist(engine, tmp_path, code_revision="creator-revision")
+    legacy_campaign_hash = next(iter(LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES))
+
+    before: dict[str, str] = {}
+    with Session(engine) as session, session.begin():
+        rows = list(
+            session.scalars(
+                select(MatchupEvaluationModel).where(
+                    MatchupEvaluationModel.model_key != "NOT_RUN_DATA_GATE"
+                )
+            )
+        )
+        assert len(rows) == 6
+        for row in rows:
+            metrics = cast(
+                dict[str, object],
+                json.loads(json.dumps(row.metrics)),
+            )
+            authoritative = cast(
+                dict[str, object],
+                metrics["authoritative_evidence"],
+            )
+            authoritative["campaign_result_hash"] = legacy_campaign_hash
+            if row.model_key == "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL":
+                model_metrics = cast(dict[str, object], metrics["model"])
+                model_metrics["brier"] = float(model_metrics["brier"]) + 1e-16
+                row.effect = float(row.effect) + 1e-18
+                row.p_value = float(row.p_value) + 1e-16
+            evaluation_hash = _legacy_hash_metrics(
+                {
+                    "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+                    "model_key": row.model_key,
+                    "metrics": metrics,
+                    "dataset_hash": row.dataset_hash,
+                }
+            )
+            row.metrics = metrics
+            row.evaluation_hash = evaluation_hash
+            row.idempotency_key = f"j11:evaluation:{evaluation_hash}"
+            before[row.id] = _evaluation_snapshot(row)
+
+    replay = _persist(engine, tmp_path, code_revision="replay-revision")
+
+    assert sum(cast(dict[str, int], replay["inserted"]).values()) == 0
+    assert replay["legacy_numeric_equivalent_evaluations"] == 6
+    with Session(engine) as session:
+        after = {
+            row.id: _evaluation_snapshot(row)
+            for row in session.scalars(
+                select(MatchupEvaluationModel).where(
+                    MatchupEvaluationModel.model_key != "NOT_RUN_DATA_GATE"
+                )
+            )
+        }
+    assert after == before
+
+
+def test_material_evaluation_drift_still_fails_closed(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-material-drift.db'}")
+    Base.metadata.create_all(engine)
+    _persist(engine, tmp_path, code_revision="creator-revision")
+    campaign_path = tmp_path / "campaign-11a-summary.json"
+    campaign = cast(
+        dict[str, object],
+        json.loads(campaign_path.read_text(encoding="utf-8")),
+    )
+    models = cast(dict[str, object], campaign["models"])
+    primary = cast(
+        dict[str, object],
+        models["B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL"],
+    )
+    primary["log_loss"] = float(primary["log_loss"]) + 1e-6
+    campaign.pop("result_hash")
+    campaign["result_hash"] = scientific_evidence_hash(campaign)
+    _write(campaign_path, campaign)
+
+    with pytest.raises(
+        ValueError,
+        match="JALON11_IMMUTABLE_REPLAY_MISMATCH:matchup_evaluations",
+    ):
+        _persist(engine, tmp_path, code_revision="drift-revision")
+
+
+def test_material_drift_inside_a_coherent_legacy_row_fails_closed(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-legacy-material.db'}")
+    Base.metadata.create_all(engine)
+    _persist(engine, tmp_path, code_revision="creator-revision")
+    with Session(engine) as session, session.begin():
+        primary = _primary_evaluation(session)
+        _set_legacy_campaign_hash(
+            primary,
+            next(iter(LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES)),
+        )
+        metrics = cast(
+            dict[str, object],
+            json.loads(json.dumps(primary.metrics)),
+        )
+        model_metrics = cast(dict[str, object], metrics["model"])
+        model_metrics["log_loss"] = float(model_metrics["log_loss"]) + 1e-6
+        evaluation_hash = _legacy_hash_metrics(
+            {
+                "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+                "model_key": primary.model_key,
+                "metrics": metrics,
+                "dataset_hash": primary.dataset_hash,
+            }
+        )
+        primary.metrics = metrics
+        primary.evaluation_hash = evaluation_hash
+        primary.idempotency_key = f"j11:evaluation:{evaluation_hash}"
+
+    with pytest.raises(
+        ValueError,
+        match="JALON11_IMMUTABLE_REPLAY_MISMATCH:matchup_evaluations",
+    ):
+        _persist(engine, tmp_path, code_revision="replay-revision")
+
+
+def test_unallowlisted_legacy_campaign_hash_fails_closed(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-unallowlisted.db'}")
+    Base.metadata.create_all(engine)
+    _persist(engine, tmp_path, code_revision="creator-revision")
+    with Session(engine) as session, session.begin():
+        _set_legacy_campaign_hash(_primary_evaluation(session), "c" * 64)
+
+    with pytest.raises(
+        ValueError,
+        match="JALON11_IMMUTABLE_REPLAY_MISMATCH:matchup_evaluations",
+    ):
+        _persist(engine, tmp_path, code_revision="replay-revision")
+
+
+def test_corrupt_legacy_evaluation_hash_fails_closed(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-corrupt-legacy.db'}")
+    Base.metadata.create_all(engine)
+    _persist(engine, tmp_path, code_revision="creator-revision")
+    with Session(engine) as session, session.begin():
+        primary = _primary_evaluation(session)
+        _set_legacy_campaign_hash(
+            primary,
+            next(iter(LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES)),
+        )
+        primary.evaluation_hash = "d" * 64
+        primary.idempotency_key = f"j11:evaluation:{primary.evaluation_hash}"
+
+    with pytest.raises(
+        ValueError,
+        match="JALON11_IMMUTABLE_REPLAY_MISMATCH:matchup_evaluations",
+    ):
+        _persist(engine, tmp_path, code_revision="replay-revision")
+
+
+def test_legacy_replay_does_not_relax_non_float_row_fields(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-status-drift.db'}")
+    Base.metadata.create_all(engine)
+    _persist(engine, tmp_path, code_revision="creator-revision")
+    with Session(engine) as session, session.begin():
+        primary = _primary_evaluation(session)
+        _set_legacy_campaign_hash(
+            primary,
+            next(iter(LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES)),
+        )
+        primary.status = "DATA_GATE_BLOCKED"
+
+    with pytest.raises(
+        ValueError,
+        match="JALON11_IMMUTABLE_REPLAY_MISMATCH:matchup_evaluations",
+    ):
+        _persist(engine, tmp_path, code_revision="replay-revision")
+
+
+def test_invalid_campaign_result_hash_is_rejected_before_persistence(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-invalid-hash.db'}")
+    Base.metadata.create_all(engine)
+    campaign_path = tmp_path / "campaign-11a-summary.json"
+    campaign = cast(
+        dict[str, object],
+        json.loads(campaign_path.read_text(encoding="utf-8")),
+    )
+    campaign["result_hash"] = "f" * 64
+    _write(campaign_path, campaign)
+
+    with pytest.raises(
+        ValueError,
+        match="JALON11_CAMPAIGN_RESULT_HASH_MISMATCH",
+    ):
+        _persist(engine, tmp_path, code_revision="invalid-hash-revision")

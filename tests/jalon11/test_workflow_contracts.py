@@ -66,6 +66,9 @@ def test_deep_feature_build_checks_primary_inference_fidelity_in_postgresql() ->
     assert "tested_model_evaluations" in build
     assert "diagnostic_model_evaluations" in build
     assert "blocked_owner_evaluations" in build
+    assert "legacy_numeric_equivalent_evaluations" in build
+    assert "numeric_evidence_contract" in build
+    assert "persisted_campaign_result_hashes" in build
     assert "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE" in build
 
 

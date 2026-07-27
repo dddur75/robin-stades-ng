@@ -22,7 +22,12 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 from robin.deep_football.campaigns import campaign_manifest
-from robin.deep_football.contracts import DataGateStatus
+from robin.deep_football.contracts import (
+    SCIENTIFIC_FLOAT_CONTRACT_VERSION,
+    DataGateStatus,
+    normalize_scientific_evidence,
+    scientific_evidence_hash,
+)
 from robin.deep_football.datasets import deterministic_dataset_hash
 from robin.deep_football.matchups import (
     evaluate_hypothesis_eligibility,
@@ -1338,6 +1343,7 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
     promotion = evaluate_promotion(evidence)
     summary: dict[str, object] = {
         "schema_version": "jalon11-team-campaign-v1",
+        "numeric_evidence_contract": SCIENTIFIC_FLOAT_CONTRACT_VERSION,
         "campaign": "11A",
         "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
         "promotion_eligible": False,
@@ -1473,10 +1479,11 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
         "real_bets": False,
         "no_bet_default": True,
     }
-    hashable = json.loads(json.dumps(summary, sort_keys=True))
-    summary["result_hash"] = hashlib.sha256(
-        json.dumps(hashable, sort_keys=True, separators=(",", ":")).encode()
-    ).hexdigest()
+    normalized_summary = normalize_scientific_evidence(summary)
+    if not isinstance(normalized_summary, dict):
+        raise TypeError("JALON11_CAMPAIGN_SUMMARY_OBJECT_REQUIRED")
+    summary = normalized_summary
+    summary["result_hash"] = scientific_evidence_hash(summary)
     _write_json(output / "campaign-11a-summary.json", summary)
     return summary
 

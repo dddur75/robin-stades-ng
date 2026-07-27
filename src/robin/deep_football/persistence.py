@@ -18,7 +18,12 @@ from typing import TypeVar
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import Session
 
-from robin.deep_football.contracts import canonical_hash
+from robin.deep_football.contracts import (
+    SCIENTIFIC_FLOAT_CONTRACT_VERSION,
+    canonical_hash,
+    normalize_scientific_evidence,
+    scientific_evidence_hash,
+)
 from robin.deep_football.matchups import owner_hypotheses
 from robin.storage.models import (
     CoverageGateModel,
@@ -62,6 +67,23 @@ AUTHORITATIVE_EVIDENCE_PUBLISHED_AT = datetime(
     17,
     tzinfo=UTC,
 )
+LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES = frozenset(
+    {
+        # First Linux persistence on run 30277990260.  A repeated calculation
+        # changed only three last-bit float representations (max 6.94e-18).
+        # This exact allowlist bridges that immutable row to the normalized
+        # scientific hash without broadening replay equivalence.
+        "cbd0dfde77b7603c818a662652d92389fa400175bd941e7a0525fd6b0d3fe9a4",
+    }
+)
+EVALUATION_SCIENTIFIC_FLOAT_FIELDS = frozenset(
+    {
+        "effect",
+        "p_value",
+        "q_value_family",
+        "q_value_global",
+    }
+)
 
 
 def _identifier(namespace: str, value: str) -> str:
@@ -84,12 +106,124 @@ def _canonical(value: object) -> str:
     )
 
 
+def _team_evaluation_hash(
+    *,
+    model_key: str,
+    metrics: Mapping[str, object],
+    dataset_hash: str,
+    legacy: bool = False,
+) -> str:
+    hash_function = _legacy_hash_metrics if legacy else _hash_metrics
+    return hash_function(
+        {
+            "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+            "model_key": model_key,
+            "metrics": metrics,
+            "dataset_hash": dataset_hash,
+        }
+    )
+
+
+def _metrics_without_derived_campaign_hash(
+    metrics: Mapping[str, object],
+) -> tuple[dict[str, object], str]:
+    normalized = normalize_scientific_evidence(dict(metrics))
+    if not isinstance(normalized, dict):
+        raise TypeError("JALON11_EVALUATION_METRICS_OBJECT_REQUIRED")
+    authoritative = normalized.get("authoritative_evidence")
+    if not isinstance(authoritative, dict):
+        raise ValueError("JALON11_AUTHORITATIVE_EVIDENCE_REQUIRED")
+    campaign_result_hash = authoritative.get("campaign_result_hash")
+    if not isinstance(campaign_result_hash, str):
+        raise ValueError("JALON11_CAMPAIGN_RESULT_HASH_REQUIRED")
+    normalized_authoritative = dict(authoritative)
+    normalized_authoritative.pop("campaign_result_hash")
+    normalized["authoritative_evidence"] = normalized_authoritative
+    return normalized, campaign_result_hash
+
+
+def _is_known_legacy_numeric_evaluation_replay(
+    existing: MatchupEvaluationModel,
+    expected: Mapping[str, object],
+    mismatches: set[str],
+) -> bool:
+    if not mismatches:
+        return False
+    if existing.model_key == "NOT_RUN_DATA_GATE":
+        return False
+    expected_metrics = expected.get("metrics")
+    expected_evaluation_hash = expected.get("evaluation_hash")
+    expected_idempotency_key = expected.get("idempotency_key")
+    expected_dataset_hash = expected.get("dataset_hash")
+    if (
+        not isinstance(expected_metrics, dict)
+        or not isinstance(expected_evaluation_hash, str)
+        or not isinstance(expected_idempotency_key, str)
+        or not isinstance(expected_dataset_hash, str)
+    ):
+        return False
+    existing_metrics = existing.metrics
+    if not isinstance(existing_metrics, dict):
+        return False
+    try:
+        normalized_existing, existing_campaign_hash = _metrics_without_derived_campaign_hash(
+            existing_metrics
+        )
+        normalized_expected, expected_campaign_hash = _metrics_without_derived_campaign_hash(
+            expected_metrics
+        )
+    except (TypeError, ValueError):
+        return False
+    if existing_campaign_hash not in LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES:
+        return False
+    if existing_campaign_hash == expected_campaign_hash:
+        return False
+    if _canonical(normalized_existing) != _canonical(normalized_expected):
+        return False
+    for field, expected_value in expected.items():
+        if field in {
+            "code_revision",
+            "evaluation_hash",
+            "idempotency_key",
+            "metrics",
+        }:
+            continue
+        existing_value = getattr(existing, field)
+        if field in EVALUATION_SCIENTIFIC_FLOAT_FIELDS:
+            try:
+                existing_value = normalize_scientific_evidence(existing_value)
+                expected_value = normalize_scientific_evidence(expected_value)
+            except (TypeError, ValueError):
+                return False
+        if _canonical(existing_value) != _canonical(expected_value):
+            return False
+    if (
+        existing.idempotency_key != f"j11:evaluation:{existing.evaluation_hash}"
+        or expected_idempotency_key != f"j11:evaluation:{expected_evaluation_hash}"
+    ):
+        return False
+    if existing.evaluation_hash != _team_evaluation_hash(
+        model_key=existing.model_key,
+        metrics=existing_metrics,
+        dataset_hash=existing.dataset_hash,
+        legacy=True,
+    ):
+        return False
+    return expected_evaluation_hash == _team_evaluation_hash(
+        model_key=existing.model_key,
+        metrics=expected_metrics,
+        dataset_hash=expected_dataset_hash,
+    )
+
+
 def _add_or_verify(
     session: Session,
     model_type: type[ModelT],
     identifier: str,
     model: ModelT,
     expected: Mapping[str, object],
+    *,
+    legacy_numeric_replays: list[str] | None = None,
 ) -> bool:
     existing = session.scalar(select(model_type).where(model_type.id == identifier))
     if existing is None:
@@ -100,13 +234,23 @@ def _add_or_verify(
     # hashes already carry that identity.  A replay from a later merge commit
     # must therefore preserve the creator revision instead of treating it as a
     # mutation or inserting a duplicate.
-    mismatches = [
+    mismatches = {
         field
         for field, value in expected.items()
         if field != "code_revision"
         if _canonical(getattr(existing, field)) != _canonical(value)
-    ]
+    }
     if mismatches:
+        if isinstance(existing, MatchupEvaluationModel) and (
+            _is_known_legacy_numeric_evaluation_replay(
+                existing,
+                expected,
+                mismatches,
+            )
+        ):
+            if legacy_numeric_replays is not None:
+                legacy_numeric_replays.append(identifier)
+            return False
         raise ValueError(
             "JALON11_IMMUTABLE_REPLAY_MISMATCH:"
             + model_type.__tablename__
@@ -276,6 +420,10 @@ def _cutoff_class(gate: str) -> str:
 
 
 def _hash_metrics(value: Mapping[str, object]) -> str:
+    return scientific_evidence_hash(dict(value))
+
+
+def _legacy_hash_metrics(value: Mapping[str, object]) -> str:
     return hashlib.sha256(_canonical(value).encode("utf-8")).hexdigest()
 
 
@@ -316,6 +464,15 @@ def persist_deep_football_evidence(
         raise ValueError("JALON11_ODDS_CREDITS_MUST_BE_ZERO")
     if campaign.get("production_status") != "PRODUCTION_LOCKED":
         raise ValueError("JALON11_PRODUCTION_MUST_REMAIN_LOCKED")
+    if campaign.get("numeric_evidence_contract") != SCIENTIFIC_FLOAT_CONTRACT_VERSION:
+        raise ValueError("JALON11_NUMERIC_EVIDENCE_CONTRACT_MISMATCH")
+    campaign_result_hash = campaign.get("result_hash")
+    if not isinstance(campaign_result_hash, str) or len(campaign_result_hash) != 64:
+        raise ValueError("JALON11_CAMPAIGN_RESULT_HASH_INVALID")
+    campaign_hashable = dict(campaign)
+    campaign_hashable.pop("result_hash")
+    if scientific_evidence_hash(campaign_hashable) != campaign_result_hash:
+        raise ValueError("JALON11_CAMPAIGN_RESULT_HASH_MISMATCH")
     dataset_hash = str(manifest["dataset_hash"])
     if len(dataset_hash) != 64:
         raise ValueError("JALON11_DATASET_HASH_INVALID")
@@ -332,6 +489,7 @@ def persist_deep_football_evidence(
         "evaluations": 0,
     }
     examined = dict(inserted)
+    legacy_numeric_replays: list[str] = []
     with Session(engine) as session, session.begin():
         for feature in features:
             contract = _feature_contract(feature)
@@ -582,6 +740,7 @@ def persist_deep_football_evidence(
                     identifier,
                     MatchupEvaluationModel(id=identifier, **expected),
                     expected,
+                    legacy_numeric_replays=legacy_numeric_replays,
                 )
             )
 
@@ -726,6 +885,7 @@ def persist_deep_football_evidence(
                     identifier,
                     MatchupEvaluationModel(id=identifier, **expected),
                     expected,
+                    legacy_numeric_replays=legacy_numeric_replays,
                 )
             )
 
@@ -736,6 +896,7 @@ def persist_deep_football_evidence(
         "examined": examined,
         "inserted": inserted,
         "duplicates_avoided": {key: examined[key] - inserted[key] for key in examined},
+        "legacy_numeric_equivalent_evaluations": len(legacy_numeric_replays),
         "heavy_observations_location": "R2_PARQUET",
         "feature_observations_inserted": 0,
         "provider_calls": 0,

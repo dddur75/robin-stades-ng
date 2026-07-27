@@ -4,10 +4,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from enum import StrEnum
 from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+SCIENTIFIC_FLOAT_SIGNIFICANT_DIGITS = 15
+SCIENTIFIC_FLOAT_CONTRACT_VERSION = "j11-scientific-float15-v1"
 
 
 class DataGateStatus(StrEnum):
@@ -52,6 +56,40 @@ def canonical_hash(value: object) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def normalize_scientific_evidence(value: object) -> object:
+    """Make insignificant binary-float noise stable before evidence hashing.
+
+    Fifteen significant decimal digits with Python's round-half-even formatting
+    retain the meaningful precision of an IEEE-754 double while removing
+    last-bit differences caused by otherwise equivalent BLAS/reduction paths on
+    separate runners.  Booleans and integers deliberately remain untouched,
+    and non-finite or non-JSON evidence is rejected.
+    """
+
+    if isinstance(value, bool) or value is None:
+        return value
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("SCIENTIFIC_EVIDENCE_REQUIRES_FINITE_FLOATS")
+        normalized = float(f"{value:.{SCIENTIFIC_FLOAT_SIGNIFICANT_DIGITS}g}")
+        return 0.0 if normalized == 0.0 else normalized
+    if isinstance(value, dict):
+        if any(not isinstance(key, str) for key in value):
+            raise TypeError("SCIENTIFIC_EVIDENCE_REQUIRES_STRING_KEYS")
+        return {key: normalize_scientific_evidence(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [normalize_scientific_evidence(item) for item in value]
+    if isinstance(value, (int, str)):
+        return value
+    raise TypeError("SCIENTIFIC_EVIDENCE_REQUIRES_JSON_TYPES")
+
+
+def scientific_evidence_hash(value: object) -> str:
+    """Hash scientific evidence after deterministic numeric normalization."""
+
+    return canonical_hash(normalize_scientific_evidence(value))
+
+
 class FeatureContract(BaseModel):
     """Immutable contract; missing values remain explicit and never become facts."""
 
@@ -83,9 +121,7 @@ class FeatureContract(BaseModel):
             raise ValueError("DEEP_FEATURE_LEAKAGE_TESTS_REQUIRED")
         if not self.allowed_research_modes:
             raise ValueError("DEEP_FEATURE_RESEARCH_MODE_REQUIRED")
-        if not self.provenance.get("provider") or not self.provenance.get(
-            "source_field"
-        ):
+        if not self.provenance.get("provider") or not self.provenance.get("source_field"):
             raise ValueError("DEEP_FEATURE_PROVENANCE_REQUIRED")
         return self
 

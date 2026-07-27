@@ -66,6 +66,9 @@ jobs:
           from sqlalchemy import select, text
           from sqlalchemy.orm import Session
           from robin.storage.database import build_engine
+          from robin.deep_football.persistence import (
+              LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES,
+          )
           from robin.storage.models import (
               MatchupEvaluationModel,
               MatchupHypothesisModel,
@@ -101,6 +104,13 @@ jobs:
           )
           assert sum(replay["inserted"].values()) == 0
           assert replay["duplicates_avoided"] == expected
+          assert (
+              primary["legacy_numeric_equivalent_evaluations"]
+              == replay["legacy_numeric_equivalent_evaluations"]
+          )
+          assert primary[
+              "legacy_numeric_equivalent_evaluations"
+          ] in {0, 6}
           assert replay["provider_calls"] == 0
           assert replay["odds_api_credits"] == 0
           assert replay["production_status"] == "PRODUCTION_LOCKED"
@@ -173,6 +183,22 @@ jobs:
                   if row.id != primary_evaluation.id
               ]
               assert len(diagnostics) == 5
+              persisted_campaign_hashes = {
+                  row.metrics["authoritative_evidence"][
+                      "campaign_result_hash"
+                  ]
+                  for row in model_evaluations
+              }
+              if primary[
+                  "legacy_numeric_equivalent_evaluations"
+              ]:
+                  assert persisted_campaign_hashes.issubset(
+                      LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES
+                  )
+              else:
+                  assert persisted_campaign_hashes == {
+                      campaign["result_hash"]
+                  }
               assert all(
                   row.p_value is None
                   and row.q_value_family is None
@@ -216,6 +242,18 @@ jobs:
                   "blocked_owner_evaluations": len(
                       blocked_owner_evaluations
                   ),
+                  "numeric_evidence_contract": campaign[
+                      "numeric_evidence_contract"
+                  ],
+                  "current_campaign_result_hash": campaign[
+                      "result_hash"
+                  ],
+                  "persisted_campaign_result_hashes": sorted(
+                      persisted_campaign_hashes
+                  ),
+                  "legacy_numeric_equivalent_evaluations": primary[
+                      "legacy_numeric_equivalent_evaluations"
+                  ],
               }
           Path(
               "artifacts/deep-feature-build/postgresql-proof.json"
