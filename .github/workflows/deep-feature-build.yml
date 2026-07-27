@@ -61,8 +61,13 @@ jobs:
           import json
           import os
           from pathlib import Path
-          from sqlalchemy import text
+          from sqlalchemy import select, text
+          from sqlalchemy.orm import Session
           from robin.storage.database import build_engine
+          from robin.storage.models import (
+              MatchupEvaluationModel,
+              MatchupHypothesisModel,
+          )
           primary = json.loads(
               Path(
                   "artifacts/deep-feature-build/postgresql-primary.json"
@@ -71,6 +76,12 @@ jobs:
           replay = json.loads(
               Path(
                   "artifacts/deep-feature-build/postgresql-replay.json"
+              ).read_text()
+          )
+          campaign = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/"
+                  "campaign-11a-summary.json"
               ).read_text()
           )
           expected = {
@@ -97,6 +108,113 @@ jobs:
                   text("SELECT version_num FROM alembic_version")
               )
           assert revision == "0008_jalon11_deep_football"
+          with Session(engine) as session:
+              team_hypothesis = session.scalar(
+                  select(MatchupHypothesisModel).where(
+                      MatchupHypothesisModel.hypothesis_id
+                      == "H11-A-TEAM-INCREMENTAL",
+                      MatchupHypothesisModel.hypothesis_version
+                      == "1.0.0-amendment-1",
+                  )
+              )
+              assert team_hypothesis is not None
+              protocol = team_hypothesis.protocol
+              assert protocol["frozen_before_results"] is False
+              assert protocol["prior_team_only_diagnostics_seen"] is True
+              assert protocol["promotion_eligible"] is False
+              assert protocol["protocol_amendment"]["status"] == (
+                  "CORRECTIVE_PROTOCOL_AMENDMENT"
+              )
+              model_evaluations = list(
+                  session.scalars(
+                      select(MatchupEvaluationModel).where(
+                          MatchupEvaluationModel.hypothesis_id
+                          == team_hypothesis.id,
+                          MatchupEvaluationModel.model_key
+                          != "NOT_RUN_DATA_GATE",
+                      )
+                  )
+              )
+              assert len(model_evaluations) == 6
+              primary_model = campaign["models"]["primary_for_inference"]
+              primary_evaluation = next(
+                  row
+                  for row in model_evaluations
+                  if row.model_key == primary_model
+              )
+              statistics = campaign["statistics"]
+              conservative_p = max(
+                  statistics["cr1_one_sided_p"],
+                  statistics["sign_flip_p"],
+              )
+              assert abs(primary_evaluation.p_value - conservative_p) < 1e-12
+              assert (
+                  abs(
+                      primary_evaluation.q_value_family
+                      - statistics["family_q"]
+                  )
+                  < 1e-12
+              )
+              assert (
+                  abs(
+                      primary_evaluation.q_value_global
+                      - statistics["global_q"]
+                  )
+                  < 1e-12
+              )
+              assert primary_evaluation.metrics["inference"][
+                  "multiplicity_included"
+              ] is True
+              diagnostics = [
+                  row
+                  for row in model_evaluations
+                  if row.id != primary_evaluation.id
+              ]
+              assert len(diagnostics) == 5
+              assert all(
+                  row.p_value is None
+                  and row.q_value_family is None
+                  and row.q_value_global is None
+                  and row.status
+                  == "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
+                  and row.metrics["inference"]["multiplicity_included"]
+                  is False
+                  for row in diagnostics
+              )
+              blocked_owner_evaluations = list(
+                  session.scalars(
+                      select(MatchupEvaluationModel).where(
+                          MatchupEvaluationModel.dataset_hash
+                          == primary["dataset_hash"],
+                          MatchupEvaluationModel.model_key
+                          == "NOT_RUN_DATA_GATE",
+                      )
+                  )
+              )
+              assert len(blocked_owner_evaluations) == 8
+              assert all(
+                  row.p_value is None
+                  and row.q_value_family is None
+                  and row.q_value_global is None
+                  for row in blocked_owner_evaluations
+              )
+              scientific_fidelity = {
+                  "team_protocol_version": (
+                      team_hypothesis.hypothesis_version
+                  ),
+                  "protocol_amendment_hash": protocol[
+                      "protocol_amendment_hash"
+                  ],
+                  "primary_model": primary_model,
+                  "primary_p_value": primary_evaluation.p_value,
+                  "family_q": primary_evaluation.q_value_family,
+                  "global_q": primary_evaluation.q_value_global,
+                  "tested_model_evaluations": 1,
+                  "diagnostic_model_evaluations": len(diagnostics),
+                  "blocked_owner_evaluations": len(
+                      blocked_owner_evaluations
+                  ),
+              }
           Path(
               "artifacts/deep-feature-build/postgresql-proof.json"
           ).write_text(
@@ -105,6 +223,7 @@ jobs:
                       "alembic_revision": revision,
                       "primary": primary,
                       "replay": replay,
+                      "scientific_fidelity": scientific_fidelity,
                   },
                   indent=2,
                   sort_keys=True,

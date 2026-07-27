@@ -44,9 +44,15 @@ jobs:
           import json
           from pathlib import Path
           root = Path("artifacts/prospective-watchlist")
+          campaign = json.loads(
+              Path("reports/jalon11/campaign-summary.json").read_text()
+          )
           watchlist = json.loads(
               (root / "prospective-watchlist.json").read_text()
           )
+          assert campaign["promotion"]["watchlist"] == 0
+          assert campaign["promotion"]["shadow_candidates"] == 0
+          assert watchlist["campaign_result_hash"] == campaign["result_hash"]
           assert watchlist["count"] == 0
           assert watchlist["not_a_bet"] is True
           assert watchlist["production_status"] == "PRODUCTION_LOCKED"
