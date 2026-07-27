@@ -336,6 +336,7 @@ def test_cockpit_accepts_valid_replay_then_rejects_single_guard_mutations(
     valid = valid_replay_report()
     report_path.write_text(json.dumps(valid), encoding="utf-8")
     accepted_snapshot = read_json(COMPACT)
+    accepted_snapshot["postgresql"]["lag"] = 7
     build_cockpit_snapshot.merge_verified_replay_evidence(
         accepted_snapshot,
         report_root=tmp_path,
@@ -351,6 +352,7 @@ def test_cockpit_accepts_valid_replay_then_rejects_single_guard_mutations(
     )
     assert accepted_snapshot["postgresql"]["tables"] == 12
     assert accepted_snapshot["postgresql"]["payload_body_rows"] == 0
+    assert accepted_snapshot["postgresql"]["lag"] == 0
     assert accepted_snapshot["postgresql"]["duplicates_avoided"] == 1
 
     invalid = deepcopy(valid)

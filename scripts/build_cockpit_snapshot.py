@@ -901,6 +901,7 @@ def merge_verified_replay_evidence(
             "migration": replay_postgresql["migration"],
             "tables": postgresql_counts["tables"],
             "payload_body_rows": postgresql_counts["payload_body_rows"],
+            "lag": r2_counts["lag"],
             "reconstruction_status": "RECONSTRUCTIBLE_FROM_R2",
             "duplicates_avoided": report_counts["second_pass_duplicates"],
         }
