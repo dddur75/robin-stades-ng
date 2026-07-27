@@ -60,6 +60,7 @@ def test_deep_feature_build_checks_primary_inference_fidelity_in_postgresql() ->
 
     assert "1.0.0-amendment-1" in build
     assert "CORRECTIVE_PROTOCOL_AMENDMENT" in build
+    assert "python -m pip install boto3" in build
     assert "frozen_before_results" in build
     assert "conservative_p = max(" in build
     assert "tested_model_evaluations" in build
