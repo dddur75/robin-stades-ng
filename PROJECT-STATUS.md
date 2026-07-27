@@ -300,8 +300,7 @@ Les workflows de gate 14, 21 et 22 sont verts sur la branche avec les runs
 `main` restent explicites : le premier est corrigé dans la PR avant toute
 nouvelle perte silencieuse; le second maintient volontairement les priorités
 P3/P4 suspendues tant que Git reste la source principale proche de son seuil.
-La PR #12 peut être validée après la dernière CI, mais ne doit pas être fusionnée
-automatiquement.
+La PR #12 a été fusionnée par merge commit dans `main`.
 
 Le run planifié `30205590638` de `main` a confirmé l'incident de provenance
 pré-fusion : le lot fournisseur a réussi, puis
@@ -310,3 +309,23 @@ présent dans la PR #12 exécute désormais la réparation en mode contrôlé,
 persiste Git/Neon et le delta R2 dans tous les cas, puis échoue explicitement
 si la provenance reste incomplète. Il empêche une nouvelle perte silencieuse
 sans masquer l'incident.
+
+### Validation post-fusion du Jalon 9
+
+Le merge commit `77baf8bedffc0cd76a9b2a44bd7dd1de31d22bac` est validé par
+la CI `30246853477`. Les contrôles réels sur `main` sont verts :
+
+- santé shadow `30247017756`, Neon `POSTGRESQL_HEALTHY`, Alembic `0005`,
+  replay fournisseur et quota à zéro ;
+- backfill dry-run `30247200571`, provenance réparée, PostgreSQL connecté,
+  cinq deltas R2 vérifiés et lag nul ;
+- audit R2 borné `30248653612`, scope 25 422 toujours
+  `AUDIT_COMPLETE_VERIFIED`, zéro upload et zéro suppression.
+
+Le stockage historique courant dépasse le seuil de pause de 900 MB.
+`STORAGE_PAUSED` reste donc obligatoire : seuls les traitements historiques
+critiques sont autorisés, P3/P4 et les tâches secondaires restent différés.
+R2 demeure un miroir et ne justifie aucune croissance libre de Git. La
+réduction de la dépendance à Git et un éventuel basculement de source principale
+seront traités dans un jalon ultérieur distinct, non ouvert par cette mission.
+La production reste `PRODUCTION_LOCKED`.

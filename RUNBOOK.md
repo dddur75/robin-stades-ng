@@ -370,3 +370,15 @@ Preuve Jalon 9.1 : migration complète en six runs, audit
 `RESTORE_VERIFIED` dans `30203249310`, réplication `SYNCED` et lag nul dans
 `30238268175`. L'audit a repris après un delta de readiness sans réinitialiser
 son curseur et n'a exécuté aucun `PutObject`.
+
+## Politique de stockage post-fusion
+
+À partir de 900 MB, maintenir `STORAGE_PAUSED` même si le miroir R2 est
+`SYNCED`. Autoriser uniquement l'historique critique nécessaire aux gates.
+Différer P3/P4, les tâches secondaires et toute collecte massive. R2 reste un
+miroir vérifié; `historical-data` demeure la source principale.
+
+Ne reprendre les tâches secondaires qu'après une décision d'architecture
+séparée réduisant réellement la dépendance au stockage Git. Cette évolution
+doit appartenir à un jalon ultérieur distinct et ne fait pas partie de la
+validation post-fusion du Jalon 9.
