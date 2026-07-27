@@ -1,0 +1,210 @@
+name: "51 - Deep Feature Build"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer le runtime
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Construire le dataset cache-only et la preuve scientifique
+        run: >-
+          python scripts/run_deep_football.py all
+          --state data/historical
+          --output artifacts/deep-feature-build
+          --source-commit "$(git -C .historical-registry rev-parse HEAD)"
+          --main-commit "${{ github.sha }}"
+          --main-ci-run-id "${{ github.run_id }}"
+      - name: Migrer et persister deux fois dans PostgreSQL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+          python scripts/persist_deep_football.py \
+            --artifacts artifacts/deep-feature-build \
+            --code-revision "${{ github.sha }}" \
+            --output artifacts/deep-feature-build/postgresql-primary.json
+          python scripts/persist_deep_football.py \
+            --artifacts artifacts/deep-feature-build \
+            --code-revision "${{ github.sha }}" \
+            --output artifacts/deep-feature-build/postgresql-replay.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from sqlalchemy import text
+          from robin.storage.database import build_engine
+          primary = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/postgresql-primary.json"
+              ).read_text()
+          )
+          replay = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/postgresql-replay.json"
+              ).read_text()
+          )
+          expected = {
+              "feature_definitions": 11,
+              "coverage_gates": 270,
+              "hypotheses": 9,
+              "evaluations": 14,
+          }
+          assert primary["examined"] == expected
+          assert replay["examined"] == expected
+          assert primary["dataset_hash"] == replay["dataset_hash"]
+          assert (
+              primary["campaign_result_hash"]
+              == replay["campaign_result_hash"]
+          )
+          assert sum(replay["inserted"].values()) == 0
+          assert replay["duplicates_avoided"] == expected
+          assert replay["provider_calls"] == 0
+          assert replay["odds_api_credits"] == 0
+          assert replay["production_status"] == "PRODUCTION_LOCKED"
+          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
+          with engine.connect() as connection:
+              revision = connection.scalar(
+                  text("SELECT version_num FROM alembic_version")
+              )
+          assert revision == "0008_jalon11_deep_football"
+          Path(
+              "artifacts/deep-feature-build/postgresql-proof.json"
+          ).write_text(
+              json.dumps(
+                  {
+                      "alembic_revision": revision,
+                      "primary": primary,
+                      "replay": replay,
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + "\n"
+          )
+          PY
+      - name: Répliquer uniquement le nouvel objet lourd vers R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          read -r DATASET_HASH PARQUET_SHA < <(
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/dataset-manifest.json"
+              ).read_text()
+          )
+          print(manifest["dataset_hash"], manifest["parquet_sha256"])
+          PY
+          )
+          [[ "$DATASET_HASH" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$PARQUET_SHA" =~ ^[0-9a-f]{64}$ ]]
+          export OBJECT_KEY="derived/jalon11/${DATASET_HASH}/team-prematch-v2-${PARQUET_SHA}.parquet"
+          mkdir -p "data/historical/$(dirname "$OBJECT_KEY")"
+          cp artifacts/deep-feature-build/heavy/team-prematch-v2.parquet \
+            "data/historical/$OBJECT_KEY"
+          python scripts/replicate_object_storage.py \
+            --state data/historical \
+            --max-files 10
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          manifest = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/dataset-manifest.json"
+              ).read_text()
+          )
+          report = json.loads(
+              Path(
+                  "data/historical/storage/r2-replication-latest.json"
+              ).read_text()
+          )
+          index = json.loads(
+              Path(
+                  "data/historical/storage/r2-object-index.json"
+              ).read_text()
+          )
+          object_key = os.environ["OBJECT_KEY"]
+          local_path = Path("data/historical") / object_key
+          payload = local_path.read_bytes()
+          digest = hashlib.sha256(payload).hexdigest()
+          record = index["objects"][object_key]
+          assert digest == manifest["parquet_sha256"]
+          assert len(payload) == manifest["parquet_bytes"]
+          assert record["sha256"] == digest
+          assert record["size"] == len(payload)
+          assert record["status"] == "verified"
+          assert report["selected_files"] <= 10
+          assert report["errors"] == 0
+          assert report["deletions"] == 0
+          assert report["source_mutations"] == 0
+          assert report["lag_objects"] == 0
+          assert report["source_preserved"] is True
+          assert report["status"] == "SYNCED"
+          Path(
+              "artifacts/deep-feature-build/r2-object-proof.json"
+          ).write_text(
+              json.dumps(
+                  {
+                      "object_key": object_key,
+                      "sha256": digest,
+                      "size": len(payload),
+                      "uploaded": report["uploaded"],
+                      "replayed": report["replayed"],
+                      "verified_objects": report["verified_objects"],
+                      "expected_objects": report["expected_objects"],
+                      "lag_objects": report["lag_objects"],
+                      "deletions": report["deletions"],
+                      "source_mutations": report["source_mutations"],
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + "\n"
+          )
+          PY
+      - uses: ./.github/actions/historical-r2-control-persist
+        with:
+          run-id: ${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deep-feature-build-${{ github.run_id }}
+          path: artifacts/deep-feature-build
+          retention-days: 90
+          compression-level: 9

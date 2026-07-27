@@ -17,6 +17,8 @@ jobs:
     env:
       API_FOOTBALL_CALLS_ALLOWED: "0"
       ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
       REAL_BETS: "false"
       NO_BET_DEFAULT: "true"
@@ -29,10 +31,15 @@ jobs:
           mkdir -p artifacts/shadow-candidate-decision
           python - <<'PY'
           import json
+          import os
           from pathlib import Path
           report = json.loads(
               Path("reports/jalon11/campaign-summary.json").read_text()
           )
+          assert os.environ["STORAGE_PAUSED"] == "true"
+          assert os.environ["P3_P4_PAUSED"] == "true"
+          assert os.environ["PRODUCTION_LOCKED"] == "true"
+          assert os.environ["REAL_BETS"] == "false"
           candidates = report["promotion"]["shadow_candidates"]
           if candidates != 0:
               raise SystemExit(

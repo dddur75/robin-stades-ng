@@ -11,7 +11,9 @@ import hashlib
 import json
 import math
 import random
+import shutil
 import time
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -36,13 +38,20 @@ from robin.deep_football.statistics import (
     family_and_global_bh,
     strict_cluster_p_value,
 )
+from robin.deep_football.temporal import (
+    TemporalInput,
+    assert_feature_allowlist,
+    assert_input_available_strictly_before_cutoff,
+)
 from robin.historical.external_validation import external_team_rows
 from robin.historical.model_lab import (
     _fit_multinomial,
     _predict_multinomial,
 )
+from robin.modeling.reference import poisson_probabilities
 
 SEED = 11_011
+LEDGER_FROZEN_AT = datetime(2026, 7, 27, 12, 0, tzinfo=UTC)
 COMPETITIONS = (
     "Ligue 1",
     "Premier League",
@@ -71,7 +80,7 @@ FEATURES = (
     "away_rest_days",
 )
 GATE_STATUSES = {
-    "TEAM_GATE": DataGateStatus.READY,
+    "TEAM_GATE": DataGateStatus.PARTIAL,
     "MARKET_GATE": DataGateStatus.READY,
     "PLAYER_GATE": DataGateStatus.BLOCKED_BY_TEMPORALITY,
     "PLAYER_FORM_GATE": DataGateStatus.BLOCKED_BY_TEMPORALITY,
@@ -151,8 +160,25 @@ def build_team_market_frame(state: Path) -> tuple[pd.DataFrame, dict[str, object
     joined = joined.drop(columns=["_merge"])
     if len(joined) != len(market):
         raise RuntimeError("TEAM_MARKET_PAIRING_CARDINALITY_CHANGED")
+    feature_boundaries = pd.to_datetime(
+        joined["as_of_time"],
+        utc=True,
+        errors="raise",
+    )
+    target_kickoffs = pd.to_datetime(
+        joined["kickoff_at_market"],
+        utc=True,
+        errors="raise",
+    )
+    future_boundaries = int((feature_boundaries > target_kickoffs).sum())
+    if future_boundaries:
+        raise RuntimeError(
+            f"TEAM_FEATURE_BOUNDARY_AFTER_KICKOFF:{future_boundaries}"
+        )
+    strict_boundaries = int((feature_boundaries < target_kickoffs).sum())
+    equal_boundaries = int((feature_boundaries == target_kickoffs).sum())
     joined["research_mode"] = "PRE_LINEUP"
-    joined["feature_cutoff"] = "STRICTLY_BEFORE_TARGET_KICKOFF"
+    joined["feature_cutoff"] = "TARGET_KICKOFF_EXCLUSIVE_STATE_BEFORE_UPDATE"
     joined["market_source"] = (
         joined["source_market"].astype(str)
         + ":"
@@ -191,10 +217,17 @@ def build_team_market_frame(state: Path) -> tuple[pd.DataFrame, dict[str, object
         "leakage_audit": {
             "target_in_feature_allowlist": False,
             "target_fixture_in_rolling_window": False,
-            "source_inputs_strictly_prior": True,
+            "feature_boundary_strictly_before_rows": strict_boundaries,
+            "feature_boundary_equal_kickoff_rows": equal_boundaries,
+            "feature_boundary_after_kickoff_rows": future_boundaries,
+            "feature_state_update_order": "TARGET_ROW_EMITTED_BEFORE_TARGET_RESULT_UPDATE",
+            "source_inputs_strictly_prior": "ALGORITHMIC_PRIOR_FIXTURE_STATE",
+            "row_level_source_observed_at_proven": False,
             "market_exact_observed_at": False,
             "market_observed_time_status": "SOURCE_PRICE_CLASS_ONLY",
-            "passed_for_historical_research": True,
+            "team_temporal_gate": "PARTIAL",
+            "passed_for_descriptive_historical_research": True,
+            "passed_for_promotion": False,
             "passed_for_live_decision": False,
         },
     }
@@ -339,6 +372,9 @@ def audit_state(
     gate_reasons = {
         "TEAM_GATE": [
             "10732/10732 market fixtures exactly paired with prior team/calendar features",
+            "10732/10732 feature materialization boundaries equal target kickoff",
+            "Prior-fixture update order is algorithmic; row-level source observed_at is unavailable",
+            "Descriptive diagnostics are allowed but promotion remains blocked",
         ],
         "MARKET_GATE": [
             "Historical 1X2 and O/U2.5 available for research",
@@ -496,7 +532,7 @@ def build_team_dataset(state: Path, output: Path) -> dict[str, object]:
         "dataset_name": "TEAM_PREMATCH",
         "dataset_version": "deep-football-team-prematch-v2",
         "research_mode": "PRE_LINEUP",
-        "feature_cutoff": "STRICTLY_BEFORE_TARGET_KICKOFF",
+        "feature_cutoff": "TARGET_KICKOFF_EXCLUSIVE_STATE_BEFORE_UPDATE",
         "features": list(FEATURES),
         "rows": len(frame),
         "dataset_hash": dataset_hash,
@@ -559,7 +595,7 @@ def _prediction_rows(
                 "fixture_id": str(row["fixture_id"]),
                 "kickoff_at": str(row["kickoff_at_market"]),
                 "research_mode": "PRE_LINEUP",
-                "feature_cutoff": "STRICTLY_BEFORE_TARGET_KICKOFF",
+                "feature_cutoff": "TARGET_KICKOFF_EXCLUSIVE_STATE_BEFORE_UPDATE",
                 "market_source": str(row["market_source"]),
                 "market_record_hash": str(row["market_record_hash"]),
                 "outcome": ("HOME", "DRAW", "AWAY")[int(labels[position])],
@@ -577,22 +613,415 @@ def _market_probabilities(frame: pd.DataFrame) -> np.ndarray:
     return frame[["de_vig_home", "de_vig_draw", "de_vig_away"]].to_numpy(float)
 
 
+def _poisson_rows(
+    frame: pd.DataFrame,
+    *,
+    medians: dict[str, float],
+    dixon_coles: bool,
+) -> list[dict[str, object]]:
+    probabilities: list[list[float]] = []
+    for _, row in frame.iterrows():
+        def value(column: str) -> float:
+            raw = row[column]
+            return (
+                float(raw)
+                if not bool(pd.isna(raw))
+                else float(medians[column])
+            )
+
+        expected_home = max(
+            0.2,
+            min(
+                4.0,
+                (
+                    value("home_goals_for_5")
+                    + value("away_goals_against_5")
+                )
+                / 2.0,
+            ),
+        )
+        expected_away = max(
+            0.2,
+            min(
+                4.0,
+                (
+                    value("away_goals_for_5")
+                    + value("home_goals_against_5")
+                )
+                / 2.0,
+            ),
+        )
+        prediction = poisson_probabilities(
+            expected_home,
+            expected_away,
+            dixon_coles=dixon_coles,
+            rho=-0.08,
+        )
+        probabilities.append(
+            [prediction.home, prediction.draw, prediction.away]
+        )
+    return _prediction_rows(frame, np.asarray(probabilities, dtype=float))
+
+
+def _calibration_error(
+    rows: list[dict[str, object]],
+    *,
+    bins: int = 10,
+) -> float:
+    confidences: list[float] = []
+    correct: list[float] = []
+    outcomes = {"HOME": 0, "DRAW": 1, "AWAY": 2}
+    for row in rows:
+        probabilities = (
+            float(row["p_home"]),
+            float(row["p_draw"]),
+            float(row["p_away"]),
+        )
+        prediction = max(range(3), key=probabilities.__getitem__)
+        confidences.append(probabilities[prediction])
+        correct.append(
+            float(prediction == outcomes[str(row["outcome"])])
+        )
+    total = len(rows)
+    error = 0.0
+    for index in range(bins):
+        lower = index / bins
+        upper = (index + 1) / bins
+        selected = [
+            position
+            for position, confidence in enumerate(confidences)
+            if lower <= confidence < upper
+            or (index == bins - 1 and confidence == upper)
+        ]
+        if not selected:
+            continue
+        accuracy = sum(correct[position] for position in selected) / len(selected)
+        confidence = sum(confidences[position] for position in selected) / len(
+            selected
+        )
+        error += len(selected) / total * abs(accuracy - confidence)
+    return error
+
+
+def _market_log_odds_matrix(frame: pd.DataFrame) -> np.ndarray:
+    probabilities = _market_probabilities(frame)
+    clipped = np.clip(probabilities, 1e-12, 1.0)
+    return np.column_stack(
+        [
+            np.log(clipped[:, 0] / clipped[:, 2]),
+            np.log(clipped[:, 1] / clipped[:, 2]),
+        ]
+    )
+
+
+def _market_plus_team_matrix(
+    frame: pd.DataFrame,
+    *,
+    medians: np.ndarray | None = None,
+    active: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    team, medians, active = _matrix(
+        frame,
+        medians=medians,
+        active=active,
+    )
+    return (
+        np.column_stack([_market_log_odds_matrix(frame), team]),
+        medians,
+        active,
+    )
+
+
+def _cluster_bootstrap_mean_interval(
+    values: list[float],
+    clusters: list[str],
+    *,
+    draws: int = 999,
+) -> tuple[float, float]:
+    if len(values) != len(clusters) or not values:
+        raise ValueError("CLUSTER_BOOTSTRAP_INPUT_MISMATCH")
+    grouped: dict[str, list[float]] = {}
+    for value, cluster in zip(values, clusters, strict=True):
+        grouped.setdefault(cluster, []).append(value)
+    keys = sorted(grouped)
+    generator = np.random.default_rng(SEED)
+    estimates = np.empty(draws, dtype=float)
+    for index in range(draws):
+        selected = generator.choice(keys, size=len(keys), replace=True)
+        total = 0.0
+        observations = 0
+        for key in selected:
+            group = grouped[str(key)]
+            total += sum(group)
+            observations += len(group)
+        estimates[index] = total / observations
+    lower, upper = np.quantile(estimates, [0.025, 0.975])
+    return float(lower), float(upper)
+
+
+def _cross_league_transfer(
+    eligible: pd.DataFrame,
+) -> dict[str, object]:
+    rotations: list[dict[str, object]] = []
+    for index, first in enumerate(COMPETITIONS):
+        second = COMPETITIONS[(index + 1) % len(COMPETITIONS)]
+        validation = {first, second}
+        discovery = [
+            competition
+            for competition in COMPETITIONS
+            if competition not in validation
+        ]
+        train = eligible.loc[
+            eligible["competition"].isin(discovery)
+            & (eligible["season"] <= 2021)
+        ].copy()
+        test = eligible.loc[
+            eligible["competition"].isin(validation)
+            & (eligible["season"] >= 2022)
+        ].copy()
+        market_train = _market_log_odds_matrix(train)
+        market_test = _market_log_odds_matrix(test)
+        market_weights, market_mean, market_scale = _fit_multinomial(
+            market_train,
+            _outcomes(train),
+            iterations=300,
+            learning_rate=0.08,
+            regularization=0.01,
+        )
+        train_matrix, medians, active = _market_plus_team_matrix(train)
+        test_matrix, _, _ = _market_plus_team_matrix(
+            test,
+            medians=medians,
+            active=active,
+        )
+        weights, mean, scale = _fit_multinomial(
+            train_matrix,
+            _outcomes(train),
+            iterations=300,
+            learning_rate=0.08,
+            regularization=0.01,
+        )
+        challenger = _prediction_rows(
+            test,
+            _predict_multinomial(test_matrix, weights, mean, scale),
+        )
+        reference = _prediction_rows(
+            test,
+            _predict_multinomial(
+                market_test,
+                market_weights,
+                market_mean,
+                market_scale,
+            ),
+        )
+        score = paired_score(reference, challenger)
+        rotations.append(
+            {
+                "discovery_leagues": discovery,
+                "validation_leagues": sorted(validation),
+                "train_seasons": [2020, 2021],
+                "validation_seasons": [2022, 2023, 2024, 2025],
+                "support": len(test),
+                "delta_log_loss": score.delta_log_loss,
+                "delta_brier": score.delta_brier,
+                "descriptive_direction_positive": score.delta_log_loss < 0,
+                "promotion_eligible": False,
+            }
+        )
+    return {
+        "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+        "rotations": rotations,
+        "descriptive_positive_rotations": sum(
+            bool(rotation["descriptive_direction_positive"])
+            for rotation in rotations
+        ),
+        "cross_league_survivors": 0,
+        "promotion_eligible": False,
+        "limitations": [
+            "TEAM_GATE_PARTIAL",
+            "OVERLAPPING_VALIDATION_ROTATIONS",
+            "LEAGUE_AND_TIME_SHIFT_CONFOUNDED",
+            "NO_ROTATION_LEVEL_MULTIPLICITY_INFERENCE",
+        ],
+        "provider_calls": 0,
+        "odds_api_credits": 0,
+    }
+
+
 def _sign_flip_p_value(
     improvements: list[float],
+    clusters: list[str],
     *,
     permutations: int = 999,
 ) -> float:
+    if len(improvements) != len(clusters) or not improvements:
+        raise ValueError("CLUSTER_SIGN_FLIP_INPUT_MISMATCH")
+    grouped: dict[str, float] = {}
+    for improvement, cluster in zip(improvements, clusters, strict=True):
+        grouped[cluster] = grouped.get(cluster, 0.0) + improvement
     observed = sum(improvements) / len(improvements)
     generator = random.Random(SEED)  # nosec B311
     extreme = 0
     for _ in range(permutations):
         value = sum(
-            improvement if generator.random() >= 0.5 else -improvement
-            for improvement in improvements
+            cluster_total if generator.random() >= 0.5 else -cluster_total
+            for cluster_total in grouped.values()
         ) / len(improvements)
         if value >= observed:
             extreme += 1
     return (extreme + 1) / (permutations + 1)
+
+
+def _run_negative_controls(
+    reference: list[dict[str, object]],
+    challenger: list[dict[str, object]],
+) -> dict[str, dict[str, object]]:
+    if len(reference) != len(challenger) or not reference:
+        raise ValueError("NEGATIVE_CONTROL_SAMPLE_INVALID")
+    generator = random.Random(SEED)  # nosec B311
+    shuffled_labels = [str(row["outcome"]) for row in reference]
+    strata: dict[tuple[str, int], list[int]] = {}
+    for position, row in enumerate(reference):
+        key = (str(row["competition"]), int(row["season"]))
+        strata.setdefault(key, []).append(position)
+    for positions in strata.values():
+        labels = [shuffled_labels[position] for position in positions]
+        generator.shuffle(labels)
+        for position, label in zip(positions, labels, strict=True):
+            shuffled_labels[position] = label
+    shuffled_reference = [
+        {**row, "outcome": shuffled_labels[position]}
+        for position, row in enumerate(reference)
+    ]
+    shuffled_challenger = [
+        {**row, "outcome": shuffled_labels[position]}
+        for position, row in enumerate(challenger)
+    ]
+    shuffled_score = paired_score(
+        shuffled_reference,
+        shuffled_challenger,
+    )
+
+    home_probabilities = np.tile(
+        np.asarray([[0.999998, 0.000001, 0.000001]], dtype=float),
+        (len(reference), 1),
+    )
+    home_rows = [
+        {
+            **row,
+            "p_home": float(home_probabilities[position, 0]),
+            "p_draw": float(home_probabilities[position, 1]),
+            "p_away": float(home_probabilities[position, 2]),
+        }
+        for position, row in enumerate(reference)
+    ]
+    home_score = paired_score(reference, home_rows)
+
+    wrong_fixture_status = "FAILED_TO_REJECT"
+    wrong_fixture = [dict(row) for row in challenger]
+    wrong_fixture[0]["fixture_id"] = (
+        str(wrong_fixture[0]["fixture_id"]) + ":WRONG_FIXTURE_CONTROL"
+    )
+    try:
+        paired_score(reference, wrong_fixture)
+    except ValueError as exc:
+        if str(exc).startswith("PAIRED_SAMPLE_KEYSET_MISMATCH"):
+            wrong_fixture_status = "REJECTED_BY_PAIRING_GUARD"
+
+    cutoff = datetime(2026, 7, 27, 15, tzinfo=UTC)
+    post_kickoff_status = "FAILED_TO_REJECT"
+    try:
+        assert_input_available_strictly_before_cutoff(
+            [
+                TemporalInput(
+                    input_id="NEGATIVE_POST_KICKOFF_LINEUP",
+                    available_at=cutoff,
+                    cutoff_at=cutoff,
+                    lineage_hash="a" * 64,
+                    source="NEGATIVE_CONTROL",
+                )
+            ]
+        )
+    except ValueError as exc:
+        if str(exc).startswith("INPUT_NOT_STRICTLY_BEFORE_CUTOFF"):
+            post_kickoff_status = "REJECTED_BY_TEMPORAL_GUARD"
+
+    post_result_status = "FAILED_TO_REJECT"
+    try:
+        assert_feature_allowlist(
+            {"outcome": "HOME"},
+            ["outcome"],
+        )
+    except ValueError as exc:
+        if str(exc) == "TARGET_FIELD_IN_FEATURE_ALLOWLIST":
+            post_result_status = "REJECTED_BY_FEATURE_ALLOWLIST"
+
+    return {
+        "shuffled_labels_stratified": {
+            "status": "EXECUTED_NO_PROMOTION",
+            "support": len(reference),
+            "delta_log_loss": shuffled_score.delta_log_loss,
+            "delta_brier": shuffled_score.delta_brier,
+            "promotion_eligible": False,
+        },
+        "home_team_systematic": {
+            "status": "EXECUTED_NO_PROMOTION",
+            "support": len(reference),
+            "delta_log_loss": home_score.delta_log_loss,
+            "delta_brier": home_score.delta_brier,
+            "promotion_eligible": False,
+        },
+        "wrong_fixture_odds": {
+            "status": wrong_fixture_status,
+            "support": 1,
+            "promotion_eligible": False,
+        },
+        "post_kickoff_lineup": {
+            "status": post_kickoff_status,
+            "support": 1,
+            "promotion_eligible": False,
+        },
+        "post_result_rule": {
+            "status": post_result_status,
+            "support": 1,
+            "promotion_eligible": False,
+        },
+        "impossible_condition": {
+            "status": "EXECUTED_ZERO_SUPPORT_NO_PROMOTION",
+            "support": 0,
+            "promotion_eligible": False,
+        },
+        "formation_shifted_one_match": {
+            "status": "DATA_GATE_BLOCKED",
+            "support": 0,
+            "promotion_eligible": False,
+        },
+        "absence_shifted": {
+            "status": "DATA_GATE_BLOCKED",
+            "support": 0,
+            "promotion_eligible": False,
+        },
+        "random_player": {
+            "status": "DATA_GATE_BLOCKED",
+            "support": 0,
+            "promotion_eligible": False,
+        },
+        "false_footedness": {
+            "status": "DATA_GATE_BLOCKED",
+            "support": 0,
+            "promotion_eligible": False,
+        },
+        "false_centre_back_pair": {
+            "status": "DATA_GATE_BLOCKED",
+            "support": 0,
+            "promotion_eligible": False,
+        },
+        "random_tactical_interaction": {
+            "status": "DATA_GATE_BLOCKED",
+            "support": 0,
+            "promotion_eligible": False,
+        },
+    }
 
 
 def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
@@ -603,8 +1032,13 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
     ].copy()
     attrition = len(frame) - len(eligible)
     all_market: list[dict[str, object]] = []
+    all_market_recalibrated: list[dict[str, object]] = []
     all_logistic: list[dict[str, object]] = []
     all_boosting: list[dict[str, object]] = []
+    all_poisson: list[dict[str, object]] = []
+    all_dixon_coles: list[dict[str, object]] = []
+    all_incremental_logistic: list[dict[str, object]] = []
+    all_incremental_boosting: list[dict[str, object]] = []
     folds: list[dict[str, object]] = []
     for test_season in (2022, 2023, 2024, 2025):
         train = eligible.loc[eligible["season"] < test_season].copy()
@@ -631,11 +1065,109 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
         )
         boosting_model.fit(train_matrix, train_labels)
         boosting = boosting_model.predict_proba(test_matrix)
+        market_train = _market_log_odds_matrix(train)
+        market_test = _market_log_odds_matrix(test)
+        market_weights, market_mean, market_scale = _fit_multinomial(
+            market_train,
+            train_labels,
+            iterations=300,
+            learning_rate=0.08,
+            regularization=0.01,
+        )
+        market_recalibrated = _predict_multinomial(
+            market_test,
+            market_weights,
+            market_mean,
+            market_scale,
+        )
+        augmented_train, augmented_medians, augmented_active = (
+            _market_plus_team_matrix(train)
+        )
+        augmented_test, _, _ = _market_plus_team_matrix(
+            test,
+            medians=augmented_medians,
+            active=augmented_active,
+        )
+        incremental_weights, incremental_mean, incremental_scale = (
+            _fit_multinomial(
+                augmented_train,
+                train_labels,
+                iterations=300,
+                learning_rate=0.08,
+                regularization=0.01,
+            )
+        )
+        incremental_logistic = _predict_multinomial(
+            augmented_test,
+            incremental_weights,
+            incremental_mean,
+            incremental_scale,
+        )
+        incremental_boosting_model = HistGradientBoostingClassifier(
+            learning_rate=0.05,
+            max_depth=3,
+            max_iter=100,
+            l2_regularization=1.0,
+            random_state=SEED,
+        )
+        incremental_boosting_model.fit(augmented_train, train_labels)
+        incremental_boosting = incremental_boosting_model.predict_proba(
+            augmented_test
+        )
         market_rows = _prediction_rows(test, _market_probabilities(test))
+        market_recalibrated_rows = _prediction_rows(
+            test,
+            market_recalibrated,
+        )
         logistic_rows = _prediction_rows(test, logistic)
         boosting_rows = _prediction_rows(test, boosting)
+        incremental_logistic_rows = _prediction_rows(
+            test,
+            incremental_logistic,
+        )
+        incremental_boosting_rows = _prediction_rows(
+            test,
+            incremental_boosting,
+        )
+        goal_columns = (
+            "home_goals_for_5",
+            "away_goals_for_5",
+            "home_goals_against_5",
+            "away_goals_against_5",
+        )
+        goal_medians = {
+            column: float(train[column].median()) for column in goal_columns
+        }
+        poisson_rows = _poisson_rows(
+            test,
+            medians=goal_medians,
+            dixon_coles=False,
+        )
+        dixon_coles_rows = _poisson_rows(
+            test,
+            medians=goal_medians,
+            dixon_coles=True,
+        )
         logistic_score = paired_score(market_rows, logistic_rows)
         boosting_score = paired_score(market_rows, boosting_rows)
+        poisson_score = paired_score(market_rows, poisson_rows)
+        dixon_coles_score = paired_score(market_rows, dixon_coles_rows)
+        market_recalibration_score = paired_score(
+            market_rows,
+            market_recalibrated_rows,
+        )
+        incremental_logistic_score = paired_score(
+            market_recalibrated_rows,
+            incremental_logistic_rows,
+        )
+        incremental_boosting_score = paired_score(
+            market_recalibrated_rows,
+            incremental_boosting_rows,
+        )
+        incremental_logistic_vs_raw_score = paired_score(
+            market_rows,
+            incremental_logistic_rows,
+        )
         folds.append(
             {
                 "test_season": test_season,
@@ -649,30 +1181,84 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
                     "delta_log_loss": boosting_score.delta_log_loss,
                     "delta_brier": boosting_score.delta_brier,
                 },
+                "poisson": {
+                    "delta_log_loss": poisson_score.delta_log_loss,
+                    "delta_brier": poisson_score.delta_brier,
+                },
+                "dixon_coles": {
+                    "delta_log_loss": dixon_coles_score.delta_log_loss,
+                    "delta_brier": dixon_coles_score.delta_brier,
+                },
+                "market_recalibrated_vs_raw": {
+                    "delta_log_loss": market_recalibration_score.delta_log_loss,
+                    "delta_brier": market_recalibration_score.delta_brier,
+                },
+                "incremental_logistic_vs_recalibrated_market": {
+                    "delta_log_loss": incremental_logistic_score.delta_log_loss,
+                    "delta_brier": incremental_logistic_score.delta_brier,
+                },
+                "incremental_logistic_vs_raw_market": {
+                    "delta_log_loss": (
+                        incremental_logistic_vs_raw_score.delta_log_loss
+                    ),
+                    "delta_brier": (
+                        incremental_logistic_vs_raw_score.delta_brier
+                    ),
+                },
+                "incremental_boosting_vs_recalibrated_market": {
+                    "delta_log_loss": incremental_boosting_score.delta_log_loss,
+                    "delta_brier": incremental_boosting_score.delta_brier,
+                },
             }
         )
         all_market.extend(market_rows)
+        all_market_recalibrated.extend(market_recalibrated_rows)
         all_logistic.extend(logistic_rows)
         all_boosting.extend(boosting_rows)
+        all_poisson.extend(poisson_rows)
+        all_dixon_coles.extend(dixon_coles_rows)
+        all_incremental_logistic.extend(incremental_logistic_rows)
+        all_incremental_boosting.extend(incremental_boosting_rows)
     if not folds:
         raise RuntimeError("TEAM_CAMPAIGN_NO_ELIGIBLE_FOLD")
     logistic_score = paired_score(all_market, all_logistic)
     boosting_score = paired_score(all_market, all_boosting)
-    best_name, best_rows, best_score = min(
-        (
-            ("REGULARIZED_MULTINOMIAL", all_logistic, logistic_score),
-            ("BOUNDED_GRADIENT_BOOSTING", all_boosting, boosting_score),
-        ),
-        key=lambda item: item[2].challenger_log_loss,
+    poisson_score = paired_score(all_market, all_poisson)
+    dixon_coles_score = paired_score(all_market, all_dixon_coles)
+    market_recalibration_score = paired_score(
+        all_market,
+        all_market_recalibrated,
     )
+    incremental_logistic_score = paired_score(
+        all_market_recalibrated,
+        all_incremental_logistic,
+    )
+    incremental_logistic_vs_raw_score = paired_score(
+        all_market,
+        all_incremental_logistic,
+    )
+    incremental_boosting_score = paired_score(
+        all_market_recalibrated,
+        all_incremental_boosting,
+    )
+    primary_name = "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL"
+    primary_reference_rows = all_market_recalibrated
+    primary_rows = all_incremental_logistic
+    primary_score = incremental_logistic_score
     improvements: list[float] = []
     clusters: list[str] = []
-    for market_row, model_row in zip(all_market, best_rows, strict=True):
-        label = {"HOME": 0, "DRAW": 1, "AWAY": 2}[str(market_row["outcome"])]
-        market_probability = (
-            float(market_row["p_home"]),
-            float(market_row["p_draw"]),
-            float(market_row["p_away"]),
+    for reference_row, model_row in zip(
+        primary_reference_rows,
+        primary_rows,
+        strict=True,
+    ):
+        label = {"HOME": 0, "DRAW": 1, "AWAY": 2}[
+            str(reference_row["outcome"])
+        ]
+        reference_probability = (
+            float(reference_row["p_home"]),
+            float(reference_row["p_draw"]),
+            float(reference_row["p_away"]),
         )[label]
         model_probability = (
             float(model_row["p_home"]),
@@ -680,59 +1266,74 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
             float(model_row["p_away"]),
         )[label]
         improvements.append(
-            -math.log(max(market_probability, 1e-12))
+            -math.log(max(reference_probability, 1e-12))
             + math.log(max(model_probability, 1e-12))
         )
         clusters.append(str(model_row["cluster"]))
     cr1_p = strict_cluster_p_value(improvements, clusters)
-    permutation_p = _sign_flip_p_value(improvements)
+    permutation_p = _sign_flip_p_value(improvements, clusters)
     primary_p = max(cr1_p, permutation_p)
+    bootstrap_lower, bootstrap_upper = _cluster_bootstrap_mean_interval(
+        [-value for value in improvements],
+        clusters,
+    )
+    multiplicity_records: list[dict[str, object]] = [
+        {
+            "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+            "family": "team",
+            "p_value": primary_p,
+            "eligible": True,
+        }
+    ]
+    multiplicity_records.extend(
+        {
+            "hypothesis_id": hypothesis.hypothesis_id,
+            "family": hypothesis.statistical_family,
+            "p_value": None,
+            "eligible": False,
+        }
+        for hypothesis in owner_hypotheses()
+    )
     correction = family_and_global_bh(
-        [
-            {
-                "hypothesis_id": "H11-A-TEAM-CORE",
-                "family": "team",
-                "p_value": primary_p,
-                "eligible": True,
-            }
-        ]
+        multiplicity_records
     )
     evidence = {criterion: False for criterion in PROMOTION_CRITERIA}
     evidence.update(
         {
-            "data_gate_ready": True,
-            "no_leakage": True,
-            "preregistered_support": len(best_rows) >= 80,
+            "data_gate_ready": False,
+            "no_leakage": False,
+            "preregistered_support": len(primary_rows) >= 80,
             "three_eligible_periods": len(folds) >= 3,
             "stable_direction": all(
-                float(fold[
-                    "logistic"
-                    if best_name == "REGULARIZED_MULTINOMIAL"
-                    else "bounded_gradient_boosting"
-                ]["delta_log_loss"])
+                float(
+                    fold[
+                        "incremental_logistic_vs_recalibrated_market"
+                    ]["delta_log_loss"]
+                )
                 < 0
                 for fold in folds
             ),
             "positive_last_fold": (
                 float(
                     folds[-1][
-                        "logistic"
-                        if best_name == "REGULARIZED_MULTINOMIAL"
-                        else "bounded_gradient_boosting"
+                        "incremental_logistic_vs_recalibrated_market"
                     ]["delta_log_loss"]
                 )
                 < 0
             ),
             "family_bh_passed": (
-                correction.family_q_values["H11-A-TEAM-CORE"] <= 0.05
+                correction.family_q_values["H11-A-TEAM-INCREMENTAL"] <= 0.05
             ),
             "global_control_passed": (
-                correction.global_q_values["H11-A-TEAM-CORE"] <= 0.05
+                correction.global_q_values["H11-A-TEAM-INCREMENTAL"] <= 0.05
             ),
             "permutation_passed": permutation_p <= 0.05,
-            "incremental_score_vs_market_positive": best_score.delta_log_loss < 0,
-            "rule_interpretable": best_name == "REGULARIZED_MULTINOMIAL",
-            "live_information_available": True,
+            "bootstrap_lower_coherent": bootstrap_upper < 0,
+            "incremental_score_vs_market_positive": (
+                primary_score.delta_log_loss < 0
+            ),
+            "rule_interpretable": True,
+            "live_information_available": False,
             "live_market_exact_observed_at": False,
             "decision_reproducible_before_kickoff": False,
         }
@@ -741,7 +1342,9 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
     summary: dict[str, object] = {
         "schema_version": "jalon11-team-campaign-v1",
         "campaign": "11A",
-        "status": "COMPLETED_CACHE_ONLY",
+        "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+        "promotion_eligible": False,
+        "team_gate": "PARTIAL",
         "seed": SEED,
         "provider_calls": 0,
         "odds_api_credits": 0,
@@ -751,44 +1354,116 @@ def run_team_campaign(frame: pd.DataFrame, output: Path) -> dict[str, object]:
         "folds": folds,
         "models": {
             "B0_MARKET": {
-                "log_loss": best_score.reference_log_loss,
-                "brier": best_score.reference_brier,
+                "log_loss": market_recalibration_score.reference_log_loss,
+                "brier": market_recalibration_score.reference_brier,
+                "calibration_error": _calibration_error(all_market),
+                "calibration_status": "RAW_DEVIGGED_MARKET",
             },
-            "B1_REGULARIZED_MULTINOMIAL": {
+            "B0_MARKET_RECALIBRATED_TRAIN_ONLY": {
+                "log_loss": market_recalibration_score.challenger_log_loss,
+                "brier": market_recalibration_score.challenger_brier,
+                "delta_log_loss_vs_raw_market": (
+                    market_recalibration_score.delta_log_loss
+                ),
+                "delta_brier_vs_raw_market": (
+                    market_recalibration_score.delta_brier
+                ),
+                "calibration_error": _calibration_error(
+                    all_market_recalibrated
+                ),
+                "calibration_status": "TRAIN_ONLY_MULTINOMIAL_LOG_ODDS",
+            },
+            "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL": {
                 "log_loss": logistic_score.challenger_log_loss,
                 "brier": logistic_score.challenger_brier,
                 "delta_log_loss": logistic_score.delta_log_loss,
                 "delta_brier": logistic_score.delta_brier,
+                "calibration_error": _calibration_error(all_logistic),
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
             },
-            "B1_BOUNDED_GRADIENT_BOOSTING": {
+            "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING": {
                 "log_loss": boosting_score.challenger_log_loss,
                 "brier": boosting_score.challenger_brier,
                 "delta_log_loss": boosting_score.delta_log_loss,
                 "delta_brier": boosting_score.delta_brier,
+                "calibration_error": _calibration_error(all_boosting),
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
             },
-            "selected_for_red_team": best_name,
+            "B1_TEAM_ONLY_POISSON": {
+                "log_loss": poisson_score.challenger_log_loss,
+                "brier": poisson_score.challenger_brier,
+                "delta_log_loss": poisson_score.delta_log_loss,
+                "delta_brier": poisson_score.delta_brier,
+                "calibration_error": _calibration_error(all_poisson),
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+            },
+            "B1_TEAM_ONLY_DIXON_COLES": {
+                "log_loss": dixon_coles_score.challenger_log_loss,
+                "brier": dixon_coles_score.challenger_brier,
+                "delta_log_loss": dixon_coles_score.delta_log_loss,
+                "delta_brier": dixon_coles_score.delta_brier,
+                "calibration_error": _calibration_error(all_dixon_coles),
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+            },
+            "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL": {
+                "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+                "log_loss": primary_score.challenger_log_loss,
+                "brier": primary_score.challenger_brier,
+                "delta_log_loss": primary_score.delta_log_loss,
+                "delta_brier": primary_score.delta_brier,
+                "delta_log_loss_vs_raw_market": (
+                    incremental_logistic_vs_raw_score.delta_log_loss
+                ),
+                "delta_brier_vs_raw_market": (
+                    incremental_logistic_vs_raw_score.delta_brier
+                ),
+                "calibration_error": _calibration_error(
+                    all_incremental_logistic
+                ),
+                "status": "PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL",
+            },
+            "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING": {
+                "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+                "log_loss": incremental_boosting_score.challenger_log_loss,
+                "brier": incremental_boosting_score.challenger_brier,
+                "delta_log_loss": incremental_boosting_score.delta_log_loss,
+                "delta_brier": incremental_boosting_score.delta_brier,
+                "calibration_error": _calibration_error(
+                    all_incremental_boosting
+                ),
+                "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+            },
+            "primary_for_inference": primary_name,
+            "model_selection_on_test": False,
         },
         "statistics": {
             "cr1_one_sided_p": cr1_p,
+            "cr1_cluster": "MATCH_DATE",
+            "clusters": len(set(clusters)),
             "sign_flip_permutations": 999,
+            "sign_flip_unit": "MATCH_DATE",
             "sign_flip_p": permutation_p,
-            "family_q": correction.family_q_values["H11-A-TEAM-CORE"],
-            "global_q": correction.global_q_values["H11-A-TEAM-CORE"],
+            "family_q": correction.family_q_values[
+                "H11-A-TEAM-INCREMENTAL"
+            ],
+            "global_q": correction.global_q_values[
+                "H11-A-TEAM-INCREMENTAL"
+            ],
+            "multiplicity_hypotheses": len(multiplicity_records),
+            "tested_hypotheses": 1,
+            "blocked_hypotheses_as_p1": 8,
+            "delta_log_loss_bootstrap_ci95": [
+                bootstrap_lower,
+                bootstrap_upper,
+            ],
+            "bootstrap_unit": "MATCH_DATE",
+            "serial_team_dependence_limitation": True,
         },
-        "negative_controls": {
-            "shuffled_labels": "PASSED_NO_PROMOTION",
-            "formation_shifted": "DATA_GATE_BLOCKED",
-            "absence_shifted": "DATA_GATE_BLOCKED",
-            "false_footedness": "DATA_GATE_BLOCKED",
-            "post_kickoff_lineup": "REJECTED_BY_TEMPORAL_GUARD",
-            "wrong_fixture_odds": "REJECTED_BY_PAIRING_GUARD",
-            "impossible_condition": "PASSED_NO_OCCURRENCES",
-            "home_team_systematic": "PASSED_NO_PROMOTION",
-            "post_result_rule": "REJECTED_BY_FEATURE_ALLOWLIST",
-            "false_centre_back_pair": "DATA_GATE_BLOCKED",
-            "random_tactical_interaction": "DATA_GATE_BLOCKED",
-            "random_player": "DATA_GATE_BLOCKED",
-        },
+        "cross_league": _cross_league_transfer(eligible),
+        "negative_controls": _run_negative_controls(
+            primary_reference_rows,
+            primary_rows,
+        ),
         "promotion": {
             "promoted": promotion.promoted,
             "status": promotion.status.value,
@@ -815,13 +1490,13 @@ def build_red_team_report(
 ) -> dict[str, object]:
     market_attrition = int(campaign["explicit_market_attrition"])
     objections = {
-        "chance": "CONTROLLED_WITH_CR1_SIGN_FLIP_AND_BH",
-        "leakage": "NO_TARGET_COLUMNS_AND_STRICT_ROLLING_ALLOWLIST",
+        "chance": "CONTROLLED_WITH_CR1_CLUSTER_SIGN_FLIP_CLUSTER_BOOTSTRAP_AND_BH",
+        "leakage": "TARGET_EXCLUDED_BUT_TEAM_SOURCE_OBSERVED_AT_UNPROVEN_GATE_PARTIAL",
         "concentration": "NO_STRATEGY_PROMOTED",
-        "dependence": "CLUSTER_KEYS_REQUIRED_MINIMUM_30",
+        "dependence": "MATCH_DATE_CLUSTERED_TEAM_SERIAL_DEPENDENCE_REMAINS_LIMITATION",
         "wrong_odds": "EXACT_FIXTURE_PAIRING_VERIFIED",
-        "wrong_cutoff": "HISTORICAL_ONLY_SOURCE_PRICE_CLASS_EXPLICIT",
-        "threshold_selection": "NO_ROI_THRESHOLD_SELECTED",
+        "wrong_cutoff": "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_NOT_STRICT_OBSERVED_AT",
+        "threshold_selection": "PRIMARY_FIXED_NO_TEST_SET_MODEL_SELECTION",
         "incomplete_sample": (
             "NO_1X2_MARKET_ATTRITION"
             if market_attrition == 0
@@ -831,6 +1506,9 @@ def build_red_team_report(
         "join_error": "ONE_TO_ONE_EXACT_JOIN",
         "formation_normalization": "CAMPAIGN_BLOCKED",
         "absence_classification": "CAMPAIGN_BLOCKED",
+        "calibration": "MARKET_RECALIBRATED_TRAIN_ONLY_TOP_LABEL_ECE_DIAGNOSTIC",
+        "multiplicity": "ONE_TESTED_PLUS_EIGHT_BLOCKED_HYPOTHESES_INCLUDED",
+        "negative_controls": "SIX_COMPUTATIONAL_OR_GUARD_CONTROLS_EXECUTED_SIX_DATA_GATED",
     }
     return {
         "schema_version": "jalon11-red-team-v1",
@@ -838,8 +1516,16 @@ def build_red_team_report(
         "audit_source_commit": audit["source_commit"],
         "objections": objections,
         "major_unresolved_objections": [],
+        "blocking_limitations": [
+            "TEAM_GATE_PARTIAL",
+            "PLAYER_ABSENCE_LINEUP_FORMATION_FOOTEDNESS_GATES_BLOCKED",
+            "EXACT_LIVE_MARKET_OBSERVED_AT_UNAVAILABLE",
+            "TEAM_SERIAL_DEPENDENCE_SENSITIVITY_NOT_MULTIWAY",
+        ],
+        "negative_controls": campaign["negative_controls"],
         "promotion_allowed": False,
         "reason": "DEEP_DATA_GATES_AND_EXACT_LIVE_MARKET_CUTOFF_REMAIN_CLOSED",
+        "independent_review_verdict": "REVISED_AND_FAIL_CLOSED",
         "replay_required": True,
     }
 
@@ -862,6 +1548,8 @@ def build_ledger(
                 "hypothesis_id": hypothesis.hypothesis_id,
                 "preregistration_hash": hypothesis.preregistration_hash,
             },
+            recorded_at=LEDGER_FROZEN_AT
+            + timedelta(microseconds=len(ledger.events)),
         )
         eligibility = evaluate_hypothesis_eligibility(hypothesis, GATE_STATUSES)
         ledger.append(
@@ -871,6 +1559,8 @@ def build_ledger(
             status=eligibility.status.value,
             reason=";".join(eligibility.blocking_gates) or "ALL_GATES_READY",
             payload={"hypothesis_id": hypothesis.hypothesis_id},
+            recorded_at=LEDGER_FROZEN_AT
+            + timedelta(microseconds=len(ledger.events)),
         )
         if not eligibility.eligible:
             ledger.append(
@@ -880,6 +1570,8 @@ def build_ledger(
                 status="DATA_GATE_BLOCKED",
                 reason=";".join(eligibility.blocking_gates),
                 payload={"hypothesis_id": hypothesis.hypothesis_id},
+                recorded_at=LEDGER_FROZEN_AT
+                + timedelta(microseconds=len(ledger.events)),
             )
     destination = output / "public-evidence-ledger-v2.jsonl"
     ledger.write_jsonl(destination)
@@ -888,11 +1580,11 @@ def build_ledger(
     return summary
 
 
-def build_watchlist_and_decision(
+def build_watchlist(
     output: Path,
     *,
     campaign: dict[str, object],
-) -> tuple[dict[str, object], dict[str, object]]:
+) -> dict[str, object]:
     watchlist = {
         "schema_version": "deep-football-watchlist-v1",
         "campaign_result_hash": campaign["result_hash"],
@@ -902,6 +1594,21 @@ def build_watchlist_and_decision(
         "not_a_bet": True,
         "production_status": "PRODUCTION_LOCKED",
     }
+    _write_json(output / "prospective-watchlist.json", watchlist)
+    return watchlist
+
+
+def build_shadow_candidate_decision(
+    output: Path,
+    *,
+    campaign: dict[str, object],
+) -> dict[str, object]:
+    promotion = campaign.get("promotion")
+    if not isinstance(promotion, dict):
+        raise ValueError("JALON11_CAMPAIGN_PROMOTION_REQUIRED")
+    candidate_count = int(promotion.get("shadow_candidates", 0))
+    if candidate_count != 0 or promotion.get("promoted") is True:
+        raise ValueError("JALON11_LIVE_CANDIDATE_REQUIRES_POINT_IN_TIME_PACKAGE")
     decision = {
         "schema_version": "deep-football-shadow-decision-v1",
         "candidate_count": 0,
@@ -912,12 +1619,23 @@ def build_watchlist_and_decision(
         "shadow_bankroll_before": 1000.0,
         "shadow_bankroll_after": 1000.0,
         "status": "NO_DECISION_NO_CANDIDATE",
+        "exact_observed_at_required": True,
         "real_bets": False,
         "production_status": "PRODUCTION_LOCKED",
     }
-    _write_json(output / "prospective-watchlist.json", watchlist)
     _write_json(output / "shadow-candidate-decision.json", decision)
-    return watchlist, decision
+    return decision
+
+
+def build_watchlist_and_decision(
+    output: Path,
+    *,
+    campaign: dict[str, object],
+) -> tuple[dict[str, object], dict[str, object]]:
+    return (
+        build_watchlist(output, campaign=campaign),
+        build_shadow_candidate_decision(output, campaign=campaign),
+    )
 
 
 def build_social_exports(output: Path) -> None:
@@ -958,6 +1676,40 @@ def run_all(
     replay: bool,
 ) -> dict[str, object]:
     output.mkdir(parents=True, exist_ok=True)
+    candidate_path = output / "campaign-11a-summary.json"
+    manifest_path = output / "dataset-manifest.json"
+    ledger_path = output / "ledger-audit.json"
+    ledger_jsonl_path = output / "public-evidence-ledger-v2.jsonl"
+    previous_campaign = (
+        json.loads(candidate_path.read_text("utf-8"))
+        if replay and candidate_path.exists()
+        else None
+    )
+    previous_manifest = (
+        json.loads(manifest_path.read_text("utf-8"))
+        if replay and manifest_path.exists()
+        else None
+    )
+    previous_ledger = (
+        json.loads(ledger_path.read_text("utf-8"))
+        if replay and ledger_path.exists()
+        else None
+    )
+    previous_ledger_file_hash = (
+        hashlib.sha256(ledger_jsonl_path.read_bytes()).hexdigest()
+        if replay and ledger_jsonl_path.exists()
+        else None
+    )
+    if replay and any(
+        value is None
+        for value in (
+            previous_campaign,
+            previous_manifest,
+            previous_ledger,
+            previous_ledger_file_hash,
+        )
+    ):
+        raise RuntimeError("JALON11_REPLAY_PRIMARY_ARTIFACTS_REQUIRED")
     audit = audit_state(
         state,
         source_commit=source_commit,
@@ -967,47 +1719,111 @@ def run_all(
     _write_json(output / "audit-summary.json", audit)
     manifest = build_team_dataset(state, output)
     frame, _ = build_team_market_frame(state)
-    candidate_path = output / "campaign-11a-summary.json"
-    previous = (
-        json.loads(candidate_path.read_text("utf-8"))
-        if replay and candidate_path.exists()
-        else None
-    )
     campaign = run_team_campaign(frame, output)
-    identical = (
-        previous is not None
-        and previous.get("result_hash") == campaign.get("result_hash")
-        if replay
-        else True
-    )
-    if replay and not identical:
-        raise RuntimeError("JALON11_REPLAY_NON_DETERMINISTIC")
     red_team = build_red_team_report(audit, campaign)
     _write_json(output / "red-team-report.json", red_team)
     watchlist, decision = build_watchlist_and_decision(output, campaign=campaign)
-    ledger_path = output / "ledger-audit.json"
-    ledger = (
-        json.loads(ledger_path.read_text("utf-8"))
-        if replay and ledger_path.exists()
-        else build_ledger(
+    if replay:
+        replay_ledger_root = output / ".ledger-reconstruction"
+        if replay_ledger_root.exists():
+            shutil.rmtree(replay_ledger_root)
+        reconstructed_ledger = build_ledger(
+            replay_ledger_root,
+            code_revision=main_commit,
+            dataset_hash=str(manifest["dataset_hash"]),
+        )
+        reconstructed_ledger_hash = hashlib.sha256(
+            (
+                replay_ledger_root / "public-evidence-ledger-v2.jsonl"
+            ).read_bytes()
+        ).hexdigest()
+        ledger = previous_ledger
+        ledger_equal = (
+            previous_ledger == reconstructed_ledger
+            and previous_ledger_file_hash == reconstructed_ledger_hash
+        )
+        shutil.rmtree(replay_ledger_root)
+    else:
+        ledger = build_ledger(
             output,
             code_revision=main_commit,
             dataset_hash=str(manifest["dataset_hash"]),
         )
-    )
+        ledger_equal = False
     build_social_exports(output)
+    hash_comparisons = {
+        "campaign_result_hash": (
+            previous_campaign is not None
+            and previous_campaign.get("result_hash")
+            == campaign.get("result_hash")
+        ),
+        "dataset_hash": (
+            previous_manifest is not None
+            and previous_manifest.get("dataset_hash")
+            == manifest.get("dataset_hash")
+        ),
+        "parquet_sha256": (
+            previous_manifest is not None
+            and previous_manifest.get("parquet_sha256")
+            == manifest.get("parquet_sha256")
+        ),
+        "ledger_hash_chain": ledger_equal,
+    }
+    data_loss = (
+        abs(
+            int(previous_manifest.get("rows", 0))
+            - int(manifest.get("rows", 0))
+        )
+        if previous_manifest is not None
+        else 0
+    )
+    hash_mismatches = (
+        sum(not matched for matched in hash_comparisons.values())
+        if replay
+        else 0
+    )
+    identical = (
+        replay
+        and all(hash_comparisons.values())
+        and data_loss == 0
+    )
+    if replay and not identical:
+        raise RuntimeError("JALON11_REPLAY_NON_DETERMINISTIC")
+    report = manifest.get("report", {})
+    pairing = (
+        report.get("pairing", {})
+        if isinstance(report, dict)
+        else {}
+    )
     replay_report = {
         "mode": "REPLAY" if replay else "PRIMARY",
+        "status": (
+            "REPLAY_FULL_HASH_VERIFIED"
+            if replay
+            else "PRIMARY_WRITTEN_REPLAY_REQUIRED"
+        ),
         "identical": identical,
         "primary_result_hash": (
-            previous.get("result_hash") if previous is not None else campaign["result_hash"]
+            previous_campaign.get("result_hash")
+            if previous_campaign is not None
+            else campaign["result_hash"]
         ),
         "result_hash": campaign["result_hash"],
+        "primary_dataset_hash": (
+            previous_manifest.get("dataset_hash")
+            if previous_manifest is not None
+            else manifest["dataset_hash"]
+        ),
+        "dataset_hash": manifest["dataset_hash"],
+        "parquet_sha256": manifest["parquet_sha256"],
+        "ledger_head_hash": ledger.get("head_hash"),
+        "hash_comparisons": hash_comparisons,
+        "code_revision": main_commit,
         "provider_calls": 0,
         "odds_api_credits": 0,
-        "business_duplicates": 0,
-        "data_loss": 0,
-        "hash_mismatches": 0,
+        "business_duplicates": int(pairing.get("duplicate_keys", 0)),
+        "data_loss": data_loss,
+        "hash_mismatches": hash_mismatches,
     }
     _write_json(output / "replay.json", replay_report)
     verdict = "JALON_11_BLOCKED_BY_DATA_GATES"
@@ -1048,6 +1864,7 @@ def main() -> None:
     parser.add_argument("--source-commit", default="UNKNOWN")
     parser.add_argument("--main-commit", default="UNKNOWN")
     parser.add_argument("--main-ci-run-id", default="UNKNOWN")
+    parser.add_argument("--campaign-file", type=Path)
     parser.add_argument("--replay", action="store_true")
     args = parser.parse_args()
     if args.command == "all":
@@ -1069,7 +1886,7 @@ def main() -> None:
         _write_json(args.output / "audit-summary.json", result)
     elif args.command == "build":
         result = build_team_dataset(args.state, args.output)
-    else:
+    elif args.command in {"campaign", "validate"}:
         audit_path = args.output / "audit-summary.json"
         if not audit_path.exists():
             raise SystemExit("RUN_AUDIT_FIRST")
@@ -1080,18 +1897,25 @@ def main() -> None:
         campaign = run_team_campaign(frame, args.output)
         if args.command == "campaign":
             result = campaign
-        elif args.command == "validate":
+        else:
             audit = json.loads(audit_path.read_text("utf-8"))
             result = build_red_team_report(audit, campaign)
             _write_json(args.output / "red-team-report.json", result)
-        elif args.command in {"watchlist", "decision"}:
-            watchlist, decision = build_watchlist_and_decision(
-                args.output,
-                campaign=campaign,
-            )
-            result = watchlist if args.command == "watchlist" else decision
+    elif args.command in {"watchlist", "decision"}:
+        if args.campaign_file is None:
+            raise SystemExit("CAMPAIGN_FILE_REQUIRED")
+        campaign_value = json.loads(args.campaign_file.read_text("utf-8"))
+        if not isinstance(campaign_value, dict):
+            raise SystemExit("CAMPAIGN_OBJECT_REQUIRED")
+        if args.command == "watchlist":
+            result = build_watchlist(args.output, campaign=campaign_value)
         else:
-            raise AssertionError("UNREACHABLE_COMMAND")
+            result = build_shadow_candidate_decision(
+                args.output,
+                campaign=campaign_value,
+            )
+    else:
+        raise AssertionError("UNREACHABLE_COMMAND")
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
 
 

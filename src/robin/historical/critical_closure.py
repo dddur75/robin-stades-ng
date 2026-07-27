@@ -960,6 +960,12 @@ class ObjectStorageAdapter:
                 "get_operations": 1,
                 **verification,
             }
+        if existing:
+            raise ObjectStorageIntegrityError(
+                "OBJECT_STORAGE_IMMUTABLE_KEY_CONFLICT",
+                key=key,
+                hash_mismatch=True,
+            )
         upload_started = perf_counter()
         self.client.put_object(
             Bucket=self.bucket,

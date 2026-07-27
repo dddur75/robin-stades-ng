@@ -79,9 +79,15 @@ def _add_or_verify(
     if existing is None:
         session.add(model)
         return True
+    # ``code_revision`` records the commit which created the immutable row.  It
+    # is provenance, not scientific identity: the content/dataset/evaluation
+    # hashes already carry that identity.  A replay from a later merge commit
+    # must therefore preserve the creator revision instead of treating it as a
+    # mutation or inserting a duplicate.
     mismatches = [
         field
         for field, value in expected.items()
+        if field != "code_revision"
         if _canonical(getattr(existing, field)) != _canonical(value)
     ]
     if mismatches:
@@ -190,7 +196,9 @@ def _usable_coverage(
 
 
 def _cutoff_class(gate: str) -> str:
-    if gate in {"TEAM_GATE", "MARKET_GATE"}:
+    if gate == "TEAM_GATE":
+        return "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_PARTIAL"
+    if gate == "MARKET_GATE":
         return "HISTORICAL_PREMATCH_RESEARCH"
     return "UNPROVEN_PREMATCH_OR_POST_MATCH_ONLY"
 
@@ -336,9 +344,9 @@ def persist_deep_football_evidence(
                 )
         hypotheses = list(owner_hypotheses())
         team_protocol: dict[str, object] = {
-            "hypothesis_id": "H11-A-TEAM-CORE",
-            "title": "Team and Calendar Deep Baseline",
-            "mechanism": "Team and calendar information may add value beyond de-vigged 1X2.",
+            "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+            "title": "Market-adjusted Team and Calendar Diagnostic",
+            "mechanism": "Team and calendar information may add value beyond a train-only recalibration of de-vigged 1X2.",
             "expected_direction": "LOWER_LOG_LOSS_THAN_MARKET",
             "markets": ["1X2"],
             "cutoff": "PRE_LINEUP",
@@ -368,8 +376,8 @@ def persist_deep_football_evidence(
                     name=f"required_gates:{hypothesis_key}",
                 )
             ]
-            if hypothesis_key == "H11-A-TEAM-CORE":
-                status = "DOMINATED"
+            if hypothesis_key == "H11-A-TEAM-INCREMENTAL":
+                status = "DATA_GATE_BLOCKED"
                 family = "team"
             else:
                 status = "DATA_GATE_BLOCKED"
@@ -487,17 +495,32 @@ def persist_deep_football_evidence(
             campaign["paired_1x2_rows"],
             name="paired_1x2_rows",
         )
-        for model_key in (
-            "B1_REGULARIZED_MULTINOMIAL",
-            "B1_BOUNDED_GRADIENT_BOOSTING",
-        ):
+        model_keys = tuple(
+            model_key
+            for model_key in (
+                "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL",
+                "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING",
+                "B1_TEAM_ONLY_POISSON",
+                "B1_TEAM_ONLY_DIXON_COLES",
+                "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+                "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING",
+            )
+            if model_key in model_results
+        )
+        for model_key in model_keys:
             metrics = _require_mapping(
                 model_results[model_key],
                 name=f"campaign.models.{model_key}",
             )
+            delta_log_loss = _as_float(
+                metrics["delta_log_loss"],
+                name=f"{model_key}.delta_log_loss",
+            )
             evaluation_payload: dict[str, object] = {
                 "model": metrics,
-                "market_baseline": model_results["B0_MARKET"],
+                "market_baseline": model_results[
+                    str(metrics.get("reference", "B0_MARKET"))
+                ],
                 "statistics": statistics,
                 "folds": campaign["folds"],
                 "promotion": campaign["promotion"],
@@ -506,7 +529,7 @@ def persist_deep_football_evidence(
             }
             evaluation_hash = _hash_metrics(
                 {
-                    "hypothesis_id": "H11-A-TEAM-CORE",
+                    "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
                     "model_key": model_key,
                     "metrics": evaluation_payload,
                     "dataset_hash": dataset_hash,
@@ -514,21 +537,20 @@ def persist_deep_football_evidence(
             )
             identifier = _identifier(
                 "evaluation",
-                f"H11-A-TEAM-CORE:{model_key}:{dataset_hash}",
+                f"H11-A-TEAM-INCREMENTAL:{model_key}:{dataset_hash}",
             )
             expected = {
                 "idempotency_key": f"j11:evaluation:{evaluation_hash}",
-                "hypothesis_id": hypothesis_model_ids["H11-A-TEAM-CORE"],
+                "hypothesis_id": hypothesis_model_ids[
+                    "H11-A-TEAM-INCREMENTAL"
+                ],
                 "coverage_gate_id": None,
                 "evaluation_scope": "EXPANDING_WALK_FORWARD_2022_2025",
                 "fold_key": "2022-2025",
                 "model_key": model_key,
                 "market": "1X2",
                 "support": support,
-                "effect": -_as_float(
-                    metrics["delta_log_loss"],
-                    name=f"{model_key}.delta_log_loss",
-                ),
+                "effect": -delta_log_loss,
                 "metrics": evaluation_payload,
                 "p_value": _as_float(
                     statistics["sign_flip_p"],
@@ -542,7 +564,11 @@ def persist_deep_football_evidence(
                     statistics["global_q"],
                     name="global_q",
                 ),
-                "status": "DOMINATED",
+                "status": (
+                    "DOMINATED"
+                    if delta_log_loss >= 0.0
+                    else "DATA_GATE_BLOCKED"
+                ),
                 "paired_sample_hash": dataset_hash,
                 "dataset_version": DATASET_VERSION,
                 "dataset_hash": dataset_hash,

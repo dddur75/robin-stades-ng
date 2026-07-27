@@ -78,13 +78,13 @@ def _artifacts(root: Path) -> None:
             "folds": [],
             "models": {
                 "B0_MARKET": {"log_loss": 1.0, "brier": 0.2},
-                "B1_REGULARIZED_MULTINOMIAL": {
+                "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL": {
                     "log_loss": 1.1,
                     "brier": 0.21,
                     "delta_log_loss": 0.1,
                     "delta_brier": 0.01,
                 },
-                "B1_BOUNDED_GRADIENT_BOOSTING": {
+                "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING": {
                     "log_loss": 1.2,
                     "brier": 0.22,
                     "delta_log_loss": 0.2,
@@ -146,3 +146,32 @@ def test_compact_projection_is_idempotent_and_keeps_heavy_rows_out(
             select(func.count()).select_from(MatchupEvaluationModel)
         ) == 10
 
+
+def test_replay_from_later_commit_preserves_creator_revision(
+    tmp_path: Path,
+) -> None:
+    _artifacts(tmp_path)
+    engine = build_engine(f"sqlite:///{tmp_path / 'j11-revision.db'}")
+    Base.metadata.create_all(engine)
+
+    first = persist_deep_football_evidence(
+        engine,
+        tmp_path,
+        code_revision="branch-revision",
+    )
+    replay = persist_deep_football_evidence(
+        engine,
+        tmp_path,
+        code_revision="merge-revision",
+    )
+
+    assert sum(first["inserted"].values()) == 24
+    assert sum(replay["inserted"].values()) == 0
+    with Session(engine) as session:
+        revisions = {
+            str(value)
+            for value in session.scalars(
+                select(DeepFeatureDefinitionModel.code_revision)
+            )
+        }
+    assert revisions == {"branch-revision"}

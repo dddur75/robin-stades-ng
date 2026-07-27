@@ -42,6 +42,15 @@ jobs:
           --source-commit "$(git -C .historical-registry rev-parse HEAD)"
           --main-commit "${{ github.sha }}"
           --main-ci-run-id "${{ github.run_id }}"
+      - name: Rejouer la validation sans fournisseur
+        run: >-
+          python scripts/run_deep_football.py all
+          --state data/historical
+          --output artifacts/matchup-validation
+          --source-commit "$(git -C .historical-registry rev-parse HEAD)"
+          --main-commit "${{ github.sha }}"
+          --main-ci-run-id "${{ github.run_id }}"
+          --replay
       - name: Tester les contrôles scientifiques
         run: python -m pytest -q tests/jalon11
       - name: Vérifier multiplicité, négatifs et rejet
@@ -54,12 +63,19 @@ jobs:
               (root / "campaign-11a-summary.json").read_text()
           )
           red_team = json.loads((root / "red-team-report.json").read_text())
+          replay = json.loads((root / "replay.json").read_text())
           assert campaign["statistics"]["family_q"] == 1.0
           assert campaign["statistics"]["global_q"] == 1.0
           assert campaign["promotion"]["promoted"] is False
           assert campaign["promotion"]["status"] == "REJECTED"
           assert red_team["promotion_allowed"] is False
           assert not red_team["major_unresolved_objections"]
+          assert replay["identical"] is True
+          assert replay["provider_calls"] == 0
+          assert replay["odds_api_credits"] == 0
+          assert replay["business_duplicates"] == 0
+          assert replay["data_loss"] == 0
+          assert replay["hash_mismatches"] == 0
           PY
       - uses: actions/upload-artifact@v4
         with:

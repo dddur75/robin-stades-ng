@@ -17,6 +17,8 @@ jobs:
     env:
       API_FOOTBALL_CALLS_ALLOWED: "0"
       ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
       REAL_BETS: "false"
       NO_BET_DEFAULT: "true"
@@ -31,15 +33,11 @@ jobs:
       - run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
-      - uses: ./.github/actions/historical-state-restore
-      - name: Construire seulement la preuve et le registre
+      - name: Construire seulement le registre depuis la campagne gelÃ©e
         run: >-
-          python scripts/run_deep_football.py all
-          --state data/historical
+          python scripts/run_deep_football.py watchlist
           --output artifacts/prospective-watchlist
-          --source-commit "$(git -C .historical-registry rev-parse HEAD)"
-          --main-commit "${{ github.sha }}"
-          --main-ci-run-id "${{ github.run_id }}"
+          --campaign-file reports/jalon11/campaign-summary.json
       - name: Vérifier que le registre ne crée aucune décision
         run: |
           python - <<'PY'
@@ -49,15 +47,10 @@ jobs:
           watchlist = json.loads(
               (root / "prospective-watchlist.json").read_text()
           )
-          decision = json.loads(
-              (root / "shadow-candidate-decision.json").read_text()
-          )
           assert watchlist["count"] == 0
           assert watchlist["not_a_bet"] is True
-          assert decision["candidate_count"] == 0
-          assert decision["decisions"] == 0
-          assert decision["stake_units"] == 0
-          assert decision["shadow_bankroll_after"] == 1000.0
+          assert watchlist["production_status"] == "PRODUCTION_LOCKED"
+          assert not (root / "shadow-candidate-decision.json").exists()
           PY
       - uses: actions/upload-artifact@v4
         with:
