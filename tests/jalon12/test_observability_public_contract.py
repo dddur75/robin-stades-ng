@@ -345,6 +345,12 @@ def test_cockpit_accepts_valid_replay_then_rejects_single_guard_mutations(
     assert accepted_snapshot["r2"]["objects_added"] == 3
     assert accepted_snapshot["r2"]["recovery_objects"] == 1
     assert accepted_snapshot["r2"]["recovery_bytes"] == 112_345_679
+    assert (
+        accepted_snapshot["postgresql"]["migration"]
+        == "0009_jalon12_observatory"
+    )
+    assert accepted_snapshot["postgresql"]["tables"] == 12
+    assert accepted_snapshot["postgresql"]["payload_body_rows"] == 0
     assert accepted_snapshot["postgresql"]["duplicates_avoided"] == 1
 
     invalid = deepcopy(valid)
