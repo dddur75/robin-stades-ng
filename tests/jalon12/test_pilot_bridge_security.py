@@ -22,6 +22,7 @@ def test_pilot_bridge_is_exact_branch_marker_and_post_ci_only() -> None:
         in pilot
     )
     assert "[run-j12-pilot]" in pilot
+    assert "[run-j12-replay-only]" in pilot
     assert "github.event_name == 'push'" in pilot
 
 
@@ -49,6 +50,42 @@ def test_pilot_network_calls_are_one_shot_and_due_only() -> None:
     assert pilot.count("--max-attempts 1") >= 3
     assert "Capturer seulement les fenetres actuellement dues" in pilot
     assert "--estimate-file" in pilot
+    for step_name in (
+        "Estimer puis enregistrer les fixtures Ligue 1",
+        "Planifier les fenetres",
+        "Capturer seulement les fenetres actuellement dues",
+    ):
+        step = pilot.split(f"- name: {step_name}", maxsplit=1)[1].split(
+            "\n      - ",
+            maxsplit=1,
+        )[0]
+        assert (
+            "contains(github.event.head_commit.message, '[run-j12-pilot]')"
+            in step
+        )
+        assert (
+            "!contains(github.event.head_commit.message, "
+            "'[run-j12-replay-only]')"
+        ) in step
+
+
+def test_pilot_and_replay_only_markers_are_mutually_exclusive() -> None:
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(
+        encoding="utf-8"
+    )
+    rejection_step = workflow.split(
+        "- name: Refuser les marqueurs Jalon 12 incompatibles",
+        maxsplit=1,
+    )[1].split("\n      - ", maxsplit=1)[0]
+    assert (
+        "contains(github.event.head_commit.message, '[run-j12-pilot]')"
+        in rejection_step
+    )
+    assert (
+        "contains(github.event.head_commit.message, "
+        "'[run-j12-replay-only]')"
+    ) in rejection_step
+    assert "exit 1" in rejection_step
 
 
 def test_pilot_replay_has_zero_provider_credentials_and_compact_artifact() -> None:

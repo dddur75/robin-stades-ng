@@ -236,7 +236,11 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
     observatory.policy_source,
     "configs/prospective_observatory_v1.json",
   );
-  assert.equal(observatory.origin, "NO_PROSPECTIVE_CAPTURE_YET");
+  assert.ok(
+    ["NO_PROSPECTIVE_CAPTURE_YET", "LIVE_PROSPECTIVE_CAPTURE"].includes(
+      observatory.origin,
+    ),
+  );
   assert.equal(observatory.fixtures.horizon_days, 30);
   assert.equal(observatory.fixtures.max_matchdays_per_competition, 3);
   assert.equal(observatory.fixtures.competitions.length, 5);
@@ -252,8 +256,15 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
         hypothesis.status === "WAITING_FOR_OBSERVATIONS",
     ),
   );
-  assert.equal(observatory.providers.api_football_calls, 0);
-  assert.equal(observatory.providers.odds_api_credits, 0);
+  assert.ok(observatory.providers.api_football_calls >= 0);
+  assert.ok(observatory.providers.api_football_calls <= 5000);
+  assert.ok(observatory.providers.odds_api_credits >= 0);
+  assert.ok(observatory.providers.odds_api_credits <= 250);
+  if (observatory.origin === "NO_PROSPECTIVE_CAPTURE_YET") {
+    assert.equal(observatory.captures.hashes, 0);
+  } else {
+    assert.ok(observatory.captures.hashes > 0);
+  }
   assert.equal(observatory.providers.budgets.api_football_max_total, 5000);
   assert.equal(observatory.providers.budgets.odds_api_max_total, 250);
   assert.equal(observatory.providers.reserves.api_football, 5000);

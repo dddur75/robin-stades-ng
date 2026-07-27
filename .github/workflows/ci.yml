@@ -109,7 +109,8 @@ jobs:
     if: >-
       github.event_name == 'push' &&
       github.ref == 'refs/heads/codex/jalon-12-prospective-deep-data-observatory' &&
-      contains(github.event.head_commit.message, '[run-j12-pilot]')
+      (contains(github.event.head_commit.message, '[run-j12-pilot]') ||
+      contains(github.event.head_commit.message, '[run-j12-replay-only]'))
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
@@ -129,6 +130,13 @@ jobs:
       DEMO_MODE_ENABLED: "false"
     steps:
       - uses: actions/checkout@v4
+      - name: Refuser les marqueurs Jalon 12 incompatibles
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          contains(github.event.head_commit.message, '[run-j12-replay-only]')
+        run: |
+          echo "Les modes pilote et replay-only sont mutuellement exclusifs."
+          exit 1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -166,6 +174,9 @@ jobs:
           python -m alembic upgrade head
           python -m alembic current | grep -q "0009_jalon12_observatory"
       - name: Estimer puis enregistrer les fixtures Ligue 1
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          !contains(github.event.head_commit.message, '[run-j12-replay-only]')
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -178,6 +189,9 @@ jobs:
           python scripts/run_prospective_observatory.py fixture-registry --estimate --max-attempts 1 --policy "$PROSPECTIVE_POLICY" --competition "Ligue 1" --output "$PROSPECTIVE_OUTPUT"
           python scripts/run_prospective_observatory.py fixture-registry --execute --max-attempts 1 --policy "$PROSPECTIVE_POLICY" --estimate-file "$PROSPECTIVE_OUTPUT/fixture-registry-estimate.json" --competition "Ligue 1" --output "$PROSPECTIVE_OUTPUT"
       - name: Planifier les fenetres
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          !contains(github.event.head_commit.message, '[run-j12-replay-only]')
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -186,6 +200,9 @@ jobs:
           --policy "$PROSPECTIVE_POLICY"
           --output "$PROSPECTIVE_OUTPUT"
       - name: Capturer seulement les fenetres actuellement dues
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          !contains(github.event.head_commit.message, '[run-j12-replay-only]')
         shell: bash
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

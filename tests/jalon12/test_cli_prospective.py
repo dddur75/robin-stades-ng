@@ -943,6 +943,7 @@ def test_provider_error_then_success_uses_durable_attempt_number(
     assert gates["ledger_events"] > 0
     monkeypatch.setenv("PROSPECTIVE_REPORT_ROOT", str(output))  # type: ignore[attr-defined]
     cockpit = build_prospective_observatory()
+    assert cockpit["origin"] == "LIVE_PROSPECTIVE_CAPTURE"
     assert cockpit["captures"]["attempted"] > 0
     assert cockpit["providers"]["api_football_calls"] == 4
     assert cockpit["ledger"]["events"] > 0

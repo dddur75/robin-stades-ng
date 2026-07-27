@@ -145,6 +145,13 @@ def build_prospective_observatory() -> dict[str, Any]:
         if not safe:
             raise RuntimeError("rapport Jalon 12 refusé : invariants incomplets")
         compact = merge_dicts(compact, observed)
+        captures = observed.get("captures", {})
+        has_live_evidence = (
+            isinstance(captures, dict)
+            and int(str(captures.get("hashes", 0))) > 0
+        )
+        if has_live_evidence:
+            compact["origin"] = "LIVE_PROSPECTIVE_CAPTURE"
 
         fixtures = observed.get("fixtures", {})
         if isinstance(fixtures, dict):
