@@ -452,3 +452,17 @@ prédicat `OUTCOME_IS_HOME_AND_AWAY` : support 0,
 `EXECUTED_ZERO_SUPPORT_NO_PROMOTION`.
 Voir
 `docs/deep-football/JALON-11-SCIENTIFIC-CONTRACT.md`.
+
+### Revue finale PR #14
+
+Le run `30290942945` et les CI push/PR du commit
+`31ec41632b72cd93676f5b1d8592e1bba429e937` sont verts. Le replay est
+`REPLAY_FULL_HASH_VERIFIED` sur campagne, dataset, Parquet et ledger. Le ledger
+compte 27 événements, dont le triplet H11-A, avec la tête
+`7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf`.
+
+PostgreSQL est à `0008_jalon11_deep_football`, avec deux passages de 304 preuves,
+0 insertion et 304 doublons évités. R2 est synchronisé à 25 453 objets, lag 0,
+0 nouvel objet, 0 suppression et 0 mutation. Le verdict scientifique reste
+`JALON_11_BLOCKED_BY_DATA_GATES`; aucun candidat, aucune décision et aucune mise
+n'ont été créés.

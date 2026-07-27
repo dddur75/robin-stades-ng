@@ -148,3 +148,24 @@ campagne
 `437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`
 et la tête ledger
 `90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`.
+
+## Preuve de revue finale
+
+La preuve précédente reste historique. La revue finale est le run
+`30290942945` sur
+`31ec41632b72cd93676f5b1d8592e1bba429e937`.
+
+Elle confirme sans retuning :
+
+- 10 732 lignes dataset et 7 081 évaluations 1X2 appariées ;
+- le hash campagne inchangé
+  `437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355` ;
+- un ledger de 27 événements, incluant H11-A comme amendement correctif
+  non préenregistré et non promouvable ;
+- la tête ledger
+  `7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf` ;
+- un replay intégralement identique, sans fournisseur ni perte ;
+- `TEAM_GATE=PARTIAL`, H11-001 à H11-008 bloquées et H11-A dominée.
+
+Cette preuve ne transforme aucune donnée post-match en donnée pré-match et
+n'autorise ni modèle joueurs, ni stratégie, ni pari réel.

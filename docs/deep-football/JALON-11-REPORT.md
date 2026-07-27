@@ -208,3 +208,34 @@ Le champ JSON compact correspondant à `P3/P4_PAUSED` est
 
 Aucun secret n'est consigné. La branche ne doit pas être fusionnée
 automatiquement.
+
+## Revue adversariale finale de la PR #14
+
+Le run cache-only `30290942945` a validé le correctif de revue sur
+`31ec41632b72cd93676f5b1d8592e1bba429e937`. Les deux CI du même commit et les
+six jobs opérationnels sont verts.
+
+La revue a fermé quatre écarts réels :
+
+- le replay construit désormais le candidat hors du répertoire primaire et
+  préserve les preuves primaires si un hash diverge ;
+- la baseline titulaire exige exactement huit fixtures antérieures de
+  l'équipe, avec échec fermé sur transfert, doublon ou observation incomplète ;
+- le ledger inclut le triplet complet de l'amendement correctif H11-A ;
+- Robin Live affiche l'attrition équipe et ne prétend plus qu'une preuve de
+  préenregistrement incomplète est gelée.
+
+Le ledger final de cette revue contient 27 événements et sa tête vaut
+`7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf`.
+Le replay vérifie les quatre hashes, avec 0 appel, 0 crédit, 0 doublon, 0 perte
+et 0 mismatch. Neon reste à `0008_jalon11_deep_football`; les deux passages
+examinent chacun 304 preuves et évitent 304 doublons. R2 reste à
+25 453 / 25 453 objets, avec 0 nouvel upload, lag 0, 0 suppression et
+0 mutation.
+
+Le résultat scientifique ne change pas : delta Log Loss primaire
+`+0.00170221115952107`, p unilatérale CR1 `0.963826923344745`, q globale `1.0`,
+promotion refusée, `TEAM_GATE=PARTIAL` et huit hypothèses gelées bloquées.
+La preuve structurée est
+`reports/jalon11/final-review-validation.json`; le rapport
+`operational-validation.json` reste la photographie immuable du premier run.

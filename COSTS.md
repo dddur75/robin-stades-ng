@@ -194,3 +194,16 @@ données en cache :
 
 Cette exécution n'ouvre aucun abonnement ni achat. `STORAGE_PAUSED` et P3/P4
 restent suspendus.
+
+### Coût de la revue finale
+
+Le run `30290942945` a duré 1 536 secondes entre 17:49:04 et 18:14:40 UTC.
+Il est resté entièrement cache-only :
+
+- 0 appel API-Football et 0 crédit The Odds API ;
+- 0 nouvel objet R2, 0 octet R2 ajouté, 25 453 objets vérifiés et lag 0 ;
+- 0 ligne PostgreSQL ajoutée sur chacun des deux passages idempotents ;
+- 0 publication sociale, 0 décision, 0 mise et 0 pari réel ;
+- 0 payload lourd ajouté à Git.
+
+Ce run n'a créé aucun achat ni changement d'abonnement.

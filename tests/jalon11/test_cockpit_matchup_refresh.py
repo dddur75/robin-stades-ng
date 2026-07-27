@@ -26,6 +26,18 @@ def test_matchup_snapshot_preserves_campaign_and_preregistration_proof() -> None
     assert matchup["promotion"]["criteria"] == [
         {"name": "DEEP_DATA_GATES", "passed": False}
     ]
+    assert (
+        matchup["provenance"]["sourceCommit"]
+        == "803091cb506e17a07850f56ef78b7b9df55575dd"
+    )
+    assert (
+        matchup["provenance"]["mainCommit"]
+        == "31ec41632b72cd93676f5b1d8592e1bba429e937"
+    )
+    assert (
+        matchup["provenance"]["codeRevision"]
+        == "31ec41632b72cd93676f5b1d8592e1bba429e937"
+    )
 
 
 def test_matchup_only_refresh_preserves_other_cockpit_evidence(

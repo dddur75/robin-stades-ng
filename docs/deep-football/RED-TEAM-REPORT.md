@@ -73,3 +73,12 @@ les gates football profond, l'absence d'`observed_at` exact du marché live et
 la sensibilité sérielle non multiway. Aucun ROI n'est calculé. Aucun pattern ne
 rejoint la watchlist, aucun candidat shadow n'est créé, et aucune mise n'est
 produite.
+
+## Revue finale
+
+La tête `90bd34…` ci-dessus est celle de la preuve opérationnelle initiale.
+Après ajout du triplet H11-A exigé par la revue, le run `30290942945` vérifie
+27 événements et la tête
+`7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf`.
+Le verdict, les métriques, les gates et l'absence de promotion restent
+inchangés.

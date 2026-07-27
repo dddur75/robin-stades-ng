@@ -723,18 +723,28 @@ def build_matchup_lab() -> dict[str, Any]:
         if isinstance(final.get("audit"), dict)
         else {}
     )
-    operational = first_report("operational-validation.json")
+    operational = first_report(
+        "final-review-validation.json",
+        "operational-validation.json",
+    )
     operational_audit = (
         operational.get("audit", {})
         if isinstance(operational.get("audit"), dict)
         else {}
     )
     detailed_audit = first_report("audit-summary.json", "preflight-summary.json")
-    audit = {
-        **detailed_audit,
-        **final_audit,
-        **operational_audit,
-    }
+    if os.environ.get("JALON11_REPORT_ROOT"):
+        audit = {
+            **operational_audit,
+            **detailed_audit,
+            **final_audit,
+        }
+    else:
+        audit = {
+            **detailed_audit,
+            **final_audit,
+            **operational_audit,
+        }
     campaign = (
         final.get("campaign", {})
         if isinstance(final.get("campaign"), dict)
@@ -1855,10 +1865,16 @@ def build_matchup_lab() -> dict[str, Any]:
             "codeRevision": str(
                 audit.get(
                     "code_revision",
-                    (
-                        operational.get("github", {}).get("code_revision", "")
-                        if isinstance(operational.get("github"), dict)
-                        else ""
+                    replay.get(
+                        "code_revision",
+                        (
+                            operational.get("github", {}).get(
+                                "code_revision",
+                                "",
+                            )
+                            if isinstance(operational.get("github"), dict)
+                            else ""
+                        ),
                     ),
                 )
             ),

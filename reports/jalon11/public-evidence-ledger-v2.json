@@ -1,14 +1,14 @@
 {
   "schema_version": "public-evidence-ledger-v2-summary",
   "status": "HASH_CHAIN_VERIFIED",
-  "events": 24,
-  "head_hash": "90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8",
-  "code_revision": "1b74e94d38038b566e14f21ff2c852230cf046fa",
+  "events": 27,
+  "head_hash": "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
+  "code_revision": "31ec41632b72cd93676f5b1d8592e1bba429e937",
   "genesis_previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "event_counts": {
-    "HYPOTHESIS_REGISTERED": 8,
-    "DATA_GATE_EVALUATED": 8,
-    "PATTERN_REJECTED": 8,
+    "HYPOTHESIS_REGISTERED": 9,
+    "DATA_GATE_EVALUATED": 9,
+    "PATTERN_REJECTED": 9,
     "PATTERN_PROMOTED_TO_WATCHLIST": 0,
     "PATTERN_PROMOTED_TO_SHADOW_CANDIDATE": 0,
     "SHADOW_DECISION": 0,
@@ -22,7 +22,8 @@
     "H11-005",
     "H11-006",
     "H11-007",
-    "H11-008"
+    "H11-008",
+    "H11-A-TEAM-INCREMENTAL"
   ],
   "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
   "campaign_result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",

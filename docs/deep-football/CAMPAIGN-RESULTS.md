@@ -141,3 +141,13 @@ Le test principal n'ajoute aucune information au marché recalibré. 11A et 11F
 restent des diagnostics descriptifs non promouvables, 11E termine l'évaluation
 de gates avec huit hypothèses bloquées, et 11B/11C/11D/11G restent data-gated.
 Watchlist, candidats, décisions et mises restent à zéro.
+
+## Revue finale
+
+Le hash campagne reste
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`.
+La tête ledger initiale `90bd34…` est conservée comme preuve historique ; le
+run de revue `30290942945` ajoute le triplet H11-A et produit la tête
+`7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf`.
+Le replay reste strictement identique et le verdict reste
+`JALON_11_BLOCKED_BY_DATA_GATES`.

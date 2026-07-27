@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T17:36:26.356591+00:00",
+  "generatedAt": "2026-07-27T18:24:30.516965+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -19390,67 +19390,87 @@
           "name": "TEAM_GATE",
           "status": "PARTIAL",
           "reasons": [
-            "10732/10732 fixtures paired and target excluded, but every materialization boundary equals kickoff and row-level source observed_at is unproven; descriptive research only"
+            "10732/10732 market fixtures exactly paired with prior team/calendar features",
+            "10732/10732 feature materialization boundaries equal target kickoff",
+            "Prior-fixture update order is algorithmic; row-level source observed_at is unavailable",
+            "Descriptive diagnostics are allowed but promotion remains blocked"
           ]
         },
         {
           "name": "PLAYER_GATE",
           "status": "BLOCKED_BY_TEMPORALITY",
           "reasons": [
-            "Raw facts are Ligue 1 only and POST_MATCH_ONLY"
+            "Deep player match facts exist only for Ligue 1",
+            "Raw observations are POST_MATCH_ONLY and were collected in July 2026",
+            "V1 derived manifests disagree with raw coverage"
           ]
         },
         {
           "name": "PLAYER_FORM_GATE",
           "status": "BLOCKED_BY_TEMPORALITY",
           "reasons": [
-            "V1 windows include unused substitutes and null-versus-zero goal ambiguity"
+            "V1 windows include unused substitutes",
+            "goals.total has null-versus-zero ambiguity",
+            "Goal events require score reconciliation before use"
           ]
         },
         {
           "name": "ABSENCE_GATE",
           "status": "BLOCKED_BY_TEMPORALITY",
           "reasons": [
-            "Historical injuries are not point-in-time"
+            "All historical injury observations are HISTORICAL_NON_POINT_IN_TIME",
+            "Non-selection is forbidden as an absence proxy"
           ]
         },
         {
           "name": "LINEUP_GATE",
           "status": "BLOCKED_BY_TEMPORALITY",
           "reasons": [
-            "Ligue 1 content is retrospective POST_MATCH_ONLY"
+            "Lineup content is near-complete for Ligue 1 only",
+            "All raw lineups are POST_MATCH_ONLY; pre-kickoff cutoff is unproven"
           ]
         },
         {
           "name": "FORMATION_GATE",
           "status": "BLOCKED_BY_TEMPORALITY",
           "reasons": [
-            "Retrospective formations lack a pre-kickoff observed_at"
+            "Formation content is near-complete for Ligue 1",
+            "Target formation is retrospective and lacks a pre-kickoff observed_at"
           ]
         },
         {
           "name": "STARTER_BASELINE_GATE",
           "status": "BLOCKED_BY_TEMPORALITY",
           "reasons": [
-            "Roster expiry and source-time lineage are unproven"
+            "V1 days_since_last_start uses last record rather than last start",
+            "Roster expiry and source-time lineage are not proven"
           ]
         },
         {
           "name": "FOOTEDNESS_GATE",
           "status": "BLOCKED_BY_COVERAGE",
           "reasons": [
-            "No sourced preferred-foot field exists in cache"
+            "No sourced preferred-foot field exists in cached players or squads",
+            "Heuristic completion is forbidden"
           ]
         },
         {
           "name": "MARKET_GATE",
           "status": "READY",
           "reasons": [
-            "Historical research prices exist; exact live observed_at remains unavailable"
+            "Historical 1X2 and O/U2.5 available for research",
+            "Exact observed_at unavailable; live market gate remains closed"
           ]
         }
       ],
-      "contentTotals": {}
+      "contentTotals": {
+        "exact_xi": 4138,
+        "formation_present": 4127,
+        "grid_complete": 4127,
+        "injury_rows": 12801,
+        "lineup_team_rows": 4138,
+        "player_team_rows": 4134
+      }
     },
     "dataset": {
       "name": "TEAM_PREMATCH",
@@ -19469,7 +19489,7 @@
         "home_rest_days",
         "away_rest_days"
       ],
-      "featureCutoff": "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_PARTIAL",
+      "featureCutoff": "TARGET_KICKOFF_EXCLUSIVE_STATE_BEFORE_UPDATE",
       "researchMode": "PRE_LINEUP",
       "source": [
         "API_FOOTBALL_HISTORICAL",
@@ -19485,24 +19505,20 @@
       },
       "blocked": [
         {
-          "name": "ABSENCE",
-          "reason": "BLOCKED_BY_TEMPORALITY"
+          "name": "FOOTEDNESS_MATCHUP",
+          "reason": "FOOTEDNESS_COVERAGE_GATE_BLOCKED"
         },
         {
-          "name": "FOOTEDNESS",
-          "reason": "BLOCKED_BY_COVERAGE"
+          "name": "FORMATION_MATCHUP",
+          "reason": "FORMATION_TEMPORAL_GATE_BLOCKED"
         },
         {
-          "name": "FORMATION",
-          "reason": "BLOCKED_BY_TEMPORALITY"
+          "name": "PLAYER_PRELINEUP",
+          "reason": "PLAYER_FORM_AND_STARTER_BASELINE_GATES_BLOCKED"
         },
         {
-          "name": "LINEUP",
-          "reason": "BLOCKED_BY_TEMPORALITY"
-        },
-        {
-          "name": "PLAYER",
-          "reason": "BLOCKED_BY_TEMPORALITY"
+          "name": "POST_LINEUP",
+          "reason": "LINEUP_TEMPORAL_GATE_BLOCKED"
         }
       ],
       "hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
@@ -19515,10 +19531,12 @@
         {
           "id": "11A",
           "title": "Team and Calendar Deep Baseline",
-          "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
-          "requiredGates": [],
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "TEAM_GATE"
+          ],
           "blockingGates": [
-            "DEEP_DATA_GATES"
+            "TEAM_GATE"
           ],
           "cacheOnly": true
         },
@@ -19526,9 +19544,15 @@
           "id": "11B",
           "title": "Player Availability",
           "status": "DATA_GATE_BLOCKED",
-          "requiredGates": [],
+          "requiredGates": [
+            "PLAYER_GATE",
+            "PLAYER_FORM_GATE",
+            "ABSENCE_GATE"
+          ],
           "blockingGates": [
-            "DEEP_DATA_GATES"
+            "PLAYER_GATE",
+            "PLAYER_FORM_GATE",
+            "ABSENCE_GATE"
           ],
           "cacheOnly": true
         },
@@ -19536,9 +19560,13 @@
           "id": "11C",
           "title": "Lineup Continuity",
           "status": "DATA_GATE_BLOCKED",
-          "requiredGates": [],
+          "requiredGates": [
+            "LINEUP_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
           "blockingGates": [
-            "DEEP_DATA_GATES"
+            "LINEUP_GATE",
+            "STARTER_BASELINE_GATE"
           ],
           "cacheOnly": true
         },
@@ -19546,16 +19574,20 @@
           "id": "11D",
           "title": "Formation Matchups",
           "status": "DATA_GATE_BLOCKED",
-          "requiredGates": [],
+          "requiredGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
           "blockingGates": [
-            "DEEP_DATA_GATES"
+            "LINEUP_GATE",
+            "FORMATION_GATE"
           ],
           "cacheOnly": true
         },
         {
           "id": "11E",
           "title": "Owner Anchored Hypotheses",
-          "status": "COMPLETED_AS_GATE_EVALUATION",
+          "status": "ELIGIBLE",
           "requiredGates": [],
           "blockingGates": [],
           "cacheOnly": true
@@ -19563,10 +19595,13 @@
         {
           "id": "11F",
           "title": "Cross-League Transfer",
-          "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
-          "requiredGates": [],
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "TEAM_GATE",
+            "MARKET_GATE"
+          ],
           "blockingGates": [
-            "DEEP_DATA_GATES"
+            "TEAM_GATE"
           ],
           "cacheOnly": true
         },
@@ -19574,9 +19609,20 @@
           "id": "11G",
           "title": "Integrated Matchup Arena",
           "status": "DATA_GATE_BLOCKED",
-          "requiredGates": [],
+          "requiredGates": [
+            "TEAM_GATE",
+            "PLAYER_GATE",
+            "ABSENCE_GATE",
+            "LINEUP_GATE",
+            "FORMATION_GATE",
+            "MARKET_GATE"
+          ],
           "blockingGates": [
-            "DEEP_DATA_GATES"
+            "TEAM_GATE",
+            "PLAYER_GATE",
+            "ABSENCE_GATE",
+            "LINEUP_GATE",
+            "FORMATION_GATE"
           ],
           "cacheOnly": true
         }
@@ -19696,8 +19742,8 @@
           "preregistrationHash": "210281fbd53d625e04410ff4820fe669c4e59a232b071f042e5b235fc2c1d86a"
         }
       ],
-      "eligible": 0,
-      "blocked": 4
+      "eligible": 1,
+      "blocked": 6
     },
     "results": {
       "campaign": "11A",
@@ -19797,10 +19843,10 @@
           "season": 2022,
           "matches": 1826,
           "primaryDeltaLogLoss": -0.000172676616561063,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 5.70357328212034e-05,
           "teamOnlyLogitDeltaLogLoss": 0.0152480090098843,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320972914950618,
+          "marketRecalibrationDeltaLogLoss": 0.00350277485238304,
           "incrementalBoostingDeltaLogLoss": 0.0177124961543904,
           "outcome": "BETTER_DESCRIPTIVE_ONLY"
         },
@@ -19808,10 +19854,10 @@
           "season": 2023,
           "matches": 1752,
           "primaryDeltaLogLoss": 0.00401481454320307,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 0.000677692262125523,
           "teamOnlyLogitDeltaLogLoss": 0.0283645481535346,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320005755233936,
+          "marketRecalibrationDeltaLogLoss": 0.00120146415329847,
           "incrementalBoostingDeltaLogLoss": 0.00594181088713586,
           "outcome": "LOST_TO_RECALIBRATED_MARKET"
         },
@@ -19819,10 +19865,10 @@
           "season": 2024,
           "matches": 1751,
           "primaryDeltaLogLoss": 0.00205463541313433,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 0.000603629372582709,
           "teamOnlyLogitDeltaLogLoss": 0.0254261918619104,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.0356210999390846,
+          "marketRecalibrationDeltaLogLoss": 0.00161641430687831,
           "incrementalBoostingDeltaLogLoss": 0.00962408123674241,
           "outcome": "LOST_TO_RECALIBRATED_MARKET"
         },
@@ -19830,10 +19876,10 @@
           "season": 2025,
           "matches": 1752,
           "primaryDeltaLogLoss": 0.000991462919131658,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 3.67009680335706e-05,
           "teamOnlyLogitDeltaLogLoss": 0.0198330034393753,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.025250240440528,
+          "marketRecalibrationDeltaLogLoss": 0.00227247984177747,
           "incrementalBoostingDeltaLogLoss": 0.00443935642191107,
           "outcome": "LOST_TO_RECALIBRATED_MARKET"
         }
@@ -19842,22 +19888,23 @@
       "modelSelectionOnTest": false,
       "roi": "NOT_COMPUTED_NO_PREREGISTERED_BETTING_RULE",
       "statistics": {
-        "cr1_cluster": "MATCH_DATE",
-        "clusters": 729,
-        "cr1_one_sided_p": 0.963826923344745,
-        "sign_flip_permutations": 999,
-        "sign_flip_unit": "MATCH_DATE",
-        "sign_flip_p": 0.961,
-        "family_q": 0.963826923344745,
-        "global_q": 1.0,
-        "tested_hypotheses": 1,
         "blocked_hypotheses_as_p1": 8,
-        "multiplicity_hypotheses": 9,
         "bootstrap_unit": "MATCH_DATE",
+        "clusters": 729,
+        "cr1_cluster": "MATCH_DATE",
+        "cr1_one_sided_p": 0.963826923344745,
         "delta_log_loss_bootstrap_ci95": [
           -0.000242884261756291,
           0.00390178176075534
-        ]
+        ],
+        "family_q": 0.963826923344745,
+        "global_q": 1.0,
+        "multiplicity_hypotheses": 9,
+        "serial_team_dependence_limitation": true,
+        "sign_flip_p": 0.961,
+        "sign_flip_permutations": 999,
+        "sign_flip_unit": "MATCH_DATE",
+        "tested_hypotheses": 1
       },
       "pairedComparator": {
         "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
@@ -19881,10 +19928,10 @@
           "season": 2022,
           "matches": 1826,
           "primaryDeltaLogLoss": -0.000172676616561063,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 5.70357328212034e-05,
           "teamOnlyLogitDeltaLogLoss": 0.0152480090098843,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320972914950618,
+          "marketRecalibrationDeltaLogLoss": 0.00350277485238304,
           "incrementalBoostingDeltaLogLoss": 0.0177124961543904,
           "outcome": "BETTER_DESCRIPTIVE_ONLY"
         },
@@ -19892,10 +19939,10 @@
           "season": 2023,
           "matches": 1752,
           "primaryDeltaLogLoss": 0.00401481454320307,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 0.000677692262125523,
           "teamOnlyLogitDeltaLogLoss": 0.0283645481535346,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320005755233936,
+          "marketRecalibrationDeltaLogLoss": 0.00120146415329847,
           "incrementalBoostingDeltaLogLoss": 0.00594181088713586,
           "outcome": "LOST_TO_RECALIBRATED_MARKET"
         },
@@ -19903,10 +19950,10 @@
           "season": 2024,
           "matches": 1751,
           "primaryDeltaLogLoss": 0.00205463541313433,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 0.000603629372582709,
           "teamOnlyLogitDeltaLogLoss": 0.0254261918619104,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.0356210999390846,
+          "marketRecalibrationDeltaLogLoss": 0.00161641430687831,
           "incrementalBoostingDeltaLogLoss": 0.00962408123674241,
           "outcome": "LOST_TO_RECALIBRATED_MARKET"
         },
@@ -19914,17 +19961,103 @@
           "season": 2025,
           "matches": 1752,
           "primaryDeltaLogLoss": 0.000991462919131658,
-          "primaryDeltaBrier": null,
+          "primaryDeltaBrier": 3.67009680335706e-05,
           "teamOnlyLogitDeltaLogLoss": 0.0198330034393753,
-          "teamOnlyBoostingDeltaLogLoss": null,
-          "marketRecalibrationDeltaLogLoss": null,
+          "teamOnlyBoostingDeltaLogLoss": 0.025250240440528,
+          "marketRecalibrationDeltaLogLoss": 0.00227247984177747,
           "incrementalBoostingDeltaLogLoss": 0.00443935642191107,
           "outcome": "LOST_TO_RECALIBRATED_MARKET"
         }
       ],
       "crossLeague": {
         "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
-        "rotations": [],
+        "rotations": [
+          {
+            "id": "ROTATION_1",
+            "discoveryLeagues": [
+              "La Liga",
+              "Bundesliga",
+              "Serie A"
+            ],
+            "validationLeagues": [
+              "Ligue 1",
+              "Premier League"
+            ],
+            "support": 2818,
+            "deltaLogLoss": 0.00894206491346405,
+            "deltaBrier": 0.00154808995263317,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_2",
+            "discoveryLeagues": [
+              "Ligue 1",
+              "Bundesliga",
+              "Serie A"
+            ],
+            "validationLeagues": [
+              "La Liga",
+              "Premier League"
+            ],
+            "support": 3040,
+            "deltaLogLoss": 0.00339538736516509,
+            "deltaBrier": 0.000562202417004637,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_3",
+            "discoveryLeagues": [
+              "Ligue 1",
+              "Premier League",
+              "Serie A"
+            ],
+            "validationLeagues": [
+              "Bundesliga",
+              "La Liga"
+            ],
+            "support": 2743,
+            "deltaLogLoss": 0.00471249838626187,
+            "deltaBrier": 0.000933997702685485,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_4",
+            "discoveryLeagues": [
+              "Ligue 1",
+              "Premier League",
+              "La Liga"
+            ],
+            "validationLeagues": [
+              "Bundesliga",
+              "Serie A"
+            ],
+            "support": 2743,
+            "deltaLogLoss": 0.00801666810684432,
+            "deltaBrier": 0.00135457726746596,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_5",
+            "discoveryLeagues": [
+              "Premier League",
+              "La Liga",
+              "Bundesliga"
+            ],
+            "validationLeagues": [
+              "Ligue 1",
+              "Serie A"
+            ],
+            "support": 2818,
+            "deltaLogLoss": 0.00369841073387878,
+            "deltaBrier": 0.00062524724633764,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          }
+        ],
         "rotationCount": 5,
         "minimumSupport": 2743,
         "maximumSupport": 3040,
@@ -19934,7 +20067,12 @@
         ],
         "survivors": 0,
         "descriptivePositiveRotations": 0,
-        "limitations": [],
+        "limitations": [
+          "TEAM_GATE_PARTIAL",
+          "OVERLAPPING_VALIDATION_ROTATIONS",
+          "LEAGUE_AND_TIME_SHIFT_CONFOUNDED",
+          "NO_ROTATION_LEVEL_MULTIPLICITY_INFERENCE"
+        ],
         "promotionEligible": false
       },
       "teamGate": "PARTIAL",
@@ -20102,12 +20240,89 @@
       "promoted": false,
       "criteria": [
         {
-          "name": "DEEP_DATA_GATES",
+          "name": "bootstrap_lower_coherent",
           "passed": false
+        },
+        {
+          "name": "concentration_passed",
+          "passed": false
+        },
+        {
+          "name": "data_gate_ready",
+          "passed": false
+        },
+        {
+          "name": "decision_reproducible_before_kickoff",
+          "passed": false
+        },
+        {
+          "name": "family_bh_passed",
+          "passed": false
+        },
+        {
+          "name": "global_control_passed",
+          "passed": false
+        },
+        {
+          "name": "historical_roi_not_artificial",
+          "passed": false
+        },
+        {
+          "name": "incremental_score_vs_market_positive",
+          "passed": false
+        },
+        {
+          "name": "live_information_available",
+          "passed": false
+        },
+        {
+          "name": "live_market_exact_observed_at",
+          "passed": false
+        },
+        {
+          "name": "no_leakage",
+          "passed": false
+        },
+        {
+          "name": "permutation_passed",
+          "passed": false
+        },
+        {
+          "name": "positive_last_fold",
+          "passed": false
+        },
+        {
+          "name": "preregistered_support",
+          "passed": true
+        },
+        {
+          "name": "rule_interpretable",
+          "passed": true
+        },
+        {
+          "name": "stable_direction",
+          "passed": false
+        },
+        {
+          "name": "three_eligible_periods",
+          "passed": true
         }
       ],
       "failedCriteria": [
-        "DEEP_DATA_GATES"
+        "data_gate_ready",
+        "no_leakage",
+        "stable_direction",
+        "positive_last_fold",
+        "family_bh_passed",
+        "global_control_passed",
+        "permutation_passed",
+        "bootstrap_lower_coherent",
+        "concentration_passed",
+        "incremental_score_vs_market_positive",
+        "historical_roi_not_artificial",
+        "live_information_available",
+        "live_market_exact_observed_at",
+        "decision_reproducible_before_kickoff"
       ]
     },
     "watchlist": {
@@ -20153,31 +20368,23 @@
     },
     "ledger": {
       "status": "HASH_CHAIN_VERIFIED",
-      "events": 24,
-      "headHash": "90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8",
-      "eventCounts": {
-        "DATA_GATE_EVALUATED": 8,
-        "HYPOTHESIS_REGISTERED": 8,
-        "PATTERN_PROMOTED_TO_SHADOW_CANDIDATE": 0,
-        "PATTERN_PROMOTED_TO_WATCHLIST": 0,
-        "PATTERN_REJECTED": 8,
-        "SETTLEMENT": 0,
-        "SHADOW_DECISION": 0
-      }
+      "events": 27,
+      "headHash": "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
+      "eventCounts": {}
     },
     "provenance": {
-      "sourceCommit": "033a98b11b80c059f8986c33c69f1401ce8cf05c",
-      "mainCommit": "6bfa906d6ea69183a9d2ce251ddffd0d9bda5c17",
-      "codeRevision": "1b74e94d38038b566e14f21ff2c852230cf046fa",
+      "sourceCommit": "803091cb506e17a07850f56ef78b7b9df55575dd",
+      "mainCommit": "31ec41632b72cd93676f5b1d8592e1bba429e937",
+      "codeRevision": "31ec41632b72cd93676f5b1d8592e1bba429e937",
       "datasetHash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
       "campaignResultHash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
-      "ledgerHeadHash": "90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8",
-      "marketObservedTimeStatus": "NOT_EVALUATED"
+      "ledgerHeadHash": "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
+      "marketObservedTimeStatus": "SOURCE_PRICE_CLASS_ONLY"
     },
     "costs": {
       "providerCalls": 0,
       "oddsApiCredits": 0,
-      "historicalBytes": 985499179,
+      "historicalBytes": 985499173,
       "databaseBytes": 47366144,
       "r2ExpectedBytes": 974079201,
       "r2LagObjects": 0,

@@ -528,3 +528,21 @@ COCKPIT_MATCHUP_ONLY=1 python scripts/build_cockpit_snapshot.py
 Le gate de décision shadow exige un candidat et un prix live avec
 `observed_at` exact. À défaut, le résultat normal est
 `NO_DECISION_NO_CANDIDATE`, avec 0 unité mise et une bankroll inchangée.
+
+### Audit de revue finale Jalon 11
+
+Conserver `30282406035` comme preuve initiale. Pour la revue finale, exiger :
+
+- run `30290942945`, commit
+  `31ec41632b72cd93676f5b1d8592e1bba429e937`, six jobs verts ;
+- CI push `30290942423` et CI PR `30290944657` vertes ;
+- ledger `HASH_CHAIN_VERIFIED`, 27 événements, tête
+  `7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf` ;
+- replay `REPLAY_FULL_HASH_VERIFIED`, quatre comparaisons vraies et tous les
+  compteurs fournisseur, doublon, perte et mismatch à zéro ;
+- PostgreSQL `0008`, deux passages de 304 preuves et 304 doublons évités ;
+- R2 25 453 / 25 453, lag 0, aucune suppression ni mutation.
+
+Pour rafraîchir Robin Live depuis un artefact de validation, définir en plus
+`JALON11_REPORT_ROOT` vers sa racine. Toujours conserver
+`COCKPIT_MATCHUP_ONLY=1` afin de ne modifier que `generatedAt` et `matchupLab`.

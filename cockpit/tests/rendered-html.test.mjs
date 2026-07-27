@@ -120,9 +120,23 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(matchup.costs.oddsApiCredits, 0);
   assert.equal(matchup.watchlist.notABet, true);
   assert.equal(matchup.promotion.promoted, false);
-  assert.deepEqual(matchup.promotion.criteria, [
-    { name: "DEEP_DATA_GATES", passed: false },
-  ]);
+  assert.ok(matchup.promotion.criteria.length > 0);
+  assert.ok(
+    matchup.promotion.criteria.every(
+      (criterion) =>
+        typeof criterion.name === "string" &&
+        typeof criterion.passed === "boolean",
+    ),
+  );
+  assert.deepEqual(
+    matchup.promotion.criteria.filter((criterion) =>
+      ["data_gate_ready", "no_leakage"].includes(criterion.name),
+    ),
+    [
+      { name: "data_gate_ready", passed: false },
+      { name: "no_leakage", passed: false },
+    ],
+  );
   assert.equal(matchup.verdict, "JALON_11_BLOCKED_BY_DATA_GATES");
   assert.equal(matchup.dataset.rows, 10732);
   assert.equal(matchup.dataset.pairing.leftAttrition, 0);
@@ -188,26 +202,26 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(matchup.replay.resultHash, matchup.results.resultHash);
   assert.equal(
     matchup.ledger.headHash,
-    "90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8",
+    "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
   );
   assert.equal(
     matchup.provenance.sourceCommit,
-    "033a98b11b80c059f8986c33c69f1401ce8cf05c",
+    "803091cb506e17a07850f56ef78b7b9df55575dd",
   );
   assert.equal(
     matchup.provenance.mainCommit,
-    "6bfa906d6ea69183a9d2ce251ddffd0d9bda5c17",
+    "31ec41632b72cd93676f5b1d8592e1bba429e937",
   );
   assert.equal(
     matchup.provenance.codeRevision,
-    "1b74e94d38038b566e14f21ff2c852230cf046fa",
+    "31ec41632b72cd93676f5b1d8592e1bba429e937",
   );
-  assert.equal(matchup.costs.historicalBytes, 985499179);
+  assert.equal(matchup.costs.historicalBytes, 985499173);
   assert.equal(matchup.costs.databaseBytes, 47366144);
   assert.equal(matchup.costs.r2ExpectedBytes, 974079201);
   assert.equal(matchup.costs.r2LagObjects, 0);
   assert.equal(matchup.ledger.status, "HASH_CHAIN_VERIFIED");
-  assert.ok(matchup.ledger.events >= 24);
+  assert.equal(matchup.ledger.events, 27);
   assert.ok(deep.datasets.length >= 6);
   assert.ok(deep.models.length >= 9);
   assert.ok(deep.backtests.length >= 15);

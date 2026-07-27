@@ -94,3 +94,12 @@ l'unique action pourra être :
 
 Aucun crédit fournisseur, reprise P3/P4, secret, connexion sociale, permission
 de pari ou déverrouillage de production n'est demandé.
+
+### Revue finale Jalon 11
+
+La revue adversariale et le run cache-only `30290942945` sont verts sur le
+correctif `31ec416`. Le replay, Neon `0008`, R2, le ledger à 27 événements et
+Robin Live sont vérifiés. La PR doit être fusionnée par l'automatisation de
+clôture uniquement après son passage en Ready et le dernier contrôle GitHub.
+
+`AUCUNE ACTION UTILISATEUR REQUISE`

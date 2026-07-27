@@ -1,0 +1,183 @@
+{
+  "schema_version": "jalon11-final-review-validation-v1",
+  "captured_at": "2026-07-27T18:16:03Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": {
+    "number": 14,
+    "reviewed_head": "31ec41632b72cd93676f5b1d8592e1bba429e937",
+    "base": "6bfa906d6ea69183a9d2ce251ddffd0d9bda5c17",
+    "state_at_capture": "OPEN_DRAFT"
+  },
+  "previous_operational_validation": {
+    "run_id": 30282406035,
+    "code_revision": "1b74e94d38038b566e14f21ff2c852230cf046fa",
+    "report": "reports/jalon11/operational-validation.json",
+    "classification": "IMMUTABLE_INITIAL_OPERATIONAL_PROOF"
+  },
+  "verdict": "FINAL_ADVERSARIAL_REVIEW_VERIFIED",
+  "audit": {
+    "source_commit": "803091cb506e17a07850f56ef78b7b9df55575dd",
+    "main_commit": "31ec41632b72cd93676f5b1d8592e1bba429e937",
+    "code_revision": "31ec41632b72cd93676f5b1d8592e1bba429e937"
+  },
+  "github": {
+    "run_id": 30290942945,
+    "code_revision": "31ec41632b72cd93676f5b1d8592e1bba429e937",
+    "conclusion": "success",
+    "started_at": "2026-07-27T17:49:04Z",
+    "completed_at": "2026-07-27T18:14:40Z",
+    "wall_seconds": 1536,
+    "ci": {
+      "push_run_id": 30290942423,
+      "push_conclusion": "success",
+      "pull_request_run_id": 30290944657,
+      "pull_request_conclusion": "success"
+    },
+    "jobs": [
+      {
+        "name": "deep-feature-audit",
+        "job_id": 90060289460,
+        "duration_seconds": 341,
+        "conclusion": "success"
+      },
+      {
+        "name": "deep-feature-build",
+        "job_id": 90061736052,
+        "duration_seconds": 430,
+        "conclusion": "success"
+      },
+      {
+        "name": "matchup-campaign",
+        "job_id": 90063573883,
+        "duration_seconds": 351,
+        "conclusion": "success"
+      },
+      {
+        "name": "matchup-validation",
+        "job_id": 90065051310,
+        "duration_seconds": 288,
+        "conclusion": "success"
+      },
+      {
+        "name": "prospective-watchlist",
+        "job_id": 90066243182,
+        "duration_seconds": 51,
+        "conclusion": "success"
+      },
+      {
+        "name": "shadow-candidate-decision",
+        "job_id": 90066465072,
+        "duration_seconds": 41,
+        "conclusion": "success"
+      }
+    ],
+    "artifacts": {
+      "deep_feature_audit": 8662892208,
+      "r2_controls": 8663096594,
+      "deep_feature_build": 8663097034,
+      "matchup_campaign": 8663264541,
+      "matchup_validation": 8663399445,
+      "prospective_watchlist": 8663423358,
+      "shadow_candidate_decision": 8663445620
+    }
+  },
+  "review_corrections": {
+    "replay_primary_preserved_on_mismatch": true,
+    "starter_baseline_requires_eight_team_fixtures": true,
+    "h11a_ledger_triplet_added": true,
+    "cockpit_attrition_rendered": true,
+    "cockpit_campaign_status_corrected": true,
+    "cockpit_preregistration_proof_fail_closed": true,
+    "cockpit_promotion_criteria_rendered": true
+  },
+  "scientific_evidence": {
+    "verdict": "JALON_11_BLOCKED_BY_DATA_GATES",
+    "team_gate": "PARTIAL",
+    "dataset_rows": 10732,
+    "paired_1x2_rows": 7081,
+    "team_rows_available": 12967,
+    "right_attrition": 2235,
+    "duplicate_keys": 0,
+    "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+    "campaign_result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+    "parquet_sha256": "d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673",
+    "parquet_bytes": 2000155,
+    "ledger_events": 27,
+    "ledger_head_hash": "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
+    "h11a_ledger_events": 3,
+    "primary_delta_log_loss": 0.00170221115952107,
+    "primary_cr1_one_sided_p": 0.963826923344745,
+    "global_q": 1.0,
+    "promotion_eligible": false
+  },
+  "postgresql": {
+    "status": "CONNECTED_SSL_AND_VERIFIED",
+    "alembic_revision": "0008_jalon11_deep_football",
+    "primary_examined": 304,
+    "primary_inserted": 0,
+    "primary_duplicates_avoided": 304,
+    "replay_examined": 304,
+    "replay_inserted": 0,
+    "replay_duplicates_avoided": 304,
+    "legacy_numeric_equivalent_evaluations": 6,
+    "immutable_rows_mutated": 0
+  },
+  "r2": {
+    "status": "SYNCED",
+    "expected_objects": 25453,
+    "verified_objects": 25453,
+    "expected_bytes": 974079201,
+    "uploaded": 0,
+    "replayed": 0,
+    "lag_objects": 0,
+    "deletions": 0,
+    "source_mutations": 0,
+    "errors": 0,
+    "historical_source_commit": "f1b437dd87b4674fd51530ea12575800324cde62",
+    "historical_validation_source_commit": "803091cb506e17a07850f56ef78b7b9df55575dd",
+    "historical_post_run_head": "803091cb506e17a07850f56ef78b7b9df55575dd"
+  },
+  "replay": {
+    "status": "REPLAY_FULL_HASH_VERIFIED",
+    "identical": true,
+    "campaign_result_hash_equal": true,
+    "dataset_hash_equal": true,
+    "ledger_hash_chain_equal": true,
+    "parquet_sha256_equal": true,
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "business_duplicates": 0,
+    "data_loss": 0,
+    "hash_mismatches": 0
+  },
+  "decision": {
+    "watchlist_entries": 0,
+    "candidates": 0,
+    "decisions": 0,
+    "stake_units": 0,
+    "shadow_bankroll_before": 1000.0,
+    "shadow_bankroll_after": 1000.0
+  },
+  "secrets": {
+    "DATABASE_URL": "AVAILABLE_NAME_ONLY",
+    "ODDS_API_KEY": "AVAILABLE_NAME_ONLY",
+    "API_FOOTBALL_KEY": "AVAILABLE_NAME_ONLY",
+    "R2_ACCOUNT_ID": "AVAILABLE_NAME_ONLY",
+    "R2_ACCESS_KEY_ID": "AVAILABLE_NAME_ONLY",
+    "R2_SECRET_ACCESS_KEY": "AVAILABLE_NAME_ONLY",
+    "R2_BUCKET_NAME": "AVAILABLE_NAME_ONLY",
+    "values_read_or_logged": false
+  },
+  "invariants": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false,
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "secret_values_exposed": false
+  }
+}
