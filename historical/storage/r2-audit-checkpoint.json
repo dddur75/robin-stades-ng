@@ -1,12 +1,12 @@
 {
   "failed": 0,
-  "last_key": "raw/observations/2026/07/25/b43cc3dd-c3f3-4fab-a444-b0de11c57aa7.json",
-  "next_index": 10000,
-  "replayed": 10000,
+  "last_key": "raw/payloads/26/264581d6056f9feb20cef2bb5237ae165932d3986b6f60c013d39f6c6c508ab5.bin.gz",
+  "next_index": 15000,
+  "replayed": 15000,
   "schema_version": "r2-audit-checkpoint-v1",
   "scope_hash": "8687a80087576711e309d01a2a9758937b78fc914660c6db77c838ae59754b7f",
   "status": "IN_PROGRESS",
-  "updated_at": "2026-07-27T01:27:20.118877+00:00",
+  "updated_at": "2026-07-27T02:08:05.526103+00:00",
   "uploaded": 0,
-  "verified": 10000
+  "verified": 15000
 }
