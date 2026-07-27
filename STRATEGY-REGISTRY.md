@@ -62,3 +62,20 @@ promue.
 Hypothèses bornées : 1X2 edges 2/3/5 %, probabilités 55/65 %, accord de modèles;
 totals edges 3/5 % et accord Poisson/Dixon-Coles. Aucun combiné. Les filtres
 joueur exigent PLAYER_GATE READY. `NO_BET_DEFAULT = true`.
+
+## Pattern Research V1
+
+| Famille | Marché | Evidence scope | Statut |
+|---|---|---|---|
+| Équipe + marché | 1X2 | `DISCOVERY_EXPOSED` | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Équipe + marché | O/U 2,5 | `DISCOVERY_EXPOSED` | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Calendrier/repos | marchés prêts | `DISCOVERY_EXPOSED` | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Joueurs/tactique | selon gates | exposé | `BLOCKED_BY_DATA_GATES` |
+| Latéralité | aucun | aucun | `FOOTEDNESS_DATA_GATE` |
+
+Zéro pattern est `LIVE_SHADOW_CANDIDATE`, `LIVE_SHADOW` ou `VALIDATED` avant la
+campagne. Même une survivante historique reste bloquée par
+`SOURCE_PRICE_CLASS_ONLY` tant qu’un prix live exact n’est pas observable.
+
+Mise scientifique : 1 unité fixe. Bankroll : 1 000 unités fictives. Martingale,
+pari réel et publication sociale sont interdits.

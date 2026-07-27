@@ -7,6 +7,7 @@ from datetime import datetime
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     DateTime,
     Float,
     ForeignKey,
@@ -435,3 +436,331 @@ class OperationalAlert(Base):
     source_run_id: Mapped[str | None] = mapped_column(
         ForeignKey("pipeline_runs.id", ondelete="SET NULL")
     )
+
+
+class PatternDefinitionModel(Base):
+    """Définition immuable et versionnée d'une règle de recherche."""
+
+    __tablename__ = "pattern_definitions"
+    __table_args__ = (
+        UniqueConstraint(
+            "pattern_id",
+            "pattern_version",
+            name="uq_pattern_definition_version",
+        ),
+        UniqueConstraint(
+            "rule_hash",
+            "pattern_version",
+            name="uq_pattern_definition_rule_version",
+        ),
+        Index("ix_pattern_definition_status", "status", "evidence_scope"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    pattern_id: Mapped[str] = mapped_column(String(80))
+    pattern_version: Mapped[str] = mapped_column(String(40))
+    rule_hash: Mapped[str] = mapped_column(String(64))
+    sport: Mapped[str] = mapped_column(String(30))
+    market: Mapped[str] = mapped_column(String(80))
+    selection: Mapped[str] = mapped_column(String(80))
+    status: Mapped[str] = mapped_column(String(50))
+    evidence_scope: Mapped[str] = mapped_column(String(50))
+    definition: Mapped[dict[str, object]] = mapped_column(JSON)
+    code_revision: Mapped[str] = mapped_column(String(80))
+    dataset_hashes: Mapped[list[str]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    supersedes_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_definitions.id", ondelete="RESTRICT")
+    )
+
+
+class PatternRunModel(Base):
+    """Exécution reproductible de découverte, validation ou replay."""
+
+    __tablename__ = "pattern_runs"
+    __table_args__ = (
+        CheckConstraint("simulation = true", name="ck_pattern_run_simulation"),
+        CheckConstraint(
+            "rules_generated >= 0 AND rules_executed >= 0 "
+            "AND rules_rejected >= 0",
+            name="ck_pattern_run_counts",
+        ),
+        Index("ix_pattern_run_status", "run_type", "status", "started_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    idempotency_key: Mapped[str] = mapped_column(String(250), unique=True)
+    run_type: Mapped[str] = mapped_column(String(40))
+    seed: Mapped[int] = mapped_column(Integer)
+    code_revision: Mapped[str] = mapped_column(String(80))
+    configuration: Mapped[dict[str, object]] = mapped_column(JSON)
+    dataset_hashes: Mapped[list[str]] = mapped_column(JSON, default=list)
+    environment: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(40))
+    rules_generated: Mapped[int] = mapped_column(Integer, default=0)
+    rules_executed: Mapped[int] = mapped_column(Integer, default=0)
+    rules_rejected: Mapped[int] = mapped_column(Integer, default=0)
+    cost_units: Mapped[float] = mapped_column(Float, default=0.0)
+    checkpoint: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class PatternEvaluationModel(Base):
+    """Mesures d'une règle pour une portée et un fold déterminés."""
+
+    __tablename__ = "pattern_evaluations"
+    __table_args__ = (
+        UniqueConstraint(
+            "pattern_definition_id",
+            "pattern_run_id",
+            "evaluation_scope",
+            "fold_key",
+            name="uq_pattern_evaluation_fold",
+        ),
+        CheckConstraint(
+            "simulation = true",
+            name="ck_pattern_evaluation_simulation",
+        ),
+        CheckConstraint("support >= 0", name="ck_pattern_evaluation_support"),
+        CheckConstraint(
+            "(p_value IS NULL OR (p_value >= 0 AND p_value <= 1)) "
+            "AND (q_value IS NULL OR (q_value >= 0 AND q_value <= 1))",
+            name="ck_pattern_evaluation_probabilities",
+        ),
+        Index(
+            "ix_pattern_evaluation_status",
+            "evaluation_scope",
+            "status",
+            "evaluated_at",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    pattern_definition_id: Mapped[str] = mapped_column(
+        ForeignKey("pattern_definitions.id", ondelete="RESTRICT")
+    )
+    pattern_run_id: Mapped[str] = mapped_column(
+        ForeignKey("pattern_runs.id", ondelete="RESTRICT")
+    )
+    evaluation_scope: Mapped[str] = mapped_column(String(50))
+    fold_key: Mapped[str] = mapped_column(String(120))
+    support: Mapped[int] = mapped_column(Integer)
+    metrics: Mapped[dict[str, object]] = mapped_column(JSON)
+    p_value: Mapped[float | None] = mapped_column(Float)
+    q_value: Mapped[float | None] = mapped_column(Float)
+    status: Mapped[str] = mapped_column(String(50))
+    dataset_hash: Mapped[str] = mapped_column(String(64))
+    evaluated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class PatternDecisionRecordModel(Base):
+    """Décision shadow gelée avant match; jamais un ordre de pari réel."""
+
+    __tablename__ = "pattern_decisions"
+    __table_args__ = (
+        CheckConstraint("simulation = true", name="ck_pattern_decision_simulation"),
+        CheckConstraint("append_only = true", name="ck_pattern_decision_append_only"),
+        CheckConstraint(
+            "published_at <= cutoff_at AND cutoff_at < kickoff_at",
+            name="ck_pattern_decision_temporal",
+        ),
+        CheckConstraint(
+            "decision IN ('BET', 'NO_BET', 'NO_BET_DATA_UNAVAILABLE')",
+            name="ck_pattern_decision_value",
+        ),
+        CheckConstraint(
+            "(decision = 'BET' AND stake_units = 1) "
+            "OR (decision <> 'BET' AND stake_units = 0)",
+            name="ck_pattern_decision_stake",
+        ),
+        UniqueConstraint(
+            "fixture_id",
+            "market",
+            "selection",
+            "cutoff_at",
+            name="uq_pattern_decision_business",
+        ),
+        Index("ix_pattern_decision_fixture", "fixture_id", "kickoff_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    decision_id: Mapped[str] = mapped_column(String(120), unique=True)
+    idempotency_key: Mapped[str] = mapped_column(String(250), unique=True)
+    pattern_definition_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_definitions.id", ondelete="RESTRICT")
+    )
+    pattern_run_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_runs.id", ondelete="RESTRICT")
+    )
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    cutoff_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    fixture_id: Mapped[str] = mapped_column(String(100))
+    competition: Mapped[str] = mapped_column(String(120))
+    kickoff_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    market: Mapped[str] = mapped_column(String(80))
+    selection: Mapped[str] = mapped_column(String(80))
+    odds: Mapped[float | None] = mapped_column(Float)
+    odds_source: Mapped[str] = mapped_column(String(160))
+    decision: Mapped[str] = mapped_column(String(40))
+    stake_units: Mapped[float] = mapped_column(Float, default=0.0)
+    shadow_bankroll_before: Mapped[float] = mapped_column(Float)
+    status: Mapped[str] = mapped_column(String(50))
+    code_revision: Mapped[str] = mapped_column(String(80))
+    dataset_hash: Mapped[str] = mapped_column(String(64))
+    payload: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    append_only: Mapped[bool] = mapped_column(Boolean, default=True)
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class PatternSettlementModel(Base):
+    """Événement de règlement séparé de la décision immuable."""
+
+    __tablename__ = "pattern_settlements"
+    __table_args__ = (
+        CheckConstraint(
+            "simulation = true",
+            name="ck_pattern_settlement_simulation",
+        ),
+        CheckConstraint(
+            "append_only = true",
+            name="ck_pattern_settlement_append_only",
+        ),
+        CheckConstraint(
+            "result IN ('WIN', 'LOSS', 'VOID')",
+            name="ck_pattern_settlement_result",
+        ),
+        UniqueConstraint(
+            "pattern_decision_id",
+            name="uq_pattern_settlement_decision",
+        ),
+        Index("ix_pattern_settlement_time", "settled_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    settlement_id: Mapped[str] = mapped_column(String(120), unique=True)
+    idempotency_key: Mapped[str] = mapped_column(String(250), unique=True)
+    pattern_decision_id: Mapped[str] = mapped_column(
+        ForeignKey("pattern_decisions.id", ondelete="RESTRICT")
+    )
+    settled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    result: Mapped[str] = mapped_column(String(20))
+    profit_units: Mapped[float] = mapped_column(Float)
+    shadow_bankroll_after: Mapped[float] = mapped_column(Float)
+    payload: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    append_only: Mapped[bool] = mapped_column(Boolean, default=True)
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class BankrollEventModel(Base):
+    """Mouvement append-only du bankroll shadow."""
+
+    __tablename__ = "bankroll_events"
+    __table_args__ = (
+        CheckConstraint("simulation = true", name="ck_bankroll_event_simulation"),
+        CheckConstraint("append_only = true", name="ck_bankroll_event_append_only"),
+        CheckConstraint(
+            "balance_before >= 0 AND balance_after >= 0",
+            name="ck_bankroll_event_balances",
+        ),
+        UniqueConstraint(
+            "pattern_settlement_id",
+            name="uq_bankroll_event_settlement",
+        ),
+        Index("ix_bankroll_event_time", "occurred_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    event_id: Mapped[str] = mapped_column(String(120), unique=True)
+    idempotency_key: Mapped[str] = mapped_column(String(250), unique=True)
+    event_type: Mapped[str] = mapped_column(String(40))
+    pattern_decision_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_decisions.id", ondelete="RESTRICT")
+    )
+    pattern_settlement_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_settlements.id", ondelete="RESTRICT")
+    )
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    amount_units: Mapped[float] = mapped_column(Float)
+    balance_before: Mapped[float] = mapped_column(Float)
+    balance_after: Mapped[float] = mapped_column(Float)
+    payload: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    append_only: Mapped[bool] = mapped_column(Boolean, default=True)
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class EvidenceLedgerModel(Base):
+    """Projection transactionnelle de la chaîne publique append-only."""
+
+    __tablename__ = "evidence_ledger"
+    __table_args__ = (
+        CheckConstraint("append_only = true", name="ck_evidence_ledger_append_only"),
+        CheckConstraint("simulation = true", name="ck_evidence_ledger_simulation"),
+        CheckConstraint("sequence_no >= 0", name="ck_evidence_ledger_sequence"),
+        Index("ix_evidence_ledger_recorded", "recorded_at", "record_type"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    record_id: Mapped[str] = mapped_column(String(120), unique=True)
+    idempotency_key: Mapped[str] = mapped_column(String(250), unique=True)
+    sequence_no: Mapped[int] = mapped_column(Integer, unique=True)
+    record_type: Mapped[str] = mapped_column(String(30))
+    pattern_decision_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_decisions.id", ondelete="RESTRICT")
+    )
+    pattern_settlement_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_settlements.id", ondelete="RESTRICT")
+    )
+    previous_record_hash: Mapped[str] = mapped_column(String(64))
+    record_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    payload: Mapped[dict[str, object]] = mapped_column(JSON)
+    recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    append_only: Mapped[bool] = mapped_column(Boolean, default=True)
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class ExperimentRegistryModel(Base):
+    """Préenregistrement versionné des hypothèses et seuils scientifiques."""
+
+    __tablename__ = "experiment_registry"
+    __table_args__ = (
+        UniqueConstraint(
+            "experiment_id",
+            "experiment_version",
+            name="uq_experiment_registry_version",
+        ),
+        UniqueConstraint(
+            "preregistration_hash",
+            name="uq_experiment_preregistration_hash",
+        ),
+        CheckConstraint(
+            "simulation = true",
+            name="ck_experiment_registry_simulation",
+        ),
+        CheckConstraint(
+            "frozen_at >= registered_at",
+            name="ck_experiment_registry_frozen",
+        ),
+        Index("ix_experiment_registry_status", "status", "registered_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    experiment_id: Mapped[str] = mapped_column(String(120))
+    experiment_version: Mapped[str] = mapped_column(String(40))
+    preregistration_hash: Mapped[str] = mapped_column(String(64))
+    hypothesis: Mapped[str] = mapped_column(Text)
+    protocol: Mapped[dict[str, object]] = mapped_column(JSON)
+    dataset_scope: Mapped[dict[str, object]] = mapped_column(JSON)
+    status: Mapped[str] = mapped_column(String(40))
+    registered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    frozen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    code_revision: Mapped[str] = mapped_column(String(80))
+    pattern_definition_id: Mapped[str | None] = mapped_column(
+        ForeignKey("pattern_definitions.id", ondelete="RESTRICT")
+    )
+    supersedes_id: Mapped[str | None] = mapped_column(
+        ForeignKey("experiment_registry.id", ondelete="RESTRICT")
+    )
+    simulation: Mapped[bool] = mapped_column(Boolean, default=True)

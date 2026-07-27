@@ -88,3 +88,14 @@ Aucun modèle n’est `PRODUCTION_READY`; aucun candidat shadow n’est promu.
 Les modèles Jalon 8 restent gelés. Ils ne sont comparés au marché que pour une
 ligue dont MARKET_GATE est READY, sur échantillon apparié. Sans amélioration
 robuste : `NO_EXTERNAL_VALIDATED_EDGE`, zéro promotion.
+
+## Jalon 10
+
+Le Pattern Research Engine est un moteur de règles et d’évaluation, pas un
+nouveau modèle probabiliste. Les modèles Jalons 7–9 restent gelés et leurs
+résultats historiques restent exposés.
+
+État avant campagne : `PENDING_REAL_CACHE_ONLY_RUN`. Aucun modèle n’est
+réentraîné, retuné, promu ou déclaré `MODEL_VALIDATED`. Le marché déviggué reste
+la baseline économique ; un pattern doit au minimum lui survivre avec prix
+observés, FDR, walk-forward et contrôles négatifs.

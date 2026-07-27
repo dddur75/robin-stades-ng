@@ -1,0 +1,54 @@
+name: "41 - Pattern Validation et replay"
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pattern-research-state
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      STORAGE_PAUSED: "true"
+      REAL_BETS: "false"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Campagne primaire
+        run: >-
+          python scripts/run_pattern_campaign.py
+          --state data/historical
+          --output artifacts/pattern-validation
+          --code-revision "${{ github.sha }}"
+      - name: Replay déterministe sans fournisseur
+        run: >-
+          python scripts/run_pattern_campaign.py
+          --state data/historical
+          --output artifacts/pattern-validation
+          --code-revision "${{ github.sha }}"
+          --replay
+      - name: Persistance puis replay PostgreSQL idempotent
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+          python scripts/persist_pattern_campaign.py \
+            --campaign artifacts/pattern-validation/campaign-summary.json \
+            --output artifacts/pattern-validation/postgresql-primary.json
+          python scripts/persist_pattern_campaign.py \
+            --campaign artifacts/pattern-validation/campaign-summary.json \
+            --output artifacts/pattern-validation/postgresql-replay.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pattern-validation-${{ github.run_id }}
+          path: artifacts/pattern-validation
+          retention-days: 90
+          compression-level: 9

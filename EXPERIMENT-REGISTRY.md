@@ -75,3 +75,19 @@ Les contrôles cibles permutées et lineups aléatoires sont obligatoires.
 | Market paired validation | conditionnée par MARKET_GATE |
 | Strategy Lab V4 | conditionné par MARKET_GATE |
 | Migration R2 | dry-run, suppression interdite |
+
+## Expériences Jalon 10
+
+| Expérience | Question | État |
+|---|---|---|
+| Pattern Campaign V1 | Une règle simple survit-elle à FDR, bootstrap et walk-forward ? | `PENDING_REAL_CACHE_ONLY_RUN` |
+| External league transfer | La règle reste-t-elle positive séparément en Bundesliga et Serie A ? | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Negative controls V1 | Labels mélangés, fuite et règles impossibles sont-ils rejetés ? | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Deterministic replay | Configuration, règles, métriques et hashes sont-ils identiques ? | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Public Ledger V1 | Décisions et règlements forment-ils une chaîne append-only valide ? | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Shadow Bankroll V1 | La comptabilité fixe de 1 unité est-elle rejouable ? | `PENDING_REAL_CACHE_ONLY_RUN` |
+
+Paramètres gelés : support 80 paris / 3 saisons, q ≤ 0,05, bootstrap groupé
+1 000, au moins 2 folds admissibles, 15 paris par fold, ratio positif ≥ 0,67 et
+dernier fold positif. Bundesliga et Serie A exigent chacune 40 paris et un ROI
+positif. Les données restent exposées et ne peuvent produire `VALIDATED`.

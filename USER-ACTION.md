@@ -40,3 +40,16 @@ Les secrets nécessaires uniquement aux runs réels sont `R2_ACCOUNT_ID`,
 `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` et `R2_BUCKET_NAME`. Leur valeur ne
 doit jamais être publiée. La production reste `PRODUCTION_LOCKED`,
 `REAL_BETS=false` et `NO_BET_DEFAULT=true`.
+
+## Jalon 10
+
+La campagne réelle cache-only, son replay, la red team et la CI doivent encore
+être inscrits dans le rapport. Avant ces preuves :
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Une fois la PR brouillon complète, verte et déclarée prête, l’unique action
+pourra devenir : `Valider puis fusionner la PR du Jalon 10.`
+
+Aucun secret, crédit fournisseur, connexion sociale, permission de pari ou
+reprise P3/P4 n’est demandé. La production reste `PRODUCTION_LOCKED`.

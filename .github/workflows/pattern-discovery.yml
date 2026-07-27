@@ -1,0 +1,52 @@
+name: "40 - Pattern Discovery cache-only"
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pattern-research-state
+  cancel-in-progress: false
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      STORAGE_PAUSED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Vérifier les verrous et le cache
+        shell: bash
+        run: |
+          test "$STORAGE_PAUSED" = "true"
+          test "$REAL_BETS" = "false"
+          test "$SOCIAL_PUBLISHING_ENABLED" = "false"
+          test -d data/historical/parquet
+      - name: Exécuter toutes les hypothèses préenregistrées
+        run: >-
+          python scripts/run_pattern_campaign.py
+          --state data/historical
+          --output artifacts/pattern-research
+          --code-revision "${{ github.sha }}"
+      - name: Persister les registres compacts dans PostgreSQL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+          python scripts/persist_pattern_campaign.py \
+            --campaign artifacts/pattern-research/campaign-summary.json \
+            --output artifacts/pattern-research/postgresql.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pattern-discovery-${{ github.run_id }}
+          path: artifacts/pattern-research
+          retention-days: 90
+          compression-level: 9

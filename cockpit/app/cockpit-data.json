@@ -19051,5 +19051,76 @@
       "DEMO DATA",
       "NO OUTPUT"
     ]
+  },
+  "patternResearch": {
+    "version": "ROBIN_LIVE_V1",
+    "dataStatus": "NO_LIVE_SHADOW_DATA",
+    "researchStatus": "NO_OUTPUT",
+    "campaignVerdict": "NOT_RUN",
+    "publicationTime": null,
+    "today": {
+      "matchesAnalyzed": 0,
+      "shadowBets": 0,
+      "noBets": 0,
+      "unclassifiedDecisions": 0,
+      "justification": "Aucune décision shadow publiée.",
+      "origin": "NO OUTPUT"
+    },
+    "results": {
+      "won": 0,
+      "lost": 0,
+      "void": 0,
+      "settlements": 0,
+      "profitUnits": 0,
+      "roi": 0,
+      "historyRecords": 0
+    },
+    "bankroll": {
+      "initialUnits": 1000,
+      "currentUnits": 1000,
+      "profitUnits": 0,
+      "roi": 0,
+      "maxDrawdownUnits": 0,
+      "curve": [
+        1000
+      ],
+      "simulationOnly": true
+    },
+    "strategies": {
+      "inResearch": 0,
+      "shadowCandidates": 0,
+      "inShadow": 0,
+      "rejected": 0,
+      "rejectionReason": "Aucune stratégie publiée."
+    },
+    "laboratory": {
+      "hypothesesGenerated": 0,
+      "rulesExecuted": 0,
+      "supportRejected": 0,
+      "rawPositive": 0,
+      "fdrSurvivors": 0,
+      "walkForwardSurvivors": 0,
+      "externalLeagueSurvivors": 0,
+      "negativeControls": 0,
+      "negativeControlsPassed": 0,
+      "fdrMethod": "Benjamini-Hochberg"
+    },
+    "methodology": {
+      "backtest": "Un backtest rejoue une règle sur des données historiques sans transformer ce résultat en promesse.",
+      "shadow": "Le shadow observe et règle des décisions fictives, sans transaction ni connexion bookmaker.",
+      "publication": "Robin publie aussi les pertes et les NO BET afin de rendre les résultats auditables.",
+      "warning": "Les performances passées ne garantissent aucun résultat futur."
+    },
+    "ledger": {
+      "status": "NOT_CREATED",
+      "records": 0,
+      "decisions": 0,
+      "settlements": 0
+    },
+    "productionStatus": "PRODUCTION_LOCKED",
+    "realBets": false,
+    "noBetDefault": true,
+    "socialPublishingEnabled": false,
+    "demoModeEnabled": false
   }
 }

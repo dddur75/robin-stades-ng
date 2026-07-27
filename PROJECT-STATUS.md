@@ -1,8 +1,8 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-26
+Dernière mise à jour : 2026-07-27
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-9-market-player-storage`
+Branche : `codex/jalon-10-pattern-research-ledger`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -41,7 +41,8 @@ Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 | 6 — dataset et Player Feature Factory | `VERIFIED` | PR #9 fusionnée |
 | 7 — Scientific Model Arena | `VERIFIED` | PR #10 fusionnée |
 | 8 — validation externe | `WAITING_FOR_EXTERNAL_GATES` | `docs/audits/JALON-8-REPORT.md` |
-| 9 | `PRE_MERGE_R2_VALIDATION` | PR #12 |
+| 9 | `MERGED_AND_POST_MERGE_VERIFIED` | PR #12 |
+| 10 — Pattern Research / Public Ledger | `PENDING_REAL_CACHE_ONLY_RUN` | `docs/pattern-research/JALON-10-REPORT.md` |
 
 ## Preuves Jalon 4
 
@@ -329,3 +330,37 @@ R2 demeure un miroir et ne justifie aucune croissance libre de Git. La
 réduction de la dépendance à Git et un éventuel basculement de source principale
 seront traités dans un jalon ultérieur distinct, non ouvert par cette mission.
 La production reste `PRODUCTION_LOCKED`.
+
+## Jalon 10 — Pattern Research Engine et Public Evidence Ledger
+
+Le protocole V1 est gelé avant lecture des résultats. Le corpus disponible
+comprend 10 732 matchs appariés sur Ligue 1, Premier League, La Liga,
+Bundesliga et Serie A en 2020–2025. Le marché 1X2 strict conserve 10 731 lignes
+après exclusion d’une marge négative ; Over/Under 2,5 conserve 10 732 lignes.
+
+Ces données sont `DISCOVERY_EXPOSED`. Les prix portent
+`SOURCE_PRICE_CLASS_ONLY` et ne disposent pas d’un `observed_at` exact : ils
+autorisent la recherche historique, mais ferment le gate live point-in-time.
+La première campagne reste `PENDING_REAL_CACHE_ONLY_RUN`; aucun résultat,
+pattern robuste ou candidat shadow n’est déclaré avant son exécution réelle et
+son replay.
+
+Le Public Evidence Ledger est défini comme append-only, chaîné par SHA-256 et
+shadow-only, avec une bankroll initiale fictive de 1 000 unités. Robin Live V1
+doit afficher zéro pari honnête tant qu’aucun candidat n’existe. Les exports
+sociaux restent générables mais désactivés.
+
+L’audit borné de l’antériorité tennis a produit uniquement le signal
+`LEGACY_HARDCODED_SECRET_DETECTED`; aucune valeur, archive, règle ou performance
+tennis n’entre dans Robin.
+
+Invariants :
+
+```text
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+```

@@ -169,3 +169,39 @@ cibles, couverture, qualité, politique temporelle, révision et SHA-256.
 
 `business_value_priority` est distinct de `priority`. `provider_fixture_id`
 conserve le contexte de requête pour les statistiques joueurs et lineups.
+
+## Entités Jalon 10
+
+La révision Alembic `0006_jalon10_pattern_ledger` ajoute :
+
+| Entité | Grain | Clé d’idempotence |
+|---|---|---|
+| `pattern_definitions` | une version immuable de règle | pattern + version ; hash + version |
+| `pattern_runs` | une campagne ou un replay | `idempotency_key` |
+| `pattern_evaluations` | règle × fold/périmètre | run + règle + fold |
+| `pattern_decisions` | décision pré-match gelée | `decision_id` |
+| `pattern_settlements` | règlement séparé | `settlement_id` |
+| `bankroll_events` | variation shadow | événement / règlement |
+| `evidence_ledger` | record de chaîne append-only | hash du record |
+| `experiment_registry` | version d’expérience | identifiant + version |
+
+Une définition porte conditions canoniques, source, cutoff, evidence scope,
+statut, révision et hashes. Une évaluation porte support, métriques à mise fixe,
+intervalle, q-value, stabilité et motifs de rejet.
+
+Une décision contient `published_at < kickoff_at`, la cote réellement observée
+ou `null`, le motif `BET`/`NO_BET`, la bankroll avant, `simulation=true`, le
+hash précédent et le hash courant. Le règlement est un nouvel événement ; il
+ne modifie jamais la décision.
+
+## Corpus marché du Pattern Research Engine
+
+| Dataset logique | Lignes strictes | Temporalité |
+|---|---:|---|
+| `historical_market_v1` apparié | 10 732 | `DISCOVERY_EXPOSED` |
+| 1X2 strict | 10 731 | `SOURCE_PRICE_CLASS_ONLY` |
+| Over/Under 2,5 | 10 732 | `SOURCE_PRICE_CLASS_ONLY` |
+
+La marge négative exclue du 1X2 strict reste auditable. Il n’existe pas de
+timestamp intrajournalier fiable pour ces prix. Aucun BTTS, handicap, corner,
+carton, buteur ou prop joueur n’est créé sans cote historique observée.

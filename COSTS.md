@@ -141,3 +141,25 @@ R2 ni abonnement n’est créé automatiquement.
 Mesure durable Jalon 9 : 474 143 947 octets; projection gates critiques
 634 143 947; plan complet 894 143 947; plan complet avec marché 939 143 947.
 Le seuil haut de 900 MB impose `OBJECT_STORAGE_REQUIRED`.
+
+## Budget Jalon 10
+
+La recherche est cache-only. Budget autorisé :
+
+| Poste | Budget |
+|---|---:|
+| API-Football | 0 appel |
+| The Odds API | 0 crédit |
+| Nouvelle source payante | 0 |
+| Pari réel | 0 |
+| Publication sociale | 0 |
+
+Les résultats compacts, hashes et registres peuvent être versionnés ; aucun gros
+dataset n’est recopié dans Git. Les sorties lourdes restent dans PostgreSQL/R2
+ou dans un artifact borné. `STORAGE_PAUSED` et la suspension P3/P4 restent
+actifs.
+
+Le temps GitHub Actions, les octets ajoutés et les opérations R2 du premier run
+restent `PENDING_REAL_CACHE_ONLY_RUN`. Une valeur n’est inscrite qu’après mesure
+du workflow réel et de son replay. Aucun achat ni changement de plan n’est
+autorisé automatiquement.

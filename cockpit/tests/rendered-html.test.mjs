@@ -33,9 +33,16 @@ test("server-renders the Cockpit Live V2 shell", async () => {
   assert.match(html, /Registre PostgreSQL/);
   assert.match(html, /101/);
   assert.match(html, /PostgreSQL/);
+  assert.match(html, /Robin Live V1/);
+  assert.match(html, /Preuve publique shadow/);
+  assert.match(html, /Bankroll shadow/);
+  assert.match(html, /NO BET/);
+  assert.match(html, /NO LIVE SHADOW DATA/);
+  assert.match(html, /SOCIAL_PUBLISHING_ENABLED=false/);
   assert.match(html, /DOUBLE ÉCRITURE/i);
   assert.match(html, /19[\s ]992/);
   assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
+  assert.doesNotMatch(html, /garantie de gain|gain garanti|100 % gagnant/i);
   assert.doesNotMatch(html, /react-loading-skeleton/);
 });
 
@@ -82,6 +89,11 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Strategy Lab/);
   assert.match(page, /Backtest Explorer/);
   assert.match(page, /Historical Data Quality/);
+  assert.match(page, /Robin Live V1/);
+  assert.match(page, /Décisions shadow et NO BET/);
+  assert.match(page, /Hypothèses, FDR et contrôles négatifs/);
+  assert.match(data, /Les performances passées ne garantissent aucun résultat futur/);
+  assert.match(page, /SOCIAL_PUBLISHING_ENABLED=false/);
   assert.match(page, /LIVE_PIPELINE_VERIFIED/);
   assert.match(page, /EN ATTENTE DE DONNÉES PROSPECTIVES/);
   assert.match(page, /AUCUNE CONCLUSION STATISTIQUE|statistical_message/);
@@ -100,6 +112,15 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"bridge_lag_records": 0/);
   assert.match(data, /"capacity_used_pct": 2\.39/);
   assert.match(data, /"deepData":/);
+  assert.match(data, /"patternResearch":/);
+  assert.match(data, /"version": "ROBIN_LIVE_V1"/);
+  assert.match(data, /"dataStatus": "NO_LIVE_SHADOW_DATA"/);
+  assert.match(data, /"initialUnits": 1000(?:\.0)?/);
+  assert.match(data, /"currentUnits": 1000(?:\.0)?/);
+  assert.match(data, /"fdrMethod": "Benjamini-Hochberg"/);
+  assert.match(data, /"socialPublishingEnabled": false/);
+  assert.match(data, /"realBets": false/);
+  assert.match(data, /"demoModeEnabled": false/);
   assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
   assert.match(data, /"HISTORICAL POINT-IN-TIME"/);
   assert.match(

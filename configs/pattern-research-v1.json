@@ -1,0 +1,22 @@
+{
+  "bootstrap_candidates_limit": 40,
+  "bootstrap_iterations": 1000,
+  "external_competitions": [
+    "Bundesliga",
+    "Serie A"
+  ],
+  "fdr_alpha": 0.05,
+  "feature_cutoff": "T_MINUS_60_MINUTES",
+  "live_market_point_in_time": false,
+  "minimum_bets": 80,
+  "minimum_fold_bets": 15,
+  "minimum_positive_fold_ratio": 0.67,
+  "minimum_seasons": 3,
+  "odds_type": "HISTORICAL_CLOSING_MARKET",
+  "permutation_candidates_limit": 5,
+  "preregistered_at": "2026-07-27T00:00:00+00:00",
+  "provider_calls_allowed": 0,
+  "schema_version": "pattern-campaign-v1",
+  "seed": 10010,
+  "social_publishing_enabled": false
+}

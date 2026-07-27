@@ -382,3 +382,52 @@ Ne reprendre les tâches secondaires qu'après une décision d'architecture
 séparée réduisant réellement la dépendance au stockage Git. Cette évolution
 doit appartenir à un jalon ultérieur distinct et ne fait pas partie de la
 validation post-fusion du Jalon 9.
+
+## Jalon 10 — recherche cache-only et ledger
+
+Prérequis : restaurer l’historique durable sans l’écrire dans Git, vérifier
+`STORAGE_PAUSED`, conserver P3/P4 suspendus et ne fournir aucune variable de
+secret fournisseur au job de recherche.
+
+Exécution locale bornée :
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_pattern_campaign.py `
+  --state data/historical `
+  --output data/pattern-research/run.json `
+  --code-revision (git rev-parse HEAD)
+
+.\.venv\Scripts\python.exe scripts/run_pattern_campaign.py `
+  --state data/historical `
+  --output data/pattern-research/replay.json `
+  --code-revision (git rev-parse HEAD) `
+  --replay
+```
+
+Comparer configuration, hash du dataset, règles, sélections, métriques et hash
+stable. Le replay doit consommer zéro appel et zéro crédit. Un run GitHub vert
+sans hypothèse exécutée n’est pas une preuve.
+
+Avant toute promotion, exiger le contrat
+`docs/pattern-research/SCIENTIFIC-CONTRACT.md`, la politique temporelle, FDR,
+bootstrap, walk-forward, contrôles négatifs et rapport de concentration. Les
+prix `SOURCE_PRICE_CLASS_ONLY` ferment le gate live ; ne pas le contourner.
+
+Les workflows séparés sont `pattern-discovery.yml`,
+`pattern-validation.yml`, `shadow-pattern-decisions.yml`,
+`pattern-settlement.yml` et `public-ledger-build.yml`. Ils ne doivent pas
+prendre le verrou `historical-state`, écrire dans `historical-data`, lancer un
+fournisseur ou réactiver P3/P4.
+
+Pour le ledger :
+
+1. vérifier la chaîne avant toute génération publique ;
+2. figer la décision avant kickoff ;
+3. ajouter le règlement sans modifier la décision ;
+4. refuser un identifiant rejoué avec un contenu différent ;
+5. afficher `NO_BET_DATA_UNAVAILABLE` si le point-in-time manque ;
+6. conserver `simulation=true`, `REAL_BETS=false` et la bankroll fictive.
+
+Une incohérence de hash bloque Robin Live. Un artifact construit n’est pas
+qualifié de déploiement privé. Les exports sociaux peuvent être construits,
+mais `SOCIAL_PUBLISHING_ENABLED=false` interdit tout envoi externe.

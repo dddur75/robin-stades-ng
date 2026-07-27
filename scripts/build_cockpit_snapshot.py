@@ -317,6 +317,187 @@ def sanitize_public_snapshot(value: Any) -> Any:
     return value
 
 
+def build_pattern_research() -> dict[str, Any]:
+    """Construire Robin Live V1 depuis des résumés compacts, jamais depuis une démo."""
+
+    roots = [
+        ROOT / "data" / "historical" / "pattern-research",
+        ROOT / "reports" / "pattern-research",
+    ]
+    campaign: dict[str, Any] = {}
+    ledger: dict[str, Any] = {}
+    for root in roots:
+        if not campaign:
+            candidate = read_json(root / "campaign-summary.json", {})
+            if isinstance(candidate, dict):
+                campaign = candidate
+        if not ledger:
+            candidate = read_json(root / "ledger-summary.json", {})
+            if isinstance(candidate, dict):
+                ledger = candidate
+
+    counts = campaign.get("counts", {})
+    if not isinstance(counts, dict):
+        counts = {}
+
+    def integer(source: dict[str, Any], key: str) -> int:
+        value = source.get(key, 0)
+        if isinstance(value, bool):
+            return 0
+        try:
+            return max(0, int(str(value)))
+        except (TypeError, ValueError):
+            return 0
+
+    def number(source: dict[str, Any], key: str, default: float = 0.0) -> float:
+        value = source.get(key, default)
+        if isinstance(value, bool):
+            return default
+        try:
+            return float(str(value))
+        except (TypeError, ValueError):
+            return default
+
+    decisions = integer(ledger, "decisions")
+    shadow_bets = integer(ledger, "shadow_bets")
+    no_bets = integer(ledger, "no_bets")
+    classified_decisions = min(decisions, shadow_bets + no_bets)
+    current_bankroll = number(ledger, "shadow_bankroll", 1000.0)
+    if current_bankroll <= 0:
+        current_bankroll = 1000.0
+    profit = number(ledger, "profit_units", current_bankroll - 1000.0)
+    settled_stakes = number(ledger, "settled_stake_units", 0.0)
+    roi = number(
+        ledger,
+        "roi",
+        profit / settled_stakes if settled_stakes > 0 else 0.0,
+    )
+    has_campaign = bool(campaign)
+    has_ledger = bool(ledger)
+    data_status = (
+        "LIVE_SHADOW_LEDGER"
+        if has_ledger and decisions > 0
+        else "NO_LIVE_SHADOW_DATA"
+    )
+    source_status = (
+        "HISTORICAL_RESEARCH"
+        if has_campaign
+        else "NO_OUTPUT"
+    )
+    support_rejected = integer(counts, "support_rejected")
+    negative_controls = campaign.get("negative_controls", {})
+    if not isinstance(negative_controls, dict):
+        negative_controls = {}
+    strategies_rejected = integer(counts, "strategies_rejected")
+    if not strategies_rejected:
+        strategies_rejected = support_rejected
+
+    return {
+        "version": "ROBIN_LIVE_V1",
+        "dataStatus": data_status,
+        "researchStatus": source_status,
+        "campaignVerdict": str(campaign.get("verdict", "NOT_RUN")),
+        "publicationTime": ledger.get("published_at"),
+        "today": {
+            "matchesAnalyzed": integer(ledger, "matches_analyzed"),
+            "shadowBets": shadow_bets,
+            "noBets": no_bets,
+            "unclassifiedDecisions": decisions - classified_decisions,
+            "justification": (
+                "Aucune décision shadow publiée."
+                if decisions == 0
+                else "Décisions gelées avant match dans le registre append-only."
+            ),
+            "origin": (
+                "LIVE SHADOW"
+                if data_status == "LIVE_SHADOW_LEDGER"
+                else "NO OUTPUT"
+            ),
+        },
+        "results": {
+            "won": integer(ledger, "won"),
+            "lost": integer(ledger, "lost"),
+            "void": integer(ledger, "void"),
+            "settlements": integer(ledger, "settlements"),
+            "profitUnits": round(profit, 4),
+            "roi": round(roi, 6),
+            "historyRecords": integer(ledger, "records"),
+        },
+        "bankroll": {
+            "initialUnits": 1000.0,
+            "currentUnits": round(current_bankroll, 4),
+            "profitUnits": round(profit, 4),
+            "roi": round(roi, 6),
+            "maxDrawdownUnits": round(
+                number(ledger, "max_drawdown_units", 0.0),
+                4,
+            ),
+            "curve": ledger.get("bankroll_curve", [1000.0]),
+            "simulationOnly": True,
+        },
+        "strategies": {
+            "inResearch": integer(counts, "hypotheses_executed"),
+            "shadowCandidates": integer(counts, "shadow_candidates"),
+            "inShadow": integer(counts, "strategies_in_shadow"),
+            "rejected": strategies_rejected,
+            "rejectionReason": (
+                "Support ou validation scientifique insuffisante."
+                if strategies_rejected
+                else "Aucune stratégie publiée."
+            ),
+        },
+        "laboratory": {
+            "hypothesesGenerated": integer(counts, "hypotheses_generated"),
+            "rulesExecuted": integer(counts, "hypotheses_executed"),
+            "supportRejected": support_rejected,
+            "rawPositive": integer(counts, "raw_positive"),
+            "fdrSurvivors": integer(counts, "fdr_survivors"),
+            "walkForwardSurvivors": integer(
+                counts,
+                "walk_forward_survivors",
+            ),
+            "externalLeagueSurvivors": integer(
+                counts,
+                "external_league_survivors",
+            ),
+            "negativeControls": len(negative_controls),
+            "negativeControlsPassed": sum(
+                isinstance(control, dict) and control.get("passed") is True
+                for control in negative_controls.values()
+            ),
+            "fdrMethod": "Benjamini-Hochberg",
+        },
+        "methodology": {
+            "backtest": (
+                "Un backtest rejoue une règle sur des données historiques "
+                "sans transformer ce résultat en promesse."
+            ),
+            "shadow": (
+                "Le shadow observe et règle des décisions fictives, sans "
+                "transaction ni connexion bookmaker."
+            ),
+            "publication": (
+                "Robin publie aussi les pertes et les NO BET afin de rendre "
+                "les résultats auditables."
+            ),
+            "warning": (
+                "Les performances passées ne garantissent aucun résultat futur."
+            ),
+        },
+        "ledger": {
+            "status": str(ledger.get("status", "NOT_CREATED")),
+            "records": integer(ledger, "records"),
+            "decisions": decisions,
+            "settlements": integer(ledger, "settlements"),
+        },
+        "productionStatus": "PRODUCTION_LOCKED",
+        "realBets": False,
+        "noBetDefault": True,
+        "socialPublishingEnabled": False,
+        "demoModeEnabled": False,
+    }
+
+
 def build_deep_data() -> dict[str, Any]:
     state = Path(
         os.environ.get("HISTORICAL_STATE", str(ROOT / "data" / "historical"))
@@ -1108,6 +1289,7 @@ def main() -> None:
         for item in oos
     ]
     deep_data = build_deep_data()
+    pattern_research = build_pattern_research()
     snapshot = {
         "generatedAt": datetime.now(UTC).isoformat(),
         "sourceCapturedAt": durable["captured_at"],
@@ -1264,6 +1446,7 @@ def main() -> None:
             for item in matches
         ],
         "deepData": deep_data,
+        "patternResearch": pattern_research,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     public_snapshot = sanitize_public_snapshot(snapshot)
