@@ -2023,6 +2023,13 @@
       "status": "verified",
       "verified_at": "2026-07-26T23:41:16.164634+00:00"
     },
+    "derived/jalon11/2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6/team-prematch-v2-d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673.parquet": {
+      "last_action": "uploaded",
+      "sha256": "d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673",
+      "size": 2000155,
+      "status": "verified",
+      "verified_at": "2026-07-27T16:08:34.994725+00:00"
+    },
     "external/datasets/bundesliga_team_pre_match_v1.json": {
       "last_action": "uploaded",
       "sha256": "d5db2f0957c9ace943be6b41cb4ec9b133972778954f25eaa8e39e947a629b9f",
@@ -178166,5 +178173,5 @@
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-27T15:38:58.220222+00:00"
+  "updated_at": "2026-07-27T16:08:34.994750+00:00"
 }
