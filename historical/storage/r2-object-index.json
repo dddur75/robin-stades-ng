@@ -945,6 +945,27 @@
       "status": "verified",
       "verified_at": "2026-07-27T05:21:21.532826+00:00"
     },
+    "bundles/30247200571/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T07:56:03.693025+00:00"
+    },
+    "bundles/30247200571/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "e41ce1d56659a603496117c5977489160b050304753e22a6586e21700704b540",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T07:56:05.162878+00:00"
+    },
+    "bundles/30247200571/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "8bc0c12f43b0a5a290462e3a1e18d68b5f9e30bcc01606995c1e7e6767ef929e",
+      "size": 20999330,
+      "status": "verified",
+      "verified_at": "2026-07-27T07:56:11.050485+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -2417,10 +2438,10 @@
     },
     "forecasts/accelerated-safe.json": {
       "last_action": "uploaded",
-      "sha256": "0501a32d0e86db2972e48f88f8ffebc2567b93c5c630cab786abc19b1f495159",
+      "sha256": "0b17d8cb5b560a797dc57518fcf4d5b62535366c872907a4a57070e505982903",
       "size": 8398,
       "status": "verified",
-      "verified_at": "2026-07-27T05:21:29.952870+00:00"
+      "verified_at": "2026-07-27T07:56:12.899240+00:00"
     },
     "identity/team-alias-registry-v1.json": {
       "last_action": "replayed",
@@ -177962,11 +177983,11 @@
       "verified_at": "2026-07-27T05:34:29.359781+00:00"
     },
     "storage/latest-compaction.json": {
-      "last_action": "replayed",
-      "sha256": "a9cbdc1ff24f94f6c816fc67611a1ca0be1795034f4952e6068b17a68bb506e9",
+      "last_action": "uploaded",
+      "sha256": "385512c0aa182336a755842dc3b9a968906d72f810ebf0ffab52683523915cd2",
       "size": 677,
       "status": "verified",
-      "verified_at": "2026-07-27T05:34:29.706433+00:00"
+      "verified_at": "2026-07-27T07:56:14.652038+00:00"
     },
     "strategies/api_elo_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
@@ -178103,5 +178124,5 @@
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-27T05:34:35.059901+00:00"
+  "updated_at": "2026-07-27T07:56:14.652054+00:00"
 }
