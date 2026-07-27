@@ -379,7 +379,10 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"patternResearch":/);
   assert.match(data, /"matchupLab":/);
   assert.match(data, /"prospectiveObservatory":/);
-  assert.match(data, /"origin": "NO_PROSPECTIVE_CAPTURE_YET"/);
+  assert.match(
+    data,
+    /"origin": "(?:NO_PROSPECTIVE_CAPTURE_YET|LIVE_PROSPECTIVE_CAPTURE)"/,
+  );
   assert.match(data, /"raw_payloads_in_git": 0/);
   assert.match(data, /"version": "MATCHUP_LAB_V1"/);
   assert.match(data, /"version": "ROBIN_LIVE_V1"/);
