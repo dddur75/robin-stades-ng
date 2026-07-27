@@ -1,0 +1,89 @@
+name: "61 - Planificateur horaire Deep Data prospectif"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Capturer les familles générales actuellement dues"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "13 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prospective-deep-state
+  cancel-in-progress: false
+
+jobs:
+  schedule-windows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Appliquer les migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          alembic upgrade head
+          alembic current | grep -q "0009"
+      - name: Planifier seulement les fenêtres dues
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: >-
+          python scripts/run_prospective_observatory.py scheduler
+          --policy "$PROSPECTIVE_POLICY"
+          --output artifacts/prospective-observatory
+      - name: Estimer les captures générales dues
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: >-
+          python scripts/run_prospective_observatory.py capture-general
+          --estimate
+          --policy "$PROSPECTIVE_POLICY"
+          --max-attempts 3
+          --output artifacts/prospective-observatory
+      - name: Capturer fixtures, équipes et états dus R2-first
+        if: github.event_name == 'schedule' || inputs.execute
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_prospective_observatory.py capture-general
+          --execute
+          --policy "$PROSPECTIVE_POLICY"
+          --estimate-file artifacts/prospective-observatory/general-capture-estimate.json
+          --max-attempts 3
+          --output artifacts/prospective-observatory
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prospective-scheduler-${{ github.run_id }}
+          path: artifacts/prospective-observatory/*.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

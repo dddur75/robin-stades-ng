@@ -22,6 +22,7 @@ Thumbs.db
 *.out
 *.err
 .ci/
+artifacts/
 data/shadow/
 data/robin.db
 data/*.db

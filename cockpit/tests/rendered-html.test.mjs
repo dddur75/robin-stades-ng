@@ -35,6 +35,7 @@ test("server-renders the Cockpit Live V2 shell", async () => {
   assert.match(html, /PostgreSQL/);
   assert.match(html, /Robin Live V1/);
   assert.match(html, /Matchup Lab/);
+  assert.match(html, /Observatoire des données/);
   assert.match(html, /Preuve publique shadow/);
   assert.match(html, /Bankroll shadow/);
   assert.match(html, /NO BET/);
@@ -81,6 +82,7 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   const research = JSON.parse(data).patternResearch;
   const matchup = JSON.parse(data).matchupLab;
   const deep = JSON.parse(data).deepData;
+  const observatory = JSON.parse(data).prospectiveObservatory;
   assert.deepEqual(
     {
       generated: research.laboratory.hypothesesGenerated,
@@ -226,6 +228,49 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(matchup.costs.secondaryTasks, "P3_P4_PAUSED");
   assert.equal(matchup.ledger.status, "HASH_CHAIN_VERIFIED");
   assert.equal(matchup.ledger.events, 27);
+  assert.equal(
+    observatory.schema_version,
+    "prospective-observatory-snapshot-v1",
+  );
+  assert.equal(
+    observatory.policy_source,
+    "configs/prospective_observatory_v1.json",
+  );
+  assert.equal(observatory.origin, "NO_PROSPECTIVE_CAPTURE_YET");
+  assert.equal(observatory.fixtures.horizon_days, 30);
+  assert.equal(observatory.fixtures.max_matchdays_per_competition, 3);
+  assert.equal(observatory.fixtures.competitions.length, 5);
+  assert.equal(observatory.fixtures.pilot_priority, "Ligue 1");
+  assert.equal(Object.keys(observatory.captures.by_family).length, 9);
+  assert.equal(Object.keys(observatory.gates.by_name).length, 5);
+  assert.equal(observatory.hypotheses.length, 8);
+  assert.ok(
+    observatory.hypotheses.every(
+      (hypothesis) =>
+        hypothesis.frozen === true &&
+        hypothesis.observations === 0 &&
+        hypothesis.status === "WAITING_FOR_OBSERVATIONS",
+    ),
+  );
+  assert.equal(observatory.providers.api_football_calls, 0);
+  assert.equal(observatory.providers.odds_api_credits, 0);
+  assert.equal(observatory.providers.budgets.api_football_max_total, 5000);
+  assert.equal(observatory.providers.budgets.odds_api_max_total, 250);
+  assert.equal(observatory.providers.reserves.api_football, 5000);
+  assert.equal(observatory.providers.reserves.odds_api, 4000);
+  assert.equal(observatory.providers.reserves.odds_api_internal_safety, 2);
+  assert.equal(observatory.providers.reserves.odds_api_near_kickoff, 80);
+  assert.equal(observatory.r2.deletions, 0);
+  assert.equal(observatory.postgresql.payload_body_rows, 0);
+  assert.equal(observatory.decisions, 0);
+  assert.equal(observatory.candidates, 0);
+  assert.equal(observatory.invariants.raw_payloads_in_git, 0);
+  assert.equal(observatory.invariants.production_status, "PRODUCTION_LOCKED");
+  assert.equal(observatory.invariants.real_bets, false);
+  assert.equal(observatory.invariants.no_bet_default, true);
+  assert.equal(observatory.invariants.social_publishing_enabled, false);
+  assert.equal(observatory.invariants.demo_mode_enabled, false);
+  assert.equal(observatory.invariants.external_social_networks_connected, false);
   assert.ok(deep.datasets.length >= 6);
   assert.ok(deep.models.length >= 9);
   assert.ok(deep.backtests.length >= 15);
@@ -256,6 +301,12 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Attrition équipe/);
   assert.match(page, /pairing\.rightAttrition/);
   assert.match(page, /Matchup Lab/);
+  assert.match(page, /Observatoire des données/);
+  assert.match(page, /Ce qui était connu avant le match/);
+  assert.match(page, /NO_PREMATURE_CONCLUSION/);
+  assert.match(page, /Aucune décision lorsque zéro candidat existe/);
+  assert.match(page, /Réserves fournisseur protégées/);
+  assert.match(data, /response_received_at < cutoff_at < kickoff_at/);
   assert.match(page, /Score Comparisons/);
   assert.match(page, /Comparison Table/);
   assert.match(page, /Paired Comparator/);
@@ -316,6 +367,9 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"deepData":/);
   assert.match(data, /"patternResearch":/);
   assert.match(data, /"matchupLab":/);
+  assert.match(data, /"prospectiveObservatory":/);
+  assert.match(data, /"origin": "NO_PROSPECTIVE_CAPTURE_YET"/);
+  assert.match(data, /"raw_payloads_in_git": 0/);
   assert.match(data, /"version": "MATCHUP_LAB_V1"/);
   assert.match(data, /"version": "ROBIN_LIVE_V1"/);
   assert.match(data, /"dataStatus": "NO_LIVE_SHADOW_DATA"/);

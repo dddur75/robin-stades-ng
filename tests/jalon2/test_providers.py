@@ -106,6 +106,9 @@ def test_http_archive_brut_quota_et_masque_le_secret(tmp_path: Path) -> None:
     assert result.quota.remaining == 488
     assert result.quota.last_cost == 2
     assert result.raw_observation_id == observation.observation_id
+    assert result.raw_payload == [{"id": 1}]
+    assert "raw_payload" not in result.model_dump()
+    assert "top-secret" not in repr(result)
     assert observation.request_parameters["apiKey"] == "[REDACTED]"
 
 

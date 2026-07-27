@@ -180,10 +180,15 @@ class JsonHttpProvider:
                     headers=headers,
                     timeout=30,
                 )
-            except requests.RequestException as exc:
+            except requests.RequestException:
                 if attempt == self.max_retries:
                     self._record_failure()
-                    raise TransientProviderError(str(exc)) from exc
+                    # A Requests exception may embed the full request URL. Some
+                    # providers authenticate through a query parameter, so the
+                    # original exception must never reach workflow logs.
+                    raise TransientProviderError(
+                        f"{self.provider_name}: transport_error"
+                    ) from None
                 self.sleeper(2**attempt + self.randomizer())
                 continue
             if response.status_code == 429:
@@ -312,6 +317,7 @@ class JsonHttpProvider:
             origin=DataOrigin.LIVE_SOURCE,
             raw_observation_id=raw_id,
             raw_payload_hash=raw_payload_hash,
+            raw_payload=payload,
             quota=quota,
             http_status=response.status_code,
             requested_at=requested_at,

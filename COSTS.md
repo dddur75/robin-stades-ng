@@ -207,3 +207,35 @@ Il est resté entièrement cache-only :
 - 0 payload lourd ajouté à Git.
 
 Ce run n'a créé aucun achat ni changement d'abonnement.
+
+## Budget du Jalon 12
+
+La source canonique est
+`configs/prospective_observatory_v1.json#provider_budgets`.
+
+| Poste | Plafond du pilote | Réserve externe |
+|---|---:|---:|
+| API-Football | 5 000 appels cumulés | 5 000 appels |
+| The Odds API | 250 crédits cumulés | 4 000 crédits |
+| Sécurité dérive coût Odds | 2 crédits non planifiables | interne au plafond 250 |
+| Fenêtres Odds proches kickoff | incluses dans 250 | 80 crédits dédiés |
+| Pari réel | 0 | `PRODUCTION_LOCKED` |
+| Publication sociale | 0 | désactivée |
+
+Le budget est cumulatif au niveau du pilote, pas remis à zéro par workflow. Il
+sert uniquement aux fenêtres prospectives dues. Un replay R2 consomme zéro
+appel et zéro crédit. Avant une cote, le solde The Odds API est rafraîchi par
+le endpoint `/v4/sports`, documenté comme gratuit ; le coût effectif et le
+solde restant de `/odds` sont ensuite inscrits dans le ledger append-only.
+
+Objectifs de stockage :
+
+```text
+Git raw payload growth = 0
+R2 raw payload storage = autorisé
+PostgreSQL payload body storage = 0
+```
+
+Git conserve seulement code, migration, contrats, reçus agrégés, hashes,
+rapports compacts et tests. Aucun achat ni changement de plan n’est autorisé
+automatiquement. `STORAGE_PAUSED` et `P3/P4_PAUSED` restent actifs.

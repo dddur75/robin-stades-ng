@@ -7,7 +7,7 @@ import json
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -18,6 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cockpit" / "app" / "cockpit-data.json"
 OUTPUT_HASH = ROOT / "cockpit" / "app" / "cockpit-data.sha256"
 PRIVATE_DEPLOYMENT = ROOT / "configs" / "cockpit-private-deployment.json"
+PROSPECTIVE_COMPACT = ROOT / "reports" / "jalon12" / "observatory-snapshot.json"
+PROSPECTIVE_POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
 
 
 def read_json(path: Path, default: Any) -> Any:
@@ -30,6 +32,144 @@ def directory_size(path: Path) -> int:
     if not path.exists():
         return 0
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
+
+
+def merge_dicts(base: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
+    """Fusionner un rapport compact sans supprimer les champs contractuels."""
+
+    merged = dict(base)
+    for key, value in update.items():
+        current = merged.get(key)
+        if isinstance(current, dict) and isinstance(value, dict):
+            merged[key] = merge_dicts(current, value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def build_prospective_observatory() -> dict[str, Any]:
+    """Construire la vue publique Jalon 12 depuis des rapports compacts sûrs."""
+
+    compact = read_json(PROSPECTIVE_COMPACT, {})
+    if not isinstance(compact, dict) or not compact:
+        raise RuntimeError("rapport compact Jalon 12 absent")
+    policy = read_json(PROSPECTIVE_POLICY, {})
+    if not isinstance(policy, dict) or not policy:
+        raise RuntimeError("politique Jalon 12 absente")
+
+    competition_registry = policy.get("competition_registry", [])
+    fixture_policy = policy.get("fixture_registry", {})
+    provider_budgets = policy.get("provider_budgets", {})
+    storage_policy = policy.get("storage", {})
+    capture_windows = policy.get("capture_windows", {})
+    if (
+        not isinstance(competition_registry, list)
+        or not isinstance(fixture_policy, dict)
+        or not isinstance(provider_budgets, dict)
+        or not isinstance(storage_policy, dict)
+        or not isinstance(capture_windows, dict)
+    ):
+        raise RuntimeError("politique Jalon 12 invalide")
+    compact["policy_source"] = PROSPECTIVE_POLICY.relative_to(ROOT).as_posix()
+    compact["fixtures"]["competitions"] = [
+        str(item["competition"])
+        for item in competition_registry
+        if isinstance(item, dict) and item.get("competition")
+    ]
+    compact["fixtures"]["pilot_priority"] = next(
+        (
+            str(item["competition"])
+            for item in competition_registry
+            if isinstance(item, dict) and item.get("priority") == "P0"
+        ),
+        "Ligue 1",
+    )
+    compact["fixtures"]["horizon_days"] = int(
+        str(fixture_policy.get("horizon_days", 30))
+    )
+    compact["fixtures"]["max_matchdays_per_competition"] = int(
+        str(fixture_policy.get("max_matchdays_per_competition", 3))
+    )
+    compact["windows"]["policy_version"] = str(
+        capture_windows.get(
+            "policy_version",
+            compact["windows"].get("policy_version", ""),
+        )
+    )
+    compact["providers"]["budgets"] = {
+        "api_football_max_total": int(
+            str(provider_budgets["api_football_max_calls_total"])
+        ),
+        "odds_api_max_total": int(
+            str(provider_budgets["odds_api_max_credits_total"])
+        ),
+    }
+    compact["providers"]["reserves"] = {
+        "api_football": int(
+            str(provider_budgets["api_football_provider_reserve"])
+        ),
+        "odds_api": int(str(provider_budgets["odds_api_provider_reserve"])),
+        "odds_api_internal_safety": int(
+            str(provider_budgets["odds_api_internal_safety_reserve"])
+        ),
+        "odds_api_near_kickoff": int(
+            str(provider_budgets["odds_api_near_kickoff_reserve"])
+        ),
+    }
+    compact["r2"]["namespace"] = str(
+        storage_policy.get("raw_namespace", compact["r2"].get("namespace", ""))
+    )
+
+    report_root = Path(
+        os.environ.get(
+            "PROSPECTIVE_REPORT_ROOT",
+            str(ROOT / "artifacts" / "prospective-observatory"),
+        )
+    )
+    observed: dict[str, Any] = {}
+    for filename in ("gate-report.json", "pilot-report.json"):
+        report = read_json(report_root / filename, {})
+        candidate = report.get("observatory", {}) if isinstance(report, dict) else {}
+        if isinstance(candidate, dict) and candidate:
+            observed = merge_dicts(observed, candidate)
+
+    if observed:
+        invariants = observed.get("invariants", {})
+        safe = (
+            isinstance(invariants, dict)
+            and invariants.get("production_status") == "PRODUCTION_LOCKED"
+            and invariants.get("real_bets") is False
+            and invariants.get("social_publishing_enabled") is False
+            and invariants.get("demo_mode_enabled") is False
+        )
+        if not safe:
+            raise RuntimeError("rapport Jalon 12 refusé : invariants incomplets")
+        compact = merge_dicts(compact, observed)
+
+        fixtures = observed.get("fixtures", {})
+        if isinstance(fixtures, dict):
+            compact["windows"]["planned"] = int(
+                fixtures.get(
+                    "windows_planned",
+                    compact["windows"].get("planned", 0),
+                )
+            )
+            compact["windows"]["due"] = int(
+                fixtures.get("windows_due", compact["windows"].get("due", 0))
+            )
+
+    invariants = compact.get("invariants", {})
+    if (
+        not isinstance(invariants, dict)
+        or invariants.get("production_status") != "PRODUCTION_LOCKED"
+        or invariants.get("real_bets") is not False
+        or invariants.get("no_bet_default") is not True
+        or invariants.get("social_publishing_enabled") is not False
+        or invariants.get("demo_mode_enabled") is not False
+        or int(str(compact.get("decisions", 0))) != 0
+    ):
+        raise RuntimeError("snapshot Observatoire non publiable")
+    return cast(dict[str, Any], compact)
 
 
 def private_deployment_status(
@@ -2545,6 +2685,15 @@ def write_snapshot(snapshot: dict[str, Any]) -> None:
 
 
 def main() -> None:
+    if os.environ.get("COCKPIT_PROSPECTIVE_ONLY") == "1":
+        snapshot = read_json(OUTPUT, {})
+        if not isinstance(snapshot, dict) or not snapshot:
+            raise RuntimeError("snapshot Cockpit existant absent")
+        snapshot["generatedAt"] = datetime.now(UTC).isoformat()
+        snapshot["prospectiveObservatory"] = build_prospective_observatory()
+        write_snapshot(snapshot)
+        return
+
     if os.environ.get("COCKPIT_MATCHUP_ONLY") == "1":
         snapshot = read_json(OUTPUT, {})
         if not isinstance(snapshot, dict) or not snapshot:
@@ -2761,6 +2910,7 @@ def main() -> None:
     deep_data = build_deep_data()
     pattern_research = build_pattern_research()
     matchup_lab = build_matchup_lab()
+    prospective_observatory = build_prospective_observatory()
     snapshot = {
         "generatedAt": datetime.now(UTC).isoformat(),
         "sourceCapturedAt": durable["captured_at"],
@@ -2919,6 +3069,7 @@ def main() -> None:
         "deepData": deep_data,
         "patternResearch": pattern_research,
         "matchupLab": matchup_lab,
+        "prospectiveObservatory": prospective_observatory,
     }
     write_snapshot(snapshot)
 

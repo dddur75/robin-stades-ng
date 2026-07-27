@@ -22,6 +22,7 @@ type PageKey =
   | "modelLab"
   | "modelArena"
   | "matchupLab"
+  | "dataObservatory"
   | "externalValidation"
   | "criticalClosure"
   | "strategyLab"
@@ -47,6 +48,7 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "modelLab", label: "Model Lab", glyph: "M" },
   { key: "modelArena", label: "Model Arena", glyph: "A" },
   { key: "matchupLab", label: "Matchup Lab", glyph: "H" },
+  { key: "dataObservatory", label: "Observatoire des données", glyph: "O" },
   { key: "externalValidation", label: "External Validation", glyph: "X" },
   { key: "criticalClosure", label: "Market & Storage", glyph: "R" },
   { key: "strategyLab", label: "Strategy Lab", glyph: "S" },
@@ -144,6 +146,11 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     eyebrow: "Jalon 11 · features football profondes · cache-only",
     title: "Matchup Lab",
     note: "Couverture, hypothèses préréglées et résultats appariés au marché, sans promotion automatique.",
+  },
+  dataObservatory: {
+    eyebrow: "Jalon 12 · mémoire prospective R2-first",
+    title: "Observatoire des données",
+    note: "Ce qui était réellement connu avant chaque match, sans donnée démo, conclusion prématurée ni décision de pari.",
   },
   externalValidation: {
     eyebrow: "Multi-ligues · protocole gelé · aucun retuning",
@@ -430,6 +437,7 @@ export default function Home() {
           {page === "modelLab" && <ModelLab />}
           {page === "modelArena" && <ModelArena />}
           {page === "matchupLab" && <MatchupLab />}
+          {page === "dataObservatory" && <DataObservatory />}
           {page === "externalValidation" && <ExternalValidation />}
           {page === "criticalClosure" && <CriticalClosure />}
           {page === "strategyLab" && <HistoricalStrategyLab />}
@@ -797,6 +805,158 @@ type MatchupLabSnapshot = {
 
 function matchupLabSnapshot() {
   return (snapshot as unknown as { matchupLab: MatchupLabSnapshot }).matchupLab;
+}
+
+type ProspectiveObservatorySnapshot = {
+  schema_version: string;
+  policy_source: string;
+  status: string;
+  origin: string;
+  generated_at: string | null;
+  fixtures: {
+    tracked: number;
+    horizon_days: number;
+    max_matchdays_per_competition: number;
+    competitions: string[];
+    pilot_priority: string;
+    next: Array<{
+      fixture_id?: string;
+      home?: string;
+      away?: string;
+      kickoff_at?: string;
+      competition?: string;
+      status?: string;
+    }>;
+  };
+  windows: {
+    planned: number;
+    due: number;
+    captured: number;
+    missed: number;
+    next: Array<{
+      fixture_id?: string;
+      family?: string;
+      label?: string;
+      due_at?: string;
+      status?: string;
+    }>;
+    policy_version: string;
+  };
+  captures: {
+    attempted: number;
+    captured: number;
+    empty: number;
+    missed: number;
+    invalid: number;
+    bytes: number;
+    hashes: number;
+    by_family: Record<
+      string,
+      {
+        due: number;
+        attempted: number;
+        captured: number;
+        empty: number;
+        missed: number;
+        invalid: number;
+        bytes: number;
+        hashes: number;
+      }
+    >;
+  };
+  temporal: {
+    truth_rule: string;
+    before_cutoff: number;
+    late: number;
+    rejected: number;
+    gates: number;
+  };
+  providers: {
+    api_football_calls: number;
+    odds_api_credits: number;
+    errors: number;
+    retries: number;
+    budgets: {
+      api_football_max_total: number;
+      odds_api_max_total: number;
+    };
+    reserves: {
+      api_football: number;
+      odds_api: number;
+      odds_api_near_kickoff: number;
+    };
+  };
+  r2: {
+    namespace: string;
+    objects_added: number;
+    bytes: number;
+    verified: number;
+    lag: number;
+    deletions: number;
+    replay_status: string;
+  };
+  postgresql: {
+    migration: string;
+    tables: number;
+    inserts: number;
+    duplicates_avoided: number;
+    lag: number;
+    reconstruction_status: string;
+    payload_body_rows: number;
+  };
+  gates: {
+    by_name: Record<
+      string,
+      { status: string; passed: number; total: number; reason: string }
+    >;
+  };
+  hypotheses: Array<{
+    id: string;
+    title: string;
+    required_data: string[];
+    minimum_support: number;
+    observations: number;
+    coverage: number;
+    status: string;
+    first_possible_analysis_at: string | null;
+    frozen: boolean;
+  }>;
+  research_cards: Array<{
+    title: string;
+    required_data: string[];
+    accumulated: number;
+    status: string;
+    first_possible_analysis_at: string | null;
+  }>;
+  ledger: {
+    schema_version: string;
+    events: number;
+    head_hash: string | null;
+    allowed_event_types: string[];
+    bet_decisions: number;
+  };
+  decisions: number;
+  candidates: number;
+  invariants: {
+    storage_paused: boolean;
+    p3_p4_paused: boolean;
+    production_status: string;
+    real_bets: boolean;
+    no_bet_default: boolean;
+    social_publishing_enabled: boolean;
+    demo_mode_enabled: boolean;
+    external_social_networks_connected: boolean;
+    raw_payloads_in_git: number;
+    postgresql_payload_body_rows: number;
+  };
+};
+
+function prospectiveObservatorySnapshot() {
+  return (
+    snapshot as unknown as {
+      prospectiveObservatory: ProspectiveObservatorySnapshot;
+    }
+  ).prospectiveObservatory;
 }
 
 function shortHash(value: string) {
@@ -1496,6 +1656,260 @@ function FeatureLab() {
         {snapshot.deepData.featureCatalog.map((feature) => <tr key={feature.name}><td>{feature.name}</td><td>{feature.version}</td><td><StatusPill value={feature.status} /></td><td>{feature.leakageRisk}</td><td><SourceBadge origin={feature.origin} /></td></tr>)}
       </tbody></table></div>
     </section>
+  );
+}
+
+function DataObservatory() {
+  const observatory = prospectiveObservatorySnapshot();
+  const captureFamilies = Object.entries(observatory.captures.by_family);
+  const gates = Object.entries(observatory.gates.by_name);
+  const generatedAt = observatory.generated_at
+    ? new Date(observatory.generated_at).getTime()
+    : null;
+  const countdown = (kickoffAt?: string) => {
+    if (!kickoffAt || generatedAt == null) return "—";
+    const remaining = new Date(kickoffAt).getTime() - generatedAt;
+    if (remaining <= 0) return "kickoff passé";
+    const totalHours = Math.floor(remaining / 3_600_000);
+    const days = Math.floor(totalHours / 24);
+    return days > 0 ? `J-${days} · ${totalHours % 24} h` : `H-${totalHours}`;
+  };
+
+  return (
+    <>
+      <section className="metric-grid">
+        <Metric label="Fixtures suivies" value={String(observatory.fixtures.tracked)} detail={`${observatory.fixtures.horizon_days} jours · priorité ${observatory.fixtures.pilot_priority}`} />
+        <Metric label="Fenêtres prévues" value={String(observatory.windows.planned)} detail={`${observatory.windows.due} dues maintenant`} tone="cyan" />
+        <Metric label="Captures vérifiées" value={String(observatory.captures.captured)} detail={`${observatory.captures.empty} réponses vides observées`} />
+        <Metric label="Fenêtres manquées" value={String(observatory.windows.missed)} detail="jamais reconstruites après kickoff" tone="amber" />
+        <Metric label="API-Football" value={`${observatory.providers.api_football_calls} / ${observatory.providers.budgets.api_football_max_total}`} detail="appels du pilote complet" />
+        <Metric label="The Odds API" value={`${observatory.providers.odds_api_credits} / ${observatory.providers.budgets.odds_api_max_total}`} detail="crédits du pilote complet" />
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>État prospectif</span><h2>Ce qui était connu avant le match</h2></div>
+          <StatusPill value={observatory.status} />
+        </div>
+        <p className="panel-note">
+          Vérité temporelle : <code>{observatory.temporal.truth_rule}</code>.
+          Une réponse tardive reste tardive ; une fenêtre manquée n&apos;est
+          jamais remplie rétrospectivement. Source : {observatory.origin} ·
+          politique : {observatory.policy_source}.
+        </p>
+        <div className="cost-grid">
+          <article><span>Avant cutoff</span><strong>{observatory.temporal.before_cutoff}</strong><small>captures admissibles</small></article>
+          <article><span>Tardives</span><strong>{observatory.temporal.late}</strong><small>LATE_RETRY exclu du cutoff initial</small></article>
+          <article><span>Rejetées</span><strong>{observatory.temporal.rejected}</strong><small>temporalité ou qualité</small></article>
+          <article><span>Décisions</span><strong>{observatory.decisions}</strong><small>aucune décision de pari dans ce jalon</small></article>
+        </div>
+      </section>
+
+      <section className="two-column">
+        <article className="panel">
+          <div className="panel-head">
+            <div><span>Horizon officiel</span><h2>Prochaines rencontres suivies</h2></div>
+            <SourceBadge origin={observatory.origin} />
+          </div>
+          {observatory.fixtures.next.length ? (
+            <div className="table-wrap"><table><thead><tr><th>Rencontre</th><th>Compétition</th><th>Kickoff</th><th>Compte à rebours</th><th>Statut</th></tr></thead><tbody>
+              {observatory.fixtures.next.map((fixture, index) => (
+                <tr key={fixture.fixture_id ?? `${fixture.home}-${fixture.away}-${index}`}>
+                  <td>{fixture.home && fixture.away ? `${fixture.home} — ${fixture.away}` : fixture.fixture_id ?? "fixture non nommée"}</td>
+                  <td>{fixture.competition ?? "—"}</td>
+                  <td>{dateTime(fixture.kickoff_at ?? null)}</td>
+                  <td>{countdown(fixture.kickoff_at)}</td>
+                  <td><StatusPill value={fixture.status ?? "REGISTERED"} /></td>
+                </tr>
+              ))}
+            </tbody></table></div>
+          ) : (
+            <EmptyState
+              title="Aucune fixture réelle publiée"
+              text="Le cockpit n’invente ni calendrier ni rencontre. Le registre quotidien publiera ici les prochaines fixtures officielles vérifiées."
+              label="NO OUTPUT"
+            />
+          )}
+        </article>
+
+        <article className="panel">
+          <div className="panel-head">
+            <div><span>Ordonnanceur</span><h2>Prochaines fenêtres</h2></div>
+            <StatusPill value={observatory.windows.policy_version} />
+          </div>
+          {observatory.windows.next.length ? (
+            <div className="table-wrap"><table><thead><tr><th>Fixture</th><th>Famille</th><th>Fenêtre</th><th>Échéance</th><th>Statut</th></tr></thead><tbody>
+              {observatory.windows.next.map((window, index) => (
+                <tr key={`${window.fixture_id}-${window.family}-${window.label}-${index}`}>
+                  <td>{window.fixture_id ?? "—"}</td>
+                  <td>{window.family ?? "—"}</td>
+                  <td>{window.label ?? "—"}</td>
+                  <td>{dateTime(window.due_at ?? null)}</td>
+                  <td><StatusPill value={window.status ?? "NOT_DUE"} /></td>
+                </tr>
+              ))}
+            </tbody></table></div>
+          ) : (
+            <EmptyState
+              title="Aucune fenêtre due publiée"
+              text="windows_due=0 est un état sain. Aucun appel fournisseur n’est forcé pour remplir une carte."
+              label="NO OUTPUT"
+            />
+          )}
+        </article>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Budgets bornés</span><h2>Réserves fournisseur protégées</h2></div>
+          <StatusPill value="BUDGET_GUARD_ACTIVE" />
+        </div>
+        <div className="cost-grid">
+          <article><span>Plafond API-Football</span><strong>{observatory.providers.budgets.api_football_max_total}</strong><small>pilote Jalon 12 complet</small></article>
+          <article><span>Réserve API-Football</span><strong>{observatory.providers.reserves.api_football.toLocaleString("fr-FR")}</strong><small>réserve globale conservée</small></article>
+          <article><span>Plafond The Odds API</span><strong>{observatory.providers.budgets.odds_api_max_total}</strong><small>crédits du pilote complet</small></article>
+          <article><span>Réserve The Odds API</span><strong>{observatory.providers.reserves.odds_api.toLocaleString("fr-FR")}</strong><small>réserve globale conservée</small></article>
+          <article><span>Réserve proche kickoff</span><strong>{observatory.providers.reserves.odds_api_near_kickoff}</strong><small>crédits dédiés aux fenêtres critiques</small></article>
+          <article><span>Erreurs / retries</span><strong>{observatory.providers.errors} / {observatory.providers.retries}</strong><small>aucun appel en boucle</small></article>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Neuf familles append-only</span><h2>Captures, vides et manques</h2></div>
+          <StatusPill value="R2_FIRST" />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Famille</th><th>Dues</th><th>Tentées</th><th>Capturées</th><th>Vides</th><th>Manquées</th><th>Invalides</th><th>Octets</th><th>Hashes</th></tr></thead><tbody>
+          {captureFamilies.map(([family, values]) => (
+            <tr key={family}>
+              <td>{family}</td>
+              <td>{values.due}</td>
+              <td>{values.attempted}</td>
+              <td>{values.captured}</td>
+              <td>{values.empty}</td>
+              <td>{values.missed}</td>
+              <td>{values.invalid}</td>
+              <td>{values.bytes.toLocaleString("fr-FR")}</td>
+              <td>{values.hashes}</td>
+            </tr>
+          ))}
+        </tbody></table></div>
+        <p className="panel-note">
+          CAPTURED_EMPTY est une observation réelle et reste distincte d&apos;une
+          donnée manquante. Git contient {observatory.invariants.raw_payloads_in_git}{" "}
+          payload brut ; les corps sont stockés dans R2 uniquement.
+        </p>
+      </section>
+
+      <section className="two-column">
+        <article className="panel storage-card">
+          <div className="panel-head">
+            <div><span>R2 append-only</span><h2>Objets bruts et replay</h2></div>
+            <StatusPill value={observatory.r2.replay_status} />
+          </div>
+          <dl>
+            <div><dt>Namespace</dt><dd>{observatory.r2.namespace}</dd></div>
+            <div><dt>Objets ajoutés</dt><dd>{observatory.r2.objects_added}</dd></div>
+            <div><dt>Objets vérifiés</dt><dd>{observatory.r2.verified}</dd></div>
+            <div><dt>Volume</dt><dd>{bytes(observatory.r2.bytes)}</dd></div>
+            <div><dt>Lag R2</dt><dd>{observatory.r2.lag}</dd></div>
+            <div><dt>Suppressions</dt><dd>{observatory.r2.deletions}</dd></div>
+          </dl>
+        </article>
+        <article className="panel storage-card">
+          <div className="panel-head">
+            <div><span>Projection relationnelle</span><h2>PostgreSQL sans payload lourd</h2></div>
+            <StatusPill value={observatory.postgresql.reconstruction_status} />
+          </div>
+          <dl>
+            <div><dt>Migration</dt><dd>{observatory.postgresql.migration}</dd></div>
+            <div><dt>Tables</dt><dd>{observatory.postgresql.tables}</dd></div>
+            <div><dt>Inserts</dt><dd>{observatory.postgresql.inserts}</dd></div>
+            <div><dt>Doublons évités</dt><dd>{observatory.postgresql.duplicates_avoided}</dd></div>
+            <div><dt>Lag PostgreSQL</dt><dd>{observatory.postgresql.lag}</dd></div>
+            <div><dt>Corps de payload</dt><dd>{observatory.postgresql.payload_body_rows}</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Gates par fixture puis agrégés</span><h2>Qualité prospective</h2></div>
+          <StatusPill value={`${observatory.temporal.gates}_TEMPORAL_GATES`} />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Gate</th><th>Statut</th><th>Passées</th><th>Total</th><th>Preuve attendue</th></tr></thead><tbody>
+          {gates.map(([name, gate]) => (
+            <tr key={name}>
+              <td>{name}</td>
+              <td><StatusPill value={gate.status} /></td>
+              <td>{gate.passed}</td>
+              <td>{gate.total}</td>
+              <td>{gate.reason}</td>
+            </tr>
+          ))}
+        </tbody></table></div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Protocoles H11 gelés</span><h2>Progression sans conclusion prématurée</h2></div>
+          <StatusPill value="MINIMUM_SAMPLE_ENFORCED" />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>ID</th><th>Hypothèse</th><th>Données requises</th><th>Observations</th><th>Minimum</th><th>Couverture</th><th>Première analyse</th><th>Statut</th></tr></thead><tbody>
+          {observatory.hypotheses.map((hypothesis) => (
+            <tr key={hypothesis.id}>
+              <td>{hypothesis.id}</td>
+              <td>{hypothesis.title}</td>
+              <td>{hypothesis.required_data.join(", ")}</td>
+              <td>{hypothesis.observations}</td>
+              <td>{hypothesis.minimum_support}</td>
+              <td>{pct(hypothesis.coverage)}</td>
+              <td>{dateTime(hypothesis.first_possible_analysis_at)}</td>
+              <td><StatusPill value={hypothesis.status} /></td>
+            </tr>
+          ))}
+        </tbody></table></div>
+        <p className="panel-note">
+          Les huit protocoles restent gelés. L&apos;observatoire accumule une
+          mémoire point-in-time ; il ne valide ni pattern, ni stratégie, ni
+          avantage de marché.
+        </p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Questions de recherche</span><h2>Cartes d’observation</h2></div>
+          <StatusPill value="NO_PREMATURE_CONCLUSION" />
+        </div>
+        <div className="cost-grid">
+          {observatory.research_cards.map((card) => (
+            <article key={card.title}>
+              <span>{card.title}</span>
+              <strong>{card.accumulated}</strong>
+              <small>{card.required_data.join(" + ")} · {card.status.replaceAll("_", " ")} · première analyse {dateTime(card.first_possible_analysis_at)}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Research vs Production</span><h2>Aucune décision lorsque zéro candidat existe</h2></div>
+          <StatusPill value={observatory.invariants.production_status} />
+        </div>
+        <EmptyState
+          title="Zéro décision de pari"
+          text={`${observatory.candidates} candidat · ${observatory.decisions} décision · REAL_BETS=${String(observatory.invariants.real_bets)} · NO_BET_DEFAULT=${String(observatory.invariants.no_bet_default)}.`}
+          label="NO OUTPUT"
+        />
+        <p className="panel-note">
+          SOCIAL_PUBLISHING_ENABLED={String(observatory.invariants.social_publishing_enabled)}{" "}
+          · DEMO_MODE_ENABLED={String(observatory.invariants.demo_mode_enabled)}{" "}
+          · STORAGE_PAUSED={String(observatory.invariants.storage_paused)}{" "}
+          · P3/P4_PAUSED={String(observatory.invariants.p3_p4_paused)}.
+        </p>
+      </section>
+    </>
   );
 }
 

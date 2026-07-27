@@ -1,0 +1,18 @@
+{
+  "schema_version": "social-export-v3",
+  "kind": "PROSPECTIVE_OBSERVATORY_UPDATE",
+  "generated_at": null,
+  "status": "WAITING_FOR_FIRST_DUE_WINDOW",
+  "fixtures_tracked": 0,
+  "windows_due": 0,
+  "windows_captured": 0,
+  "provider_calls": 0,
+  "odds_api_credits": 0,
+  "message": "L’observatoire attend ses premières fenêtres réellement dues. Aucune conclusion sportive ou décision de pari.",
+  "negative_results_included": true,
+  "publishing_enabled": false,
+  "external_networks_connected": false,
+  "production_status": "PRODUCTION_LOCKED",
+  "real_bets": false,
+  "demo_mode_enabled": false
+}

@@ -546,3 +546,47 @@ Conserver `30282406035` comme preuve initiale. Pour la revue finale, exiger :
 Pour rafraîchir Robin Live depuis un artefact de validation, définir en plus
 `JALON11_REPORT_ROOT` vers sa racine. Toujours conserver
 `COCKPIT_MATCHUP_ONLY=1` afin de ne modifier que `generatedAt` et `matchupLab`.
+
+## Jalon 12 — Observatoire prospectif
+
+Politique : `configs/prospective_observatory_v1.json`. Migration :
+`0009_jalon12_observatory`. Verrou :
+`prospective-deep-state`.
+
+Ordre d’exploitation :
+
+1. `prospective-fixture-registry.yml` enregistre les fixtures officielles ;
+2. `prospective-deep-scheduler.yml` publie les fenêtres dues et le budget ;
+3. les workflows player, lineup et odds capturent uniquement les fenêtres dues ;
+4. R2 reçoit le payload brut append-only et son reçu hashé ;
+5. PostgreSQL indexe et projette sans corps de payload ;
+6. `prospective-r2-replay-audit.yml` rejoue sans fournisseur ;
+7. `prospective-gate-report.yml` produit le rapport compact et Robin Live.
+
+CLI canonique :
+
+```powershell
+python scripts/run_prospective_observatory.py fixture-registry --help
+python scripts/run_prospective_observatory.py scheduler --help
+python scripts/run_prospective_observatory.py capture-player --help
+python scripts/run_prospective_observatory.py capture-lineup --help
+python scripts/run_prospective_observatory.py capture-odds --help
+python scripts/run_prospective_observatory.py replay-audit --help
+python scripts/run_prospective_observatory.py gate-report --help
+```
+
+`windows_due=0` doit terminer sans appel. Une fenêtre dépassée devient
+`MISSED_WINDOW`; un retry tardif reste `LATE_RETRY` et ne ferme pas le cutoff.
+
+Rafraîchissement cockpit borné :
+
+```powershell
+$env:COCKPIT_PROSPECTIVE_ONLY = "1"
+$env:PROSPECTIVE_REPORT_ROOT = "<répertoire de rapports compacts>"
+python scripts/build_cockpit_snapshot.py
+pnpm --dir cockpit test
+```
+
+Le builder refuse toute source sans `PRODUCTION_LOCKED`, avec pari réel,
+publication sociale, démo active ou décision non nulle. Voir
+`docs/prospective-observatory/OBSERVATORY-OPERATIONS.md`.

@@ -466,3 +466,40 @@ PostgreSQL est à `0008_jalon11_deep_football`, avec deux passages de 304 preuve
 0 nouvel objet, 0 suppression et 0 mutation. Le verdict scientifique reste
 `JALON_11_BLOCKED_BY_DATA_GATES`; aucun candidat, aucune décision et aucune mise
 n'ont été créés.
+
+## Jalon 12 — Observatoire prospectif R2-first
+
+Le développement s’effectue sur
+`codex/jalon-12-prospective-deep-data-observatory`. La politique canonique est
+`configs/prospective_observatory_v1.json` et la migration attendue est
+`0009_jalon12_observatory`.
+
+Le namespace `prospective-deep-data/schema-v1` devient la source primaire des
+nouveaux payloads bruts prospectifs. Git conserve zéro payload brut et
+PostgreSQL zéro corps volumineux. Le snapshot compact initial est
+`WAITING_FOR_FIRST_DUE_WINDOW`, avec la provenance explicite
+`NO_PROSPECTIVE_CAPTURE_YET`; il ne revendique aucune fixture, lineup,
+blessure, cote ou décision avant une capture réelle.
+
+Le pilote P0 est la Ligue 1 sur trente jours et trois journées au maximum. Les
+fenêtres ont une tolérance gelée d’une heure, avec cutoff toujours strictement
+antérieur au kickoff, afin de couvrir chaque minute avec le scheduler horaire.
+Les plafonds cumulés du pilote
+sont 5 000 appels API-Football et 250 crédits The Odds API, avec réserves
+externes de 5 000, 4 000 et 80 crédits proches du kickoff. H11-001 à H11-008
+restent gelées à `WAITING_FOR_OBSERVATIONS`.
+
+Les invariants restent :
+
+```text
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```
+
+Aucun verdict de readiness final n’est déclaré avant pilote réel, projection,
+replay R2 et CI verte.

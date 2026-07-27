@@ -55,6 +55,7 @@ class ApiFootballProvider(JsonHttpProvider):
         search: str | None = None,
         country: str | None = None,
         season: int | None = None,
+        current: bool | None = None,
     ) -> ProviderResult:
         params: dict[str, object] = {}
         if league_id is not None:
@@ -67,6 +68,8 @@ class ApiFootballProvider(JsonHttpProvider):
             params["country"] = country
         if season is not None:
             params["season"] = season
+        if current is not None:
+            params["current"] = "true" if current else "false"
         return self._request("/leagues", params=params)
 
     def get_seasons(self) -> ProviderResult:
@@ -121,6 +124,8 @@ class ApiFootballProvider(JsonHttpProvider):
         season: int | None = None,
         fixture_id: int | None = None,
         status: str | None = None,
+        date_from: str | None = None,
+        date_to: str | None = None,
     ) -> ProviderResult:
         params: dict[str, object]
         if fixture_id is not None:
@@ -132,6 +137,10 @@ class ApiFootballProvider(JsonHttpProvider):
             }
         if status:
             params["status"] = status
+        if date_from:
+            params["from"] = date_from
+        if date_to:
+            params["to"] = date_to
         return self._request("/fixtures", params=params)
 
     def get_results(self) -> ProviderResult:

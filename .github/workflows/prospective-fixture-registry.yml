@@ -1,0 +1,82 @@
+name: "60 - Registre quotidien des fixtures prospectives"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Interroger API-Football après estimation bornée"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "7 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prospective-deep-state
+  cancel-in-progress: false
+
+jobs:
+  registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - name: Installer le runtime prospectif
+        run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Estimer le registre Ligue 1
+        run: >-
+          python scripts/run_prospective_observatory.py fixture-registry
+          --estimate
+          --max-attempts 1
+          --policy "$PROSPECTIVE_POLICY"
+          --competition "Ligue 1"
+          --output artifacts/prospective-observatory
+      - name: Appliquer les migrations
+        if: github.event_name == 'schedule' || inputs.execute
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          alembic upgrade head
+          alembic current | grep -q "0009"
+      - name: Enregistrer les fixtures réelles dans R2 et PostgreSQL
+        if: github.event_name == 'schedule' || inputs.execute
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_prospective_observatory.py fixture-registry
+          --execute
+          --max-attempts 1
+          --policy "$PROSPECTIVE_POLICY"
+          --estimate-file artifacts/prospective-observatory/fixture-registry-estimate.json
+          --competition "Ligue 1"
+          --output artifacts/prospective-observatory
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prospective-fixture-registry-${{ github.run_id }}
+          path: artifacts/prospective-observatory/*.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
