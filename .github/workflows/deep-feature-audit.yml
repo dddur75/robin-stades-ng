@@ -1,0 +1,75 @@
+name: "50 - Deep Feature Audit"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer le runtime
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Vérifier les verrous cache-only
+        run: |
+          test "$API_FOOTBALL_CALLS_ALLOWED" = "0"
+          test "$ODDS_API_CREDITS_ALLOWED" = "0"
+          test "$STORAGE_PAUSED" = "true"
+          test "$PRODUCTION_LOCKED" = "true"
+          test "$REAL_BETS" = "false"
+          test "$DEMO_MODE_ENABLED" = "false"
+      - name: Auditer la couverture sans fournisseur
+        run: >-
+          python scripts/run_deep_football.py audit
+          --state data/historical
+          --output artifacts/deep-feature-audit
+          --source-commit "$(git -C .historical-registry rev-parse HEAD)"
+          --main-commit "${{ github.sha }}"
+          --main-ci-run-id "${{ github.run_id }}"
+      - name: Vérifier le budget nul
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(
+              Path("artifacts/deep-feature-audit/audit-summary.json").read_text()
+          )
+          assert report["provider_calls"] == 0
+          assert report["odds_api_credits"] == 0
+          assert (
+              report["invariants"]["production_status"]
+              == "PRODUCTION_LOCKED"
+          )
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deep-feature-audit-${{ github.run_id }}
+          path: artifacts/deep-feature-audit
+          retention-days: 90
+          compression-level: 9

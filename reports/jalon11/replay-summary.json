@@ -1,0 +1,25 @@
+{
+  "schema_version": "jalon11-replay-summary-v1",
+  "mode": "REPLAY",
+  "identical": true,
+  "status": "REPLAY_FULL_HASH_VERIFIED",
+  "code_revision": "31ec41632b72cd93676f5b1d8592e1bba429e937",
+  "primary_result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+  "result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+  "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+  "parquet_sha256": "d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673",
+  "parquet_bytes": 2000155,
+  "ledger_head_hash": "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
+  "hash_comparisons": {
+    "campaign_result_hash": true,
+    "dataset_hash": true,
+    "ledger_hash_chain": true,
+    "parquet_sha256": true
+  },
+  "provider_calls": 0,
+  "odds_api_credits": 0,
+  "business_duplicates": 0,
+  "data_loss": 0,
+  "hash_mismatches": 0,
+  "production_status": "PRODUCTION_LOCKED"
+}

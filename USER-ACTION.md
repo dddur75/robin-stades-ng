@@ -63,3 +63,43 @@ pourra devenir : `Valider puis fusionner la PR du Jalon 10.`
 
 Aucun secret, crédit fournisseur, connexion sociale, permission de pari ou
 reprise P3/P4 n’est demandé. La production reste `PRODUCTION_LOCKED`.
+
+## Jalon 11
+
+Le calcul cache-only et son replay démontrent 10 732 fixtures équipe/marché,
+7 081 évaluations chronologiques, aucun gain primaire, zéro watchlist,
+zéro candidat, zéro décision et zéro coût fournisseur. `TEAM_GATE=PARTIAL`
+limite 11A et 11F aux diagnostics descriptifs ; 11E termine l'évaluation de
+gates avec huit hypothèses bloquées. Les familles profondes restent honnêtement
+bloquées.
+
+Le replay vérifie les quatre hashes campagne, dataset, Parquet et ledger sans
+écart. Le preflight à 0007 reste conservé comme photographie historique. Le run
+vert `30282406035` vérifie désormais Neon à
+`0008_jalon11_deep_football`, deux passages idempotents de 304 preuves
+compactes et R2 à 25 453 / 25 453 objets avec lag nul.
+
+Le test principal est un amendement correctif non promouvable, enregistré après
+les diagnostics team-only et avant ce run autoritatif ; il n'est pas présenté
+comme préenregistré. Le verdict reste `JALON_11_BLOCKED_BY_DATA_GATES`.
+
+Tant que la PR brouillon n'est pas complète et verte :
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Après validation finale de la CI et passage explicite de la PR à l'état prêt,
+l'unique action pourra être :
+
+`Valider puis fusionner la PR du Jalon 11.`
+
+Aucun crédit fournisseur, reprise P3/P4, secret, connexion sociale, permission
+de pari ou déverrouillage de production n'est demandé.
+
+### Revue finale Jalon 11
+
+La revue adversariale et le run cache-only `30290942945` sont verts sur le
+correctif `31ec416`. Le replay, Neon `0008`, R2, le ledger à 27 événements et
+Robin Live sont vérifiés. La PR doit être fusionnée par l'automatisation de
+clôture uniquement après son passage en Ready et le dernier contrôle GitHub.
+
+`AUCUNE ACTION UTILISATEUR REQUISE`

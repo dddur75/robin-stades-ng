@@ -213,6 +213,23 @@ def test_replay_est_relu_et_verifie() -> None:
     assert client.get_calls == reads_before + 1
 
 
+def test_cle_distante_existante_ne_peut_jamais_etre_ecrasee() -> None:
+    client = FakeS3()
+    client.objects["derived/content-addressed"] = b"existing"
+    client.metadata["derived/content-addressed"] = {
+        "sha256": hashlib.sha256(b"existing").hexdigest()
+    }
+    adapter = ObjectStorageAdapter(client, "private")
+
+    with pytest.raises(ObjectStorageIntegrityError) as raised:
+        adapter.upload("derived/content-addressed", b"different")
+
+    assert raised.value.code == "OBJECT_STORAGE_IMMUTABLE_KEY_CONFLICT"
+    assert raised.value.hash_mismatch is True
+    assert client.objects["derived/content-addressed"] == b"existing"
+    assert client.put_calls == 0
+
+
 def test_audit_d_un_objet_absent_echoue_sans_le_creer() -> None:
     client = FakeS3()
     adapter = ObjectStorageAdapter(client, "private")

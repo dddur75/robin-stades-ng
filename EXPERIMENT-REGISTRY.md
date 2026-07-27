@@ -48,7 +48,7 @@ Le choix des features, calibrations et seuils s'arrête avant l'ouverture de
 | Expérience | Comparateur | Unité | Décision actuelle |
 |---|---|---|---|
 | HGB équipe | multinomiale équipe | fixture exacte | `INCONCLUSIVE` |
-| Poisson | marché déviggué | fixture exacte | à compléter si prix valides |
+| Poisson | marché déviggué | fixture exacte | non complété dans le Jalon 7 |
 | Dixon–Coles | Poisson | fixture exacte | `INCONCLUSIVE` |
 | joueurs pré-lineup | équipe | fixture exacte | `INCONCLUSIVE` |
 | post-lineup | joueurs pré-lineup | fixture exacte | inférieur, non promu |
@@ -102,3 +102,46 @@ Sous-verdict :
 familles équipe, calendrier/repos, joueurs, tactique et autres marchés ne font
 pas partie des 700 règles. Le contrôle Bundesliga/Serie A réutilise le corpus
 exposé et ne constitue pas un holdout externe indépendant.
+
+## Expériences Jalon 11
+
+| Expérience | Question | Échantillon | Résultat |
+|---|---|---:|---|
+| 11A principal correctif, amendement 1 | marché + équipe améliore-t-il le marché recalibré train-only ? | 7 081 | Δ LL +0,001702 ; IC traverse zéro ; non promouvable |
+| 11A diagnostics post-contrat initial | les challengers team-only ou GBT incrémental falsifient-ils le résultat ? | 7 081 | 5 diagnostics antérieurs à l'amendement, tous non promouvables |
+| 11B disponibilité | les absences apportent-elles un résidu ? | 0 | `DATA_GATE_BLOCKED` |
+| 11C lineup | la continuité apporte-t-elle un résidu ? | 0 | `DATA_GATE_BLOCKED` |
+| 11D formations | les interactions tactiques sont-elles stables ? | 0 | `DATA_GATE_BLOCKED` |
+| 11E H11-001…008 | les intuitions propriétaire sont-elles éligibles ? | 0 | gate evaluation terminée, huit bloquées |
+| 11F transfert équipe | l'effet équipe se transfère-t-il entre ligues ? | 5 rotations, N 2 743–3 040 | descriptif, 0 positive, 0 survivante |
+| 11G intégrée | B2–B4 améliorent-ils B0/B1 ? | 0 | `DATA_GATE_BLOCKED` |
+| contrôles négatifs | un faux edge peut-il être promu ? | 12 contrôles | aucun faux edge promu |
+| replay | les résultats sont-ils déterministes ? | 1 replay | hash identique |
+
+Paramètres : seed 11011, expanding walk-forward, 999 permutations, 729 dates
+clusterisées, BH par famille et globale. Le primaire donne p CR1 `0,9638269`,
+q famille `0,9638269` et q globale `1,0`. Huit hypothèses bloquées sont incluses
+dans la multiplicité.
+
+Le test principal n'est pas préenregistré : l'amendement correctif
+`1.0.0-amendment-1` a été enregistré après les diagnostics team-only et avant
+le run autoritatif `30282406035`. Son hash est
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`;
+il ne peut servir à une promotion.
+
+Le contrôle `impossible_condition` est réellement calculé sur 7 081 lignes :
+le prédicat `OUTCOME_IS_HOME_AND_AWAY` a un support nul et le statut
+`EXECUTED_ZERO_SUPPORT_NO_PROMOTION`.
+
+Le replay complet conserve le hash
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`
+et vérifie les quatre hashes campagne, dataset, Parquet et ledger avec zéro
+doublon, perte, mismatch, appel et crédit.
+
+La tête ledger est
+`90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`.
+Le même run valide PostgreSQL `0008` en deux passages idempotents de 304 objets
+et R2 à 25 453 / 25 453 objets, lag nul.
+
+Verdict : `JALON_11_BLOCKED_BY_DATA_GATES`. Aucun résultat historique n'est
+qualifié de `VALIDATED`.

@@ -21,6 +21,7 @@ type PageKey =
   | "featureLab"
   | "modelLab"
   | "modelArena"
+  | "matchupLab"
   | "externalValidation"
   | "criticalClosure"
   | "strategyLab"
@@ -45,6 +46,7 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "featureLab", label: "Feature Lab", glyph: "F" },
   { key: "modelLab", label: "Model Lab", glyph: "M" },
   { key: "modelArena", label: "Model Arena", glyph: "A" },
+  { key: "matchupLab", label: "Matchup Lab", glyph: "H" },
   { key: "externalValidation", label: "External Validation", glyph: "X" },
   { key: "criticalClosure", label: "Market & Storage", glyph: "R" },
   { key: "strategyLab", label: "Strategy Lab", glyph: "S" },
@@ -137,6 +139,11 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     eyebrow: "Validation appariée · cross-fit · bootstrap",
     title: "Scientific Model Arena",
     note: "Comparaisons exactes, intervalles groupés et contrôles négatifs sans promotion automatique.",
+  },
+  matchupLab: {
+    eyebrow: "Jalon 11 · features football profondes · cache-only",
+    title: "Matchup Lab",
+    note: "Couverture, hypothèses préréglées et résultats appariés au marché, sans promotion automatique.",
   },
   externalValidation: {
     eyebrow: "Multi-ligues · protocole gelé · aucun retuning",
@@ -422,6 +429,7 @@ export default function Home() {
           {page === "featureLab" && <FeatureLab />}
           {page === "modelLab" && <ModelLab />}
           {page === "modelArena" && <ModelArena />}
+          {page === "matchupLab" && <MatchupLab />}
           {page === "externalValidation" && <ExternalValidation />}
           {page === "criticalClosure" && <CriticalClosure />}
           {page === "strategyLab" && <HistoricalStrategyLab />}
@@ -571,6 +579,264 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
   );
 }
 
+type MatchupLabSnapshot = {
+  version: string;
+  dataStatus: string;
+  origin: string;
+  verdict: string;
+  coverage: {
+    marketRows: number;
+    pairedEvaluationRows: number;
+    competitions: Array<{
+      competition: string;
+      seasons: number[];
+      teamFixtures: number;
+      playerFixtures: number;
+      lineupFixtures: number;
+      injuryRows: number;
+      footednessObserved: number;
+    }>;
+    gates: Array<{ name: string; status: string; reasons: string[] }>;
+    contentTotals: Record<string, number>;
+  };
+  dataset: {
+    name: string;
+    version: string;
+    rows: number;
+    features: string[];
+    featureCutoff: string;
+    researchMode: string;
+    source: string[];
+    pairing: {
+      marketRows: number;
+      pairedRows: number;
+      duplicateKeys: number;
+      leftAttrition: number;
+      rightAttrition: number;
+      exactKeyset: boolean;
+    };
+    blocked: Array<{ name: string; reason: string }>;
+    hash: string;
+    parquetHash: string;
+    parquetBytes: number;
+    heavyArtifactLocation: string;
+  };
+  experiments: {
+    campaigns: Array<{
+      id: string;
+      title: string;
+      status: string;
+      requiredGates: string[];
+      blockingGates: string[];
+      cacheOnly: boolean;
+    }>;
+    ownerHypotheses: Array<{
+      id: string;
+      title: string;
+      family: string;
+      eligibility: string;
+      blockingGates: string[];
+      minimumSupport: number;
+      cutoff: string;
+      frozenBeforeResults: boolean;
+      preregistrationHash: string;
+    }>;
+    eligible: number;
+    blocked: number;
+  };
+  results: {
+    campaign: string;
+    status: string;
+    models: Array<{
+      id: string;
+      logLoss: number | null;
+      brier: number | null;
+      deltaLogLoss: number | null;
+      deltaBrier: number | null;
+      calibrationError: number | null;
+      reference: string;
+      status: string;
+      interpretation: string;
+    }>;
+    folds: Array<{
+      season: number;
+      matches: number;
+      primaryDeltaLogLoss: number | null;
+      primaryDeltaBrier: number | null;
+      teamOnlyLogitDeltaLogLoss: number | null;
+      teamOnlyBoostingDeltaLogLoss: number | null;
+      marketRecalibrationDeltaLogLoss: number | null;
+      incrementalBoostingDeltaLogLoss: number | null;
+      outcome: string;
+    }>;
+    primaryForInference: string;
+    modelSelectionOnTest: boolean;
+    roi: string;
+    statistics: Record<string, number>;
+    pairedComparator: {
+      reference: string;
+      challenger: string;
+      support: number;
+      deltaLogLoss: number | null;
+      deltaBrier: number | null;
+      bootstrapCi95: number[];
+      cr1OneSidedP: number | null;
+      signFlipP: number | null;
+      familyQ: number | null;
+      globalQ: number | null;
+      clusters: number;
+      promotionEligible: boolean;
+    };
+    whereModelLost: Array<{
+      season: number;
+      matches: number;
+      primaryDeltaLogLoss: number | null;
+      primaryDeltaBrier: number | null;
+      outcome: string;
+    }>;
+    crossLeague: {
+      status: string;
+      rotations: Array<{
+        id: string;
+        discoveryLeagues: string[];
+        validationLeagues: string[];
+        support: number;
+        deltaLogLoss: number | null;
+        deltaBrier: number | null;
+        descriptiveDirectionPositive: boolean;
+        promotionEligible: boolean;
+      }>;
+      rotationCount: number;
+      minimumSupport: number;
+      maximumSupport: number;
+      deltaLogLossRange: number[];
+      survivors: number;
+      descriptivePositiveRotations: number;
+      limitations: string[];
+      promotionEligible: boolean;
+    };
+    teamGate: string;
+    resultHash: string;
+  };
+  negativeControls: Array<{
+    name: string;
+    status: string;
+    support: number;
+    category: string;
+    promotionEligible: boolean;
+  }>;
+  negativeControlSummary: {
+    total: number;
+    executedOrGuard: number;
+    dataGated: number;
+  };
+  redTeam: {
+    promotionAllowed: boolean;
+    reason: string;
+    objections: Array<{ name: string; status: string }>;
+  };
+  promotion: {
+    status: string;
+    promoted: boolean;
+    criteria: Array<{ name: string; passed: boolean }>;
+    failedCriteria: string[];
+  };
+  watchlist: { status: string; count: number; notABet: boolean };
+  decision: {
+    status: string;
+    candidateCount: number;
+    decisions: number;
+    stakeUnits: number;
+    shadowBankrollBefore: number;
+    shadowBankrollAfter: number;
+  };
+  replay: {
+    status: string;
+    identical: boolean;
+    providerCalls: number;
+    oddsApiCredits: number;
+    businessDuplicates: number;
+    dataLoss: number;
+    hashMismatches: number;
+    hashComparisons: Array<{ name: string; matched: boolean }>;
+    resultHash: string;
+  };
+  ledger: {
+    status: string;
+    events: number;
+    headHash: string;
+    eventCounts: Record<string, number>;
+  };
+  provenance: {
+    sourceCommit: string;
+    mainCommit: string;
+    datasetHash: string;
+    campaignResultHash: string;
+    ledgerHeadHash: string;
+    marketObservedTimeStatus: string;
+  };
+  costs: {
+    providerCalls: number;
+    oddsApiCredits: number;
+    historicalBytes: number;
+    databaseBytes: number;
+    r2ExpectedBytes: number;
+    r2LagObjects: number;
+    storageStatus: string;
+    secondaryTasks: string;
+  };
+  locks: {
+    productionStatus: string;
+    realBets: boolean;
+    noBetDefault: boolean;
+    socialPublishingEnabled: boolean;
+    demoModeEnabled: boolean;
+  };
+  caveats: string[];
+};
+
+function matchupLabSnapshot() {
+  return (snapshot as unknown as { matchupLab: MatchupLabSnapshot }).matchupLab;
+}
+
+function shortHash(value: string) {
+  return value ? `${value.slice(0, 12)}…` : "—";
+}
+
+function score(value: number | null | undefined) {
+  return value == null ? "—" : value.toFixed(6);
+}
+
+function bytes(value: number) {
+  if (!value) return "—";
+  return `${(value / 1_000_000).toFixed(2)} MB`;
+}
+
+function RobinLiveMatchupSummary() {
+  const matchup = matchupLabSnapshot();
+  const comparator = matchup.results.pairedComparator;
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <div><span>Jalon 11 · recherche historique</span><h2>Matchup Lab</h2></div>
+        <SourceBadge origin={matchup.origin} />
+      </div>
+      <div className="cost-grid">
+        <article><span>Verdict</span><strong>{matchup.verdict}</strong><small>aucune promotion implicite</small></article>
+        <article><span>Échantillon apparié</span><strong>{matchup.coverage.pairedEvaluationRows.toLocaleString("fr-FR")}</strong><small>évaluation chronologique 2022–2025</small></article>
+        <article><span>Δ Log Loss primaire</span><strong>{score(comparator.deltaLogLoss)}</strong><small>vs marché recalibré · positif = moins bon</small></article>
+        <article><span>Watchlist</span><strong>{matchup.watchlist.count}</strong><small>{matchup.watchlist.status.replaceAll("_", " ")}</small></article>
+      </div>
+      <p className="panel-note">
+        {`Preuve historique cache-only · TEAM_GATE ${matchup.results.teamGate}. `}
+        Le challenger primaire ne bat pas le marché recalibré ; aucune donnée
+        démo n&apos;est présentée comme live et aucune décision de pari n&apos;est
+        créée.
+      </p>
+    </section>
+  );
+}
+
 export function RobinLive() {
   const research = snapshot.patternResearch;
   const lab = research.laboratory;
@@ -653,6 +919,8 @@ export function RobinLive() {
           <article><span>Rejetées de la promotion</span><strong>{research.strategies.promotionRejected}</strong><small>{research.strategies.rejectionReason}</small></article>
         </div>
       </section>
+
+      <RobinLiveMatchupSummary />
 
       <section className="panel">
         <div className="panel-head">
@@ -1250,6 +1518,427 @@ function ModelLab() {
         {models.map((model) => <tr key={model.name}><td>{model.name}</td><td>{model.dataset ?? "—"}</td><td>{model.calibration ?? "—"}</td><td>{model.logLoss == null ? "—" : model.logLoss.toFixed(4)}</td><td>{model.brier == null ? "—" : model.brier.toFixed(4)}</td><td>{model.ece == null ? "—" : model.ece.toFixed(4)}</td><td><StatusPill value={model.status} /></td><td><SourceBadge origin={model.origin} /></td></tr>)}
       </tbody></table></div>
     </section>
+  );
+}
+
+function MatchupLab() {
+  const matchup = matchupLabSnapshot();
+  const readyGates = matchup.coverage.gates.filter(
+    (gate) => gate.status === "READY",
+  ).length;
+  const failedPromotionCriteria = matchup.promotion.criteria.filter(
+    (criterion) => !criterion.passed,
+  ).length;
+  const allHypothesesFrozen =
+    matchup.experiments.ownerHypotheses.length > 0 &&
+    matchup.experiments.ownerHypotheses.every(
+      (hypothesis) =>
+        hypothesis.frozenBeforeResults &&
+        hypothesis.minimumSupport > 0 &&
+        hypothesis.cutoff !== "UNSPECIFIED" &&
+        hypothesis.preregistrationHash.length === 64,
+    );
+  const referenceModelCount = matchup.results.models.filter((model) =>
+    model.id.startsWith("B0_"),
+  ).length;
+  const challengerModelCount =
+    matchup.results.models.length - referenceModelCount;
+  const lostFoldCount = matchup.results.folds.filter(
+    (fold) => fold.outcome === "LOST_TO_RECALIBRATED_MARKET",
+  ).length;
+  return (
+    <>
+      <section className="metric-grid">
+        <Metric label="Statut Jalon 11" value={matchup.verdict} detail="aucune promotion automatique" tone="amber" />
+        <Metric label="Fixtures dataset" value={matchup.dataset.rows.toLocaleString("fr-FR")} detail="TEAM_PREMATCH · cinq ligues · six saisons" />
+        <Metric label="Évaluation appariée" value={matchup.coverage.pairedEvaluationRows.toLocaleString("fr-FR")} detail="marché et modèles sur les mêmes matchs" tone="cyan" />
+        <Metric label="Gates prêts" value={`${readyGates}/${matchup.coverage.gates.length}`} detail="les gates temporels restent bloqués" />
+        <Metric label="Watchlist" value={String(matchup.watchlist.count)} detail="ceci n'est pas un pari" />
+        <Metric label="Appels / crédits" value={`${matchup.costs.providerCalls} / ${matchup.costs.oddsApiCredits}`} detail="campagne cache-only" tone="cyan" />
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Data Gates</span><h2>Couverture et temporalité non contournables</h2></div>
+          <SourceBadge origin={matchup.origin} />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Gate</th><th>Statut</th><th>Preuve ou blocage</th></tr></thead><tbody>
+          {matchup.coverage.gates.map((gate) => (
+            <tr key={gate.name}>
+              <td>{gate.name}</td>
+              <td><StatusPill value={gate.status} /></td>
+              <td>{gate.reasons.length ? gate.reasons.join(" · ") : "Aucune preuve publiée dans ce snapshot."}</td>
+            </tr>
+          ))}
+        </tbody></table></div>
+        <p className="panel-note">
+          Un contenu rétrospectif disponible ne vaut pas preuve point-in-time.
+          Les lineups, absences, formations et statistiques joueurs collectés
+          après match restent exclus des décisions pré-match.
+        </p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Grain ligue × saison</span><h2>Couverture réellement observée</h2></div>
+          <StatusPill value={matchup.dataStatus} />
+        </div>
+        {matchup.coverage.competitions.length ? (
+          <div className="table-wrap"><table><thead><tr><th>Compétition</th><th>Saisons</th><th>TEAM</th><th>PLAYER brut</th><th>LINEUP brut</th><th>Blessures</th><th>Pied sourcé</th></tr></thead><tbody>
+            {matchup.coverage.competitions.map((row) => (
+              <tr key={row.competition}>
+                <td>{row.competition}</td>
+                <td>{row.seasons.join(", ")}</td>
+                <td>{row.teamFixtures.toLocaleString("fr-FR")}</td>
+                <td>{row.playerFixtures.toLocaleString("fr-FR")}</td>
+                <td>{row.lineupFixtures.toLocaleString("fr-FR")}</td>
+                <td>{row.injuryRows.toLocaleString("fr-FR")} lignes</td>
+                <td>{row.footednessObserved.toLocaleString("fr-FR")}</td>
+              </tr>
+            ))}
+          </tbody></table></div>
+        ) : (
+          <EmptyState
+            title="Couverture Jalon 11 non publiée"
+            text="Le Cockpit n'invente aucune valeur de repli. Il attend un rapport Jalon 11 compact et vérifié."
+            label="NO OUTPUT"
+          />
+        )}
+      </section>
+
+      <section className="two-column">
+        <article className="panel">
+          <div className="panel-head">
+            <div><span>Feature Contract V2</span><h2>{matchup.dataset.name}</h2></div>
+            <StatusPill value={matchup.dataset.featureCutoff} />
+          </div>
+          <div className="schema-strip">
+            {matchup.dataset.features.length
+              ? matchup.dataset.features.map((feature) => <span key={feature}>{feature}</span>)
+              : <span>NO OUTPUT</span>}
+          </div>
+          <p className="panel-note">
+            Mode {matchup.dataset.researchMode.replaceAll("_", " ")} · source{" "}
+            {matchup.dataset.source.join(" + ") || "non publiée"} · cible exclue
+            des fenêtres roulantes.
+          </p>
+        </article>
+        <article className="panel storage-card">
+          <div className="panel-head">
+            <div><span>Dataset exact</span><h2>Pairing et artefact lourd</h2></div>
+            <StatusPill value={matchup.dataset.pairing.exactKeyset ? "EXACT_KEYSET" : "NOT_VERIFIED"} />
+          </div>
+          <dl>
+            <div><dt>Marché</dt><dd>{matchup.dataset.pairing.marketRows.toLocaleString("fr-FR")}</dd></div>
+            <div><dt>Appariées</dt><dd>{matchup.dataset.pairing.pairedRows.toLocaleString("fr-FR")}</dd></div>
+            <div><dt>Doublons clés</dt><dd>{matchup.dataset.pairing.duplicateKeys}</dd></div>
+            <div><dt>Attrition marché</dt><dd>{matchup.dataset.pairing.leftAttrition}</dd></div>
+            <div><dt>Attrition équipe</dt><dd>{matchup.dataset.pairing.rightAttrition.toLocaleString("fr-FR")}</dd></div>
+            <div><dt>Parquet</dt><dd>{bytes(matchup.dataset.parquetBytes)}</dd></div>
+            <div><dt>Stockage</dt><dd>{matchup.dataset.heavyArtifactLocation}</dd></div>
+            <div><dt>Hash dataset</dt><dd>{shortHash(matchup.dataset.hash)}</dd></div>
+            <div><dt>Hash Parquet</dt><dd>{shortHash(matchup.dataset.parquetHash)}</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Datasets conditionnels</span><h2>Ce qui reste volontairement bloqué</h2></div>
+          <StatusPill value="DATA_GATES_ENFORCED" />
+        </div>
+        {matchup.dataset.blocked.length ? (
+          <div className="table-wrap"><table><thead><tr><th>Dataset</th><th>Blocage factuel</th></tr></thead><tbody>
+            {matchup.dataset.blocked.map((item) => <tr key={item.name}><td>{item.name}</td><td>{item.reason}</td></tr>)}
+          </tbody></table></div>
+        ) : (
+          <EmptyState title="Aucun contrat conditionnel publié" text="L'absence d'un rapport ne débloque jamais une feature." label="NO OUTPUT" />
+        )}
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Campagnes 11A–11G</span><h2>Expériences et éligibilité</h2></div>
+          <StatusPill value={`${matchup.experiments.eligible}_ELIGIBLE_${matchup.experiments.blocked}_BLOCKED`} />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Campagne</th><th>Objet</th><th>Statut</th><th>Gates requis</th><th>Gates bloquants</th><th>Mode</th></tr></thead><tbody>
+          {matchup.experiments.campaigns.map((campaign) => (
+            <tr key={campaign.id}>
+              <td>{campaign.id}</td>
+              <td>{campaign.title}</td>
+              <td><StatusPill value={campaign.status} /></td>
+              <td>{campaign.requiredGates.join(", ") || "aucun gate profond"}</td>
+              <td>{campaign.blockingGates.join(", ") || "—"}</td>
+              <td>{campaign.cacheOnly ? "CACHE_ONLY" : "BLOCKED"}</td>
+            </tr>
+          ))}
+        </tbody></table></div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Hypothèses du propriétaire</span><h2>Préréglage H11-001 à H11-008</h2></div>
+          <StatusPill value={allHypothesesFrozen ? "FROZEN_BEFORE_RESULTS" : "PREREGISTRATION_PROOF_INCOMPLETE"} />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>ID</th><th>Hypothèse</th><th>Famille</th><th>Support min.</th><th>Cutoff</th><th>Éligibilité</th><th>Preuve</th></tr></thead><tbody>
+          {matchup.experiments.ownerHypotheses.map((hypothesis) => (
+            <tr key={hypothesis.id}>
+              <td>{hypothesis.id}</td>
+              <td>{hypothesis.title}</td>
+              <td>{hypothesis.family}</td>
+              <td>{hypothesis.minimumSupport}</td>
+              <td>{hypothesis.cutoff.replaceAll("_", " ")}</td>
+              <td><StatusPill value={hypothesis.eligibility} /></td>
+              <td>{shortHash(hypothesis.preregistrationHash)}</td>
+            </tr>
+          ))}
+        </tbody></table></div>
+        <p className="panel-note">
+          {allHypothesesFrozen
+            ? "Chaque hypothèse est gelée avant lecture des résultats. Un gate fermé produit DATA_GATE_BLOCKED, jamais une simulation présentée comme preuve."
+            : "La preuve de préréglage est incomplète ; aucune hypothèse n’est présentée comme gelée ni testable."}
+        </p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Score Comparisons</span><h2>Comparison Table · marché et challengers</h2></div>
+          <StatusPill value={matchup.results.status} />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Référence / challenger</th><th>Référence exacte</th><th>Log Loss</th><th>Δ Log Loss</th><th>Brier</th><th>Δ Brier</th><th>Calibration</th><th>Interprétation</th></tr></thead><tbody>
+          {matchup.results.models.map((model) => (
+            <tr key={model.id}>
+              <td>{model.id}</td>
+              <td>{model.reference}</td>
+              <td>{score(model.logLoss)}</td>
+              <td>{score(model.deltaLogLoss)}</td>
+              <td>{score(model.brier)}</td>
+              <td>{score(model.deltaBrier)}</td>
+              <td>{score(model.calibrationError)}</td>
+              <td><StatusPill value={model.interpretation} /></td>
+            </tr>
+          ))}
+        </tbody></table></div>
+        <p className="panel-note">
+          {referenceModelCount} références de marché et {challengerModelCount}{" "}
+          challengers sont affichés. Un delta positif signifie une perte
+          probabiliste supérieure à la référence déclarée ; aucun challenger ne
+          franchit les gates de promotion.
+        </p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Paired Comparator</span><h2>Primaire vs marché recalibré train-only</h2></div>
+          <StatusPill value={matchup.results.pairedComparator.promotionEligible ? "PROMOTION_ELIGIBLE" : "NON_PROMOTABLE"} />
+        </div>
+        <div className="cost-grid">
+          <article><span>Référence</span><strong>{matchup.results.pairedComparator.reference}</strong><small>recalibration ajustée sur train uniquement</small></article>
+          <article><span>Challenger primaire</span><strong>{matchup.results.pairedComparator.challenger}</strong><small>sélection test-set = {String(matchup.results.modelSelectionOnTest)}</small></article>
+          <article><span>Δ Log Loss</span><strong>{score(matchup.results.pairedComparator.deltaLogLoss)}</strong><small>+0,001702 · défavorable</small></article>
+          <article><span>IC bootstrap 95 %</span><strong>{matchup.results.pairedComparator.bootstrapCi95.map((value) => score(value)).join(" · ") || "—"}</strong><small>{matchup.results.pairedComparator.clusters} dates groupées</small></article>
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Support</th><th>Δ Brier</th><th>CR1 p</th><th>Sign-flip p</th><th>q famille</th><th>q globale</th><th>TEAM_GATE</th></tr></thead><tbody>
+          <tr>
+            <td>{matchup.results.pairedComparator.support.toLocaleString("fr-FR")}</td>
+            <td>{score(matchup.results.pairedComparator.deltaBrier)}</td>
+            <td>{score(matchup.results.pairedComparator.cr1OneSidedP)}</td>
+            <td>{score(matchup.results.pairedComparator.signFlipP)}</td>
+            <td>{score(matchup.results.pairedComparator.familyQ)}</td>
+            <td>{score(matchup.results.pairedComparator.globalQ)}</td>
+            <td><StatusPill value={matchup.results.teamGate} /></td>
+          </tr>
+        </tbody></table></div>
+        <p className="panel-note">
+          La borne basse de l&apos;IC traverse zéro et le score moyen est
+          défavorable. TEAM_GATE reste PARTIAL : diagnostic descriptif autorisé,
+          promotion et décision live interdites.
+        </p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Where the Model Lost</span><h2>Décomposition chronologique appariée</h2></div>
+          <StatusPill value={`${lostFoldCount}_OF_${matchup.results.folds.length}_FOLDS_WORSE`} />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Saison test</th><th>Matchs</th><th>Primaire Δ Log Loss</th><th>Primaire Δ Brier</th><th>Marché recalibré Δ LL</th><th>Team-only logit Δ LL</th><th>Boosting incrémental Δ LL</th><th>Lecture</th></tr></thead><tbody>
+          {matchup.results.folds.map((fold) => (
+            <tr key={fold.season}>
+              <td>{fold.season || "—"}</td>
+              <td>{fold.matches.toLocaleString("fr-FR")}</td>
+              <td>{score(fold.primaryDeltaLogLoss)}</td>
+              <td>{score(fold.primaryDeltaBrier)}</td>
+              <td>{score(fold.marketRecalibrationDeltaLogLoss)}</td>
+              <td>{score(fold.teamOnlyLogitDeltaLogLoss)}</td>
+              <td>{score(fold.incrementalBoostingDeltaLogLoss)}</td>
+              <td><StatusPill value={fold.outcome} /></td>
+            </tr>
+          ))}
+        </tbody></table></div>
+      </section>
+
+      <section className="two-column">
+        <article className="panel">
+          <div className="panel-head">
+            <div><span>Robustness</span><h2>{matchup.negativeControlSummary.total} contrôles négatifs</h2></div>
+            <StatusPill value="NO_PROMOTION" />
+          </div>
+          <div className="cost-grid">
+            <article><span>Exécutés / guards</span><strong>{matchup.negativeControlSummary.executedOrGuard}</strong><small>calcul ou rejet de sécurité observé</small></article>
+            <article><span>Data-gated</span><strong>{matchup.negativeControlSummary.dataGated}</strong><small>aucune valeur simulée</small></article>
+          </div>
+          <div className="table-wrap"><table><thead><tr><th>Contrôle</th><th>Catégorie</th><th>Support</th><th>Statut</th></tr></thead><tbody>
+            {matchup.negativeControls.map((control) => <tr key={control.name}><td>{control.name.replaceAll("_", " ")}</td><td>{control.category.replaceAll("_", " ")}</td><td>{control.support.toLocaleString("fr-FR")}</td><td><StatusPill value={control.status} /></td></tr>)}
+          </tbody></table></div>
+        </article>
+        <article className="panel">
+          <div className="panel-head">
+            <div><span>Red team</span><h2>Objections enregistrées</h2></div>
+            <StatusPill value={matchup.redTeam.promotionAllowed ? "PROMOTION_ALLOWED" : "PROMOTION_BLOCKED"} />
+          </div>
+          <div className="table-wrap"><table><thead><tr><th>Risque</th><th>Traitement</th></tr></thead><tbody>
+            {matchup.redTeam.objections.map((objection) => <tr key={objection.name}><td>{objection.name.replaceAll("_", " ")}</td><td>{objection.status.replaceAll("_", " ")}</td></tr>)}
+          </tbody></table></div>
+          <p className="panel-note">{matchup.redTeam.reason.replaceAll("_", " ")}</p>
+        </article>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>League Decomposition</span><h2>Rotations discovery → validation</h2></div>
+          <StatusPill value={matchup.results.crossLeague.status} />
+        </div>
+        <div className="cost-grid">
+          <article><span>Rotations</span><strong>{matchup.results.crossLeague.rotationCount}</strong><small>discovery → validation</small></article>
+          <article><span>Support</span><strong>{matchup.results.crossLeague.minimumSupport.toLocaleString("fr-FR")}–{matchup.results.crossLeague.maximumSupport.toLocaleString("fr-FR")}</strong><small>fixtures par rotation</small></article>
+          <article><span>Δ Log Loss</span><strong>{matchup.results.crossLeague.deltaLogLossRange.map((value) => score(value)).join(" → ") || "—"}</strong><small>plage descriptive défavorable</small></article>
+          <article><span>Survivants</span><strong>{matchup.results.crossLeague.survivors}</strong><small>promotion interdite</small></article>
+        </div>
+        {matchup.results.crossLeague.rotations.length ? (
+          <div className="table-wrap"><table><thead><tr><th>Rotation</th><th>Discovery</th><th>Validation</th><th>Support</th><th>Δ Log Loss</th><th>Δ Brier</th><th>Direction</th><th>Promotion</th></tr></thead><tbody>
+            {matchup.results.crossLeague.rotations.map((rotation) => (
+              <tr key={rotation.id}>
+                <td>{rotation.id}</td>
+                <td>{rotation.discoveryLeagues.join(", ")}</td>
+                <td>{rotation.validationLeagues.join(", ")}</td>
+                <td>{rotation.support.toLocaleString("fr-FR")}</td>
+                <td>{score(rotation.deltaLogLoss)}</td>
+                <td>{score(rotation.deltaBrier)}</td>
+                <td><StatusPill value={rotation.descriptiveDirectionPositive ? "POSITIVE_DESCRIPTIVE" : "WORSE_THAN_REFERENCE"} /></td>
+                <td><StatusPill value={rotation.promotionEligible ? "ELIGIBLE" : "BLOCKED"} /></td>
+              </tr>
+            ))}
+          </tbody></table></div>
+        ) : null}
+        <p className="panel-note">
+          {matchup.results.crossLeague.survivors} survivant ·{" "}
+          {matchup.results.crossLeague.descriptivePositiveRotations} rotation
+          positive descriptive.{" "}
+          {matchup.results.crossLeague.limitations.join(" · ")}
+        </p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Gates de promotion</span><h2>{failedPromotionCriteria} critères fermés</h2></div>
+          <StatusPill value={matchup.promotion.promoted ? "PROMOTED" : "NOT_PROMOTED"} />
+        </div>
+        <div className="guardrails">
+          {matchup.promotion.criteria.map((criterion) => (
+            <div key={criterion.name}>
+              <StatusPill value={criterion.passed ? "PASS" : "BLOCKED"} />
+              <strong>{criterion.name.replaceAll("_", " ")}</strong>
+              <small>{criterion.passed ? "preuve satisfaite" : "condition non satisfaite"}</small>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Prospective Shadow</span><h2>Watchlist et décision shadow</h2></div>
+          <StatusPill value={matchup.watchlist.status} />
+        </div>
+        {matchup.watchlist.count === 0 ? (
+          <EmptyState
+            title="Watchlist vide — aucun candidat robuste"
+            text="Aucune entrée, aucune décision, aucune mise. La watchlist est un registre de recherche et ne constitue jamais un pari."
+            label="NO OUTPUT"
+          />
+        ) : (
+          <p className="warning">
+            Le snapshot signale {matchup.watchlist.count} entrée(s) de recherche ;
+            elles restent non transactionnelles et soumises à décision séparée.
+          </p>
+        )}
+        <div className="cost-grid">
+          <article><span>Candidats</span><strong>{matchup.decision.candidateCount}</strong><small>aucune promotion automatique</small></article>
+          <article><span>Décisions</span><strong>{matchup.decision.decisions}</strong><small>{matchup.decision.status.replaceAll("_", " ")}</small></article>
+          <article><span>Mise</span><strong>{matchup.decision.stakeUnits.toFixed(2)} u</strong><small>fictive uniquement</small></article>
+          <article><span>Bankroll shadow</span><strong>{matchup.decision.shadowBankrollAfter.toFixed(2)} u</strong><small>avant {matchup.decision.shadowBankrollBefore.toFixed(2)} u</small></article>
+        </div>
+      </section>
+
+      <section className="two-column">
+        <article className="panel storage-card">
+          <div className="panel-head">
+            <div><span>Ledger V2 et provenance</span><h2>Chaîne de preuve append-only</h2></div>
+            <StatusPill value={matchup.ledger.status} />
+          </div>
+          <dl>
+            <div><dt>Événements</dt><dd>{matchup.ledger.events}</dd></div>
+            <div><dt>Head hash</dt><dd>{shortHash(matchup.ledger.headHash)}</dd></div>
+            <div><dt>Source commit</dt><dd>{shortHash(matchup.provenance.sourceCommit)}</dd></div>
+            <div><dt>Dataset</dt><dd>{shortHash(matchup.provenance.datasetHash)}</dd></div>
+            <div><dt>Campagne</dt><dd>{shortHash(matchup.provenance.campaignResultHash)}</dd></div>
+            <div><dt>Prix</dt><dd>{matchup.provenance.marketObservedTimeStatus}</dd></div>
+          </dl>
+          <div className="schema-strip">
+            {matchup.replay.hashComparisons.map((comparison) => (
+              <span key={comparison.name}>
+                {comparison.name}={comparison.matched ? "MATCH" : "MISMATCH"}
+              </span>
+            ))}
+          </div>
+          <p className="panel-note">
+            Replay {matchup.replay.status.replaceAll("_", " ")} ·{" "}
+            {matchup.replay.providerCalls} appel · {matchup.replay.oddsApiCredits} crédit ·{" "}
+            {matchup.replay.businessDuplicates} doublon · {matchup.replay.hashMismatches} mismatch.
+          </p>
+        </article>
+        <article className="panel storage-card">
+          <div className="panel-head">
+            <div><span>Costs / Usage</span><h2>Budget nul, stockage sous contrôle</h2></div>
+            <StatusPill value={matchup.costs.storageStatus} />
+          </div>
+          <dl>
+            <div><dt>API-Football</dt><dd>{matchup.costs.providerCalls} appel</dd></div>
+            <div><dt>The Odds API</dt><dd>{matchup.costs.oddsApiCredits} crédit</dd></div>
+            <div><dt>historical-data</dt><dd>{bytes(matchup.costs.historicalBytes)}</dd></div>
+            <div><dt>PostgreSQL</dt><dd>{bytes(matchup.costs.databaseBytes)}</dd></div>
+            <div><dt>R2 attendu</dt><dd>{bytes(matchup.costs.r2ExpectedBytes)}</dd></div>
+            <div><dt>Lag R2</dt><dd>{matchup.costs.r2LagObjects} objet</dd></div>
+            <div><dt>Tâches secondaires</dt><dd>{matchup.costs.secondaryTasks}</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Research vs Production</span><h2>Sécurité et limites visibles</h2></div>
+          <StatusPill value={matchup.locks.productionStatus} />
+        </div>
+        <div className="guardrails">
+          <div><StatusPill value="LOCKED" /><strong>REAL_BETS</strong><small>{String(matchup.locks.realBets)}</small></div>
+          <div><StatusPill value="PASS" /><strong>NO_BET_DEFAULT</strong><small>{String(matchup.locks.noBetDefault)}</small></div>
+          <div><StatusPill value="DISABLED" /><strong>Publication sociale</strong><small>{String(matchup.locks.socialPublishingEnabled)}</small></div>
+          <div><StatusPill value="DISABLED" /><strong>Données démo</strong><small>{String(matchup.locks.demoModeEnabled)}</small></div>
+        </div>
+        <ul className="matchup-caveats">
+          {matchup.caveats.map((caveat) => <li key={caveat}>{caveat}</li>)}
+        </ul>
+      </section>
+    </>
   );
 }
 

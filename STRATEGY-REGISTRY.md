@@ -91,3 +91,39 @@ observable.
 
 Mise scientifique : 1 unité fixe. Bankroll : 1 000 unités fictives. Martingale,
 pari réel et publication sociale sont interdits.
+
+## Deep Matchup Research V1
+
+| Famille | Statut | Motif |
+|---|---|---|
+| équipe/calendrier 11A | `DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC` | primaire sans gain, `TEAM_GATE=PARTIAL` |
+| disponibilité joueurs 11B | `DATA_GATE_BLOCKED` | temporalité joueurs/absences |
+| continuité lineup 11C | `DATA_GATE_BLOCKED` | lineups post-match |
+| formations 11D | `DATA_GATE_BLOCKED` | cutoff pré-kickoff absent |
+| hypothèses propriétaire 11E | `COMPLETED_AS_GATE_EVALUATION` | H11-001 à H11-008 bloquées individuellement |
+| transfert équipe 11F | `DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC` | 5 rotations, 0 positive, 0 survivante |
+| arène intégrée 11G | `DATA_GATE_BLOCKED` | B2–B4 indisponibles |
+
+Le test principal 11A compare le marché + équipe multinomial au marché
+recalibré train-only : Δ Log Loss `+0,001702211`, IC 95 %
+`[-0,000242884 ; +0,003901782]`, q globale `1,0`. Les quatre challengers
+team-only et le gradient boosting incrémental sont des diagnostics post-contrat
+initial, antérieurs à l'amendement et non promouvables.
+
+Le test principal est un amendement correctif enregistré après ces diagnostics
+team-only et avant le run autoritatif, pas un test préenregistré. La version
+`1.0.0-amendment-1` et son hash
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`
+restent non promouvables.
+
+Aucune règle de mise n'a été préenregistrée ; le ROI n'est donc pas calculé.
+Zéro pattern rejoint `PROSPECTIVE_WATCHLIST` ou
+`LIVE_SHADOW_CANDIDATE`. Zéro décision et zéro unité sont émises, la bankroll
+shadow reste 1 000.
+
+`PRODUCTION_LOCKED`, `REAL_BETS=false` et `NO_BET_DEFAULT=true` sont
+obligatoires.
+
+Le run vert `30282406035` confirme zéro watchlist, candidat, décision ou mise,
+avec une bankroll shadow inchangée à 1 000 et le hash campagne
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`.

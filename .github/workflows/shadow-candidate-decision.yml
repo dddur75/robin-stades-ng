@@ -1,0 +1,103 @@
+name: "55 - Shadow Candidate Decision"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shadow-state
+  cancel-in-progress: false
+
+jobs:
+  fail-closed-decision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer le runtime
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Produire la décision fail-closed avec le moteur canonique
+        run: >-
+          python scripts/run_deep_football.py decision
+          --output artifacts/shadow-candidate-decision
+          --campaign-file reports/jalon11/campaign-summary.json
+      - name: Vérifier le contrat canonique et tous les compteurs
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          campaign = json.loads(
+              Path("reports/jalon11/campaign-summary.json").read_text()
+          )
+          decision = json.loads(
+              Path(
+                  "artifacts/shadow-candidate-decision/"
+                  "shadow-candidate-decision.json"
+              ).read_text()
+          )
+          assert os.environ["STORAGE_PAUSED"] == "true"
+          assert os.environ["P3_P4_PAUSED"] == "true"
+          assert os.environ["PRODUCTION_LOCKED"] == "true"
+          assert os.environ["REAL_BETS"] == "false"
+          assert os.environ["NO_BET_DEFAULT"] == "true"
+          assert os.environ["SOCIAL_PUBLISHING_ENABLED"] == "false"
+          assert os.environ["DEMO_MODE_ENABLED"] == "false"
+          promotion = campaign["promotion"]
+          assert promotion["shadow_candidates"] == 0
+          assert promotion["decisions"] == 0
+          assert promotion["stake_units"] == 0
+          assert decision["schema_version"] == (
+              "deep-football-shadow-decision-v1"
+          )
+          assert decision["status"] == "NO_DECISION_NO_CANDIDATE"
+          assert decision["candidate_count"] == (
+              promotion["shadow_candidates"]
+          )
+          assert decision["decisions"] == promotion["decisions"] == 0
+          assert decision["stake_units"] == promotion["stake_units"] == 0
+          assert decision["provider_calls"] == campaign["provider_calls"] == 0
+          assert (
+              decision["odds_api_credits"]
+              == campaign["odds_api_credits"]
+              == 0
+          )
+          assert decision["shadow_bankroll_before"] == (
+              promotion["shadow_bankroll"]
+          )
+          assert decision["shadow_bankroll_after"] == (
+              promotion["shadow_bankroll"]
+          )
+          assert promotion["shadow_bankroll"] == 1000.0
+          assert decision["exact_observed_at_required"] is True
+          assert decision["production_status"] == (
+              campaign["production_status"]
+          )
+          assert decision["production_status"] == "PRODUCTION_LOCKED"
+          assert decision["real_bets"] is campaign["real_bets"] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shadow-candidate-decision-${{ github.run_id }}
+          path: artifacts/shadow-candidate-decision
+          retention-days: 90
+          compression-level: 9

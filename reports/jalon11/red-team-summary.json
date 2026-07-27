@@ -1,0 +1,62 @@
+{
+  "schema_version": "jalon11-red-team-v1",
+  "campaign_result_hash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+  "audit_source_commit": "033a98b11b80c059f8986c33c69f1401ce8cf05c",
+  "objections": {
+    "chance": "CONTROLLED_WITH_CR1_CLUSTER_SIGN_FLIP_CLUSTER_BOOTSTRAP_AND_BH",
+    "leakage": "TARGET_EXCLUDED_BUT_TEAM_SOURCE_OBSERVED_AT_UNPROVEN_GATE_PARTIAL",
+    "concentration": "NO_STRATEGY_PROMOTED",
+    "dependence": "MATCH_DATE_CLUSTERED_TEAM_SERIAL_DEPENDENCE_REMAINS_LIMITATION",
+    "wrong_odds": "EXACT_FIXTURE_PAIRING_VERIFIED",
+    "wrong_cutoff": "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_NOT_STRICT_OBSERVED_AT",
+    "threshold_selection": "PRIMARY_FIXED_NO_TEST_SET_MODEL_SELECTION",
+    "incomplete_sample": "NO_1X2_MARKET_ATTRITION",
+    "confounding": "NO_CAUSAL_CLAIM",
+    "join_error": "ONE_TO_ONE_EXACT_JOIN",
+    "formation_normalization": "CAMPAIGN_BLOCKED",
+    "absence_classification": "CAMPAIGN_BLOCKED",
+    "calibration": "MARKET_RECALIBRATED_TRAIN_ONLY_TOP_LABEL_ECE_DIAGNOSTIC",
+    "multiplicity": "ONE_TESTED_PLUS_EIGHT_BLOCKED_HYPOTHESES_INCLUDED",
+    "negative_controls": "SIX_COMPUTATIONAL_OR_GUARD_CONTROLS_EXECUTED_SIX_DATA_GATED"
+  },
+  "negative_controls": {
+    "shuffled_labels_stratified": {
+      "status": "EXECUTED_NO_PROMOTION",
+      "support": 7081,
+      "delta_log_loss": 0.00847512670026274
+    },
+    "formation_shifted_one_match": "DATA_GATE_BLOCKED",
+    "absence_shifted": "DATA_GATE_BLOCKED",
+    "random_player": "DATA_GATE_BLOCKED",
+    "false_footedness": "DATA_GATE_BLOCKED",
+    "post_kickoff_lineup": {"status": "REJECTED_BY_TEMPORAL_GUARD", "support": 1},
+    "wrong_fixture_odds": {"status": "REJECTED_BY_PAIRING_GUARD", "support": 1},
+    "impossible_condition": {
+      "status": "EXECUTED_ZERO_SUPPORT_NO_PROMOTION",
+      "support": 0,
+      "rows_examined": 7081,
+      "predicate": "OUTCOME_IS_HOME_AND_AWAY"
+    },
+    "home_team_systematic": {
+      "status": "EXECUTED_NO_PROMOTION",
+      "support": 7081,
+      "delta_log_loss": 6.80411897040303
+    },
+    "post_result_rule": {"status": "REJECTED_BY_FEATURE_ALLOWLIST", "support": 1},
+    "false_centre_back_pair": "DATA_GATE_BLOCKED",
+    "random_tactical_interaction": "DATA_GATE_BLOCKED"
+  },
+  "major_unresolved_objections": [],
+  "blocking_limitations": [
+    "TEAM_GATE_PARTIAL",
+    "PLAYER_ABSENCE_LINEUP_FORMATION_FOOTEDNESS_GATES_BLOCKED",
+    "EXACT_LIVE_MARKET_OBSERVED_AT_UNAVAILABLE",
+    "TEAM_SERIAL_DEPENDENCE_SENSITIVITY_NOT_MULTIWAY"
+  ],
+  "independent_review_verdict": "REVISED_AND_FAIL_CLOSED",
+  "promotion_allowed": false,
+  "reason": "DEEP_DATA_GATES_AND_EXACT_LIVE_MARKET_CUTOFF_REMAIN_CLOSED",
+  "replay_required": true,
+  "provider_calls": 0,
+  "odds_api_credits": 0
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": "deep-football-scientific-contract-v1-amendment-1",
+  "amends": "deep-football-scientific-contract-v1",
+  "status": "CORRECTIVE_PROTOCOL_AMENDMENT",
+  "recorded_before_authoritative_incremental_run": true,
+  "prior_team_only_diagnostics_seen": true,
+  "reason": "The initial implementation compared team-only models with the market but did not identify incremental team information conditional on a train-only market calibration.",
+  "scope_effect": "METHODOLOGICAL_CORRECTION_ONLY_NO_THRESHOLD_OR_OUTCOME_SELECTION",
+  "temporal_gate": {
+    "TEAM_GATE": "PARTIAL",
+    "reason": "Derived rows use the target kickoff as an exclusive materialization boundary; row-level source observed_at timestamps are unavailable.",
+    "promotion_eligible": false
+  },
+  "primary_inference": {
+    "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+    "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+    "challenger": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+    "features": "MARKET_LOG_ODDS_PLUS_FROZEN_TEAM_FEATURES",
+    "model_selection_on_test": false,
+    "paired_fixtures_required": true,
+    "expected_direction": "DELTA_LOG_LOSS_LT_ZERO",
+    "promotion_eligible": false
+  },
+  "secondary_diagnostics": {
+    "promotion_eligible": false,
+    "models": [
+      "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL",
+      "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING",
+      "B1_TEAM_ONLY_POISSON",
+      "B1_TEAM_ONLY_DIXON_COLES",
+      "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING"
+    ]
+  },
+  "dependence_controls": {
+    "cr1_cluster": "MATCH_DATE",
+    "sign_flip_unit": "MATCH_DATE",
+    "bootstrap_unit": "MATCH_DATE",
+    "draws": 999,
+    "serial_team_dependence_limitation": true
+  },
+  "calibration": {
+    "market_recalibration": "TRAIN_ONLY_MULTINOMIAL_LOG_ODDS",
+    "separate_post_calibration": false,
+    "reported_metric": "TOP_LABEL_ECE_DIAGNOSTIC"
+  },
+  "negative_controls": {
+    "computational": [
+      "SHUFFLED_LABELS_STRATIFIED",
+      "HOME_TEAM_SYSTEMATIC",
+      "WRONG_FIXTURE_ODDS",
+      "POST_KICKOFF_LINEUP",
+      "POST_RESULT_RULE",
+      "IMPOSSIBLE_CONDITION"
+    ],
+    "data_gate_blocked": [
+      "FORMATION_SHIFTED_ONE_MATCH",
+      "ABSENCE_SHIFTED",
+      "RANDOM_PLAYER",
+      "FALSE_FOOTEDNESS",
+      "FALSE_CENTRE_BACK_PAIR",
+      "RANDOM_TACTICAL_INTERACTION"
+    ]
+  },
+  "provider_calls_allowed": 0,
+  "odds_api_credits_allowed": 0,
+  "production_status": "PRODUCTION_LOCKED"
+}

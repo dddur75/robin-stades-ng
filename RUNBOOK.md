@@ -431,3 +431,118 @@ Pour le ledger :
 Une incohérence de hash bloque Robin Live. Un artifact construit n’est pas
 qualifié de déploiement privé. Les exports sociaux peuvent être construits,
 mais `SOCIAL_PUBLISHING_ENABLED=false` interdit tout envoi externe.
+
+## Jalon 11 — Deep Football
+
+Le moteur démarre toujours en cache-only :
+
+```powershell
+$out = Join-Path $env:TEMP "robin-jalon11"
+.\.venv\Scripts\python.exe scripts\run_deep_football.py all `
+  --state data\historical `
+  --output $out `
+  --source-commit (git rev-parse historical-data) `
+  --main-commit (git rev-parse HEAD) `
+  --main-ci-run-id <RUN_ID>
+```
+
+Le replay utilise exactement le même répertoire et doit reproduire le hash :
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_deep_football.py all `
+  --state data\historical `
+  --output $out `
+  --source-commit (git rev-parse historical-data) `
+  --main-commit (git rev-parse HEAD) `
+  --main-ci-run-id <RUN_ID> `
+  --replay
+```
+
+Avant exécution, confirmer :
+
+```text
+API_FOOTBALL_CALLS_ALLOWED=0
+ODDS_API_CREDITS_ALLOWED=0
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```
+
+Dans les rapports JSON, le verrou `P3/P4_PAUSED` est sérialisé sous
+`P3_P4_PAUSED=true`.
+
+Vérifier ensuite `dataset-manifest.json`, `campaign-11a-summary.json`,
+`red-team-report.json`, `replay.json`, `prospective-watchlist.json`,
+`shadow-candidate-decision.json` et `ledger-audit.json`. Un replay valide exige
+le même hash, zéro doublon, zéro perte, zéro mismatch, zéro appel et zéro
+crédit.
+
+Ne jamais exécuter une campagne joueurs, absence, lineup, formation ou pied
+fort si son gate n'est pas `READY`. Une couverture de contenu post-match ne
+ferme pas un gate pré-match. Les sorties lourdes vont vers R2/PostgreSQL ; Git
+ne conserve que contrats, rapports compacts, hashes et checkpoints.
+
+`TEAM_GATE=PARTIAL` autorise uniquement `DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC`.
+Le test principal est la multinomiale marché + équipe contre le marché
+recalibré train-only. Il relève de l'amendement correctif
+`1.0.0-amendment-1`, enregistré après les diagnostics team-only et avant le run
+autoritatif ; ne jamais le qualifier de préenregistré ni de promouvable. Son
+hash est
+`37b41db1912790c2c2efb83600a6b5e3708e84dac61e81aa4e15f73d6af166fa`.
+Les quatre challengers team-only, le gradient boosting incrémental et les cinq
+rotations 11F restent descriptifs et non promouvables. 11E peut terminer comme
+évaluation de gates même lorsque ses huit hypothèses sont bloquées.
+
+Le snapshot preflight conserve historiquement la révision `0007`. Le run
+opérationnel `30282406035` a ensuite vérifié l'upgrade Neon live vers
+`0008_jalon11_deep_football` : 304 preuves examinées deux fois, 0 insertion et
+304 doublons évités à chaque passage, avec six équivalences numériques legacy.
+Le même run a vérifié 25 453 objets R2, un upload du Parquet de 2 000 155
+octets, lag 0, aucune suppression et aucune mutation. La source est
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.
+
+Pour auditer ce run, exiger le hash campagne
+`437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`,
+la tête ledger
+`90bd34d99a689553246ce3b57ea344d751fb1f948cdc048661d6c2e0b22b92a8`
+et `REPLAY_FULL_HASH_VERIFIED`.
+
+Lorsque seuls les rapports Jalon 11 sont disponibles, rafraîchir uniquement le
+volet Matchup du Cockpit afin de préserver les autres preuves :
+
+```powershell
+$env:COCKPIT_MATCHUP_ONLY = "1"
+python scripts/build_cockpit_snapshot.py
+```
+
+Sous un shell POSIX, l'équivalent est :
+
+```bash
+COCKPIT_MATCHUP_ONLY=1 python scripts/build_cockpit_snapshot.py
+```
+
+Le gate de décision shadow exige un candidat et un prix live avec
+`observed_at` exact. À défaut, le résultat normal est
+`NO_DECISION_NO_CANDIDATE`, avec 0 unité mise et une bankroll inchangée.
+
+### Audit de revue finale Jalon 11
+
+Conserver `30282406035` comme preuve initiale. Pour la revue finale, exiger :
+
+- run `30290942945`, commit
+  `31ec41632b72cd93676f5b1d8592e1bba429e937`, six jobs verts ;
+- CI push `30290942423` et CI PR `30290944657` vertes ;
+- ledger `HASH_CHAIN_VERIFIED`, 27 événements, tête
+  `7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf` ;
+- replay `REPLAY_FULL_HASH_VERIFIED`, quatre comparaisons vraies et tous les
+  compteurs fournisseur, doublon, perte et mismatch à zéro ;
+- PostgreSQL `0008`, deux passages de 304 preuves et 304 doublons évités ;
+- R2 25 453 / 25 453, lag 0, aucune suppression ni mutation.
+
+Pour rafraîchir Robin Live depuis un artefact de validation, définir en plus
+`JALON11_REPORT_ROOT` vers sa racine. Toujours conserver
+`COCKPIT_MATCHUP_ONLY=1` afin de ne modifier que `generatedAt` et `matchupLab`.

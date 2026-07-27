@@ -1,0 +1,93 @@
+{
+  "schema_version": "deep-football-feature-contract-v2",
+  "dataset_version": "deep-football-team-prematch-v2",
+  "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+  "cutoff_policy": "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_PARTIAL",
+  "required_cutoff_policy": "STRICTLY_BEFORE_TARGET_KICKOFF",
+  "observed_temporal_gate": "PARTIAL",
+  "row_level_source_observed_at_proven": false,
+  "promotion_eligible": false,
+  "missing_policy": "MISSING_NOT_ZERO",
+  "research_mode": "PRE_LINEUP",
+  "defined": 11,
+  "built": 11,
+  "rejected": 0,
+  "features": [
+    {
+      "name": "elo_difference",
+      "family": "TEAM_STRENGTH",
+      "hash": "a94821265f398b239d66bb418b4d8eda0b0e3be236bd38ef9b858adb48b801bb",
+      "missing_rate": 0.0
+    },
+    {
+      "name": "home_form_5",
+      "family": "TEAM_FORM",
+      "hash": "b6a1a9ae14784767525e25f4c143c34697dc6171e5d1dd4d1203dc04b8f6bae4",
+      "missing_rate": 0.0015840477077897876
+    },
+    {
+      "name": "away_form_5",
+      "family": "TEAM_FORM",
+      "hash": "1f1470b0cff43338254b62d29ebac9d9dac1e13897ecf2d0f689e2d0177f0241",
+      "missing_rate": 0.0021431233693626536
+    },
+    {
+      "name": "home_form_10",
+      "family": "TEAM_FORM",
+      "hash": "3c60f5c33f75c4a341d63e351164cf3a48faf2aaa59aa19d3c180647651f7e9b",
+      "missing_rate": 0.0015840477077897876
+    },
+    {
+      "name": "away_form_10",
+      "family": "TEAM_FORM",
+      "hash": "74295823ec57829e95f30ffbd10b48898ae6f22b841ca9ac5af09c4cab575dec",
+      "missing_rate": 0.0021431233693626536
+    },
+    {
+      "name": "home_goals_for_5",
+      "family": "TEAM_FORM",
+      "hash": "234bebb1cded5cbc0d5f7b001b301b4cf7d48834090fc49c2e2d216b120c3db7",
+      "missing_rate": 0.0015840477077897876
+    },
+    {
+      "name": "away_goals_for_5",
+      "family": "TEAM_FORM",
+      "hash": "5cf6d2bac68134a83cc88a8f22a2b4fcc4e01f781707a1e5b3a2208f69384350",
+      "missing_rate": 0.0021431233693626536
+    },
+    {
+      "name": "home_goals_against_5",
+      "family": "TEAM_FORM",
+      "hash": "535d4ca047e0575b55a9e690e8cd4f5b47225848d8e9a36c3d3fab13defc10ce",
+      "missing_rate": 0.0015840477077897876
+    },
+    {
+      "name": "away_goals_against_5",
+      "family": "TEAM_FORM",
+      "hash": "e15cfb40b09074e23ec597c22cbcf6a50074022b8d2ffb83c5661ac3f1883b98",
+      "missing_rate": 0.0021431233693626536
+    },
+    {
+      "name": "home_rest_days",
+      "family": "CALENDAR",
+      "hash": "38474119896921d078d2656cffe465d96b34b7c08c1841d9a67f0b9cc299cecf",
+      "missing_rate": 0.0015840477077897876
+    },
+    {
+      "name": "away_rest_days",
+      "family": "CALENDAR",
+      "hash": "d1c4731ab570caba80e49ac80e2e3b157e388bf52a8c5a810b036e3758ebc044",
+      "missing_rate": 0.0021431233693626536
+    }
+  ],
+  "blocked_families": {
+    "PLAYER": "BLOCKED_BY_TEMPORALITY",
+    "ABSENCE": "BLOCKED_BY_TEMPORALITY",
+    "LINEUP": "BLOCKED_BY_TEMPORALITY",
+    "FORMATION": "BLOCKED_BY_TEMPORALITY",
+    "FOOTEDNESS": "BLOCKED_BY_COVERAGE"
+  },
+  "provider_calls": 0,
+  "odds_api_credits": 0,
+  "production_status": "PRODUCTION_LOCKED"
+}

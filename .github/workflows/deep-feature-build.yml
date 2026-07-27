@@ -1,0 +1,370 @@
+name: "51 - Deep Feature Build"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer le runtime
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install boto3
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Construire le dataset cache-only et la preuve scientifique
+        run: >-
+          python scripts/run_deep_football.py all
+          --state data/historical
+          --output artifacts/deep-feature-build
+          --source-commit "$(git -C .historical-registry rev-parse HEAD)"
+          --main-commit "${{ github.sha }}"
+          --main-ci-run-id "${{ github.run_id }}"
+      - name: Migrer et persister deux fois dans PostgreSQL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+          python scripts/persist_deep_football.py \
+            --artifacts artifacts/deep-feature-build \
+            --code-revision "${{ github.sha }}" \
+            --output artifacts/deep-feature-build/postgresql-primary.json
+          python scripts/persist_deep_football.py \
+            --artifacts artifacts/deep-feature-build \
+            --code-revision "${{ github.sha }}" \
+            --output artifacts/deep-feature-build/postgresql-replay.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from sqlalchemy import select, text
+          from sqlalchemy.orm import Session
+          from robin.storage.database import build_engine
+          from robin.deep_football.persistence import (
+              LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES,
+          )
+          from robin.storage.models import (
+              MatchupEvaluationModel,
+              MatchupHypothesisModel,
+          )
+          primary = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/postgresql-primary.json"
+              ).read_text()
+          )
+          replay = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/postgresql-replay.json"
+              ).read_text()
+          )
+          campaign = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/"
+                  "campaign-11a-summary.json"
+              ).read_text()
+          )
+          expected = {
+              "feature_definitions": 11,
+              "coverage_gates": 270,
+              "hypotheses": 9,
+              "evaluations": 14,
+          }
+          assert primary["examined"] == expected
+          assert replay["examined"] == expected
+          assert primary["dataset_hash"] == replay["dataset_hash"]
+          assert (
+              primary["campaign_result_hash"]
+              == replay["campaign_result_hash"]
+          )
+          assert sum(replay["inserted"].values()) == 0
+          assert replay["duplicates_avoided"] == expected
+          assert (
+              primary["legacy_numeric_equivalent_evaluations"]
+              == replay["legacy_numeric_equivalent_evaluations"]
+          )
+          assert primary[
+              "legacy_numeric_equivalent_evaluations"
+          ] in {0, 6}
+          assert replay["provider_calls"] == 0
+          assert replay["odds_api_credits"] == 0
+          assert replay["production_status"] == "PRODUCTION_LOCKED"
+          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
+          with engine.connect() as connection:
+              revision = connection.scalar(
+                  text("SELECT version_num FROM alembic_version")
+              )
+          assert revision == "0008_jalon11_deep_football"
+          with Session(engine) as session:
+              team_hypothesis = session.scalar(
+                  select(MatchupHypothesisModel).where(
+                      MatchupHypothesisModel.hypothesis_id
+                      == "H11-A-TEAM-INCREMENTAL",
+                      MatchupHypothesisModel.hypothesis_version
+                      == "1.0.0-amendment-1",
+                  )
+              )
+              assert team_hypothesis is not None
+              protocol = team_hypothesis.protocol
+              assert protocol["frozen_before_results"] is False
+              assert protocol["prior_team_only_diagnostics_seen"] is True
+              assert protocol["promotion_eligible"] is False
+              assert protocol["protocol_amendment"]["status"] == (
+                  "CORRECTIVE_PROTOCOL_AMENDMENT"
+              )
+              model_evaluations = list(
+                  session.scalars(
+                      select(MatchupEvaluationModel).where(
+                          MatchupEvaluationModel.hypothesis_id
+                          == team_hypothesis.id,
+                          MatchupEvaluationModel.model_key
+                          != "NOT_RUN_DATA_GATE",
+                      )
+                  )
+              )
+              assert len(model_evaluations) == 6
+              primary_model = campaign["models"]["primary_for_inference"]
+              primary_evaluation = next(
+                  row
+                  for row in model_evaluations
+                  if row.model_key == primary_model
+              )
+              statistics = campaign["statistics"]
+              conservative_p = max(
+                  statistics["cr1_one_sided_p"],
+                  statistics["sign_flip_p"],
+              )
+              assert abs(primary_evaluation.p_value - conservative_p) < 1e-12
+              assert (
+                  abs(
+                      primary_evaluation.q_value_family
+                      - statistics["family_q"]
+                  )
+                  < 1e-12
+              )
+              assert (
+                  abs(
+                      primary_evaluation.q_value_global
+                      - statistics["global_q"]
+                  )
+                  < 1e-12
+              )
+              assert primary_evaluation.metrics["inference"][
+                  "multiplicity_included"
+              ] is True
+              diagnostics = [
+                  row
+                  for row in model_evaluations
+                  if row.id != primary_evaluation.id
+              ]
+              assert len(diagnostics) == 5
+              persisted_campaign_hashes = {
+                  row.metrics["authoritative_evidence"][
+                      "campaign_result_hash"
+                  ]
+                  for row in model_evaluations
+              }
+              if primary[
+                  "legacy_numeric_equivalent_evaluations"
+              ]:
+                  assert persisted_campaign_hashes.issubset(
+                      LEGACY_NUMERIC_CAMPAIGN_RESULT_HASHES
+                  )
+              else:
+                  assert persisted_campaign_hashes == {
+                      campaign["result_hash"]
+                  }
+              assert all(
+                  row.p_value is None
+                  and row.q_value_family is None
+                  and row.q_value_global is None
+                  and row.status
+                  == "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
+                  and row.metrics["inference"]["multiplicity_included"]
+                  is False
+                  for row in diagnostics
+              )
+              blocked_owner_evaluations = list(
+                  session.scalars(
+                      select(MatchupEvaluationModel).where(
+                          MatchupEvaluationModel.dataset_hash
+                          == primary["dataset_hash"],
+                          MatchupEvaluationModel.model_key
+                          == "NOT_RUN_DATA_GATE",
+                      )
+                  )
+              )
+              assert len(blocked_owner_evaluations) == 8
+              assert all(
+                  row.p_value is None
+                  and row.q_value_family is None
+                  and row.q_value_global is None
+                  for row in blocked_owner_evaluations
+              )
+              scientific_fidelity = {
+                  "team_protocol_version": (
+                      team_hypothesis.hypothesis_version
+                  ),
+                  "protocol_amendment_hash": protocol[
+                      "protocol_amendment_hash"
+                  ],
+                  "primary_model": primary_model,
+                  "primary_p_value": primary_evaluation.p_value,
+                  "family_q": primary_evaluation.q_value_family,
+                  "global_q": primary_evaluation.q_value_global,
+                  "tested_model_evaluations": 1,
+                  "diagnostic_model_evaluations": len(diagnostics),
+                  "blocked_owner_evaluations": len(
+                      blocked_owner_evaluations
+                  ),
+                  "numeric_evidence_contract": campaign[
+                      "numeric_evidence_contract"
+                  ],
+                  "current_campaign_result_hash": campaign[
+                      "result_hash"
+                  ],
+                  "persisted_campaign_result_hashes": sorted(
+                      persisted_campaign_hashes
+                  ),
+                  "legacy_numeric_equivalent_evaluations": primary[
+                      "legacy_numeric_equivalent_evaluations"
+                  ],
+              }
+          Path(
+              "artifacts/deep-feature-build/postgresql-proof.json"
+          ).write_text(
+              json.dumps(
+                  {
+                      "alembic_revision": revision,
+                      "primary": primary,
+                      "replay": replay,
+                      "scientific_fidelity": scientific_fidelity,
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + "\n"
+          )
+          PY
+      - name: Répliquer uniquement le nouvel objet lourd vers R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          read -r DATASET_HASH PARQUET_SHA < <(
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/dataset-manifest.json"
+              ).read_text()
+          )
+          print(manifest["dataset_hash"], manifest["parquet_sha256"])
+          PY
+          )
+          [[ "$DATASET_HASH" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$PARQUET_SHA" =~ ^[0-9a-f]{64}$ ]]
+          export OBJECT_KEY="derived/jalon11/${DATASET_HASH}/team-prematch-v2-${PARQUET_SHA}.parquet"
+          mkdir -p "data/historical/$(dirname "$OBJECT_KEY")"
+          cp artifacts/deep-feature-build/heavy/team-prematch-v2.parquet \
+            "data/historical/$OBJECT_KEY"
+          python scripts/replicate_object_storage.py \
+            --state data/historical \
+            --max-files 10
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          manifest = json.loads(
+              Path(
+                  "artifacts/deep-feature-build/dataset-manifest.json"
+              ).read_text()
+          )
+          report = json.loads(
+              Path(
+                  "data/historical/storage/r2-replication-latest.json"
+              ).read_text()
+          )
+          index = json.loads(
+              Path(
+                  "data/historical/storage/r2-object-index.json"
+              ).read_text()
+          )
+          object_key = os.environ["OBJECT_KEY"]
+          local_path = Path("data/historical") / object_key
+          payload = local_path.read_bytes()
+          digest = hashlib.sha256(payload).hexdigest()
+          record = index["objects"][object_key]
+          assert digest == manifest["parquet_sha256"]
+          assert len(payload) == manifest["parquet_bytes"]
+          assert record["sha256"] == digest
+          assert record["size"] == len(payload)
+          assert record["status"] == "verified"
+          assert report["selected_files"] <= 10
+          assert report["errors"] == 0
+          assert report["deletions"] == 0
+          assert report["source_mutations"] == 0
+          assert report["lag_objects"] == 0
+          assert report["source_preserved"] is True
+          assert report["status"] == "SYNCED"
+          Path(
+              "artifacts/deep-feature-build/r2-object-proof.json"
+          ).write_text(
+              json.dumps(
+                  {
+                      "object_key": object_key,
+                      "sha256": digest,
+                      "size": len(payload),
+                      "uploaded": report["uploaded"],
+                      "replayed": report["replayed"],
+                      "verified_objects": report["verified_objects"],
+                      "expected_objects": report["expected_objects"],
+                      "lag_objects": report["lag_objects"],
+                      "deletions": report["deletions"],
+                      "source_mutations": report["source_mutations"],
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + "\n"
+          )
+          PY
+      - uses: ./.github/actions/historical-r2-control-persist
+        with:
+          run-id: ${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deep-feature-build-${{ github.run_id }}
+          path: artifacts/deep-feature-build
+          retention-days: 90
+          compression-level: 9

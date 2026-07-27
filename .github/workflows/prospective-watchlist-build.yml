@@ -1,0 +1,74 @@
+name: "54 - Prospective Watchlist Build"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pattern-research-state
+  cancel-in-progress: false
+
+jobs:
+  watchlist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Construire seulement le registre depuis la campagne gelÃ©e
+        run: >-
+          python scripts/run_deep_football.py watchlist
+          --output artifacts/prospective-watchlist
+          --campaign-file reports/jalon11/campaign-summary.json
+      - name: Vérifier que le registre ne crée aucune décision
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path("artifacts/prospective-watchlist")
+          campaign = json.loads(
+              Path("reports/jalon11/campaign-summary.json").read_text()
+          )
+          watchlist = json.loads(
+              (root / "prospective-watchlist.json").read_text()
+          )
+          assert campaign["promotion"]["watchlist"] == 0
+          assert campaign["promotion"]["shadow_candidates"] == 0
+          assert campaign["provider_calls"] == 0
+          assert campaign["odds_api_credits"] == 0
+          assert campaign["production_status"] == "PRODUCTION_LOCKED"
+          assert campaign["real_bets"] is False
+          assert watchlist["schema_version"] == "deep-football-watchlist-v1"
+          assert watchlist["campaign_result_hash"] == campaign["result_hash"]
+          assert watchlist["entries"] == []
+          assert watchlist["count"] == 0
+          assert watchlist["status"] == "EMPTY_NO_ROBUST_DEEP_MATCHUP"
+          assert watchlist["not_a_bet"] is True
+          assert watchlist["production_status"] == "PRODUCTION_LOCKED"
+          assert not (root / "shadow-candidate-decision.json").exists()
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prospective-watchlist-${{ github.run_id }}
+          path: artifacts/prospective-watchlist
+          retention-days: 90
+          compression-level: 9

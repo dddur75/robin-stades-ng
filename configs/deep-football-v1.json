@@ -1,0 +1,169 @@
+{
+  "schema_version": "deep-football-scientific-contract-v1",
+  "dataset_version": "deep-football-team-prematch-v2",
+  "seed": 11011,
+  "cache_only": true,
+  "provider_budgets": {
+    "API_FOOTBALL_CALLS_ALLOWED": 0,
+    "ODDS_API_CREDITS_ALLOWED": 0
+  },
+  "invariants": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  },
+  "coverage_gates": {
+    "PLAYER_GATE": {
+      "minimum_seasons": 3,
+      "fixture_coverage_minimum": 0.9,
+      "identity_rate_minimum": 0.99,
+      "minutes_coherent": true,
+      "cutoff_required": true
+    },
+    "LINEUP_GATE": {
+      "minimum_seasons": 3,
+      "fixture_coverage_minimum": 0.85,
+      "identity_rate_minimum": 0.99,
+      "complete_response_starters": 11,
+      "cutoff_required": true
+    },
+    "ABSENCE_GATE": {
+      "identity_rate_minimum": 0.99,
+      "pre_match_evidence_required": true,
+      "role_resolution_required": true,
+      "non_selection_proxy_forbidden": true
+    },
+    "FORMATION_GATE": {
+      "eligible_lineup_coverage_minimum": 0.8,
+      "unambiguous_normalization_required": true,
+      "valid_starting_xi_required": true,
+      "cutoff_required": true
+    },
+    "FOOTEDNESS_GATE": {
+      "relevant_player_coverage_minimum": 0.9,
+      "observed_source_required": true,
+      "heuristic_completion_forbidden": true
+    },
+    "PLAYER_FORM_GATE": {
+      "minimum_prior_appearances": 3,
+      "target_fixture_forbidden": true,
+      "missing_not_zero": true
+    },
+    "STARTER_BASELINE_GATE": {
+      "lookback_matches": 8,
+      "minimum_starts": 4,
+      "target_fixture_forbidden": true
+    }
+  },
+  "frozen_windows": {
+    "team_form_matches": [
+      3,
+      5,
+      10
+    ],
+    "player_form_appearances": [
+      3,
+      5
+    ],
+    "usual_formation_matches": 5,
+    "starter_baseline_matches": 8
+  },
+  "owner_hypotheses": [
+    "H11-001",
+    "H11-002",
+    "H11-003",
+    "H11-004",
+    "H11-005",
+    "H11-006",
+    "H11-007",
+    "H11-008"
+  ],
+  "campaigns": [
+    "11A",
+    "11B",
+    "11C",
+    "11D",
+    "11E",
+    "11F",
+    "11G"
+  ],
+  "baselines": {
+    "B0": "DEVIGGED_1X2_MARKET",
+    "B1": [
+      "REGULARIZED_MULTINOMIAL",
+      "BOUNDED_GRADIENT_BOOSTING"
+    ],
+    "B2": "BLOCKED_BY_PLAYER_DATA_GATES",
+    "B3": "BLOCKED_BY_LINEUP_DATA_GATES",
+    "B4": "BLOCKED_BY_MATCHUP_DATA_GATES"
+  },
+  "walk_forward": {
+    "type": "EXPANDING",
+    "initial_train_seasons": [
+      2020,
+      2021
+    ],
+    "test_seasons": [
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "train_only_imputation": true,
+    "exact_pairing_required": true
+  },
+  "multiple_testing": {
+    "families": [
+      "team",
+      "players",
+      "absences",
+      "lineup",
+      "formations",
+      "calendar",
+      "matchups",
+      "footedness",
+      "interactions"
+    ],
+    "family_bh_alpha": 0.05,
+    "global_bh_alpha": 0.05,
+    "sign_flip_permutations": 999,
+    "minimum_clusters": 30
+  },
+  "promotion_gates": [
+    "data_gate_ready",
+    "no_leakage",
+    "preregistered_support",
+    "three_eligible_periods",
+    "stable_direction",
+    "positive_last_fold",
+    "family_bh_passed",
+    "global_control_passed",
+    "permutation_passed",
+    "bootstrap_lower_coherent",
+    "concentration_passed",
+    "incremental_score_vs_market_positive",
+    "historical_roi_not_artificial",
+    "rule_interpretable",
+    "live_information_available",
+    "live_market_exact_observed_at",
+    "decision_reproducible_before_kickoff"
+  ],
+  "negative_controls": [
+    "SHUFFLED_LABELS_STRATIFIED",
+    "FORMATION_SHIFTED_ONE_MATCH",
+    "ABSENCE_SHIFTED",
+    "RANDOM_PLAYER",
+    "FALSE_FOOTEDNESS",
+    "POST_KICKOFF_LINEUP",
+    "WRONG_FIXTURE_ODDS",
+    "IMPOSSIBLE_CONDITION",
+    "HOME_TEAM_SYSTEMATIC",
+    "POST_RESULT_RULE",
+    "FALSE_CENTRE_BACK_PAIR",
+    "RANDOM_TACTICAL_INTERACTION"
+  ]
+}

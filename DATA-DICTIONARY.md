@@ -199,9 +199,55 @@ ne modifie jamais la décision.
 | Dataset logique | Lignes strictes | Temporalité |
 |---|---:|---|
 | `historical_market_v1` apparié | 10 732 | `DISCOVERY_EXPOSED` |
-| 1X2 strict | 10 731 | `SOURCE_PRICE_CLASS_ONLY` |
+| 1X2 strict courant | 10 732 | `SOURCE_PRICE_CLASS_ONLY` |
 | Over/Under 2,5 | 10 732 | `SOURCE_PRICE_CLASS_ONLY` |
 
-La marge négative exclue du 1X2 strict reste auditable. Il n’existe pas de
-timestamp intrajournalier fiable pour ces prix. Aucun BTTS, handicap, corner,
-carton, buteur ou prop joueur n’est créé sans cote historique observée.
+Le snapshot de cache courant contient 10 732 lignes 1X2 strictes. Il n’existe
+pas de timestamp intrajournalier fiable pour ces prix. Aucun BTTS, handicap,
+corner, carton, buteur ou prop joueur n’est créé sans cote historique observée.
+
+## Entités Jalon 11
+
+La révision Alembic `0008_jalon11_deep_football` définit :
+
+Le snapshot preflight du 27 juillet 2026 conserve historiquement
+`0007_jalon10_immutable_evidence`. Le run opérationnel `30282406035` a ensuite
+vérifié l'application live de `0008_jalon11_deep_football`. La persistance
+compacte porte sur 11 définitions de features, 270 gates de couverture,
+9 hypothèses et 14 évaluations, soit 304 objets examinés. Les passages primaire
+et replay ont chacun inséré 0 objet et évité 304 doublons. Six évaluations
+legacy ont été reliées par équivalence numérique stricte
+(`legacy_numeric_equivalent_evaluations=6`).
+
+| Entité | Grain | Rôle |
+|---|---|---|
+| `deep_feature_definitions` | contrat de feature versionné | schéma, cutoff, gate et hash |
+| `deep_feature_observations` | valeur feature × entité × fixture | observation point-in-time |
+| `coverage_gates` | gate × périmètre × dataset | preuve de disponibilité |
+| `matchup_hypotheses` | hypothèse préenregistrée | mécanisme, marchés, support, hash |
+| `matchup_evaluations` | hypothèse × campagne/fold | métriques et décision scientifique |
+| `prospective_watchlist` | version de règle surveillée | suivi sans pari ni mise |
+| `shadow_candidate_versions` | package candidat immuable | décision fail-closed |
+
+Tous les objets portent version de dataset, révision de code, timestamps UTC et
+hashes. Les preuves sont append-only et idempotentes.
+
+## Dataset `TEAM_PREMATCH`
+
+Grain : une fixture avec état domicile/extérieur émis avant la mise à jour par
+le résultat du match cible. La frontière de matérialisation est égale au
+kickoff ; le `source_observed_at` ligne par ligne n'est pas prouvé. Champs
+principaux : identifiants ligue/saison/fixture, kickoff, labels de résultat
+séparés, probabilités de marché, différence Elo, formes 5/10, buts pour/contre
+5, repos et indicateurs de missingness.
+
+Le dataset courant contient 10 732 lignes ; son hash est
+`2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6`.
+Son SHA-256 Parquet est
+`d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673`.
+La source autoritative est
+`historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`. Le Parquet de
+2 000 155 octets est vérifié dans R2 parmi 25 453 / 25 453 objets, lag 0.
+`TEAM_GATE=PARTIAL` limite ce dataset aux diagnostics rétrospectifs.
+Les datasets joueurs, lineup, formation et pied fort restent bloqués et
+n'existent pas sous une forme artificiellement complétée.
