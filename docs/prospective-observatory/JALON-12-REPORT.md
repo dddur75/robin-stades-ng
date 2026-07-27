@@ -104,10 +104,12 @@ Le pilote réel borné a été exécuté sur la Ligue 1 par le run GitHub
 `30304339733`. Toutes les étapes opérationnelles — migration Neon, registre,
 scheduler, captures dues, replay R2 et gates — ont réussi. Le run global a
 ensuite révélé une assertion frontend qui supposait encore le snapshot initial.
-Le correctif n’a pas relancé le fournisseur : le run replay-only
-`30306515056`, sur `fb55817d2b8e09958a120898ffff8e8dda77e9fa`, a explicitement
-ignoré les trois étapes réseau, puis a validé replay, gates, Robin Live et
-l’artefact `jalon12-pilot-30306515056`.
+Le correctif n’a pas relancé le fournisseur. Après durcissement adversarial,
+le run replay-only final `30314975830`, sur
+`2469e57ec4b2ef2849f9e707f63843033ec026e6`, a explicitement ignoré le
+registre, le scheduler et les captures réseau, puis validé replay, gates,
+Robin Live et l’artefact `jalon12-pilot-30314975830`. La CI PR
+`30314978406` est également verte.
 
 ### Fixtures, fenêtres et captures
 
@@ -142,8 +144,9 @@ pas dues.
 
 ### R2, PostgreSQL et ledger
 
-- R2 : 18 objets — 9 payloads et 9 reçus —, 11 691 octets, 18 vérifiés,
-  lag 0, suppression 0 ;
+- R2 : 18 objets — 9 payloads et 9 reçus —, 24 714 octets physiques
+  — 11 691 de payloads et 13 023 de reçus —, 18 vérifiés, lag 0,
+  suppression 0 ;
 - replay complet : 18 objets examinés, 9 payloads reconstruits, sélection non
   tronquée, 0 mismatch, 0 perte, 0 appel, 0 crédit ;
 - second passage : 0 insert, 9 doublons évités ;
@@ -161,12 +164,36 @@ H11-008 restent gelées, avec 0 observation et
 `WAITING_FOR_OBSERVATIONS`. Il s’agit du résultat attendu avant les premières
 fenêtres critiques.
 
+### Durcissement final
+
+La revue adversariale a fermé les écarts suivants sans nouvel appel
+fournisseur :
+
+- le Cockpit n’accepte que des enveloppes authentifiées et liées au même
+  `capture_set_sha256`; les inventaires PostgreSQL protégés proviennent du
+  replay vérifié et non d’une valeur initiale ;
+- les versions de registre, annulations, passages `TBD` et réactivations
+  conservent une chaîne de cycle de vie append-only, y compris après reprise
+  SQL ;
+- le circuit fournisseur compte exactement les appels physiques et interdit
+  tout compteur fantôme après ouverture ;
+- l’inventaire R2 est exhaustif sur payloads, reçus et intentions de
+  récupération. Le lot historique vérifié précède les intentions et porte donc
+  légitimement `recovery_objects=0`; toute nouvelle écriture est récupérable
+  sans fournisseur ;
+- un reçu durable sans tentative compacte est réconcilié sans dupliquer la
+  donnée métier.
+
+La suite finale compte 690 tests, dont 124 tests Jalon 12. Ruff, mypy strict
+sur 106 sources, Bandit, `pip check`, `compileall`, YAML/JSON, détection de
+secrets, migrations et frontend sont verts.
+
 ### Robin Live et verdict
 
-Le snapshot du run `30306515056` porte
+Le snapshot du run `30314975830` porte
 `origin=LIVE_PROSPECTIVE_CAPTURE`, `PROSPECTIVE_GATES_ACCUMULATING`, les neuf
 fixtures, les compteurs fournisseur et les preuves R2/Neon. Son SHA-256 est
-`0c919c3062d4ec98a4d9a6fb7cb62b18674c9c97cb082506d959f699e157fbde`.
+`f0ff76b0c476ef259eb73143f969a75f3c6904786e1d073ce9874c1cbd776f53`.
 Le build 5/5 et les quatre tests frontend sont verts. L’artefact est publié ;
 aucun déploiement privé n’est revendiqué.
 

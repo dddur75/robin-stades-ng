@@ -512,17 +512,23 @@ Le pilote Ligue 1 a enregistré 9 fixtures et 531 fenêtres sur l’horizon de
 cumulé est de 3 appels API-Football et 0 crédit The Odds API, sans erreur ni
 retry.
 
-Le run replay-only `30306515056` a migré Neon en
-`0009_jalon12_observatory`, ignoré explicitement les trois étapes fournisseur,
-examiné les 18 objets R2, reconstruit les 9 fixtures et confirmé 0 mismatch,
-0 perte, 0 appel, 0 crédit, 0 suppression et 9 doublons évités au second
-passage. PostgreSQL expose 12 tables et aucun corps de payload. Le ledger V3
-compte 586 événements avec chaîne vérifiée.
+Le run replay-only final `30314975830`, sur
+`2469e57ec4b2ef2849f9e707f63843033ec026e6`, a migré Neon en
+`0009_jalon12_observatory`, ignoré explicitement le registre, le scheduler et
+les captures fournisseur, puis examiné les 18 objets R2. Il a vérifié
+24 714 octets physiques — 11 691 octets de payloads et 13 023 octets de reçus
+—, reconstruit les 9 fixtures et confirmé 0 mismatch, 0 perte, 0 appel,
+0 crédit, 0 suppression et 9 doublons évités au second passage. PostgreSQL
+expose 12 tables, 54 écritures compactes, un lag nul et aucun corps de payload.
+Le ledger V3 compte 586 événements avec chaîne vérifiée.
 
 Robin Live a été construit et testé avec le snapshot opérationnel
-`LIVE_PROSPECTIVE_CAPTURE`; l’artefact `jalon12-pilot-30306515056` est publié.
-Il ne s’agit pas d’un déploiement privé. Les CI push `30306515056` et PR
-`30306519612` sont vertes sur `fb55817`.
+`LIVE_PROSPECTIVE_CAPTURE`; l’artefact `jalon12-pilot-30314975830` est publié
+avec le SHA-256
+`f0ff76b0c476ef259eb73143f969a75f3c6904786e1d073ce9874c1cbd776f53`.
+Il ne s’agit pas d’un déploiement privé. Les CI push `30314975830` et PR
+`30314978406` sont vertes. La validation locale compte 690 tests, dont 124
+tests Jalon 12.
 
 Le verdict factuel est `JALON_12_PARTIAL_CAPTURE_READY` : l’infrastructure,
 R2, Neon et le replay sont verts, tandis que les gates joueur, blessure,

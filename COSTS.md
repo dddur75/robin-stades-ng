@@ -245,7 +245,9 @@ automatiquement. `STORAGE_PAUSED` et `P3/P4_PAUSED` restent actifs.
 Le pilote Ligue 1 du 27 juillet 2026 a consommé 3 appels API-Football pour
 enregistrer 9 fixtures. Aucune fenêtre de cote n’était due : The Odds API a
 consommé 0 crédit. Les replays de récupération ont exécuté 0 appel et consommé
-0 crédit ; les trois étapes fournisseur étaient explicitement `skipped` dans
-le run final `30306515056`.
+0 crédit ; le registre, le scheduler et les captures fournisseur étaient
+explicitement `skipped` dans le run final `30314975830`. Ce run a relu
+24 714 octets physiques déjà durables dans R2 sans ajouter d’objet ni engager
+de coût fournisseur.
 
 Aucun achat, changement d’abonnement ou coût de pari n’a été engagé.

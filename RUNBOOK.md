@@ -605,5 +605,9 @@ mode replay-only, vérifier dans le run GitHub que les étapes registre,
 scheduler et captures sont toutes `skipped`. Ne jamais utiliser le replay-only
 pour simuler une capture : il ne fait que reconstruire l’état déjà durable.
 
-Preuve de référence : run `30306515056`, 18 objets R2 examinés, 9 payloads
-rejoués, 0 appel fournisseur, 0 crédit, 0 mismatch et 0 perte.
+Preuve de référence finale : run `30314975830`, commit `2469e57`, 18 objets R2
+examinés pour 24 714 octets physiques, 9 payloads rejoués, 0 appel fournisseur,
+0 crédit, 0 mismatch, 0 perte et 0 suppression. L’artefact Cockpit doit
+afficher PostgreSQL `0009`, 12 tables, 54 écritures compactes, 9 doublons
+évités, lag 0 et zéro corps de payload. Son SHA-256 attendu est
+`f0ff76b0c476ef259eb73143f969a75f3c6904786e1d073ce9874c1cbd776f53`.
