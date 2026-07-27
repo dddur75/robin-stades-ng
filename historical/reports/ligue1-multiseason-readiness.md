@@ -1,6 +1,6 @@
 # Ligue 1 — readiness multi-saison
 
-Généré : `2026-07-26T11:11:20.631970+00:00`.
+Généré : `2026-07-27T04:10:34.587514+00:00`.
 
 Les couvertures sont calculées depuis les Parquet et observations du registre durable. Une absence reste une absence ; elle n'est jamais remplacée par zéro.
 
