@@ -235,10 +235,10 @@
       "status": "UNAVAILABLE"
     }
   ],
-  "completed_at": "2026-07-26T11:05:40.037381+00:00",
+  "completed_at": "2026-07-27T02:15:01.389634+00:00",
   "datasets": [
     {
-      "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+      "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
       "competition": "Premier League",
       "coverage": 1.0,
       "dataset_name": "pl_team_pre_match_v1",
@@ -256,7 +256,7 @@
         "away_rest_days"
       ],
       "fixtures": 2660,
-      "generated_at": "2026-07-26T11:02:50.688937+00:00",
+      "generated_at": "2026-07-27T02:12:22.817371+00:00",
       "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
       "partitions": [
         {
@@ -339,7 +339,7 @@
       "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
     },
     {
-      "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+      "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
       "competition": "La Liga",
       "coverage": 1.0,
       "dataset_name": "laliga_team_pre_match_v1",
@@ -357,7 +357,7 @@
         "away_rest_days"
       ],
       "fixtures": 2660,
-      "generated_at": "2026-07-26T11:02:51.064500+00:00",
+      "generated_at": "2026-07-27T02:12:23.172436+00:00",
       "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
       "partitions": [
         {
@@ -440,7 +440,7 @@
       "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
     },
     {
-      "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+      "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
       "competition": "Bundesliga",
       "coverage": 1.0,
       "dataset_name": "bundesliga_team_pre_match_v1",
@@ -458,7 +458,7 @@
         "away_rest_days"
       ],
       "fixtures": 2156,
-      "generated_at": "2026-07-26T11:02:51.386288+00:00",
+      "generated_at": "2026-07-27T02:12:23.478923+00:00",
       "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
       "partitions": [
         {
@@ -1102,7 +1102,7 @@
     "calibrators": [
       "NONE_FROZEN_EXTERNAL"
     ],
-    "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+    "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
     "dataset_versions": [
       "pl_team_pre_match_v1",
       "laliga_team_pre_match_v1",
@@ -1115,7 +1115,7 @@
     "feature_versions": [
       "TEAM_FEATURES_V1"
     ],
-    "generated_at": "2026-07-26T11:02:48.607291+00:00",
+    "generated_at": "2026-07-27T02:12:20.790013+00:00",
     "hashes": {
       "datasets": {
         "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
@@ -1126,7 +1126,7 @@
     },
     "model_versions": [],
     "package": "PRESEASON_SHADOW_PACKAGE_V1",
-    "package_hash": "1ca2b415529a1cb6d4f2ea684eca953185424ff90bcd21c1516e05dc59f29458",
+    "package_hash": "5a4312809f4df22def2a467798a2923add0758b70c1856f0bd52c4dab21d6942",
     "production_status": "PRODUCTION_LOCKED",
     "quality_gates": [
       "TEAM_GATE",
@@ -1756,21 +1756,21 @@
         "temporality": "PASSED"
       }
     ],
-    "generated_at": "2026-07-26T11:02:50.318098+00:00",
+    "generated_at": "2026-07-27T02:12:22.461315+00:00",
     "production_status": "PRODUCTION_LOCKED",
     "schema_version": "external-league-readiness-v1"
   },
   "real_bets": false,
-  "run_id": "30199276046",
-  "source_commit": "3378c692c4446189ea44a40f00dfec2e9e739b22",
-  "started_at": "2026-07-26T11:02:48.607291+00:00",
+  "run_id": "30231446075",
+  "source_commit": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
+  "started_at": "2026-07-27T02:12:20.790013+00:00",
   "status": "WAITING_FOR_EXTERNAL_GATES",
   "storage": {
-    "after_bytes": 631465640,
+    "after_bytes": 802083283,
     "can_write": true,
-    "current_bytes": 631465640,
+    "current_bytes": 802083283,
     "pause_bytes": 900000000,
-    "status": "SAFE",
+    "status": "WARNING",
     "warning_bytes": 750000000
   },
   "strategies": {

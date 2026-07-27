@@ -597,7 +597,7 @@
       "temporality": "PASSED"
     }
   ],
-  "generated_at": "2026-07-26T11:02:50.318098+00:00",
+  "generated_at": "2026-07-27T02:12:22.461315+00:00",
   "production_status": "PRODUCTION_LOCKED",
   "schema_version": "external-league-readiness-v1"
 }

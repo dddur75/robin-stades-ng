@@ -1,5 +1,5 @@
 {
-  "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+  "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
   "competition": "Bundesliga",
   "coverage": 1.0,
   "dataset_name": "bundesliga_team_pre_match_v1",
@@ -17,7 +17,7 @@
     "away_rest_days"
   ],
   "fixtures": 2156,
-  "generated_at": "2026-07-26T11:02:51.386288+00:00",
+  "generated_at": "2026-07-27T02:12:23.478923+00:00",
   "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
   "partitions": [
     {

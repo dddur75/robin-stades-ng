@@ -1,5 +1,5 @@
 {
-  "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+  "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
   "competition": "Premier League",
   "coverage": 1.0,
   "dataset_name": "pl_team_pre_match_v1",
@@ -17,7 +17,7 @@
     "away_rest_days"
   ],
   "fixtures": 2660,
-  "generated_at": "2026-07-26T11:02:50.688937+00:00",
+  "generated_at": "2026-07-27T02:12:22.817371+00:00",
   "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
   "partitions": [
     {

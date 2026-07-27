@@ -1,5 +1,5 @@
 {
-  "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+  "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
   "competition": "La Liga",
   "coverage": 1.0,
   "dataset_name": "laliga_team_pre_match_v1",
@@ -17,7 +17,7 @@
     "away_rest_days"
   ],
   "fixtures": 2660,
-  "generated_at": "2026-07-26T11:02:51.064500+00:00",
+  "generated_at": "2026-07-27T02:12:23.172436+00:00",
   "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
   "partitions": [
     {

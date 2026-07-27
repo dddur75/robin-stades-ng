@@ -5,7 +5,7 @@
   "calibrators": [
     "NONE_FROZEN_EXTERNAL"
   ],
-  "code_revision": "3378c692c4446189ea44a40f00dfec2e9e739b22",
+  "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
   "dataset_versions": [
     "pl_team_pre_match_v1",
     "laliga_team_pre_match_v1",
@@ -18,7 +18,7 @@
   "feature_versions": [
     "TEAM_FEATURES_V1"
   ],
-  "generated_at": "2026-07-26T11:02:48.607291+00:00",
+  "generated_at": "2026-07-27T02:12:20.790013+00:00",
   "hashes": {
     "datasets": {
       "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
@@ -29,7 +29,7 @@
   },
   "model_versions": [],
   "package": "PRESEASON_SHADOW_PACKAGE_V1",
-  "package_hash": "1ca2b415529a1cb6d4f2ea684eca953185424ff90bcd21c1516e05dc59f29458",
+  "package_hash": "5a4312809f4df22def2a467798a2923add0758b70c1856f0bd52c4dab21d6942",
   "production_status": "PRODUCTION_LOCKED",
   "quality_gates": [
     "TEAM_GATE",
