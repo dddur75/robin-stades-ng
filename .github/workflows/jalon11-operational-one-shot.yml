@@ -1,0 +1,50 @@
+name: "49 - Jalon 11 Operational One-Shot"
+
+on:
+  push:
+    branches:
+      - codex/jalon-11-deep-football-matchups
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jalon11-operational-one-shot
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: >-
+      contains(
+        github.event.head_commit.message,
+        '[run-j11-operational]'
+      )
+    uses: ./.github/workflows/deep-feature-audit.yml
+    secrets: inherit
+
+  build:
+    needs: audit
+    uses: ./.github/workflows/deep-feature-build.yml
+    secrets: inherit
+
+  campaign:
+    needs: build
+    uses: ./.github/workflows/matchup-campaign.yml
+    with:
+      campaign: "11A"
+    secrets: inherit
+
+  validation:
+    needs: campaign
+    uses: ./.github/workflows/matchup-validation.yml
+    secrets: inherit
+
+  watchlist:
+    needs: validation
+    uses: ./.github/workflows/prospective-watchlist-build.yml
+    secrets: inherit
+
+  decision:
+    needs: watchlist
+    uses: ./.github/workflows/shadow-candidate-decision.yml
+    secrets: inherit

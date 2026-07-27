@@ -2,6 +2,7 @@ name: "51 - Deep Feature Build"
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write

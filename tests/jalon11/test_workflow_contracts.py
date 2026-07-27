@@ -66,3 +66,18 @@ def test_deep_feature_build_checks_primary_inference_fidelity_in_postgresql() ->
     assert "diagnostic_model_evaluations" in build
     assert "blocked_owner_evaluations" in build
     assert "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE" in build
+
+
+def test_one_shot_orchestrator_is_explicit_sequential_and_branch_bounded() -> None:
+    orchestrator = _workflow("jalon11-operational-one-shot.yml")
+
+    assert "codex/jalon-11-deep-football-matchups" in orchestrator
+    assert "[run-j11-operational]" in orchestrator
+    assert "cancel-in-progress: false" in orchestrator
+    assert "uses: ./.github/workflows/deep-feature-audit.yml" in orchestrator
+    assert "uses: ./.github/workflows/deep-feature-build.yml" in orchestrator
+    assert "needs: audit" in orchestrator
+    assert "needs: build" in orchestrator
+    assert "needs: campaign" in orchestrator
+    assert "needs: validation" in orchestrator
+    assert "needs: watchlist" in orchestrator

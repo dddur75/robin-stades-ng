@@ -2,6 +2,7 @@ name: "54 - Prospective Watchlist Build"
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read

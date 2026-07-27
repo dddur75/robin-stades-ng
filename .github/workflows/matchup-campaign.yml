@@ -9,6 +9,13 @@ on:
         options:
           - 11A
         default: 11A
+  workflow_call:
+    inputs:
+      campaign:
+        description: "Campagne cache-only autorisée"
+        required: false
+        type: string
+        default: "11A"
 
 permissions:
   contents: read
