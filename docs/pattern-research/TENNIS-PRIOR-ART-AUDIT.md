@@ -4,6 +4,15 @@ Date : 2026-07-27
 Portée : lecture statique bornée, hors dépôt
 Part maximale du Jalon 10 : environ 10 %
 
+## Empreinte de l’archive
+
+- SHA-256 :
+  `9e48a1b643680062d1871b4b5ce14f6097d12bf5a60f08dea13ce70c25564c47` ;
+- taille : 550 586 octets ;
+- inventaire statique : 29 entrées, dont 28 fichiers ;
+- extraction : répertoire temporaire hors Git, supprimé après l’audit ;
+- copie dans Robin : aucune.
+
 ## Qualification
 
 L’archive ATP jointe est un retour d’expérience, pas un cahier des charges
@@ -36,9 +45,14 @@ emplacement temporaire hors versionnement.
 ## Défauts méthodologiques à ne pas importer
 
 - orientation `winner_*`/`loser_*`, impossible avant l’événement ;
+- taux de réussite parfait construit à partir du vainqueur/perdant connu ;
+- ROI et cotes issus de simulations ou d’aléas, pas de prix bookmaker observés ;
 - exploration opportuniste sans dénominateur complet des hypothèses ;
 - risque de sélection du meilleur résultat sur une seule période ;
 - absence possible de correction des tests multiples ;
+- absence de walk-forward, de FDR et de protocole point-in-time ;
+- incohérence de reproductibilité : 8 979 lignes CSV observées pour
+  27 672 lignes annoncées ;
 - confusion entre confiance heuristique, probabilité et edge ;
 - optimisation de mise avant preuve de robustesse ;
 - dépendance à des conventions tennis non transférables au football ;

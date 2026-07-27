@@ -159,7 +159,18 @@ dataset n’est recopié dans Git. Les sorties lourdes restent dans PostgreSQL/R
 ou dans un artifact borné. `STORAGE_PAUSED` et la suspension P3/P4 restent
 actifs.
 
-Le temps GitHub Actions, les octets ajoutés et les opérations R2 du premier run
-restent `PENDING_REAL_CACHE_ONLY_RUN`. Une valeur n’est inscrite qu’après mesure
-du workflow réel et de son replay. Aucun achat ni changement de plan n’est
-autorisé automatiquement.
+La campagne réelle et son replay ont mesuré :
+
+- 0 appel fournisseur ;
+- 0 crédit The Odds API ;
+- 700 hypothèses exécutées depuis le cache ;
+- replay identique, sans nouvelle consommation ni doublon ;
+- 0 opération R2 ;
+- 78,8 secondes de calcul local cumulé pour le run et le replay ;
+- 2 621 135 octets d’artefacts complets temporaires hors Git ;
+- 9 141 octets de résumés et hashes compacts ajoutés sous
+  `reports/pattern-research`.
+
+Le temps de la CI GitHub est mesuré par le run associé à la PR et n’est pas
+réinjecté dans le commit afin d’éviter une boucle de nouveaux runs. Aucun achat
+ni changement de plan n’est autorisé automatiquement.

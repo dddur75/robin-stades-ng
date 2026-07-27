@@ -1,10 +1,11 @@
 # Première campagne de recherche
 
-Statut : `PENDING_REAL_CACHE_ONLY_RUN`
+Statut : `JALON_10_NO_ROBUST_PATTERN_FOUND`
 Protocole : `pattern-scientific-contract-v1`
 
-Ce document est le réceptacle compact de la première exécution réelle. Il ne
-contient volontairement aucun résultat simulé ou supposé.
+La première campagne réelle cache-only et son replay sont terminés. Les
+résultats ci-dessous proviennent de la sortie déterministe ; aucun résultat
+simulé ou supposé n’est ajouté.
 
 ## Entrées vérifiées avant exécution
 
@@ -40,28 +41,31 @@ ferme le gate live point-in-time.
 - conditions : une à trois ;
 - exécution : cache-only, déterministe et checkpointée.
 
-## Résultats à remplacer depuis l’artefact signé
+## Résultats de l’artefact signé
 
 | Mesure | Valeur |
 |---|---|
-| Run / révision | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Hash du dataset | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Hypothèses générées | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Hypothèses exécutées | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Rejets pour fuite | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Rejets pour support | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Positives brutes | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Survivantes FDR | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Survivantes walk-forward | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Survivantes ligues externes | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Candidates shadow | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Contrôles négatifs | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Replay / hash identique | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Coût fournisseur | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Statut du run | `CACHE_ONLY_COMPLETED` |
+| Révision du code | `5c5b1a0344346b812a71962e7d0abadc3ba19266` |
+| Hash du dataset | `3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495` |
+| Hash du résultat | `e7dbd83ce41a96bcf58cbedba5102d499d2fa9a8f9b6ab2aaf22169abce1d0db` |
+| Hypothèses générées | 700 |
+| Hypothèses exécutées | 700 |
+| Rejets pour support | 167 |
+| Positives brutes | 118 |
+| Survivantes FDR | 0 |
+| Survivantes walk-forward brutes | 24 |
+| Survivantes ligues externes | 0 |
+| Candidates shadow | 0 |
+| Contrôles négatifs | 7/7 réussis |
+| Replay / hash identique | oui |
+| Appels fournisseur | 0 |
+| Crédits The Odds API | 0 |
+| Doublons au replay | 0 |
 
-Ces cellules ne sont remplacées qu’après une exécution réelle ayant restauré
-les données historiques durables. Un succès de workflow sans règles exécutées
-ne suffit pas.
+Les 24 survivantes walk-forward sont un résultat brut avant le gate FDR. Avec
+zéro survivante FDR, aucune ne peut progresser vers une validation externe ou
+le shadow. Le replay reproduit le même hash de résultat sans fournisseur.
 
 ## Règles de publication
 
@@ -69,6 +73,5 @@ Le rapport final montre toutes les hypothèses et tous les rejets, pas seulement
 le meilleur ROI. Pour chaque meilleur résultat, il publie support, intervalle,
 q-value, folds, drawdown, concentration, limites et comparaison au marché.
 
-Si aucun candidat ne franchit les gates, le résultat attendu est
-`NO_ROBUST_PATTERN_FOUND`. Aucun seuil ne sera modifié après lecture des
-résultats.
+Le verdict est `JALON_10_NO_ROBUST_PATTERN_FOUND`. Aucun seuil n’est modifié
+après lecture des résultats.

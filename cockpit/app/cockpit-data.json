@@ -19055,8 +19055,8 @@
   "patternResearch": {
     "version": "ROBIN_LIVE_V1",
     "dataStatus": "NO_LIVE_SHADOW_DATA",
-    "researchStatus": "NO_OUTPUT",
-    "campaignVerdict": "NOT_RUN",
+    "researchStatus": "HISTORICAL_RESEARCH",
+    "campaignVerdict": "JALON_10_NO_ROBUST_PATTERN_FOUND",
     "publicationTime": null,
     "today": {
       "matchesAnalyzed": 0,
@@ -19087,22 +19087,22 @@
       "simulationOnly": true
     },
     "strategies": {
-      "inResearch": 0,
+      "inResearch": 700,
       "shadowCandidates": 0,
       "inShadow": 0,
-      "rejected": 0,
-      "rejectionReason": "Aucune stratégie publiée."
+      "rejected": 167,
+      "rejectionReason": "Support ou validation scientifique insuffisante."
     },
     "laboratory": {
-      "hypothesesGenerated": 0,
-      "rulesExecuted": 0,
-      "supportRejected": 0,
-      "rawPositive": 0,
+      "hypothesesGenerated": 700,
+      "rulesExecuted": 700,
+      "supportRejected": 167,
+      "rawPositive": 118,
       "fdrSurvivors": 0,
-      "walkForwardSurvivors": 0,
+      "walkForwardSurvivors": 24,
       "externalLeagueSurvivors": 0,
-      "negativeControls": 0,
-      "negativeControlsPassed": 0,
+      "negativeControls": 7,
+      "negativeControlsPassed": 7,
       "fdrMethod": "Benjamini-Hochberg"
     },
     "methodology": {
@@ -19112,7 +19112,7 @@
       "warning": "Les performances passées ne garantissent aucun résultat futur."
     },
     "ledger": {
-      "status": "NOT_CREATED",
+      "status": "LEDGER_VERIFIED",
       "records": 0,
       "decisions": 0,
       "settlements": 0

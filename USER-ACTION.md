@@ -43,8 +43,13 @@ doit jamais être publiée. La production reste `PRODUCTION_LOCKED`,
 
 ## Jalon 10
 
-La campagne réelle cache-only, son replay, la red team et la CI doivent encore
-être inscrits dans le rapport. Avant ces preuves :
+La campagne réelle cache-only et son replay sont terminés : 700 hypothèses
+exécutées, zéro survivante FDR, zéro candidat shadow, 7/7 contrôles négatifs,
+zéro doublon et zéro coût fournisseur. Verdict :
+`JALON_10_NO_ROBUST_PATTERN_FOUND`.
+
+La campagne ne demande aucune action utilisateur. Tant que la PR brouillon
+n’est pas déclarée verte et prête :
 
 `AUCUNE ACTION UTILISATEUR REQUISE`
 

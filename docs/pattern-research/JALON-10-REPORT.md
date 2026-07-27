@@ -1,14 +1,15 @@
 # Rapport Jalon 10
 
-Statut documentaire : `PENDING_REAL_CACHE_ONLY_RUN`
+Statut documentaire : `JALON_10_NO_ROBUST_PATTERN_FOUND`
 Date : 2026-07-27
 
 ## Résumé actuel
 
-Le contrat scientifique, la politique point-in-time, les tests multiples, les
-gates de promotion et le registre public sont spécifiés avant lecture des
-résultats. La campagne réelle cache-only n’est pas encore consignée dans ce
-rapport ; aucun pattern n’est donc annoncé robuste, shadow ou validé.
+Le contrat scientifique, la politique point-in-time, les tests multiples et
+les gates de promotion ont été gelés avant lecture. La campagne réelle
+cache-only a exécuté les 700 hypothèses générées. Malgré 118 ROI positifs bruts
+et 24 survivantes walk-forward brutes, aucune hypothèse ne survit à la
+correction FDR. Aucun pattern n’est robuste, shadow ou validé.
 
 ## Audit tennis
 
@@ -31,18 +32,49 @@ son moteur, son vocabulaire et ses preuves propres.
 
 | Mesure | Résultat |
 |---|---|
-| Run réel | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Hypothèses générées | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Hypothèses exécutées | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Rejets fuite/support | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Positives brutes | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Survivantes FDR | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Survivantes walk-forward | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Survivantes validation externe | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Candidates shadow | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Contrôles négatifs | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Run réel | `CACHE_ONLY_COMPLETED` |
+| Révision du code | `5c5b1a0344346b812a71962e7d0abadc3ba19266` |
+| Hash dataset | `3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495` |
+| Hash résultat | `e7dbd83ce41a96bcf58cbedba5102d499d2fa9a8f9b6ab2aaf22169abce1d0db` |
+| Hypothèses générées | 700 |
+| Hypothèses exécutées | 700 |
+| Rejets pour fuite dans l’univers admissible | 0 |
+| Rejets pour support | 167 |
+| Positives brutes | 118 |
+| Survivantes FDR | 0 |
+| Survivantes walk-forward brutes | 24 |
+| Survivantes validation externe | 0 |
+| Candidates shadow | 0 |
+| Contrôles négatifs | 7/7 réussis |
+| Replay | hash identique, 0 doublon |
 
-La section sera remplacée uniquement depuis le rapport stable et son hash.
+Le walk-forward brut n’outrepasse pas la correction des tests multiples. Zéro
+survivante FDR implique zéro promotion, même si 24 règles ont des folds bruts
+positifs.
+
+## Meilleurs résultats exploratoires
+
+Ces trois règles sont les meilleurs ROI parmi les règles à support suffisant
+ayant survécu au walk-forward brut. Elles restent `DISCOVERED`, avec `q = 1`,
+et ne sont ni externes, ni shadow, ni `VALIDATED`.
+
+| Règle | Support | ROI / profit | IC bootstrap 95 % | q | Folds | Drawdown | Limite |
+|---|---:|---:|---:|---:|---:|---:|---|
+| La Liga, extérieur, cote 2,00–2,50, marge ≤ 6 % | 261 paris / 225 groupes | 16,64 % / 43,43 u | [3,36 % ; 30,77 %] | 1,00 | 4/4 | 9,27 u | spécifique à une ligue, sans validation externe ni prix live exact |
+| Serie A, nul, cote 2,50–3,25, marge ≤ 6 % | 363 paris / 282 groupes | 15,94 % / 57,88 u | [0,43 % ; 31,39 %] | 1,00 | 4/4 | 19,52 u | spécifique à une ligue, sans validation externe ni prix live exact |
+| Serie A, extérieur, cote 1,60–2,00, marge ≤ 6 % | 241 paris / 204 groupes | 13,87 % / 33,42 u | [2,49 % ; 24,27 %] | 1,00 | 3/3 | 7,22 u | spécifique à une ligue, sans validation externe ni prix live exact |
+
+La comparaison pertinente reste le marché observé : aucune de ces règles ne
+survit à la correction des 700 hypothèses, et l’absence d’horodatage exact
+interdit toute mesure CLV ou affirmation de supériorité reproductible en live.
+
+## Contrôles négatifs
+
+Les sept contrôles sont non promouvables et réussissent : labels mélangés
+stratifiés, feature aléatoire inconnue, cotes décalées, condition impossible,
+règle triviale « domicile partout », pattern post-résultat et orientation
+winner/loser. Le contrôle mélangé produit un ROI de −8,02 % sur 10 731 paris ;
+la règle triviale produit −8,12 %. Aucun faux edge n’est promu.
 
 ## Public Evidence Ledger
 
@@ -54,10 +86,9 @@ présentées comme réelles.
 
 ## Coûts et stockage
 
-L’objectif du run est zéro appel API-Football, zéro crédit The Odds API, aucun
-nouveau fournisseur et seulement des sorties compactes. Les mesures réelles de
-temps Actions, stockage et opérations R2 restent
-`PENDING_REAL_CACHE_ONLY_RUN`.
+Le run et son replay ont consommé zéro appel fournisseur et zéro crédit The
+Odds API. Aucun nouveau fournisseur n’a été utilisé et seules des sorties
+compactes sont conservées.
 
 `STORAGE_PAUSED` reste actif ; P3/P4 sont différés. Aucune suppression
 `historical-data` ou R2 n’est autorisée.
@@ -76,12 +107,7 @@ sont autorisés par ce rapport.
 
 ## Verdict
 
-`PENDING_REAL_CACHE_ONLY_RUN`
+`JALON_10_NO_ROBUST_PATTERN_FOUND`
 
-Un des verdicts officiels du Jalon 10 ne sera inscrit qu’après exécution,
-replay, red team et CI :
-
-- `JALON_10_PATTERN_ENGINE_READY`
-- `JALON_10_NO_ROBUST_PATTERN_FOUND`
-- `JALON_10_BLOCKED_BY_DATA_GATES`
-- `JALON_10_SCIENTIFIC_VALIDATION_FAILED`
+Ce verdict est scientifique, non opérationnel : il n’autorise ni changement de
+seuil, ni nouvelle source, ni pari réel.

@@ -67,15 +67,19 @@ joueur exigent PLAYER_GATE READY. `NO_BET_DEFAULT = true`.
 
 | Famille | Marché | Evidence scope | Statut |
 |---|---|---|---|
-| Équipe + marché | 1X2 | `DISCOVERY_EXPOSED` | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Équipe + marché | O/U 2,5 | `DISCOVERY_EXPOSED` | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Calendrier/repos | marchés prêts | `DISCOVERY_EXPOSED` | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Équipe + marché | 1X2 | `DISCOVERY_EXPOSED` | `NO_FDR_SURVIVOR` |
+| Équipe + marché | O/U 2,5 | `DISCOVERY_EXPOSED` | `NO_FDR_SURVIVOR` |
+| Calendrier/repos | marchés prêts | `DISCOVERY_EXPOSED` | `NO_FDR_SURVIVOR` |
 | Joueurs/tactique | selon gates | exposé | `BLOCKED_BY_DATA_GATES` |
 | Latéralité | aucun | aucun | `FOOTEDNESS_DATA_GATE` |
 
-Zéro pattern est `LIVE_SHADOW_CANDIDATE`, `LIVE_SHADOW` ou `VALIDATED` avant la
-campagne. Même une survivante historique reste bloquée par
-`SOURCE_PRICE_CLASS_ONLY` tant qu’un prix live exact n’est pas observable.
+La campagne V1 a exécuté 700 règles : 118 sont positives brutes et 24 survivent
+au walk-forward brut, mais aucune ne survit à la FDR. Il reste donc zéro pattern
+`LIVE_SHADOW_CANDIDATE`, `LIVE_SHADOW` ou `VALIDATED`. Le verdict est
+`JALON_10_NO_ROBUST_PATTERN_FOUND`.
+
+Indépendamment de ce verdict, `SOURCE_PRICE_CLASS_ONLY` aurait maintenu le gate
+live fermé sans prix exact observable.
 
 Mise scientifique : 1 unité fixe. Bankroll : 1 000 unités fictives. Martingale,
 pari réel et publication sociale sont interdits.

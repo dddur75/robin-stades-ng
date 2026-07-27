@@ -1,0 +1,32 @@
+{
+  "schema_version": "pattern-artifact-hashes-v1",
+  "artifacts": [
+    {
+      "name": "campaign-summary.full.json",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "bytes": 1549075,
+      "sha256": "e3f620a6cd04e3ab7547b367384d81183d240d906070becb4924c0d7df05d491"
+    },
+    {
+      "name": "hypothesis-registry.jsonl",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "records": 700,
+      "bytes": 1071163,
+      "sha256": "29d4ca4faed4d9c6713d1047644e724d1e742fecf417f2531ffbde17b449df6e"
+    },
+    {
+      "name": "ledger-summary.full.json",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "bytes": 589,
+      "sha256": "8cae237f440431bf76e6ef4391f99e2c83e25b58006807ad15815b011ad50851"
+    },
+    {
+      "name": "replay.full.json",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "bytes": 308,
+      "sha256": "5e8aa28f4a97fc6d32e4bcc7a9dc5783787c9e85f21f6482e0d052e43af82008"
+    }
+  ],
+  "git_policy": "ONLY_COMPACT_SUMMARIES_AND_HASHES",
+  "r2_operations": 0
+}

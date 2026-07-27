@@ -80,14 +80,18 @@ Les contrôles cibles permutées et lineups aléatoires sont obligatoires.
 
 | Expérience | Question | État |
 |---|---|---|
-| Pattern Campaign V1 | Une règle simple survit-elle à FDR, bootstrap et walk-forward ? | `PENDING_REAL_CACHE_ONLY_RUN` |
-| External league transfer | La règle reste-t-elle positive séparément en Bundesliga et Serie A ? | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Negative controls V1 | Labels mélangés, fuite et règles impossibles sont-ils rejetés ? | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Deterministic replay | Configuration, règles, métriques et hashes sont-ils identiques ? | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Public Ledger V1 | Décisions et règlements forment-ils une chaîne append-only valide ? | `PENDING_REAL_CACHE_ONLY_RUN` |
-| Shadow Bankroll V1 | La comptabilité fixe de 1 unité est-elle rejouable ? | `PENDING_REAL_CACHE_ONLY_RUN` |
+| Pattern Campaign V1 | Une règle simple survit-elle à FDR, bootstrap et walk-forward ? | `NO_FDR_SURVIVOR` |
+| External league transfer | La règle reste-t-elle positive séparément en Bundesliga et Serie A ? | `NO_EXTERNAL_SURVIVOR` |
+| Negative controls V1 | Labels mélangés, fuite, règle triviale et règles impossibles sont-ils rejetés ? | `VERIFIED_7_OF_7` |
+| Deterministic replay | Configuration, règles, métriques et hashes sont-ils identiques ? | `VERIFIED_IDENTICAL` |
+| Public Ledger V1 | Décisions et règlements forment-ils une chaîne append-only valide ? | `VERIFIED_EMPTY_LEDGER_AND_TESTS` |
+| Shadow Bankroll V1 | La comptabilité fixe de 1 unité est-elle rejouable ? | `VERIFIED_EMPTY_LEDGER_AND_TESTS` |
 
 Paramètres gelés : support 80 paris / 3 saisons, q ≤ 0,05, bootstrap groupé
 1 000, au moins 2 folds admissibles, 15 paris par fold, ratio positif ≥ 0,67 et
 dernier fold positif. Bundesliga et Serie A exigent chacune 40 paris et un ROI
 positif. Les données restent exposées et ne peuvent produire `VALIDATED`.
+
+Résultat V1 : 700/700 hypothèses exécutées, 167 rejets support, 118 positives
+brutes, 24 survivantes walk-forward brutes, 0 survivante FDR, 0 externe et
+0 candidat shadow. Verdict : `JALON_10_NO_ROBUST_PATTERN_FOUND`.

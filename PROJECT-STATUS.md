@@ -42,7 +42,7 @@ Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 | 7 — Scientific Model Arena | `VERIFIED` | PR #10 fusionnée |
 | 8 — validation externe | `WAITING_FOR_EXTERNAL_GATES` | `docs/audits/JALON-8-REPORT.md` |
 | 9 | `MERGED_AND_POST_MERGE_VERIFIED` | PR #12 |
-| 10 — Pattern Research / Public Ledger | `PENDING_REAL_CACHE_ONLY_RUN` | `docs/pattern-research/JALON-10-REPORT.md` |
+| 10 — Pattern Research / Public Ledger | `JALON_10_NO_ROBUST_PATTERN_FOUND` | `docs/pattern-research/JALON-10-REPORT.md` |
 
 ## Preuves Jalon 4
 
@@ -341,9 +341,23 @@ après exclusion d’une marge négative ; Over/Under 2,5 conserve 10 732 lignes
 Ces données sont `DISCOVERY_EXPOSED`. Les prix portent
 `SOURCE_PRICE_CLASS_ONLY` et ne disposent pas d’un `observed_at` exact : ils
 autorisent la recherche historique, mais ferment le gate live point-in-time.
-La première campagne reste `PENDING_REAL_CACHE_ONLY_RUN`; aucun résultat,
-pattern robuste ou candidat shadow n’est déclaré avant son exécution réelle et
-son replay.
+La première campagne cache-only a généré et exécuté 700 hypothèses : 167 sont
+rejetées pour support, 118 ont un ROI brut positif, 24 survivent au
+walk-forward brut, mais zéro survit à la FDR, zéro à la validation externe et
+zéro ne devient candidat shadow. Les 7 contrôles négatifs sur 7 réussissent.
+Le replay est identique, avec zéro appel fournisseur, zéro crédit et zéro
+doublon. Révision exécutée :
+`5c5b1a0344346b812a71962e7d0abadc3ba19266`.
+
+Hashes de preuve :
+
+- dataset :
+  `3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495` ;
+- résultat :
+  `e7dbd83ce41a96bcf58cbedba5102d499d2fa9a8f9b6ab2aaf22169abce1d0db`.
+
+Verdict : `JALON_10_NO_ROBUST_PATTERN_FOUND`. Aucun seuil n’est assoupli et
+aucun pattern n’est promu.
 
 Le Public Evidence Ledger est défini comme append-only, chaîné par SHA-256 et
 shadow-only, avec une bankroll initiale fictive de 1 000 unités. Robin Live V1
