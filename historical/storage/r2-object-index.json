@@ -861,6 +861,90 @@
       "status": "verified",
       "verified_at": "2026-07-26T13:42:16.204917+00:00"
     },
+    "bundles/30231446075/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:20:58.845550+00:00"
+    },
+    "bundles/30231446075/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "435d462d092bafb124329539efa6fb554bab9bc1758f460c4a530592aa9862f1",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:20:59.979345+00:00"
+    },
+    "bundles/30231446075/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "67fbec306bfa2e6be3401d245735210f11904968b972dcb5e8b4da7eab8ea3af",
+      "size": 20998503,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:03.334886+00:00"
+    },
+    "bundles/30233306063/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:05.063144+00:00"
+    },
+    "bundles/30233306063/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "607e2691e74cda18899d95866b0253d09d385905f974735e81ceeac67cf7e26b",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:06.282258+00:00"
+    },
+    "bundles/30233306063/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "e73285c25838b80982e1f98bb74be91dc7447e9ea1c6c2d117813415e76b5046",
+      "size": 20996472,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:08.674356+00:00"
+    },
+    "bundles/30236163351/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:10.453971+00:00"
+    },
+    "bundles/30236163351/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "0ed5b20cec75f7c235379a8c6bd22c328aefb055de5e78a3fac581c8433b922f",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:11.814172+00:00"
+    },
+    "bundles/30236163351/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "26e58346c1723b82bbf67686ba36877751eb8692c647bf67583e97343bead96f",
+      "size": 21000137,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:14.750878+00:00"
+    },
+    "bundles/30238268175/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:16.900841+00:00"
+    },
+    "bundles/30238268175/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "f7f60307e5ac11ef7356f1ec6ebe04e454a9488fe759b08ca3ac7f7a1a7f27ca",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:18.130500+00:00"
+    },
+    "bundles/30238268175/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "5b754efe400f5ad8c3c4df88b4c68808f71153153d1fba9921f3bef6eed7f58e",
+      "size": 20994115,
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:21.532826+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -1877,25 +1961,25 @@
       "verified_at": "2026-07-26T23:41:16.164634+00:00"
     },
     "external/datasets/bundesliga_team_pre_match_v1.json": {
-      "last_action": "replayed",
-      "sha256": "45d76f00949528f56f6d370265aae0031811e919b1becb15bc4b0e46534e3f62",
+      "last_action": "uploaded",
+      "sha256": "d5db2f0957c9ace943be6b41cb4ec9b133972778954f25eaa8e39e947a629b9f",
       "size": 4030,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:16.383491+00:00"
+      "verified_at": "2026-07-27T05:21:22.784633+00:00"
     },
     "external/datasets/laliga_team_pre_match_v1.json": {
-      "last_action": "replayed",
-      "sha256": "2485e7a75a04e61c6fa5785f29aaeb589779d82a2046ee62763facf737b65977",
+      "last_action": "uploaded",
+      "sha256": "08b0de9cf473aa55ceb7e6f9036b2e67a1eecf11751ece052730d2e0fc96448e",
       "size": 3942,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:16.602678+00:00"
+      "verified_at": "2026-07-27T05:21:24.399201+00:00"
     },
     "external/datasets/pl_team_pre_match_v1.json": {
-      "last_action": "replayed",
-      "sha256": "8d983ece337335f18a8cd8cb9a112c03636b0c02976cc954b5698a75082b8fed",
+      "last_action": "uploaded",
+      "sha256": "c27221d23c4e274687cbcb47c847baca65487bdf83b8aace80a5b98f4c479dcd",
       "size": 3934,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:17.033476+00:00"
+      "verified_at": "2026-07-27T05:21:25.517447+00:00"
     },
     "external/derived/competition=Bundesliga/season=2019/entity_type=bundesliga_team_pre_match_v1/dataset_version=bundesliga_team_pre_match_v1/part-00000.parquet": {
       "last_action": "replayed",
@@ -2045,11 +2129,11 @@
       "verified_at": "2026-07-26T23:41:21.819944+00:00"
     },
     "external/packages/preseason-shadow-package-v1.json": {
-      "last_action": "replayed",
-      "sha256": "943c77a613cf2237f76e70a231166c2f09da043756ed6863f3e8d93a9475b566",
+      "last_action": "uploaded",
+      "sha256": "5356454d0237b7a7d38f5f1742e074e1e12495c213d99ef5af5ff4c7fc9ebbe5",
       "size": 1611,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:22.032339+00:00"
+      "verified_at": "2026-07-27T05:21:26.634357+00:00"
     },
     "external/predictions/competition=Bundesliga/season=2024/entity_type=external_model_predictions_v1/dataset_version=bundesliga_dixon_coles_v1/part-00000.parquet": {
       "last_action": "replayed",
@@ -2318,25 +2402,25 @@
       "verified_at": "2026-07-26T23:41:30.954804+00:00"
     },
     "external/readiness/external-league-readiness-v1.json": {
-      "last_action": "replayed",
-      "sha256": "072e9e100937d33ab43991e0454ca56858cbad2d5f77a2b406df17554ecdab11",
+      "last_action": "uploaded",
+      "sha256": "40af9be38a3fb2a25d731661a0870dd0de8868c56456c8a300267dcfa65d8968",
       "size": 16039,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:31.179935+00:00"
+      "verified_at": "2026-07-27T05:21:27.750125+00:00"
     },
     "external/runs/jalon8-latest.json": {
-      "last_action": "replayed",
-      "sha256": "52262854da829685e6d529f9aef1a5c15497680640f141dc1163879342b254a2",
-      "size": 64113,
+      "last_action": "uploaded",
+      "sha256": "2984a0327e70d8f60c568fb38b88c0d96a0a7bffa9a9767afda2954b680e1ca8",
+      "size": 64116,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:31.415871+00:00"
+      "verified_at": "2026-07-27T05:21:28.868590+00:00"
     },
     "forecasts/accelerated-safe.json": {
-      "last_action": "replayed",
-      "sha256": "a377a6f3a185ee0eb1fc3e9a7713bc65d1d17847f8cdf08734c3aca23d1f3a7b",
+      "last_action": "uploaded",
+      "sha256": "0501a32d0e86db2972e48f88f8ffebc2567b93c5c630cab786abc19b1f495159",
       "size": 8398,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:31.658102+00:00"
+      "verified_at": "2026-07-27T05:21:29.952870+00:00"
     },
     "identity/team-alias-registry-v1.json": {
       "last_action": "replayed",
@@ -2822,11 +2906,11 @@
       "verified_at": "2026-07-26T23:41:49.051854+00:00"
     },
     "models/jalon8-external-validation.json": {
-      "last_action": "replayed",
-      "sha256": "52262854da829685e6d529f9aef1a5c15497680640f141dc1163879342b254a2",
-      "size": 64113,
+      "last_action": "uploaded",
+      "sha256": "2984a0327e70d8f60c568fb38b88c0d96a0a7bffa9a9767afda2954b680e1ca8",
+      "size": 64116,
       "status": "verified",
-      "verified_at": "2026-07-26T23:41:49.265010+00:00"
+      "verified_at": "2026-07-27T05:21:31.238259+00:00"
     },
     "models/market_devigged_baseline_v1.json": {
       "last_action": "replayed",
@@ -177857,18 +177941,18 @@
       "verified_at": "2026-07-27T04:29:06.856345+00:00"
     },
     "readiness/ligue1-multiseason-v1.json": {
-      "last_action": "failed",
+      "last_action": "uploaded",
       "sha256": "e82d43a6835825ab2ef059bf973f06527c473a0e8d78e39944e634633188a7af",
       "size": 31722,
-      "status": "failed",
-      "verified_at": null
+      "status": "verified",
+      "verified_at": "2026-07-27T05:21:32.595551+00:00"
     },
     "reports/ligue1-multiseason-readiness.md": {
-      "last_action": "replayed",
-      "sha256": "55d6933c6e7a31c44f7ce56a859c57952f22e40794053f0c4469a5e78faee824",
+      "last_action": "uploaded",
+      "sha256": "af0dec6456cfa46cc86dcac65c60b225e1c0127429b9bbba0bb0955e56fb8aa7",
       "size": 1537,
       "status": "verified",
-      "verified_at": "2026-07-26T23:28:58.762481+00:00"
+      "verified_at": "2026-07-27T05:21:33.859311+00:00"
     },
     "runs/pilot-ligue-1-2025.json": {
       "last_action": "replayed",
@@ -177878,11 +177962,11 @@
       "verified_at": "2026-07-26T23:28:59.004677+00:00"
     },
     "storage/latest-compaction.json": {
-      "last_action": "replayed",
-      "sha256": "fea505768649da5ef099739bb6ceccb0d29c2bddeba340fcf7f7efa8599331ca",
+      "last_action": "uploaded",
+      "sha256": "a9cbdc1ff24f94f6c816fc67611a1ca0be1795034f4952e6068b17a68bb506e9",
       "size": 677,
       "status": "verified",
-      "verified_at": "2026-07-26T23:28:59.264999+00:00"
+      "verified_at": "2026-07-27T05:21:34.959126+00:00"
     },
     "strategies/api_elo_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
@@ -178019,5 +178103,5 @@
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-27T04:29:07.026708+00:00"
+  "updated_at": "2026-07-27T05:21:34.959141+00:00"
 }
