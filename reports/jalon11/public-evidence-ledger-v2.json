@@ -1,0 +1,35 @@
+{
+  "schema_version": "public-evidence-ledger-v2-summary",
+  "status": "HASH_CHAIN_VERIFIED",
+  "events": 24,
+  "head_hash": "3cf52461465047b6e22b755616e166f9fb063bd1cc81438c1b3ff144d3f65c5c",
+  "genesis_previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_counts": {
+    "HYPOTHESIS_REGISTERED": 8,
+    "DATA_GATE_EVALUATED": 8,
+    "PATTERN_REJECTED": 8,
+    "PATTERN_PROMOTED_TO_WATCHLIST": 0,
+    "PATTERN_PROMOTED_TO_SHADOW_CANDIDATE": 0,
+    "SHADOW_DECISION": 0,
+    "SETTLEMENT": 0
+  },
+  "hypotheses": [
+    "H11-001",
+    "H11-002",
+    "H11-003",
+    "H11-004",
+    "H11-005",
+    "H11-006",
+    "H11-007",
+    "H11-008"
+  ],
+  "dataset_hash": "af9421281a71a8d936bfec8596fce5d2945b35f84948d92eb35a7bf435f7dd00",
+  "campaign_result_hash": "2c131727c4a1af593443c3fe54f16ef5d4ed530bc010e361f349e68fe4930260",
+  "watchlist": 0,
+  "shadow_candidates": 0,
+  "decisions": 0,
+  "settlements": 0,
+  "shadow_bankroll": 1000.0,
+  "production_status": "PRODUCTION_LOCKED",
+  "real_bets": false
+}

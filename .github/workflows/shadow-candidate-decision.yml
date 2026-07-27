@@ -1,0 +1,63 @@
+name: "55 - Shadow Candidate Decision"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shadow-state
+  cancel-in-progress: false
+
+jobs:
+  fail-closed-decision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refuser toute décision sans candidat et observed_at exact
+        run: |
+          mkdir -p artifacts/shadow-candidate-decision
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(
+              Path("reports/jalon11/campaign-summary.json").read_text()
+          )
+          candidates = report["promotion"]["shadow_candidates"]
+          if candidates != 0:
+              raise SystemExit(
+                  "CANDIDATE_REQUIRES_SEPARATE_POINT_IN_TIME_PACKAGE"
+              )
+          decision = {
+              "status": "NO_DECISION_NO_CANDIDATE",
+              "candidate_count": 0,
+              "decisions": 0,
+              "stake_units": 0,
+              "shadow_bankroll_before": 1000.0,
+              "shadow_bankroll_after": 1000.0,
+              "provider_calls": 0,
+              "odds_api_credits": 0,
+              "exact_observed_at_required": True,
+              "production_status": "PRODUCTION_LOCKED",
+              "real_bets": False,
+          }
+          Path(
+              "artifacts/shadow-candidate-decision/decision.json"
+          ).write_text(json.dumps(decision, indent=2) + "\n")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shadow-candidate-decision-${{ github.run_id }}
+          path: artifacts/shadow-candidate-decision
+          retention-days: 90
+          compression-level: 9

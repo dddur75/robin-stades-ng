@@ -1,0 +1,21 @@
+{
+  "blocked_gates": [
+    "PLAYER_GATE",
+    "PLAYER_FORM_GATE",
+    "STARTER_BASELINE_GATE",
+    "ABSENCE_GATE",
+    "LINEUP_GATE",
+    "FORMATION_GATE",
+    "FOOTEDNESS_GATE"
+  ],
+  "message_template": "Données insuffisantes pour les matchups profonds. L'équipe et le calendrier sont prêts ; joueurs, absences, lineups, formations et pied fort restent bloqués.",
+  "negative_results_included": true,
+  "network_connected": false,
+  "publishing_enabled": false,
+  "ready_gates": [
+    "TEAM_GATE",
+    "MARKET_GATE_HISTORICAL_ONLY"
+  ],
+  "schema_version": "deep-football-social-export-v1",
+  "status": "JALON_11_BLOCKED_BY_DATA_GATES"
+}

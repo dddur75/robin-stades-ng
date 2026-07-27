@@ -1,0 +1,10 @@
+{
+  "message_template": "Aucune hypothèse n'entre dans la watchlist prospective : les gates ou les tests scientifiques restent insuffisants.",
+  "negative_results_included": true,
+  "network_connected": false,
+  "not_a_bet": true,
+  "publishing_enabled": false,
+  "schema_version": "deep-football-social-export-v1",
+  "status": "EMPTY_NO_ROBUST_DEEP_MATCHUP",
+  "watchlist_count": 0
+}

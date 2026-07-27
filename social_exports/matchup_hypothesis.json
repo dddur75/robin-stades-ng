@@ -1,0 +1,10 @@
+{
+  "candidate": false,
+  "hypothesis_id": "H11-001",
+  "message_template": "Hypothèse en cours : buteur en forme face à deux centraux absents. Les données temporelles sont insuffisantes ; aucun pari n'est proposé.",
+  "negative_results_included": true,
+  "network_connected": false,
+  "publishing_enabled": false,
+  "schema_version": "deep-football-social-export-v1",
+  "status": "DATA_GATE_BLOCKED"
+}

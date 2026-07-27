@@ -1,0 +1,14 @@
+{
+  "candidate_count": 0,
+  "decisions": 0,
+  "future_message_template": "Nouveau candidat shadow : publication statique autorisée uniquement après passage des 17 gates ; ce statut ne constitue pas un pari réel.",
+  "message_template": "Aucun nouveau candidat shadow. Aucune décision, aucune mise et aucun pari réel.",
+  "negative_results_included": true,
+  "network_connected": false,
+  "production_status": "PRODUCTION_LOCKED",
+  "publishing_enabled": false,
+  "real_bets": false,
+  "schema_version": "deep-football-social-export-v1",
+  "stake_units": 0,
+  "status": "NO_CANDIDATE"
+}
