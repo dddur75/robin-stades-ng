@@ -82,3 +82,9 @@ accordé.
 | Dixon–Coles | 2 136 | 1,0312 | `INCONCLUSIVE` face à Poisson |
 
 Aucun modèle n’est `PRODUCTION_READY`; aucun candidat shadow n’est promu.
+
+## Validation marché Jalon 9
+
+Les modèles Jalon 8 restent gelés. Ils ne sont comparés au marché que pour une
+ligue dont MARKET_GATE est READY, sur échantillon apparié. Sans amélioration
+robuste : `NO_EXTERNAL_VALIDATED_EDGE`, zéro promotion.

@@ -58,6 +58,7 @@ class BackfillTask(BaseModel):
     team_id: int | None = None
     player_id: int | None = None
     priority: str = "A"
+    business_value_priority: str = "P4_DEFERRED"
     estimated_calls: int = 1
     status: TaskStatus = TaskStatus.PENDING
     attempt_count: int = 0

@@ -66,6 +66,64 @@ CORE_ENDPOINTS = (
 
 SECONDARY_ENDPOINTS = ("teams/statistics", "coachs", "transfers")
 
+BUSINESS_PRIORITY_ORDER = {
+    "P0_MARKET": 0,
+    "P0_TEAM_IDENTITY": 1,
+    "P1_PLAYER_MATCH_STATS": 2,
+    "P1_LINEUPS": 3,
+    "P1_TEAM_MATCH_STATS": 4,
+    "P2_EVENTS": 5,
+    "P3_SECONDARY": 6,
+    "P4_DEFERRED": 7,
+}
+
+
+def business_value_priority(
+    *,
+    competition: str,
+    season: int,
+    endpoint: str,
+) -> str:
+    """Prioriser les appels qui ferment un gate sans supprimer le plan initial."""
+
+    normalized = endpoint.strip("/")
+    external = competition in {
+        "Premier League",
+        "La Liga",
+        "Bundesliga",
+        "Serie A",
+        "UEFA Champions League",
+    }
+    recent = season in {2022, 2023, 2024, 2025}
+    if (
+        competition in {"Serie A", "UEFA Champions League"}
+        and normalized in {"leagues", "teams", "fixtures"}
+    ):
+        return "P0_TEAM_IDENTITY"
+    if external and recent and normalized == "fixtures/players":
+        return "P1_PLAYER_MATCH_STATS"
+    if external and recent and normalized == "fixtures/lineups":
+        return "P1_LINEUPS"
+    if external and recent and normalized == "fixtures/statistics":
+        return "P1_TEAM_MATCH_STATS"
+    if external and recent and normalized == "fixtures/events":
+        return "P2_EVENTS"
+    if normalized in SECONDARY_ENDPOINTS:
+        return "P3_SECONDARY"
+    return "P4_DEFERRED"
+
+
+def storage_allows_business_priority(
+    storage_status: str,
+    business_priority: str,
+) -> bool:
+    """Suspendre P3/P4 quand la projection haute franchit la pause."""
+
+    return not (
+        storage_status == "OBJECT_STORAGE_REQUIRED"
+        and business_priority in {"P3_SECONDARY", "P4_DEFERRED"}
+    )
+
 
 def stable_task_id(
     competition_id: int,
@@ -110,6 +168,11 @@ def build_backfill_plan(
                         season=season,
                         endpoint=endpoint,
                         priority=priority,
+                        business_value_priority=business_value_priority(
+                            competition=target.name,
+                            season=season,
+                            endpoint=endpoint,
+                        ),
                     )
                 )
     return sorted(

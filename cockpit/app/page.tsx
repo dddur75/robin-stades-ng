@@ -21,6 +21,7 @@ type PageKey =
   | "modelLab"
   | "modelArena"
   | "externalValidation"
+  | "criticalClosure"
   | "strategyLab"
   | "backtestLab"
   | "historicalQuality";
@@ -43,6 +44,7 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
   { key: "modelLab", label: "Model Lab", glyph: "M" },
   { key: "modelArena", label: "Model Arena", glyph: "A" },
   { key: "externalValidation", label: "External Validation", glyph: "X" },
+  { key: "criticalClosure", label: "Market & Storage", glyph: "R" },
   { key: "strategyLab", label: "Strategy Lab", glyph: "S" },
   { key: "backtestLab", label: "Backtest Explorer", glyph: "T" },
   { key: "historicalQuality", label: "Historical Quality", glyph: "Q" },
@@ -133,6 +135,11 @@ const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> 
     eyebrow: "Multi-ligues · protocole gelé · aucun retuning",
     title: "External Validation",
     note: "Transfert, modèles spécifiques, pooled et leave-one-league-out, strictement conditionnés par les gates.",
+  },
+  criticalClosure: {
+    eyebrow: "Gates critiques · marché réel · stockage durable",
+    title: "Market & Storage Control Center",
+    note: "Identités, joueurs, lineups, matching Football-Data et readiness R2 sans pari réel.",
   },
   strategyLab: {
     eyebrow: "Hypothèses sous contrôle",
@@ -408,6 +415,7 @@ export default function Home() {
           {page === "modelLab" && <ModelLab />}
           {page === "modelArena" && <ModelArena />}
           {page === "externalValidation" && <ExternalValidation />}
+          {page === "criticalClosure" && <CriticalClosure />}
           {page === "strategyLab" && <HistoricalStrategyLab />}
           {page === "backtestLab" && <BacktestExplorer />}
           {page === "historicalQuality" && <HistoricalDataQuality />}
@@ -1318,6 +1326,102 @@ function HistoricalStrategyLab() {
         {rows.map((row) => <tr key={row.strategy_version ?? row.strategy}><td>{row.strategy_version ?? row.strategy}</td><td>{row.market}</td><td>{row.bets ?? 0}</td><td>{row.roi == null ? "—" : pct(row.roi)}</td><td>{row.max_drawdown_units?.toFixed(2) ?? "—"} u</td><td>{row.adjusted_p_value?.toFixed(4) ?? "—"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
       </tbody></table></div> : <EmptyState title="Strategy Lab en attente" text="Aucune stratégie n'est promue sans OOS, volume et robustesse." label="NO OUTPUT" />}
     </section>
+  );
+}
+
+function CriticalClosure() {
+  type Gate = {
+    competition?: string;
+    status?: string;
+    one_x_two_status?: string;
+    totals_status?: string;
+    coverage?: number;
+    mapping_rate?: number;
+    fixtures_mapped?: number;
+    ambiguities?: number;
+  };
+  const closure = (snapshot.deepData as unknown as {
+    criticalClosure?: {
+      status?: string;
+      teamGates?: Record<string, { status?: string; coverage?: number }>;
+      playerGates?: Gate[];
+      lineupGates?: Gate[];
+      marketGates?: Gate[];
+      matching?: { matched?: number; market_rows?: number; mapping_rate?: number; ambiguous?: number };
+      files?: number;
+      marketRows?: number;
+      storage?: {
+        actual_bytes?: number;
+        critical_gates_only?: number;
+        current_full_plan?: number;
+        current_full_plan_plus_market?: number;
+        status?: string;
+      };
+      r2?: { mode?: string; uploaded?: number; deletions?: number };
+      strategy?: { status?: string; live_shadow_candidates?: number; shadow_model_candidates?: number };
+      marketValidation?: {
+        status?: string;
+        paired_predictions?: number;
+        comparisons?: Array<{
+          competition?: string;
+          model?: string;
+          paired_fixtures?: number;
+          model_log_loss?: number;
+          market_log_loss?: number;
+          paired_log_loss_delta?: number;
+          ci95?: number[];
+          status?: string;
+        }>;
+      };
+      package?: { status?: string; NO_BET_DEFAULT?: boolean };
+      oddsApi?: { credits_consumed?: number; estimated_credits?: number };
+      productionStatus?: string;
+      realBets?: boolean;
+    };
+  }).criticalClosure;
+  const bytes = (value?: number) => value == null ? "—" : `${(value / 1_000_000).toFixed(1)} MB`;
+  const gateRows = [
+    ...(closure?.marketGates ?? []).map((gate) => ({ ...gate, family: "MARKET" })),
+    ...(closure?.playerGates ?? []).map((gate) => ({ ...gate, family: "PLAYER" })),
+    ...(closure?.lineupGates ?? []).map((gate) => ({ ...gate, family: "LINEUP" })),
+  ];
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric label="Fichiers Football-Data" value={String(closure?.files ?? 0)} detail={`${closure?.marketRows ?? 0} lignes marché`} />
+        <Metric label="Matching fixture" value={`${(((closure?.matching?.mapping_rate ?? 0) * 100)).toFixed(1)} %`} detail={`${closure?.matching?.matched ?? 0}/${closure?.matching?.market_rows ?? 0} · ${closure?.matching?.ambiguous ?? 0} ambiguïté`} />
+        <Metric label="The Odds API historique" value={`${closure?.oddsApi?.credits_consumed ?? 0} crédit`} detail={`dry-run ${closure?.oddsApi?.estimated_credits ?? 0}`} />
+        <Metric label="Object storage" value={closure?.storage?.status ?? "OBJECT_STORAGE_OPTIONAL"} detail={`R2 ${closure?.r2?.mode ?? "WAITING"}`} />
+        <Metric label="Production" value={closure?.productionStatus ?? "PRODUCTION_LOCKED"} detail="REAL_BETS = false" tone="warning" />
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Critical Gate Monitor</span><h2>Gates par ligue et famille</h2></div><StatusPill value={closure?.status ?? "JALON_9_WAITING"} /></div>
+        <div className="table-wrap"><table><thead><tr><th>Famille</th><th>Compétition</th><th>Statut</th><th>Coverage</th><th>Mapping</th><th>1X2</th><th>Totals</th></tr></thead><tbody>
+          {gateRows.map((gate, index) => <tr key={`${gate.family}-${gate.competition}-${index}`}><td>{gate.family}</td><td>{gate.competition}</td><td><StatusPill value={gate.status ?? "UNAVAILABLE"} /></td><td>{gate.coverage == null ? "—" : pct(gate.coverage)}</td><td>{gate.mapping_rate == null ? "—" : pct(gate.mapping_rate)}</td><td>{gate.one_x_two_status ?? "—"}</td><td>{gate.totals_status ?? "—"}</td></tr>)}
+        </tbody></table></div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Storage Control Center</span><h2>Capacité et projections</h2></div><StatusPill value={closure?.storage?.status ?? "OBJECT_STORAGE_OPTIONAL"} /></div>
+        <div className="cost-grid">
+          <article><span>Actuel</span><strong>{bytes(closure?.storage?.actual_bytes)}</strong><small>historical-data</small></article>
+          <article><span>Gates critiques</span><strong>{bytes(closure?.storage?.critical_gates_only)}</strong><small>projection ciblée</small></article>
+          <article><span>Plan complet</span><strong>{bytes(closure?.storage?.current_full_plan)}</strong><small>projection centrale</small></article>
+          <article><span>Plan + marché</span><strong>{bytes(closure?.storage?.current_full_plan_plus_market)}</strong><small>projection haute</small></article>
+        </div>
+      </section>
+      <section className="panel">
+        <div className="panel-head"><div><span>Market Model Arena</span><h2>Validation et package pré-saison V2</h2></div><StatusPill value={closure?.strategy?.status ?? "NO_EXTERNAL_VALIDATED_EDGE"} /></div>
+        <div className="cost-grid">
+          <article><span>Stratégies shadow</span><strong>{closure?.strategy?.live_shadow_candidates ?? 0}</strong><small>aucune promotion automatique</small></article>
+          <article><span>Modèles shadow</span><strong>{closure?.strategy?.shadow_model_candidates ?? 0}</strong><small>conditionnés par MARKET_GATE</small></article>
+          <article><span>Package</span><strong>{closure?.package?.status ?? "WAITING"}</strong><small>{closure?.package?.NO_BET_DEFAULT ? "NO_BET_DEFAULT" : "gate en attente"}</small></article>
+          <article><span>R2 suppressions</span><strong>{closure?.r2?.deletions ?? 0}</strong><small>interdites avant validation</small></article>
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Ligue</th><th>Modèle gelé</th><th>Fixtures</th><th>Log Loss modèle</th><th>Log Loss marché</th><th>Delta</th><th>IC 95 %</th><th>Statut</th></tr></thead><tbody>
+          {(closure?.marketValidation?.comparisons ?? []).map((row, index) => <tr key={`${row.competition}-${row.model}-${index}`}><td>{row.competition}</td><td>{row.model}</td><td>{row.paired_fixtures ?? 0}</td><td>{row.model_log_loss?.toFixed(4) ?? "—"}</td><td>{row.market_log_loss?.toFixed(4) ?? "—"}</td><td>{row.paired_log_loss_delta?.toFixed(4) ?? "—"}</td><td>{row.ci95?.map((value) => value.toFixed(4)).join(" · ") ?? "—"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
+        </tbody></table></div>
+      </section>
+    </>
   );
 }
 

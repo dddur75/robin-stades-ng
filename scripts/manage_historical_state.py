@@ -24,6 +24,21 @@ def safe_target(root: Path, relative: Path) -> Path:
     return target
 
 
+def write_registry_manifest(destination: Path) -> None:
+    manifest = {
+        "schema_version": "jalon5-historical-v1",
+        "files": {
+            path.relative_to(destination).as_posix(): file_hash(path)
+            for path in sorted(destination.rglob("*"))
+            if path.is_file() and path.name != "manifest.json"
+        },
+    }
+    (destination / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
 def append_state(state: Path, registry: Path) -> dict[str, object]:
     destination = registry / "historical"
     copied = 0
@@ -52,24 +67,38 @@ def append_state(state: Path, registry: Path) -> dict[str, object]:
             if target.exists():
                 target.unlink()
                 compacted += 1
-    manifest = {
-        "schema_version": "jalon5-historical-v1",
-        "files": {
-            path.relative_to(destination).as_posix(): file_hash(path)
-            for path in sorted(destination.rglob("*"))
-            if path.is_file() and path.name != "manifest.json"
-        },
-    }
-    manifest_path = destination / "manifest.json"
-    manifest_path.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    write_registry_manifest(destination)
     return {
         "status": "APPENDED",
         "copied": copied,
         "unchanged": unchanged,
         "compacted_sources_removed": compacted,
+    }
+
+
+def append_r2_controls(state: Path, registry: Path) -> dict[str, object]:
+    """Persister uniquement les preuves R2 sans recopier les sources restaurées."""
+
+    destination = registry / "historical"
+    storage = state / "storage"
+    copied = 0
+    unchanged = 0
+    for source in sorted(storage.glob("r2-*.json")):
+        if not source.is_file():
+            continue
+        relative = source.relative_to(state)
+        target = safe_target(destination, relative)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if target.exists() and file_hash(source) == file_hash(target):
+            unchanged += 1
+            continue
+        shutil.copy2(source, target)
+        copied += 1
+    write_registry_manifest(destination)
+    return {
+        "status": "R2_CONTROLS_APPENDED",
+        "copied": copied,
+        "unchanged": unchanged,
     }
 
 
@@ -119,16 +148,18 @@ def restore_state(registry: Path, destination: Path) -> dict[str, object]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
-    for name in ("append", "verify", "restore"):
+    for name in ("append", "append-r2-controls", "verify", "restore"):
         child = subparsers.add_parser(name)
         child.add_argument("--registry", type=Path, required=True)
-        if name == "append":
+        if name in {"append", "append-r2-controls"}:
             child.add_argument("--state", type=Path, required=True)
         if name == "restore":
             child.add_argument("--destination", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "append":
         result = append_state(args.state, args.registry)
+    elif args.command == "append-r2-controls":
+        result = append_r2_controls(args.state, args.registry)
     elif args.command == "verify":
         result = verify_state(args.registry)
     else:

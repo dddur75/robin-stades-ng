@@ -204,3 +204,13 @@ calibrations sont choisies sur Validation seulement. DuckDB 1.5.4 et Polars
 - conserver `NO_EXTERNAL_VALIDATED_EDGE` et `NO_BET_DEFAULT` tant que les gates
   externes ne sont pas complets ;
 - standardiser par ligue pour le pooled et interdire tout retuning externe.
+
+## ADR Jalon 9
+
+- Football-Data est la source massive historique domestique; The Odds API reste
+  un pilote ciblé plafonné à 500 crédits.
+- La priorité métier s’ajoute à la priorité historique et ne supprime aucune
+  tâche.
+- Les mappings fixture/marché ambigus ne sont jamais utilisés.
+- Pinnacle récent dégradé est conservé pour audit mais exclu des agrégats.
+- R2 est privé, S3-compatible, sans suppression par défaut.

@@ -91,3 +91,9 @@ marquée `INCONCLUSIVE`; elle ne débloque pas de feature.
 
 Aucune cible, donnée future ou valeur manquante convertie en zéro n’est
 autorisée.
+
+## Gates externes Jalon 9
+
+Les features joueur ne sont calculables qu’après PLAYER_GATE par ligue; les
+features composition conservent `PRE_LINEUP` et `POST_LINEUP_SIMULATED`
+séparés. Les blessures restent `BLOCKED_BY_TEMPORALITY`.

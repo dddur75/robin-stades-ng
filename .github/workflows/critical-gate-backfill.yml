@@ -1,0 +1,54 @@
+name: "27 - Backfill des gates critiques"
+on:
+  workflow_dispatch:
+    inputs:
+      business_priority:
+        description: "Gate à fermer"
+        type: choice
+        options:
+          - P0_TEAM_IDENTITY
+          - P1_PLAYER_MATCH_STATS
+          - P1_LINEUPS
+          - P1_TEAM_MATCH_STATS
+        default: P0_TEAM_IDENTITY
+      max_tasks:
+        type: number
+        default: 100
+permissions:
+  contents: write
+concurrency:
+  group: historical-state
+  cancel-in-progress: false
+jobs:
+  critical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Lot borné, reprenable et protégé par la réserve
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: >-
+          python scripts/run_historical_pipeline.py
+          --run-id "${{ github.run_id }}"
+          --max-calls 0
+          --quota-reserve 5000
+          backfill
+          --max-tasks "${{ inputs.max_tasks }}"
+          --max-duration-minutes 110
+          --business-priority "${{ inputs.business_priority }}"
+      - uses: ./.github/actions/historical-state-persist
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
+          r2-replication-enabled: "true"
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2-bucket-name: ${{ secrets.R2_BUCKET_NAME }}

@@ -1,8 +1,8 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-25
+Dernière mise à jour : 2026-07-26
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-8-external-validation`
+Branche : `codex/jalon-9-market-player-storage`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -41,7 +41,7 @@ Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 | 6 — dataset et Player Feature Factory | `VERIFIED` | PR #9 fusionnée |
 | 7 — Scientific Model Arena | `VERIFIED` | PR #10 fusionnée |
 | 8 — validation externe | `WAITING_FOR_EXTERNAL_GATES` | `docs/audits/JALON-8-REPORT.md` |
-| 9 | `NOT_STARTED` | hors périmètre |
+| 9 | `PRE_MERGE_R2_VALIDATION` | PR #12 |
 
 ## Preuves Jalon 4
 
@@ -208,3 +208,105 @@ Statut : `MODEL_ARENA_ACTIVE`. La baseline Jalon 6 est gelée sous
 plus à sélectionner un paramètre. La preuve sur `historical-data@d25865e`
 produit 4 691 prédictions sur 8 familles, avec comparaisons appariées et 5 000 bootstraps
 groupés. Aucun modèle ni stratégie n'est promu; `PRODUCTION_LOCKED` reste actif.
+
+## Jalon 9 — Critical Data Closure
+
+La branche Jalon 9 ajoute la priorité `business_value_priority`, la Historical
+Market Factory Football-Data, les gates TEAM/PLAYER/LINEUP/MARKET, le forecast
+object storage et l’adaptateur R2. Le backfill conserve 30 000 appels/jour, une
+réserve de 5 000 et un passage toutes les deux heures. `REAL_BETS = false`.
+
+La preuve durable `historical-data@518cb4b` mesure 474,1 MB, 894,1 MB de
+projection centrale et 939,1 MB de projection haute :
+`OBJECT_STORAGE_REQUIRED`. P3/P4 sont suspendus; les gates critiques restent
+autorisés.
+
+### Correctif pré-migration R2
+
+Le workflow existant `22 - Qualité historique` expose désormais un mode
+pré-fusion exclusif pour la migration R2 sur la branche de la PR #12. Il
+restaure et persiste `historical-state`, accepte un dry-run sans secret, puis
+des lots cumulatifs de 25, 250 et du périmètre complet.
+
+La preuve exige une lecture distante après chaque upload et chaque replay,
+vérifie SHA-256 et taille, exclut ses propres rapports, conserve toutes les
+sources et ne fournit aucune suppression. Le client utilise la région `auto`
+et l'endpoint Cloudflare R2 global. Le pilote réel, son replay et les gates de
+montée en charge sont verts sur la branche avant fusion.
+`PRODUCTION_LOCKED`, `REAL_BETS = false` et `NO_BET_DEFAULT = true`.
+
+### Jalon 9.1 — Réplication et restauration R2
+
+Le pilote réel de 25 fichiers est vert en upload puis replay. Il ne constitue
+pas une migration complète. L'audit confirme que l'ancien
+`double_write=true` prouvait seulement la conservation des sources pendant le
+lot.
+
+La branche PR #12 contient désormais un scope stable, un index par objet, un
+checkpoint et un curseur reprenable. La persistance historique normale
+réplique seulement son delta vers R2 avec retry borné, circuit breaker, lag et
+accusé durable. R2 reste un miroir; `historical-data` demeure la source
+principale. Une action légère publie les contrôles R2 sans recompacter toutes
+les sources à chaque lot.
+
+Le workflow 31 restaure un échantillon JSON/Parquet/CSV/manifeste/checkpoint
+dans un dossier temporaire, vérifie les hashes et tailles, lit Parquet et rejoue
+un bundle sans fournisseur.
+
+Le benchmark réel 250 est vert : 225 uploads, 25 replays et 250 lectures
+distantes en 246,660 s, puis un replay de contrôle avec 0 upload, 250 replays
+et 250 lectures distantes en 172,533 s. Le périmètre stable compte 25 422
+fichiers pour 710 072 047 octets. La projection monolithique dépasse largement
+les 120 minutes; la migration est donc découpée en segments de 5 000 objets,
+eux-mêmes checkpointés tous les 1 000 objets.
+
+La restauration réelle est `RESTORE_VERIFIED` sur sept fichiers représentatifs,
+avec 3 128 fichiers de bundle rejoués, zéro appel fournisseur, zéro perte,
+zéro doublon et zéro mismatch. La réplication continue a rattrapé un lag réel
+de 50 objets jusqu'à `SYNCED`, 804 objets vérifiés et lag nul.
+
+La migration complète a ensuite traité les 25 422 fichiers en six runs bornés :
+`30204764498`, `30209017214`, `30212660451`, `30218134027`,
+`30220648824` et `30225027066`. Le rapport final est `COMPLETE_VERIFIED` et
+le checkpoint `COMPLETE` : 24 627 uploads, 471 replays et 324 objets déjà
+acquittés par l'index, soit 25 422 objets vérifiés; zéro mismatch, objet
+manquant, mutation, suppression ou retry.
+
+L'audit intégral en lecture seule a vérifié ses cinq premiers segments de
+5 000 objets sans aucun `PutObject`. Son dernier segment a correctement bloqué
+sur une readiness régénérée après sa migration : taille inchangée mais hash
+source plus récent que la métadonnée R2. La réplication continue
+`30238268175` a alors envoyé et relu les 23 deltas courants, avec 816 objets
+attendus et vérifiés, lag nul, zéro erreur, retry, mutation ou suppression.
+PostgreSQL a été synchronisé à la révision `0005_jalon9_critical_closure`.
+
+L'audit a repris exactement au curseur 25 399. Le run `30239697041` est
+`AUDIT_COMPLETE_VERIFIED` : 25 422/25 422 objets, 710 072 047 octets,
+`uploaded=0`, `put_operations=0`, zéro mismatch de hash ou taille, objet
+manquant, mutation ou suppression. Le checkpoint d'audit est `COMPLETE`.
+Les 21 clés créées après le gel du scope sont volontairement hors de ce
+dénominateur; elles sont couvertes par le contrôle courant 816/816 de la
+réplication, dont le lag effectif est nul.
+
+Le contrôle shadow `30238014683` exécuté sur la branche de la PR est vert.
+Neon est `POSTGRESQL_HEALTHY` à la révision
+`0005_jalon9_critical_closure`, le pont durable n'a aucun retard, le replay a
+consommé zéro appel et zéro quota, et la production reste
+`PRODUCTION_LOCKED`.
+
+Les workflows de gate 14, 21 et 22 sont verts sur la branche avec les runs
+`30238014683`, `30238268175` et `30239697041`. Les arrêts
+`HISTORICAL_PROVENANCE_REPAIR_INCOMPLETE` et `STORAGE_PAUSED` observés sur
+`main` restent explicites : le premier est corrigé dans la PR avant toute
+nouvelle perte silencieuse; le second maintient volontairement les priorités
+P3/P4 suspendues tant que Git reste la source principale proche de son seuil.
+La PR #12 peut être validée après la dernière CI, mais ne doit pas être fusionnée
+automatiquement.
+
+Le run planifié `30205590638` de `main` a confirmé l'incident de provenance
+pré-fusion : le lot fournisseur a réussi, puis
+`HISTORICAL_PROVENANCE_REPAIR_INCOMPLETE` a empêché la persistance. Le correctif
+présent dans la PR #12 exécute désormais la réparation en mode contrôlé,
+persiste Git/Neon et le delta R2 dans tous les cas, puis échoue explicitement
+si la provenance reste incomplète. Il empêche une nouvelle perte silencieuse
+sans masquer l'incident.

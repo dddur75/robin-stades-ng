@@ -7,6 +7,26 @@ on:
         required: false
         type: boolean
         default: false
+      run_critical_closure:
+        description: "Exécuter le Jalon 9 depuis une branche pré-fusion"
+        required: false
+        type: boolean
+        default: false
+      run_object_storage_migration:
+        description: "Exécuter la migration R2 depuis une branche pré-fusion"
+        required: false
+        type: boolean
+        default: false
+      execute_object_storage_migration:
+        description: "Écrire et vérifier les objets R2 (sinon dry-run)"
+        required: false
+        type: boolean
+        default: false
+      object_storage_max_files:
+        description: "Nombre cumulatif maximal de fichiers à vérifier"
+        required: false
+        type: number
+        default: 25
   schedule:
     - cron: "23 2 * * *"
 permissions:
@@ -17,32 +37,56 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.12", cache: pip}
+      - name: Refuser plusieurs modes spéciaux simultanés
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          ((inputs.run_external_validation && inputs.run_critical_closure) ||
+          (inputs.run_external_validation && inputs.run_object_storage_migration) ||
+          (inputs.run_critical_closure && inputs.run_object_storage_migration))
+        run: |
+          echo "::error::Un seul mode spécial peut être actif par exécution."
+          exit 1
       - run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
+      - name: Installer le client Cloudflare R2
+        if: github.event_name == 'workflow_dispatch' && inputs.run_object_storage_migration
+        run: python -m pip install boto3
       - uses: ./.github/actions/historical-state-restore
       - name: Repair provenance from the durable cache
-        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          (!inputs.run_external_validation && !inputs.run_critical_closure &&
+          !inputs.run_object_storage_migration)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
           repair-provenance
-      - if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+      - if: >-
+          github.event_name != 'workflow_dispatch' ||
+          (!inputs.run_external_validation && !inputs.run_critical_closure &&
+          !inputs.run_object_storage_migration)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" quality
       - name: Publier les gates factuels
-        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          (!inputs.run_external_validation && !inputs.run_critical_closure &&
+          !inputs.run_object_storage_migration)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}" readiness
       - name: Recalculate the forecast after quality controls
-        if: github.event_name != 'workflow_dispatch' || !inputs.run_external_validation
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          (!inputs.run_external_validation && !inputs.run_critical_closure &&
+          !inputs.run_object_storage_migration)
         run: >-
           python scripts/run_historical_pipeline.py
           --run-id "${{ github.run_id }}"
@@ -54,7 +98,86 @@ jobs:
           --state data/historical
           --run-id "${{ github.run_id }}"
           --source-commit "${{ github.sha }}"
+      - name: Exécuter la fermeture critique pré-fusion
+        if: github.event_name == 'workflow_dispatch' && inputs.run_critical_closure
+        run: >-
+          python scripts/run_critical_closure.py
+          --state data/historical
+          --run-id "${{ github.run_id }}"
+          --source-commit "${{ github.sha }}"
+      - name: Migrer et vérifier le stockage objet sans suppression
+        id: object_storage_migration
+        if: github.event_name == 'workflow_dispatch' && inputs.run_object_storage_migration
+        continue-on-error: true
+        env:
+          R2_ACCOUNT_ID: ${{ inputs.execute_object_storage_migration && secrets.R2_ACCOUNT_ID || '' }}
+          R2_ACCESS_KEY_ID: ${{ inputs.execute_object_storage_migration && secrets.R2_ACCESS_KEY_ID || '' }}
+          R2_SECRET_ACCESS_KEY: ${{ inputs.execute_object_storage_migration && secrets.R2_SECRET_ACCESS_KEY || '' }}
+          R2_BUCKET_NAME: ${{ inputs.execute_object_storage_migration && secrets.R2_BUCKET_NAME || '' }}
+        run: |
+          requested="${{ inputs.object_storage_max_files }}"
+          if [ "$requested" -eq 0 ]; then
+            if [ "${{ inputs.execute_object_storage_migration }}" != "true" ]; then
+              echo "::error::La restauration R2 exige execute=true"
+              exit 1
+            fi
+            restore_root="$(mktemp -d)"
+            python scripts/restore_object_storage.py \
+              --state data/historical \
+              --destination "$restore_root"
+            exit 0
+          fi
+
+          args=(--state data/historical)
+          if [ "${{ inputs.execute_object_storage_migration }}" = "true" ]; then
+            args+=(--execute)
+          fi
+          if [ "$requested" -gt 0 ] && [ "$requested" -le 250 ]; then
+            python scripts/migrate_object_storage.py \
+              "${args[@]}" --max-files "$requested"
+            exit 0
+          fi
+
+          audit=false
+          if [ "$requested" -lt 0 ]; then
+            audit=true
+            requested=$((-requested))
+          fi
+          remaining="$requested"
+          while [ "$remaining" -gt 0 ]; do
+            batch=1000
+            if [ "$remaining" -lt "$batch" ]; then
+              batch="$remaining"
+            fi
+            batch_args=("${args[@]}" --max-files "$batch" --resume)
+            if [ "$audit" = "true" ]; then
+              batch_args+=(--audit)
+            fi
+            python scripts/migrate_object_storage.py "${batch_args[@]}"
+            remaining=$((remaining-batch))
+            complete="$(python -c "import json; print(str(json.load(open('data/historical/storage/r2-migration-latest.json'))['complete']).lower())")"
+            if [ "$complete" = "true" ]; then
+              break
+            fi
+          done
       - uses: ./.github/actions/historical-state-persist
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          !inputs.run_object_storage_migration
         with:
           run-id: ${{ github.run_id }}
           database-url: ${{ secrets.DATABASE_URL }}
+      - uses: ./.github/actions/historical-r2-control-persist
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.run_object_storage_migration
+        with:
+          run-id: ${{ github.run_id }}
+      - name: Échouer après persistance d'un rapport R2 en erreur
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.run_object_storage_migration &&
+          steps.object_storage_migration.outcome == 'failure'
+        run: |
+          echo "::error::La migration R2 a échoué; le rapport a été persisté."
+          exit 1

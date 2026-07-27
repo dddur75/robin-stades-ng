@@ -24,3 +24,19 @@ Après CI verte de la PR brouillon :
 
 Aucun crédit fournisseur, achat de stockage ou déverrouillage de pari réel
 n’est demandé. Les gates encore en attente progresseront avec le backfill.
+
+## Jalon 9
+
+Le pilote et son replay, le benchmark 250, la migration complète segmentée,
+l'audit intégral sans écriture, la restauration et la réplication continue sont
+vérifiés. Le miroir R2 est `SYNCED` avec lag nul; Neon et les workflows 14, 21
+et 22 sont verts sur la branche.
+
+Action unique :
+
+**Valider puis fusionner la PR #12.**
+
+Les secrets nécessaires uniquement aux runs réels sont `R2_ACCOUNT_ID`,
+`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` et `R2_BUCKET_NAME`. Leur valeur ne
+doit jamais être publiée. La production reste `PRODUCTION_LOCKED`,
+`REAL_BETS=false` et `NO_BET_DEFAULT=true`.

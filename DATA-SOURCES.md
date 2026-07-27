@@ -95,3 +95,14 @@ Toute nouvelle source doit fournir :
 - paramètres expurgés de tout secret ;
 - conditions d'utilisation, limites et coût documentés ;
 - contrôles de volume, fraîcheur, cohérence, conflits et identités non résolues.
+
+## Football-Data
+
+Archives CSV domestiques 2020–2025, conservées localement avec SHA-256 et
+mapping de schéma versionné. Types de prix : opening, pre-closing, closing ou
+timestamp unknown. Aucune valeur absente n’est imputée.
+
+## The Odds API historique
+
+Réservée à l’UCL, aux trous et contrôles, marchés h2h/totals région eu. Tout
+appel exige un dry-run et reste sous 500 crédits.

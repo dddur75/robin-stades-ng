@@ -95,6 +95,12 @@ historical_backfill_tasks = Table(
     Column("team_id", Integer),
     Column("player_id", Integer),
     Column("priority", String(10), nullable=False),
+    Column(
+        "business_value_priority",
+        String(40),
+        nullable=False,
+        default="P4_DEFERRED",
+    ),
     Column("estimated_calls", Integer, nullable=False),
     Column("status", String(40), nullable=False),
     Column("attempt_count", Integer, nullable=False, default=0),
@@ -106,6 +112,12 @@ historical_backfill_tasks = Table(
     Column("error_code", String(160)),
     Column("coverage_status", String(30), nullable=False),
     Index("ix_historical_tasks_ready", "status", "priority", "season"),
+    Index(
+        "ix_historical_tasks_business_ready",
+        "status",
+        "business_value_priority",
+        "season",
+    ),
 )
 
 

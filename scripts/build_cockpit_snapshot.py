@@ -532,6 +532,10 @@ def build_deep_data() -> dict[str, Any]:
         state / "external" / "runs" / "jalon8-latest.json",
         {},
     )
+    critical_closure = read_json(
+        state / "market" / "runs" / "jalon9-latest.json",
+        {},
+    )
     external_readiness = external.get("readiness", {})
     external_competitions = (
         external_readiness.get("competitions", [])
@@ -546,6 +550,38 @@ def build_deep_data() -> dict[str, Any]:
         "backfillStatus": plan.get("status", "NOT_STARTED"),
         "qualityStatus": quality.get("status", "NOT_RUN"),
         "productionStatus": "PRODUCTION_LOCKED",
+        "criticalClosure": {
+            "status": critical_closure.get("milestone", "JALON_9_WAITING"),
+            "runId": critical_closure.get("run_id"),
+            "sourceCommit": critical_closure.get("source_commit"),
+            "teamGates": critical_closure.get("team_gates", {}),
+            "playerGates": critical_closure.get("player_gates", []),
+            "lineupGates": critical_closure.get("lineup_gates", []),
+            "marketGates": critical_closure.get("market_gates", []),
+            "matching": critical_closure.get("matching", {}),
+            "files": critical_closure.get(
+                "football_data_files_available",
+                0,
+            ),
+            "marketRows": critical_closure.get("market_dataset_rows", 0),
+            "storage": critical_closure.get("storage", {}),
+            "r2": read_json(
+                state / "storage" / "r2-migration-latest.json",
+                {"mode": "WAITING_FOR_USER_STORAGE_ACTION"},
+            ),
+            "strategy": critical_closure.get("strategy_lab_v4", {}),
+            "marketValidation": critical_closure.get(
+                "market_paired_validation",
+                {},
+            ),
+            "package": critical_closure.get("preseason_package", {}),
+            "oddsApi": critical_closure.get(
+                "odds_api_historical_pilot",
+                {"credits_consumed": 0},
+            ),
+            "productionStatus": "PRODUCTION_LOCKED",
+            "realBets": False,
+        },
         "modelArena": {
             "status": arena.get("status", "NOT_RUN"),
             "baselineStatus": arena.get(
