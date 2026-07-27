@@ -1071,6 +1071,27 @@
       "status": "verified",
       "verified_at": "2026-07-27T21:53:22.030053+00:00"
     },
+    "bundles/30314944359/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T23:48:43.530109+00:00"
+    },
+    "bundles/30314944359/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "790d9ad0ce13db7c8155a48a8928e7c3c1399c2045ff419b7ba5c66d717c0f09",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T23:48:44.703905+00:00"
+    },
+    "bundles/30314944359/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "b56dd8f7ac11905225cf387d8ddf53fea01ae33f7f03755614c36586e75f8126",
+      "size": 20995647,
+      "status": "verified",
+      "verified_at": "2026-07-27T23:48:47.418014+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -178096,7 +178117,7 @@
     },
     "storage/latest-compaction.json": {
       "last_action": "failed",
-      "sha256": "ac4e15405314ca8a6b2083b622097956a83a779d3ef97d30402f103aac0119a1",
+      "sha256": "bd840b9c31edf6665cfb7016fa8a23b2d3b7c5e139fa2622100dff0e31c54956",
       "size": 677,
       "status": "failed",
       "verified_at": null
@@ -178229,12 +178250,12 @@
     },
     "tasks/backfill-plan.json": {
       "last_action": "failed",
-      "sha256": "be92d4424387d5a58fe4ea0d82502ae28cdbf9fda1d8063b0b39ed275d1468c8",
+      "sha256": "f84da128007738ae035d0539725c111d652f5681f9bb191c13c2c5e5d328b2a2",
       "size": 34532938,
       "status": "failed",
       "verified_at": null
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-27T21:53:22.295675+00:00"
+  "updated_at": "2026-07-27T23:48:47.859158+00:00"
 }
