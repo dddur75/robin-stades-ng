@@ -1,12 +1,12 @@
 {
-  "failed": 1,
-  "last_key": "raw/payloads/ff/fffe866f6902e17e611ae44e7bca7639a0c6a938809cb2aec107353e343f65d8.bin.gz",
-  "next_index": 25399,
-  "replayed": 25399,
+  "failed": 0,
+  "last_key": "tasks/backfill-plan.json",
+  "next_index": 25422,
+  "replayed": 25422,
   "schema_version": "r2-audit-checkpoint-v1",
   "scope_hash": "8687a80087576711e309d01a2a9758937b78fc914660c6db77c838ae59754b7f",
-  "status": "FAILED",
-  "updated_at": "2026-07-27T04:29:09.448644+00:00",
+  "status": "COMPLETE",
+  "updated_at": "2026-07-27T05:34:39.675003+00:00",
   "uploaded": 0,
-  "verified": 25399
+  "verified": 25422
 }

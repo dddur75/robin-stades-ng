@@ -177941,167 +177941,167 @@
       "verified_at": "2026-07-27T04:29:06.856345+00:00"
     },
     "readiness/ligue1-multiseason-v1.json": {
-      "last_action": "uploaded",
+      "last_action": "replayed",
       "sha256": "e82d43a6835825ab2ef059bf973f06527c473a0e8d78e39944e634633188a7af",
       "size": 31722,
       "status": "verified",
-      "verified_at": "2026-07-27T05:21:32.595551+00:00"
+      "verified_at": "2026-07-27T05:34:28.648313+00:00"
     },
     "reports/ligue1-multiseason-readiness.md": {
-      "last_action": "uploaded",
+      "last_action": "replayed",
       "sha256": "af0dec6456cfa46cc86dcac65c60b225e1c0127429b9bbba0bb0955e56fb8aa7",
       "size": 1537,
       "status": "verified",
-      "verified_at": "2026-07-27T05:21:33.859311+00:00"
+      "verified_at": "2026-07-27T05:34:29.003338+00:00"
     },
     "runs/pilot-ligue-1-2025.json": {
       "last_action": "replayed",
       "sha256": "23772f2a84563f4b9e81577e634b056c7f6fcc367e8389e08200ca35cedc698d",
       "size": 816893,
       "status": "verified",
-      "verified_at": "2026-07-26T23:28:59.004677+00:00"
+      "verified_at": "2026-07-27T05:34:29.359781+00:00"
     },
     "storage/latest-compaction.json": {
-      "last_action": "uploaded",
+      "last_action": "replayed",
       "sha256": "a9cbdc1ff24f94f6c816fc67611a1ca0be1795034f4952e6068b17a68bb506e9",
       "size": 677,
       "status": "verified",
-      "verified_at": "2026-07-27T05:21:34.959126+00:00"
+      "verified_at": "2026-07-27T05:34:29.706433+00:00"
     },
     "strategies/api_elo_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
       "sha256": "f94ca604a166ccc758cd1dc241fcb8655213986a1d6efb12962d8b3289a77920",
       "size": 877,
       "status": "verified",
-      "verified_at": "2026-07-26T23:28:59.502633+00:00"
+      "verified_at": "2026-07-27T05:34:29.983470+00:00"
     },
     "strategies/api_elo_v1_1x2_edge_0_04.json": {
       "last_action": "replayed",
       "sha256": "e5da7fa68ece1a8f61b567309426ee893548c161b26485ecef1f1d840e5c54f2",
       "size": 873,
       "status": "verified",
-      "verified_at": "2026-07-26T23:28:59.757728+00:00"
+      "verified_at": "2026-07-27T05:34:30.217071+00:00"
     },
     "strategies/api_elo_v1_1x2_edge_0_06.json": {
       "last_action": "replayed",
       "sha256": "36cb290c0545e60aba42c110307b26ba7d0903368ecb0490058936800005c496",
       "size": 873,
       "status": "verified",
-      "verified_at": "2026-07-26T23:28:59.979068+00:00"
+      "verified_at": "2026-07-27T05:34:30.487618+00:00"
     },
     "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
       "sha256": "22e2b4d1ec6e612c9c65770c5c75a3c66fb034a247c653053cdf3a804dd82600",
       "size": 927,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:00.207517+00:00"
+      "verified_at": "2026-07-27T05:34:30.759916+00:00"
     },
     "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_04.json": {
       "last_action": "replayed",
       "sha256": "2750851705b7d485ce7e70dc3787a615d061c7b0972964e63725fb77bcfaac7c",
       "size": 927,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:00.468696+00:00"
+      "verified_at": "2026-07-27T05:34:31.002882+00:00"
     },
     "strategies/api_player_pre_lineup_multinomial_v1_1x2_edge_0_06.json": {
       "last_action": "replayed",
       "sha256": "e4c0cefa47d6b8aee8ee01fb30dfa53832a6060b8f9f4c6a6ca93be797ac4289",
       "size": 908,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:01.002855+00:00"
+      "verified_at": "2026-07-27T05:34:31.270376+00:00"
     },
     "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
       "sha256": "3bb007755ce19e71110e174762ed8167f520bc920170eb3fa4f26dfbe89241ef",
       "size": 934,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:01.226153+00:00"
+      "verified_at": "2026-07-27T05:34:31.569210+00:00"
     },
     "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_04.json": {
       "last_action": "replayed",
       "sha256": "1c4adab6f055b9a0d41fab51191f50dd2411044ab26f190648c886d8214ec65c",
       "size": 936,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:01.451503+00:00"
+      "verified_at": "2026-07-27T05:34:31.844483+00:00"
     },
     "strategies/api_post_lineup_simulated_multinomial_v1_1x2_edge_0_06.json": {
       "last_action": "replayed",
       "sha256": "4228cb453a31bb70238adaa9db585477f20cebe7c6e19c7873ab5d3a837cf0d8",
       "size": 935,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:01.682208+00:00"
+      "verified_at": "2026-07-27T05:34:32.106448+00:00"
     },
     "strategies/api_team_multinomial_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
       "sha256": "ce5337d0c8b2678f5b6b54d28927835166b473ed49644f089375f5e13fce039f",
       "size": 884,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:01.935734+00:00"
+      "verified_at": "2026-07-27T05:34:32.350993+00:00"
     },
     "strategies/api_team_multinomial_v1_1x2_edge_0_04.json": {
       "last_action": "replayed",
       "sha256": "4a63a5a79057e67361a06327a00731635920e328cb4b350a323ebb398debb629",
       "size": 888,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:02.182710+00:00"
+      "verified_at": "2026-07-27T05:34:32.631360+00:00"
     },
     "strategies/api_team_multinomial_v1_1x2_edge_0_06.json": {
       "last_action": "replayed",
       "sha256": "1f14271cf3f0ea62c9f4c216fbe1f8c2dc0a701739c11804b962855dcba4b30b",
       "size": 889,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:02.430493+00:00"
+      "verified_at": "2026-07-27T05:34:32.869549+00:00"
     },
     "strategies/jalon6-run.json": {
       "last_action": "replayed",
       "sha256": "7a4e5c219bc6dd8176653a0ca5d919c4c40f300941784ecb17e6114d9e09d44d",
       "size": 218,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:02.654179+00:00"
+      "verified_at": "2026-07-27T05:34:33.148031+00:00"
     },
     "strategies/jalon7-run.json": {
       "last_action": "replayed",
       "sha256": "a2066fb107aa91db4e6138b37db55599e6d73edba5be49449aa3f3b12fb72ea7",
       "size": 539,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:02.902055+00:00"
+      "verified_at": "2026-07-27T05:34:33.432394+00:00"
     },
     "strategies/jalon8-strategy-lab-v3.json": {
       "last_action": "replayed",
       "sha256": "505d6b4b80e43f198bd46049ae6a79f2903f5f97e2f6c7d9f3e22cdea0d3d38f",
       "size": 409,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:03.124176+00:00"
+      "verified_at": "2026-07-27T05:34:33.696974+00:00"
     },
     "strategies/market_devigged_baseline_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
       "sha256": "6dffa23155f8f60b6bab486ef19a220e2ab6c7fea3fb5f25b5833ca9b61856e6",
       "size": 907,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:03.361801+00:00"
+      "verified_at": "2026-07-27T05:34:33.964616+00:00"
     },
     "strategies/market_devigged_baseline_v1_1x2_edge_0_04.json": {
       "last_action": "replayed",
       "sha256": "f9b4b9a772317c078060f68590e2169de60cfb274667055da737ff7d6f2cee9f",
       "size": 895,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:03.592611+00:00"
+      "verified_at": "2026-07-27T05:34:34.241958+00:00"
     },
     "strategies/market_devigged_baseline_v1_1x2_edge_0_06.json": {
       "last_action": "replayed",
       "sha256": "9f0e99f292d41c6a69f5a463433550fd38a8d357e8da9b0f917b56270461aaad",
       "size": 898,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:03.831352+00:00"
+      "verified_at": "2026-07-27T05:34:34.507211+00:00"
     },
     "tasks/backfill-plan.json": {
       "last_action": "replayed",
       "sha256": "5fca2ff49d0524120b0953e33148df9def4e2d69a674d109e066652ec9fea73b",
       "size": 34532914,
       "status": "verified",
-      "verified_at": "2026-07-26T23:29:04.623447+00:00"
+      "verified_at": "2026-07-27T05:34:35.059874+00:00"
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-27T05:21:34.959141+00:00"
+  "updated_at": "2026-07-27T05:34:35.059901+00:00"
 }
