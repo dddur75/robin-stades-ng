@@ -122,6 +122,8 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(matchup.promotion.promoted, false);
   assert.equal(matchup.verdict, "JALON_11_BLOCKED_BY_DATA_GATES");
   assert.equal(matchup.dataset.rows, 10732);
+  assert.equal(matchup.dataset.pairing.leftAttrition, 0);
+  assert.equal(matchup.dataset.pairing.rightAttrition, 2235);
   assert.equal(matchup.coverage.competitions.length, 5);
   assert.equal(matchup.experiments.campaigns.length, 7);
   assert.equal(matchup.experiments.ownerHypotheses.length, 8);

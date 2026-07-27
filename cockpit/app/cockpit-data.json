@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T16:42:12.331780+00:00",
+  "generatedAt": "2026-07-27T16:49:59.682933+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -19480,7 +19480,7 @@
         "pairedRows": 10732,
         "duplicateKeys": 0,
         "leftAttrition": 0,
-        "rightAttrition": 0,
+        "rightAttrition": 2235,
         "exactKeyset": true
       },
       "blocked": [

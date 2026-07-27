@@ -109,7 +109,8 @@ Tests applicables au primaire marché + équipe :
 
 - paires marché/équipe : 10 732 / 10 732 ;
 - doublons de clé : 0 ;
-- attrition marché : 0 ;
+- attrition côté marché : 0 ;
+- lignes équipe supplémentaires exclues (attrition droite) : 2 235 ;
 - contrôle `impossible_condition` : prédicat
   `OUTCOME_IS_HOME_AND_AWAY` réellement calculé sur 7 081 lignes, support 0,
   `EXECUTED_ZERO_SUPPORT_NO_PROMOTION` ;

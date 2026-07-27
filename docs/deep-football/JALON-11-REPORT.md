@@ -69,8 +69,9 @@ prouve pas qu'il était disponible avant kickoff.
 
 ## Dataset
 
-`TEAM_PREMATCH` contient 10 732 lignes, sans doublon ni attrition du périmètre
-marché. Son hash logique est
+`TEAM_PREMATCH` contient 10 732 lignes, sans doublon ni attrition côté marché.
+Les 12 967 lignes équipe disponibles contiennent 2 235 lignes supplémentaires
+hors de ce périmètre apparié ; elles sont exclues, pas perdues. Son hash logique est
 `2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6`.
 Le Parquet lourd pèse 2 000 155 octets, son SHA-256 est
 `d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673`,

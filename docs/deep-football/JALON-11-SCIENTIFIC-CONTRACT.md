@@ -71,9 +71,10 @@ L'échantillon de comparaison doit avoir :
 - un rapport explicite de toute attrition.
 
 Le dataset `TEAM_PREMATCH` contient 10 732 fixtures exactement appariées au
-marché, sans doublon ni attrition du périmètre marché. L'évaluation
-chronologique 2022–2025 porte sur 7 081 fixtures ; les saisons 2020–2021 servent
-au premier entraînement.
+marché, sans doublon ni attrition côté marché. Les 2 235 lignes équipe
+supplémentaires hors de ce périmètre apparié sont comptées comme attrition
+droite et exclues de l'évaluation. L'évaluation chronologique 2022–2025 porte
+sur 7 081 fixtures ; les saisons 2020–2021 servent au premier entraînement.
 
 La ligne cible est émise avant la mise à jour par son propre résultat, mais les
 frontières de matérialisation sont égales au kickoff et la temporalité

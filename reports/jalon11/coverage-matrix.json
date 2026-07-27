@@ -9,6 +9,15 @@
   "feature_boundary_strictly_before_rows": 0,
   "row_level_source_observed_at_proven": false,
   "promotion_eligible": false,
+  "pairing": {
+    "market_rows": 10732,
+    "paired_rows": 10732,
+    "team_rows_available": 12967,
+    "duplicate_keys": 0,
+    "left_attrition": 0,
+    "right_attrition": 2235,
+    "exact_keyset_for_market_scope": true
+  },
   "gates": {
     "TEAM_GATE": {
       "status": "PARTIAL",
