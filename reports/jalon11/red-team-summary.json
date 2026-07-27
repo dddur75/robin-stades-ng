@@ -1,0 +1,39 @@
+{
+  "schema_version": "jalon11-red-team-v1",
+  "campaign_result_hash": "2c131727c4a1af593443c3fe54f16ef5d4ed530bc010e361f349e68fe4930260",
+  "audit_source_commit": "8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+  "objections": {
+    "chance": "CONTROLLED_WITH_CR1_SIGN_FLIP_AND_BH",
+    "leakage": "NO_TARGET_COLUMNS_AND_STRICT_ROLLING_ALLOWLIST",
+    "concentration": "NO_STRATEGY_PROMOTED",
+    "dependence": "CLUSTER_KEYS_REQUIRED_MINIMUM_30",
+    "wrong_odds": "EXACT_FIXTURE_PAIRING_VERIFIED",
+    "wrong_cutoff": "HISTORICAL_ONLY_SOURCE_PRICE_CLASS_EXPLICIT",
+    "threshold_selection": "NO_ROI_THRESHOLD_SELECTED",
+    "incomplete_sample": "NO_1X2_MARKET_ATTRITION",
+    "confounding": "NO_CAUSAL_CLAIM",
+    "join_error": "ONE_TO_ONE_EXACT_JOIN",
+    "formation_normalization": "CAMPAIGN_BLOCKED",
+    "absence_classification": "CAMPAIGN_BLOCKED"
+  },
+  "negative_controls": {
+    "shuffled_labels": "PASSED_NO_PROMOTION",
+    "formation_shifted_one_match": "DATA_GATE_BLOCKED",
+    "absence_shifted": "DATA_GATE_BLOCKED",
+    "random_player": "DATA_GATE_BLOCKED",
+    "false_footedness": "DATA_GATE_BLOCKED",
+    "post_kickoff_lineup": "REJECTED_BY_TEMPORAL_GUARD",
+    "wrong_fixture_odds": "REJECTED_BY_PAIRING_GUARD",
+    "impossible_condition": "PASSED_NO_OCCURRENCES",
+    "home_team_systematic": "PASSED_NO_PROMOTION",
+    "post_result_rule": "REJECTED_BY_FEATURE_ALLOWLIST",
+    "false_centre_back_pair": "DATA_GATE_BLOCKED",
+    "random_tactical_interaction": "DATA_GATE_BLOCKED"
+  },
+  "major_unresolved_objections": [],
+  "promotion_allowed": false,
+  "reason": "DEEP_DATA_GATES_AND_EXACT_LIVE_MARKET_CUTOFF_REMAIN_CLOSED",
+  "replay_required": true,
+  "provider_calls": 0,
+  "odds_api_credits": 0
+}

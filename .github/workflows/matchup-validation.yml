@@ -1,0 +1,69 @@
+name: "53 - Matchup Validation"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pattern-research-state
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Construire puis red-team
+        run: >-
+          python scripts/run_deep_football.py all
+          --state data/historical
+          --output artifacts/matchup-validation
+          --source-commit "$(git -C .historical-registry rev-parse HEAD)"
+          --main-commit "${{ github.sha }}"
+          --main-ci-run-id "${{ github.run_id }}"
+      - name: Tester les contrôles scientifiques
+        run: python -m pytest -q tests/jalon11
+      - name: Vérifier multiplicité, négatifs et rejet
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path("artifacts/matchup-validation")
+          campaign = json.loads(
+              (root / "campaign-11a-summary.json").read_text()
+          )
+          red_team = json.loads((root / "red-team-report.json").read_text())
+          assert campaign["statistics"]["family_q"] == 1.0
+          assert campaign["statistics"]["global_q"] == 1.0
+          assert campaign["promotion"]["promoted"] is False
+          assert campaign["promotion"]["status"] == "REJECTED"
+          assert red_team["promotion_allowed"] is False
+          assert not red_team["major_unresolved_objections"]
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: matchup-validation-${{ github.run_id }}
+          path: artifacts/matchup-validation
+          retention-days: 90
+          compression-level: 9

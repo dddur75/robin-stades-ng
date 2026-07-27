@@ -1,0 +1,15 @@
+{
+  "schema_version": "jalon11-replay-summary-v1",
+  "mode": "REPLAY",
+  "identical": true,
+  "primary_result_hash": "2c131727c4a1af593443c3fe54f16ef5d4ed530bc010e361f349e68fe4930260",
+  "result_hash": "2c131727c4a1af593443c3fe54f16ef5d4ed530bc010e361f349e68fe4930260",
+  "dataset_hash": "af9421281a71a8d936bfec8596fce5d2945b35f84948d92eb35a7bf435f7dd00",
+  "parquet_sha256": "4b77f4703ff40adf700aa0be6325b23028fa6a71b0b2ec4fd1b1fb1d9d5d46d1",
+  "provider_calls": 0,
+  "odds_api_credits": 0,
+  "business_duplicates": 0,
+  "data_loss": 0,
+  "hash_mismatches": 0,
+  "production_status": "PRODUCTION_LOCKED"
+}
