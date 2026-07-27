@@ -521,8 +521,9 @@ def build_pattern_research() -> dict[str, Any]:
                 "SOURCE_PRICE_CLASS_ONLY."
             ),
             (
-                "Mise fixe, support, bootstrap groupé, walk-forward brut, "
-                "Benjamini-Hochberg et 7 contrôles négatifs."
+                "Mise fixe, support, p-values CR1 groupées par date, "
+                "bootstrap groupé, walk-forward brut, Benjamini-Hochberg "
+                "et 7 contrôles négatifs exécutés."
             ),
             (
                 "Replay déterministe sans fournisseur, sans crédit et sans "
@@ -640,6 +641,7 @@ def build_pattern_research() -> dict[str, Any]:
                 for control in negative_controls.values()
             ),
             "fdrMethod": "Benjamini-Hochberg",
+            "pValueMethod": "CR1 unilatérale groupée par date de match",
             "topExploratoryResults": top_exploratory,
         },
         "WHAT_WAS_TESTED": what_was_tested,

@@ -1,20 +1,22 @@
 {
-  "schema_version": "pattern-campaign-evidence-v1",
+  "schema_version": "pattern-campaign-evidence-v1.1-review-hardening",
   "campaign_id": "jalon10-cache-only-20260727",
-  "executed_at": "2026-07-27T09:39:39Z",
+  "executed_at": "2026-07-27T11:00:02Z",
   "mode": "CACHE_ONLY",
-  "code_revision": "5c5b1a0344346b812a71962e7d0abadc3ba19266",
+  "code_revision": "423fb7e77ba52286b660956161f02f8a2c1be7f8",
   "historical_data_revision": "5c85cf20b932df44dca8665de00e52e3f1e02236",
   "dataset_hashes": [
     "3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495"
   ],
-  "result_hash": "e7dbd83ce41a96bcf58cbedba5102d499d2fa9a8f9b6ab2aaf22169abce1d0db",
+  "result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b",
   "data_classification": "DISCOVERY_EXPOSED",
   "verdict": "JALON_10_NO_ROBUST_PATTERN_FOUND",
+  "scope_subverdict": "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE",
   "production_status": "PRODUCTION_LOCKED",
   "real_bets": false,
   "no_bet_default": true,
   "social_publishing_enabled": false,
+  "demo_mode_enabled": false,
   "counts": {
     "fixtures_matched": 10732,
     "strict_1x2_rows": 10731,
@@ -27,6 +29,7 @@
     "fdr_survivors": 0,
     "walk_forward_survivors": 24,
     "external_league_survivors": 0,
+    "exposed_league_stability_survivors": 0,
     "shadow_candidates": 0,
     "negative_controls": 7,
     "negative_controls_passed": 7
@@ -38,6 +41,7 @@
     "minimum_fold_bets": 15,
     "minimum_positive_fold_ratio": 0.67,
     "fdr_method": "BENJAMINI_HOCHBERG",
+    "p_value_method": "ONE_SIDED_CLUSTER_ROBUST_CR1_BY_MATCH_DATE",
     "fdr_alpha": 0.05,
     "bootstrap_iterations": 1000,
     "maximum_conditions": 3,
@@ -94,7 +98,7 @@
       "max_drawdown_units": 9.27,
       "hit_rate": 0.5172413793103449,
       "average_odds": 2.2504214559386972,
-      "p_value": 0.008868293187748164,
+      "p_value": 0.009949050710225124,
       "q_value": 1.0,
       "bootstrap_roi_95": [
         0.03360868411743898,
@@ -125,7 +129,7 @@
       "max_drawdown_units": 19.52,
       "hit_rate": 0.3746556473829201,
       "average_odds": 3.094903581267218,
-      "p_value": 0.021528099960890282,
+      "p_value": 0.02547293414143248,
       "q_value": 1.0,
       "bootstrap_roi_95": [
         0.0042719415204679045,
@@ -150,13 +154,13 @@
         ]
       },
       "bets": 241,
-      "distinct_bootstrap_groups": 204,
+      "distinct_bootstrap_groups": 207,
       "roi": 0.1386721991701245,
       "profit_units": 33.42,
       "max_drawdown_units": 7.22,
       "hit_rate": 0.6390041493775933,
-      "average_odds": 1.7835269709543569,
-      "p_value": 0.006276023299606921,
+      "average_odds": 1.7834854771784232,
+      "p_value": 0.007478892043326665,
       "q_value": 1.0,
       "bootstrap_roi_95": [
         0.024913994885916647,
@@ -171,6 +175,13 @@
   "negative_controls": {
     "winner_loser_leakage": {
       "status": "LEAKAGE_REJECTED",
+      "executed": true,
+      "rejected_columns": [
+        "future_odds",
+        "home_goals",
+        "loser_aces",
+        "winner_rank"
+      ],
       "passed": true,
       "promoted": false
     },
@@ -179,20 +190,23 @@
       "strata": 969,
       "bets": 10731,
       "roi": -0.08019849035504613,
-      "p_value": 0.9999999999629956,
+      "p_value": 0.9999999999850118,
       "status": "REJECTED",
+      "executed": true,
       "passed": true,
       "promoted": false
     },
     "shifted_odds": {
       "status": "LEAKAGE_REJECTED",
+      "executed": true,
       "reason": "FIXTURE_ODDS_JOIN_MISMATCH",
       "passed": true,
       "promoted": false
     },
     "random_feature": {
       "status": "REJECTED",
-      "reason": "PREREGISTERED_NEGATIVE_CONTROL",
+      "executed": true,
+      "reason": "UNKNOWN_FEATURE_AVAILABILITY:random_feature",
       "passed": true,
       "promoted": false
     },
@@ -200,7 +214,9 @@
       "description": "BET_HOME_ON_EVERY_ELIGIBLE_FIXTURE",
       "bets": 10731,
       "roi": -0.08123287671232877,
+      "p_value": 0.9999999999836676,
       "status": "REJECTED",
+      "executed": true,
       "reason": "PREREGISTERED_NEGATIVE_CONTROL",
       "passed": true,
       "promoted": false
@@ -208,11 +224,14 @@
     "impossible_condition": {
       "selected": 0,
       "status": "REJECTED",
+      "executed": true,
       "passed": true,
       "promoted": false
     },
     "post_result_pattern": {
       "status": "LEAKAGE_REJECTED",
+      "executed": true,
+      "reason": "LEAKAGE_REJECTED:home_goals",
       "passed": true,
       "promoted": false
     }
@@ -222,20 +241,20 @@
     "business_duplicates": 0,
     "provider_calls": 0,
     "odds_api_credits": 0,
-    "result_hash": "e7dbd83ce41a96bcf58cbedba5102d499d2fa9a8f9b6ab2aaf22169abce1d0db"
+    "result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b"
   },
   "costs": {
     "provider_calls": 0,
     "api_football_calls": 0,
     "odds_api_credits": 0,
     "r2_operations": 0,
-    "primary_runtime_seconds": 40.4,
-    "replay_runtime_seconds": 38.4
+    "primary_runtime_seconds": 40.6,
+    "replay_runtime_seconds": 40.7
   },
   "promotion": {
     "historical_validated_patterns": 0,
     "live_shadow_candidates": 0,
-    "reason": "ZERO_FDR_SURVIVORS",
+    "reason": "ZERO_FDR_SURVIVORS_AND_FAIL_CLOSED_CONCENTRATION",
     "validated_label_forbidden": true
   }
 }

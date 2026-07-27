@@ -333,7 +333,9 @@ La production reste `PRODUCTION_LOCKED`.
 
 ## Jalon 10 — Pattern Research Engine et Public Evidence Ledger
 
-Le protocole V1 est gelé avant lecture des résultats. Le corpus disponible
+L’espace et les seuils V1 sont gelés avant lecture des résultats. La revue
+pré-fusion V1.1 durcit les p-values CR1 groupées, les contrôles exécutés et les
+gates fail-closed sans retuning. Le corpus disponible
 comprend 10 732 matchs appariés sur Ligue 1, Premier League, La Liga,
 Bundesliga et Serie A en 2020–2025. Le marché 1X2 strict conserve 10 731 lignes
 après exclusion d’une marge négative ; Over/Under 2,5 conserve 10 732 lignes.
@@ -349,14 +351,14 @@ négatifs sur 7 réussissent. Bundesliga et Serie A appartiennent déjà au corp
 ce contrôle n’est pas un holdout externe indépendant.
 Le replay est identique, avec zéro appel fournisseur, zéro crédit et zéro
 doublon. Révision exécutée :
-`5c5b1a0344346b812a71962e7d0abadc3ba19266`.
+`423fb7e77ba52286b660956161f02f8a2c1be7f8`.
 
 Hashes de preuve :
 
 - dataset :
   `3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495` ;
 - résultat :
-  `e7dbd83ce41a96bcf58cbedba5102d499d2fa9a8f9b6ab2aaf22169abce1d0db`.
+  `edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b`.
 
 Verdict : `JALON_10_NO_ROBUST_PATTERN_FOUND`. Aucun seuil n’est assoupli et
 aucun pattern n’est promu.
@@ -385,4 +387,5 @@ PRODUCTION_LOCKED
 REAL_BETS=false
 NO_BET_DEFAULT=true
 SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
 ```

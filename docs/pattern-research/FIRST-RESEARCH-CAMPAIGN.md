@@ -5,9 +5,11 @@ Sous-verdict scientifique :
 `NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`
 Protocole : `pattern-scientific-contract-v1`
 
-La première campagne réelle cache-only et son replay sont terminés. Les
-résultats ci-dessous proviennent de la sortie déterministe ; aucun résultat
-simulé ou supposé n’est ajouté.
+La première campagne réelle cache-only et son replay corrigé V1.1 sont
+terminés. L’espace et les seuils restent ceux gelés avant la campagne ; la
+revue pré-fusion a durci les p-values groupées, les contrôles et les gates sans
+retuning. Les résultats ci-dessous proviennent de la sortie déterministe ;
+aucun résultat simulé ou supposé n’est ajouté.
 
 ## Entrées vérifiées avant exécution
 
@@ -47,7 +49,8 @@ Ont été testés :
 Le dénominateur est 15 règles simples, 50 paires et 75 triplets par marché,
 soit 140 règles par marché et 700 règles au total. L’évaluation utilise
 l’historique exposé 2020–2025, une mise fixe d’une unité, la FDR, le bootstrap
-groupé, le walk-forward exposé et sept contrôles négatifs.
+groupé, des p-values CR1 groupées par date, le walk-forward exposé et sept
+contrôles négatifs exécutés.
 
 ## WHAT_WAS_NOT_TESTED
 
@@ -83,6 +86,7 @@ Aucune conclusion ne peut être extrapolée à ces familles non testées.
 - au moins 2 folds admissibles et dernier fold positif ;
 - ratio de folds positifs : 0,67 ;
 - FDR Benjamini–Hochberg : 0,05 ;
+- p-value marginale : CR1 unilatérale groupée par date de match ;
 - bootstrap groupé : 1 000 réplications ;
 - stabilité inter-ligues exposée : Bundesliga et Serie A, chacune ≥ 40 paris
   et ROI > 0 ; ce contrôle n’est pas un holdout externe ;
@@ -97,13 +101,15 @@ Aucune conclusion ne peut être extrapolée à ces familles non testées.
 | Mesure | Valeur |
 |---|---|
 | Statut du run | `CACHE_ONLY_COMPLETED` |
-| Révision du code | `5c5b1a0344346b812a71962e7d0abadc3ba19266` |
+| Révision du code | `423fb7e77ba52286b660956161f02f8a2c1be7f8` |
 | Hash du dataset | `3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495` |
-| Hash du résultat | `e7dbd83ce41a96bcf58cbedba5102d499d2fa9a8f9b6ab2aaf22169abce1d0db` |
+| Hash du résultat | `edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b` |
 | Hypothèses générées | 700 |
 | Hypothèses exécutées | 700 |
 | Rejets pour support | 167 |
 | Positives brutes | 118 |
+| Plus petite p-value CR1 | 0,0074788920 |
+| Plus petite q-value | 1,00 |
 | Survivantes FDR | 0 |
 | Survivantes walk-forward brutes | 24 |
 | Survivantes stabilité inter-ligues exposée | 0 |

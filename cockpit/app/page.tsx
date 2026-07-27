@@ -664,7 +664,7 @@ export function RobinLive() {
           <tr><td>Règles exécutées</td><td>{lab.rulesExecuted}</td><td>cache-only</td></tr>
           <tr><td>Rejets de support</td><td>{lab.supportRejected}</td><td>échantillon insuffisant</td></tr>
           <tr><td>Résultats positifs bruts</td><td>{lab.rawPositive}</td><td>non promotionnels</td></tr>
-          <tr><td>Survivants FDR</td><td>{lab.fdrSurvivors}</td><td>{lab.fdrMethod}</td></tr>
+          <tr><td>Survivants FDR</td><td>{lab.fdrSurvivors}</td><td>{lab.pValueMethod} · {lab.fdrMethod}</td></tr>
           <tr><td>Walk-forward brut avant FDR</td><td>{lab.walkForwardRawBeforeFdr}</td><td>exploratoire, non promotionnel</td></tr>
           <tr><td>Survivants ligue externe</td><td>{lab.externalLeagueSurvivors}</td><td>transférabilité</td></tr>
           <tr><td>Contrôles négatifs</td><td>{lab.negativeControlsPassed}/{lab.negativeControls}</td><td>permutations et labels mélangés</td></tr>
