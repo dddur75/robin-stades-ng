@@ -23,6 +23,30 @@ class FamilyCorrection:
     global_q_values: dict[str, float]
 
 
+def impossible_outcome_control(
+    rows: Sequence[Mapping[str, object]],
+) -> dict[str, object]:
+    """Evaluate a zero-support categorical impossibility over every row."""
+
+    support = sum(
+        1
+        for row in rows
+        if str(row.get("outcome")) == "HOME"
+        and str(row.get("outcome")) == "AWAY"
+    )
+    return {
+        "status": (
+            "EXECUTED_ZERO_SUPPORT_NO_PROMOTION"
+            if support == 0
+            else "FAILED_IMPOSSIBLE_CONDITION_NONZERO"
+        ),
+        "support": support,
+        "rows_examined": len(rows),
+        "predicate": "OUTCOME_IS_HOME_AND_AWAY",
+        "promotion_eligible": False,
+    }
+
+
 def family_and_global_bh(
     hypotheses: Sequence[Mapping[str, object]],
     *,

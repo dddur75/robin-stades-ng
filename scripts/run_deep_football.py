@@ -36,6 +36,7 @@ from robin.deep_football.public_evidence import (
 )
 from robin.deep_football.statistics import (
     family_and_global_bh,
+    impossible_outcome_control,
     strict_cluster_p_value,
 )
 from robin.deep_football.temporal import (
@@ -986,11 +987,7 @@ def _run_negative_controls(
             "support": 1,
             "promotion_eligible": False,
         },
-        "impossible_condition": {
-            "status": "EXECUTED_ZERO_SUPPORT_NO_PROMOTION",
-            "support": 0,
-            "promotion_eligible": False,
-        },
+        "impossible_condition": impossible_outcome_control(reference),
         "formation_shifted_one_match": {
             "status": "DATA_GATE_BLOCKED",
             "support": 0,

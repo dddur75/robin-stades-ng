@@ -15,6 +15,7 @@ from robin.deep_football.models import (
 from robin.deep_football.statistics import (
     concentration_report,
     family_and_global_bh,
+    impossible_outcome_control,
     leave_one_group_out_direction,
     strict_cluster_p_value,
 )
@@ -282,3 +283,21 @@ def test_permutation_control_rejects_an_unpermutable_label_vector() -> None:
             _difference_in_means,
             permutations=100,
         )
+
+
+def test_impossible_condition_control_evaluates_the_paired_sample() -> None:
+    rows = [
+        _prediction("fixture-1", (0.50, 0.30, 0.20)),
+        _prediction(
+            "fixture-2",
+            (0.20, 0.30, 0.50),
+            outcome="AWAY",
+        ),
+    ]
+    assert impossible_outcome_control(rows) == {
+        "status": "EXECUTED_ZERO_SUPPORT_NO_PROMOTION",
+        "support": 0,
+        "rows_examined": 2,
+        "predicate": "OUTCOME_IS_HOME_AND_AWAY",
+        "promotion_eligible": False,
+    }
