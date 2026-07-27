@@ -1008,6 +1008,27 @@
       "status": "verified",
       "verified_at": "2026-07-27T15:38:50.341955+00:00"
     },
+    "bundles/30292585796/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-27T18:18:45.285479+00:00"
+    },
+    "bundles/30292585796/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "0cea87f281d83c5ff00c77aea9e012356ff92c2771a8e7d99520a18524ba5823",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-27T18:18:46.304950+00:00"
+    },
+    "bundles/30292585796/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "6d9f019fc2ce309b82754d385fb3f3547fe3f4e767fd045f0ead96afe073668c",
+      "size": 21002127,
+      "status": "verified",
+      "verified_at": "2026-07-27T18:18:49.366351+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -178033,10 +178054,10 @@
     },
     "storage/latest-compaction.json": {
       "last_action": "uploaded",
-      "sha256": "e1ccf1f0f2a2d8923104ea9a05da798ec529a0c1e844783fc0897e46ccc0257d",
+      "sha256": "25f0ac4fa63c05810a421761e015ed216b31f473324f98bc84b7fe489d7fbd24",
       "size": 677,
       "status": "verified",
-      "verified_at": "2026-07-27T15:38:51.613276+00:00"
+      "verified_at": "2026-07-27T18:18:50.486372+00:00"
     },
     "strategies/api_elo_v1_1x2_edge_0_02.json": {
       "last_action": "replayed",
@@ -178166,12 +178187,12 @@
     },
     "tasks/backfill-plan.json": {
       "last_action": "uploaded",
-      "sha256": "51f7d38106b8f42ba0e2ba01da34f6ccdd165e554a1bbbab85b8064937e0cfc0",
+      "sha256": "2e92496c97f7ab2835488a041861b62ef016a5633fdf3ce8c97615aee525b72d",
       "size": 34532938,
       "status": "verified",
-      "verified_at": "2026-07-27T15:38:58.220200+00:00"
+      "verified_at": "2026-07-27T18:18:54.134672+00:00"
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-27T16:08:34.994750+00:00"
+  "updated_at": "2026-07-27T18:18:54.134701+00:00"
 }
