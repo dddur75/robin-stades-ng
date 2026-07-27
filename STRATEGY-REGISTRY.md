@@ -62,3 +62,32 @@ promue.
 Hypothèses bornées : 1X2 edges 2/3/5 %, probabilités 55/65 %, accord de modèles;
 totals edges 3/5 % et accord Poisson/Dixon-Coles. Aucun combiné. Les filtres
 joueur exigent PLAYER_GATE READY. `NO_BET_DEFAULT = true`.
+
+## Pattern Research V1
+
+| Famille | Marché | Evidence scope | Statut |
+|---|---|---|---|
+| Tranches de marché | 1X2 domicile/nul/extérieur, O/U 2,5 | `DISCOVERY_EXPOSED` | `NO_FDR_SURVIVOR` |
+| Conditions testées | cote, marge, catégorie de prix, compétition | `DISCOVERY_EXPOSED` | `EXECUTED_700` |
+| Équipe/forme/Elo | non testé dans V1 | aucun | `NOT_TESTED_IN_V1` |
+| Calendrier/repos | non testé dans V1 | aucun | `NOT_TESTED_IN_V1` |
+| Joueurs/tactique | non testé dans V1 | aucun | `NOT_TESTED_IN_V1` |
+| Latéralité | non testé dans V1 | aucun | `FOOTEDNESS_DATA_GATE` |
+
+La campagne V1 a exécuté 700 règles : 118 sont positives brutes et 24 survivent
+au walk-forward brut, mais aucune ne survit à la FDR. Il reste donc zéro pattern
+`LIVE_SHADOW_CANDIDATE`, `LIVE_SHADOW` ou `VALIDATED`. Le verdict est
+`JALON_10_NO_ROBUST_PATTERN_FOUND`.
+
+Sous-verdict :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. Il
+n’exclut pas un signal dans les familles équipe, calendrier, joueurs, tactique,
+autres marchés ou futures données prospectives, qui n’ont pas été testées.
+
+Le contrôle Bundesliga/Serie A est une stabilité inter-ligues exposée, pas un
+holdout externe indépendant. Indépendamment du résultat, la classe
+`SOURCE_PRICE_CLASS_ONLY` maintient le gate live fermé sans prix exact
+observable.
+
+Mise scientifique : 1 unité fixe. Bankroll : 1 000 unités fictives. Martingale,
+pari réel et publication sociale sont interdits.

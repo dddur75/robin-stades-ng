@@ -1,0 +1,112 @@
+name: "40 - Pattern Discovery cache-only"
+on:
+  workflow_dispatch:
+concurrency:
+  group: pattern-research-state
+  cancel-in-progress: false
+jobs:
+  discover:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      STORAGE_PAUSED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/historical-state-restore
+      - name: Vérifier les verrous et le cache
+        shell: bash
+        run: |
+          test "$STORAGE_PAUSED" = "true"
+          test "$REAL_BETS" = "false"
+          test "$SOCIAL_PUBLISHING_ENABLED" = "false"
+          test -d data/historical/parquet
+      - name: Exécuter toutes les hypothèses préenregistrées
+        run: >-
+          python scripts/run_pattern_campaign.py
+          --state data/historical
+          --output artifacts/pattern-research
+          --code-revision "${{ github.sha }}"
+          --config configs/pattern-research-v1.json
+      - name: Persister les registres compacts dans PostgreSQL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+          python scripts/persist_pattern_campaign.py \
+            --campaign artifacts/pattern-research/campaign-summary.json \
+            --output artifacts/pattern-research/postgresql.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pattern-discovery-${{ github.run_id }}
+          path: artifacts/pattern-research
+          retention-days: 90
+          compression-level: 9
+  publish-candidate-registry:
+    needs: discover
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: shadow-state
+      cancel-in-progress: false
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: actions/download-artifact@v4
+        with:
+          name: pattern-discovery-${{ github.run_id }}
+          path: artifacts/pattern-research
+      - name: Restaurer le shadow durable
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/manage_shadow_state.py restore
+          --repo "${{ github.repository }}"
+          --destination data/shadow
+          --current-run-id "${{ github.run_id }}"
+      - name: Publier uniquement le registre compact des candidats
+        run: |
+          mkdir -p data/shadow/pattern-research
+          cp artifacts/pattern-research/shadow-candidate-registry.json \
+            data/shadow/pattern-research/shadow-candidate-registry.json
+          test "$(python -c \
+            'import json,pathlib; p=pathlib.Path("data/shadow/pattern-research/shadow-candidate-registry.json"); d=json.loads(p.read_text()); print(len(d.get("hypotheses", [])))')" \
+            = "$(python -c \
+            'import json,pathlib; p=pathlib.Path("data/shadow/pattern-research/shadow-candidate-registry.json"); d=json.loads(p.read_text()); print(int(d.get("candidate_count", -1)))')"
+          test "$(stat -c%s data/shadow/pattern-research/shadow-candidate-registry.json)" \
+            -le 262144
+      - uses: ./.github/actions/durable-shadow
+        with:
+          run-id: ${{ github.run_id }}
+          database-url: ${{ secrets.DATABASE_URL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shadow-state-${{ github.run_id }}
+          path: data/shadow
+          retention-days: 14
+          compression-level: 9
+      - name: Élaguer les anciens artefacts shadow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/manage_shadow_state.py prune
+          --repo "${{ github.repository }}"
+          --current-artifact-name "shadow-state-${{ github.run_id }}"
+          --keep 2

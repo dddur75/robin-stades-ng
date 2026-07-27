@@ -4,12 +4,12 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 
-async function render() {
+async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
   return worker.fetch(
-    new Request("http://localhost/", { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
     {
       ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) },
     },
@@ -33,10 +33,36 @@ test("server-renders the Cockpit Live V2 shell", async () => {
   assert.match(html, /Registre PostgreSQL/);
   assert.match(html, /101/);
   assert.match(html, /PostgreSQL/);
+  assert.match(html, /Robin Live V1/);
+  assert.match(html, /Preuve publique shadow/);
+  assert.match(html, /Bankroll shadow/);
+  assert.match(html, /NO BET/);
+  assert.match(html, /NO LIVE SHADOW DATA/);
+  assert.match(html, /SOCIAL_PUBLISHING_ENABLED=false/);
   assert.match(html, /DOUBLE ÉCRITURE/i);
   assert.match(html, /19[\s ]992/);
   assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
+  assert.doesNotMatch(html, /garantie de gain|gain garanti|100 % gagnant/i);
   assert.doesNotMatch(html, /react-loading-skeleton/);
+});
+
+test("server-renders the public Robin Live V1 route", async () => {
+  const response = await render("/robin-live");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Robin Live V1/);
+  assert.match(html, /WHAT_WAS_TESTED/);
+  assert.match(html, /WHAT_WAS_NOT_TESTED/);
+  assert.match(html, /Walk-forward brut avant FDR/);
+  assert.match(html, /Trois meilleurs résultats bruts/);
+  assert.match(
+    html,
+    /EXPLORATORY REJECTED AFTER MULTIPLE TESTING/,
+  );
+  assert.match(html, /N\/A — aucun pari réglé/);
+  assert.match(html, /PRODUCTION_LOCKED/);
+  assert.match(html, /SOCIAL_PUBLISHING_ENABLED=false/);
+  assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
 });
 
 test("ships a provenance-aware, disposable static snapshot", async () => {
@@ -46,6 +72,44 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
     readFile(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
+  const research = JSON.parse(data).patternResearch;
+  assert.deepEqual(
+    {
+      generated: research.laboratory.hypothesesGenerated,
+      rawPositive: research.laboratory.rawPositive,
+      walkForwardRaw: research.laboratory.walkForwardRawBeforeFdr,
+      fdr: research.laboratory.fdrSurvivors,
+      candidates: research.strategies.shadowCandidates,
+      supportRejected: research.strategies.supportRejected,
+      promotionRejected: research.strategies.promotionRejected,
+    },
+    {
+      generated: 700,
+      rawPositive: 118,
+      walkForwardRaw: 24,
+      fdr: 0,
+      candidates: 0,
+      supportRejected: 167,
+      promotionRejected: 700,
+    },
+  );
+  assert.equal(research.subVerdict, "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE");
+  assert.equal(research.results.roi, null);
+  assert.equal(research.bankroll.currentUnits, 1000);
+  assert.equal(research.ledger.status, "LEDGER_VERIFIED");
+  assert.equal(research.productionStatus, "PRODUCTION_LOCKED");
+  assert.equal(research.realBets, false);
+  assert.equal(research.noBetDefault, true);
+  assert.equal(research.socialPublishingEnabled, false);
+  assert.equal(research.demoModeEnabled, false);
+  assert.equal(research.laboratory.topExploratoryResults.length, 3);
+  for (const result of research.laboratory.topExploratoryResults) {
+    assert.equal(
+      result.publicStatus,
+      "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+    );
+    assert.equal(result.qValue, 1);
+  }
 
   assert.match(page, /Odds Explorer/);
   assert.match(page, /Coverage Explorer/);
@@ -82,6 +146,11 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Strategy Lab/);
   assert.match(page, /Backtest Explorer/);
   assert.match(page, /Historical Data Quality/);
+  assert.match(page, /Robin Live V1/);
+  assert.match(page, /Décisions shadow et NO BET/);
+  assert.match(page, /Hypothèses, FDR et contrôles négatifs/);
+  assert.match(data, /Les performances passées ne garantissent aucun résultat futur/);
+  assert.match(page, /SOCIAL_PUBLISHING_ENABLED=false/);
   assert.match(page, /LIVE_PIPELINE_VERIFIED/);
   assert.match(page, /EN ATTENTE DE DONNÉES PROSPECTIVES/);
   assert.match(page, /AUCUNE CONCLUSION STATISTIQUE|statistical_message/);
@@ -100,6 +169,15 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"bridge_lag_records": 0/);
   assert.match(data, /"capacity_used_pct": 2\.39/);
   assert.match(data, /"deepData":/);
+  assert.match(data, /"patternResearch":/);
+  assert.match(data, /"version": "ROBIN_LIVE_V1"/);
+  assert.match(data, /"dataStatus": "NO_LIVE_SHADOW_DATA"/);
+  assert.match(data, /"initialUnits": 1000(?:\.0)?/);
+  assert.match(data, /"currentUnits": 1000(?:\.0)?/);
+  assert.match(data, /"fdrMethod": "Benjamini-Hochberg"/);
+  assert.match(data, /"socialPublishingEnabled": false/);
+  assert.match(data, /"realBets": false/);
+  assert.match(data, /"demoModeEnabled": false/);
   assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
   assert.match(data, /"HISTORICAL POINT-IN-TIME"/);
   assert.match(
@@ -117,4 +195,18 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
     assert.equal(error.code, "ENOENT");
   }
   await assert.rejects(access(new URL("package-lock.json", root)));
+});
+
+test("public ledger workflow publishes the audited Robin Live bundle", async () => {
+  const workflow = await readFile(
+    new URL("../../.github/workflows/public-ledger-build.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(workflow, /group: shadow-state/);
+  assert.match(workflow, /PATTERN_LEDGER_SUMMARY:/);
+  assert.match(workflow, /artifacts\/public-ledger\/ledger-summary\.json/);
+  assert.match(workflow, /test -f dist\/server\/index\.js/);
+  assert.match(workflow, /cockpit\/dist/);
+  assert.match(workflow, /if-no-files-found: error/);
+  assert.doesNotMatch(workflow, /cockpit\/out/);
 });

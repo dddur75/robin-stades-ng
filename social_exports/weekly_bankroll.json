@@ -1,0 +1,8 @@
+{
+  "message_template": "Bankroll shadow fictive — aucune garantie.",
+  "negative_results_included": true,
+  "public_ledger": "/robin-live",
+  "publishing_enabled": false,
+  "schema_version": "social-export-v1",
+  "status": "SHADOW_ONLY"
+}

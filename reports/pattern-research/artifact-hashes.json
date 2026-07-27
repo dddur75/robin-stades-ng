@@ -1,0 +1,39 @@
+{
+  "schema_version": "pattern-artifact-hashes-v1",
+  "artifacts": [
+    {
+      "name": "campaign-summary.full.json",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "bytes": 1645713,
+      "sha256": "3fe485238073e739cf423b1686ed9115f9b1a5a3db5cbd4e152c4dadde02c00c"
+    },
+    {
+      "name": "hypothesis-registry.jsonl",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "records": 700,
+      "bytes": 1148303,
+      "sha256": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731"
+    },
+    {
+      "name": "ledger-summary.full.json",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "bytes": 618,
+      "sha256": "e4d7953112dcef183f0de538970c29f7dc27d82a6e9c1491e7ce38fa6291b280"
+    },
+    {
+      "name": "replay.full.json",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "bytes": 308,
+      "sha256": "c6888c4ea33c956fb84160396fe3ca7098938a1f083f4a7ef0ab07e77b2772b0"
+    },
+    {
+      "name": "shadow-candidate-registry.json",
+      "storage": "TEMPORARY_RUNTIME_ONLY",
+      "records": 0,
+      "bytes": 1428,
+      "sha256": "2da2a1e386f159c402e0aa20eb18931ad2bd8df0b3cb67e8fe6bf1e39d3b7828"
+    }
+  ],
+  "git_policy": "ONLY_COMPACT_SUMMARIES_AND_HASHES",
+  "r2_operations": 0
+}

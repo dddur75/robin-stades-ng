@@ -5,6 +5,7 @@ import snapshot from "./cockpit-data.json";
 
 type PageKey =
   | "command"
+  | "robinLive"
   | "coverage"
   | "odds"
   | "matches"
@@ -27,6 +28,7 @@ type PageKey =
   | "historicalQuality";
 
 const pages: { key: PageKey; label: string; glyph: string }[] = [
+  { key: "robinLive", label: "Robin Live V1", glyph: "V1" },
   { key: "command", label: "Command Center", glyph: "⌂" },
   { key: "coverage", label: "Coverage Explorer", glyph: "▦" },
   { key: "odds", label: "Odds Explorer", glyph: "↗" },
@@ -51,6 +53,11 @@ const pages: { key: PageKey; label: string; glyph: string }[] = [
 ];
 
 const labels: Record<PageKey, { eyebrow: string; title: string; note: string }> = {
+  robinLive: {
+    eyebrow: "Preuve publique · shadow uniquement",
+    title: "Robin Live V1",
+    note: "Décisions, résultats et recherche publiés sans démo, pari réel ni promesse.",
+  },
   command: {
     eyebrow: "Vue opérationnelle",
     title: "Command Center",
@@ -399,6 +406,7 @@ export default function Home() {
           </section>
 
           {page === "command" && <CommandCenter onNavigate={setPage} />}
+          {page === "robinLive" && <RobinLive />}
           {page === "coverage" && <CoverageExplorer />}
           {page === "matches" && <MatchCenter matches={filteredMatches} market={market} />}
           {page === "odds" && <OddsExplorer />}
@@ -428,6 +436,26 @@ export default function Home() {
 function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
   return (
     <>
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Robin Live V1</span><h2>Preuve publique shadow</h2></div>
+          <StatusPill value={snapshot.patternResearch.dataStatus} />
+        </div>
+        <div className="cost-grid">
+          <article><span>Paris shadow</span><strong>{snapshot.patternResearch.today.shadowBets}</strong><small>simulation uniquement</small></article>
+          <article><span>NO BET</span><strong>{snapshot.patternResearch.today.noBets}</strong><small>les absences sont publiées</small></article>
+          <article><span>Bankroll shadow</span><strong>{snapshot.patternResearch.bankroll.currentUnits.toFixed(2)} u</strong><small>initiale 1 000 u</small></article>
+          <article><span>Candidats</span><strong>{snapshot.patternResearch.strategies.shadowCandidates}</strong><small>aucune promotion automatique</small></article>
+        </div>
+        <p className="panel-note">
+          {snapshot.patternResearch.methodology.warning} Données démo désactivées ·
+          SOCIAL_PUBLISHING_ENABLED=false · {snapshot.patternResearch.productionStatus}.
+        </p>
+        <button className="text-button" onClick={() => onNavigate("robinLive")}>
+          Ouvrir le registre Robin Live →
+        </button>
+      </section>
+
       <section className="metric-grid">
         <Metric label="Fixtures suivies" value={String(snapshot.metrics.fixtures)} detail="fenêtre prospective" />
         <Metric label="Snapshots réels" value={String(snapshot.metrics.snapshots)} detail="2 payloads distincts" tone="cyan" />
@@ -538,6 +566,159 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
             <div key={name}><StatusPill value={status} /><strong>{name}</strong><small>{detail}</small></div>
           ))}
         </div>
+      </section>
+    </>
+  );
+}
+
+export function RobinLive() {
+  const research = snapshot.patternResearch;
+  const lab = research.laboratory;
+  const bankroll = research.bankroll;
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric label="Matchs analysés" value={String(research.today.matchesAnalyzed)} detail="décisions publiées aujourd'hui" />
+        <Metric label="Paris shadow" value={String(research.today.shadowBets)} detail="mise fictive fixe, jamais réelle" tone="cyan" />
+        <Metric label="NO BET" value={String(research.today.noBets)} detail="absence de pari publiée" />
+        <Metric label="Publication" value={dateTime(research.publicationTime)} detail={research.today.origin} />
+        <Metric label="Données" value={research.dataStatus} detail="aucune démo présentée comme live" tone="amber" />
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Aujourd&apos;hui</span><h2>Décisions shadow et NO BET</h2></div>
+          <SourceBadge origin={research.today.origin} />
+        </div>
+        {research.ledger.decisions === 0 ? (
+          <EmptyState
+            title="Zéro décision shadow publiée"
+            text="Le registre reste vide tant qu'aucun candidat ne franchit les gates. Aucun exemple de démonstration n'est présenté comme réel."
+            label="NO OUTPUT"
+          />
+        ) : (
+          <div className="cost-grid">
+            <article><span>Décisions</span><strong>{research.ledger.decisions}</strong><small>gelées avant kickoff</small></article>
+            <article><span>Paris shadow</span><strong>{research.today.shadowBets}</strong><small>simulation uniquement</small></article>
+            <article><span>NO BET</span><strong>{research.today.noBets}</strong><small>publiés avec justification</small></article>
+            <article><span>Non classées</span><strong>{research.today.unclassifiedDecisions}</strong><small>jamais requalifiées en pari</small></article>
+          </div>
+        )}
+        <p className="panel-note">{research.today.justification}</p>
+      </section>
+
+      <section className="two-column">
+        <article className="panel">
+          <div className="panel-head">
+            <div><span>Résultats complets</span><h2>Règlements shadow</h2></div>
+            <StatusPill value={research.ledger.status} />
+          </div>
+          <dl>
+            <div><dt>Gagnés</dt><dd>{research.results.won}</dd></div>
+            <div><dt>Perdus</dt><dd>{research.results.lost}</dd></div>
+            <div><dt>Void</dt><dd>{research.results.void}</dd></div>
+            <div><dt>Règlements</dt><dd>{research.results.settlements}</dd></div>
+            <div><dt>Profit fictif</dt><dd>{research.results.profitUnits.toFixed(2)} u</dd></div>
+            <div><dt>ROI shadow</dt><dd>{research.results.roi == null ? "N/A — aucun pari réglé" : pct(research.results.roi)}</dd></div>
+            <div><dt>Registre</dt><dd>{research.results.historyRecords} enregistrements</dd></div>
+          </dl>
+        </article>
+
+        <article className="panel">
+          <div className="panel-head">
+            <div><span>Bankroll fictive</span><h2>Trajectoire à mise fixe</h2></div>
+            <StatusPill value="SIMULATION_ONLY" />
+          </div>
+          <dl>
+            <div><dt>Initiale</dt><dd>{bankroll.initialUnits.toFixed(2)} u</dd></div>
+            <div><dt>Actuelle</dt><dd>{bankroll.currentUnits.toFixed(2)} u</dd></div>
+            <div><dt>Profit</dt><dd>{bankroll.profitUnits.toFixed(2)} u</dd></div>
+            <div><dt>ROI</dt><dd>{bankroll.roi == null ? "N/A — aucune mise réglée" : pct(bankroll.roi)}</dd></div>
+            <div><dt>Drawdown max</dt><dd>{bankroll.maxDrawdownUnits.toFixed(2)} u</dd></div>
+            <div><dt>Courbe</dt><dd>{bankroll.curve.map((value) => Number(value).toFixed(2)).join(" → ")} u</dd></div>
+          </dl>
+          <p className="panel-note">Unités théoriques · aucune transaction · aucune connexion bookmaker.</p>
+        </article>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Stratégies</span><h2>Recherche, shadow et rejets</h2></div>
+          <StatusPill value={research.campaignVerdict} />
+        </div>
+        <div className="cost-grid">
+          <article><span>Hypothèses exécutées</span><strong>{research.strategies.inResearch}</strong><small>recherche historique, pas des recommandations</small></article>
+          <article><span>Candidates shadow</span><strong>{research.strategies.shadowCandidates}</strong><small>gates non contournables</small></article>
+          <article><span>Rejets de support</span><strong>{research.strategies.supportRejected}</strong><small>167 inclus dans le total rejeté</small></article>
+          <article><span>Rejetées de la promotion</span><strong>{research.strategies.promotionRejected}</strong><small>{research.strategies.rejectionReason}</small></article>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Laboratoire scientifique</span><h2>Hypothèses, FDR et contrôles négatifs</h2></div>
+          <SourceBadge origin={research.researchStatus === "HISTORICAL_RESEARCH" ? "HISTORICAL RESEARCH" : "NO OUTPUT"} />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Mesure</th><th>Nombre</th><th>Interprétation</th></tr></thead><tbody>
+          <tr><td>Hypothèses générées</td><td>{lab.hypothesesGenerated}</td><td>univers déclaré</td></tr>
+          <tr><td>Règles exécutées</td><td>{lab.rulesExecuted}</td><td>cache-only</td></tr>
+          <tr><td>Rejets de support</td><td>{lab.supportRejected}</td><td>échantillon insuffisant</td></tr>
+          <tr><td>Résultats positifs bruts</td><td>{lab.rawPositive}</td><td>non promotionnels</td></tr>
+          <tr><td>Survivants FDR</td><td>{lab.fdrSurvivors}</td><td>{lab.pValueMethod} · {lab.fdrMethod}</td></tr>
+          <tr><td>Walk-forward brut avant FDR</td><td>{lab.walkForwardRawBeforeFdr}</td><td>exploratoire, non promotionnel</td></tr>
+          <tr><td>Survivants ligue externe</td><td>{lab.externalLeagueSurvivors}</td><td>transférabilité</td></tr>
+          <tr><td>Contrôles négatifs</td><td>{lab.negativeControlsPassed}/{lab.negativeControls}</td><td>permutations et labels mélangés</td></tr>
+        </tbody></table></div>
+        <p className="panel-note"><StatusPill value={research.subVerdict} /></p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Exploration rejetée</span><h2>Trois meilleurs résultats bruts</h2></div>
+          <StatusPill value="EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING" />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Règle exposée</th><th>Support</th><th>ROI / IC 95 %</th><th>q-value</th><th>Folds</th><th>Stabilité ligue exposée</th><th>Statut</th><th>Limite</th></tr></thead><tbody>
+          {lab.topExploratoryResults.map((row) => (
+            <tr key={row.ruleHash}>
+              <td>{row.competition} · {row.market} · {row.selection}</td>
+              <td>{row.bets} paris · {row.bootstrapGroups} groupes</td>
+              <td>{pct(row.roi)} · {row.bootstrapRoi95.length === 2 ? row.bootstrapRoi95.map((value) => pct(Number(value))).join(" / ") : "N/A"}</td>
+              <td>{row.qValue.toFixed(2)}</td>
+              <td>{row.positiveFolds}/{row.eligibleFolds}</td>
+              <td>{row.leagueStability} · {row.exposedLeagueStability}</td>
+              <td><StatusPill value={row.publicStatus} /></td>
+              <td>{row.limit}</td>
+            </tr>
+          ))}
+        </tbody></table></div>
+        <p className="panel-note">Ces résultats sont exposés pour transparence. Ils échouent la correction des tests multiples et ne sont ni candidats, ni recommandations.</p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Méthodologie</span><h2>Lire Robin Live sans surinterpréter</h2></div>
+          <StatusPill value={research.productionStatus} />
+        </div>
+        <div className="two-column">
+          <article>
+            <h3>WHAT_WAS_TESTED</h3>
+            <ul>{research.WHAT_WAS_TESTED.map((item) => <li key={item}>{item}</li>)}</ul>
+          </article>
+          <article>
+            <h3>WHAT_WAS_NOT_TESTED</h3>
+            <ul>{research.WHAT_WAS_NOT_TESTED.map((item) => <li key={item}>{item}</li>)}</ul>
+          </article>
+        </div>
+        <div className="guardrails">
+          <div><StatusPill value="BACKTEST" /><strong>Historique</strong><small>{research.methodology.backtest}</small></div>
+          <div><StatusPill value="SHADOW" /><strong>Simulation</strong><small>{research.methodology.shadow}</small></div>
+          <div><StatusPill value="TRANSPARENCY" /><strong>Preuve complète</strong><small>{research.methodology.publication}</small></div>
+          <div><StatusPill value="WARNING" /><strong>Aucune garantie</strong><small>{research.methodology.warning}</small></div>
+        </div>
+        <p className="panel-note">
+          REAL_BETS=false · NO_BET_DEFAULT=true · SOCIAL_PUBLISHING_ENABLED=false ·
+          données de démonstration désactivées.
+        </p>
       </section>
     </>
   );
@@ -1183,7 +1364,7 @@ function ModelArena() {
       </section>
       <section className="panel">
         <div className="panel-head"><div><span>Stratégies bornées</span><h2>Strategy Lab V2</h2></div><StatusPill value={arena?.strategyStatus ?? "NOT_RUN"} /></div>
-        <p>{arena?.strategiesTested ?? 0} hypothèses exécutées. Aucune stratégie n'est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
+        <p>{arena?.strategiesTested ?? 0} hypothèses exécutées. Aucune stratégie n&apos;est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
       </section>
     </>
   );
@@ -1288,7 +1469,7 @@ function ExternalValidation() {
       </section>
       <section className="panel">
         <div className="panel-head"><div><span>Leave-One-League-Out</span><h2>Généralisation football</h2></div><StatusPill value="LEAVE_ONE_LEAGUE_OUT_READY" /></div>
-        <div className="table-wrap"><table><thead><tr><th>Ligue tenue à l'écart</th><th>Fixtures</th><th>Log Loss</th><th>Brier</th><th>ECE</th><th>Marché</th><th>Statut</th></tr></thead><tbody>
+        <div className="table-wrap"><table><thead><tr><th>Ligue tenue à l&apos;écart</th><th>Fixtures</th><th>Log Loss</th><th>Brier</th><th>ECE</th><th>Marché</th><th>Statut</th></tr></thead><tbody>
           {(external?.leaveOneLeagueOut ?? []).map((row) => <tr key={row.held_out_competition}><td>{row.held_out_competition}</td><td>{row.paired_fixtures ?? 0}</td><td>{row.metrics?.log_loss?.toFixed(4) ?? "—"}</td><td>{row.metrics?.brier_score?.toFixed(4) ?? "—"}</td><td>{row.metrics?.ece?.toFixed(4) ?? "—"}</td><td>{row.market_comparison ?? "UNAVAILABLE"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
         </tbody></table></div>
       </section>

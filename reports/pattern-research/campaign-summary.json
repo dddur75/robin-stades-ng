@@ -1,0 +1,260 @@
+{
+  "schema_version": "pattern-campaign-evidence-v1.1-review-hardening",
+  "campaign_id": "jalon10-cache-only-20260727",
+  "executed_at": "2026-07-27T11:00:02Z",
+  "mode": "CACHE_ONLY",
+  "code_revision": "423fb7e77ba52286b660956161f02f8a2c1be7f8",
+  "historical_data_revision": "5c85cf20b932df44dca8665de00e52e3f1e02236",
+  "dataset_hashes": [
+    "3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495"
+  ],
+  "result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b",
+  "data_classification": "DISCOVERY_EXPOSED",
+  "verdict": "JALON_10_NO_ROBUST_PATTERN_FOUND",
+  "scope_subverdict": "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE",
+  "production_status": "PRODUCTION_LOCKED",
+  "real_bets": false,
+  "no_bet_default": true,
+  "social_publishing_enabled": false,
+  "demo_mode_enabled": false,
+  "counts": {
+    "fixtures_matched": 10732,
+    "strict_1x2_rows": 10731,
+    "over_under_2_5_rows": 10732,
+    "hypotheses_generated": 700,
+    "hypotheses_executed": 700,
+    "leakage_rejected": 0,
+    "support_rejected": 167,
+    "raw_positive": 118,
+    "fdr_survivors": 0,
+    "walk_forward_survivors": 24,
+    "external_league_survivors": 0,
+    "exposed_league_stability_survivors": 0,
+    "shadow_candidates": 0,
+    "negative_controls": 7,
+    "negative_controls_passed": 7
+  },
+  "configuration": {
+    "seed": 10010,
+    "minimum_bets": 80,
+    "minimum_seasons": 3,
+    "minimum_fold_bets": 15,
+    "minimum_positive_fold_ratio": 0.67,
+    "fdr_method": "BENJAMINI_HOCHBERG",
+    "p_value_method": "ONE_SIDED_CLUSTER_ROBUST_CR1_BY_MATCH_DATE",
+    "fdr_alpha": 0.05,
+    "bootstrap_iterations": 1000,
+    "maximum_conditions": 3,
+    "stake_per_bet_units": 1.0,
+    "live_market_point_in_time": false
+  },
+  "market_matrix": [
+    {
+      "market": "1X2",
+      "results_available": true,
+      "historical_prices_present": true,
+      "exact_observed_at": false,
+      "rows": 10731,
+      "status": "HISTORICAL_RESEARCH_ONLY",
+      "reason": "SOURCE_PRICE_CLASS_ONLY; no exact intraday timestamp or CLV claim"
+    },
+    {
+      "market": "OVER_UNDER_2_5",
+      "results_available": true,
+      "historical_prices_present": true,
+      "exact_observed_at": false,
+      "rows": 10732,
+      "status": "PARTIAL_PRICE_CLASS_GATE",
+      "reason": "price taxonomy is not sufficient for a live point-in-time promotion"
+    },
+    {
+      "market": "SCORERS_CARDS_CORNERS_HANDICAPS_PLAYER_PROPS",
+      "results_available": false,
+      "historical_prices_present": false,
+      "exact_observed_at": false,
+      "rows": 0,
+      "status": "MARKET_UNAVAILABLE",
+      "reason": "required outcomes and observed historical prices are not jointly available"
+    }
+  ],
+  "top_exploratory_walk_forward_results": [
+    {
+      "rule_hash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+      "status": "DISCOVERED",
+      "market": "1X2_AWAY",
+      "selection": "AWAY",
+      "competition": "La Liga",
+      "conditions": {
+        "market_margin_1x2_max": 0.06,
+        "odds_away": [
+          2.0,
+          2.5
+        ]
+      },
+      "bets": 261,
+      "distinct_bootstrap_groups": 225,
+      "roi": 0.1663984674329502,
+      "profit_units": 43.43,
+      "max_drawdown_units": 9.27,
+      "hit_rate": 0.5172413793103449,
+      "average_odds": 2.2504214559386972,
+      "p_value": 0.009949050710225124,
+      "q_value": 1.0,
+      "bootstrap_roi_95": [
+        0.03360868411743898,
+        0.30770262226512224
+      ],
+      "walk_forward_positive_folds": 4,
+      "walk_forward_eligible_folds": 4,
+      "external_validation": "INELIGIBLE_COMPETITION_SPECIFIC_RULE",
+      "limit": "fails FDR and has no external-league or live point-in-time validation"
+    },
+    {
+      "rule_hash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+      "status": "DISCOVERED",
+      "market": "1X2_DRAW",
+      "selection": "DRAW",
+      "competition": "Serie A",
+      "conditions": {
+        "market_margin_1x2_max": 0.06,
+        "odds_draw": [
+          2.5,
+          3.25
+        ]
+      },
+      "bets": 363,
+      "distinct_bootstrap_groups": 282,
+      "roi": 0.1594490358126722,
+      "profit_units": 57.88,
+      "max_drawdown_units": 19.52,
+      "hit_rate": 0.3746556473829201,
+      "average_odds": 3.094903581267218,
+      "p_value": 0.02547293414143248,
+      "q_value": 1.0,
+      "bootstrap_roi_95": [
+        0.0042719415204679045,
+        0.31393382749629106
+      ],
+      "walk_forward_positive_folds": 4,
+      "walk_forward_eligible_folds": 4,
+      "external_validation": "INELIGIBLE_COMPETITION_SPECIFIC_RULE",
+      "limit": "fails FDR and has no external-league or live point-in-time validation"
+    },
+    {
+      "rule_hash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+      "status": "DISCOVERED",
+      "market": "1X2_AWAY",
+      "selection": "AWAY",
+      "competition": "Serie A",
+      "conditions": {
+        "market_margin_1x2_max": 0.06,
+        "odds_away": [
+          1.6,
+          2.0
+        ]
+      },
+      "bets": 241,
+      "distinct_bootstrap_groups": 207,
+      "roi": 0.1386721991701245,
+      "profit_units": 33.42,
+      "max_drawdown_units": 7.22,
+      "hit_rate": 0.6390041493775933,
+      "average_odds": 1.7834854771784232,
+      "p_value": 0.007478892043326665,
+      "q_value": 1.0,
+      "bootstrap_roi_95": [
+        0.024913994885916647,
+        0.24270212811073993
+      ],
+      "walk_forward_positive_folds": 3,
+      "walk_forward_eligible_folds": 3,
+      "external_validation": "INELIGIBLE_COMPETITION_SPECIFIC_RULE",
+      "limit": "fails FDR and has no external-league or live point-in-time validation"
+    }
+  ],
+  "negative_controls": {
+    "winner_loser_leakage": {
+      "status": "LEAKAGE_REJECTED",
+      "executed": true,
+      "rejected_columns": [
+        "future_odds",
+        "home_goals",
+        "loser_aces",
+        "winner_rank"
+      ],
+      "passed": true,
+      "promoted": false
+    },
+    "shuffled_labels": {
+      "method": "STRATIFIED_BY_COMPETITION_SEASON_ODDS_BAND",
+      "strata": 969,
+      "bets": 10731,
+      "roi": -0.08019849035504613,
+      "p_value": 0.9999999999850118,
+      "status": "REJECTED",
+      "executed": true,
+      "passed": true,
+      "promoted": false
+    },
+    "shifted_odds": {
+      "status": "LEAKAGE_REJECTED",
+      "executed": true,
+      "reason": "FIXTURE_ODDS_JOIN_MISMATCH",
+      "passed": true,
+      "promoted": false
+    },
+    "random_feature": {
+      "status": "REJECTED",
+      "executed": true,
+      "reason": "UNKNOWN_FEATURE_AVAILABILITY:random_feature",
+      "passed": true,
+      "promoted": false
+    },
+    "trivial_market_rule": {
+      "description": "BET_HOME_ON_EVERY_ELIGIBLE_FIXTURE",
+      "bets": 10731,
+      "roi": -0.08123287671232877,
+      "p_value": 0.9999999999836676,
+      "status": "REJECTED",
+      "executed": true,
+      "reason": "PREREGISTERED_NEGATIVE_CONTROL",
+      "passed": true,
+      "promoted": false
+    },
+    "impossible_condition": {
+      "selected": 0,
+      "status": "REJECTED",
+      "executed": true,
+      "passed": true,
+      "promoted": false
+    },
+    "post_result_pattern": {
+      "status": "LEAKAGE_REJECTED",
+      "executed": true,
+      "reason": "LEAKAGE_REJECTED:home_goals",
+      "passed": true,
+      "promoted": false
+    }
+  },
+  "replay": {
+    "identical": true,
+    "business_duplicates": 0,
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b"
+  },
+  "costs": {
+    "provider_calls": 0,
+    "api_football_calls": 0,
+    "odds_api_credits": 0,
+    "r2_operations": 0,
+    "primary_runtime_seconds": 40.6,
+    "replay_runtime_seconds": 40.7
+  },
+  "promotion": {
+    "historical_validated_patterns": 0,
+    "live_shadow_candidates": 0,
+    "reason": "ZERO_FDR_SURVIVORS_AND_FAIL_CLOSED_CONCENTRATION",
+    "validated_label_forbidden": true
+  }
+}

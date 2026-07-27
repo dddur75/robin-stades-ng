@@ -1,8 +1,8 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-26
+Dernière mise à jour : 2026-07-27
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-9-market-player-storage`
+Branche : `codex/jalon-10-pattern-research-ledger`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -41,7 +41,8 @@ Ce statut n’est ni `LIVE_SHADOW_VALIDATED`, ni `PRODUCTION_READY`.
 | 6 — dataset et Player Feature Factory | `VERIFIED` | PR #9 fusionnée |
 | 7 — Scientific Model Arena | `VERIFIED` | PR #10 fusionnée |
 | 8 — validation externe | `WAITING_FOR_EXTERNAL_GATES` | `docs/audits/JALON-8-REPORT.md` |
-| 9 | `PRE_MERGE_R2_VALIDATION` | PR #12 |
+| 9 | `MERGED_AND_POST_MERGE_VERIFIED` | PR #12 |
+| 10 — Pattern Research / Public Ledger | `JALON_10_NO_ROBUST_PATTERN_FOUND` | `docs/pattern-research/JALON-10-REPORT.md` |
 
 ## Preuves Jalon 4
 
@@ -329,3 +330,62 @@ R2 demeure un miroir et ne justifie aucune croissance libre de Git. La
 réduction de la dépendance à Git et un éventuel basculement de source principale
 seront traités dans un jalon ultérieur distinct, non ouvert par cette mission.
 La production reste `PRODUCTION_LOCKED`.
+
+## Jalon 10 — Pattern Research Engine et Public Evidence Ledger
+
+L’espace et les seuils V1 sont gelés avant lecture des résultats. La revue
+pré-fusion V1.1 durcit les p-values CR1 groupées, les contrôles exécutés et les
+gates fail-closed sans retuning. Le corpus disponible
+comprend 10 732 matchs appariés sur Ligue 1, Premier League, La Liga,
+Bundesliga et Serie A en 2020–2025. Le marché 1X2 strict conserve 10 731 lignes
+après exclusion d’une marge négative ; Over/Under 2,5 conserve 10 732 lignes.
+
+Ces données sont `DISCOVERY_EXPOSED`. Les prix portent
+`SOURCE_PRICE_CLASS_ONLY` et ne disposent pas d’un `observed_at` exact : ils
+autorisent la recherche historique, mais ferment le gate live point-in-time.
+La première campagne cache-only a généré et exécuté 700 hypothèses : 167 sont
+rejetées pour support, 118 ont un ROI brut positif, 24 survivent au
+walk-forward brut, mais zéro survit à la FDR, zéro au contrôle de stabilité
+inter-ligues exposé et zéro ne devient candidat shadow. Les 7 contrôles
+négatifs sur 7 réussissent. Bundesliga et Serie A appartiennent déjà au corpus :
+ce contrôle n’est pas un holdout externe indépendant.
+Le replay est identique, avec zéro appel fournisseur, zéro crédit et zéro
+doublon. Révision exécutée :
+`423fb7e77ba52286b660956161f02f8a2c1be7f8`.
+
+Hashes de preuve :
+
+- dataset :
+  `3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495` ;
+- résultat :
+  `edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b`.
+
+Verdict : `JALON_10_NO_ROBUST_PATTERN_FOUND`. Aucun seuil n’est assoupli et
+aucun pattern n’est promu.
+
+Sous-verdict scientifique :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. Il porte
+uniquement sur les 700 règles de cote, marge, catégorie de prix et compétition
+préenregistrées ; il ne conclut pas à l’absence de pattern robuste dans le
+football ou dans les familles de features non testées.
+
+Le Public Evidence Ledger est défini comme append-only, chaîné par SHA-256 et
+shadow-only, avec une bankroll initiale fictive de 1 000 unités. Robin Live V1
+doit afficher zéro pari honnête tant qu’aucun candidat n’existe. Les exports
+sociaux restent générables mais désactivés.
+
+L’audit borné de l’antériorité tennis a produit uniquement le signal
+`LEGACY_HARDCODED_SECRET_DETECTED`; aucune valeur, archive, règle ou performance
+tennis n’entre dans Robin.
+
+Invariants :
+
+```text
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```

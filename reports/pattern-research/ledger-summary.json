@@ -1,0 +1,27 @@
+{
+  "bankroll_curve": [
+    1000.0
+  ],
+  "decisions": 0,
+  "demo_mode_enabled": false,
+  "last_record_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "lost": 0,
+  "matches_analyzed": 0,
+  "max_drawdown_units": 0.0,
+  "no_bet_default": true,
+  "no_bets": 0,
+  "production_status": "PRODUCTION_LOCKED",
+  "profit_units": 0.0,
+  "published_at": null,
+  "real_bets": false,
+  "records": 0,
+  "roi": null,
+  "settled_stake_units": 0.0,
+  "settlements": 0,
+  "shadow_bankroll": 1000.0,
+  "shadow_bets": 0,
+  "social_publishing_enabled": false,
+  "status": "LEDGER_VERIFIED",
+  "void": 0,
+  "won": 0
+}

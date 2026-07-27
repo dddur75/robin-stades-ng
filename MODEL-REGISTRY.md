@@ -88,3 +88,20 @@ Aucun modèle n’est `PRODUCTION_READY`; aucun candidat shadow n’est promu.
 Les modèles Jalon 8 restent gelés. Ils ne sont comparés au marché que pour une
 ligue dont MARKET_GATE est READY, sur échantillon apparié. Sans amélioration
 robuste : `NO_EXTERNAL_VALIDATED_EDGE`, zéro promotion.
+
+## Jalon 10
+
+Le Pattern Research Engine est un moteur de règles et d’évaluation, pas un
+nouveau modèle probabiliste. Les modèles Jalons 7–9 restent gelés et leurs
+résultats historiques restent exposés.
+
+État après campagne : `JALON_10_NO_ROBUST_PATTERN_FOUND`. Les 700 règles ont
+été exécutées, mais aucune ne survit à la FDR et aucun candidat shadow n’est
+créé. Aucun modèle n’est réentraîné, retuné, promu ou déclaré
+`MODEL_VALIDATED`. Le marché déviggué reste la baseline économique.
+
+Sous-verdict :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. Les
+700 règles portent uniquement sur des tranches de cote, marge, catégorie de
+prix et compétition. Les modèles et features d’équipe, calendrier, joueurs et
+tactiques n’ont pas été testés par cette campagne.

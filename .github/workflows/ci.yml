@@ -45,7 +45,7 @@ jobs:
       - name: Linting
         run: >-
           python -m ruff check
-          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9
+          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10
           scripts migrations
       - name: Typage strict
         run: python -m mypy src/robin
@@ -62,7 +62,7 @@ jobs:
           ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
         run: |
           python -m alembic upgrade head
-          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs'} <= names"
+          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry'} <= names"
           python -m alembic downgrade 0002_jalon2_shadow
           python -m alembic upgrade head
           python -m alembic downgrade base

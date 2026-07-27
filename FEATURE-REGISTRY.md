@@ -97,3 +97,25 @@ autorisée.
 Les features joueur ne sont calculables qu’après PLAYER_GATE par ligue; les
 features composition conservent `PRE_LINEUP` et `POST_LINEUP_SIMULATED`
 séparés. Les blessures restent `BLOCKED_BY_TEMPORALITY`.
+
+## Jalon 10 — disponibilité pour les patterns
+
+| Famille | Usage recherche | Gate |
+|---|---|---|
+| Résultat du match cible | interdit | `POST_MATCH_ONLY` |
+| Forme/ratings roulants antérieurs | admissible si fenêtre exclut la cible | `POINT_IN_TIME_TEST_REQUIRED` |
+| Repos/calendrier antérieur | admissible | `POINT_IN_TIME_TEST_REQUIRED` |
+| Cotes 1X2 / O-U 2,5 | historique exposé uniquement | `SOURCE_PRICE_CLASS_ONLY` |
+| Mouvement de cote | non calculable sans snapshots multiples datés | `MARKET_UNAVAILABLE` |
+| Joueurs pré-lineup | non forcé dans V1 | gates Jalon 9 conservés |
+| Composition confirmée | simulation historique seulement | `POST_LINEUP_SIMULATED` |
+| Blessures/disponibilité | exclu | `BLOCKED_BY_TEMPORALITY` |
+| Formations | exclu sans preuve de disponibilité | `POINT_IN_TIME_GATE` |
+| Latéralité/pied fort | exclu | `FOOTEDNESS_DATA_GATE` |
+
+Les noms `winner_*`/`loser_*`, scores, statistiques du match cible et cotes
+futures produisent `LEAKAGE_REJECTED`. Une valeur manquante reste `null`.
+
+Les concentrations équipe et bookmaker doivent être rapportées avant toute
+promotion. La sensibilité bookmaker n’est pas démontrable à partir du seul prix
+moyen actuel et échoue fermée.

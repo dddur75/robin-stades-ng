@@ -40,3 +40,26 @@ Les secrets nécessaires uniquement aux runs réels sont `R2_ACCOUNT_ID`,
 `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` et `R2_BUCKET_NAME`. Leur valeur ne
 doit jamais être publiée. La production reste `PRODUCTION_LOCKED`,
 `REAL_BETS=false` et `NO_BET_DEFAULT=true`.
+
+## Jalon 10
+
+La campagne réelle cache-only et son replay sont terminés : 700 hypothèses
+exécutées, zéro survivante FDR, zéro candidat shadow, 7/7 contrôles négatifs,
+zéro doublon et zéro coût fournisseur. Verdict :
+`JALON_10_NO_ROBUST_PATTERN_FOUND`.
+
+Sous-verdict :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. La
+conclusion porte sur 700 règles préenregistrées de tranches de marché, pas sur
+tous les patterns football ni sur les familles non testées.
+
+La campagne ne demande aucune action utilisateur. Tant que la PR brouillon
+n’est pas déclarée verte et prête :
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Une fois la PR brouillon complète, verte et déclarée prête, l’unique action
+pourra devenir : `Valider puis fusionner la PR du Jalon 10.`
+
+Aucun secret, crédit fournisseur, connexion sociale, permission de pari ou
+reprise P3/P4 n’est demandé. La production reste `PRODUCTION_LOCKED`.

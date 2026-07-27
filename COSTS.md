@@ -141,3 +141,36 @@ R2 ni abonnement n’est créé automatiquement.
 Mesure durable Jalon 9 : 474 143 947 octets; projection gates critiques
 634 143 947; plan complet 894 143 947; plan complet avec marché 939 143 947.
 Le seuil haut de 900 MB impose `OBJECT_STORAGE_REQUIRED`.
+
+## Budget Jalon 10
+
+La recherche est cache-only. Budget autorisé :
+
+| Poste | Budget |
+|---|---:|
+| API-Football | 0 appel |
+| The Odds API | 0 crédit |
+| Nouvelle source payante | 0 |
+| Pari réel | 0 |
+| Publication sociale | 0 |
+
+Les résultats compacts, hashes et registres peuvent être versionnés ; aucun gros
+dataset n’est recopié dans Git. Les sorties lourdes restent dans PostgreSQL/R2
+ou dans un artifact borné. `STORAGE_PAUSED` et la suspension P3/P4 restent
+actifs.
+
+La campagne réelle et son replay ont mesuré :
+
+- 0 appel fournisseur ;
+- 0 crédit The Odds API ;
+- 700 hypothèses exécutées depuis le cache ;
+- replay identique, sans nouvelle consommation ni doublon ;
+- 0 opération R2 ;
+- 78,8 secondes de calcul local cumulé pour le run et le replay ;
+- 2 621 135 octets d’artefacts complets temporaires hors Git ;
+- 9 141 octets de résumés et hashes compacts ajoutés sous
+  `reports/pattern-research`.
+
+Le temps de la CI GitHub est mesuré par le run associé à la PR et n’est pas
+réinjecté dans le commit afin d’éviter une boucle de nouveaux runs. Aucun achat
+ni changement de plan n’est autorisé automatiquement.
