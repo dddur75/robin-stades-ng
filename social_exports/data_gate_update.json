@@ -8,12 +8,14 @@
     "FORMATION_GATE",
     "FOOTEDNESS_GATE"
   ],
-  "message_template": "Données insuffisantes pour les matchups profonds. L'équipe et le calendrier sont prêts ; joueurs, absences, lineups, formations et pied fort restent bloqués.",
+  "message_template": "Données insuffisantes pour les matchups profonds. L'équipe et le calendrier sont exploitables uniquement pour un diagnostic rétrospectif ; leur horodatage source reste partiel. Joueurs, absences, lineups, formations et pied fort restent bloqués.",
   "negative_results_included": true,
   "network_connected": false,
   "publishing_enabled": false,
+  "partial_gates": [
+    "TEAM_GATE"
+  ],
   "ready_gates": [
-    "TEAM_GATE",
     "MARKET_GATE_HISTORICAL_ONLY"
   ],
   "schema_version": "deep-football-social-export-v1",

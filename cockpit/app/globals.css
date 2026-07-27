@@ -93,7 +93,7 @@ h1 { margin: 0; font-size: clamp(28px, 3vw, 42px); letter-spacing: -.045em; font
 .metric-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 10px; }
 .metric { min-width: 0; background: linear-gradient(145deg, #121a22, #0e151b); border: 1px solid var(--line); border-radius: 6px; padding: 15px; }
 .metric > span { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
-.metric strong { display: block; font: 23px var(--font-geist-mono); letter-spacing: -.04em; margin: 10px 0 6px; }
+.metric strong { display: block; font: 23px var(--font-geist-mono); letter-spacing: -.04em; margin: 10px 0 6px; overflow-wrap: anywhere; }
 .metric small { color: #65717e; white-space: nowrap; }
 .metric.cyan { border-top-color: var(--cyan); }
 .metric.cyan strong { color: var(--cyan); }
@@ -113,10 +113,14 @@ h1 { margin: 0; font-size: clamp(28px, 3vw, 42px); letter-spacing: -.045em; font
 .source-badge.live { color: var(--cyan); border-color: #28594f; background: #102824; }
 .source-badge.live-shadow, .source-badge.test-evidence { color: var(--cyan); border-color: #28594f; background: #102824; }
 .source-badge.oos-historical { color: var(--amber); border-color: #5a462c; background: #251d13; }
+.source-badge.historical-research { color: var(--amber); border-color: #5a462c; background: #251d13; }
 .source-badge.no-output { color: #788592; border-color: #34404b; background: #111820; }
 .status-pill.pass, .status-pill.passed, .status-pill.present { color: var(--cyan); border-color: #2a5a51; background: #102723; }
+.status-pill.ready, .status-pill.exact-keyset, .status-pill.replay-verified, .status-pill.hash-chain-verified { color: var(--cyan); border-color: #2a5a51; background: #102723; }
 .status-pill.pending, .status-pill.partial, .status-pill.warning, .status-pill.inconclusive-oos { color: var(--amber); border-color: #5a462c; background: #251d13; }
+.status-pill.storage-paused, .status-pill.historical-research-evidence, .status-pill.better-descriptive-only, .status-pill.reference-raw-market, .status-pill.reference-recalibrated-train-only, .status-pill.non-promotable { color: var(--amber); border-color: #5a462c; background: #251d13; }
 .status-pill.rejeté, .status-pill.rejected-oos, .status-pill.no-promotion { color: var(--red); border-color: #673b39; background: #2a1717; }
+.status-pill.blocked, .status-pill.data-gate-blocked, .status-pill.blocked-by-temporality, .status-pill.blocked-by-coverage, .status-pill.worse-than-market, .status-pill.worse-than-reference, .status-pill.not-promoted, .status-pill.promotion-blocked, .status-pill.lost-to-recalibrated-market { color: var(--red); border-color: #673b39; background: #2a1717; }
 .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); margin: 28px 5px 25px; }
 .pipeline > div { position: relative; text-align: center; color: var(--muted); font-size: 11px; }
 .pipeline i { position: relative; z-index: 1; margin: 0 auto 8px; display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; font-style: normal; background: #18232b; border: 1px solid #35434e; }
@@ -263,6 +267,8 @@ td:first-child { color: var(--ink); }
 .strategy-grid p { color: #65727f; font-size: 10px; line-height: 1.4; min-height: 28px; }
 .mini-ci { margin-top: 16px; display: grid !important; grid-template-columns: auto 1fr auto; align-items: center; color: var(--muted); font: 9px var(--font-geist-mono); }
 .mini-ci b { height: 2px; background: #46525e; margin: 0 8px; }
+.matchup-caveats { margin: 18px 0 0; padding-left: 20px; color: var(--muted); line-height: 1.6; }
+.matchup-caveats li + li { margin-top: 7px; }
 
 @media (max-width: 1180px) {
   .metric-grid { grid-template-columns: repeat(3, 1fr); }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T18:40:50.851122+00:00",
+  "generatedAt": "2026-07-27T14:22:48.148007+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -377,17 +377,17 @@
       "strategy": "aucun_pari",
       "bets": 0,
       "wins": 0,
-      "profit": 0,
-      "roi": 0,
-      "roi_ci_low": 0,
-      "roi_ci_high": 0,
-      "max_drawdown": 0,
+      "profit": 0.0,
+      "roi": 0.0,
+      "roi_ci_low": 0.0,
+      "roi_ci_high": 0.0,
+      "max_drawdown": 0.0,
       "status": "INSUFFICIENT_SAMPLE",
       "note": "baseline nulle",
       "origin": "LEGACY SOURCE",
-      "roiPct": 0,
-      "ciLowPct": 0,
-      "ciHighPct": 0
+      "roiPct": 0.0,
+      "ciLowPct": 0.0,
+      "ciHighPct": 0.0
     },
     {
       "strategy": "favori_marche",
@@ -530,24 +530,24 @@
       "note": "Poisson vs cote O2,5, edge >= 4%",
       "origin": "LEGACY SOURCE",
       "roiPct": 2.83,
-      "ciLowPct": -8,
+      "ciLowPct": -8.0,
       "ciHighPct": 13.66
     },
     {
       "strategy": "btts_value",
       "bets": 0,
       "wins": 0,
-      "profit": 0,
-      "roi": 0,
-      "roi_ci_low": 0,
-      "roi_ci_high": 0,
-      "max_drawdown": 0,
+      "profit": 0.0,
+      "roi": 0.0,
+      "roi_ci_low": 0.0,
+      "roi_ci_high": 0.0,
+      "max_drawdown": 0.0,
       "status": "INSUFFICIENT_SAMPLE",
       "note": "bloqué : aucune cote BTTS fiable dans le dataset legacy",
       "origin": "LEGACY SOURCE",
-      "roiPct": 0,
-      "ciLowPct": 0,
-      "ciHighPct": 0
+      "roiPct": 0.0,
+      "ciLowPct": 0.0,
+      "ciHighPct": 0.0
     }
   ],
   "runs": [
@@ -786,7 +786,7 @@
     "hashes_validated": 5,
     "errors": 0,
     "unrecoverable_rows": 0,
-    "coverage": 1
+    "coverage": 1.0
   },
   "replay": {
     "status": "REPLAY_CONFIRMED",
@@ -809,8 +809,8 @@
     "statistical_message": "ÉCHANTILLON INSUFFISANT — AUCUNE CONCLUSION STATISTIQUE"
   },
   "slo": {
-    "provenance_target": 1,
-    "provenance_observed": 1,
+    "provenance_target": 1.0,
+    "provenance_observed": 1.0,
     "silent_loss_target": 0,
     "silent_loss_observed": 0,
     "unresolved_duplicate_target": 0,
@@ -821,8 +821,8 @@
     "quota_reserve_observed": 0.9996,
     "secret_exposure_observed": 0,
     "demo_as_live_observed": 0,
-    "decision_reason_coverage": 1,
-    "rejection_code_coverage": 1
+    "decision_reason_coverage": 1.0,
+    "rejection_code_coverage": 1.0
   },
   "scheduler": {
     "windows": [
@@ -1279,7 +1279,7 @@
               "alias": "Parma",
               "canonical_name": "Parma",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "3c675d08a06c558bc6be499a7e47d098",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1292,7 +1292,7 @@
               "alias": "Juventus",
               "canonical_name": "Juventus",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1cefb6098cbf115ecbfdfd96c5513e31",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1305,7 +1305,7 @@
               "alias": "Fiorentina",
               "canonical_name": "Fiorentina",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "d858b1766a583a0a9fef93e7217f9c1b",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1318,7 +1318,7 @@
               "alias": "Napoli",
               "canonical_name": "Napoli",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "98a0e93c56d222094731e2729b7c0a09",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1331,7 +1331,7 @@
               "alias": "Udinese",
               "canonical_name": "Udinese",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "26a8c137cb4337e5bd9e88e0d457c937",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1344,7 +1344,7 @@
               "alias": "AC Milan",
               "canonical_name": "AC Milan",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "c1d9b63895a35190c975ac991c082688",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1357,7 +1357,7 @@
               "alias": "Cagliari",
               "canonical_name": "Cagliari",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "151d70b3f27792ff387ab76e9db34fa6",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1370,7 +1370,7 @@
               "alias": "Brescia",
               "canonical_name": "Brescia",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "2eaffb479758c45e40d1dd06435cd23c",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1383,7 +1383,7 @@
               "alias": "Spal",
               "canonical_name": "Spal",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "7a12d53378604e66c5a239d2205cae1b",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1396,7 +1396,7 @@
               "alias": "Atalanta",
               "canonical_name": "Atalanta",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "6dd376e390ad499a1dedad192ed44c7e",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1409,7 +1409,7 @@
               "alias": "AS Roma",
               "canonical_name": "AS Roma",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "ed3670d94708118ea13f14c5df917908",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1422,7 +1422,7 @@
               "alias": "Genoa",
               "canonical_name": "Genoa",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "8c0ad72e5ce2b0896d94f13a76a75a9b",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1435,7 +1435,7 @@
               "alias": "Sampdoria",
               "canonical_name": "Sampdoria",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "415c09973fd1a8d1f9b7327b1fe8b5cc",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1448,7 +1448,7 @@
               "alias": "Lazio",
               "canonical_name": "Lazio",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "919b46a346b5f56eacd1023cf09db708",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1461,7 +1461,7 @@
               "alias": "Torino",
               "canonical_name": "Torino",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "947b0fdb08969f9ad1591719e81c4d02",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1474,7 +1474,7 @@
               "alias": "Sassuolo",
               "canonical_name": "Sassuolo",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "c45043eefd19c1d721ca6568b9bc880f",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1487,7 +1487,7 @@
               "alias": "Hellas Verona",
               "canonical_name": "Hellas Verona",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "64e2956cb39f5b795f0ace18c78e96a0",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1500,7 +1500,7 @@
               "alias": "Bologna",
               "canonical_name": "Bologna",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e4ce19d85b4966a274157717967234fc",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1513,7 +1513,7 @@
               "alias": "Inter",
               "canonical_name": "Inter",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "84da0e75bb317ca71fd1df7cd406007a",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1526,7 +1526,7 @@
               "alias": "Lecce",
               "canonical_name": "Lecce",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e70edabc2501f13408cd1701f4dac9a7",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1539,7 +1539,7 @@
               "alias": "Crotone",
               "canonical_name": "Crotone",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "9fcb135d4fbb780003d8cff5da2a4a60",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1552,7 +1552,7 @@
               "alias": "Benevento",
               "canonical_name": "Benevento",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "0057dd0cf575fb85f124a3eaeda17f84",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1565,7 +1565,7 @@
               "alias": "Spezia",
               "canonical_name": "Spezia",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "039d6a930c24a210ceb3ade894adda46",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1578,7 +1578,7 @@
               "alias": "Empoli",
               "canonical_name": "Empoli",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "a9b2774b296425671833f9248942f6f5",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1591,7 +1591,7 @@
               "alias": "Salernitana",
               "canonical_name": "Salernitana",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "b5820de3f957a28aa61e6d8cf3ade93c",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1604,7 +1604,7 @@
               "alias": "Venezia",
               "canonical_name": "Venezia",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "f54a51498e6c1953514f90d7b5543b13",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1617,7 +1617,7 @@
               "alias": "Monza",
               "canonical_name": "Monza",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "d86dbf7de8c0130253503b4d775f97e2",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1630,7 +1630,7 @@
               "alias": "Cremonese",
               "canonical_name": "Cremonese",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "98029b63bc7d2fff2d867e6012cc8909",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1643,7 +1643,7 @@
               "alias": "Frosinone",
               "canonical_name": "Frosinone",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "c37e0d7cc8808b41c2b421b2564ba78c",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1656,7 +1656,7 @@
               "alias": "Como",
               "canonical_name": "Como",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "4f5491d84fd0a78cdc5da1a5fc3810d0",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1669,7 +1669,7 @@
               "alias": "Pisa",
               "canonical_name": "Pisa",
               "competition": "Serie A",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "6e5c6039d87dc904edcaf84a342bfe7a",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1680,7 +1680,7 @@
             }
           ],
           "competition": "Serie A",
-          "coverage": 1,
+          "coverage": 1.0,
           "identities_resolved": 31,
           "identities_unresolved": 0,
           "status": "READY",
@@ -1693,7 +1693,7 @@
               "alias": "Lyon",
               "canonical_name": "Lyon",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "27a57722a6195d2540dcb1371666d725",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1706,7 +1706,7 @@
               "alias": "Zenit Saint Petersburg",
               "canonical_name": "Zenit Saint Petersburg",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "521ff7d599f651e37b01b9225ae25e3c",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1719,7 +1719,7 @@
               "alias": "Inter",
               "canonical_name": "Inter",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "84da0e75bb317ca71fd1df7cd406007a",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1732,7 +1732,7 @@
               "alias": "Slavia Praha",
               "canonical_name": "Slavia Praha",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "32016471044ccb5af082c1f3544f6db9",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1745,7 +1745,7 @@
               "alias": "Chelsea",
               "canonical_name": "Chelsea",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1a9370266a4f295a7c524dae3d6f6186",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1758,7 +1758,7 @@
               "alias": "Valencia",
               "canonical_name": "Valencia",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "7e4cb26b34440486db5492707790e10d",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1771,7 +1771,7 @@
               "alias": "Borussia Dortmund",
               "canonical_name": "Borussia Dortmund",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "edf38e1226a7a5fb17174c4d494c72f0",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1784,7 +1784,7 @@
               "alias": "Barcelona",
               "canonical_name": "Barcelona",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "9cd33d7a7c12fd08b47b65817f15419f",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1797,7 +1797,7 @@
               "alias": "Ajax",
               "canonical_name": "Ajax",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "090da66283c90eb4796ebe12b22cc0ba",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1810,7 +1810,7 @@
               "alias": "Lille",
               "canonical_name": "Lille",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "8c58513d2ea22a54985d5f6376eb4f74",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1823,7 +1823,7 @@
               "alias": "Benfica",
               "canonical_name": "Benfica",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e5a79048dd185283302aa482eeb1b218",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1836,7 +1836,7 @@
               "alias": "RB Leipzig",
               "canonical_name": "RB Leipzig",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "bddf29a2a5e8f4a3fc056e3f5fa9d404",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1849,7 +1849,7 @@
               "alias": "Napoli",
               "canonical_name": "Napoli",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "98a0e93c56d222094731e2729b7c0a09",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1862,7 +1862,7 @@
               "alias": "Liverpool",
               "canonical_name": "Liverpool",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "17df8b260faeba9b499979134a3cf593",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1875,7 +1875,7 @@
               "alias": "Red Bull Salzburg",
               "canonical_name": "Red Bull Salzburg",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "9ea1ea1838256ad0ebd3a19bd7fe7116",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1888,7 +1888,7 @@
               "alias": "Genk",
               "canonical_name": "Genk",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "567895458a2a4fd170113bdbfa4f5776",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1901,7 +1901,7 @@
               "alias": "Olympiakos Piraeus",
               "canonical_name": "Olympiakos Piraeus",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "bf11080b042c44b9c566719f42f6abc1",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1914,7 +1914,7 @@
               "alias": "Tottenham",
               "canonical_name": "Tottenham",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "6f1ecc2cc4b12efaa7c2231187301573",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1927,7 +1927,7 @@
               "alias": "Club Brugge KV",
               "canonical_name": "Club Brugge KV",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "b49110ceb8a8cf2975cac42b102cd85d",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1940,7 +1940,7 @@
               "alias": "Galatasaray",
               "canonical_name": "Galatasaray",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "5bb3e8726490eaa98e609e73e6502978",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1953,7 +1953,7 @@
               "alias": "Paris Saint Germain",
               "canonical_name": "Paris Saint Germain",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "a840b1d4eba2db255f86dea84d1700c4",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1966,7 +1966,7 @@
               "alias": "Real Madrid",
               "canonical_name": "Real Madrid",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "6a8e59d8fe79cedd980213b4d70a35eb",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1979,7 +1979,7 @@
               "alias": "Bayern Munich",
               "canonical_name": "Bayern Munich",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "57f0be45372c30fab9b85675c8f19232",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -1992,7 +1992,7 @@
               "alias": "Bayern München",
               "canonical_name": "Bayern Munich",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "57f0be45372c30fab9b85675c8f19232",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2005,7 +2005,7 @@
               "alias": "FK Crvena Zvezda",
               "canonical_name": "FK Crvena Zvezda",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "2897b9e48f8c98e410334c7124ecb302",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2018,7 +2018,7 @@
               "alias": "Bayer Leverkusen",
               "canonical_name": "Bayer Leverkusen",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "f1f17b63014d4a7339f14a03bf09b8da",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2031,7 +2031,7 @@
               "alias": "Lokomotiv Moscow",
               "canonical_name": "Lokomotiv Moscow",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "956971fc79df925248096a1653ef9aca",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2044,7 +2044,7 @@
               "alias": "Atletico Madrid",
               "canonical_name": "Atletico Madrid",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "b1e473020b731a70207679f81b5a46d3",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2057,7 +2057,7 @@
               "alias": "Juventus",
               "canonical_name": "Juventus",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1cefb6098cbf115ecbfdfd96c5513e31",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2070,7 +2070,7 @@
               "alias": "Shakhtar Donetsk",
               "canonical_name": "Shakhtar Donetsk",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "08746766bcf3aa72b2bf57bbef0153d4",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2083,7 +2083,7 @@
               "alias": "Manchester City",
               "canonical_name": "Manchester City",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1fd49ce79f23132e8817ff3f61d1ea02",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2096,7 +2096,7 @@
               "alias": "Dinamo Zagreb",
               "canonical_name": "Dinamo Zagreb",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "fac5a1dad759d520fac19ca96d3e6d07",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2109,7 +2109,7 @@
               "alias": "Atalanta",
               "canonical_name": "Atalanta",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "6dd376e390ad499a1dedad192ed44c7e",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2122,7 +2122,7 @@
               "alias": "Dynamo Kyiv",
               "canonical_name": "Dynamo Kyiv",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "30b305a793ed6dbfbd5c9f87a28f9ce8",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2135,7 +2135,7 @@
               "alias": "Sevilla",
               "canonical_name": "Sevilla",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "8bba75b19890fb9d804c934d9418a553",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2148,7 +2148,7 @@
               "alias": "Manchester United",
               "canonical_name": "Manchester United",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "0bc70ecf1990875a6c369ff9a4cd03df",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2161,7 +2161,7 @@
               "alias": "Rennes",
               "canonical_name": "Rennes",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "a2ce2b7dee14876c517675d876373158",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2174,7 +2174,7 @@
               "alias": "Krasnodar",
               "canonical_name": "Krasnodar",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "c1aed7d2aa90fc8ff8fdedee06f44d98",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2187,7 +2187,7 @@
               "alias": "Başakşehir",
               "canonical_name": "Başakşehir",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "bc0396faa555fef2094409278f68926d",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2200,7 +2200,7 @@
               "alias": "Lazio",
               "canonical_name": "Lazio",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "919b46a346b5f56eacd1023cf09db708",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2213,7 +2213,7 @@
               "alias": "Ferencvarosi TC",
               "canonical_name": "Ferencvarosi TC",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "9c42e097e3a0caf1fd1ed1912182132b",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2226,7 +2226,7 @@
               "alias": "FC Porto",
               "canonical_name": "FC Porto",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "00ee46105fcdde922541fbe03203005c",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2239,7 +2239,7 @@
               "alias": "FC Midtjylland",
               "canonical_name": "FC Midtjylland",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "bc3e828707b044135941e08a1c3cec93",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2252,7 +2252,7 @@
               "alias": "Borussia Monchengladbach",
               "canonical_name": "Borussia Monchengladbach",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e3d60dc14bd1c0ed63f001cbc5b1fc1b",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2265,7 +2265,7 @@
               "alias": "Marseille",
               "canonical_name": "Marseille",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "73da9065585997c1fef79a45b860f1eb",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2278,7 +2278,7 @@
               "alias": "BSC Young Boys",
               "canonical_name": "BSC Young Boys",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1627ec76fd391e3a3ced1328f2a9e5ec",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2291,7 +2291,7 @@
               "alias": "VfL Wolfsburg",
               "canonical_name": "VfL Wolfsburg",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "d82f38398538db5b10a2df20b6fa185d",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2304,7 +2304,7 @@
               "alias": "Malmo FF",
               "canonical_name": "Malmo FF",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "48708f98beeb5a0675bb5df07abb5561",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2317,7 +2317,7 @@
               "alias": "Villarreal",
               "canonical_name": "Villarreal",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "4a0f7ff32bd726b84c7c5e1dc97900a6",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2330,7 +2330,7 @@
               "alias": "Beşiktaş",
               "canonical_name": "Beşiktaş",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "669126b8685a626f44edcb0318fbcebe",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2343,7 +2343,7 @@
               "alias": "Sheriff Tiraspol",
               "canonical_name": "Sheriff Tiraspol",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "ef5b5f803a93fefe4a46ec129047d0e9",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2356,7 +2356,7 @@
               "alias": "AC Milan",
               "canonical_name": "AC Milan",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "c1d9b63895a35190c975ac991c082688",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2369,7 +2369,7 @@
               "alias": "Sporting CP",
               "canonical_name": "Sporting CP",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "120412c45266853760ab821815cafb8f",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2382,7 +2382,7 @@
               "alias": "FC Copenhagen",
               "canonical_name": "FC Copenhagen",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "87f6a16c909e27a5d80fb2b91aba63b8",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2395,7 +2395,7 @@
               "alias": "Maccabi Haifa",
               "canonical_name": "Maccabi Haifa",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "7127c10d80faf7e2675e79ad1e58663e",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2408,7 +2408,7 @@
               "alias": "Celtic",
               "canonical_name": "Celtic",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1f1893db4c9a92b4e14be2548ffbb928",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2421,7 +2421,7 @@
               "alias": "Eintracht Frankfurt",
               "canonical_name": "Eintracht Frankfurt",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "10aa8f3433ec0b6a156f121c05810822",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2434,7 +2434,7 @@
               "alias": "Rangers",
               "canonical_name": "Rangers",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "8771bcf2d3dc88edec1875821b869070",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2447,7 +2447,7 @@
               "alias": "Plzen",
               "canonical_name": "Plzen",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "4e2e439fa68eb8cd930e79c80367ba13",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2460,7 +2460,7 @@
               "alias": "Newcastle",
               "canonical_name": "Newcastle",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "b65906d11dd69358b82dc92e8dace964",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2473,7 +2473,7 @@
               "alias": "Feyenoord",
               "canonical_name": "Feyenoord",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "43008a05daf9adefa9c7cb8331225ccd",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2486,7 +2486,7 @@
               "alias": "Antwerp",
               "canonical_name": "Antwerp",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "cf4861ebd272b98605b07113a9811761",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2499,7 +2499,7 @@
               "alias": "Union Berlin",
               "canonical_name": "Union Berlin",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "f97e43131f34f86476f85807ebf642e7",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2512,7 +2512,7 @@
               "alias": "Arsenal",
               "canonical_name": "Arsenal",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1966f3ac7f3fc020fa65dce6cd946597",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2525,7 +2525,7 @@
               "alias": "PSV Eindhoven",
               "canonical_name": "PSV Eindhoven",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "4d8bbfeb4a0076c6a2b4f1c41aba50c1",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2538,7 +2538,7 @@
               "alias": "SC Braga",
               "canonical_name": "SC Braga",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "07c2299c9d6df3fa9e68d0320b181507",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2551,7 +2551,7 @@
               "alias": "Lens",
               "canonical_name": "Lens",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "6dd341f61075652249b692ed39eca3c5",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2564,7 +2564,7 @@
               "alias": "Real Sociedad",
               "canonical_name": "Real Sociedad",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "9c9334a640453b00d0801ae5d014186b",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2577,7 +2577,7 @@
               "alias": "Aston Villa",
               "canonical_name": "Aston Villa",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e47450b57a9a64f6d683b27fa2f69e5c",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2590,7 +2590,7 @@
               "alias": "VfB Stuttgart",
               "canonical_name": "VfB Stuttgart",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "f469eb59d8fb88c7a96617c623fa434d",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2603,7 +2603,7 @@
               "alias": "Bologna",
               "canonical_name": "Bologna",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e4ce19d85b4966a274157717967234fc",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2616,7 +2616,7 @@
               "alias": "Sparta Praha",
               "canonical_name": "Sparta Praha",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "c01d7becf2da9587f0befb97f2029507",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2629,7 +2629,7 @@
               "alias": "Girona",
               "canonical_name": "Girona",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e391233db01b3b1524315aeecaaafdd0",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2642,7 +2642,7 @@
               "alias": "Slovan Bratislava",
               "canonical_name": "Slovan Bratislava",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "1d242d7078e1d52fcc6788dfa8b1a353",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2655,7 +2655,7 @@
               "alias": "Monaco",
               "canonical_name": "Monaco",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "ce1f19a25db4f6810a8c7ffb09bb3b21",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2668,7 +2668,7 @@
               "alias": "Stade Brestois 29",
               "canonical_name": "Stade Brestois 29",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "6b8849ea6648d41a46507be74e7882f4",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2681,7 +2681,7 @@
               "alias": "Sturm Graz",
               "canonical_name": "Sturm Graz",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "7d55c2c15c10acc8340b20a9f608a91a",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2694,7 +2694,7 @@
               "alias": "Union St. Gilloise",
               "canonical_name": "Union St. Gilloise",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e036e77f6597bea9d83194e6c784f98f",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2707,7 +2707,7 @@
               "alias": "Athletic Club",
               "canonical_name": "Athletic Club",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "8c268fb57464ef38e47879605c89e4b8",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2720,7 +2720,7 @@
               "alias": "Qarabag",
               "canonical_name": "Qarabag",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "c1b0b9d77bc117986a84313d9bbbd5e8",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2733,7 +2733,7 @@
               "alias": "Pafos",
               "canonical_name": "Pafos",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "01d2f9c2110b08a009e57da5ee54c6be",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2746,7 +2746,7 @@
               "alias": "Bodo/Glimt",
               "canonical_name": "Bodo/Glimt",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "0eacd2c744c4ac49e7964417e9db3e07",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2759,7 +2759,7 @@
               "alias": "Kairat Almaty",
               "canonical_name": "Kairat Almaty",
               "competition": "UEFA Champions League",
-              "confidence": 1,
+              "confidence": 1.0,
               "internal_team_id": "e3a14d582198040c8e115dcf3a7c6934",
               "mapping_method": "PROVIDER_ID_FIXTURE_MEMBERSHIP",
               "mapping_status": "RESOLVED",
@@ -2770,7 +2770,7 @@
             }
           ],
           "competition": "UEFA Champions League",
-          "coverage": 1,
+          "coverage": 1.0,
           "identities_resolved": 82,
           "identities_unresolved": 0,
           "status": "READY",
@@ -2784,63 +2784,63 @@
           "coverage": 0.9977029096477795,
           "finished_fixtures": 1306,
           "fixtures_with_player_stats": 1303,
-          "identity_rate": 1,
-          "minutes_coherence": 1,
+          "identity_rate": 1.0,
+          "minutes_coherence": 1.0,
           "seasons": 4,
           "status": "READY",
           "temporality": "POST_MATCH_ONLY"
         },
         {
           "competition": "Premier League",
-          "coverage": 0,
+          "coverage": 0.0,
           "finished_fixtures": 1520,
           "fixtures_with_player_stats": 0,
-          "identity_rate": 0,
-          "minutes_coherence": 0,
+          "identity_rate": 0.0,
+          "minutes_coherence": 0.0,
           "seasons": 0,
           "status": "BLOCKED_BY_COVERAGE",
           "temporality": "POST_MATCH_ONLY"
         },
         {
           "competition": "La Liga",
-          "coverage": 0,
+          "coverage": 0.0,
           "finished_fixtures": 1520,
           "fixtures_with_player_stats": 0,
-          "identity_rate": 0,
-          "minutes_coherence": 0,
+          "identity_rate": 0.0,
+          "minutes_coherence": 0.0,
           "seasons": 0,
           "status": "BLOCKED_BY_COVERAGE",
           "temporality": "POST_MATCH_ONLY"
         },
         {
           "competition": "Bundesliga",
-          "coverage": 0,
+          "coverage": 0.0,
           "finished_fixtures": 1232,
           "fixtures_with_player_stats": 0,
-          "identity_rate": 0,
-          "minutes_coherence": 0,
+          "identity_rate": 0.0,
+          "minutes_coherence": 0.0,
           "seasons": 0,
           "status": "BLOCKED_BY_COVERAGE",
           "temporality": "POST_MATCH_ONLY"
         },
         {
           "competition": "Serie A",
-          "coverage": 0,
+          "coverage": 0.0,
           "finished_fixtures": 1521,
           "fixtures_with_player_stats": 0,
-          "identity_rate": 0,
-          "minutes_coherence": 0,
+          "identity_rate": 0.0,
+          "minutes_coherence": 0.0,
           "seasons": 0,
           "status": "BLOCKED_BY_COVERAGE",
           "temporality": "POST_MATCH_ONLY"
         },
         {
           "competition": "UEFA Champions League",
-          "coverage": 0,
+          "coverage": 0.0,
           "finished_fixtures": 988,
           "fixtures_with_player_stats": 0,
-          "identity_rate": 0,
-          "minutes_coherence": 0,
+          "identity_rate": 0.0,
+          "minutes_coherence": 0.0,
           "seasons": 0,
           "status": "BLOCKED_BY_COVERAGE",
           "temporality": "POST_MATCH_ONLY"
@@ -2863,7 +2863,7 @@
         {
           "competition": "Premier League",
           "complete_lineups": 0,
-          "coverage": 0,
+          "coverage": 0.0,
           "datasets": [
             "PRE_LINEUP",
             "POST_LINEUP_SIMULATED"
@@ -2876,7 +2876,7 @@
         {
           "competition": "La Liga",
           "complete_lineups": 0,
-          "coverage": 0,
+          "coverage": 0.0,
           "datasets": [
             "PRE_LINEUP",
             "POST_LINEUP_SIMULATED"
@@ -2889,7 +2889,7 @@
         {
           "competition": "Bundesliga",
           "complete_lineups": 0,
-          "coverage": 0,
+          "coverage": 0.0,
           "datasets": [
             "PRE_LINEUP",
             "POST_LINEUP_SIMULATED"
@@ -2902,7 +2902,7 @@
         {
           "competition": "Serie A",
           "complete_lineups": 0,
-          "coverage": 0,
+          "coverage": 0.0,
           "datasets": [
             "PRE_LINEUP",
             "POST_LINEUP_SIMULATED"
@@ -2915,7 +2915,7 @@
         {
           "competition": "UEFA Champions League",
           "complete_lineups": 0,
-          "coverage": 0,
+          "coverage": 0.0,
           "datasets": [
             "PRE_LINEUP",
             "POST_LINEUP_SIMULATED"
@@ -2945,12 +2945,12 @@
           "competition": "Premier League",
           "fixtures_expected": 2280,
           "fixtures_mapped": 2280,
-          "mapping_rate": 1,
-          "one_x_two_coverage": 1,
+          "mapping_rate": 1.0,
+          "one_x_two_coverage": 1.0,
           "one_x_two_status": "READY",
           "seasons": 6,
           "status": "READY",
-          "totals_coverage": 1,
+          "totals_coverage": 1.0,
           "totals_status": "READY"
         },
         {
@@ -2958,12 +2958,12 @@
           "competition": "La Liga",
           "fixtures_expected": 2280,
           "fixtures_mapped": 2280,
-          "mapping_rate": 1,
-          "one_x_two_coverage": 1,
+          "mapping_rate": 1.0,
+          "one_x_two_coverage": 1.0,
           "one_x_two_status": "READY",
           "seasons": 6,
           "status": "READY",
-          "totals_coverage": 1,
+          "totals_coverage": 1.0,
           "totals_status": "READY"
         },
         {
@@ -3020,7 +3020,55 @@
         "warning_bytes": 750000000
       },
       "r2": {
-        "mode": "WAITING_FOR_USER_STORAGE_ACTION"
+        "audit": true,
+        "bucket_hash": "1ae86c3466ef6f72a170ce5f371fd9d3ce716579170761eb59f54efe2e00de99",
+        "bytes_per_minute": 0.0,
+        "complete": true,
+        "completed_at": "2026-07-27T08:18:18.052613+00:00",
+        "current_source_lag": 24,
+        "deletions": 0,
+        "double_write": true,
+        "download_seconds": 0.0,
+        "duration_seconds": 8.327173701999982,
+        "failed": 0,
+        "files_per_minute": 0.0,
+        "final_scan_seconds": 3.9145529369999963,
+        "get_operations": 0,
+        "hash_mismatches": 0,
+        "head_operations": 0,
+        "head_seconds": 0.0,
+        "initial_scan_seconds": 3.9176777669999865,
+        "mirror_verified_objects": 25422,
+        "missing_remote_objects": 0,
+        "mode": "EXECUTE",
+        "object_processing_seconds": 1.111000017317565e-06,
+        "pending": 0,
+        "put_operations": 0,
+        "r2_operations": 0,
+        "remote_verified": 0,
+        "replayed": 0,
+        "resume": true,
+        "retry_count": 0,
+        "scan_seconds": 7.832230703999983,
+        "scope_bytes": 710072047,
+        "scope_files": 25422,
+        "scope_hash": "8687a80087576711e309d01a2a9758937b78fc914660c6db77c838ae59754b7f",
+        "selected_bytes": 0,
+        "selected_files": 0,
+        "selection_end_index": 25422,
+        "selection_start_index": 25422,
+        "size_mismatches": 0,
+        "source_bytes": 919672749,
+        "source_bytes_after": 919672749,
+        "source_files": 25446,
+        "source_files_after": 25446,
+        "source_mutations": 0,
+        "start_after": null,
+        "started_at": "2026-07-27T08:18:09.725440+00:00",
+        "status": "AUDIT_COMPLETE_VERIFIED",
+        "upload_seconds": 0.0,
+        "uploaded": 0,
+        "verified": 25422
       },
       "strategy": {
         "hypotheses": 10,
@@ -3750,7 +3798,7 @@
             ],
             "groups": 51,
             "iterations": 5000,
-            "probability_challenger_better": 0,
+            "probability_challenger_better": 0.0,
             "seed": 1707
           }
         },
@@ -3888,7 +3936,7 @@
             ],
             "groups": 68,
             "iterations": 5000,
-            "probability_challenger_better": 0,
+            "probability_challenger_better": 0.0,
             "seed": 1707
           }
         }
@@ -3909,7 +3957,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -3974,7 +4022,7 @@
               "count": 0,
               "lower": 0.9,
               "mean_confidence": null,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 612,
@@ -3995,7 +4043,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -4060,7 +4108,7 @@
               "count": 0,
               "lower": 0.9,
               "mean_confidence": null,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 408,
@@ -4081,7 +4129,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -4146,7 +4194,7 @@
               "count": 0,
               "lower": 0.9,
               "mean_confidence": null,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 612,
@@ -4167,7 +4215,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -4232,7 +4280,7 @@
               "count": 0,
               "lower": 0.9,
               "mean_confidence": null,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 612,
@@ -4253,7 +4301,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -4314,11 +4362,11 @@
               "upper": 0.9
             },
             {
-              "accuracy": 1,
+              "accuracy": 1.0,
               "count": 4,
               "lower": 0.9,
               "mean_confidence": 0.907675883921851,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 611,
@@ -4339,7 +4387,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -4404,7 +4452,7 @@
               "count": 0,
               "lower": 0.9,
               "mean_confidence": null,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 612,
@@ -4425,7 +4473,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -4490,7 +4538,7 @@
               "count": 0,
               "lower": 0.9,
               "mean_confidence": null,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 612,
@@ -4511,7 +4559,7 @@
             {
               "accuracy": null,
               "count": 0,
-              "lower": 0,
+              "lower": 0.0,
               "mean_confidence": null,
               "upper": 0.1
             },
@@ -4576,7 +4624,7 @@
               "count": 0,
               "lower": 0.9,
               "mean_confidence": null,
-              "upper": 1
+              "upper": 1.0
             }
           ],
           "sample": 612,
@@ -4668,7 +4716,7 @@
           ],
           "leakage_guard": "CALIBRATOR_FIT_ONLY_ON_STRICTLY_EARLIER_FOLDS",
           "method": "TEMPERATURE_SCALING",
-          "temperature": 3
+          "temperature": 3.0
         },
         "team_multinomial_crossfit": {
           "cross_fitted_log_loss": {
@@ -4745,7 +4793,7 @@
           "direction_stable": true,
           "feature": "elo_difference",
           "importance_proxy": "SEASONAL_TARGET_CORRELATION_DIAGNOSTIC_ONLY",
-          "missing_rate": 0,
+          "missing_rate": 0.0,
           "promotion_use": "FORBIDDEN",
           "status": "STABLE"
         },
@@ -5030,8 +5078,8 @@
     },
     "externalValidation": {
       "status": "WAITING_FOR_EXTERNAL_GATES",
-      "runId": "30167355305",
-      "sourceCommit": "959245089d13935e9a6d80b5614f50b98933e8bc",
+      "runId": "30233306063",
+      "sourceCommit": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
       "protocol": {
         "frozen_at": "2026-07-25T17:20:32.814754+00:00",
         "hash": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2",
@@ -5054,7 +5102,7 @@
               "status": "PARTIAL"
             },
             "LINEUP_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "resolved_starting_xi_rate": null,
               "rows": 0,
@@ -5068,30 +5116,30 @@
               "status": "UNAVAILABLE"
             },
             "PLAYER_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "identity_rate": null,
               "rows": 0,
               "status": "BLOCKED_BY_COVERAGE"
             },
             "TEAM_GATE": {
-              "canonical_rate": 1,
+              "canonical_rate": 1.0,
               "fixtures": 2660,
-              "provenance_rate": 1,
+              "provenance_rate": 1.0,
               "seasons": 7,
               "status": "READY",
-              "team_identity_rate": 1,
+              "team_identity_rate": 1.0,
               "temporal_errors": 0
             }
           },
           "market_1x2": 0,
           "market_over_under_25": 0,
-          "null_rate": 0,
+          "null_rate": 0.0,
           "players": 5216,
           "quality": "PASSED",
           "seasons": [
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5100,7 +5148,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5109,7 +5157,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5118,7 +5166,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5127,7 +5175,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5136,7 +5184,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5145,7 +5193,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5174,7 +5222,7 @@
               "status": "PARTIAL"
             },
             "LINEUP_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "resolved_starting_xi_rate": null,
               "rows": 0,
@@ -5188,30 +5236,30 @@
               "status": "UNAVAILABLE"
             },
             "PLAYER_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "identity_rate": null,
               "rows": 0,
               "status": "BLOCKED_BY_COVERAGE"
             },
             "TEAM_GATE": {
-              "canonical_rate": 1,
+              "canonical_rate": 1.0,
               "fixtures": 2660,
-              "provenance_rate": 1,
+              "provenance_rate": 1.0,
               "seasons": 7,
               "status": "READY",
-              "team_identity_rate": 1,
+              "team_identity_rate": 1.0,
               "temporal_errors": 0
             }
           },
           "market_1x2": 0,
           "market_over_under_25": 0,
-          "null_rate": 0,
+          "null_rate": 0.0,
           "players": 5042,
           "quality": "PASSED",
           "seasons": [
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5220,7 +5268,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5229,7 +5277,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5238,7 +5286,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5247,7 +5295,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5256,7 +5304,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5265,7 +5313,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5294,7 +5342,7 @@
               "status": "PARTIAL"
             },
             "LINEUP_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "resolved_starting_xi_rate": null,
               "rows": 0,
@@ -5308,30 +5356,30 @@
               "status": "UNAVAILABLE"
             },
             "PLAYER_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "identity_rate": null,
               "rows": 0,
               "status": "BLOCKED_BY_COVERAGE"
             },
             "TEAM_GATE": {
-              "canonical_rate": 1,
+              "canonical_rate": 1.0,
               "fixtures": 2156,
-              "provenance_rate": 1,
+              "provenance_rate": 1.0,
               "seasons": 7,
               "status": "READY",
-              "team_identity_rate": 1,
+              "team_identity_rate": 1.0,
               "temporal_errors": 0
             }
           },
           "market_1x2": 0,
           "market_over_under_25": 0,
-          "null_rate": 0,
+          "null_rate": 0.0,
           "players": 4178,
           "quality": "PASSED",
           "seasons": [
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 308,
               "fixtures_expected": 306,
               "fixtures_received": 308,
@@ -5340,7 +5388,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 308,
               "fixtures_expected": 306,
               "fixtures_received": 308,
@@ -5349,7 +5397,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 308,
               "fixtures_expected": 306,
               "fixtures_received": 308,
@@ -5358,7 +5406,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 308,
               "fixtures_expected": 306,
               "fixtures_received": 308,
@@ -5367,7 +5415,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 308,
               "fixtures_expected": 306,
               "fixtures_received": 308,
@@ -5376,7 +5424,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 308,
               "fixtures_expected": 306,
               "fixtures_received": 308,
@@ -5385,7 +5433,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 308,
               "fixtures_expected": 306,
               "fixtures_received": 308,
@@ -5412,7 +5460,7 @@
               "status": "BLOCKED_BY_COVERAGE"
             },
             "LINEUP_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "resolved_starting_xi_rate": null,
               "rows": 0,
@@ -5426,16 +5474,16 @@
               "status": "UNAVAILABLE"
             },
             "PLAYER_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "identity_rate": null,
               "rows": 0,
               "status": "BLOCKED_BY_COVERAGE"
             },
             "TEAM_GATE": {
-              "canonical_rate": 1,
+              "canonical_rate": 1.0,
               "fixtures": 2661,
-              "provenance_rate": 1,
+              "provenance_rate": 1.0,
               "seasons": 7,
               "status": "BLOCKED_BY_COVERAGE",
               "team_identity_rate": 0.9354838709677419,
@@ -5444,12 +5492,12 @@
           },
           "market_1x2": 0,
           "market_over_under_25": 0,
-          "null_rate": 0,
+          "null_rate": 0.0,
           "players": 5530,
           "quality": "PARTIAL",
           "seasons": [
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5458,7 +5506,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5467,7 +5515,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5476,7 +5524,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 381,
               "fixtures_expected": 380,
               "fixtures_received": 381,
@@ -5485,7 +5533,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5494,7 +5542,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5503,7 +5551,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 380,
               "fixtures_expected": 380,
               "fixtures_received": 380,
@@ -5530,7 +5578,7 @@
               "status": "BLOCKED_BY_COVERAGE"
             },
             "LINEUP_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "resolved_starting_xi_rate": null,
               "rows": 0,
@@ -5544,16 +5592,16 @@
               "status": "UNAVAILABLE"
             },
             "PLAYER_GATE": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures": 0,
               "identity_rate": null,
               "rows": 0,
               "status": "BLOCKED_BY_COVERAGE"
             },
             "TEAM_GATE": {
-              "canonical_rate": 1,
+              "canonical_rate": 1.0,
               "fixtures": 1594,
-              "provenance_rate": 1,
+              "provenance_rate": 1.0,
               "seasons": 7,
               "status": "BLOCKED_BY_COVERAGE",
               "team_identity_rate": 0.9521531100478469,
@@ -5562,12 +5610,12 @@
           },
           "market_1x2": 0,
           "market_over_under_25": 0,
-          "null_rate": 0,
+          "null_rate": 0.0,
           "players": 14392,
           "quality": "PARTIAL",
           "seasons": [
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 210,
               "fixtures_expected": null,
               "fixtures_received": 210,
@@ -5576,7 +5624,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 178,
               "fixtures_expected": null,
               "fixtures_received": 178,
@@ -5585,7 +5633,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 218,
               "fixtures_expected": null,
               "fixtures_received": 218,
@@ -5594,7 +5642,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 214,
               "fixtures_expected": null,
               "fixtures_received": 214,
@@ -5603,7 +5651,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 214,
               "fixtures_expected": null,
               "fixtures_received": 214,
@@ -5612,7 +5660,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 279,
               "fixtures_expected": null,
               "fixtures_received": 279,
@@ -5621,7 +5669,7 @@
               "status": "READY"
             },
             {
-              "fixture_coverage": 1,
+              "fixture_coverage": 1.0,
               "fixtures_canonical": 281,
               "fixtures_expected": null,
               "fixtures_received": 281,
@@ -5726,7 +5774,7 @@
           "metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021201981876e-7,
+            "calibration_intercept": -6.473021201981876e-07,
             "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796728,
             "log_loss": 0.9982971423875214,
@@ -5773,7 +5821,7 @@
           "challenger_metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021202492957e-7,
+            "calibration_intercept": -6.473021202492957e-07,
             "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796697,
             "log_loss": 0.9982971423875217,
@@ -5827,7 +5875,7 @@
           "challenger_metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021202492957e-7,
+            "calibration_intercept": -6.473021202492957e-07,
             "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796697,
             "log_loss": 0.9982971423875217,
@@ -5961,7 +6009,7 @@
           "reference_metrics": {
             "accuracy": 0.5173220973782772,
             "brier_score": 0.19802208649452005,
-            "calibration_intercept": -6.473021202492957e-7,
+            "calibration_intercept": -6.473021202492957e-07,
             "calibration_slope": 0.9629687389101174,
             "ece": 0.026226616056796697,
             "log_loss": 0.9982971423875217,
@@ -5981,7 +6029,7 @@
             ],
             "groups": 215,
             "iterations": 5000,
-            "probability_challenger_better": 0,
+            "probability_challenger_better": 0.0,
             "seed": 1707
           }
         },
@@ -6101,7 +6149,7 @@
           "control": "TARGET_PERMUTATION",
           "metrics": {
             "brier_score": 0.21802054478301014,
-            "ece": 0,
+            "ece": 0.0,
             "log_loss": 1.079799282333215,
             "matches": 760
           },
@@ -6132,7 +6180,7 @@
           "control": "TARGET_PERMUTATION",
           "metrics": {
             "brier_score": 0.2130944136657433,
-            "ece": 0,
+            "ece": 0.0,
             "log_loss": 1.0593400582518078,
             "matches": 760
           },
@@ -6210,7 +6258,7 @@
         "calibrators": [
           "NONE_FROZEN_EXTERNAL"
         ],
-        "code_revision": "959245089d13935e9a6d80b5614f50b98933e8bc",
+        "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
         "dataset_versions": [
           "pl_team_pre_match_v1",
           "laliga_team_pre_match_v1",
@@ -6223,7 +6271,7 @@
         "feature_versions": [
           "TEAM_FEATURES_V1"
         ],
-        "generated_at": "2026-07-25T17:20:32.814586+00:00",
+        "generated_at": "2026-07-27T02:59:32.899711+00:00",
         "hashes": {
           "datasets": {
             "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
@@ -6234,7 +6282,7 @@
         },
         "model_versions": [],
         "package": "PRESEASON_SHADOW_PACKAGE_V1",
-        "package_hash": "464347506cc531de7afe1931dc4d68dbfe08a69f53c539acd6104487142a3e41",
+        "package_hash": "37a38566828deaeffff2427b1d8da2cc778896b0d85b7d1e616bb634ba5ea459",
         "production_status": "PRODUCTION_LOCKED",
         "quality_gates": [
           "TEAM_GATE",
@@ -6261,11 +6309,11 @@
       "providerCalls": 0,
       "quotaConsumed": 0,
       "storage": {
-        "after_bytes": 383367123,
+        "after_bytes": 828284488,
         "can_write": true,
-        "current_bytes": 379897417,
+        "current_bytes": 828284488,
         "pause_bytes": 900000000,
-        "status": "SAFE",
+        "status": "WARNING",
         "warning_bytes": 750000000
       },
       "productionStatus": "PRODUCTION_LOCKED"
@@ -15859,17 +15907,17 @@
       "rawBytes": 0,
       "parquetBytes": 50260181,
       "derivedBytes": 69523587,
-      "totalBytes": 478321349,
-      "fileCount": 772,
-      "bundleCount": 22,
+      "totalBytes": 939552887,
+      "fileCount": 830,
+      "bundleCount": 39,
       "payloadCount": 0,
-      "projectedBytes": 1486898505,
-      "projectedBytesLow": 906471307,
-      "projectedBytesBase": 1486898505,
-      "projectedBytesHigh": 2200488868,
+      "projectedBytes": 2044360075,
+      "projectedBytesLow": 1416049840,
+      "projectedBytesBase": 2044360075,
+      "projectedBytesHigh": 2816818929,
       "warningBytes": 750000000,
       "pauseBytes": 900000000,
-      "capacityStatus": "OK",
+      "capacityStatus": "PAUSE",
       "lastCompaction": "COMPACTED_AND_VERIFIED",
       "backend": "POSTGRESQL + PARQUET + HISTORICAL-DATA"
     },
@@ -16134,35 +16182,37 @@
           "passed": false,
           "provenance_complete": false,
           "status": "BLOCKED_BY_COVERAGE",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "temporal_errors": 0
         },
         "B": {
           "eligible_seasons": [
+            2020,
             2021,
             2022,
             2023,
             2024,
             2025
           ],
-          "exploitable_seasons": 5,
-          "minutes_coherence_rate": 1,
+          "exploitable_seasons": 6,
+          "minutes_coherence_rate": 1.0,
           "name": "API_PLAYER_DATASET",
           "passed": true,
-          "player_identity_rate": 1,
+          "player_identity_rate": 1.0,
           "status": "API_PLAYER_DATASET_READY"
         },
         "C": {
           "eligible_seasons": [
+            2020,
             2021,
             2022,
             2023,
             2024,
             2025
           ],
-          "exact_starting_xi_rate": 1,
-          "exploitable_seasons": 5,
-          "lineup_identity_rate": 1,
+          "exact_starting_xi_rate": 1.0,
+          "exploitable_seasons": 6,
+          "lineup_identity_rate": 1.0,
           "name": "POST_LINEUP_SIMULATED",
           "passed": true,
           "status": "POST_LINEUP_SIMULATED_READY"
@@ -16174,8 +16224,8 @@
           "status": "BLOCKED_BY_TEMPORALITY"
         }
       },
-      "generated_at": "2026-07-25T17:29:10.439147+00:00",
-      "normalized_rows": 112425,
+      "generated_at": "2026-07-27T04:10:34.587514+00:00",
+      "normalized_rows": 152895,
       "production_status": "PRODUCTION_LOCKED",
       "provenance_rows": 55079,
       "quality_status": "PASSED",
@@ -16193,16 +16243,18 @@
           },
           "endpoints": {
             "fixture_events": {
-              "coverage": 0,
-              "fixtures_received": 0,
+              "coverage": 0.3,
+              "exact_starting_xi_rate": null,
+              "fixtures_received": 114,
               "identity_rate": null,
-              "null_rate": null,
-              "rows_received": 0,
-              "status": "UNAVAILABLE",
-              "temporality": "NOT_OBSERVED"
+              "minutes_coherence_rate": null,
+              "null_rate": 0.229519,
+              "rows_received": 1420,
+              "status": "AVAILABLE",
+              "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_player_statistics": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures_received": 0,
               "identity_rate": null,
               "null_rate": null,
@@ -16211,7 +16263,7 @@
               "temporality": "NOT_OBSERVED"
             },
             "fixture_team_statistics": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures_received": 0,
               "identity_rate": null,
               "null_rate": null,
@@ -16220,7 +16272,7 @@
               "temporality": "NOT_OBSERVED"
             },
             "injuries": {
-              "coverage": 0,
+              "coverage": 0.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16231,7 +16283,7 @@
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures_received": 0,
               "identity_rate": null,
               "null_rate": null,
@@ -16240,10 +16292,10 @@
               "temporality": "NOT_OBSERVED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.202235,
               "rows_received": 667,
@@ -16251,7 +16303,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures_received": 0,
               "identity_rate": null,
               "null_rate": null,
@@ -16260,7 +16312,7 @@
               "temporality": "NOT_OBSERVED"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16271,25 +16323,25 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 20,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
             }
           },
-          "fixture_coverage": 1,
+          "fixture_coverage": 1.0,
           "fixtures_expected": 380,
           "fixtures_received": 380,
-          "results_coverage": 1,
+          "results_coverage": 1.0,
           "results_received": 380,
           "season": 2018,
           "status": "REGULAR_SEASON_CANONICAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 20
         },
         {
@@ -16304,34 +16356,40 @@
           },
           "endpoints": {
             "fixture_events": {
-              "coverage": 0,
-              "fixtures_received": 0,
+              "coverage": 0.734211,
+              "exact_starting_xi_rate": null,
+              "fixtures_received": 279,
               "identity_rate": null,
-              "null_rate": null,
-              "rows_received": 0,
-              "status": "UNAVAILABLE",
-              "temporality": "NOT_OBSERVED"
+              "minutes_coherence_rate": null,
+              "null_rate": 0.229057,
+              "rows_received": 3426,
+              "status": "AVAILABLE",
+              "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_player_statistics": {
-              "coverage": 0,
-              "fixtures_received": 0,
-              "identity_rate": null,
-              "null_rate": null,
-              "rows_received": 0,
-              "status": "UNAVAILABLE",
-              "temporality": "NOT_OBSERVED"
+              "coverage": 0.734211,
+              "exact_starting_xi_rate": null,
+              "fixtures_received": 279,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": 1.0,
+              "null_rate": 0.274464,
+              "rows_received": 558,
+              "status": "AVAILABLE",
+              "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_team_statistics": {
-              "coverage": 0,
-              "fixtures_received": 0,
+              "coverage": 0.734211,
+              "exact_starting_xi_rate": null,
+              "fixtures_received": 279,
               "identity_rate": null,
-              "null_rate": null,
-              "rows_received": 0,
-              "status": "UNAVAILABLE",
-              "temporality": "NOT_OBSERVED"
+              "minutes_coherence_rate": null,
+              "null_rate": 0.025806,
+              "rows_received": 558,
+              "status": "AVAILABLE",
+              "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "injuries": {
-              "coverage": 0,
+              "coverage": 0.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16342,19 +16400,21 @@
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
-              "coverage": 0,
-              "fixtures_received": 0,
-              "identity_rate": null,
-              "null_rate": null,
-              "rows_received": 0,
-              "status": "UNAVAILABLE",
-              "temporality": "NOT_OBSERVED"
+              "coverage": 0.734211,
+              "exact_starting_xi_rate": 0.962069,
+              "fixtures_received": 279,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": null,
+              "null_rate": 0.083909,
+              "rows_received": 580,
+              "status": "AVAILABLE",
+              "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.212082,
               "rows_received": 638,
@@ -16362,7 +16422,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures_received": 0,
               "identity_rate": null,
               "null_rate": null,
@@ -16371,7 +16431,7 @@
               "temporality": "NOT_OBSERVED"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16382,12 +16442,12 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 20,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
@@ -16400,7 +16460,7 @@
           "results_received": 279,
           "season": 2019,
           "status": "PARTIAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 20
         },
         {
@@ -16415,7 +16475,7 @@
           },
           "endpoints": {
             "fixture_events": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 380,
               "identity_rate": null,
@@ -16426,25 +16486,29 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_player_statistics": {
-              "coverage": 0,
-              "fixtures_received": 0,
-              "identity_rate": null,
-              "null_rate": null,
-              "rows_received": 0,
-              "status": "UNAVAILABLE",
-              "temporality": "NOT_OBSERVED"
+              "coverage": 1.0,
+              "exact_starting_xi_rate": null,
+              "fixtures_received": 380,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": 1.0,
+              "null_rate": 0.438766,
+              "rows_received": 764,
+              "status": "AVAILABLE",
+              "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_team_statistics": {
-              "coverage": 0,
-              "fixtures_received": 0,
+              "coverage": 1.0,
+              "exact_starting_xi_rate": null,
+              "fixtures_received": 380,
               "identity_rate": null,
-              "null_rate": null,
-              "rows_received": 0,
-              "status": "UNAVAILABLE",
-              "temporality": "NOT_OBSERVED"
+              "minutes_coherence_rate": null,
+              "null_rate": 0.025954,
+              "rows_received": 764,
+              "status": "AVAILABLE",
+              "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "injuries": {
-              "coverage": 0,
+              "coverage": 0.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16455,21 +16519,21 @@
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
-              "coverage": 0.731579,
-              "exact_starting_xi_rate": 1,
-              "fixtures_received": 278,
-              "identity_rate": 1,
+              "coverage": 1.0,
+              "exact_starting_xi_rate": 1.0,
+              "fixtures_received": 380,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
-              "null_rate": 0.087916,
-              "rows_received": 560,
+              "null_rate": 0.08816,
+              "rows_received": 764,
               "status": "AVAILABLE",
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.215808,
               "rows_received": 740,
@@ -16477,7 +16541,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 0,
+              "coverage": 0.0,
               "fixtures_received": 0,
               "identity_rate": null,
               "null_rate": null,
@@ -16486,7 +16550,7 @@
               "temporality": "NOT_OBSERVED"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16497,25 +16561,25 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 21,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
             }
           },
-          "fixture_coverage": 1,
+          "fixture_coverage": 1.0,
           "fixtures_expected": 380,
           "fixtures_received": 382,
-          "results_coverage": 1,
+          "results_coverage": 1.0,
           "results_received": 380,
           "season": 2020,
           "status": "REGULAR_SEASON_CANONICAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 20
         },
         {
@@ -16530,7 +16594,7 @@
           },
           "endpoints": {
             "fixture_events": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 380,
               "identity_rate": null,
@@ -16541,18 +16605,18 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_player_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 380,
-              "identity_rate": 1,
-              "minutes_coherence_rate": 1,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": 1.0,
               "null_rate": 0.445664,
               "rows_received": 764,
               "status": "AVAILABLE",
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_team_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 380,
               "identity_rate": null,
@@ -16563,21 +16627,21 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "injuries": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 2681,
               "status": "AVAILABLE",
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
-              "coverage": 1,
-              "exact_starting_xi_rate": 1,
+              "coverage": 1.0,
+              "exact_starting_xi_rate": 1.0,
               "fixtures_received": 380,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.079117,
               "rows_received": 764,
@@ -16585,10 +16649,10 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.226735,
               "rows_received": 784,
@@ -16596,7 +16660,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16607,7 +16671,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16618,25 +16682,25 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 21,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
             }
           },
-          "fixture_coverage": 1,
+          "fixture_coverage": 1.0,
           "fixtures_expected": 380,
           "fixtures_received": 382,
-          "results_coverage": 1,
+          "results_coverage": 1.0,
           "results_received": 380,
           "season": 2021,
           "status": "REGULAR_SEASON_CANONICAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 20
         },
         {
@@ -16651,7 +16715,7 @@
           },
           "endpoints": {
             "fixture_events": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 380,
               "identity_rate": null,
@@ -16662,18 +16726,18 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_player_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 380,
-              "identity_rate": 1,
-              "minutes_coherence_rate": 1,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": 1.0,
               "null_rate": 0.441608,
               "rows_received": 760,
               "status": "AVAILABLE",
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_team_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 380,
               "identity_rate": null,
@@ -16684,21 +16748,21 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "injuries": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 2717,
               "status": "AVAILABLE",
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
-              "coverage": 1,
-              "exact_starting_xi_rate": 1,
+              "coverage": 1.0,
+              "exact_starting_xi_rate": 1.0,
               "fixtures_received": 380,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.08161,
               "rows_received": 760,
@@ -16706,10 +16770,10 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.249468,
               "rows_received": 788,
@@ -16717,7 +16781,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16728,7 +16792,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16739,25 +16803,25 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 20,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
             }
           },
-          "fixture_coverage": 1,
+          "fixture_coverage": 1.0,
           "fixtures_expected": 380,
           "fixtures_received": 380,
-          "results_coverage": 1,
+          "results_coverage": 1.0,
           "results_received": 380,
           "season": 2022,
           "status": "REGULAR_SEASON_CANONICAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 20
         },
         {
@@ -16772,7 +16836,7 @@
           },
           "endpoints": {
             "fixture_events": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 306,
               "identity_rate": null,
@@ -16783,18 +16847,18 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_player_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 306,
-              "identity_rate": 1,
-              "minutes_coherence_rate": 1,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": 1.0,
               "null_rate": 0.440821,
               "rows_received": 616,
               "status": "AVAILABLE",
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_team_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 306,
               "identity_rate": null,
@@ -16805,21 +16869,21 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "injuries": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 2078,
               "status": "AVAILABLE",
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
-              "coverage": 1,
-              "exact_starting_xi_rate": 1,
+              "coverage": 1.0,
+              "exact_starting_xi_rate": 1.0,
               "fixtures_received": 306,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.080049,
               "rows_received": 616,
@@ -16827,10 +16891,10 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.278289,
               "rows_received": 860,
@@ -16838,7 +16902,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16849,7 +16913,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16860,25 +16924,25 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 19,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
             }
           },
-          "fixture_coverage": 1,
+          "fixture_coverage": 1.0,
           "fixtures_expected": 306,
           "fixtures_received": 308,
-          "results_coverage": 1,
+          "results_coverage": 1.0,
           "results_received": 306,
           "season": 2023,
           "status": "REGULAR_SEASON_CANONICAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 18
         },
         {
@@ -16893,7 +16957,7 @@
           },
           "endpoints": {
             "fixture_events": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 306,
               "identity_rate": null,
@@ -16904,18 +16968,18 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_player_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 306,
-              "identity_rate": 1,
-              "minutes_coherence_rate": 1,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": 1.0,
               "null_rate": 0.423342,
               "rows_received": 616,
               "status": "AVAILABLE",
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "fixture_team_statistics": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 306,
               "identity_rate": null,
@@ -16926,21 +16990,21 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "injuries": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 2460,
               "status": "AVAILABLE",
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
-              "coverage": 1,
-              "exact_starting_xi_rate": 1,
+              "coverage": 1.0,
+              "exact_starting_xi_rate": 1.0,
               "fixtures_received": 306,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.079922,
               "rows_received": 616,
@@ -16948,10 +17012,10 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.310481,
               "rows_received": 920,
@@ -16959,7 +17023,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16970,7 +17034,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -16981,25 +17045,25 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 19,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
             }
           },
-          "fixture_coverage": 1,
+          "fixture_coverage": 1.0,
           "fixtures_expected": 306,
           "fixtures_received": 308,
-          "results_coverage": 1,
+          "results_coverage": 1.0,
           "results_received": 306,
           "season": 2024,
           "status": "REGULAR_SEASON_CANONICAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 18
         },
         {
@@ -17028,8 +17092,8 @@
               "coverage": 0.990196,
               "exact_starting_xi_rate": null,
               "fixtures_received": 303,
-              "identity_rate": 1,
-              "minutes_coherence_rate": 1,
+              "identity_rate": 1.0,
+              "minutes_coherence_rate": 1.0,
               "null_rate": 0.426049,
               "rows_received": 614,
               "status": "AVAILABLE",
@@ -17047,21 +17111,21 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "injuries": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 2865,
               "status": "AVAILABLE",
               "temporality": "HISTORICAL_NON_POINT_IN_TIME"
             },
             "lineups": {
               "coverage": 0.996732,
-              "exact_starting_xi_rate": 1,
+              "exact_starting_xi_rate": 1.0,
               "fixtures_received": 305,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.079435,
               "rows_received": 618,
@@ -17069,10 +17133,10 @@
               "temporality": "POST_MATCH_LAG_REQUIRED"
             },
             "players": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
-              "identity_rate": 1,
+              "identity_rate": 1.0,
               "minutes_coherence_rate": null,
               "null_rate": 0.213123,
               "rows_received": 780,
@@ -17080,7 +17144,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "squads": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -17091,7 +17155,7 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "standings_snapshots": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
@@ -17102,25 +17166,25 @@
               "temporality": "POINT_IN_TIME_SAFE"
             },
             "teams": {
-              "coverage": 1,
+              "coverage": 1.0,
               "exact_starting_xi_rate": null,
               "fixtures_received": 0,
               "identity_rate": null,
               "minutes_coherence_rate": null,
-              "null_rate": 0,
+              "null_rate": 0.0,
               "rows_received": 21,
               "status": "AVAILABLE",
               "temporality": "POINT_IN_TIME_SAFE"
             }
           },
-          "fixture_coverage": 1,
+          "fixture_coverage": 1.0,
           "fixtures_expected": 306,
           "fixtures_received": 310,
-          "results_coverage": 1,
+          "results_coverage": 1.0,
           "results_received": 306,
           "season": 2025,
           "status": "REGULAR_SEASON_CANONICAL",
-          "team_identity_rate": 1,
+          "team_identity_rate": 1.0,
           "teams_received": 18
         }
       ],
@@ -17132,7 +17196,7 @@
         "version": "api_market_baseline_v1",
         "rows": 1534,
         "fixtures": 1534,
-        "coverage": 1,
+        "coverage": 1.0,
         "quality": "PASSED",
         "temporalPolicy": "HISTORICAL_CLOSING_MARKET",
         "status": "API_MARKET_BASELINE_READY",
@@ -17143,7 +17207,7 @@
         "version": "api_player_match_facts_v1",
         "rows": 51589,
         "fixtures": 1295,
-        "coverage": 1,
+        "coverage": 1.0,
         "quality": "PASSED",
         "temporalPolicy": "POST_MATCH_ONLY",
         "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
@@ -17154,7 +17218,7 @@
         "version": "api_player_pre_lineup_v1",
         "rows": 2058,
         "fixtures": 2058,
-        "coverage": 1,
+        "coverage": 1.0,
         "quality": "PASSED",
         "temporalPolicy": "PRE_LINEUP",
         "status": "API_PLAYER_DATASET_READY",
@@ -17165,7 +17229,7 @@
         "version": "api_post_lineup_simulated_v1",
         "rows": 1297,
         "fixtures": 1297,
-        "coverage": 1,
+        "coverage": 1.0,
         "quality": "PASSED",
         "temporalPolicy": "POST_LINEUP_SIMULATED",
         "status": "POST_LINEUP_SIMULATED_READY",
@@ -17176,7 +17240,7 @@
         "version": "api_team_pre_match_v1",
         "rows": 2058,
         "fixtures": 2058,
-        "coverage": 1,
+        "coverage": 1.0,
         "quality": "PASSED",
         "temporalPolicy": "HISTORICAL POINT-IN-TIME",
         "status": "API_TEAM_DATASET_READY",
@@ -17187,7 +17251,7 @@
         "version": "player_feature_store_v1",
         "rows": 905344,
         "fixtures": 1288,
-        "coverage": 1,
+        "coverage": 1.0,
         "quality": "PASSED",
         "temporalPolicy": "PRE_LINEUP",
         "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
@@ -17264,7 +17328,7 @@
       "competitions": [
         "Ligue 1"
       ],
-      "coverage": 1,
+      "coverage": 1.0,
       "dataset_name": "api_team_pre_match_v1",
       "dataset_version": "api_team_pre_match_v1",
       "excluded_rows": 0,
@@ -17424,9 +17488,9 @@
         "brier": 0.2012142810199943,
         "ece": 0.04234711798509103,
         "incremental": {
-          "brier_improvement": 0,
+          "brier_improvement": 0.0,
           "decision": "INCONCLUSIVE",
-          "log_loss_improvement": 0
+          "log_loss_improvement": 0.0
         },
         "origin": "OOS HISTORICAL"
       },
@@ -17481,7 +17545,7 @@
     ],
     "backtests": [
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 382,
         "confidence_interval_per_bet": [
@@ -17497,8 +17561,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17512,7 +17576,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 342,
         "confidence_interval_per_bet": [
@@ -17528,8 +17592,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17543,7 +17607,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 260,
         "confidence_interval_per_bet": [
@@ -17559,8 +17623,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17590,8 +17654,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17621,8 +17685,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17636,7 +17700,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 307,
         "confidence_interval_per_bet": [
@@ -17652,8 +17716,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17683,8 +17747,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17714,8 +17778,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17745,8 +17809,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17760,7 +17824,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 393,
         "confidence_interval_per_bet": [
@@ -17776,8 +17840,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17791,7 +17855,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 338,
         "confidence_interval_per_bet": [
@@ -17807,8 +17871,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17822,7 +17886,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 271,
         "confidence_interval_per_bet": [
@@ -17838,8 +17902,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17869,8 +17933,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17884,7 +17948,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 261,
         "confidence_interval_per_bet": [
@@ -17900,8 +17964,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17915,7 +17979,7 @@
         "origin": "OOS HISTORICAL"
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 200,
         "confidence_interval_per_bet": [
@@ -17931,8 +17995,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17948,7 +18012,7 @@
     ],
     "strategies": [
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 382,
         "confidence_interval_per_bet": [
@@ -17964,8 +18028,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -17979,7 +18043,7 @@
         "yield": 0.00018324607329843354
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 342,
         "confidence_interval_per_bet": [
@@ -17995,8 +18059,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18010,7 +18074,7 @@
         "yield": -0.02745614035087719
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 260,
         "confidence_interval_per_bet": [
@@ -18026,8 +18090,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18057,8 +18121,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18088,8 +18152,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18103,7 +18167,7 @@
         "yield": -0.12955678670360113
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 307,
         "confidence_interval_per_bet": [
@@ -18119,8 +18183,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18150,8 +18214,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18181,8 +18245,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18212,8 +18276,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18227,7 +18291,7 @@
         "yield": -0.15914473684210528
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 393,
         "confidence_interval_per_bet": [
@@ -18243,8 +18307,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18258,7 +18322,7 @@
         "yield": -0.04559796437659033
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 338,
         "confidence_interval_per_bet": [
@@ -18274,8 +18338,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18289,7 +18353,7 @@
         "yield": -0.017810650887573963
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 271,
         "confidence_interval_per_bet": [
@@ -18305,8 +18369,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18366,8 +18430,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.02,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18381,7 +18445,7 @@
         "yield": -0.09339233038348083
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 261,
         "confidence_interval_per_bet": [
@@ -18397,8 +18461,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.04,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18412,7 +18476,7 @@
         "yield": -0.04762452107279693
       },
       {
-        "adjusted_p_value": 1,
+        "adjusted_p_value": 1.0,
         "backtest_version": "api_football_backtest_v3",
         "bets": 200,
         "confidence_interval_per_bet": [
@@ -18428,8 +18492,8 @@
         "parameters": {
           "kelly_fraction": 0.25,
           "minimum_edge": 0.06,
-          "minimum_probability": 0,
-          "stake_cap": 2,
+          "minimum_probability": 0.0,
+          "stake_cap": 2.0,
           "staking": "FIXED"
         },
         "production_status": "PRODUCTION_LOCKED",
@@ -18509,7 +18573,7 @@
       "callsRemainingLow": 43369,
       "callsRemainingBase": 58132,
       "callsRemainingHigh": 65073,
-      "callsPerHour": 3600,
+      "callsPerHour": null,
       "callsPerDay": 30000,
       "etaPriorityADays": 0.05,
       "etaPriorityBDays": 0.97,
@@ -18542,13 +18606,13 @@
       "expandedThisRun": 41,
       "newLatentTasksMaterialized": 41,
       "scheduler": {
-        "batch_size": 500,
-        "max_calls": 2500,
-        "max_tasks": 2500,
-        "mode": "ACCELERATED_SAFE",
-        "next_run_at": "2026-07-25T19:39:53.038545+00:00",
-        "request_rate": 1,
-        "stop_reason": null
+        "batch_size": 0,
+        "max_calls": 0,
+        "max_tasks": 0,
+        "mode": "PAUSED",
+        "next_run_at": "2026-07-27T14:01:10.459561+00:00",
+        "request_rate": 0.0,
+        "stop_reason": "STORAGE_PAUSE_THRESHOLD"
       },
       "rowsLastRun": 8274
     },
@@ -18640,7 +18704,7 @@
             "fixtureCount": 0,
             "playerCount": 15432,
             "rows": 40535,
-            "nullRate": 0,
+            "nullRate": 0.0,
             "dependencies": [
               "players"
             ]
@@ -19030,8 +19094,8 @@
       "build": "COCKPIT_BUILD_SUCCESS",
       "artifact": "COCKPIT_ARTIFACT_PUBLISHED",
       "private": "COCKPIT_PRIVATE_STALE",
-      "snapshotGeneratedAt": "2026-07-25T18:40:50.838693+00:00",
-      "currentDataHash": "f31ebcf15adf3b247ef35577f5f5581696110ed407b7ee37dc2d1069861a0f94",
+      "snapshotGeneratedAt": "2026-07-27T14:22:48.128782+00:00",
+      "currentDataHash": "ad17f0d54fd184969e5410bb28958f705a5f38933c914a18d02cc753ccde7e94",
       "currentBackfillRunId": "30167993935",
       "deploymentVersion": 10,
       "deploymentTime": "2026-07-25T17:34:55.145343+00:00",
@@ -19072,19 +19136,19 @@
       "lost": 0,
       "void": 0,
       "settlements": 0,
-      "profitUnits": 0,
+      "profitUnits": 0.0,
       "roi": null,
       "historyRecords": 0,
-      "settledStakeUnits": 0
+      "settledStakeUnits": 0.0
     },
     "bankroll": {
-      "initialUnits": 1000,
-      "currentUnits": 1000,
-      "profitUnits": 0,
+      "initialUnits": 1000.0,
+      "currentUnits": 1000.0,
+      "profitUnits": 0.0,
       "roi": null,
-      "maxDrawdownUnits": 0,
+      "maxDrawdownUnits": 0.0,
       "curve": [
-        1000
+        1000.0
       ],
       "simulationOnly": true
     },
@@ -19119,7 +19183,7 @@
           "conditions": {
             "market_margin_1x2_max": 0.06,
             "odds_away": [
-              2,
+              2.0,
               2.5
             ]
           },
@@ -19128,7 +19192,7 @@
           "roi": 0.1663984674329502,
           "profitUnits": 43.43,
           "maxDrawdownUnits": 9.27,
-          "qValue": 1,
+          "qValue": 1.0,
           "bootstrapRoi95": [
             0.03360868411743898,
             0.30770262226512224
@@ -19157,7 +19221,7 @@
           "roi": 0.1594490358126722,
           "profitUnits": 57.88,
           "maxDrawdownUnits": 19.52,
-          "qValue": 1,
+          "qValue": 1.0,
           "bootstrapRoi95": [
             0.0042719415204679045,
             0.31393382749629106
@@ -19178,7 +19242,7 @@
             "market_margin_1x2_max": 0.06,
             "odds_away": [
               1.6,
-              2
+              2.0
             ]
           },
           "bets": 241,
@@ -19186,7 +19250,7 @@
           "roi": 0.1386721991701245,
           "profitUnits": 33.42,
           "maxDrawdownUnits": 7.22,
-          "qValue": 1,
+          "qValue": 1.0,
           "bootstrapRoi95": [
             0.024913994885916647,
             0.24270212811073993
@@ -19230,5 +19294,902 @@
     "noBetDefault": true,
     "socialPublishingEnabled": false,
     "demoModeEnabled": false
+  },
+  "matchupLab": {
+    "version": "MATCHUP_LAB_V1",
+    "dataStatus": "HISTORICAL_RESEARCH_EVIDENCE",
+    "origin": "HISTORICAL RESEARCH",
+    "verdict": "JALON_11_BLOCKED_BY_DATA_GATES",
+    "coverage": {
+      "marketRows": 10732,
+      "pairedEvaluationRows": 7081,
+      "competitions": [
+        {
+          "competition": "Ligue 1",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2058,
+          "playerFixtures": 2058,
+          "lineupFixtures": 2058,
+          "injuryRows": 12801,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "Premier League",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2280,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "La Liga",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2280,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "Bundesliga",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 1835,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "Serie A",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2279,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        }
+      ],
+      "gates": [
+        {
+          "name": "TEAM_GATE",
+          "status": "PARTIAL",
+          "reasons": [
+            "10732/10732 fixtures paired and target excluded, but every materialization boundary equals kickoff and row-level source observed_at is unproven; descriptive research only"
+          ]
+        },
+        {
+          "name": "PLAYER_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Raw facts are Ligue 1 only and POST_MATCH_ONLY"
+          ]
+        },
+        {
+          "name": "PLAYER_FORM_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "V1 windows include unused substitutes and null-versus-zero goal ambiguity"
+          ]
+        },
+        {
+          "name": "ABSENCE_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Historical injuries are not point-in-time"
+          ]
+        },
+        {
+          "name": "LINEUP_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Ligue 1 content is retrospective POST_MATCH_ONLY"
+          ]
+        },
+        {
+          "name": "FORMATION_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Retrospective formations lack a pre-kickoff observed_at"
+          ]
+        },
+        {
+          "name": "STARTER_BASELINE_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Roster expiry and source-time lineage are unproven"
+          ]
+        },
+        {
+          "name": "FOOTEDNESS_GATE",
+          "status": "BLOCKED_BY_COVERAGE",
+          "reasons": [
+            "No sourced preferred-foot field exists in cache"
+          ]
+        },
+        {
+          "name": "MARKET_GATE",
+          "status": "READY",
+          "reasons": [
+            "Historical research prices exist; exact live observed_at remains unavailable"
+          ]
+        }
+      ],
+      "contentTotals": {}
+    },
+    "dataset": {
+      "name": "TEAM_PREMATCH",
+      "version": "deep-football-team-prematch-v2",
+      "rows": 10732,
+      "features": [
+        "elo_difference",
+        "home_form_5",
+        "away_form_5",
+        "home_form_10",
+        "away_form_10",
+        "home_goals_for_5",
+        "away_goals_for_5",
+        "home_goals_against_5",
+        "away_goals_against_5",
+        "home_rest_days",
+        "away_rest_days"
+      ],
+      "featureCutoff": "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_PARTIAL",
+      "researchMode": "PRE_LINEUP",
+      "source": [
+        "API_FOOTBALL_HISTORICAL",
+        "FOOTBALL_DATA"
+      ],
+      "pairing": {
+        "marketRows": 10732,
+        "pairedRows": 10732,
+        "duplicateKeys": 0,
+        "leftAttrition": 0,
+        "rightAttrition": 0,
+        "exactKeyset": true
+      },
+      "blocked": [
+        {
+          "name": "ABSENCE",
+          "reason": "BLOCKED_BY_TEMPORALITY"
+        },
+        {
+          "name": "FOOTEDNESS",
+          "reason": "BLOCKED_BY_COVERAGE"
+        },
+        {
+          "name": "FORMATION",
+          "reason": "BLOCKED_BY_TEMPORALITY"
+        },
+        {
+          "name": "LINEUP",
+          "reason": "BLOCKED_BY_TEMPORALITY"
+        },
+        {
+          "name": "PLAYER",
+          "reason": "BLOCKED_BY_TEMPORALITY"
+        }
+      ],
+      "hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+      "parquetHash": "d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673",
+      "parquetBytes": 2000155,
+      "heavyArtifactLocation": "R2_OR_POSTGRESQL_NOT_GIT"
+    },
+    "experiments": {
+      "campaigns": [
+        {
+          "id": "11A",
+          "title": "Team and Calendar Deep Baseline",
+          "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+          "requiredGates": [],
+          "blockingGates": [
+            "DEEP_DATA_GATES"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11B",
+          "title": "Player Availability",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [],
+          "blockingGates": [
+            "DEEP_DATA_GATES"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11C",
+          "title": "Lineup Continuity",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [],
+          "blockingGates": [
+            "DEEP_DATA_GATES"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11D",
+          "title": "Formation Matchups",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [],
+          "blockingGates": [
+            "DEEP_DATA_GATES"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11E",
+          "title": "Owner Anchored Hypotheses",
+          "status": "COMPLETED_AS_GATE_EVALUATION",
+          "requiredGates": [],
+          "blockingGates": [],
+          "cacheOnly": true
+        },
+        {
+          "id": "11F",
+          "title": "Cross-League Transfer",
+          "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+          "requiredGates": [],
+          "blockingGates": [
+            "DEEP_DATA_GATES"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11G",
+          "title": "Integrated Matchup Arena",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [],
+          "blockingGates": [
+            "DEEP_DATA_GATES"
+          ],
+          "cacheOnly": true
+        }
+      ],
+      "ownerHypotheses": [
+        {
+          "id": "H11-001",
+          "title": "Buteur en forme vs deux centraux absents",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "PLAYER_FORM_GATE",
+            "ABSENCE_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        },
+        {
+          "id": "H11-002",
+          "title": "4-3-3 vs 4-4-2",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        },
+        {
+          "id": "H11-003",
+          "title": "Pied fort et couloir",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FOOTEDNESS_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        },
+        {
+          "id": "H11-004",
+          "title": "Gardien habituel absent",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "ABSENCE_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        },
+        {
+          "id": "H11-005",
+          "title": "Nouveau duo central",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        },
+        {
+          "id": "H11-006",
+          "title": "Continuité du onze",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "ABSENCE_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        },
+        {
+          "id": "H11-007",
+          "title": "Changement tactique",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        },
+        {
+          "id": "H11-008",
+          "title": "Fatigue et formation",
+          "family": "UNKNOWN",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "minimumSupport": 0,
+          "cutoff": "UNSPECIFIED",
+          "frozenBeforeResults": false,
+          "preregistrationHash": ""
+        }
+      ],
+      "eligible": 0,
+      "blocked": 4
+    },
+    "results": {
+      "campaign": "NOT_RUN",
+      "status": "NOT_RUN",
+      "models": [
+        {
+          "id": "B0_MARKET",
+          "logLoss": 0.9667732056631618,
+          "brier": 0.19161913389909357,
+          "deltaLogLoss": null,
+          "deltaBrier": null,
+          "calibrationError": 0.02155294644400855,
+          "reference": "SELF",
+          "status": "REFERENCE_RAW_MARKET",
+          "interpretation": "REFERENCE_RAW_MARKET"
+        },
+        {
+          "id": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+          "logLoss": 0.9689357191797792,
+          "brier": 0.1921268948053238,
+          "deltaLogLoss": 0.002162513516617337,
+          "deltaBrier": 0.0005077609062302257,
+          "calibrationError": 0.0123863884894918,
+          "reference": "B0_MARKET",
+          "status": "REFERENCE_RECALIBRATED_TRAIN_ONLY",
+          "interpretation": "REFERENCE_RECALIBRATED_TRAIN_ONLY"
+        },
+        {
+          "id": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+          "logLoss": 0.9706379303393002,
+          "brier": 0.19246762623008903,
+          "deltaLogLoss": 0.001702211159521072,
+          "deltaBrier": 0.00034073142476523377,
+          "calibrationError": 0.009652438899583718,
+          "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+          "status": "PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING",
+          "logLoss": 0.9784516899958932,
+          "brier": 0.19393773105633308,
+          "deltaLogLoss": 0.009515970816113994,
+          "deltaBrier": 0.001810836251009279,
+          "calibrationError": 0.009348923174883422,
+          "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL",
+          "logLoss": 0.9889178514466714,
+          "brier": 0.19645788901396544,
+          "deltaLogLoss": 0.02214464578350961,
+          "deltaBrier": 0.004838755114871862,
+          "calibrationError": 0.018341806852224807,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING",
+          "logLoss": 0.998023824196153,
+          "brier": 0.1981756811903527,
+          "deltaLogLoss": 0.03125061853299116,
+          "deltaBrier": 0.006556547291259124,
+          "calibrationError": 0.016539054691398387,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_POISSON",
+          "logLoss": 1.046018927343817,
+          "brier": 0.209819162318555,
+          "deltaLogLoss": 0.07924572168065513,
+          "deltaBrier": 0.018200028419461417,
+          "calibrationError": 0.027092726399363127,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_DIXON_COLES",
+          "logLoss": 1.0466263470697117,
+          "brier": 0.209862662711249,
+          "deltaLogLoss": 0.07985314140654987,
+          "deltaBrier": 0.018243528812155435,
+          "calibrationError": 0.02080499588785642,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        }
+      ],
+      "folds": [
+        {
+          "season": 2022,
+          "matches": 1826,
+          "primaryDeltaLogLoss": -0.0001726766165610627,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.015248009009884322,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.01771249615439041,
+          "outcome": "BETTER_DESCRIPTIVE_ONLY"
+        },
+        {
+          "season": 2023,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.004014814543203071,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.02836454815353462,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.005941810887135857,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2024,
+          "matches": 1751,
+          "primaryDeltaLogLoss": 0.0020546354131343314,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.02542619186191042,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.00962408123674241,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2025,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.0009914629191316582,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.01983300343937533,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.004439356421911067,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        }
+      ],
+      "primaryForInference": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+      "modelSelectionOnTest": false,
+      "roi": "NOT_COMPUTED_NO_PREREGISTERED_BETTING_RULE",
+      "statistics": {
+        "cr1_cluster": "MATCH_DATE",
+        "clusters": 729,
+        "cr1_one_sided_p": 0.9638269233447452,
+        "sign_flip_permutations": 999,
+        "sign_flip_unit": "MATCH_DATE",
+        "sign_flip_p": 0.961,
+        "family_q": 0.9638269233447452,
+        "global_q": 1.0,
+        "tested_hypotheses": 1,
+        "blocked_hypotheses_as_p1": 8,
+        "multiplicity_hypotheses": 9,
+        "bootstrap_unit": "MATCH_DATE",
+        "delta_log_loss_bootstrap_ci95": [
+          -0.00024288426175629246,
+          0.003901781760755334
+        ]
+      },
+      "pairedComparator": {
+        "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+        "challenger": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+        "support": 7081,
+        "deltaLogLoss": 0.001702211159521072,
+        "deltaBrier": 0.00034073142476523377,
+        "bootstrapCi95": [
+          -0.00024288426175629246,
+          0.003901781760755334
+        ],
+        "cr1OneSidedP": 0.9638269233447452,
+        "signFlipP": 0.961,
+        "familyQ": 0.9638269233447452,
+        "globalQ": 1.0,
+        "clusters": 729,
+        "promotionEligible": false
+      },
+      "whereModelLost": [
+        {
+          "season": 2022,
+          "matches": 1826,
+          "primaryDeltaLogLoss": -0.0001726766165610627,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.015248009009884322,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.01771249615439041,
+          "outcome": "BETTER_DESCRIPTIVE_ONLY"
+        },
+        {
+          "season": 2023,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.004014814543203071,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.02836454815353462,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.005941810887135857,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2024,
+          "matches": 1751,
+          "primaryDeltaLogLoss": 0.0020546354131343314,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.02542619186191042,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.00962408123674241,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2025,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.0009914629191316582,
+          "primaryDeltaBrier": null,
+          "teamOnlyLogitDeltaLogLoss": 0.01983300343937533,
+          "teamOnlyBoostingDeltaLogLoss": null,
+          "marketRecalibrationDeltaLogLoss": null,
+          "incrementalBoostingDeltaLogLoss": 0.004439356421911067,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        }
+      ],
+      "crossLeague": {
+        "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+        "rotations": [],
+        "rotationCount": 5,
+        "minimumSupport": 2743,
+        "maximumSupport": 3040,
+        "deltaLogLossRange": [
+          0.0033953873651650923,
+          0.008942064913464054
+        ],
+        "survivors": 0,
+        "descriptivePositiveRotations": 0,
+        "limitations": [],
+        "promotionEligible": false
+      },
+      "teamGate": "PARTIAL",
+      "resultHash": "ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe"
+    },
+    "negativeControls": [
+      {
+        "name": "absence_shifted",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "false_centre_back_pair",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "false_footedness",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "formation_shifted_one_match",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "home_team_systematic",
+        "status": "EXECUTED_NO_PROMOTION",
+        "support": 7081,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "impossible_condition",
+        "status": "EXECUTED_ZERO_SUPPORT_NO_PROMOTION",
+        "support": 0,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "post_kickoff_lineup",
+        "status": "REJECTED_BY_TEMPORAL_GUARD",
+        "support": 1,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "post_result_rule",
+        "status": "REJECTED_BY_FEATURE_ALLOWLIST",
+        "support": 1,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "random_player",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "random_tactical_interaction",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "shuffled_labels_stratified",
+        "status": "EXECUTED_NO_PROMOTION",
+        "support": 7081,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "wrong_fixture_odds",
+        "status": "REJECTED_BY_PAIRING_GUARD",
+        "support": 1,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      }
+    ],
+    "negativeControlSummary": {
+      "total": 12,
+      "executedOrGuard": 6,
+      "dataGated": 6
+    },
+    "redTeam": {
+      "promotionAllowed": false,
+      "reason": "DEEP_DATA_GATES_AND_EXACT_LIVE_MARKET_CUTOFF_REMAIN_CLOSED",
+      "objections": [
+        {
+          "name": "absence_classification",
+          "status": "CAMPAIGN_BLOCKED"
+        },
+        {
+          "name": "calibration",
+          "status": "MARKET_RECALIBRATED_TRAIN_ONLY_TOP_LABEL_ECE_DIAGNOSTIC"
+        },
+        {
+          "name": "chance",
+          "status": "CONTROLLED_WITH_CR1_CLUSTER_SIGN_FLIP_CLUSTER_BOOTSTRAP_AND_BH"
+        },
+        {
+          "name": "concentration",
+          "status": "NO_STRATEGY_PROMOTED"
+        },
+        {
+          "name": "confounding",
+          "status": "NO_CAUSAL_CLAIM"
+        },
+        {
+          "name": "dependence",
+          "status": "MATCH_DATE_CLUSTERED_TEAM_SERIAL_DEPENDENCE_REMAINS_LIMITATION"
+        },
+        {
+          "name": "formation_normalization",
+          "status": "CAMPAIGN_BLOCKED"
+        },
+        {
+          "name": "incomplete_sample",
+          "status": "NO_1X2_MARKET_ATTRITION"
+        },
+        {
+          "name": "join_error",
+          "status": "ONE_TO_ONE_EXACT_JOIN"
+        },
+        {
+          "name": "leakage",
+          "status": "TARGET_EXCLUDED_BUT_TEAM_SOURCE_OBSERVED_AT_UNPROVEN_GATE_PARTIAL"
+        },
+        {
+          "name": "multiplicity",
+          "status": "ONE_TESTED_PLUS_EIGHT_BLOCKED_HYPOTHESES_INCLUDED"
+        },
+        {
+          "name": "negative_controls",
+          "status": "SIX_COMPUTATIONAL_OR_GUARD_CONTROLS_EXECUTED_SIX_DATA_GATED"
+        },
+        {
+          "name": "threshold_selection",
+          "status": "PRIMARY_FIXED_NO_TEST_SET_MODEL_SELECTION"
+        },
+        {
+          "name": "wrong_cutoff",
+          "status": "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_NOT_STRICT_OBSERVED_AT"
+        },
+        {
+          "name": "wrong_odds",
+          "status": "EXACT_FIXTURE_PAIRING_VERIFIED"
+        }
+      ]
+    },
+    "promotion": {
+      "status": "REJECTED",
+      "promoted": false,
+      "criteria": [],
+      "failedCriteria": [
+        "DEEP_DATA_GATES"
+      ]
+    },
+    "watchlist": {
+      "status": "EMPTY_NO_ROBUST_DEEP_MATCHUP",
+      "count": 0,
+      "notABet": true
+    },
+    "decision": {
+      "status": "NO_DECISION_NO_CANDIDATE",
+      "candidateCount": 0,
+      "decisions": 0,
+      "stakeUnits": 0.0,
+      "shadowBankrollBefore": 1000.0,
+      "shadowBankrollAfter": 1000.0
+    },
+    "replay": {
+      "status": "REPLAY_VERIFIED",
+      "identical": true,
+      "providerCalls": 0,
+      "oddsApiCredits": 0,
+      "businessDuplicates": 0,
+      "dataLoss": 0,
+      "hashMismatches": 0,
+      "hashComparisons": [
+        {
+          "name": "campaign_result_hash",
+          "matched": true
+        },
+        {
+          "name": "dataset_hash",
+          "matched": true
+        },
+        {
+          "name": "ledger_hash_chain",
+          "matched": true
+        },
+        {
+          "name": "parquet_sha256",
+          "matched": true
+        }
+      ],
+      "resultHash": "ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe"
+    },
+    "ledger": {
+      "status": "HASH_CHAIN_VERIFIED",
+      "events": 24,
+      "headHash": "8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8",
+      "eventCounts": {
+        "DATA_GATE_EVALUATED": 8,
+        "HYPOTHESIS_REGISTERED": 8,
+        "PATTERN_PROMOTED_TO_SHADOW_CANDIDATE": 0,
+        "PATTERN_PROMOTED_TO_WATCHLIST": 0,
+        "PATTERN_REJECTED": 8,
+        "SETTLEMENT": 0,
+        "SHADOW_DECISION": 0
+      }
+    },
+    "provenance": {
+      "sourceCommit": "8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+      "mainCommit": "6bfa906d6ea69183a9d2ce251ddffd0d9bda5c17",
+      "datasetHash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+      "campaignResultHash": "ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe",
+      "ledgerHeadHash": "8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8",
+      "marketObservedTimeStatus": "NOT_EVALUATED"
+    },
+    "costs": {
+      "providerCalls": 0,
+      "oddsApiCredits": 0,
+      "historicalBytes": 939552887,
+      "databaseBytes": 47366144,
+      "r2ExpectedBytes": 920725165,
+      "r2LagObjects": 0,
+      "storageStatus": "STORAGE_PAUSED",
+      "secondaryTasks": "P3_P4_PAUSED"
+    },
+    "locks": {
+      "productionStatus": "PRODUCTION_LOCKED",
+      "realBets": false,
+      "noBetDefault": true,
+      "socialPublishingEnabled": false,
+      "demoModeEnabled": false
+    },
+    "caveats": [
+      "Recherche historique uniquement : les prix sont de classe SOURCE_PRICE_CLASS_ONLY, sans observed_at exact.",
+      "TEAM_GATE est PARTIAL : l'ordre algorithmique est descriptif mais le observed_at source ligne par ligne n'est pas prouvé ; les gates joueurs et tactiques restent fermés.",
+      "Les deltas positifs de Log Loss/Brier sont défavorables : aucun challenger testé ne bat sa référence de marché.",
+      "Watchlist et décisions restent vides ; aucun résultat historique n'est présenté comme live."
+    ]
   }
 }

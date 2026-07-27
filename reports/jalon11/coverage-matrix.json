@@ -4,10 +4,15 @@
   "market_rows": 10732,
   "strict_1x2_rows": 10732,
   "market_time_class": "SOURCE_PRICE_CLASS_ONLY",
+  "team_temporal_gate": "PARTIAL",
+  "feature_boundary_equal_kickoff_rows": 10732,
+  "feature_boundary_strictly_before_rows": 0,
+  "row_level_source_observed_at_proven": false,
+  "promotion_eligible": false,
   "gates": {
     "TEAM_GATE": {
-      "status": "READY",
-      "reason": "10732/10732 market fixtures exactly paired with prior team/calendar features"
+      "status": "PARTIAL",
+      "reason": "10732/10732 fixtures paired and target excluded, but every materialization boundary equals kickoff and row-level source observed_at is unproven; descriptive research only"
     },
     "MARKET_GATE": {
       "status": "READY",

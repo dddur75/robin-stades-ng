@@ -3,12 +3,15 @@
   "evaluation_matches": 7081,
   "market_brier": 0.191619,
   "market_log_loss": 0.966773,
-  "message_template": "Résultat de recherche rejeté : les modèles d'équipe n'améliorent pas le marché. Aucune stratégie aujourd'hui.",
-  "multinomial_brier": 0.196458,
-  "multinomial_log_loss": 0.988918,
+  "market_recalibrated_log_loss": 0.968936,
+  "message_template": "Résultat descriptif rejeté : le modèle marché plus équipe n'améliore pas le marché recalibré, et TEAM_GATE reste partiel. Aucune stratégie aujourd'hui.",
+  "primary_delta_brier": 0.000341,
+  "primary_delta_log_loss": 0.001702,
+  "primary_log_loss": 0.970638,
+  "primary_model": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
   "negative_results_included": true,
   "network_connected": false,
   "publishing_enabled": false,
   "schema_version": "deep-football-social-export-v1",
-  "status": "DOMINATED_BY_MARKET"
+  "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC_NO_PROMOTION"
 }

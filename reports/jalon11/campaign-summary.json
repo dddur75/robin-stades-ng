@@ -1,15 +1,17 @@
 {
   "schema_version": "jalon11-campaign-summary-v1",
   "verdict": "JALON_11_BLOCKED_BY_DATA_GATES",
-  "dataset_hash": "af9421281a71a8d936bfec8596fce5d2945b35f84948d92eb35a7bf435f7dd00",
-  "result_hash": "2c131727c4a1af593443c3fe54f16ef5d4ed530bc010e361f349e68fe4930260",
+  "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+  "result_hash": "ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe",
+  "team_gate": "PARTIAL",
+  "promotion_eligible": false,
   "campaigns": {
-    "11A": "COMPLETED_CACHE_ONLY",
+    "11A": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
     "11B": "DATA_GATE_BLOCKED",
     "11C": "DATA_GATE_BLOCKED",
     "11D": "DATA_GATE_BLOCKED",
     "11E": "COMPLETED_AS_GATE_EVALUATION",
-    "11F": "COMPLETED_WITH_TEAM_BASELINE_ONLY",
+    "11F": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
     "11G": "DATA_GATE_BLOCKED"
   },
   "sample": {
@@ -33,64 +35,135 @@
   "models": {
     "B0_MARKET": {
       "log_loss": 0.9667732056631618,
-      "brier": 0.19161913389909357
+      "brier": 0.19161913389909357,
+      "calibration_error": 0.02155294644400855,
+      "calibration_status": "RAW_DEVIGGED_MARKET"
     },
-    "B1_REGULARIZED_MULTINOMIAL": {
+    "B0_MARKET_RECALIBRATED_TRAIN_ONLY": {
+      "log_loss": 0.9689357191797792,
+      "brier": 0.1921268948053238,
+      "calibration_error": 0.0123863884894918,
+      "delta_log_loss_vs_raw_market": 0.002162513516617337,
+      "delta_brier_vs_raw_market": 0.0005077609062302257,
+      "calibration_status": "TRAIN_ONLY_MULTINOMIAL_LOG_ODDS"
+    },
+    "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL": {
+      "log_loss": 0.9706379303393002,
+      "brier": 0.19246762623008903,
+      "delta_log_loss": 0.001702211159521072,
+      "delta_brier": 0.00034073142476523377,
+      "delta_log_loss_vs_raw_market": 0.003864724676138409,
+      "delta_brier_vs_raw_market": 0.0008484923309954595,
+      "calibration_error": 0.009652438899583718,
+      "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+      "status": "PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL"
+    },
+    "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING": {
+      "log_loss": 0.9784516899958932,
+      "brier": 0.19393773105633308,
+      "delta_log_loss": 0.009515970816113994,
+      "delta_brier": 0.001810836251009279,
+      "calibration_error": 0.009348923174883422,
+      "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+      "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
+    },
+    "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL": {
       "log_loss": 0.9889178514466714,
       "brier": 0.19645788901396544,
       "delta_log_loss": 0.02214464578350961,
       "delta_brier": 0.004838755114871862,
-      "status": "DOMINATED_BY_MARKET"
+      "calibration_error": 0.018341806852224807,
+      "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
-    "B1_BOUNDED_GRADIENT_BOOSTING": {
+    "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING": {
       "log_loss": 0.998023824196153,
       "brier": 0.1981756811903527,
       "delta_log_loss": 0.03125061853299116,
       "delta_brier": 0.006556547291259124,
-      "status": "DOMINATED_BY_MARKET"
+      "calibration_error": 0.016539054691398387,
+      "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
-    "B2_PLAYER_PRELINEUP": {
-      "status": "BLOCKED_BY_DATA_GATES"
+    "B1_TEAM_ONLY_POISSON": {
+      "log_loss": 1.046018927343817,
+      "brier": 0.209819162318555,
+      "delta_log_loss": 0.07924572168065513,
+      "delta_brier": 0.018200028419461417,
+      "calibration_error": 0.027092726399363127,
+      "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
-    "B3_POST_LINEUP": {
-      "status": "BLOCKED_BY_DATA_GATES"
+    "B1_TEAM_ONLY_DIXON_COLES": {
+      "log_loss": 1.0466263470697117,
+      "brier": 0.209862662711249,
+      "delta_log_loss": 0.07985314140654987,
+      "delta_brier": 0.018243528812155435,
+      "calibration_error": 0.02080499588785642,
+      "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE"
     },
-    "B4_MATCHUPS": {
-      "status": "BLOCKED_BY_DATA_GATES"
-    }
+    "primary_for_inference": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+    "model_selection_on_test": false
   },
   "folds": [
     {
       "season": 2022,
       "matches": 1826,
-      "logit_delta_log_loss": 0.015248009009884322,
-      "boosting_delta_log_loss": 0.0320972914950618
+      "primary_delta_log_loss": -0.0001726766165610627,
+      "incremental_boosting_delta_log_loss": 0.01771249615439041,
+      "team_only_logit_delta_log_loss": 0.015248009009884322
     },
     {
       "season": 2023,
       "matches": 1752,
-      "logit_delta_log_loss": 0.02836454815353462,
-      "boosting_delta_log_loss": 0.03200057552339364
+      "primary_delta_log_loss": 0.004014814543203071,
+      "incremental_boosting_delta_log_loss": 0.005941810887135857,
+      "team_only_logit_delta_log_loss": 0.02836454815353462
     },
     {
       "season": 2024,
       "matches": 1751,
-      "logit_delta_log_loss": 0.02542619186191042,
-      "boosting_delta_log_loss": 0.03562109993908458
+      "primary_delta_log_loss": 0.0020546354131343314,
+      "incremental_boosting_delta_log_loss": 0.00962408123674241,
+      "team_only_logit_delta_log_loss": 0.02542619186191042
     },
     {
       "season": 2025,
       "matches": 1752,
-      "logit_delta_log_loss": 0.01983300343937533,
-      "boosting_delta_log_loss": 0.025250240440528038
+      "primary_delta_log_loss": 0.0009914629191316582,
+      "incremental_boosting_delta_log_loss": 0.004439356421911067,
+      "team_only_logit_delta_log_loss": 0.01983300343937533
     }
   ],
   "statistics": {
-    "cr1_one_sided_p": 1.0,
+    "cr1_cluster": "MATCH_DATE",
+    "clusters": 729,
+    "cr1_one_sided_p": 0.9638269233447452,
     "sign_flip_permutations": 999,
-    "sign_flip_p": 1.0,
-    "family_q": 1.0,
-    "global_q": 1.0
+    "sign_flip_unit": "MATCH_DATE",
+    "sign_flip_p": 0.961,
+    "family_q": 0.9638269233447452,
+    "global_q": 1.0,
+    "tested_hypotheses": 1,
+    "blocked_hypotheses_as_p1": 8,
+    "multiplicity_hypotheses": 9,
+    "bootstrap_unit": "MATCH_DATE",
+    "delta_log_loss_bootstrap_ci95": [
+      -0.00024288426175629246,
+      0.003901781760755334
+    ]
+  },
+  "cross_league": {
+    "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+    "rotations": 5,
+    "survivors": 0,
+    "descriptive_positive_rotations": 0,
+    "promotion_eligible": false,
+    "minimum_support": 2743,
+    "maximum_support": 3040,
+    "delta_log_loss_range": [
+      0.0033953873651650923,
+      0.008942064913464054
+    ],
+    "provider_calls": 0,
+    "odds_api_credits": 0
   },
   "owner_hypotheses": [
     {
@@ -98,7 +171,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2_TEAM,TEAM_GOALS,OVER_2_5",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "PLAYER_FORM_GATE;ABSENCE_GATE;STARTER_BASELINE_GATE"
     },
     {
@@ -106,7 +179,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2,OVER_2_5",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "LINEUP_GATE;FORMATION_GATE"
     },
     {
@@ -114,7 +187,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2,TEAM_GOALS",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "LINEUP_GATE;FOOTEDNESS_GATE"
     },
     {
@@ -122,7 +195,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2,OVER_2_5",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "ABSENCE_GATE;STARTER_BASELINE_GATE"
     },
     {
@@ -130,7 +203,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2,OVER_2_5",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "LINEUP_GATE;STARTER_BASELINE_GATE"
     },
     {
@@ -138,7 +211,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2,TEAM_GOALS",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "LINEUP_GATE;ABSENCE_GATE"
     },
     {
@@ -146,7 +219,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2,TEAM_GOALS",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "LINEUP_GATE;FORMATION_GATE"
     },
     {
@@ -154,7 +227,7 @@
       "status": "DATA_GATE_BLOCKED",
       "support": 0,
       "market": "1X2,OVER_2_5",
-      "q_value": null,
+      "q_value": 1.0,
       "limit": "LINEUP_GATE;FORMATION_GATE"
     }
   ],

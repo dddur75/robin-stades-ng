@@ -2,7 +2,8 @@
   "schema_version": "public-evidence-ledger-v2-summary",
   "status": "HASH_CHAIN_VERIFIED",
   "events": 24,
-  "head_hash": "3cf52461465047b6e22b755616e166f9fb063bd1cc81438c1b3ff144d3f65c5c",
+  "head_hash": "8e6d3f0bef494288dca5de747a66b199598c4bdb362024db16d6f8b76aadf5a8",
+  "code_revision": "bff3c672c279a94ed97e5a7de0ce0d9b9c56883e",
   "genesis_previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "event_counts": {
     "HYPOTHESIS_REGISTERED": 8,
@@ -23,8 +24,8 @@
     "H11-007",
     "H11-008"
   ],
-  "dataset_hash": "af9421281a71a8d936bfec8596fce5d2945b35f84948d92eb35a7bf435f7dd00",
-  "campaign_result_hash": "2c131727c4a1af593443c3fe54f16ef5d4ed530bc010e361f349e68fe4930260",
+  "dataset_hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+  "campaign_result_hash": "ff37983cc85ad77716ce1b96e3499da1e29908c133c6b085e86fdfd9667a1cfe",
   "watchlist": 0,
   "shadow_candidates": 0,
   "decisions": 0,

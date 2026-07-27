@@ -34,6 +34,7 @@ test("server-renders the Cockpit Live V2 shell", async () => {
   assert.match(html, /101/);
   assert.match(html, /PostgreSQL/);
   assert.match(html, /Robin Live V1/);
+  assert.match(html, /Matchup Lab/);
   assert.match(html, /Preuve publique shadow/);
   assert.match(html, /Bankroll shadow/);
   assert.match(html, /NO BET/);
@@ -62,6 +63,11 @@ test("server-renders the public Robin Live V1 route", async () => {
   assert.match(html, /N\/A — aucun pari réglé/);
   assert.match(html, /PRODUCTION_LOCKED/);
   assert.match(html, /SOCIAL_PUBLISHING_ENABLED=false/);
+  assert.match(html, /Matchup Lab/);
+  assert.match(html, /aucune promotion implicite/i);
+  assert.match(html, /aucune donnée démo n.*est présentée comme live/i);
+  assert.match(html, /TEAM_GATE PARTIAL/);
+  assert.match(html, /0\.001702/);
   assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
 });
 
@@ -73,6 +79,8 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
   const research = JSON.parse(data).patternResearch;
+  const matchup = JSON.parse(data).matchupLab;
+  const deep = JSON.parse(data).deepData;
   assert.deepEqual(
     {
       generated: research.laboratory.hypothesesGenerated,
@@ -102,6 +110,64 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(research.noBetDefault, true);
   assert.equal(research.socialPublishingEnabled, false);
   assert.equal(research.demoModeEnabled, false);
+  assert.equal(matchup.version, "MATCHUP_LAB_V1");
+  assert.equal(matchup.locks.productionStatus, "PRODUCTION_LOCKED");
+  assert.equal(matchup.locks.realBets, false);
+  assert.equal(matchup.locks.noBetDefault, true);
+  assert.equal(matchup.locks.socialPublishingEnabled, false);
+  assert.equal(matchup.locks.demoModeEnabled, false);
+  assert.equal(matchup.costs.providerCalls, 0);
+  assert.equal(matchup.costs.oddsApiCredits, 0);
+  assert.equal(matchup.watchlist.notABet, true);
+  assert.equal(matchup.promotion.promoted, false);
+  assert.equal(matchup.verdict, "JALON_11_BLOCKED_BY_DATA_GATES");
+  assert.equal(matchup.dataset.rows, 10732);
+  assert.equal(matchup.coverage.competitions.length, 5);
+  assert.equal(matchup.experiments.campaigns.length, 7);
+  assert.equal(matchup.experiments.ownerHypotheses.length, 8);
+  assert.equal(matchup.coverage.gates.length, 9);
+  assert.equal(
+    matchup.coverage.gates.find((gate) => gate.name === "TEAM_GATE").status,
+    "PARTIAL",
+  );
+  assert.equal(matchup.results.models.length, 8);
+  assert.equal(
+    matchup.results.models.filter((model) => model.id.startsWith("B0_")).length,
+    2,
+  );
+  assert.equal(matchup.negativeControls.length, 12);
+  assert.deepEqual(matchup.negativeControlSummary, {
+    total: 12,
+    executedOrGuard: 6,
+    dataGated: 6,
+  });
+  assert.equal(
+    matchup.results.pairedComparator.deltaLogLoss,
+    0.001702211159521072,
+  );
+  assert.equal(matchup.results.folds.length, 4);
+  assert.equal(
+    matchup.results.folds.filter(
+      (fold) => fold.outcome === "LOST_TO_RECALIBRATED_MARKET",
+    ).length,
+    3,
+  );
+  assert.equal(matchup.results.crossLeague.rotationCount, 5);
+  assert.equal(matchup.results.crossLeague.survivors, 0);
+  assert.equal(matchup.watchlist.count, 0);
+  assert.equal(matchup.decision.candidateCount, 0);
+  assert.equal(matchup.decision.decisions, 0);
+  assert.equal(matchup.decision.stakeUnits, 0);
+  assert.equal(matchup.replay.hashComparisons.length, 4);
+  assert.ok(matchup.replay.hashComparisons.every((item) => item.matched));
+  assert.equal(matchup.replay.providerCalls, 0);
+  assert.equal(matchup.replay.oddsApiCredits, 0);
+  assert.equal(matchup.ledger.status, "HASH_CHAIN_VERIFIED");
+  assert.ok(matchup.ledger.events >= 24);
+  assert.ok(deep.datasets.length >= 6);
+  assert.ok(deep.models.length >= 9);
+  assert.ok(deep.backtests.length >= 15);
+  assert.ok(deep.strategies.length >= 17);
   assert.equal(research.laboratory.topExploratoryResults.length, 3);
   for (const result of research.laboratory.topExploratoryResults) {
     assert.equal(
@@ -125,6 +191,21 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Feature Lab/);
   assert.match(page, /Model Lab/);
   assert.match(page, /Model Arena/);
+  assert.match(page, /Matchup Lab/);
+  assert.match(page, /Score Comparisons/);
+  assert.match(page, /Comparison Table/);
+  assert.match(page, /Paired Comparator/);
+  assert.match(page, /Where the Model Lost/);
+  assert.match(page, /Robustness/);
+  assert.match(page, /League Decomposition/);
+  assert.match(page, /Data Gates/);
+  assert.match(page, /Research vs Production/);
+  assert.match(page, /Prospective Shadow/);
+  assert.match(page, /Costs \/ Usage/);
+  assert.match(page, /Watchlist vide — aucun candidat robuste/);
+  assert.match(page, /Ledger V2 et provenance/);
+  assert.match(page, /Budget nul, stockage sous contrôle/);
+  assert.doesNotMatch(page, /deux modèles/i);
   assert.match(page, /External Validation/);
   assert.match(page, /External Readiness/);
   assert.match(page, /League Transfer Matrix/);
@@ -170,6 +251,8 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"capacity_used_pct": 2\.39/);
   assert.match(data, /"deepData":/);
   assert.match(data, /"patternResearch":/);
+  assert.match(data, /"matchupLab":/);
+  assert.match(data, /"version": "MATCHUP_LAB_V1"/);
   assert.match(data, /"version": "ROBIN_LIVE_V1"/);
   assert.match(data, /"dataStatus": "NO_LIVE_SHADOW_DATA"/);
   assert.match(data, /"initialUnits": 1000(?:\.0)?/);
@@ -179,6 +262,7 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(data, /"realBets": false/);
   assert.match(data, /"demoModeEnabled": false/);
   assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
+  assert.doesNotMatch(page, /DATABASE_URL|API_FOOTBALL_KEY|ODDS_API_KEY|R2_SECRET_ACCESS_KEY/);
   assert.match(data, /"HISTORICAL POINT-IN-TIME"/);
   assert.match(
     data,
