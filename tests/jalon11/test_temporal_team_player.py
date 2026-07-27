@@ -12,6 +12,7 @@ from robin.deep_football.availability import (
 )
 from robin.deep_football.player_features import (
     PlayerAppearance,
+    PriorTeamFixture,
     baseline_centre_back_before,
     player_form_before,
     prior_appearances,
@@ -60,12 +61,13 @@ def _appearance(
     shots: int | None = 1,
     observed_delta: timedelta = timedelta(hours=3),
     position: str | None = "centre-back",
+    team_id: str = "team-a",
 ) -> PlayerAppearance:
     kickoff = TARGET - timedelta(days=offset_days)
     return PlayerAppearance(
         fixture_id=fixture_id or f"f-{offset_days}",
         player_id=player_id,
-        team_id="team-a",
+        team_id=team_id,
         kickoff_at=kickoff,
         minutes=minutes,
         started=started,
@@ -74,6 +76,16 @@ def _appearance(
         shots=shots,
         observed_at=kickoff + observed_delta,
         position=position,
+    )
+
+
+def _team_fixture_window() -> tuple[PriorTeamFixture, ...]:
+    return tuple(
+        PriorTeamFixture(
+            fixture_id=f"f-{index}",
+            kickoff_at=TARGET - timedelta(days=index),
+        )
+        for index in range(8, 0, -1)
     )
 
 
@@ -354,7 +366,9 @@ def test_usual_starter_requires_support_and_observed_starter_flags() -> None:
     assert (
         usual_starter_before(
             regular,
+            team_fixtures=_team_fixture_window(),
             player_id="p1",
+            target_team_id="team-a",
             target_fixture_id="target",
             target_kickoff=TARGET,
         )
@@ -363,7 +377,9 @@ def test_usual_starter_requires_support_and_observed_starter_flags() -> None:
     assert (
         usual_starter_before(
             regular[:3],
+            team_fixtures=_team_fixture_window(),
             player_id="p1",
+            target_team_id="team-a",
             target_fixture_id="target",
             target_kickoff=TARGET,
         )
@@ -373,7 +389,9 @@ def test_usual_starter_requires_support_and_observed_starter_flags() -> None:
     assert (
         usual_starter_before(
             with_missing_flag,
+            team_fixtures=_team_fixture_window(),
             player_id="p1",
+            target_team_id="team-a",
             target_fixture_id="target",
             target_kickoff=TARGET,
         )
@@ -386,7 +404,9 @@ def test_baseline_centre_back_requires_observed_role_and_four_starts() -> None:
     assert (
         baseline_centre_back_before(
             centre_back,
+            team_fixtures=_team_fixture_window(),
             player_id="p1",
+            target_team_id="team-a",
             target_fixture_id="target",
             target_kickoff=TARGET,
         )
@@ -400,7 +420,9 @@ def test_baseline_centre_back_requires_observed_role_and_four_starts() -> None:
     assert (
         baseline_centre_back_before(
             midfielder,
+            team_fixtures=_team_fixture_window(),
             player_id="p1",
+            target_team_id="team-a",
             target_fixture_id="target",
             target_kickoff=TARGET,
         )
@@ -410,11 +432,189 @@ def test_baseline_centre_back_requires_observed_role_and_four_starts() -> None:
     assert (
         baseline_centre_back_before(
             unknown_role,
+            team_fixtures=_team_fixture_window(),
             player_id="p1",
+            target_team_id="team-a",
             target_fixture_id="target",
             target_kickoff=TARGET,
         )
         is None
+    )
+
+
+def test_starter_baselines_require_all_eight_prior_team_fixtures() -> None:
+    four_appearances = [
+        _appearance(index)
+        for index in range(4, 0, -1)
+    ]
+
+    assert (
+        usual_starter_before(
+            four_appearances,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is None
+    )
+    assert (
+        baseline_centre_back_before(
+            four_appearances,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is None
+    )
+
+
+def test_explicit_non_appearances_complete_the_eight_fixture_window() -> None:
+    observations = [
+        _appearance(
+            index,
+            minutes=90 if index <= 4 else 0,
+            started=index <= 4,
+        )
+        for index in range(8, 0, -1)
+    ]
+
+    assert (
+        usual_starter_before(
+            observations,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is True
+    )
+    assert (
+        baseline_centre_back_before(
+            observations,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is True
+    )
+
+
+@pytest.mark.parametrize(
+    "incomplete_observation",
+    [
+        _appearance(1, minutes=None),
+        _appearance(1, started=None),
+        _appearance(1, position=None),
+        _appearance(1, observed_delta=timedelta(days=1)),
+    ],
+)
+def test_starter_baselines_fail_closed_on_incomplete_observations(
+    incomplete_observation: PlayerAppearance,
+) -> None:
+    observations = [
+        *[_appearance(index) for index in range(8, 1, -1)],
+        incomplete_observation,
+    ]
+
+    assert (
+        usual_starter_before(
+            observations,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is None
+    )
+    assert (
+        baseline_centre_back_before(
+            observations,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is None
+    )
+
+
+def test_starter_baselines_fail_closed_on_transfer_or_duplicate_roster() -> None:
+    transfer_window = [
+        *[_appearance(index) for index in range(8, 1, -1)],
+        _appearance(1, team_id="team-b"),
+    ]
+    duplicate_window = [
+        *[_appearance(index) for index in range(8, 0, -1)],
+        _appearance(1),
+    ]
+
+    for observations in (transfer_window, duplicate_window):
+        assert (
+            usual_starter_before(
+                observations,
+                team_fixtures=_team_fixture_window(),
+                player_id="p1",
+                target_team_id="team-a",
+                target_fixture_id="target",
+                target_kickoff=TARGET,
+            )
+            is None
+        )
+        assert (
+            baseline_centre_back_before(
+                observations,
+                team_fixtures=_team_fixture_window(),
+                player_id="p1",
+                target_team_id="team-a",
+                target_fixture_id="target",
+                target_kickoff=TARGET,
+            )
+            is None
+        )
+
+
+def test_target_fixture_is_excluded_from_starter_baselines() -> None:
+    observations = [
+        *[_appearance(index) for index in range(8, 0, -1)],
+        _appearance(
+            0,
+            fixture_id="target",
+            started=False,
+            position="M",
+            observed_delta=timedelta(0),
+        ),
+    ]
+
+    assert (
+        usual_starter_before(
+            observations,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is True
+    )
+    assert (
+        baseline_centre_back_before(
+            observations,
+            team_fixtures=_team_fixture_window(),
+            player_id="p1",
+            target_team_id="team-a",
+            target_fixture_id="target",
+            target_kickoff=TARGET,
+        )
+        is True
     )
 
 

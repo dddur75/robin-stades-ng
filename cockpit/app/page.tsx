@@ -1529,6 +1529,15 @@ function MatchupLab() {
   const failedPromotionCriteria = matchup.promotion.criteria.filter(
     (criterion) => !criterion.passed,
   ).length;
+  const allHypothesesFrozen =
+    matchup.experiments.ownerHypotheses.length > 0 &&
+    matchup.experiments.ownerHypotheses.every(
+      (hypothesis) =>
+        hypothesis.frozenBeforeResults &&
+        hypothesis.minimumSupport > 0 &&
+        hypothesis.cutoff !== "UNSPECIFIED" &&
+        hypothesis.preregistrationHash.length === 64,
+    );
   const referenceModelCount = matchup.results.models.filter((model) =>
     model.id.startsWith("B0_"),
   ).length;
@@ -1624,6 +1633,7 @@ function MatchupLab() {
             <div><dt>Appariées</dt><dd>{matchup.dataset.pairing.pairedRows.toLocaleString("fr-FR")}</dd></div>
             <div><dt>Doublons clés</dt><dd>{matchup.dataset.pairing.duplicateKeys}</dd></div>
             <div><dt>Attrition marché</dt><dd>{matchup.dataset.pairing.leftAttrition}</dd></div>
+            <div><dt>Attrition équipe</dt><dd>{matchup.dataset.pairing.rightAttrition.toLocaleString("fr-FR")}</dd></div>
             <div><dt>Parquet</dt><dd>{bytes(matchup.dataset.parquetBytes)}</dd></div>
             <div><dt>Stockage</dt><dd>{matchup.dataset.heavyArtifactLocation}</dd></div>
             <div><dt>Hash dataset</dt><dd>{shortHash(matchup.dataset.hash)}</dd></div>
@@ -1668,7 +1678,7 @@ function MatchupLab() {
       <section className="panel">
         <div className="panel-head">
           <div><span>Hypothèses du propriétaire</span><h2>Préréglage H11-001 à H11-008</h2></div>
-          <StatusPill value="FROZEN_BEFORE_RESULTS" />
+          <StatusPill value={allHypothesesFrozen ? "FROZEN_BEFORE_RESULTS" : "PREREGISTRATION_PROOF_INCOMPLETE"} />
         </div>
         <div className="table-wrap"><table><thead><tr><th>ID</th><th>Hypothèse</th><th>Famille</th><th>Support min.</th><th>Cutoff</th><th>Éligibilité</th><th>Preuve</th></tr></thead><tbody>
           {matchup.experiments.ownerHypotheses.map((hypothesis) => (
@@ -1684,8 +1694,9 @@ function MatchupLab() {
           ))}
         </tbody></table></div>
         <p className="panel-note">
-          Chaque hypothèse est gelée avant lecture des résultats. Un gate fermé
-          produit DATA_GATE_BLOCKED, jamais une simulation présentée comme preuve.
+          {allHypothesesFrozen
+            ? "Chaque hypothèse est gelée avant lecture des résultats. Un gate fermé produit DATA_GATE_BLOCKED, jamais une simulation présentée comme preuve."
+            : "La preuve de préréglage est incomplète ; aucune hypothèse n’est présentée comme gelée ni testable."}
         </p>
       </section>
 

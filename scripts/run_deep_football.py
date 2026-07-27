@@ -11,7 +11,7 @@ import hashlib
 import json
 import math
 import random
-import shutil
+import tempfile
 import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -34,6 +34,7 @@ from robin.deep_football.matchups import (
     owner_hypotheses,
 )
 from robin.deep_football.models import paired_score
+from robin.deep_football.persistence import PROTOCOL_AMENDMENT_HASH
 from robin.deep_football.promotion import PROMOTION_CRITERIA, evaluate_promotion
 from robin.deep_football.public_evidence import (
     EvidenceEventKind,
@@ -1539,6 +1540,7 @@ def build_ledger(
     *,
     code_revision: str,
     dataset_hash: str,
+    campaign: dict[str, object],
 ) -> dict[str, object]:
     ledger = PublicEvidenceLedgerV2()
     for hypothesis in owner_hypotheses():
@@ -1577,6 +1579,78 @@ def build_ledger(
                 recorded_at=LEDGER_FROZEN_AT
                 + timedelta(microseconds=len(ledger.events)),
             )
+    models = campaign.get("models")
+    statistics = campaign.get("statistics")
+    if not isinstance(models, dict) or not isinstance(statistics, dict):
+        raise ValueError("JALON11_PRIMARY_LEDGER_EVIDENCE_REQUIRED")
+    primary_model_key = str(models.get("primary_for_inference", ""))
+    primary_model = models.get(primary_model_key)
+    if not primary_model_key or not isinstance(primary_model, dict):
+        raise ValueError("JALON11_PRIMARY_LEDGER_MODEL_REQUIRED")
+    campaign_result_hash = str(campaign.get("result_hash", ""))
+    if len(campaign_result_hash) != 64:
+        raise ValueError("JALON11_PRIMARY_LEDGER_RESULT_HASH_REQUIRED")
+    sample = campaign.get("sample")
+    support_raw = campaign.get("paired_1x2_rows")
+    if support_raw is None and isinstance(sample, dict):
+        support_raw = sample.get("paired_evaluation_rows")
+    if support_raw is None:
+        raise ValueError("JALON11_PRIMARY_LEDGER_SUPPORT_REQUIRED")
+    delta_log_loss = float(primary_model["delta_log_loss"])
+    primary_payload = {
+        "hypothesis_id": "H11-A-TEAM-INCREMENTAL",
+        "protocol_amendment_hash": PROTOCOL_AMENDMENT_HASH,
+        "campaign_result_hash": campaign_result_hash,
+        "reference": str(primary_model.get("reference", "")),
+        "challenger": primary_model_key,
+        "support": int(support_raw),
+        "promotion_eligible": False,
+    }
+    ledger.append(
+        event_kind=EvidenceEventKind.HYPOTHESIS_REGISTERED,
+        code_revision=code_revision,
+        dataset_hashes=(dataset_hash,),
+        status="CORRECTIVE_PROTOCOL_AMENDMENT",
+        reason="RECORDED_AFTER_TEAM_ONLY_DIAGNOSTICS_BEFORE_AUTHORITATIVE_INCREMENTAL_RUN",
+        payload={
+            **primary_payload,
+            "frozen_before_results": False,
+            "model_selection_on_test": False,
+        },
+        recorded_at=LEDGER_FROZEN_AT
+        + timedelta(microseconds=len(ledger.events)),
+    )
+    ledger.append(
+        event_kind=EvidenceEventKind.DATA_GATE_EVALUATED,
+        code_revision=code_revision,
+        dataset_hashes=(dataset_hash,),
+        status="PARTIAL",
+        reason="TEAM_GATE_PARTIAL;EXACT_MARKET_OBSERVED_AT_UNAVAILABLE",
+        payload={
+            **primary_payload,
+            "team_gate": str(campaign.get("team_gate", "PARTIAL")),
+        },
+        recorded_at=LEDGER_FROZEN_AT
+        + timedelta(microseconds=len(ledger.events)),
+    )
+    ledger.append(
+        event_kind=EvidenceEventKind.PATTERN_REJECTED,
+        code_revision=code_revision,
+        dataset_hashes=(dataset_hash,),
+        status="DOMINATED" if delta_log_loss >= 0.0 else "DATA_GATE_BLOCKED",
+        reason="NO_INCREMENTAL_GAIN_AND_DATA_GATES_CLOSED",
+        payload={
+            **primary_payload,
+            "delta_log_loss": delta_log_loss,
+            "delta_brier": float(primary_model["delta_brier"]),
+            "cr1_one_sided_p": float(statistics["cr1_one_sided_p"]),
+            "sign_flip_p": float(statistics["sign_flip_p"]),
+            "family_q": float(statistics["family_q"]),
+            "global_q": float(statistics["global_q"]),
+        },
+        recorded_at=LEDGER_FROZEN_AT
+        + timedelta(microseconds=len(ledger.events)),
+    )
     destination = output / "public-evidence-ledger-v2.jsonl"
     ledger.write_jsonl(destination)
     summary = ledger.audit()
@@ -1670,91 +1744,49 @@ def build_social_exports(output: Path) -> None:
         _write_json(export_root / name, payload)
 
 
-def run_all(
+def _complete_run(
     *,
     state: Path,
     output: Path,
+    candidate_output: Path,
     source_commit: str,
     main_commit: str,
     main_ci_run_id: str,
     replay: bool,
+    previous_campaign: dict[str, object] | None,
+    previous_manifest: dict[str, object] | None,
+    previous_ledger: dict[str, object] | None,
+    previous_ledger_file_hash: str | None,
 ) -> dict[str, object]:
-    output.mkdir(parents=True, exist_ok=True)
-    candidate_path = output / "campaign-11a-summary.json"
-    manifest_path = output / "dataset-manifest.json"
-    ledger_path = output / "ledger-audit.json"
-    ledger_jsonl_path = output / "public-evidence-ledger-v2.jsonl"
-    previous_campaign = (
-        json.loads(candidate_path.read_text("utf-8"))
-        if replay and candidate_path.exists()
-        else None
-    )
-    previous_manifest = (
-        json.loads(manifest_path.read_text("utf-8"))
-        if replay and manifest_path.exists()
-        else None
-    )
-    previous_ledger = (
-        json.loads(ledger_path.read_text("utf-8"))
-        if replay and ledger_path.exists()
-        else None
-    )
-    previous_ledger_file_hash = (
-        hashlib.sha256(ledger_jsonl_path.read_bytes()).hexdigest()
-        if replay and ledger_jsonl_path.exists()
-        else None
-    )
-    if replay and any(
-        value is None
-        for value in (
-            previous_campaign,
-            previous_manifest,
-            previous_ledger,
-            previous_ledger_file_hash,
-        )
-    ):
-        raise RuntimeError("JALON11_REPLAY_PRIMARY_ARTIFACTS_REQUIRED")
+    """Build a replay candidate away from the immutable primary artifacts."""
+
     audit = audit_state(
         state,
         source_commit=source_commit,
         main_commit=main_commit,
         main_ci_run_id=main_ci_run_id,
     )
-    _write_json(output / "audit-summary.json", audit)
-    manifest = build_team_dataset(state, output)
+    _write_json(candidate_output / "audit-summary.json", audit)
+    manifest = build_team_dataset(state, candidate_output)
     frame, _ = build_team_market_frame(state)
-    campaign = run_team_campaign(frame, output)
+    campaign = run_team_campaign(frame, candidate_output)
     red_team = build_red_team_report(audit, campaign)
-    _write_json(output / "red-team-report.json", red_team)
-    watchlist, decision = build_watchlist_and_decision(output, campaign=campaign)
-    if replay:
-        replay_ledger_root = output / ".ledger-reconstruction"
-        if replay_ledger_root.exists():
-            shutil.rmtree(replay_ledger_root)
-        reconstructed_ledger = build_ledger(
-            replay_ledger_root,
-            code_revision=main_commit,
-            dataset_hash=str(manifest["dataset_hash"]),
-        )
-        reconstructed_ledger_hash = hashlib.sha256(
-            (
-                replay_ledger_root / "public-evidence-ledger-v2.jsonl"
-            ).read_bytes()
-        ).hexdigest()
-        ledger = previous_ledger
-        ledger_equal = (
-            previous_ledger == reconstructed_ledger
-            and previous_ledger_file_hash == reconstructed_ledger_hash
-        )
-        shutil.rmtree(replay_ledger_root)
-    else:
-        ledger = build_ledger(
-            output,
-            code_revision=main_commit,
-            dataset_hash=str(manifest["dataset_hash"]),
-        )
-        ledger_equal = False
-    build_social_exports(output)
+    _write_json(candidate_output / "red-team-report.json", red_team)
+    watchlist, decision = build_watchlist_and_decision(
+        candidate_output,
+        campaign=campaign,
+    )
+    ledger = build_ledger(
+        candidate_output,
+        code_revision=main_commit,
+        dataset_hash=str(manifest["dataset_hash"]),
+        campaign=campaign,
+    )
+    candidate_ledger_file_hash = hashlib.sha256(
+        (candidate_output / "public-evidence-ledger-v2.jsonl").read_bytes()
+    ).hexdigest()
+    build_social_exports(candidate_output)
+
     hash_comparisons = {
         "campaign_result_hash": (
             previous_campaign is not None
@@ -1771,7 +1803,11 @@ def run_all(
             and previous_manifest.get("parquet_sha256")
             == manifest.get("parquet_sha256")
         ),
-        "ledger_hash_chain": ledger_equal,
+        "ledger_hash_chain": (
+            previous_ledger is not None
+            and previous_ledger == ledger
+            and previous_ledger_file_hash == candidate_ledger_file_hash
+        ),
     }
     data_loss = (
         abs(
@@ -1786,13 +1822,24 @@ def run_all(
         if replay
         else 0
     )
-    identical = (
-        replay
-        and all(hash_comparisons.values())
-        and data_loss == 0
-    )
+    identical = replay and all(hash_comparisons.values()) and data_loss == 0
     if replay and not identical:
-        raise RuntimeError("JALON11_REPLAY_NON_DETERMINISTIC")
+        _write_json(
+            output / "replay-mismatch.json",
+            {
+                "status": "JALON11_REPLAY_NON_DETERMINISTIC_PRIMARY_PRESERVED",
+                "hash_comparisons": hash_comparisons,
+                "data_loss": data_loss,
+                "hash_mismatches": hash_mismatches,
+                "provider_calls": 0,
+                "odds_api_credits": 0,
+                "production_status": "PRODUCTION_LOCKED",
+            },
+        )
+        raise RuntimeError(
+            "JALON11_REPLAY_NON_DETERMINISTIC_PRIMARY_PRESERVED"
+        )
+
     report = manifest.get("report", {})
     pairing = (
         report.get("pairing", {})
@@ -1855,6 +1902,83 @@ def run_all(
     }
     _write_json(output / "jalon11-final.json", final)
     return final
+
+
+def run_all(
+    *,
+    state: Path,
+    output: Path,
+    source_commit: str,
+    main_commit: str,
+    main_ci_run_id: str,
+    replay: bool,
+) -> dict[str, object]:
+    output.mkdir(parents=True, exist_ok=True)
+    candidate_path = output / "campaign-11a-summary.json"
+    manifest_path = output / "dataset-manifest.json"
+    ledger_path = output / "ledger-audit.json"
+    ledger_jsonl_path = output / "public-evidence-ledger-v2.jsonl"
+    previous_campaign = (
+        json.loads(candidate_path.read_text("utf-8"))
+        if replay and candidate_path.exists()
+        else None
+    )
+    previous_manifest = (
+        json.loads(manifest_path.read_text("utf-8"))
+        if replay and manifest_path.exists()
+        else None
+    )
+    previous_ledger = (
+        json.loads(ledger_path.read_text("utf-8"))
+        if replay and ledger_path.exists()
+        else None
+    )
+    previous_ledger_file_hash = (
+        hashlib.sha256(ledger_jsonl_path.read_bytes()).hexdigest()
+        if replay and ledger_jsonl_path.exists()
+        else None
+    )
+    if replay and any(
+        value is None
+        for value in (
+            previous_campaign,
+            previous_manifest,
+            previous_ledger,
+            previous_ledger_file_hash,
+        )
+    ):
+        raise RuntimeError("JALON11_REPLAY_PRIMARY_ARTIFACTS_REQUIRED")
+    if replay:
+        with tempfile.TemporaryDirectory(
+            prefix=".j11-replay-",
+            dir=output,
+        ) as replay_candidate:
+            return _complete_run(
+                state=state,
+                output=output,
+                candidate_output=Path(replay_candidate),
+                source_commit=source_commit,
+                main_commit=main_commit,
+                main_ci_run_id=main_ci_run_id,
+                replay=True,
+                previous_campaign=previous_campaign,
+                previous_manifest=previous_manifest,
+                previous_ledger=previous_ledger,
+                previous_ledger_file_hash=previous_ledger_file_hash,
+            )
+    return _complete_run(
+        state=state,
+        output=output,
+        candidate_output=output,
+        source_commit=source_commit,
+        main_commit=main_commit,
+        main_ci_run_id=main_ci_run_id,
+        replay=False,
+        previous_campaign=None,
+        previous_manifest=None,
+        previous_ledger=None,
+        previous_ledger_file_hash=None,
+    )
 
 
 def main() -> None:

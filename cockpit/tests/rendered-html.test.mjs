@@ -120,6 +120,9 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(matchup.costs.oddsApiCredits, 0);
   assert.equal(matchup.watchlist.notABet, true);
   assert.equal(matchup.promotion.promoted, false);
+  assert.deepEqual(matchup.promotion.criteria, [
+    { name: "DEEP_DATA_GATES", passed: false },
+  ]);
   assert.equal(matchup.verdict, "JALON_11_BLOCKED_BY_DATA_GATES");
   assert.equal(matchup.dataset.rows, 10732);
   assert.equal(matchup.dataset.pairing.leftAttrition, 0);
@@ -127,7 +130,21 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(matchup.coverage.competitions.length, 5);
   assert.equal(matchup.experiments.campaigns.length, 7);
   assert.equal(matchup.experiments.ownerHypotheses.length, 8);
+  assert.ok(
+    matchup.experiments.ownerHypotheses.every(
+      (hypothesis) =>
+        hypothesis.frozenBeforeResults === true &&
+        hypothesis.minimumSupport >= 80 &&
+        hypothesis.cutoff !== "UNSPECIFIED" &&
+        /^[0-9a-f]{64}$/.test(hypothesis.preregistrationHash),
+    ),
+  );
   assert.equal(matchup.coverage.gates.length, 9);
+  assert.equal(matchup.results.campaign, "11A");
+  assert.equal(
+    matchup.results.status,
+    "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+  );
   assert.equal(
     matchup.coverage.gates.find((gate) => gate.name === "TEAM_GATE").status,
     "PARTIAL",
@@ -218,6 +235,8 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Feature Lab/);
   assert.match(page, /Model Lab/);
   assert.match(page, /Model Arena/);
+  assert.match(page, /Attrition équipe/);
+  assert.match(page, /pairing\.rightAttrition/);
   assert.match(page, /Matchup Lab/);
   assert.match(page, /Score Comparisons/);
   assert.match(page, /Comparison Table/);

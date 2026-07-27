@@ -9,6 +9,25 @@ import pytest
 from scripts import build_cockpit_snapshot
 
 
+def test_matchup_snapshot_preserves_campaign_and_preregistration_proof() -> None:
+    matchup = build_cockpit_snapshot.build_matchup_lab()
+
+    assert matchup["results"]["campaign"] == "11A"
+    assert (
+        matchup["results"]["status"]
+        == "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC"
+    )
+    hypotheses = matchup["experiments"]["ownerHypotheses"]
+    assert len(hypotheses) == 8
+    assert all(item["frozenBeforeResults"] is True for item in hypotheses)
+    assert all(item["minimumSupport"] >= 80 for item in hypotheses)
+    assert all(item["cutoff"] != "UNSPECIFIED" for item in hypotheses)
+    assert all(len(item["preregistrationHash"]) == 64 for item in hypotheses)
+    assert matchup["promotion"]["criteria"] == [
+        {"name": "DEEP_DATA_GATES", "passed": False}
+    ]
+
+
 def test_matchup_only_refresh_preserves_other_cockpit_evidence(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

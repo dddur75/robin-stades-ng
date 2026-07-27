@@ -11,6 +11,7 @@ from typing import Any
 
 import pandas as pd
 
+from robin.deep_football.matchups import owner_hypotheses
 from robin.domain.odds import stable_internal_id
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1133,6 +1134,10 @@ def build_matchup_lab() -> dict[str, Any]:
                 "cacheOnly": item.get("cache_only") is True,
             }
         )
+    primary_campaign = next(
+        (item for item in campaigns if item["id"] == "11A"),
+        {"id": "NOT_RUN", "status": "NOT_RUN"},
+    )
 
     hypotheses_source = audit.get("owner_hypotheses", [])
     if not isinstance(hypotheses_source, list):
@@ -1142,34 +1147,32 @@ def build_matchup_lab() -> dict[str, Any]:
         list,
     ):
         hypotheses_source = campaign["owner_hypotheses"]
+    hypothesis_contracts = {
+        contract.hypothesis_id: contract for contract in owner_hypotheses()
+    }
     hypotheses = []
     for item in hypotheses_source:
         if not isinstance(item, dict):
             continue
+        hypothesis_id = str(
+            item.get("hypothesis_id", item.get("id", "UNKNOWN"))
+        )
+        contract = hypothesis_contracts.get(hypothesis_id)
         hypotheses.append(
             {
-                "id": str(
-                    item.get("hypothesis_id", item.get("id", "UNKNOWN"))
-                ),
+                "id": hypothesis_id,
                 "title": str(
                     item.get(
                         "title",
-                        {
-                            "H11-001": "Buteur en forme vs deux centraux absents",
-                            "H11-002": "4-3-3 vs 4-4-2",
-                            "H11-003": "Pied fort et couloir",
-                            "H11-004": "Gardien habituel absent",
-                            "H11-005": "Nouveau duo central",
-                            "H11-006": "Continuité du onze",
-                            "H11-007": "Changement tactique",
-                            "H11-008": "Fatigue et formation",
-                        }.get(
-                            str(item.get("id", "")),
-                            "Untitled hypothesis",
-                        ),
+                        contract.title if contract else "Untitled hypothesis",
                     )
                 ),
-                "family": str(item.get("statistical_family", "UNKNOWN")),
+                "family": str(
+                    item.get(
+                        "statistical_family",
+                        contract.statistical_family if contract else "UNKNOWN",
+                    )
+                ),
                 "eligibility": str(
                     item.get(
                         "eligibility",
@@ -1184,11 +1187,30 @@ def build_matchup_lab() -> dict[str, Any]:
                     for value in str(item.get("limit", "")).split(";")
                     if value
                 ],
-                "minimumSupport": integer(item.get("minimum_support")),
-                "cutoff": str(item.get("cutoff", "UNSPECIFIED")),
-                "frozenBeforeResults": item.get("frozen_before_results") is True,
+                "minimumSupport": integer(
+                    item.get(
+                        "minimum_support",
+                        contract.minimum_support if contract else 0,
+                    )
+                ),
+                "cutoff": str(
+                    item.get(
+                        "cutoff",
+                        contract.cutoff if contract else "UNSPECIFIED",
+                    )
+                ),
+                "frozenBeforeResults": (
+                    item.get(
+                        "frozen_before_results",
+                        contract.frozen_before_results if contract else False,
+                    )
+                    is True
+                ),
                 "preregistrationHash": str(
-                    item.get("preregistration_hash", "")
+                    item.get(
+                        "preregistration_hash",
+                        contract.preregistration_hash if contract else "",
+                    )
                 ),
             }
         )
@@ -1315,7 +1337,7 @@ def build_matchup_lab() -> dict[str, Any]:
             **promotion,
             "status": "REJECTED",
             "promoted": False,
-            "criteria": {},
+            "criteria": {"DEEP_DATA_GATES": False},
             "failed_criteria": ["DEEP_DATA_GATES"],
         }
     criteria_source = promotion.get("criteria", {})
@@ -1626,8 +1648,12 @@ def build_matchup_lab() -> dict[str, Any]:
             ),
         },
         "results": {
-            "campaign": str(campaign.get("campaign", "NOT_RUN")),
-            "status": str(campaign.get("status", "NOT_RUN")),
+            "campaign": str(
+                campaign.get("campaign", primary_campaign["id"])
+            ),
+            "status": str(
+                campaign.get("status", primary_campaign["status"])
+            ),
             "models": models,
             "folds": normalized_folds[:8],
             "primaryForInference": primary_model_id,

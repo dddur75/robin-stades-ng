@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T16:49:59.682933+00:00",
+  "generatedAt": "2026-07-27T17:36:26.356591+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -19584,124 +19584,124 @@
       "ownerHypotheses": [
         {
           "id": "H11-001",
-          "title": "Buteur en forme vs deux centraux absents",
-          "family": "UNKNOWN",
+          "title": "Buteur en forme contre défense centrale amputée",
+          "family": "interactions",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "PLAYER_FORM_GATE",
             "ABSENCE_GATE",
             "STARTER_BASELINE_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 80,
+          "cutoff": "PRE_LINEUP_OR_POST_LINEUP_EXPLICIT",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "eea4f1ac12fdfdcde1a0692db0e6dab7ce99dbbbda035aa407d470ab3a0f1932"
         },
         {
           "id": "H11-002",
-          "title": "4-3-3 vs 4-4-2",
-          "family": "UNKNOWN",
+          "title": "4-3-3 contre 4-4-2",
+          "family": "formations",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "LINEUP_GATE",
             "FORMATION_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 120,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "e417115d9e65c7625a66ec771c7068adeed500700ac3b38fcca610e720e078d9"
         },
         {
           "id": "H11-003",
-          "title": "Pied fort et couloir",
-          "family": "UNKNOWN",
+          "title": "Trois attaquants droitiers contre défense gauchère",
+          "family": "footedness",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "LINEUP_GATE",
             "FOOTEDNESS_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 100,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "cea5693e0e47d8b7cfb8399c67dc6d85998d1e1e5fd0f972308f6884802e8610"
         },
         {
           "id": "H11-004",
-          "title": "Gardien habituel absent",
-          "family": "UNKNOWN",
+          "title": "Gardien titulaire absent",
+          "family": "absences",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "ABSENCE_GATE",
             "STARTER_BASELINE_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 80,
+          "cutoff": "PRE_LINEUP_OR_POST_LINEUP_EXPLICIT",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "297a45c10e63ff0155c200b91527375f93ab0846975465f19be7daa299e54603"
         },
         {
           "id": "H11-005",
-          "title": "Nouveau duo central",
-          "family": "UNKNOWN",
+          "title": "Deux centraux nouveaux ensemble",
+          "family": "lineup",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "LINEUP_GATE",
             "STARTER_BASELINE_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 100,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "14b43f3539457a27025f0fb253aeef11c2fd35c45810eaf1061b0f7c1bc1f411"
         },
         {
           "id": "H11-006",
-          "title": "Continuité du onze",
-          "family": "UNKNOWN",
+          "title": "Rupture du onze",
+          "family": "lineup",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "LINEUP_GATE",
             "ABSENCE_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 120,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "bdfef06acb33e8b7d36e219c1f42d00f1cb1770784a28d7edb53c6f74c583e23"
         },
         {
           "id": "H11-007",
-          "title": "Changement tactique",
-          "family": "UNKNOWN",
+          "title": "Congestion et tactique inhabituelle",
+          "family": "interactions",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "LINEUP_GATE",
             "FORMATION_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 100,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "436dfaac52acec5251b2f933ece0c9749d2bb8a0aa02ebb3255b0d8243e20267"
         },
         {
           "id": "H11-008",
-          "title": "Fatigue et formation",
-          "family": "UNKNOWN",
+          "title": "Matchup structurel",
+          "family": "matchups",
           "eligibility": "DATA_GATE_BLOCKED",
           "blockingGates": [
             "LINEUP_GATE",
             "FORMATION_GATE"
           ],
-          "minimumSupport": 0,
-          "cutoff": "UNSPECIFIED",
-          "frozenBeforeResults": false,
-          "preregistrationHash": ""
+          "minimumSupport": 120,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "210281fbd53d625e04410ff4820fe669c4e59a232b071f042e5b235fc2c1d86a"
         }
       ],
       "eligible": 0,
       "blocked": 4
     },
     "results": {
-      "campaign": "NOT_RUN",
-      "status": "NOT_RUN",
+      "campaign": "11A",
+      "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
       "models": [
         {
           "id": "B0_MARKET",
@@ -20100,7 +20100,12 @@
     "promotion": {
       "status": "REJECTED",
       "promoted": false,
-      "criteria": [],
+      "criteria": [
+        {
+          "name": "DEEP_DATA_GATES",
+          "passed": false
+        }
+      ],
       "failedCriteria": [
         "DEEP_DATA_GATES"
       ]

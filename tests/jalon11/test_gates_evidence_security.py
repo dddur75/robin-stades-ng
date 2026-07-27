@@ -34,6 +34,8 @@ from robin.deep_football.public_evidence import (
     EvidenceEventKind,
     PublicEvidenceLedgerV2,
 )
+from scripts import run_deep_football
+from scripts.run_deep_football import build_ledger
 
 NOW = datetime(2026, 7, 27, 12, tzinfo=UTC)
 
@@ -454,3 +456,177 @@ def test_empty_public_ledger_is_a_valid_genesis_chain() -> None:
         "events": 0,
         "head_hash": "0" * 64,
     }
+
+
+def test_public_ledger_chains_the_corrective_primary_hypothesis(
+    tmp_path: Path,
+) -> None:
+    root = Path(__file__).resolve().parents[2]
+    campaign = json.loads(
+        (root / "reports" / "jalon11" / "campaign-summary.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    summary = build_ledger(
+        tmp_path,
+        code_revision="revision-1",
+        dataset_hash=str(campaign["dataset_hash"]),
+        campaign=campaign,
+    )
+    rows = [
+        json.loads(line)
+        for line in (
+            tmp_path / "public-evidence-ledger-v2.jsonl"
+        ).read_text(encoding="utf-8").splitlines()
+    ]
+
+    assert summary["status"] == "HASH_CHAIN_VERIFIED"
+    assert summary["events"] == 27
+    primary = [
+        row
+        for row in rows
+        if row["payload"].get("hypothesis_id")
+        == "H11-A-TEAM-INCREMENTAL"
+    ]
+    assert [row["event_kind"] for row in primary] == [
+        "HYPOTHESIS_REGISTERED",
+        "DATA_GATE_EVALUATED",
+        "PATTERN_REJECTED",
+    ]
+    assert primary[0]["status"] == "CORRECTIVE_PROTOCOL_AMENDMENT"
+    assert primary[-1]["status"] == "DOMINATED"
+    assert primary[-1]["payload"]["campaign_result_hash"] == campaign["result_hash"]
+    assert primary[-1]["payload"]["promotion_eligible"] is False
+
+
+def test_non_deterministic_replay_preserves_primary_artifacts(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output = tmp_path / "primary"
+    output.mkdir()
+    primary_campaign = {"result_hash": "a" * 64, "sentinel": "PRIMARY"}
+    primary_manifest = {
+        "dataset_hash": "d" * 64,
+        "parquet_sha256": "e" * 64,
+        "rows": 1,
+        "sentinel": "PRIMARY",
+    }
+    primary_ledger = {"status": "HASH_CHAIN_VERIFIED", "head_hash": "f" * 64}
+    paths = {
+        "campaign": output / "campaign-11a-summary.json",
+        "manifest": output / "dataset-manifest.json",
+        "ledger": output / "ledger-audit.json",
+        "ledger_file": output / "public-evidence-ledger-v2.jsonl",
+    }
+    paths["campaign"].write_text(json.dumps(primary_campaign), encoding="utf-8")
+    paths["manifest"].write_text(json.dumps(primary_manifest), encoding="utf-8")
+    paths["ledger"].write_text(json.dumps(primary_ledger), encoding="utf-8")
+    paths["ledger_file"].write_text("PRIMARY_LEDGER\n", encoding="utf-8")
+    primary_bytes = {name: path.read_bytes() for name, path in paths.items()}
+
+    monkeypatch.setattr(
+        run_deep_football,
+        "audit_state",
+        lambda *_args, **_kwargs: {
+            "market": {"rows": 1, "strict_1x2_rows": 1},
+            "storage": {},
+        },
+    )
+
+    def build_manifest(_state: Path, candidate: Path) -> dict[str, object]:
+        manifest = {
+            "dataset_hash": "d" * 64,
+            "parquet_sha256": "e" * 64,
+            "rows": 1,
+            "report": {"pairing": {"duplicate_keys": 0}},
+            "sentinel": "REPLAY",
+        }
+        (candidate / "dataset-manifest.json").write_text(
+            json.dumps(manifest),
+            encoding="utf-8",
+        )
+        return manifest
+
+    def build_campaign(_frame: object, candidate: Path) -> dict[str, object]:
+        campaign = {
+            "result_hash": "b" * 64,
+            "paired_1x2_rows": 1,
+            "sentinel": "REPLAY",
+        }
+        (candidate / "campaign-11a-summary.json").write_text(
+            json.dumps(campaign),
+            encoding="utf-8",
+        )
+        return campaign
+
+    def build_candidate_ledger(
+        candidate: Path,
+        **_kwargs: object,
+    ) -> dict[str, object]:
+        (candidate / "public-evidence-ledger-v2.jsonl").write_text(
+            "PRIMARY_LEDGER\n",
+            encoding="utf-8",
+        )
+        return primary_ledger
+
+    monkeypatch.setattr(
+        run_deep_football,
+        "build_team_dataset",
+        build_manifest,
+    )
+    monkeypatch.setattr(
+        run_deep_football,
+        "build_team_market_frame",
+        lambda _state: (object(), {}),
+    )
+    monkeypatch.setattr(
+        run_deep_football,
+        "run_team_campaign",
+        build_campaign,
+    )
+    monkeypatch.setattr(
+        run_deep_football,
+        "build_red_team_report",
+        lambda *_args: {},
+    )
+    monkeypatch.setattr(
+        run_deep_football,
+        "build_watchlist_and_decision",
+        lambda *_args, **_kwargs: ({}, {}),
+    )
+    monkeypatch.setattr(
+        run_deep_football,
+        "build_ledger",
+        build_candidate_ledger,
+    )
+    monkeypatch.setattr(
+        run_deep_football,
+        "build_social_exports",
+        lambda _output: None,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="JALON11_REPLAY_NON_DETERMINISTIC_PRIMARY_PRESERVED",
+    ):
+        run_deep_football.run_all(
+            state=tmp_path / "state",
+            output=output,
+            source_commit="source",
+            main_commit="revision",
+            main_ci_run_id="run",
+            replay=True,
+        )
+
+    assert {
+        name: path.read_bytes() for name, path in paths.items()
+    } == primary_bytes
+    assert not list(output.glob(".j11-replay-*"))
+    mismatch = json.loads(
+        (output / "replay-mismatch.json").read_text(encoding="utf-8")
+    )
+    assert mismatch["status"].endswith("PRIMARY_PRESERVED")
+    assert mismatch["provider_calls"] == 0
+    assert mismatch["odds_api_credits"] == 0
