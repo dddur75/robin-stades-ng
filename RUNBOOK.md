@@ -337,3 +337,36 @@ zéro fournisseur.
 
 À `OBJECT_STORAGE_REQUIRED`, suspendre P3/P4 et exécuter d’abord le workflow R2
 en dry-run. Suivre `docs/operations/R2-MIGRATION-RUNBOOK.md`.
+
+Le Jalon 9.1 distingue conservation des sources, réplication continue et
+restauration. `double_write=true` dans un ancien rapport ne prouve que
+l'absence de mutation pendant le lot. Les migrations longues utilisent le
+workflow 30 avec scope, curseur et checkpoint; le workflow 31 restaure un
+échantillon multi-format dans un dossier temporaire. Les workflows historiques
+normaux répliquent uniquement leur delta et laissent Git/Neon disponibles si
+R2 est momentanément indisponible.
+
+Avant fusion de la PR #12, utiliser sur la branche de la PR le workflow 22
+comme façade compatible avec la branche par défaut : une borne strictement
+supérieure à 250 lance la migration reprenable par sous-lots de 1 000; une
+borne négative lance l'audit sans écriture. Réserver le workflow 30 natif aux
+exécutions post-fusion, lorsqu'il sera présent sur la branche par défaut. Ne
+jamais lancer deux modes spéciaux simultanément.
+
+Si `repair-provenance` retourne
+`HISTORICAL_PROVENANCE_REPAIR_INCOMPLETE`, ne pas ignorer l'incident et ne pas
+relancer le fournisseur. La persistance doit s'exécuter avec `always()` avant
+le verdict terminal afin de conserver le lot dans Git/Neon et le pont R2. Le
+workflow publie ensuite l'échec de provenance. Cette séquence est obligatoire
+avant fusion de la PR #12.
+
+Pour fermer le gate live sans appel fournisseur, lancer `14 - Sante quotidienne
+shadow` sur la branche de la PR. Exiger `POSTGRESQL_HEALTHY`, la révision
+Alembic attendue, `bridge_lag_records=0`, `provider_calls=0`,
+`quota_consumed=0` et `PRODUCTION_LOCKED`.
+
+Preuve Jalon 9.1 : migration complète en six runs, audit
+`AUDIT_COMPLETE_VERIFIED` dans `30239697041`, restauration
+`RESTORE_VERIFIED` dans `30203249310`, réplication `SYNCED` et lag nul dans
+`30238268175`. L'audit a repris après un delta de readiness sans réinitialiser
+son curseur et n'a exécuté aucun `PutObject`.

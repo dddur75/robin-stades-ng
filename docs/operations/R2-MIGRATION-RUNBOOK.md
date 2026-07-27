@@ -2,83 +2,154 @@
 
 ## Invariants
 
-- workflow pré-fusion : `22 - Qualité historique` ;
 - branche : `codex/jalon-9-market-player-storage` ;
+- PR #12 maintenue en brouillon jusqu'à fermeture de tous les gates ;
+- `historical-data` reste la source principale ;
+- R2 est un miroir privé, sans méthode de suppression ;
 - `PRODUCTION_LOCKED`, `REAL_BETS=false`, `NO_BET_DEFAULT=true` ;
-- bucket R2 privé, endpoint global
-  `https://<R2_ACCOUNT_ID>.r2.cloudflarestorage.com`, région `auto` ;
-- aucune suppression et conservation intégrale de `historical-data` ;
-- aucun appel API-Football ni consommation The Odds API.
+- aucun appel API-Football ni The Odds API pendant une migration ou restauration.
 
-Le dry-run ne lit aucun secret R2 et n'instancie aucun client distant. Les
-quatre secrets `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
-`R2_SECRET_ACCESS_KEY` et `R2_BUCKET_NAME` ne sont transmis au script que
-comme variables d'environnement lors d'une exécution réelle.
+## Workflows
 
-## Procédure pré-fusion exacte
+- `22 - Qualité historique` : benchmark cumulatif 25 puis 250 ;
+- `30 - Migration object storage` : lots segmentés avec checkpoint ;
+- `31 - Test restauration R2` : restauration représentative isolée.
 
-Dans GitHub Actions, choisir `22 - Qualité historique`, puis sélectionner la
-branche `codex/jalon-9-market-player-storage`.
+Tous utilisent `historical-state`, `cancel-in-progress: false` et une
+persistance légère des seuls contrôles R2.
 
-1. Dry-run :
+## Benchmark 250
+
+1. Attendre que `historical-state` soit libre.
+2. Lancer le workflow 22 avec :
    - `run_external_validation=false`
    - `run_critical_closure=false`
    - `run_object_storage_migration=true`
-   - `execute_object_storage_migration=false`
-   - `object_storage_max_files=25`
-2. Premier lot réel de 25 :
-   - mêmes valeurs, sauf `execute_object_storage_migration=true`
-3. Rejouer exactement le lot de 25 avec les mêmes valeurs.
-4. Passer à `object_storage_max_files=250`.
-5. Utiliser une valeur très supérieure au périmètre, par exemple
-   `object_storage_max_files=1000000`, pour vérifier tout le périmètre.
-6. Rejouer la valeur complète pour prouver l'idempotence globale.
-7. Contrôler le rapport durable
-   `storage/r2-migration-latest.json` après chaque exécution.
-8. Ne jamais supprimer la branche `historical-data` ni ses fichiers.
-9. Ne fusionner la PR #12 qu'après un replay complet vert.
+   - `execute_object_storage_migration=true`
+   - `object_storage_max_files=250`
+3. Exiger `remote_verified=250`, zéro mismatch, zéro mutation et zéro
+   suppression.
+4. Rejouer exactement les mêmes paramètres.
+5. Exiger `uploaded=0`, `replayed=250`, `remote_verified=250`.
+6. Calculer l'ETA centrale et haute avant toute migration complète.
 
-Un seul des trois modes spéciaux `run_external_validation`,
-`run_critical_closure` et `run_object_storage_migration` peut être actif.
+## Migration segmentée
 
-## Résultats attendus
+Avant fusion, utiliser le workflow 22 sur la branche de la PR avec :
 
-Dry-run :
+- `run_object_storage_migration=true`
+- `execute_object_storage_migration=true`
+- `object_storage_max_files=5000` pour la migration ;
+- les deux autres modes spéciaux à `false`.
 
-- `mode=DRY_RUN`, `status=DRY_RUN_READY`, `complete=false` ;
-- `uploaded=0`, `replayed=0`, `remote_verified=0` ;
-- `deletions=0`, `source_mutations=0`, `double_write=true` ;
-- `bucket_hash=null` et aucun secret requis.
+Une valeur supérieure à 250 active la reprise et découpe la borne en sous-lots
+de 1 000 sous le même verrou. Répéter le run jusqu'à
+`COMPLETE_VERIFIED`. Une valeur négative active l'audit sans écriture; utiliser
+`-5000` jusqu'à `AUDIT_COMPLETE_VERIFIED`.
 
-Premier lot de 25, si le périmètre compte au moins 25 fichiers :
+Après fusion, le workflow 30 expose directement :
 
-- `selected_files=25`, `uploaded=25`, `replayed=0` ;
-- `remote_verified=25`, zéro mismatch et zéro objet distant manquant ;
-- `status=PARTIAL_VERIFIED`, sauf si le périmètre total ne dépasse pas 25.
+- `execute=true`
+- `max_files=<taille du lot validée>`
+- `resume=true`
+- `max_batches_per_run=<nombre borné par l'ETA mesurée>`
+- `start_after=""`, sauf reprise opérateur explicite.
 
-Replay du lot de 25 :
+Le scope est figé dans `r2-migration-scope.json`. Le checkpoint contient
+`next_index`, `last_key`, `uploaded`, `replayed`, `verified`, `failed` et le
+statut. Ne jamais supprimer ou éditer manuellement ces fichiers.
 
-- `selected_files=25`, `uploaded=0`, `replayed=25` ;
-- les 25 objets sont relus et `remote_verified=25`.
+Après un échec, relancer le même workflow avec `resume=true`. Le curseur reprend
+au premier objet non acquitté. Ne pas utiliser un run monolithique si l'ETA
+centrale dépasse 90 minutes ou si l'ETA haute dépasse 110 minutes.
 
-Exécution complète :
+Après la migration complète, relancer le workflow 30 avec les mêmes paramètres,
+`resume=true` et `audit=true`. L'audit dispose de son propre checkpoint et
+relit le scope complet sans aucun `PutObject`. Exiger
+`AUDIT_COMPLETE_VERIFIED`, zéro upload, zéro mismatch et zéro objet manquant.
 
-- `selected_files=source_files` ;
-- `remote_verified=source_files` ;
-- `status=COMPLETE_VERIFIED` et `complete=true` uniquement avec zéro
-  mismatch, zéro objet manquant, zéro mutation source et `double_write=true`.
+### Dimensionnement mesuré
 
-Toute erreur d'authentification, d'autorisation, de réseau, de hash ou de
-taille est bloquante. Un `401` ou `403` n'est jamais assimilé à un objet
-absent.
+- périmètre : 25 422 fichiers, 710 072 047 octets ;
+- benchmark upload/replay : 250 fichiers en 246,660 s ;
+- replay pur : 250 fichiers en 172,533 s ;
+- projection monolithique restante : 400,6 minutes, donc interdite ;
+- plan : six runs de 5 000 objets au plus, sous-lots de 1 000 ;
+- durée centrale projetée par run plein : 82,7 minutes ;
+- durée haute projetée par run plein : 102,6 minutes ;
+- audit : six runs de 5 000 objets au plus.
 
-## Risques résiduels
+Le volume et les opérations projetés restent sous les quotas gratuits mensuels
+R2 publiés (10 Go-mois, 1 million de classe A, 10 millions de classe B). Ne
+souscrire aucun service ni augmenter la taille des runs pour consommer un quota
+disponible.
 
-- coût et durée de lecture/écriture du périmètre complet d'environ 500 MB ;
-- indisponibilité temporaire de GitHub Actions, R2 ou du pont
-  `historical-data` ;
-- erreur de configuration du bucket privé ou de ses credentials ;
-- mutation concurrente du périmètre source, qui fait échouer la preuve.
+### Exécution réelle du périmètre figé
 
-Le workflow est limité à 120 minutes et le groupe de concurrence
-`historical-state` sérialise les écritures durables.
+Les six runs de migration sont `30204764498`, `30209017214`,
+`30212660451`, `30218134027`, `30220648824` et `30225027066`.
+Le checkpoint final contient `next_index=25422`, `verified=25422`,
+`uploaded=24627`, `replayed=471`, `bootstrapped_from_index=324` et
+`status=COMPLETE`.
+
+L'audit complet s'effectue avec la borne `-5000`. Il est strictement en lecture
+seule : chaque segment doit conserver `uploaded=0` et `put_operations=0`.
+Si un fichier source mutable a changé depuis la migration, ne pas contourner
+le mismatch et ne pas réinitialiser le checkpoint. Exécuter d'abord un passage
+normal de réplication continue sans fournisseur, puis reprendre l'audit au même
+curseur jusqu'à `AUDIT_COMPLETE_VERIFIED`.
+
+Preuves réelles de l'audit :
+
+- segments 1 à 5 : `30225577323`, `30228448367`, `30230060695`,
+  `30232044231`, `30233935541` ;
+- incident bloquant sans écriture : `30236737672` ;
+- réplication du delta et lag nul : `30238268175` ;
+- reprise du segment 6 : `30239697041`.
+
+Le checkpoint final contient `next_index=25422`, `verified=25422`,
+`replayed=25422`, `uploaded=0`, `failed=0` et `status=COMPLETE`.
+
+## Réplication continue
+
+Les workflows historiques normaux passent les secrets R2 à l'action de
+persistance. La réplication est limitée à 500 objets par run, avec deux retries
+et circuit breaker après trois échecs consécutifs.
+
+Contrôler `storage/r2-replication-latest.json` :
+
+- `SYNCED` et `lag_objects=0` : miroir à jour ;
+- `LAGGING` : relancer un workflow historique ou un replay de delta ;
+- `CIRCUIT_OPEN` : conserver Git/Neon, corriger l'incident R2, puis rejouer.
+
+Une panne R2 ne justifie jamais une suppression Git.
+
+## Restauration
+
+Lancer le workflow 31 seulement après un lot migré vert. Le dossier de
+restauration est créé par `mktemp -d` et doit être vide. Le gate exige :
+
+- JSON, Parquet, CSV, manifeste et checkpoint ;
+- hash et taille identiques ;
+- registre vérifié ;
+- Parquet lisible ;
+- replay bundle sans fournisseur ;
+- zéro perte et zéro doublon métier ;
+- `status=RESTORE_VERIFIED`.
+
+Le test n'écrit jamais dans l'état historique réel.
+
+## Gate avant fusion
+
+La PR #12 ne devient prête que lorsque :
+
+- benchmark et replay 250 verts ;
+- migration segmentée complète et replay/audit intégral verts ;
+- restauration R2 verte ;
+- réplication continue verte et lag nul ;
+- CI complète verte ;
+- workflows 14, 21 et 22 verts ;
+- aucun mode maintenance laissé actif ;
+- production toujours verrouillée.
+
+Ne pas fusionner automatiquement la PR.
