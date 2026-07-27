@@ -12,8 +12,9 @@ provider
   → payload JSON reçu
   → SHA-256 sur les octets canoniques
   → compression gzip déterministe
-  → écriture conditionnelle R2
-  → receipt compact
+  → intention de reprise immuable
+  → payload R2 conditionnel
+  → receipt compact conditionnel
   → index PostgreSQL
   → projections et gates
 ```
@@ -31,11 +32,28 @@ prospective-deep-data/
               observed_at=<utc_timestamp>/
                 payload-<sha256>.json.gz
                 receipt-<window-scope-sha256>-<payload-sha256>.json
+
+prospective-deep-data-recovery/
+  schema-v1/
+    intent-<receipt-sha256>.json
 ```
 
 Le payload brut est dédupliqué par son hash. Chaque fenêtre conserve toutefois
 un reçu distinct grâce au hash de portée `window_id + window_label`, y compris
 si deux fenêtres partagent exactement le même payload et le même `observed_at`.
+
+Avant le payload, une intention de reprise canonique et append-only conserve le
+payload gzip exact et son reçu complet. Un arrêt après cette intention ou après
+le payload est ainsi réparé sans rappeler le fournisseur. Une capture legacy
+complète, payload et reçu cohérents mais sans intention, reste valide.
+
+La capacité publiée compte les objets physiques uniques et leurs octets réels :
+payloads, reçus JSON et intentions de reprise. Les compteurs
+`physical_recovery_objects` et `physical_recovery_bytes` rendent explicite le
+surcoût de durabilité. Les métriques de replay publient séparément les
+références logiques et les octets relus ; elles ne supposent jamais
+`objets = 2 × reçus`, car plusieurs reçus peuvent référencer le même payload
+physique dédupliqué.
 Tous les segments sont normalisés et validés. Une clé ne contient ni secret,
 ni header, ni URL signée, ni paramètre de clé API.
 
@@ -77,7 +95,7 @@ Les secrets et headers sensibles sont interdits.
 
 | Stockage | Contenu | Interdit |
 |---|---|---|
-| R2 | payloads gzip, reçus unitaires, versions | suppression et écrasement |
+| R2 | intentions de reprise, payloads gzip, reçus unitaires, versions | suppression et écrasement |
 | PostgreSQL | index, relations, tentatives, reçus, projections, gates | corps JSON volumineux |
 | Git | code, migrations, contrats, rapports compacts, hashes | payload brut |
 | Artifacts GitHub | rapports bornés et preuves de run | source primaire durable |

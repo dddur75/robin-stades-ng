@@ -32,6 +32,14 @@ scripts/run_prospective_observatory.py gate-report
 Consulter `--help` pour les paramètres. `pilot-mock` sert uniquement aux tests
 et ne peut jamais alimenter Robin Live comme source réelle.
 
+Les entrées `--cache` portent la provenance immuable `cache-test` et sont
+refusées avec `--execute` ou avec PostgreSQL durable. Un `--object-store-root`
+local est également refusé pour toute exécution fournisseur et pour tout
+replay vers PostgreSQL durable : la lane opérationnelle écrit et relit R2
+uniquement. Chaque unité fournisseur est réservée dans le ledger durable avant
+l’appel correspondant, afin qu’une erreur de parsing, R2 ou PostgreSQL ne
+rende jamais le coût invisible.
+
 ## Rapports compacts
 
 Le répertoire d’artifact contient :
@@ -82,8 +90,11 @@ pnpm --dir cockpit test
 Le builder refuse un rapport sans `PRODUCTION_LOCKED`, avec `real_bets=true`,
 publication sociale active, démo active ou décisions non nulles.
 
-`prospective-gate-report.yml` reconstruit et teste ce snapshot, puis publie
-l’état Robin Live et le ledger V3 dans un artefact compact. Ce mécanisme
+`prospective-gate-report.yml` exécute dans le même verrou un replay R2 complet
+sans fournisseur, puis le gate report, reconstruit et teste le snapshot, et
+publie l’état Robin Live et le ledger V3 dans un artefact compact. Le gate et
+le cockpit sont ainsi liés au même ensemble exact de reçus, sans réutiliser
+un artefact d’un run antérieur. Ce mécanisme
 n’implique pas un déploiement privé : tant qu’aucune cible privée n’est
 explicitement reliée au dépôt, le statut exact reste
 `COCKPIT_ARTIFACT_PUBLISHED`, jamais `COCKPIT_PRIVATE_DEPLOYED`.

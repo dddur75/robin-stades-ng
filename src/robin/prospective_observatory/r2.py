@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 import gzip
+import hashlib
 import json
+import re
+import zlib
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from datetime import UTC
@@ -13,12 +18,15 @@ from urllib.parse import quote
 from robin.prospective_observatory.contracts import (
     R2_SCHEMA_VERSION,
     CaptureContext,
+    CaptureFamily,
     CaptureReceipt,
     canonical_json_bytes,
     receipt_scope_sha256,
 )
 
 R2_NAMESPACE = "prospective-deep-data"
+R2_RECOVERY_NAMESPACE = "prospective-deep-data-recovery"
+R2_RECOVERY_SCHEMA_VERSION = "prospective-receipt-recovery-intent-v1"
 
 
 class AppendOnlyViolation(RuntimeError):
@@ -27,6 +35,68 @@ class AppendOnlyViolation(RuntimeError):
 
 class PayloadIntegrityError(RuntimeError):
     """Raised when a stored payload no longer matches its immutable receipt."""
+
+
+class ReceiptRecoveryIntegrityError(PayloadIntegrityError):
+    """Raised when an append-only receipt recovery intent is not trustworthy."""
+
+
+@dataclass(frozen=True, slots=True)
+class R2NamespaceInventory:
+    """Exhaustive, content-verified inventory of the prospective namespace."""
+
+    namespace_prefix: str
+    physical_unique_objects: int
+    physical_unique_bytes: int
+    physical_payload_objects: int
+    physical_payload_bytes: int
+    physical_receipt_objects: int
+    physical_receipt_bytes: int
+    physical_recovery_objects: int
+    physical_recovery_bytes: int
+    logical_references: int
+    logical_payload_bytes_read: int
+    logical_receipt_bytes_read: int
+    payload_keys: tuple[str, ...]
+    receipt_keys: tuple[str, ...]
+    recovery_keys: tuple[str, ...]
+    orphan_payload_keys: tuple[str, ...]
+    orphan_receipt_keys: tuple[str, ...]
+    unexpected_keys: tuple[str, ...]
+    unreadable_keys: tuple[str, ...]
+    integrity_error_keys: tuple[str, ...]
+    integrity_errors: tuple[str, ...]
+
+    @property
+    def logical_bytes_read(self) -> int:
+        """Bytes read when each receipt resolves its logical payload reference."""
+
+        return self.logical_payload_bytes_read + self.logical_receipt_bytes_read
+
+    @property
+    def verified(self) -> bool:
+        return not (
+            self.orphan_payload_keys
+            or self.orphan_receipt_keys
+            or self.unexpected_keys
+            or self.unreadable_keys
+            or self.integrity_error_keys
+        )
+
+
+class R2NamespaceIntegrityError(PayloadIntegrityError):
+    """Raised before replay when the complete R2 namespace is not coherent."""
+
+    def __init__(self, inventory: R2NamespaceInventory) -> None:
+        self.inventory = inventory
+        counts = (
+            f"orphan_payloads={len(inventory.orphan_payload_keys)},"
+            f"orphan_receipts={len(inventory.orphan_receipt_keys)},"
+            f"unexpected={len(inventory.unexpected_keys)},"
+            f"unreadable={len(inventory.unreadable_keys)},"
+            f"integrity={len(inventory.integrity_error_keys)}"
+        )
+        super().__init__(f"R2_NAMESPACE_INTEGRITY_FAILED:{counts}")
 
 
 @runtime_checkable
@@ -72,6 +142,50 @@ class StoredCapture:
     receipt_created: bool
 
 
+@dataclass(frozen=True, slots=True)
+class _PayloadInspection:
+    stored_bytes: int
+    payload_bytes: int | None
+    payload_sha256: str | None
+    valid: bool
+
+
+_SAFE_KEY_SEGMENT = r"(?:[A-Za-z0-9._~-]|%[0-9A-F]{2})+"
+_FAMILY_PATTERN = "|".join(
+    re.escape(family.value) for family in CaptureFamily
+)
+_OBJECT_KEY_PATTERN = re.compile(
+    rf"^{re.escape(R2_NAMESPACE)}/{re.escape(R2_SCHEMA_VERSION)}/"
+    rf"competition={_SAFE_KEY_SEGMENT}/"
+    rf"season={_SAFE_KEY_SEGMENT}/"
+    rf"fixture={_SAFE_KEY_SEGMENT}/"
+    rf"source={_SAFE_KEY_SEGMENT}/"
+    rf"family=(?:{_FAMILY_PATTERN})/"
+    r"observed_at=\d{8}T\d{6}\.\d{6}Z/"
+    r"(?:"
+    r"payload-(?P<payload_hash>[0-9a-f]{64})\.json\.gz"
+    r"|"
+    r"receipt-(?P<receipt_scope>[0-9a-f]{64})-"
+    r"(?P<receipt_payload_hash>[0-9a-f]{64})\.json"
+    r")$"
+)
+_RECOVERY_INTENT_KEY_PATTERN = re.compile(
+    rf"^{re.escape(R2_RECOVERY_NAMESPACE)}/{re.escape(R2_SCHEMA_VERSION)}/"
+    r"intent-(?P<receipt_hash>[0-9a-f]{64})\.json$"
+)
+
+
+def _has_deterministic_gzip_header(data: bytes) -> bool:
+    # RFC 1952 stores MTIME in bytes 4..7. The OS byte may legitimately vary
+    # across Python/zlib platforms, so it is deliberately not compared.
+    return (
+        len(data) >= 10
+        and data[:3] == b"\x1f\x8b\x08"
+        and data[3] == 0
+        and data[4:8] == b"\x00\x00\x00\x00"
+    )
+
+
 def _safe_segment(value: str) -> str:
     if not value or value in {".", ".."}:
         raise ValueError("R2_KEY_SEGMENT_INVALID")
@@ -110,6 +224,57 @@ def deterministic_r2_keys(
     )
 
 
+def _context_from_receipt(receipt: CaptureReceipt) -> CaptureContext:
+    return CaptureContext(
+        window_id=receipt.window_id,
+        window_label=receipt.window_label,
+        fixture_id=receipt.fixture_id,
+        competition=receipt.competition,
+        season=receipt.season,
+        provider=receipt.provider,
+        family=receipt.family,
+        requested_at=receipt.requested_at,
+        response_received_at=receipt.response_received_at,
+        observed_at=receipt.observed_at,
+        kickoff_at=receipt.kickoff_at,
+        cutoff_at=receipt.cutoff_at,
+        http_status=receipt.http_status,
+        source_endpoint=receipt.source_endpoint,
+        complete=receipt.complete,
+        quality_status=receipt.quality_status,
+        provider_calls=receipt.provider_calls,
+        code_revision=receipt.code_revision,
+        event_time=receipt.event_time,
+        provider_updated_at=receipt.provider_updated_at,
+        materialized_at=receipt.materialized_at,
+    )
+
+
+def _recovery_intent_key(receipt: CaptureReceipt) -> str:
+    return (
+        f"{R2_RECOVERY_NAMESPACE}/{R2_SCHEMA_VERSION}/"
+        f"intent-{receipt.receipt_hash}.json"
+    )
+
+
+def _recovery_intent_bytes(
+    receipt: CaptureReceipt,
+    compressed_payload: bytes,
+) -> bytes:
+    return canonical_json_bytes(
+        {
+            "schema_version": R2_RECOVERY_SCHEMA_VERSION,
+            "receipt": receipt.model_dump(mode="json"),
+            "compressed_payload_base64": base64.b64encode(
+                compressed_payload
+            ).decode("ascii"),
+            "compressed_payload_sha256": hashlib.sha256(
+                compressed_payload
+            ).hexdigest(),
+        }
+    )
+
+
 class ProspectiveR2Repository:
     """Owns raw prospective bytes; Git and PostgreSQL only retain references."""
 
@@ -143,7 +308,6 @@ class ProspectiveR2Repository:
         context: CaptureContext,
     ) -> StoredCapture:
         canonical_payload = canonical_json_bytes(payload)
-        import hashlib
 
         payload_sha256 = hashlib.sha256(canonical_payload).hexdigest()
         compressed = gzip.compress(canonical_payload, compresslevel=9, mtime=0)
@@ -182,22 +346,345 @@ class ProspectiveR2Repository:
         )
         receipt_bytes = canonical_json_bytes(receipt.model_dump(mode="json"))
 
+        # Write-ahead recovery is itself immutable and contains the exact
+        # compressed payload plus its canonical receipt. Therefore a crash
+        # before either final object can be repaired provider-free.
+        self._put_immutable(
+            self.store,
+            _recovery_intent_key(receipt),
+            _recovery_intent_bytes(receipt, compressed),
+        )
         payload_created = self._put_immutable(self.store, payload_key, compressed)
-        try:
-            receipt_created = self._put_immutable(
-                self.store,
-                receipt_key,
-                receipt_bytes,
-            )
-        except Exception:
-            # The raw payload remains a valid immutable orphan and can be reconciled.
-            # Deleting it would violate the lane's storage contract.
-            raise
+        receipt_created = self._put_immutable(
+            self.store,
+            receipt_key,
+            receipt_bytes,
+        )
         return StoredCapture(
             receipt=receipt,
             payload=payload,
             payload_created=payload_created,
             receipt_created=receipt_created,
+        )
+
+    @staticmethod
+    def _payload_from_compressed(
+        receipt: CaptureReceipt,
+        compressed: bytes,
+    ) -> object:
+        try:
+            canonical_payload = gzip.decompress(compressed)
+            payload = json.loads(canonical_payload)
+        except (
+            gzip.BadGzipFile,
+            EOFError,
+            zlib.error,
+            UnicodeDecodeError,
+            json.JSONDecodeError,
+        ) as error:
+            raise PayloadIntegrityError("R2_PAYLOAD_INVALID") from error
+
+        if (
+            hashlib.sha256(canonical_payload).hexdigest()
+            != receipt.payload_sha256
+            or len(canonical_payload) != receipt.payload_bytes
+            or len(compressed) != receipt.stored_bytes
+            or canonical_json_bytes(payload) != canonical_payload
+            or not _has_deterministic_gzip_header(compressed)
+        ):
+            raise PayloadIntegrityError("R2_PAYLOAD_HASH_OR_SIZE_MISMATCH")
+        return payload
+
+    def _payload_for_receipt(self, receipt: CaptureReceipt) -> object:
+        compressed = self.store.get_object(receipt.r2_key)
+        if compressed is None:
+            raise PayloadIntegrityError("R2_PAYLOAD_MISSING")
+        return self._payload_from_compressed(receipt, compressed)
+
+    def reconcile_pending_receipts(self) -> int:
+        """Materialize receipts proven by an immutable recovery intent.
+
+        Recovery is deliberately narrow: the canonical intent contains the
+        exact compressed payload and receipt, its key must match the receipt
+        hash, every deterministic R2 key must match, and the payload must pass
+        the complete hash/size validation. Payload objects without such an
+        attributable intent remain namespace-integrity failures.
+        """
+
+        prefix = f"{R2_RECOVERY_NAMESPACE}/{R2_SCHEMA_VERSION}/"
+        recovered = 0
+        for key in sorted(set(self.store.iter_keys(prefix))):
+            match = _RECOVERY_INTENT_KEY_PATTERN.fullmatch(key)
+            body = self.store.get_object(key)
+            if match is None or body is None:
+                raise ReceiptRecoveryIntegrityError(
+                    "R2_RECEIPT_RECOVERY_INTENT_INVALID"
+                )
+            try:
+                intent_data = json.loads(body)
+                if (
+                    not isinstance(intent_data, dict)
+                    or set(intent_data)
+                    != {
+                        "schema_version",
+                        "receipt",
+                        "compressed_payload_base64",
+                        "compressed_payload_sha256",
+                    }
+                    or intent_data.get("schema_version")
+                    != R2_RECOVERY_SCHEMA_VERSION
+                    or canonical_json_bytes(intent_data) != body
+                    or not isinstance(
+                        intent_data.get("compressed_payload_base64"),
+                        str,
+                    )
+                    or not isinstance(
+                        intent_data.get("compressed_payload_sha256"),
+                        str,
+                    )
+                ):
+                    raise ValueError("RECOVERY_INTENT_CONTRACT_INVALID")
+                receipt = CaptureReceipt.model_validate(
+                    intent_data.get("receipt")
+                )
+                canonical_receipt = canonical_json_bytes(
+                    receipt.model_dump(mode="json")
+                )
+                compressed_payload = base64.b64decode(
+                    intent_data["compressed_payload_base64"],
+                    validate=True,
+                )
+            except (
+                binascii.Error,
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+                TypeError,
+                ValueError,
+            ) as error:
+                raise ReceiptRecoveryIntegrityError(
+                    "R2_RECEIPT_RECOVERY_INTENT_INVALID"
+                ) from error
+            expected_payload_key, expected_receipt_key = deterministic_r2_keys(
+                _context_from_receipt(receipt),
+                receipt.payload_sha256,
+            )
+            if (
+                match.group("receipt_hash") != receipt.receipt_hash
+                or receipt.r2_key != expected_payload_key
+                or receipt.receipt_r2_key != expected_receipt_key
+                or key != _recovery_intent_key(receipt)
+                or intent_data["compressed_payload_sha256"]
+                != hashlib.sha256(compressed_payload).hexdigest()
+            ):
+                raise ReceiptRecoveryIntegrityError(
+                    "R2_RECEIPT_RECOVERY_INTENT_MISMATCH"
+                )
+            try:
+                self._payload_from_compressed(receipt, compressed_payload)
+                self._put_immutable(
+                    self.store,
+                    receipt.r2_key,
+                    compressed_payload,
+                )
+                created = self._put_immutable(
+                    self.store,
+                    receipt.receipt_r2_key,
+                    canonical_receipt,
+                )
+            except AppendOnlyViolation as error:
+                raise ReceiptRecoveryIntegrityError(
+                    "R2_RECEIPT_RECOVERY_CONFLICT"
+                ) from error
+            except PayloadIntegrityError as error:
+                raise ReceiptRecoveryIntegrityError(
+                    "R2_RECEIPT_RECOVERY_PAYLOAD_INVALID"
+                ) from error
+            recovered += int(created)
+        return recovered
+
+    def inventory_namespace(self) -> R2NamespaceInventory:
+        """Recover attributed writes, then validate every raw namespace object."""
+
+        self.reconcile_pending_receipts()
+        namespace_prefix = f"{self.namespace}/"
+        recovery_prefix = (
+            f"{R2_RECOVERY_NAMESPACE}/{R2_SCHEMA_VERSION}/"
+        )
+        recovery_keys = tuple(
+            sorted(set(self.store.iter_keys(recovery_prefix)))
+        )
+        physical_recovery_bytes = 0
+        for key in recovery_keys:
+            if _RECOVERY_INTENT_KEY_PATTERN.fullmatch(key) is None:
+                raise ReceiptRecoveryIntegrityError(
+                    "R2_RECEIPT_RECOVERY_INTENT_INVALID"
+                )
+            body = self.store.get_object(key)
+            if body is None:
+                raise ReceiptRecoveryIntegrityError(
+                    "R2_RECEIPT_RECOVERY_INTENT_INVALID"
+                )
+            physical_recovery_bytes += len(body)
+        keys = tuple(sorted(set(self.store.iter_keys(namespace_prefix))))
+        payload_keys: set[str] = set()
+        receipt_object_keys: set[str] = set()
+        unexpected_keys: set[str] = set()
+        unreadable_keys: set[str] = set()
+        integrity_error_keys: set[str] = set()
+        integrity_errors: set[str] = set()
+        payload_inspections: dict[str, _PayloadInspection] = {}
+        receipts: dict[str, tuple[CaptureReceipt, int]] = {}
+        physical_unique_bytes = 0
+        physical_payload_bytes = 0
+        physical_receipt_bytes = 0
+
+        def flag_integrity(key: str, code: str) -> None:
+            integrity_error_keys.add(key)
+            integrity_errors.add(f"{code}:{key}")
+
+        for key in keys:
+            match = _OBJECT_KEY_PATTERN.fullmatch(key)
+            body = self.store.get_object(key)
+            if body is None:
+                unreadable_keys.add(key)
+            else:
+                physical_unique_bytes += len(body)
+
+            if match is None:
+                unexpected_keys.add(key)
+                continue
+
+            payload_hash = match.group("payload_hash")
+            if payload_hash is not None:
+                payload_keys.add(key)
+                if body is None:
+                    continue
+                physical_payload_bytes += len(body)
+                try:
+                    canonical_payload = gzip.decompress(body)
+                    payload = json.loads(canonical_payload)
+                    recanonicalized = canonical_json_bytes(payload)
+                except (
+                    gzip.BadGzipFile,
+                    EOFError,
+                    zlib.error,
+                    UnicodeDecodeError,
+                    json.JSONDecodeError,
+                    TypeError,
+                    ValueError,
+                ):
+                    flag_integrity(key, "R2_PAYLOAD_INVALID")
+                    payload_inspections[key] = _PayloadInspection(
+                        stored_bytes=len(body),
+                        payload_bytes=None,
+                        payload_sha256=None,
+                        valid=False,
+                    )
+                    continue
+
+                actual_hash = hashlib.sha256(canonical_payload).hexdigest()
+                valid = True
+                if recanonicalized != canonical_payload:
+                    flag_integrity(key, "R2_PAYLOAD_NOT_CANONICAL")
+                    valid = False
+                if actual_hash != payload_hash:
+                    flag_integrity(key, "R2_PAYLOAD_KEY_HASH_MISMATCH")
+                    valid = False
+                if not _has_deterministic_gzip_header(body):
+                    flag_integrity(key, "R2_PAYLOAD_GZIP_HEADER_INVALID")
+                    valid = False
+                payload_inspections[key] = _PayloadInspection(
+                    stored_bytes=len(body),
+                    payload_bytes=len(canonical_payload),
+                    payload_sha256=actual_hash,
+                    valid=valid,
+                )
+                continue
+
+            receipt_object_keys.add(key)
+            if body is None:
+                continue
+            physical_receipt_bytes += len(body)
+            try:
+                receipt_data = json.loads(body)
+                receipt = CaptureReceipt.model_validate(receipt_data)
+                canonical_receipt = canonical_json_bytes(
+                    receipt.model_dump(mode="json")
+                )
+            except (
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+                TypeError,
+                ValueError,
+            ):
+                flag_integrity(key, "R2_RECEIPT_INVALID")
+                continue
+
+            valid_receipt = True
+            if canonical_receipt != body:
+                flag_integrity(key, "R2_RECEIPT_NOT_CANONICAL")
+                valid_receipt = False
+            expected_payload_key, expected_receipt_key = deterministic_r2_keys(
+                _context_from_receipt(receipt),
+                receipt.payload_sha256,
+            )
+            if (
+                receipt.r2_key != expected_payload_key
+                or receipt.receipt_r2_key != expected_receipt_key
+                or key != expected_receipt_key
+            ):
+                flag_integrity(key, "R2_RECEIPT_KEY_MISMATCH")
+                valid_receipt = False
+            if valid_receipt:
+                receipts[key] = (receipt, len(body))
+
+        referenced_payload_keys: set[str] = set()
+        orphan_receipt_keys: set[str] = set()
+        logical_payload_bytes_read = 0
+        logical_receipt_bytes_read = 0
+        for receipt_key, (receipt, receipt_bytes) in receipts.items():
+            logical_receipt_bytes_read += receipt_bytes
+            referenced_payload_keys.add(receipt.r2_key)
+            payload_inspection = payload_inspections.get(receipt.r2_key)
+            if payload_inspection is None:
+                orphan_receipt_keys.add(receipt_key)
+                continue
+
+            logical_payload_bytes_read += payload_inspection.stored_bytes
+            if not payload_inspection.valid:
+                continue
+            if (
+                payload_inspection.payload_sha256 != receipt.payload_sha256
+                or payload_inspection.payload_bytes != receipt.payload_bytes
+                or payload_inspection.stored_bytes != receipt.stored_bytes
+            ):
+                flag_integrity(receipt_key, "R2_RECEIPT_PAYLOAD_MISMATCH")
+
+        orphan_payload_keys = payload_keys - referenced_payload_keys
+        return R2NamespaceInventory(
+            namespace_prefix=namespace_prefix,
+            physical_unique_objects=len(keys) + len(recovery_keys),
+            physical_unique_bytes=(
+                physical_unique_bytes + physical_recovery_bytes
+            ),
+            physical_payload_objects=len(payload_keys),
+            physical_payload_bytes=physical_payload_bytes,
+            physical_receipt_objects=len(receipt_object_keys),
+            physical_receipt_bytes=physical_receipt_bytes,
+            physical_recovery_objects=len(recovery_keys),
+            physical_recovery_bytes=physical_recovery_bytes,
+            logical_references=len(receipts),
+            logical_payload_bytes_read=logical_payload_bytes_read,
+            logical_receipt_bytes_read=logical_receipt_bytes_read,
+            payload_keys=tuple(sorted(payload_keys)),
+            receipt_keys=tuple(sorted(receipts)),
+            recovery_keys=recovery_keys,
+            orphan_payload_keys=tuple(sorted(orphan_payload_keys)),
+            orphan_receipt_keys=tuple(sorted(orphan_receipt_keys)),
+            unexpected_keys=tuple(sorted(unexpected_keys)),
+            unreadable_keys=tuple(sorted(unreadable_keys)),
+            integrity_error_keys=tuple(sorted(integrity_error_keys)),
+            integrity_errors=tuple(sorted(integrity_errors)),
         )
 
     def read_capture(self, receipt_key: str) -> StoredCapture:
@@ -207,25 +694,28 @@ class ProspectiveR2Repository:
         try:
             receipt_data = json.loads(receipt_bytes)
             receipt = CaptureReceipt.model_validate(receipt_data)
-        except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+            canonical_receipt = canonical_json_bytes(
+                receipt.model_dump(mode="json")
+            )
+        except (
+            UnicodeDecodeError,
+            json.JSONDecodeError,
+            TypeError,
+            ValueError,
+        ) as error:
             raise PayloadIntegrityError("R2_RECEIPT_INVALID") from error
-        compressed = self.store.get_object(receipt.r2_key)
-        if compressed is None:
-            raise PayloadIntegrityError("R2_PAYLOAD_MISSING")
-        try:
-            canonical_payload = gzip.decompress(compressed)
-            payload = json.loads(canonical_payload)
-        except (gzip.BadGzipFile, EOFError, UnicodeDecodeError, json.JSONDecodeError) as error:
-            raise PayloadIntegrityError("R2_PAYLOAD_INVALID") from error
-        import hashlib
-
+        expected_keys = deterministic_r2_keys(
+            _context_from_receipt(receipt),
+            receipt.payload_sha256,
+        )
         if (
-            hashlib.sha256(canonical_payload).hexdigest() != receipt.payload_sha256
-            or len(canonical_payload) != receipt.payload_bytes
-            or len(compressed) != receipt.stored_bytes
-            or canonical_json_bytes(payload) != canonical_payload
+            canonical_receipt != receipt_bytes
+            or receipt.r2_key != expected_keys[0]
+            or receipt.receipt_r2_key != expected_keys[1]
+            or receipt_key != expected_keys[1]
         ):
-            raise PayloadIntegrityError("R2_PAYLOAD_HASH_OR_SIZE_MISMATCH")
+            raise PayloadIntegrityError("R2_RECEIPT_KEY_OR_BODY_MISMATCH")
+        payload = self._payload_for_receipt(receipt)
         return StoredCapture(
             receipt=receipt,
             payload=payload,
@@ -234,12 +724,8 @@ class ProspectiveR2Repository:
         )
 
     def iter_captures(self) -> Iterator[StoredCapture]:
-        prefix = f"{self.namespace}/{R2_SCHEMA_VERSION}/"
-        receipt_keys = sorted(
-            key
-            for key in self.store.iter_keys(prefix)
-            if key.rsplit("/", maxsplit=1)[-1].startswith("receipt-")
-            and key.endswith(".json")
-        )
-        for receipt_key in receipt_keys:
+        inventory = self.inventory_namespace()
+        if not inventory.verified:
+            raise R2NamespaceIntegrityError(inventory)
+        for receipt_key in inventory.receipt_keys:
             yield self.read_capture(receipt_key)

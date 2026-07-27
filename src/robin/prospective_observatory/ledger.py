@@ -223,10 +223,27 @@ def build_observatory_ledger(
     attempt_rows = tuple(attempts)
     receipt_rows = tuple(receipts)
     gate_rows = tuple(gates)
-    receipts_by_window = {
-        receipt.window_id: receipt
-        for receipt in receipt_rows
-        if receipt.window_id is not None
+    receipts_by_window: dict[str, tuple[CaptureReceipt, ...]] = {}
+    for receipt in receipt_rows:
+        if receipt.window_id is None:
+            continue
+        receipts_by_window[receipt.window_id] = (
+            *receipts_by_window.get(receipt.window_id, ()),
+            receipt,
+        )
+    completed_window_ids = {
+        window_id
+        for window_id, scoped_receipts in receipts_by_window.items()
+        if any(
+            receipt.temporally_admissible
+            and receipt.quality_status
+            in {
+                AvailabilityStatus.CAPTURED,
+                AvailabilityStatus.CAPTURED_EMPTY,
+                AvailabilityStatus.COMPLETE,
+            }
+            for receipt in scoped_receipts
+        )
     }
     events: list[
         tuple[
@@ -271,7 +288,7 @@ def build_observatory_ledger(
                 {"family": window.family.value, "label": window.label},
             )
         )
-        if window.cutoff_at <= frozen_at and window.window_id not in receipts_by_window:
+        if window.cutoff_at <= frozen_at and window.window_id not in completed_window_ids:
             events.append(
                 (
                     window.cutoff_at,
@@ -303,8 +320,26 @@ def build_observatory_ledger(
                 },
             )
         )
-        receipt = receipts_by_window.get(attempt.window_id)
-        evidence_hash = receipt.receipt_hash if receipt is not None else attempt_hash
+        matching_receipt = next(
+            (
+                item
+                for item in receipts_by_window.get(attempt.window_id, ())
+                if attempt.idempotency_key.endswith(
+                    f":{item.payload_sha256}"
+                )
+                and item.requested_at == attempt.attempted_at
+                and item.provider == attempt.provider
+                and item.family is attempt.family
+                and item.http_status == attempt.http_status
+                and item.quality_status is attempt.status
+            ),
+            None,
+        )
+        evidence_hash = (
+            matching_receipt.receipt_hash
+            if matching_receipt is not None
+            else attempt_hash
+        )
         if attempt.status is AvailabilityStatus.CAPTURED:
             kind = EvidenceEventKindV3.CAPTURE_SUCCEEDED
         elif attempt.status is AvailabilityStatus.CAPTURED_EMPTY:

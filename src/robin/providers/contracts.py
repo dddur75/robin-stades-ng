@@ -59,3 +59,9 @@ class RateLimitError(ProviderCallError):
 
 class TransientProviderError(ProviderCallError):
     pass
+
+
+class CircuitOpenError(TransientProviderError):
+    """A provider call rejected locally before the HTTP transport is reached."""
+
+    pass

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections.abc import Mapping
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import pytest
 from alembic import command
@@ -18,7 +20,13 @@ from robin.prospective_observatory.contracts import (
     CaptureFamily,
 )
 from robin.prospective_observatory.r2 import ProspectiveR2Repository
-from robin.providers.contracts import ProviderResult, QuotaState
+from robin.providers.api_football import ApiFootballProvider
+from robin.providers.contracts import (
+    CircuitOpenError,
+    ProviderResult,
+    QuotaState,
+    TransientProviderError,
+)
 from robin.storage.database import build_engine
 from scripts.build_cockpit_snapshot import build_prospective_observatory
 from scripts.run_prospective_observatory import (
@@ -164,12 +172,13 @@ def _args(
     output: Path,
     cache: Path | None = None,
     object_store_root: Path | None = None,
+    now: datetime = NOW,
 ) -> argparse.Namespace:
     return argparse.Namespace(
         command=command_name,
         policy=POLICY,
         output=output,
-        now=NOW.isoformat(),
+        now=now.isoformat(),
         code_revision="test-revision",
         cache=cache,
         object_store_root=object_store_root,
@@ -292,6 +301,48 @@ class _FakeOdds:
         )
 
 
+class _CircuitResponse:
+    def __init__(
+        self,
+        payload: object,
+        *,
+        status_code: int,
+        headers: Mapping[str, str] | None = None,
+    ) -> None:
+        self.payload = payload
+        self.status_code = status_code
+        self.headers = dict(headers or {})
+        self.content = json.dumps(payload).encode()
+
+    def json(self) -> object:
+        return self.payload
+
+
+class _CircuitTransport:
+    def __init__(self, *, status_first: bool) -> None:
+        self.status_first = status_first
+        self.calls = 0
+
+    def get(self, *_args: Any, **_kwargs: Any) -> _CircuitResponse:
+        self.calls += 1
+        if self.status_first and self.calls == 1:
+            return _CircuitResponse(
+                {
+                    "response": [
+                        {
+                            "requests": {
+                                "current": 1,
+                                "limit_day": 75_000,
+                            }
+                        }
+                    ]
+                },
+                status_code=200,
+                headers={"x-ratelimit-requests-remaining": "74999"},
+            )
+        return _CircuitResponse({}, status_code=503)
+
+
 def _execute_capture(
     command_name: str,
     *,
@@ -341,6 +392,25 @@ def test_quota_parser_reads_nested_real_api_football_shape() -> None:
         origin=DataOrigin.LIVE_SOURCE,
     )
     assert _provider_quota_remaining(result) == 74_877
+
+
+def test_http_circuit_preflight_is_typed_and_never_reaches_transport() -> None:
+    transport = _CircuitTransport(status_first=False)
+    provider = ApiFootballProvider(
+        api_key="test-key",
+        transport=transport,
+        max_retries=0,
+        circuit_failure_threshold=3,
+        circuit_cooldown_seconds=600,
+    )
+    for _ in range(3):
+        with pytest.raises(TransientProviderError):
+            provider.get_fixtures(fixture_id=9001)
+    assert transport.calls == 3
+
+    with pytest.raises(CircuitOpenError, match="circuit_open"):
+        provider.assert_transport_available()
+    assert transport.calls == 3
 
 
 def test_nonempty_malformed_payload_cannot_complete_a_window(
@@ -714,6 +784,59 @@ def test_cache_capture_replay_and_second_operation_are_zero_cost(
         _renormalize_r2_payload(registry_capture.receipt, mutated_raw)
 
 
+def test_gate_report_cockpit_preserves_full_replay_and_fixture_previews(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    report_now = datetime.now(UTC)
+    cache = _cache(tmp_path / "cache.json")
+    output = tmp_path / "reports"
+    repository = ProspectiveR2Repository(
+        DirectoryObjectStore(tmp_path / "objects")
+    )
+    state = MemoryOperationalState()
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+            now=report_now,
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output, now=report_now), state=state)
+    replay = run_replay_audit(
+        _args(
+            "replay-audit",
+            output=output,
+            object_store_root=tmp_path / "objects",
+            now=report_now,
+        ),
+        state=state,
+        repository=repository,
+    )
+    gate_report = run_gate_report(
+        _args("gate-report", output=output, now=report_now),
+        state=state,
+    )
+    gate_observatory = gate_report["observatory"]
+    assert gate_observatory["fixtures"]["next"]
+    assert gate_observatory["windows"]["next"]
+    monkeypatch.setenv("PROSPECTIVE_REPORT_ROOT", str(output))  # type: ignore[attr-defined]
+    cockpit = build_prospective_observatory()
+    assert replay["status"] == "R2_REPLAY_VERIFIED"
+    assert cockpit["r2"]["replay_status"] == "R2_REPLAY_VERIFIED"
+    assert (
+        cockpit["postgresql"]["reconstruction_status"]
+        == "RECONSTRUCTIBLE_FROM_R2"
+    )
+    assert cockpit["postgresql"]["duplicates_avoided"] > 0
+    assert cockpit["fixtures"]["next"]
+    assert cockpit["windows"]["next"]
+
+
 def test_replay_is_complete_beyond_the_legacy_250_object_bound(
     tmp_path: Path,
 ) -> None:
@@ -784,7 +907,9 @@ def test_replay_is_complete_beyond_the_legacy_250_object_bound(
     )
     assert replay["complete_replay"] is True
     assert replay["selection_truncated"] is False
-    assert replay["objects_examined"] == 262
+    assert replay["objects_examined"] == 393
+    assert replay["physical_recovery_objects"] == 131
+    assert replay["physical_recovery_bytes"] > 0
     assert replay["payloads_replayed"] == 131
     assert replay["second_pass_inserts"] == 0
 
@@ -929,6 +1054,15 @@ def test_provider_error_then_success_uses_durable_attempt_number(
     assert second["captured"] > 0
     assert second["retries"] > 0
     assert {attempt.attempt_number for attempt in restarted.attempts()} == {1, 2}
+    run_replay_audit(
+        _args(
+            "replay-audit",
+            output=output,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=restarted,
+        repository=repository,
+    )
     gates = run_gate_report(
         _args("gate-report", output=output),
         state=restarted,
@@ -941,9 +1075,17 @@ def test_provider_error_then_success_uses_durable_attempt_number(
     assert observatory["r2"]["objects_added"] > 0
     assert observatory["ledger"]["events"] > 0
     assert gates["ledger_events"] > 0
+    monkeypatch.setattr(  # type: ignore[attr-defined]
+        "scripts.build_cockpit_snapshot._utc_now",
+        lambda: NOW,
+    )
     monkeypatch.setenv("PROSPECTIVE_REPORT_ROOT", str(output))  # type: ignore[attr-defined]
     cockpit = build_prospective_observatory()
-    assert cockpit["origin"] == "LIVE_PROSPECTIVE_CAPTURE"
+    # The fixture registry was intentionally seeded from a cache in this
+    # SQLite recovery test. Mixed cache/live evidence must never be labelled
+    # as a fully live prospective dataset.
+    assert cockpit["origin"] == "NO_PROSPECTIVE_CAPTURE_YET"
+    assert gates["capture_provenance"]["cache_test_receipts"] == 1
     assert cockpit["captures"]["attempted"] > 0
     assert cockpit["providers"]["api_football_calls"] == 4
     assert cockpit["ledger"]["events"] > 0
@@ -998,3 +1140,65 @@ def test_exhausted_windows_make_no_fourth_provider_call(
     assert fourth["status"] == "NO_CAPTURE_DUE"
     assert unused_provider.status_calls == 0
     assert unused_provider.fixture_calls == 0
+
+
+def test_capture_stops_at_open_circuit_without_phantom_quota_or_errors(
+    tmp_path: Path,
+) -> None:
+    fixtures = [
+        _fixture_record(
+            fixture_id,
+            NOW + timedelta(hours=1),
+        )
+        for fixture_id in range(9001, 9007)
+    ]
+    cache = tmp_path / "fixtures.json"
+    cache.write_text(
+        json.dumps(
+            {
+                "current_season": 2026,
+                "fixtures": fixtures,
+                "payloads": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    output = tmp_path / "reports"
+    repository = ProspectiveR2Repository(
+        DirectoryObjectStore(tmp_path / "objects")
+    )
+    state = MemoryOperationalState()
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output), state=state)
+
+    transport = _CircuitTransport(status_first=True)
+    provider = ApiFootballProvider(
+        api_key="test-key",
+        transport=transport,
+        max_retries=0,
+        circuit_failure_threshold=3,
+        circuit_cooldown_seconds=600,
+    )
+    report = _execute_capture(
+        "capture-general",
+        output=output,
+        state=state,
+        repository=repository,
+        provider=provider,
+    )
+
+    assert report["status"] == "CAPTURE_STOPPED_CIRCUIT_OPEN"
+    assert report["circuit_open"] is True
+    assert transport.calls == 4
+    assert report["provider_calls"] == 4
+    assert state.budget_used(ProviderKind.API_FOOTBALL) == 4
+    assert report["provider_errors"] == 3

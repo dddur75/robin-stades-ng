@@ -18,6 +18,7 @@ from scripts.run_prospective_observatory import (
     MemoryOperationalState,
     ObservatoryPolicy,
     SQLAlchemyOperationalState,
+    _active_windows,
     _due_windows,
     _filter_fixtures,
     run_fixture_registry,
@@ -305,3 +306,130 @@ def test_cancellation_tombstone_survives_sql_restart(
 
     restarted = SQLAlchemyOperationalState(build_engine(url))
     assert restarted.fixtures() == ()
+
+
+def test_same_kickoff_reactivation_is_append_only_and_survives_sql_restart(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    url = f"sqlite:///{(tmp_path / 'reactivated.db').as_posix()}"
+    monkeypatch.setenv("ROBIN_DATABASE_URL", url)
+    command.upgrade(Config(str(ROOT / "alembic.ini")), "head")
+    engine = build_engine(url)
+    state = SQLAlchemyOperationalState(engine)
+    cache = _cache(tmp_path / "fixtures.json")
+    store = tmp_path / "objects"
+    repository = ProspectiveR2Repository(DirectoryObjectStore(store))
+
+    active_args = _args(
+        output=tmp_path / "reports",
+        cache=cache,
+        store=store,
+        now=NOW,
+        revision="active-v1",
+    )
+    run_fixture_registry(active_args, state=state, repository=repository)
+    scheduler_args = argparse.Namespace(**vars(active_args))
+    scheduler_args.command = "scheduler"
+    run_scheduler(scheduler_args, state=state)
+    original_window_ids = {window.window_id for window in state.windows()}
+    original_hash = state.fixtures()[0].registry_hash
+
+    cache.write_text(
+        json.dumps(
+            {
+                "current_season": 2026,
+                "fixtures": [_fixture_record(status="TBD")],
+            }
+        ),
+        encoding="utf-8",
+    )
+    run_fixture_registry(
+        _args(
+            output=tmp_path / "reports",
+            cache=cache,
+            store=store,
+            now=NOW + timedelta(minutes=5),
+            revision="tombstone",
+        ),
+        state=state,
+        repository=repository,
+    )
+    engine.dispose()
+
+    tombstoned = SQLAlchemyOperationalState(build_engine(url))
+    assert tombstoned.fixtures() == ()
+    cache.write_text(
+        json.dumps(
+            {
+                "current_season": 2026,
+                "fixtures": [_fixture_record(status="NS")],
+            }
+        ),
+        encoding="utf-8",
+    )
+    reactivation_args = _args(
+        output=tmp_path / "reports",
+        cache=cache,
+        store=store,
+        now=NOW + timedelta(minutes=10),
+        revision="active-v2",
+    )
+    reactivated = run_fixture_registry(
+        reactivation_args,
+        state=tombstoned,
+        repository=repository,
+    )
+    scheduler_args = argparse.Namespace(**vars(reactivation_args))
+    scheduler_args.command = "scheduler"
+    scheduled = run_scheduler(scheduler_args, state=tombstoned)
+
+    active = tombstoned.fixtures()
+    assert reactivated["fixtures_inserted"] == 1
+    assert len(active) == 1
+    assert active[0].kickoff_at == NOW + timedelta(hours=2)
+    assert active[0].registry_hash != original_hash
+    assert scheduled["windows_inserted"] > 0
+    reactivated_window_ids = {
+        window.window_id for window in _active_windows(tombstoned)
+    }
+    assert reactivated_window_ids
+    assert original_window_ids.isdisjoint(reactivated_window_ids)
+
+    repeated = run_fixture_registry(
+        _args(
+            output=tmp_path / "reports",
+            cache=cache,
+            store=store,
+            now=NOW + timedelta(minutes=15),
+            revision="active-v2-reobserved",
+        ),
+        state=tombstoned,
+        repository=repository,
+    )
+    assert repeated["fixtures_inserted"] == 0
+    assert repeated["duplicates_avoided"] == 1
+    tombstoned.engine.dispose()
+
+    restored = SQLAlchemyOperationalState(build_engine(url))
+    assert len(restored.fixtures()) == 1
+    assert restored.fixtures()[0].registry_hash == active[0].registry_hash
+    fixture_table = Table(
+        "prospective_fixtures",
+        MetaData(),
+        autoload_with=restored.engine,
+    )
+    with restored.engine.connect() as connection:
+        versions = connection.execute(
+            select(
+                fixture_table.c.registry_hash,
+                fixture_table.c.cancelled,
+            ).order_by(fixture_table.c.registered_at)
+        ).all()
+    assert len(versions) == 3
+    assert [bool(row.cancelled) for row in versions] == [
+        False,
+        True,
+        False,
+    ]
+    assert len({str(row.registry_hash) for row in versions}) == 3

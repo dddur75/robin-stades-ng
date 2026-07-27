@@ -14,6 +14,7 @@ import requests
 from robin.domain.enums import DataAvailability, DataOrigin
 from robin.ingestion.raw_store import LocalRawStore
 from robin.providers.contracts import (
+    CircuitOpenError,
     ProviderResult,
     QuotaState,
     RateLimitError,
@@ -131,9 +132,14 @@ class JsonHttpProvider:
         if self._circuit_opened_at is None:
             return
         if time.monotonic() - self._circuit_opened_at < self.circuit_cooldown_seconds:
-            raise TransientProviderError(f"{self.provider_name}: circuit_open")
+            raise CircuitOpenError(f"{self.provider_name}: circuit_open")
         self._circuit_opened_at = None
         self._consecutive_failures = 0
+
+    def assert_transport_available(self) -> None:
+        """Fail before callers reserve quota when the local circuit is open."""
+
+        self._assert_circuit_closed()
 
     def _request(
         self,

@@ -144,7 +144,8 @@ def test_r2_key_receipt_hash_and_replay_are_deterministic_and_index_only() -> No
         "prospective-deep-data/schema-v1/competition=Ligue%201/"
     )
     assert temporal_admissibility(first.receipt) is AvailabilityStatus.COMPLETE
-    assert store.object_count == 2
+    # One append-only recovery intent accompanies payload + receipt.
+    assert store.object_count == 3
 
     sink = InMemoryProjectionSink()
     initial = replay_from_r2(repository, sink)
@@ -190,7 +191,8 @@ def test_same_raw_payload_has_one_object_and_distinct_receipts_per_window() -> N
     assert not second.payload_created
     assert first.receipt_created and second.receipt_created
     assert first.receipt.receipt_hash != second.receipt.receipt_hash
-    assert store.object_count == 3
+    # One shared payload, two receipts and two recovery intents.
+    assert store.object_count == 5
     assert repository.read_capture(first.receipt.receipt_r2_key).receipt == first.receipt
     assert repository.read_capture(second.receipt.receipt_r2_key).receipt == second.receipt
 

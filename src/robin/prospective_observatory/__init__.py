@@ -46,6 +46,8 @@ from robin.prospective_observatory.r2 import (
     InMemoryObjectStore,
     ObjectStore,
     ProspectiveR2Repository,
+    R2NamespaceIntegrityError,
+    R2NamespaceInventory,
     StoredCapture,
     deterministic_r2_keys,
 )
@@ -96,6 +98,8 @@ __all__ = [
     "ProspectiveR2Repository",
     "ProviderKind",
     "PublicEvidenceLedgerV3",
+    "R2NamespaceIntegrityError",
+    "R2NamespaceInventory",
     "ReplayResult",
     "StoredCapture",
     "aggregate_gate_evaluations",

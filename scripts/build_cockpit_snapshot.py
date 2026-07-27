@@ -5,7 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from datetime import UTC, datetime
+import re
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
 
@@ -13,6 +14,12 @@ import pandas as pd
 
 from robin.deep_football.matchups import owner_hypotheses
 from robin.domain.odds import stable_internal_id
+from robin.prospective_observatory.contracts import (
+    AvailabilityStatus,
+    CaptureFamily,
+    canonical_sha256,
+)
+from robin.prospective_observatory.gates import GateName, GateStatus
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cockpit" / "app" / "cockpit-data.json"
@@ -20,6 +27,133 @@ OUTPUT_HASH = ROOT / "cockpit" / "app" / "cockpit-data.sha256"
 PRIVATE_DEPLOYMENT = ROOT / "configs" / "cockpit-private-deployment.json"
 PROSPECTIVE_COMPACT = ROOT / "reports" / "jalon12" / "observatory-snapshot.json"
 PROSPECTIVE_POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
+_EXPECTED_INVARIANTS: dict[str, object] = {
+    "storage_paused": True,
+    "p3_p4_paused": True,
+    "production_status": "PRODUCTION_LOCKED",
+    "real_bets": False,
+    "no_bet_default": True,
+    "social_publishing_enabled": False,
+    "demo_mode_enabled": False,
+    "external_social_networks_connected": False,
+    "raw_payloads_in_git": 0,
+    "postgresql_payload_body_rows": 0,
+}
+_REQUIRED_REPORT_INVARIANTS = frozenset(
+    {
+        "storage_paused",
+        "p3_p4_paused",
+        "production_status",
+        "real_bets",
+        "no_bet_default",
+        "social_publishing_enabled",
+        "demo_mode_enabled",
+    }
+)
+_PROTECTED_PUBLIC_PATHS = frozenset(
+    {
+        "schema_version",
+        "policy_source",
+        "status",
+        "origin",
+        "fixtures.horizon_days",
+        "fixtures.max_matchdays_per_competition",
+        "fixtures.competitions",
+        "fixtures.pilot_priority",
+        "windows.policy_version",
+        "temporal.truth_rule",
+        "providers.budgets",
+        "providers.reserves",
+        "r2.namespace",
+        "r2.objects_added",
+        "r2.bytes",
+        "r2.recovery_objects",
+        "r2.recovery_bytes",
+        "r2.verified",
+        "r2.lag",
+        "r2.deletions",
+        "r2.replay_status",
+        "postgresql.migration",
+        "postgresql.tables",
+        "postgresql.payload_body_rows",
+        "postgresql.duplicates_avoided",
+        "postgresql.lag",
+        "postgresql.reconstruction_status",
+        "ledger.schema_version",
+        "ledger.allowed_event_types",
+        "ledger.bet_decisions",
+        "hypotheses",
+        "research_cards",
+        "decisions",
+        "candidates",
+        "invariants",
+    }
+)
+_PREVIEW_FIELDS = {
+    "fixtures.next": frozenset(
+        {
+            "fixture_id",
+            "home",
+            "away",
+            "kickoff_at",
+            "competition",
+            "status",
+        }
+    ),
+    "windows.next": frozenset(
+        {"fixture_id", "family", "label", "due_at", "status"}
+    ),
+}
+_PREVIEW_REQUIRED_FIELDS = {
+    "fixtures.next": frozenset(
+        {
+            "fixture_id",
+            "home",
+            "away",
+            "kickoff_at",
+            "competition",
+            "status",
+        }
+    ),
+    "windows.next": frozenset(
+        {"fixture_id", "family", "label", "due_at", "status"}
+    ),
+}
+_SENSITIVE_UNKNOWN_FIELD_MARKERS = frozenset(
+    {
+        "authorization",
+        "cookie",
+        "credential",
+        "header",
+        "identity",
+        "password",
+        "payload",
+        "rawpayload",
+        "secret",
+        "token",
+    }
+)
+_OPERATION_REPORT_SCHEMA = "prospective-observatory-operation-v1"
+_ALLOWED_GATE_REASONS = frozenset(
+    {
+        "BOTH_COMPLETE_LINEUPS_RECEIVED_BEFORE_KICKOFF",
+        "BOTH_FORMATIONS_NORMALIZED_AFTER_LINEUP_GATE",
+        "BOTH_TEAM_FORMATIONS_NOT_NORMALIZABLE",
+        "EXACT_ODDS_BOOKMAKER_MARGIN_OR_OBSERVED_AT_MISSING",
+        "EXACTLY_TWO_COMPLETE_ELEVEN_PLAYER_LINEUPS_REQUIRED",
+        "IDENTITY_NOT_CANONICAL",
+        "INJURY_OBSERVED_BEFORE_CUTOFF",
+        "INJURY_PLAYER_STATUS_OR_SOURCE_MISSING",
+        "LINEUP_GATE_REQUIRED",
+        "MARKET_SNAPSHOT_MATCHED_WITHOUT_AMBIGUITY",
+        "NO_FIXTURE",
+        "NO_PROSPECTIVE_OBSERVATION",
+        "NO_RESPONSE_RECEIVED_BEFORE_CUTOFF",
+        "PLAYER_CAPTURE_POLICY_SATISFIED",
+        "PLAYER_LIST_MISSING",
+        "THREE_PRIOR_CAPTURES_REQUIRED",
+    }
+)
 
 
 def read_json(path: Path, default: Any) -> Any:
@@ -34,17 +168,740 @@ def directory_size(path: Path) -> int:
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
 
 
-def merge_dicts(base: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
-    """Fusionner un rapport compact sans supprimer les champs contractuels."""
+def _utc_now() -> datetime:
+    return datetime.now(UTC)
+
+
+def _non_negative_int(value: object) -> int | None:
+    """Lire un compteur JSON strict sans booléen, flottant ou valeur négative."""
+
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        parsed = value
+    elif isinstance(value, str):
+        try:
+            parsed = int(value)
+        except ValueError:
+            return None
+    else:
+        return None
+    return parsed if parsed >= 0 else None
+
+
+def _reject_sensitive_unknown_field(*, key: str, path: str) -> None:
+    normalized = re.sub(r"[^a-z0-9]", "", key.casefold())
+    if any(marker in normalized for marker in _SENSITIVE_UNKNOWN_FIELD_MARKERS):
+        location = f"{path}.{key}" if path else key
+        raise RuntimeError(f"champ public Jalon 12 interdit : {location}")
+
+
+def _sanitize_preview(value: object, *, path: str) -> list[dict[str, str]]:
+    if not isinstance(value, list):
+        raise RuntimeError(f"aperçu public Jalon 12 invalide : {path}")
+    allowed = _PREVIEW_FIELDS[path]
+    required = _PREVIEW_REQUIRED_FIELDS[path]
+    policy = read_json(PROSPECTIVE_POLICY, {})
+    if not isinstance(policy, dict):
+        raise RuntimeError("politique d'aperçu Jalon 12 invalide")
+    registry = policy.get("competition_registry", [])
+    capture_windows = policy.get("capture_windows", {})
+    if not isinstance(registry, list) or not isinstance(capture_windows, dict):
+        raise RuntimeError("politique d'aperçu Jalon 12 invalide")
+    allowed_competitions = {
+        str(item["competition"])
+        for item in registry
+        if isinstance(item, dict) and item.get("competition")
+    }
+    allowed_families = {family.value for family in CaptureFamily}
+    allowed_window_statuses = {
+        AvailabilityStatus.NOT_DUE.value,
+        AvailabilityStatus.DUE.value,
+    }
+    seen_preview_keys: set[tuple[str, ...]] = set()
+    sanitized: list[dict[str, str]] = []
+    for raw_item in value[:20]:
+        if not isinstance(raw_item, dict):
+            raise RuntimeError(f"aperçu public Jalon 12 invalide : {path}")
+        unknown = set(raw_item) - allowed
+        if unknown:
+            raise RuntimeError(
+                f"champ d'aperçu public Jalon 12 interdit : "
+                f"{path}.{sorted(unknown)[0]}"
+            )
+        if not required.issubset(raw_item):
+            raise RuntimeError(f"aperçu public Jalon 12 incomplet : {path}")
+        item: dict[str, str] = {}
+        for key, raw_value in raw_item.items():
+            if raw_value is None:
+                continue
+            if not isinstance(raw_value, (str, int)) or isinstance(raw_value, bool):
+                raise RuntimeError(f"valeur d'aperçu Jalon 12 invalide : {path}.{key}")
+            text = str(raw_value)
+            if not text or len(text) > 512:
+                raise RuntimeError(f"valeur d'aperçu Jalon 12 invalide : {path}.{key}")
+            item[key] = text
+        if not required.issubset(item):
+            raise RuntimeError(f"aperçu public Jalon 12 incomplet : {path}")
+        fixture_id = item["fixture_id"]
+        if re.fullmatch(r"api-football:[1-9][0-9]*", fixture_id) is None:
+            raise RuntimeError(f"fixture d'aperçu Jalon 12 invalide : {path}")
+        timestamp_key = "kickoff_at" if path == "fixtures.next" else "due_at"
+        try:
+            timestamp = datetime.fromisoformat(
+                item[timestamp_key].replace("Z", "+00:00")
+            )
+        except ValueError as exception:
+            raise RuntimeError(
+                f"horodatage d'aperçu Jalon 12 invalide : {path}"
+            ) from exception
+        if (
+            timestamp.tzinfo is None
+            or timestamp.utcoffset() is None
+            or timestamp.utcoffset() != timedelta(0)
+        ):
+            raise RuntimeError(f"horodatage d'aperçu Jalon 12 non UTC : {path}")
+        preview_key: tuple[str, ...]
+        if path == "fixtures.next":
+            if (
+                item["competition"] not in allowed_competitions
+                or item["status"] != "REGISTERED"
+                or any(
+                    not item[key].isdigit() or int(item[key]) <= 0
+                    for key in ("home", "away")
+                )
+                or item["home"] == item["away"]
+            ):
+                raise RuntimeError(f"fixture d'aperçu Jalon 12 invalide : {path}")
+            preview_key = (fixture_id,)
+        else:
+            family = item["family"]
+            labels = capture_windows.get(family, [])
+            if (
+                family not in allowed_families
+                or not isinstance(labels, list)
+                or item["label"] not in labels
+                or item["status"] not in allowed_window_statuses
+            ):
+                raise RuntimeError(f"fenêtre d'aperçu Jalon 12 invalide : {path}")
+            preview_key = (fixture_id, family, item["label"])
+        if preview_key in seen_preview_keys:
+            raise RuntimeError(f"doublon d'aperçu Jalon 12 : {path}")
+        seen_preview_keys.add(preview_key)
+        sanitized.append(item)
+    return sanitized
+
+
+def _public_scalar(current: object, value: object, *, path: str) -> object:
+    if isinstance(current, bool):
+        if not isinstance(value, bool):
+            raise RuntimeError(f"type public Jalon 12 invalide : {path}")
+        return value
+    if isinstance(current, int):
+        parsed = _non_negative_int(value)
+        if parsed is None:
+            raise RuntimeError(f"compteur public Jalon 12 invalide : {path}")
+        return parsed
+    if isinstance(current, str):
+        if not isinstance(value, str) or len(value) > 4096:
+            raise RuntimeError(f"texte public Jalon 12 invalide : {path}")
+        return value
+    if current is None:
+        if value is not None and (
+            not isinstance(value, str) or len(value) > 4096
+        ):
+            raise RuntimeError(f"valeur publique Jalon 12 invalide : {path}")
+        return value
+    raise RuntimeError(f"type public Jalon 12 non pris en charge : {path}")
+
+
+def merge_public_observatory(
+    base: dict[str, Any],
+    update: dict[str, Any],
+    *,
+    path: str = "",
+) -> dict[str, Any]:
+    """Projeter un rapport sur le schéma public fermé du Cockpit."""
 
     merged = dict(base)
     for key, value in update.items():
-        current = merged.get(key)
-        if isinstance(current, dict) and isinstance(value, dict):
-            merged[key] = merge_dicts(current, value)
+        child_path = f"{path}.{key}" if path else key
+        if key not in base:
+            if path == "invariants":
+                raise RuntimeError(
+                    f"invariant public Jalon 12 inconnu : {child_path}"
+                )
+            _reject_sensitive_unknown_field(key=key, path=path)
+            continue
+        if child_path in _PROTECTED_PUBLIC_PATHS:
+            continue
+        current = base[key]
+        if isinstance(current, dict):
+            if not isinstance(value, dict):
+                raise RuntimeError(f"objet public Jalon 12 invalide : {child_path}")
+            merged[key] = merge_public_observatory(
+                current,
+                value,
+                path=child_path,
+            )
+        elif isinstance(current, list):
+            if child_path in _PREVIEW_FIELDS:
+                merged[key] = _sanitize_preview(value, path=child_path)
+            elif not isinstance(value, list):
+                raise RuntimeError(f"liste publique Jalon 12 invalide : {child_path}")
         else:
-            merged[key] = value
+            merged[key] = _public_scalar(current, value, path=child_path)
     return merged
+
+
+def _validate_report_invariants(value: object) -> bool:
+    if not isinstance(value, dict):
+        return False
+    if not _REQUIRED_REPORT_INVARIANTS.issubset(value):
+        return False
+    if not set(value).issubset(_EXPECTED_INVARIANTS):
+        return False
+    return all(
+        key not in value or value[key] == expected
+        for key, expected in _EXPECTED_INVARIANTS.items()
+    )
+
+
+def _validate_operation_report(
+    report: object,
+    *,
+    expected_command: str,
+    policy_sha256: str,
+) -> tuple[dict[str, Any], datetime]:
+    """Authentifier l'enveloppe avant de lire une preuve opérationnelle."""
+
+    if not isinstance(report, dict):
+        raise RuntimeError("enveloppe opérationnelle Jalon 12 invalide")
+    claimed_hash = report.get("report_sha256")
+    unsigned = dict(report)
+    unsigned.pop("report_sha256", None)
+    locked = (
+        report.get("schema_version") == _OPERATION_REPORT_SCHEMA
+        and report.get("command") == expected_command
+        and report.get("policy_sha256") == policy_sha256
+        and isinstance(claimed_hash, str)
+        and claimed_hash == canonical_sha256(unsigned)
+        and report.get("production_status") == "PRODUCTION_LOCKED"
+        and report.get("real_bets") is False
+        and report.get("no_bet_default") is True
+        and report.get("social_publishing_enabled") is False
+        and report.get("demo_mode_enabled") is False
+        and report.get("deletions") == 0
+        and report.get("raw_payloads_in_git") == 0
+    )
+    if not locked:
+        raise RuntimeError("enveloppe opérationnelle Jalon 12 refusée")
+    raw_generated_at = report.get("generated_at")
+    if not isinstance(raw_generated_at, str):
+        raise RuntimeError("horodatage opérationnel Jalon 12 absent")
+    try:
+        generated_at = datetime.fromisoformat(
+            raw_generated_at.replace("Z", "+00:00")
+        )
+    except ValueError as exception:
+        raise RuntimeError("horodatage opérationnel Jalon 12 invalide") from exception
+    if generated_at.tzinfo is None or generated_at.utcoffset() is None:
+        raise RuntimeError("horodatage opérationnel Jalon 12 non UTC")
+    generated_at = generated_at.astimezone(UTC)
+    if generated_at > _utc_now() + timedelta(minutes=5):
+        raise RuntimeError("horodatage opérationnel Jalon 12 futur")
+    observatory = report.get("observatory")
+    if not isinstance(observatory, dict):
+        raise RuntimeError("observatoire opérationnel Jalon 12 absent")
+    if observatory.get("generated_at") != raw_generated_at:
+        raise RuntimeError("horodatages Jalon 12 incohérents")
+    return cast(dict[str, Any], observatory), generated_at
+
+
+def _validated_capture_evidence(
+    captures: object,
+    *,
+    expected_receipts: int,
+) -> tuple[int, int]:
+    """Recouper les totaux de capture avec les neuf familles fermées."""
+
+    if not isinstance(captures, dict):
+        raise RuntimeError("captures publiques Jalon 12 invalides")
+    by_family = captures.get("by_family")
+    if not isinstance(by_family, dict) or len(by_family) != 9:
+        raise RuntimeError("familles de capture Jalon 12 invalides")
+    counter_names = (
+        "attempted",
+        "captured",
+        "empty",
+        "missed",
+        "invalid",
+        "bytes",
+        "hashes",
+    )
+    totals: dict[str, int] = {}
+    for counter in counter_names:
+        total = _non_negative_int(captures.get(counter))
+        family_values = [
+            _non_negative_int(item.get(counter))
+            for item in by_family.values()
+            if isinstance(item, dict)
+        ]
+        if (
+            total is None
+            or len(family_values) != 9
+            or any(value is None for value in family_values)
+            or total != sum(cast(int, value) for value in family_values)
+        ):
+            raise RuntimeError(f"compteur de capture Jalon 12 incohérent : {counter}")
+        totals[counter] = total
+    for item in by_family.values():
+        if not isinstance(item, dict) or _non_negative_int(item.get("due")) is None:
+            raise RuntimeError("compteur de capture Jalon 12 incohérent : due")
+    classified = totals["captured"] + totals["empty"] + totals["invalid"]
+    fixture_family = by_family.get("FIXTURE")
+    if not isinstance(fixture_family, dict):
+        raise RuntimeError("famille FIXTURE Jalon 12 absente")
+    fixture_hashes = cast(int, _non_negative_int(fixture_family.get("hashes")))
+    non_fixture_hashes = totals["hashes"] - fixture_hashes
+    if (
+        classified > totals["hashes"]
+        or bool(totals["bytes"]) != bool(totals["hashes"])
+        or non_fixture_hashes > totals["attempted"]
+        or totals["hashes"] != expected_receipts
+    ):
+        raise RuntimeError("preuves de capture Jalon 12 incohérentes")
+    return totals["bytes"], totals["hashes"]
+
+
+def _validated_capture_provenance(
+    value: object,
+    *,
+    expected_receipts: int,
+) -> bool:
+    """Accept LIVE only when every immutable receipt is genuine provider data."""
+
+    expected_keys = {
+        "live_provider_receipts",
+        "cache_test_receipts",
+        "unverified_receipts",
+        "provider_calls_recorded",
+    }
+    if not isinstance(value, dict) or set(value) != expected_keys:
+        raise RuntimeError("provenance des captures Jalon 12 absente")
+    counters = {
+        key: _non_negative_int(value.get(key))
+        for key in expected_keys
+    }
+    if any(counter is None for counter in counters.values()):
+        raise RuntimeError("provenance des captures Jalon 12 invalide")
+    live = cast(int, counters["live_provider_receipts"])
+    cache = cast(int, counters["cache_test_receipts"])
+    unverified = cast(int, counters["unverified_receipts"])
+    calls = cast(int, counters["provider_calls_recorded"])
+    if (
+        live + cache + unverified != expected_receipts
+        or calls > live
+        or (live == 0 and calls != 0)
+    ):
+        raise RuntimeError("provenance des captures Jalon 12 incohÃ©rente")
+    return (
+        expected_receipts > 0
+        and live == expected_receipts
+        and cache == 0
+        and unverified == 0
+        and calls > 0
+    )
+
+
+def _validate_gate_evidence(
+    snapshot: dict[str, Any],
+    *,
+    fixture_count: int,
+    capture_hashes: int,
+) -> None:
+    gates = snapshot.get("gates")
+    temporal = snapshot.get("temporal")
+    if not isinstance(gates, dict) or not isinstance(temporal, dict):
+        raise RuntimeError("preuves de gates Jalon 12 absentes")
+    by_name = gates.get("by_name")
+    expected_names = {gate.value for gate in GateName}
+    if not isinstance(by_name, dict) or set(by_name) != expected_names:
+        raise RuntimeError("registre de gates Jalon 12 invalide")
+    total_evaluations = 0
+    for name in sorted(expected_names):
+        item = by_name.get(name)
+        if not isinstance(item, dict):
+            raise RuntimeError(f"gate Jalon 12 invalide : {name}")
+        passed = _non_negative_int(item.get("passed"))
+        total = _non_negative_int(item.get("total"))
+        expected_status = (
+            GateStatus.PASSED.value
+            if total is not None and total > 0 and passed == total
+            else GateStatus.BLOCKED_BY_COVERAGE.value
+        )
+        raw_reason = item.get("reason")
+        reasons = raw_reason.split(",") if isinstance(raw_reason, str) else []
+        if (
+            passed is None
+            or total is None
+            or passed > total
+            or total != fixture_count
+            or item.get("status") != expected_status
+            or not reasons
+            or any(reason not in _ALLOWED_GATE_REASONS for reason in reasons)
+            or (total == 0 and reasons != ["NO_FIXTURE"])
+        ):
+            raise RuntimeError(f"agrégat de gate Jalon 12 incohérent : {name}")
+        total_evaluations += total
+    temporal_gates = _non_negative_int(temporal.get("gates"))
+    before_cutoff = _non_negative_int(temporal.get("before_cutoff"))
+    late = _non_negative_int(temporal.get("late"))
+    rejected = _non_negative_int(temporal.get("rejected"))
+    if (
+        temporal_gates != total_evaluations
+        or before_cutoff is None
+        or late is None
+        or rejected is None
+        or before_cutoff + late != capture_hashes
+        or rejected != late
+    ):
+        raise RuntimeError("temporalité des gates Jalon 12 incohérente")
+
+
+def _validate_preview_context(
+    snapshot: dict[str, Any],
+    *,
+    generated_at: datetime,
+    fixture_count: int,
+) -> None:
+    fixtures = snapshot.get("fixtures")
+    windows = snapshot.get("windows")
+    if not isinstance(fixtures, dict) or not isinstance(windows, dict):
+        raise RuntimeError("contexte d'aperçu Jalon 12 absent")
+    fixture_preview = fixtures.get("next")
+    window_preview = windows.get("next")
+    horizon_days = _non_negative_int(fixtures.get("horizon_days"))
+    planned_windows = _non_negative_int(windows.get("planned"))
+    if (
+        not isinstance(fixture_preview, list)
+        or not isinstance(window_preview, list)
+        or horizon_days is None
+        or planned_windows is None
+        or len(fixture_preview) > min(20, fixture_count)
+        or len(window_preview) > min(20, planned_windows)
+    ):
+        raise RuntimeError("cardinalité d'aperçu Jalon 12 incohérente")
+    horizon = generated_at + timedelta(days=horizon_days)
+    for item in fixture_preview:
+        if not isinstance(item, dict):
+            raise RuntimeError("fixture d'aperçu Jalon 12 invalide")
+        raw_kickoff = item.get("kickoff_at")
+        if not isinstance(raw_kickoff, str):
+            raise RuntimeError("kickoff d'aperçu Jalon 12 absent")
+        kickoff = datetime.fromisoformat(
+            raw_kickoff.replace("Z", "+00:00")
+        ).astimezone(UTC)
+        if not generated_at < kickoff <= horizon:
+            raise RuntimeError("kickoff d'aperçu Jalon 12 hors horizon")
+    policy = read_json(PROSPECTIVE_POLICY, {})
+    capture_policy = (
+        policy.get("capture_windows", {})
+        if isinstance(policy, dict)
+        else {}
+    )
+    tolerance_seconds = (
+        _non_negative_int(capture_policy.get("operational_tolerance_seconds"))
+        if isinstance(capture_policy, dict)
+        else None
+    )
+    if tolerance_seconds is None or tolerance_seconds > 3600:
+        raise RuntimeError("tolérance d'aperçu Jalon 12 invalide")
+    tolerance = timedelta(seconds=tolerance_seconds)
+    for item in window_preview:
+        if not isinstance(item, dict):
+            raise RuntimeError("fenêtre d'aperçu Jalon 12 invalide")
+        raw_due = item.get("due_at")
+        status = item.get("status")
+        if not isinstance(raw_due, str):
+            raise RuntimeError("due_at d'aperçu Jalon 12 absent")
+        due_at = datetime.fromisoformat(
+            raw_due.replace("Z", "+00:00")
+        ).astimezone(UTC)
+        if (
+            status == AvailabilityStatus.NOT_DUE.value
+            and generated_at >= due_at - tolerance
+        ) or (
+            status == AvailabilityStatus.DUE.value
+            and not due_at - tolerance <= generated_at < due_at + tolerance
+        ):
+            raise RuntimeError("statut temporel d'aperçu Jalon 12 incohérent")
+
+
+def _validate_ledger_evidence(
+    snapshot: dict[str, Any],
+    *,
+    expected_events: int,
+) -> None:
+    ledger = snapshot.get("ledger")
+    if not isinstance(ledger, dict):
+        raise RuntimeError("ledger Jalon 12 absent")
+    events = _non_negative_int(ledger.get("events"))
+    head_hash = ledger.get("head_hash")
+    valid_head = (
+        head_hash is None
+        if expected_events == 0
+        else isinstance(head_hash, str)
+        and re.fullmatch(r"[0-9a-f]{64}", head_hash) is not None
+    )
+    if (
+        events != expected_events
+        or not valid_head
+        or _non_negative_int(ledger.get("bet_decisions")) != 0
+    ):
+        raise RuntimeError("ledger Jalon 12 incohérent")
+
+
+def merge_verified_replay_evidence(
+    snapshot: dict[str, Any],
+    *,
+    report_root: Path,
+    expected_capture_set_sha256: str | None = None,
+    latest_allowed_generated_at: datetime | None = None,
+) -> None:
+    """Propager uniquement les preuves sûres du replay dans le snapshot live."""
+
+    report = read_json(report_root / "r2-replay-audit.json", {})
+    if not report:
+        return
+    policy = read_json(PROSPECTIVE_POLICY, {})
+    if not isinstance(policy, dict) or not policy:
+        raise RuntimeError("politique Jalon 12 absente du replay")
+    replay_observatory, replay_generated_at = _validate_operation_report(
+        report,
+        expected_command="replay-audit",
+        policy_sha256=canonical_sha256(policy),
+    )
+    replay_r2 = (
+        replay_observatory.get("r2", {})
+        if isinstance(replay_observatory, dict)
+        else {}
+    )
+    replay_postgresql = (
+        replay_observatory.get("postgresql", {})
+        if isinstance(replay_observatory, dict)
+        else {}
+    )
+    report_counts = {
+        key: _non_negative_int(report.get(key))
+        for key in (
+            "provider_calls",
+            "odds_api_credits",
+            "hash_mismatches",
+            "data_loss",
+            "deletions",
+            "second_pass_inserts",
+            "second_pass_duplicates",
+            "payloads_replayed",
+            "fixtures_reconstructed",
+            "fixture_ids_expected",
+            "objects_examined",
+            "physical_unique_objects",
+            "physical_unique_bytes",
+            "physical_payload_objects",
+            "physical_payload_bytes",
+            "physical_receipt_objects",
+            "physical_receipt_bytes",
+            "physical_recovery_objects",
+            "physical_recovery_bytes",
+            "logical_references",
+            "logical_payload_bytes_read",
+            "logical_receipt_bytes_read",
+            "logical_bytes_read",
+        )
+    }
+    r2_counts = (
+        {
+            key: _non_negative_int(replay_r2.get(key))
+            for key in (
+                "bytes",
+                "deletions",
+                "lag",
+                "objects_added",
+                "recovery_bytes",
+                "recovery_objects",
+                "verified",
+            )
+        }
+        if isinstance(replay_r2, dict)
+        else {}
+    )
+    postgresql_counts = (
+        {
+            key: _non_negative_int(replay_postgresql.get(key))
+            for key in (
+                "duplicates_avoided",
+                "inserts",
+                "payload_body_rows",
+                "tables",
+            )
+        }
+        if isinstance(replay_postgresql, dict)
+        else {}
+    )
+    all_counts_valid = (
+        all(value is not None for value in report_counts.values())
+        and all(value is not None for value in r2_counts.values())
+        and all(value is not None for value in postgresql_counts.values())
+    )
+    payloads_replayed = report_counts.get("payloads_replayed")
+    objects_examined = report_counts.get("objects_examined")
+    physical_objects = report_counts.get("physical_unique_objects")
+    physical_bytes = report_counts.get("physical_unique_bytes")
+    physical_payload_objects = report_counts.get("physical_payload_objects")
+    physical_payload_bytes = report_counts.get("physical_payload_bytes")
+    physical_receipt_objects = report_counts.get("physical_receipt_objects")
+    physical_receipt_bytes = report_counts.get("physical_receipt_bytes")
+    physical_recovery_objects = report_counts.get("physical_recovery_objects")
+    physical_recovery_bytes = report_counts.get("physical_recovery_bytes")
+    logical_references = report_counts.get("logical_references")
+    logical_payload_bytes = report_counts.get("logical_payload_bytes_read")
+    logical_receipt_bytes = report_counts.get("logical_receipt_bytes_read")
+    logical_bytes = report_counts.get("logical_bytes_read")
+    fixtures_expected = report_counts.get("fixture_ids_expected")
+    replay_bytes = r2_counts.get("bytes")
+    postgresql_inserts = postgresql_counts.get("inserts")
+    dataset_hash = report.get("dataset_hash")
+    replay_capture_set = report.get("capture_set_sha256")
+    safe = (
+        all_counts_valid
+        and report.get("command") == "replay-audit"
+        and report.get("status") == "R2_REPLAY_VERIFIED"
+        and report.get("complete_replay") is True
+        and report.get("selection_truncated") is False
+        and report_counts.get("provider_calls") == 0
+        and report_counts.get("odds_api_credits") == 0
+        and report_counts.get("hash_mismatches") == 0
+        and report_counts.get("data_loss") == 0
+        and report_counts.get("deletions") == 0
+        and report_counts.get("second_pass_inserts") == 0
+        and payloads_replayed is not None
+        and payloads_replayed > 0
+        and report_counts.get("second_pass_duplicates") == payloads_replayed
+        and report_counts.get("fixtures_reconstructed")
+        == fixtures_expected
+        and fixtures_expected is not None
+        and 0 < fixtures_expected <= payloads_replayed
+        and objects_examined is not None
+        and objects_examined > 0
+        and objects_examined == physical_objects
+        and physical_objects is not None
+        and physical_objects
+        == cast(int, physical_payload_objects)
+        + cast(int, physical_receipt_objects)
+        + cast(int, physical_recovery_objects)
+        and physical_receipt_objects == payloads_replayed
+        and physical_payload_objects is not None
+        and 0 < physical_payload_objects <= payloads_replayed
+        and physical_recovery_objects is not None
+        and 0 <= physical_recovery_objects <= payloads_replayed
+        and physical_bytes is not None
+        and physical_bytes
+        == cast(int, physical_payload_bytes)
+        + cast(int, physical_receipt_bytes)
+        + cast(int, physical_recovery_bytes)
+        and physical_payload_bytes is not None
+        and physical_payload_bytes > 0
+        and physical_receipt_bytes is not None
+        and physical_receipt_bytes > 0
+        and physical_recovery_bytes is not None
+        and (
+            (physical_recovery_objects == 0 and physical_recovery_bytes == 0)
+            or (
+                physical_recovery_objects > 0
+                and physical_recovery_bytes > 0
+            )
+        )
+        and logical_references == payloads_replayed
+        and logical_payload_bytes is not None
+        and logical_payload_bytes >= physical_payload_bytes
+        and logical_receipt_bytes == physical_receipt_bytes
+        and logical_bytes
+        == logical_payload_bytes + logical_receipt_bytes
+        and report.get("namespace_verified") is True
+        and isinstance(dataset_hash, str)
+        and re.fullmatch(r"(?!0{64})[0-9a-f]{64}", dataset_hash) is not None
+        and isinstance(replay_capture_set, str)
+        and re.fullmatch(r"[0-9a-f]{64}", replay_capture_set) is not None
+        and (
+            expected_capture_set_sha256 is None
+            or replay_capture_set == expected_capture_set_sha256
+        )
+        and (
+            latest_allowed_generated_at is None
+            or replay_generated_at <= latest_allowed_generated_at
+        )
+        and report.get("production_status") == "PRODUCTION_LOCKED"
+        and report.get("real_bets") is False
+        and report.get("no_bet_default") is True
+        and report.get("social_publishing_enabled") is False
+        and report.get("demo_mode_enabled") is False
+        and report.get("raw_payloads_in_git") == 0
+        and isinstance(replay_r2, dict)
+        and replay_r2.get("replay_status") == "R2_REPLAY_VERIFIED"
+        and r2_counts.get("verified") == objects_examined
+        and replay_bytes is not None
+        and replay_bytes == physical_bytes
+        and r2_counts.get("lag") == 0
+        and r2_counts.get("deletions") == 0
+        and r2_counts.get("objects_added") == physical_objects
+        and r2_counts.get("recovery_objects") == physical_recovery_objects
+        and r2_counts.get("recovery_bytes") == physical_recovery_bytes
+        and isinstance(replay_postgresql, dict)
+        and replay_postgresql.get("reconstruction_status")
+        == "RECONSTRUCTIBLE_FROM_R2"
+        and replay_postgresql.get("migration") == "0009_jalon12_observatory"
+        and postgresql_counts.get("tables") == 12
+        and postgresql_inserts is not None
+        and postgresql_inserts <= payloads_replayed
+        and postgresql_counts.get("payload_body_rows") == 0
+        and postgresql_counts.get("duplicates_avoided")
+        == report_counts.get("second_pass_duplicates")
+    )
+    if not safe:
+        raise RuntimeError("preuve replay Jalon 12 refusée")
+
+    target_r2 = snapshot.get("r2", {})
+    target_postgresql = snapshot.get("postgresql", {})
+    if not isinstance(target_r2, dict) or not isinstance(target_postgresql, dict):
+        raise RuntimeError("snapshot replay Jalon 12 invalide")
+    target_bytes = _non_negative_int(target_r2.get("bytes"))
+    target_objects = _non_negative_int(target_r2.get("objects_added"))
+    if (
+        target_bytes is None
+        or target_bytes not in {0, replay_bytes}
+        or target_objects is None
+        or target_objects not in {0, objects_examined}
+    ):
+        raise RuntimeError("preuve replay Jalon 12 incohérente avec les captures")
+    target_r2.update(
+        {
+            "objects_added": physical_objects,
+            "bytes": physical_bytes,
+            "recovery_objects": physical_recovery_objects,
+            "recovery_bytes": physical_recovery_bytes,
+            "replay_status": "R2_REPLAY_VERIFIED",
+            "verified": objects_examined,
+            "lag": 0,
+            "deletions": 0,
+        }
+    )
+    target_postgresql.update(
+        {
+            "reconstruction_status": "RECONSTRUCTIBLE_FROM_R2",
+            "duplicates_avoided": report_counts["second_pass_duplicates"],
+        }
+    )
 
 
 def build_prospective_observatory() -> dict[str, Any]:
@@ -127,53 +984,136 @@ def build_prospective_observatory() -> dict[str, Any]:
         )
     )
     observed: dict[str, Any] = {}
-    for filename in ("gate-report.json", "pilot-report.json"):
-        report = read_json(report_root / filename, {})
-        candidate = report.get("observatory", {}) if isinstance(report, dict) else {}
-        if isinstance(candidate, dict) and candidate:
-            observed = merge_dicts(observed, candidate)
+    observed_generated_at: datetime | None = None
+    observed_receipts: int | None = None
+    observed_ledger_events: int | None = None
+    observed_capture_set_sha256: str | None = None
+    observed_capture_provenance: object = None
+    gate_report_path = report_root / "gate-report.json"
+    if gate_report_path.exists():
+        gate_report = read_json(gate_report_path, {})
+        observed, observed_generated_at = _validate_operation_report(
+            gate_report,
+            expected_command="gate-report",
+            policy_sha256=canonical_sha256(policy),
+        )
+        if isinstance(gate_report, dict):
+            observed_receipts = _non_negative_int(gate_report.get("receipts"))
+            observed_ledger_events = _non_negative_int(
+                gate_report.get("ledger_events")
+            )
+            raw_capture_set = gate_report.get("capture_set_sha256")
+            observed_capture_set_sha256 = (
+                raw_capture_set
+                if isinstance(raw_capture_set, str)
+                and re.fullmatch(r"[0-9a-f]{64}", raw_capture_set) is not None
+                else None
+            )
+            observed_capture_provenance = gate_report.get(
+                "capture_provenance"
+            )
+        if (
+            observed_receipts is None
+            or observed_ledger_events is None
+            or observed_capture_set_sha256 is None
+        ):
+            raise RuntimeError("compteur de reçus Jalon 12 absent")
 
     if observed:
+        if observed_receipts is None:
+            raise RuntimeError("compteur de reçus Jalon 12 absent")
+        if observed_ledger_events is None:
+            raise RuntimeError("compteur de ledger Jalon 12 absent")
+        if observed_capture_set_sha256 is None:
+            raise RuntimeError("empreinte des captures Jalon 12 absente")
         invariants = observed.get("invariants", {})
-        safe = (
-            isinstance(invariants, dict)
-            and invariants.get("production_status") == "PRODUCTION_LOCKED"
-            and invariants.get("real_bets") is False
-            and invariants.get("social_publishing_enabled") is False
-            and invariants.get("demo_mode_enabled") is False
-        )
-        if not safe:
+        if not _validate_report_invariants(invariants):
             raise RuntimeError("rapport Jalon 12 refusé : invariants incomplets")
-        compact = merge_dicts(compact, observed)
-        captures = observed.get("captures", {})
+        compact = merge_public_observatory(compact, observed)
+        fixture_count = _non_negative_int(compact.get("fixtures", {}).get("tracked"))
+        if fixture_count is None:
+            raise RuntimeError("compteur de fixtures Jalon 12 invalide")
+        _capture_bytes, capture_hashes = _validated_capture_evidence(
+            compact.get("captures"),
+            expected_receipts=observed_receipts,
+        )
+        genuine_live_provenance = _validated_capture_provenance(
+            observed_capture_provenance,
+            expected_receipts=observed_receipts,
+        )
+        _validate_gate_evidence(
+            compact,
+            fixture_count=fixture_count,
+            capture_hashes=capture_hashes,
+        )
+        _validate_ledger_evidence(
+            compact,
+            expected_events=observed_ledger_events,
+        )
+        merge_verified_replay_evidence(
+            compact,
+            report_root=report_root,
+            expected_capture_set_sha256=observed_capture_set_sha256,
+            latest_allowed_generated_at=observed_generated_at,
+        )
         has_live_evidence = (
-            isinstance(captures, dict)
-            and int(str(captures.get("hashes", 0))) > 0
+            capture_hashes > 0
+            and genuine_live_provenance
+            and compact["r2"]["replay_status"] == "R2_REPLAY_VERIFIED"
+            and compact["r2"]["verified"] > 0
+            and compact["postgresql"]["reconstruction_status"]
+            == "RECONSTRUCTIBLE_FROM_R2"
         )
         if has_live_evidence:
             compact["origin"] = "LIVE_PROSPECTIVE_CAPTURE"
+        if observed_generated_at is not None:
+            compact["generated_at"] = observed_generated_at.isoformat()
+            _validate_preview_context(
+                compact,
+                generated_at=observed_generated_at,
+                fixture_count=fixture_count,
+            )
+        gates = compact.get("gates", {})
+        by_name = gates.get("by_name", {}) if isinstance(gates, dict) else {}
+        gate_totals = (
+            [
+                _non_negative_int(item.get("total"))
+                for item in by_name.values()
+                if isinstance(item, dict)
+            ]
+            if isinstance(by_name, dict)
+            else []
+        )
+        if any(total is None for total in gate_totals):
+            raise RuntimeError("compteurs de gates Jalon 12 invalides")
+        compact["status"] = (
+            "PROSPECTIVE_GATES_ACCUMULATING"
+            if any(total and total > 0 for total in gate_totals)
+            else "GATES_BLOCKED_BY_COVERAGE"
+        )
 
         fixtures = observed.get("fixtures", {})
         if isinstance(fixtures, dict):
-            compact["windows"]["planned"] = int(
+            planned = _non_negative_int(
                 fixtures.get(
                     "windows_planned",
                     compact["windows"].get("planned", 0),
                 )
             )
-            compact["windows"]["due"] = int(
+            due = _non_negative_int(
                 fixtures.get("windows_due", compact["windows"].get("due", 0))
             )
+            if planned is None or due is None or due > planned:
+                raise RuntimeError("compteurs de fenêtres Jalon 12 invalides")
+            compact["windows"]["planned"] = planned
+            compact["windows"]["due"] = due
 
     invariants = compact.get("invariants", {})
     if (
-        not isinstance(invariants, dict)
-        or invariants.get("production_status") != "PRODUCTION_LOCKED"
-        or invariants.get("real_bets") is not False
-        or invariants.get("no_bet_default") is not True
-        or invariants.get("social_publishing_enabled") is not False
-        or invariants.get("demo_mode_enabled") is not False
+        invariants != _EXPECTED_INVARIANTS
         or int(str(compact.get("decisions", 0))) != 0
+        or int(str(compact.get("candidates", 0))) != 0
+        or int(str(compact.get("ledger", {}).get("bet_decisions", 0))) != 0
     ):
         raise RuntimeError("snapshot Observatoire non publiable")
     return cast(dict[str, Any], compact)

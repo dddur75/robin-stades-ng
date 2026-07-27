@@ -146,6 +146,12 @@ class ProspectiveFixture(FrozenContract):
     cancelled: bool = False
     kickoff_reliable: bool = True
     horizon_days: int = Field(default=30, ge=1, le=30)
+    lifecycle_version_hash: str | None = Field(
+        default=None,
+        min_length=64,
+        max_length=64,
+        pattern=r"^[0-9a-f]{64}$",
+    )
 
     @model_validator(mode="after")
     def validate_fixture(self) -> Self:
@@ -165,7 +171,7 @@ class ProspectiveFixture(FrozenContract):
         return self
 
     @property
-    def registry_hash(self) -> str:
+    def business_hash(self) -> str:
         # Registration time and the running code revision are observation
         # metadata, not part of the provider fixture's business identity.
         # Excluding them keeps a daily registry replay idempotent while a real
@@ -173,9 +179,20 @@ class ProspectiveFixture(FrozenContract):
         return canonical_sha256(
             self.model_dump(
                 mode="json",
-                exclude={"registered_at", "code_revision"},
+                exclude={
+                    "registered_at",
+                    "code_revision",
+                    "lifecycle_version_hash",
+                },
             )
         )
+
+    @property
+    def registry_hash(self) -> str:
+        # An exact business state may legitimately recur after a cancellation
+        # or TBD tombstone. In that case the immutable lifecycle hash prevents
+        # the new activation from aliasing the older SQL/R2 version.
+        return self.lifecycle_version_hash or self.business_hash
 
 
 class CaptureWindow(FrozenContract):

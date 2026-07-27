@@ -154,6 +154,8 @@
     "namespace": "prospective-deep-data/schema-v1",
     "objects_added": 0,
     "bytes": 0,
+    "recovery_objects": 0,
+    "recovery_bytes": 0,
     "verified": 0,
     "lag": 0,
     "deletions": 0,

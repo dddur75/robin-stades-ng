@@ -13,10 +13,12 @@ from robin.prospective_observatory.contracts import (
     HistoricalSemanticStatus,
     ProspectiveFixture,
     RetryDisposition,
+    canonical_sha256,
     ensure_utc,
 )
 
 WINDOW_POLICY_VERSION = "prospective-capture-window-v1"
+VERSIONED_WINDOW_ID_PREFIX = "prospective-window-v2:"
 # Scheduled workflows run no more frequently than hourly. A symmetric one-hour
 # tolerance guarantees that an hourly execution can observe every declared
 # window; near kickoff the cutoff is still clamped strictly before kickoff.
@@ -98,9 +100,18 @@ def schedule_windows(
     for offset in CAPTURE_POLICIES[family]:
         due_at = kickoff_at - offset.before_kickoff
         cutoff_at = min(due_at + tolerance, kickoff_at - timedelta(microseconds=1))
-        window_id = (
-            f"{fixture.fixture_id}:{family.value}:{offset.label}:"
-            f"{due_at.strftime('%Y%m%dT%H%M%SZ')}"
+        # Bind the operational window to the complete immutable fixture
+        # business version.  A provider correction to teams, phase, season or
+        # kickoff must never allow an earlier window/receipt to certify the
+        # corrected fixture.
+        window_id = VERSIONED_WINDOW_ID_PREFIX + canonical_sha256(
+            {
+                "fixture_registry_hash": fixture.registry_hash,
+                "family": family.value,
+                "label": offset.label,
+                "due_at": due_at.isoformat(),
+                "policy_version": WINDOW_POLICY_VERSION,
+            }
         )
         windows.append(
             CaptureWindow(

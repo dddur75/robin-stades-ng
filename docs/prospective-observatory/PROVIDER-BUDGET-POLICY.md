@@ -50,16 +50,26 @@ préflight frais ; son coût réel (`x-requests-last`) et son nouveau solde
 (`x-requests-remaining`) alimentent ensuite le ledger durable. Un header absent
 ferme la capture avec `QUOTA_UNKNOWN`.
 
-L’estimation hashée est persistée avant la tentative. Le mouvement réellement
-consommé et le solde fournisseur sont appendus après la réponse ; une panne
-transport est comptée de manière conservatrice.
+L’estimation hashée est persistée avant la tentative. Chaque unité maximale
+facturable est ensuite réservée dans le ledger durable immédiatement avant
+l’appel physique. Une panne transport, une réponse invalide ou un échec R2/PG
+ne peut donc pas rendre la consommation invisible. Lorsque The Odds API
+retourne son coût réel, un éventuel supplément est appendu avant tout traitement
+du payload ; un coût inférieur reste compté conservativement sans écriture
+négative.
+
+Le circuit local est sondé avant cette réservation. Lorsqu’il est déjà ouvert,
+la boucle s’arrête avec `CAPTURE_STOPPED_CIRCUIT_OPEN` : aucun transport, aucune
+unité et aucune erreur fournisseur fantôme ne sont ajoutés. L’appel physique qui
+fait effectivement franchir le seuil reste, lui, compté même s’il échoue.
 
 ## Ledger
 
-Le ledger est append-only. Chaque mouvement porte fournisseur, unités
-réellement consommées, fenêtre et numéro de tentative, timestamp, révision et
-clé d’idempotence. L’estimation séparée porte le coût maximum, les fixtures et
-les fenêtres. Un replay ne produit aucun débit.
+Le ledger est append-only. Chaque mouvement porte fournisseur, unités réservées
+ou facturées, appel physique, timestamp, révision et clé unique d’exécution.
+Deux appels physiques répétés, même avec le même `--now`, créent deux mouvements
+distincts. L’estimation séparée porte le coût maximum, les fixtures et les
+fenêtres. Un replay ne produit aucun débit.
 
 | Mesure | Interprétation |
 |---|---|

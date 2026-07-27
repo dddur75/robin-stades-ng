@@ -7,7 +7,10 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from robin.prospective_observatory.contracts import CaptureReceipt, canonical_sha256
-from robin.prospective_observatory.r2 import ProspectiveR2Repository
+from robin.prospective_observatory.r2 import (
+    ProspectiveR2Repository,
+    R2NamespaceIntegrityError,
+)
 
 NormalizedProjection = Mapping[str, object]
 Normalizer = Callable[[CaptureReceipt, object], NormalizedProjection]
@@ -59,6 +62,19 @@ class ReplayResult:
     bytes_read: int
     hash_mismatches: int
     data_loss: int
+    physical_unique_objects: int
+    physical_unique_bytes: int
+    physical_payload_objects: int
+    physical_payload_bytes: int
+    physical_receipt_objects: int
+    physical_receipt_bytes: int
+    physical_recovery_objects: int
+    physical_recovery_bytes: int
+    logical_references: int
+    logical_payload_bytes_read: int
+    logical_receipt_bytes_read: int
+    logical_bytes_read: int
+    namespace_verified: bool
     dataset_hash: str
 
 
@@ -86,13 +102,18 @@ def replay_from_r2(
     *,
     normalizer: Normalizer | None = None,
 ) -> ReplayResult:
+    inventory = repository.inventory_namespace()
+    if not inventory.verified:
+        raise R2NamespaceIntegrityError(inventory)
+
     normalize = normalizer or _default_normalizer
     inserted = 0
     duplicates = 0
     bytes_read = 0
     evidence: list[dict[str, object]] = []
     captures = 0
-    for stored in repository.iter_captures():
+    for receipt_key in inventory.receipt_keys:
+        stored = repository.read_capture(receipt_key)
         captures += 1
         projection = normalize(stored.receipt, stored.payload)
         projection_hash = canonical_sha256(dict(projection))
@@ -109,7 +130,7 @@ def replay_from_r2(
             }
         )
     return ReplayResult(
-        objects_examined=captures * 2,
+        objects_examined=inventory.physical_unique_objects,
         payloads_replayed=captures,
         projections_inserted=inserted,
         duplicates_avoided=duplicates,
@@ -118,5 +139,18 @@ def replay_from_r2(
         bytes_read=bytes_read,
         hash_mismatches=0,
         data_loss=0,
+        physical_unique_objects=inventory.physical_unique_objects,
+        physical_unique_bytes=inventory.physical_unique_bytes,
+        physical_payload_objects=inventory.physical_payload_objects,
+        physical_payload_bytes=inventory.physical_payload_bytes,
+        physical_receipt_objects=inventory.physical_receipt_objects,
+        physical_receipt_bytes=inventory.physical_receipt_bytes,
+        physical_recovery_objects=inventory.physical_recovery_objects,
+        physical_recovery_bytes=inventory.physical_recovery_bytes,
+        logical_references=inventory.logical_references,
+        logical_payload_bytes_read=inventory.logical_payload_bytes_read,
+        logical_receipt_bytes_read=inventory.logical_receipt_bytes_read,
+        logical_bytes_read=inventory.logical_bytes_read,
+        namespace_verified=True,
         dataset_hash=canonical_sha256(evidence),
     )

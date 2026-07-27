@@ -70,12 +70,14 @@ from robin.prospective_observatory.replay import (
     replay_from_r2,
 )
 from robin.prospective_observatory.temporal import (
+    VERSIONED_WINDOW_ID_PREFIX,
     classify_window,
     retry_disposition,
     schedule_windows,
 )
 from robin.providers.api_football import ApiFootballProvider
 from robin.providers.contracts import (
+    CircuitOpenError,
     MissingCredentialError,
     ProviderResult,
     QuotaState,
@@ -414,6 +416,10 @@ class OperationalState(Protocol):
 
     def fixtures(self) -> tuple[ProspectiveFixture, ...]: ...
 
+    def fixture_versions(self) -> tuple[ProspectiveFixture, ...]: ...
+
+    def fixture_lifecycle_heads(self) -> tuple[ProspectiveFixture, ...]: ...
+
     def schedule_window(self, window: CaptureWindow) -> bool: ...
 
     def windows(self) -> tuple[CaptureWindow, ...]: ...
@@ -464,6 +470,7 @@ class OperationalState(Protocol):
 @dataclass(slots=True)
 class MemoryOperationalState:
     fixture_rows: dict[str, tuple[str, ProspectiveFixture]] = field(default_factory=dict)
+    fixture_version_rows: dict[str, ProspectiveFixture] = field(default_factory=dict)
     window_rows: dict[str, CaptureWindow] = field(default_factory=dict)
     attempt_rows: dict[str, CaptureAttempt] = field(default_factory=dict)
     receipt_rows: dict[str, CaptureReceipt] = field(default_factory=dict)
@@ -477,6 +484,7 @@ class MemoryOperationalState:
         capture: StoredCapture,
     ) -> bool:
         value = (fixture.registry_hash, fixture)
+        self.fixture_version_rows.setdefault(fixture.registry_hash, fixture)
         existing = self.fixture_rows.get(fixture.fixture_id)
         if existing is not None and existing[0] == fixture.registry_hash:
             # Ingestion metadata (registered_at/code_revision) is deliberately
@@ -493,6 +501,12 @@ class MemoryOperationalState:
         return tuple(
             row[1] for row in self.fixture_rows.values() if not row[1].cancelled
         )
+
+    def fixture_versions(self) -> tuple[ProspectiveFixture, ...]:
+        return tuple(self.fixture_version_rows.values())
+
+    def fixture_lifecycle_heads(self) -> tuple[ProspectiveFixture, ...]:
+        return tuple(row[1] for row in self.fixture_rows.values())
 
     def schedule_window(self, window: CaptureWindow) -> bool:
         existing = self.window_rows.get(window.window_id)
@@ -716,7 +730,12 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                         "cancelled": bool(row["cancelled"]),
                         "kickoff_reliable": True,
                         "horizon_days": int(row.get("horizon_days", 30)),
+                        "lifecycle_version_hash": str(row["registry_hash"]),
                     }
+                )
+                self.fixture_version_rows.setdefault(
+                    fixture.registry_hash,
+                    fixture,
                 )
                 existing = self.fixture_rows.get(fixture.fixture_id)
                 if existing is None or existing[1].registered_at < fixture.registered_at:
@@ -762,6 +781,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         fixture: ProspectiveFixture,
         capture: StoredCapture,
     ) -> bool:
+        self.fixture_version_rows.setdefault(fixture.registry_hash, fixture)
         existing = self.fixture_rows.get(fixture.fixture_id)
         if existing is not None and existing[0] == fixture.registry_hash:
             self.persist_capture(capture)
@@ -811,6 +831,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             ).mappings().first()
             if existing is not None:
                 immutable = (
+                    "fixture_record_id",
                     "fixture_id",
                     "family",
                     "label",
@@ -1104,6 +1125,13 @@ class SQLAlchemyProjectionSink:
         """Restore fixture/window indexes before receipt FK projection."""
 
         captures = tuple(captures)
+        registry_captures: list[
+            tuple[ProspectiveFixture, StoredCapture]
+        ] = []
+        versions_by_fixture: dict[
+            str,
+            dict[str, ProspectiveFixture],
+        ] = {}
         for stored in captures:
             if stored.receipt.family is not CaptureFamily.FIXTURE:
                 continue
@@ -1113,29 +1141,95 @@ class SQLAlchemyProjectionSink:
             if not isinstance(contract, Mapping):
                 continue
             fixture = ProspectiveFixture.model_validate(dict(contract))
+            registry_captures.append((fixture, stored))
+            existing_version = versions_by_fixture.setdefault(
+                fixture.fixture_id,
+                {},
+            ).get(fixture.registry_hash)
+            if (
+                existing_version is None
+                or existing_version.registered_at > fixture.registered_at
+            ):
+                versions_by_fixture[fixture.fixture_id][
+                    fixture.registry_hash
+                ] = fixture
+        for fixture, stored in sorted(
+            registry_captures,
+            key=lambda item: (
+                item[0].registered_at,
+                item[0].registry_hash,
+                item[1].receipt.receipt_hash,
+            ),
+        ):
             self.state.register_fixture(fixture, stored)
         for stored in captures:
             receipt = stored.receipt
             if receipt.window_id is None:
                 continue
-            fixture_entry = self.state.fixture_rows.get(receipt.fixture_id)
-            if fixture_entry is None:
-                continue
-            candidates = schedule_windows(
-                fixture_entry[1],
-                receipt.family,
-                scheduled_at=receipt.requested_at,
-                tolerance=tolerance,
+            fixture_versions = tuple(
+                versions_by_fixture.get(receipt.fixture_id, {}).values()
             )
-            matches = [
-                window
-                for window in candidates
-                if window.window_id == receipt.window_id
-                and window.label == receipt.window_label
-            ]
+            exact_matches: list[
+                tuple[ProspectiveFixture, CaptureWindow]
+            ] = []
+            legacy_matches: list[
+                tuple[ProspectiveFixture, CaptureWindow]
+            ] = []
+            for fixture in fixture_versions:
+                for candidate in schedule_windows(
+                    fixture,
+                    receipt.family,
+                    scheduled_at=receipt.requested_at,
+                    tolerance=tolerance,
+                ):
+                    if (
+                        candidate.label != receipt.window_label
+                        or candidate.kickoff_at != receipt.kickoff_at
+                        or candidate.cutoff_at != receipt.cutoff_at
+                    ):
+                        continue
+                    if candidate.window_id == receipt.window_id:
+                        exact_matches.append((fixture, candidate))
+                    elif (
+                        not receipt.window_id.startswith(
+                            VERSIONED_WINDOW_ID_PREFIX
+                        )
+                        and fixture.registered_at <= receipt.requested_at
+                    ):
+                        legacy_matches.append(
+                            (
+                                fixture,
+                                candidate.model_copy(
+                                    update={"window_id": receipt.window_id}
+                                ),
+                            )
+                        )
+            matches = exact_matches
+            if not matches and legacy_matches:
+                latest_registration = max(
+                    fixture.registered_at
+                    for fixture, _ in legacy_matches
+                )
+                matches = [
+                    item
+                    for item in legacy_matches
+                    if item[0].registered_at == latest_registration
+                ]
             if len(matches) != 1:
                 raise RuntimeError("R2_REPLAY_WINDOW_CONTRACT_MISMATCH")
-            self.state.schedule_window(matches[0])
+            fixture, window = matches[0]
+            current_fixture = self.state.fixture_rows.get(fixture.fixture_id)
+            self.state.fixture_rows[fixture.fixture_id] = (
+                fixture.registry_hash,
+                fixture,
+            )
+            try:
+                self.state.schedule_window(window)
+            finally:
+                if current_fixture is None:
+                    self.state.fixture_rows.pop(fixture.fixture_id, None)
+                else:
+                    self.state.fixture_rows[fixture.fixture_id] = current_fixture
 
     @staticmethod
     def _records(projection: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
@@ -1615,6 +1709,137 @@ def _filter_fixtures(
     )
 
 
+def _fixture_lifecycle_tombstones(
+    records: Iterable[Mapping[str, object]],
+    *,
+    state: OperationalState,
+    policy: ObservatoryPolicy,
+    competition: str,
+    now: datetime,
+    code_revision: str,
+    selected_fixture_ids: set[str],
+) -> tuple[tuple[ProspectiveFixture, Mapping[str, object]], ...]:
+    """Close an active fixture when the provider explicitly withdraws reliability.
+
+    A `TBD`/excluded lifecycle update may no longer satisfy the prospective
+    admission contract, but silently dropping that update would leave the
+    previous kickoff and all of its windows active.  We therefore append a
+    cancelled version based on the last admitted fixture.  The provider record
+    remains the immutable evidence; no historical version or window is mutated.
+    Malformed records without an explicit provider fixture id/status never
+    deactivate anything.
+    """
+
+    excluded = {
+        str(value)
+        for value in cast(
+            list[object],
+            policy.fixture_registry["excluded_statuses"],
+        )
+    }
+    lifecycle_statuses = excluded | {"TBD"}
+    active = {fixture.fixture_id: fixture for fixture in state.fixtures()}
+    tombstones: list[tuple[ProspectiveFixture, Mapping[str, object]]] = []
+    seen: set[str] = set()
+    for record in records:
+        fixture_value = record.get("fixture")
+        if not isinstance(fixture_value, Mapping):
+            continue
+        provider_fixture_id = str(fixture_value.get("id", "")).strip()
+        status_value = fixture_value.get("status")
+        status_short = (
+            str(status_value.get("short", "")).strip()
+            if isinstance(status_value, Mapping)
+            else ""
+        )
+        fixture_id = f"api-football:{provider_fixture_id}"
+        current = active.get(fixture_id)
+        if (
+            not provider_fixture_id
+            or status_short not in lifecycle_statuses
+            or fixture_id in selected_fixture_ids
+            or fixture_id in seen
+            or current is None
+            or current.competition != competition
+            or current.kickoff_at <= now
+        ):
+            continue
+        tombstones.append(
+            (
+                current.model_copy(
+                    update={
+                        "registered_at": now,
+                        "code_revision": code_revision,
+                        "cancelled": True,
+                        "lifecycle_version_hash": None,
+                    }
+                ),
+                record,
+            )
+        )
+        seen.add(fixture_id)
+    return tuple(
+        sorted(
+            tombstones,
+            key=lambda item: (item[0].kickoff_at, item[0].fixture_id),
+        )
+    )
+
+
+def _version_fixture_lifecycle_transitions(
+    fixtures: Iterable[tuple[ProspectiveFixture, Mapping[str, object]]],
+    *,
+    state: OperationalState,
+) -> tuple[tuple[ProspectiveFixture, Mapping[str, object]], ...]:
+    """Bind recurring business states to an immutable lifecycle chain.
+
+    A fixture can transition from NS to a TBD/cancelled tombstone and later
+    return to the exact same NS payload and kickoff. Its plain business hash
+    would then alias the first NS row. A transition-derived hash creates a new
+    append-only version, while a routine reobservation of the current state
+    keeps the existing hash and remains idempotent.
+    """
+
+    heads = {
+        fixture.fixture_id: fixture
+        for fixture in state.fixture_lifecycle_heads()
+    }
+    versioned: list[tuple[ProspectiveFixture, Mapping[str, object]]] = []
+    for fixture, record in fixtures:
+        candidate = fixture.model_copy(
+            update={"lifecycle_version_hash": None}
+        )
+        current = heads.get(candidate.fixture_id)
+        if current is None:
+            resolved = candidate
+        elif current.business_hash == candidate.business_hash:
+            resolved = candidate.model_copy(
+                update={
+                    "lifecycle_version_hash": current.registry_hash,
+                }
+            )
+        else:
+            resolved = candidate.model_copy(
+                update={
+                    "lifecycle_version_hash": canonical_sha256(
+                        {
+                            "schema_version": (
+                                "prospective-fixture-lifecycle-v1"
+                            ),
+                            "fixture_id": candidate.fixture_id,
+                            "previous_registry_hash": (
+                                current.registry_hash
+                            ),
+                            "business_hash": candidate.business_hash,
+                        }
+                    )
+                }
+            )
+        heads[resolved.fixture_id] = resolved
+        versioned.append((resolved, record))
+    return tuple(versioned)
+
+
 def _estimate(
     *,
     command: str,
@@ -1739,6 +1964,8 @@ def _base_snapshot(policy: ObservatoryPolicy, *, now: datetime) -> dict[str, obj
         "r2": {
             "objects_added": 0,
             "bytes": 0,
+            "recovery_objects": 0,
+            "recovery_bytes": 0,
             "verified": 0,
             "lag": 0,
             "deletions": 0,
@@ -1803,6 +2030,107 @@ def _report(
     return value
 
 
+def _capture_set_sha256(receipts: Iterable[CaptureReceipt]) -> str:
+    """Lier gate et replay au même ensemble exact de reçus R2."""
+
+    return canonical_sha256(
+        sorted(
+            (receipt.receipt_hash, receipt.payload_sha256)
+            for receipt in receipts
+        )
+    )
+
+
+def _capture_provenance(
+    receipts: Iterable[CaptureReceipt],
+) -> dict[str, int]:
+    """Summarize immutable receipt provenance without exposing raw payloads."""
+
+    live_receipts = 0
+    cache_test_receipts = 0
+    unverified_receipts = 0
+    provider_calls_recorded = 0
+    for receipt in receipts:
+        provider_calls_recorded += receipt.provider_calls
+        if (
+            receipt.provider == "cache-test"
+            or receipt.source_endpoint.startswith("cache://")
+        ):
+            cache_test_receipts += 1
+        elif (
+            receipt.provider in {"api-football", "the-odds-api"}
+            and receipt.source_endpoint.startswith("/")
+        ):
+            live_receipts += 1
+        else:
+            unverified_receipts += 1
+    return {
+        "live_provider_receipts": live_receipts,
+        "cache_test_receipts": cache_test_receipts,
+        "unverified_receipts": unverified_receipts,
+        "provider_calls_recorded": provider_calls_recorded,
+    }
+
+
+def _reject_non_durable_execution_inputs(
+    args: argparse.Namespace,
+    *,
+    state: OperationalState,
+) -> None:
+    """Keep cache/local adapters outside durable provider executions."""
+
+    durable_database = (
+        isinstance(state, SQLAlchemyOperationalState)
+        and state.engine.dialect.name != "sqlite"
+    )
+    execute = bool(getattr(args, "execute", False))
+    if args.cache is not None and (execute or durable_database):
+        raise ValueError("CACHE_INPUT_FORBIDDEN_FOR_DURABLE_EXECUTION")
+    if args.object_store_root is not None and (execute or durable_database):
+        raise ValueError("LOCAL_OBJECT_STORE_FORBIDDEN_FOR_PROVIDER_EXECUTION")
+
+
+def _record_provider_units_before_call(
+    state: OperationalState,
+    *,
+    operation_key: str,
+    step: str,
+    provider: ProviderKind,
+    units: int,
+    provider_remaining: int,
+    provider_reserve: int,
+    recorded_at: datetime,
+    code_revision: str,
+) -> None:
+    """Durably reserve charged units before control reaches a provider call."""
+
+    if units <= 0:
+        return
+    state.append_budget(
+        idempotency_key=f"{operation_key}:provider-step:{step}",
+        provider=provider,
+        units=units,
+        provider_remaining=max(provider_remaining, 0),
+        provider_reserve=provider_reserve,
+        recorded_at=recorded_at,
+        reason=f"RESERVED_BEFORE_PROVIDER_CALL:{step}",
+        code_revision=code_revision,
+    )
+
+
+def _assert_provider_transport_available(
+    provider: object,
+) -> None:
+    """Probe optional adapters without breaking lightweight test providers."""
+
+    probe = getattr(provider, "assert_transport_available", None)
+    if probe is None:
+        return
+    if not callable(probe):
+        raise RuntimeError("PROVIDER_TRANSPORT_PREFLIGHT_INVALID")
+    probe()
+
+
 def _database_state() -> SQLAlchemyOperationalState:
     database_url = os.getenv("ROBIN_DATABASE_URL") or os.getenv("DATABASE_URL")
     if not database_url:
@@ -1857,14 +2185,22 @@ def run_fixture_registry(
             command=command,
             policy=policy,
         )
-        if _int_value(
-            verified["estimated_units"],
-            error="PROVIDER_ESTIMATE_UNITS_INVALID",
-        ) > _int_value(
-            policy.budgets["api_football_max_calls_total"],
-            error="PROSPECTIVE_API_FOOTBALL_CAP_INVALID",
+        if (
+            verified.get("provider") != ProviderKind.API_FOOTBALL.value
+            or _int_value(
+                verified["estimated_units"],
+                error="PROVIDER_ESTIMATE_UNITS_INVALID",
+            )
+            != 3
+            or _int_value(
+                verified["windows_due"],
+                error="PROVIDER_ESTIMATE_WINDOWS_INVALID",
+            )
+            != 1
+            or verified.get("window_ids_sha256")
+            != canonical_sha256([])
         ):
-            raise BudgetExceeded("PROSPECTIVE_API_FOOTBALL_CAP_EXCEEDED")
+            raise ValueError("PROVIDER_ESTIMATE_SCOPE_CHANGED")
 
     competition = policy.competition(args.competition)
     horizon_days = _int_value(
@@ -1875,6 +2211,7 @@ def run_fixture_registry(
     state = state or (
         _database_state() if args.execute else MemoryOperationalState()
     )
+    _reject_non_durable_execution_inputs(args, state=state)
     if (
         args.execute
         and state.budget_used(ProviderKind.API_FOOTBALL) + 3
@@ -1916,8 +2253,27 @@ def run_fixture_registry(
             offline=False,
             max_retries=0,
         )
-        status = provider.get_status()
+        provider_reserve = _int_value(
+            policy.budgets["api_football_provider_reserve"],
+            error="PROSPECTIVE_API_FOOTBALL_RESERVE_INVALID",
+        )
+        operation_key = f"{command}:{uuid.uuid4()}"
+        _record_provider_units_before_call(
+            state,
+            operation_key=operation_key,
+            step="status",
+            provider=ProviderKind.API_FOOTBALL,
+            units=1,
+            provider_remaining=0,
+            provider_reserve=provider_reserve,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
         api_calls += 1
+        status = provider.get_status()
+        status_error = _provider_result_error(status)
+        if status_error is not None:
+            raise RuntimeError(f"API_FOOTBALL_STATUS_FAILED:{status_error}")
         quota_remaining = _provider_quota_remaining(status)
         if quota_remaining is None:
             raise RuntimeError("API_FOOTBALL_QUOTA_UNKNOWN_BEFORE_FIXTURE_CALL")
@@ -1925,11 +2281,20 @@ def run_fixture_registry(
             ProviderKind.API_FOOTBALL,
             2,
             provider_remaining=quota_remaining,
-            provider_reserve=_int_value(
-                policy.budgets["api_football_provider_reserve"],
-                error="PROSPECTIVE_API_FOOTBALL_RESERVE_INVALID",
-            ),
+            provider_reserve=provider_reserve,
         )
+        _record_provider_units_before_call(
+            state,
+            operation_key=operation_key,
+            step="competition",
+            provider=ProviderKind.API_FOOTBALL,
+            units=1,
+            provider_remaining=quota_remaining - 1,
+            provider_reserve=provider_reserve,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
+        api_calls += 1
         competition_response = provider.get_competitions(
             league_id=_int_value(
                 competition["provider_id"],
@@ -1937,8 +2302,24 @@ def run_fixture_registry(
             ),
             current=True,
         )
-        api_calls += 1
+        competition_error = _provider_result_error(competition_response)
+        if competition_error is not None:
+            raise RuntimeError(
+                f"API_FOOTBALL_COMPETITION_FAILED:{competition_error}"
+            )
         current_season = _current_provider_season(competition_response)
+        _record_provider_units_before_call(
+            state,
+            operation_key=operation_key,
+            step="fixtures",
+            provider=ProviderKind.API_FOOTBALL,
+            units=1,
+            provider_remaining=quota_remaining - 2,
+            provider_reserve=provider_reserve,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
+        api_calls += 1
         response = provider.get_fixtures(
             league_id=_int_value(
                 competition["provider_id"],
@@ -1949,7 +2330,11 @@ def run_fixture_registry(
             date_to=until.date().isoformat(),
         )
         registry_result = response
-        api_calls += 1
+        fixture_error = _provider_result_error(response)
+        if fixture_error is not None:
+            raise RuntimeError(
+                f"API_FOOTBALL_FIXTURES_FAILED:{fixture_error}"
+            )
         records = _fixture_records(response)
         registry_requested_at = response.requested_at or now
         registry_received_at = response.received_at or response.observed_at
@@ -1967,6 +2352,25 @@ def run_fixture_registry(
         now=now,
         code_revision=_code_revision(args.code_revision),
         expected_season=current_season,
+    )
+    lifecycle_tombstones = _fixture_lifecycle_tombstones(
+        records,
+        state=state,
+        policy=policy,
+        competition=args.competition,
+        now=now,
+        code_revision=_code_revision(args.code_revision),
+        selected_fixture_ids={fixture.fixture_id for fixture, _ in selected},
+    )
+    selected = tuple(
+        sorted(
+            (*selected, *lifecycle_tombstones),
+            key=lambda item: (item[0].kickoff_at, item[0].fixture_id),
+        )
+    )
+    selected = _version_fixture_lifecycle_transitions(
+        selected,
+        state=state,
     )
     repository = repository or _repository(cache_root=args.object_store_root)
     inserted = 0
@@ -1986,7 +2390,7 @@ def run_fixture_registry(
             fixture_id=fixture.fixture_id,
             competition=fixture.competition,
             season=fixture.season,
-            provider=fixture.provider,
+            provider=("cache-test" if args.cache is not None else fixture.provider),
             family=CaptureFamily.FIXTURE,
             requested_at=registry_requested_at,
             response_received_at=registry_received_at,
@@ -1994,7 +2398,11 @@ def run_fixture_registry(
             kickoff_at=fixture.kickoff_at,
             cutoff_at=cutoff,
             http_status=200,
-            source_endpoint="/fixtures",
+            source_endpoint=(
+                "cache://fixture-registry"
+                if args.cache is not None
+                else "/fixtures"
+            ),
             complete=quality is AvailabilityStatus.CAPTURED,
             quality_status=quality,
             provider_calls=1 if index == 0 and api_calls else 0,
@@ -2014,25 +2422,10 @@ def run_fixture_registry(
             inserted += 1
         else:
             duplicates += 1
-    if api_calls:
-        state.append_budget(
-            idempotency_key=f"{command}:{now.isoformat()}",
-            provider=ProviderKind.API_FOOTBALL,
-            units=api_calls,
-            provider_remaining=quota_remaining or 0,
-            provider_reserve=_int_value(
-                policy.budgets["api_football_provider_reserve"],
-                error="PROSPECTIVE_API_FOOTBALL_RESERVE_INVALID",
-            ),
-            recorded_at=now,
-            reason="LIGUE_1_30_DAY_FIXTURE_REGISTRY",
-            code_revision=_code_revision(args.code_revision),
-        )
-
     snapshot = _base_snapshot(policy, now=now)
     cast(dict[str, object], snapshot["fixtures"]).update(
         {
-            "tracked": len(selected),
+            "tracked": len(state.fixtures()),
             "windows_planned": 0,
             "windows_due": 0,
         }
@@ -2069,6 +2462,7 @@ def run_fixture_registry(
             ],
             "fixtures_received": len(records),
             "fixtures_registered": len(selected),
+            "fixture_tombstones_registered": len(lifecycle_tombstones),
             "fixtures_inserted": inserted,
             "duplicates_avoided": duplicates,
             "quota_remaining": quota_remaining,
@@ -2149,9 +2543,6 @@ def _due_windows(
     now: datetime,
     maximum_attempts: int | None = None,
 ) -> tuple[CaptureWindow, ...]:
-    current_fixtures = {
-        fixture.fixture_id: fixture for fixture in state.fixtures()
-    }
     completed_window_ids = {
         receipt.window_id
         for receipt in state.receipts()
@@ -2168,10 +2559,7 @@ def _due_windows(
         sorted(
             (
                 window
-                for window in state.windows()
-                if window.fixture_id in current_fixtures
-                and window.kickoff_at
-                == current_fixtures[window.fixture_id].kickoff_at
+                for window in _active_windows(state)
                 if window.family in families
                 and classify_window(window, now=now) is AvailabilityStatus.DUE
                 and window.window_id not in completed_window_ids
@@ -2183,6 +2571,138 @@ def _due_windows(
             key=lambda item: (item.cutoff_at, item.window_id),
         )
     )
+
+
+def _window_matches_fixture_version(
+    window: CaptureWindow,
+    fixture: ProspectiveFixture,
+) -> bool:
+    """Return whether a window belongs to the current fixture business version.
+
+    Versioned Jalon-12 windows are matched by their exact deterministic ID.
+    Legacy pilot windows did not carry the fixture hash.  They are accepted
+    only when their kickoff still matches and they were scheduled no earlier
+    than the current fixture version registration.  Any subsequent provider
+    correction therefore invalidates them until the scheduler creates the new
+    version-bound windows.
+    """
+
+    if window.fixture_id != fixture.fixture_id or window.kickoff_at != fixture.kickoff_at:
+        return False
+    tolerance = timedelta(seconds=window.operational_tolerance_seconds)
+    expected = next(
+        (
+            candidate
+            for candidate in schedule_windows(
+                fixture,
+                window.family,
+                scheduled_at=window.scheduled_at,
+                tolerance=tolerance,
+            )
+            if candidate.label == window.label
+        ),
+        None,
+    )
+    if expected is None:
+        return False
+    if window.window_id == expected.window_id:
+        return True
+    if window.window_id.startswith(VERSIONED_WINDOW_ID_PREFIX):
+        return False
+    return window.scheduled_at >= fixture.registered_at
+
+
+def _active_windows(state: OperationalState) -> tuple[CaptureWindow, ...]:
+    current_fixtures = {
+        fixture.fixture_id: fixture for fixture in state.fixtures()
+    }
+    return tuple(
+        window
+        for window in state.windows()
+        if (
+            (fixture := current_fixtures.get(window.fixture_id)) is not None
+            and _window_matches_fixture_version(window, fixture)
+        )
+    )
+
+
+def _reconcile_receipt_attempts(state: OperationalState) -> int:
+    """Rebuild a missing compact attempt from an immutable R2/PG receipt."""
+
+    attempts = list(state.attempts())
+    inserted = 0
+    for receipt in sorted(
+        state.receipts(),
+        key=lambda item: (item.requested_at, item.receipt_hash),
+    ):
+        if receipt.window_id is None or any(
+            attempt.window_id == receipt.window_id
+            and attempt.idempotency_key.endswith(
+                f":{receipt.payload_sha256}"
+            )
+            for attempt in attempts
+        ):
+            continue
+        attempt_number = (
+            max(
+                (
+                    attempt.attempt_number
+                    for attempt in attempts
+                    if attempt.window_id == receipt.window_id
+                ),
+                default=0,
+            )
+            + 1
+        )
+        if attempt_number > 5:
+            raise RuntimeError("CAPTURE_ATTEMPT_RECONCILIATION_LIMIT_EXCEEDED")
+        successful_statuses = {
+            AvailabilityStatus.CAPTURED,
+            AvailabilityStatus.CAPTURED_EMPTY,
+            AvailabilityStatus.COMPLETE,
+        }
+        attempt = CaptureAttempt(
+            attempt_id=canonical_sha256(
+                {
+                    "receipt_hash": receipt.receipt_hash,
+                    "reconciliation": "IMMUTABLE_RECEIPT",
+                }
+            ),
+            idempotency_key=(
+                f"{receipt.window_id}:attempt:{attempt_number}:"
+                f"{receipt.payload_sha256}"
+            ),
+            window_id=receipt.window_id,
+            fixture_id=receipt.fixture_id,
+            provider=receipt.provider,
+            family=receipt.family,
+            attempted_at=receipt.requested_at,
+            status=receipt.quality_status,
+            retry_disposition=(
+                RetryDisposition.NOT_REQUIRED
+                if receipt.quality_status in successful_statuses
+                else RetryDisposition.RETRY_PENDING
+            ),
+            attempt_number=attempt_number,
+            http_status=receipt.http_status,
+            provider_calls=receipt.provider_calls,
+            provider_credits=(
+                2
+                if receipt.provider == "the-odds-api"
+                and receipt.provider_calls
+                else 0
+            ),
+            error_code=(
+                None
+                if receipt.quality_status in successful_statuses
+                else "RECONSTRUCTED_FROM_IMMUTABLE_RECEIPT"
+            ),
+            code_revision=receipt.code_revision,
+        )
+        if state.append_attempt(attempt):
+            inserted += 1
+        attempts.append(attempt)
+    return inserted
 
 
 def _capture_estimated_units(
@@ -2231,9 +2751,15 @@ def _provider_capture(
     fixture: ProspectiveFixture,
     family: CaptureFamily,
     provider: ApiFootballProvider | TheOddsApiProvider,
+    before_provider_call: Callable[[str, int, int], None] | None = None,
 ) -> tuple[ProviderResult, str, int, int]:
+    def before(step: str, calls: int, credits: int) -> None:
+        if before_provider_call is not None:
+            before_provider_call(step, calls, credits)
+
     fixture_id = int(fixture.provider_fixture_id)
     if command == "capture-general":
+        before("fixtures", 1, 0)
         result = cast(ApiFootballProvider, provider).get_fixtures(
             fixture_id=fixture_id
         )
@@ -2241,7 +2767,9 @@ def _provider_capture(
     if command == "capture-player":
         if family is CaptureFamily.SQUAD:
             football = cast(ApiFootballProvider, provider)
+            before("squad-home", 1, 0)
             home = football.get_squads(team_id=int(fixture.home_team_id))
+            before("squad-away", 1, 0)
             away = football.get_squads(team_id=int(fixture.away_team_id))
             sides_present = (
                 home.availability is DataAvailability.PRESENT
@@ -2318,15 +2846,18 @@ def _provider_capture(
             CaptureFamily.PLAYER_STATUS,
         }:
             raise RuntimeError("PLAYER_CAPTURE_FAMILY_UNSUPPORTED")
+        before("injuries", 1, 0)
         result = cast(ApiFootballProvider, provider).get_injuries(
             fixture_id=fixture_id
         )
         return result, "/injuries", 1, 0
     if command == "capture-lineup":
+        before("lineups", 1, 0)
         result = cast(ApiFootballProvider, provider).get_lineups(
             fixture_id=fixture_id
         )
         return result, "/fixtures/lineups", 1, 0
+    before("odds", 1, 2)
     result = cast(TheOddsApiProvider, provider).get_odds()
     return result, "/sports/soccer_france_ligue_one/odds", 1, 2
 
@@ -2840,6 +3371,8 @@ def run_capture(
         "capture-odds": ODDS_FAMILIES,
     }[command]
     state = state or _database_state()
+    _reject_non_durable_execution_inputs(args, state=state)
+    _reconcile_receipt_attempts(state)
     due = _due_windows(
         state,
         families=families,
@@ -2932,8 +3465,8 @@ def run_capture(
     provider_credits = 0
     provider_remaining = 0
     provider_reserve = 0
-    odds_postflight_observed = False
     odds_cost_contract_mismatch = False
+    operation_key = f"{command}:{uuid.uuid4()}"
     if args.cache is not None:
         cache = _mapping(_read_json(args.cache), error="CAPTURE_CACHE_INVALID")
     else:
@@ -2944,16 +3477,33 @@ def run_capture(
                     offline=False,
                     max_retries=0,
                 )
-            status = cast(ApiFootballProvider, provider).get_status()
-            provider_calls = 1
-            remaining = _provider_quota_remaining(status)
-            if remaining is None:
-                raise RuntimeError("API_FOOTBALL_QUOTA_UNKNOWN_BEFORE_CAPTURE")
-            provider_remaining = remaining
             provider_reserve = _int_value(
                 policy.budgets["api_football_provider_reserve"],
                 error="PROSPECTIVE_API_FOOTBALL_RESERVE_INVALID",
             )
+            _assert_provider_transport_available(provider)
+            _record_provider_units_before_call(
+                state,
+                operation_key=operation_key,
+                step="status",
+                provider=ProviderKind.API_FOOTBALL,
+                units=1,
+                provider_remaining=0,
+                provider_reserve=provider_reserve,
+                recorded_at=now,
+                code_revision=_code_revision(args.code_revision),
+            )
+            provider_calls = 1
+            status = cast(ApiFootballProvider, provider).get_status()
+            status_error = _provider_result_error(status)
+            if status_error is not None:
+                raise RuntimeError(
+                    f"API_FOOTBALL_STATUS_FAILED:{status_error}"
+                )
+            remaining = _provider_quota_remaining(status)
+            if remaining is None:
+                raise RuntimeError("API_FOOTBALL_QUOTA_UNKNOWN_BEFORE_CAPTURE")
+            provider_remaining = remaining
             BudgetLedger().authorize(
                 ProviderKind.API_FOOTBALL,
                 max(units - 1, 0),
@@ -2967,6 +3517,7 @@ def run_capture(
                     offline=False,
                     max_retries=0,
                 )
+            _assert_provider_transport_available(provider)
             preflight = cast(
                 TheOddsApiProvider,
                 provider,
@@ -3019,7 +3570,7 @@ def run_capture(
     provider_errors = 0
     identity_errors = 0
     retry_attempts = 0
-    budget_attempt_keys: list[str] = []
+    circuit_open = False
     seen_provider_requests: dict[
         tuple[str, str],
         tuple[ProviderResult, str, int, int],
@@ -3074,7 +3625,6 @@ def run_capture(
         if operation_now >= fixture.kickoff_at:
             skipped_after_kickoff += 1
             continue
-        attempted_at = operation_now
         endpoint = f"cache://{window.family.value.casefold()}"
         result: ProviderResult | None = None
         if cache is not None:
@@ -3105,37 +3655,78 @@ def run_capture(
             if cached_result is None:
                 if provider is None:
                     raise RuntimeError("PROVIDER_ADAPTER_MISSING")
+                expected_request_credits = (
+                    2 if provider_kind is ProviderKind.ODDS_API else 0
+                )
+                request_calls = 0
+                request_credits = 0
+                request_step = canonical_sha256(request_key)
+
+                def record_before_provider_call(
+                    step: str,
+                    calls_to_record: int,
+                    credits_to_record: int,
+                ) -> None:
+                    nonlocal provider_calls
+                    nonlocal provider_credits
+                    nonlocal provider_remaining
+                    nonlocal request_calls
+                    nonlocal request_credits
+                    _assert_provider_transport_available(provider)
+                    reserved_units = (
+                        credits_to_record
+                        if provider_kind is ProviderKind.ODDS_API
+                        else calls_to_record
+                    )
+                    _record_provider_units_before_call(
+                        state,
+                        operation_key=operation_key,
+                        step=(
+                            f"{request_step}:{step}:"
+                            f"{request_calls + calls_to_record}"
+                        ),
+                        provider=provider_kind,
+                        units=reserved_units,
+                        provider_remaining=(
+                            provider_remaining - reserved_units
+                        ),
+                        provider_reserve=provider_reserve,
+                        recorded_at=operation_now,
+                        code_revision=_code_revision(
+                            args.code_revision
+                        ),
+                    )
+                    if provider_kind is ProviderKind.API_FOOTBALL:
+                        provider_remaining = max(
+                            provider_remaining - reserved_units,
+                            0,
+                        )
+                    provider_calls += calls_to_record
+                    provider_credits += credits_to_record
+                    request_calls += calls_to_record
+                    request_credits += credits_to_record
+
                 try:
-                    result, endpoint, request_calls, request_credits = (
+                    result, endpoint, contract_calls, contract_credits = (
                         _provider_capture(
                             command=command,
                             fixture=fixture,
                             family=window.family,
                             provider=provider,
+                            before_provider_call=(
+                                record_before_provider_call
+                            ),
                         )
                     )
+                except CircuitOpenError:
+                    circuit_open = True
+                    break
                 except (
                     MissingCredentialError,
                     RateLimitError,
                     TransientProviderError,
                 ) as error:
                     error_code = type(error).__name__.upper()
-                    request_calls = (
-                        0
-                        if isinstance(error, MissingCredentialError)
-                        else (
-                            2
-                            if command == "capture-player"
-                            and window.family is CaptureFamily.SQUAD
-                            else 1
-                        )
-                    )
-                    request_credits = (
-                        2
-                        if request_calls
-                        and provider_kind is ProviderKind.ODDS_API
-                        else 0
-                    )
                     endpoint = (
                         "/sports/soccer_france_ligue_one/odds"
                         if provider_kind is ProviderKind.ODDS_API
@@ -3159,6 +3750,14 @@ def run_capture(
                         received_at=operation_now,
                         message=error_code,
                     )
+                else:
+                    if (
+                        contract_calls != request_calls
+                        or contract_credits != request_credits
+                    ):
+                        raise RuntimeError(
+                            "PROVIDER_CALL_COST_CONTRACT_MISMATCH"
+                        )
                 if provider_kind is ProviderKind.ODDS_API:
                     if (
                         result.quota.last_cost is None
@@ -3174,6 +3773,26 @@ def run_capture(
                     else:
                         actual_credits = result.quota.last_cost
                         actual_remaining = result.quota.remaining
+                        if actual_credits > expected_request_credits:
+                            _record_provider_units_before_call(
+                                state,
+                                operation_key=operation_key,
+                                step=(
+                                    f"{canonical_sha256(request_key)}:"
+                                    "observed-cost-delta"
+                                ),
+                                provider=provider_kind,
+                                units=(
+                                    actual_credits
+                                    - expected_request_credits
+                                ),
+                                provider_remaining=actual_remaining,
+                                provider_reserve=provider_reserve,
+                                recorded_at=operation_now,
+                                code_revision=_code_revision(
+                                    args.code_revision
+                                ),
+                            )
                         if actual_credits != request_credits:
                             odds_cost_contract_mismatch = True
                             result = result.model_copy(
@@ -3186,17 +3805,17 @@ def run_capture(
                             )
                         request_credits = actual_credits
                         provider_remaining = actual_remaining
-                        odds_postflight_observed = True
+                        provider_credits += (
+                            actual_credits - expected_request_credits
+                        )
                 seen_provider_requests[request_key] = (
                     result,
                     endpoint,
                     request_calls,
                     request_credits,
                 )
-                provider_calls += request_calls
                 calls = min(request_calls, 1)
                 credits = request_credits
-                provider_credits += request_credits
             else:
                 result, endpoint, _, _ = cached_result
                 calls = 0
@@ -3239,10 +3858,12 @@ def run_capture(
                     code_revision=_code_revision(args.code_revision),
                 )
                 state.append_attempt(failure)
-                budget_attempt_keys.append(failure.idempotency_key)
                 attempts += 1
                 retry_attempts += int(attempt_number > 1)
-                provider_errors += 1
+                # One failed physical request may feed several family windows.
+                # Report the provider failure once, while retaining one
+                # durable attempt per affected family.
+                provider_errors += int(bool(calls or credits))
                 continue
             try:
                 payload = _family_payload(
@@ -3287,7 +3908,6 @@ def run_capture(
                     code_revision=_code_revision(args.code_revision),
                 )
                 state.append_attempt(failure)
-                budget_attempt_keys.append(failure.idempotency_key)
                 attempts += 1
                 retry_attempts += int(attempt_number > 1)
                 identity_errors += 1
@@ -3311,9 +3931,13 @@ def run_capture(
             competition=fixture.competition,
             season=fixture.season,
             provider=(
-                "the-odds-api"
-                if provider_kind is ProviderKind.ODDS_API
-                else "api-football"
+                "cache-test"
+                if cache is not None
+                else (
+                    "the-odds-api"
+                    if provider_kind is ProviderKind.ODDS_API
+                    else "api-football"
+                )
             ),
             family=window.family,
             requested_at=requested_at,
@@ -3368,7 +3992,7 @@ def run_capture(
             fixture_id=fixture.fixture_id,
             provider=context.provider,
             family=window.family,
-            attempted_at=attempted_at,
+            attempted_at=requested_at,
             status=quality,
             retry_disposition=(
                 RetryDisposition.NOT_REQUIRED
@@ -3396,7 +4020,6 @@ def run_capture(
             code_revision=context.code_revision,
         )
         state.append_attempt(attempt)
-        budget_attempt_keys.append(attempt.idempotency_key)
         attempts += 1
         retry_attempts += int(attempt_number > 1)
         captured += int(quality is AvailabilityStatus.CAPTURED)
@@ -3405,29 +4028,6 @@ def run_capture(
         objects_added += int(capture.payload_created) + int(capture.receipt_created)
         bytes_added += capture.receipt.stored_bytes
 
-    charged_units = provider_credits if provider_kind is ProviderKind.ODDS_API else provider_calls
-    if charged_units:
-        final_provider_remaining = (
-            max(provider_remaining - max(provider_calls - 1, 0), 0)
-            if provider_kind is ProviderKind.API_FOOTBALL
-            else (
-                provider_remaining
-                if odds_postflight_observed
-                else max(provider_remaining - provider_credits, 0)
-            )
-        )
-        state.append_budget(
-            idempotency_key=(
-                f"{command}:{canonical_sha256(sorted(budget_attempt_keys))}"
-            ),
-            provider=provider_kind,
-            units=charged_units,
-            provider_remaining=final_provider_remaining,
-            provider_reserve=provider_reserve,
-            recorded_at=now,
-            reason=f"DUE_WINDOWS_ONLY:{command}",
-            code_revision=_code_revision(args.code_revision),
-        )
     if odds_cost_contract_mismatch:
         # The provider has already charged the request. Persist the observed
         # cost first, then fail closed so no payload can be admitted under a
@@ -3507,12 +4107,16 @@ def run_capture(
         {"inserts": attempts + projection_inserts}
     )
     snapshot["status"] = (
-        "CAPTURE_PARTIAL_PROVIDER_UNAVAILABLE"
-        if provider_errors or identity_errors
+        "CAPTURE_STOPPED_CIRCUIT_OPEN"
+        if circuit_open
         else (
-            "CAPTURE_PARTIAL_INVALID_PAYLOAD"
-            if invalid_payloads
-            else "CAPTURED_DUE_WINDOWS"
+            "CAPTURE_PARTIAL_PROVIDER_UNAVAILABLE"
+            if provider_errors or identity_errors
+            else (
+                "CAPTURE_PARTIAL_INVALID_PAYLOAD"
+                if invalid_payloads
+                else "CAPTURED_DUE_WINDOWS"
+            )
         )
     )
     report = _report(
@@ -3533,6 +4137,7 @@ def run_capture(
             "retries": retry_attempts,
             "provider_errors": provider_errors,
             "identity_errors": identity_errors,
+            "circuit_open": circuit_open,
             "projection_inserts": projection_inserts,
         },
     )
@@ -3549,6 +4154,7 @@ def run_replay_audit(
     now = _parse_utc(args.now)
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
+    _reject_non_durable_execution_inputs(args, state=state)
     repository = repository or _repository(cache_root=args.object_store_root)
 
     def operational_normalizer(
@@ -3582,10 +4188,11 @@ def run_replay_audit(
         or second.duplicates_avoided != first.payloads_replayed
     ):
         raise RuntimeError("R2_REPLAY_NOT_IDEMPOTENT")
+    stored_captures = tuple(repository.iter_captures())
     durable_sink = state.projection_sink()
     if isinstance(durable_sink, SQLAlchemyProjectionSink):
         durable_sink.bootstrap(
-            repository.iter_captures(),
+            stored_captures,
             tolerance=policy.operational_tolerance,
         )
     durable = replay_from_r2(
@@ -3593,8 +4200,9 @@ def run_replay_audit(
         durable_sink,
         normalizer=operational_normalizer,
     )
+    _reconcile_receipt_attempts(state)
     receipt_fixture_ids = {
-        capture.receipt.fixture_id for capture in repository.iter_captures()
+        capture.receipt.fixture_id for capture in stored_captures
     }
     reconstructed_fixture_ids = {fixture.fixture_id for fixture in state.fixtures()}
     reconstruction_complete = receipt_fixture_ids <= reconstructed_fixture_ids
@@ -3604,15 +4212,21 @@ def run_replay_audit(
     )
     cast(dict[str, object], snapshot["r2"]).update(
         {
-            "verified": first.objects_examined,
-            "bytes": first.bytes_read,
+            "objects_added": first.physical_unique_objects,
+            "verified": first.physical_unique_objects,
+            "bytes": first.physical_unique_bytes,
+            "recovery_objects": first.physical_recovery_objects,
+            "recovery_bytes": first.physical_recovery_bytes,
             "replay_status": "R2_REPLAY_VERIFIED",
         }
     )
     cast(dict[str, object], snapshot["postgresql"]).update(
         {
             "inserts": durable.projections_inserted,
-            "duplicates_avoided": durable.duplicates_avoided,
+            # The public replay metric describes the proved idempotent pass,
+            # independently of whether the durable sink needed reconstruction
+            # during the first pass.
+            "duplicates_avoided": second.duplicates_avoided,
             "reconstruction_status": (
                 "RECONSTRUCTIBLE_FROM_R2"
                 if reconstruction_complete
@@ -3632,11 +4246,34 @@ def run_replay_audit(
         snapshot=snapshot,
         extra={
             "status": snapshot["status"],
-            "objects_examined": first.objects_examined,
+            "objects_examined": first.physical_unique_objects,
+            "physical_unique_objects": first.physical_unique_objects,
+            "physical_unique_bytes": first.physical_unique_bytes,
+            "physical_payload_objects": first.physical_payload_objects,
+            "physical_payload_bytes": first.physical_payload_bytes,
+            "physical_receipt_objects": first.physical_receipt_objects,
+            "physical_receipt_bytes": first.physical_receipt_bytes,
+            "physical_recovery_objects": first.physical_recovery_objects,
+            "physical_recovery_bytes": first.physical_recovery_bytes,
+            "logical_references": first.logical_references,
+            "logical_payload_bytes_read": (
+                first.logical_payload_bytes_read
+            ),
+            "logical_receipt_bytes_read": (
+                first.logical_receipt_bytes_read
+            ),
+            "logical_bytes_read": first.logical_bytes_read,
+            "namespace_verified": first.namespace_verified,
             "selection_truncated": False,
             "complete_replay": True,
             "payloads_replayed": first.payloads_replayed,
             "dataset_hash": first.dataset_hash,
+            "capture_set_sha256": _capture_set_sha256(
+                capture.receipt for capture in stored_captures
+            ),
+            "capture_provenance": _capture_provenance(
+                capture.receipt for capture in stored_captures
+            ),
             "second_pass_inserts": second.projections_inserted,
             "second_pass_duplicates": second.duplicates_avoided,
             "provider_calls": 0,
@@ -3659,7 +4296,7 @@ def _aggregate_operational_snapshot(
 ) -> None:
     receipts = state.receipts()
     attempts = state.attempts()
-    windows = state.windows()
+    windows = _active_windows(state)
     completed_window_ids = {
         receipt.window_id
         for receipt in receipts
@@ -3798,11 +4435,20 @@ def run_gate_report(
     now = _parse_utc(args.now)
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
+    _reconcile_receipt_attempts(state)
+    fixtures = state.fixtures()
+    all_windows = state.windows()
+    windows = _active_windows(state)
     receipts = state.receipts()
-    observations = state.gate_observations()
+    active_window_ids = {window.window_id for window in windows}
+    observations = tuple(
+        observation
+        for observation in state.gate_observations()
+        if observation.receipt.window_id in active_window_ids
+    )
     evaluations = tuple(
         evaluation
-        for fixture in state.fixtures()
+        for fixture in fixtures
         for evaluation in evaluate_fixture_gates(
             fixture.fixture_id,
             observations,
@@ -3818,8 +4464,8 @@ def run_gate_report(
     )
     aggregates = aggregate_gate_evaluations(evaluations)
     ledger = build_observatory_ledger(
-        fixtures=state.fixtures(),
-        windows=state.windows(),
+        fixtures=state.fixture_versions(),
+        windows=all_windows,
         attempts=state.attempts(),
         receipts=receipts,
         gates=evaluations,
@@ -3843,11 +4489,56 @@ def run_gate_report(
     snapshot = _base_snapshot(policy, now=now)
     _aggregate_operational_snapshot(snapshot, state=state, now=now)
     snapshot["ledger"] = ledger_summary
+    due_windows = _due_windows(
+        state,
+        families=tuple(CaptureFamily),
+        now=now,
+    )
     cast(dict[str, object], snapshot["fixtures"]).update(
         {
-            "tracked": len(state.fixtures()),
-            "windows_planned": len(state.windows()),
-            "windows_due": len(_due_windows(state, families=tuple(CaptureFamily), now=now)),
+            "tracked": len(fixtures),
+            "windows_planned": len(windows),
+            "windows_due": len(due_windows),
+            "next": [
+                {
+                    "fixture_id": fixture.fixture_id,
+                    "home": fixture.home_team_id,
+                    "away": fixture.away_team_id,
+                    "competition": fixture.competition,
+                    "kickoff_at": fixture.kickoff_at.isoformat(),
+                    "status": "REGISTERED",
+                }
+                for fixture in sorted(
+                    (
+                        item
+                        for item in fixtures
+                        if not item.cancelled and item.kickoff_at > now
+                    ),
+                    key=lambda item: item.kickoff_at,
+                )[:20]
+            ],
+        }
+    )
+    windows_snapshot = snapshot.setdefault("windows", {})
+    if not isinstance(windows_snapshot, dict):
+        raise RuntimeError("PROSPECTIVE_WINDOWS_SNAPSHOT_INVALID")
+    windows_snapshot.update(
+        {
+            "planned": len(windows),
+            "due": len(due_windows),
+            "next": [
+                {
+                    "fixture_id": window.fixture_id,
+                    "family": window.family.value,
+                    "label": window.label,
+                    "due_at": window.due_at.isoformat(),
+                    "status": classify_window(window, now=now).value,
+                }
+                for window in sorted(
+                    (item for item in windows if item.cutoff_at > now),
+                    key=lambda item: item.due_at,
+                )[:20]
+            ],
         }
     )
     admissible = sum(receipt.temporally_admissible for receipt in receipts)
@@ -3890,10 +4581,14 @@ def run_gate_report(
         extra={
             "status": snapshot["status"],
             "fixtures": len(state.fixtures()),
+            "active_windows": len(windows),
+            "inactive_windows": len(all_windows) - len(windows),
             "receipts": len(receipts),
             "temporally_admissible": admissible,
             "gate_evaluations": len(evaluations),
             "gate_rows_inserted": gate_inserts,
+            "capture_set_sha256": _capture_set_sha256(receipts),
+            "capture_provenance": _capture_provenance(receipts),
             "ledger_artifact": ledger_path.name,
             "ledger_sha256": ledger_content_sha256,
             "ledger_events": len(ledger.events),

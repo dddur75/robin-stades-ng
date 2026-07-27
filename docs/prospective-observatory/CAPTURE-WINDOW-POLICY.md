@@ -84,6 +84,22 @@ au Jalon 12.
 Une fenêtre ne peut être capturée qu’une fois par identité métier et hash. Un
 second passage identique est un replay, pas une nouvelle observation.
 
+L’identifiant opérationnel `prospective-window-v2:<sha256>` lie aussi la
+fenêtre au `registry_hash` complet de la version immuable de la fixture. Une
+correction fournisseur du kickoff, des équipes, de la phase ou de la saison
+crée donc une nouvelle génération de fenêtres. Les anciennes fenêtres restent
+dans l’audit append-only, mais sont exclues des fenêtres actives et ne peuvent
+plus satisfaire un gate de la fixture corrigée. Les fenêtres héritées du
+pilote ne sont acceptées que si leur kickoff correspond encore et si elles
+n’ont pas été planifiées avant l’enregistrement de la version courante.
+
+Un statut fournisseur explicite `TBD`, reporté ou annulé crée un tombstone
+append-only à partir de la dernière fixture admise. Il désactive immédiatement
+toutes ses fenêtres sans effacer leur historique. Si la fixture redevient
+ensuite active avec le même kickoff, un hash de cycle chaîné crée une nouvelle
+version et de nouvelles fenêtres ; une simple réobservation du même état reste
+idempotente.
+
 ## Horizon
 
 Le registre résout les trente prochains jours, au plus trois journées par

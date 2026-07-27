@@ -890,6 +890,8 @@ type ProspectiveObservatorySnapshot = {
     namespace: string;
     objects_added: number;
     bytes: number;
+    recovery_objects: number;
+    recovery_bytes: number;
     verified: number;
     lag: number;
     deletions: number;
@@ -1725,9 +1727,19 @@ function DataObservatory() {
             </tbody></table></div>
           ) : (
             <EmptyState
-              title="Aucune fixture réelle publiée"
-              text="Le cockpit n’invente ni calendrier ni rencontre. Le registre quotidien publiera ici les prochaines fixtures officielles vérifiées."
-              label="NO OUTPUT"
+              title={
+                observatory.fixtures.tracked > 0
+                  ? "Détails des fixtures absents de cette vue compacte"
+                  : "Aucune fixture réelle publiée"
+              }
+              text={
+                observatory.fixtures.tracked > 0
+                  ? "Le registre durable contient des fixtures vérifiées, mais cet artefact ne publie pas encore leur aperçu. Aucun calendrier n’est inventé."
+                  : "Le cockpit n’invente ni calendrier ni rencontre. Le registre quotidien publiera ici les prochaines fixtures officielles vérifiées."
+              }
+              label={
+                observatory.fixtures.tracked > 0 ? "COMPACT VIEW" : "NO OUTPUT"
+              }
             />
           )}
         </article>
@@ -1809,9 +1821,11 @@ function DataObservatory() {
           </div>
           <dl>
             <div><dt>Namespace</dt><dd>{observatory.r2.namespace}</dd></div>
-            <div><dt>Objets ajoutés</dt><dd>{observatory.r2.objects_added}</dd></div>
+            <div><dt>Objets physiques vérifiés</dt><dd>{observatory.r2.objects_added}</dd></div>
             <div><dt>Objets vérifiés</dt><dd>{observatory.r2.verified}</dd></div>
-            <div><dt>Volume</dt><dd>{bytes(observatory.r2.bytes)}</dd></div>
+            <div><dt>Volume physique</dt><dd>{bytes(observatory.r2.bytes)}</dd></div>
+            <div><dt>Journaux recovery</dt><dd>{observatory.r2.recovery_objects}</dd></div>
+            <div><dt>Volume recovery</dt><dd>{bytes(observatory.r2.recovery_bytes)}</dd></div>
             <div><dt>Lag R2</dt><dd>{observatory.r2.lag}</dd></div>
             <div><dt>Suppressions</dt><dd>{observatory.r2.deletions}</dd></div>
           </dl>

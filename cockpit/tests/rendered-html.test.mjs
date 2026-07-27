@@ -286,7 +286,29 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(observatory.providers.reserves.odds_api_internal_safety, 2);
   assert.equal(observatory.providers.reserves.odds_api_near_kickoff, 80);
   assert.equal(observatory.r2.deletions, 0);
+  assert.ok(observatory.r2.recovery_objects >= 0);
+  assert.ok(observatory.r2.recovery_bytes >= 0);
+  if (observatory.r2.recovery_objects === 0) {
+    assert.equal(observatory.r2.recovery_bytes, 0);
+  } else {
+    assert.ok(observatory.r2.recovery_bytes > 0);
+  }
+  assert.match(page, /Journaux recovery/);
+  assert.match(page, /Volume recovery/);
   assert.equal(observatory.postgresql.payload_body_rows, 0);
+  if (
+    observatory.fixtures.tracked > 0 &&
+    observatory.fixtures.next.length === 0
+  ) {
+    assert.match(page, /Détails des fixtures absents de cette vue compacte/);
+  }
+  if (observatory.r2.replay_status === "R2_REPLAY_VERIFIED") {
+    assert.equal(
+      observatory.postgresql.reconstruction_status,
+      "RECONSTRUCTIBLE_FROM_R2",
+    );
+    assert.ok(observatory.postgresql.duplicates_avoided > 0);
+  }
   assert.equal(observatory.decisions, 0);
   assert.equal(observatory.candidates, 0);
   assert.equal(observatory.invariants.raw_payloads_in_git, 0);

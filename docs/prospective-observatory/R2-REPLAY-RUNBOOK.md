@@ -17,7 +17,8 @@ R2
 
 ## Préconditions
 
-- namespace `prospective-deep-data/schema-v1` accessible en lecture ;
+- namespaces `prospective-deep-data/schema-v1` et
+  `prospective-deep-data-recovery/schema-v1` accessibles en lecture ;
 - aucune variable de clé fournisseur transmise au job ;
 - destination PostgreSQL jetable vide et migrée ;
 - inventaire borné ou curseur explicite ;
@@ -39,16 +40,23 @@ rapport.
 
 ## Séquence
 
-1. lister les reçus attendus ;
-2. vérifier schéma, clé, hash, taille et provenance ;
-3. télécharger l’objet correspondant dans un répertoire temporaire ;
-4. décompresser sans écrire de payload dans Git ;
-5. recalculer le SHA-256 ;
-6. normaliser avec la révision déclarée ;
-7. projeter dans la base jetable ;
-8. rejouer une seconde fois ;
-9. comparer dataset hash, identités et compteurs ;
-10. publier `r2-replay-audit.json`.
+1. inventorier et valider exhaustivement toutes les intentions de reprise ;
+2. matérialiser de façon idempotente le payload et le reçu exacts de chaque
+   intention valide, sans appel fournisseur ;
+3. inventorier exhaustivement toutes les clés, payloads et reçus ;
+4. refuser avant toute projection les payloads orphelins, reçus orphelins,
+   clés inattendues, objets illisibles et divergences d’intégrité ;
+5. vérifier schéma, clé, hash, taille et provenance ;
+6. télécharger l’objet correspondant sans l’écrire dans Git ;
+7. décompresser et recalculer le SHA-256 ;
+8. normaliser avec la révision déclarée ;
+9. projeter dans la base jetable ;
+10. rejouer une seconde fois ;
+11. comparer dataset hash, identités, ensemble exact des reçus et compteurs ;
+12. publier séparément objets/octets physiques uniques, objets/octets de
+    reprise et
+    références/octets logiques lus ;
+13. publier `r2-replay-audit.json`.
 
 ## Critères verts
 
@@ -60,6 +68,7 @@ hash_mismatches=0
 data_loss=0
 deletions=0
 postgresql_payload_body_rows=0
+namespace_verified=true
 ```
 
 Le second passage doit insérer zéro nouvelle ligne métier et incrémenter le
@@ -69,8 +78,12 @@ compteur de doublons évités.
 
 - mismatch hash/taille : quarantaine et arrêt ;
 - objet absent : `data_loss > 0`, arrêt ;
-- receipt sans objet : lag R2 explicite ;
-- objet sans receipt : non projetable ;
+- receipt sans objet : audit bloqué ;
+- intention valide sans objet final : récupération automatique et contrôlée ;
+- intention invalide ou divergente : audit bloqué ;
+- objet sans receipt et sans intention attribuable : audit bloqué, jamais
+  ignoré comme un replay vide ;
+- clé inattendue ou illisible : audit bloqué avant PostgreSQL ;
 - migration incohérente : aucune projection ;
 - secret détecté : artifact refusé.
 

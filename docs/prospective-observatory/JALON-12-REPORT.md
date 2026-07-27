@@ -147,8 +147,9 @@ pas dues.
 - replay complet : 18 objets examinés, 9 payloads reconstruits, sélection non
   tronquée, 0 mismatch, 0 perte, 0 appel, 0 crédit ;
 - second passage : 0 insert, 9 doublons évités ;
-- PostgreSQL : migration `0009_jalon12_observatory`, 12 tables, 54 écritures
-  compactes du gate report, aucun corps de payload, reconstruction
+- PostgreSQL : migration `0009_jalon12_observatory`, 12 tables, 45 nouvelles
+  évaluations de gate et 9 reçus déjà présents dans le compteur de 54,
+  aucun corps de payload, reconstruction
   `RECONSTRUCTIBLE_FROM_R2` ;
 - temporalité : 9 preuves avant cutoff, 45 évaluations de gate, 0 tardive,
   0 rejet ;
