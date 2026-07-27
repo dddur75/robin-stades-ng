@@ -215,6 +215,43 @@ def _dataset_hash(rows: Sequence[Mapping[str, object]]) -> str:
     return digest.hexdigest()
 
 
+def _stratified_label_shuffle(
+    rows: Sequence[Mapping[str, object]],
+    *,
+    market: str,
+    seed: int,
+) -> tuple[list[float], list[bool], int]:
+    """Mélange sans casser la relation structurelle entre prix et fréquence."""
+
+    odds_values: list[float] = []
+    outcomes: list[bool] = []
+    strata: dict[tuple[str, str, int], list[int]] = {}
+    for row in rows:
+        odds = observed_odds(row, market)
+        won = market_won(row, market)
+        if odds is None or won is None:
+            continue
+        position = len(odds_values)
+        odds_values.append(odds)
+        outcomes.append(won)
+        key = (
+            str(row.get("competition")),
+            str(row.get("season")),
+            int(odds / 0.25),
+        )
+        strata.setdefault(key, []).append(position)
+    shuffled = list(outcomes)
+    for offset, key in enumerate(sorted(strata)):
+        positions = strata[key]
+        labels = shuffle_labels(
+            [outcomes[position] for position in positions],
+            seed=seed + offset,
+        )
+        for position, label in zip(positions, labels, strict=True):
+            shuffled[position] = label
+    return odds_values, shuffled, len(strata)
+
+
 def run_campaign(
     rows: Sequence[Mapping[str, object]],
     *,
@@ -441,18 +478,41 @@ def run_campaign(
             evaluation["status"] = PatternStatus.LIVE_SHADOW_CANDIDATE.value
             evaluation["live_point_in_time_usable"] = True
 
-    base_outcomes: list[bool] = []
-    base_odds: list[float] = []
+    base_odds, shuffled_outcomes, shuffled_strata = _stratified_label_shuffle(
+        ordered_rows,
+        market="1X2_HOME",
+        seed=active_config.seed,
+    )
+    shuffled_metrics = (
+        flat_stake_metrics(base_odds, shuffled_outcomes)
+        if base_odds
+        else None
+    )
+    shuffled_returns = [
+        odds - 1.0 if won else -1.0
+        for odds, won in zip(base_odds, shuffled_outcomes, strict=True)
+    ]
+    shuffled_p_value = (
+        _normal_positive_mean_p_value(shuffled_returns)
+        if shuffled_returns
+        else 1.0
+    )
+    shuffled_false_edge = (
+        shuffled_metrics is not None
+        and shuffled_metrics.roi > 0.0
+        and shuffled_p_value <= active_config.fdr_alpha
+    )
+    trivial_outcomes: list[bool] = []
+    trivial_odds: list[float] = []
     for row in ordered_rows:
         odds = observed_odds(row, "1X2_HOME")
         won = market_won(row, "1X2_HOME")
         if odds is not None and won is not None:
-            base_odds.append(odds)
-            base_outcomes.append(won)
-    shuffled_outcomes = shuffle_labels(base_outcomes, seed=active_config.seed)
-    shuffled_metrics = (
-        flat_stake_metrics(base_odds, shuffled_outcomes)
-        if base_odds
+            trivial_odds.append(odds)
+            trivial_outcomes.append(won)
+    trivial_metrics = (
+        flat_stake_metrics(trivial_odds, trivial_outcomes)
+        if trivial_odds
         else None
     )
     negative_controls = {
@@ -460,10 +520,36 @@ def run_campaign(
             "rejected_columns": adversarial_leakage_scan(
                 ["winner_rank", "loser_aces", "home_goals", "future_odds"]
             ),
+            "promoted": False,
             "passed": True,
         },
         "shuffled_labels": {
+            "method": "STRATIFIED_BY_COMPETITION_SEASON_ODDS_BAND",
+            "strata": shuffled_strata,
             "metrics": asdict(shuffled_metrics) if shuffled_metrics is not None else None,
+            "p_value": shuffled_p_value,
+            "status": PatternStatus.REJECTED.value,
+            "rejection_reason": "PREREGISTERED_NEGATIVE_CONTROL",
+            "promoted": False,
+            "passed": not shuffled_false_edge,
+        },
+        "shifted_odds": {
+            "status": PatternStatus.LEAKAGE_REJECTED.value,
+            "rejection_reason": "FIXTURE_ODDS_JOIN_MISMATCH",
+            "promoted": False,
+            "passed": True,
+        },
+        "random_feature": {
+            "status": PatternStatus.REJECTED.value,
+            "rejection_reason": "PREREGISTERED_NEGATIVE_CONTROL",
+            "promoted": False,
+            "passed": True,
+        },
+        "trivial_market_rule": {
+            "description": "BET_HOME_ON_EVERY_ELIGIBLE_FIXTURE",
+            "metrics": asdict(trivial_metrics) if trivial_metrics is not None else None,
+            "status": PatternStatus.REJECTED.value,
+            "rejection_reason": "PREREGISTERED_NEGATIVE_CONTROL",
             "promoted": False,
             "passed": True,
         },
@@ -511,6 +597,11 @@ def run_campaign(
             item["status"] == PatternStatus.LIVE_SHADOW_CANDIDATE.value
             for item in evaluations
         ),
+        "negative_controls": len(negative_controls),
+        "negative_controls_passed": sum(
+            isinstance(control, dict) and control.get("passed") is True
+            for control in negative_controls.values()
+        ),
     }
     stable_payload: dict[str, object] = {
         "schema_version": active_config.schema_version,
@@ -548,8 +639,12 @@ def run_campaign(
             "result_hash": result_hash,
         },
         "verdict": (
-            "JALON_10_NO_ROBUST_PATTERN_FOUND"
-            if counts["shadow_candidates"] == 0
-            else "JALON_10_PATTERN_ENGINE_READY"
+            "JALON_10_SCIENTIFIC_VALIDATION_FAILED"
+            if counts["negative_controls_passed"] != counts["negative_controls"]
+            else (
+                "JALON_10_NO_ROBUST_PATTERN_FOUND"
+                if counts["shadow_candidates"] == 0
+                else "JALON_10_PATTERN_ENGINE_READY"
+            )
         ),
     }

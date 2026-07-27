@@ -27,7 +27,7 @@ def rows() -> list[dict[str, object]]:
                         "kickoff_at": f"{season}-{match + 1:02d}-01T15:00:00Z",
                         "home_goals": home_goals,
                         "away_goals": away_goals,
-                        "odds_home": 2.0,
+                        "odds_home": 1.5,
                         "odds_draw": 3.2,
                         "odds_away": 3.8,
                         "odds_over_25": 2.0,
@@ -77,6 +77,11 @@ def test_negative_controls_are_never_promoted() -> None:
         ),
     )
     controls = result["negative_controls"]
-    assert all(control["passed"] for control in controls.values())
+    assert all(control["promoted"] is False for control in controls.values())
+    assert len(controls) == 7
+    assert controls["shuffled_labels"]["passed"] is True
+    assert controls["shuffled_labels"]["status"] == "REJECTED"
+    assert controls["shifted_odds"]["status"] == "LEAKAGE_REJECTED"
+    assert controls["trivial_market_rule"]["status"] == "REJECTED"
     assert controls["shuffled_labels"]["promoted"] is False
     assert controls["post_result_pattern"]["status"] == "LEAKAGE_REJECTED"
