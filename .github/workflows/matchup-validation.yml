@@ -64,8 +64,18 @@ jobs:
           )
           red_team = json.loads((root / "red-team-report.json").read_text())
           replay = json.loads((root / "replay.json").read_text())
-          assert campaign["statistics"]["family_q"] == 1.0
-          assert campaign["statistics"]["global_q"] == 1.0
+          statistics = campaign["statistics"]
+          assert 0.0 <= statistics["family_q"] <= 1.0
+          assert statistics["family_q"] > 0.05
+          assert statistics["global_q"] == 1.0
+          assert statistics["multiplicity_hypotheses"] == 9
+          assert statistics["tested_hypotheses"] == 1
+          assert statistics["blocked_hypotheses_as_p1"] == 8
+          impossible = campaign["negative_controls"]["impossible_condition"]
+          assert impossible["predicate"] == "OUTCOME_IS_HOME_AND_AWAY"
+          assert impossible["rows_examined"] == campaign["paired_1x2_rows"]
+          assert impossible["support"] == 0
+          assert impossible["promotion_eligible"] is False
           assert campaign["promotion"]["promoted"] is False
           assert campaign["promotion"]["status"] == "REJECTED"
           assert red_team["promotion_allowed"] is False
