@@ -1,0 +1,87 @@
+{
+  "schema_version": "jalon11-preflight-v1",
+  "captured_at": "2026-07-27T13:26:48Z",
+  "repository": "dddur75/robin-stades-ng",
+  "main_commit": "000517a1d29c95733448e2021e03b31312640e4a",
+  "main_ci": {
+    "run_id": 30260955084,
+    "conclusion": "success"
+  },
+  "branches": {
+    "main": "000517a1d29c95733448e2021e03b31312640e4a",
+    "historical-data": "8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+    "shadow-data": "AVAILABLE",
+    "work": "codex/jalon-11-deep-football-matchups"
+  },
+  "workflows": {
+    "critical_runs_in_progress": 0,
+    "historical_state_writer_in_progress": 0,
+    "last_scheduled_backfill": {
+      "run_id": 30263816431,
+      "conclusion": "failure",
+      "reason": "STORAGE_PAUSE_THRESHOLD_WITH_ZERO_PROVIDER_BUDGET",
+      "provider_calls": 0,
+      "data_loss": 0
+    }
+  },
+  "postgresql": {
+    "status": "LAST_VERIFIED_CONNECTED_SSL",
+    "alembic_revision_before_jalon11": "0007_jalon10_immutable_evidence",
+    "table_count_before_jalon11": 77,
+    "durable_rows_last_verified": 291,
+    "bridge_lag": 0,
+    "database_bytes_last_verified": 47366144,
+    "last_verification_run_id": 30261147321,
+    "target_revision": "0008_jalon11_deep_football"
+  },
+  "historical_storage": {
+    "source_primary": "historical-data",
+    "source_mirror": "cloudflare-r2",
+    "local_bytes": 939552887,
+    "warning_bytes": 750000000,
+    "pause_bytes": 900000000,
+    "status": "STORAGE_PAUSED"
+  },
+  "r2": {
+    "status": "SYNCED",
+    "expected_objects": 822,
+    "verified_objects": 822,
+    "expected_bytes": 920725165,
+    "lag_objects": 0,
+    "errors": 0,
+    "deletions": 0,
+    "source_mutations": 0
+  },
+  "secrets": {
+    "DATABASE_URL": "AVAILABLE_NAME_ONLY",
+    "ODDS_API_KEY": "AVAILABLE_NAME_ONLY",
+    "API_FOOTBALL_KEY": "AVAILABLE_NAME_ONLY",
+    "R2_ACCOUNT_ID": "AVAILABLE_NAME_ONLY",
+    "R2_ACCESS_KEY_ID": "AVAILABLE_NAME_ONLY",
+    "R2_SECRET_ACCESS_KEY": "AVAILABLE_NAME_ONLY",
+    "R2_BUCKET_NAME": "AVAILABLE_NAME_ONLY",
+    "values_read_or_logged": false
+  },
+  "provider_budget": {
+    "known_quota_observation": "NOT_READ_NO_PROVIDER_CALL",
+    "API_FOOTBALL_CALLS_ALLOWED": 0,
+    "ODDS_API_CREDITS_ALLOWED": 0
+  },
+  "source_hashes": {
+    "historical_commit": "8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+    "team_prematch_dataset": "af9421281a71a8d936bfec8596fce5d2945b35f84948d92eb35a7bf435f7dd00",
+    "team_prematch_parquet": "4b77f4703ff40adf700aa0be6325b23028fa6a71b0b2ec4fd1b1fb1d9d5d46d1"
+  },
+  "invariants": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  },
+  "provider_calls": 0,
+  "odds_api_credits": 0,
+  "secret_values_exposed": false
+}

@@ -1,0 +1,430 @@
+{
+  "schema_version": "jalon11-coverage-matrix-v1",
+  "source_commit": "8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+  "market_rows": 10732,
+  "strict_1x2_rows": 10732,
+  "market_time_class": "SOURCE_PRICE_CLASS_ONLY",
+  "gates": {
+    "TEAM_GATE": {
+      "status": "READY",
+      "reason": "10732/10732 market fixtures exactly paired with prior team/calendar features"
+    },
+    "MARKET_GATE": {
+      "status": "READY",
+      "reason": "Historical research prices exist; exact live observed_at remains unavailable"
+    },
+    "PLAYER_GATE": {
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "reason": "Raw facts are Ligue 1 only and POST_MATCH_ONLY"
+    },
+    "PLAYER_FORM_GATE": {
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "reason": "V1 windows include unused substitutes and null-versus-zero goal ambiguity"
+    },
+    "STARTER_BASELINE_GATE": {
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "reason": "Roster expiry and source-time lineage are unproven"
+    },
+    "LINEUP_GATE": {
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "reason": "Ligue 1 content is retrospective POST_MATCH_ONLY"
+    },
+    "ABSENCE_GATE": {
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "reason": "Historical injuries are not point-in-time"
+    },
+    "FORMATION_GATE": {
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "reason": "Retrospective formations lack a pre-kickoff observed_at"
+    },
+    "FOOTEDNESS_GATE": {
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "No sourced preferred-foot field exists in cache"
+    }
+  },
+  "rows": [
+    {
+      "competition": "Ligue 1",
+      "season": 2020,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 380,
+      "lineup_raw_fixtures": 380,
+      "exact_xi_team_rows": 764,
+      "formation_team_rows": 764,
+      "injury_rows": 0,
+      "deep_cutoff": "POST_MATCH_ONLY",
+      "identity_rate": 1.0,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Ligue 1",
+      "season": 2021,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 380,
+      "lineup_raw_fixtures": 380,
+      "exact_xi_team_rows": 764,
+      "formation_team_rows": 764,
+      "injury_rows": 2681,
+      "deep_cutoff": "POST_MATCH_ONLY",
+      "identity_rate": 1.0,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Ligue 1",
+      "season": 2022,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 380,
+      "lineup_raw_fixtures": 380,
+      "exact_xi_team_rows": 760,
+      "formation_team_rows": 750,
+      "injury_rows": 2717,
+      "deep_cutoff": "POST_MATCH_ONLY",
+      "identity_rate": 1.0,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Ligue 1",
+      "season": 2023,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 306,
+      "lineup_raw_fixtures": 306,
+      "exact_xi_team_rows": 616,
+      "formation_team_rows": 615,
+      "injury_rows": 2078,
+      "deep_cutoff": "POST_MATCH_ONLY",
+      "identity_rate": 1.0,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Ligue 1",
+      "season": 2024,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 306,
+      "lineup_raw_fixtures": 306,
+      "exact_xi_team_rows": 616,
+      "formation_team_rows": 616,
+      "injury_rows": 2460,
+      "deep_cutoff": "POST_MATCH_ONLY",
+      "identity_rate": 1.0,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Ligue 1",
+      "season": 2025,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 306,
+      "lineup_raw_fixtures": 306,
+      "exact_xi_team_rows": 618,
+      "formation_team_rows": 618,
+      "injury_rows": 2865,
+      "deep_cutoff": "POST_MATCH_ONLY",
+      "identity_rate": 1.0,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Premier League",
+      "season": 2020,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Premier League",
+      "season": 2021,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Premier League",
+      "season": 2022,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Premier League",
+      "season": 2023,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Premier League",
+      "season": 2024,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Premier League",
+      "season": 2025,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "La Liga",
+      "season": 2020,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "La Liga",
+      "season": 2021,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "La Liga",
+      "season": 2022,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "La Liga",
+      "season": 2023,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "La Liga",
+      "season": 2024,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "La Liga",
+      "season": 2025,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Bundesliga",
+      "season": 2020,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Bundesliga",
+      "season": 2021,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Bundesliga",
+      "season": 2022,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Bundesliga",
+      "season": 2023,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Bundesliga",
+      "season": 2024,
+      "fixtures": 305,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Bundesliga",
+      "season": 2025,
+      "fixtures": 306,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Serie A",
+      "season": 2020,
+      "fixtures": 379,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Serie A",
+      "season": 2021,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Serie A",
+      "season": 2022,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Serie A",
+      "season": 2023,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Serie A",
+      "season": 2024,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    },
+    {
+      "competition": "Serie A",
+      "season": 2025,
+      "fixtures": 380,
+      "team_coverage": 1.0,
+      "player_raw_fixtures": 0,
+      "lineup_raw_fixtures": 0,
+      "injury_rows": 0,
+      "deep_cutoff": "UNAVAILABLE",
+      "identity_rate": null,
+      "footedness_observed": 0
+    }
+  ],
+  "content_totals": {
+    "player_fixture_estimate": 2067,
+    "lineup_fixture_estimate": 2067,
+    "exact_xi_team_rows": 4138,
+    "formation_team_rows": 4127,
+    "injury_rows": 12801,
+    "footedness_observed": 0
+  },
+  "provider_calls": 0,
+  "odds_api_credits": 0,
+  "production_status": "PRODUCTION_LOCKED"
+}
