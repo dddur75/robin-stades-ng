@@ -1,0 +1,12 @@
+{
+  "failed": 0,
+  "last_key": "raw/observations/2026/07/25/404741da-8a91-4c0a-980b-24385c9b6401.json",
+  "next_index": 5000,
+  "replayed": 5000,
+  "schema_version": "r2-audit-checkpoint-v1",
+  "scope_hash": "8687a80087576711e309d01a2a9758937b78fc914660c6db77c838ae59754b7f",
+  "status": "IN_PROGRESS",
+  "updated_at": "2026-07-27T00:02:33.326766+00:00",
+  "uploaded": 0,
+  "verified": 5000
+}
