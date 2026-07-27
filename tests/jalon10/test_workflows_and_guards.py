@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
+import pytest
 import yaml
+
+from robin.patterns.ledger import EvidenceLedger
+from robin.patterns.temporal import LeakageError
+from scripts.run_shadow_pattern_decisions import main as run_decisions
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = (
@@ -31,11 +37,18 @@ def test_all_pattern_workflows_are_valid_bounded_and_isolated() -> None:
     ).read_text("utf-8")
     for text in (discovery, validation):
         assert "group: pattern-research-state" in text
+        assert "group: shadow-state" in text
         assert "historical-state-restore" in text
         assert "ODDS_API_KEY" not in text
         assert "API_FOOTBALL_KEY" not in text
         assert "historical-state-persist" not in text
-        assert "durable-shadow" not in text
+        assert "durable-shadow" in text
+        assert "ROBIN_DATABASE_URL" in text
+        assert "shadow-candidate-registry.json" in text
+        assert "campaign-summary.json" not in text.split(
+            "Publier uniquement le registre compact des candidats",
+            maxsplit=1,
+        )[-1]
     assert "--replay" in validation
 
 
@@ -53,8 +66,11 @@ def test_shadow_workflows_preserve_shadow_isolation_and_fail_closed() -> None:
         assert "ODDS_API_KEY" not in text
         assert "API_FOOTBALL_KEY" not in text
         assert "durable-shadow" in text
-    assert "NO_BET_DATA_UNAVAILABLE" in decisions
     assert "NO_SETTLEMENT_DUE" in settlement
+    assert "schedule:" not in decisions
+    assert "schedule:" not in settlement
+    assert "NO_LIVE_SHADOW_CANDIDATE" in decisions
+    assert "shadow-candidate-registry.json" in decisions
 
 
 def test_preregistered_config_and_social_files_are_locked() -> None:
@@ -79,3 +95,137 @@ def test_ci_includes_jalon10_migrations_and_secret_scan() -> None:
     assert "pattern_definitions" in text
     assert "experiment_registry" in text
     assert "scripts/check_no_secrets.py" in text
+
+
+def test_runner_decisions_parse_json_point_in_time_et_fixture_string(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    campaign = {
+        "provider_calls": 0,
+        "real_bets": False,
+        "no_bet_default": True,
+        "production_status": "PRODUCTION_LOCKED",
+        "social_publishing_enabled": False,
+        "demo_mode_enabled": False,
+        "candidate_count": 1,
+        "config": {"live_market_point_in_time": True},
+        "hypotheses": [
+            {
+                "status": "LIVE_SHADOW_CANDIDATE",
+                "market": "1X2_HOME",
+                "selection": "HOME",
+                "rule_hash": "a" * 64,
+                "conditions": [
+                    {
+                        "feature": "competition",
+                        "operator": "EQ",
+                        "value": "Ligue 1",
+                        "source": "API_FOOTBALL_FIXTURE",
+                        "available_at": "FIXTURE_PUBLICATION",
+                    }
+                ],
+            }
+        ],
+    }
+    fixtures = [
+        {
+            "fixture_id": "odds-api-uuid-1",
+            "competition": "Ligue 1",
+            "kickoff_at": "2026-08-01T12:00:00+00:00",
+            "observed_at": "2026-08-01T09:00:00+00:00",
+            "odds_home": 2.0,
+            "odds_source": "POINT_IN_TIME_CACHE",
+            "dataset_hash": "b" * 64,
+        }
+    ]
+    campaign_path = tmp_path / "candidates.json"
+    fixtures_path = tmp_path / "fixtures.json"
+    ledger_path = tmp_path / "ledger.jsonl"
+    output_path = tmp_path / "report.json"
+    campaign_path.write_text(json.dumps(campaign), encoding="utf-8")
+    fixtures_path.write_text(json.dumps(fixtures), encoding="utf-8")
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_shadow_pattern_decisions.py",
+            "--campaign",
+            str(campaign_path),
+            "--fixtures",
+            str(fixtures_path),
+            "--ledger",
+            str(ledger_path),
+            "--output",
+            str(output_path),
+            "--code-revision",
+            "abc123",
+            "--published-at",
+            "2026-08-01T10:00:00+00:00",
+        ],
+    )
+
+    run_decisions()
+
+    audit = EvidenceLedger(ledger_path).audit()
+    record = json.loads(ledger_path.read_text("utf-8"))
+    assert audit["decisions"] == 1
+    assert record["fixture_id"] == "odds-api-uuid-1"
+    assert record["decision"] == "BET"
+
+
+def test_runner_refuse_condition_historique_marquee_live(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    campaign = {
+        "provider_calls": 0,
+        "real_bets": False,
+        "no_bet_default": True,
+        "production_status": "PRODUCTION_LOCKED",
+        "social_publishing_enabled": False,
+        "demo_mode_enabled": False,
+        "candidate_count": 1,
+        "config": {"live_market_point_in_time": True},
+        "hypotheses": [
+            {
+                "status": "LIVE_SHADOW_CANDIDATE",
+                "market": "1X2_HOME",
+                "selection": "HOME",
+                "rule_hash": "a" * 64,
+                "conditions": [
+                    {
+                        "feature": "odds_home",
+                        "operator": "GE",
+                        "value": 1.5,
+                        "source": "FOOTBALL_DATA",
+                        "available_at": "HISTORICAL_PRICE_CATEGORY",
+                    }
+                ],
+            }
+        ],
+    }
+    campaign_path = tmp_path / "candidates.json"
+    fixtures_path = tmp_path / "fixtures.json"
+    campaign_path.write_text(json.dumps(campaign), encoding="utf-8")
+    fixtures_path.write_text("[]", encoding="utf-8")
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_shadow_pattern_decisions.py",
+            "--campaign",
+            str(campaign_path),
+            "--fixtures",
+            str(fixtures_path),
+            "--ledger",
+            str(tmp_path / "ledger.jsonl"),
+            "--output",
+            str(tmp_path / "report.json"),
+            "--code-revision",
+            "abc123",
+        ],
+    )
+
+    with pytest.raises(LeakageError, match="FEATURE_NOT_LIVE_POINT_IN_TIME"):
+        run_decisions()

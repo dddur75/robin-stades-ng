@@ -10,7 +10,7 @@ de la décision.
 |---|---|
 | `DISCOVERY_EXPOSED` | génération d’hypothèses sur historique déjà examiné |
 | `EXPOSED_HISTORICAL_OOS` | fold temporel exposé, jamais qualifié de vierge |
-| `EXTERNAL_LEAGUE_VALIDATION` | transfert vers une autre ligue, elle-même historique et exposée |
+| `EXTERNAL_LEAGUE_VALIDATION` | nom technique ; scientifiquement, stabilité inter-ligues exposée sans holdout indépendant |
 | `LIVE_PROSPECTIVE` | seule classe pouvant contribuer à `VALIDATED` |
 
 ## Disponibilité des marchés
@@ -79,6 +79,7 @@ le registre des hypothèses et ne peut pas être promue.
 ## Décision live
 
 Tant qu’un prix possède seulement `SOURCE_PRICE_CLASS_ONLY`, un pattern
-historique peut au plus atteindre `EXTERNAL_LEAGUE_SURVIVOR`. Il ne devient pas
-`LIVE_SHADOW_CANDIDATE`. En exploitation, l’absence d’une feature ou d’une cote
-point-in-time produit `NO_BET_DATA_UNAVAILABLE`.
+historique peut au plus atteindre le statut technique
+`EXTERNAL_LEAGUE_SURVIVOR`, qui ne prouve qu’une stabilité inter-ligues exposée.
+Il ne devient pas `LIVE_SHADOW_CANDIDATE`. En exploitation, l’absence d’une
+feature ou d’une cote point-in-time produit `NO_BET_DATA_UNAVAILABLE`.

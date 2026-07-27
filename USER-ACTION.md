@@ -48,6 +48,11 @@ exécutées, zéro survivante FDR, zéro candidat shadow, 7/7 contrôles négati
 zéro doublon et zéro coût fournisseur. Verdict :
 `JALON_10_NO_ROBUST_PATTERN_FOUND`.
 
+Sous-verdict :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. La
+conclusion porte sur 700 règles préenregistrées de tranches de marché, pas sur
+tous les patterns football ni sur les familles non testées.
+
 La campagne ne demande aucune action utilisateur. Tant que la PR brouillon
 n’est pas déclarée verte et prête :
 

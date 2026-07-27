@@ -99,3 +99,9 @@ résultats historiques restent exposés.
 été exécutées, mais aucune ne survit à la FDR et aucun candidat shadow n’est
 créé. Aucun modèle n’est réentraîné, retuné, promu ou déclaré
 `MODEL_VALIDATED`. Le marché déviggué reste la baseline économique.
+
+Sous-verdict :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. Les
+700 règles portent uniquement sur des tranches de cote, marge, catégorie de
+prix et compétition. Les modèles et features d’équipe, calendrier, joueurs et
+tactiques n’ont pas été testés par cette campagne.

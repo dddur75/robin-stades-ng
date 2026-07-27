@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -12,6 +13,7 @@ from robin.patterns.ledger import (
     REAL_BETS,
     SOCIAL_PUBLISHING_ENABLED,
     EvidenceLedger,
+    record_hash,
 )
 from robin.patterns.social import (
     EXPORT_FILES,
@@ -141,6 +143,90 @@ def test_hash_chain_detects_mutation(tmp_path: Path) -> None:
     path.write_text(json.dumps(record) + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match="LEDGER_HASH_MISMATCH"):
         ledger.audit()
+
+
+def test_audit_recalcule_profit_et_bankroll_meme_si_hash_recalcule(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "ledger.jsonl"
+    ledger = EvidenceLedger(path)
+    append_bet(ledger)
+    _, _, _, settled = timestamps()
+    ledger.append_settlement(
+        settlement_id="settlement-1",
+        decision_id="decision-1",
+        settled_at=settled,
+        result="WIN",
+        profit_units=1.0,
+    )
+    records = [
+        json.loads(line)
+        for line in path.read_text("utf-8").splitlines()
+    ]
+    records[1]["profit_units"] = 999.0
+    records[1]["shadow_bankroll_after"] = 1999.0
+    records[1]["record_hash"] = record_hash(records[1])
+    path.write_text(
+        "".join(json.dumps(record) + "\n" for record in records),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="SETTLEMENT_PROFIT_MISMATCH"):
+        ledger.audit()
+    before = path.read_bytes()
+    with pytest.raises(ValueError, match="SETTLEMENT_PROFIT_MISMATCH"):
+        ledger.append_decision(
+            decision_id="blocked-after-corruption",
+            published_at=timestamps()[0],
+            cutoff_at=timestamps()[1],
+            fixture_id="fixture-string",
+            competition="Ligue 1",
+            kickoff_at=timestamps()[2],
+            market="NO_MARKET",
+            selection="NONE",
+            odds=None,
+            odds_source="NO_CANDIDATE",
+            pattern_id=None,
+            pattern_version=None,
+            decision="NO_BET",
+            code_revision="abc",
+            dataset_hash="hash",
+        )
+    assert path.read_bytes() == before
+
+
+def test_append_concurrent_est_serialise_sans_fourche(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "ledger.jsonl"
+    published, cutoff, kickoff, _ = timestamps()
+
+    def append(index: int) -> None:
+        EvidenceLedger(path).append_decision(
+            decision_id=f"decision-{index}",
+            published_at=published,
+            cutoff_at=cutoff,
+            fixture_id=f"fixture-{index}",
+            competition="Ligue 1",
+            kickoff_at=kickoff,
+            market="NO_MARKET",
+            selection="NONE",
+            odds=None,
+            odds_source="NO_CANDIDATE",
+            pattern_id=None,
+            pattern_version=None,
+            decision="NO_BET",
+            code_revision="abc",
+            dataset_hash="hash",
+        )
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        list(executor.map(append, range(20)))
+    audit = EvidenceLedger(path).audit()
+    assert audit["records"] == 20
+    assert audit["decisions"] == 20
+    assert audit["no_bet_default"] is True
+    assert not path.with_name(f"{path.name}.lock").exists()
 
 
 def test_social_exports_are_fact_based_and_disabled(tmp_path: Path) -> None:

@@ -1,6 +1,6 @@
 # Gates de promotion des patterns
 
-Version : `pattern-promotion-gates-v1`
+Version : `pattern-promotion-gates-v1.1-review-hardening`
 
 ## Progression
 
@@ -27,19 +27,24 @@ Pour devenir `HISTORICAL_CANDIDATE`, une règle doit satisfaire simultanément :
 - ROI à mise fixe strictement positif ;
 - q-value ≤ 0,05 après FDR ;
 - borne basse du bootstrap groupé strictement positive ;
+- permutation présente, au moins 100 tirages et p-value ≤ 0,05 ;
+- concentration équipe et bookmaker mesurée avec seuils préenregistrés ;
 - aucune fuite ni performance suspectement parfaite ;
 - règle canonique non dominée ;
 - cote historique réellement observée.
 
-## Gate walk-forward et ligues
+## Gate walk-forward et stabilité inter-ligues exposée
 
-`EXPOSED_OOS_SURVIVOR` exige des folds strictement temporels, au moins 15 paris
-par fold admissible, au moins deux folds, au moins 67 % de folds positifs et un
-dernier fold positif. L’étiquette reste `EXPOSED_HISTORICAL_OOS`.
+La campagne V1 mesure des folds strictement temporels, au moins 15 paris par
+fold admissible, au moins deux folds, au moins 67 % de folds positifs et un
+dernier fold positif. Comme le classement initial des règles voit tout le
+corpus 2020–2025, ces 24 résultats sont une stabilité temporelle descriptive,
+pas une sélection nested OOS et pas une promotion `EXPOSED_OOS_SURVIVOR`.
 
-`EXTERNAL_LEAGUE_SURVIVOR` exige séparément au moins 40 paris et un ROI positif
-en Bundesliga et en Serie A, périmètre défini avant le run. Ce test ne
-transforme pas une ligue historique déjà examinée en holdout vierge.
+Le contrôle descriptif séparé Bundesliga/Serie A exige au moins 40 paris et un
+ROI positif dans chacune. Ces deux ligues appartiennent déjà au corpus de
+découverte : ce test n’est ni un holdout vierge, ni une validation externe
+indépendante et ne peut jamais attribuer `EXTERNAL_LEAGUE_SURVIVOR`.
 
 ## Gate live shadow
 
@@ -56,8 +61,9 @@ Le corpus actuel porte `SOURCE_PRICE_CLASS_ONLY`. Le gate live demeure donc
 fermé, même si un pattern survit aux tests historiques.
 
 La concentration équipe et la sensibilité bookmaker doivent être présentes
-dans le rapport avant toute promotion. Elles restent à compléter dans le
-dataset marché moyen actuel ; le gate échoue donc fermé si elles manquent.
+avec des seuils préenregistrés avant toute promotion. Elles restent
+incomplètes dans le dataset marché moyen actuel ; le moteur l'enregistre
+explicitement et le gate échoue fermé.
 
 ## Gate `VALIDATED`
 

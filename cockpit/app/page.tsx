@@ -571,7 +571,7 @@ function CommandCenter({ onNavigate }: { onNavigate: (page: PageKey) => void }) 
   );
 }
 
-function RobinLive() {
+export function RobinLive() {
   const research = snapshot.patternResearch;
   const lab = research.laboratory;
   const bankroll = research.bankroll;
@@ -587,7 +587,7 @@ function RobinLive() {
 
       <section className="panel">
         <div className="panel-head">
-          <div><span>Aujourd'hui</span><h2>Décisions shadow et NO BET</h2></div>
+          <div><span>Aujourd&apos;hui</span><h2>Décisions shadow et NO BET</h2></div>
           <SourceBadge origin={research.today.origin} />
         </div>
         {research.ledger.decisions === 0 ? (
@@ -619,7 +619,7 @@ function RobinLive() {
             <div><dt>Void</dt><dd>{research.results.void}</dd></div>
             <div><dt>Règlements</dt><dd>{research.results.settlements}</dd></div>
             <div><dt>Profit fictif</dt><dd>{research.results.profitUnits.toFixed(2)} u</dd></div>
-            <div><dt>ROI shadow</dt><dd>{pct(research.results.roi)}</dd></div>
+            <div><dt>ROI shadow</dt><dd>{research.results.roi == null ? "N/A — aucun pari réglé" : pct(research.results.roi)}</dd></div>
             <div><dt>Registre</dt><dd>{research.results.historyRecords} enregistrements</dd></div>
           </dl>
         </article>
@@ -633,7 +633,7 @@ function RobinLive() {
             <div><dt>Initiale</dt><dd>{bankroll.initialUnits.toFixed(2)} u</dd></div>
             <div><dt>Actuelle</dt><dd>{bankroll.currentUnits.toFixed(2)} u</dd></div>
             <div><dt>Profit</dt><dd>{bankroll.profitUnits.toFixed(2)} u</dd></div>
-            <div><dt>ROI</dt><dd>{pct(bankroll.roi)}</dd></div>
+            <div><dt>ROI</dt><dd>{bankroll.roi == null ? "N/A — aucune mise réglée" : pct(bankroll.roi)}</dd></div>
             <div><dt>Drawdown max</dt><dd>{bankroll.maxDrawdownUnits.toFixed(2)} u</dd></div>
             <div><dt>Courbe</dt><dd>{bankroll.curve.map((value) => Number(value).toFixed(2)).join(" → ")} u</dd></div>
           </dl>
@@ -647,10 +647,10 @@ function RobinLive() {
           <StatusPill value={research.campaignVerdict} />
         </div>
         <div className="cost-grid">
-          <article><span>En recherche</span><strong>{research.strategies.inResearch}</strong><small>hypothèses, pas des recommandations</small></article>
+          <article><span>Hypothèses exécutées</span><strong>{research.strategies.inResearch}</strong><small>recherche historique, pas des recommandations</small></article>
           <article><span>Candidates shadow</span><strong>{research.strategies.shadowCandidates}</strong><small>gates non contournables</small></article>
-          <article><span>En shadow</span><strong>{research.strategies.inShadow}</strong><small>simulation prospective</small></article>
-          <article><span>Rejetées</span><strong>{research.strategies.rejected}</strong><small>{research.strategies.rejectionReason}</small></article>
+          <article><span>Rejets de support</span><strong>{research.strategies.supportRejected}</strong><small>167 inclus dans le total rejeté</small></article>
+          <article><span>Rejetées de la promotion</span><strong>{research.strategies.promotionRejected}</strong><small>{research.strategies.rejectionReason}</small></article>
         </div>
       </section>
 
@@ -665,16 +665,49 @@ function RobinLive() {
           <tr><td>Rejets de support</td><td>{lab.supportRejected}</td><td>échantillon insuffisant</td></tr>
           <tr><td>Résultats positifs bruts</td><td>{lab.rawPositive}</td><td>non promotionnels</td></tr>
           <tr><td>Survivants FDR</td><td>{lab.fdrSurvivors}</td><td>{lab.fdrMethod}</td></tr>
-          <tr><td>Survivants walk-forward</td><td>{lab.walkForwardSurvivors}</td><td>validation temporelle</td></tr>
+          <tr><td>Walk-forward brut avant FDR</td><td>{lab.walkForwardRawBeforeFdr}</td><td>exploratoire, non promotionnel</td></tr>
           <tr><td>Survivants ligue externe</td><td>{lab.externalLeagueSurvivors}</td><td>transférabilité</td></tr>
           <tr><td>Contrôles négatifs</td><td>{lab.negativeControlsPassed}/{lab.negativeControls}</td><td>permutations et labels mélangés</td></tr>
         </tbody></table></div>
+        <p className="panel-note"><StatusPill value={research.subVerdict} /></p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div><span>Exploration rejetée</span><h2>Trois meilleurs résultats bruts</h2></div>
+          <StatusPill value="EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING" />
+        </div>
+        <div className="table-wrap"><table><thead><tr><th>Règle exposée</th><th>Support</th><th>ROI / IC 95 %</th><th>q-value</th><th>Folds</th><th>Stabilité ligue exposée</th><th>Statut</th><th>Limite</th></tr></thead><tbody>
+          {lab.topExploratoryResults.map((row) => (
+            <tr key={row.ruleHash}>
+              <td>{row.competition} · {row.market} · {row.selection}</td>
+              <td>{row.bets} paris · {row.bootstrapGroups} groupes</td>
+              <td>{pct(row.roi)} · {row.bootstrapRoi95.length === 2 ? row.bootstrapRoi95.map((value) => pct(Number(value))).join(" / ") : "N/A"}</td>
+              <td>{row.qValue.toFixed(2)}</td>
+              <td>{row.positiveFolds}/{row.eligibleFolds}</td>
+              <td>{row.leagueStability} · {row.exposedLeagueStability}</td>
+              <td><StatusPill value={row.publicStatus} /></td>
+              <td>{row.limit}</td>
+            </tr>
+          ))}
+        </tbody></table></div>
+        <p className="panel-note">Ces résultats sont exposés pour transparence. Ils échouent la correction des tests multiples et ne sont ni candidats, ni recommandations.</p>
       </section>
 
       <section className="panel">
         <div className="panel-head">
           <div><span>Méthodologie</span><h2>Lire Robin Live sans surinterpréter</h2></div>
           <StatusPill value={research.productionStatus} />
+        </div>
+        <div className="two-column">
+          <article>
+            <h3>WHAT_WAS_TESTED</h3>
+            <ul>{research.WHAT_WAS_TESTED.map((item) => <li key={item}>{item}</li>)}</ul>
+          </article>
+          <article>
+            <h3>WHAT_WAS_NOT_TESTED</h3>
+            <ul>{research.WHAT_WAS_NOT_TESTED.map((item) => <li key={item}>{item}</li>)}</ul>
+          </article>
         </div>
         <div className="guardrails">
           <div><StatusPill value="BACKTEST" /><strong>Historique</strong><small>{research.methodology.backtest}</small></div>
@@ -1331,7 +1364,7 @@ function ModelArena() {
       </section>
       <section className="panel">
         <div className="panel-head"><div><span>Stratégies bornées</span><h2>Strategy Lab V2</h2></div><StatusPill value={arena?.strategyStatus ?? "NOT_RUN"} /></div>
-        <p>{arena?.strategiesTested ?? 0} hypothèses exécutées. Aucune stratégie n'est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
+        <p>{arena?.strategiesTested ?? 0} hypothèses exécutées. Aucune stratégie n&apos;est promue sans intervalle apparié favorable, validation externe et confirmation prospective indépendante.</p>
       </section>
     </>
   );
@@ -1436,7 +1469,7 @@ function ExternalValidation() {
       </section>
       <section className="panel">
         <div className="panel-head"><div><span>Leave-One-League-Out</span><h2>Généralisation football</h2></div><StatusPill value="LEAVE_ONE_LEAGUE_OUT_READY" /></div>
-        <div className="table-wrap"><table><thead><tr><th>Ligue tenue à l'écart</th><th>Fixtures</th><th>Log Loss</th><th>Brier</th><th>ECE</th><th>Marché</th><th>Statut</th></tr></thead><tbody>
+        <div className="table-wrap"><table><thead><tr><th>Ligue tenue à l&apos;écart</th><th>Fixtures</th><th>Log Loss</th><th>Brier</th><th>ECE</th><th>Marché</th><th>Statut</th></tr></thead><tbody>
           {(external?.leaveOneLeagueOut ?? []).map((row) => <tr key={row.held_out_competition}><td>{row.held_out_competition}</td><td>{row.paired_fixtures ?? 0}</td><td>{row.metrics?.log_loss?.toFixed(4) ?? "—"}</td><td>{row.metrics?.brier_score?.toFixed(4) ?? "—"}</td><td>{row.metrics?.ece?.toFixed(4) ?? "—"}</td><td>{row.market_comparison ?? "UNAVAILABLE"}</td><td><StatusPill value={row.status ?? "INCONCLUSIVE"} /></td></tr>)}
         </tbody></table></div>
       </section>

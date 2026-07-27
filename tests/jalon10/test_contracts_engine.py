@@ -197,6 +197,26 @@ def test_rule_hash_is_order_independent_and_tennis_fields_never_generated() -> N
     )
 
 
+def test_preregistered_thresholds_never_depend_on_future_results() -> None:
+    baseline = [
+        market_row(fixture_id=1, competition="Ligue 1"),
+        market_row(fixture_id=2, competition="Serie A"),
+    ]
+    future_results_changed = [
+        {**row, "home_goals": 99, "away_goals": 0, "full_time_result": "HOME"}
+        for row in baseline
+    ]
+
+    baseline_rules = generate_rules(baseline)
+    changed_rules = generate_rules(future_results_changed)
+    assert [rule.digest for rule in baseline_rules] == [
+        rule.digest for rule in changed_rules
+    ]
+    assert [rule.conditions for rule in baseline_rules] == [
+        rule.conditions for rule in changed_rules
+    ]
+
+
 def test_deduplication_prefers_a_sufficient_simple_rule() -> None:
     simple = Rule(
         "1X2_HOME",

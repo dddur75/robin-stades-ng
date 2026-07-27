@@ -1,6 +1,8 @@
 # Rapport Jalon 10
 
 Statut documentaire : `JALON_10_NO_ROBUST_PATTERN_FOUND`
+Sous-verdict scientifique :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`
 Date : 2026-07-27
 
 ## Résumé actuel
@@ -9,7 +11,8 @@ Le contrat scientifique, la politique point-in-time, les tests multiples et
 les gates de promotion ont été gelés avant lecture. La campagne réelle
 cache-only a exécuté les 700 hypothèses générées. Malgré 118 ROI positifs bruts
 et 24 survivantes walk-forward brutes, aucune hypothèse ne survit à la
-correction FDR. Aucun pattern n’est robuste, shadow ou validé.
+correction FDR. Aucune des 700 règles de ce search space n’est promue, shadow ou
+validée ; cette conclusion ne porte pas sur les patterns football non testés.
 
 ## Audit tennis
 
@@ -28,6 +31,54 @@ son moteur, son vocabulaire et ses preuves propres.
 - données déjà exposées, donc aucune validation prospective ;
 - autres marchés sans prix historique : `MARKET_UNAVAILABLE`.
 
+## WHAT_WAS_TESTED
+
+La conclusion porte exclusivement sur 700 règles historiques préenregistrées
+de tranches de marché, et non sur tous les patterns possibles dans le football.
+
+Ont été testés :
+
+- cinq sélections : domicile, nul et extérieur en 1X2, Over 2,5 et Under 2,5 ;
+- cinq bandes de cote : 1,20–1,60, 1,60–2,00, 2,00–2,50, 2,50–3,25 et
+  3,25–5,00 ;
+- trois plafonds de marge : 6 %, 8 % et 10 % ;
+- deux catégories de prix source : closing et pre-closing ;
+- cinq filtres de compétition : Ligue 1, Premier League, La Liga, Bundesliga et
+  Serie A ;
+- des règles simples, des paires limitées à cote + un filtre et des triplets
+  limités à cote + marge + compétition.
+
+Le dénominateur est 15 règles simples, 50 paires et 75 triplets par marché,
+soit 140 règles par marché et 700 règles au total. L’évaluation utilise
+l’historique exposé 2020–2025, une mise fixe d’une unité, la FDR, le bootstrap
+groupé, le walk-forward exposé et sept contrôles négatifs.
+
+## WHAT_WAS_NOT_TESTED
+
+Cette campagne n’a pas testé :
+
+- l’ensemble des patterns possibles dans le football ;
+- la forme, l’Elo, les buts ou xG historiques, la force d’équipe ou les
+  confrontations directes ;
+- le repos, la congestion, le déplacement ou le calendrier ;
+- les joueurs, absences, blessures, compositions, formations, tactiques,
+  entraîneurs ou la latéralité ;
+- le mouvement de cote, la CLV, des snapshots intrajournaliers ou les prix de
+  bookmakers individuels ;
+- BTTS, handicaps, scores exacts, corners, cartons, buteurs ou props joueurs ;
+- d’autres ligues, saisons, seuils, règles à quatre conditions ou modèles
+  non linéaires ;
+- une validation prospective live, un prix réellement observé à T−60 ou un
+  closing exact : seules les catégories source closing/pre-closing existent ;
+- un holdout externe indépendant : Bundesliga et Serie A appartiennent déjà au
+  corpus historique exposé ;
+- une permutation candidate stratifiée par compétition, saison et bande de
+  cote ; la permutation V1 reste globale et le gate concentration ferme toute
+  promotion ;
+- une gestion de mise autre que la mise fixe d’une unité.
+
+Aucune conclusion ne peut être extrapolée à ces familles non testées.
+
 ## Recherche
 
 | Mesure | Résultat |
@@ -43,7 +94,7 @@ son moteur, son vocabulaire et ses preuves propres.
 | Positives brutes | 118 |
 | Survivantes FDR | 0 |
 | Survivantes walk-forward brutes | 24 |
-| Survivantes validation externe | 0 |
+| Survivantes stabilité inter-ligues exposée | 0 |
 | Candidates shadow | 0 |
 | Contrôles négatifs | 7/7 réussis |
 | Replay | hash identique, 0 doublon |
@@ -56,13 +107,14 @@ positifs.
 
 Ces trois règles sont les meilleurs ROI parmi les règles à support suffisant
 ayant survécu au walk-forward brut. Elles restent `DISCOVERED`, avec `q = 1`,
-et ne sont ni externes, ni shadow, ni `VALIDATED`.
+ne survivent pas au contrôle de stabilité inter-ligues exposé et ne sont ni
+shadow, ni `VALIDATED`.
 
 | Règle | Support | ROI / profit | IC bootstrap 95 % | q | Folds | Drawdown | Limite |
 |---|---:|---:|---:|---:|---:|---:|---|
-| La Liga, extérieur, cote 2,00–2,50, marge ≤ 6 % | 261 paris / 225 groupes | 16,64 % / 43,43 u | [3,36 % ; 30,77 %] | 1,00 | 4/4 | 9,27 u | spécifique à une ligue, sans validation externe ni prix live exact |
-| Serie A, nul, cote 2,50–3,25, marge ≤ 6 % | 363 paris / 282 groupes | 15,94 % / 57,88 u | [0,43 % ; 31,39 %] | 1,00 | 4/4 | 19,52 u | spécifique à une ligue, sans validation externe ni prix live exact |
-| Serie A, extérieur, cote 1,60–2,00, marge ≤ 6 % | 241 paris / 204 groupes | 13,87 % / 33,42 u | [2,49 % ; 24,27 %] | 1,00 | 3/3 | 7,22 u | spécifique à une ligue, sans validation externe ni prix live exact |
+| La Liga, extérieur, cote 2,00–2,50, marge ≤ 6 % | 261 paris / 225 groupes | 16,64 % / 43,43 u | [3,36 % ; 30,77 %] | 1,00 | 4/4 | 9,27 u | spécifique à une ligue, sans holdout indépendant ni prix live exact |
+| Serie A, nul, cote 2,50–3,25, marge ≤ 6 % | 363 paris / 282 groupes | 15,94 % / 57,88 u | [0,43 % ; 31,39 %] | 1,00 | 4/4 | 19,52 u | spécifique à une ligue, sans holdout indépendant ni prix live exact |
+| Serie A, extérieur, cote 1,60–2,00, marge ≤ 6 % | 241 paris / 204 groupes | 13,87 % / 33,42 u | [2,49 % ; 24,27 %] | 1,00 | 3/3 | 7,22 u | spécifique à une ligue, sans holdout indépendant ni prix live exact |
 
 La comparaison pertinente reste le marché observé : aucune de ces règles ne
 survit à la correction des 700 hypothèses, et l’absence d’horodatage exact
@@ -108,6 +160,16 @@ sont autorisés par ce rapport.
 ## Verdict
 
 `JALON_10_NO_ROBUST_PATTERN_FOUND`
+
+Sous-verdict scientifique :
+
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`
+
+Cela signifie qu’aucune des 700 règles préenregistrées de tranches de marché
+n’a survécu à la FDR sur ce corpus historique exposé. Cela ne signifie pas
+qu’aucun pattern robuste n’existe dans le football, dans les familles de
+features non testées, sur d’autres marchés ou dans de futures données
+prospectives.
 
 Ce verdict est scientifique, non opérationnel : il n’autorise ni changement de
 seuil, ni nouvelle source, ni pari réel.

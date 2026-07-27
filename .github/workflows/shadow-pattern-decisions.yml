@@ -1,8 +1,6 @@
 name: "42 - Shadow Pattern Decisions"
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "15 9 * * *"
 permissions:
   actions: write
   contents: write
@@ -16,6 +14,7 @@ jobs:
     env:
       REAL_BETS: "false"
       NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -36,17 +35,24 @@ jobs:
         shell: bash
         run: |
           mkdir -p artifacts/shadow-pattern
-          if test -f data/shadow/pattern-research/campaign-summary.json &&
+          registry="data/shadow/pattern-research/shadow-candidate-registry.json"
+          candidates=0
+          if test -f "$registry"; then
+            candidates="$(python -c \
+              'import json,sys; print(int(json.load(open(sys.argv[1], encoding="utf-8")).get("candidate_count", 0)))' \
+              "$registry")"
+          fi
+          if test "$candidates" -gt 0 &&
              test -f data/shadow/upcoming-fixtures-point-in-time.json; then
             python scripts/run_shadow_pattern_decisions.py \
-              --campaign data/shadow/pattern-research/campaign-summary.json \
+              --campaign "$registry" \
               --fixtures data/shadow/upcoming-fixtures-point-in-time.json \
               --ledger data/shadow/pattern-evidence-ledger.jsonl \
               --output artifacts/shadow-pattern/decision-run.json \
               --code-revision "${{ github.sha }}"
             echo "durable=true" >> "$GITHUB_OUTPUT"
           else
-            printf '%s\n' '{"status":"NO_BET_DATA_UNAVAILABLE","provider_calls":0,"real_bets":false}' \
+            printf '%s\n' '{"status":"NO_LIVE_SHADOW_CANDIDATE","provider_calls":0,"real_bets":false}' \
               > artifacts/shadow-pattern/decision-run.json
             echo "durable=false" >> "$GITHUB_OUTPUT"
           fi
@@ -60,3 +66,19 @@ jobs:
           name: shadow-pattern-decisions-${{ github.run_id }}
           path: artifacts/shadow-pattern
           retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: steps.decisions.outputs.durable == 'true'
+        with:
+          name: shadow-state-${{ github.run_id }}
+          path: data/shadow
+          retention-days: 14
+          compression-level: 9
+      - name: Élaguer les anciens artefacts shadow
+        if: steps.decisions.outputs.durable == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/manage_shadow_state.py prune
+          --repo "${{ github.repository }}"
+          --current-artifact-name "shadow-state-${{ github.run_id }}"
+          --keep 2

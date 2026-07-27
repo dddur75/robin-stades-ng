@@ -7,6 +7,7 @@ import pytest
 from robin.patterns.statistics import (
     assess_support,
     benjamini_hochberg,
+    clustered_positive_mean_p_value,
     detect_perfect_performance,
     flat_stake_metrics,
     grouped_bootstrap_mean,
@@ -50,6 +51,106 @@ def test_benjamini_hochberg_handles_ties_and_rejects_invalid_p_values() -> None:
     assert tied.q_values[0] == tied.q_values[1]
     with pytest.raises(ValueError, match="INVALID_P_VALUE"):
         benjamini_hochberg([0.1, float("nan")])
+
+
+def test_benjamini_hochberg_q_values_are_monotone_in_p_value_order() -> None:
+    p_values = [0.20, 0.001, 0.08, 0.04, 0.01, 0.50]
+    result = benjamini_hochberg(p_values)
+    ordered = sorted(
+        zip(p_values, result.q_values, strict=True),
+        key=lambda pair: pair[0],
+    )
+
+    assert all(
+        left[1] <= right[1]
+        for left, right in zip(ordered[:-1], ordered[1:], strict=True)
+    )
+
+
+def test_benjamini_hochberg_700_tests_with_minimum_near_0006_rejects_none() -> None:
+    result = benjamini_hochberg([0.006276023299606921] + [1.0] * 699)
+
+    assert result.hypotheses == 700
+    assert min(result.q_values) == 1.0
+    assert sum(result.rejected) == 0
+
+
+def test_benjamini_hochberg_700_tests_rejects_an_extreme_p_value() -> None:
+    result = benjamini_hochberg([1e-8] + [1.0] * 699)
+
+    assert result.q_values[0] == pytest.approx(7e-6)
+    assert result.rejected[0] is True
+    assert sum(result.rejected) == 1
+
+
+def test_clustered_positive_mean_p_value_uses_cr1_clusters() -> None:
+    group_returns = [1.0] * 12 + [-1.0] * 8
+    values = [
+        value
+        for group_return in group_returns
+        for value in [group_return] * 5
+    ]
+    groups = [
+        f"day-{group_index}"
+        for group_index in range(len(group_returns))
+        for _ in range(5)
+    ]
+
+    result = clustered_positive_mean_p_value(values, groups)
+
+    assert result == pytest.approx(0.1867983187282179)
+    assert result > 0.05
+
+
+def test_clustered_positive_mean_p_value_is_invariant_to_cluster_replication() -> None:
+    group_returns = [1.0] * 12 + [-1.0] * 8
+    base_groups = [f"day-{index}" for index in range(len(group_returns))]
+    replicated_values = [
+        value
+        for group_return in group_returns
+        for value in [group_return] * 5
+    ]
+    replicated_groups = [
+        group
+        for group in base_groups
+        for _ in range(5)
+    ]
+
+    base = clustered_positive_mean_p_value(group_returns, base_groups)
+    replicated = clustered_positive_mean_p_value(
+        replicated_values,
+        replicated_groups,
+    )
+    reversed_order = clustered_positive_mean_p_value(
+        list(reversed(replicated_values)),
+        list(reversed(replicated_groups)),
+    )
+
+    assert replicated == pytest.approx(base)
+    assert reversed_order == pytest.approx(base)
+
+
+def test_clustered_positive_mean_p_value_fails_closed() -> None:
+    assert clustered_positive_mean_p_value([1.0, -1.0], ["a", "b"]) == 1.0
+    assert (
+        clustered_positive_mean_p_value(
+            [1.0, 1.0, 1.0],
+            ["a", "b", "c"],
+        )
+        == 1.0
+    )
+    assert (
+        clustered_positive_mean_p_value(
+            [1e308, -1e308, 1e308, -1e308],
+            ["a", "b", "c", "d"],
+        )
+        == 1.0
+    )
+
+
+def test_clustered_positive_mean_p_value_rejects_length_mismatch() -> None:
+    with pytest.raises(ValueError, match="CLUSTERED_P_VALUE_LENGTH_MISMATCH"):
+        clustered_positive_mean_p_value([1.0, -1.0, 0.5], ["a", "b"])
 
 
 def test_walk_forward_training_is_always_strictly_earlier() -> None:

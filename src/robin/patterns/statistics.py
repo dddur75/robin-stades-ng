@@ -241,6 +241,52 @@ def benjamini_hochberg(
     )
 
 
+def clustered_positive_mean_p_value(
+    values: Sequence[float],
+    groups: Sequence[str],
+) -> float:
+    """Return a one-sided CR1 p-value for a positive record-level mean.
+
+    The estimator is the intercept-only cluster-robust normal approximation.
+    It preserves the record-weighted mean while treating each group as the
+    independent sampling unit.  Fewer than three groups, a zero variance, or a
+    non-finite standard error fail closed with a p-value of one.
+    """
+
+    numeric = _finite_values(values, name="CLUSTERED_P_VALUE_VALUES")
+    if len(numeric) != len(groups):
+        raise ValueError("CLUSTERED_P_VALUE_LENGTH_MISMATCH")
+
+    group_values: dict[str, list[float]] = {}
+    for group, value in zip(groups, numeric, strict=True):
+        group_values.setdefault(str(group), []).append(value)
+    group_count = len(group_values)
+    if group_count < 3:
+        return 1.0
+
+    try:
+        estimate = statistics.fmean(numeric)
+        cluster_scores = [
+            math.fsum(value - estimate for value in observations)
+            for observations in group_values.values()
+        ]
+        score_squares = math.fsum(score * score for score in cluster_scores)
+        variance = (
+            (group_count / (group_count - 1))
+            * score_squares
+            / (len(numeric) * len(numeric))
+        )
+        standard_error = math.sqrt(variance)
+    except (OverflowError, ValueError):
+        return 1.0
+    if not math.isfinite(standard_error) or standard_error <= 0.0:
+        return 1.0
+
+    z_score = estimate / standard_error
+    p_value = 0.5 * math.erfc(z_score / math.sqrt(2.0))
+    return p_value if math.isfinite(p_value) else 1.0
+
+
 def walk_forward_splits(
     periods: Sequence[int],
     *,
@@ -520,6 +566,7 @@ __all__ = [
     "WalkForwardFold",
     "assess_support",
     "benjamini_hochberg",
+    "clustered_positive_mean_p_value",
     "detect_perfect_performance",
     "flat_stake_metrics",
     "grouped_bootstrap_mean",

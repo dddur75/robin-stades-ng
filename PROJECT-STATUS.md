@@ -343,8 +343,10 @@ Ces données sont `DISCOVERY_EXPOSED`. Les prix portent
 autorisent la recherche historique, mais ferment le gate live point-in-time.
 La première campagne cache-only a généré et exécuté 700 hypothèses : 167 sont
 rejetées pour support, 118 ont un ROI brut positif, 24 survivent au
-walk-forward brut, mais zéro survit à la FDR, zéro à la validation externe et
-zéro ne devient candidat shadow. Les 7 contrôles négatifs sur 7 réussissent.
+walk-forward brut, mais zéro survit à la FDR, zéro au contrôle de stabilité
+inter-ligues exposé et zéro ne devient candidat shadow. Les 7 contrôles
+négatifs sur 7 réussissent. Bundesliga et Serie A appartiennent déjà au corpus :
+ce contrôle n’est pas un holdout externe indépendant.
 Le replay est identique, avec zéro appel fournisseur, zéro crédit et zéro
 doublon. Révision exécutée :
 `5c5b1a0344346b812a71962e7d0abadc3ba19266`.
@@ -358,6 +360,12 @@ Hashes de preuve :
 
 Verdict : `JALON_10_NO_ROBUST_PATTERN_FOUND`. Aucun seuil n’est assoupli et
 aucun pattern n’est promu.
+
+Sous-verdict scientifique :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. Il porte
+uniquement sur les 700 règles de cote, marge, catégorie de prix et compétition
+préenregistrées ; il ne conclut pas à l’absence de pattern robuste dans le
+football ou dans les familles de features non testées.
 
 Le Public Evidence Ledger est défini comme append-only, chaîné par SHA-256 et
 shadow-only, avec une bankroll initiale fictive de 1 000 unités. Robin Live V1

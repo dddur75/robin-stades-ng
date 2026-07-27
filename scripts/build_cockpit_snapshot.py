@@ -321,11 +321,21 @@ def build_pattern_research() -> dict[str, Any]:
     """Construire Robin Live V1 depuis des résumés compacts, jamais depuis une démo."""
 
     roots = [
+        ROOT / "data" / "shadow" / "pattern-research",
         ROOT / "data" / "historical" / "pattern-research",
         ROOT / "reports" / "pattern-research",
     ]
     campaign: dict[str, Any] = {}
     ledger: dict[str, Any] = {}
+    ledger_override = os.environ.get("PATTERN_LEDGER_SUMMARY")
+    if ledger_override:
+        override_path = Path(ledger_override).resolve()
+        if not override_path.is_file():
+            raise RuntimeError("PATTERN_LEDGER_SUMMARY_MISSING")
+        candidate = read_json(override_path, {})
+        if not isinstance(candidate, dict) or not candidate:
+            raise RuntimeError("PATTERN_LEDGER_SUMMARY_INVALID")
+        ledger = candidate
     for root in roots:
         if not campaign:
             candidate = read_json(root / "campaign-summary.json", {})
@@ -358,6 +368,36 @@ def build_pattern_research() -> dict[str, Any]:
         except (TypeError, ValueError):
             return default
 
+    def require_guard(
+        source: dict[str, Any],
+        key: str,
+        expected: object,
+        artifact: str,
+    ) -> None:
+        if key not in source or source[key] != expected:
+            raise RuntimeError(
+                f"UNSAFE_PATTERN_RESEARCH_ARTIFACT:{artifact}:{key}"
+            )
+
+    for artifact, source in (("campaign", campaign), ("ledger", ledger)):
+        if not source:
+            continue
+        require_guard(
+            source,
+            "production_status",
+            "PRODUCTION_LOCKED",
+            artifact,
+        )
+        require_guard(source, "real_bets", False, artifact)
+        require_guard(source, "no_bet_default", True, artifact)
+        require_guard(
+            source,
+            "social_publishing_enabled",
+            False,
+            artifact,
+        )
+        require_guard(source, "demo_mode_enabled", False, artifact)
+
     decisions = integer(ledger, "decisions")
     shadow_bets = integer(ledger, "shadow_bets")
     no_bets = integer(ledger, "no_bets")
@@ -367,10 +407,14 @@ def build_pattern_research() -> dict[str, Any]:
         current_bankroll = 1000.0
     profit = number(ledger, "profit_units", current_bankroll - 1000.0)
     settled_stakes = number(ledger, "settled_stake_units", 0.0)
-    roi = number(
-        ledger,
-        "roi",
-        profit / settled_stakes if settled_stakes > 0 else 0.0,
+    roi = (
+        number(
+            ledger,
+            "roi",
+            profit / settled_stakes,
+        )
+        if settled_stakes > 0
+        else None
     )
     has_campaign = bool(campaign)
     has_ledger = bool(ledger)
@@ -390,13 +434,135 @@ def build_pattern_research() -> dict[str, Any]:
         negative_controls = {}
     strategies_rejected = integer(counts, "strategies_rejected")
     if not strategies_rejected:
-        strategies_rejected = support_rejected
+        strategies_rejected = max(
+            0,
+            integer(counts, "hypotheses_executed")
+            - integer(counts, "shadow_candidates"),
+        )
+    fdr_alpha = number(
+        campaign.get("configuration", {})
+        if isinstance(campaign.get("configuration"), dict)
+        else {},
+        "fdr_alpha",
+        0.05,
+    )
+    top_exploratory: list[dict[str, Any]] = []
+    raw_top = campaign.get("top_exploratory_walk_forward_results", [])
+    if isinstance(raw_top, list):
+        for item in raw_top[:3]:
+            if not isinstance(item, dict):
+                continue
+            interval = item.get("bootstrap_roi_95", [])
+            folds_positive = integer(item, "walk_forward_positive_folds")
+            folds_eligible = integer(item, "walk_forward_eligible_folds")
+            q_value = number(item, "q_value", 1.0)
+            top_exploratory.append(
+                {
+                    "ruleHash": str(item.get("rule_hash", "")),
+                    "competition": str(item.get("competition", "UNKNOWN")),
+                    "market": str(item.get("market", "UNKNOWN")),
+                    "selection": str(item.get("selection", "UNKNOWN")),
+                    "conditions": item.get("conditions", {}),
+                    "bets": integer(item, "bets"),
+                    "bootstrapGroups": integer(
+                        item,
+                        "distinct_bootstrap_groups",
+                    ),
+                    "roi": number(item, "roi"),
+                    "profitUnits": number(item, "profit_units"),
+                    "maxDrawdownUnits": number(
+                        item,
+                        "max_drawdown_units",
+                    ),
+                    "qValue": q_value,
+                    "bootstrapRoi95": (
+                        interval
+                        if isinstance(interval, list) and len(interval) == 2
+                        else []
+                    ),
+                    "positiveFolds": folds_positive,
+                    "eligibleFolds": folds_eligible,
+                    "exposedLeagueStability": str(
+                        item.get("external_validation", "NOT_TESTED")
+                    ),
+                    "leagueStability": "EXPOSED_SINGLE_LEAGUE_ONLY",
+                    "limit": str(item.get("limit", "NOT_PROMOTABLE")),
+                    "publicStatus": (
+                        "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+                        if q_value > fdr_alpha
+                        else "EXPLORATORY_NOT_PROMOTED"
+                    ),
+                }
+            )
+    expected_scope_subverdict = (
+        "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE"
+    )
+    sub_verdict = str(
+        campaign.get(
+            "scope_subverdict",
+            expected_scope_subverdict
+            if integer(counts, "raw_positive") > 0
+            and integer(counts, "fdr_survivors") == 0
+            else "NO_EXPLORATORY_RESULT_TO_PUBLISH",
+        )
+    )
+    if has_campaign and sub_verdict != expected_scope_subverdict:
+        raise RuntimeError("PATTERN_RESEARCH_SCOPE_SUBVERDICT_INVALID")
+    what_was_tested = (
+        [
+            (
+                "Campagne football cache-only sur "
+                f"{integer(counts, 'fixtures_matched'):,} fixtures appariées, "
+                "cinq ligues et saisons 2020–2025."
+            ),
+            (
+                f"{integer(counts, 'hypotheses_executed')} hypothèses "
+                "exécutées sur 1X2 et Over/Under 2,5 avec prix historiques "
+                "SOURCE_PRICE_CLASS_ONLY."
+            ),
+            (
+                "Mise fixe, support, bootstrap groupé, walk-forward brut, "
+                "Benjamini-Hochberg et 7 contrôles négatifs."
+            ),
+            (
+                "Replay déterministe sans fournisseur, sans crédit et sans "
+                "doublon métier."
+            ),
+        ]
+        if has_campaign
+        else []
+    )
+    not_tested = [
+        (
+            "Cotes live avec observed_at exact, CLV et validation "
+            "prospective point-in-time."
+        ),
+        (
+            "Permutation candidate stratifiée par compétition, saison et "
+            "bande de cote ; le gate V1 reste fermé sans cette extension."
+        ),
+        (
+            "Décisions et règlements shadow non vides ; la bankroll "
+            "reste à son état initial."
+        ),
+        (
+            "Marchés joueurs, buteurs, cartons, corners et handicaps "
+            "indisponibles dans le corpus."
+        ),
+        (
+            "Publication sur un réseau social, transaction réelle ou "
+            "connexion bookmaker."
+        ),
+    ]
+    if not has_campaign:
+        not_tested.insert(0, "Campagne scientifique indisponible dans ce snapshot.")
 
     return {
         "version": "ROBIN_LIVE_V1",
         "dataStatus": data_status,
         "researchStatus": source_status,
         "campaignVerdict": str(campaign.get("verdict", "NOT_RUN")),
+        "subVerdict": sub_verdict,
         "publicationTime": ledger.get("published_at"),
         "today": {
             "matchesAnalyzed": integer(ledger, "matches_analyzed"),
@@ -420,14 +586,15 @@ def build_pattern_research() -> dict[str, Any]:
             "void": integer(ledger, "void"),
             "settlements": integer(ledger, "settlements"),
             "profitUnits": round(profit, 4),
-            "roi": round(roi, 6),
+            "roi": round(roi, 6) if roi is not None else None,
             "historyRecords": integer(ledger, "records"),
+            "settledStakeUnits": settled_stakes,
         },
         "bankroll": {
             "initialUnits": 1000.0,
             "currentUnits": round(current_bankroll, 4),
             "profitUnits": round(profit, 4),
-            "roi": round(roi, 6),
+            "roi": round(roi, 6) if roi is not None else None,
             "maxDrawdownUnits": round(
                 number(ledger, "max_drawdown_units", 0.0),
                 4,
@@ -440,8 +607,11 @@ def build_pattern_research() -> dict[str, Any]:
             "shadowCandidates": integer(counts, "shadow_candidates"),
             "inShadow": integer(counts, "strategies_in_shadow"),
             "rejected": strategies_rejected,
+            "supportRejected": support_rejected,
+            "promotionRejected": strategies_rejected,
             "rejectionReason": (
-                "Support ou validation scientifique insuffisante."
+                "Toutes les hypothèses sont rejetées de la promotion ; "
+                "les rejets de support sont comptés séparément."
                 if strategies_rejected
                 else "Aucune stratégie publiée."
             ),
@@ -456,6 +626,10 @@ def build_pattern_research() -> dict[str, Any]:
                 counts,
                 "walk_forward_survivors",
             ),
+            "walkForwardRawBeforeFdr": integer(
+                counts,
+                "walk_forward_survivors",
+            ),
             "externalLeagueSurvivors": integer(
                 counts,
                 "external_league_survivors",
@@ -466,7 +640,10 @@ def build_pattern_research() -> dict[str, Any]:
                 for control in negative_controls.values()
             ),
             "fdrMethod": "Benjamini-Hochberg",
+            "topExploratoryResults": top_exploratory,
         },
+        "WHAT_WAS_TESTED": what_was_tested,
+        "WHAT_WAS_NOT_TESTED": not_tested,
         "methodology": {
             "backtest": (
                 "Un backtest rejoue une règle sur des données historiques "

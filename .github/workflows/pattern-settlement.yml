@@ -1,8 +1,6 @@
 name: "43 - Pattern Settlement append-only"
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "30 4 * * *"
 permissions:
   actions: write
   contents: write
@@ -55,3 +53,19 @@ jobs:
           name: pattern-settlement-${{ github.run_id }}
           path: artifacts/pattern-settlement
           retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: steps.settlement.outputs.durable == 'true'
+        with:
+          name: shadow-state-${{ github.run_id }}
+          path: data/shadow
+          retention-days: 14
+          compression-level: 9
+      - name: Élaguer les anciens artefacts shadow
+        if: steps.settlement.outputs.durable == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/manage_shadow_state.py prune
+          --repo "${{ github.repository }}"
+          --current-artifact-name "shadow-state-${{ github.run_id }}"
+          --keep 2

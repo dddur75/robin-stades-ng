@@ -81,7 +81,7 @@ Les contrôles cibles permutées et lineups aléatoires sont obligatoires.
 | Expérience | Question | État |
 |---|---|---|
 | Pattern Campaign V1 | Une règle simple survit-elle à FDR, bootstrap et walk-forward ? | `NO_FDR_SURVIVOR` |
-| External league transfer | La règle reste-t-elle positive séparément en Bundesliga et Serie A ? | `NO_EXTERNAL_SURVIVOR` |
+| Exposed cross-league stability | La règle reste-t-elle positive séparément dans les sous-groupes exposés Bundesliga et Serie A ? | `NO_EXPOSED_CROSS_LEAGUE_SURVIVOR` |
 | Negative controls V1 | Labels mélangés, fuite, règle triviale et règles impossibles sont-ils rejetés ? | `VERIFIED_7_OF_7` |
 | Deterministic replay | Configuration, règles, métriques et hashes sont-ils identiques ? | `VERIFIED_IDENTICAL` |
 | Public Ledger V1 | Décisions et règlements forment-ils une chaîne append-only valide ? | `VERIFIED_EMPTY_LEDGER_AND_TESTS` |
@@ -93,5 +93,12 @@ dernier fold positif. Bundesliga et Serie A exigent chacune 40 paris et un ROI
 positif. Les données restent exposées et ne peuvent produire `VALIDATED`.
 
 Résultat V1 : 700/700 hypothèses exécutées, 167 rejets support, 118 positives
-brutes, 24 survivantes walk-forward brutes, 0 survivante FDR, 0 externe et
-0 candidat shadow. Verdict : `JALON_10_NO_ROBUST_PATTERN_FOUND`.
+brutes, 24 survivantes walk-forward brutes, 0 survivante FDR, 0 survivante du
+contrôle inter-ligues exposé et 0 candidat shadow. Verdict :
+`JALON_10_NO_ROBUST_PATTERN_FOUND`.
+
+Sous-verdict :
+`NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE`. Les
+familles équipe, calendrier/repos, joueurs, tactique et autres marchés ne font
+pas partie des 700 règles. Le contrôle Bundesliga/Serie A réutilise le corpus
+exposé et ne constitue pas un holdout externe indépendant.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from typing import Any
 
@@ -12,10 +13,14 @@ from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
 from robin.storage.models import (
+    BankrollEventModel,
+    EvidenceLedgerModel,
     ExperimentRegistryModel,
+    PatternDecisionRecordModel,
     PatternDefinitionModel,
     PatternEvaluationModel,
     PatternRunModel,
+    PatternSettlementModel,
 )
 
 
@@ -24,9 +29,19 @@ def _identifier(namespace: str, value: str) -> str:
 
 
 def _canonical(value: object) -> str:
+    def default(item: object) -> str:
+        if isinstance(item, datetime):
+            normalized = (
+                item.replace(tzinfo=UTC)
+                if item.tzinfo is None
+                else item.astimezone(UTC)
+            )
+            return normalized.isoformat()
+        return str(item)
+
     return json.dumps(
         value,
-        default=str,
+        default=default,
         ensure_ascii=False,
         sort_keys=True,
         separators=(",", ":"),
@@ -40,6 +55,26 @@ def _config_time(payload: dict[str, Any]) -> datetime:
     if parsed.tzinfo is None:
         raise ValueError("PREREGISTRATION_UTC_REQUIRED")
     return parsed.astimezone(UTC)
+
+
+def _ledger_time(value: object) -> datetime:
+    parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("LEDGER_UTC_TIMESTAMP_REQUIRED")
+    return parsed.astimezone(UTC)
+
+
+def _validate_result_hash(payload: dict[str, Any]) -> str:
+    claimed = str(payload["result_hash"])
+    stable = {
+        key: value
+        for key, value in payload.items()
+        if key not in {"checkpoint", "result_hash", "verdict"}
+    }
+    calculated = hashlib.sha256(_canonical(stable).encode("utf-8")).hexdigest()
+    if claimed != calculated:
+        raise ValueError("PATTERN_CAMPAIGN_RESULT_HASH_MISMATCH")
+    return claimed
 
 
 def _add_or_verify(
@@ -62,7 +97,7 @@ def _add_or_verify(
 def persist_campaign(engine: Engine, payload: dict[str, Any]) -> dict[str, object]:
     """Insère ou vérifie un replay; aucune mise à jour silencieuse n'est admise."""
 
-    result_hash = str(payload["result_hash"])
+    result_hash = _validate_result_hash(payload)
     dataset_hash = str(payload["dataset_hashes"][0])
     registered_at = _config_time(payload)
     config = dict(payload["config"])
@@ -109,17 +144,21 @@ def persist_campaign(engine: Engine, payload: dict[str, Any]) -> dict[str, objec
         )
         for hypothesis in hypotheses:
             rule_digest = str(hypothesis["rule_hash"])
-            definition_id = _identifier("pattern-definition", rule_digest)
+            definition_version = f"1.0.0+{result_hash[:12]}"
+            definition_id = _identifier(
+                "pattern-definition",
+                f"{rule_digest}:{definition_version}",
+            )
             definition_payload = {
                 "market": hypothesis["market"],
                 "selection": hypothesis["selection"],
                 "conditions": hypothesis["conditions"],
-                "feature_cutoff": "T_MINUS_60_MINUTES",
-                "odds_type": "HISTORICAL_CLOSING_MARKET",
+                "feature_cutoff": str(config["feature_cutoff"]),
+                "odds_type": str(config["odds_type"]),
             }
             definition_expected: dict[str, object] = {
                 "pattern_id": f"PTRN-{rule_digest[:16].upper()}",
-                "pattern_version": "1.0.0",
+                "pattern_version": definition_version,
                 "rule_hash": rule_digest,
                 "sport": "football",
                 "market": str(hypothesis["market"]),
@@ -181,10 +220,14 @@ def persist_campaign(engine: Engine, payload: dict[str, Any]) -> dict[str, objec
         preregistration_hash = hashlib.sha256(
             _canonical(config).encode("utf-8")
         ).hexdigest()
-        experiment_id = _identifier("experiment", preregistration_hash)
+        experiment_version = f"1.0.0+{result_hash[:12]}"
+        experiment_id = _identifier(
+            "experiment",
+            f"{preregistration_hash}:{experiment_version}",
+        )
         experiment_expected: dict[str, object] = {
             "experiment_id": "JALON10-FIRST-CACHE-ONLY-CAMPAIGN",
-            "experiment_version": "1.0.0",
+            "experiment_version": experiment_version,
             "preregistration_hash": preregistration_hash,
             "hypothesis": (
                 "Des règles simples équipe/marché peuvent-elles survivre aux "
@@ -228,4 +271,195 @@ def persist_campaign(engine: Engine, payload: dict[str, Any]) -> dict[str, objec
         },
         "provider_calls": 0,
         "result_hash": result_hash,
+    }
+
+
+def persist_evidence_ledger(
+    engine: Engine,
+    records: Sequence[Mapping[str, object]],
+) -> dict[str, object]:
+    """Projeter le ledger durable vers les tables Jalon 10 sans mutation."""
+
+    ordered = sorted(
+        records,
+        key=lambda item: int(str(item["_ledger_sequence_no"])),
+    )
+    inserted = {
+        "decisions": 0,
+        "settlements": 0,
+        "bankroll_events": 0,
+        "evidence_records": 0,
+    }
+    decision_ids: dict[str, str] = {}
+    with Session(engine) as session, session.begin():
+        for wrapped in ordered:
+            raw = wrapped.get("pattern_ledger_record")
+            if not isinstance(raw, Mapping):
+                raise ValueError("PATTERN_LEDGER_RECORD_MISSING")
+            record = dict(raw)
+            sequence_no = int(str(wrapped["_ledger_sequence_no"]))
+            record_type = str(record["record_type"])
+            decision_model_id: str | None = None
+            settlement_model_id: str | None = None
+            if record_type == "DECISION":
+                decision_id = str(record["decision_id"])
+                decision_model_id = _identifier(
+                    "pattern-decision",
+                    decision_id,
+                )
+                decision_expected: dict[str, object] = {
+                    "decision_id": decision_id,
+                    "idempotency_key": str(record["record_hash"]),
+                    "pattern_definition_id": None,
+                    "pattern_run_id": None,
+                    "published_at": _ledger_time(record["published_at"]),
+                    "cutoff_at": _ledger_time(record["cutoff_at"]),
+                    "fixture_id": str(record["fixture_id"]),
+                    "competition": str(record["competition"]),
+                    "kickoff_at": _ledger_time(record["kickoff_at"]),
+                    "market": str(record["market"]),
+                    "selection": str(record["selection"]),
+                    "odds": (
+                        float(record["odds"])
+                        if record.get("odds") is not None
+                        else None
+                    ),
+                    "odds_source": str(record["odds_source"]),
+                    "decision": str(record["decision"]),
+                    "stake_units": float(record["stake_units"]),
+                    "shadow_bankroll_before": float(
+                        record["shadow_bankroll_before"]
+                    ),
+                    "status": str(record["status"]),
+                    "code_revision": str(record["code_revision"]),
+                    "dataset_hash": str(record["dataset_hash"]),
+                    "payload": record,
+                    "append_only": True,
+                    "simulation": True,
+                }
+                inserted["decisions"] += int(
+                    _add_or_verify(
+                        session,
+                        PatternDecisionRecordModel,
+                        decision_model_id,
+                        PatternDecisionRecordModel(
+                            id=decision_model_id,
+                            **decision_expected,
+                        ),
+                        decision_expected,
+                    )
+                )
+                decision_ids[decision_id] = decision_model_id
+            elif record_type == "SETTLEMENT":
+                decision_id = str(record["decision_id"])
+                decision_model_id = decision_ids.get(
+                    decision_id,
+                    _identifier("pattern-decision", decision_id),
+                )
+                settlement_id = str(record["settlement_id"])
+                settlement_model_id = _identifier(
+                    "pattern-settlement",
+                    settlement_id,
+                )
+                settlement_expected: dict[str, object] = {
+                    "settlement_id": settlement_id,
+                    "idempotency_key": str(record["record_hash"]),
+                    "pattern_decision_id": decision_model_id,
+                    "settled_at": _ledger_time(record["settled_at"]),
+                    "result": str(record["result"]),
+                    "profit_units": float(record["profit_units"]),
+                    "shadow_bankroll_after": float(
+                        record["shadow_bankroll_after"]
+                    ),
+                    "payload": record,
+                    "append_only": True,
+                    "simulation": True,
+                }
+                inserted["settlements"] += int(
+                    _add_or_verify(
+                        session,
+                        PatternSettlementModel,
+                        settlement_model_id,
+                        PatternSettlementModel(
+                            id=settlement_model_id,
+                            **settlement_expected,
+                        ),
+                        settlement_expected,
+                    )
+                )
+                bankroll_id = _identifier(
+                    "pattern-bankroll-event",
+                    settlement_id,
+                )
+                profit = float(record["profit_units"])
+                bankroll_after = float(record["shadow_bankroll_after"])
+                bankroll_expected: dict[str, object] = {
+                    "event_id": f"BANKROLL-{settlement_id}",
+                    "idempotency_key": f"bankroll:{record['record_hash']}",
+                    "event_type": "SETTLEMENT",
+                    "pattern_decision_id": decision_model_id,
+                    "pattern_settlement_id": settlement_model_id,
+                    "occurred_at": _ledger_time(record["settled_at"]),
+                    "amount_units": profit,
+                    "balance_before": bankroll_after - profit,
+                    "balance_after": bankroll_after,
+                    "payload": record,
+                    "append_only": True,
+                    "simulation": True,
+                }
+                inserted["bankroll_events"] += int(
+                    _add_or_verify(
+                        session,
+                        BankrollEventModel,
+                        bankroll_id,
+                        BankrollEventModel(
+                            id=bankroll_id,
+                            **bankroll_expected,
+                        ),
+                        bankroll_expected,
+                    )
+                )
+            else:
+                raise ValueError("UNKNOWN_LEDGER_RECORD")
+
+            evidence_id = _identifier(
+                "evidence-ledger",
+                str(record["record_hash"]),
+            )
+            evidence_expected: dict[str, object] = {
+                "record_id": str(record["record_hash"]),
+                "idempotency_key": str(record["record_hash"]),
+                "sequence_no": sequence_no,
+                "record_type": record_type,
+                "pattern_decision_id": decision_model_id,
+                "pattern_settlement_id": settlement_model_id,
+                "previous_record_hash": str(record["previous_record_hash"]),
+                "record_hash": str(record["record_hash"]),
+                "payload": record,
+                "recorded_at": _ledger_time(
+                    record.get("published_at") or record.get("settled_at")
+                ),
+                "append_only": True,
+                "simulation": True,
+            }
+            inserted["evidence_records"] += int(
+                _add_or_verify(
+                    session,
+                    EvidenceLedgerModel,
+                    evidence_id,
+                    EvidenceLedgerModel(
+                        id=evidence_id,
+                        **evidence_expected,
+                    ),
+                    evidence_expected,
+                )
+            )
+    examined = len(ordered)
+    return {
+        "status": "PATTERN_EVIDENCE_LEDGER_PERSISTED",
+        "records_examined": examined,
+        "inserted": inserted,
+        "duplicates_avoided": {
+            "evidence_records": examined - inserted["evidence_records"],
+        },
     }

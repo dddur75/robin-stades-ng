@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 import statistics
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from typing import Any
 
-from robin.patterns.contracts import PatternStatus, canonical_conditions
+from robin.patterns.contracts import (
+    ConditionOperator,
+    PatternCondition,
+    PatternStatus,
+    canonical_conditions,
+)
 from robin.patterns.engine import (
     Rule,
     apply_rule,
@@ -23,6 +27,7 @@ from robin.patterns.search_space import generate_rules
 from robin.patterns.statistics import (
     assess_support,
     benjamini_hochberg,
+    clustered_positive_mean_p_value,
     detect_perfect_performance,
     flat_stake_metrics,
     grouped_bootstrap_mean,
@@ -30,12 +35,16 @@ from robin.patterns.statistics import (
     shuffle_labels,
     walk_forward_splits,
 )
-from robin.patterns.temporal import LeakageError, adversarial_leakage_scan
+from robin.patterns.temporal import (
+    LeakageError,
+    adversarial_leakage_scan,
+    validate_conditions,
+)
 
 
 @dataclass(frozen=True, slots=True)
 class CampaignConfig:
-    schema_version: str = "pattern-campaign-v1"
+    schema_version: str = "pattern-campaign-v1.1-review-hardening"
     seed: int = 10_010
     minimum_bets: int = 80
     minimum_seasons: int = 3
@@ -45,22 +54,13 @@ class CampaignConfig:
     bootstrap_iterations: int = 1_000
     bootstrap_candidates_limit: int = 40
     permutation_candidates_limit: int = 5
-    external_competitions: tuple[str, ...] = ("Bundesliga", "Serie A")
+    exposed_stability_competitions: tuple[str, ...] = ("Bundesliga", "Serie A")
     live_market_point_in_time: bool = False
+    feature_cutoff: str = "HISTORICAL_PRICE_CATEGORY_NO_EXACT_CUTOFF"
+    odds_type: str = "HISTORICAL_CLOSING_OR_PRE_CLOSING_MARKET"
+    provider_calls_allowed: int = 0
+    social_publishing_enabled: bool = False
     preregistered_at: str = "2026-07-27T00:00:00+00:00"
-
-
-def _normal_positive_mean_p_value(values: Sequence[float]) -> float:
-    """One-sided normal approximation, used only as an FDR screening statistic."""
-
-    if len(values) < 2:
-        return 1.0
-    mean = statistics.fmean(values)
-    deviation = statistics.stdev(values)
-    if deviation == 0.0:
-        return 0.0 if mean > 0.0 else 1.0
-    z_score = mean / (deviation / math.sqrt(len(values)))
-    return 0.5 * math.erfc(z_score / math.sqrt(2.0))
 
 
 def _difference_in_means(
@@ -157,19 +157,23 @@ def _walk_forward_evidence(
     }
 
 
-def _external_evidence(
+def _exposed_league_stability_evidence(
     rows: Sequence[Mapping[str, object]],
     rule: Rule,
     *,
     competitions: Sequence[str],
     minimum_bets: int,
 ) -> dict[str, object]:
+    """Mesurer une stabilité descriptive, jamais une validation indépendante."""
+
     if any(condition.feature == "competition" for condition in rule.conditions):
         return {
             "eligible": False,
             "reason": "COMPETITION_SPECIFIC_RULE",
             "survived": False,
             "competitions": [],
+            "independent": False,
+            "evidence_scope": "DISCOVERY_EXPOSED",
         }
     results: list[dict[str, object]] = []
     for competition in competitions:
@@ -190,6 +194,9 @@ def _external_evidence(
         "eligible": True,
         "competitions": results,
         "survived": bool(results) and all(bool(item["positive"]) for item in results),
+        "independent": False,
+        "evidence_scope": "DISCOVERY_EXPOSED",
+        "reason": "EXPOSED_LEAGUE_STABILITY_ONLY",
     }
 
 
@@ -220,11 +227,12 @@ def _stratified_label_shuffle(
     *,
     market: str,
     seed: int,
-) -> tuple[list[float], list[bool], int]:
+) -> tuple[list[float], list[bool], int, list[str]]:
     """Mélange sans casser la relation structurelle entre prix et fréquence."""
 
     odds_values: list[float] = []
     outcomes: list[bool] = []
+    cluster_groups: list[str] = []
     strata: dict[tuple[str, str, int], list[int]] = {}
     for row in rows:
         odds = observed_odds(row, market)
@@ -234,6 +242,7 @@ def _stratified_label_shuffle(
         position = len(odds_values)
         odds_values.append(odds)
         outcomes.append(won)
+        cluster_groups.append(str(row.get("match_date") or row.get("fixture_id")))
         key = (
             str(row.get("competition")),
             str(row.get("season")),
@@ -249,7 +258,121 @@ def _stratified_label_shuffle(
         )
         for position, label in zip(positions, labels, strict=True):
             shuffled[position] = label
-    return odds_values, shuffled, len(strata)
+    return odds_values, shuffled, len(strata), cluster_groups
+
+
+def _validate_fixture_alignment(
+    expected_fixture_ids: Sequence[str],
+    observed_fixture_ids: Sequence[str],
+) -> None:
+    """Fail closed when market prices are joined to another fixture."""
+
+    if len(expected_fixture_ids) != len(observed_fixture_ids) or any(
+        expected != observed
+        for expected, observed in zip(
+            expected_fixture_ids,
+            observed_fixture_ids,
+            strict=True,
+        )
+    ):
+        raise LeakageError("FIXTURE_ODDS_JOIN_MISMATCH")
+
+
+def _rejected_condition(
+    feature: str,
+    *,
+    source: str = "ADVERSARIAL_NEGATIVE_CONTROL",
+) -> tuple[bool, str | None]:
+    """Execute the temporal registry against an intentionally invalid feature."""
+
+    condition = PatternCondition(
+        feature=feature,
+        operator=ConditionOperator.EQ,
+        value="CONTROL",
+        source=source,
+        available_at="AFTER_KICKOFF_OR_UNKNOWN",
+    )
+    try:
+        validate_conditions([condition], market="1X2_HOME")
+    except LeakageError as exc:
+        return True, str(exc)
+    return False, None
+
+
+def _concentration_evidence(
+    rows: Sequence[Mapping[str, object]],
+    rule: Rule,
+) -> dict[str, object]:
+    """Measure available concentration dimensions and keep the V1 gate closed."""
+
+    selected = [
+        row
+        for row in apply_rule(rows, rule)
+        if observed_odds(row, rule.market) is not None
+    ]
+    bookmaker_field = (
+        "bookmaker_totals" if rule.market.startswith("TOTAL_") else "bookmaker_1x2"
+    )
+    bookmaker_values = [
+        str(row[bookmaker_field])
+        for row in selected
+        if row.get(bookmaker_field) not in (None, "")
+    ]
+    team_values = [
+        str(team)
+        for row in selected
+        for team in (row.get("home_team_id"), row.get("away_team_id"))
+        if team not in (None, "")
+    ]
+    season_values = [
+        str(row["season"])
+        for row in selected
+        if row.get("season") not in (None, "")
+    ]
+    complete_bookmakers = len(bookmaker_values) == len(selected)
+    complete_teams = len(team_values) == len(selected) * 2
+    measured = bool(selected) and complete_bookmakers and complete_teams
+    return {
+        "selected_fixtures": len(selected),
+        "bookmaker_field": bookmaker_field,
+        "bookmaker_values_present": len(bookmaker_values),
+        "distinct_bookmakers": len(set(bookmaker_values)),
+        "team_values_present": len(team_values),
+        "distinct_teams": len(set(team_values)),
+        "distinct_seasons": len(set(season_values)),
+        "measured": measured,
+        "passed": False,
+        "reason": (
+            "V1_CONCENTRATION_THRESHOLDS_NOT_PREREGISTERED"
+            if measured
+            else "TEAM_OR_BOOKMAKER_CONCENTRATION_NOT_MEASURABLE"
+        ),
+    }
+
+
+def _historical_promotion_gate_passes(
+    evaluation: Mapping[str, object],
+    *,
+    alpha: float,
+) -> bool:
+    """Apply every V1 promotion gate; missing evidence always fails closed."""
+
+    metrics = evaluation.get("metrics")
+    bootstrap = evaluation.get("bootstrap")
+    permutation = evaluation.get("permutation")
+    concentration = evaluation.get("concentration")
+    return (
+        isinstance(metrics, Mapping)
+        and float(metrics.get("roi", 0.0)) > 0.0
+        and float(str(evaluation.get("q_value", 1.0))) <= alpha
+        and isinstance(bootstrap, Mapping)
+        and float(bootstrap.get("lower", 0.0)) > 0.0
+        and isinstance(permutation, Mapping)
+        and int(permutation.get("permutations", 0)) >= 100
+        and float(permutation.get("p_value", 1.0)) <= alpha
+        and isinstance(concentration, Mapping)
+        and concentration.get("passed") is True
+    )
 
 
 def run_campaign(
@@ -261,6 +384,10 @@ def run_campaign(
     """Exécute toutes les hypothèses préenregistrées et conserve les négatives."""
 
     active_config = config or CampaignConfig()
+    if active_config.provider_calls_allowed != 0:
+        raise ValueError("PATTERN_CAMPAIGN_MUST_BE_CACHE_ONLY")
+    if active_config.social_publishing_enabled:
+        raise ValueError("SOCIAL_PUBLISHING_MUST_REMAIN_DISABLED")
     ordered_rows = sorted(
         rows,
         key=lambda row: (
@@ -307,7 +434,7 @@ def run_campaign(
             else None
         )
         p_value = (
-            _normal_positive_mean_p_value(profits)
+            clustered_positive_mean_p_value(profits, groups)
             if support.sufficient and perfect is not None and not perfect.suspicious
             else 1.0
         )
@@ -335,8 +462,9 @@ def run_campaign(
             "q_value": 1.0,
             "bootstrap": None,
             "walk_forward": None,
-            "external_validation": None,
+            "exposed_league_stability": None,
             "permutation": None,
+            "concentration": None,
             "live_point_in_time_usable": False,
         }
         evaluations.append(evaluation)
@@ -383,11 +511,15 @@ def run_campaign(
             minimum_fold_bets=active_config.minimum_fold_bets,
             minimum_positive_fold_ratio=active_config.minimum_positive_fold_ratio,
         )
-        evaluation["external_validation"] = _external_evidence(
+        evaluation["exposed_league_stability"] = _exposed_league_stability_evidence(
             ordered_rows,
             rule_by_hash[digest],
-            competitions=active_config.external_competitions,
+            competitions=active_config.exposed_stability_competitions,
             minimum_bets=max(20, active_config.minimum_bets // 2),
+        )
+        evaluation["concentration"] = _concentration_evidence(
+            ordered_rows,
+            rule_by_hash[digest],
         )
 
     permutation_targets = bootstrap_targets[: active_config.permutation_candidates_limit]
@@ -429,9 +561,9 @@ def run_campaign(
         ),
     ):
         metrics_payload = evaluation.get("metrics")
-        bootstrap = evaluation.get("bootstrap")
         walk_forward = evaluation.get("walk_forward")
-        external = evaluation.get("external_validation")
+        exposed_stability = evaluation.get("exposed_league_stability")
+        permutation = evaluation.get("permutation")
         if not isinstance(metrics_payload, dict):
             continue
         rule = rule_by_hash[str(evaluation["rule_hash"])]
@@ -446,39 +578,63 @@ def run_campaign(
         if dominated is not None:
             evaluation["status"] = PatternStatus.DOMINATED.value
             continue
-        raw_positive = roi > 0.0
-        fdr_survivor = float(evaluation["q_value"]) <= active_config.fdr_alpha
-        bootstrap_survivor = (
-            isinstance(bootstrap, dict) and float(bootstrap["lower"]) > 0.0
-        )
         walk_forward_survivor = (
             isinstance(walk_forward, dict) and bool(walk_forward["survived"])
         )
-        external_survivor = (
-            isinstance(external, dict) and bool(external["survived"])
+        permutation_survivor = (
+            isinstance(permutation, dict)
+            and int(permutation.get("permutations", 0)) >= 100
+            and float(permutation.get("p_value", 1.0)) <= active_config.fdr_alpha
         )
-        if raw_positive and fdr_survivor and bootstrap_survivor:
+        evaluation["permutation_gate_passed"] = permutation_survivor
+        concentration = evaluation.get("concentration")
+        evaluation["concentration_gate_passed"] = (
+            isinstance(concentration, dict)
+            and concentration.get("passed") is True
+        )
+        if _historical_promotion_gate_passes(
+            evaluation,
+            alpha=active_config.fdr_alpha,
+        ):
             evaluation["status"] = PatternStatus.HISTORICAL_CANDIDATE.value
             accepted_simple.append((rule, roi, ids))
         if (
             evaluation["status"] == PatternStatus.HISTORICAL_CANDIDATE.value
             and walk_forward_survivor
         ):
-            evaluation["status"] = PatternStatus.EXPOSED_OOS_SURVIVOR.value
-        if (
-            evaluation["status"] == PatternStatus.EXPOSED_OOS_SURVIVOR.value
-            and external_survivor
-        ):
-            evaluation["status"] = PatternStatus.EXTERNAL_LEAGUE_SURVIVOR.value
-        # Le gate live reste fermé : SOURCE_PRICE_CLASS_ONLY n'a pas d'observed_at exact.
+            # The rule was ranked on the full exposed corpus. These folds are
+            # descriptive stability evidence, not nested OOS selection.
+            evaluation["exposed_temporal_stability_passed"] = True
+        # Le contrôle par ligue réutilise le corpus exposé. Il ne peut donc
+        # jamais attribuer EXTERNAL_LEAGUE_SURVIVOR.
+        if isinstance(exposed_stability, dict):
+            evaluation["exposed_league_stability_passed"] = bool(
+                exposed_stability.get("survived")
+            )
+        # Le gate live reste fermé : SOURCE_PRICE_CLASS_ONLY n'a pas
+        # d'observed_at exact et ses conditions ne sont pas live-compatibles.
         if (
             evaluation["status"] == PatternStatus.EXTERNAL_LEAGUE_SURVIVOR.value
             and active_config.live_market_point_in_time
         ):
-            evaluation["status"] = PatternStatus.LIVE_SHADOW_CANDIDATE.value
-            evaluation["live_point_in_time_usable"] = True
+            try:
+                validate_conditions(
+                    rule.conditions,
+                    market=rule.market,
+                    require_live_usable=True,
+                )
+            except LeakageError:
+                evaluation["live_point_in_time_usable"] = False
+            else:
+                evaluation["status"] = PatternStatus.LIVE_SHADOW_CANDIDATE.value
+                evaluation["live_point_in_time_usable"] = True
 
-    base_odds, shuffled_outcomes, shuffled_strata = _stratified_label_shuffle(
+    (
+        base_odds,
+        shuffled_outcomes,
+        shuffled_strata,
+        shuffled_groups,
+    ) = _stratified_label_shuffle(
         ordered_rows,
         market="1X2_HOME",
         seed=active_config.seed,
@@ -493,7 +649,7 @@ def run_campaign(
         for odds, won in zip(base_odds, shuffled_outcomes, strict=True)
     ]
     shuffled_p_value = (
-        _normal_positive_mean_p_value(shuffled_returns)
+        clustered_positive_mean_p_value(shuffled_returns, shuffled_groups)
         if shuffled_returns
         else 1.0
     )
@@ -504,26 +660,89 @@ def run_campaign(
     )
     trivial_outcomes: list[bool] = []
     trivial_odds: list[float] = []
+    trivial_groups: list[str] = []
     for row in ordered_rows:
         odds = observed_odds(row, "1X2_HOME")
         won = market_won(row, "1X2_HOME")
         if odds is not None and won is not None:
             trivial_odds.append(odds)
             trivial_outcomes.append(won)
+            trivial_groups.append(
+                str(row.get("match_date") or row.get("fixture_id"))
+            )
     trivial_metrics = (
         flat_stake_metrics(trivial_odds, trivial_outcomes)
         if trivial_odds
         else None
     )
+    trivial_returns = [
+        odds - 1.0 if won else -1.0
+        for odds, won in zip(trivial_odds, trivial_outcomes, strict=True)
+    ]
+    trivial_p_value = (
+        clustered_positive_mean_p_value(trivial_returns, trivial_groups)
+        if trivial_returns
+        else 1.0
+    )
+    trivial_false_edge = (
+        trivial_metrics is not None
+        and trivial_metrics.roi > 0.0
+        and trivial_p_value <= active_config.fdr_alpha
+    )
+
+    leakage_features = ("winner_rank", "loser_aces", "home_goals", "future_odds")
+    leakage_results = {
+        feature: _rejected_condition(feature)
+        for feature in leakage_features
+    }
+    random_rejected, random_reason = _rejected_condition("random_feature")
+    post_result_rejected, post_result_reason = _rejected_condition("home_goals")
+
+    eligible_fixture_ids = [
+        str(row.get("fixture_id"))
+        for row in ordered_rows
+        if observed_odds(row, "1X2_HOME") is not None
+    ]
+    shifted_fixture_ids = (
+        eligible_fixture_ids[1:] + eligible_fixture_ids[:1]
+        if len(eligible_fixture_ids) > 1
+        else list(eligible_fixture_ids)
+    )
+    shifted_rejected = False
+    shifted_reason: str | None = None
+    try:
+        _validate_fixture_alignment(eligible_fixture_ids, shifted_fixture_ids)
+    except LeakageError as exc:
+        shifted_rejected = True
+        shifted_reason = str(exc)
+
+    impossible_condition = PatternCondition(
+        feature="season",
+        operator=ConditionOperator.EQ,
+        value="__IMPOSSIBLE_SEASON__",
+        source="API_FOOTBALL_FIXTURE",
+        available_at="FIXTURE_PUBLICATION",
+    )
+    impossible_rule = Rule(
+        market="1X2_HOME",
+        selection="HOME",
+        conditions=(impossible_condition,),
+    )
+    impossible_selected = len(apply_rule(ordered_rows, impossible_rule))
     negative_controls = {
         "winner_loser_leakage": {
-            "rejected_columns": adversarial_leakage_scan(
-                ["winner_rank", "loser_aces", "home_goals", "future_odds"]
-            ),
+            "executed": True,
+            "rejected_columns": adversarial_leakage_scan(leakage_features),
+            "rejection_reasons": {
+                feature: reason
+                for feature, (rejected, reason) in leakage_results.items()
+                if rejected and reason is not None
+            },
             "promoted": False,
-            "passed": True,
+            "passed": all(rejected for rejected, _ in leakage_results.values()),
         },
         "shuffled_labels": {
+            "executed": True,
             "method": "STRATIFIED_BY_COMPETITION_SEASON_ODDS_BAND",
             "strata": shuffled_strata,
             "metrics": asdict(shuffled_metrics) if shuffled_metrics is not None else None,
@@ -534,34 +753,41 @@ def run_campaign(
             "passed": not shuffled_false_edge,
         },
         "shifted_odds": {
+            "executed": True,
             "status": PatternStatus.LEAKAGE_REJECTED.value,
-            "rejection_reason": "FIXTURE_ODDS_JOIN_MISMATCH",
+            "rejection_reason": shifted_reason,
             "promoted": False,
-            "passed": True,
+            "passed": shifted_rejected,
         },
         "random_feature": {
+            "executed": True,
             "status": PatternStatus.REJECTED.value,
-            "rejection_reason": "PREREGISTERED_NEGATIVE_CONTROL",
+            "rejection_reason": random_reason,
             "promoted": False,
-            "passed": True,
+            "passed": random_rejected,
         },
         "trivial_market_rule": {
+            "executed": True,
             "description": "BET_HOME_ON_EVERY_ELIGIBLE_FIXTURE",
             "metrics": asdict(trivial_metrics) if trivial_metrics is not None else None,
+            "p_value": trivial_p_value,
             "status": PatternStatus.REJECTED.value,
             "rejection_reason": "PREREGISTERED_NEGATIVE_CONTROL",
             "promoted": False,
-            "passed": True,
+            "passed": not trivial_false_edge,
         },
         "impossible_condition": {
-            "selected": 0,
+            "executed": True,
+            "selected": impossible_selected,
             "promoted": False,
-            "passed": True,
+            "passed": impossible_selected == 0,
         },
         "post_result_pattern": {
+            "executed": True,
             "status": PatternStatus.LEAKAGE_REJECTED.value,
+            "rejection_reason": post_result_reason,
             "promoted": False,
-            "passed": True,
+            "passed": post_result_rejected,
         },
     }
     counts = {
@@ -593,6 +819,11 @@ def run_campaign(
             item["status"] == PatternStatus.EXTERNAL_LEAGUE_SURVIVOR.value
             for item in evaluations
         ),
+        "exposed_league_stability_survivors": sum(
+            isinstance(item.get("exposed_league_stability"), dict)
+            and bool(item["exposed_league_stability"].get("survived"))
+            for item in evaluations
+        ),
         "shadow_candidates": sum(
             item["status"] == PatternStatus.LIVE_SHADOW_CANDIDATE.value
             for item in evaluations
@@ -606,6 +837,12 @@ def run_campaign(
     stable_payload: dict[str, object] = {
         "schema_version": active_config.schema_version,
         "config": asdict(active_config),
+        "p_value_method": "ONE_SIDED_CLUSTER_ROBUST_CR1_BY_MATCH_DATE",
+        "multiple_testing_method": "BENJAMINI_HOCHBERG_FULL_FROZEN_FAMILY",
+        "multiple_testing_dependence_caveat": (
+            "OVERLAPPING_RULES_NOT_PROVEN_INDEPENDENT_OR_PRDS;"
+            "PROMOTION_REMAINS_FAIL_CLOSED"
+        ),
         "code_revision": code_revision,
         "dataset_hashes": [dataset_hash],
         "data_classification": "DISCOVERY_EXPOSED",
@@ -615,6 +852,10 @@ def run_campaign(
         "real_bets": False,
         "no_bet_default": True,
         "social_publishing_enabled": False,
+        "demo_mode_enabled": False,
+        "scope_subverdict": (
+            "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE"
+        ),
         "counts": counts,
         "negative_controls": negative_controls,
         "hypotheses": evaluations,

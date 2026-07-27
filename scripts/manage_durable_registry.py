@@ -15,6 +15,8 @@ from typing import Any
 
 from sqlalchemy import func, inspect, select, text
 
+from robin.patterns.ledger import EvidenceLedger
+from robin.patterns.persistence import persist_evidence_ledger
 from robin.storage.database import build_engine
 from robin.storage.durable import (
     DurableRecord,
@@ -328,6 +330,111 @@ def state_records(state: Path, run: Mapping[str, object]) -> list[DurableRecord]
                 quality=str(item.get("severity", "INFO")),
             )
         )
+    candidate_path = (
+        state
+        / "pattern-research"
+        / "shadow-candidate-registry.json"
+    )
+    candidate_registry = read_json(candidate_path, {})
+    if isinstance(candidate_registry, dict) and candidate_registry:
+        encoded = json.dumps(
+            candidate_registry,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        hypotheses = candidate_registry.get("hypotheses", [])
+        if (
+            len(encoded) > 262_144
+            or not isinstance(hypotheses, list)
+            or len(hypotheses)
+            != int(candidate_registry.get("candidate_count", -1))
+            or any(
+                not isinstance(item, dict)
+                or item.get("status") != "LIVE_SHADOW_CANDIDATE"
+                for item in hypotheses
+            )
+            or candidate_registry.get("provider_calls") != 0
+            or candidate_registry.get("odds_api_credits") != 0
+            or candidate_registry.get("production_status") != "PRODUCTION_LOCKED"
+            or candidate_registry.get("real_bets") is not False
+            or candidate_registry.get("no_bet_default") is not True
+            or candidate_registry.get("social_publishing_enabled") is not False
+            or candidate_registry.get("demo_mode_enabled") is not False
+        ):
+            raise RuntimeError("PATTERN_CANDIDATE_REGISTRY_NOT_COMPACT")
+        records.append(
+            record(
+                "quality_runs",
+                (
+                    "pattern-candidate-registry:"
+                    f"{candidate_registry.get('source_result_hash')}"
+                ),
+                {
+                    **candidate_registry,
+                    "status": candidate_registry.get(
+                        "verdict",
+                        "PATTERN_CANDIDATE_REGISTRY",
+                    ),
+                },
+                run_id=run_id,
+                observed_at=now,
+                quality="VERIFIED",
+                provenance="CACHE-ONLY RESEARCH",
+            )
+        )
+
+    ledger_path = state / "pattern-evidence-ledger.jsonl"
+    if ledger_path.exists():
+        EvidenceLedger(ledger_path).audit()
+        ledger_records = read_jsonl(ledger_path)
+        decision_fixtures = {
+            str(item["decision_id"]): str(item["fixture_id"])
+            for item in ledger_records
+            if item.get("record_type") == "DECISION"
+        }
+        for sequence_no, item in enumerate(ledger_records):
+            record_type = str(item.get("record_type"))
+            wrapped: dict[str, object] = {
+                "pattern_ledger_record": item,
+                "_ledger_sequence_no": sequence_no,
+            }
+            if record_type == "DECISION":
+                wrapped.update(
+                    {
+                        "fixture_id": str(item["fixture_id"]),
+                        "strategy_version": str(
+                            item.get("pattern_version") or "NO_BET"
+                        ),
+                    }
+                )
+                kind = "candidate_bets"
+                business_key = f"pattern-decision:{item['decision_id']}"
+                observed_at = iso(item.get("published_at"), now)
+            elif record_type == "SETTLEMENT":
+                decision_id = str(item["decision_id"])
+                wrapped.update(
+                    {
+                        "fixture_id": decision_fixtures[decision_id],
+                        "settlement_status": str(item["result"]),
+                    }
+                )
+                kind = "settlements"
+                business_key = f"pattern-settlement:{item['settlement_id']}"
+                observed_at = iso(item.get("settled_at"), now)
+            else:
+                raise RuntimeError("UNKNOWN_PATTERN_LEDGER_RECORD")
+            records.append(
+                record(
+                    kind,
+                    business_key,
+                    wrapped,
+                    run_id=run_id,
+                    observed_at=observed_at,
+                    quality="VERIFIED",
+                    provenance="LIVE SHADOW",
+                )
+            )
     return records
 
 
@@ -463,7 +570,11 @@ def verify_registry(registry: Path) -> dict[str, object]:
             continue
         read_bundle(bundle)
         bundles += 1
-        for object_meta in manifest.get("objects", []):
+        object_metadata = manifest.get("objects", [])
+        if not isinstance(object_metadata, list):
+            errors.append(f"liste d'objets invalide: {bundle}")
+            continue
+        for object_meta in object_metadata:
             if not isinstance(object_meta, dict):
                 continue
             path = registry / str(object_meta["relative_path"])
@@ -520,7 +631,10 @@ def persist_registry(registry_path: Path, database_url: str) -> dict[str, object
     manifests = read_jsonl(registry_path / "manifests" / "index.jsonl")
     raw_by_hash: dict[str, dict[str, object]] = {}
     for manifest in manifests:
-        for item in manifest.get("objects", []):
+        object_metadata = manifest.get("objects", [])
+        if not isinstance(object_metadata, list):
+            raise RuntimeError("liste d'objets invalide dans le manifeste")
+        for item in object_metadata:
             if isinstance(item, dict):
                 raw_by_hash[str(item["content_hash"])] = item
     raw_inserted = 0
@@ -530,7 +644,7 @@ def persist_registry(registry_path: Path, database_url: str) -> dict[str, object
                 payload_hash=str(item["content_hash"]),
                 provider=str(item.get("provider") or "unknown"),
                 object_location=str(item["relative_path"]),
-                byte_size=int(item["bytes"]),
+                byte_size=int(str(item["bytes"])),
                 observed_at=iso(item.get("observed_at"), datetime.now(UTC)),
                 schema_version=str(item.get("schema_version") or "unknown"),
             )
@@ -560,6 +674,21 @@ def persist_registry(registry_path: Path, database_url: str) -> dict[str, object
             if isinstance(value, Mapping)
         )
     result = durable.append_many(records_to_persist)
+    pattern_records_by_hash: dict[str, Mapping[str, object]] = {}
+    for durable_record in records_to_persist:
+        wrapped = durable_record.payload
+        ledger_record = wrapped.get("pattern_ledger_record")
+        if not isinstance(ledger_record, Mapping):
+            continue
+        digest = str(ledger_record["record_hash"])
+        known = pattern_records_by_hash.get(digest)
+        if known is not None and known != wrapped:
+            raise RuntimeError("PATTERN_LEDGER_DURABLE_CONFLICT")
+        pattern_records_by_hash[digest] = wrapped
+    pattern_persistence = persist_evidence_ledger(
+        engine,
+        list(pattern_records_by_hash.values()),
+    )
     return {
         "status": "POSTGRESQL_PERSISTED",
         "bundles_examined": len(manifests),
@@ -570,6 +699,7 @@ def persist_registry(registry_path: Path, database_url: str) -> dict[str, object
         "raw_payloads_inserted": raw_inserted,
         "raw_payload_duplicates": len(raw_by_hash) - raw_inserted,
         "hashes_validated": verification["objects_verified"],
+        "pattern_ledger": pattern_persistence,
     }
 
 
@@ -610,7 +740,10 @@ def audit_database(registry_path: Path, database_url: str) -> dict[str, object]:
                 ).lower()
                 if provenance == "LIVE SOURCE" and "demo data" in payload_text:
                     demo_as_live += 1
-        for item in manifest.get("objects", []):
+        object_metadata = manifest.get("objects", [])
+        if not isinstance(object_metadata, list):
+            raise RuntimeError("liste d'objets invalide dans le manifeste")
+        for item in object_metadata:
             if isinstance(item, Mapping):
                 raw_hashes.add(str(item["content_hash"]))
     missing_records = provenance_mismatches = 0
@@ -715,7 +848,10 @@ def replay_to_directory(registry: Path, destination: Path) -> dict[str, object]:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(bundle, target)
         bundles_replayed += 1
-        for item in manifest.get("objects", []):
+        object_metadata = manifest.get("objects", [])
+        if not isinstance(object_metadata, list):
+            raise RuntimeError("liste d'objets invalide dans le manifeste")
+        for item in object_metadata:
             if not isinstance(item, dict):
                 continue
             source = registry / str(item["relative_path"])
@@ -736,7 +872,7 @@ def replay_to_directory(registry: Path, destination: Path) -> dict[str, object]:
 
 
 def acknowledge(state: Path, *, backend: str, commit: str | None) -> dict[str, object]:
-    ack = {
+    ack: dict[str, object] = {
         "status": "DURABLE_WRITE_CONFIRMED",
         "backend": backend,
         "commit": commit,
@@ -783,6 +919,7 @@ def main() -> None:
     ack_parser.add_argument("--backend", required=True)
     ack_parser.add_argument("--commit")
     args = parser.parse_args()
+    result: Mapping[str, object]
     if args.command == "stage":
         result = stage(args.state, args.outbox, args.current_run_id)
     elif args.command == "append":

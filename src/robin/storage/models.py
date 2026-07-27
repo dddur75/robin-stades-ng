@@ -733,6 +733,7 @@ class ExperimentRegistryModel(Base):
         ),
         UniqueConstraint(
             "preregistration_hash",
+            "experiment_version",
             name="uq_experiment_preregistration_hash",
         ),
         CheckConstraint(

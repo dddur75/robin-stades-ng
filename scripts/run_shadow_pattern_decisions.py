@@ -11,7 +11,10 @@ from typing import Any
 from robin.patterns.contracts import PatternCondition
 from robin.patterns.engine import condition_matches
 from robin.patterns.ledger import EvidenceLedger
-from robin.patterns.temporal import validate_observation_cutoff
+from robin.patterns.temporal import (
+    validate_conditions,
+    validate_observation_cutoff,
+)
 
 
 def _time(value: object) -> datetime:
@@ -33,11 +36,39 @@ def main() -> None:
 
     campaign: dict[str, Any] = json.loads(args.campaign.read_text("utf-8"))
     fixtures: list[dict[str, Any]] = json.loads(args.fixtures.read_text("utf-8"))
+    if (
+        campaign.get("provider_calls") != 0
+        or campaign.get("real_bets") is not False
+        or campaign.get("no_bet_default") is not True
+        or campaign.get("production_status") != "PRODUCTION_LOCKED"
+        or campaign.get("social_publishing_enabled") is not False
+        or campaign.get("demo_mode_enabled") is not False
+    ):
+        raise ValueError("SHADOW_CANDIDATE_REGISTRY_GUARDS_FAILED")
     candidates = [
         item
         for item in campaign.get("hypotheses", [])
         if item.get("status") == "LIVE_SHADOW_CANDIDATE"
     ]
+    if int(campaign.get("candidate_count", len(candidates))) != len(candidates):
+        raise ValueError("SHADOW_CANDIDATE_COUNT_MISMATCH")
+    if candidates and not bool(
+        dict(campaign.get("config") or {}).get("live_market_point_in_time")
+    ):
+        raise ValueError("LIVE_POINT_IN_TIME_GATE_CLOSED")
+    parsed_candidates: list[tuple[dict[str, Any], list[PatternCondition]]] = []
+    for candidate in candidates:
+        conditions = [
+            PatternCondition.model_validate(condition)
+            for condition in candidate.get("conditions", [])
+        ]
+        market = str(candidate["market"])
+        validate_conditions(
+            conditions,
+            market=market,
+            require_live_usable=True,
+        )
+        parsed_candidates.append((candidate, conditions))
     published_at = (
         _time(args.published_at)
         if args.published_at
@@ -49,23 +80,31 @@ def main() -> None:
     no_bet = 0
     bets = 0
     for fixture in fixtures:
-        kickoff_at = _time(fixture["kickoff_at"])
+        normalized_fixture = dict(fixture)
+        kickoff_at = _time(normalized_fixture["kickoff_at"])
+        normalized_fixture["kickoff_at"] = kickoff_at
+        if "observed_at" in normalized_fixture:
+            normalized_fixture["observed_at"] = _time(
+                normalized_fixture["observed_at"]
+            )
         cutoff_at = kickoff_at - timedelta(minutes=60)
         if published_at > cutoff_at:
             unavailable += 1
             continue
         try:
-            validate_observation_cutoff(fixture, cutoff_at=cutoff_at)
+            validate_observation_cutoff(
+                normalized_fixture,
+                cutoff_at=cutoff_at,
+            )
         except ValueError:
             unavailable += 1
             continue
         matching = []
-        for candidate in candidates:
-            conditions = [
-                PatternCondition.model_validate(condition)
-                for condition in candidate.get("conditions", [])
-            ]
-            if all(condition_matches(fixture, condition) for condition in conditions):
+        for candidate, conditions in parsed_candidates:
+            if all(
+                condition_matches(normalized_fixture, condition)
+                for condition in conditions
+            ):
                 matching.append(candidate)
         selected = matching[0] if len(matching) == 1 else None
         if selected is None:
@@ -84,7 +123,7 @@ def main() -> None:
                 "TOTAL_OVER_2_5": "odds_over_25",
                 "TOTAL_UNDER_2_5": "odds_under_25",
             }[market]
-            odds = float(fixture[odds_key])
+            odds = float(normalized_fixture[odds_key])
             decision = "BET"
             bets += 1
             pattern_id = f"PTRN-{str(selected['rule_hash'])[:16].upper()}"
@@ -94,7 +133,7 @@ def main() -> None:
             decision_id=f"PTRN-DEC-{fixture['fixture_id']}-{cutoff_at:%Y%m%d%H%M}",
             published_at=published_at,
             cutoff_at=cutoff_at,
-            fixture_id=int(fixture["fixture_id"]),
+            fixture_id=str(fixture["fixture_id"]),
             competition=str(fixture["competition"]),
             kickoff_at=kickoff_at,
             market=(

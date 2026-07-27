@@ -5,12 +5,16 @@ permissions:
   actions: read
   contents: read
 concurrency:
-  group: pattern-public-ledger
+  group: shadow-state
   cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,6 +41,8 @@ jobs:
             --ledger data/shadow/pattern-evidence-ledger.jsonl \
             --output artifacts/public-ledger/ledger-summary.json
       - name: Construire Robin Live
+        env:
+          PATTERN_LEDGER_SUMMARY: ${{ github.workspace }}/artifacts/public-ledger/ledger-summary.json
         run: |
           python scripts/build_cockpit_snapshot.py
           cd cockpit
@@ -44,11 +50,18 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm test
           pnpm build
+          test -d dist
+          test -f dist/server/index.js
+          test -f app/cockpit-data.json
+          test -f app/cockpit-data.sha256
       - uses: actions/upload-artifact@v4
         with:
           name: public-ledger-robin-live-${{ github.run_id }}
           path: |
             artifacts/public-ledger
-            cockpit/out
+            cockpit/dist
+            cockpit/app/cockpit-data.json
+            cockpit/app/cockpit-data.sha256
+          if-no-files-found: error
           retention-days: 30
           compression-level: 9
