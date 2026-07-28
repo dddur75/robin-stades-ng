@@ -12,7 +12,7 @@ from typing import Any, cast
 from urllib.parse import quote
 
 from botocore.exceptions import ClientError  # type: ignore[import-untyped]
-from sqlalchemy import bindparam, create_engine, text
+from sqlalchemy import bindparam, text
 
 from robin.historical.object_storage_migration import create_r2_client
 from robin.prospective_observatory.contracts import CaptureFamily, canonical_sha256
@@ -26,6 +26,7 @@ from robin.prospective_observatory.team_identities import (
     extract_team_identity_evidence,
     fixture_identity_scope_sha256,
 )
+from robin.storage.database import build_engine
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -195,7 +196,7 @@ def _postgresql_projection(
         WHERE fixture_id IN :fixture_ids
         """
     ).bindparams(bindparam("fixture_ids", expanding=True))
-    engine = create_engine(database_url)
+    engine = build_engine(database_url)
     rows_read = 0
     try:
         with engine.connect() as connection:
