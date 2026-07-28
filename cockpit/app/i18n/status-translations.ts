@@ -176,6 +176,20 @@ const catalogue: Record<string, StatusPresentation> = {
     icon: "✓",
     severity: 0,
   },
+  VERIFIED: {
+    short: "Identité vérifiée",
+    long: "Le nom est relié à un payload de fixture et à son reçu cryptographiquement vérifié.",
+    tone: "positive",
+    icon: "✓",
+    severity: 0,
+  },
+  UNRESOLVED: {
+    short: "Identité non résolue",
+    long: "Aucune preuve vérifiée ne permet encore de publier le nom de cette équipe.",
+    tone: "attention",
+    icon: "◌",
+    severity: 1,
+  },
   CAPTURED: {
     short: "Capture vérifiée",
     long: "La capture a été enregistrée avec sa provenance et son empreinte.",

@@ -17,6 +17,12 @@ La suite produit exactement 18 PNG pleine page hors Git dans
 
 Résultat local final : **9 tests réussis, 0 échec, 18 captures**.
 
+La passe V1.2 du 28 juillet 2026 utilise les 18 identités vérifiées du snapshot.
+Les vues prioritaires Accueil, Matchs, fiche match et Observatoire ont été
+inspectées à 1440 px et 390 px. Aucun fallback `Équipe <id>` n’est visible.
+`Stade Brestois 29` et `Paris Saint Germain` reviennent à la ligne sans
+débordement ni association erronée.
+
 ## Contrôles par scénario
 
 - langue `fr-FR` et titre principal attendu ;
@@ -65,8 +71,11 @@ durables sont publiées par la CI dans l’artefact visuel de chaque run.
 | clavier | cible `main` non focalisable | `tabIndex="-1"` |
 | automatisation | clic lancé avant hydratation | marqueur de disponibilité client |
 | V1.1 dynamique | états modifié et vide absents des preuves | deux scénarios synthétiques isolés ajoutés |
+| V1.2 identités | IDs fournisseur affichés comme noms | noms issus du snapshot vérifié, fallback public non numérique |
 | performance | snapshot technique chargé côté client | projections publique et experte compactes au build |
 
 ## Performance des captures
 
-La suite complète s’exécute localement en environ 15 secondes, avec un seul worker pour limiter les variations. `prefers-reduced-motion` est activé afin de stabiliser les images.
+La suite V1.2 complète s’exécute localement en 17 secondes, avec un seul worker
+pour limiter les variations. `prefers-reduced-motion` est activé afin de
+stabiliser les images.

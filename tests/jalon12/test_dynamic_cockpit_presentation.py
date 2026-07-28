@@ -4,7 +4,10 @@ import json
 import re
 from pathlib import Path
 
-from robin.prospective_observatory.contracts import CaptureFamily
+from robin.prospective_observatory.contracts import (
+    CaptureFamily,
+    canonical_sha256,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -128,3 +131,77 @@ def test_snapshot_generator_exposes_provenance_without_raw_payloads() -> None:
     assert isinstance(invariants, dict)
     assert invariants["raw_payloads_in_git"] == 0
     assert invariants["postgresql_payload_body_rows"] == 0
+
+
+def test_real_snapshot_has_two_verified_identities_per_fixture() -> None:
+    snapshot = _snapshot()
+    observatory = snapshot["prospectiveObservatory"]
+    assert isinstance(observatory, dict)
+    fixtures = observatory["fixtures"]
+    assert isinstance(fixtures, dict)
+    registry = fixtures["registry"]
+    assert isinstance(registry, list)
+    assert len(registry) == 9
+    assert all(
+        isinstance(fixture, dict)
+        and isinstance(fixture["home_name"], str)
+        and isinstance(fixture["away_name"], str)
+        and fixture["home_identity_status"] == "VERIFIED"
+        and fixture["away_identity_status"] == "VERIFIED"
+        and fixture["home_identity_provenance"]["source"]
+        == "R2_FIXTURE_PAYLOAD"
+        and fixture["away_identity_provenance"]["source"]
+        == "R2_FIXTURE_PAYLOAD"
+        for fixture in registry
+    )
+    identity_registry = fixtures["identity_registry"]
+    assert isinstance(identity_registry, dict)
+    assert identity_registry["team_slots_expected"] == 18
+    assert identity_registry["team_slots_resolved"] == 18
+
+
+def test_committed_team_identity_provenance_is_verified_and_provider_free() -> None:
+    report = json.loads(
+        (
+            ROOT / "reports" / "ux" / "team-identity-provenance.json"
+        ).read_text(encoding="utf-8")
+    )
+    report_hash = report.pop("report_sha256")
+    assert canonical_sha256(report) == report_hash
+    assert report["coverage"] == {
+        "fixtures_expected": 9,
+        "fixtures_resolved": 9,
+        "team_slots_expected": 18,
+        "team_slots_resolved": 18,
+        "team_slots_unresolved": 0,
+        "percentage": 100.0,
+    }
+    assert report["provider_usage"] == {
+        "api_football_calls": 0,
+        "odds_api_credits": 0,
+    }
+    assert report["reads"]["r2"]["writes"] == 0
+    assert report["reads"]["postgresql"]["writes"] == 0
+    assert len(report["identities"]) == 18
+    assert all(
+        identity["receipt_verified"] is True
+        and identity["identity_status"] == "VERIFIED"
+        and identity["source"] == "R2_FIXTURE_PAYLOAD"
+        and all(identity["postgresql_projection"].values())
+        for identity in report["identities"]
+    )
+
+
+def test_public_presentation_contains_no_numeric_team_fallback() -> None:
+    presentation = json.loads(
+        (ROOT / "cockpit" / "app" / "cockpit-presentation.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    matches = presentation["matches"]
+    assert len(matches) == 9
+    assert all(
+        re.fullmatch(r"Équipe\s+\d+", match[side]) is None
+        for match in matches
+        for side in ("home", "away")
+    )

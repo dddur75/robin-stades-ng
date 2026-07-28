@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T10:39:45.185033+00:00",
+  "generatedAt": "2026-07-28T11:42:53.364185+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -20506,8 +20506,24 @@
           "provider_fixture_id": "1552733",
           "home_team_id": "81",
           "away_team_id": "95",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Marseille",
+          "away_name": "Strasbourg",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49",
+            "receipt_id": "ec2498dea1709b2d53d984a20f8b4cd78faf62c872c42bc4b857543ba5ace41c",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49",
+            "receipt_id": "ec2498dea1709b2d53d984a20f8b4cd78faf62c872c42bc4b857543ba5ace41c",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20524,8 +20540,24 @@
           "provider_fixture_id": "1552732",
           "home_team_id": "116",
           "away_team_id": "108",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Lens",
+          "away_name": "Auxerre",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916",
+            "receipt_id": "ac655ecdd3a1b235bb9609afc2cf26d8e567f6cbc5a892e53098332150d6e72d",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916",
+            "receipt_id": "ac655ecdd3a1b235bb9609afc2cf26d8e567f6cbc5a892e53098332150d6e72d",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20542,8 +20574,24 @@
           "provider_fixture_id": "1552731",
           "home_team_id": "1298",
           "away_team_id": "106",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Le Mans",
+          "away_name": "Stade Brestois 29",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b",
+            "receipt_id": "04060aac61aa3e48b132365690c6840ac9fa60bc1ce69ba98a23523b3d53573e",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b",
+            "receipt_id": "04060aac61aa3e48b132365690c6840ac9fa60bc1ce69ba98a23523b3d53573e",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20560,8 +20608,24 @@
           "provider_fixture_id": "1552734",
           "home_team_id": "84",
           "away_team_id": "97",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Nice",
+          "away_name": "Lorient",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c",
+            "receipt_id": "0c9e5832a4a7fc1e152e8dcdd71099d4b2ea5aaff879be1a90cfe0aa626ae852",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c",
+            "receipt_id": "0c9e5832a4a7fc1e152e8dcdd71099d4b2ea5aaff879be1a90cfe0aa626ae852",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20578,8 +20642,24 @@
           "provider_fixture_id": "1552736",
           "home_team_id": "96",
           "away_team_id": "80",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Toulouse",
+          "away_name": "Lyon",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840",
+            "receipt_id": "4687eae3fbca85e4873ba87d0317b2b87ab5cf7fa3c5feb8614abdf402b577f1",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840",
+            "receipt_id": "4687eae3fbca85e4873ba87d0317b2b87ab5cf7fa3c5feb8614abdf402b577f1",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20596,8 +20676,24 @@
           "provider_fixture_id": "1552737",
           "home_team_id": "110",
           "away_team_id": "114",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Estac Troyes",
+          "away_name": "Paris FC",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187",
+            "receipt_id": "01ed16cc751aa5945fb4f0223539a33eca326293ba34e37d02a1ff8667b02bef",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187",
+            "receipt_id": "01ed16cc751aa5945fb4f0223539a33eca326293ba34e37d02a1ff8667b02bef",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20614,8 +20710,24 @@
           "provider_fixture_id": "1552729",
           "home_team_id": "77",
           "away_team_id": "79",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Angers",
+          "away_name": "Lille",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe",
+            "receipt_id": "57f2ecbd595d76eb5b9bacced2d1b6362167158bb8819b8013b26341081cfdbf",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe",
+            "receipt_id": "57f2ecbd595d76eb5b9bacced2d1b6362167158bb8819b8013b26341081cfdbf",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20632,8 +20744,24 @@
           "provider_fixture_id": "1552730",
           "home_team_id": "111",
           "away_team_id": "91",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Le Havre",
+          "away_name": "Monaco",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8",
+            "receipt_id": "80e609b3511034bfd1f78e28c77b3c15efc3c102c43685cd106c78d84b20e8a6",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8",
+            "receipt_id": "80e609b3511034bfd1f78e28c77b3c15efc3c102c43685cd106c78d84b20e8a6",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20650,8 +20778,24 @@
           "provider_fixture_id": "1552735",
           "home_team_id": "85",
           "away_team_id": "94",
-          "home_name": null,
-          "away_name": null,
+          "home_name": "Paris Saint Germain",
+          "away_name": "Rennes",
+          "home_short_name": null,
+          "away_short_name": null,
+          "home_identity_status": "VERIFIED",
+          "away_identity_status": "VERIFIED",
+          "home_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a",
+            "receipt_id": "68cd5c145ab3041923539d2c93e8beac12003b146b4000b8e82f414b3da9b14a",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
+          "away_identity_provenance": {
+            "source": "R2_FIXTURE_PAYLOAD",
+            "payload_sha256": "734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a",
+            "receipt_id": "68cd5c145ab3041923539d2c93e8beac12003b146b4000b8e82f414b3da9b14a",
+            "captured_at": "2026-07-28T05:33:44.948310+00:00"
+          },
           "competition": "Ligue 1",
           "season": null,
           "phase": null,
@@ -20671,7 +20815,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552732",
@@ -20681,7 +20825,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552731",
@@ -20691,7 +20835,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552734",
@@ -20701,7 +20845,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552736",
@@ -20711,7 +20855,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552737",
@@ -20721,7 +20865,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552729",
@@ -20731,7 +20875,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552730",
@@ -20741,7 +20885,7 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         },
         {
           "fixture_id": "api-football:1552735",
@@ -20751,9 +20895,18 @@
           "response_received_at": null,
           "window_id": null,
           "temporally_admissible": true,
-          "provenance": "VERIFIED_AGGREGATE_BIJECTION"
+          "provenance": "RECEIPT_PROJECTION"
         }
-      ]
+      ],
+      "identity_registry": {
+        "schema_version": "team-identity-registry-v1",
+        "source": "EXISTING_VERIFIED_R2_FIXTURE_CAPTURES",
+        "report": "reports/ux/team-identity-provenance.json",
+        "registry_sha256": "eaa6d296ba19464df74393d26ffb638145302b3a8173243571cb6d7f8ed951ff",
+        "verified_at": "2026-07-28T11:41:34.915284+00:00",
+        "team_slots_expected": 18,
+        "team_slots_resolved": 18
+      }
     },
     "windows": {
       "planned": 441,
