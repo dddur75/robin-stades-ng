@@ -7,11 +7,11 @@ export function t(
   key: TranslationKey,
   variables: Record<string, string | number> = {},
 ): string {
-  return Object.entries(variables).reduce(
-    (value, [name, replacement]) =>
-      value.replaceAll(`{${name}}`, String(replacement)),
-    frFR[key],
-  );
+  let value: string = frFR[key];
+  for (const [name, replacement] of Object.entries(variables)) {
+    value = value.replaceAll(`{${name}}`, String(replacement));
+  }
+  return value;
 }
 
 export function formatDateTime(value: string | Date, includeYear = false) {
@@ -59,7 +59,8 @@ export function formatPercent(value: number | null | undefined) {
       }).format(value);
 }
 
-export function formatUnits(value: number) {
+export function formatUnits(value: number | null | undefined) {
+  if (value == null) return t("common.notApplicable");
   return `${formatNumber(value, 1)} ${value > 1 ? "unités" : "unité"}`;
 }
 

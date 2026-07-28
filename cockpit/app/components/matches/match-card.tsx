@@ -36,7 +36,7 @@ export function MatchCard({ match }: { match: MatchPresentation }) {
         </div>
         <div>
           <span>{t("matches.nextCapture")}</span>
-          <strong>{formatDateTime(match.nextCapture)}</strong>
+          <strong>{match.nextCapture ? formatDateTime(match.nextCapture) : t("common.notApplicable")}</strong>
         </div>
       </div>
       <ProgressBar

@@ -85,3 +85,51 @@ test("le catalogue des statuts contient une présentation complète", async () =
   assert.match(source, /icon:/);
   assert.match(source, /severity:/);
 });
+
+test("aucune valeur opérationnelle connue n’est recopiée dans la couche frontend", async () => {
+  const directories = [
+    new URL("../app/components/", import.meta.url),
+    new URL("../app/lib/", import.meta.url),
+    new URL("../app/i18n/", import.meta.url),
+  ];
+  const files = (await Promise.all(directories.map(sourceFiles))).flat();
+  const source = (
+    await Promise.all(files.map((file) => readFile(file, "utf8")))
+  ).join("\n");
+  for (const forbidden of [
+    "30314975830",
+    "2469e57ec4b2ef2849f9e707f63843033ec026e6",
+    "api-football:1552733",
+    "api-football:1552732",
+    "2026-08-21T18:45:00",
+    "2026-07-31T18:45:00",
+    "04395a33b7584d33a4413fb61dba41c3e7c4f83ef2e2e07fd2b16b0d116745c6",
+  ]) {
+    assert.doesNotMatch(source, new RegExp(forbidden), forbidden);
+  }
+});
+
+test("les catalogues et composants sont encodés en UTF-8 sans mojibake", async () => {
+  const files = await sourceFiles(appRoot);
+  const source = (
+    await Promise.all(files.map((file) => readFile(file, "utf8")))
+  ).join("\n");
+  assert.doesNotMatch(source, /Ãƒ|Ã‚|Ã¢â‚¬â„¢|Ã¢â‚¬â€œ|Ã¢â‚¬â€/);
+  assert.doesNotMatch(
+    source,
+    /fran\?aise|Livr\?|R\?sultats|M\?thode|r\?ussis/i,
+  );
+});
+
+test("le catalogue anglais reste synchronisé mais absent des routes publiques", async () => {
+  const files = await sourceFiles(appRoot);
+  const publicSources = (
+    await Promise.all(
+      files
+        .filter((file) => !file.pathname.endsWith("/en-GB.ts"))
+        .map((file) => readFile(file, "utf8")),
+    )
+  ).join("\n");
+  assert.doesNotMatch(publicSources, /from\s+["'][^"']*en-GB["']/);
+  assert.doesNotMatch(publicSources, /language selector|sélecteur de langue/i);
+});

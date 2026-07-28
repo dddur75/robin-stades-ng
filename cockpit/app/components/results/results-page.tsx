@@ -22,6 +22,10 @@ import { ExpertOnly } from "../common/view-mode";
 export function ResultsPage() {
   const bankroll = scientificInvariants.bankroll;
   const results = scientificInvariants.results;
+  const curve = bankroll.curve.length ? bankroll.curve : [bankroll.currentUnits];
+  const curveMaximum = Math.max(...curve);
+  const curveMinimum = Math.min(...curve);
+  const curveMiddle = (curveMaximum + curveMinimum) / 2;
   return (
     <>
       <PageHeader
@@ -29,15 +33,15 @@ export function ResultsPage() {
         subtitle={t("results.subtitle")}
         title={t("results.title")}
       >
-        <StatusBadge value="NO_LIVE_SHADOW_DATA" />
+        <StatusBadge value={scientificInvariants.dataStatus} />
       </PageHeader>
 
       <section className="metrics-grid results-metrics">
-        <MetricCard detail="simulation uniquement" label={t("results.bankrollInitial")} tone="blue" value={formatUnits(bankroll.initialUnits)} />
-        <MetricCard detail="aucune décision enregistrée" label={t("results.bankrollCurrent")} tone="green" value={formatUnits(bankroll.currentUnits)} />
-        <MetricCard detail="aucun règlement" label={t("results.profit")} value={formatUnits(results.profitUnits)} />
-        <MetricCard detail="aucun pari réglé" label={t("results.roi")} value={formatPercent(results.roi)} />
-        <MetricCard detail="bankroll inchangée" label={t("results.drawdown")} value={formatUnits(bankroll.maxDrawdownUnits)} />
+        <MetricCard detail="politique scientifique versionnée" label={t("results.bankrollInitial")} tone="blue" value={formatUnits(bankroll.initialUnits)} />
+        <MetricCard detail="registre shadow" label={t("results.bankrollCurrent")} tone="green" value={formatUnits(bankroll.currentUnits)} />
+        <MetricCard detail="preuve du ledger" label={t("results.profit")} value={formatUnits(results.profitUnits)} />
+        <MetricCard detail="calculé après règlement" label={t("results.roi")} value={formatPercent(results.roi)} />
+        <MetricCard detail="preuve du ledger" label={t("results.drawdown")} value={formatUnits(bankroll.maxDrawdownUnits)} />
         <MetricCard detail="registre prospectif" label={t("results.decisions")} value={formatNumber(operationalEvidence.decisions)} />
       </section>
 
@@ -91,7 +95,9 @@ export function ResultsPage() {
             role="img"
           >
             <div className="chart-y-axis">
-              <span>1 010</span><span>1 000</span><span>990</span>
+              <span>{formatNumber(curveMaximum, 1)}</span>
+              <span>{formatNumber(curveMiddle, 1)}</span>
+              <span>{formatNumber(curveMinimum, 1)}</span>
             </div>
             <div className="chart-plot">
               <i className="grid-line top" />
@@ -114,12 +120,12 @@ export function ResultsPage() {
             </div>
             <div style={{ "--share": "0%" } as React.CSSProperties}>
               <span>Décisions simulées</span>
-              <strong>0</strong>
+              <strong>{formatNumber(scientificInvariants.ledger.decisions)}</strong>
               <i />
             </div>
             <div style={{ "--share": "0%" } as React.CSSProperties}>
               <span>Résultats réglés</span>
-              <strong>0</strong>
+              <strong>{formatNumber(results.settlements)}</strong>
               <i />
             </div>
           </div>

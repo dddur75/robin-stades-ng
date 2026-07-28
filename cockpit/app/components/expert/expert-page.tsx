@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  cleanFrench,
   expertData,
   operationalEvidence,
+  presentationSystem,
 } from "../../lib/presentation";
 import {
   formatBytes,
@@ -24,6 +24,10 @@ import {
 } from "../common/ui";
 import { useViewMode, ViewModeSwitch } from "../common/view-mode";
 
+function displayText(value: unknown) {
+  return String(value ?? "—");
+}
+
 function sourceLabel(value: string) {
   const labels: Record<string, string> = {
     "LIVE SOURCE": "Source opérationnelle",
@@ -31,8 +35,25 @@ function sourceLabel(value: string) {
     "LEGACY SOURCE": "Source historique",
     "NO OUTPUT": "Aucune sortie",
   };
-  return labels[value] ?? cleanFrench(value);
+  return labels[value] ?? displayText(value);
 }
+
+const absoluteInvariantOrder = [
+  "NO_BET_DEFAULT",
+  "REAL_BETS",
+  "PRODUCTION_LOCKED",
+];
+
+const absoluteInvariantRows = Object.entries(operationalEvidence.invariants).sort(
+  ([left], [right]) => {
+    const leftIndex = absoluteInvariantOrder.indexOf(left);
+    const rightIndex = absoluteInvariantOrder.indexOf(right);
+    if (leftIndex === rightIndex) return left.localeCompare(right);
+    if (leftIndex === -1) return 1;
+    if (rightIndex === -1) return -1;
+    return leftIndex - rightIndex;
+  },
+);
 
 const datasetRows: Array<Record<string, unknown>> = expertData.datasets.map((row) => ({
   nom: row.name,
@@ -41,7 +62,7 @@ const datasetRows: Array<Record<string, unknown>> = expertData.datasets.map((row
   rencontres: row.fixtures,
   couverture: formatPercent(row.coverage),
   qualite: statusPresentation(row.quality).short,
-  temporalite: cleanFrench(row.temporalPolicy),
+  temporalite: displayText(row.temporalPolicy),
   statut: row.status,
   empreinte: row.sha256,
 }));
@@ -70,10 +91,10 @@ const backtestRows: Array<Record<string, unknown>> = expertData.backtests.map((r
 }));
 
 const qualityRows: Array<Record<string, unknown>> = expertData.qualityChecks.map((row) => ({
-  controle: cleanFrench(row.check),
+  controle: displayText(row.check),
   resultat: statusPresentation(row.status).short,
-  valeur: cleanFrench(row.value),
-  seuil: cleanFrench(row.threshold),
+  valeur: displayText(row.value),
+  seuil: displayText(row.threshold),
   origine: sourceLabel(row.origin),
 }));
 
@@ -82,7 +103,7 @@ const externalReadinessRows: Array<Record<string, unknown>> =
     competition: row.competition,
     saisons: Array.isArray(row.seasons)
       ? row.seasons.join("–")
-      : cleanFrench(row.seasons),
+      : displayText(row.seasons),
     equipes: row.teams,
     joueurs: row.players,
     qualite: statusPresentation(row.quality).short,
@@ -98,7 +119,7 @@ const leaveOneLeagueOutRows: Array<Record<string, unknown>> =
     rencontres: row.paired_fixtures,
     logLoss: Number(row.metrics.log_loss).toFixed(4),
     brier: Number(row.metrics.brier_score).toFixed(4),
-    calibration: cleanFrench(row.calibration_stability),
+    calibration: displayText(row.calibration_stability),
     statut: row.status,
   }));
 
@@ -106,7 +127,7 @@ const playerGeneralizationRows: Array<Record<string, unknown>> =
   expertData.externalValidation.playerGeneralization.map((row) => ({
     competition: row.competition,
     resultat: statusPresentation(row.status).short,
-    raison: cleanFrench(row.reason),
+    raison: displayText(row.reason),
     statut: row.scientific_status,
   }));
 
@@ -410,7 +431,7 @@ export function ExpertPage() {
               <article className="section-card invariants-card">
                 <h3>Invariants absolus</h3>
                 <ul>
-                  {Object.entries(operationalEvidence.invariants).map(([key, value]) => (
+                  {absoluteInvariantRows.map(([key, value]) => (
                     <li key={key}><code>{key}={String(value)}</code><span>verrouillé</span></li>
                   ))}
                 </ul>
@@ -421,9 +442,17 @@ export function ExpertPage() {
               <TechnicalList rows={[
                 { label: "Artefact", value: <code>{operationalEvidence.sourceRun}</code> },
                 { label: "Révision", value: <code>{operationalEvidence.sourceRevision}</code> },
+                { label: "Workflow", value: <code>{operationalEvidence.sourceWorkflow}</code> },
                 { label: "Généré à (UTC)", value: <code>{operationalEvidence.generatedAt}</code> },
+                { label: "Âge du snapshot", value: operationalEvidence.freshness.ageMinutes == null ? t("common.notApplicable") : `${formatNumber(operationalEvidence.freshness.ageMinutes)} min` },
+                { label: "Fraîcheur", value: <StatusBadge value={operationalEvidence.freshness.status} showTechnical /> },
+                { label: "Motif de fraîcheur", value: operationalEvidence.freshness.reason },
                 { label: "Tête du registre", value: <code>{operationalEvidence.ledger.headHash}</code> },
                 { label: "Payloads PostgreSQL", value: operationalEvidence.postgresql.payloadBodyRows },
+                { label: "Couverture des statuts", value: `${formatPercent(presentationSystem.statusCoverage.percentage)} · ${presentationSystem.statusCoverage.translated}/${presentationSystem.statusCoverage.total}` },
+                { label: "Statuts inconnus", value: presentationSystem.statusCoverage.unknown.join(" · ") || "Aucun" },
+                { label: "Corrections d’encodage legacy", value: presentationSystem.encodingCorrections.count },
+                { label: "Nettoyeur legacy actif", value: presentationSystem.encodingCorrections.cleanerEnabled ? "Oui" : "Non" },
               ]} />
             </div>
           </section>

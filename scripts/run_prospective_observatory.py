@@ -1938,6 +1938,11 @@ def _base_snapshot(policy: ObservatoryPolicy, *, now: datetime) -> dict[str, obj
         "schema_version": SNAPSHOT_SCHEMA_VERSION,
         "status": "NO_DUE_WINDOW_SUCCESS",
         "generated_at": now.isoformat(),
+        "source": {
+            "run_id": os.environ.get("GITHUB_RUN_ID"),
+            "revision": os.environ.get("GITHUB_SHA"),
+            "workflow": os.environ.get("GITHUB_WORKFLOW"),
+        },
         "fixtures": {
             "tracked": 0,
             "horizon_days": _int_value(
@@ -5641,9 +5646,22 @@ def run_gate_report(
     else:
         _reconcile_receipt_attempts(state)
     fixtures = state.fixtures()
+    lifecycle_heads = state.fixture_lifecycle_heads()
     all_windows = state.windows()
     windows = _active_windows(state)
     receipts = state.receipts()
+    identities = _fixture_identities(repository) if repository is not None else {}
+    completed_window_ids = {
+        receipt.window_id
+        for receipt in receipts
+        if receipt.window_id is not None
+        and receipt.quality_status
+        in {
+            AvailabilityStatus.CAPTURED,
+            AvailabilityStatus.CAPTURED_EMPTY,
+            AvailabilityStatus.COMPLETE,
+        }
+    }
     active_window_ids = {window.window_id for window in windows}
     observations = tuple(
         observation
@@ -5703,6 +5721,57 @@ def run_gate_report(
             "tracked": len(fixtures),
             "windows_planned": len(windows),
             "windows_due": len(due_windows),
+            "registry": [
+                {
+                    "fixture_id": fixture.fixture_id,
+                    "canonical_key": fixture.fixture_id,
+                    "provider": fixture.provider,
+                    "provider_fixture_id": fixture.provider_fixture_id,
+                    "home_team_id": fixture.home_team_id,
+                    "away_team_id": fixture.away_team_id,
+                    "home_name": (
+                        identities[fixture.fixture_id][0]
+                        if fixture.fixture_id in identities
+                        else None
+                    ),
+                    "away_name": (
+                        identities[fixture.fixture_id][1]
+                        if fixture.fixture_id in identities
+                        else None
+                    ),
+                    "competition": fixture.competition,
+                    "season": fixture.season,
+                    "phase": fixture.phase,
+                    "kickoff_at": fixture.kickoff_at.isoformat(),
+                    "registered_at": fixture.registered_at.isoformat(),
+                    "status": "TOMBSTONED" if fixture.cancelled else "REGISTERED",
+                    "cancelled": fixture.cancelled,
+                    "lifecycle_version_hash": fixture.registry_hash,
+                }
+                for fixture in sorted(
+                    lifecycle_heads,
+                    key=lambda item: (item.kickoff_at, item.fixture_id),
+                )
+            ],
+            "evidence": [
+                {
+                    "fixture_id": receipt.fixture_id,
+                    "family": receipt.family.value,
+                    "status": receipt.quality_status.value,
+                    "observed_at": receipt.observed_at.isoformat(),
+                    "response_received_at": receipt.response_received_at.isoformat(),
+                    "window_id": receipt.window_id,
+                    "temporally_admissible": receipt.temporally_admissible,
+                }
+                for receipt in sorted(
+                    receipts,
+                    key=lambda item: (
+                        item.fixture_id,
+                        item.observed_at,
+                        item.family.value,
+                    ),
+                )
+            ],
             "next": [
                 {
                     "fixture_id": fixture.fixture_id,
@@ -5730,12 +5799,44 @@ def run_gate_report(
         {
             "planned": len(windows),
             "due": len(due_windows),
+            "inactive_legacy": len(all_windows) - len(windows),
+            "registry": [
+                {
+                    "window_id": window.window_id,
+                    "fixture_id": window.fixture_id,
+                    "family": window.family.value,
+                    "label": window.label,
+                    "opens_at": window.opens_at.isoformat(),
+                    "due_at": window.due_at.isoformat(),
+                    "cutoff_at": window.cutoff_at.isoformat(),
+                    "kickoff_at": window.kickoff_at.isoformat(),
+                    "status": classify_window(
+                        window,
+                        now=now,
+                        already_captured=window.window_id in completed_window_ids,
+                    ).value,
+                    "policy_version": window.policy_version,
+                    "active": True,
+                    "acknowledged": window.window_id in completed_window_ids,
+                }
+                for window in sorted(
+                    windows,
+                    key=lambda item: (
+                        item.opens_at,
+                        item.fixture_id,
+                        item.family.value,
+                    ),
+                )
+            ],
             "next": [
                 {
                     "fixture_id": window.fixture_id,
                     "family": window.family.value,
                     "label": window.label,
+                    "opens_at": window.opens_at.isoformat(),
                     "due_at": window.due_at.isoformat(),
+                    "cutoff_at": window.cutoff_at.isoformat(),
+                    "kickoff_at": window.kickoff_at.isoformat(),
                     "status": classify_window(window, now=now).value,
                 }
                 for window in sorted(

@@ -1,0 +1,11 @@
+{
+  "schema_version": "shadow-simulation-policy-v1",
+  "initial_bankroll_units": 1000.0,
+  "unit_label": "unité",
+  "simulation_only": true,
+  "production_status": "PRODUCTION_LOCKED",
+  "real_bets": false,
+  "no_bet_default": true,
+  "social_publishing_enabled": false,
+  "demo_mode_enabled": false
+}

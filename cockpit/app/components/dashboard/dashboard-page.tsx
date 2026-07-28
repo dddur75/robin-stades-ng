@@ -1,6 +1,7 @@
 import { Countdown, SinceLastVisit } from "../common/client-widgets";
 import {
   EvidenceNote,
+  EmptyState,
   InlineLink,
   MetricCard,
   PageHeader,
@@ -23,18 +24,18 @@ import {
   matches,
   nextCaptures,
   operationalEvidence,
+  presentationBankroll,
 } from "../../lib/presentation";
-
-const progressSteps = [
-  { label: "Rencontres enregistrées", done: true },
-  { label: "Fenêtres planifiées", done: true },
-  { label: "Données profondes", done: false },
-  { label: "Hypothèses testables", done: false },
-  { label: "Décisions simulées", done: false },
-];
 
 export function DashboardPage() {
   const next = nextCaptures[0];
+  const progressSteps = [
+    { label: "Rencontres enregistrées", done: operationalEvidence.fixtures > 0 },
+    { label: "Fenêtres planifiées", done: operationalEvidence.activeWindows > 0 },
+    { label: "Données profondes", done: operationalEvidence.deepObservations > 0 },
+    { label: "Hypothèses testables", done: hypotheses.some((item) => item.observations >= item.minimumSupport) },
+    { label: "Décisions simulées", done: operationalEvidence.decisions > 0 },
+  ];
   return (
     <>
       <section className="hero">
@@ -45,6 +46,7 @@ export function DashboardPage() {
         >
           <div className="hero-statuses">
             <StatusBadge value={operationalEvidence.status} />
+            <StatusBadge value={operationalEvidence.freshness.status} />
             <StatusBadge value="PRODUCTION_LOCKED" />
           </div>
         </PageHeader>
@@ -96,7 +98,7 @@ export function DashboardPage() {
           detail="simulation sans argent"
           icon="∿"
           label={t("home.metrics.bankroll")}
-          value={formatUnits(1_000)}
+          value={formatUnits(presentationBankroll.currentUnits)}
         />
       </section>
 
@@ -105,19 +107,31 @@ export function DashboardPage() {
           <SectionHeading
             title={t("home.next.title")}
             subtitle={t("home.next.subtitle")}
-            action={<StatusBadge value={next.status} />}
+            action={next ? <StatusBadge value={next.status} /> : undefined}
           />
-          <div className="countdown">
-            <span>{t("home.next.in")}</span>
-            <strong><Countdown target={next.dueAt} /></strong>
-            <time dateTime={next.dueAt}>{formatDateTime(next.dueAt, true)}</time>
-          </div>
-          <dl className="capture-details">
-            <div><dt>{t("home.next.match")}</dt><dd>{next.match}</dd></div>
-            <div><dt>{t("home.next.data")}</dt><dd>{dataFamilyLabels[next.family]}</dd></div>
-            <div><dt>{t("home.next.workflow")}</dt><dd>{t("home.next.workflowValue")}</dd></div>
-            <div><dt>{t("home.next.cost")}</dt><dd>{t("home.next.costValue")}</dd></div>
-          </dl>
+          {next ? (
+            <>
+              <div className="countdown">
+                <span>{t("home.next.in")}</span>
+                <strong><Countdown target={next.dueAt} /></strong>
+                <time dateTime={next.dueAt}>{formatDateTime(next.dueAt, true)}</time>
+              </div>
+              <dl className="capture-details">
+                <div><dt>{t("home.next.match")}</dt><dd>{next.match}</dd></div>
+                <div>
+                  <dt>{t("home.next.data")}</dt>
+                  <dd>{next.families.map((family) => dataFamilyLabels[family] ?? family).join(" · ")}</dd>
+                </div>
+                <div><dt>{t("home.next.workflow")}</dt><dd>{t("home.next.workflowValue")}</dd></div>
+                <div><dt>{t("home.next.cost")}</dt><dd>{t("home.next.costValue")}</dd></div>
+              </dl>
+            </>
+          ) : (
+            <EmptyState
+              title="Aucune prochaine fenêtre"
+              text="Aucune capture active n’est actuellement planifiée pour une rencontre suivie."
+            />
+          )}
           <InlineLink href="/observatoire">{t("nav.observatory")}</InlineLink>
         </article>
 
@@ -152,9 +166,10 @@ export function DashboardPage() {
         </div>
         <ExpertOnly>
           <EvidenceNote>
-            Les 531 fenêtres de la politique initiale sont conservées comme preuves
-            inactives. Les 441 fenêtres actives correspondent à la politique révisée
-            non chevauchante.
+            {formatNumber(operationalEvidence.inactiveLegacyWindows)} fenêtres
+            legacy sont conservées pour le replay uniquement. Les{" "}
+            {formatNumber(operationalEvidence.activeWindows)} fenêtres actives
+            proviennent de la politique versionnée du snapshot.
           </EvidenceNote>
         </ExpertOnly>
       </section>

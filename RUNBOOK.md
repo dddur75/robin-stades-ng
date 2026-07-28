@@ -734,3 +734,47 @@ Ne jamais utiliser cette validation pour déclencher :
 Les preuves scientifiques demeurent dans `cockpit/app/cockpit-data.json` et son
 empreinte. Les ajustements UX appartiennent aux catalogues, au modèle de
 présentation et aux composants.
+
+## Robin Experience V1.1 — reconstruction provider-free
+
+Pour reconstruire le cockpit depuis un snapshot vérifié déjà téléchargé :
+
+```powershell
+$env:COCKPIT_VERIFIED_SNAPSHOT_INPUT = "<chemin vers cockpit-data.json>"
+$env:COCKPIT_VERIFIED_SNAPSHOT_SHA256 = "<sha256 attendu>"
+$env:COCKPIT_SOURCE_RUN = "<run GitHub>"
+$env:COCKPIT_SOURCE_REVISION = "<commit source>"
+$env:COCKPIT_SOURCE_WORKFLOW = "<workflow source>"
+python scripts/build_cockpit_snapshot.py
+cd cockpit
+pnpm run build:data
+pnpm test
+pnpm run test:visual
+```
+
+Le builder refuse une empreinte différente, une production déverrouillée, un
+pari réel, une publication sociale ou une décision non nulle non autorisée.
+Cette commande ne doit jamais recevoir de credential fournisseur ou de
+stockage distant.
+
+Contrôles de livraison V1.1 :
+
+```powershell
+python -m pytest -q
+python -m ruff check src/robin tests scripts migrations
+python -m mypy src/robin scripts/run_prospective_observatory.py
+python -m mypy --strict scripts/build_cockpit_snapshot.py
+python -m bandit -q -r src/robin
+python scripts/check_no_secrets.py
+python -m pip check
+cd cockpit
+pnpm run typecheck
+pnpm run lint
+pnpm test
+pnpm run test:visual
+```
+
+Le build génère `cockpit-presentation.json` et
+`cockpit-expert-data.json`. Ils doivent être régénérés et commités avec le
+snapshot. Toute modification de `cockpit-data.json` doit également mettre à
+jour `cockpit-data.sha256`.

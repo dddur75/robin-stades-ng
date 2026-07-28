@@ -1,8 +1,8 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-27
+Dernière mise à jour : 2026-07-28
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-11-deep-football-matchups`
+Branche : `codex/robin-experience-v1-french-dashboard`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -617,3 +617,32 @@ NO_BET_DEFAULT=true
 SOCIAL_PUBLISHING_ENABLED=false
 DEMO_MODE_ENABLED=false
 ```
+
+## Robin Experience V1.1 — données dynamiques
+
+Verdict de livraison : `ROBIN_EXPERIENCE_V1_1_DYNAMIC_READY`.
+
+La présentation suit désormais le contrat
+`snapshot → buildPresentationModel(snapshot) → projections compactes → UI`.
+Les rencontres, fenêtres, prochaines captures, preuves, observations,
+candidats, bankroll, résultats, statuts et fraîcheur proviennent du snapshot.
+Les composants ne portent plus les anciennes valeurs opérationnelles.
+
+Le snapshot intégré est reconstruit depuis l’artefact vérifié du run
+`30314975830`, sans fournisseur, sans R2 distant et sans PostgreSQL distant.
+Il expose 9 fixtures, 441 fenêtres actives, 531 fenêtres legacy inactives,
+18 preuves physiques, 0 observation profonde, 0 candidat et 0 décision. Les
+noms d’équipes absents de cette preuve ne sont pas inventés : les identifiants
+fournisseur sont utilisés comme repli explicite.
+
+Validation locale :
+
+- 748 tests Python ;
+- 26 tests frontend, typecheck applicatif et ESLint ;
+- 9 tests Playwright, 18 captures ;
+- Ruff, mypy strict, Bandit, secrets, dépendances et compilation verts ;
+- couverture des statuts du snapshot : 117/117 ;
+- bundle : 545 960 octets contre 830 890 en V1.
+
+La PR #19 reste brouillon, ouverte et non fusionnée. Les détails de provenance,
+d’encodage et de validation sont dans `docs/ux`.

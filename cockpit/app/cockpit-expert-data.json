@@ -1,0 +1,3332 @@
+{
+  "datasets": [
+    {
+      "name": "api_market_baseline_v1",
+      "version": "api_market_baseline_v1",
+      "rows": 1534,
+      "fixtures": 1534,
+      "coverage": 1,
+      "quality": "PASSED",
+      "temporalPolicy": "HISTORICAL_CLOSING_MARKET",
+      "status": "API_MARKET_BASELINE_READY",
+      "sha256": "367f8d3f70d5bde8c693da71e5608019435ffe81c277615ca10c99d8499f188a"
+    },
+    {
+      "name": "api_player_match_facts_v1",
+      "version": "api_player_match_facts_v1",
+      "rows": 51589,
+      "fixtures": 1295,
+      "coverage": 1,
+      "quality": "PASSED",
+      "temporalPolicy": "POST_MATCH_ONLY",
+      "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+      "sha256": "b5507a298ddb33d50d64d56afd143234a25646a7e245c9d2250ff38b7560d731"
+    },
+    {
+      "name": "api_player_pre_lineup_v1",
+      "version": "api_player_pre_lineup_v1",
+      "rows": 2058,
+      "fixtures": 2058,
+      "coverage": 1,
+      "quality": "PASSED",
+      "temporalPolicy": "PRE_LINEUP",
+      "status": "API_PLAYER_DATASET_READY",
+      "sha256": "9bb644722563b2bd2a137732bf04a1a74662dc1c92f5e94ea0255b55bcd6e86e"
+    },
+    {
+      "name": "api_post_lineup_simulated_v1",
+      "version": "api_post_lineup_simulated_v1",
+      "rows": 1297,
+      "fixtures": 1297,
+      "coverage": 1,
+      "quality": "PASSED",
+      "temporalPolicy": "POST_LINEUP_SIMULATED",
+      "status": "POST_LINEUP_SIMULATED_READY",
+      "sha256": "f2da79c6a193a69d9c96d0ba65595883644970016f17e0c1d6b9732313cda0cd"
+    },
+    {
+      "name": "api_team_pre_match_v1",
+      "version": "api_team_pre_match_v1",
+      "rows": 2058,
+      "fixtures": 2058,
+      "coverage": 1,
+      "quality": "PASSED",
+      "temporalPolicy": "HISTORICAL POINT-IN-TIME",
+      "status": "API_TEAM_DATASET_READY",
+      "sha256": "288307b59a5b65b1247dd12bb6f4070908218a0011250b176ee915acdfd3bf4b"
+    },
+    {
+      "name": "player_feature_store_v1",
+      "version": "player_feature_store_v1",
+      "rows": 905344,
+      "fixtures": 1288,
+      "coverage": 1,
+      "quality": "PASSED",
+      "temporalPolicy": "PRE_LINEUP",
+      "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+      "sha256": "32ee24fdc6541829c0ed126604db2de405c9b1983477641462955afbe21f58ec"
+    }
+  ],
+  "models": [
+    {
+      "name": "api_elo",
+      "version": "api_elo_v1",
+      "dataset": "api_team_pre_match_v1",
+      "status": "API_OOS_BACKTEST_READY",
+      "calibration": "isotonic",
+      "logLoss": 1.164156473832917,
+      "brier": 0.19857317288932516,
+      "ece": 0.020584987018334017,
+      "incremental": {
+        "brier_improvement": 0.0026411081306691453,
+        "decision": "INCONCLUSIVE",
+        "log_loss_improvement": -0.11238628447848065
+      },
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "name": "api_player_pre_lineup_multinomial",
+      "version": "api_player_pre_lineup_multinomial_v1",
+      "dataset": "api_player_pre_lineup_v1",
+      "status": "API_OOS_BACKTEST_READY",
+      "calibration": "isotonic",
+      "logLoss": 1.0266857765396575,
+      "brier": 0.20425602559939304,
+      "ece": 0.022654356852120177,
+      "incremental": {
+        "brier_improvement": -0.0030417445793987363,
+        "decision": "INCONCLUSIVE",
+        "log_loss_improvement": 0.02508441281477891
+      },
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "name": "api_post_lineup_simulated_multinomial",
+      "version": "api_post_lineup_simulated_multinomial_v1",
+      "dataset": "api_post_lineup_simulated_v1",
+      "status": "API_OOS_BACKTEST_READY",
+      "calibration": "isotonic",
+      "logLoss": 1.6920036142588435,
+      "brier": 0.21077457095475585,
+      "ece": 0.02568995934295436,
+      "incremental": {
+        "brier_improvement": -0.009560289934761546,
+        "decision": "REJECTED",
+        "log_loss_improvement": -0.640233424904407
+      },
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "name": "api_team_multinomial",
+      "version": "api_team_multinomial_v1",
+      "dataset": "api_team_pre_match_v1",
+      "status": "API_OOS_BACKTEST_READY",
+      "calibration": "isotonic",
+      "logLoss": 1.0517701893544364,
+      "brier": 0.2012142810199943,
+      "ece": 0.04234711798509103,
+      "incremental": {
+        "brier_improvement": 0,
+        "decision": "INCONCLUSIVE",
+        "log_loss_improvement": 0
+      },
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "name": "market_devigged_baseline",
+      "version": "market_devigged_baseline_v1",
+      "dataset": "api_team_pre_match_v1",
+      "status": "API_OOS_BACKTEST_READY",
+      "calibration": "isotonic",
+      "logLoss": 1.5176925802721661,
+      "brier": 0.19340635563896558,
+      "ece": 0.050496572110169946,
+      "incremental": {
+        "brier_improvement": 0.00780792538102873,
+        "decision": "INCONCLUSIVE",
+        "log_loss_improvement": -0.4659223909177297
+      },
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "name": "Poisson",
+      "version": "planned_v1",
+      "status": "BLOCKED_BY_COVERAGE",
+      "logLoss": null,
+      "brier": null,
+      "origin": "NO OUTPUT"
+    },
+    {
+      "name": "Dixon-Coles",
+      "version": "planned_v1",
+      "status": "BLOCKED_BY_COVERAGE",
+      "logLoss": null,
+      "brier": null,
+      "origin": "NO OUTPUT"
+    },
+    {
+      "name": "Gradient boosting",
+      "version": "planned_v1",
+      "status": "BLOCKED_BY_COVERAGE",
+      "logLoss": null,
+      "brier": null,
+      "origin": "NO OUTPUT"
+    },
+    {
+      "name": "Ensemble calibré",
+      "version": "planned_v1",
+      "status": "BLOCKED_BY_COVERAGE",
+      "logLoss": null,
+      "brier": null,
+      "origin": "NO OUTPUT"
+    }
+  ],
+  "backtests": [
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 382,
+      "confidence_interval_per_bet": [
+        -0.16346465968586388,
+        0.15983965968586375
+      ],
+      "generated_at": "2026-07-25T15:40:16.999428+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 42.60000000000002,
+      "max_loss_streak": 12,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.02,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": 0.07000000000000162,
+      "promotion": "NO_PROMOTION",
+      "roi": 0.00013942278965084872,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_elo_v1_1x2_edge_0.02",
+      "yield": 0.00018324607329843354,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 342,
+      "confidence_interval_per_bet": [
+        -0.20074634502923983,
+        0.15047002923976605
+      ],
+      "generated_at": "2026-07-25T15:40:17.011185+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 43.140000000000015,
+      "max_loss_streak": 12,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.04,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -9.389999999999999,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.02093132119212679,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_elo_v1_1x2_edge_0.04",
+      "yield": -0.02745614035087719,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 260,
+      "confidence_interval_per_bet": [
+        -0.22200769230769232,
+        0.1972201923076922
+      ],
+      "generated_at": "2026-07-25T15:40:17.019751+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 31.480000000000032,
+      "max_loss_streak": 16,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.06,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -5.249999999999998,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.01505376344086021,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_elo_v1_1x2_edge_0.06",
+      "yield": -0.020192307692307686,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 0.9055139421589233,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 396,
+      "confidence_interval_per_bet": [
+        -0.2561578282828283,
+        0.07771148989898985
+      ],
+      "generated_at": "2026-07-25T15:40:17.030829+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 45.120000000000005,
+      "max_loss_streak": 20,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.02,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -36.33,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.06514605411802679,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.02",
+      "yield": -0.09174242424242424,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 0.5019052884741783,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 361,
+      "confidence_interval_per_bet": [
+        -0.3031668975069252,
+        0.061837950138504114
+      ],
+      "generated_at": "2026-07-25T15:40:17.040156+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 48.51999999999998,
+      "max_loss_streak": 20,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.04,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -46.77,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.09184454961412329,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.04",
+      "yield": -0.12955678670360113,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 307,
+      "confidence_interval_per_bet": [
+        -0.2916653094462541,
+        0.111269543973941
+      ],
+      "generated_at": "2026-07-25T15:40:17.048912+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 44.349999999999994,
+      "max_loss_streak": 18,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.06,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -29.95,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.06775251668363307,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.06",
+      "yield": -0.097557003257329,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 0.3447746561706254,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 388,
+      "confidence_interval_per_bet": [
+        -0.30761726804123707,
+        0.0358923969072164
+      ],
+      "generated_at": "2026-07-25T15:40:17.058806+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 61.86000000000004,
+      "max_loss_streak": 21,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.02,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -54.33,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.10296207857183468,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.02",
+      "yield": -0.14002577319587628,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 0.14276299573327006,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 353,
+      "confidence_interval_per_bet": [
+        -0.3528293201133144,
+        0.005309490084985762
+      ],
+      "generated_at": "2026-07-25T15:40:17.067864+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 68.88000000000002,
+      "max_loss_streak": 20,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.04,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -64.15,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.13595422274027763,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.04",
+      "yield": -0.18172804532577905,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 0.3552890411423093,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 304,
+      "confidence_interval_per_bet": [
+        -0.3510871710526316,
+        0.051450657894736816
+      ],
+      "generated_at": "2026-07-25T15:40:17.076360+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 53.91000000000005,
+      "max_loss_streak": 19,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.06,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -48.38,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.11753559107915068,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.06",
+      "yield": -0.15914473684210528,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 393,
+      "confidence_interval_per_bet": [
+        -0.20066666666666663,
+        0.10683333333333324
+      ],
+      "generated_at": "2026-07-25T15:40:17.086500+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 44.36999999999999,
+      "max_loss_streak": 9,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.02,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -17.92,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.0349945321043587,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_team_multinomial_v1_1x2_edge_0.02",
+      "yield": -0.04559796437659033,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 338,
+      "confidence_interval_per_bet": [
+        -0.18290680473372778,
+        0.16133579881656804
+      ],
+      "generated_at": "2026-07-25T15:40:17.097092+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 38.610000000000014,
+      "max_loss_streak": 10,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.04,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -6.02,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.013378372372105426,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_team_multinomial_v1_1x2_edge_0.04",
+      "yield": -0.017810650887573963,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 271,
+      "confidence_interval_per_bet": [
+        -0.23367066420664206,
+        0.16789852398523986
+      ],
+      "generated_at": "2026-07-25T15:40:17.105540+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 35.36,
+      "max_loss_streak": 15,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.06,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -10.489999999999998,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.029017177948051226,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "api_team_multinomial_v1_1x2_edge_0.06",
+      "yield": -0.038708487084870846,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 0.6656913401899025,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 339,
+      "confidence_interval_per_bet": [
+        -0.24083702064896753,
+        0.05951474926253677
+      ],
+      "generated_at": "2026-07-25T15:40:17.113146+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 46.90000000000006,
+      "max_loss_streak": 9,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.02,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -31.66,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.0794798413415675,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "market_devigged_baseline_v1_1x2_edge_0.02",
+      "yield": -0.09339233038348083,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 261,
+      "confidence_interval_per_bet": [
+        -0.21817432950191568,
+        0.12816666666666662
+      ],
+      "generated_at": "2026-07-25T15:40:17.119770+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 29.360000000000014,
+      "max_loss_streak": 10,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.04,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -12.43,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.04121762774811818,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "market_devigged_baseline_v1_1x2_edge_0.04",
+      "yield": -0.04762452107279693,
+      "origin": "OOS HISTORICAL"
+    },
+    {
+      "adjusted_p_value": 1,
+      "backtest_version": "api_football_backtest_v3",
+      "bets": 200,
+      "confidence_interval_per_bet": [
+        -0.23270125,
+        0.13379374999999977
+      ],
+      "generated_at": "2026-07-25T15:40:17.125756+00:00",
+      "hypotheses_tested": 3,
+      "market": "1X2",
+      "max_drawdown_units": 26.959999999999994,
+      "max_loss_streak": 8,
+      "multiple_testing_method": "BONFERRONI",
+      "parameters": {
+        "kelly_fraction": 0.25,
+        "minimum_edge": 0.06,
+        "minimum_probability": 0,
+        "stake_cap": 2,
+        "staking": "FIXED"
+      },
+      "production_status": "PRODUCTION_LOCKED",
+      "profit_units": -11.569999999999999,
+      "promotion": "NO_PROMOTION",
+      "roi": -0.05345839301390749,
+      "segment": "BLIND_OOS",
+      "status": "INCONCLUSIVE",
+      "strategy": "market_devigged_baseline_v1_1x2_edge_0.06",
+      "yield": -0.05784999999999999,
+      "origin": "OOS HISTORICAL"
+    }
+  ],
+  "qualityChecks": [
+    {
+      "check": "PostgreSQL Neon",
+      "status": "PASS",
+      "value": "101 lignes · révision 0003_jalon4_durable_shadow",
+      "threshold": "connecté, migré et audité",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Double écriture durable",
+      "status": "PASS",
+      "value": "POSTGRESQL_AND_GIT_DATA_BRIDGE",
+      "threshold": "PostgreSQL + shadow-data",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Authentification The Odds API",
+      "status": "PASS",
+      "value": "appel HTTP 200, secret non exposé",
+      "threshold": "source authentifiée",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Provenance brute",
+      "status": "PASS",
+      "value": "endpoint + temps + hash + ingestion",
+      "threshold": "champs complets",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Persistance inter-runners",
+      "status": "PASS",
+      "value": "4 fichiers restaurés",
+      "threshold": "observation stable",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Déduplication exacte",
+      "status": "PASS",
+      "value": "0 doublon",
+      "threshold": "0",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Idempotence prédictions",
+      "status": "PASS",
+      "value": "1 → 1 ; décisions 1 → 1",
+      "threshold": "aucun ajout identique",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Réserve quota",
+      "status": "PASS",
+      "value": "20 %",
+      "threshold": "≥ 20 %",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "Prédictions sans cote",
+      "status": "WARN",
+      "value": "8 bloquées",
+      "threshold": "jamais synthétisées",
+      "origin": "LIVE SOURCE"
+    },
+    {
+      "check": "API-Football",
+      "status": "PENDING",
+      "value": "adaptateur prêt, secret absent",
+      "threshold": "enrichissement optionnel",
+      "origin": "NO OUTPUT"
+    },
+    {
+      "check": "Paris réels",
+      "status": "PASS",
+      "value": "PRODUCTION_LOCKED",
+      "threshold": "aucune exécution financière",
+      "origin": "NO OUTPUT"
+    },
+    {
+      "check": "Couverture UUID legacy",
+      "status": "PASS",
+      "value": "98.668 %",
+      "threshold": "≥ 98 %",
+      "origin": "LEGACY SOURCE"
+    }
+  ],
+  "providers": [
+    {
+      "name": "The Odds API",
+      "adapter_ready": true,
+      "secret_present": true,
+      "authenticated": true,
+      "live_data_received": true,
+      "live_data_persisted": true,
+      "status": "LIVE_PIPELINE_VERIFIED"
+    },
+    {
+      "name": "API-Football",
+      "adapter_ready": true,
+      "secret_present": false,
+      "authenticated": false,
+      "live_data_received": false,
+      "live_data_persisted": false,
+      "status": "ADAPTER_ONLY"
+    },
+    {
+      "name": "Football-Data.co.uk",
+      "adapter_ready": true,
+      "secret_present": false,
+      "authenticated": false,
+      "live_data_received": false,
+      "live_data_persisted": false,
+      "status": "ADAPTER_ONLY"
+    }
+  ],
+  "incidents": [
+    {
+      "code": "ARTIFACT_REDIRECT_AUTH_HEADER",
+      "severity": "WARNING",
+      "status": "RESOLVED",
+      "startedAt": "2026-07-24T12:54:00Z",
+      "endedAt": "2026-07-24T12:56:43Z",
+      "cause": "En-tête GitHub transmis vers une URL signée",
+      "impact": "Un run arrêté avant appel fournisseur",
+      "correction": "Retrait de l’en-tête hors api.github.com",
+      "origin": "LIVE SOURCE"
+    }
+  ],
+  "quota": {
+    "provider_limit": 20000,
+    "used_after_activation": 8,
+    "remaining_after_activation": 19992,
+    "credits_per_snapshot": 2,
+    "forecast_matches_per_month": 40,
+    "forecast_windows_per_match": 9,
+    "forecast_credits_per_month": 720,
+    "operational_ceiling": 1000,
+    "reserve_credits": 4000,
+    "reserve_pct": 20,
+    "estimated_provider_cost_eur": 0,
+    "artifact_storage_bytes_retained": 29939
+  },
+  "provenance": {
+    "demo": "Mode démo disponible uniquement sur activation explicite.",
+    "legacy": "data/matches.parquet + rapports/jalon2/oos-results.json",
+    "live": "The Odds API → registre append-only shadow-data → preuve compacte Jalon 4",
+    "stateArtifact": "shadow-state-30095263615",
+    "sourceCommit": "e32ecfe09987542bba750b766488ddd927b6ea0b"
+  },
+  "externalValidation": {
+    "status": "WAITING_FOR_EXTERNAL_GATES",
+    "runId": "30233306063",
+    "sourceCommit": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
+    "protocol": {
+      "frozen_at": "2026-07-25T17:20:32.814754+00:00",
+      "hash": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2",
+      "status": "EXTERNAL_VALIDATION_PROTOCOL_V1_LOCKED"
+    },
+    "readiness": [
+      {
+        "competition": "Premier League",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [
+              "TEAM"
+            ],
+            "status": "PARTIAL"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1,
+            "fixtures": 2660,
+            "provenance_rate": 1,
+            "seasons": 7,
+            "status": "READY",
+            "team_identity_rate": 1,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0,
+        "players": 5216,
+        "quality": "PASSED",
+        "seasons": [
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 28,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "La Liga",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [
+              "TEAM"
+            ],
+            "status": "PARTIAL"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1,
+            "fixtures": 2660,
+            "provenance_rate": 1,
+            "seasons": 7,
+            "status": "READY",
+            "team_identity_rate": 1,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0,
+        "players": 5042,
+        "quality": "PASSED",
+        "seasons": [
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 28,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "Bundesliga",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [
+              "TEAM"
+            ],
+            "status": "PARTIAL"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1,
+            "fixtures": 2156,
+            "provenance_rate": 1,
+            "seasons": 7,
+            "status": "READY",
+            "team_identity_rate": 1,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0,
+        "players": 4178,
+        "quality": "PASSED",
+        "seasons": [
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 308,
+            "fixtures_expected": 306,
+            "fixtures_received": 308,
+            "results": 308,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 28,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "Serie A",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [],
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1,
+            "fixtures": 2661,
+            "provenance_rate": 1,
+            "seasons": 7,
+            "status": "BLOCKED_BY_COVERAGE",
+            "team_identity_rate": 0.9354838709677419,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0,
+        "players": 5530,
+        "quality": "PARTIAL",
+        "seasons": [
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 381,
+            "fixtures_expected": 380,
+            "fixtures_received": 381,
+            "results": 381,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 380,
+            "fixtures_expected": 380,
+            "fixtures_received": 380,
+            "results": 380,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 31,
+        "temporality": "PASSED"
+      },
+      {
+        "competition": "UEFA Champions League",
+        "events": 0,
+        "gates": {
+          "EXTERNAL_VALIDATION_GATE": {
+            "blocked_components": [
+              "PLAYER",
+              "LINEUP",
+              "MARKET"
+            ],
+            "ready_components": [],
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "LINEUP_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "resolved_starting_xi_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "MARKET_GATE": {
+            "fixtures_1x2": 0,
+            "fixtures_over_under_25": 0,
+            "invented_prices": 0,
+            "reason": "NO_RELIABLE_HISTORICAL_EXTERNAL_PRICE_SOURCE",
+            "status": "UNAVAILABLE"
+          },
+          "PLAYER_GATE": {
+            "coverage": 0,
+            "fixtures": 0,
+            "identity_rate": null,
+            "rows": 0,
+            "status": "BLOCKED_BY_COVERAGE"
+          },
+          "TEAM_GATE": {
+            "canonical_rate": 1,
+            "fixtures": 1594,
+            "provenance_rate": 1,
+            "seasons": 7,
+            "status": "BLOCKED_BY_COVERAGE",
+            "team_identity_rate": 0.9521531100478469,
+            "temporal_errors": 0
+          }
+        },
+        "market_1x2": 0,
+        "market_over_under_25": 0,
+        "null_rate": 0,
+        "players": 14392,
+        "quality": "PARTIAL",
+        "seasons": [
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 210,
+            "fixtures_expected": null,
+            "fixtures_received": 210,
+            "results": 210,
+            "season": 2019,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 178,
+            "fixtures_expected": null,
+            "fixtures_received": 178,
+            "results": 178,
+            "season": 2020,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 218,
+            "fixtures_expected": null,
+            "fixtures_received": 218,
+            "results": 218,
+            "season": 2021,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 214,
+            "fixtures_expected": null,
+            "fixtures_received": 214,
+            "results": 214,
+            "season": 2022,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 214,
+            "fixtures_expected": null,
+            "fixtures_received": 214,
+            "results": 214,
+            "season": 2023,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 279,
+            "fixtures_expected": null,
+            "fixtures_received": 279,
+            "results": 279,
+            "season": 2024,
+            "status": "READY"
+          },
+          {
+            "fixture_coverage": 1,
+            "fixtures_canonical": 281,
+            "fixtures_expected": null,
+            "fixtures_received": 281,
+            "results": 281,
+            "season": 2025,
+            "status": "READY"
+          }
+        ],
+        "team_statistics": 0,
+        "teams": 209,
+        "temporality": "PASSED"
+      }
+    ],
+    "datasets": [
+      {
+        "name": "pl_team_pre_match_v1",
+        "version": "pl_team_pre_match_v1",
+        "competition": "Premier League",
+        "seasons": [
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ],
+        "fixtures": 2660,
+        "rows": 2660,
+        "hash": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876",
+        "status": "EXTERNAL_DATASET_READY"
+      },
+      {
+        "name": "laliga_team_pre_match_v1",
+        "version": "laliga_team_pre_match_v1",
+        "competition": "La Liga",
+        "seasons": [
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ],
+        "fixtures": 2660,
+        "rows": 2660,
+        "hash": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
+        "status": "EXTERNAL_DATASET_READY"
+      },
+      {
+        "name": "bundesliga_team_pre_match_v1",
+        "version": "bundesliga_team_pre_match_v1",
+        "competition": "Bundesliga",
+        "seasons": [
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ],
+        "fixtures": 2156,
+        "rows": 2156,
+        "hash": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
+        "status": "EXTERNAL_DATASET_READY"
+      }
+    ],
+    "models": {
+      "dixon_coles": {
+        "metrics": {
+          "accuracy": 0.48408239700374533,
+          "brier_score": 0.20629441098352527,
+          "calibration_intercept": -0.05023616498532767,
+          "calibration_slope": 1.1407627784217027,
+          "ece": 0.015695303651762683,
+          "log_loss": 1.0311716150187518,
+          "matches": 2136,
+          "sharpness": 0.11455780801450983,
+          "status": "EVALUATED"
+        },
+        "predictions": 2136,
+        "status": "EVALUATED"
+      },
+      "frozen_transfer": {
+        "metrics": {
+          "accuracy": 0.5135767790262172,
+          "brier_score": 0.1975806310484061,
+          "calibration_intercept": -0.03995141587885205,
+          "calibration_slope": 1.0552520079562246,
+          "ece": 0.019490646257564193,
+          "log_loss": 0.9945416331307865,
+          "matches": 2136,
+          "sharpness": 0.16277437533684563,
+          "status": "EVALUATED"
+        },
+        "predictions": 2136,
+        "status": "FROZEN_TRANSFER_EVALUATED"
+      },
+      "league_specific": {
+        "metrics": {
+          "accuracy": 0.5173220973782772,
+          "brier_score": 0.19802208649452005,
+          "calibration_intercept": -6.473021201981876e-7,
+          "calibration_slope": 0.9629687389101174,
+          "ece": 0.026226616056796728,
+          "log_loss": 0.9982971423875214,
+          "matches": 2136,
+          "sharpness": 0.17167798871470927,
+          "status": "EVALUATED"
+        },
+        "predictions": 2136,
+        "status": "LEAGUE_SPECIFIC_EVALUATED"
+      },
+      "poisson": {
+        "metrics": {
+          "accuracy": 0.48174157303370785,
+          "brier_score": 0.20632646999032503,
+          "calibration_intercept": -0.08237049775829654,
+          "calibration_slope": 1.1822260108139404,
+          "ece": 0.014667937607782785,
+          "log_loss": 1.0316794227669985,
+          "matches": 2136,
+          "sharpness": 0.12049168107672568,
+          "status": "EVALUATED"
+        },
+        "predictions": 2136,
+        "status": "EVALUATED"
+      },
+      "pooled": {
+        "metrics": {
+          "accuracy": 0.5112359550561798,
+          "brier_score": 0.19797843008003416,
+          "calibration_intercept": -0.043903242517988286,
+          "calibration_slope": 1.0370677794687746,
+          "ece": 0.026141992803416225,
+          "log_loss": 0.9958391466612695,
+          "matches": 2136,
+          "sharpness": 0.1693654874677291,
+          "status": "EVALUATED"
+        },
+        "predictions": 2136,
+        "status": "POOLED_MODEL_EVALUATED"
+      }
+    },
+    "comparisons": [
+      {
+        "challenger_metrics": {
+          "accuracy": 0.5173220973782772,
+          "brier_score": 0.19802208649452005,
+          "calibration_intercept": -6.473021202492957e-7,
+          "calibration_slope": 0.9629687389101174,
+          "ece": 0.026226616056796697,
+          "log_loss": 0.9982971423875217,
+          "matches": 2136,
+          "sharpness": 0.17167798871470927,
+          "status": "EVALUATED"
+        },
+        "comparison_id": "LEAGUE_SPECIFIC_VS_FROZEN_TRANSFER",
+        "competitions": [
+          "Bundesliga",
+          "La Liga",
+          "Premier League"
+        ],
+        "excluded_fixtures": 0,
+        "exclusion_reasons": [],
+        "fixtures_a": 2136,
+        "fixtures_b": 2136,
+        "model_a": "bundesliga_specific_v1",
+        "model_b": "ligue1_frozen_transfer_v1",
+        "paired_fixtures": 2136,
+        "paired_log_loss_delta": 0.0037555092567349733,
+        "production_status": "PRODUCTION_LOCKED",
+        "reference_metrics": {
+          "accuracy": 0.5135767790262172,
+          "brier_score": 0.1975806310484061,
+          "calibration_intercept": -0.039951415878851905,
+          "calibration_slope": 1.055252007956225,
+          "ece": 0.019490646257564248,
+          "log_loss": 0.9945416331307865,
+          "matches": 2136,
+          "sharpness": 0.16277437533684563,
+          "status": "EVALUATED"
+        },
+        "status": "INCONCLUSIVE",
+        "uncertainty": {
+          "ci90": [
+            -0.001867244828243303,
+            0.009646575004382726
+          ],
+          "ci95": [
+            -0.0028781149957812927,
+            0.010781776644698331
+          ],
+          "groups": 215,
+          "iterations": 5000,
+          "probability_challenger_better": 0.137,
+          "seed": 1707
+        }
+      },
+      {
+        "challenger_metrics": {
+          "accuracy": 0.5173220973782772,
+          "brier_score": 0.19802208649452005,
+          "calibration_intercept": -6.473021202492957e-7,
+          "calibration_slope": 0.9629687389101174,
+          "ece": 0.026226616056796697,
+          "log_loss": 0.9982971423875217,
+          "matches": 2136,
+          "sharpness": 0.17167798871470927,
+          "status": "EVALUATED"
+        },
+        "comparison_id": "LEAGUE_SPECIFIC_VS_POOLED",
+        "competitions": [
+          "Bundesliga",
+          "La Liga",
+          "Premier League"
+        ],
+        "excluded_fixtures": 0,
+        "exclusion_reasons": [],
+        "fixtures_a": 2136,
+        "fixtures_b": 2136,
+        "model_a": "bundesliga_specific_v1",
+        "model_b": "pooled_multileague_v1",
+        "paired_fixtures": 2136,
+        "paired_log_loss_delta": 0.0024579957262518388,
+        "production_status": "PRODUCTION_LOCKED",
+        "reference_metrics": {
+          "accuracy": 0.5112359550561798,
+          "brier_score": 0.19797843008003416,
+          "calibration_intercept": -0.0439032425179883,
+          "calibration_slope": 1.0370677794687744,
+          "ece": 0.026141992803416222,
+          "log_loss": 0.9958391466612697,
+          "matches": 2136,
+          "sharpness": 0.1693654874677291,
+          "status": "EVALUATED"
+        },
+        "status": "INCONCLUSIVE",
+        "uncertainty": {
+          "ci90": [
+            -0.0017054164266271893,
+            0.006784032404360514
+          ],
+          "ci95": [
+            -0.002509193697461491,
+            0.007526481307921518
+          ],
+          "groups": 215,
+          "iterations": 5000,
+          "probability_challenger_better": 0.166,
+          "seed": 1707
+        }
+      },
+      {
+        "challenger_metrics": {
+          "accuracy": 0.48408239700374533,
+          "brier_score": 0.20629441098352527,
+          "calibration_intercept": -0.05023616498532781,
+          "calibration_slope": 1.1407627784217025,
+          "ece": 0.015695303651762672,
+          "log_loss": 1.0311716150187518,
+          "matches": 2136,
+          "sharpness": 0.11455780801450983,
+          "status": "EVALUATED"
+        },
+        "comparison_id": "DIXON_COLES_VS_POISSON",
+        "competitions": [
+          "Bundesliga",
+          "La Liga",
+          "Premier League"
+        ],
+        "excluded_fixtures": 0,
+        "exclusion_reasons": [],
+        "fixtures_a": 2136,
+        "fixtures_b": 2136,
+        "model_a": "bundesliga_dixon_coles_v1",
+        "model_b": "bundesliga_poisson_v1",
+        "paired_fixtures": 2136,
+        "paired_log_loss_delta": -0.0005078077482467707,
+        "production_status": "PRODUCTION_LOCKED",
+        "reference_metrics": {
+          "accuracy": 0.48174157303370785,
+          "brier_score": 0.20632646999032503,
+          "calibration_intercept": -0.08237049775829688,
+          "calibration_slope": 1.182226010813941,
+          "ece": 0.014667937607782802,
+          "log_loss": 1.0316794227669985,
+          "matches": 2136,
+          "sharpness": 0.12049168107672568,
+          "status": "EVALUATED"
+        },
+        "status": "INCONCLUSIVE",
+        "uncertainty": {
+          "ci90": [
+            -0.002029280969680828,
+            0.0010161409376894782
+          ],
+          "ci95": [
+            -0.0022937343630384187,
+            0.0013181624238046594
+          ],
+          "groups": 215,
+          "iterations": 5000,
+          "probability_challenger_better": 0.7058,
+          "seed": 1707
+        }
+      },
+      {
+        "challenger_metrics": {
+          "accuracy": 0.48174157303370785,
+          "brier_score": 0.20632646999032503,
+          "calibration_intercept": -0.08237049775829688,
+          "calibration_slope": 1.182226010813941,
+          "ece": 0.014667937607782802,
+          "log_loss": 1.0316794227669985,
+          "matches": 2136,
+          "sharpness": 0.12049168107672568,
+          "status": "EVALUATED"
+        },
+        "comparison_id": "POISSON_VS_LEAGUE_SPECIFIC",
+        "competitions": [
+          "Bundesliga",
+          "La Liga",
+          "Premier League"
+        ],
+        "excluded_fixtures": 0,
+        "exclusion_reasons": [],
+        "fixtures_a": 2136,
+        "fixtures_b": 2136,
+        "model_a": "bundesliga_poisson_v1",
+        "model_b": "bundesliga_specific_v1",
+        "paired_fixtures": 2136,
+        "paired_log_loss_delta": 0.033382280379477,
+        "production_status": "PRODUCTION_LOCKED",
+        "reference_metrics": {
+          "accuracy": 0.5173220973782772,
+          "brier_score": 0.19802208649452005,
+          "calibration_intercept": -6.473021202492957e-7,
+          "calibration_slope": 0.9629687389101174,
+          "ece": 0.026226616056796697,
+          "log_loss": 0.9982971423875217,
+          "matches": 2136,
+          "sharpness": 0.17167798871470927,
+          "status": "EVALUATED"
+        },
+        "status": "EXTERNAL_VALIDATION_FAILED",
+        "uncertainty": {
+          "ci90": [
+            0.02175552020341727,
+            0.04486066952082869
+          ],
+          "ci95": [
+            0.01936090240503835,
+            0.04684659374761711
+          ],
+          "groups": 215,
+          "iterations": 5000,
+          "probability_challenger_better": 0,
+          "seed": 1707
+        }
+      },
+      {
+        "comparison_id": "FROZEN_TRANSFER_VS_MARKET",
+        "paired_fixtures": 0,
+        "reason": "MARKET_GATE_UNAVAILABLE",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "comparison_id": "LEAGUE_SPECIFIC_VS_MARKET",
+        "paired_fixtures": 0,
+        "reason": "MARKET_GATE_UNAVAILABLE",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "comparison_id": "POOLED_VS_MARKET",
+        "paired_fixtures": 0,
+        "reason": "MARKET_GATE_UNAVAILABLE",
+        "status": "UNAVAILABLE"
+      }
+    ],
+    "leaveOneLeagueOut": [
+      {
+        "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+        "feature_stability": "MEASURED",
+        "held_out_competition": "Premier League",
+        "market_comparison": "UNAVAILABLE_MARKET_GATE",
+        "metrics": {
+          "accuracy": 0.49605263157894736,
+          "brier_score": 0.20208171649561105,
+          "calibration_intercept": -0.01431375105564785,
+          "calibration_slope": 0.975542433050069,
+          "ece": 0.03160492550995335,
+          "log_loss": 1.0104974067498922,
+          "matches": 760,
+          "sharpness": 0.15921724377176238,
+          "status": "EVALUATED"
+        },
+        "paired_fixtures": 760,
+        "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+        "training_competitions": [
+          "Bundesliga",
+          "La Liga"
+        ]
+      },
+      {
+        "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+        "feature_stability": "MEASURED",
+        "held_out_competition": "La Liga",
+        "market_comparison": "UNAVAILABLE_MARKET_GATE",
+        "metrics": {
+          "accuracy": 0.5223684210526316,
+          "brier_score": 0.1961772753961993,
+          "calibration_intercept": -0.0504885763829514,
+          "calibration_slope": 1.0582948765177307,
+          "ece": 0.02049686050339524,
+          "log_loss": 0.9913360571337251,
+          "matches": 760,
+          "sharpness": 0.1746281456581208,
+          "status": "EVALUATED"
+        },
+        "paired_fixtures": 760,
+        "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+        "training_competitions": [
+          "Bundesliga",
+          "Premier League"
+        ]
+      },
+      {
+        "calibration_stability": "INCONCLUSIVE_NO_EXTERNAL_CALIBRATOR_TUNING",
+        "feature_stability": "MEASURED",
+        "held_out_competition": "Bundesliga",
+        "market_comparison": "UNAVAILABLE_MARKET_GATE",
+        "metrics": {
+          "accuracy": 0.512987012987013,
+          "brier_score": 0.197653478787476,
+          "calibration_intercept": -0.01936068610468552,
+          "calibration_slope": 0.981672994675791,
+          "ece": 0.04199653872653711,
+          "log_loss": 0.9946561498073714,
+          "matches": 616,
+          "sharpness": 0.17615867488010248,
+          "status": "EVALUATED"
+        },
+        "paired_fixtures": 616,
+        "status": "LEAVE_ONE_LEAGUE_OUT_READY",
+        "training_competitions": [
+          "La Liga",
+          "Premier League"
+        ]
+      }
+    ],
+    "playerGeneralization": [
+      {
+        "competition": "Premier League",
+        "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+        "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+        "status": "INCONCLUSIVE"
+      },
+      {
+        "competition": "La Liga",
+        "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+        "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+        "status": "INCONCLUSIVE"
+      },
+      {
+        "competition": "Bundesliga",
+        "reason": "PLAYER_GATE_BLOCKED_BY_COVERAGE",
+        "scientific_status": "PLAYER_GENERALIZATION_INCONCLUSIVE",
+        "status": "INCONCLUSIVE"
+      }
+    ],
+    "negativeControls": [
+      {
+        "competition": "Premier League",
+        "control": "TARGET_PERMUTATION",
+        "metrics": {
+          "brier_score": 0.21802054478301014,
+          "ece": 0,
+          "log_loss": 1.079799282333215,
+          "matches": 760
+        },
+        "status": "PASSED"
+      },
+      {
+        "competition": "Premier League",
+        "control": "PLAYER_FEATURE_PERMUTATION",
+        "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+      },
+      {
+        "competition": "Premier League",
+        "control": "CONSTANT_PLAYER_FEATURES",
+        "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+      },
+      {
+        "competition": "Premier League",
+        "control": "RANDOM_LINEUPS",
+        "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+      },
+      {
+        "competition": "Premier League",
+        "control": "SYNTHETIC_FUTURE_FEATURE",
+        "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+      },
+      {
+        "competition": "La Liga",
+        "control": "TARGET_PERMUTATION",
+        "metrics": {
+          "brier_score": 0.2130944136657433,
+          "ece": 0,
+          "log_loss": 1.0593400582518078,
+          "matches": 760
+        },
+        "status": "PASSED"
+      },
+      {
+        "competition": "La Liga",
+        "control": "PLAYER_FEATURE_PERMUTATION",
+        "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+      },
+      {
+        "competition": "La Liga",
+        "control": "CONSTANT_PLAYER_FEATURES",
+        "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+      },
+      {
+        "competition": "La Liga",
+        "control": "RANDOM_LINEUPS",
+        "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+      },
+      {
+        "competition": "La Liga",
+        "control": "SYNTHETIC_FUTURE_FEATURE",
+        "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+      },
+      {
+        "competition": "Bundesliga",
+        "control": "TARGET_PERMUTATION",
+        "metrics": {
+          "brier_score": 0.2179945325237533,
+          "ece": 5.551115123125783e-17,
+          "log_loss": 1.0792756090717992,
+          "matches": 616
+        },
+        "status": "PASSED"
+      },
+      {
+        "competition": "Bundesliga",
+        "control": "PLAYER_FEATURE_PERMUTATION",
+        "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+      },
+      {
+        "competition": "Bundesliga",
+        "control": "CONSTANT_PLAYER_FEATURES",
+        "status": "NOT_APPLICABLE_PLAYER_GATE_BLOCKED"
+      },
+      {
+        "competition": "Bundesliga",
+        "control": "RANDOM_LINEUPS",
+        "status": "NOT_APPLICABLE_LINEUP_GATE_BLOCKED"
+      },
+      {
+        "competition": "Bundesliga",
+        "control": "SYNTHETIC_FUTURE_FEATURE",
+        "status": "PASSED_BLOCKED_BY_ANTI_LEAKAGE"
+      }
+    ],
+    "strategies": {
+      "backtests": 0,
+      "hypotheses": 13,
+      "live_shadow_candidates": 0,
+      "production_status": "PRODUCTION_LOCKED",
+      "protocol": "STRATEGY_LAB_V3_PREREGISTERED",
+      "protocol_hash": "38a539aa32588057c8250bd63d15576fb24c1fc8a9aca6aa3e6a0968cab1be95",
+      "provider_calls": 0,
+      "quota_consumed": 0,
+      "reason": "MARKET_GATE_UNAVAILABLE",
+      "shadow_model_candidates": 0,
+      "status": "NO_EXTERNAL_VALIDATED_EDGE"
+    },
+    "package": {
+      "NO_BET_DEFAULT": true,
+      "PRODUCTION_LOCKED": true,
+      "REAL_BETS": false,
+      "calibrators": [
+        "NONE_FROZEN_EXTERNAL"
+      ],
+      "code_revision": "2817d053504c2b5befb86f12edb9e12b0cd737b1",
+      "dataset_versions": [
+        "pl_team_pre_match_v1",
+        "laliga_team_pre_match_v1",
+        "bundesliga_team_pre_match_v1"
+      ],
+      "decision_rules": [
+        "MARKET_BASELINE_MONITORING",
+        "NO_EXTERNAL_VALIDATED_EDGE"
+      ],
+      "feature_versions": [
+        "TEAM_FEATURES_V1"
+      ],
+      "generated_at": "2026-07-27T02:59:32.899711+00:00",
+      "hashes": {
+        "datasets": {
+          "bundesliga_team_pre_match_v1": "6832dc8b15ffcdf51dc19f65a1db5d547238f87e71881293cbc07414e06ed652",
+          "laliga_team_pre_match_v1": "a64d84bc5741ae6045e4b607e4a08ffc58deb6dde10dd443c53b0d15e6f5b1b4",
+          "pl_team_pre_match_v1": "aebc5c3c7eb8458dd59f0621c5df8776c81eeb7d88593fec68f399d95b23d876"
+        },
+        "external_protocol": "53932dff3a30038668230b493746d3d7e7f45cbd4c9f967191e934da853645d2"
+      },
+      "model_versions": [],
+      "package": "PRESEASON_SHADOW_PACKAGE_V1",
+      "package_hash": "37a38566828deaeffff2427b1d8da2cc778896b0d85b7d1e616bb634ba5ea459",
+      "production_status": "PRODUCTION_LOCKED",
+      "quality_gates": [
+        "TEAM_GATE",
+        "PLAYER_GATE",
+        "LINEUP_GATE",
+        "MARKET_GATE",
+        "EXTERNAL_VALIDATION_GATE"
+      ],
+      "rejection_rules": [
+        "UNPAIRED_SAMPLE",
+        "TEMPORAL_LEAKAGE",
+        "POOR_CALIBRATION",
+        "PROFIT_CONCENTRATION",
+        "NEGATIVE_CONTROL_FAILURE"
+      ],
+      "status": "PRESEASON_PACKAGE_WAITING_FOR_EXTERNAL_GATES",
+      "strategy_versions": [],
+      "thresholds": {
+        "external_ci": 0.95,
+        "minimum_competitions": 3
+      }
+    },
+    "predictions": 12816,
+    "providerCalls": 0,
+    "quotaConsumed": 0,
+    "storage": {
+      "after_bytes": 828284488,
+      "can_write": true,
+      "current_bytes": 828284488,
+      "pause_bytes": 900000000,
+      "status": "WARNING",
+      "warning_bytes": 750000000
+    },
+    "productionStatus": "PRODUCTION_LOCKED"
+  },
+  "matchup": {
+    "version": "MATCHUP_LAB_V1",
+    "dataStatus": "HISTORICAL_RESEARCH_EVIDENCE",
+    "origin": "HISTORICAL RESEARCH",
+    "verdict": "JALON_11_BLOCKED_BY_DATA_GATES",
+    "coverage": {
+      "marketRows": 10732,
+      "pairedEvaluationRows": 7081,
+      "competitions": [
+        {
+          "competition": "Ligue 1",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2058,
+          "playerFixtures": 2058,
+          "lineupFixtures": 2058,
+          "injuryRows": 12801,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "Premier League",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2280,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "La Liga",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2280,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "Bundesliga",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 1835,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        },
+        {
+          "competition": "Serie A",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "teamFixtures": 2279,
+          "playerFixtures": 0,
+          "lineupFixtures": 0,
+          "injuryRows": 0,
+          "footednessObserved": 0
+        }
+      ],
+      "gates": [
+        {
+          "name": "TEAM_GATE",
+          "status": "PARTIAL",
+          "reasons": [
+            "10732/10732 market fixtures exactly paired with prior team/calendar features",
+            "10732/10732 feature materialization boundaries equal target kickoff",
+            "Prior-fixture update order is algorithmic; row-level source observed_at is unavailable",
+            "Descriptive diagnostics are allowed but promotion remains blocked"
+          ]
+        },
+        {
+          "name": "PLAYER_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Deep player match facts exist only for Ligue 1",
+            "Raw observations are POST_MATCH_ONLY and were collected in July 2026",
+            "V1 derived manifests disagree with raw coverage"
+          ]
+        },
+        {
+          "name": "PLAYER_FORM_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "V1 windows include unused substitutes",
+            "goals.total has null-versus-zero ambiguity",
+            "Goal events require score reconciliation before use"
+          ]
+        },
+        {
+          "name": "ABSENCE_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "All historical injury observations are HISTORICAL_NON_POINT_IN_TIME",
+            "Non-selection is forbidden as an absence proxy"
+          ]
+        },
+        {
+          "name": "LINEUP_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Lineup content is near-complete for Ligue 1 only",
+            "All raw lineups are POST_MATCH_ONLY; pre-kickoff cutoff is unproven"
+          ]
+        },
+        {
+          "name": "FORMATION_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "Formation content is near-complete for Ligue 1",
+            "Target formation is retrospective and lacks a pre-kickoff observed_at"
+          ]
+        },
+        {
+          "name": "STARTER_BASELINE_GATE",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "reasons": [
+            "V1 days_since_last_start uses last record rather than last start",
+            "Roster expiry and source-time lineage are not proven"
+          ]
+        },
+        {
+          "name": "FOOTEDNESS_GATE",
+          "status": "BLOCKED_BY_COVERAGE",
+          "reasons": [
+            "No sourced preferred-foot field exists in cached players or squads",
+            "Heuristic completion is forbidden"
+          ]
+        },
+        {
+          "name": "MARKET_GATE",
+          "status": "READY",
+          "reasons": [
+            "Historical 1X2 and O/U2.5 available for research",
+            "Exact observed_at unavailable; live market gate remains closed"
+          ]
+        }
+      ],
+      "contentTotals": {
+        "exact_xi": 4138,
+        "formation_present": 4127,
+        "grid_complete": 4127,
+        "injury_rows": 12801,
+        "lineup_team_rows": 4138,
+        "player_team_rows": 4134
+      }
+    },
+    "dataset": {
+      "name": "TEAM_PREMATCH",
+      "version": "deep-football-team-prematch-v2",
+      "rows": 10732,
+      "features": [
+        "elo_difference",
+        "home_form_5",
+        "away_form_5",
+        "home_form_10",
+        "away_form_10",
+        "home_goals_for_5",
+        "away_goals_for_5",
+        "home_goals_against_5",
+        "away_goals_against_5",
+        "home_rest_days",
+        "away_rest_days"
+      ],
+      "featureCutoff": "TARGET_KICKOFF_EXCLUSIVE_STATE_BEFORE_UPDATE",
+      "researchMode": "PRE_LINEUP",
+      "source": [
+        "API_FOOTBALL_HISTORICAL",
+        "FOOTBALL_DATA"
+      ],
+      "pairing": {
+        "marketRows": 10732,
+        "pairedRows": 10732,
+        "duplicateKeys": 0,
+        "leftAttrition": 0,
+        "rightAttrition": 2235,
+        "exactKeyset": true
+      },
+      "blocked": [
+        {
+          "name": "FOOTEDNESS_MATCHUP",
+          "reason": "FOOTEDNESS_COVERAGE_GATE_BLOCKED"
+        },
+        {
+          "name": "FORMATION_MATCHUP",
+          "reason": "FORMATION_TEMPORAL_GATE_BLOCKED"
+        },
+        {
+          "name": "PLAYER_PRELINEUP",
+          "reason": "PLAYER_FORM_AND_STARTER_BASELINE_GATES_BLOCKED"
+        },
+        {
+          "name": "POST_LINEUP",
+          "reason": "LINEUP_TEMPORAL_GATE_BLOCKED"
+        }
+      ],
+      "hash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+      "parquetHash": "d871477dc8d830726869c173b742e5fb57bf95ff06094613a5ff1ce7baa11673",
+      "parquetBytes": 2000155,
+      "heavyArtifactLocation": "R2_OR_POSTGRESQL_NOT_GIT"
+    },
+    "experiments": {
+      "campaigns": [
+        {
+          "id": "11A",
+          "title": "Team and Calendar Deep Baseline",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "TEAM_GATE"
+          ],
+          "blockingGates": [
+            "TEAM_GATE"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11B",
+          "title": "Player Availability",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "PLAYER_GATE",
+            "PLAYER_FORM_GATE",
+            "ABSENCE_GATE"
+          ],
+          "blockingGates": [
+            "PLAYER_GATE",
+            "PLAYER_FORM_GATE",
+            "ABSENCE_GATE"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11C",
+          "title": "Lineup Continuity",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "LINEUP_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "blockingGates": [
+            "LINEUP_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11D",
+          "title": "Formation Matchups",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11E",
+          "title": "Owner Anchored Hypotheses",
+          "status": "ELIGIBLE",
+          "requiredGates": [],
+          "blockingGates": [],
+          "cacheOnly": true
+        },
+        {
+          "id": "11F",
+          "title": "Cross-League Transfer",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "TEAM_GATE",
+            "MARKET_GATE"
+          ],
+          "blockingGates": [
+            "TEAM_GATE"
+          ],
+          "cacheOnly": true
+        },
+        {
+          "id": "11G",
+          "title": "Integrated Matchup Arena",
+          "status": "DATA_GATE_BLOCKED",
+          "requiredGates": [
+            "TEAM_GATE",
+            "PLAYER_GATE",
+            "ABSENCE_GATE",
+            "LINEUP_GATE",
+            "FORMATION_GATE",
+            "MARKET_GATE"
+          ],
+          "blockingGates": [
+            "TEAM_GATE",
+            "PLAYER_GATE",
+            "ABSENCE_GATE",
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "cacheOnly": true
+        }
+      ],
+      "ownerHypotheses": [
+        {
+          "id": "H11-001",
+          "title": "Buteur en forme contre défense centrale amputée",
+          "family": "interactions",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "PLAYER_FORM_GATE",
+            "ABSENCE_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "minimumSupport": 80,
+          "cutoff": "PRE_LINEUP_OR_POST_LINEUP_EXPLICIT",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "eea4f1ac12fdfdcde1a0692db0e6dab7ce99dbbbda035aa407d470ab3a0f1932"
+        },
+        {
+          "id": "H11-002",
+          "title": "4-3-3 contre 4-4-2",
+          "family": "formations",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "minimumSupport": 120,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "e417115d9e65c7625a66ec771c7068adeed500700ac3b38fcca610e720e078d9"
+        },
+        {
+          "id": "H11-003",
+          "title": "Trois attaquants droitiers contre défense gauchère",
+          "family": "footedness",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FOOTEDNESS_GATE"
+          ],
+          "minimumSupport": 100,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "cea5693e0e47d8b7cfb8399c67dc6d85998d1e1e5fd0f972308f6884802e8610"
+        },
+        {
+          "id": "H11-004",
+          "title": "Gardien titulaire absent",
+          "family": "absences",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "ABSENCE_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "minimumSupport": 80,
+          "cutoff": "PRE_LINEUP_OR_POST_LINEUP_EXPLICIT",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "297a45c10e63ff0155c200b91527375f93ab0846975465f19be7daa299e54603"
+        },
+        {
+          "id": "H11-005",
+          "title": "Deux centraux nouveaux ensemble",
+          "family": "lineup",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "minimumSupport": 100,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "14b43f3539457a27025f0fb253aeef11c2fd35c45810eaf1061b0f7c1bc1f411"
+        },
+        {
+          "id": "H11-006",
+          "title": "Rupture du onze",
+          "family": "lineup",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "ABSENCE_GATE"
+          ],
+          "minimumSupport": 120,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "bdfef06acb33e8b7d36e219c1f42d00f1cb1770784a28d7edb53c6f74c583e23"
+        },
+        {
+          "id": "H11-007",
+          "title": "Congestion et tactique inhabituelle",
+          "family": "interactions",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "minimumSupport": 100,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "436dfaac52acec5251b2f933ece0c9749d2bb8a0aa02ebb3255b0d8243e20267"
+        },
+        {
+          "id": "H11-008",
+          "title": "Matchup structurel",
+          "family": "matchups",
+          "eligibility": "DATA_GATE_BLOCKED",
+          "blockingGates": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "minimumSupport": 120,
+          "cutoff": "POST_LINEUP_ONLY",
+          "frozenBeforeResults": true,
+          "preregistrationHash": "210281fbd53d625e04410ff4820fe669c4e59a232b071f042e5b235fc2c1d86a"
+        }
+      ],
+      "eligible": 1,
+      "blocked": 6
+    },
+    "results": {
+      "campaign": "11A",
+      "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+      "models": [
+        {
+          "id": "B0_MARKET",
+          "logLoss": 0.966773205663162,
+          "brier": 0.191619133899094,
+          "deltaLogLoss": null,
+          "deltaBrier": null,
+          "calibrationError": 0.0215529464440085,
+          "reference": "SELF",
+          "status": "REFERENCE_RAW_MARKET",
+          "interpretation": "REFERENCE_RAW_MARKET"
+        },
+        {
+          "id": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+          "logLoss": 0.968935719179779,
+          "brier": 0.192126894805324,
+          "deltaLogLoss": 0.00216251351661734,
+          "deltaBrier": 0.000507760906230226,
+          "calibrationError": 0.0123863884894918,
+          "reference": "B0_MARKET",
+          "status": "REFERENCE_RECALIBRATED_TRAIN_ONLY",
+          "interpretation": "REFERENCE_RECALIBRATED_TRAIN_ONLY"
+        },
+        {
+          "id": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+          "logLoss": 0.9706379303393,
+          "brier": 0.192467626230089,
+          "deltaLogLoss": 0.00170221115952107,
+          "deltaBrier": 0.000340731424765234,
+          "calibrationError": 0.00965243889958372,
+          "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+          "status": "PRIMARY_CORRECTIVE_NON_PROMOTABLE_TEAM_GATE_PARTIAL",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_MARKET_PLUS_TEAM_BOUNDED_GRADIENT_BOOSTING",
+          "logLoss": 0.978451689995893,
+          "brier": 0.193937731056333,
+          "deltaLogLoss": 0.00951597081611399,
+          "deltaBrier": 0.00181083625100928,
+          "calibrationError": 0.00934892317488342,
+          "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_REGULARIZED_MULTINOMIAL",
+          "logLoss": 0.988917851446671,
+          "brier": 0.196457889013965,
+          "deltaLogLoss": 0.0221446457835096,
+          "deltaBrier": 0.00483875511487186,
+          "calibrationError": 0.0183418068522248,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_BOUNDED_GRADIENT_BOOSTING",
+          "logLoss": 0.998023824196153,
+          "brier": 0.198175681190353,
+          "deltaLogLoss": 0.0312506185329912,
+          "deltaBrier": 0.00655654729125912,
+          "calibrationError": 0.0165390546913984,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_POISSON",
+          "logLoss": 1.04601892734382,
+          "brier": 0.209819162318555,
+          "deltaLogLoss": 0.0792457216806551,
+          "deltaBrier": 0.0182000284194614,
+          "calibrationError": 0.0270927263993631,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        },
+        {
+          "id": "B1_TEAM_ONLY_DIXON_COLES",
+          "logLoss": 1.04662634706971,
+          "brier": 0.209862662711249,
+          "deltaLogLoss": 0.0798531414065499,
+          "deltaBrier": 0.0182435288121554,
+          "calibrationError": 0.0208049958878564,
+          "reference": "B0_MARKET",
+          "status": "POST_CONTRACT_DIAGNOSTIC_NON_PROMOTABLE",
+          "interpretation": "WORSE_THAN_REFERENCE"
+        }
+      ],
+      "folds": [
+        {
+          "season": 2022,
+          "matches": 1826,
+          "primaryDeltaLogLoss": -0.000172676616561063,
+          "primaryDeltaBrier": 0.0000570357328212034,
+          "teamOnlyLogitDeltaLogLoss": 0.0152480090098843,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320972914950618,
+          "marketRecalibrationDeltaLogLoss": 0.00350277485238304,
+          "incrementalBoostingDeltaLogLoss": 0.0177124961543904,
+          "outcome": "BETTER_DESCRIPTIVE_ONLY"
+        },
+        {
+          "season": 2023,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.00401481454320307,
+          "primaryDeltaBrier": 0.000677692262125523,
+          "teamOnlyLogitDeltaLogLoss": 0.0283645481535346,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320005755233936,
+          "marketRecalibrationDeltaLogLoss": 0.00120146415329847,
+          "incrementalBoostingDeltaLogLoss": 0.00594181088713586,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2024,
+          "matches": 1751,
+          "primaryDeltaLogLoss": 0.00205463541313433,
+          "primaryDeltaBrier": 0.000603629372582709,
+          "teamOnlyLogitDeltaLogLoss": 0.0254261918619104,
+          "teamOnlyBoostingDeltaLogLoss": 0.0356210999390846,
+          "marketRecalibrationDeltaLogLoss": 0.00161641430687831,
+          "incrementalBoostingDeltaLogLoss": 0.00962408123674241,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2025,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.000991462919131658,
+          "primaryDeltaBrier": 0.0000367009680335706,
+          "teamOnlyLogitDeltaLogLoss": 0.0198330034393753,
+          "teamOnlyBoostingDeltaLogLoss": 0.025250240440528,
+          "marketRecalibrationDeltaLogLoss": 0.00227247984177747,
+          "incrementalBoostingDeltaLogLoss": 0.00443935642191107,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        }
+      ],
+      "primaryForInference": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+      "modelSelectionOnTest": false,
+      "roi": "NOT_COMPUTED_NO_PREREGISTERED_BETTING_RULE",
+      "statistics": {
+        "blocked_hypotheses_as_p1": 8,
+        "bootstrap_unit": "MATCH_DATE",
+        "clusters": 729,
+        "cr1_cluster": "MATCH_DATE",
+        "cr1_one_sided_p": 0.963826923344745,
+        "delta_log_loss_bootstrap_ci95": [
+          -0.000242884261756291,
+          0.00390178176075534
+        ],
+        "family_q": 0.963826923344745,
+        "global_q": 1,
+        "multiplicity_hypotheses": 9,
+        "serial_team_dependence_limitation": true,
+        "sign_flip_p": 0.961,
+        "sign_flip_permutations": 999,
+        "sign_flip_unit": "MATCH_DATE",
+        "tested_hypotheses": 1
+      },
+      "pairedComparator": {
+        "reference": "B0_MARKET_RECALIBRATED_TRAIN_ONLY",
+        "challenger": "B1_MARKET_PLUS_TEAM_REGULARIZED_MULTINOMIAL",
+        "support": 7081,
+        "deltaLogLoss": 0.00170221115952107,
+        "deltaBrier": 0.000340731424765234,
+        "bootstrapCi95": [
+          -0.000242884261756291,
+          0.00390178176075534
+        ],
+        "cr1OneSidedP": 0.963826923344745,
+        "signFlipP": 0.961,
+        "familyQ": 0.963826923344745,
+        "globalQ": 1,
+        "clusters": 729,
+        "promotionEligible": false
+      },
+      "whereModelLost": [
+        {
+          "season": 2022,
+          "matches": 1826,
+          "primaryDeltaLogLoss": -0.000172676616561063,
+          "primaryDeltaBrier": 0.0000570357328212034,
+          "teamOnlyLogitDeltaLogLoss": 0.0152480090098843,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320972914950618,
+          "marketRecalibrationDeltaLogLoss": 0.00350277485238304,
+          "incrementalBoostingDeltaLogLoss": 0.0177124961543904,
+          "outcome": "BETTER_DESCRIPTIVE_ONLY"
+        },
+        {
+          "season": 2023,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.00401481454320307,
+          "primaryDeltaBrier": 0.000677692262125523,
+          "teamOnlyLogitDeltaLogLoss": 0.0283645481535346,
+          "teamOnlyBoostingDeltaLogLoss": 0.0320005755233936,
+          "marketRecalibrationDeltaLogLoss": 0.00120146415329847,
+          "incrementalBoostingDeltaLogLoss": 0.00594181088713586,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2024,
+          "matches": 1751,
+          "primaryDeltaLogLoss": 0.00205463541313433,
+          "primaryDeltaBrier": 0.000603629372582709,
+          "teamOnlyLogitDeltaLogLoss": 0.0254261918619104,
+          "teamOnlyBoostingDeltaLogLoss": 0.0356210999390846,
+          "marketRecalibrationDeltaLogLoss": 0.00161641430687831,
+          "incrementalBoostingDeltaLogLoss": 0.00962408123674241,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        },
+        {
+          "season": 2025,
+          "matches": 1752,
+          "primaryDeltaLogLoss": 0.000991462919131658,
+          "primaryDeltaBrier": 0.0000367009680335706,
+          "teamOnlyLogitDeltaLogLoss": 0.0198330034393753,
+          "teamOnlyBoostingDeltaLogLoss": 0.025250240440528,
+          "marketRecalibrationDeltaLogLoss": 0.00227247984177747,
+          "incrementalBoostingDeltaLogLoss": 0.00443935642191107,
+          "outcome": "LOST_TO_RECALIBRATED_MARKET"
+        }
+      ],
+      "crossLeague": {
+        "status": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+        "rotations": [
+          {
+            "id": "ROTATION_1",
+            "discoveryLeagues": [
+              "La Liga",
+              "Bundesliga",
+              "Serie A"
+            ],
+            "validationLeagues": [
+              "Ligue 1",
+              "Premier League"
+            ],
+            "support": 2818,
+            "deltaLogLoss": 0.00894206491346405,
+            "deltaBrier": 0.00154808995263317,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_2",
+            "discoveryLeagues": [
+              "Ligue 1",
+              "Bundesliga",
+              "Serie A"
+            ],
+            "validationLeagues": [
+              "La Liga",
+              "Premier League"
+            ],
+            "support": 3040,
+            "deltaLogLoss": 0.00339538736516509,
+            "deltaBrier": 0.000562202417004637,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_3",
+            "discoveryLeagues": [
+              "Ligue 1",
+              "Premier League",
+              "Serie A"
+            ],
+            "validationLeagues": [
+              "Bundesliga",
+              "La Liga"
+            ],
+            "support": 2743,
+            "deltaLogLoss": 0.00471249838626187,
+            "deltaBrier": 0.000933997702685485,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_4",
+            "discoveryLeagues": [
+              "Ligue 1",
+              "Premier League",
+              "La Liga"
+            ],
+            "validationLeagues": [
+              "Bundesliga",
+              "Serie A"
+            ],
+            "support": 2743,
+            "deltaLogLoss": 0.00801666810684432,
+            "deltaBrier": 0.00135457726746596,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          },
+          {
+            "id": "ROTATION_5",
+            "discoveryLeagues": [
+              "Premier League",
+              "La Liga",
+              "Bundesliga"
+            ],
+            "validationLeagues": [
+              "Ligue 1",
+              "Serie A"
+            ],
+            "support": 2818,
+            "deltaLogLoss": 0.00369841073387878,
+            "deltaBrier": 0.00062524724633764,
+            "descriptiveDirectionPositive": false,
+            "promotionEligible": false
+          }
+        ],
+        "rotationCount": 5,
+        "minimumSupport": 2743,
+        "maximumSupport": 3040,
+        "deltaLogLossRange": [
+          0.00339538736516509,
+          0.00894206491346405
+        ],
+        "survivors": 0,
+        "descriptivePositiveRotations": 0,
+        "limitations": [
+          "TEAM_GATE_PARTIAL",
+          "OVERLAPPING_VALIDATION_ROTATIONS",
+          "LEAGUE_AND_TIME_SHIFT_CONFOUNDED",
+          "NO_ROTATION_LEVEL_MULTIPLICITY_INFERENCE"
+        ],
+        "promotionEligible": false
+      },
+      "teamGate": "PARTIAL",
+      "resultHash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355"
+    },
+    "negativeControls": [
+      {
+        "name": "absence_shifted",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "false_centre_back_pair",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "false_footedness",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "formation_shifted_one_match",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "home_team_systematic",
+        "status": "EXECUTED_NO_PROMOTION",
+        "support": 7081,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "impossible_condition",
+        "status": "EXECUTED_ZERO_SUPPORT_NO_PROMOTION",
+        "support": 0,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "post_kickoff_lineup",
+        "status": "REJECTED_BY_TEMPORAL_GUARD",
+        "support": 1,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "post_result_rule",
+        "status": "REJECTED_BY_FEATURE_ALLOWLIST",
+        "support": 1,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "random_player",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "random_tactical_interaction",
+        "status": "DATA_GATE_BLOCKED",
+        "support": 0,
+        "category": "DATA_GATED",
+        "promotionEligible": false
+      },
+      {
+        "name": "shuffled_labels_stratified",
+        "status": "EXECUTED_NO_PROMOTION",
+        "support": 7081,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      },
+      {
+        "name": "wrong_fixture_odds",
+        "status": "REJECTED_BY_PAIRING_GUARD",
+        "support": 1,
+        "category": "EXECUTED_OR_GUARD",
+        "promotionEligible": false
+      }
+    ],
+    "negativeControlSummary": {
+      "total": 12,
+      "executedOrGuard": 6,
+      "dataGated": 6
+    },
+    "redTeam": {
+      "promotionAllowed": false,
+      "reason": "DEEP_DATA_GATES_AND_EXACT_LIVE_MARKET_CUTOFF_REMAIN_CLOSED",
+      "objections": [
+        {
+          "name": "absence_classification",
+          "status": "CAMPAIGN_BLOCKED"
+        },
+        {
+          "name": "calibration",
+          "status": "MARKET_RECALIBRATED_TRAIN_ONLY_TOP_LABEL_ECE_DIAGNOSTIC"
+        },
+        {
+          "name": "chance",
+          "status": "CONTROLLED_WITH_CR1_CLUSTER_SIGN_FLIP_CLUSTER_BOOTSTRAP_AND_BH"
+        },
+        {
+          "name": "concentration",
+          "status": "NO_STRATEGY_PROMOTED"
+        },
+        {
+          "name": "confounding",
+          "status": "NO_CAUSAL_CLAIM"
+        },
+        {
+          "name": "dependence",
+          "status": "MATCH_DATE_CLUSTERED_TEAM_SERIAL_DEPENDENCE_REMAINS_LIMITATION"
+        },
+        {
+          "name": "formation_normalization",
+          "status": "CAMPAIGN_BLOCKED"
+        },
+        {
+          "name": "incomplete_sample",
+          "status": "NO_1X2_MARKET_ATTRITION"
+        },
+        {
+          "name": "join_error",
+          "status": "ONE_TO_ONE_EXACT_JOIN"
+        },
+        {
+          "name": "leakage",
+          "status": "TARGET_EXCLUDED_BUT_TEAM_SOURCE_OBSERVED_AT_UNPROVEN_GATE_PARTIAL"
+        },
+        {
+          "name": "multiplicity",
+          "status": "ONE_TESTED_PLUS_EIGHT_BLOCKED_HYPOTHESES_INCLUDED"
+        },
+        {
+          "name": "negative_controls",
+          "status": "SIX_COMPUTATIONAL_OR_GUARD_CONTROLS_EXECUTED_SIX_DATA_GATED"
+        },
+        {
+          "name": "threshold_selection",
+          "status": "PRIMARY_FIXED_NO_TEST_SET_MODEL_SELECTION"
+        },
+        {
+          "name": "wrong_cutoff",
+          "status": "TARGET_KICKOFF_EXCLUSIVE_BOUNDARY_NOT_STRICT_OBSERVED_AT"
+        },
+        {
+          "name": "wrong_odds",
+          "status": "EXACT_FIXTURE_PAIRING_VERIFIED"
+        }
+      ]
+    },
+    "promotion": {
+      "status": "REJECTED",
+      "promoted": false,
+      "criteria": [
+        {
+          "name": "bootstrap_lower_coherent",
+          "passed": false
+        },
+        {
+          "name": "concentration_passed",
+          "passed": false
+        },
+        {
+          "name": "data_gate_ready",
+          "passed": false
+        },
+        {
+          "name": "decision_reproducible_before_kickoff",
+          "passed": false
+        },
+        {
+          "name": "family_bh_passed",
+          "passed": false
+        },
+        {
+          "name": "global_control_passed",
+          "passed": false
+        },
+        {
+          "name": "historical_roi_not_artificial",
+          "passed": false
+        },
+        {
+          "name": "incremental_score_vs_market_positive",
+          "passed": false
+        },
+        {
+          "name": "live_information_available",
+          "passed": false
+        },
+        {
+          "name": "live_market_exact_observed_at",
+          "passed": false
+        },
+        {
+          "name": "no_leakage",
+          "passed": false
+        },
+        {
+          "name": "permutation_passed",
+          "passed": false
+        },
+        {
+          "name": "positive_last_fold",
+          "passed": false
+        },
+        {
+          "name": "preregistered_support",
+          "passed": true
+        },
+        {
+          "name": "rule_interpretable",
+          "passed": true
+        },
+        {
+          "name": "stable_direction",
+          "passed": false
+        },
+        {
+          "name": "three_eligible_periods",
+          "passed": true
+        }
+      ],
+      "failedCriteria": [
+        "data_gate_ready",
+        "no_leakage",
+        "stable_direction",
+        "positive_last_fold",
+        "family_bh_passed",
+        "global_control_passed",
+        "permutation_passed",
+        "bootstrap_lower_coherent",
+        "concentration_passed",
+        "incremental_score_vs_market_positive",
+        "historical_roi_not_artificial",
+        "live_information_available",
+        "live_market_exact_observed_at",
+        "decision_reproducible_before_kickoff"
+      ]
+    },
+    "watchlist": {
+      "status": "EMPTY_NO_ROBUST_DEEP_MATCHUP",
+      "count": 0,
+      "notABet": true
+    },
+    "decision": {
+      "status": "NO_DECISION_NO_CANDIDATE",
+      "candidateCount": 0,
+      "decisions": 0,
+      "stakeUnits": 0,
+      "shadowBankrollBefore": 1000,
+      "shadowBankrollAfter": 1000
+    },
+    "replay": {
+      "status": "REPLAY_VERIFIED",
+      "identical": true,
+      "providerCalls": 0,
+      "oddsApiCredits": 0,
+      "businessDuplicates": 0,
+      "dataLoss": 0,
+      "hashMismatches": 0,
+      "hashComparisons": [
+        {
+          "name": "campaign_result_hash",
+          "matched": true
+        },
+        {
+          "name": "dataset_hash",
+          "matched": true
+        },
+        {
+          "name": "ledger_hash_chain",
+          "matched": true
+        },
+        {
+          "name": "parquet_sha256",
+          "matched": true
+        }
+      ],
+      "resultHash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355"
+    },
+    "ledger": {
+      "status": "HASH_CHAIN_VERIFIED",
+      "events": 27,
+      "headHash": "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
+      "eventCounts": {}
+    },
+    "provenance": {
+      "sourceCommit": "803091cb506e17a07850f56ef78b7b9df55575dd",
+      "mainCommit": "31ec41632b72cd93676f5b1d8592e1bba429e937",
+      "codeRevision": "31ec41632b72cd93676f5b1d8592e1bba429e937",
+      "datasetHash": "2c73aa3bab4683fd9ec6fead1d7700e3681f85625182b885c00b7095a5a873d6",
+      "campaignResultHash": "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
+      "ledgerHeadHash": "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
+      "marketObservedTimeStatus": "SOURCE_PRICE_CLASS_ONLY"
+    },
+    "costs": {
+      "providerCalls": 0,
+      "oddsApiCredits": 0,
+      "historicalBytes": 985499173,
+      "databaseBytes": 47366144,
+      "r2ExpectedBytes": 974079201,
+      "r2LagObjects": 0,
+      "storageStatus": "STORAGE_PAUSED",
+      "secondaryTasks": "P3_P4_PAUSED"
+    },
+    "locks": {
+      "productionStatus": "PRODUCTION_LOCKED",
+      "realBets": false,
+      "noBetDefault": true,
+      "socialPublishingEnabled": false,
+      "demoModeEnabled": false
+    },
+    "caveats": [
+      "Recherche historique uniquement : les prix sont de classe SOURCE_PRICE_CLASS_ONLY, sans observed_at exact.",
+      "TEAM_GATE est PARTIAL : l'ordre algorithmique est descriptif mais le observed_at source ligne par ligne n'est pas prouvé ; les gates joueurs et tactiques restent fermés.",
+      "Les deltas positifs de Log Loss/Brier sont défavorables : aucun challenger testé ne bat sa référence de marché.",
+      "Watchlist et décisions restent vides ; aucun résultat historique n'est présenté comme live."
+    ]
+  },
+  "patternResearch": {
+    "version": "ROBIN_LIVE_V1",
+    "dataStatus": "NO_LIVE_SHADOW_DATA",
+    "researchStatus": "HISTORICAL_RESEARCH",
+    "campaignVerdict": "JALON_10_NO_ROBUST_PATTERN_FOUND",
+    "subVerdict": "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE",
+    "publicationTime": null,
+    "today": {
+      "matchesAnalyzed": 0,
+      "shadowBets": 0,
+      "noBets": 0,
+      "unclassifiedDecisions": 0,
+      "justification": "Aucune décision shadow publiée.",
+      "origin": "NO OUTPUT"
+    },
+    "results": {
+      "won": 0,
+      "lost": 0,
+      "void": 0,
+      "settlements": 0,
+      "profitUnits": 0,
+      "roi": null,
+      "historyRecords": 0,
+      "settledStakeUnits": 0
+    },
+    "bankroll": {
+      "initialUnits": 1000,
+      "currentUnits": 1000,
+      "profitUnits": 0,
+      "roi": null,
+      "maxDrawdownUnits": 0,
+      "curve": [
+        1000
+      ],
+      "simulationOnly": true,
+      "policySource": "configs/shadow_simulation_v1.json"
+    },
+    "strategies": {
+      "inResearch": 700,
+      "shadowCandidates": 0,
+      "inShadow": 0,
+      "rejected": 700,
+      "supportRejected": 167,
+      "promotionRejected": 700,
+      "rejectionReason": "Toutes les hypothèses sont rejetées de la promotion ; les rejets de support sont comptés séparément."
+    },
+    "laboratory": {
+      "hypothesesGenerated": 700,
+      "rulesExecuted": 700,
+      "supportRejected": 167,
+      "rawPositive": 118,
+      "fdrSurvivors": 0,
+      "walkForwardSurvivors": 24,
+      "walkForwardRawBeforeFdr": 24,
+      "externalLeagueSurvivors": 0,
+      "negativeControls": 7,
+      "negativeControlsPassed": 7,
+      "fdrMethod": "Benjamini-Hochberg",
+      "pValueMethod": "CR1 unilatérale groupée par date de match",
+      "topExploratoryResults": [
+        {
+          "ruleHash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+          "competition": "La Liga",
+          "market": "1X2_AWAY",
+          "selection": "AWAY",
+          "conditions": {
+            "market_margin_1x2_max": 0.06,
+            "odds_away": [
+              2,
+              2.5
+            ]
+          },
+          "bets": 261,
+          "bootstrapGroups": 225,
+          "roi": 0.1663984674329502,
+          "profitUnits": 43.43,
+          "maxDrawdownUnits": 9.27,
+          "qValue": 1,
+          "bootstrapRoi95": [
+            0.03360868411743898,
+            0.30770262226512224
+          ],
+          "positiveFolds": 4,
+          "eligibleFolds": 4,
+          "exposedLeagueStability": "INELIGIBLE_COMPETITION_SPECIFIC_RULE",
+          "leagueStability": "EXPOSED_SINGLE_LEAGUE_ONLY",
+          "limit": "fails FDR and has no external-league or live point-in-time validation",
+          "publicStatus": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+        },
+        {
+          "ruleHash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+          "competition": "Serie A",
+          "market": "1X2_DRAW",
+          "selection": "DRAW",
+          "conditions": {
+            "market_margin_1x2_max": 0.06,
+            "odds_draw": [
+              2.5,
+              3.25
+            ]
+          },
+          "bets": 363,
+          "bootstrapGroups": 282,
+          "roi": 0.1594490358126722,
+          "profitUnits": 57.88,
+          "maxDrawdownUnits": 19.52,
+          "qValue": 1,
+          "bootstrapRoi95": [
+            0.0042719415204679045,
+            0.31393382749629106
+          ],
+          "positiveFolds": 4,
+          "eligibleFolds": 4,
+          "exposedLeagueStability": "INELIGIBLE_COMPETITION_SPECIFIC_RULE",
+          "leagueStability": "EXPOSED_SINGLE_LEAGUE_ONLY",
+          "limit": "fails FDR and has no external-league or live point-in-time validation",
+          "publicStatus": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+        },
+        {
+          "ruleHash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+          "competition": "Serie A",
+          "market": "1X2_AWAY",
+          "selection": "AWAY",
+          "conditions": {
+            "market_margin_1x2_max": 0.06,
+            "odds_away": [
+              1.6,
+              2
+            ]
+          },
+          "bets": 241,
+          "bootstrapGroups": 207,
+          "roi": 0.1386721991701245,
+          "profitUnits": 33.42,
+          "maxDrawdownUnits": 7.22,
+          "qValue": 1,
+          "bootstrapRoi95": [
+            0.024913994885916647,
+            0.24270212811073993
+          ],
+          "positiveFolds": 3,
+          "eligibleFolds": 3,
+          "exposedLeagueStability": "INELIGIBLE_COMPETITION_SPECIFIC_RULE",
+          "leagueStability": "EXPOSED_SINGLE_LEAGUE_ONLY",
+          "limit": "fails FDR and has no external-league or live point-in-time validation",
+          "publicStatus": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+        }
+      ]
+    },
+    "WHAT_WAS_TESTED": [
+      "Campagne football cache-only sur 10,732 fixtures appariées, cinq ligues et saisons 2020–2025.",
+      "700 hypothèses exécutées sur 1X2 et Over/Under 2,5 avec prix historiques SOURCE_PRICE_CLASS_ONLY.",
+      "Mise fixe, support, p-values CR1 groupées par date, bootstrap groupé, walk-forward brut, Benjamini-Hochberg et 7 contrôles négatifs exécutés.",
+      "Replay déterministe sans fournisseur, sans crédit et sans doublon métier."
+    ],
+    "WHAT_WAS_NOT_TESTED": [
+      "Cotes live avec observed_at exact, CLV et validation prospective point-in-time.",
+      "Permutation candidate stratifiée par compétition, saison et bande de cote ; le gate V1 reste fermé sans cette extension.",
+      "Décisions et règlements shadow non vides ; la bankroll reste à son état initial.",
+      "Marchés joueurs, buteurs, cartons, corners et handicaps indisponibles dans le corpus.",
+      "Publication sur un réseau social, transaction réelle ou connexion bookmaker."
+    ],
+    "methodology": {
+      "backtest": "Un backtest rejoue une règle sur des données historiques sans transformer ce résultat en promesse.",
+      "shadow": "Le shadow observe et règle des décisions fictives, sans transaction ni connexion bookmaker.",
+      "publication": "Robin publie aussi les pertes et les NO BET afin de rendre les résultats auditables.",
+      "warning": "Les performances passées ne garantissent aucun résultat futur."
+    },
+    "ledger": {
+      "status": "LEDGER_VERIFIED",
+      "records": 0,
+      "decisions": 0,
+      "settlements": 0
+    },
+    "productionStatus": "PRODUCTION_LOCKED",
+    "realBets": false,
+    "noBetDefault": true,
+    "socialPublishingEnabled": false,
+    "demoModeEnabled": false
+  }
+}

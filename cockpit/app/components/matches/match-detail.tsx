@@ -115,12 +115,18 @@ export function MatchDetail({ match }: { match: MatchPresentation }) {
             </section>
             <section className="feature-card">
               <h2>{t("match.expectedData")}</h2>
-              <p>
-                <strong>{dataFamilyLabels[match.nextFamily]}</strong>
-                <br />
-                {formatDateTime(match.nextCapture, true)}
-              </p>
-              <StatusBadge value="NOT_DUE" />
+              {match.nextCapture && match.nextFamily ? (
+                <>
+                  <p>
+                    <strong>{match.nextFamilies.map((family) => dataFamilyLabels[family] ?? family).join(" · ")}</strong>
+                    <br />
+                    {formatDateTime(match.nextCapture, true)}
+                  </p>
+                  <StatusBadge value="NOT_DUE" />
+                </>
+              ) : (
+                <p>{t("common.notApplicable")}</p>
+              )}
             </section>
             <section className="feature-card">
               <h2>Hypothèses concernées</h2>
@@ -197,23 +203,33 @@ export function MatchDetail({ match }: { match: MatchPresentation }) {
         {activeTab === "timeline" ? (
           <section className="section-card">
             <h2>Chronologie pré-match</h2>
-            <ol className="capture-timeline">
-              {[
-                ["Match enregistré", operationalEvidence.generatedAt, "CAPTURED"],
-                ["Capture J-21", match.nextCapture, "NOT_DUE"],
-                ["Capture J-7", new Date(new Date(match.kickoff).getTime() - 7 * 86_400_000).toISOString(), "NOT_DUE"],
-                ["Capture J-3", new Date(new Date(match.kickoff).getTime() - 3 * 86_400_000).toISOString(), "NOT_DUE"],
-                ["Capture J-1", new Date(new Date(match.kickoff).getTime() - 86_400_000).toISOString(), "NOT_DUE"],
-                ["Composition officielle", new Date(new Date(match.kickoff).getTime() - 2 * 3_600_000).toISOString(), "NOT_DUE"],
-                ["Coup d’envoi", match.kickoff, "PENDING"],
-              ].map(([label, date, status]) => (
-                <li key={label}>
+            {match.timeline.length ? (
+              <ol className="capture-timeline">
+                {match.timeline.map((window) => (
+                  <li key={window.id}>
+                    <span aria-hidden="true" />
+                    <div>
+                      <strong>{dataFamilyLabels[window.family] ?? window.family} · {window.label}</strong>
+                      <time dateTime={window.dueAt}>{formatDateTime(window.dueAt, true)}</time>
+                    </div>
+                    <StatusBadge value={window.status} />
+                  </li>
+                ))}
+                <li>
                   <span aria-hidden="true" />
-                  <div><strong>{label}</strong><time dateTime={date}>{formatDateTime(date, true)}</time></div>
-                  <StatusBadge value={status} />
+                  <div>
+                    <strong>Coup d’envoi</strong>
+                    <time dateTime={match.kickoff}>{formatDateTime(match.kickoff, true)}</time>
+                  </div>
+                  <StatusBadge value="PENDING" />
                 </li>
-              ))}
-            </ol>
+              </ol>
+            ) : (
+              <EmptyState
+                title="Aucune fenêtre planifiée"
+                text="Le snapshot ne contient aucune fenêtre active pour cette rencontre."
+              />
+            )}
           </section>
         ) : null}
 
@@ -225,6 +241,8 @@ export function MatchDetail({ match }: { match: MatchPresentation }) {
               rows={[
                 { label: "Identifiant fournisseur", value: <code>{match.providerId}</code> },
                 { label: "Identifiant interne", value: <code>{match.internalId}</code> },
+                { label: "Équipe domicile", value: <code>{match.homeTeamId}</code> },
+                { label: "Équipe extérieure", value: <code>{match.awayTeamId}</code> },
                 { label: "Heure du coup d’envoi", value: <><span>{formatDateTime(match.kickoff, true)}</span><code>{match.kickoff}</code></> },
                 { label: "Révision du code", value: <code>{operationalEvidence.sourceRevision}</code> },
                 { label: "Origine", value: <><StatusBadge value={operationalEvidence.origin} showTechnical /></> },

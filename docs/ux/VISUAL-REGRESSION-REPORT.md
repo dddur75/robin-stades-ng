@@ -5,22 +5,17 @@
 Configuration : `cockpit/playwright.config.ts`
 Scénarios : `cockpit/tests/visual-regression.spec.ts`
 
-La suite produit des PNG pleine page hors Git dans `.ci/visual-regression/captures` :
+La suite produit exactement 18 PNG pleine page hors Git dans
+`.ci/visual-regression/captures` :
 
-- Accueil essentiel ;
-- Accueil Expert ;
-- Matchs ;
-- fiche Marseille – Strasbourg ;
-- Observatoire ;
-- Laboratoire ;
-- Résultats vides ;
-- Méthode ;
-- chaque page publique à 390 × 844 ;
-- Observatoire + glossaire à 768 × 1024 ;
-- toutes les pages publiques à 1440 × 900 ;
-- parcours clavier.
+- 8 desktop : Accueil essentiel, Accueil Expert, Matchs, fiche match,
+  Observatoire, Laboratoire, Résultats et Méthode ;
+- 7 mobile à 390 × 844 : les mêmes routes publiques hors Accueil Expert ;
+- 1 tablette à 768 × 1024 : Observatoire avec glossaire ;
+- 1 Accueil avec snapshot modifié ;
+- 1 état vide mobile sans fixture.
 
-Résultat local final : **5 tests réussis, 0 échec**.
+Résultat local final : **9 tests réussis, 0 échec, 18 captures**.
 
 ## Contrôles par scénario
 
@@ -31,6 +26,9 @@ Résultat local final : **5 tests réussis, 0 échec**.
 - état vide « Aucun pari simulé pour le moment » ;
 - valeur « Non applicable » ;
 - Vue expert réellement active ;
+- neuf onglets de fiche match Expert sélectionnables sur smartphone ;
+- zoom texte à 200 % utilisable ;
+- snapshots modifié et vide clairement identifiés comme preuves synthétiques ;
 - glossaire visible et nommé ;
 - lien d’évitement et focus visible.
 
@@ -46,12 +44,16 @@ Rétention : 30 jours. Les captures ne sont pas ajoutées au dépôt.
 
 ## Contrôle navigateur manuel
 
-Le navigateur intégré a parcouru `/robin-live`, `/matchs`, une fiche match, `/observatoire`, `/laboratoire`, `/resultats`, `/methode` et `/expert`. Il a vérifié les six tailles cibles, la recherche « Marseille », les cotes observées, la persistance de la Vue expert, le glossaire et les erreurs console. Un serveur de développement propre n’a produit aucune erreur ni alerte console.
+Le navigateur intégré a parcouru l’Accueil, l’Observatoire et une fiche match à
+1440 px puis à 390 px. Il a vérifié la bascule Expert, les neuf onglets de la
+fiche un par un, la matrice mobile et les erreurs console. Un serveur de
+développement propre n’a produit aucune erreur ni alerte console.
 
 Les preuves locales de travail sont enregistrées hors Git dans :
 
 ```text
-C:\Users\ddura\.codex\visualizations\2026\07\28\019fa7c6-2519-7881-a031-10748a621cfd\robin-experience-v1
+.ci/visual-regression/captures/ pendant la validation locale ; les preuves
+durables sont publiées par la CI dans l’artefact visuel de chaque run.
 ```
 
 ## Incidents trouvés
@@ -62,6 +64,8 @@ C:\Users\ddura\.codex\visualizations\2026\07\28\019fa7c6-2519-7881-a031-10748a62
 | mobile Laboratoire | frise de 420 px élargissant la page | largeur bornée, scroll interne |
 | clavier | cible `main` non focalisable | `tabIndex="-1"` |
 | automatisation | clic lancé avant hydratation | marqueur de disponibilité client |
+| V1.1 dynamique | états modifié et vide absents des preuves | deux scénarios synthétiques isolés ajoutés |
+| performance | snapshot technique chargé côté client | projections publique et experte compactes au build |
 
 ## Performance des captures
 

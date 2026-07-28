@@ -3,6 +3,15 @@ import { access, readdir, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
+const snapshot = JSON.parse(
+  await readFile(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
+);
+const firstFixture = snapshot.prospectiveObservatory.fixtures.registry[0];
+const fixtureCount = snapshot.prospectiveObservatory.fixtures.registry.filter(
+  (fixture) => !fixture.cancelled && fixture.status !== "TOMBSTONED",
+).length;
+const firstHome = firstFixture.home_name ?? `Équipe ${firstFixture.home_team_id}`;
+const firstAway = firstFixture.away_name ?? `Équipe ${firstFixture.away_team_id}`;
 
 async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -28,7 +37,7 @@ function visibleText(html) {
 }
 
 const publicRoutes = [
-  ["/", "Robin observe actuellement 9 rencontres"],
+  ["/", `Robin observe actuellement ${fixtureCount} rencontres`],
   ["/robin-live", "À comprendre aujourd’hui"],
   ["/matchs", "Les matchs observés"],
   ["/observatoire", "Matrice de couverture"],
@@ -54,11 +63,11 @@ test("rend toutes les routes Robin Experience V1 en français", async () => {
 });
 
 test("rend une vraie fiche match avec ses états vides pédagogiques", async () => {
-  const response = await render("/matchs/600aeb3560814afc9a02bec5126b249d");
+  const response = await render(`/matchs/${firstFixture.fixture_id}`);
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /Marseille/);
-  assert.match(html, /Strasbourg/);
+  assert.match(html, new RegExp(firstHome));
+  assert.match(html, new RegExp(firstAway));
   assert.match(html, /Synthèse/);
   assert.match(html, /Chronologie/);
   assert.match(html, /Niveau de couverture/);
@@ -105,8 +114,17 @@ test("préserve exactement les invariants et les résultats scientifiques du sna
   const data = JSON.parse(
     await readFile(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
   );
-  assert.equal(data.patternResearch.bankroll.initialUnits, 1000);
-  assert.equal(data.patternResearch.bankroll.currentUnits, 1000);
+  const simulationPolicy = JSON.parse(
+    await readFile(new URL("../../configs/shadow_simulation_v1.json", import.meta.url), "utf8"),
+  );
+  assert.equal(
+    data.patternResearch.bankroll.initialUnits,
+    simulationPolicy.initial_bankroll_units,
+  );
+  assert.equal(
+    data.patternResearch.bankroll.currentUnits,
+    data.patternResearch.bankroll.curve.at(-1),
+  );
   assert.equal(data.patternResearch.results.roi, null);
   assert.equal(data.patternResearch.productionStatus, "PRODUCTION_LOCKED");
   assert.equal(data.patternResearch.realBets, false);
@@ -133,8 +151,11 @@ test("inclut navigation, accessibilité structurelle et formats français", asyn
   assert.match(html, /aria-label="Navigation principale"/);
   assert.match(html, /Aller au contenu principal/);
   assert.match(html, /<main id="contenu-principal"/);
-  assert.match(html, /1[\s\u202f]000 unités/);
-  assert.match(html, /28 juillet 2026 à 01 h 47/);
+  const formattedBankroll = new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits: 1,
+  }).format(snapshot.patternResearch.bankroll.currentUnits);
+  assert.match(html, new RegExp(`${formattedBankroll.replace(/\s/g, "[\\s\\u202f]")} unités`));
+  assert.match(html, new RegExp(new Date(snapshot.prospectiveObservatory.generated_at).getUTCFullYear().toString()));
   assert.doesNotMatch(html, /1,000|Jul 27, 2026|24\.1 KB/);
 });
 

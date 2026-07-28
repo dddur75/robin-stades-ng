@@ -145,3 +145,16 @@ captures `robin-experience-visual-*` et la
 [PR brouillon #19](https://github.com/dddur75/robin-stades-ng/pull/19).
 Ne pas fusionner automatiquement. Toute fusion doit être une décision explicite
 après revue de l’UX, de l’accessibilité et de la séparation scientifique.
+
+## Robin Experience V1.1
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+La mise à jour reste sur la PR brouillon #19, ouverte et non fusionnée. Elle ne
+demande aucun secret, appel fournisseur, crédit, écriture distante, connexion
+sociale, décision ou pari.
+
+Après la CI et le redéploiement privé, l’action recommandée reste uniquement de
+consulter le site privé, les 18 captures de l’artefact
+`robin-experience-visual-*` et la PR #19. Toute fusion appartient à une décision
+ultérieure explicite.

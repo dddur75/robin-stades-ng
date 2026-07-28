@@ -15,6 +15,7 @@ import {
 } from "../../lib/presentation";
 import {
   EvidenceNote,
+  EmptyState,
   MetricCard,
   PageHeader,
   ProgressBar,
@@ -53,11 +54,12 @@ export function ObservatoryPage() {
         title={t("observatory.title")}
       >
         <StatusBadge value={operationalEvidence.status} />
+        <StatusBadge value={operationalEvidence.freshness.status} />
       </PageHeader>
 
       <section className="metrics-grid observatory-metrics" aria-label="Indicateurs de l’observatoire">
-        <MetricCard detail="Ligue 1" icon="◉" label={t("observatory.metrics.fixtures")} tone="blue" value={formatNumber(operationalEvidence.fixtures)} />
-        <MetricCard detail="politique révisée" icon="◫" label={t("observatory.metrics.activeWindows")} tone="green" value={formatNumber(operationalEvidence.activeWindows)} />
+        <MetricCard detail="registre prospectif" icon="◉" label={t("observatory.metrics.fixtures")} tone="blue" value={formatNumber(operationalEvidence.fixtures)} />
+        <MetricCard detail="politique versionnée" icon="◫" label={t("observatory.metrics.activeWindows")} tone="green" value={formatNumber(operationalEvidence.activeWindows)} />
         <MetricCard detail="à cet instant" icon="◷" label={t("observatory.metrics.dueWindows")} value={formatNumber(operationalEvidence.dueWindows)} />
         <MetricCard detail="vérifiées dans R2" icon="✓" label={t("observatory.metrics.physical")} tone="green" value={formatNumber(operationalEvidence.physicalEvidence)} />
         <MetricCard detail="collecte en attente" icon="◇" label={t("observatory.metrics.deep")} tone="violet" value={formatNumber(operationalEvidence.deepObservations)} />
@@ -69,7 +71,7 @@ export function ObservatoryPage() {
           subtitle={t("observatory.timeline.subtitle")}
           title={t("observatory.timeline.title")}
         />
-        <ol className="horizontal-timeline">
+        {nextCaptures.length ? <ol className="horizontal-timeline">
           {nextCaptures.slice(0, 5).map((capture, index) => (
             <li key={capture.id}>
               <div>
@@ -78,11 +80,16 @@ export function ObservatoryPage() {
               </div>
               <time dateTime={capture.dueAt}>{formatDateTime(capture.dueAt, true)}</time>
               <strong>{capture.match}</strong>
-              <small>{dataFamilyLabels[capture.family]}</small>
+              <small>{capture.families.map((family) => dataFamilyLabels[family] ?? family).join(" · ")}</small>
               <StatusBadge value={capture.status} />
             </li>
           ))}
-        </ol>
+        </ol> : (
+          <EmptyState
+            title="Aucune fenêtre à venir"
+            text="Le snapshot ne contient aucune fenêtre active à afficher."
+          />
+        )}
       </section>
 
       <section className="section-card coverage-matrix-section">
@@ -95,9 +102,9 @@ export function ObservatoryPage() {
             <span key={state}><i className={`coverage-${state}`} />{stateLabels[state]}</span>
           ))}
         </div>
-        <div className="matrix-scroll" tabIndex={0}>
+        {matches.length ? <div className="matrix-scroll" tabIndex={0}>
           <table className="coverage-matrix">
-            <caption>Couverture des familles de données pour les neuf rencontres suivies</caption>
+            <caption>Couverture des familles de données pour {formatNumber(matches.length)} rencontre{matches.length > 1 ? "s" : ""} suivie{matches.length > 1 ? "s" : ""}</caption>
             <thead>
               <tr>
                 <th scope="col">Rencontre</th>
@@ -123,7 +130,12 @@ export function ObservatoryPage() {
               ))}
             </tbody>
           </table>
-        </div>
+        </div> : (
+          <EmptyState
+            title="Aucune rencontre suivie"
+            text="La matrice se remplira automatiquement lorsque le registre prospectif contiendra une fixture active."
+          />
+        )}
         <EvidenceNote>
           Une cellule « à venir » signifie que la fenêtre n’est pas encore due.
           Elle ne constitue ni une erreur ni une donnée absente.
@@ -170,9 +182,9 @@ export function ObservatoryPage() {
           <article className="section-card">
             <SectionHeading title={t("observatory.storage.title")} />
             <div className="storage-bars">
-              <ProgressBar label={`R2 · ${formatBytes(operationalEvidence.r2.bytes)}`} value={operationalEvidence.r2.objects / 100} />
-              <ProgressBar label={`API-Football · 0 / ${formatNumber(operationalEvidence.providers.apiFootballCap)}`} value={0} />
-              <ProgressBar label={`The Odds API · 0 / ${formatNumber(operationalEvidence.providers.oddsApiCap)} crédits`} value={0} />
+              <ProgressBar label={`R2 · ${formatBytes(operationalEvidence.r2.bytes)}`} value={operationalEvidence.r2.objects ? operationalEvidence.r2.verified / operationalEvidence.r2.objects : 0} />
+              <ProgressBar label={`API-Football · ${formatNumber(operationalEvidence.providers.apiFootballCalls)} / ${formatNumber(operationalEvidence.providers.apiFootballCap)}`} value={operationalEvidence.providers.apiFootballCap ? operationalEvidence.providers.apiFootballCalls / operationalEvidence.providers.apiFootballCap : 0} />
+              <ProgressBar label={`The Odds API · ${formatNumber(operationalEvidence.providers.oddsApiCredits)} / ${formatNumber(operationalEvidence.providers.oddsApiCap)} crédits`} value={operationalEvidence.providers.oddsApiCap ? operationalEvidence.providers.oddsApiCredits / operationalEvidence.providers.oddsApiCap : 0} />
             </div>
             <ExpertOnly>
               <TechnicalList rows={[
@@ -193,8 +205,14 @@ export function ObservatoryPage() {
             { label: "Origine", value: <StatusBadge value={operationalEvidence.origin} showTechnical /> },
             { label: "Révision source", value: <code>{operationalEvidence.sourceRevision}</code> },
             { label: "Registre", value: `${formatNumber(operationalEvidence.ledger.events)} événements` },
-            { label: "Couverture active", value: formatPercent(operationalEvidence.activeWindows / (operationalEvidence.activeWindows + operationalEvidence.inactiveLegacyWindows)) },
+            { label: "Couverture active", value: formatPercent(
+              operationalEvidence.activeWindows + operationalEvidence.inactiveLegacyWindows
+                ? operationalEvidence.activeWindows / (operationalEvidence.activeWindows + operationalEvidence.inactiveLegacyWindows)
+                : null,
+            ) },
             { label: "Fenêtres legacy", value: `${formatNumber(operationalEvidence.inactiveLegacyWindows)} · replay uniquement` },
+            { label: "Fraîcheur", value: <StatusBadge value={operationalEvidence.freshness.status} showTechnical /> },
+            { label: "Motif fraîcheur", value: operationalEvidence.freshness.reason },
           ]} />
         </section>
       </ExpertOnly>

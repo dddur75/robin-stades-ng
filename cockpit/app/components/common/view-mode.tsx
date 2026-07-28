@@ -44,7 +44,11 @@ function readMode(): ViewMode {
 }
 
 export function ViewModeProvider({ children }: { children: ReactNode }) {
-  const mode = useSyncExternalStore(subscribeMode, readMode, () => "essential");
+  const mode = useSyncExternalStore<ViewMode>(
+    subscribeMode,
+    readMode,
+    () => "essential",
+  );
 
   useEffect(() => {
     document.documentElement.dataset.robinHydrated = "true";
@@ -58,7 +62,7 @@ export function ViewModeProvider({ children }: { children: ReactNode }) {
     window.dispatchEvent(new Event(storageEvent));
   };
 
-  const value = useMemo(
+  const value = useMemo<ViewModeContextValue>(
     () => ({ mode, setMode, isExpert: mode === "expert" }),
     [mode],
   );

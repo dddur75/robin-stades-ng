@@ -117,6 +117,8 @@ export function ExperienceShell({
               <time dateTime={operationalEvidence.generatedAt}>
                 {formatDateTime(operationalEvidence.generatedAt, true)}
               </time>
+              {" · "}
+              <StatusBadge value={operationalEvidence.freshness.status} />
             </p>
             <div className="topbar-actions">
               <button
