@@ -778,8 +778,19 @@ class MemoryOperationalState:
         capture: StoredCapture,
     ) -> bool:
         value = (fixture.registry_hash, fixture)
+        version_already_registered = (
+            fixture.registry_hash in self.fixture_version_rows
+        )
         self.fixture_version_rows.setdefault(fixture.registry_hash, fixture)
         existing = self.fixture_rows.get(fixture.fixture_id)
+        if version_already_registered:
+            self.persist_capture(capture)
+            if (
+                existing is None
+                or existing[1].registered_at <= fixture.registered_at
+            ):
+                self.fixture_rows[fixture.fixture_id] = value
+            return False
         if existing is not None and existing[0] == fixture.registry_hash:
             # Ingestion metadata (registered_at/code_revision) is deliberately
             # outside the business-version hash. Keep each R2 receipt while
@@ -1095,8 +1106,22 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         fixture: ProspectiveFixture,
         capture: StoredCapture,
     ) -> bool:
+        version_already_registered = (
+            fixture.registry_hash in self.fixture_version_rows
+        )
         self.fixture_version_rows.setdefault(fixture.registry_hash, fixture)
         existing = self.fixture_rows.get(fixture.fixture_id)
+        if version_already_registered:
+            self.persist_capture(capture)
+            if (
+                existing is None
+                or existing[1].registered_at <= fixture.registered_at
+            ):
+                self.fixture_rows[fixture.fixture_id] = (
+                    fixture.registry_hash,
+                    fixture,
+                )
+            return False
         if existing is not None and existing[0] == fixture.registry_hash:
             self.persist_capture(capture)
             self.fixture_rows[fixture.fixture_id] = (
