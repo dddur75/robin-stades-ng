@@ -59,10 +59,10 @@
       "status": "BLOCKED_BY_TEMPORALITY"
     }
   },
-  "generated_at": "2026-07-27T04:10:34.587514+00:00",
+  "generated_at": "2026-07-28T05:35:03.944484+00:00",
   "normalized_rows": 152895,
   "production_status": "PRODUCTION_LOCKED",
-  "provenance_rows": 55079,
+  "provenance_rows": 120699,
   "quality_status": "PASSED",
   "schema_version": "jalon6-readiness-v1",
   "seasons": [
