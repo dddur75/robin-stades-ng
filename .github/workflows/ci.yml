@@ -103,6 +103,37 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm test
 
+  visual-regression:
+    name: "Robin Experience — preuves visuelles"
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.9.0"
+      - name: Installer le Cockpit et Chromium
+        working-directory: cockpit
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+      - name: Capturer les vues de référence
+        working-directory: cockpit
+        run: pnpm run test:visual
+      - name: Publier les preuves visuelles
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robin-experience-visual-${{ github.run_id }}
+          path: cockpit/.ci/visual-regression
+          if-no-files-found: error
+          retention-days: 30
+
   jalon12-pilot:
     name: "Pilote Jalon 12 R2-first borne"
     needs: tests

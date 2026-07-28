@@ -570,3 +570,46 @@ P0 reste Ligue 1 seule ; Premier League, Liga, Bundesliga et Serie A restent
 `P1_OFF`. Aucun cron sur `main`, aucune activation 12.1 et aucun nouveau run
 fournisseur ne sont revendiqués avant fusion et validation post-fusion.
 `PRODUCTION_LOCKED`, `REAL_BETS=false` et `NO_BET_DEFAULT=true` restent actifs.
+
+## Robin Experience V1
+
+La branche `codex/robin-experience-v1-french-dashboard`, créée depuis
+`c512c7bc20f9272cd1b91cc3acf8605500541185`, porte la refonte française et
+progressive du Cockpit. Robin Live devient l’entrée publique ; Matchs,
+Observatoire, Laboratoire, Résultats et Méthode forment la navigation
+principale. L’exhaustivité est conservée derrière une Vue expert mémorisée
+localement.
+
+État de présentation vérifié :
+
+- 9 rencontres ;
+- 441 fenêtres actives ;
+- 531 traces legacy inactives ;
+- 18 captures physiques ;
+- 0 observation profonde ;
+- 0 candidat ;
+- 0 décision ;
+- bankroll fictive de 1 000 unités.
+
+La couche `cockpit/app/lib/presentation.ts` adapte le snapshot sans le modifier.
+Les catalogues `fr-FR` et `en-GB`, 36 présentations de statuts et 22 entrées de
+glossaire sont versionnés. Les tests frontend, SSR, i18n et visuels contrôlent
+la langue, les codes publics, l’intégrité scientifique, six résolutions et les
+parcours clavier.
+
+La CI publie les captures sous
+`robin-experience-visual-${{ github.run_id }}`. Le dossier `docs/ux` contient
+l’audit, l’architecture, le guide éditorial, le design system et les rapports
+de validation. La PR reste brouillon et non fusionnée.
+
+Invariants inchangés :
+
+```text
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```

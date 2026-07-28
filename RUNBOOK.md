@@ -679,3 +679,58 @@ la revue 12.1 n’a pas sa propre suite verte ; les cron de branche ne prouvent
 pas une activation sur `main`. P0 reste Ligue 1, P1 reste `P1_OFF`, et
 `PRODUCTION_LOCKED`, `REAL_BETS=false`, `NO_BET_DEFAULT=true` restent
 obligatoires.
+
+## Robin Experience V1 — validation sans fournisseur
+
+Tous les contrôles suivants sont locaux et ne doivent recevoir aucun secret
+fournisseur :
+
+```powershell
+cd cockpit
+pnpm install --frozen-lockfile
+pnpm run lint
+pnpm test
+pnpm run test:visual
+```
+
+`pnpm test` compile le build de production puis exécute les tests SSR et i18n.
+`pnpm run test:visual` démarre un serveur local sur `127.0.0.1:4173`, utilise
+Chromium avec mouvements réduits et écrit les captures dans
+`cockpit/.ci/visual-regression`. Ce dossier est ignoré par Git.
+
+Pour une vérification manuelle :
+
+```powershell
+cd cockpit
+pnpm run dev
+```
+
+Contrôler `/robin-live`, les filtres de `/matchs`, les neuf onglets d’une fiche,
+la matrice mobile de `/observatoire`, les huit hypothèses de `/laboratoire`,
+l’état vide de `/resultats`, le glossaire et la Vue expert.
+
+Résolutions obligatoires :
+
+```text
+360 × 800
+390 × 844
+430 × 932
+768 × 1024
+1440 × 900
+1920 × 1080
+```
+
+Le test visuel doit échouer en cas de débordement horizontal, de route sans
+titre français, de Vue expert inactive, de glossaire inaccessible ou de focus
+d’évitement absent.
+
+Ne jamais utiliser cette validation pour déclencher :
+
+- API-Football ou The Odds API ;
+- une capture ou un workflow prospectif ;
+- une écriture R2 ou PostgreSQL distante ;
+- une décision, une mise ou une publication sociale.
+
+Les preuves scientifiques demeurent dans `cockpit/app/cockpit-data.json` et son
+empreinte. Les ajustements UX appartiennent aux catalogues, au modèle de
+présentation et aux composants.

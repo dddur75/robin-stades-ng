@@ -128,3 +128,18 @@ est attendue et ne justifie ni appel forcé ni fusion automatique.
 `AUCUNE ACTION UTILISATEUR REQUISE`
 
 Ne pas fusionner la PR #17 dans cette mission.
+
+## Robin Experience V1
+
+La refonte est livrée dans une PR brouillon distincte. Aucune autorisation de
+fournisseur, aucun secret, aucune dépense, aucune connexion sociale et aucun
+pari ne sont demandés.
+
+Avant la fin de la CI :
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Après publication des preuves, l’action recommandée est uniquement de consulter
+le site privé, les captures `robin-experience-visual-*` et la PR brouillon.
+Ne pas fusionner automatiquement. Toute fusion doit être une décision explicite
+après revue de l’UX, de l’accessibilité et de la séparation scientifique.
