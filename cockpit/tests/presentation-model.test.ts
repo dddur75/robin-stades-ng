@@ -435,7 +435,13 @@ test("la fraîcheur devient ancienne lorsqu’une fenêtre s’ouvre après le s
 });
 
 test("tous les statuts du snapshot réel sont traduits", () => {
-  const model = buildPresentationModel(snapshot, { now: referenceNow });
+  const value = cloneSnapshot();
+  value.prospectiveObservatory.postgresql = {
+    ...(value.prospectiveObservatory.postgresql as MutableRecord),
+    reconstruction_status:
+      "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2",
+  };
+  const model = buildPresentationModel(value, { now: referenceNow });
   assert.equal(model.system.statusCoverage.percentage, 1);
   assert.deepEqual(model.system.statusCoverage.unknown, []);
 });
