@@ -340,15 +340,21 @@ test("identité C — une nouvelle équipe apparaît sans modification frontend"
 
 test("cas D — le report d’un match déplace kickoff et fenêtres", () => {
   const value = cloneSnapshot();
-  const fixture = value.prospectiveObservatory.fixtures.registry[0];
+  const fixture = value.prospectiveObservatory.fixtures.registry.find(
+    (candidate) =>
+      value.prospectiveObservatory.windows.registry.some(
+        (window) => window.fixture_id === candidate.fixture_id,
+      ),
+  );
+  assert.ok(fixture, "le snapshot doit contenir une fixture planifiée");
   const homeName = fixture.home_name;
   const awayName = fixture.away_name;
   const originalKickoff = fixture.kickoff_at;
-  const originalNext = value.prospectiveObservatory.windows.registry
+  const fixtureWindows = value.prospectiveObservatory.windows.registry
     .filter((window) => window.fixture_id === fixture.fixture_id)
-    .sort((left, right) =>
-      left.opens_at.localeCompare(right.opens_at),
-    )[0].due_at;
+    .sort((left, right) => left.opens_at.localeCompare(right.opens_at));
+  assert.ok(fixtureWindows.length > 0);
+  const originalNext = fixtureWindows[0].due_at;
   const shift = 24 * 3_600_000;
   fixture.kickoff_at = shiftIso(fixture.kickoff_at, shift);
   const temporalFields = [
