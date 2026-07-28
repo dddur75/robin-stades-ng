@@ -1036,7 +1036,11 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                         "code_revision": row["code_revision"],
                         "cancelled": bool(row["cancelled"]),
                         "kickoff_reliable": True,
-                        "horizon_days": int(row.get("horizon_days", 30)),
+                        # The compact SQL projection predates this policy
+                        # metadata. Reconstruct it with the current discovery
+                        # default; the immutable provider identity deliberately
+                        # excludes the horizon.
+                        "horizon_days": int(row.get("horizon_days", 45)),
                         "lifecycle_version_hash": str(row["registry_hash"]),
                     }
                 )

@@ -214,16 +214,18 @@ class ProspectiveFixture(FrozenContract):
 
     @property
     def business_hash(self) -> str:
-        # Registration time and the running code revision are observation
-        # metadata, not part of the provider fixture's business identity.
-        # Excluding them keeps a daily registry replay idempotent while a real
-        # kickoff/team/phase change still creates a new immutable version.
+        # Registration time, running revision and discovery horizon are
+        # observation-policy metadata, not part of the provider fixture's
+        # business identity. Excluding them keeps a daily registry replay
+        # idempotent while a real kickoff/team/phase change still creates a
+        # new immutable version.
         return canonical_sha256(
             self.model_dump(
                 mode="json",
                 exclude={
                     "registered_at",
                     "code_revision",
+                    "horizon_days",
                     "lifecycle_version_hash",
                 },
             )

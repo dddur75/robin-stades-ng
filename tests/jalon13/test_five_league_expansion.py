@@ -85,6 +85,13 @@ def test_registry_horizon_is_extended_without_changing_matchday_cap() -> None:
     assert fixture_registry["max_matchdays_per_competition"] == 3
 
 
+def test_discovery_horizon_is_not_part_of_fixture_business_identity() -> None:
+    fixture = _fixture("Liga", 14_000)
+    assert fixture.model_copy(update={"horizon_days": 30}).business_hash == (
+        fixture.model_copy(update={"horizon_days": 45}).business_hash
+    )
+
+
 def test_registry_gate_distinguishes_waiting_horizon_and_provider_error() -> None:
     policy = ObservatoryPolicy.load(POLICY_PATH)
     liga = next(
