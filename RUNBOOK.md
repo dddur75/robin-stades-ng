@@ -791,3 +791,54 @@ version privée Sites = 15
 
 Les deux CI sont vertes. Le site est en accès `custom`, avec le propriétaire
 comme seul utilisateur autorisé et aucun groupe autorisé.
+
+## Robin Experience V1.2 — validation depuis main
+
+Référence post-fusion :
+
+```text
+head pré-fusion = 77f3ea358b4a4b71014ed32c96ebca9f0dca15af
+merge commit = 937481e914ddbac56432a85bef8466a30c43e1d0
+CI main = 30359456373
+Pages = 30359455364
+sous-arbre cockpit = fb07ed35c23c7b7b0a7d0fce30b37031141bf9c6
+arbre cockpit = 4e6adb2bd418ef8a75ba05494b1af2ca4fce7f41
+source Sites = d0a78b3fb710b949e7ac7b99907ef20002c017d8
+version privée Sites = 18
+```
+
+Contrôler après chaque déploiement privé depuis `main` :
+
+```text
+/
+/robin-live
+/matchs
+/matchs/<fixture canonique>
+/observatoire
+/laboratoire
+/resultats
+/methode
+/expert
+```
+
+Vérifier sur desktop et 390 px : langue `fr-FR`, dates Europe/Paris, compte à
+rebours, 9 fixtures, 18 identités, aucun `Équipe <id>` en Vue essentielle,
+Vue expert, glossaire, navigation, absence de débordement et absence d’erreur
+console. Le déploiement doit conserver l’accès `custom` au seul propriétaire.
+
+Les workflows 60 à 66 doivent rester `active`, conserver leurs crons, le
+groupe `prospective-deep-state` et `cancel-in-progress=false`. Leur inspection
+est en lecture seule : ne jamais forcer un dispatch fournisseur pour valider
+Robin Experience.
+
+État attendu :
+
+```text
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```

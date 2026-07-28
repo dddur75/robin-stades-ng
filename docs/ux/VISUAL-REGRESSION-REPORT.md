@@ -73,9 +73,29 @@ durables sont publiées par la CI dans l’artefact visuel de chaque run.
 | V1.1 dynamique | états modifié et vide absents des preuves | deux scénarios synthétiques isolés ajoutés |
 | V1.2 identités | IDs fournisseur affichés comme noms | noms issus du snapshot vérifié, fallback public non numérique |
 | performance | snapshot technique chargé côté client | projections publique et experte compactes au build |
+| clôture desktop Résultats | « Non applicable » coupé au milieu du mot | retour à la ligne limité aux séparateurs normaux |
 
 ## Performance des captures
 
 La suite V1.2 complète s’exécute localement en 17 secondes, avec un seul worker
 pour limiter les variations. `prefers-reduced-motion` est activé afin de
 stabiliser les images.
+
+## Validation post-fusion privée
+
+Le run `main` `30359456373` a republié les 18 captures sous
+`robin-experience-visual-30359456373`. Les tests, migrations, build et preuves
+visuelles sont verts sur le merge commit
+`937481e914ddbac56432a85bef8466a30c43e1d0`.
+
+La version privée Sites 18 a ensuite été inspectée en accès propriétaire.
+Toutes les routes publiques, une fiche match et `/expert` ont un titre
+français, aucune chaîne `Équipe 81` ou `Équipe 95`, aucun débordement desktop
+ou 390 px et aucune erreur console. Les noms composés, Europe/Paris, le compte
+à rebours, le glossaire, la Vue expert et la navigation mobile sont conformes.
+
+```text
+MERGED
+POST_MERGE_VERIFIED
+PRIVATE_DEPLOYED_FROM_MAIN
+```

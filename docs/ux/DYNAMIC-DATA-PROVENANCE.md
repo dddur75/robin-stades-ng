@@ -1,4 +1,4 @@
-# Provenance des données dynamiques — Robin Experience V1.1
+# Provenance des données dynamiques — Robin Experience V1.2
 
 ## Contrat de présentation
 
@@ -26,7 +26,7 @@ appel fournisseur, sans lecture R2 distante et sans écriture PostgreSQL.
 | Information affichée | Clé du snapshot | Source vérifiée | Règle de présentation |
 |---|---|---|---|
 | rencontres, identifiants, coup d’envoi | `prospectiveObservatory.fixtures.registry` | registre et reçus du gate report | clé canonique, jamais la position dans un tableau |
-| noms d’équipes | `fixtures.registry[].home_team_name` / `away_team_name` | identité présente dans le reçu vérifié | si le nom manque, afficher honnêtement l’identifiant fournisseur |
+| noms d’équipes | `fixtures.registry[].home_team_name` / `away_team_name` | payload `FIXTURE` R2 et reçu vérifié, projetés dans le registre d’identités | si le nom manque, afficher « Équipe en cours d’identification » ; ID uniquement en Expert |
 | fenêtres actives | `prospectiveObservatory.windows.registry` | politique temporelle versionnée + coup d’envoi | exclure legacy, annulées, tombstonées et terminées |
 | prochaine capture | même registre de fenêtres | `opens_at`, `due_at`, `cutoff_at`, statut | recalcul à l’instant d’affichage, regroupement des échéances simultanées |
 | captures et familles | `captures`, `by_family`, `fixtures.evidence` | reçus physiques et projections PostgreSQL vérifiées | états partiels et vides explicites, aucun zéro inventé |
@@ -54,12 +54,22 @@ par le catalogue français. Un code essentiel inconnu devient exactement
 « État en cours de vérification », est journalisé une seule fois dans la
 console, et reste visible brut en Vue expert.
 
-## Limite de la preuve actuelle
+## Preuve d’identité V1.2
 
-L’artefact historique utilisé contient les identifiants d’équipes mais pas
-leurs noms. La V1.1 ne les invente pas : elle affiche donc « Équipe 81 »,
-« Équipe 95 », etc. Le gate report enrichi publiera les noms dès qu’ils seront
-présents dans les prochains reçus vérifiés.
+Le rapport `reports/ux/team-identity-provenance.json` relie les neuf fixtures
+aux 18 noms présents dans des payloads `FIXTURE` R2 existants et à leurs reçus
+vérifiés. La couverture est 18/18, sans nom inventé ni appel fournisseur.
+
+Le registre est indexé par `provider:provider_team_id`, conserve la provenance
+temporelle et évite toute collision multi-fournisseur ou association par
+position. Son empreinte est
+`eaa6d296ba19464df74393d26ffb638145302b3a8173243571cb6d7f8ed951ff`.
+Le snapshot enrichi porte l’empreinte
+`217a66a4bcaed77028d407a7a14f0b4ee2be2e3f34cfcb34632d9cae9f005d7f`.
+
+L’audit réussi a effectué 1 LIST et 36 GET R2, puis une transaction
+PostgreSQL read-only de 2 requêtes et 18 lignes. Il a réalisé 0 écriture,
+0 appel API-Football et consommé 0 crédit Odds.
 
 ## Invariants
 
@@ -67,3 +77,7 @@ Cette chaîne ne déclenche aucun appel API-Football ou The Odds API, aucune
 capture, aucune écriture R2/PostgreSQL distante, aucune décision, aucune mise
 et aucune publication sociale. `PRODUCTION_LOCKED`, `REAL_BETS=false` et
 `NO_BET_DEFAULT=true` demeurent obligatoires.
+
+La chaîne V1.2 est fusionnée par
+`937481e914ddbac56432a85bef8466a30c43e1d0`, validée post-fusion et déployée
+en privé depuis l’arbre exact du sous-répertoire `cockpit` de `main`.

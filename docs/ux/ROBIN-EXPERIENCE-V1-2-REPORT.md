@@ -120,5 +120,39 @@ DEMO_MODE_ENABLED=false
 ```
 
 Aucun payload brut, secret, header ou URL signée n’est ajouté à Git. Aucun nom
-n’est inventé. Aucun pari, aucune publication sociale et aucune fusion ne sont
-effectués.
+n’est inventé. Aucun pari et aucune publication sociale ne sont effectués.
+
+## Clôture post-fusion
+
+```text
+ROBIN EXPERIENCE V1.2
+MERGED
+POST_MERGE_VERIFIED
+PRIVATE_DEPLOYED_FROM_MAIN
+```
+
+La revue adversariale finale n’a trouvé aucune objection majeure. Un défaut
+visuel mineur a été corrigé : « Non applicable » ne coupe plus un mot en son
+milieu dans la carte ROI desktop.
+
+La PR #19 a été validée sur
+`77f3ea358b4a4b71014ed32c96ebca9f0dca15af`, puis fusionnée par merge commit
+`937481e914ddbac56432a85bef8466a30c43e1d0`. La CI `main`
+`30359456373`, les migrations, le build, les tests frontend et les 18 captures
+sont verts.
+
+Le sous-arbre Cockpit
+`fb07ed35c23c7b7b0a7d0fce30b37031141bf9c6` possède l’arbre
+`4e6adb2bd418ef8a75ba05494b1af2ca4fce7f41`, identique au dossier `cockpit`
+du merge commit. Il est publié par le commit source Sites
+`d0a78b3fb710b949e7ac7b99907ef20002c017d8` en version privée 18,
+propriétaire uniquement.
+
+Les routes `/`, `/robin-live`, `/matchs`, une fiche match, `/observatoire`,
+`/laboratoire`, `/resultats`, `/methode` et `/expert` ont été contrôlées sur
+la version privée. La langue, Europe/Paris, les noms, le compte à rebours, le
+mobile, la Vue expert et le glossaire sont conformes ; aucune erreur console
+n’a été observée.
+
+La clôture n’a déclenché aucun appel fournisseur forcé, crédit Odds, écriture
+R2/PostgreSQL, pari réel ou publication sociale.

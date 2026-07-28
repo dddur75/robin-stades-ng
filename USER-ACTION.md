@@ -160,3 +160,26 @@ recommandée reste uniquement de consulter le
 18 captures des artefacts `robin-experience-visual-30352906004` /
 `robin-experience-visual-30352908592` et la PR #19. Toute fusion appartient à
 une décision ultérieure explicite.
+
+## Robin Experience V1.2 — clôturée
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+La PR #19 a été passée en Ready, fusionnée par merge commit et validée sur
+`main`. La version privée Sites 18 a été reconstruite et déployée depuis le
+sous-arbre exact du commit de fusion. Elle reste accessible au seul
+propriétaire :
+
+https://robin-stades-shadow-cockpit.dddur.chatgpt.site
+
+La CI post-fusion, les 18 captures, les routes privées, le mobile, la Vue
+expert, le glossaire et l’absence d’erreur console ont été vérifiés. Aucun
+appel fournisseur forcé, crédit Odds, pari réel, publication sociale, secret
+supplémentaire ou déverrouillage de production n’est demandé.
+
+```text
+ROBIN EXPERIENCE V1.2
+MERGED
+POST_MERGE_VERIFIED
+PRIVATE_DEPLOYED_FROM_MAIN
+```

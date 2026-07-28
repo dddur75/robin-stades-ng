@@ -653,3 +653,39 @@ et PR `30352908592` sont vertes, migrations et 18 preuves visuelles comprises.
 Le sous-arbre Cockpit `7e879a70df712b10b749a6b38f4cf6f44b8e11b4` est déployé
 en version Sites 15, privée et réservée au propriétaire, sur
 `https://robin-stades-shadow-cockpit.dddur.chatgpt.site`.
+
+## Robin Experience V1.2 — clôture
+
+```text
+ROBIN EXPERIENCE V1.2
+MERGED
+POST_MERGE_VERIFIED
+PRIVATE_DEPLOYED_FROM_MAIN
+```
+
+La PR #19 a été validée sur le head
+`77f3ea358b4a4b71014ed32c96ebca9f0dca15af`, passée en Ready puis fusionnée
+par merge commit `937481e914ddbac56432a85bef8466a30c43e1d0`.
+Elle contient 8 commits et modifie 75 fichiers. La CI post-fusion
+`30359456373` et GitHub Pages `30359455364` sont vertes.
+
+L’identité des équipes est complète : 9/9 fixtures, 18/18 identités
+vérifiées, 0 non résolue. Le registre porte l’empreinte
+`eaa6d296ba19464df74393d26ffb638145302b3a8173243571cb6d7f8ed951ff`
+et le snapshot
+`217a66a4bcaed77028d407a7a14f0b4ee2be2e3f34cfcb34632d9cae9f005d7f`.
+
+La version privée Sites 18 provient du sous-arbre Cockpit
+`fb07ed35c23c7b7b0a7d0fce30b37031141bf9c6`, extrait du merge commit.
+Son arbre `4e6adb2bd418ef8a75ba05494b1af2ca4fce7f41` est identique au dossier
+`cockpit` de `main`. Le commit source Sites est
+`d0a78b3fb710b949e7ac7b99907ef20002c017d8`. L’accès reste `custom`,
+propriétaire uniquement, sans groupe.
+
+L’Observatoire reste inchangé : 9 rencontres, 441 fenêtres V3 actives,
+531 traces legacy inactives, 18 preuves physiques, 0 candidat, 0 décision et
+bankroll fictive de 1 000 unités. Les workflows 60 à 66 restent actifs, dans
+`prospective-deep-state`, avec `cancel-in-progress=false`.
+
+La clôture n’a forcé aucun appel fournisseur, crédit Odds, écriture R2 ou
+PostgreSQL, pari réel ou publication sociale.
