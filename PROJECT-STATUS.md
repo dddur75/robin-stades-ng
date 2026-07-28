@@ -597,10 +597,14 @@ glossaire sont versionnés. Les tests frontend, SSR, i18n et visuels contrôlent
 la langue, les codes publics, l’intégrité scientifique, six résolutions et les
 parcours clavier.
 
+La PR brouillon [#19](https://github.com/dddur75/robin-stades-ng/pull/19)
+reste non fusionnée. La version 14 du site privé est publiée sur
+`https://robin-stades-shadow-cockpit.dddur.chatgpt.site`.
+
 La CI publie les captures sous
 `robin-experience-visual-${{ github.run_id }}`. Le dossier `docs/ux` contient
 l’audit, l’architecture, le guide éditorial, le design system et les rapports
-de validation. La PR reste brouillon et non fusionnée.
+de validation.
 
 Invariants inchangés :
 

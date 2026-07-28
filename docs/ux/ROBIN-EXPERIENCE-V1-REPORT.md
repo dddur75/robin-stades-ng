@@ -100,4 +100,9 @@ Aucun résultat, hash, gate, workflow, budget, règle de capture ou décision n�
 
 ## Publication
 
-La branche, le commit, la PR en brouillon, la CI et l’URL consultable sont renseignés dans la PR et dans les documents racine après publication. La PR reste non fusionnée.
+- Branche : `codex/robin-experience-v1-french-dashboard`.
+- Commit fonctionnel : `6fca54a61a850526eb38414869a372bf8b66b644`.
+- PR : [#19 — Robin Experience V1 — Dashboard français et UX progressive](https://github.com/dddur75/robin-stades-ng/pull/19).
+- Site privé, version 14 : [ouvrir Robin Experience V1](https://robin-stades-shadow-cockpit.dddur.chatgpt.site).
+
+La PR reste en brouillon et non fusionnée. La CI distante valide notamment le cycle PostgreSQL et publie l’artefact de captures.

@@ -140,6 +140,8 @@ Avant la fin de la CI :
 `AUCUNE ACTION UTILISATEUR REQUISE`
 
 Après publication des preuves, l’action recommandée est uniquement de consulter
-le site privé, les captures `robin-experience-visual-*` et la PR brouillon.
+le [site privé](https://robin-stades-shadow-cockpit.dddur.chatgpt.site), les
+captures `robin-experience-visual-*` et la
+[PR brouillon #19](https://github.com/dddur75/robin-stades-ng/pull/19).
 Ne pas fusionner automatiquement. Toute fusion doit être une décision explicite
 après revue de l’UX, de l’accessibilité et de la séparation scientifique.
