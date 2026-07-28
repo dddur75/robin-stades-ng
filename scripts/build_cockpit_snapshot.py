@@ -20,6 +20,10 @@ from robin.prospective_observatory.contracts import (
     canonical_sha256,
 )
 from robin.prospective_observatory.gates import GateName, GateStatus
+from robin.prospective_observatory.team_identities import (
+    canonical_team_key,
+    fixture_identity_scope_sha256,
+)
 from robin.prospective_observatory.temporal import (
     CAPTURE_POLICIES,
     DEFAULT_OPERATIONAL_TOLERANCE,
@@ -32,6 +36,9 @@ OUTPUT_HASH = ROOT / "cockpit" / "app" / "cockpit-data.sha256"
 PRIVATE_DEPLOYMENT = ROOT / "configs" / "cockpit-private-deployment.json"
 PROSPECTIVE_COMPACT = ROOT / "reports" / "jalon12" / "observatory-snapshot.json"
 PROSPECTIVE_POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
+TEAM_IDENTITY_PROVENANCE = (
+    ROOT / "reports" / "ux" / "team-identity-provenance.json"
+)
 SHADOW_SIMULATION_POLICY = ROOT / "configs" / "shadow_simulation_v1.json"
 _EXPECTED_INVARIANTS: dict[str, object] = {
     "storage_paused": True,
@@ -328,6 +335,52 @@ def _presentation_fixture_registry(
                     raw.get("away_name"),
                     path=f"fixtures.registry[{index}].away_name",
                 ),
+                "home_short_name": _optional_public_text(
+                    raw.get("home_short_name"),
+                    path=f"fixtures.registry[{index}].home_short_name",
+                ),
+                "away_short_name": _optional_public_text(
+                    raw.get("away_short_name"),
+                    path=f"fixtures.registry[{index}].away_short_name",
+                ),
+                "home_identity_status": _optional_public_text(
+                    raw.get("home_identity_status"),
+                    path=f"fixtures.registry[{index}].home_identity_status",
+                    maximum=80,
+                )
+                or (
+                    "VERIFIED"
+                    if _optional_public_text(
+                        raw.get("home_name"),
+                        path=f"fixtures.registry[{index}].home_name",
+                    )
+                    is not None
+                    else "UNRESOLVED"
+                ),
+                "away_identity_status": _optional_public_text(
+                    raw.get("away_identity_status"),
+                    path=f"fixtures.registry[{index}].away_identity_status",
+                    maximum=80,
+                )
+                or (
+                    "VERIFIED"
+                    if _optional_public_text(
+                        raw.get("away_name"),
+                        path=f"fixtures.registry[{index}].away_name",
+                    )
+                    is not None
+                    else "UNRESOLVED"
+                ),
+                "home_identity_provenance": (
+                    dict(raw["home_identity_provenance"])
+                    if isinstance(raw.get("home_identity_provenance"), dict)
+                    else None
+                ),
+                "away_identity_provenance": (
+                    dict(raw["away_identity_provenance"])
+                    if isinstance(raw.get("away_identity_provenance"), dict)
+                    else None
+                ),
                 "competition": competition,
                 "season": _optional_public_text(
                     raw.get("season"),
@@ -354,6 +407,180 @@ def _presentation_fixture_registry(
             }
         )
     return registry
+
+
+def _team_identity_report_path(report_root: Path) -> Path:
+    configured = os.environ.get("TEAM_IDENTITY_PROVENANCE_INPUT")
+    if configured:
+        return Path(configured)
+    default_report_root = ROOT / "artifacts" / "prospective-observatory"
+    if report_root.resolve() == default_report_root.resolve():
+        return TEAM_IDENTITY_PROVENANCE
+    return report_root / "team-identity-provenance.json"
+
+
+def _validated_team_identity_report(
+    path: Path,
+    *,
+    fixtures: list[dict[str, object]],
+) -> dict[tuple[str, str], dict[str, object]]:
+    report = read_json(path, {})
+    if not isinstance(report, dict):
+        raise RuntimeError("rapport de provenance des identités invalide")
+    report_hash = report.get("report_sha256")
+    unsigned_report = {
+        key: value for key, value in report.items() if key != "report_sha256"
+    }
+    if (
+        report.get("schema_version") != "team-identity-provenance-v1"
+        or not isinstance(report_hash, str)
+        or canonical_sha256(unsigned_report) != report_hash
+        or report.get("fixture_scope_sha256")
+        != fixture_identity_scope_sha256(fixtures)
+    ):
+        raise RuntimeError("provenance des identités non vérifiée")
+    registry = report.get("registry")
+    if (
+        not isinstance(registry, dict)
+        or canonical_sha256(registry) != report.get("registry_sha256")
+    ):
+        raise RuntimeError("registre d’identités non vérifié")
+    provider_usage = report.get("provider_usage")
+    invariants = report.get("invariants")
+    if (
+        provider_usage
+        != {"api_football_calls": 0, "odds_api_credits": 0}
+        or not isinstance(invariants, dict)
+        or invariants.get("r2_read_only") is not True
+        or invariants.get("postgresql_read_only") is not True
+        or invariants.get("raw_payloads_in_report") != 0
+        or invariants.get("secrets_in_report") != 0
+    ):
+        raise RuntimeError("invariants du registre d’identités invalides")
+    raw_identities = report.get("identities")
+    if not isinstance(raw_identities, list):
+        raise RuntimeError("identités vérifiées absentes")
+    identities: dict[tuple[str, str], dict[str, object]] = {}
+    for index, raw in enumerate(raw_identities):
+        if not isinstance(raw, dict):
+            raise RuntimeError("identité vérifiée invalide")
+        provider = _optional_public_text(
+            raw.get("provider"),
+            path=f"identities[{index}].provider",
+            maximum=120,
+        )
+        provider_team_id = _optional_public_text(
+            raw.get("provider_team_id"),
+            path=f"identities[{index}].provider_team_id",
+            maximum=120,
+        )
+        fixture_id = _optional_public_text(
+            raw.get("fixture_id"),
+            path=f"identities[{index}].fixture_id",
+            maximum=120,
+        )
+        side = raw.get("side")
+        display_name = _optional_public_text(
+            raw.get("display_name"),
+            path=f"identities[{index}].display_name",
+        )
+        payload_sha256 = raw.get("payload_sha256")
+        receipt_id = raw.get("receipt_id")
+        captured_at = raw.get("captured_at")
+        postgresql = raw.get("postgresql_projection")
+        if (
+            provider is None
+            or provider_team_id is None
+            or fixture_id is None
+            or side not in {"home", "away"}
+            or display_name is None
+            or raw.get("canonical_team_id")
+            != canonical_team_key(provider, provider_team_id)
+            or raw.get("source") != "R2_FIXTURE_PAYLOAD"
+            or raw.get("identity_status") != "VERIFIED"
+            or raw.get("receipt_verified") is not True
+            or not isinstance(payload_sha256, str)
+            or re.fullmatch(r"[0-9a-f]{64}", payload_sha256) is None
+            or not isinstance(receipt_id, str)
+            or re.fullmatch(r"[0-9a-f]{64}", receipt_id) is None
+            or not isinstance(captured_at, str)
+            or not isinstance(postgresql, dict)
+            or postgresql.get("capture_receipt_verified") is not True
+            or postgresql.get("payload_index_verified") is not True
+            or postgresql.get("fixture_projection_verified") is not True
+        ):
+            raise RuntimeError("preuve d’identité incomplète")
+        key = (fixture_id, str(side))
+        if key in identities:
+            raise RuntimeError("preuve d’identité dupliquée")
+        identities[key] = dict(raw)
+    return identities
+
+
+def _enrich_fixture_identities(
+    fixtures: list[dict[str, object]],
+    *,
+    report_path: Path,
+) -> dict[str, object]:
+    expected_slots = len(fixtures) * 2
+    if not report_path.exists():
+        return {
+            "schema_version": "team-identity-registry-v1",
+            "source": "NO_VERIFIED_IDENTITY_REPORT",
+            "report": None,
+            "registry_sha256": None,
+            "team_slots_expected": expected_slots,
+            "team_slots_resolved": sum(
+                fixture.get(f"{side}_identity_status") == "VERIFIED"
+                for fixture in fixtures
+                for side in ("home", "away")
+            ),
+        }
+    identities = _validated_team_identity_report(
+        report_path,
+        fixtures=fixtures,
+    )
+    resolved = 0
+    for fixture in fixtures:
+        fixture_id = str(fixture["fixture_id"])
+        provider = str(fixture["provider"])
+        for side in ("home", "away"):
+            evidence = identities.get((fixture_id, side))
+            expected_team_id = str(fixture[f"{side}_team_id"])
+            if (
+                evidence is None
+                or evidence.get("provider") != provider
+                or evidence.get("provider_team_id") != expected_team_id
+            ):
+                fixture[f"{side}_name"] = None
+                fixture[f"{side}_short_name"] = None
+                fixture[f"{side}_identity_status"] = "UNRESOLVED"
+                fixture[f"{side}_identity_provenance"] = None
+                continue
+            fixture[f"{side}_name"] = evidence["display_name"]
+            fixture[f"{side}_short_name"] = evidence.get("short_name")
+            fixture[f"{side}_identity_status"] = "VERIFIED"
+            fixture[f"{side}_identity_provenance"] = {
+                "source": evidence["source"],
+                "payload_sha256": evidence["payload_sha256"],
+                "receipt_id": evidence["receipt_id"],
+                "captured_at": evidence["captured_at"],
+            }
+            resolved += 1
+    report = cast(dict[str, object], read_json(report_path, {}))
+    try:
+        report_label = report_path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        report_label = report_path.name
+    return {
+        "schema_version": "team-identity-registry-v1",
+        "source": "EXISTING_VERIFIED_R2_FIXTURE_CAPTURES",
+        "report": report_label,
+        "registry_sha256": report.get("registry_sha256"),
+        "verified_at": report.get("generated_at"),
+        "team_slots_expected": expected_slots,
+        "team_slots_resolved": resolved,
+    }
 
 
 def _derived_active_windows(
@@ -1677,6 +1904,10 @@ def build_prospective_observatory() -> dict[str, Any]:
         fixture_source = observed_fixtures.get("registry", fixture_source)
         evidence_source = observed_fixtures.get("evidence")
     fixture_registry = _presentation_fixture_registry(fixture_source)
+    identity_registry = _enrich_fixture_identities(
+        fixture_registry,
+        report_path=_team_identity_report_path(report_root),
+    )
     active_fixture_ids = {
         str(item["fixture_id"])
         for item in fixture_registry
@@ -1714,6 +1945,7 @@ def build_prospective_observatory() -> dict[str, Any]:
         raise RuntimeError("projection publique Jalon 12 invalide")
     compact_fixtures["registry"] = fixture_registry
     compact_fixtures["evidence"] = fixture_evidence
+    compact_fixtures["identity_registry"] = identity_registry
     compact_fixtures["tracked"] = len(active_fixture_ids)
     compact_windows["registry"] = active_windows
     compact_windows["planned"] = len(active_windows)

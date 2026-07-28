@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from robin.prospective_observatory.contracts import CaptureFamily
@@ -88,6 +89,30 @@ def test_operational_values_are_absent_from_frontend_sources() -> None:
         if path.suffix in {".ts", ".tsx"}
     )
     assert all(value not in source for value in forbidden)
+
+
+def test_frontend_has_no_manual_team_identity_mapping() -> None:
+    forbidden_patterns = (
+        r'["\']81["\']\s*:\s*["\']Marseille',
+        r'["\']95["\']\s*:\s*["\']Strasbourg',
+        r"\bteamNamesByProviderId\b",
+        r"\bproviderFixtures\b",
+    )
+    roots = (
+        ROOT / "cockpit" / "app" / "components",
+        ROOT / "cockpit" / "app" / "lib",
+        ROOT / "cockpit" / "app" / "i18n",
+    )
+    source = "\n".join(
+        path.read_text(encoding="utf-8")
+        for root in roots
+        for path in root.rglob("*")
+        if path.suffix in {".ts", ".tsx"}
+    )
+    assert all(
+        re.search(pattern, source, flags=re.IGNORECASE) is None
+        for pattern in forbidden_patterns
+    )
 
 
 def test_snapshot_generator_exposes_provenance_without_raw_payloads() -> None:

@@ -1,0 +1,72 @@
+name: "Robin Experience - identites verifiees"
+
+on:
+  push:
+    branches:
+      - "codex/robin-experience-v1-french-dashboard"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: robin-experience-team-identity-audit
+  cancel-in-progress: false
+
+jobs:
+  read-only-audit:
+    if: contains(github.event.head_commit.message, '[audit-team-identities]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer le runtime de lecture
+        run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Verifier uniquement la presence des acces de lecture
+        shell: bash
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          for name in DATABASE_URL R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME; do
+            if [ -z "${!name:-}" ]; then
+              echo "Acces requis absent: ${name}"
+              exit 1
+            fi
+          done
+      - name: Extraire les identites sans fournisseur ni ecriture
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          API_FOOTBALL_KEY: ""
+          ODDS_API_KEY: ""
+          API_FOOTBALL_CALLS_ALLOWED: "0"
+          ODDS_API_CREDITS_ALLOWED: "0"
+        run: >-
+          python scripts/audit_team_identities.py
+          --snapshot cockpit/app/cockpit-data.json
+          --output reports/ux/team-identity-provenance.json
+          --require-complete
+      - name: Verifier le rapport compact
+        run: |
+          python -c "import json,pathlib; p=pathlib.Path('reports/ux/team-identity-provenance.json'); d=json.loads(p.read_text()); assert d['provider_usage']=={'api_football_calls':0,'odds_api_credits':0}; assert d['reads']['r2']['writes']==0; assert d['reads']['postgresql']['writes']==0; assert d['coverage']['team_slots_resolved']==d['coverage']['team_slots_expected']"
+          python scripts/check_no_secrets.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: robin-experience-team-identities-${{ github.run_id }}
+          path: reports/ux/team-identity-provenance.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

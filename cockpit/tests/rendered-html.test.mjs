@@ -10,8 +10,9 @@ const firstFixture = snapshot.prospectiveObservatory.fixtures.registry[0];
 const fixtureCount = snapshot.prospectiveObservatory.fixtures.registry.filter(
   (fixture) => !fixture.cancelled && fixture.status !== "TOMBSTONED",
 ).length;
-const firstHome = firstFixture.home_name ?? `Équipe ${firstFixture.home_team_id}`;
-const firstAway = firstFixture.away_name ?? `Équipe ${firstFixture.away_team_id}`;
+const unresolvedTeam = "Équipe en cours d’identification";
+const firstHome = firstFixture.home_name ?? unresolvedTeam;
+const firstAway = firstFixture.away_name ?? unresolvedTeam;
 
 async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);

@@ -241,8 +241,10 @@ export function MatchDetail({ match }: { match: MatchPresentation }) {
               rows={[
                 { label: "Identifiant fournisseur", value: <code>{match.providerId}</code> },
                 { label: "Identifiant interne", value: <code>{match.internalId}</code> },
-                { label: "Équipe domicile", value: <code>{match.homeTeamId}</code> },
-                { label: "Équipe extérieure", value: <code>{match.awayTeamId}</code> },
+                { label: "Identifiant fournisseur — domicile", value: <code>{match.homeTeamId}</code> },
+                { label: "Statut identité — domicile", value: match.homeIdentityStatus === "VERIFIED" ? "identité vérifiée" : "identité non résolue" },
+                { label: "Identifiant fournisseur — extérieur", value: <code>{match.awayTeamId}</code> },
+                { label: "Statut identité — extérieur", value: match.awayIdentityStatus === "VERIFIED" ? "identité vérifiée" : "identité non résolue" },
                 { label: "Heure du coup d’envoi", value: <><span>{formatDateTime(match.kickoff, true)}</span><code>{match.kickoff}</code></> },
                 { label: "Révision du code", value: <code>{operationalEvidence.sourceRevision}</code> },
                 { label: "Origine", value: <><StatusBadge value={operationalEvidence.origin} showTechnical /></> },

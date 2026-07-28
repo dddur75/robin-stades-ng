@@ -32,6 +32,10 @@ export type MatchPresentation = {
   away: string;
   homeTeamId: string;
   awayTeamId: string;
+  homeIdentityStatus: string;
+  awayIdentityStatus: string;
+  homeIdentitySource: string | null;
+  awayIdentitySource: string | null;
   kickoff: string;
   matchStatus: string;
   dataStatus: string;
@@ -283,11 +287,14 @@ function activeFixture(item: UnknownRecord): boolean {
 function fixtureName(item: UnknownRecord, side: "home" | "away"): string {
   const name = optionalText(item[`${side}_name`]);
   if (name) return name;
-  const identifier = text(
-    item[`${side}_team_id`],
-    text(item[side], "non renseignée"),
-  );
-  return `Équipe ${identifier}`;
+  return "Équipe en cours d’identification";
+}
+
+function fixtureIdentitySource(
+  item: UnknownRecord,
+  side: "home" | "away",
+): string | null {
+  return optionalText(record(item[`${side}_identity_provenance`]).source);
 }
 
 function presentationWindow(item: UnknownRecord): PresentationWindow | null {
@@ -568,6 +575,10 @@ export function buildPresentationModel(
         away: fixtureName(fixture, "away"),
         homeTeamId: text(fixture.home_team_id, text(fixture.home)),
         awayTeamId: text(fixture.away_team_id, text(fixture.away)),
+        homeIdentityStatus: text(fixture.home_identity_status, "UNRESOLVED"),
+        awayIdentityStatus: text(fixture.away_identity_status, "UNRESOLVED"),
+        homeIdentitySource: fixtureIdentitySource(fixture, "home"),
+        awayIdentitySource: fixtureIdentitySource(fixture, "away"),
         kickoff: text(fixture.kickoff_at),
         matchStatus: text(fixture.status, "REGISTERED"),
         dataStatus: matchOdds.length || availableFamilies > 1

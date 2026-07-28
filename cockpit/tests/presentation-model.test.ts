@@ -174,9 +174,49 @@ test("cas C — une dixième fixture apparaît automatiquement", () => {
   assert.ok(model.matches.some((match) => match.id === "synthetic-test:fixture-10"));
 });
 
+test("identité A — un nom vérifié du snapshot est affiché tel quel", () => {
+  const value = cloneSnapshot();
+  const fixture = value.prospectiveObservatory.fixtures.registry[0];
+  fixture.home_name = "Olympique Synthétique Vérifié";
+  fixture.home_identity_status = "VERIFIED";
+  fixture.home_identity_provenance = { source: "R2_FIXTURE_PAYLOAD" };
+  const match = buildPresentationModel(value, { now: referenceNow }).matches[0];
+  assert.equal(match.home, "Olympique Synthétique Vérifié");
+  assert.equal(match.homeIdentityStatus, "VERIFIED");
+  assert.equal(match.homeIdentitySource, "R2_FIXTURE_PAYLOAD");
+});
+
+test("identité B — une identité absente masque l’identifiant en vue essentielle", () => {
+  const value = cloneSnapshot();
+  const fixture = value.prospectiveObservatory.fixtures.registry[0];
+  fixture.home_name = null;
+  fixture.home_identity_status = "UNRESOLVED";
+  fixture.home_identity_provenance = null;
+  const match = buildPresentationModel(value, { now: referenceNow }).matches[0];
+  assert.equal(match.home, "Équipe en cours d’identification");
+  assert.equal(match.homeTeamId, fixture.home_team_id);
+  assert.equal(match.homeIdentityStatus, "UNRESOLVED");
+  assert.doesNotMatch(match.home, new RegExp(String(fixture.home_team_id)));
+});
+
+test("identité C — une nouvelle équipe apparaît sans modification frontend", () => {
+  const value = cloneSnapshot();
+  addSyntheticFixture(value, {
+    fixtureId: "synthetic-test:new-team-identity",
+    kickoffShift: 8 * 86_400_000,
+  });
+  const match = buildPresentationModel(value, { now: referenceNow }).matches.find(
+    (item) => item.id === "synthetic-test:new-team-identity",
+  );
+  assert.equal(match?.home, "Équipe Test Domicile");
+  assert.equal(match?.away, "Équipe Test Extérieure");
+});
+
 test("cas D — le report d’un match déplace kickoff et fenêtres", () => {
   const value = cloneSnapshot();
   const fixture = value.prospectiveObservatory.fixtures.registry[0];
+  const homeName = fixture.home_name;
+  const awayName = fixture.away_name;
   const originalKickoff = fixture.kickoff_at;
   const originalNext = value.prospectiveObservatory.windows.registry
     .filter((window) => window.fixture_id === fixture.fixture_id)
@@ -202,6 +242,24 @@ test("cas D — le report d’un match déplace kickoff et fenêtres", () => {
   const match = model.matches.find((item) => item.id === fixture.fixture_id);
   assert.equal(match?.kickoff, shiftIso(originalKickoff, shift));
   assert.equal(match?.nextCapture, shiftIso(originalNext, shift));
+  assert.equal(match?.home, homeName ?? "Équipe en cours d’identification");
+  assert.equal(match?.away, awayName ?? "Équipe en cours d’identification");
+});
+
+test("identité G — réordonner les fixtures ne change aucune association", () => {
+  const value = cloneSnapshot();
+  const expected = new Map(
+    buildPresentationModel(value, { now: referenceNow }).matches.map((match) => [
+      match.id,
+      `${match.home}|${match.away}`,
+    ]),
+  );
+  value.prospectiveObservatory.fixtures.registry.reverse();
+  const reordered = buildPresentationModel(value, { now: referenceNow });
+  assert.deepEqual(
+    new Map(reordered.matches.map((match) => [match.id, `${match.home}|${match.away}`])),
+    expected,
+  );
 });
 
 test("cas E — une cote prospective capturée apparaît sans code par match", () => {

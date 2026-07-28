@@ -22,8 +22,9 @@ const snapshot = JSON.parse(
 
 const firstFixture = snapshot.prospectiveObservatory.fixtures.registry[0];
 const matchId = firstFixture.fixture_id;
-const matchHome = firstFixture.home_name ?? `Équipe ${firstFixture.home_team_id}`;
-const matchAway = firstFixture.away_name ?? `Équipe ${firstFixture.away_team_id}`;
+const unresolvedTeam = "Équipe en cours d’identification";
+const matchHome = firstFixture.home_name ?? unresolvedTeam;
+const matchAway = firstFixture.away_name ?? unresolvedTeam;
 const fixtureCount = snapshot.prospectiveObservatory.fixtures.registry.filter(
   (fixture) => !fixture.cancelled && fixture.status !== "TOMBSTONED",
 ).length;
