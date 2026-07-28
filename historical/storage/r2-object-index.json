@@ -1113,6 +1113,48 @@
       "status": "verified",
       "verified_at": "2026-07-28T03:55:57.417956+00:00"
     },
+    "bundles/30331661732/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-28T05:45:11.446743+00:00"
+    },
+    "bundles/30331661732/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "1298fb01e6d0fcd4df964cf4cf205431ada515003ca43d9185d5bd29f0b2a376",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-28T05:45:12.140814+00:00"
+    },
+    "bundles/30331661732/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "456259e572aa610daf9e3a19f4622bd0df323808aa94fc96b7f8475cea337a17",
+      "size": 21000126,
+      "status": "verified",
+      "verified_at": "2026-07-28T05:45:14.151172+00:00"
+    },
+    "bundles/30331955052/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-07-28T05:45:15.497024+00:00"
+    },
+    "bundles/30331955052/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "7e7a42358b39e3c84ef712c2614418c2a61b7c234266ffcae9bb475963178374",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-07-28T05:45:16.185119+00:00"
+    },
+    "bundles/30331955052/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "78c62edae6989c0b75ef6e0a931c5c01afe6b3a5b0722f9201f1c7d018ac4ab1",
+      "size": 20994137,
+      "status": "verified",
+      "verified_at": "2026-07-28T05:45:17.917919+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -2591,11 +2633,11 @@
       "verified_at": "2026-07-27T05:21:28.868590+00:00"
     },
     "forecasts/accelerated-safe.json": {
-      "last_action": "uploaded",
-      "sha256": "0b17d8cb5b560a797dc57518fcf4d5b62535366c872907a4a57070e505982903",
-      "size": 8398,
-      "status": "verified",
-      "verified_at": "2026-07-27T07:56:12.899240+00:00"
+      "last_action": "failed",
+      "sha256": "f65d9ad86f973fa86176fb4dc66568bcca974a91970c8abf249b077a64fda394",
+      "size": 8399,
+      "status": "failed",
+      "verified_at": null
     },
     "identity/team-alias-registry-v1.json": {
       "last_action": "replayed",
@@ -5713,11 +5755,11 @@
       "verified_at": "2026-07-26T23:43:19.597825+00:00"
     },
     "quality/latest.json": {
-      "last_action": "replayed",
-      "sha256": "4f92fdfc81210ed4431b3d136711bf721eb4b3fe493ded2a29b47fe765f1f203",
-      "size": 1274,
-      "status": "verified",
-      "verified_at": "2026-07-26T23:43:19.833405+00:00"
+      "last_action": "failed",
+      "sha256": "f44f6948adf40f40f0bf891f898aa99ddfb8ad841655a4c862049a0c8a93c723",
+      "size": 1285,
+      "status": "failed",
+      "verified_at": null
     },
     "quality/provenance-repair.json": {
       "last_action": "replayed",
@@ -178116,11 +178158,11 @@
       "verified_at": "2026-07-27T04:29:06.856345+00:00"
     },
     "readiness/ligue1-multiseason-v1.json": {
-      "last_action": "replayed",
-      "sha256": "e82d43a6835825ab2ef059bf973f06527c473a0e8d78e39944e634633188a7af",
-      "size": 31722,
-      "status": "verified",
-      "verified_at": "2026-07-27T05:34:28.648313+00:00"
+      "last_action": "failed",
+      "sha256": "c43d73b1c18ef1ab9854460d95e577b2a0bf418bf5cee1212d812ce4e571fefb",
+      "size": 31723,
+      "status": "failed",
+      "verified_at": null
     },
     "reports/ligue1-multiseason-readiness.md": {
       "last_action": "replayed",
@@ -178278,5 +178320,5 @@
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-07-28T03:55:57.924787+00:00"
+  "updated_at": "2026-07-28T05:45:18.264600+00:00"
 }
