@@ -2956,11 +2956,9 @@ def _window_matches_fixture_version(
     """Return whether a window belongs to the current fixture business version.
 
     Versioned Jalon-12 windows are matched by their exact deterministic ID.
-    Legacy pilot windows did not carry the fixture hash.  They are accepted
-    only when their kickoff still matches and they were scheduled no earlier
-    than the current fixture version registration.  Any subsequent provider
-    correction therefore invalidates them until the scheduler creates the new
-    version-bound windows.
+    Legacy pilot windows remain append-only replay evidence and are never
+    operational. ``registered_at`` is ingestion metadata, not a durable
+    business-version discriminator, so activation never depends on it.
     """
 
     if window.fixture_id != fixture.fixture_id or window.kickoff_at != fixture.kickoff_at:
@@ -2981,11 +2979,7 @@ def _window_matches_fixture_version(
     )
     if expected is None:
         return False
-    if window.window_id == expected.window_id:
-        return True
-    if is_versioned_window_id(window.window_id):
-        return False
-    return window.scheduled_at >= fixture.registered_at
+    return window.window_id == expected.window_id
 
 
 def _active_windows(state: OperationalState) -> tuple[CaptureWindow, ...]:

@@ -41,6 +41,7 @@ from scripts.run_prospective_observatory import (
     run_capture,
     run_fixture_registry,
     run_gate_report,
+    run_next_due_report,
     run_replay_audit,
     run_scheduler,
 )
@@ -357,6 +358,137 @@ def test_fixture_business_change_replaces_active_windows_at_same_kickoff(
     assert original_window_ids.isdisjoint(replacement_window_ids)
     assert active_window_ids == replacement_window_ids
     assert original_window_ids.isdisjoint(active_window_ids)
+
+
+def test_only_current_policy_windows_are_active_even_when_generation_is_partial(
+    tmp_path: Path,
+) -> None:
+    kickoff = NOW + timedelta(days=22)
+    cache = _write_cache(tmp_path / "fixtures.json", kickoff_at=kickoff)
+    output = tmp_path / "reports"
+    repository = ProspectiveR2Repository(
+        DirectoryObjectStore(tmp_path / "objects")
+    )
+    state = MemoryOperationalState()
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            now=NOW,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output, now=NOW), state=state)
+    current_windows = tuple(state.windows())
+    fixture = state.fixtures()[0]
+
+    for index, window in enumerate(current_windows):
+        legacy = window.model_copy(
+            update={
+                "window_id": f"legacy-window:{index}:{window.window_id}",
+                "policy_version": "prospective-capture-window-v1",
+                "scheduled_at": fixture.registered_at
+                + timedelta(seconds=1),
+            }
+        )
+        assert state.schedule_window(legacy)
+
+    active = _active_windows(state)
+    assert len(current_windows) == 49
+    assert len(state.windows()) == 98
+    assert {window.window_id for window in active} == {
+        window.window_id for window in current_windows
+    }
+
+    args = _args("next-due-report", output=output, now=NOW)
+    args.report_path = tmp_path / "next-due-windows.json"
+    report = run_next_due_report(args, state=state)
+    assert report["active_windows"] == 49
+    assert len(report["entries"]) == len(CaptureFamily) == 9
+
+    for window in current_windows[1:]:
+        state.window_rows.pop(window.window_id)
+    partial = _active_windows(state)
+    assert len(partial) == 1
+    assert all(
+        not window.window_id.startswith("legacy-window:")
+        for window in partial
+    )
+    state.window_rows.pop(current_windows[0].window_id)
+    assert _active_windows(state) == ()
+
+
+def test_legacy_windows_remain_inactive_after_same_hash_sql_restart(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    kickoff = NOW + timedelta(days=22)
+    cache = _write_cache(tmp_path / "fixtures.json", kickoff_at=kickoff)
+    output = tmp_path / "reports"
+    object_store_root = tmp_path / "objects"
+    repository = ProspectiveR2Repository(
+        DirectoryObjectStore(object_store_root)
+    )
+    url = f"sqlite:///{(tmp_path / 'state.db').as_posix()}"
+    monkeypatch.setenv("ROBIN_DATABASE_URL", url)
+    command.upgrade(Config(str(ROOT / "alembic.ini")), "head")
+    engine = build_engine(url)
+    state = SQLAlchemyOperationalState(engine)
+
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            now=NOW,
+            cache=cache,
+            object_store_root=object_store_root,
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output, now=NOW), state=state)
+    current_windows = tuple(state.windows())
+    fixture = state.fixtures()[0]
+    legacy = current_windows[0].model_copy(
+        update={
+            "window_id": (
+                f"legacy-window:sql-restart:{current_windows[0].window_id}"
+            ),
+            "policy_version": "prospective-capture-window-v1",
+            "scheduled_at": fixture.registered_at + timedelta(minutes=1),
+        }
+    )
+    assert state.schedule_window(legacy)
+
+    repeated = run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            now=NOW + timedelta(minutes=2),
+            cache=cache,
+            object_store_root=object_store_root,
+        ),
+        state=state,
+        repository=repository,
+    )
+    before_restart = {
+        window.window_id for window in _active_windows(state)
+    }
+    assert repeated["fixtures_inserted"] == 0
+    assert len(before_restart) == 49
+    assert legacy.window_id not in before_restart
+    engine.dispose()
+
+    restarted = SQLAlchemyOperationalState(build_engine(url))
+    after_restart = {
+        window.window_id for window in _active_windows(restarted)
+    }
+    assert after_restart == before_restart
+    assert legacy.window_id not in after_restart
+    restarted.engine.dispose()
 
 
 def test_fixture_tbd_appends_tombstone_and_deactivates_existing_windows(
