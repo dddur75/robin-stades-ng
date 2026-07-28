@@ -10,7 +10,7 @@ from typing import Any
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import MetaData, Table, func, select
+from sqlalchemy import MetaData, Table, event, func, select
 
 from robin.domain.enums import DataAvailability, DataOrigin
 from robin.prospective_observatory.budgets import BudgetExceeded, ProviderKind
@@ -571,7 +571,35 @@ def test_odds_capture_requires_fresh_quota_headers_and_charges_actual_cost(
         state=state,
         repository=repository,
     )
-    run_scheduler(_args("scheduler", output=output), state=state)
+    capture_window_inserts: list[bool] = []
+
+    def record_capture_window_insert(
+        _connection: object,
+        _cursor: object,
+        statement: str,
+        _parameters: object,
+        _context: object,
+        executemany: bool,
+    ) -> None:
+        if statement.lstrip().upper().startswith("INSERT INTO CAPTURE_WINDOWS"):
+            capture_window_inserts.append(executemany)
+
+    event.listen(
+        engine,
+        "before_cursor_execute",
+        record_capture_window_insert,
+    )
+    first_schedule = run_scheduler(
+        _args("scheduler", output=output),
+        state=state,
+    )
+    event.remove(
+        engine,
+        "before_cursor_execute",
+        record_capture_window_insert,
+    )
+    assert first_schedule["windows_inserted"] > 1
+    assert capture_window_inserts == [True]
 
     missing_headers = _FakeOdds(include_quota_headers=False)
     with pytest.raises(

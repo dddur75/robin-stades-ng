@@ -714,6 +714,11 @@ class OperationalState(Protocol):
 
     def schedule_window(self, window: CaptureWindow) -> bool: ...
 
+    def schedule_windows_batch(
+        self,
+        windows: Iterable[CaptureWindow],
+    ) -> tuple[int, int]: ...
+
     def windows(self) -> tuple[CaptureWindow, ...]: ...
 
     def append_attempt(self, attempt: CaptureAttempt) -> bool: ...
@@ -821,6 +826,19 @@ class MemoryOperationalState:
             return False
         self.window_rows[window.window_id] = window
         return True
+
+    def schedule_windows_batch(
+        self,
+        windows: Iterable[CaptureWindow],
+    ) -> tuple[int, int]:
+        inserted = 0
+        duplicates = 0
+        for window in windows:
+            if self.schedule_window(window):
+                inserted += 1
+            else:
+                duplicates += 1
+        return inserted, duplicates
 
     def windows(self) -> tuple[CaptureWindow, ...]:
         return tuple(self.window_rows.values())
@@ -1151,51 +1169,72 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         return inserted
 
     def schedule_window(self, window: CaptureWindow) -> bool:
-        fixture_entry = self.fixture_rows.get(window.fixture_id)
-        if fixture_entry is None:
-            raise RuntimeError("CAPTURE_WINDOW_FIXTURE_MISSING")
-        fixture_record_id = _stable_id("fixture", fixture_entry[0])
-        values = window.model_dump()
-        values.update(
+        inserted, _ = self.schedule_windows_batch((window,))
+        return inserted == 1
+
+    def schedule_windows_batch(
+        self,
+        windows: Iterable[CaptureWindow],
+    ) -> tuple[int, int]:
+        immutable = (
+            "fixture_id",
+            "family",
+            "label",
+            "due_at",
+            "opens_at",
+            "cutoff_at",
+            "kickoff_at",
+            "operational_tolerance_seconds",
+            "policy_version",
+        )
+        pending: dict[str, tuple[CaptureWindow, dict[str, object]]] = {}
+        duplicates = 0
+        for window in windows:
+            fixture_entry = self.fixture_rows.get(window.fixture_id)
+            if fixture_entry is None:
+                raise RuntimeError("CAPTURE_WINDOW_FIXTURE_MISSING")
+            fixture_record_id = _stable_id("fixture", fixture_entry[0])
+            values = window.model_dump()
+            values.update(
+                {
+                    "id": _stable_id("window", window.window_id),
+                    "fixture_record_id": fixture_record_id,
+                    "append_only": True,
+                }
+            )
+            existing = self.window_rows.get(window.window_id)
+            if existing is not None:
+                for name in immutable:
+                    if _json_compatible(getattr(existing, name)) != _json_compatible(
+                        values[name]
+                    ):
+                        raise ValueError("CAPTURE_WINDOW_IDEMPOTENCY_CONFLICT")
+                duplicates += 1
+                continue
+            pending_existing = pending.get(window.window_id)
+            if pending_existing is not None:
+                if pending_existing[0] != window:
+                    raise ValueError("CAPTURE_WINDOW_IDEMPOTENCY_CONFLICT")
+                duplicates += 1
+                continue
+            pending[window.window_id] = (window, values)
+
+        if not pending:
+            return 0, duplicates
+        table = self.tables["capture_windows"]
+        rows = [
+            self._row_for(table, values)
+            for _, values in pending.values()
+        ]
+        with self.engine.begin() as connection:
+            connection.execute(table.insert(), rows)
+        self.window_rows.update(
             {
-                "id": _stable_id("window", window.window_id),
-                "fixture_record_id": fixture_record_id,
-                "append_only": True,
+                window_id: window
+                for window_id, (window, _) in pending.items()
             }
         )
-        table = self.tables["capture_windows"]
-        with self.engine.begin() as connection:
-            existing = connection.execute(
-                select(table).where(table.c.window_id == window.window_id)
-            ).mappings().first()
-            if existing is not None:
-                immutable = (
-                    "fixture_record_id",
-                    "fixture_id",
-                    "family",
-                    "label",
-                    "due_at",
-                    "opens_at",
-                    "cutoff_at",
-                    "kickoff_at",
-                    "operational_tolerance_seconds",
-                    "policy_version",
-                )
-                for name in immutable:
-                    if _json_compatible(existing[name]) != _json_compatible(values[name]):
-                        raise ValueError("CAPTURE_WINDOW_IDEMPOTENCY_CONFLICT")
-                restored = CaptureWindow.model_validate(
-                    {
-                        key: _db_value(existing[key])
-                        for key in CaptureWindow.model_fields
-                        if key in existing
-                    }
-                )
-                self.window_rows[window.window_id] = restored
-                return False
-            connection.execute(table.insert().values(**self._row_for(table, values)))
-        self.window_rows[window.window_id] = window
-        return True
+        return len(pending), duplicates
 
     def append_attempt(self, attempt: CaptureAttempt) -> bool:
         if attempt.window_id not in self.window_rows:
@@ -3321,11 +3360,10 @@ def run_scheduler(
     now = _parse_utc(args.now)
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
-    inserted = 0
-    duplicates = 0
     due = 0
     missed = 0
     by_family: Counter[str] = Counter()
+    planned_windows: list[CaptureWindow] = []
     for fixture in state.fixtures():
         for family in CaptureFamily:
             allowed_labels = set(
@@ -3343,13 +3381,11 @@ def run_scheduler(
                     continue
                 status = classify_window(window, now=now)
                 stored_window = window.model_copy(update={"status": status})
-                if state.schedule_window(stored_window):
-                    inserted += 1
-                else:
-                    duplicates += 1
+                planned_windows.append(stored_window)
                 by_family[f"{family.value}:{status.value}"] += 1
                 due += int(status is AvailabilityStatus.DUE)
                 missed += int(status is AvailabilityStatus.MISSED_WINDOW)
+    inserted, duplicates = state.schedule_windows_batch(planned_windows)
     snapshot = _base_snapshot(policy, now=now)
     cast(dict[str, object], snapshot["fixtures"]).update(
         {
