@@ -1,7 +1,7 @@
 # Matrice de capacité des fournisseurs prospectifs
 
 Cette matrice décrit ce que les intégrations réelles savent observer. Elle ne
-transforme pas une réponse vide en absence certaine et n'autorise pas P1.
+transforme pas une réponse vide en absence certaine.
 L'horodatage de preuve reste l'horodatage HTTP local
 `requested_at`/`response_received_at`; aucun horodatage fournisseur n'est
 actuellement mappé dans le reçu canonique.
@@ -34,13 +34,18 @@ la fixture est neutralisée : une réponse globale multi-fixtures conserve un
 seul identifiant physique. Le ledger publie ensuite au plus une preuve
 temporelle par identifiant physique et fixture.
 
-## Limites d'activation
+## Activation par compétition
 
-P0 est limité à la Ligue 1. Le mapping Odds actif est
-`soccer_france_ligue_one`. La Premier League, la Liga, la Bundesliga et la
-Serie A restent `P1_OFF` : la présence d'un identifiant API-Football dans le
-registre ne suffit pas à démontrer le mapping marché, la couverture temporelle
-ou le coût fournisseur.
+| Compétition | API-Football | The Odds API | Profil |
+|---|---:|---|---|
+| Ligue 1 | 61 | `soccer_france_ligue_one` | `FULL` |
+| Premier League | 39 | `soccer_epl` | `DEEP_FULL_ODDS_REDUCED` |
+| Liga | 140 | `soccer_spain_la_liga` | `DEEP_FULL_ODDS_REDUCED` |
+| Bundesliga | 78 | `soccer_germany_bundesliga` | `DEEP_FULL_ODDS_REDUCED` |
+| Serie A | 135 | `soccer_italy_serie_a` | `DEEP_FULL_ODDS_REDUCED` |
+
+La présence d’un mapping ne suffit pas à rendre la ligue active. Fixtures,
+identités, kickoffs, R2, PostgreSQL, replay et budget doivent tous être verts.
 
 Toute valeur sans identité, kickoff fiable, horodatage de réception ou réponse
 HTTP vérifiable est rejetée. `CAPTURED_EMPTY` est une preuve de réponse vide,

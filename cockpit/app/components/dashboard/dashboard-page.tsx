@@ -21,6 +21,7 @@ import {
 import {
   dataFamilyLabels,
   hypotheses,
+  leagueSummaries,
   matches,
   nextCaptures,
   operationalEvidence,
@@ -41,7 +42,10 @@ export function DashboardPage() {
       <section className="hero">
         <PageHeader
           eyebrow={t("home.eyebrow")}
-          title={t("home.title", { count: operationalEvidence.fixtures })}
+          title={t("home.title", {
+            count: operationalEvidence.fixtures,
+            leagues: leagueSummaries.length,
+          })}
           subtitle={t("home.subtitle")}
         >
           <div className="hero-statuses">
@@ -60,7 +64,7 @@ export function DashboardPage() {
 
       <section className="metrics-grid metrics-home" aria-label="Indicateurs principaux">
         <MetricCard
-          detail="prochaine journée de Ligue 1"
+          detail={`${leagueSummaries.length} championnats actifs ou en gate`}
           icon="◉"
           label={t("home.metrics.matches")}
           tone="blue"
@@ -100,6 +104,29 @@ export function DashboardPage() {
           label={t("home.metrics.bankroll")}
           value={formatUnits(presentationBankroll.currentUnits)}
         />
+      </section>
+
+      <section className="section-block">
+        <SectionHeading
+          title="Les cinq championnats"
+          subtitle="Une lecture compacte de l’activation, de la couverture et du coût observé."
+        />
+        <div className="league-summary-grid">
+          {leagueSummaries.map((league) => (
+            <article className="league-summary-card" key={league.competition}>
+              <div>
+                <strong>{league.competition}</strong>
+                <StatusBadge value={league.gate} />
+              </div>
+              <span>{formatNumber(league.fixtures)} matchs</span>
+              <small>
+                {formatNumber(league.deepObservations)} observations profondes ·{" "}
+                {formatNumber(league.apiFootballCalls)} appels ·{" "}
+                {formatNumber(league.oddsApiCredits)} crédits
+              </small>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="dashboard-grid">

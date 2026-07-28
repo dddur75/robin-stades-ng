@@ -1,5 +1,5 @@
 {
-  "schema_version": "prospective-observatory-policy-v1",
+  "schema_version": "prospective-observatory-policy-v2",
   "storage": {
     "raw_primary": "R2",
     "raw_namespace": "prospective-deep-data/schema-v1",
@@ -13,33 +13,89 @@
       "competition": "Ligue 1",
       "provider": "api-football",
       "provider_id": 61,
-      "priority": "P0"
+      "capture_profile": "FULL",
+      "odds_sport_key": "soccer_france_ligue_one"
     },
     {
       "competition": "Premier League",
       "provider": "api-football",
       "provider_id": 39,
-      "priority": "P1"
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "odds_sport_key": "soccer_epl"
     },
     {
-      "competition": "La Liga",
+      "competition": "Liga",
       "provider": "api-football",
       "provider_id": 140,
-      "priority": "P1"
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "odds_sport_key": "soccer_spain_la_liga"
     },
     {
       "competition": "Bundesliga",
       "provider": "api-football",
       "provider_id": 78,
-      "priority": "P1"
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "odds_sport_key": "soccer_germany_bundesliga"
     },
     {
       "competition": "Serie A",
       "provider": "api-football",
       "provider_id": 135,
-      "priority": "P1"
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "odds_sport_key": "soccer_italy_serie_a"
     }
   ],
+  "capture_profiles": {
+    "FULL": {
+      "families": [
+        "FIXTURE",
+        "TEAM",
+        "SQUAD",
+        "PLAYER_STATUS",
+        "INJURY",
+        "LINEUP",
+        "FORMATION",
+        "ODDS",
+        "EVENT_STATUS"
+      ],
+      "odds_windows": [
+        "J-7",
+        "J-3",
+        "J-1",
+        "H-6",
+        "H-2",
+        "NEAR_KICKOFF"
+      ]
+    },
+    "DEEP_FULL_ODDS_REDUCED": {
+      "families": [
+        "FIXTURE",
+        "TEAM",
+        "SQUAD",
+        "PLAYER_STATUS",
+        "INJURY",
+        "LINEUP",
+        "FORMATION",
+        "ODDS",
+        "EVENT_STATUS"
+      ],
+      "odds_windows": [
+        "J-1",
+        "H-2",
+        "NEAR_KICKOFF"
+      ]
+    },
+    "FIXTURE_ONLY": {
+      "families": [
+        "FIXTURE"
+      ],
+      "odds_windows": []
+    },
+    "DISABLED": {
+      "families": [],
+      "odds_windows": []
+    }
+  },
   "fixture_registry": {
     "horizon_days": 30,
     "max_matchdays_per_competition": 3,
@@ -128,12 +184,34 @@
     "OVER_UNDER_2_5"
   ],
   "provider_budgets": {
-    "api_football_max_calls_total": 5000,
-    "odds_api_max_credits_total": 250,
-    "odds_api_internal_safety_reserve": 2,
-    "api_football_provider_reserve": 5000,
-    "odds_api_provider_reserve": 4000,
-    "odds_api_near_kickoff_reserve": 80
+    "api_football": {
+      "per_run": 250,
+      "per_day": 800,
+      "per_competition_per_run": 80,
+      "per_competition_per_day": 240,
+      "per_season": 75000,
+      "provider_reserve": 5000
+    },
+    "odds_api": {
+      "per_run": 20,
+      "per_day": 120,
+      "per_week": 600,
+      "per_competition_per_run": 4,
+      "per_competition_per_day": 24,
+      "provider_reserve": 4000,
+      "internal_safety_reserve": 2,
+      "near_kickoff_reserve": 80,
+      "circuit_breaker_failures": 3,
+      "circuit_breaker_cooldown_minutes": 15,
+      "window_priority": [
+        "NEAR_KICKOFF",
+        "H-2",
+        "J-1",
+        "H-6",
+        "J-3",
+        "J-7"
+      ]
+    }
   },
   "minimum_samples": {
     "technical_audit_complete_fixtures": 1,

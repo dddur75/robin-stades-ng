@@ -24,6 +24,7 @@ type TestWindow = MutableRecord & {
 type TestSnapshot = MutableRecord & {
   prospectiveObservatory: MutableRecord & {
     generated_at: string;
+    competitions?: MutableRecord[];
     r2: MutableRecord & {
       objects_added: number;
       verified: number;
@@ -172,6 +173,65 @@ test("cas C — une dixième fixture apparaît automatiquement", () => {
   const model = buildPresentationModel(value, { now: referenceNow });
   assert.equal(model.matches.length, 10);
   assert.ok(model.matches.some((match) => match.id === "synthetic-test:fixture-10"));
+});
+
+test("cinq ligues — les profils et gates restent pilotés par le snapshot", () => {
+  const value = cloneSnapshot();
+  value.prospectiveObservatory.competitions = [
+    {
+      competition: "Ligue 1",
+      capture_profile: "FULL",
+      fixtures: 9,
+      teams: 18,
+      identity_slots_verified: 18,
+      identity_slots_expected: 18,
+      windows: 441,
+      next_captures: 9,
+      captures: 18,
+      deep_observations: 0,
+      empty_responses: 0,
+      api_football_calls: 3,
+      odds_api_credits: 0,
+      gate: "ACTIVE_FULL",
+      r2: "VERIFIED",
+      postgresql: "VERIFIED",
+      replay: "VERIFIED",
+    },
+    ...["Premier League", "Liga", "Bundesliga", "Serie A"].map(
+      (competition) => ({
+        competition,
+        capture_profile: "DEEP_FULL_ODDS_REDUCED",
+        fixtures: 0,
+        teams: 0,
+        identity_slots_verified: 0,
+        identity_slots_expected: 0,
+        windows: 0,
+        next_captures: 0,
+        captures: 0,
+        deep_observations: 0,
+        empty_responses: 0,
+        api_football_calls: 3,
+        odds_api_credits: 0,
+        gate: "BLOCKED_PROVIDER",
+        r2: "PENDING",
+        postgresql: "PENDING",
+        replay: "PENDING",
+      }),
+    ),
+  ];
+
+  const model = buildPresentationModel(value, { now: referenceNow });
+  assert.deepEqual(
+    model.leagues.map((league) => league.competition),
+    ["Ligue 1", "Premier League", "Liga", "Bundesliga", "Serie A"],
+  );
+  assert.equal(model.leagues[0].captureProfile, "FULL");
+  assert.equal(model.leagues[0].gate, "ACTIVE_FULL");
+  assert.equal(
+    model.leagues[1].captureProfile,
+    "DEEP_FULL_ODDS_REDUCED",
+  );
+  assert.equal(model.leagues[1].gate, "BLOCKED_PROVIDER");
 });
 
 test("identité A — un nom vérifié du snapshot est affiché tel quel", () => {

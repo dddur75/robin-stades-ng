@@ -75,6 +75,19 @@ NEAR_KICKOFF
 Marchés initiaux : `1X2` et `OVER_UNDER_2_5`. Aucun marché joueur n’appartient
 au Jalon 12.
 
+## Profils par compétition
+
+- `FULL` : toutes les familles et toutes les fenêtres ; profil de la Ligue 1.
+- `DEEP_FULL_ODDS_REDUCED` : toutes les familles API-Football, mais seulement
+  `J-1`, `H-2` et `NEAR_KICKOFF` pour `ODDS` ; profil de Premier League, Liga,
+  Bundesliga et Serie A.
+- `FIXTURE_ONLY` : registre fixture uniquement.
+- `DISABLED` : aucune fenêtre opérationnelle.
+
+Le scheduler lit le profil de chaque fixture depuis le registre central. Une
+fenêtre non autorisée par le profil n’est jamais créée ; elle ne peut donc ni
+être forcée, ni acquitter un gate.
+
 `EVENT_STATUS` suit les huit fenêtres de `FIXTURE`. Au total, la politique v2
 planifie 49 observations sémantiques par fixture : 24 pour
 `FIXTURE`/`TEAM`/`EVENT_STATUS`, 3 pour `SQUAD`, 12 pour
@@ -177,7 +190,7 @@ après planification. Avant H-1 seule `H-2` peut être active ; à partir de H-1
 seule `NEAR_KICKOFF` peut l’être ; après kickoff aucune capture n’est
 admissible.
 
-P0 reste exclusivement la Ligue 1. Premier League, Liga, Bundesliga et Serie A
-restent `P1_OFF` jusqu’à un gate d’activation explicite. Cette politique ne
-déverrouille ni modèle, ni stratégie, ni pari : `PRODUCTION_LOCKED`,
+Les cinq compétitions sont inscrites dans le registre actif, chacune restant
+soumise à son gate d’activation. Cette politique ne déverrouille ni modèle, ni
+stratégie, ni pari : `PRODUCTION_LOCKED`,
 `REAL_BETS=false` et `NO_BET_DEFAULT=true` restent obligatoires.

@@ -13,6 +13,7 @@ const typedPresentation = presentation as unknown as PresentationModel;
 
 export const operationalEvidence = typedPresentation.dashboard.operationalEvidence;
 export const matches = typedPresentation.matches;
+export const leagueSummaries = typedPresentation.leagues;
 export const nextCaptures = typedPresentation.nextCaptures;
 export const hypotheses = typedPresentation.hypotheses;
 export const gateRows = typedPresentation.observatory.gateRows;

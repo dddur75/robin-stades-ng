@@ -126,6 +126,27 @@ export type OperationalEvidence = {
   freshness: FreshnessPresentation;
 };
 
+export type LeaguePresentation = {
+  competition: string;
+  captureProfile: string;
+  fixtures: number;
+  teams: number;
+  identitySlotsVerified: number;
+  identitySlotsExpected: number;
+  activeWindows: number;
+  nextCaptures: number;
+  captures: number;
+  deepObservations: number;
+  emptyResponses: number;
+  apiFootballCalls: number;
+  oddsApiCredits: number;
+  gate: string;
+  r2: string;
+  postgresql: string;
+  replay: string;
+  coverage: number;
+};
+
 export type PresentationModel = {
   dashboard: {
     operationalEvidence: OperationalEvidence;
@@ -136,6 +157,7 @@ export type PresentationModel = {
     };
   };
   matches: MatchPresentation[];
+  leagues: LeaguePresentation[];
   nextCaptures: NextCapturePresentation[];
   observatory: {
     gateRows: Array<{
@@ -650,6 +672,54 @@ export function buildPresentationModel(
       };
     },
   );
+  const competitionRows = records(observatory.competitions);
+  const leagueRows: UnknownRecord[] = competitionRows.length
+    ? competitionRows
+    : Array.from(new Set(matches.map((match) => match.competition))).map(
+      (competition) => ({
+        competition,
+        capture_profile: "FULL",
+        fixtures: matches.filter((match) => match.competition === competition).length,
+        teams: new Set(
+          matches
+            .filter((match) => match.competition === competition)
+            .flatMap((match) => [match.homeTeamId, match.awayTeamId]),
+        ).size,
+        gate: "BLOCKED_PROVIDER",
+      }),
+    );
+  const leagues = leagueRows.map(
+    (item): LeaguePresentation => {
+      const competition = text(item.competition, "Compétition non renseignée");
+      const scopedMatches = matches.filter(
+        (match) => match.competition === competition,
+      );
+      const coverage = scopedMatches.length
+        ? scopedMatches.reduce((sum, match) => sum + match.coverage, 0)
+          / scopedMatches.length
+        : 0;
+      return {
+        competition,
+        captureProfile: text(item.capture_profile, "DISABLED"),
+        fixtures: numberValue(item.fixtures),
+        teams: numberValue(item.teams),
+        identitySlotsVerified: numberValue(item.identity_slots_verified),
+        identitySlotsExpected: numberValue(item.identity_slots_expected),
+        activeWindows: numberValue(item.windows),
+        nextCaptures: numberValue(item.next_captures),
+        captures: numberValue(item.captures),
+        deepObservations: numberValue(item.deep_observations),
+        emptyResponses: numberValue(item.empty_responses),
+        apiFootballCalls: numberValue(item.api_football_calls),
+        oddsApiCredits: numberValue(item.odds_api_credits),
+        gate: text(item.gate, "BLOCKED_PROVIDER"),
+        r2: text(item.r2, "PENDING"),
+        postgresql: text(item.postgresql, "PENDING"),
+        replay: text(item.replay, "PENDING"),
+        coverage,
+      };
+    },
+  );
 
   const gateRows = Object.entries(record(record(observatory.gates).by_name)).map(
     ([technicalName, raw]) => {
@@ -772,6 +842,7 @@ export function buildPresentationModel(
       },
     },
     matches,
+    leagues,
     nextCaptures,
     observatory: { gateRows },
     hypotheses,

@@ -6,8 +6,10 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 
-MAX_API_FOOTBALL_CALLS_TOTAL = 5_000
-MAX_ODDS_API_CREDITS_TOTAL = 250
+# Absolute append-only ledger guards. Operational admission is governed by
+# the stricter run/day/week/competition/season ceilings in the central policy.
+MAX_API_FOOTBALL_CALLS_TOTAL = 75_000
+MAX_ODDS_API_CREDITS_TOTAL = 10_000
 ODDS_API_INTERNAL_SAFETY_RESERVE = 2
 API_FOOTBALL_PROVIDER_RESERVE = 5_000
 ODDS_API_PROVIDER_RESERVE = 4_000

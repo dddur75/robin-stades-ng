@@ -1700,10 +1700,17 @@ def build_prospective_observatory() -> dict[str, Any]:
         (
             str(item["competition"])
             for item in competition_registry
-            if isinstance(item, dict) and item.get("priority") == "P0"
+            if isinstance(item, dict) and item.get("capture_profile") == "FULL"
         ),
         "Ligue 1",
     )
+    compact["fixtures"]["competition_profiles"] = {
+        str(item["competition"]): str(item["capture_profile"])
+        for item in competition_registry
+        if isinstance(item, dict)
+        and item.get("competition")
+        and item.get("capture_profile")
+    }
     compact["fixtures"]["horizon_days"] = int(
         str(fixture_policy.get("horizon_days", 30))
     )
@@ -1716,24 +1723,25 @@ def build_prospective_observatory() -> dict[str, Any]:
             compact["windows"].get("policy_version", ""),
         )
     )
+    api_budget = provider_budgets.get("api_football", {})
+    odds_budget = provider_budgets.get("odds_api", {})
+    if not isinstance(api_budget, dict) or not isinstance(odds_budget, dict):
+        raise RuntimeError("politique de budget multi-ligues invalide")
     compact["providers"]["budgets"] = {
-        "api_football_max_total": int(
-            str(provider_budgets["api_football_max_calls_total"])
-        ),
-        "odds_api_max_total": int(
-            str(provider_budgets["odds_api_max_credits_total"])
-        ),
+        "api_football_max_total": int(str(api_budget["per_run"])),
+        "odds_api_max_total": int(str(odds_budget["per_run"])),
+        "api_football_per_day": int(str(api_budget["per_day"])),
+        "odds_api_per_day": int(str(odds_budget["per_day"])),
+        "odds_api_per_week": int(str(odds_budget["per_week"])),
     }
     compact["providers"]["reserves"] = {
-        "api_football": int(
-            str(provider_budgets["api_football_provider_reserve"])
-        ),
-        "odds_api": int(str(provider_budgets["odds_api_provider_reserve"])),
+        "api_football": int(str(api_budget["provider_reserve"])),
+        "odds_api": int(str(odds_budget["provider_reserve"])),
         "odds_api_internal_safety": int(
-            str(provider_budgets["odds_api_internal_safety_reserve"])
+            str(odds_budget["internal_safety_reserve"])
         ),
         "odds_api_near_kickoff": int(
-            str(provider_budgets["odds_api_near_kickoff_reserve"])
+            str(odds_budget["near_kickoff_reserve"])
         ),
     }
     compact["r2"]["namespace"] = str(
@@ -2005,6 +2013,122 @@ def build_prospective_observatory() -> dict[str, Any]:
             or os.environ.get("GITHUB_WORKFLOW")
         ),
     }
+    fixture_competitions = {
+        str(item["fixture_id"]): str(item["competition"])
+        for item in fixture_registry
+    }
+    configured_competitions = [
+        item
+        for item in competition_registry
+        if isinstance(item, dict)
+        and item.get("competition")
+        and item.get("capture_profile")
+    ]
+    summary_path = report_root / "five-league-expansion-summary.json"
+    summary_rows: dict[str, dict[str, Any]] = {}
+    if summary_path.exists():
+        summary = read_json(summary_path, {})
+        raw_summary_rows = summary.get("leagues", [])
+        unsigned_summary = dict(summary)
+        summary_sha256 = unsigned_summary.pop("report_sha256", None)
+        if (
+            not isinstance(summary, dict)
+            or summary.get("schema_version")
+            != "five-league-expansion-summary-v1"
+            or summary.get("policy_sha256") != canonical_sha256(policy)
+            or not isinstance(summary_sha256, str)
+            or summary_sha256 != canonical_sha256(unsigned_summary)
+            or summary.get("production_status") != "PRODUCTION_LOCKED"
+            or summary.get("real_bets") is not False
+            or summary.get("provider_calls_for_summary") != 0
+            or summary.get("odds_api_credits_for_summary") != 0
+            or summary.get("model_promotion_authorized") is not False
+            or not isinstance(raw_summary_rows, list)
+            or len(raw_summary_rows) != 5
+        ):
+            raise RuntimeError("rapport multi-ligues non publiable")
+        summary_rows = {
+            str(item["competition"]): item
+            for item in raw_summary_rows
+            if isinstance(item, dict) and item.get("competition")
+        }
+        if set(summary_rows) != {
+            str(item["competition"]) for item in configured_competitions
+        }:
+            raise RuntimeError("périmètre multi-ligues incomplet")
+    competition_summaries: list[dict[str, Any]] = []
+    for configured in configured_competitions:
+        competition = str(configured["competition"])
+        fixture_ids = {
+            fixture_id
+            for fixture_id, name in fixture_competitions.items()
+            if name == competition
+        }
+        scoped_windows = [
+            item
+            for item in active_windows
+            if str(item["fixture_id"]) in fixture_ids
+        ]
+        scoped_evidence = [
+            item
+            for item in fixture_evidence
+            if str(item.get("fixture_id", "")) in fixture_ids
+        ]
+        observed_summary = summary_rows.get(competition, {})
+        profile = str(configured["capture_profile"])
+        default_gate = "BLOCKED_PROVIDER"
+        competition_summaries.append(
+            {
+                "competition": competition,
+                "capture_profile": profile,
+                "fixtures": len(fixture_ids),
+                "teams": int(str(observed_summary.get("teams", 0))),
+                "identity_slots_verified": int(
+                    str(
+                        observed_summary.get(
+                            "identity_slots_verified",
+                            2 * len(fixture_ids)
+                            if all(
+                                item.get("home_identity_status") == "VERIFIED"
+                                and item.get("away_identity_status")
+                                == "VERIFIED"
+                                for item in fixture_registry
+                                if str(item["fixture_id"]) in fixture_ids
+                            )
+                            else 0,
+                        )
+                    )
+                ),
+                "identity_slots_expected": 2 * len(fixture_ids),
+                "windows": len(scoped_windows),
+                "next_captures": sum(
+                    item["acknowledged"] is not True
+                    and item["status"]
+                    != AvailabilityStatus.MISSED_WINDOW.value
+                    for item in scoped_windows
+                ),
+                "captures": len(scoped_evidence),
+                "deep_observations": int(
+                    str(observed_summary.get("deep_observations", 0))
+                ),
+                "empty_responses": int(
+                    str(observed_summary.get("empty_responses", 0))
+                ),
+                "api_football_calls": int(
+                    str(observed_summary.get("api_football_calls", 0))
+                ),
+                "odds_api_credits": int(
+                    str(observed_summary.get("odds_api_credits", 0))
+                ),
+                "gate": str(observed_summary.get("gate", default_gate)),
+                "r2": str(observed_summary.get("r2", "PENDING")),
+                "postgresql": str(
+                    observed_summary.get("postgresql", "PENDING")
+                ),
+                "replay": str(observed_summary.get("replay", "PENDING")),
+            }
+        )
+    compact["competitions"] = competition_summaries
 
     invariants = compact.get("invariants", {})
     if (

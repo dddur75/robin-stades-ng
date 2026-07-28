@@ -12,6 +12,7 @@ const deepData = snapshotRecord.deepData as Record<string, unknown>;
 const publicPresentation = {
   dashboard: presentation.dashboard,
   matches: presentation.matches,
+  leagues: presentation.leagues,
   nextCaptures: presentation.nextCaptures,
   observatory: presentation.observatory,
   hypotheses: presentation.hypotheses,

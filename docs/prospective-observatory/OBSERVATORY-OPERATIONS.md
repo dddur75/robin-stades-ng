@@ -19,19 +19,18 @@ active.
 La configuration partagée est
 `configs/prospective_observatory_v1.json`.
 
-Sur la branche de la PR #17, ces cron ne constituent pas encore une activation
-sur `main`. Leur activation et leur prochaine échéance ne peuvent être
-revendiquées qu’après fusion et observation des workflows sur la branche par
-défaut.
-
-Le seul périmètre autorisé est P0 Ligue 1. Les quatre ligues P1 restent
-`P1_OFF`, même si elles figurent dans le registre de configuration. Toute
-exécution conserve `PRODUCTION_LOCKED`, `REAL_BETS=false`,
+Le registre actif contient Ligue 1, Premier League, Liga, Bundesliga et Serie A.
+La Ligue 1 utilise `FULL`; les quatre autres utilisent
+`DEEP_FULL_ODDS_REDUCED`. Toute exécution conserve `PRODUCTION_LOCKED`,
+`REAL_BETS=false`,
 `NO_BET_DEFAULT=true`, publication sociale et démo désactivées.
 
 ## CLI
 
 ```text
+scripts/run_five_league_expansion.py registry
+scripts/run_five_league_expansion.py projection
+scripts/run_five_league_expansion.py summary
 scripts/run_prospective_observatory.py fixture-registry
 scripts/run_prospective_observatory.py scheduler
 scripts/run_prospective_observatory.py capture-player
@@ -80,6 +79,8 @@ Le répertoire d’artifact contient :
 
 ```text
 fixture-registry.json
+five-league-registry.json
+five-league-expansion-summary.json
 scheduler-plan.json
 general-capture-report.json
 player-capture-report.json
@@ -117,7 +118,8 @@ les transports de contrôle sans reçu.
 
 ## Ordre d’un pilote
 
-1. registre Ligue 1 ;
+1. estimation signée globale, puis registre borné des cinq ligues, trois appels
+   API-Football au maximum par ligue et zéro crédit Odds ;
 2. plan du scheduler ;
 3. réconciliation des complétions prouvées par reçu R2, puis contrôle des
    guards non résolus avant tout preflight ;
@@ -126,8 +128,9 @@ les transports de contrôle sans reçu.
 6. vérification R2 ;
 7. projection PostgreSQL ;
 8. replay audit ;
-9. gate report ;
-10. snapshot Robin Live.
+9. gate report et synthèse cinq ligues provider-free ;
+10. premier snapshot de périmètre, audit R2/PostgreSQL des identités, puis
+    snapshot Robin Live final.
 
 Si `windows_due=0`, publier `NO_DUE_WINDOW_SUCCESS` avec
 `provider_calls=0`, `odds_api_credits=0`, `r2_puts=0` et
@@ -175,10 +178,11 @@ Le builder refuse un rapport sans `PRODUCTION_LOCKED`, avec `real_bets=true`,
 publication sociale active, démo active ou décisions non nulles.
 
 `prospective-gate-report.yml` exécute dans le même verrou un replay R2 complet
-sans fournisseur, puis le gate report, reconstruit et teste le snapshot, et
-publie l’état Robin Live et le ledger V3 dans un artefact compact. Le gate et
-le cockpit sont ainsi liés au même ensemble exact de reçus, sans réutiliser
-un artefact d’un run antérieur. Ce mécanisme
+sans fournisseur, puis le gate report et la synthèse par ligue. Il construit
+un premier périmètre, vérifie chaque identité contre le reçu R2 et sa projection
+PostgreSQL, reconstruit le snapshot final et teste Robin Experience. Le gate,
+les identités et le cockpit sont ainsi liés au même ensemble exact de reçus,
+sans réutiliser un artefact d’un run antérieur. Ce mécanisme
 n’implique pas un déploiement privé : tant qu’aucune cible privée n’est
 explicitement reliée au dépôt, le statut exact reste
 `COCKPIT_ARTIFACT_PUBLISHED`, jamais `COCKPIT_PRIVATE_DEPLOYED`.

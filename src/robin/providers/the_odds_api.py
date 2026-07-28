@@ -28,7 +28,19 @@ from robin.providers.http import JsonHttpProvider
 class TheOddsApiProvider(JsonHttpProvider):
     SPORT_KEY = "soccer_france_ligue_one"
 
-    def __init__(self, *, api_key: str | None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        api_key: str | None,
+        sport_key: str = SPORT_KEY,
+        **kwargs: Any,
+    ) -> None:
+        if not sport_key or any(
+            character not in "abcdefghijklmnopqrstuvwxyz_"
+            for character in sport_key
+        ):
+            raise ValueError("ODDS_API_SPORT_KEY_INVALID")
+        self.sport_key = sport_key
         super().__init__(
             provider_name="the-odds-api",
             base_url="https://api.the-odds-api.com/v4",
@@ -50,11 +62,11 @@ class TheOddsApiProvider(JsonHttpProvider):
         return self._unsupported("/players")
 
     def get_fixtures(self) -> ProviderResult:
-        return self._request(f"/sports/{self.SPORT_KEY}/events")
+        return self._request(f"/sports/{self.sport_key}/events")
 
     def get_results(self) -> ProviderResult:
         return self._request(
-            f"/sports/{self.SPORT_KEY}/scores",
+            f"/sports/{self.sport_key}/scores",
             params={"daysFrom": 3, "dateFormat": "iso"},
         )
 
@@ -77,8 +89,16 @@ class TheOddsApiProvider(JsonHttpProvider):
         return self._unsupported("/suspensions")
 
     def get_odds(self) -> ProviderResult:
+        return self.get_odds_for_sport(self.sport_key)
+
+    def get_odds_for_sport(self, sport_key: str) -> ProviderResult:
+        if not sport_key or any(
+            character not in "abcdefghijklmnopqrstuvwxyz_"
+            for character in sport_key
+        ):
+            raise ValueError("ODDS_API_SPORT_KEY_INVALID")
         return self._request(
-            f"/sports/{self.SPORT_KEY}/odds",
+            f"/sports/{sport_key}/odds",
             params={
                 "regions": "eu",
                 "markets": "h2h,totals",
@@ -89,7 +109,7 @@ class TheOddsApiProvider(JsonHttpProvider):
 
     def get_event_odds(self, event_id: str) -> ProviderResult:
         return self._request(
-            f"/sports/{self.SPORT_KEY}/events/{event_id}/odds",
+            f"/sports/{self.sport_key}/events/{event_id}/odds",
             params={
                 "regions": "eu",
                 "markets": "h2h,totals",

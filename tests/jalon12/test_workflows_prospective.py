@@ -67,12 +67,34 @@ def test_central_policy_owns_provider_caps_reserves_and_markets() -> None:
     )
     budgets = policy["provider_budgets"]
     assert budgets == {
-        "api_football_max_calls_total": 5000,
-        "odds_api_max_credits_total": 250,
-        "odds_api_internal_safety_reserve": 2,
-        "api_football_provider_reserve": 5000,
-        "odds_api_provider_reserve": 4000,
-        "odds_api_near_kickoff_reserve": 80,
+        "api_football": {
+            "per_run": 250,
+            "per_day": 800,
+            "per_competition_per_run": 80,
+            "per_competition_per_day": 240,
+            "per_season": 75000,
+            "provider_reserve": 5000,
+        },
+        "odds_api": {
+            "per_run": 20,
+            "per_day": 120,
+            "per_week": 600,
+            "per_competition_per_run": 4,
+            "per_competition_per_day": 24,
+            "provider_reserve": 4000,
+            "internal_safety_reserve": 2,
+            "near_kickoff_reserve": 80,
+            "circuit_breaker_failures": 3,
+            "circuit_breaker_cooldown_minutes": 15,
+            "window_priority": [
+                "NEAR_KICKOFF",
+                "H-2",
+                "J-1",
+                "H-6",
+                "J-3",
+                "J-7",
+            ],
+        },
     }
     assert policy["markets"] == ["1X2", "OVER_UNDER_2_5"]
 
@@ -107,7 +129,8 @@ def test_capture_workflows_estimate_before_explicit_bounded_execution() -> None:
 
 def test_fixture_registry_is_dynamic_bounded_and_persisted_r2_first() -> None:
     workflow = _workflow("prospective-fixture-registry.yml")
-    assert "--competition \"Ligue 1\"" in workflow
+    assert "run_five_league_expansion.py registry" in workflow
+    assert "--competition \"Ligue 1\"" not in workflow
     assert '--policy "$PROSPECTIVE_POLICY"' in workflow
     assert workflow.index("--estimate") < workflow.index("--execute")
     assert "API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}" in workflow

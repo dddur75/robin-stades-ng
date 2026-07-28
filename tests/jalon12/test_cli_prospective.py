@@ -688,7 +688,10 @@ def test_odds_internal_reserve_blocks_cost_drift_at_cap_boundary(
         include_quota_headers=True,
         actual_cost=3,
     )
-    with pytest.raises(BudgetExceeded, match="PROSPECTIVE_PROVIDER_CAP_EXCEEDED"):
+    with pytest.raises(
+        BudgetExceeded,
+        match="PROSPECTIVE_ADAPTIVE_BUDGET_BLOCKED.*BLOCKED_DAILY_BUDGET",
+    ):
         _execute_capture(
             "capture-odds",
             output=output,

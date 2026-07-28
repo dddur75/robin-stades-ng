@@ -65,6 +65,18 @@ jobs:
           python scripts/run_prospective_observatory.py gate-report
           --policy "$PROSPECTIVE_POLICY"
           --output artifacts/prospective-observatory
+      - name: Consolider les gates des cinq ligues sans fournisseur
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_five_league_expansion.py summary
+          --policy "$PROSPECTIVE_POLICY"
+          --output artifacts/prospective-observatory
       - name: Publier les prochaines fenêtres attendues sans fournisseur
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -74,6 +86,24 @@ jobs:
           --policy "$PROSPECTIVE_POLICY"
           --report-path reports/jalon12/next-due-windows.json
           --output artifacts/prospective-observatory
+      - name: Construire le périmètre d’identités sans fournisseur
+        env:
+          COCKPIT_PROSPECTIVE_ONLY: "1"
+          PROSPECTIVE_REPORT_ROOT: "artifacts/prospective-observatory"
+        run: python scripts/build_cockpit_snapshot.py
+      - name: Vérifier les identités des cinq ligues sans fournisseur
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/audit_team_identities.py
+          --snapshot cockpit/app/cockpit-data.json
+          --output artifacts/prospective-observatory/team-identity-provenance.json
+          --require-complete
       - name: Construire le snapshot prospectif Robin Live
         env:
           COCKPIT_PROSPECTIVE_ONLY: "1"

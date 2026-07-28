@@ -53,10 +53,12 @@ jobs:
       - name: Linting
         run: >-
           python -m ruff check
-          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12
+          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12 tests/jalon13
           scripts migrations
       - name: Typage strict
-        run: python -m mypy src/robin scripts/run_prospective_observatory.py
+        run: |
+          python -m mypy src/robin scripts/run_prospective_observatory.py
+          python -m mypy --explicit-package-bases scripts/run_five_league_expansion.py
       - name: Securite basique
         run: python -m bandit -q -r src/robin
       - name: Verification des secrets

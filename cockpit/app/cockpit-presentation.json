@@ -61,7 +61,7 @@
       "freshness": {
         "status": "FRESHNESS_CURRENT",
         "generatedAt": "2026-07-27T23:47:02.391672+00:00",
-        "ageMinutes": 717,
+        "ageMinutes": 887,
         "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
         "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
         "lastWorkflowAt": "2026-07-24T13:02:12Z"
@@ -1983,6 +1983,28 @@
       ]
     }
   ],
+  "leagues": [
+    {
+      "competition": "Ligue 1",
+      "captureProfile": "FULL",
+      "fixtures": 9,
+      "teams": 18,
+      "identitySlotsVerified": 0,
+      "identitySlotsExpected": 0,
+      "activeWindows": 0,
+      "nextCaptures": 0,
+      "captures": 0,
+      "deepObservations": 0,
+      "emptyResponses": 0,
+      "apiFootballCalls": 0,
+      "oddsApiCredits": 0,
+      "gate": "BLOCKED_PROVIDER",
+      "r2": "PENDING",
+      "postgresql": "PENDING",
+      "replay": "PENDING",
+      "coverage": 0.125
+    }
+  ],
   "nextCaptures": [
     {
       "id": "capture-group:2026-07-31T18:45:00+00:00",
@@ -3168,7 +3190,7 @@
     "freshness": {
       "status": "FRESHNESS_CURRENT",
       "generatedAt": "2026-07-27T23:47:02.391672+00:00",
-      "ageMinutes": 717,
+      "ageMinutes": 887,
       "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
       "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
       "lastWorkflowAt": "2026-07-24T13:02:12Z"

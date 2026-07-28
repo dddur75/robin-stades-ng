@@ -1,0 +1,118 @@
+{
+  "assumptions": {
+    "api_calls_per_fixture": 30,
+    "api_status_cohorts_per_matchday": 32,
+    "odds_credits_per_competition_window": 2,
+    "r2_objects_per_capture": 3,
+    "raw_payloads_in_git": 0,
+    "registry_calls_per_league_day": 3,
+    "scenario": "central_without_retries"
+  },
+  "budgets": {
+    "api_football": {
+      "per_competition_per_day": 240,
+      "per_competition_per_run": 80,
+      "per_day": 800,
+      "per_run": 250,
+      "per_season": 75000,
+      "provider_reserve": 5000
+    },
+    "odds_api": {
+      "circuit_breaker_cooldown_minutes": 15,
+      "circuit_breaker_failures": 3,
+      "internal_safety_reserve": 2,
+      "near_kickoff_reserve": 80,
+      "per_competition_per_day": 24,
+      "per_competition_per_run": 4,
+      "per_day": 120,
+      "per_run": 20,
+      "per_week": 600,
+      "provider_reserve": 4000,
+      "window_priority": [
+        "NEAR_KICKOFF",
+        "H-2",
+        "J-1",
+        "H-6",
+        "J-3",
+        "J-7"
+      ]
+    }
+  },
+  "leagues": [
+    {
+      "api_football_calls": 10268,
+      "capture_profile": "FULL",
+      "competition": "Ligue 1",
+      "fixtures": 306,
+      "matchdays": 34,
+      "odds_api_calls": 204,
+      "odds_api_credits": 408,
+      "odds_windows": 6,
+      "semantic_windows": 14994
+    },
+    {
+      "api_football_calls": 12616,
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "competition": "Premier League",
+      "fixtures": 380,
+      "matchdays": 38,
+      "odds_api_calls": 114,
+      "odds_api_credits": 228,
+      "odds_windows": 3,
+      "semantic_windows": 17480
+    },
+    {
+      "api_football_calls": 12616,
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "competition": "Liga",
+      "fixtures": 380,
+      "matchdays": 38,
+      "odds_api_calls": 114,
+      "odds_api_credits": 228,
+      "odds_windows": 3,
+      "semantic_windows": 17480
+    },
+    {
+      "api_football_calls": 10268,
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "competition": "Bundesliga",
+      "fixtures": 306,
+      "matchdays": 34,
+      "odds_api_calls": 102,
+      "odds_api_credits": 204,
+      "odds_windows": 3,
+      "semantic_windows": 14076
+    },
+    {
+      "api_football_calls": 12616,
+      "capture_profile": "DEEP_FULL_ODDS_REDUCED",
+      "competition": "Serie A",
+      "fixtures": 380,
+      "matchdays": 38,
+      "odds_api_calls": 114,
+      "odds_api_credits": 228,
+      "odds_windows": 3,
+      "semantic_windows": 17480
+    }
+  ],
+  "policy_sha256": "dfcf8f6a01b3dd99abbc3fc96bf94d5c0387b5e2361954d84428fb5cf51b7501",
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_authorized": false,
+  "real_bets": false,
+  "report_sha256": "e86816c373b626aae7f2bac09db8021ef2fc01e9c2fb573f2a611d9ebdbe34d7",
+  "schema_version": "five-league-season-cost-projection-v1",
+  "totals": {
+    "api_football_calls": 63859,
+    "api_football_calls_per_day_average": 174.96,
+    "bytes": null,
+    "fixtures": 1752,
+    "known_postgresql_receipt_rows": 83262,
+    "known_r2_objects": 249786,
+    "odds_api_credits": 1296,
+    "odds_api_credits_per_week_average": 24.92,
+    "registry_calls": 5475,
+    "semantic_windows": 81510,
+    "storage_cost": null
+  },
+  "within_configured_season_api_cap": true
+}

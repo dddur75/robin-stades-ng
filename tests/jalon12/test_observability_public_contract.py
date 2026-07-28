@@ -261,16 +261,21 @@ def test_compact_snapshot_is_sourced_from_policy_and_fail_closed(
     assert snapshot["providers"]["api_football_calls"] == 0
     assert snapshot["providers"]["odds_api_credits"] == 0
     assert snapshot["providers"]["budgets"] == {
-        "api_football_max_total": budgets["api_football_max_calls_total"],
-        "odds_api_max_total": budgets["odds_api_max_credits_total"],
+        "api_football_max_total": budgets["api_football"]["per_run"],
+        "odds_api_max_total": budgets["odds_api"]["per_run"],
+        "api_football_per_day": budgets["api_football"]["per_day"],
+        "odds_api_per_day": budgets["odds_api"]["per_day"],
+        "odds_api_per_week": budgets["odds_api"]["per_week"],
     }
     assert snapshot["providers"]["reserves"] == {
-        "api_football": budgets["api_football_provider_reserve"],
-        "odds_api": budgets["odds_api_provider_reserve"],
-        "odds_api_internal_safety": budgets[
-            "odds_api_internal_safety_reserve"
+        "api_football": budgets["api_football"]["provider_reserve"],
+        "odds_api": budgets["odds_api"]["provider_reserve"],
+        "odds_api_internal_safety": budgets["odds_api"][
+            "internal_safety_reserve"
         ],
-        "odds_api_near_kickoff": budgets["odds_api_near_kickoff_reserve"],
+        "odds_api_near_kickoff": budgets["odds_api"][
+            "near_kickoff_reserve"
+        ],
     }
     assert snapshot["postgresql"]["migration"] == "0009_jalon12_observatory"
     assert snapshot["postgresql"]["payload_body_rows"] == 0
