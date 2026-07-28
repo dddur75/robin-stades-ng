@@ -77,6 +77,12 @@ l’application, ESLint, Ruff, mypy strict, Bandit, la recherche de secrets,
 GitHub de la PR #19 et le redéploiement privé Sites complètent les preuves de
 livraison consignées dans la PR.
 
+Les CI push `30352906004` et PR `30352908592` sont vertes sur le commit
+fonctionnel `51a91f29397854d21861cee71ece37ee72f6e015`. Elles publient
+chacune l’artefact de 18 captures et valident le cycle complet des migrations.
+Le sous-arbre Cockpit `7e879a70df712b10b749a6b38f4cf6f44b8e11b4` est
+déployé en version Sites 15, en accès propriétaire uniquement.
+
 ## Invariants et action
 
 La V1.1 ne déclenche aucun appel fournisseur, aucune capture, aucune écriture

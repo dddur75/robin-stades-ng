@@ -154,7 +154,9 @@ La mise à jour reste sur la PR brouillon #19, ouverte et non fusionnée. Elle n
 demande aucun secret, appel fournisseur, crédit, écriture distante, connexion
 sociale, décision ou pari.
 
-Après la CI et le redéploiement privé, l’action recommandée reste uniquement de
-consulter le site privé, les 18 captures de l’artefact
-`robin-experience-visual-*` et la PR #19. Toute fusion appartient à une décision
-ultérieure explicite.
+La CI et le redéploiement privé Sites 15 sont terminés avec succès. L’action
+recommandée reste uniquement de consulter le
+[site privé](https://robin-stades-shadow-cockpit.dddur.chatgpt.site), les
+18 captures des artefacts `robin-experience-visual-30352906004` /
+`robin-experience-visual-30352908592` et la PR #19. Toute fusion appartient à
+une décision ultérieure explicite.

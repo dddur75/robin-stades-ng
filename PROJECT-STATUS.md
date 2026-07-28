@@ -646,3 +646,10 @@ Validation locale :
 
 La PR #19 reste brouillon, ouverte et non fusionnée. Les détails de provenance,
 d’encodage et de validation sont dans `docs/ux`.
+
+La livraison fonctionnelle est le commit
+`51a91f29397854d21861cee71ece37ee72f6e015`. Les CI push `30352906004`
+et PR `30352908592` sont vertes, migrations et 18 preuves visuelles comprises.
+Le sous-arbre Cockpit `7e879a70df712b10b749a6b38f4cf6f44b8e11b4` est déployé
+en version Sites 15, privée et réservée au propriétaire, sur
+`https://robin-stades-shadow-cockpit.dddur.chatgpt.site`.

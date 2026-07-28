@@ -778,3 +778,16 @@ Le build génère `cockpit-presentation.json` et
 `cockpit-expert-data.json`. Ils doivent être régénérés et commités avec le
 snapshot. Toute modification de `cockpit-data.json` doit également mettre à
 jour `cockpit-data.sha256`.
+
+Référence de livraison V1.1 :
+
+```text
+commit fonctionnel = 51a91f29397854d21861cee71ece37ee72f6e015
+CI push = 30352906004
+CI PR = 30352908592
+sous-arbre Sites = 7e879a70df712b10b749a6b38f4cf6f44b8e11b4
+version privée Sites = 15
+```
+
+Les deux CI sont vertes. Le site est en accès `custom`, avec le propriétaire
+comme seul utilisateur autorisé et aucun groupe autorisé.
