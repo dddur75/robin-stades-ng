@@ -177,6 +177,16 @@ def test_gate_workflow_preserves_ledger_and_refreshes_robin_live_artifact() -> N
     assert "cockpit/app/cockpit-data.sha256" in workflow
     assert "next-due-report" in workflow
     assert "reports/jalon12/next-due-windows.json" in workflow
+    assert (
+        'TEAM_IDENTITY_PROVENANCE_INPUT: '
+        '"artifacts/prospective-observatory/team-identity-pending.json"'
+        in workflow
+    )
+    assert (
+        'TEAM_IDENTITY_PROVENANCE_INPUT: '
+        '"artifacts/prospective-observatory/team-identity-provenance.json"'
+        in workflow
+    )
     assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
     assert "R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}" in workflow
     assert "R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}" in workflow
