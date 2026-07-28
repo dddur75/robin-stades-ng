@@ -4609,10 +4609,21 @@ def run_capture(
     }[command]
     state = state or _database_state()
     _reject_non_durable_execution_inputs(args, state=state)
-    if (
-        args.estimate
+    provisional_due = _due_windows(
+        state,
+        families=families,
+        now=now,
+        maximum_attempts=args.max_attempts,
+    )
+    provider_free_noop = (
+        not provisional_due
         and repository is None
         and args.object_store_root is None
+    )
+    if (
+        repository is None
+        and args.object_store_root is None
+        and (args.estimate or provider_free_noop)
     ):
         _reconcile_receipt_attempts(state)
         recovery = {
@@ -4720,8 +4731,6 @@ def run_capture(
     if args.estimate:
         _write_json(args.output / f"{report_prefix}-estimate.json", estimate)
         return estimate
-    if repository is None:
-        raise RuntimeError("PROSPECTIVE_R2_REPOSITORY_REQUIRED")
     if not args.execute and args.cache is None:
         raise ValueError("CAPTURE_MODE_REQUIRED")
     if args.execute:
@@ -4779,6 +4788,8 @@ def run_capture(
         )
         _write_json(args.output / f"{report_prefix}-report.json", report)
         return report
+    if repository is None:
+        raise RuntimeError("PROSPECTIVE_R2_REPOSITORY_REQUIRED")
 
     configured_cap = policy.run_cap(provider_kind)
     admission_cap = (

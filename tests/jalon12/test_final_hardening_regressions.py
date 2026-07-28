@@ -193,6 +193,41 @@ def _signed_execution_args(
     return execute_args
 
 
+def test_zero_due_signed_execution_does_not_open_r2(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    state = MemoryOperationalState()
+    args = _signed_execution_args(
+        "capture-player",
+        output=tmp_path / "reports",
+        state=state,
+    )
+
+    def fail_if_r2_is_opened(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("R2 must stay unopened when no window is due")
+
+    monkeypatch.setattr(
+        "scripts.run_prospective_observatory._repository",
+        fail_if_r2_is_opened,
+    )
+
+    report = run_capture(args, state=state)
+
+    assert report["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert report["provider_calls"] == 0
+    assert report["odds_api_credits"] == 0
+    assert report["r2_puts"] == 0
+    assert report["recovery_r2_puts"] == 0
+    assert report["preflight_reconciliation"] == {
+        "captures": 0,
+        "projection_inserts": 0,
+        "attempts_reconstructed": 0,
+        "budget_records": 0,
+        "r2_recovered_objects": 0,
+    }
+
+
 class _NoNetworkApiFootball:
     def __init__(
         self,
