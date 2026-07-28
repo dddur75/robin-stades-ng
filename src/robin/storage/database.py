@@ -62,7 +62,22 @@ def build_engine(database_url: str, *, echo: bool = False) -> Engine:
         connect_args["check_same_thread"] = False
     elif url.get_backend_name() == "postgresql":
         connect_args["connect_timeout"] = 10
-    engine = create_engine(url, echo=echo, future=True, connect_args=connect_args)
+    if url.get_backend_name() == "postgresql":
+        engine = create_engine(
+            url,
+            echo=echo,
+            future=True,
+            connect_args=connect_args,
+            pool_pre_ping=True,
+            pool_recycle=240,
+        )
+    else:
+        engine = create_engine(
+            url,
+            echo=echo,
+            future=True,
+            connect_args=connect_args,
+        )
     if url.get_backend_name() == "sqlite":
         @event.listens_for(engine, "connect")
         def enable_foreign_keys(dbapi_connection: object, _connection_record: object) -> None:
