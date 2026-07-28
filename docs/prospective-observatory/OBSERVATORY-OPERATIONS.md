@@ -153,6 +153,13 @@ et peut produire `NO_INJURY_REPORTED_AT_CAPTURE`. Elle ne signifie jamais
 famille, son workflow, son coût maximum et l’état attendu. Il ne transforme pas
 une estimation en activation.
 
+Seuls les identifiants v3 exacts de la version métier courante sont
+opérationnels. Les fenêtres legacy append-only restent reconstructibles mais
+sont toujours exclues de `active_windows` et du choix de la prochaine échéance.
+Une génération v2 partielle n’active que ses fenêtres v3 présentes : le
+scheduler idempotent la complète sans jamais réactiver le legacy ni autoriser
+un second appel fournisseur sur une fenêtre obsolète.
+
 ## Robin Live
 
 Rafraîchissement borné :
