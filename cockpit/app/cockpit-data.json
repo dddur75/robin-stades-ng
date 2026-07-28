@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T18:24:30.516965+00:00",
+  "generatedAt": "2026-07-28T04:56:45.881932+00:00",
   "sourceCapturedAt": "2026-07-24T17:46:38Z",
   "snapshotType": "PUBLISHED_OPERATIONAL_PROOF",
   "status": "INSUFFICIENT_OBSERVATION",
@@ -20404,5 +20404,428 @@
       "Les deltas positifs de Log Loss/Brier sont défavorables : aucun challenger testé ne bat sa référence de marché.",
       "Watchlist et décisions restent vides ; aucun résultat historique n'est présenté comme live."
     ]
+  },
+  "prospectiveObservatory": {
+    "schema_version": "prospective-observatory-snapshot-v1",
+    "policy_source": "configs/prospective_observatory_v1.json",
+    "status": "WAITING_FOR_FIRST_DUE_WINDOW",
+    "origin": "NO_PROSPECTIVE_CAPTURE_YET",
+    "generated_at": null,
+    "fixtures": {
+      "tracked": 0,
+      "horizon_days": 30,
+      "max_matchdays_per_competition": 3,
+      "competitions": [
+        "Ligue 1",
+        "Premier League",
+        "La Liga",
+        "Bundesliga",
+        "Serie A"
+      ],
+      "pilot_priority": "Ligue 1",
+      "next": []
+    },
+    "windows": {
+      "planned": 0,
+      "due": 0,
+      "captured": 0,
+      "missed": 0,
+      "next": [],
+      "policy_version": "prospective-capture-window-v2"
+    },
+    "captures": {
+      "attempted": 0,
+      "captured": 0,
+      "empty": 0,
+      "missed": 0,
+      "invalid": 0,
+      "bytes": 0,
+      "hashes": 0,
+      "by_family": {
+        "FIXTURE": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "TEAM": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "SQUAD": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "PLAYER_STATUS": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "INJURY": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "LINEUP": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "FORMATION": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "ODDS": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        },
+        "EVENT_STATUS": {
+          "due": 0,
+          "attempted": 0,
+          "captured": 0,
+          "empty": 0,
+          "missed": 0,
+          "invalid": 0,
+          "bytes": 0,
+          "hashes": 0
+        }
+      }
+    },
+    "temporal": {
+      "truth_rule": "opens_at <= response_received_at < cutoff_at < kickoff_at",
+      "before_cutoff": 0,
+      "late": 0,
+      "rejected": 0,
+      "gates": 0
+    },
+    "providers": {
+      "api_football_calls": 0,
+      "odds_api_credits": 0,
+      "errors": 0,
+      "retries": 0,
+      "budgets": {
+        "api_football_max_total": 5000,
+        "odds_api_max_total": 250
+      },
+      "reserves": {
+        "api_football": 5000,
+        "odds_api": 4000,
+        "odds_api_internal_safety": 2,
+        "odds_api_near_kickoff": 80
+      }
+    },
+    "r2": {
+      "namespace": "prospective-deep-data/schema-v1",
+      "objects_added": 0,
+      "bytes": 0,
+      "recovery_objects": 0,
+      "recovery_bytes": 0,
+      "verified": 0,
+      "lag": 0,
+      "deletions": 0,
+      "replay_status": "NOT_RUN_NO_CAPTURE"
+    },
+    "postgresql": {
+      "migration": "0009_jalon12_observatory",
+      "tables": 0,
+      "inserts": 0,
+      "duplicates_avoided": 0,
+      "lag": 0,
+      "reconstruction_status": "NOT_RUN_NO_CAPTURE",
+      "payload_body_rows": 0
+    },
+    "gates": {
+      "by_name": {
+        "PROSPECTIVE_PLAYER_GATE": {
+          "status": "WAITING_FOR_OBSERVATIONS",
+          "passed": 0,
+          "total": 0,
+          "reason": "Trois captures antérieures et des identités cohérentes sont requises."
+        },
+        "PROSPECTIVE_INJURY_GATE": {
+          "status": "WAITING_FOR_OBSERVATIONS",
+          "passed": 0,
+          "total": 0,
+          "reason": "Une indisponibilité sourcée reçue avant cutoff est requise."
+        },
+        "PROSPECTIVE_LINEUP_GATE": {
+          "status": "WAITING_FOR_OBSERVATIONS",
+          "passed": 0,
+          "total": 0,
+          "reason": "Exactement onze titulaires identifiés avant kickoff sont requis."
+        },
+        "PROSPECTIVE_FORMATION_GATE": {
+          "status": "WAITING_FOR_OBSERVATIONS",
+          "passed": 0,
+          "total": 0,
+          "reason": "Le lineup gate doit être vert et la formation non ambiguë."
+        },
+        "PROSPECTIVE_MARKET_GATE": {
+          "status": "WAITING_FOR_OBSERVATIONS",
+          "passed": 0,
+          "total": 0,
+          "reason": "Une cote, un bookmaker, une marge et observed_at exacts sont requis."
+        }
+      }
+    },
+    "hypotheses": [
+      {
+        "id": "H11-001",
+        "title": "Buteur en forme contre défense centrale amputée",
+        "required_data": [
+          "PLAYER_STATUS",
+          "INJURY",
+          "LINEUP"
+        ],
+        "minimum_support": 80,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      },
+      {
+        "id": "H11-002",
+        "title": "4-3-3 contre 4-4-2",
+        "required_data": [
+          "LINEUP",
+          "FORMATION"
+        ],
+        "minimum_support": 120,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      },
+      {
+        "id": "H11-003",
+        "title": "Trois attaquants droitiers contre défense gauchère",
+        "required_data": [
+          "LINEUP",
+          "FOOTEDNESS"
+        ],
+        "minimum_support": 100,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      },
+      {
+        "id": "H11-004",
+        "title": "Gardien titulaire absent",
+        "required_data": [
+          "INJURY",
+          "PLAYER_STATUS",
+          "LINEUP"
+        ],
+        "minimum_support": 80,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      },
+      {
+        "id": "H11-005",
+        "title": "Deux centraux nouveaux ensemble",
+        "required_data": [
+          "LINEUP",
+          "PLAYER_STATUS"
+        ],
+        "minimum_support": 100,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      },
+      {
+        "id": "H11-006",
+        "title": "Rupture du onze",
+        "required_data": [
+          "LINEUP",
+          "PLAYER_STATUS"
+        ],
+        "minimum_support": 120,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      },
+      {
+        "id": "H11-007",
+        "title": "Congestion et tactique inhabituelle",
+        "required_data": [
+          "FIXTURE",
+          "LINEUP",
+          "FORMATION"
+        ],
+        "minimum_support": 100,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      },
+      {
+        "id": "H11-008",
+        "title": "Matchup structurel",
+        "required_data": [
+          "LINEUP",
+          "FORMATION",
+          "ODDS"
+        ],
+        "minimum_support": 120,
+        "observations": 0,
+        "coverage": 0.0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null,
+        "frozen": true
+      }
+    ],
+    "research_cards": [
+      {
+        "title": "Buteur en forme vs deux centraux absents",
+        "required_data": [
+          "PLAYER_STATUS",
+          "INJURY",
+          "LINEUP"
+        ],
+        "accumulated": 0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null
+      },
+      {
+        "title": "4-3-3 vs 4-4-2",
+        "required_data": [
+          "LINEUP",
+          "FORMATION"
+        ],
+        "accumulated": 0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null
+      },
+      {
+        "title": "Gardien titulaire absent",
+        "required_data": [
+          "INJURY",
+          "PLAYER_STATUS",
+          "LINEUP"
+        ],
+        "accumulated": 0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null
+      },
+      {
+        "title": "Continuité du onze",
+        "required_data": [
+          "LINEUP",
+          "PLAYER_STATUS"
+        ],
+        "accumulated": 0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null
+      },
+      {
+        "title": "Pied fort",
+        "required_data": [
+          "FOOTEDNESS",
+          "LINEUP"
+        ],
+        "accumulated": 0,
+        "status": "WAITING_FOR_OBSERVATIONS",
+        "first_possible_analysis_at": null
+      }
+    ],
+    "ledger": {
+      "schema_version": "public-evidence-ledger-v3",
+      "events": 0,
+      "head_hash": null,
+      "allowed_event_types": [
+        "FIXTURE_REGISTERED",
+        "CAPTURE_WINDOW_SCHEDULED",
+        "CAPTURE_ATTEMPTED",
+        "CAPTURE_SUCCEEDED",
+        "CAPTURE_EMPTY",
+        "CAPTURE_FAILED",
+        "CAPTURE_WINDOW_MISSED",
+        "TEMPORAL_EVIDENCE_RECORDED",
+        "TEMPORAL_GATE_PASSED",
+        "TEMPORAL_GATE_FAILED",
+        "DATASET_VERSION_FROZEN"
+      ],
+      "event_counts": {},
+      "cardinality": {
+        "planned_events": 0,
+        "capture_attempt_events": 0,
+        "physical_capture_events": 0,
+        "physical_http_calls": 0,
+        "temporal_evidence_events": 0,
+        "gate_evaluation_events": 0,
+        "lifecycle_events": 0,
+        "receipts": 0
+      },
+      "bet_decisions": 0
+    },
+    "decisions": 0,
+    "candidates": 0,
+    "invariants": {
+      "storage_paused": true,
+      "p3_p4_paused": true,
+      "production_status": "PRODUCTION_LOCKED",
+      "real_bets": false,
+      "no_bet_default": true,
+      "social_publishing_enabled": false,
+      "demo_mode_enabled": false,
+      "external_social_networks_connected": false,
+      "raw_payloads_in_git": 0,
+      "postgresql_payload_body_rows": 0
+    }
   }
 }

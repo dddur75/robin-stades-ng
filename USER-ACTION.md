@@ -103,3 +103,28 @@ Robin Live sont vérifiés. La PR doit être fusionnée par l'automatisation de
 clôture uniquement après son passage en Ready et le dernier contrôle GitHub.
 
 `AUCUNE ACTION UTILISATEUR REQUISE`
+
+## Jalon 12
+
+La branche et la PR brouillon Jalon 12 doivent rester non fusionnées pendant la
+construction et le pilote. Le système utilise les secrets existants sans jamais
+les afficher. Aucun achat, nouvel abonnement, réseau social, pari réel ou
+reprise P3/P4 n’est demandé.
+
+Tant que le pilote réel, le replay R2, PostgreSQL et la CI ne sont pas tous
+verts :
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Une demande de fusion éventuelle appartiendra à une mission distincte après
+revue des preuves.
+
+Le pilote borné et le replay-only final sont désormais vérifiés par le run
+`30314975830`, avec CI PR `30314978406` verte. Le verdict reste
+`JALON_12_PARTIAL_CAPTURE_READY` parce qu’aucune fenêtre critique joueur,
+blessure, lineup, formation ou cote n’était due. Cette couverture partielle
+est attendue et ne justifie ni appel forcé ni fusion automatique.
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Ne pas fusionner la PR #17 dans cette mission.

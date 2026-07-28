@@ -1,0 +1,81 @@
+name: "63 - Capture lineups et formations prospective"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Capturer uniquement les fenêtres actuellement dues"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "29 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prospective-deep-state
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Appliquer les migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          alembic upgrade head
+          alembic current | grep -q "0009"
+      - name: Estimer le coût des fenêtres lineup dues
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: >-
+          python scripts/run_prospective_observatory.py capture-lineup
+          --estimate
+          --policy "$PROSPECTIVE_POLICY"
+          --max-attempts 3
+          --output artifacts/prospective-observatory
+      - name: Capturer dans R2 puis indexer PostgreSQL
+        if: github.event_name == 'schedule' || inputs.execute
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_prospective_observatory.py capture-lineup
+          --execute
+          --policy "$PROSPECTIVE_POLICY"
+          --estimate-file artifacts/prospective-observatory/lineup-capture-estimate.json
+          --max-attempts 3
+          --output artifacts/prospective-observatory
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prospective-lineup-capture-${{ github.run_id }}
+          path: artifacts/prospective-observatory/*.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

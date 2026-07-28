@@ -466,3 +466,107 @@ PostgreSQL est à `0008_jalon11_deep_football`, avec deux passages de 304 preuve
 0 nouvel objet, 0 suppression et 0 mutation. Le verdict scientifique reste
 `JALON_11_BLOCKED_BY_DATA_GATES`; aucun candidat, aucune décision et aucune mise
 n'ont été créés.
+
+## Jalon 12 — Observatoire prospectif R2-first
+
+Le développement s’effectue sur
+`codex/jalon-12-prospective-deep-data-observatory`. La politique canonique est
+`configs/prospective_observatory_v1.json` et la migration attendue est
+`0009_jalon12_observatory`.
+
+Le namespace `prospective-deep-data/schema-v1` devient la source primaire des
+nouveaux payloads bruts prospectifs. Git conserve zéro payload brut et
+PostgreSQL zéro corps volumineux. Le snapshot compact initial est
+`WAITING_FOR_FIRST_DUE_WINDOW`, avec la provenance explicite
+`NO_PROSPECTIVE_CAPTURE_YET`; il ne revendique aucune fixture, lineup,
+blessure, cote ou décision avant une capture réelle.
+
+Le pilote P0 est la Ligue 1 sur trente jours et trois journées au maximum. Les
+fenêtres actives suivent l’Option B v2 : `H-2=[H-3,H-1)` puis
+`NEAR_KICKOFF=[H-1,kickoff)`. Ces plages adjacentes remplacent les fenêtres
+rapprochées que le scheduler horaire ne pouvait pas distinguer honnêtement.
+Le cutoff reste toujours strictement antérieur au kickoff.
+Les plafonds cumulés du pilote
+sont 5 000 appels API-Football et 250 crédits The Odds API, avec réserves
+externes de 5 000, 4 000 et 80 crédits proches du kickoff. H11-001 à H11-008
+restent gelées à `WAITING_FOR_OBSERVATIONS`.
+
+Les invariants restent :
+
+```text
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```
+
+Aucun verdict de readiness final n’est déclaré avant pilote réel, projection,
+replay R2 et CI verte.
+
+### Pilote réel et validation pré-fusion
+
+Le pilote Ligue 1 v1 a enregistré 9 fixtures et 531 fenêtres sur l’horizon de
+30 jours. Ces fenêtres restent append-only mais sont inactives sous la
+politique v2. Le contrat actif représente 49 fenêtres par fixture, soit 441
+pour neuf fixtures nouvellement planifiées. Au moment du contrôle v1,
+`windows_due=0` : seules les 9 captures
+`FIXTURE` réelles sont présentes, pour 11 691 octets et 9 hashes. Le coût
+cumulé est de 3 appels API-Football et 0 crédit The Odds API, sans erreur ni
+retry.
+
+Le run replay-only final `30314975830`, sur
+`2469e57ec4b2ef2849f9e707f63843033ec026e6`, a migré Neon en
+`0009_jalon12_observatory`, ignoré explicitement le registre, le scheduler et
+les captures fournisseur, puis examiné les 18 objets R2. Il a vérifié
+24 714 octets physiques — 11 691 octets de payloads et 13 023 octets de reçus
+—, reconstruit les 9 fixtures et confirmé 0 mismatch, 0 perte, 0 appel,
+0 crédit, 0 suppression et 9 doublons évités au second passage. PostgreSQL
+expose 12 tables, 54 écritures compactes, un lag nul et aucun corps de payload.
+Le ledger V3 historique compte 586 événements avec chaîne vérifiée. La revue
+12.1 ajoute `physical_capture_id` et sépare planifications, tentatives,
+captures physiques, preuves temporelles et gates ; ce total historique ne doit
+pas être réutilisé comme cardinalité 12.1.
+
+Robin Live a été construit et testé avec le snapshot opérationnel
+`LIVE_PROSPECTIVE_CAPTURE`; l’artefact `jalon12-pilot-30314975830` est publié
+avec le SHA-256
+`f0ff76b0c476ef259eb73143f969a75f3c6904786e1d073ce9874c1cbd776f53`.
+Il ne s’agit pas d’un déploiement privé. Les CI push `30314975830` et PR
+`30314978406` sont vertes. La validation locale compte 690 tests, dont 124
+tests Jalon 12.
+
+Le verdict factuel est `JALON_12_PARTIAL_CAPTURE_READY` : l’infrastructure,
+R2, Neon et le replay sont verts, tandis que les gates joueur, blessure,
+lineup, formation et marché restent bloqués par couverture jusqu’aux fenêtres
+réellement dues. La PR #17 reste brouillon et non fusionnée.
+
+### Revue temporelle 12.1 en attente de validation finale
+
+La branche de la PR #17 porte la politique v2 non chevauchante, la
+déduplication des gates par capture physique, le preflight kickoff borné aux
+fixtures dues et le contrat `NO_DUE_WINDOW_SUCCESS` avec appels, crédits,
+puts de capture R2 et tentatives tous à zéro. Une éventuelle réparation
+provider-free est isolée dans `recovery_r2_puts`. Le journal budget devient
+durable dans R2 avant transport et son seeding legacy accepte un namespace
+partiellement rempli. La reprise impose la parité exacte des reçus, index
+payloads, budgets et des cinq tables de projection avec PostgreSQL.
+
+L’identité physique est fixture-scoped pour API-Football et globale pour une
+réponse Odds multi-fixtures. Le ledger sépare en plus `physical_http_calls` des
+reçus et preuves temporelles. API-Football n’admet que le statut `NS`; le
+cutoff est revérifié avant preflight, avant transport et à réception.
+Un `CAPTURED_EMPTY` injury est une preuve bornée
+`NO_INJURY_REPORTED_AT_CAPTURE`, jamais une absence médicale ni un zéro.
+
+Le statut de reconstruction complet attendu du code corrigé est
+`CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2`, associé à
+`R2_REPLAY_VERIFIED`. Toute fixture incomplète porte
+`RECONSTRUCTION_INCOMPLETE` / `R2_REPLAY_PARTIAL_FIXTURE_INDEX`.
+
+P0 reste Ligue 1 seule ; Premier League, Liga, Bundesliga et Serie A restent
+`P1_OFF`. Aucun cron sur `main`, aucune activation 12.1 et aucun nouveau run
+fournisseur ne sont revendiqués avant fusion et validation post-fusion.
+`PRODUCTION_LOCKED`, `REAL_BETS=false` et `NO_BET_DEFAULT=true` restent actifs.

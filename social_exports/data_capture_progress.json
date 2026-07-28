@@ -1,0 +1,19 @@
+{
+  "schema_version": "social-export-v3",
+  "kind": "DATA_CAPTURE_PROGRESS",
+  "generated_at": null,
+  "status": "WAITING_FOR_FIRST_DUE_WINDOW",
+  "attempted": 0,
+  "captured": 0,
+  "captured_empty": 0,
+  "missed": 0,
+  "invalid": 0,
+  "payload_bytes": 0,
+  "message": "Aucune capture n’est revendiquée avant une fenêtre due et un reçu vérifié.",
+  "negative_results_included": true,
+  "publishing_enabled": false,
+  "external_networks_connected": false,
+  "production_status": "PRODUCTION_LOCKED",
+  "real_bets": false,
+  "demo_mode_enabled": false
+}

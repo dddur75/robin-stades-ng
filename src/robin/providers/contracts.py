@@ -32,6 +32,10 @@ class ProviderResult(BaseModel):
     origin: DataOrigin
     raw_observation_id: str | None = None
     raw_payload_hash: str | None = None
+    # Parsed response envelope retained only for an immediate R2-first sink.
+    # It is excluded from repr/serialization so reports and logs cannot
+    # accidentally duplicate a potentially large provider body.
+    raw_payload: Any | None = Field(default=None, exclude=True, repr=False)
     quota: QuotaState = Field(default_factory=QuotaState)
     http_status: int | None = None
     requested_at: datetime | None = None
@@ -54,4 +58,10 @@ class RateLimitError(ProviderCallError):
 
 
 class TransientProviderError(ProviderCallError):
+    pass
+
+
+class CircuitOpenError(TransientProviderError):
+    """A provider call rejected locally before the HTTP transport is reached."""
+
     pass

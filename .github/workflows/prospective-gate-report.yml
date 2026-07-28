@@ -1,0 +1,104 @@
+name: "66 - Rapport des gates prospectifs"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "53 6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prospective-deep-state
+  cancel-in-progress: false
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Appliquer les migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          alembic upgrade head
+          alembic current | grep -q "0009"
+      - name: Rejouer R2 sans fournisseur sur le même état verrouillé
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_prospective_observatory.py replay-audit
+          --policy "$PROSPECTIVE_POLICY"
+          --output artifacts/prospective-observatory
+      - name: Produire le rapport factuel des gates
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_prospective_observatory.py gate-report
+          --policy "$PROSPECTIVE_POLICY"
+          --output artifacts/prospective-observatory
+      - name: Publier les prochaines fenêtres attendues sans fournisseur
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: >-
+          python scripts/run_prospective_observatory.py next-due-report
+          --policy "$PROSPECTIVE_POLICY"
+          --report-path reports/jalon12/next-due-windows.json
+          --output artifacts/prospective-observatory
+      - name: Construire le snapshot prospectif Robin Live
+        env:
+          COCKPIT_PROSPECTIVE_ONLY: "1"
+          PROSPECTIVE_REPORT_ROOT: "artifacts/prospective-observatory"
+        run: python scripts/build_cockpit_snapshot.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.9.0"
+      - name: Tester Robin Live avec le rapport des gates
+        working-directory: cockpit
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prospective-gates-${{ github.run_id }}
+          path: |
+            artifacts/prospective-observatory/*.json
+            artifacts/prospective-observatory/*.jsonl
+            reports/jalon12/next-due-windows.json
+            cockpit/app/cockpit-data.json
+            cockpit/app/cockpit-data.sha256
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

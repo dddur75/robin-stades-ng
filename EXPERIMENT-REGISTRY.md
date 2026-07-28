@@ -145,3 +145,23 @@ et R2 à 25 453 / 25 453 objets, lag nul.
 
 Verdict : `JALON_11_BLOCKED_BY_DATA_GATES`. Aucun résultat historique n'est
 qualifié de `VALIDATED`.
+
+## Protocoles prospectifs Jalon 12
+
+H11-001 à H11-008 sont repris sans changer leur minimum ni leur direction.
+
+| Protocole | Données prospectives principales | Minimum | Statut initial |
+|---|---|---:|---|
+| H11-001 — buteur en forme / centraux absents | PLAYER_STATUS, INJURY, LINEUP | 80 | `WAITING_FOR_OBSERVATIONS` |
+| H11-002 — 4-3-3 / 4-4-2 | LINEUP, FORMATION | 120 | `WAITING_FOR_OBSERVATIONS` |
+| H11-003 — matchup pied fort | LINEUP, FOOTEDNESS | 100 | `WAITING_FOR_OBSERVATIONS` |
+| H11-004 — gardien titulaire absent | INJURY, PLAYER_STATUS, LINEUP | 80 | `WAITING_FOR_OBSERVATIONS` |
+| H11-005 — nouveau duo central | LINEUP, PLAYER_STATUS | 100 | `WAITING_FOR_OBSERVATIONS` |
+| H11-006 — rupture du onze | LINEUP, PLAYER_STATUS | 120 | `WAITING_FOR_OBSERVATIONS` |
+| H11-007 — congestion / tactique | FIXTURE, LINEUP, FORMATION | 100 | `WAITING_FOR_OBSERVATIONS` |
+| H11-008 — matchup structurel | LINEUP, FORMATION, ODDS | 120 | `WAITING_FOR_OBSERVATIONS` |
+
+Statuts autorisés : `WAITING_FOR_OBSERVATIONS`, `DATA_CAPTURE_ACTIVE`,
+`MINIMUM_SAMPLE_NOT_REACHED` et `ELIGIBLE_FOR_EXPLORATORY_ANALYSIS`. Aucun test
+n’est lancé avant le minimum préenregistré. L’éligibilité exploratoire ne vaut
+ni signal, ni validation, ni promotion shadow.

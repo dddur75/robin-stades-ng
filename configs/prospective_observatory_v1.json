@@ -1,0 +1,155 @@
+{
+  "schema_version": "prospective-observatory-policy-v1",
+  "storage": {
+    "raw_primary": "R2",
+    "raw_namespace": "prospective-deep-data/schema-v1",
+    "metadata_and_projections": "POSTGRESQL",
+    "git_raw_payloads_allowed": 0,
+    "postgresql_payload_bodies_allowed": 0,
+    "append_only": true
+  },
+  "competition_registry": [
+    {
+      "competition": "Ligue 1",
+      "provider": "api-football",
+      "provider_id": 61,
+      "priority": "P0"
+    },
+    {
+      "competition": "Premier League",
+      "provider": "api-football",
+      "provider_id": 39,
+      "priority": "P1"
+    },
+    {
+      "competition": "La Liga",
+      "provider": "api-football",
+      "provider_id": 140,
+      "priority": "P1"
+    },
+    {
+      "competition": "Bundesliga",
+      "provider": "api-football",
+      "provider_id": 78,
+      "priority": "P1"
+    },
+    {
+      "competition": "Serie A",
+      "provider": "api-football",
+      "provider_id": 135,
+      "priority": "P1"
+    }
+  ],
+  "fixture_registry": {
+    "horizon_days": 30,
+    "max_matchdays_per_competition": 3,
+    "resolve_season_from_provider_response": true,
+    "require_verified_phase": true,
+    "excluded_statuses": [
+      "CANC",
+      "PST",
+      "ABD"
+    ],
+    "require_reliable_utc_kickoff": true
+  },
+  "capture_windows": {
+    "policy_version": "prospective-capture-window-v2",
+    "operational_tolerance_seconds": 3600,
+    "FIXTURE": [
+      "J-21",
+      "J-14",
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-6",
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "TEAM": [
+      "J-21",
+      "J-14",
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-6",
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "SQUAD": [
+      "J-7",
+      "J-3",
+      "J-1"
+    ],
+    "PLAYER_STATUS": [
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-6",
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "INJURY": [
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-6",
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "LINEUP": [
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "FORMATION": [
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "ODDS": [
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-6",
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "EVENT_STATUS": [
+      "J-21",
+      "J-14",
+      "J-7",
+      "J-3",
+      "J-1",
+      "H-6",
+      "H-2",
+      "NEAR_KICKOFF"
+    ]
+  },
+  "markets": [
+    "1X2",
+    "OVER_UNDER_2_5"
+  ],
+  "provider_budgets": {
+    "api_football_max_calls_total": 5000,
+    "odds_api_max_credits_total": 250,
+    "odds_api_internal_safety_reserve": 2,
+    "api_football_provider_reserve": 5000,
+    "odds_api_provider_reserve": 4000,
+    "odds_api_near_kickoff_reserve": 80
+  },
+  "minimum_samples": {
+    "technical_audit_complete_fixtures": 1,
+    "pipeline_validation_fixtures": 5,
+    "pipeline_validation_matchdays": 2,
+    "pipeline_validation_windows_per_critical_family": 2,
+    "descriptive_occurrences": 30,
+    "exploratory_occurrences": 80
+  },
+  "invariants": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  }
+}

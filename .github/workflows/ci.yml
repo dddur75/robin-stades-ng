@@ -11,8 +11,16 @@ permissions:
   contents: read
 
 concurrency:
-  group: quality-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Isolate the marked pilot from ordinary branch CI so a later push cannot
+  # interrupt it after a provider call.
+  group: >-
+    ${{ (github.event_name == 'push' &&
+    contains(github.event.head_commit.message, '[run-j12-pilot]')) &&
+    'quality-jalon12-pilot' ||
+    format('quality-{0}-{1}', github.workflow, github.ref) }}
+  cancel-in-progress: >-
+    ${{ !(github.event_name == 'push' &&
+    contains(github.event.head_commit.message, '[run-j12-pilot]')) }}
 
 jobs:
   tests:
@@ -45,10 +53,10 @@ jobs:
       - name: Linting
         run: >-
           python -m ruff check
-          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11
+          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12
           scripts migrations
       - name: Typage strict
-        run: python -m mypy src/robin
+        run: python -m mypy src/robin scripts/run_prospective_observatory.py
       - name: Securite basique
         run: python -m bandit -q -r src/robin
       - name: Verification des secrets
@@ -62,7 +70,7 @@ jobs:
           ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
         run: |
           python -m alembic upgrade head
-          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions'} <= names"
+          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger'} <= names"
           python -m alembic downgrade 0002_jalon2_shadow
           python -m alembic upgrade head
           python -m alembic downgrade base
@@ -72,7 +80,7 @@ jobs:
         run: python -m pytest -q tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9
       - name: Tester les configurations et le pipeline mock
         run: |
-          python -c "import pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github').rglob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text())"
+          python -c "import json,pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github').rglob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text()); json.loads(pathlib.Path('configs/prospective_observatory_v1.json').read_text())"
           python scripts/run_shadow_pipeline.py collect-fixtures --mock --output .ci/shadow
           python scripts/run_shadow_pipeline.py collect-odds --mock --output .ci/shadow
           python scripts/run_shadow_pipeline.py pre-match-shadow --mock --output .ci/shadow
@@ -94,3 +102,167 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm test
+
+  jalon12-pilot:
+    name: "Pilote Jalon 12 R2-first borne"
+    needs: tests
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/codex/jalon-12-prospective-deep-data-observatory' &&
+      (contains(github.event.head_commit.message, '[run-j12-pilot]') ||
+      contains(github.event.head_commit.message, '[run-j12-replay-only]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    concurrency:
+      group: prospective-deep-state
+      cancel-in-progress: false
+    env:
+      PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      PROSPECTIVE_OUTPUT: "artifacts/prospective-observatory"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refuser les marqueurs Jalon 12 incompatibles
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          contains(github.event.head_commit.message, '[run-j12-replay-only]')
+        run: |
+          echo "Les modes pilote et replay-only sont mutuellement exclusifs."
+          exit 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer le runtime prospectif
+        run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Verifier uniquement la presence des secrets
+        shell: bash
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          if [ "${GITHUB_RUN_ATTEMPT}" != "1" ]; then
+            echo "Le pilote fournisseur ne peut pas etre relance pour un meme run."
+            exit 1
+          fi
+          for name in DATABASE_URL API_FOOTBALL_KEY ODDS_API_KEY R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME; do
+            if [ -z "${!name:-}" ]; then
+              echo "Secret requis absent: ${name}"
+              exit 1
+            fi
+          done
+      - name: Migrer PostgreSQL Neon en 0009
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+          python -m alembic current | grep -q "0009_jalon12_observatory"
+      - name: Estimer puis enregistrer les fixtures Ligue 1
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          !contains(github.event.head_commit.message, '[run-j12-replay-only]')
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          python scripts/run_prospective_observatory.py fixture-registry --estimate --max-attempts 1 --policy "$PROSPECTIVE_POLICY" --competition "Ligue 1" --output "$PROSPECTIVE_OUTPUT"
+          python scripts/run_prospective_observatory.py fixture-registry --execute --max-attempts 1 --policy "$PROSPECTIVE_POLICY" --estimate-file "$PROSPECTIVE_OUTPUT/fixture-registry-estimate.json" --competition "Ligue 1" --output "$PROSPECTIVE_OUTPUT"
+      - name: Planifier les fenetres
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          !contains(github.event.head_commit.message, '[run-j12-replay-only]')
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: >-
+          python scripts/run_prospective_observatory.py scheduler
+          --policy "$PROSPECTIVE_POLICY"
+          --output "$PROSPECTIVE_OUTPUT"
+      - name: Capturer seulement les fenetres actuellement dues
+        if: >-
+          contains(github.event.head_commit.message, '[run-j12-pilot]') &&
+          !contains(github.event.head_commit.message, '[run-j12-replay-only]')
+        shell: bash
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          for command in capture-general capture-player capture-lineup capture-odds; do
+            python scripts/run_prospective_observatory.py "$command" --estimate --max-attempts 1 --policy "$PROSPECTIVE_POLICY" --output "$PROSPECTIVE_OUTPUT"
+            case "$command" in
+              capture-general) estimate="general-capture-estimate.json" ;;
+              capture-player) estimate="player-capture-estimate.json" ;;
+              capture-lineup) estimate="lineup-capture-estimate.json" ;;
+              capture-odds) estimate="odds-capture-estimate.json" ;;
+            esac
+            python scripts/run_prospective_observatory.py "$command" --execute --max-attempts 1 --policy "$PROSPECTIVE_POLICY" --estimate-file "$PROSPECTIVE_OUTPUT/$estimate" --output "$PROSPECTIVE_OUTPUT"
+          done
+      - name: Rejouer R2 sans fournisseur et evaluer les gates
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          API_FOOTBALL_KEY: ""
+          ODDS_API_KEY: ""
+          API_FOOTBALL_CALLS_ALLOWED: "0"
+          ODDS_API_CREDITS_ALLOWED: "0"
+        run: |
+          python scripts/run_prospective_observatory.py replay-audit --policy "$PROSPECTIVE_POLICY" --output "$PROSPECTIVE_OUTPUT"
+          python scripts/run_prospective_observatory.py gate-report --policy "$PROSPECTIVE_POLICY" --output "$PROSPECTIVE_OUTPUT"
+      - name: Construire le snapshot prospectif Robin Live
+        env:
+          COCKPIT_PROSPECTIVE_ONLY: "1"
+          PROSPECTIVE_REPORT_ROOT: "artifacts/prospective-observatory"
+        run: python scripts/build_cockpit_snapshot.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.9.0"
+      - name: Tester Robin Live avec le snapshot du pilote
+        working-directory: cockpit
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jalon12-pilot-${{ github.run_id }}
+          path: |
+            artifacts/prospective-observatory/*.json
+            artifacts/prospective-observatory/*.jsonl
+            cockpit/app/cockpit-data.json
+            cockpit/app/cockpit-data.sha256
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

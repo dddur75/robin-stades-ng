@@ -207,3 +207,92 @@ Il est resté entièrement cache-only :
 - 0 payload lourd ajouté à Git.
 
 Ce run n'a créé aucun achat ni changement d'abonnement.
+
+## Budget du Jalon 12
+
+La source canonique est
+`configs/prospective_observatory_v1.json#provider_budgets`.
+
+| Poste | Plafond du pilote | Réserve externe |
+|---|---:|---:|
+| API-Football | 5 000 appels cumulés | 5 000 appels |
+| The Odds API | 250 crédits cumulés | 4 000 crédits |
+| Sécurité dérive coût Odds | 2 crédits non planifiables | interne au plafond 250 |
+| Fenêtres Odds proches kickoff | incluses dans 250 | 80 crédits dédiés |
+| Pari réel | 0 | `PRODUCTION_LOCKED` |
+| Publication sociale | 0 | désactivée |
+
+Le budget est cumulatif au niveau du pilote, pas remis à zéro par workflow. Il
+sert uniquement aux fenêtres prospectives dues. Un replay R2 consomme zéro
+appel et zéro crédit. Avant une cote, le solde The Odds API est rafraîchi par
+le endpoint `/v4/sports`, documenté comme gratuit ; le coût effectif et le
+solde restant de `/odds` sont ensuite inscrits dans le ledger append-only.
+
+Objectifs de stockage :
+
+```text
+Git raw payload growth = 0
+R2 raw payload storage = autorisé
+PostgreSQL payload body storage = 0
+```
+
+Git conserve seulement code, migration, contrats, reçus agrégés, hashes,
+rapports compacts et tests. Aucun achat ni changement de plan n’est autorisé
+automatiquement. `STORAGE_PAUSED` et `P3/P4_PAUSED` restent actifs.
+
+### Consommation vérifiée du pilote
+
+Le pilote Ligue 1 du 27 juillet 2026 a consommé 3 appels API-Football pour
+enregistrer 9 fixtures. Aucune fenêtre de cote n’était due : The Odds API a
+consommé 0 crédit. Les replays de récupération ont exécuté 0 appel et consommé
+0 crédit ; le registre, le scheduler et les captures fournisseur étaient
+explicitement `skipped` dans le run final `30314975830`. Ce run a relu
+24 714 octets physiques déjà durables dans R2 sans ajouter d’objet ni engager
+de coût fournisseur.
+
+Aucun achat, changement d’abonnement ou coût de pari n’a été engagé.
+
+### Projection déterministe de saison — politique temporelle Option B
+
+Le rapport machine
+`reports/jalon12/season-cost-projection.json` est généré par la fonction pure
+`build_season_cost_projection()`. Il applique la politique non chevauchante
+Option B : 49 fenêtres sémantiques par fixture, dont 8 pour chacune des
+familles `FIXTURE`, `TEAM`, `EVENT_STATUS`, 3 `SQUAD`, 6 pour chacune des
+familles `PLAYER_STATUS` et `INJURY`, 2 pour chacune des familles `LINEUP` et
+`FORMATION`, et 6 `ODDS`.
+
+Les réponses communes ramènent le coût API-Football des endpoints profonds à
+22 appels par fixture : 8 `/fixtures`, 6 `/players/squads`, 6 `/injuries` et
+2 `/fixtures/lineups`. Les 8 contrôles de fraîcheur `/fixtures?id=...` des
+workflows joueur/lineup portent le coût de données réel à 30 appels par
+fixture. La projection ajoute un `/status` par cohorte/run et 3 appels de
+registre par jour actif. Une requête Odds globale coûte 2 crédits et peut
+mutualiser plusieurs fixtures d’une même cohorte.
+
+Projection centrale, exprimée en unités et non en euros :
+
+| Périmètre | Fixtures | API-Football | Odds | Runs GHA minimum | Objets R2 connus | Reçus PostgreSQL structurels |
+|---|---:|---:|---:|---:|---:|---:|
+| pilote borné | 9 | 305 appels | 36 crédits | 51 | 3 185 | 522 |
+| journée Ligue 1 | 9 | 368 appels | 36 crédits | 72 | 3 248 | 522 |
+| mois Ligue 1 | 36 | 1 298 appels | 144 crédits | 230 | 12 818 | 2 088 |
+| saison Ligue 1 | 306 | 11 363 appels | 1 224 crédits | 2 065 | 109 283 | 17 748 |
+| cinq ligues, planification seule | 1 752 | 59 607 appels | 7 008 crédits | 9 821 | 620 247 | 101 616 |
+
+Les scénarios `low`, `central`, `high` et `high_with_retries` font varier la
+fragmentation des cohortes et ajoutent, dans le dernier cas, 10 % de retries
+arrondis au supérieur. Les plafonds 5 000 appels / 250 crédits sont des gates
+du pilote, pas une autorisation de saison. Le pilote de neuf fixtures reste
+sous ces deux plafonds dans les quatre scénarios ; une saison ne peut pas être
+admise comme un seul lot sous ces plafonds.
+
+P0 reste limité à la Ligue 1. La projection cinq ligues est informative et
+porte explicitement `P1_OFF_PLANNING_ONLY`; elle n’autorise aucune activation.
+Les octets, ratios de compression, minutes GitHub Actions et coûts monétaires
+restent `null` tant qu’ils ne sont pas mesurés. R2 compte trois objets
+append-only par capture — intention, payload, reçu — ainsi que le journal de
+transport, 71 guards fail-closed par fixture (65 API-Football, 6 Odds) et 71
+liens de complétion guard→reçu dans le scénario sans retry. Les tailles ne sont
+pas inventées. PostgreSQL conserve les reçus, projections et lignes de
+budget/guard/complétion, pas les corps de payload.

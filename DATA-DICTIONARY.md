@@ -251,3 +251,32 @@ La source autoritative est
 `TEAM_GATE=PARTIAL` limite ce dataset aux diagnostics rétrospectifs.
 Les datasets joueurs, lineup, formation et pied fort restent bloqués et
 n'existent pas sous une forme artificiellement complétée.
+
+## Entités Jalon 12
+
+La révision `0009_jalon12_observatory` ajoute :
+
+| Entité | Grain | Rôle |
+|---|---|---|
+| `prospective_fixtures` | fixture fournisseur canonique | horizon, phase, saison et kickoff |
+| `capture_windows` | fixture × famille × fenêtre | échéance, cutoff et statut |
+| `capture_attempts` | tentative append-only | requête, réponse, erreur et coût |
+| `capture_receipts` | reçu de payload append-only | temps, hash, taille, clé R2 |
+| `prospective_payload_index` | objet R2 prospectif | provenance sans corps volumineux |
+| `prospective_player_status` | joueur × fixture × observation | disponibilité et statut observés |
+| `prospective_injuries` | joueur × fixture × observation | indisponibilité sourcée |
+| `prospective_lineups` | équipe × fixture × observation | onze officiel point-in-time |
+| `prospective_formations` | équipe × fixture × observation | formation normalisée |
+| `prospective_odds_snapshots` | bookmaker × marché × sélection × observation | cote et marge exactes |
+| `temporal_data_gates` | gate × fixture × évaluation | admissibilité et raisons |
+| `provider_budget_ledger` | mouvement de budget | consommation et réserves |
+
+Les tentatives et reçus sont immuables. Les payloads bruts résident dans R2
+sous `prospective-deep-data/schema-v1`. La preuve temporelle est
+`response_received_at < cutoff_at < kickoff_at`. Les temps `event_time`,
+`provider_updated_at`, `requested_at`, `response_received_at`, `observed_at`,
+`kickoff_at` et `materialized_at` ne sont jamais fusionnés.
+
+Les états de disponibilité sont `NOT_DUE`, `DUE`, `CAPTURED`,
+`CAPTURED_EMPTY`, `PROVIDER_UNAVAILABLE`, `MISSED_WINDOW`, `INVALID_PAYLOAD`,
+`TEMPORALITY_FAILED`, `IDENTITY_FAILED`, `RETRY_PENDING` et `COMPLETE`.

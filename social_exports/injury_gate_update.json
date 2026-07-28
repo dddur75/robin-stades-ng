@@ -1,0 +1,16 @@
+{
+  "schema_version": "social-export-v3",
+  "kind": "INJURY_GATE_UPDATE",
+  "generated_at": null,
+  "gate": "PROSPECTIVE_INJURY_GATE",
+  "status": "WAITING_FOR_OBSERVATIONS",
+  "eligible_fixtures": 0,
+  "required": "Indisponibilité sourcée, joueur identifié et réponse reçue avant le cutoff.",
+  "message": "Une absence historique récupérée après coup ne ferme pas le gate prospectif.",
+  "negative_results_included": true,
+  "publishing_enabled": false,
+  "external_networks_connected": false,
+  "production_status": "PRODUCTION_LOCKED",
+  "real_bets": false,
+  "demo_mode_enabled": false
+}

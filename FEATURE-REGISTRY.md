@@ -151,3 +151,19 @@ Alembic `0008_jalon11_deep_football` le contrat compact de 11 définitions et
 270 gates. Les deux passages ont inséré 0 objet et évité les mêmes doublons ;
 le Parquet hashé est vérifié dans R2 avec lag nul. Aucun gate profond n'a été
 ouvert par cette validation d'infrastructure.
+
+## Jalon 12 — features prospectives
+
+| Famille | Données requises | Gate | Statut initial |
+|---|---|---|---|
+| forme joueur, minutes 3/5 | PLAYER_STATUS antérieur | `PROSPECTIVE_PLAYER_GATE` | `WAITING_FOR_OBSERVATIONS` |
+| titulaire/gardien/centraux habituels | PLAYER_STATUS + LINEUP | player + lineup | `WAITING_FOR_OBSERVATIONS` |
+| absences et deux centraux absents | INJURY + identités | `PROSPECTIVE_INJURY_GATE` | `WAITING_FOR_OBSERVATIONS` |
+| continuité et nouveau duo central | LINEUP | `PROSPECTIVE_LINEUP_GATE` | `WAITING_FOR_OBSERVATIONS` |
+| formation et changement | LINEUP + FORMATION | `PROSPECTIVE_FORMATION_GATE` | `WAITING_FOR_OBSERVATIONS` |
+| repos et congestion | fixtures antérieures | gate temporel | `WAITING_FOR_OBSERVATIONS` |
+| prix à chaque fenêtre | ODDS, bookmaker, marge, observed_at | `PROSPECTIVE_MARKET_GATE` | `WAITING_FOR_OBSERVATIONS` |
+| pied fort | source observée dédiée | non disponible | `BLOCKED_BY_TEMPORALITY` |
+
+Les nulls restent nulls. `CAPTURED_EMPTY` ne devient pas zéro. Aucune feature
+ne produit une décision dans le Jalon 12.
