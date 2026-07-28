@@ -1,8 +1,8 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-27
+Dernière mise à jour : 2026-07-28
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/jalon-11-deep-football-matchups`
+Branche : `codex/robin-experience-v1-french-dashboard`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -570,3 +570,86 @@ P0 reste Ligue 1 seule ; Premier League, Liga, Bundesliga et Serie A restent
 `P1_OFF`. Aucun cron sur `main`, aucune activation 12.1 et aucun nouveau run
 fournisseur ne sont revendiqués avant fusion et validation post-fusion.
 `PRODUCTION_LOCKED`, `REAL_BETS=false` et `NO_BET_DEFAULT=true` restent actifs.
+
+## Robin Experience V1
+
+La branche `codex/robin-experience-v1-french-dashboard`, créée depuis
+`c512c7bc20f9272cd1b91cc3acf8605500541185`, porte la refonte française et
+progressive du Cockpit. Robin Live devient l’entrée publique ; Matchs,
+Observatoire, Laboratoire, Résultats et Méthode forment la navigation
+principale. L’exhaustivité est conservée derrière une Vue expert mémorisée
+localement.
+
+État de présentation vérifié :
+
+- 9 rencontres ;
+- 441 fenêtres actives ;
+- 531 traces legacy inactives ;
+- 18 captures physiques ;
+- 0 observation profonde ;
+- 0 candidat ;
+- 0 décision ;
+- bankroll fictive de 1 000 unités.
+
+La couche `cockpit/app/lib/presentation.ts` adapte le snapshot sans le modifier.
+Les catalogues `fr-FR` et `en-GB`, 36 présentations de statuts et 22 entrées de
+glossaire sont versionnés. Les tests frontend, SSR, i18n et visuels contrôlent
+la langue, les codes publics, l’intégrité scientifique, six résolutions et les
+parcours clavier.
+
+La PR brouillon [#19](https://github.com/dddur75/robin-stades-ng/pull/19)
+reste non fusionnée. La version 14 du site privé est publiée sur
+`https://robin-stades-shadow-cockpit.dddur.chatgpt.site`.
+
+La CI publie les captures sous
+`robin-experience-visual-${{ github.run_id }}`. Le dossier `docs/ux` contient
+l’audit, l’architecture, le guide éditorial, le design system et les rapports
+de validation.
+
+Invariants inchangés :
+
+```text
+STORAGE_PAUSED
+P3/P4_PAUSED
+PRODUCTION_LOCKED
+REAL_BETS=false
+NO_BET_DEFAULT=true
+SOCIAL_PUBLISHING_ENABLED=false
+DEMO_MODE_ENABLED=false
+```
+
+## Robin Experience V1.1 — données dynamiques
+
+Verdict de livraison : `ROBIN_EXPERIENCE_V1_1_DYNAMIC_READY`.
+
+La présentation suit désormais le contrat
+`snapshot → buildPresentationModel(snapshot) → projections compactes → UI`.
+Les rencontres, fenêtres, prochaines captures, preuves, observations,
+candidats, bankroll, résultats, statuts et fraîcheur proviennent du snapshot.
+Les composants ne portent plus les anciennes valeurs opérationnelles.
+
+Le snapshot intégré est reconstruit depuis l’artefact vérifié du run
+`30314975830`, sans fournisseur, sans R2 distant et sans PostgreSQL distant.
+Il expose 9 fixtures, 441 fenêtres actives, 531 fenêtres legacy inactives,
+18 preuves physiques, 0 observation profonde, 0 candidat et 0 décision. Les
+noms d’équipes absents de cette preuve ne sont pas inventés : les identifiants
+fournisseur sont utilisés comme repli explicite.
+
+Validation locale :
+
+- 748 tests Python ;
+- 26 tests frontend, typecheck applicatif et ESLint ;
+- 9 tests Playwright, 18 captures ;
+- Ruff, mypy strict, Bandit, secrets, dépendances et compilation verts ;
+- couverture des statuts du snapshot : 117/117 ;
+- bundle : 545 960 octets contre 830 890 en V1.
+
+La PR #19 reste brouillon, ouverte et non fusionnée. Les détails de provenance,
+d’encodage et de validation sont dans `docs/ux`.
+
+La livraison fonctionnelle est le commit
+`51a91f29397854d21861cee71ece37ee72f6e015`. Les CI push `30352906004`
+et PR `30352908592` sont vertes, migrations et 18 preuves visuelles comprises.
+Le sous-arbre Cockpit `7e879a70df712b10b749a6b38f4cf6f44b8e11b4` est déployé
+en version Sites 15, privée et réservée au propriétaire, sur
+`https://robin-stades-shadow-cockpit.dddur.chatgpt.site`.

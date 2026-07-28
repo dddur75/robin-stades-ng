@@ -14,17 +14,28 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://robin-stades-shadow-cockpit.openai.site"),
-  title: "Robin des Stades — Cockpit Live V2",
+  title: {
+    default: "Robin des Stades — Observer avant de conclure",
+    template: "%s · Robin des Stades",
+  },
   description:
-    "Pilotage prospectif, qualité des données et décisions simulées pour la Ligue 1.",
+    "Robin observe les matchs, vérifie les données pré-match et publie ses résultats sans pari réel ni promesse de gain.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
   openGraph: {
-    title: "Robin des Stades — Cockpit Live V2",
+    title: "Robin des Stades — Observer avant de conclure",
     description:
-      "La chaîne de décision football observable, auditable et verrouillée en simulation.",
+      "Neuf rencontres suivies, des preuves datées et une recherche football transparente.",
+    images: ["/og.png"],
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Robin des Stades — Observer avant de conclure",
+    description: "L’observatoire football transparent, sans pari réel.",
     images: ["/og.png"],
   },
 };
@@ -35,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="fr-FR">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

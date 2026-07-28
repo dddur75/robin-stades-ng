@@ -386,18 +386,26 @@ def test_cockpit_exposes_external_gates_without_secrets() -> None:
     builder = (ROOT / "scripts" / "build_cockpit_snapshot.py").read_text(
         encoding="utf-8"
     )
-    page = (ROOT / "cockpit" / "app" / "page.tsx").read_text(encoding="utf-8")
+    presentation_files = (
+        ROOT / "cockpit" / "app" / "page.tsx",
+        ROOT / "cockpit" / "app" / "lib" / "presentation.ts",
+        ROOT / "cockpit" / "app" / "components" / "expert" / "expert-page.tsx",
+        ROOT / "cockpit" / "app" / "i18n" / "fr-FR.ts",
+    )
+    cockpit = "\n".join(
+        path.read_text(encoding="utf-8") for path in presentation_files
+    )
     for label in (
-        "External Readiness",
-        "League Transfer Matrix",
-        "Leave-One-League-Out",
-        "Player Generalization",
-        "Strategy External Validation",
-        "Preseason Package",
+        "État des ligues externes",
+        "Matrice de transfert inter-ligues",
+        "Validation par ligue laissée de côté",
+        "Généralisation des joueurs",
+        "Validation externe des stratégies",
+        "Paquet de pré-saison",
         "NO_BET_DEFAULT",
         "REAL_BETS",
     ):
-        assert label in page
+        assert label in cockpit
     assert '"externalValidation"' in builder
-    assert "DATABASE_URL" not in page
-    assert "API_FOOTBALL_KEY" not in page
+    assert "DATABASE_URL" not in cockpit
+    assert "API_FOOTBALL_KEY" not in cockpit

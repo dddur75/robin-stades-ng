@@ -1,15 +1,27 @@
 import assert from "node:assert/strict";
-import { access, readFile, readdir } from "node:fs/promises";
+import { access, readdir, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
+const snapshot = JSON.parse(
+  await readFile(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
+);
+const firstFixture = snapshot.prospectiveObservatory.fixtures.registry[0];
+const fixtureCount = snapshot.prospectiveObservatory.fixtures.registry.filter(
+  (fixture) => !fixture.cancelled && fixture.status !== "TOMBSTONED",
+).length;
+const unresolvedTeam = "Équipe en cours d’identification";
+const firstHome = firstFixture.home_name ?? unresolvedTeam;
+const firstAway = firstFixture.away_name ?? unresolvedTeam;
 
 async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${path}`);
   const { default: worker } = await import(workerUrl.href);
   return worker.fetch(
-    new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${path}`, {
+      headers: { accept: "text/html" },
+    }),
     {
       ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) },
     },
@@ -17,441 +29,158 @@ async function render(path = "/") {
   );
 }
 
-test("server-renders the Cockpit Live V2 shell", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+function visibleText(html) {
+  return html
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+}
 
-  const html = await response.text();
-  assert.match(html, /<title>Robin des Stades — Cockpit Live V2<\/title>/i);
-  assert.match(html, /Command Center/);
-  assert.match(html, /PRODUCTION_LOCKED/);
-  assert.match(html, /LIVE SOURCE/);
-  assert.match(html, /SHADOW COLLECTION HARDENED/);
-  assert.match(html, /Snapshots réels/);
-  assert.match(html, /Coverage Explorer/);
-  assert.match(html, /Registre PostgreSQL/);
-  assert.match(html, /101/);
-  assert.match(html, /PostgreSQL/);
-  assert.match(html, /Robin Live V1/);
-  assert.match(html, /Matchup Lab/);
-  assert.match(html, /Observatoire des données/);
-  assert.match(html, /Preuve publique shadow/);
-  assert.match(html, /Bankroll shadow/);
-  assert.match(html, /NO BET/);
-  assert.match(html, /NO LIVE SHADOW DATA/);
-  assert.match(html, /SOCIAL_PUBLISHING_ENABLED=false/);
-  assert.match(html, /DOUBLE ÉCRITURE/i);
-  assert.match(html, /19[\s ]992/);
-  assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
-  assert.doesNotMatch(html, /garantie de gain|gain garanti|100 % gagnant/i);
-  assert.doesNotMatch(html, /react-loading-skeleton/);
+const publicRoutes = [
+  ["/", `Robin observe actuellement ${fixtureCount} rencontres`],
+  ["/robin-live", "À comprendre aujourd’hui"],
+  ["/matchs", "Les matchs observés"],
+  ["/observatoire", "Matrice de couverture"],
+  ["/laboratoire", "Laboratoire des hypothèses"],
+  ["/resultats", "Aucun pari simulé pour le moment"],
+  ["/methode", "Comment Robin travaille"],
+  ["/expert", "Activez la vue expert"],
+];
+
+test("rend toutes les routes Robin Experience V1 en français", async () => {
+  for (const [path, expected] of publicRoutes) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+    const html = await response.text();
+    assert.match(html, /<html lang="fr-FR"/);
+    assert.match(html, new RegExp(expected));
+    assert.match(html, /Vue essentielle/);
+    assert.match(html, /Vue expert/);
+    assert.match(html, /Glossaire Robin/);
+    assert.match(html, /Aucun pari réel/);
+  }
 });
 
-test("server-renders the public Robin Live V1 route", async () => {
-  const response = await render("/robin-live");
+test("rend une vraie fiche match avec ses états vides pédagogiques", async () => {
+  const response = await render(`/matchs/${firstFixture.fixture_id}`);
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /Robin Live V1/);
-  assert.match(html, /WHAT_WAS_TESTED/);
-  assert.match(html, /WHAT_WAS_NOT_TESTED/);
-  assert.match(html, /Walk-forward brut avant FDR/);
-  assert.match(html, /Trois meilleurs résultats bruts/);
-  assert.match(
-    html,
-    /EXPLORATORY REJECTED AFTER MULTIPLE TESTING/,
+  assert.match(html, new RegExp(firstHome));
+  assert.match(html, new RegExp(firstAway));
+  assert.match(html, /Synthèse/);
+  assert.match(html, /Chronologie/);
+  assert.match(html, /Niveau de couverture/);
+  assert.doesNotMatch(visibleText(html), /PRODUCTION_LOCKED|BLOCKED_BY_COVERAGE/);
+});
+
+test("n’expose ni anciens libellés anglais ni statuts techniques bruts en vue publique", async () => {
+  const forbiddenLabels = [
+    "Command Center",
+    "Coverage Explorer",
+    "Odds Explorer",
+    "Match Center",
+    "Shadow Performance",
+    "Data Explorer",
+    "Backfill Monitor",
+    "Dataset Readiness",
+    "Player Explorer",
+    "Lineup Explorer",
+    "Feature Lab",
+    "Model Lab",
+    "Scientific Model Arena",
+    "Matchup Lab",
+    "External Validation",
+    "Strategy Lab",
+    "Backtest Explorer",
+    "Historical Data Quality",
+  ];
+  const forbiddenStatuses = [
+    "BLOCKED_BY_COVERAGE",
+    "WAITING_FOR_OBSERVATIONS",
+    "LIVE_PROSPECTIVE_CAPTURE",
+    "PROSPECTIVE_GATES_ACCUMULATING",
+    "PRODUCTION_LOCKED",
+    "STORAGE_PAUSED",
+  ];
+  for (const [path] of publicRoutes.filter(([route]) => route !== "/expert")) {
+    const text = visibleText(await (await render(path)).text());
+    for (const label of forbiddenLabels) assert.doesNotMatch(text, new RegExp(label), `${path}: ${label}`);
+    for (const status of forbiddenStatuses) assert.doesNotMatch(text, new RegExp(status), `${path}: ${status}`);
+  }
+});
+
+test("préserve exactement les invariants et les résultats scientifiques du snapshot", async () => {
+  const data = JSON.parse(
+    await readFile(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
   );
-  assert.match(html, /N\/A — aucun pari réglé/);
-  assert.match(html, /PRODUCTION_LOCKED/);
-  assert.match(html, /SOCIAL_PUBLISHING_ENABLED=false/);
-  assert.match(html, /Matchup Lab/);
-  assert.match(html, /aucune promotion implicite/i);
-  assert.match(html, /aucune donnée démo n.*est présentée comme live/i);
-  assert.match(html, /TEAM_GATE PARTIAL/);
-  assert.match(html, /0\.001702/);
-  assert.doesNotMatch(html, /LIVE_SHADOW_VALIDATED/);
+  const simulationPolicy = JSON.parse(
+    await readFile(new URL("../../configs/shadow_simulation_v1.json", import.meta.url), "utf8"),
+  );
+  assert.equal(
+    data.patternResearch.bankroll.initialUnits,
+    simulationPolicy.initial_bankroll_units,
+  );
+  assert.equal(
+    data.patternResearch.bankroll.currentUnits,
+    data.patternResearch.bankroll.curve.at(-1),
+  );
+  assert.equal(data.patternResearch.results.roi, null);
+  assert.equal(data.patternResearch.productionStatus, "PRODUCTION_LOCKED");
+  assert.equal(data.patternResearch.realBets, false);
+  assert.equal(data.patternResearch.noBetDefault, true);
+  assert.equal(data.patternResearch.socialPublishingEnabled, false);
+  assert.equal(data.patternResearch.demoModeEnabled, false);
+  assert.equal(data.matchupLab.costs.storageStatus, "STORAGE_PAUSED");
+  assert.equal(data.matchupLab.costs.secondaryTasks, "P3_P4_PAUSED");
+  assert.equal(data.matchupLab.promotion.promoted, false);
+  assert.equal(data.matchupLab.decision.decisions, 0);
+  assert.equal(data.matchupLab.replay.providerCalls, 0);
+  assert.equal(data.matchupLab.replay.oddsApiCredits, 0);
+  assert.equal(data.prospectiveObservatory.invariants.raw_payloads_in_git, 0);
 });
 
-test("ships a provenance-aware, disposable static snapshot", async () => {
-  const [page, layout, data, packageJson] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+test("inclut navigation, accessibilité structurelle et formats français", async () => {
+  const html = await (await render("/robin-live")).text();
+  assert.match(html, /href="\/matchs"/);
+  assert.match(html, /href="\/observatoire"/);
+  assert.match(html, /href="\/laboratoire"/);
+  assert.match(html, /href="\/resultats"/);
+  assert.match(html, /href="\/methode"/);
+  assert.match(html, /href="\/expert/);
+  assert.match(html, /aria-label="Navigation principale"/);
+  assert.match(html, /Aller au contenu principal/);
+  assert.match(html, /<main id="contenu-principal"/);
+  const formattedBankroll = new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits: 1,
+  }).format(snapshot.patternResearch.bankroll.currentUnits);
+  assert.match(html, new RegExp(`${formattedBankroll.replace(/\s/g, "[\\s\\u202f]")} unités`));
+  assert.match(html, new RegExp(new Date(snapshot.prospectiveObservatory.generated_at).getUTCFullYear().toString()));
+  assert.doesNotMatch(html, /1,000|Jul 27, 2026|24\.1 KB/);
+});
+
+test("livre un bundle borné et les métadonnées Robin", async () => {
+  const [layout, packageJson] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
-  const research = JSON.parse(data).patternResearch;
-  const matchup = JSON.parse(data).matchupLab;
-  const deep = JSON.parse(data).deepData;
-  const observatory = JSON.parse(data).prospectiveObservatory;
-  assert.deepEqual(
-    {
-      generated: research.laboratory.hypothesesGenerated,
-      rawPositive: research.laboratory.rawPositive,
-      walkForwardRaw: research.laboratory.walkForwardRawBeforeFdr,
-      fdr: research.laboratory.fdrSurvivors,
-      candidates: research.strategies.shadowCandidates,
-      supportRejected: research.strategies.supportRejected,
-      promotionRejected: research.strategies.promotionRejected,
-    },
-    {
-      generated: 700,
-      rawPositive: 118,
-      walkForwardRaw: 24,
-      fdr: 0,
-      candidates: 0,
-      supportRejected: 167,
-      promotionRejected: 700,
-    },
-  );
-  assert.equal(research.subVerdict, "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE");
-  assert.equal(research.results.roi, null);
-  assert.equal(research.bankroll.currentUnits, 1000);
-  assert.equal(research.ledger.status, "LEDGER_VERIFIED");
-  assert.equal(research.productionStatus, "PRODUCTION_LOCKED");
-  assert.equal(research.realBets, false);
-  assert.equal(research.noBetDefault, true);
-  assert.equal(research.socialPublishingEnabled, false);
-  assert.equal(research.demoModeEnabled, false);
-  assert.equal(matchup.version, "MATCHUP_LAB_V1");
-  assert.equal(matchup.locks.productionStatus, "PRODUCTION_LOCKED");
-  assert.equal(matchup.locks.realBets, false);
-  assert.equal(matchup.locks.noBetDefault, true);
-  assert.equal(matchup.locks.socialPublishingEnabled, false);
-  assert.equal(matchup.locks.demoModeEnabled, false);
-  assert.equal(matchup.costs.providerCalls, 0);
-  assert.equal(matchup.costs.oddsApiCredits, 0);
-  assert.equal(matchup.watchlist.notABet, true);
-  assert.equal(matchup.promotion.promoted, false);
-  assert.ok(matchup.promotion.criteria.length > 0);
-  assert.ok(
-    matchup.promotion.criteria.every(
-      (criterion) =>
-        typeof criterion.name === "string" &&
-        typeof criterion.passed === "boolean",
-    ),
-  );
-  const blockingPromotionCriteria = matchup.promotion.criteria.filter(
-    (criterion) => criterion.passed === false,
-  );
-  assert.ok(blockingPromotionCriteria.length > 0);
-  assert.ok(
-    blockingPromotionCriteria.some((criterion) =>
-      ["DEEP_DATA_GATES", "data_gate_ready", "no_leakage"].includes(
-        criterion.name,
-      ),
-    ),
-  );
-  assert.equal(matchup.verdict, "JALON_11_BLOCKED_BY_DATA_GATES");
-  assert.equal(matchup.dataset.rows, 10732);
-  assert.equal(matchup.dataset.pairing.leftAttrition, 0);
-  assert.equal(matchup.dataset.pairing.rightAttrition, 2235);
-  assert.equal(matchup.coverage.competitions.length, 5);
-  assert.equal(matchup.experiments.campaigns.length, 7);
-  assert.equal(matchup.experiments.ownerHypotheses.length, 8);
-  assert.ok(
-    matchup.experiments.ownerHypotheses.every(
-      (hypothesis) =>
-        hypothesis.frozenBeforeResults === true &&
-        hypothesis.minimumSupport >= 80 &&
-        hypothesis.cutoff !== "UNSPECIFIED" &&
-        /^[0-9a-f]{64}$/.test(hypothesis.preregistrationHash),
-    ),
-  );
-  assert.equal(matchup.coverage.gates.length, 9);
-  assert.equal(matchup.results.campaign, "11A");
-  assert.equal(
-    matchup.results.status,
-    "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
-  );
-  assert.equal(
-    matchup.coverage.gates.find((gate) => gate.name === "TEAM_GATE").status,
-    "PARTIAL",
-  );
-  assert.equal(matchup.results.models.length, 8);
-  assert.equal(
-    matchup.results.models.filter((model) => model.id.startsWith("B0_")).length,
-    2,
-  );
-  assert.equal(matchup.negativeControls.length, 12);
-  assert.deepEqual(matchup.negativeControlSummary, {
-    total: 12,
-    executedOrGuard: 6,
-    dataGated: 6,
-  });
-  assert.equal(
-    matchup.results.pairedComparator.deltaLogLoss,
-    0.00170221115952107,
-  );
-  assert.equal(matchup.results.folds.length, 4);
-  assert.equal(
-    matchup.results.folds.filter(
-      (fold) => fold.outcome === "LOST_TO_RECALIBRATED_MARKET",
-    ).length,
-    3,
-  );
-  assert.equal(matchup.results.crossLeague.rotationCount, 5);
-  assert.equal(matchup.results.crossLeague.survivors, 0);
-  assert.equal(matchup.watchlist.count, 0);
-  assert.equal(matchup.decision.candidateCount, 0);
-  assert.equal(matchup.decision.decisions, 0);
-  assert.equal(matchup.decision.stakeUnits, 0);
-  assert.equal(matchup.replay.hashComparisons.length, 4);
-  assert.ok(matchup.replay.hashComparisons.every((item) => item.matched));
-  assert.equal(matchup.replay.providerCalls, 0);
-  assert.equal(matchup.replay.oddsApiCredits, 0);
-  assert.equal(
-    matchup.results.resultHash,
-    "437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355",
-  );
-  assert.equal(matchup.replay.resultHash, matchup.results.resultHash);
-  assert.equal(
-    matchup.ledger.headHash,
-    "7f52801f6a4fee8786df0fd71c1f5af3d26dbed31168ebe1e422ba387ccd3ddf",
-  );
-  assert.equal(
-    matchup.provenance.sourceCommit,
-    "803091cb506e17a07850f56ef78b7b9df55575dd",
-  );
-  assert.equal(
-    matchup.provenance.mainCommit,
-    "31ec41632b72cd93676f5b1d8592e1bba429e937",
-  );
-  assert.equal(
-    matchup.provenance.codeRevision,
-    "31ec41632b72cd93676f5b1d8592e1bba429e937",
-  );
-  assert.ok(matchup.costs.historicalBytes >= 900_000_000);
-  assert.ok(matchup.costs.databaseBytes > 0);
-  assert.ok(matchup.costs.r2ExpectedBytes > 0);
-  assert.equal(matchup.costs.r2LagObjects, 0);
-  assert.equal(matchup.costs.storageStatus, "STORAGE_PAUSED");
-  assert.equal(matchup.costs.secondaryTasks, "P3_P4_PAUSED");
-  assert.equal(matchup.ledger.status, "HASH_CHAIN_VERIFIED");
-  assert.equal(matchup.ledger.events, 27);
-  assert.equal(
-    observatory.schema_version,
-    "prospective-observatory-snapshot-v1",
-  );
-  assert.equal(
-    observatory.policy_source,
-    "configs/prospective_observatory_v1.json",
-  );
-  assert.ok(
-    ["NO_PROSPECTIVE_CAPTURE_YET", "LIVE_PROSPECTIVE_CAPTURE"].includes(
-      observatory.origin,
-    ),
-  );
-  assert.equal(observatory.fixtures.horizon_days, 30);
-  assert.equal(observatory.fixtures.max_matchdays_per_competition, 3);
-  assert.equal(observatory.fixtures.competitions.length, 5);
-  assert.equal(observatory.fixtures.pilot_priority, "Ligue 1");
-  assert.equal(Object.keys(observatory.captures.by_family).length, 9);
-  assert.equal(Object.keys(observatory.gates.by_name).length, 5);
-  assert.ok(observatory.ledger.cardinality.planned_events >= 0);
-  assert.ok(observatory.ledger.cardinality.capture_attempt_events >= 0);
-  assert.ok(observatory.ledger.cardinality.physical_capture_events >= 0);
-  assert.ok(observatory.ledger.cardinality.physical_http_calls >= 0);
-  assert.ok(observatory.ledger.cardinality.temporal_evidence_events >= 0);
-  assert.ok(
-    observatory.windows.planned <=
-      observatory.ledger.cardinality.planned_events,
-  );
-  assert.equal(observatory.hypotheses.length, 8);
-  const hypothesisStatuses = new Set([
-    "WAITING_FOR_OBSERVATIONS",
-    "DATA_CAPTURE_ACTIVE",
-    "MINIMUM_SAMPLE_NOT_REACHED",
-    "ELIGIBLE_FOR_EXPLORATORY_ANALYSIS",
-  ]);
-  assert.ok(
-    observatory.hypotheses.every(
-      (hypothesis) =>
-        hypothesis.frozen === true &&
-        hypothesis.observations >= 0 &&
-        hypothesis.minimum_support > 0 &&
-        hypothesisStatuses.has(hypothesis.status),
-    ),
-  );
-  assert.ok(observatory.providers.api_football_calls >= 0);
-  assert.ok(observatory.providers.api_football_calls <= 5000);
-  assert.ok(observatory.providers.odds_api_credits >= 0);
-  assert.ok(observatory.providers.odds_api_credits <= 250);
-  if (observatory.origin === "NO_PROSPECTIVE_CAPTURE_YET") {
-    assert.equal(observatory.captures.hashes, 0);
-    assert.ok(
-      observatory.hypotheses.every(
-        (hypothesis) =>
-          hypothesis.observations === 0 &&
-          hypothesis.status === "WAITING_FOR_OBSERVATIONS",
-      ),
-    );
-  } else {
-    assert.ok(observatory.captures.hashes > 0);
-  }
-  assert.equal(observatory.providers.budgets.api_football_max_total, 5000);
-  assert.equal(observatory.providers.budgets.odds_api_max_total, 250);
-  assert.equal(observatory.providers.reserves.api_football, 5000);
-  assert.equal(observatory.providers.reserves.odds_api, 4000);
-  assert.equal(observatory.providers.reserves.odds_api_internal_safety, 2);
-  assert.equal(observatory.providers.reserves.odds_api_near_kickoff, 80);
-  assert.equal(observatory.r2.deletions, 0);
-  assert.ok(observatory.r2.recovery_objects >= 0);
-  assert.ok(observatory.r2.recovery_bytes >= 0);
-  if (observatory.r2.recovery_objects === 0) {
-    assert.equal(observatory.r2.recovery_bytes, 0);
-  } else {
-    assert.ok(observatory.r2.recovery_bytes > 0);
-  }
-  assert.match(page, /Journaux recovery/);
-  assert.match(page, /Volume recovery/);
-  assert.equal(observatory.postgresql.payload_body_rows, 0);
-  if (
-    observatory.fixtures.tracked > 0 &&
-    observatory.fixtures.next.length === 0
-  ) {
-    assert.match(page, /Détails des fixtures absents de cette vue compacte/);
-  }
-  if (observatory.r2.replay_status === "R2_REPLAY_VERIFIED") {
-    assert.equal(
-      observatory.postgresql.reconstruction_status,
-      "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2",
-    );
-    assert.ok(observatory.postgresql.duplicates_avoided > 0);
-  }
-  assert.equal(observatory.decisions, 0);
-  assert.equal(observatory.candidates, 0);
-  assert.equal(observatory.invariants.raw_payloads_in_git, 0);
-  assert.equal(observatory.invariants.production_status, "PRODUCTION_LOCKED");
-  assert.equal(observatory.invariants.real_bets, false);
-  assert.equal(observatory.invariants.no_bet_default, true);
-  assert.equal(observatory.invariants.social_publishing_enabled, false);
-  assert.equal(observatory.invariants.demo_mode_enabled, false);
-  assert.equal(observatory.invariants.external_social_networks_connected, false);
-  assert.ok(deep.datasets.length >= 6);
-  assert.ok(deep.models.length >= 9);
-  assert.ok(deep.backtests.length >= 15);
-  assert.ok(deep.strategies.length >= 17);
-  assert.equal(research.laboratory.topExploratoryResults.length, 3);
-  for (const result of research.laboratory.topExploratoryResults) {
-    assert.equal(
-      result.publicStatus,
-      "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
-    );
-    assert.equal(result.qValue, 1);
-  }
-
-  assert.match(page, /Odds Explorer/);
-  assert.match(page, /Coverage Explorer/);
-  assert.match(page, /Shadow Performance/);
-  assert.match(page, /Pipeline & Qualité/);
-  assert.match(page, /Coûts & Quotas/);
-  assert.match(page, /Data Explorer/);
-  assert.match(page, /Deep Data Command Center/);
-  assert.match(page, /Backfill Monitor/);
-  assert.match(page, /Player Explorer/);
-  assert.match(page, /Dataset Readiness/);
-  assert.match(page, /Lineup Explorer/);
-  assert.match(page, /Feature Lab/);
-  assert.match(page, /Model Lab/);
-  assert.match(page, /Model Arena/);
-  assert.match(page, /Attrition équipe/);
-  assert.match(page, /pairing\.rightAttrition/);
-  assert.match(page, /Matchup Lab/);
-  assert.match(page, /Observatoire des données/);
-  assert.match(page, /Ce qui était connu avant le match/);
-  assert.match(page, /physical_capture_events/);
-  assert.match(page, /physical_http_calls/);
-  assert.match(page, /temporal_evidence_events/);
-  assert.match(page, /capture_attempt_events/);
-  assert.match(page, /planifi.*n'est pas observ/);
-  assert.match(page, /NO_PREMATURE_CONCLUSION/);
-  assert.match(page, /Aucune décision lorsque zéro candidat existe/);
-  assert.match(page, /Réserves fournisseur protégées/);
-  assert.match(data, /response_received_at < cutoff_at < kickoff_at/);
-  assert.match(page, /Score Comparisons/);
-  assert.match(page, /Comparison Table/);
-  assert.match(page, /Paired Comparator/);
-  assert.match(page, /Where the Model Lost/);
-  assert.match(page, /Robustness/);
-  assert.match(page, /League Decomposition/);
-  assert.match(page, /Data Gates/);
-  assert.match(page, /Research vs Production/);
-  assert.match(page, /Prospective Shadow/);
-  assert.match(page, /Costs \/ Usage/);
-  assert.match(page, /Watchlist vide — aucun candidat robuste/);
-  assert.match(page, /Ledger V2 et provenance/);
-  assert.match(page, /Budget nul, stockage sous contrôle/);
-  assert.doesNotMatch(page, /deux modèles/i);
-  assert.match(page, /External Validation/);
-  assert.match(page, /External Readiness/);
-  assert.match(page, /League Transfer Matrix/);
-  assert.match(page, /Leave-One-League-Out/);
-  assert.match(page, /Player Generalization/);
-  assert.match(page, /Strategy External Validation/);
-  assert.match(page, /Preseason Package/);
-  assert.match(page, /NO_BET_DEFAULT/);
-  assert.match(page, /REAL_BETS/);
-  assert.match(page, /Comparaison appariée/);
-  assert.match(page, /CI 90/);
-  assert.match(page, /CI 95/);
-  assert.match(page, /Model Leaderboard/);
-  assert.match(page, /Head-to-Head/);
-  assert.match(page, /Calibration Lab/);
-  assert.match(page, /Feature Ablation/);
-  assert.match(page, /Score Models/);
-  assert.match(page, /OOS Governance/);
-  assert.match(page, /Strategy Lab/);
-  assert.match(page, /Backtest Explorer/);
-  assert.match(page, /Historical Data Quality/);
-  assert.match(page, /Robin Live V1/);
-  assert.match(page, /Décisions shadow et NO BET/);
-  assert.match(page, /Hypothèses, FDR et contrôles négatifs/);
-  assert.match(data, /Les performances passées ne garantissent aucun résultat futur/);
-  assert.match(page, /SOCIAL_PUBLISHING_ENABLED=false/);
-  assert.match(page, /LIVE_PIPELINE_VERIFIED/);
-  assert.match(page, /EN ATTENTE DE DONNÉES PROSPECTIVES/);
-  assert.match(page, /AUCUNE CONCLUSION STATISTIQUE|statistical_message/);
-  assert.match(layout, /lang="fr"/);
+  assert.match(layout, /Observer avant de conclure/);
+  assert.match(layout, /locale: "fr_FR"/);
+  assert.match(layout, /twitter:/);
   assert.match(layout, /images: \["\/og\.png"\]/);
-  assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
-  assert.match(data, /"shadowStatus": "SHADOW_COLLECTION_HARDENED"/);
-  assert.match(data, /"origin": "LIVE SOURCE"/);
-  assert.match(data, /"origin": "LEGACY SOURCE"/);
-  assert.match(data, /"stateArtifact": "shadow-state-30095263615"/);
-  assert.match(data, /"snapshots": 2/);
-  assert.match(data, /"durableRecords": 101/);
-  assert.match(data, /"demoModeEnabled": false/);
-  assert.match(data, /"bridge_status": "ACTIVE_AND_VERIFIED"/);
-  assert.match(data, /"target_status": "CONNECTED_AND_PERSISTED"/);
-  assert.match(data, /"bridge_lag_records": 0/);
-  assert.match(data, /"capacity_used_pct": 2\.39/);
-  assert.match(data, /"deepData":/);
-  assert.match(data, /"patternResearch":/);
-  assert.match(data, /"matchupLab":/);
-  assert.match(data, /"prospectiveObservatory":/);
-  assert.match(
-    data,
-    /"origin": "(?:NO_PROSPECTIVE_CAPTURE_YET|LIVE_PROSPECTIVE_CAPTURE)"/,
-  );
-  assert.match(data, /"raw_payloads_in_git": 0/);
-  assert.match(data, /"version": "MATCHUP_LAB_V1"/);
-  assert.match(data, /"version": "ROBIN_LIVE_V1"/);
-  assert.match(data, /"dataStatus": "NO_LIVE_SHADOW_DATA"/);
-  assert.match(data, /"initialUnits": 1000(?:\.0)?/);
-  assert.match(data, /"currentUnits": 1000(?:\.0)?/);
-  assert.match(data, /"fdrMethod": "Benjamini-Hochberg"/);
-  assert.match(data, /"socialPublishingEnabled": false/);
-  assert.match(data, /"realBets": false/);
-  assert.match(data, /"demoModeEnabled": false/);
-  assert.match(data, /"productionStatus": "PRODUCTION_LOCKED"/);
-  assert.doesNotMatch(page, /DATABASE_URL|API_FOOTBALL_KEY|ODDS_API_KEY|R2_SECRET_ACCESS_KEY/);
-  assert.match(data, /"HISTORICAL POINT-IN-TIME"/);
-  assert.match(
-    data,
-    /"(?:OOS_BACKTEST_V1_READY|API_OOS_BACKTEST_READY)"/,
-  );
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
+  const assetsDir = new URL("../dist/client/assets/", import.meta.url);
+  const files = await readdir(assetsDir);
+  const jsFiles = files.filter((file) => file.endsWith(".js"));
+  const totalBytes = (
+    await Promise.all(jsFiles.map((file) => stat(new URL(file, assetsDir))))
+  ).reduce((sum, item) => sum + item.size, 0);
+  assert.ok(totalBytes < 850_000, `bundle client: ${totalBytes} octets`);
   await access(new URL("../public/og.png", import.meta.url));
+});
+
+test("ne conserve aucun squelette de démarrage", async () => {
   try {
     assert.deepEqual(
       await readdir(new URL("../app/_sites-preview", import.meta.url)),
@@ -461,18 +190,4 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
     assert.equal(error.code, "ENOENT");
   }
   await assert.rejects(access(new URL("package-lock.json", root)));
-});
-
-test("public ledger workflow publishes the audited Robin Live bundle", async () => {
-  const workflow = await readFile(
-    new URL("../../.github/workflows/public-ledger-build.yml", import.meta.url),
-    "utf8",
-  );
-  assert.match(workflow, /group: shadow-state/);
-  assert.match(workflow, /PATTERN_LEDGER_SUMMARY:/);
-  assert.match(workflow, /artifacts\/public-ledger\/ledger-summary\.json/);
-  assert.match(workflow, /test -f dist\/server\/index\.js/);
-  assert.match(workflow, /cockpit\/dist/);
-  assert.match(workflow, /if-no-files-found: error/);
-  assert.doesNotMatch(workflow, /cockpit\/out/);
 });

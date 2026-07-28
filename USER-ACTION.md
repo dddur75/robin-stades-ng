@@ -128,3 +128,35 @@ est attendue et ne justifie ni appel forcé ni fusion automatique.
 `AUCUNE ACTION UTILISATEUR REQUISE`
 
 Ne pas fusionner la PR #17 dans cette mission.
+
+## Robin Experience V1
+
+La refonte est livrée dans une PR brouillon distincte. Aucune autorisation de
+fournisseur, aucun secret, aucune dépense, aucune connexion sociale et aucun
+pari ne sont demandés.
+
+Avant la fin de la CI :
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Après publication des preuves, l’action recommandée est uniquement de consulter
+le [site privé](https://robin-stades-shadow-cockpit.dddur.chatgpt.site), les
+captures `robin-experience-visual-*` et la
+[PR brouillon #19](https://github.com/dddur75/robin-stades-ng/pull/19).
+Ne pas fusionner automatiquement. Toute fusion doit être une décision explicite
+après revue de l’UX, de l’accessibilité et de la séparation scientifique.
+
+## Robin Experience V1.1
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+La mise à jour reste sur la PR brouillon #19, ouverte et non fusionnée. Elle ne
+demande aucun secret, appel fournisseur, crédit, écriture distante, connexion
+sociale, décision ou pari.
+
+La CI et le redéploiement privé Sites 15 sont terminés avec succès. L’action
+recommandée reste uniquement de consulter le
+[site privé](https://robin-stades-shadow-cockpit.dddur.chatgpt.site), les
+18 captures des artefacts `robin-experience-visual-30352906004` /
+`robin-experience-visual-30352908592` et la PR #19. Toute fusion appartient à
+une décision ultérieure explicite.

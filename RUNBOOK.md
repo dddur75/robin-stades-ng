@@ -679,3 +679,115 @@ la revue 12.1 n’a pas sa propre suite verte ; les cron de branche ne prouvent
 pas une activation sur `main`. P0 reste Ligue 1, P1 reste `P1_OFF`, et
 `PRODUCTION_LOCKED`, `REAL_BETS=false`, `NO_BET_DEFAULT=true` restent
 obligatoires.
+
+## Robin Experience V1 — validation sans fournisseur
+
+Tous les contrôles suivants sont locaux et ne doivent recevoir aucun secret
+fournisseur :
+
+```powershell
+cd cockpit
+pnpm install --frozen-lockfile
+pnpm run lint
+pnpm test
+pnpm run test:visual
+```
+
+`pnpm test` compile le build de production puis exécute les tests SSR et i18n.
+`pnpm run test:visual` démarre un serveur local sur `127.0.0.1:4173`, utilise
+Chromium avec mouvements réduits et écrit les captures dans
+`cockpit/.ci/visual-regression`. Ce dossier est ignoré par Git.
+
+Pour une vérification manuelle :
+
+```powershell
+cd cockpit
+pnpm run dev
+```
+
+Contrôler `/robin-live`, les filtres de `/matchs`, les neuf onglets d’une fiche,
+la matrice mobile de `/observatoire`, les huit hypothèses de `/laboratoire`,
+l’état vide de `/resultats`, le glossaire et la Vue expert.
+
+Résolutions obligatoires :
+
+```text
+360 × 800
+390 × 844
+430 × 932
+768 × 1024
+1440 × 900
+1920 × 1080
+```
+
+Le test visuel doit échouer en cas de débordement horizontal, de route sans
+titre français, de Vue expert inactive, de glossaire inaccessible ou de focus
+d’évitement absent.
+
+Ne jamais utiliser cette validation pour déclencher :
+
+- API-Football ou The Odds API ;
+- une capture ou un workflow prospectif ;
+- une écriture R2 ou PostgreSQL distante ;
+- une décision, une mise ou une publication sociale.
+
+Les preuves scientifiques demeurent dans `cockpit/app/cockpit-data.json` et son
+empreinte. Les ajustements UX appartiennent aux catalogues, au modèle de
+présentation et aux composants.
+
+## Robin Experience V1.1 — reconstruction provider-free
+
+Pour reconstruire le cockpit depuis un snapshot vérifié déjà téléchargé :
+
+```powershell
+$env:COCKPIT_VERIFIED_SNAPSHOT_INPUT = "<chemin vers cockpit-data.json>"
+$env:COCKPIT_VERIFIED_SNAPSHOT_SHA256 = "<sha256 attendu>"
+$env:COCKPIT_SOURCE_RUN = "<run GitHub>"
+$env:COCKPIT_SOURCE_REVISION = "<commit source>"
+$env:COCKPIT_SOURCE_WORKFLOW = "<workflow source>"
+python scripts/build_cockpit_snapshot.py
+cd cockpit
+pnpm run build:data
+pnpm test
+pnpm run test:visual
+```
+
+Le builder refuse une empreinte différente, une production déverrouillée, un
+pari réel, une publication sociale ou une décision non nulle non autorisée.
+Cette commande ne doit jamais recevoir de credential fournisseur ou de
+stockage distant.
+
+Contrôles de livraison V1.1 :
+
+```powershell
+python -m pytest -q
+python -m ruff check src/robin tests scripts migrations
+python -m mypy src/robin scripts/run_prospective_observatory.py
+python -m mypy --strict scripts/build_cockpit_snapshot.py
+python -m bandit -q -r src/robin
+python scripts/check_no_secrets.py
+python -m pip check
+cd cockpit
+pnpm run typecheck
+pnpm run lint
+pnpm test
+pnpm run test:visual
+```
+
+Le build génère `cockpit-presentation.json` et
+`cockpit-expert-data.json`. Ils doivent être régénérés et commités avec le
+snapshot. Toute modification de `cockpit-data.json` doit également mettre à
+jour `cockpit-data.sha256`.
+
+Référence de livraison V1.1 :
+
+```text
+commit fonctionnel = 51a91f29397854d21861cee71ece37ee72f6e015
+CI push = 30352906004
+CI PR = 30352908592
+sous-arbre Sites = 7e879a70df712b10b749a6b38f4cf6f44b8e11b4
+version privée Sites = 15
+```
+
+Les deux CI sont vertes. Le site est en accès `custom`, avec le propriétaire
+comme seul utilisateur autorisé et aucun groupe autorisé.

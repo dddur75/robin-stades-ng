@@ -20,6 +20,15 @@ from robin.prospective_observatory.contracts import (
     canonical_sha256,
 )
 from robin.prospective_observatory.gates import GateName, GateStatus
+from robin.prospective_observatory.team_identities import (
+    canonical_team_key,
+    fixture_identity_scope_sha256,
+)
+from robin.prospective_observatory.temporal import (
+    CAPTURE_POLICIES,
+    DEFAULT_OPERATIONAL_TOLERANCE,
+    WINDOW_POLICY_VERSION,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cockpit" / "app" / "cockpit-data.json"
@@ -27,6 +36,10 @@ OUTPUT_HASH = ROOT / "cockpit" / "app" / "cockpit-data.sha256"
 PRIVATE_DEPLOYMENT = ROOT / "configs" / "cockpit-private-deployment.json"
 PROSPECTIVE_COMPACT = ROOT / "reports" / "jalon12" / "observatory-snapshot.json"
 PROSPECTIVE_POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
+TEAM_IDENTITY_PROVENANCE = (
+    ROOT / "reports" / "ux" / "team-identity-provenance.json"
+)
+SHADOW_SIMULATION_POLICY = ROOT / "configs" / "shadow_simulation_v1.json"
 _EXPECTED_INVARIANTS: dict[str, object] = {
     "storage_paused": True,
     "p3_p4_paused": True,
@@ -101,7 +114,16 @@ _PREVIEW_FIELDS = {
         }
     ),
     "windows.next": frozenset(
-        {"fixture_id", "family", "label", "due_at", "status"}
+        {
+            "fixture_id",
+            "family",
+            "label",
+            "opens_at",
+            "due_at",
+            "cutoff_at",
+            "kickoff_at",
+            "status",
+        }
     ),
 }
 _PREVIEW_REQUIRED_FIELDS = {
@@ -162,6 +184,32 @@ def read_json(path: Path, default: Any) -> Any:
     return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
+def read_verified_cockpit_snapshot(path: Path) -> dict[str, Any]:
+    """Lire un snapshot pipeline uniquement si son empreinte publiée correspond."""
+
+    resolved = path.resolve()
+    hash_path = resolved.with_suffix(".sha256")
+    if not resolved.is_file() or not hash_path.is_file():
+        raise RuntimeError("snapshot Cockpit vérifié absent")
+    expected_hash = hash_path.read_text(encoding="ascii").strip()
+    actual_hash = hashlib.sha256(resolved.read_bytes()).hexdigest()
+    if (
+        re.fullmatch(r"[0-9a-f]{64}", expected_hash) is None
+        or actual_hash != expected_hash
+    ):
+        raise RuntimeError("empreinte du snapshot Cockpit invalide")
+    value = read_json(resolved, {})
+    if not isinstance(value, dict):
+        raise RuntimeError("snapshot Cockpit vérifié invalide")
+    observatory = value.get("prospectiveObservatory")
+    if not isinstance(observatory, dict):
+        raise RuntimeError("observatoire vérifié absent du snapshot Cockpit")
+    invariants = observatory.get("invariants")
+    if invariants != _EXPECTED_INVARIANTS:
+        raise RuntimeError("invariants du snapshot Cockpit vérifié invalides")
+    return cast(dict[str, Any], value)
+
+
 def directory_size(path: Path) -> int:
     if not path.exists():
         return 0
@@ -170,6 +218,642 @@ def directory_size(path: Path) -> int:
 
 def _utc_now() -> datetime:
     return datetime.now(UTC)
+
+
+def _utc_datetime(value: object, *, path: str) -> datetime:
+    if not isinstance(value, str):
+        raise RuntimeError(f"horodatage public Jalon 12 absent : {path}")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exception:
+        raise RuntimeError(
+            f"horodatage public Jalon 12 invalide : {path}"
+        ) from exception
+    if (
+        parsed.tzinfo is None
+        or parsed.utcoffset() is None
+        or parsed.utcoffset() != timedelta(0)
+    ):
+        raise RuntimeError(f"horodatage public Jalon 12 non UTC : {path}")
+    return parsed.astimezone(UTC)
+
+
+def _optional_public_text(
+    value: object,
+    *,
+    path: str,
+    maximum: int = 512,
+) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip() or len(value) > maximum:
+        raise RuntimeError(f"texte public Jalon 12 invalide : {path}")
+    return value.strip()
+
+
+def _presentation_fixture_registry(
+    source: object,
+) -> list[dict[str, object]]:
+    if not isinstance(source, list):
+        raise RuntimeError("registre public des fixtures Jalon 12 invalide")
+    registry: list[dict[str, object]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(source):
+        if not isinstance(raw, dict):
+            raise RuntimeError("registre public des fixtures Jalon 12 invalide")
+        fixture_id = _optional_public_text(
+            raw.get("fixture_id"),
+            path=f"fixtures.registry[{index}].fixture_id",
+            maximum=120,
+        )
+        if (
+            fixture_id is None
+            or re.fullmatch(r"[a-z0-9-]+:[A-Za-z0-9._-]+", fixture_id) is None
+            or fixture_id in seen
+        ):
+            raise RuntimeError("clé canonique de fixture Jalon 12 invalide")
+        seen.add(fixture_id)
+        kickoff = _utc_datetime(
+            raw.get("kickoff_at"),
+            path=f"fixtures.registry[{index}].kickoff_at",
+        )
+        provider = _optional_public_text(
+            raw.get("provider"),
+            path=f"fixtures.registry[{index}].provider",
+            maximum=120,
+        ) or fixture_id.split(":", maxsplit=1)[0]
+        provider_fixture_id = _optional_public_text(
+            raw.get("provider_fixture_id"),
+            path=f"fixtures.registry[{index}].provider_fixture_id",
+            maximum=120,
+        ) or fixture_id.split(":", maxsplit=1)[1]
+        home_team_id = _optional_public_text(
+            raw.get("home_team_id", raw.get("home")),
+            path=f"fixtures.registry[{index}].home_team_id",
+            maximum=120,
+        )
+        away_team_id = _optional_public_text(
+            raw.get("away_team_id", raw.get("away")),
+            path=f"fixtures.registry[{index}].away_team_id",
+            maximum=120,
+        )
+        competition = _optional_public_text(
+            raw.get("competition"),
+            path=f"fixtures.registry[{index}].competition",
+            maximum=120,
+        )
+        if (
+            home_team_id is None
+            or away_team_id is None
+            or home_team_id == away_team_id
+            or competition is None
+        ):
+            raise RuntimeError("identité de fixture Jalon 12 invalide")
+        status = _optional_public_text(
+            raw.get("status", "REGISTERED"),
+            path=f"fixtures.registry[{index}].status",
+            maximum=120,
+        )
+        if status is None:
+            raise RuntimeError("statut de fixture Jalon 12 invalide")
+        cancelled = raw.get("cancelled", False)
+        if not isinstance(cancelled, bool):
+            raise RuntimeError("tombstone de fixture Jalon 12 invalide")
+        registry.append(
+            {
+                "fixture_id": fixture_id,
+                "canonical_key": fixture_id,
+                "provider": provider,
+                "provider_fixture_id": provider_fixture_id,
+                "home_team_id": home_team_id,
+                "away_team_id": away_team_id,
+                "home_name": _optional_public_text(
+                    raw.get("home_name"),
+                    path=f"fixtures.registry[{index}].home_name",
+                ),
+                "away_name": _optional_public_text(
+                    raw.get("away_name"),
+                    path=f"fixtures.registry[{index}].away_name",
+                ),
+                "home_short_name": _optional_public_text(
+                    raw.get("home_short_name"),
+                    path=f"fixtures.registry[{index}].home_short_name",
+                ),
+                "away_short_name": _optional_public_text(
+                    raw.get("away_short_name"),
+                    path=f"fixtures.registry[{index}].away_short_name",
+                ),
+                "home_identity_status": _optional_public_text(
+                    raw.get("home_identity_status"),
+                    path=f"fixtures.registry[{index}].home_identity_status",
+                    maximum=80,
+                )
+                or (
+                    "VERIFIED"
+                    if _optional_public_text(
+                        raw.get("home_name"),
+                        path=f"fixtures.registry[{index}].home_name",
+                    )
+                    is not None
+                    else "UNRESOLVED"
+                ),
+                "away_identity_status": _optional_public_text(
+                    raw.get("away_identity_status"),
+                    path=f"fixtures.registry[{index}].away_identity_status",
+                    maximum=80,
+                )
+                or (
+                    "VERIFIED"
+                    if _optional_public_text(
+                        raw.get("away_name"),
+                        path=f"fixtures.registry[{index}].away_name",
+                    )
+                    is not None
+                    else "UNRESOLVED"
+                ),
+                "home_identity_provenance": (
+                    dict(raw["home_identity_provenance"])
+                    if isinstance(raw.get("home_identity_provenance"), dict)
+                    else None
+                ),
+                "away_identity_provenance": (
+                    dict(raw["away_identity_provenance"])
+                    if isinstance(raw.get("away_identity_provenance"), dict)
+                    else None
+                ),
+                "competition": competition,
+                "season": _optional_public_text(
+                    raw.get("season"),
+                    path=f"fixtures.registry[{index}].season",
+                    maximum=40,
+                ),
+                "phase": _optional_public_text(
+                    raw.get("phase"),
+                    path=f"fixtures.registry[{index}].phase",
+                    maximum=120,
+                ),
+                "kickoff_at": kickoff.isoformat(),
+                "registered_at": _optional_public_text(
+                    raw.get("registered_at"),
+                    path=f"fixtures.registry[{index}].registered_at",
+                ),
+                "status": status,
+                "cancelled": cancelled,
+                "lifecycle_version_hash": _optional_public_text(
+                    raw.get("lifecycle_version_hash"),
+                    path=f"fixtures.registry[{index}].lifecycle_version_hash",
+                    maximum=64,
+                ),
+            }
+        )
+    return registry
+
+
+def _team_identity_report_path(report_root: Path) -> Path:
+    configured = os.environ.get("TEAM_IDENTITY_PROVENANCE_INPUT")
+    if configured:
+        return Path(configured)
+    default_report_root = ROOT / "artifacts" / "prospective-observatory"
+    if report_root.resolve() == default_report_root.resolve():
+        return TEAM_IDENTITY_PROVENANCE
+    return report_root / "team-identity-provenance.json"
+
+
+def _validated_team_identity_report(
+    path: Path,
+    *,
+    fixtures: list[dict[str, object]],
+) -> dict[tuple[str, str], dict[str, object]]:
+    report = read_json(path, {})
+    if not isinstance(report, dict):
+        raise RuntimeError("rapport de provenance des identités invalide")
+    report_hash = report.get("report_sha256")
+    unsigned_report = {
+        key: value for key, value in report.items() if key != "report_sha256"
+    }
+    if (
+        report.get("schema_version") != "team-identity-provenance-v1"
+        or not isinstance(report_hash, str)
+        or canonical_sha256(unsigned_report) != report_hash
+        or report.get("fixture_scope_sha256")
+        != fixture_identity_scope_sha256(fixtures)
+    ):
+        raise RuntimeError("provenance des identités non vérifiée")
+    registry = report.get("registry")
+    if (
+        not isinstance(registry, dict)
+        or canonical_sha256(registry) != report.get("registry_sha256")
+    ):
+        raise RuntimeError("registre d’identités non vérifié")
+    provider_usage = report.get("provider_usage")
+    invariants = report.get("invariants")
+    if (
+        provider_usage
+        != {"api_football_calls": 0, "odds_api_credits": 0}
+        or not isinstance(invariants, dict)
+        or invariants.get("r2_read_only") is not True
+        or invariants.get("postgresql_read_only") is not True
+        or invariants.get("raw_payloads_in_report") != 0
+        or invariants.get("secrets_in_report") != 0
+    ):
+        raise RuntimeError("invariants du registre d’identités invalides")
+    raw_identities = report.get("identities")
+    if not isinstance(raw_identities, list):
+        raise RuntimeError("identités vérifiées absentes")
+    identities: dict[tuple[str, str], dict[str, object]] = {}
+    for index, raw in enumerate(raw_identities):
+        if not isinstance(raw, dict):
+            raise RuntimeError("identité vérifiée invalide")
+        provider = _optional_public_text(
+            raw.get("provider"),
+            path=f"identities[{index}].provider",
+            maximum=120,
+        )
+        provider_team_id = _optional_public_text(
+            raw.get("provider_team_id"),
+            path=f"identities[{index}].provider_team_id",
+            maximum=120,
+        )
+        fixture_id = _optional_public_text(
+            raw.get("fixture_id"),
+            path=f"identities[{index}].fixture_id",
+            maximum=120,
+        )
+        side = raw.get("side")
+        display_name = _optional_public_text(
+            raw.get("display_name"),
+            path=f"identities[{index}].display_name",
+        )
+        payload_sha256 = raw.get("payload_sha256")
+        receipt_id = raw.get("receipt_id")
+        captured_at = raw.get("captured_at")
+        postgresql = raw.get("postgresql_projection")
+        if (
+            provider is None
+            or provider_team_id is None
+            or fixture_id is None
+            or side not in {"home", "away"}
+            or display_name is None
+            or raw.get("canonical_team_id")
+            != canonical_team_key(provider, provider_team_id)
+            or raw.get("source") != "R2_FIXTURE_PAYLOAD"
+            or raw.get("identity_status") != "VERIFIED"
+            or raw.get("receipt_verified") is not True
+            or not isinstance(payload_sha256, str)
+            or re.fullmatch(r"[0-9a-f]{64}", payload_sha256) is None
+            or not isinstance(receipt_id, str)
+            or re.fullmatch(r"[0-9a-f]{64}", receipt_id) is None
+            or not isinstance(captured_at, str)
+            or not isinstance(postgresql, dict)
+            or postgresql.get("capture_receipt_verified") is not True
+            or postgresql.get("payload_index_verified") is not True
+            or postgresql.get("fixture_projection_verified") is not True
+        ):
+            raise RuntimeError("preuve d’identité incomplète")
+        key = (fixture_id, str(side))
+        if key in identities:
+            raise RuntimeError("preuve d’identité dupliquée")
+        identities[key] = dict(raw)
+    return identities
+
+
+def _enrich_fixture_identities(
+    fixtures: list[dict[str, object]],
+    *,
+    report_path: Path,
+) -> dict[str, object]:
+    expected_slots = len(fixtures) * 2
+    if not report_path.exists():
+        return {
+            "schema_version": "team-identity-registry-v1",
+            "source": "NO_VERIFIED_IDENTITY_REPORT",
+            "report": None,
+            "registry_sha256": None,
+            "team_slots_expected": expected_slots,
+            "team_slots_resolved": sum(
+                fixture.get(f"{side}_identity_status") == "VERIFIED"
+                for fixture in fixtures
+                for side in ("home", "away")
+            ),
+        }
+    identities = _validated_team_identity_report(
+        report_path,
+        fixtures=fixtures,
+    )
+    resolved = 0
+    for fixture in fixtures:
+        fixture_id = str(fixture["fixture_id"])
+        provider = str(fixture["provider"])
+        for side in ("home", "away"):
+            evidence = identities.get((fixture_id, side))
+            expected_team_id = str(fixture[f"{side}_team_id"])
+            if (
+                evidence is None
+                or evidence.get("provider") != provider
+                or evidence.get("provider_team_id") != expected_team_id
+            ):
+                fixture[f"{side}_name"] = None
+                fixture[f"{side}_short_name"] = None
+                fixture[f"{side}_identity_status"] = "UNRESOLVED"
+                fixture[f"{side}_identity_provenance"] = None
+                continue
+            fixture[f"{side}_name"] = evidence["display_name"]
+            fixture[f"{side}_short_name"] = evidence.get("short_name")
+            fixture[f"{side}_identity_status"] = "VERIFIED"
+            fixture[f"{side}_identity_provenance"] = {
+                "source": evidence["source"],
+                "payload_sha256": evidence["payload_sha256"],
+                "receipt_id": evidence["receipt_id"],
+                "captured_at": evidence["captured_at"],
+            }
+            resolved += 1
+    report = cast(dict[str, object], read_json(report_path, {}))
+    try:
+        report_label = report_path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        report_label = report_path.name
+    return {
+        "schema_version": "team-identity-registry-v1",
+        "source": "EXISTING_VERIFIED_R2_FIXTURE_CAPTURES",
+        "report": report_label,
+        "registry_sha256": report.get("registry_sha256"),
+        "verified_at": report.get("generated_at"),
+        "team_slots_expected": expected_slots,
+        "team_slots_resolved": resolved,
+    }
+
+
+def _derived_active_windows(
+    fixtures: list[dict[str, object]],
+    *,
+    generated_at: datetime,
+) -> list[dict[str, object]]:
+    tolerance = DEFAULT_OPERATIONAL_TOLERANCE
+    windows: list[dict[str, object]] = []
+    for fixture in fixtures:
+        if fixture["cancelled"] is True or fixture["status"] in {
+            "CANCELLED",
+            "CANCELED",
+            "TOMBSTONED",
+        }:
+            continue
+        fixture_id = str(fixture["fixture_id"])
+        kickoff = _utc_datetime(
+            fixture["kickoff_at"],
+            path=f"fixtures.registry.{fixture_id}.kickoff_at",
+        )
+        for family, offsets in CAPTURE_POLICIES.items():
+            for offset in offsets:
+                due_at = kickoff - offset.before_kickoff
+                if (
+                    offset.opens_before_kickoff is None
+                    and offset.cutoff_before_kickoff is None
+                ):
+                    opens_at = due_at - tolerance
+                    cutoff_at = due_at + tolerance
+                elif (
+                    offset.opens_before_kickoff is not None
+                    and offset.cutoff_before_kickoff is not None
+                ):
+                    opens_at = kickoff - offset.opens_before_kickoff
+                    cutoff_at = kickoff - offset.cutoff_before_kickoff
+                else:
+                    raise RuntimeError(
+                        "bornes de fenêtre de présentation incomplètes"
+                    )
+                cutoff_at = min(cutoff_at, kickoff - timedelta(microseconds=1))
+                status = (
+                    AvailabilityStatus.NOT_DUE.value
+                    if generated_at < opens_at
+                    else (
+                        AvailabilityStatus.DUE.value
+                        if generated_at < cutoff_at
+                        else AvailabilityStatus.MISSED_WINDOW.value
+                    )
+                )
+                windows.append(
+                    {
+                        "window_id": (
+                            "presentation-window:"
+                            + canonical_sha256(
+                                {
+                                    "fixture_id": fixture_id,
+                                    "family": family.value,
+                                    "label": offset.label,
+                                    "due_at": due_at.isoformat(),
+                                    "policy_version": WINDOW_POLICY_VERSION,
+                                }
+                            )
+                        ),
+                        "fixture_id": fixture_id,
+                        "family": family.value,
+                        "label": offset.label,
+                        "opens_at": opens_at.isoformat(),
+                        "due_at": due_at.isoformat(),
+                        "cutoff_at": cutoff_at.isoformat(),
+                        "kickoff_at": kickoff.isoformat(),
+                        "status": status,
+                        "policy_version": WINDOW_POLICY_VERSION,
+                        "active": True,
+                        "acknowledged": False,
+                    }
+                )
+    return sorted(
+        windows,
+        key=lambda item: (
+            str(item["opens_at"]),
+            str(item["fixture_id"]),
+            str(item["family"]),
+        ),
+    )
+
+
+def _presentation_window_registry(
+    source: object,
+    *,
+    fixtures: list[dict[str, object]],
+    generated_at: datetime,
+) -> list[dict[str, object]]:
+    if not isinstance(source, list) or not source:
+        return _derived_active_windows(fixtures, generated_at=generated_at)
+    fixture_ids = {str(item["fixture_id"]) for item in fixtures}
+    windows: list[dict[str, object]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(source):
+        if not isinstance(raw, dict):
+            raise RuntimeError("registre public des fenêtres Jalon 12 invalide")
+        window_id = _optional_public_text(
+            raw.get("window_id"),
+            path=f"windows.registry[{index}].window_id",
+            maximum=250,
+        )
+        fixture_id = _optional_public_text(
+            raw.get("fixture_id"),
+            path=f"windows.registry[{index}].fixture_id",
+            maximum=120,
+        )
+        family = _optional_public_text(
+            raw.get("family"),
+            path=f"windows.registry[{index}].family",
+            maximum=40,
+        )
+        label = _optional_public_text(
+            raw.get("label"),
+            path=f"windows.registry[{index}].label",
+            maximum=40,
+        )
+        if (
+            window_id is None
+            or fixture_id not in fixture_ids
+            or family not in {item.value for item in CaptureFamily}
+            or label is None
+            or window_id in seen
+        ):
+            raise RuntimeError("fenêtre publique Jalon 12 invalide")
+        seen.add(window_id)
+        active = raw.get("active", True)
+        acknowledged = raw.get("acknowledged", False)
+        if not isinstance(active, bool) or not isinstance(acknowledged, bool):
+            raise RuntimeError("état de fenêtre publique Jalon 12 invalide")
+        windows.append(
+            {
+                "window_id": window_id,
+                "fixture_id": fixture_id,
+                "family": family,
+                "label": label,
+                "opens_at": _utc_datetime(
+                    raw.get("opens_at"),
+                    path=f"windows.registry[{index}].opens_at",
+                ).isoformat(),
+                "due_at": _utc_datetime(
+                    raw.get("due_at"),
+                    path=f"windows.registry[{index}].due_at",
+                ).isoformat(),
+                "cutoff_at": _utc_datetime(
+                    raw.get("cutoff_at"),
+                    path=f"windows.registry[{index}].cutoff_at",
+                ).isoformat(),
+                "kickoff_at": _utc_datetime(
+                    raw.get("kickoff_at"),
+                    path=f"windows.registry[{index}].kickoff_at",
+                ).isoformat(),
+                "status": _optional_public_text(
+                    raw.get("status"),
+                    path=f"windows.registry[{index}].status",
+                    maximum=120,
+                )
+                or AvailabilityStatus.NOT_DUE.value,
+                "policy_version": _optional_public_text(
+                    raw.get("policy_version"),
+                    path=f"windows.registry[{index}].policy_version",
+                    maximum=120,
+                )
+                or WINDOW_POLICY_VERSION,
+                "active": active,
+                "acknowledged": acknowledged,
+            }
+        )
+    return sorted(
+        windows,
+        key=lambda item: (
+            str(item["opens_at"]),
+            str(item["fixture_id"]),
+            str(item["family"]),
+        ),
+    )
+
+
+def _presentation_fixture_evidence(
+    source: object,
+    *,
+    fixtures: list[dict[str, object]],
+    captures: dict[str, Any],
+) -> list[dict[str, object]]:
+    fixture_ids = {str(item["fixture_id"]) for item in fixtures}
+    evidence: list[dict[str, object]] = []
+    if isinstance(source, list):
+        for index, raw in enumerate(source):
+            if not isinstance(raw, dict):
+                raise RuntimeError("preuve publique de fixture Jalon 12 invalide")
+            fixture_id = _optional_public_text(
+                raw.get("fixture_id"),
+                path=f"fixtures.evidence[{index}].fixture_id",
+                maximum=120,
+            )
+            family = _optional_public_text(
+                raw.get("family"),
+                path=f"fixtures.evidence[{index}].family",
+                maximum=40,
+            )
+            status = _optional_public_text(
+                raw.get("status"),
+                path=f"fixtures.evidence[{index}].status",
+                maximum=120,
+            )
+            if (
+                fixture_id not in fixture_ids
+                or family not in {item.value for item in CaptureFamily}
+                or status is None
+            ):
+                raise RuntimeError("preuve publique de fixture Jalon 12 invalide")
+            admissible = raw.get("temporally_admissible", False)
+            if not isinstance(admissible, bool):
+                raise RuntimeError("temporalité de fixture Jalon 12 invalide")
+            evidence.append(
+                {
+                    "fixture_id": fixture_id,
+                    "family": family,
+                    "status": status,
+                    "observed_at": _optional_public_text(
+                        raw.get("observed_at"),
+                        path=f"fixtures.evidence[{index}].observed_at",
+                    ),
+                    "response_received_at": _optional_public_text(
+                        raw.get("response_received_at"),
+                        path=f"fixtures.evidence[{index}].response_received_at",
+                    ),
+                    "window_id": _optional_public_text(
+                        raw.get("window_id"),
+                        path=f"fixtures.evidence[{index}].window_id",
+                        maximum=250,
+                    ),
+                    "temporally_admissible": admissible,
+                    "provenance": "RECEIPT_PROJECTION",
+                }
+            )
+        return evidence
+
+    by_family = captures.get("by_family", {})
+    fixture_family = (
+        by_family.get(CaptureFamily.FIXTURE.value, {})
+        if isinstance(by_family, dict)
+        else {}
+    )
+    captured = (
+        _non_negative_int(fixture_family.get("captured"))
+        if isinstance(fixture_family, dict)
+        else None
+    )
+    hashes = (
+        _non_negative_int(fixture_family.get("hashes"))
+        if isinstance(fixture_family, dict)
+        else None
+    )
+    if captured == len(fixtures) and hashes == len(fixtures):
+        return [
+            {
+                "fixture_id": str(fixture["fixture_id"]),
+                "family": CaptureFamily.FIXTURE.value,
+                "status": AvailabilityStatus.CAPTURED.value,
+                "observed_at": None,
+                "response_received_at": None,
+                "window_id": None,
+                "temporally_admissible": True,
+                "provenance": "VERIFIED_AGGREGATE_BIJECTION",
+            }
+            for fixture in fixtures
+        ]
+    return []
 
 
 def _non_negative_int(value: object) -> int | None:
@@ -261,6 +945,27 @@ def _sanitize_preview(value: object, *, path: str) -> list[dict[str, str]]:
             or timestamp.utcoffset() != timedelta(0)
         ):
             raise RuntimeError(f"horodatage d'aperçu Jalon 12 non UTC : {path}")
+        if path == "windows.next" and {
+            "opens_at",
+            "cutoff_at",
+            "kickoff_at",
+        }.issubset(item):
+            opens_at = _utc_datetime(
+                item["opens_at"],
+                path=f"{path}.opens_at",
+            )
+            cutoff_at = _utc_datetime(
+                item["cutoff_at"],
+                path=f"{path}.cutoff_at",
+            )
+            kickoff_at = _utc_datetime(
+                item["kickoff_at"],
+                path=f"{path}.kickoff_at",
+            )
+            if not opens_at <= timestamp <= cutoff_at < kickoff_at:
+                raise RuntimeError(
+                    f"bornes temporelles d'aperçu Jalon 12 invalides : {path}"
+                )
         preview_key: tuple[str, ...]
         if path == "fixtures.next":
             if (
@@ -953,7 +1658,19 @@ def merge_verified_replay_evidence(
 def build_prospective_observatory() -> dict[str, Any]:
     """Construire la vue publique Jalon 12 depuis des rapports compacts sûrs."""
 
-    compact = read_json(PROSPECTIVE_COMPACT, {})
+    verified_snapshot_path = os.environ.get("COCKPIT_VERIFIED_SNAPSHOT_INPUT")
+    verified_observed: dict[str, Any] | None = None
+    if verified_snapshot_path:
+        verified_snapshot = read_verified_cockpit_snapshot(
+            Path(verified_snapshot_path)
+        )
+        candidate = verified_snapshot.get("prospectiveObservatory")
+        if not isinstance(candidate, dict):
+            raise RuntimeError("observatoire vérifié absent")
+        compact = candidate
+        verified_observed = candidate
+    else:
+        compact = read_json(PROSPECTIVE_COMPACT, {})
     if not isinstance(compact, dict) or not compact:
         raise RuntimeError("rapport compact Jalon 12 absent")
     policy = read_json(PROSPECTIVE_POLICY, {})
@@ -1029,14 +1746,24 @@ def build_prospective_observatory() -> dict[str, Any]:
             str(ROOT / "artifacts" / "prospective-observatory"),
         )
     )
-    observed: dict[str, Any] = {}
+    observed: dict[str, Any] = verified_observed or {}
     observed_generated_at: datetime | None = None
     observed_receipts: int | None = None
     observed_ledger_events: int | None = None
     observed_capture_set_sha256: str | None = None
     observed_capture_provenance: object = None
+    reported_active_windows: int | None = (
+        _non_negative_int(compact.get("windows", {}).get("planned"))
+        if verified_observed is not None
+        else None
+    )
+    reported_inactive_windows: int | None = (
+        _non_negative_int(compact.get("windows", {}).get("inactive_legacy"))
+        if verified_observed is not None
+        else None
+    )
     gate_report_path = report_root / "gate-report.json"
-    if gate_report_path.exists():
+    if verified_observed is None and gate_report_path.exists():
         gate_report = read_json(gate_report_path, {})
         observed, observed_generated_at = _validate_operation_report(
             gate_report,
@@ -1058,6 +1785,12 @@ def build_prospective_observatory() -> dict[str, Any]:
             observed_capture_provenance = gate_report.get(
                 "capture_provenance"
             )
+            reported_active_windows = _non_negative_int(
+                gate_report.get("active_windows")
+            )
+            reported_inactive_windows = _non_negative_int(
+                gate_report.get("inactive_windows")
+            )
         if (
             observed_receipts is None
             or observed_ledger_events is None
@@ -1065,7 +1798,7 @@ def build_prospective_observatory() -> dict[str, Any]:
         ):
             raise RuntimeError("compteur de reçus Jalon 12 absent")
 
-    if observed:
+    if observed and verified_observed is None:
         if observed_receipts is None:
             raise RuntimeError("compteur de reçus Jalon 12 absent")
         if observed_ledger_events is None:
@@ -1153,6 +1886,125 @@ def build_prospective_observatory() -> dict[str, Any]:
                 raise RuntimeError("compteurs de fenêtres Jalon 12 invalides")
             compact["windows"]["planned"] = planned
             compact["windows"]["due"] = due
+
+    raw_generated_at = compact.get("generated_at")
+    projection_generated_at = (
+        _utc_datetime(
+            raw_generated_at,
+            path="prospectiveObservatory.generated_at",
+        )
+        if raw_generated_at is not None
+        else _utc_now()
+    )
+    observed_fixtures = observed.get("fixtures", {})
+    observed_windows = observed.get("windows", {})
+    fixture_source: object = compact.get("fixtures", {}).get("next", [])
+    evidence_source: object = None
+    if isinstance(observed_fixtures, dict):
+        fixture_source = observed_fixtures.get("registry", fixture_source)
+        evidence_source = observed_fixtures.get("evidence")
+    fixture_registry = _presentation_fixture_registry(fixture_source)
+    identity_registry = _enrich_fixture_identities(
+        fixture_registry,
+        report_path=_team_identity_report_path(report_root),
+    )
+    active_fixture_ids = {
+        str(item["fixture_id"])
+        for item in fixture_registry
+        if item["cancelled"] is not True
+        and item["status"] not in {"CANCELLED", "CANCELED", "TOMBSTONED"}
+    }
+    window_source: object = None
+    if isinstance(observed_windows, dict):
+        window_source = observed_windows.get("registry")
+    window_registry = _presentation_window_registry(
+        window_source,
+        fixtures=fixture_registry,
+        generated_at=projection_generated_at,
+    )
+    active_windows = [
+        item
+        for item in window_registry
+        if item["active"] is True
+        and str(item["fixture_id"]) in active_fixture_ids
+    ]
+    captures = compact.get("captures", {})
+    if not isinstance(captures, dict):
+        raise RuntimeError("captures publiques Jalon 12 invalides")
+    fixture_evidence = _presentation_fixture_evidence(
+        evidence_source,
+        fixtures=fixture_registry,
+        captures=captures,
+    )
+    compact_fixtures = compact.get("fixtures", {})
+    compact_windows = compact.get("windows", {})
+    if not isinstance(compact_fixtures, dict) or not isinstance(
+        compact_windows,
+        dict,
+    ):
+        raise RuntimeError("projection publique Jalon 12 invalide")
+    compact_fixtures["registry"] = fixture_registry
+    compact_fixtures["evidence"] = fixture_evidence
+    compact_fixtures["identity_registry"] = identity_registry
+    compact_fixtures["tracked"] = len(active_fixture_ids)
+    compact_windows["registry"] = active_windows
+    compact_windows["planned"] = len(active_windows)
+    compact_windows["due"] = sum(
+        item["status"] == AvailabilityStatus.DUE.value
+        for item in active_windows
+    )
+    compact_windows["captured"] = sum(
+        item["acknowledged"] is True for item in active_windows
+    )
+    compact_windows["missed"] = sum(
+        item["status"] == AvailabilityStatus.MISSED_WINDOW.value
+        for item in active_windows
+    )
+    compact_windows["next"] = [
+        {
+            key: item[key]
+            for key in (
+                "fixture_id",
+                "family",
+                "label",
+                "opens_at",
+                "due_at",
+                "cutoff_at",
+                "kickoff_at",
+                "status",
+            )
+        }
+        for item in active_windows
+        if item["acknowledged"] is not True
+        and item["status"] != AvailabilityStatus.MISSED_WINDOW.value
+    ]
+    compact_windows["inactive_legacy"] = (
+        reported_inactive_windows
+        if window_source
+        else reported_active_windows or 0
+    )
+    source = (
+        observed.get("source", {})
+        if isinstance(observed.get("source"), dict)
+        else {}
+    )
+    compact["source"] = {
+        "run_id": (
+            os.environ.get("COCKPIT_SOURCE_RUN")
+            or source.get("run_id")
+            or os.environ.get("GITHUB_RUN_ID")
+        ),
+        "revision": (
+            os.environ.get("COCKPIT_SOURCE_REVISION")
+            or source.get("revision")
+            or os.environ.get("GITHUB_SHA")
+        ),
+        "workflow": (
+            os.environ.get("COCKPIT_SOURCE_WORKFLOW")
+            or source.get("workflow")
+            or os.environ.get("GITHUB_WORKFLOW")
+        ),
+    }
 
     invariants = compact.get("invariants", {})
     if (
@@ -1454,6 +2306,28 @@ def sanitize_public_snapshot(value: Any) -> Any:
 def build_pattern_research() -> dict[str, Any]:
     """Construire Robin Live V1 depuis des résumés compacts, jamais depuis une démo."""
 
+    simulation_policy = read_json(SHADOW_SIMULATION_POLICY, {})
+    if (
+        not isinstance(simulation_policy, dict)
+        or simulation_policy.get("schema_version")
+        != "shadow-simulation-policy-v1"
+        or simulation_policy.get("simulation_only") is not True
+        or simulation_policy.get("production_status") != "PRODUCTION_LOCKED"
+        or simulation_policy.get("real_bets") is not False
+        or simulation_policy.get("no_bet_default") is not True
+        or simulation_policy.get("social_publishing_enabled") is not False
+        or simulation_policy.get("demo_mode_enabled") is not False
+    ):
+        raise RuntimeError("SHADOW_SIMULATION_POLICY_INVALID")
+    configured_bankroll = simulation_policy.get("initial_bankroll_units")
+    if (
+        isinstance(configured_bankroll, bool)
+        or not isinstance(configured_bankroll, (int, float))
+        or configured_bankroll <= 0
+    ):
+        raise RuntimeError("SHADOW_INITIAL_BANKROLL_INVALID")
+    initial_bankroll = float(configured_bankroll)
+
     roots = [
         ROOT / "data" / "shadow" / "pattern-research",
         ROOT / "data" / "historical" / "pattern-research",
@@ -1536,10 +2410,14 @@ def build_pattern_research() -> dict[str, Any]:
     shadow_bets = integer(ledger, "shadow_bets")
     no_bets = integer(ledger, "no_bets")
     classified_decisions = min(decisions, shadow_bets + no_bets)
-    current_bankroll = number(ledger, "shadow_bankroll", 1000.0)
+    current_bankroll = number(ledger, "shadow_bankroll", initial_bankroll)
     if current_bankroll <= 0:
-        current_bankroll = 1000.0
-    profit = number(ledger, "profit_units", current_bankroll - 1000.0)
+        raise RuntimeError("SHADOW_BANKROLL_INVALID")
+    profit = number(
+        ledger,
+        "profit_units",
+        current_bankroll - initial_bankroll,
+    )
     settled_stakes = number(ledger, "settled_stake_units", 0.0)
     roi = (
         number(
@@ -1726,7 +2604,7 @@ def build_pattern_research() -> dict[str, Any]:
             "settledStakeUnits": settled_stakes,
         },
         "bankroll": {
-            "initialUnits": 1000.0,
+            "initialUnits": initial_bankroll,
             "currentUnits": round(current_bankroll, 4),
             "profitUnits": round(profit, 4),
             "roi": round(roi, 6) if roi is not None else None,
@@ -1734,8 +2612,9 @@ def build_pattern_research() -> dict[str, Any]:
                 number(ledger, "max_drawdown_units", 0.0),
                 4,
             ),
-            "curve": ledger.get("bankroll_curve", [1000.0]),
+            "curve": ledger.get("bankroll_curve", [initial_bankroll]),
             "simulationOnly": True,
+            "policySource": SHADOW_SIMULATION_POLICY.relative_to(ROOT).as_posix(),
         },
         "strategies": {
             "inResearch": integer(counts, "hypotheses_executed"),
@@ -3684,6 +4563,7 @@ def main() -> None:
             raise RuntimeError("snapshot Cockpit existant absent")
         snapshot["generatedAt"] = datetime.now(UTC).isoformat()
         snapshot["prospectiveObservatory"] = build_prospective_observatory()
+        snapshot["patternResearch"] = build_pattern_research()
         write_snapshot(snapshot)
         return
 

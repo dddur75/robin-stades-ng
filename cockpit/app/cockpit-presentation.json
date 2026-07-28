@@ -1,0 +1,3190 @@
+{
+  "dashboard": {
+    "operationalEvidence": {
+      "generatedAt": "2026-07-27T23:47:02.391672+00:00",
+      "sourceRun": "30314975830",
+      "sourceRevision": "2469e57ec4b2ef2849f9e707f63843033ec026e6",
+      "sourceWorkflow": "quality-jalon12-pilot",
+      "status": "PROSPECTIVE_GATES_ACCUMULATING",
+      "origin": "LIVE_PROSPECTIVE_CAPTURE",
+      "fixtures": 9,
+      "activeWindows": 441,
+      "inactiveLegacyWindows": 531,
+      "dueWindows": 0,
+      "physicalEvidence": 18,
+      "fixtureCaptures": 9,
+      "deepObservations": 0,
+      "emptyResponses": 0,
+      "errors": 0,
+      "delays": 0,
+      "candidates": 0,
+      "decisions": 0,
+      "r2": {
+        "objects": 18,
+        "bytes": 24714,
+        "verified": 18,
+        "lag": 0,
+        "deletions": 0,
+        "replayStatus": "R2_REPLAY_VERIFIED"
+      },
+      "postgresql": {
+        "migration": "0009_jalon12_observatory",
+        "tables": 12,
+        "inserts": 54,
+        "duplicatesAvoided": 9,
+        "lag": 0,
+        "reconstructionStatus": "RECONSTRUCTIBLE_FROM_R2",
+        "payloadBodyRows": 0
+      },
+      "ledger": {
+        "events": 586,
+        "headHash": "04395a33b7584d33a4413fb61dba41c3e7c4f83ef2e2e07fd2b16b0d116745c6"
+      },
+      "providers": {
+        "apiFootballCalls": 3,
+        "oddsApiCredits": 0,
+        "apiFootballCap": 5000,
+        "oddsApiCap": 250
+      },
+      "invariants": {
+        "storage_paused": true,
+        "p3_p4_paused": true,
+        "production_status": "PRODUCTION_LOCKED",
+        "real_bets": false,
+        "no_bet_default": true,
+        "social_publishing_enabled": false,
+        "demo_mode_enabled": false,
+        "external_social_networks_connected": false,
+        "raw_payloads_in_git": 0,
+        "postgresql_payload_body_rows": 0
+      },
+      "freshness": {
+        "status": "FRESHNESS_CURRENT",
+        "generatedAt": "2026-07-27T23:47:02.391672+00:00",
+        "ageMinutes": 717,
+        "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
+        "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
+        "lastWorkflowAt": "2026-07-24T13:02:12Z"
+      }
+    },
+    "bankroll": {
+      "initialUnits": 1000,
+      "currentUnits": 1000,
+      "policySource": "configs/shadow_simulation_v1.json"
+    }
+  },
+  "matches": [
+    {
+      "id": "api-football:1552733",
+      "providerId": "api-football:1552733",
+      "internalId": "api-football:1552733",
+      "competition": "Ligue 1",
+      "home": "Marseille",
+      "away": "Strasbourg",
+      "homeTeamId": "81",
+      "awayTeamId": "95",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-21T18:45:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-07-31T18:45:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:fafc94a7e85474b6927379ccd1f7f6d22b21587e50fd4b06c0139c0e0132ad68",
+          "fixtureId": "api-football:1552733",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-07-31T17:45:00+00:00",
+          "dueAt": "2026-07-31T18:45:00+00:00",
+          "cutoffAt": "2026-07-31T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:f6d754880472a4d8a76fa0021fbf24f1ec0e0eae2c317611cf6ad51202f941c6",
+          "fixtureId": "api-football:1552733",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-07-31T17:45:00+00:00",
+          "dueAt": "2026-07-31T18:45:00+00:00",
+          "cutoffAt": "2026-07-31T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:4a5127a02ead87951be3d03631170e0d70e9aee9af21ee75089ccc9714c99b54",
+          "fixtureId": "api-football:1552733",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-07-31T17:45:00+00:00",
+          "dueAt": "2026-07-31T18:45:00+00:00",
+          "cutoffAt": "2026-07-31T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:816a2cd940c0fb9ccd8fb9c01d44169ecc4547a7094f3974152be35b5a61b453",
+          "fixtureId": "api-football:1552733",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-07T17:45:00+00:00",
+          "dueAt": "2026-08-07T18:45:00+00:00",
+          "cutoffAt": "2026-08-07T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:c8371733415a1eb394776605dba7536c4acd94f8736a41b76c0d985ccee87f2a",
+          "fixtureId": "api-football:1552733",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-07T17:45:00+00:00",
+          "dueAt": "2026-08-07T18:45:00+00:00",
+          "cutoffAt": "2026-08-07T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:cd2d53e047cbdbc99dc81d4f8c1b75511b9ec752369caa623089fbaaade7e6d9",
+          "fixtureId": "api-football:1552733",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-07T17:45:00+00:00",
+          "dueAt": "2026-08-07T18:45:00+00:00",
+          "cutoffAt": "2026-08-07T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:66b6f204779d5f1dce132271e3039c82e0fbee6ee44e8cab77e000b8712790b4",
+          "fixtureId": "api-football:1552733",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-14T17:45:00+00:00",
+          "dueAt": "2026-08-14T18:45:00+00:00",
+          "cutoffAt": "2026-08-14T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:eea2137c9b425517365e008f6dd0e994426d2bf8cbb6587e71bd8069a0268c9b",
+          "fixtureId": "api-football:1552733",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-14T17:45:00+00:00",
+          "dueAt": "2026-08-14T18:45:00+00:00",
+          "cutoffAt": "2026-08-14T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:6d48d6996097c7698d8ddbe213ca82eff4585c7d108bae823260b9fe1cc5afd9",
+          "fixtureId": "api-football:1552733",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-14T17:45:00+00:00",
+          "dueAt": "2026-08-14T18:45:00+00:00",
+          "cutoffAt": "2026-08-14T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:8449ff5188c3ef60e449471db21aaff4c59946a0aaa0f0999fa2caf67dba73eb",
+          "fixtureId": "api-football:1552733",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-14T17:45:00+00:00",
+          "dueAt": "2026-08-14T18:45:00+00:00",
+          "cutoffAt": "2026-08-14T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:3e6e381a053c2391561c9bff960a3f045c7523448c2a4c654cabdc748fdfbb20",
+          "fixtureId": "api-football:1552733",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-14T17:45:00+00:00",
+          "dueAt": "2026-08-14T18:45:00+00:00",
+          "cutoffAt": "2026-08-14T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:07ef119309db7f324fe7e7cdcca62f260bcd99bf9b89bcfb67512a29dfe20cec",
+          "fixtureId": "api-football:1552733",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-14T17:45:00+00:00",
+          "dueAt": "2026-08-14T18:45:00+00:00",
+          "cutoffAt": "2026-08-14T19:45:00+00:00",
+          "kickoffAt": "2026-08-21T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552732",
+      "providerId": "api-football:1552732",
+      "internalId": "api-football:1552732",
+      "competition": "Ligue 1",
+      "home": "Lens",
+      "away": "Auxerre",
+      "homeTeamId": "116",
+      "awayTeamId": "108",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-22T15:15:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-01T15:15:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:8e8570daea4e239d0fdf01459d524cec319489d0ede24a332ae626dae514f0ef",
+          "fixtureId": "api-football:1552732",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-01T14:15:00+00:00",
+          "dueAt": "2026-08-01T15:15:00+00:00",
+          "cutoffAt": "2026-08-01T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:9e92c35d7d6fd6514f5e50a7c76503b571d3910ec64b37b867a01b3031b5e1ce",
+          "fixtureId": "api-football:1552732",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-01T14:15:00+00:00",
+          "dueAt": "2026-08-01T15:15:00+00:00",
+          "cutoffAt": "2026-08-01T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:61c9b45ac0ea86cef766795df26c2904b948147ef3fc68adc51c43f7465fe626",
+          "fixtureId": "api-football:1552732",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-01T14:15:00+00:00",
+          "dueAt": "2026-08-01T15:15:00+00:00",
+          "cutoffAt": "2026-08-01T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:aaa32a4687d04c2d290bcf3007c09a27aea733b20119025f35b2914c5decada1",
+          "fixtureId": "api-football:1552732",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-08T14:15:00+00:00",
+          "dueAt": "2026-08-08T15:15:00+00:00",
+          "cutoffAt": "2026-08-08T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:75d0c09d5cb9345b75897b928130a361f77327ef446738ca43f02b324724a54d",
+          "fixtureId": "api-football:1552732",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-08T14:15:00+00:00",
+          "dueAt": "2026-08-08T15:15:00+00:00",
+          "cutoffAt": "2026-08-08T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:e10212abe2e6f232172289be896a3ace3274c2286928f3aa778e9c5178f569a6",
+          "fixtureId": "api-football:1552732",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-08T14:15:00+00:00",
+          "dueAt": "2026-08-08T15:15:00+00:00",
+          "cutoffAt": "2026-08-08T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:607cfbd05d7f171496473872c7cb618f1e64b202e37a08e1418383f6eae41df9",
+          "fixtureId": "api-football:1552732",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T14:15:00+00:00",
+          "dueAt": "2026-08-15T15:15:00+00:00",
+          "cutoffAt": "2026-08-15T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:336f15efceac1172a077bc5be0e611533e96161e81d3c0410f97db1907f91d26",
+          "fixtureId": "api-football:1552732",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-15T14:15:00+00:00",
+          "dueAt": "2026-08-15T15:15:00+00:00",
+          "cutoffAt": "2026-08-15T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:a851540a4b042dd780b68e62fffc297070605a709f4142fdab9c71da8fae9700",
+          "fixtureId": "api-football:1552732",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-15T14:15:00+00:00",
+          "dueAt": "2026-08-15T15:15:00+00:00",
+          "cutoffAt": "2026-08-15T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:8bd0facfea4676b62bbaefa2c09c736e3d488d9d6362fa6874dc661d1c5a08a2",
+          "fixtureId": "api-football:1552732",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T14:15:00+00:00",
+          "dueAt": "2026-08-15T15:15:00+00:00",
+          "cutoffAt": "2026-08-15T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:c5549f4764546ce3d6e50529a1de432050a691b14d634715588714fb2e3d7e99",
+          "fixtureId": "api-football:1552732",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T14:15:00+00:00",
+          "dueAt": "2026-08-15T15:15:00+00:00",
+          "cutoffAt": "2026-08-15T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:d7c6a53f8a73926ca5be53a30284385664da451c1d44fa685cfa1a82bca6c463",
+          "fixtureId": "api-football:1552732",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-15T14:15:00+00:00",
+          "dueAt": "2026-08-15T15:15:00+00:00",
+          "cutoffAt": "2026-08-15T16:15:00+00:00",
+          "kickoffAt": "2026-08-22T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552731",
+      "providerId": "api-football:1552731",
+      "internalId": "api-football:1552731",
+      "competition": "Ligue 1",
+      "home": "Le Mans",
+      "away": "Stade Brestois 29",
+      "homeTeamId": "1298",
+      "awayTeamId": "106",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-22T18:45:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-01T18:45:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:4f4df6bd21a83cffbd8356ca9801beb72e5ffdd13e7f32a2d17c1e39fe51cdb1",
+          "fixtureId": "api-football:1552731",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:0cbb80b1789eb528f05a89c75c999cd5cc052c1654becd74c0699c6fda0436e1",
+          "fixtureId": "api-football:1552731",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:9725ae848e51a17ecde66993e0bce32f0c3d38556813bf5ae84f0e399a1609cb",
+          "fixtureId": "api-football:1552731",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:d9db6cb51d314cd95202f259ca6472a34da809cec3078b9ba8c30f5206d3a117",
+          "fixtureId": "api-football:1552731",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:3a43657634cef281e0ab61de1497940a8d8b211a2e282f633ef4ed805be63a63",
+          "fixtureId": "api-football:1552731",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:ee0f91f6c1e3a05b0d82844f08d046c250b290846ab2b1447748ebe21f9eb775",
+          "fixtureId": "api-football:1552731",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:f5f32c8ab50c1e8222af048fe8158399857727e3220d100353f9404ce6b86f5f",
+          "fixtureId": "api-football:1552731",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:9ece8e37866899c5093c2e86e562302f430a6e8c1e4668eaf8e3235e223b0afe",
+          "fixtureId": "api-football:1552731",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:403ce56c151891fee03713add947cab1941b1ba257c19dcc4bac6a83d22fbf2c",
+          "fixtureId": "api-football:1552731",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:a83b8cdf9618840f3477701d04c141b83c2c5ffaf89c39fa46d7a952b36a2cf0",
+          "fixtureId": "api-football:1552731",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:9138e32a798f68c1bc4a361edccc113051bf886146267f0428319c8a42de0190",
+          "fixtureId": "api-football:1552731",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:bb6c21c145f08e4710ec3da2e34db190e7816689d2ab073903ee411e51956928",
+          "fixtureId": "api-football:1552731",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552734",
+      "providerId": "api-football:1552734",
+      "internalId": "api-football:1552734",
+      "competition": "Ligue 1",
+      "home": "Nice",
+      "away": "Lorient",
+      "homeTeamId": "84",
+      "awayTeamId": "97",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-22T18:45:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-01T18:45:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:721093039c5a52034ea6ff7092f243f1ff2b5b91ceba5f6ab2190e77b322310d",
+          "fixtureId": "api-football:1552734",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:95d789e1908d426431dcd1ff1811a3452d00f37efcc90b84ccf9d0ffe0198536",
+          "fixtureId": "api-football:1552734",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:03efe18a4a3945df76dc80cba6288d0edf73ccaa73ac662c4fa09eb886a7c1f9",
+          "fixtureId": "api-football:1552734",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:e75dfc764bc6046bde4d0d88349a5dace6c33f341d4e2546597157f5997a5872",
+          "fixtureId": "api-football:1552734",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:d6fc0a666729d99f8bdb7d89eaeba5574a8b8654b10f33e0e332840d6254ff4e",
+          "fixtureId": "api-football:1552734",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:b7cb4b612ef64f5eba1854d0da221d1840e4d58ce40212ddd7e87312155e4eaa",
+          "fixtureId": "api-football:1552734",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:5af1727c945d0aa2100c60f62ed80bd328426867a5311ee9f037ce2e54ae4a88",
+          "fixtureId": "api-football:1552734",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:f3d648c6eb12b2f52c30b0403c2b57fadb618080492f09f14e9a452441ab892f",
+          "fixtureId": "api-football:1552734",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:529f5d883badba0e944a6a9c7896ce226b388ff7f63cf0d069f15cf4225ae39e",
+          "fixtureId": "api-football:1552734",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:84cc940dcb4116312baa68a72446690d8f7099f9137f0b2e6d5b37b8428f78cf",
+          "fixtureId": "api-football:1552734",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:ea0788d8242033c0179e03b3de4590959c26c245f9f3a03f18d0c4bbbaf30e76",
+          "fixtureId": "api-football:1552734",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:d9c012d5434721a06a3b1c49e7d8de43f6c39b379ed8a26af0513fe3df23f6b0",
+          "fixtureId": "api-football:1552734",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552736",
+      "providerId": "api-football:1552736",
+      "internalId": "api-football:1552736",
+      "competition": "Ligue 1",
+      "home": "Toulouse",
+      "away": "Lyon",
+      "homeTeamId": "96",
+      "awayTeamId": "80",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-22T18:45:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-01T18:45:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:cd60eff2cd45cb87c9af210c4045ec1d4df3ac76a18d58e5215ff4784f51fc70",
+          "fixtureId": "api-football:1552736",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:37dad87687724746dab8784b642dfddb563b94b0f6f9f549dc137e80b1e66ebf",
+          "fixtureId": "api-football:1552736",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:2c01e3bd85c5ffd2972ceabaafc798e26da1d4555200b237074b0716f081625b",
+          "fixtureId": "api-football:1552736",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:083b24ac2a675ac62b8828cc00cd55a16522c5b4237600792c5a9e2ea3a5c17b",
+          "fixtureId": "api-football:1552736",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:919aa8aa66c3d75d668e0b43b24b25c56c43d50e2948287d4e6b9aeb1e1d7ff3",
+          "fixtureId": "api-football:1552736",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:9f314d13958cc2524922b8a641d9a36562b919022662a400c19a10c7042d175e",
+          "fixtureId": "api-football:1552736",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:2ddc46c490949a1c7a98826303d0b9a419bf2bff7dc926ee5f56425d25f8478b",
+          "fixtureId": "api-football:1552736",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:f8f154f4db9b053e978f460105eba98c38e39fa571d37755de503ebad6b7da14",
+          "fixtureId": "api-football:1552736",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:0e15f3050ecd53f09ce189d79e0dc035635b54e607ef5c9d6045a1c6ebe228e7",
+          "fixtureId": "api-football:1552736",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:0f8f55639dde848d3818ff71216a9db6ec1ae072e83eac8ec3386a85db5b2e40",
+          "fixtureId": "api-football:1552736",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:9f878db79751bb3c0d9b02f7dced7dc8bd8d5bc5d82509423949097bf9633049",
+          "fixtureId": "api-football:1552736",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:627cd837a5b33ddeeb3631e61cd0dffcd807ac6358f495d21aaf33bc512dc899",
+          "fixtureId": "api-football:1552736",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552737",
+      "providerId": "api-football:1552737",
+      "internalId": "api-football:1552737",
+      "competition": "Ligue 1",
+      "home": "Estac Troyes",
+      "away": "Paris FC",
+      "homeTeamId": "110",
+      "awayTeamId": "114",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-22T18:45:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-01T18:45:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:2e3ea57f06cf3eff1fc904c82859cd7e4238992747718f64635902582fcb85bc",
+          "fixtureId": "api-football:1552737",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:701b0413ccdb818ac7dc7044d9b70139491b520b570a777f07e190a219600238",
+          "fixtureId": "api-football:1552737",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:823129d62b576ac2652077d76869fe2c8ebdaa02495585f0fac807aec3986cc6",
+          "fixtureId": "api-football:1552737",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-01T17:45:00+00:00",
+          "dueAt": "2026-08-01T18:45:00+00:00",
+          "cutoffAt": "2026-08-01T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:941d63dac5a47770ec99bf23be80c79f9ce70a7b426d3f7e65051a3478fca9a8",
+          "fixtureId": "api-football:1552737",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:708c5a316dcb58d931345b61a0dea3b0aee0bc95b1a16dd627471020ccd6af2e",
+          "fixtureId": "api-football:1552737",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:299c760dab71630354bfe011c5ea4e2e79cb41413484af46735cd837b58b2409",
+          "fixtureId": "api-football:1552737",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-08T17:45:00+00:00",
+          "dueAt": "2026-08-08T18:45:00+00:00",
+          "cutoffAt": "2026-08-08T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:8f5fa923c845a1fba4350d1b69a12ceb18a03bbee282d325ac21e70b1bb5654c",
+          "fixtureId": "api-football:1552737",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:cf472f80a460da06876c25b675dece67f8afd2ef9b6d7b87017eaf1600c40337",
+          "fixtureId": "api-football:1552737",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:b6efd35f48d89f9e32fe2f3dd502a638d2f966e5026887cd2b49deeab42e0737",
+          "fixtureId": "api-football:1552737",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:48667d07deecd8542a87af9797393be2f7490aa6af4e3b2ef59b4b2d05ccdc40",
+          "fixtureId": "api-football:1552737",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:63908706cbbe0c548eb67494a20ec433e3cf06ff148044e524b4f391551eb256",
+          "fixtureId": "api-football:1552737",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:04926dd2e5364ca9b2017b23ad7db66ffa75d474c42d0f011875337074985af1",
+          "fixtureId": "api-football:1552737",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-15T17:45:00+00:00",
+          "dueAt": "2026-08-15T18:45:00+00:00",
+          "cutoffAt": "2026-08-15T19:45:00+00:00",
+          "kickoffAt": "2026-08-22T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552729",
+      "providerId": "api-football:1552729",
+      "internalId": "api-football:1552729",
+      "competition": "Ligue 1",
+      "home": "Angers",
+      "away": "Lille",
+      "homeTeamId": "77",
+      "awayTeamId": "79",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-23T13:00:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-02T13:00:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:e2d9ef686bb31184c1a7e47d2ae17580061629c8df0e908aef95917206dbacc3",
+          "fixtureId": "api-football:1552729",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-02T12:00:00+00:00",
+          "dueAt": "2026-08-02T13:00:00+00:00",
+          "cutoffAt": "2026-08-02T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:5eaadf8e42c5a5888b22a5d4f648c47aef6346a0705794d3d56530ffaca31092",
+          "fixtureId": "api-football:1552729",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-02T12:00:00+00:00",
+          "dueAt": "2026-08-02T13:00:00+00:00",
+          "cutoffAt": "2026-08-02T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:fac16bc6310b1f9de15157549e0cb44b2bce54810c2cb302d4a0aeaa20b58620",
+          "fixtureId": "api-football:1552729",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-02T12:00:00+00:00",
+          "dueAt": "2026-08-02T13:00:00+00:00",
+          "cutoffAt": "2026-08-02T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:d111ce003e107caa7701642c446ae58cc8a085c56881382dda536e5174c1e7e0",
+          "fixtureId": "api-football:1552729",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-09T12:00:00+00:00",
+          "dueAt": "2026-08-09T13:00:00+00:00",
+          "cutoffAt": "2026-08-09T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:2a24b07ee83d7e3cc8510353ec1490f1a7d6b0534f5867114c6e73ca3397b950",
+          "fixtureId": "api-football:1552729",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-09T12:00:00+00:00",
+          "dueAt": "2026-08-09T13:00:00+00:00",
+          "cutoffAt": "2026-08-09T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:ef1c40af41fb4558f15b16029a37f20f507e1a61afc48ba660e9d02470c72ab2",
+          "fixtureId": "api-football:1552729",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-09T12:00:00+00:00",
+          "dueAt": "2026-08-09T13:00:00+00:00",
+          "cutoffAt": "2026-08-09T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:cf7e75100967a21b4808134e585d8fe439d2c7fffe1ef7996f869c447ec8c8f2",
+          "fixtureId": "api-football:1552729",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T12:00:00+00:00",
+          "dueAt": "2026-08-16T13:00:00+00:00",
+          "cutoffAt": "2026-08-16T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:cf68c839ffdf645b93b36eab6ed1c256d93499b34169dee2d2e2f2111dd060d4",
+          "fixtureId": "api-football:1552729",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-16T12:00:00+00:00",
+          "dueAt": "2026-08-16T13:00:00+00:00",
+          "cutoffAt": "2026-08-16T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:4fd77c6493db4eaad151088fef7cd08cc0871249eee0829600ca2d60a7e7df16",
+          "fixtureId": "api-football:1552729",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-16T12:00:00+00:00",
+          "dueAt": "2026-08-16T13:00:00+00:00",
+          "cutoffAt": "2026-08-16T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:029a043c8ce526e27257b29d13e8520b5219bc31360ca44798850ebcfce0fa1f",
+          "fixtureId": "api-football:1552729",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T12:00:00+00:00",
+          "dueAt": "2026-08-16T13:00:00+00:00",
+          "cutoffAt": "2026-08-16T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:7138d09bbf544657a7918ef7e89358af962185873939fe35f1be0fc9d47eaa91",
+          "fixtureId": "api-football:1552729",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T12:00:00+00:00",
+          "dueAt": "2026-08-16T13:00:00+00:00",
+          "cutoffAt": "2026-08-16T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:23f6a8037e2f042f7afc53ec939878edbdd4e45666a7fe3dd5e399b3ff14ae50",
+          "fixtureId": "api-football:1552729",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-16T12:00:00+00:00",
+          "dueAt": "2026-08-16T13:00:00+00:00",
+          "cutoffAt": "2026-08-16T14:00:00+00:00",
+          "kickoffAt": "2026-08-23T13:00:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552730",
+      "providerId": "api-football:1552730",
+      "internalId": "api-football:1552730",
+      "competition": "Ligue 1",
+      "home": "Le Havre",
+      "away": "Monaco",
+      "homeTeamId": "111",
+      "awayTeamId": "91",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-23T15:15:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-02T15:15:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:d25f0377f4a9519e99ceca357d2ed3b4a7448ef4596d5d62b5d50879925dc8a5",
+          "fixtureId": "api-football:1552730",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-02T14:15:00+00:00",
+          "dueAt": "2026-08-02T15:15:00+00:00",
+          "cutoffAt": "2026-08-02T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:5ff5a39cbdf825e77f87945876e48bf22d133e2885567d90091d8dc4e0d02853",
+          "fixtureId": "api-football:1552730",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-02T14:15:00+00:00",
+          "dueAt": "2026-08-02T15:15:00+00:00",
+          "cutoffAt": "2026-08-02T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:f6d7379c8cb60029e34b3c72df9cb4ff3e9233d4c672eca65c0c1fe6eb30ff6b",
+          "fixtureId": "api-football:1552730",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-02T14:15:00+00:00",
+          "dueAt": "2026-08-02T15:15:00+00:00",
+          "cutoffAt": "2026-08-02T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:e5522c477c8f619e6f43dc2aa6aef459a3bb36ed62c9776d7a290bcb8fd287a2",
+          "fixtureId": "api-football:1552730",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-09T14:15:00+00:00",
+          "dueAt": "2026-08-09T15:15:00+00:00",
+          "cutoffAt": "2026-08-09T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:4a78b7094f5705e06a6493f99697f427301baf018dd59ce8a8a357fb20fc0485",
+          "fixtureId": "api-football:1552730",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-09T14:15:00+00:00",
+          "dueAt": "2026-08-09T15:15:00+00:00",
+          "cutoffAt": "2026-08-09T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:ba41fbd99c8aa058a5f8efa59b136a44833afa9990062959659951d2755f8473",
+          "fixtureId": "api-football:1552730",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-09T14:15:00+00:00",
+          "dueAt": "2026-08-09T15:15:00+00:00",
+          "cutoffAt": "2026-08-09T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:e96df2f9104f4c50ee97cbcee4dc7d4fb743edc6a1cc5b268e9f504136b76b1d",
+          "fixtureId": "api-football:1552730",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T14:15:00+00:00",
+          "dueAt": "2026-08-16T15:15:00+00:00",
+          "cutoffAt": "2026-08-16T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:541f1ffd9f8219017a5f7222e94ebc221c1f0161386fe6dfd504625b145e5d0b",
+          "fixtureId": "api-football:1552730",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-16T14:15:00+00:00",
+          "dueAt": "2026-08-16T15:15:00+00:00",
+          "cutoffAt": "2026-08-16T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:6afd9f73a0f4e0f9a695bd05e611954994c135be064f7f11255a7c1d8006488c",
+          "fixtureId": "api-football:1552730",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-16T14:15:00+00:00",
+          "dueAt": "2026-08-16T15:15:00+00:00",
+          "cutoffAt": "2026-08-16T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:6b1362a2d150de042f26b0251bfc65a411699b5202c1b024d56f1b64b87cc02c",
+          "fixtureId": "api-football:1552730",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T14:15:00+00:00",
+          "dueAt": "2026-08-16T15:15:00+00:00",
+          "cutoffAt": "2026-08-16T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:19eab2aba2d67e626198c1e20914e9118782dec0783d005839e4437194ce6200",
+          "fixtureId": "api-football:1552730",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T14:15:00+00:00",
+          "dueAt": "2026-08-16T15:15:00+00:00",
+          "cutoffAt": "2026-08-16T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:b73fbf7e20b5ab25d2ac2ac757b95f8ff7993766b193034aeefc5ff8adba5848",
+          "fixtureId": "api-football:1552730",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-16T14:15:00+00:00",
+          "dueAt": "2026-08-16T15:15:00+00:00",
+          "cutoffAt": "2026-08-16T16:15:00+00:00",
+          "kickoffAt": "2026-08-23T15:15:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    },
+    {
+      "id": "api-football:1552735",
+      "providerId": "api-football:1552735",
+      "internalId": "api-football:1552735",
+      "competition": "Ligue 1",
+      "home": "Paris Saint Germain",
+      "away": "Rennes",
+      "homeTeamId": "85",
+      "awayTeamId": "94",
+      "homeIdentityStatus": "VERIFIED",
+      "awayIdentityStatus": "VERIFIED",
+      "homeIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "awayIdentitySource": "R2_FIXTURE_PAYLOAD",
+      "kickoff": "2026-08-23T18:45:00+00:00",
+      "matchStatus": "REGISTERED",
+      "dataStatus": "WAITING_FOR_OBSERVATIONS",
+      "coverage": 0.125,
+      "nextCapture": "2026-08-02T18:45:00+00:00",
+      "nextFamily": "EVENT_STATUS",
+      "nextFamilies": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "observedOdds": false,
+      "hypotheses": 8,
+      "families": {
+        "FIXTURE": "captured",
+        "TEAM": "upcoming",
+        "SQUAD": "upcoming",
+        "PLAYER_STATUS": "upcoming",
+        "INJURY": "upcoming",
+        "LINEUP": "upcoming",
+        "FORMATION": "upcoming",
+        "ODDS": "upcoming"
+      },
+      "probabilities": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "timeline": [
+        {
+          "id": "presentation-window:0dbc2c1e33dda0ad084fad03a6ea685d79677c34b207dcb8bed4dbd5fb298ef0",
+          "fixtureId": "api-football:1552735",
+          "family": "EVENT_STATUS",
+          "label": "J-21",
+          "opensAt": "2026-08-02T17:45:00+00:00",
+          "dueAt": "2026-08-02T18:45:00+00:00",
+          "cutoffAt": "2026-08-02T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:91959385b5396b8f0501742cf90fd83c9598c608149d531ff4b930e613412154",
+          "fixtureId": "api-football:1552735",
+          "family": "FIXTURE",
+          "label": "J-21",
+          "opensAt": "2026-08-02T17:45:00+00:00",
+          "dueAt": "2026-08-02T18:45:00+00:00",
+          "cutoffAt": "2026-08-02T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:252f3c27ddc5a36948ab8b5813eb86240f241086070bfa84bb611a679d47a5ad",
+          "fixtureId": "api-football:1552735",
+          "family": "TEAM",
+          "label": "J-21",
+          "opensAt": "2026-08-02T17:45:00+00:00",
+          "dueAt": "2026-08-02T18:45:00+00:00",
+          "cutoffAt": "2026-08-02T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:b3a810a2d5ebb1ef910d9ea7bcc811cd4f578eb807a82b60131fd691abd4a9cc",
+          "fixtureId": "api-football:1552735",
+          "family": "EVENT_STATUS",
+          "label": "J-14",
+          "opensAt": "2026-08-09T17:45:00+00:00",
+          "dueAt": "2026-08-09T18:45:00+00:00",
+          "cutoffAt": "2026-08-09T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:5e3af100282c7bb1bf3af2ecf474c193092487911cbe0e5b462c559051e988ef",
+          "fixtureId": "api-football:1552735",
+          "family": "FIXTURE",
+          "label": "J-14",
+          "opensAt": "2026-08-09T17:45:00+00:00",
+          "dueAt": "2026-08-09T18:45:00+00:00",
+          "cutoffAt": "2026-08-09T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:27f439c9599f2d78571e444d721ce649f29e39ab2e8260d408bc4deefc0fed3b",
+          "fixtureId": "api-football:1552735",
+          "family": "TEAM",
+          "label": "J-14",
+          "opensAt": "2026-08-09T17:45:00+00:00",
+          "dueAt": "2026-08-09T18:45:00+00:00",
+          "cutoffAt": "2026-08-09T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:5862676a0a5ee546673e96916b1facc711d877c1718e0c8b481dce3addb539aa",
+          "fixtureId": "api-football:1552735",
+          "family": "EVENT_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T17:45:00+00:00",
+          "dueAt": "2026-08-16T18:45:00+00:00",
+          "cutoffAt": "2026-08-16T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:742ff42bb421271999ce05e717418cb94259d411e21039ce47c8f0377b68e88f",
+          "fixtureId": "api-football:1552735",
+          "family": "FIXTURE",
+          "label": "J-7",
+          "opensAt": "2026-08-16T17:45:00+00:00",
+          "dueAt": "2026-08-16T18:45:00+00:00",
+          "cutoffAt": "2026-08-16T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:d0cb328a83860a9baebe0c3715c214306034edea1c16c192b3aa87f19a6f306b",
+          "fixtureId": "api-football:1552735",
+          "family": "INJURY",
+          "label": "J-7",
+          "opensAt": "2026-08-16T17:45:00+00:00",
+          "dueAt": "2026-08-16T18:45:00+00:00",
+          "cutoffAt": "2026-08-16T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:5321caff9a2644fa1061e25a2c8b67e2d9c56a07fb5d03822092dd785189889a",
+          "fixtureId": "api-football:1552735",
+          "family": "ODDS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T17:45:00+00:00",
+          "dueAt": "2026-08-16T18:45:00+00:00",
+          "cutoffAt": "2026-08-16T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:86dda7304445f970c6580e148ea9a277ec21a0b6fa0d5508d75d0d7ac3475852",
+          "fixtureId": "api-football:1552735",
+          "family": "PLAYER_STATUS",
+          "label": "J-7",
+          "opensAt": "2026-08-16T17:45:00+00:00",
+          "dueAt": "2026-08-16T18:45:00+00:00",
+          "cutoffAt": "2026-08-16T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        },
+        {
+          "id": "presentation-window:51c70dea528bdb96cce39f41e2aed16a07f27bd30020a927d4c0956f84556485",
+          "fixtureId": "api-football:1552735",
+          "family": "SQUAD",
+          "label": "J-7",
+          "opensAt": "2026-08-16T17:45:00+00:00",
+          "dueAt": "2026-08-16T18:45:00+00:00",
+          "cutoffAt": "2026-08-16T19:45:00+00:00",
+          "kickoffAt": "2026-08-23T18:45:00+00:00",
+          "status": "NOT_DUE",
+          "active": true,
+          "acknowledged": false,
+          "policyVersion": "prospective-capture-window-v2"
+        }
+      ]
+    }
+  ],
+  "nextCaptures": [
+    {
+      "id": "capture-group:2026-07-31T18:45:00+00:00",
+      "dueAt": "2026-07-31T18:45:00+00:00",
+      "opensAt": "2026-07-31T17:45:00+00:00",
+      "cutoffAt": "2026-07-31T19:45:00+00:00",
+      "match": "Marseille – Strasbourg",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552733"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-01T15:15:00+00:00",
+      "dueAt": "2026-08-01T15:15:00+00:00",
+      "opensAt": "2026-08-01T14:15:00+00:00",
+      "cutoffAt": "2026-08-01T16:15:00+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-01T18:45:00+00:00",
+      "dueAt": "2026-08-01T18:45:00+00:00",
+      "opensAt": "2026-08-01T17:45:00+00:00",
+      "cutoffAt": "2026-08-01T19:45:00+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-02T13:00:00+00:00",
+      "dueAt": "2026-08-02T13:00:00+00:00",
+      "opensAt": "2026-08-02T12:00:00+00:00",
+      "cutoffAt": "2026-08-02T14:00:00+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-02T15:15:00+00:00",
+      "dueAt": "2026-08-02T15:15:00+00:00",
+      "opensAt": "2026-08-02T14:15:00+00:00",
+      "cutoffAt": "2026-08-02T16:15:00+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-02T18:45:00+00:00",
+      "dueAt": "2026-08-02T18:45:00+00:00",
+      "opensAt": "2026-08-02T17:45:00+00:00",
+      "cutoffAt": "2026-08-02T19:45:00+00:00",
+      "match": "Paris Saint Germain – Rennes",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-07T18:45:00+00:00",
+      "dueAt": "2026-08-07T18:45:00+00:00",
+      "opensAt": "2026-08-07T17:45:00+00:00",
+      "cutoffAt": "2026-08-07T19:45:00+00:00",
+      "match": "Marseille – Strasbourg",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552733"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-08T15:15:00+00:00",
+      "dueAt": "2026-08-08T15:15:00+00:00",
+      "opensAt": "2026-08-08T14:15:00+00:00",
+      "cutoffAt": "2026-08-08T16:15:00+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-08T18:45:00+00:00",
+      "dueAt": "2026-08-08T18:45:00+00:00",
+      "opensAt": "2026-08-08T17:45:00+00:00",
+      "cutoffAt": "2026-08-08T19:45:00+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-09T13:00:00+00:00",
+      "dueAt": "2026-08-09T13:00:00+00:00",
+      "opensAt": "2026-08-09T12:00:00+00:00",
+      "cutoffAt": "2026-08-09T14:00:00+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-09T15:15:00+00:00",
+      "dueAt": "2026-08-09T15:15:00+00:00",
+      "opensAt": "2026-08-09T14:15:00+00:00",
+      "cutoffAt": "2026-08-09T16:15:00+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-09T18:45:00+00:00",
+      "dueAt": "2026-08-09T18:45:00+00:00",
+      "opensAt": "2026-08-09T17:45:00+00:00",
+      "cutoffAt": "2026-08-09T19:45:00+00:00",
+      "match": "Paris Saint Germain – Rennes",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-14T18:45:00+00:00",
+      "dueAt": "2026-08-14T18:45:00+00:00",
+      "opensAt": "2026-08-14T17:45:00+00:00",
+      "cutoffAt": "2026-08-14T19:45:00+00:00",
+      "match": "Marseille – Strasbourg",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552733"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-15T15:15:00+00:00",
+      "dueAt": "2026-08-15T15:15:00+00:00",
+      "opensAt": "2026-08-15T14:15:00+00:00",
+      "cutoffAt": "2026-08-15T16:15:00+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-15T18:45:00+00:00",
+      "dueAt": "2026-08-15T18:45:00+00:00",
+      "opensAt": "2026-08-15T17:45:00+00:00",
+      "cutoffAt": "2026-08-15T19:45:00+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-16T13:00:00+00:00",
+      "dueAt": "2026-08-16T13:00:00+00:00",
+      "opensAt": "2026-08-16T12:00:00+00:00",
+      "cutoffAt": "2026-08-16T14:00:00+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-16T15:15:00+00:00",
+      "dueAt": "2026-08-16T15:15:00+00:00",
+      "opensAt": "2026-08-16T14:15:00+00:00",
+      "cutoffAt": "2026-08-16T16:15:00+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-16T18:45:00+00:00",
+      "dueAt": "2026-08-16T18:45:00+00:00",
+      "opensAt": "2026-08-16T17:45:00+00:00",
+      "cutoffAt": "2026-08-16T19:45:00+00:00",
+      "match": "Paris Saint Germain – Rennes",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-18T18:45:00+00:00",
+      "dueAt": "2026-08-18T18:45:00+00:00",
+      "opensAt": "2026-08-18T17:45:00+00:00",
+      "cutoffAt": "2026-08-18T19:45:00+00:00",
+      "match": "Marseille – Strasbourg",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552733"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-19T15:15:00+00:00",
+      "dueAt": "2026-08-19T15:15:00+00:00",
+      "opensAt": "2026-08-19T14:15:00+00:00",
+      "cutoffAt": "2026-08-19T16:15:00+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-19T18:45:00+00:00",
+      "dueAt": "2026-08-19T18:45:00+00:00",
+      "opensAt": "2026-08-19T17:45:00+00:00",
+      "cutoffAt": "2026-08-19T19:45:00+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-20T13:00:00+00:00",
+      "dueAt": "2026-08-20T13:00:00+00:00",
+      "opensAt": "2026-08-20T12:00:00+00:00",
+      "cutoffAt": "2026-08-20T14:00:00+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-20T15:15:00+00:00",
+      "dueAt": "2026-08-20T15:15:00+00:00",
+      "opensAt": "2026-08-20T14:15:00+00:00",
+      "cutoffAt": "2026-08-20T16:15:00+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-20T18:45:00+00:00",
+      "dueAt": "2026-08-20T18:45:00+00:00",
+      "opensAt": "2026-08-20T17:45:00+00:00",
+      "cutoffAt": "2026-08-20T19:45:00+00:00",
+      "match": "2 rencontres concernées",
+      "fixtureCount": 2,
+      "fixtureIds": [
+        "api-football:1552733",
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-21T12:45:00+00:00",
+      "dueAt": "2026-08-21T12:45:00+00:00",
+      "opensAt": "2026-08-21T11:45:00+00:00",
+      "cutoffAt": "2026-08-21T13:45:00+00:00",
+      "match": "Marseille – Strasbourg",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552733"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-21T15:15:00+00:00",
+      "dueAt": "2026-08-21T15:15:00+00:00",
+      "opensAt": "2026-08-21T14:15:00+00:00",
+      "cutoffAt": "2026-08-21T16:15:00+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-21T16:45:00+00:00",
+      "dueAt": "2026-08-21T16:45:00+00:00",
+      "opensAt": "2026-08-21T15:45:00+00:00",
+      "cutoffAt": "2026-08-21T17:45:00+00:00",
+      "match": "Marseille – Strasbourg",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552733"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-21T17:45:00+00:00",
+      "dueAt": "2026-08-21T17:45:00+00:00",
+      "opensAt": "2026-08-21T17:45:00+00:00",
+      "cutoffAt": "2026-08-21T18:44:59.999999+00:00",
+      "match": "Marseille – Strasbourg",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552733"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-21T18:45:00+00:00",
+      "dueAt": "2026-08-21T18:45:00+00:00",
+      "opensAt": "2026-08-21T17:45:00+00:00",
+      "cutoffAt": "2026-08-21T19:45:00+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T09:15:00+00:00",
+      "dueAt": "2026-08-22T09:15:00+00:00",
+      "opensAt": "2026-08-22T08:15:00+00:00",
+      "cutoffAt": "2026-08-22T10:15:00+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T12:45:00+00:00",
+      "dueAt": "2026-08-22T12:45:00+00:00",
+      "opensAt": "2026-08-22T11:45:00+00:00",
+      "cutoffAt": "2026-08-22T13:45:00+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T13:00:00+00:00",
+      "dueAt": "2026-08-22T13:00:00+00:00",
+      "opensAt": "2026-08-22T12:00:00+00:00",
+      "cutoffAt": "2026-08-22T14:00:00+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T13:15:00+00:00",
+      "dueAt": "2026-08-22T13:15:00+00:00",
+      "opensAt": "2026-08-22T12:15:00+00:00",
+      "cutoffAt": "2026-08-22T14:15:00+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T14:15:00+00:00",
+      "dueAt": "2026-08-22T14:15:00+00:00",
+      "opensAt": "2026-08-22T14:15:00+00:00",
+      "cutoffAt": "2026-08-22T15:14:59.999999+00:00",
+      "match": "Lens – Auxerre",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552732"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T15:15:00+00:00",
+      "dueAt": "2026-08-22T15:15:00+00:00",
+      "opensAt": "2026-08-22T14:15:00+00:00",
+      "cutoffAt": "2026-08-22T16:15:00+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T16:45:00+00:00",
+      "dueAt": "2026-08-22T16:45:00+00:00",
+      "opensAt": "2026-08-22T15:45:00+00:00",
+      "cutoffAt": "2026-08-22T17:45:00+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T17:45:00+00:00",
+      "dueAt": "2026-08-22T17:45:00+00:00",
+      "opensAt": "2026-08-22T17:45:00+00:00",
+      "cutoffAt": "2026-08-22T18:44:59.999999+00:00",
+      "match": "4 rencontres concernées",
+      "fixtureCount": 4,
+      "fixtureIds": [
+        "api-football:1552731",
+        "api-football:1552734",
+        "api-football:1552736",
+        "api-football:1552737"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-22T18:45:00+00:00",
+      "dueAt": "2026-08-22T18:45:00+00:00",
+      "opensAt": "2026-08-22T17:45:00+00:00",
+      "cutoffAt": "2026-08-22T19:45:00+00:00",
+      "match": "Paris Saint Germain – Rennes",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "SQUAD",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T07:00:00+00:00",
+      "dueAt": "2026-08-23T07:00:00+00:00",
+      "opensAt": "2026-08-23T06:00:00+00:00",
+      "cutoffAt": "2026-08-23T08:00:00+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T09:15:00+00:00",
+      "dueAt": "2026-08-23T09:15:00+00:00",
+      "opensAt": "2026-08-23T08:15:00+00:00",
+      "cutoffAt": "2026-08-23T10:15:00+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T11:00:00+00:00",
+      "dueAt": "2026-08-23T11:00:00+00:00",
+      "opensAt": "2026-08-23T10:00:00+00:00",
+      "cutoffAt": "2026-08-23T12:00:00+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T12:00:00+00:00",
+      "dueAt": "2026-08-23T12:00:00+00:00",
+      "opensAt": "2026-08-23T12:00:00+00:00",
+      "cutoffAt": "2026-08-23T12:59:59.999999+00:00",
+      "match": "Angers – Lille",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552729"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T12:45:00+00:00",
+      "dueAt": "2026-08-23T12:45:00+00:00",
+      "opensAt": "2026-08-23T11:45:00+00:00",
+      "cutoffAt": "2026-08-23T13:45:00+00:00",
+      "match": "Paris Saint Germain – Rennes",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "INJURY",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T13:15:00+00:00",
+      "dueAt": "2026-08-23T13:15:00+00:00",
+      "opensAt": "2026-08-23T12:15:00+00:00",
+      "cutoffAt": "2026-08-23T14:15:00+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T14:15:00+00:00",
+      "dueAt": "2026-08-23T14:15:00+00:00",
+      "opensAt": "2026-08-23T14:15:00+00:00",
+      "cutoffAt": "2026-08-23T15:14:59.999999+00:00",
+      "match": "Le Havre – Monaco",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552730"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T16:45:00+00:00",
+      "dueAt": "2026-08-23T16:45:00+00:00",
+      "opensAt": "2026-08-23T15:45:00+00:00",
+      "cutoffAt": "2026-08-23T17:45:00+00:00",
+      "match": "Paris Saint Germain – Rennes",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    },
+    {
+      "id": "capture-group:2026-08-23T17:45:00+00:00",
+      "dueAt": "2026-08-23T17:45:00+00:00",
+      "opensAt": "2026-08-23T17:45:00+00:00",
+      "cutoffAt": "2026-08-23T18:44:59.999999+00:00",
+      "match": "Paris Saint Germain – Rennes",
+      "fixtureCount": 1,
+      "fixtureIds": [
+        "api-football:1552735"
+      ],
+      "family": "EVENT_STATUS",
+      "families": [
+        "EVENT_STATUS",
+        "FIXTURE",
+        "FORMATION",
+        "INJURY",
+        "LINEUP",
+        "ODDS",
+        "PLAYER_STATUS",
+        "TEAM"
+      ],
+      "status": "NOT_DUE"
+    }
+  ],
+  "observatory": {
+    "gateRows": [
+      {
+        "name": "Joueurs",
+        "technicalName": "PROSPECTIVE_PLAYER_GATE",
+        "status": "BLOCKED_BY_COVERAGE",
+        "passed": 0,
+        "total": 9,
+        "reason": "Aucune observation prospective admissible."
+      },
+      {
+        "name": "Blessures",
+        "technicalName": "PROSPECTIVE_INJURY_GATE",
+        "status": "BLOCKED_BY_COVERAGE",
+        "passed": 0,
+        "total": 9,
+        "reason": "Aucune observation prospective admissible."
+      },
+      {
+        "name": "Compositions",
+        "technicalName": "PROSPECTIVE_LINEUP_GATE",
+        "status": "BLOCKED_BY_COVERAGE",
+        "passed": 0,
+        "total": 9,
+        "reason": "Aucune observation prospective admissible."
+      },
+      {
+        "name": "Formations",
+        "technicalName": "PROSPECTIVE_FORMATION_GATE",
+        "status": "BLOCKED_BY_COVERAGE",
+        "passed": 0,
+        "total": 9,
+        "reason": "La composition doit d’abord être vérifiée."
+      },
+      {
+        "name": "Marché",
+        "technicalName": "PROSPECTIVE_MARKET_GATE",
+        "status": "BLOCKED_BY_COVERAGE",
+        "passed": 0,
+        "total": 9,
+        "reason": "Aucune observation prospective admissible."
+      }
+    ]
+  },
+  "hypotheses": [
+    {
+      "id": "H11-001",
+      "title": "Buteur en forme contre défense centrale amputée",
+      "mechanism": "Une attaque en forme pourrait profiter d’une défense centrale remaniée.",
+      "requiredData": [
+        "PLAYER_STATUS",
+        "INJURY",
+        "LINEUP"
+      ],
+      "minimumSupport": 80,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    },
+    {
+      "id": "H11-002",
+      "title": "4-3-3 contre 4-4-2",
+      "mechanism": "La structure du milieu pourrait créer un surnombre ou exposer les couloirs.",
+      "requiredData": [
+        "LINEUP",
+        "FORMATION"
+      ],
+      "minimumSupport": 120,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    },
+    {
+      "id": "H11-003",
+      "title": "Trois attaquants droitiers contre défense gauchère",
+      "mechanism": "L’orientation des appuis peut modifier la qualité des duels sur un côté.",
+      "requiredData": [
+        "LINEUP",
+        "FOOTEDNESS"
+      ],
+      "minimumSupport": 100,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    },
+    {
+      "id": "H11-004",
+      "title": "Gardien titulaire absent",
+      "mechanism": "L’absence du gardien habituel peut modifier l’organisation défensive.",
+      "requiredData": [
+        "INJURY",
+        "PLAYER_STATUS",
+        "LINEUP"
+      ],
+      "minimumSupport": 80,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    },
+    {
+      "id": "H11-005",
+      "title": "Deux centraux nouveaux ensemble",
+      "mechanism": "Un duo central peu habitué à jouer ensemble peut manquer de coordination.",
+      "requiredData": [
+        "LINEUP",
+        "PLAYER_STATUS"
+      ],
+      "minimumSupport": 100,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    },
+    {
+      "id": "H11-006",
+      "title": "Rupture du onze",
+      "mechanism": "La stabilité de l’équipe de départ peut améliorer les automatismes.",
+      "requiredData": [
+        "LINEUP",
+        "PLAYER_STATUS"
+      ],
+      "minimumSupport": 120,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    },
+    {
+      "id": "H11-007",
+      "title": "Congestion et tactique inhabituelle",
+      "mechanism": "Un calendrier dense peut favoriser une formation ou une rotation inhabituelle.",
+      "requiredData": [
+        "FIXTURE",
+        "LINEUP",
+        "FORMATION"
+      ],
+      "minimumSupport": 100,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    },
+    {
+      "id": "H11-008",
+      "title": "Matchup structurel",
+      "mechanism": "Certaines structures tactiques peuvent se neutraliser ou créer un avantage local.",
+      "requiredData": [
+        "LINEUP",
+        "FORMATION",
+        "ODDS"
+      ],
+      "minimumSupport": 120,
+      "observations": 0,
+      "coverage": 0,
+      "status": "WAITING_FOR_OBSERVATIONS",
+      "frozen": true
+    }
+  ],
+  "system": {
+    "freshness": {
+      "status": "FRESHNESS_CURRENT",
+      "generatedAt": "2026-07-27T23:47:02.391672+00:00",
+      "ageMinutes": 717,
+      "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
+      "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
+      "lastWorkflowAt": "2026-07-24T13:02:12Z"
+    },
+    "statusCoverage": {
+      "total": 118,
+      "translated": 118,
+      "percentage": 1,
+      "unknown": []
+    },
+    "encodingCorrections": {
+      "count": 0,
+      "fields": [],
+      "cleanerEnabled": false
+    },
+    "validationErrors": []
+  },
+  "oddsSnapshots": []
+}
