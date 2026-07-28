@@ -690,36 +690,43 @@ bankroll fictive de 1 000 unités. Les workflows 60 à 66 restent actifs, dans
 La clôture n’a forcé aucun appel fournisseur, crédit Odds, écriture R2 ou
 PostgreSQL, pari réel ou publication sociale.
 
-## Expansion prospective cinq ligues — pilote réel
+## Expansion prospective cinq ligues — gates fermées
 
-Verdict : `FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL`.
+Verdict : `FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY`.
 
-La branche `codex/prospective-five-league-expansion` et la PR brouillon #20
-étendent le registre, les profils de capture, les budgets, le replay, le
-protocole préquentiel et Robin Experience aux cinq grands championnats.
+La PR #20 étend le registre, les profils de capture, les budgets, le replay,
+le protocole préquentiel et Robin Experience aux cinq grands championnats.
+Les statuts distinguent une attente normale de calendrier, l’absence de
+fixture dans l’horizon et une véritable erreur fournisseur. La découverte
+porte sur 45 jours sans modifier les fenêtres de capture, dont la première
+reste J-21.
 
-Le pilote registre `30371041646` a respecté la borne initiale de 3 appels
-API-Football par ligue et 0 crédit Odds. Le ledger durable confirme 15 appels
-au total. Ligue 1 (9 fixtures), Premier League (10) et Serie A (10) sont
-actives. Liga et Bundesliga restent `BLOCKED_PROVIDER` avec zéro fixture
-admissible ; leur blocage n’empêche pas les trois autres ligues.
+Les probes ciblés `30387868451` (Liga) et `30390501082` (Bundesliga) ont
+consommé exactement 3 appels API-Football chacun et 0 crédit Odds. Ils ont
+activé 30 fixtures Liga avec 60/60 slots d’identité, puis 19 fixtures
+Bundesliga avec 38/38 slots. Les deux gates sont
+`ACTIVE_ODDS_REDUCED`. Les deux échecs intermédiaires Bundesliga ont eu lieu
+avant tout transport fournisseur et ont donc consommé 0 appel.
 
-Le planificateur et les collecteurs dus ont confirmé zéro fenêtre actuellement
-due, donc zéro appel ou crédit supplémentaire et aucune fenêtre future forcée.
-Le rapport final `30383448949` vérifie 29/29 fixtures, 58/58 identités,
-47 payloads/reçus live, 132 objets R2 uniques, 264 184 octets, 1 361 fenêtres
-actives, zéro perte, suppression, hash divergent ou lag, et une reconstruction
-PostgreSQL complète sans payload brut en base.
+Le planificateur fournisseur-free `30393664912` a traité les 78 fixtures
+suivies sans fenêtre due ni collecte forcée. Le replay autonome
+`30396732141` et le rapport composite final `30403466803` vérifient
+78/78 fixtures, 156/156 slots d’identité, 96 payloads/reçus live, 279 objets
+R2 uniques, 652 026 octets, 3 615 fenêtres canoniques, 0 perte, suppression,
+hash divergent ou lag, et une reconstruction PostgreSQL idempotente sans
+payload brut en base. La seconde passe évite 96 doublons et n’insère aucune
+ligne.
 
-Robin Experience expose cinq lignes de championnat, les filtres, profils,
-coûts, gates, couvertures et prochaines captures depuis le snapshot réel. Le
-typecheck, le build, 31 tests Cockpit, la CI complète et les preuves visuelles
-sont verts sur le commit `fda43caa3722ab5053625a06649ddbd0dff7a659`.
+Robin Experience expose les cinq championnats, tous actifs : Ligue 1 en
+`ACTIVE_FULL`, puis Premier League, Liga, Bundesliga et Serie A en
+`ACTIVE_ODDS_REDUCED`. La synthèse finale, les identités, les fenêtres, le
+replay et le snapshot sont produits sans appel fournisseur ni crédit Odds.
+L’activation automatique depuis `WAITING_FOR_FIXTURES` est couverte par les
+tests backend et frontend, sans changement de code ni duplication.
 
 La référence préquentielle reste gelée, le challenger ne peut être mis à jour
 qu’après règlement, les prédictions sont immuables et liées à leur cutoff,
 features, cote, version et hash. Aucune promotion de modèle n’est autorisée.
-
-La PR #20 reste en brouillon et non fusionnée. Une revue humaine doit décider
-si le verdict partiel est acceptable ou si l’on attend la publication de
-fixtures Liga et Bundesliga. Tous les invariants de sécurité restent actifs.
+La PR #20 est autorisée à quitter le brouillon et à être fusionnée par merge
+commit dès confirmation de la CI et de l’absence d’objection majeure. Tous les
+invariants de sécurité restent actifs.

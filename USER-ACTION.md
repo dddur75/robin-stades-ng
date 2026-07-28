@@ -188,14 +188,17 @@ PRIVATE_DEPLOYED_FROM_MAIN
 
 `AUCUNE ACTION AUTOMATIQUE REQUISE`
 
-Le pilote réel est terminé et la PR brouillon #20 reste volontairement non
-fusionnée. Trois ligues sur cinq sont actives ; Liga et Bundesliga restent
-`BLOCKED_PROVIDER` faute de fixture admissible dans l’audit borné. La CI, le
-replay, R2, PostgreSQL, les identités et Robin Experience sont verts.
+Les cinq ligues sont actives. La Liga et la Bundesliga ont été validées par
+deux probes bornés à 3 appels API-Football chacun et 0 crédit Odds ; elles sont
+en `ACTIVE_ODDS_REDUCED`. Le verdict est
+`FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY`.
 
-Action recommandée : examiner la
-[PR brouillon #20](https://github.com/dddur75/robin-stades-ng/pull/20) et le
-verdict `FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL`. Ne fusionner que par
-décision explicite après acceptation de ce périmètre partiel ou après un futur
-audit fournisseur autorisé. Aucun pari réel, secret supplémentaire, achat,
-publication sociale ou reprise P3/P4 n’est demandé.
+La [PR #20](https://github.com/dddur75/robin-stades-ng/pull/20) peut être
+passée en Ready puis fusionnée par merge commit lorsque ses contrôles sont
+verts. Le replay R2, PostgreSQL, les 156 identités, les 3 615 fenêtres
+canoniques et Robin Experience sont cohérents. L’activation ultérieure d’une
+ligue en attente est automatique et testée.
+
+Aucun pari réel, bookmaker, secret supplémentaire, achat, publication sociale,
+backfill, recherche de pattern, promotion de modèle ou reprise P3/P4 n’est
+demandé.

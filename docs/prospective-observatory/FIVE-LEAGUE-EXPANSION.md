@@ -87,51 +87,87 @@ n’est inventée.
 - aucune suppression R2 ;
 - aucun pari réel, bookmaker ou publication sociale.
 
-## Pilote réel borné du 28 juillet 2026
+## Pilotes réels bornés du 28 juillet 2026
 
-Le registre réel est le run GitHub Actions `30371041646`. Son estimation
-signée autorisait 15 appels API-Football au maximum, soit exactement trois par
-ligue, et zéro crédit Odds. Le ledger durable confirme 15 appels physiques :
-le compteur de 12 du premier rapport compact sous-comptait les trois appels
-consommés avant l’exception Liga ; ce défaut de comptage a été corrigé sans
-relancer le registre.
+Le pilote initial `30371041646` avait activé Ligue 1, Premier League et
+Serie A. La Liga avait échoué sur une fixture antérieure à l’horizon et la
+Bundesliga avait répondu normalement sans fixture dans l’ancien horizon de
+30 jours. Aucun de ces deux cas ne constitue désormais une erreur fournisseur.
 
-| Ligue | Fixtures | Équipes | Saison | Dates des fixtures | Identités | Kickoffs | Gate | Profil |
-|---|---:|---:|---:|---|---:|---:|---|---|
-| Ligue 1 | 9 | 18 | 2026 | 21–23 août 2026 | 18/18 | 9/9 | `ACTIVE_FULL` | `FULL` |
-| Premier League | 10 | 20 | 2026 | 21–24 août 2026 | 20/20 | 10/10 | `ACTIVE_ODDS_REDUCED` | `DEEP_FULL_ODDS_REDUCED` |
-| Liga | 0 | 0 | — | — | 0/0 | 0/0 | `BLOCKED_PROVIDER` | `DEEP_FULL_ODDS_REDUCED` |
-| Bundesliga | 0 | 0 | 2026 | aucune fixture publiée dans l’horizon | 0/0 | 0/0 | `BLOCKED_PROVIDER` | `DEEP_FULL_ODDS_REDUCED` |
-| Serie A | 10 | 20 | 2026 | 22–24 août 2026 | 20/20 | 10/10 | `ACTIVE_ODDS_REDUCED` | `DEEP_FULL_ODDS_REDUCED` |
+Après correction du filtrage et passage de l’horizon de découverte à 45 jours,
+deux probes ciblés ont fermé les gates :
 
-La Liga a rencontré une validation sur une fixture antérieure à l’horizon.
-Le filtrage précède désormais la construction du contrat, mais le pilote
-initial n’a pas été relancé afin de ne jamais dépasser trois appels par ligue.
-La Bundesliga a répondu sans fixture sur les trente jours demandés. Ces deux
-blocages n’ont pas empêché l’activation des trois autres compétitions.
+| Ligue | Run | Appels | Fixtures reçues/admissibles | Équipes | Identités | Kickoffs | Gate |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Liga | `30387868451` | 3 | 40/30 | 20 | 60/60 | 30/30 | `ACTIVE_ODDS_REDUCED` |
+| Bundesliga | `30390501082` | 3 | 19/19 | 18 | 38/38 | 19/19 | `ACTIVE_ODDS_REDUCED` |
 
-Le planificateur `30373123502` a créé 1 361 fenêtres actives et constaté
-zéro fenêtre due et zéro fenêtre manquée. Les collecteurs joueurs/blessures
-`30373961624`, lineups/formations `30374838033` et Odds `30375023103` ont tous
-retourné `NO_DUE_WINDOW_SUCCESS` : zéro appel supplémentaire, zéro crédit
-Odds, zéro tentative et zéro écriture de capture. Aucune fenêtre future n’a été
-forcée.
+Les deux réponses fournisseur sont valides, sans erreur de schéma et sans
+payload vide. Elles ajoutent respectivement 60 objets R2 / 67 959 octets et
+38 objets / 33 595 octets, puis 30 et 19 index PostgreSQL. Les deux tentatives
+Bundesliga précédentes (`30388379467` et `30389253163`) ont échoué avant le
+premier transport fournisseur : elles ont consommé 0 appel et 0 crédit.
 
-## Preuves finales
+Le budget total de cette mission est donc exactement :
 
-Le replay autonome `30375179062` puis le rapport final `30383448949` sont
+```text
+API_FOOTBALL_CALLS_TOTAL=6
+ODDS_API_CREDITS_TOTAL=0
+```
+
+Aucun appel n’a été répété pour Ligue 1, Premier League ou Serie A. Aucune
+fenêtre profonde future n’a été forcée.
+
+## Activation automatique
+
+Le workflow quotidien conserve `competition=ALL`. Les tests construisent
+d’abord une compétition en `WAITING_FOR_FIXTURES`, puis lui présentent un
+calendrier valide. Sans mutation de code ou de configuration, le workflow :
+
+1. découvre les fixtures ;
+2. résout les identités ;
+3. crée les fenêtres idempotentes ;
+4. passe la compétition en `ACTIVE_ODDS_REDUCED` ;
+5. met à jour le modèle de présentation Robin Experience ;
+6. évite toute duplication au passage suivant.
+
+Le planificateur fournisseur-free `30393664912` confirme 78 fixtures suivies,
+3 615 fenêtres canoniques, 0 fenêtre due et 0 appel. Les 18 échéances déjà
+passées sont marquées comme manquées ; elles ne sont jamais forcées après
+leur cutoff.
+
+## Mutualisation du quota
+
+Le coût théorique reste de trois transports par ligue : `/status`, résolution
+de saison et fixtures. Un cycle complet représente donc 15 appels maximum ;
+les deux probes séparés en représentent 6. La revue n’a pas mutualisé
+`/status` entre des runs indépendants et n’a pas réutilisé une saison sans
+reçu de fraîcheur : 15 estimés / 15 physiques pour un cycle complet, soit
+0 économie artificielle. La provenance a priorité sur une optimisation
+facultative.
+
+## Replay et preuves finales
+
+Le replay autonome `30396732141` puis le rapport composite `30403466803` sont
 verts et sans fournisseur. Le dernier état vérifie :
 
-- 29 fixtures reconstruites sur 29 et 58 slots d’identité résolus sur 58 ;
-- 47 payloads/reçus live, 132 objets physiques uniques et 264 184 octets ;
+- 78 fixtures reconstruites sur 78 et 156 slots d’identité résolus sur 156 ;
+- 96 payloads et 96 reçus live, 279 objets physiques uniques et 652 026
+  octets ;
+- 87 objets de récupération / 347 848 octets, avec namespace vérifié ;
 - zéro hash divergent, perte, suppression ou lag ;
-- 1 361 fenêtres actives, 531 fenêtres héritées inactives et 47 observations
-  temporellement admissibles ;
-- 12 tables PostgreSQL, zéro payload brut en base, replay de second passage
-  avec 0 insert et 47 doublons évités ;
-- 0 appel fournisseur et 0 crédit Odds pour le replay, les gates, les
-  identités et la reconstruction Robin Experience ;
+- 3 615 fenêtres canoniques ; aucune fenêtre n’était due lors du passage
+  fournisseur-free ;
+- 12 tables PostgreSQL, zéro payload brut en base et reconstruction complète ;
+- seconde passe avec 0 insert et 96 doublons évités ;
+- 0 appel fournisseur et 0 crédit Odds pendant replay, gates, audit des
+  identités et reconstruction de Robin Experience ;
 - 0 candidat, 0 décision, 0 mise et aucune promotion de modèle.
+
+Le rapport de gates évalue 390 combinaisons fixture/gate. Les gates profondes
+restent honnêtement `BLOCKED_BY_COVERAGE` tant que leurs fenêtres ne sont pas
+échues ; ce statut scientifique ne remet pas en cause l’activation du registre
+des cinq compétitions.
 
 Les preuves compactes suivies sont :
 
@@ -141,12 +177,21 @@ Les preuves compactes suivies sont :
 - `reports/ux/team-identity-provenance.json` ;
 - `reports/jalon12/next-due-windows.json`.
 
+## Résultat par ligue
+
+| Ligue | Fixtures | Profil | Gate | Raison |
+|---|---:|---|---|---|
+| Ligue 1 | 9 | `FULL` | `ACTIVE_FULL` | Fixtures, identités, stockage et replay vérifiés |
+| Premier League | 10 | `DEEP_FULL_ODDS_REDUCED` | `ACTIVE_ODDS_REDUCED` | Fixtures et identités vérifiées, cotes sous budget réduit |
+| Liga | 30 | `DEEP_FULL_ODDS_REDUCED` | `ACTIVE_ODDS_REDUCED` | Probe ciblé valide sur l’horizon de 45 jours |
+| Bundesliga | 19 | `DEEP_FULL_ODDS_REDUCED` | `ACTIVE_ODDS_REDUCED` | Calendrier trouvé dans l’horizon de 45 jours |
+| Serie A | 10 | `DEEP_FULL_ODDS_REDUCED` | `ACTIVE_ODDS_REDUCED` | Fixtures et identités vérifiées, cotes sous budget réduit |
+
 Verdict réel :
 
 ```text
-FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL
+FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY
 ```
 
-La PR #20 reste en brouillon et non fusionnée. Le verdict est partiel parce
-que la Liga et la Bundesliga n’ont aucune fixture active issue de cet audit,
-pas à cause d’un défaut R2, PostgreSQL, replay, identité, budget ou dashboard.
+La PR #20 peut quitter le brouillon puis être fusionnée par merge commit après
+confirmation de la CI et de l’absence d’objection majeure.

@@ -120,13 +120,6 @@ const catalogue: Record<string, StatusPresentation> = {
     icon: "Ⅱ",
     severity: 0,
   },
-  BLOCKED_PROVIDER: {
-    short: "Ancien état à réévaluer",
-    long: "Ce libellé historique ne distingue pas une réponse vide d’une erreur et ne doit plus être produit.",
-    tone: "attention",
-    icon: "◔",
-    severity: 1,
-  },
   LIVE_PROSPECTIVE_CAPTURE: {
     short: "Observations pré-match en cours",
     long: "La collecte prospective est active et reste strictement antérieure au match.",
@@ -413,7 +406,6 @@ CAMPAIGN_BLOCKED
 CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2
 BLOCKED_BUDGET
 BLOCKED_IDENTITY
-BLOCKED_PROVIDER
 BLOCKED_PROVIDER_ERROR
 DISABLED
 COMPUTABLE

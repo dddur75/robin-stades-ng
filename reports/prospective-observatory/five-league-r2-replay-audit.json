@@ -1,30 +1,30 @@
 {
   "attempts_reconstructed": 0,
-  "budget_records_reconstructed": 19,
+  "budget_records_reconstructed": 25,
   "capture_provenance": {
     "cache_test_receipts": 0,
-    "live_provider_receipts": 47,
-    "provider_calls_recorded": 5,
+    "live_provider_receipts": 96,
+    "provider_calls_recorded": 7,
     "unverified_receipts": 0
   },
-  "capture_set_sha256": "4ba95647c75362a91268297e13cf44b79732828c653ffa052bec68d76f525901",
+  "capture_set_sha256": "a6d2cf431da915d675dc8ed6a94a695b042e3b6efb02dc97281e8f18475ffe94",
   "command": "replay-audit",
   "complete_replay": true,
   "data_loss": 0,
-  "dataset_hash": "bcbd33c58fd870cd91476711de62f4a0b7fb06e93ab19c8e9e17d9076301c49c",
+  "dataset_hash": "5487f0c50a2a84cecf6ff878eb6698697354ef4e128c224ff6215e42ddb0413c",
   "deletions": 0,
   "demo_mode_enabled": false,
-  "fixture_ids_expected": 29,
-  "fixtures_reconstructed": 29,
-  "generated_at": "2026-07-28T17:34:51.126428+00:00",
+  "fixture_ids_expected": 78,
+  "fixtures_reconstructed": 78,
+  "generated_at": "2026-07-28T22:09:51.939868+00:00",
   "hash_mismatches": 0,
-  "logical_bytes_read": 132016,
-  "logical_payload_bytes_read": 63797,
-  "logical_receipt_bytes_read": 68219,
-  "logical_references": 47,
+  "logical_bytes_read": 304178,
+  "logical_payload_bytes_read": 165351,
+  "logical_receipt_bytes_read": 138827,
+  "logical_references": 96,
   "namespace_verified": true,
   "no_bet_default": true,
-  "objects_examined": 132,
+  "objects_examined": 279,
   "observatory": {
     "captures": {
       "attempted": 0,
@@ -128,10 +128,10 @@
       "missed": 0
     },
     "fixtures": {
-      "horizon_days": 30,
-      "tracked": 29,
+      "horizon_days": 45,
+      "tracked": 78,
       "windows_due": 0,
-      "windows_planned": 1892
+      "windows_planned": 4146
     },
     "gates": {
       "by_name": {
@@ -167,7 +167,7 @@
         }
       }
     },
-    "generated_at": "2026-07-28T17:34:51.126428+00:00",
+    "generated_at": "2026-07-28T22:09:51.939868+00:00",
     "invariants": {
       "demo_mode_enabled": false,
       "no_bet_default": true,
@@ -178,7 +178,7 @@
       "storage_paused": true
     },
     "postgresql": {
-      "duplicates_avoided": 47,
+      "duplicates_avoided": 96,
       "inserts": 0,
       "migration": "0009_jalon12_observatory",
       "payload_body_rows": 0,
@@ -227,19 +227,19 @@
       }
     },
     "r2": {
-      "bytes": 264184,
+      "bytes": 652026,
       "deletions": 0,
       "lag": 0,
-      "objects_added": 132,
-      "recovery_bytes": 132168,
-      "recovery_objects": 38,
+      "objects_added": 279,
+      "recovery_bytes": 347848,
+      "recovery_objects": 87,
       "replay_status": "R2_REPLAY_VERIFIED",
-      "verified": 132
+      "verified": 279
     },
     "schema_version": "prospective-observatory-snapshot-v1",
     "source": {
-      "revision": "fda43caa3722ab5053625a06649ddbd0dff7a659",
-      "run_id": "30383448949",
+      "revision": "b236c39984188e01ccd0b6611869d2b1dc7d05ef",
+      "run_id": "30403466803",
       "workflow": "66 - Rapport des gates prospectifs"
     },
     "status": "R2_REPLAY_VERIFIED",
@@ -251,23 +251,23 @@
     }
   },
   "odds_api_credits": 0,
-  "payloads_replayed": 47,
-  "physical_payload_bytes": 63797,
-  "physical_payload_objects": 47,
-  "physical_receipt_bytes": 68219,
-  "physical_receipt_objects": 47,
-  "physical_recovery_bytes": 132168,
-  "physical_recovery_objects": 38,
-  "physical_unique_bytes": 264184,
-  "physical_unique_objects": 132,
-  "policy_sha256": "dfcf8f6a01b3dd99abbc3fc96bf94d5c0387b5e2361954d84428fb5cf51b7501",
+  "payloads_replayed": 96,
+  "physical_payload_bytes": 165351,
+  "physical_payload_objects": 96,
+  "physical_receipt_bytes": 138827,
+  "physical_receipt_objects": 96,
+  "physical_recovery_bytes": 347848,
+  "physical_recovery_objects": 87,
+  "physical_unique_bytes": 652026,
+  "physical_unique_objects": 279,
+  "policy_sha256": "143cd9348c28c60d488ce8ed2fba61f4f2fb3349c2eedf6befa3ae2b433da072",
   "production_status": "PRODUCTION_LOCKED",
   "provider_calls": 0,
   "raw_payloads_in_git": 0,
   "real_bets": false,
-  "report_sha256": "9eca986660f1cf553120d286dafd698a485dee48eb66d119ba857b7196f28b09",
+  "report_sha256": "5f792bad559f0c916e837064cee08b8bb868a9b458737b3fd255a38f272f3508",
   "schema_version": "prospective-observatory-operation-v1",
-  "second_pass_duplicates": 47,
+  "second_pass_duplicates": 96,
   "second_pass_inserts": 0,
   "selection_truncated": false,
   "social_publishing_enabled": false,
