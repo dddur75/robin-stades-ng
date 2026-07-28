@@ -1,6 +1,6 @@
 {
   "schema_version": "team-identity-provenance-v1",
-  "generated_at": "2026-07-28T11:41:34.915284+00:00",
+  "generated_at": "2026-07-28T17:45:27.724551+00:00",
   "source": "EXISTING_VERIFIED_R2_FIXTURE_CAPTURES",
   "source_priority": [
     "R2_FIXTURE_PAYLOAD",
@@ -8,16 +8,496 @@
     "POSTGRESQL_PROJECTION",
     "DURABLE_IDENTITY_REGISTRY"
   ],
-  "fixture_scope_sha256": "f4c6333b5432265271520ed6336ecd4f7e5e6667606b307d1199b0843e793c22",
+  "fixture_scope_sha256": "54321f941c2f1ba2f8d8475555240a42d15b6872133a22032039c880ff49f3d4",
   "coverage": {
-    "fixtures_expected": 9,
-    "fixtures_resolved": 9,
-    "team_slots_expected": 18,
-    "team_slots_resolved": 18,
+    "fixtures_expected": 29,
+    "fixtures_resolved": 29,
+    "team_slots_expected": 58,
+    "team_slots_resolved": 58,
     "team_slots_unresolved": 0,
     "percentage": 100.0
   },
   "identities": [
+    {
+      "provider": "api-football",
+      "provider_team_id": "502",
+      "canonical_team_id": "api-football:502",
+      "display_name": "Fiorentina",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550087",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f",
+      "receipt_id": "4467d8135791df07ef01f28f80d0ebbdf8cb589e62ff1ce2298c7da43a4d2104",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550087/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550087/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "497",
+      "canonical_team_id": "api-football:497",
+      "display_name": "AS Roma",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550087",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f",
+      "receipt_id": "4467d8135791df07ef01f28f80d0ebbdf8cb589e62ff1ce2298c7da43a4d2104",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550087/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550087/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "488",
+      "canonical_team_id": "api-football:488",
+      "display_name": "Sassuolo",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550088",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588",
+      "receipt_id": "5a01de22020f6ba51b7eb31d93b1c83f5ea50c606c005a2746c4eca5eee3f125",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550088/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550088/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "499",
+      "canonical_team_id": "api-football:499",
+      "display_name": "Atalanta",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550088",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588",
+      "receipt_id": "5a01de22020f6ba51b7eb31d93b1c83f5ea50c606c005a2746c4eca5eee3f125",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550088/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550088/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "487",
+      "canonical_team_id": "api-football:487",
+      "display_name": "Lazio",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550089",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4",
+      "receipt_id": "1ea46ac8d8d090e02c84ab97980c870b5762d881cced09f2ca838f7302cc2878",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550089/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550089/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "500",
+      "canonical_team_id": "api-football:500",
+      "display_name": "Bologna",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550089",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4",
+      "receipt_id": "1ea46ac8d8d090e02c84ab97980c870b5762d881cced09f2ca838f7302cc2878",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550089/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550089/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "496",
+      "canonical_team_id": "api-football:496",
+      "display_name": "Juventus",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550090",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d",
+      "receipt_id": "2af5029d1d2677214b029557d385ad2dad72e1f209985460979861489d8871fb",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550090/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550090/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "512",
+      "canonical_team_id": "api-football:512",
+      "display_name": "Frosinone",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550090",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d",
+      "receipt_id": "2af5029d1d2677214b029557d385ad2dad72e1f209985460979861489d8871fb",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550090/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550090/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "492",
+      "canonical_team_id": "api-football:492",
+      "display_name": "Napoli",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550091",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b",
+      "receipt_id": "1dd3bb5c770db6e11cd4fc77584567d99f2c26a39a71aa524de13a3fcfdbcdba",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550091/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550091/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "495",
+      "canonical_team_id": "api-football:495",
+      "display_name": "Genoa",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550091",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b",
+      "receipt_id": "1dd3bb5c770db6e11cd4fc77584567d99f2c26a39a71aa524de13a3fcfdbcdba",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550091/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550091/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "1579",
+      "canonical_team_id": "api-football:1579",
+      "display_name": "Monza",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550092",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d",
+      "receipt_id": "75b8993f9a4ed494a810ccd4bde690644c2df09c4b65b3713fa4826c4508bd3f",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550092/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550092/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "505",
+      "canonical_team_id": "api-football:505",
+      "display_name": "Inter",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550092",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d",
+      "receipt_id": "75b8993f9a4ed494a810ccd4bde690644c2df09c4b65b3713fa4826c4508bd3f",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550092/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550092/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "490",
+      "canonical_team_id": "api-football:490",
+      "display_name": "Cagliari",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550093",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d",
+      "receipt_id": "b4e10a0be4e70e6483b826eaf6dde098c178430426c8aa280cde5d44359681f2",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550093/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550093/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "523",
+      "canonical_team_id": "api-football:523",
+      "display_name": "Parma",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550093",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d",
+      "receipt_id": "b4e10a0be4e70e6483b826eaf6dde098c178430426c8aa280cde5d44359681f2",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550093/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550093/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "489",
+      "canonical_team_id": "api-football:489",
+      "display_name": "AC Milan",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550094",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec",
+      "receipt_id": "dfbc026bf339617f7c4ebfae16b35da21417c4795b80d7d09b741081ebf68be7",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550094/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550094/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "503",
+      "canonical_team_id": "api-football:503",
+      "display_name": "Torino",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550094",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec",
+      "receipt_id": "dfbc026bf339617f7c4ebfae16b35da21417c4795b80d7d09b741081ebf68be7",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550094/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550094/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "895",
+      "canonical_team_id": "api-football:895",
+      "display_name": "Como",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550095",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1",
+      "receipt_id": "917d4a122083d79634edc42173ba0404ecad2ad3702ca693bf623ce0abfd6d1d",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550095/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550095/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "494",
+      "canonical_team_id": "api-football:494",
+      "display_name": "Udinese",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550095",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1",
+      "receipt_id": "917d4a122083d79634edc42173ba0404ecad2ad3702ca693bf623ce0abfd6d1d",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550095/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550095/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "867",
+      "canonical_team_id": "api-football:867",
+      "display_name": "Lecce",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550096",
+      "side": "away",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f",
+      "receipt_id": "8b92d3a551f199b8eddca3974fb9bb68a0df37bf6bd04f2646e641bbd452f461",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550096/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550096/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "517",
+      "canonical_team_id": "api-football:517",
+      "display_name": "Venezia",
+      "short_name": null,
+      "competition": "Serie A",
+      "season": "2026",
+      "fixture_id": "api-football:1550096",
+      "side": "home",
+      "captured_at": "2026-07-28T15:12:52.821865+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f",
+      "receipt_id": "8b92d3a551f199b8eddca3974fb9bb68a0df37bf6bd04f2646e641bbd452f461",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550096/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/payload-f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Serie%20A/season=2026/fixture=api-football%3A1550096/source=api-football/family=FIXTURE/observed_at=20260728T151252.821865Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
     {
       "provider": "api-football",
       "provider_team_id": "79",
@@ -28,12 +508,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552729",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe",
-      "receipt_id": "57f2ecbd595d76eb5b9bacced2d1b6362167158bb8819b8013b26341081cfdbf",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe.json",
+      "payload_sha256": "25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3",
+      "receipt_id": "c7531c3935b85e1465f1cf3035946f92b12438e1a37d585682ee51a3f142dac3",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -52,12 +532,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552729",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe",
-      "receipt_id": "57f2ecbd595d76eb5b9bacced2d1b6362167158bb8819b8013b26341081cfdbf",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe.json",
+      "payload_sha256": "25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3",
+      "receipt_id": "c7531c3935b85e1465f1cf3035946f92b12438e1a37d585682ee51a3f142dac3",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552729/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -76,12 +556,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552730",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8",
-      "receipt_id": "80e609b3511034bfd1f78e28c77b3c15efc3c102c43685cd106c78d84b20e8a6",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8.json",
+      "payload_sha256": "9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243",
+      "receipt_id": "8162cc216210682722da1c24c983763de2db26e3498671f1181563b2964a0852",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -100,12 +580,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552730",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8",
-      "receipt_id": "80e609b3511034bfd1f78e28c77b3c15efc3c102c43685cd106c78d84b20e8a6",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8.json",
+      "payload_sha256": "9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243",
+      "receipt_id": "8162cc216210682722da1c24c983763de2db26e3498671f1181563b2964a0852",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552730/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -124,12 +604,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552731",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b",
-      "receipt_id": "04060aac61aa3e48b132365690c6840ac9fa60bc1ce69ba98a23523b3d53573e",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b.json",
+      "payload_sha256": "224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972",
+      "receipt_id": "100dca2e7668199773533c3925d488bffac5d11fcc98c3ba1b244f866116b1d2",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -148,12 +628,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552731",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b",
-      "receipt_id": "04060aac61aa3e48b132365690c6840ac9fa60bc1ce69ba98a23523b3d53573e",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b.json",
+      "payload_sha256": "224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972",
+      "receipt_id": "100dca2e7668199773533c3925d488bffac5d11fcc98c3ba1b244f866116b1d2",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552731/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -172,12 +652,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552732",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916",
-      "receipt_id": "ac655ecdd3a1b235bb9609afc2cf26d8e567f6cbc5a892e53098332150d6e72d",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916.json",
+      "payload_sha256": "a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7",
+      "receipt_id": "87b2702231f9d0c155d0d42c1bc9a1878ed8e31dd841ff2202554d17eb6df912",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -196,12 +676,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552732",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916",
-      "receipt_id": "ac655ecdd3a1b235bb9609afc2cf26d8e567f6cbc5a892e53098332150d6e72d",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916.json",
+      "payload_sha256": "a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7",
+      "receipt_id": "87b2702231f9d0c155d0d42c1bc9a1878ed8e31dd841ff2202554d17eb6df912",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552732/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -220,12 +700,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552733",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49",
-      "receipt_id": "ec2498dea1709b2d53d984a20f8b4cd78faf62c872c42bc4b857543ba5ace41c",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49.json",
+      "payload_sha256": "9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f",
+      "receipt_id": "294ae43c130f26040deee9f0647703ce7aa6f5dbd163863bdac52513e83bcda1",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -244,12 +724,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552733",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49",
-      "receipt_id": "ec2498dea1709b2d53d984a20f8b4cd78faf62c872c42bc4b857543ba5ace41c",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49.json",
+      "payload_sha256": "9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f",
+      "receipt_id": "294ae43c130f26040deee9f0647703ce7aa6f5dbd163863bdac52513e83bcda1",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552733/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -268,12 +748,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552734",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c",
-      "receipt_id": "0c9e5832a4a7fc1e152e8dcdd71099d4b2ea5aaff879be1a90cfe0aa626ae852",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c.json",
+      "payload_sha256": "00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49",
+      "receipt_id": "740fffb2c55223490c7401350f1e07b5649aa9ad47426297a62e754cf50afaec",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -292,12 +772,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552734",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c",
-      "receipt_id": "0c9e5832a4a7fc1e152e8dcdd71099d4b2ea5aaff879be1a90cfe0aa626ae852",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c.json",
+      "payload_sha256": "00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49",
+      "receipt_id": "740fffb2c55223490c7401350f1e07b5649aa9ad47426297a62e754cf50afaec",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552734/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -316,12 +796,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552735",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a",
-      "receipt_id": "68cd5c145ab3041923539d2c93e8beac12003b146b4000b8e82f414b3da9b14a",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a.json",
+      "payload_sha256": "242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901",
+      "receipt_id": "fab0f079821141e89b8e0c4356f16b95a209c1d50ff7ca983a403615caf91c73",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -340,12 +820,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552735",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a",
-      "receipt_id": "68cd5c145ab3041923539d2c93e8beac12003b146b4000b8e82f414b3da9b14a",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a.json",
+      "payload_sha256": "242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901",
+      "receipt_id": "fab0f079821141e89b8e0c4356f16b95a209c1d50ff7ca983a403615caf91c73",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552735/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -364,12 +844,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552736",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840",
-      "receipt_id": "4687eae3fbca85e4873ba87d0317b2b87ab5cf7fa3c5feb8614abdf402b577f1",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840.json",
+      "payload_sha256": "d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a",
+      "receipt_id": "dedea2ccfb3a2e604f0494990ff7e8145afad38d8638381921c6887aa2ce6e3c",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -388,12 +868,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552736",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840",
-      "receipt_id": "4687eae3fbca85e4873ba87d0317b2b87ab5cf7fa3c5feb8614abdf402b577f1",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840.json",
+      "payload_sha256": "d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a",
+      "receipt_id": "dedea2ccfb3a2e604f0494990ff7e8145afad38d8638381921c6887aa2ce6e3c",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552736/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -412,12 +892,12 @@
       "season": "2026",
       "fixture_id": "api-football:1552737",
       "side": "away",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187",
-      "receipt_id": "01ed16cc751aa5945fb4f0223539a33eca326293ba34e37d02a1ff8667b02bef",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187.json",
+      "payload_sha256": "b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10",
+      "receipt_id": "746f1f9c30f719735801aeaa791f8c3c1b84fff3204bd3b93d93daca2fae5d3f",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -436,12 +916,492 @@
       "season": "2026",
       "fixture_id": "api-football:1552737",
       "side": "home",
-      "captured_at": "2026-07-28T05:33:44.948310+00:00",
+      "captured_at": "2026-07-28T15:00:54.368704+00:00",
       "source": "R2_FIXTURE_PAYLOAD",
-      "payload_sha256": "66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187",
-      "receipt_id": "01ed16cc751aa5945fb4f0223539a33eca326293ba34e37d02a1ff8667b02bef",
-      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/payload-66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187.json.gz",
-      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T053344.948310Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187.json",
+      "payload_sha256": "b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10",
+      "receipt_id": "746f1f9c30f719735801aeaa791f8c3c1b84fff3204bd3b93d93daca2fae5d3f",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/payload-b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Ligue%201/season=2026/fixture=api-football%3A1552737/source=api-football/family=FIXTURE/observed_at=20260728T150054.368704Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "1346",
+      "canonical_team_id": "api-football:1346",
+      "display_name": "Coventry",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557367",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637",
+      "receipt_id": "f8de530d1365ba222790a24d54d92fd8bc76da7934c8fd8c4fbb4d645f31b68b",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557367/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557367/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "42",
+      "canonical_team_id": "api-football:42",
+      "display_name": "Arsenal",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557367",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637",
+      "receipt_id": "f8de530d1365ba222790a24d54d92fd8bc76da7934c8fd8c4fbb4d645f31b68b",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557367/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557367/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "33",
+      "canonical_team_id": "api-football:33",
+      "display_name": "Manchester United",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557368",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332",
+      "receipt_id": "c2ac29da6512b5a1e78daf79c7b08c94bbd907b774c59db9cce11647bbeeebb6",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557368/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557368/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "64",
+      "canonical_team_id": "api-football:64",
+      "display_name": "Hull City",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557368",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332",
+      "receipt_id": "c2ac29da6512b5a1e78daf79c7b08c94bbd907b774c59db9cce11647bbeeebb6",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557368/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557368/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "52",
+      "canonical_team_id": "api-football:52",
+      "display_name": "Crystal Palace",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557369",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9",
+      "receipt_id": "d29c8dffc34ef6fbaeac82fc15adb1338b160f686cef33884d228037b070733a",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557369/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557369/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "45",
+      "canonical_team_id": "api-football:45",
+      "display_name": "Everton",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557369",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9",
+      "receipt_id": "d29c8dffc34ef6fbaeac82fc15adb1338b160f686cef33884d228037b070733a",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557369/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557369/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "746",
+      "canonical_team_id": "api-football:746",
+      "display_name": "Sunderland",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557370",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3",
+      "receipt_id": "f0f11fc113b399520174882e3d6d76e76aaf2619d2480cef525c90fd2913a525",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557370/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557370/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "57",
+      "canonical_team_id": "api-football:57",
+      "display_name": "Ipswich",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557370",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3",
+      "receipt_id": "f0f11fc113b399520174882e3d6d76e76aaf2619d2480cef525c90fd2913a525",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557370/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557370/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "63",
+      "canonical_team_id": "api-football:63",
+      "display_name": "Leeds",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557371",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0",
+      "receipt_id": "33e865cd1ceef30298098ce2af48c7ef31b35413c2734a3fe13b5c055aeadc39",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557371/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557371/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "65",
+      "canonical_team_id": "api-football:65",
+      "display_name": "Nottingham Forest",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557371",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0",
+      "receipt_id": "33e865cd1ceef30298098ce2af48c7ef31b35413c2734a3fe13b5c055aeadc39",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557371/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557371/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "47",
+      "canonical_team_id": "api-football:47",
+      "display_name": "Tottenham",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557372",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846",
+      "receipt_id": "11e37a9721abdcd5bd3f7f9b14776794477e9aa6bdaf0d2a8b8004fbac1e4694",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557372/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557372/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "55",
+      "canonical_team_id": "api-football:55",
+      "display_name": "Brentford",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557372",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846",
+      "receipt_id": "11e37a9721abdcd5bd3f7f9b14776794477e9aa6bdaf0d2a8b8004fbac1e4694",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557372/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557372/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "66",
+      "canonical_team_id": "api-football:66",
+      "display_name": "Aston Villa",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557373",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6",
+      "receipt_id": "28ac26c5ca8451f1158572f10de131ea91a6e4bc8907075f151f9143388b6854",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557373/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557373/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "51",
+      "canonical_team_id": "api-football:51",
+      "display_name": "Brighton",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557373",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6",
+      "receipt_id": "28ac26c5ca8451f1158572f10de131ea91a6e4bc8907075f151f9143388b6854",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557373/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557373/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "35",
+      "canonical_team_id": "api-football:35",
+      "display_name": "Bournemouth",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557374",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4",
+      "receipt_id": "56aef136957833820ac9794b53133021851a5832842663ab1d74b1182c117beb",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557374/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557374/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "50",
+      "canonical_team_id": "api-football:50",
+      "display_name": "Manchester City",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557374",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4",
+      "receipt_id": "56aef136957833820ac9794b53133021851a5832842663ab1d74b1182c117beb",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557374/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557374/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "40",
+      "canonical_team_id": "api-football:40",
+      "display_name": "Liverpool",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557375",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc",
+      "receipt_id": "fb095d142939dce694007c63a910d8fc65391c586556855b88695de14dd0e086",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557375/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557375/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "34",
+      "canonical_team_id": "api-football:34",
+      "display_name": "Newcastle",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557375",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc",
+      "receipt_id": "fb095d142939dce694007c63a910d8fc65391c586556855b88695de14dd0e086",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557375/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557375/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "49",
+      "canonical_team_id": "api-football:49",
+      "display_name": "Chelsea",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557376",
+      "side": "away",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559",
+      "receipt_id": "474c79c534e1ecb7b25397e1cd8b75424a3ff13c9b434d61fe68fb643ea74582",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557376/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557376/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559.json",
+      "receipt_verified": true,
+      "identity_status": "VERIFIED",
+      "postgresql_projection": {
+        "capture_receipt_verified": true,
+        "payload_index_verified": true,
+        "fixture_projection_verified": true
+      }
+    },
+    {
+      "provider": "api-football",
+      "provider_team_id": "36",
+      "canonical_team_id": "api-football:36",
+      "display_name": "Fulham",
+      "short_name": null,
+      "competition": "Premier League",
+      "season": "2026",
+      "fixture_id": "api-football:1557376",
+      "side": "home",
+      "captured_at": "2026-07-28T15:03:23.985056+00:00",
+      "source": "R2_FIXTURE_PAYLOAD",
+      "payload_sha256": "d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559",
+      "receipt_id": "474c79c534e1ecb7b25397e1cd8b75424a3ff13c9b434d61fe68fb643ea74582",
+      "payload_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557376/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/payload-d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559.json.gz",
+      "receipt_r2_key": "prospective-deep-data/schema-v1/competition=Premier%20League/season=2026/fixture=api-football%3A1557376/source=api-football/family=FIXTURE/observed_at=20260728T150323.985056Z/receipt-895cc43fe052361065183bce1c3538f7dc449bf40a8e920027ef37c2ef409df3-d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559.json",
       "receipt_verified": true,
       "identity_status": "VERIFIED",
       "postgresql_projection": {
@@ -468,7 +1428,7 @@
           {
             "display_name": "Stade Brestois 29",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -476,9 +1436,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b",
-                "receipt_id": "04060aac61aa3e48b132365690c6840ac9fa60bc1ce69ba98a23523b3d53573e"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972",
+                "receipt_id": "100dca2e7668199773533c3925d488bffac5d11fcc98c3ba1b244f866116b1d2"
               }
             ],
             "status": "VERIFIED"
@@ -497,7 +1457,7 @@
           {
             "display_name": "Auxerre",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -505,9 +1465,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916",
-                "receipt_id": "ac655ecdd3a1b235bb9609afc2cf26d8e567f6cbc5a892e53098332150d6e72d"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7",
+                "receipt_id": "87b2702231f9d0c155d0d42c1bc9a1878ed8e31dd841ff2202554d17eb6df912"
               }
             ],
             "status": "VERIFIED"
@@ -526,7 +1486,7 @@
           {
             "display_name": "Estac Troyes",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -534,9 +1494,9 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187",
-                "receipt_id": "01ed16cc751aa5945fb4f0223539a33eca326293ba34e37d02a1ff8667b02bef"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10",
+                "receipt_id": "746f1f9c30f719735801aeaa791f8c3c1b84fff3204bd3b93d93daca2fae5d3f"
               }
             ],
             "status": "VERIFIED"
@@ -555,7 +1515,7 @@
           {
             "display_name": "Le Havre",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -563,9 +1523,9 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8",
-                "receipt_id": "80e609b3511034bfd1f78e28c77b3c15efc3c102c43685cd106c78d84b20e8a6"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243",
+                "receipt_id": "8162cc216210682722da1c24c983763de2db26e3498671f1181563b2964a0852"
               }
             ],
             "status": "VERIFIED"
@@ -584,7 +1544,7 @@
           {
             "display_name": "Paris FC",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -592,9 +1552,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "66518ff5b3c9c01f9c710c97d7821ae6a5589c26561ba73221ef773150c5a187",
-                "receipt_id": "01ed16cc751aa5945fb4f0223539a33eca326293ba34e37d02a1ff8667b02bef"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "b505c8bfd283b509de9a395c4d6548a1b9215eba4fae9e18589daa9ddd0aba10",
+                "receipt_id": "746f1f9c30f719735801aeaa791f8c3c1b84fff3204bd3b93d93daca2fae5d3f"
               }
             ],
             "status": "VERIFIED"
@@ -613,7 +1573,7 @@
           {
             "display_name": "Lens",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -621,9 +1581,9 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "a12dde01640e386f8d57145cfa859e52de992d7c55a327fe7e9684af3499e916",
-                "receipt_id": "ac655ecdd3a1b235bb9609afc2cf26d8e567f6cbc5a892e53098332150d6e72d"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "a33564484ab796deec896d40586275b1f2394c2e53748461a6891085538720a7",
+                "receipt_id": "87b2702231f9d0c155d0d42c1bc9a1878ed8e31dd841ff2202554d17eb6df912"
               }
             ],
             "status": "VERIFIED"
@@ -642,7 +1602,7 @@
           {
             "display_name": "Le Mans",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -650,9 +1610,1111 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "dd16fda13c5639567c7e61c553f3eb47166e3f77ce1e127a439ea63f69a7744b",
-                "receipt_id": "04060aac61aa3e48b132365690c6840ac9fa60bc1ce69ba98a23523b3d53573e"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "224bb2757f03a0c65377ec8f064a6caa3b746dca7a10ecdf5b696e1f49f21972",
+                "receipt_id": "100dca2e7668199773533c3925d488bffac5d11fcc98c3ba1b244f866116b1d2"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "1346",
+        "canonical_team_id": "api-football:1346",
+        "display_name": "Coventry",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Coventry",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557367",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637",
+                "receipt_id": "f8de530d1365ba222790a24d54d92fd8bc76da7934c8fd8c4fbb4d645f31b68b"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "1579",
+        "canonical_team_id": "api-football:1579",
+        "display_name": "Monza",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Monza",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550092",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d",
+                "receipt_id": "75b8993f9a4ed494a810ccd4bde690644c2df09c4b65b3713fa4826c4508bd3f"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "33",
+        "canonical_team_id": "api-football:33",
+        "display_name": "Manchester United",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Manchester United",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557368",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332",
+                "receipt_id": "c2ac29da6512b5a1e78daf79c7b08c94bbd907b774c59db9cce11647bbeeebb6"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "34",
+        "canonical_team_id": "api-football:34",
+        "display_name": "Newcastle",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Newcastle",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557375",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc",
+                "receipt_id": "fb095d142939dce694007c63a910d8fc65391c586556855b88695de14dd0e086"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "35",
+        "canonical_team_id": "api-football:35",
+        "display_name": "Bournemouth",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Bournemouth",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557374",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4",
+                "receipt_id": "56aef136957833820ac9794b53133021851a5832842663ab1d74b1182c117beb"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "36",
+        "canonical_team_id": "api-football:36",
+        "display_name": "Fulham",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Fulham",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557376",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559",
+                "receipt_id": "474c79c534e1ecb7b25397e1cd8b75424a3ff13c9b434d61fe68fb643ea74582"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "40",
+        "canonical_team_id": "api-football:40",
+        "display_name": "Liverpool",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Liverpool",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557375",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "9be2eedca692e3757b09e055d7f5b6bacfbbadbc088a0c38b5eec7371a2c10cc",
+                "receipt_id": "fb095d142939dce694007c63a910d8fc65391c586556855b88695de14dd0e086"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "42",
+        "canonical_team_id": "api-football:42",
+        "display_name": "Arsenal",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Arsenal",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557367",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "82e220cce9685527290ad8e58b00583f0a023c28c08e9d633e0dc915e967c637",
+                "receipt_id": "f8de530d1365ba222790a24d54d92fd8bc76da7934c8fd8c4fbb4d645f31b68b"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "45",
+        "canonical_team_id": "api-football:45",
+        "display_name": "Everton",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Everton",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557369",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9",
+                "receipt_id": "d29c8dffc34ef6fbaeac82fc15adb1338b160f686cef33884d228037b070733a"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "47",
+        "canonical_team_id": "api-football:47",
+        "display_name": "Tottenham",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Tottenham",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557372",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846",
+                "receipt_id": "11e37a9721abdcd5bd3f7f9b14776794477e9aa6bdaf0d2a8b8004fbac1e4694"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "487",
+        "canonical_team_id": "api-football:487",
+        "display_name": "Lazio",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Lazio",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550089",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4",
+                "receipt_id": "1ea46ac8d8d090e02c84ab97980c870b5762d881cced09f2ca838f7302cc2878"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "488",
+        "canonical_team_id": "api-football:488",
+        "display_name": "Sassuolo",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Sassuolo",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550088",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588",
+                "receipt_id": "5a01de22020f6ba51b7eb31d93b1c83f5ea50c606c005a2746c4eca5eee3f125"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "489",
+        "canonical_team_id": "api-football:489",
+        "display_name": "AC Milan",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "AC Milan",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550094",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec",
+                "receipt_id": "dfbc026bf339617f7c4ebfae16b35da21417c4795b80d7d09b741081ebf68be7"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "49",
+        "canonical_team_id": "api-football:49",
+        "display_name": "Chelsea",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Chelsea",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557376",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "d02e7ef78abdd2a01d21350de498a5e90f084c47adebd1ae06edb531ea829559",
+                "receipt_id": "474c79c534e1ecb7b25397e1cd8b75424a3ff13c9b434d61fe68fb643ea74582"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "490",
+        "canonical_team_id": "api-football:490",
+        "display_name": "Cagliari",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Cagliari",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550093",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d",
+                "receipt_id": "b4e10a0be4e70e6483b826eaf6dde098c178430426c8aa280cde5d44359681f2"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "492",
+        "canonical_team_id": "api-football:492",
+        "display_name": "Napoli",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Napoli",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550091",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b",
+                "receipt_id": "1dd3bb5c770db6e11cd4fc77584567d99f2c26a39a71aa524de13a3fcfdbcdba"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "494",
+        "canonical_team_id": "api-football:494",
+        "display_name": "Udinese",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Udinese",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550095",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1",
+                "receipt_id": "917d4a122083d79634edc42173ba0404ecad2ad3702ca693bf623ce0abfd6d1d"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "495",
+        "canonical_team_id": "api-football:495",
+        "display_name": "Genoa",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Genoa",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550091",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "8aeea219718969e9040a95ead679c1b57acc32615baea3790f237b7b9e40f53b",
+                "receipt_id": "1dd3bb5c770db6e11cd4fc77584567d99f2c26a39a71aa524de13a3fcfdbcdba"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "496",
+        "canonical_team_id": "api-football:496",
+        "display_name": "Juventus",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Juventus",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550090",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d",
+                "receipt_id": "2af5029d1d2677214b029557d385ad2dad72e1f209985460979861489d8871fb"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "497",
+        "canonical_team_id": "api-football:497",
+        "display_name": "AS Roma",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "AS Roma",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550087",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f",
+                "receipt_id": "4467d8135791df07ef01f28f80d0ebbdf8cb589e62ff1ce2298c7da43a4d2104"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "499",
+        "canonical_team_id": "api-football:499",
+        "display_name": "Atalanta",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Atalanta",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550088",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "1dbaa3cb254853fef1043eb555222209dccc137ecc7fbaf3dd7a61ef95e44588",
+                "receipt_id": "5a01de22020f6ba51b7eb31d93b1c83f5ea50c606c005a2746c4eca5eee3f125"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "50",
+        "canonical_team_id": "api-football:50",
+        "display_name": "Manchester City",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Manchester City",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557374",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "1922990dac77087c49e9741430ab045195e391713b933741a6b083220560d8c4",
+                "receipt_id": "56aef136957833820ac9794b53133021851a5832842663ab1d74b1182c117beb"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "500",
+        "canonical_team_id": "api-football:500",
+        "display_name": "Bologna",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Bologna",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550089",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "7adddb202c21124f4fcff8cd491c9238573b8afa661a8fdbc228271bd433bcc4",
+                "receipt_id": "1ea46ac8d8d090e02c84ab97980c870b5762d881cced09f2ca838f7302cc2878"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "502",
+        "canonical_team_id": "api-football:502",
+        "display_name": "Fiorentina",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Fiorentina",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550087",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "de3f356887c566029bd065d11a69c51e7a6bb88bf69eb4eea572233964c98c6f",
+                "receipt_id": "4467d8135791df07ef01f28f80d0ebbdf8cb589e62ff1ce2298c7da43a4d2104"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "503",
+        "canonical_team_id": "api-football:503",
+        "display_name": "Torino",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Torino",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550094",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "e62d4f328dd1241f08b78d0e3ba278c907f802510b3d000cfcbcee6f473eb1ec",
+                "receipt_id": "dfbc026bf339617f7c4ebfae16b35da21417c4795b80d7d09b741081ebf68be7"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "505",
+        "canonical_team_id": "api-football:505",
+        "display_name": "Inter",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Inter",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550092",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "aa38fddb95be08c87609c04b90b997586fcada0591799db93cf985a5380f178d",
+                "receipt_id": "75b8993f9a4ed494a810ccd4bde690644c2df09c4b65b3713fa4826c4508bd3f"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "51",
+        "canonical_team_id": "api-football:51",
+        "display_name": "Brighton",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Brighton",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557373",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6",
+                "receipt_id": "28ac26c5ca8451f1158572f10de131ea91a6e4bc8907075f151f9143388b6854"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "512",
+        "canonical_team_id": "api-football:512",
+        "display_name": "Frosinone",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Frosinone",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550090",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "ab76eb0531f718e81003c217f05caeedaae1a2c493d617cd89f36422282fe61d",
+                "receipt_id": "2af5029d1d2677214b029557d385ad2dad72e1f209985460979861489d8871fb"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "517",
+        "canonical_team_id": "api-football:517",
+        "display_name": "Venezia",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Venezia",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550096",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f",
+                "receipt_id": "8b92d3a551f199b8eddca3974fb9bb68a0df37bf6bd04f2646e641bbd452f461"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "52",
+        "canonical_team_id": "api-football:52",
+        "display_name": "Crystal Palace",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Crystal Palace",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557369",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "6b000d7e408785e12be084da291e7e9cb95bd8bd00786442f05fa1eac554e3d9",
+                "receipt_id": "d29c8dffc34ef6fbaeac82fc15adb1338b160f686cef33884d228037b070733a"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "523",
+        "canonical_team_id": "api-football:523",
+        "display_name": "Parma",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Parma",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550093",
+                "side": "home",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "42045da6bbe4d8ab402019e22a194138607db6743166616c10d10fc1684db02d",
+                "receipt_id": "b4e10a0be4e70e6483b826eaf6dde098c178430426c8aa280cde5d44359681f2"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "55",
+        "canonical_team_id": "api-football:55",
+        "display_name": "Brentford",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Brentford",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557372",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "c03c8c610d2fa849a07f8548204e036045a27685beb15818655cc4ae896d5846",
+                "receipt_id": "11e37a9721abdcd5bd3f7f9b14776794477e9aa6bdaf0d2a8b8004fbac1e4694"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "57",
+        "canonical_team_id": "api-football:57",
+        "display_name": "Ipswich",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Ipswich",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557370",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3",
+                "receipt_id": "f0f11fc113b399520174882e3d6d76e76aaf2619d2480cef525c90fd2913a525"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "63",
+        "canonical_team_id": "api-football:63",
+        "display_name": "Leeds",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Leeds",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557371",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0",
+                "receipt_id": "33e865cd1ceef30298098ce2af48c7ef31b35413c2734a3fe13b5c055aeadc39"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "64",
+        "canonical_team_id": "api-football:64",
+        "display_name": "Hull City",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Hull City",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557368",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "f0eb5c4e6dcfa7c3dbef5b577ff47dad0580d89c7e966fef5022d3e7dd5f7332",
+                "receipt_id": "c2ac29da6512b5a1e78daf79c7b08c94bbd907b774c59db9cce11647bbeeebb6"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "65",
+        "canonical_team_id": "api-football:65",
+        "display_name": "Nottingham Forest",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Nottingham Forest",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557371",
+                "side": "home",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "69b6df7e209daa6f82901d2fc2f35c90f8ba5ecd529277f12ccfcaf0f0140bc0",
+                "receipt_id": "33e865cd1ceef30298098ce2af48c7ef31b35413c2734a3fe13b5c055aeadc39"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "66",
+        "canonical_team_id": "api-football:66",
+        "display_name": "Aston Villa",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Aston Villa",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557373",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "5d0ba5cffbcd23f44a5c32f6a2ce6ca7ce08319282ae008ff8c737f51ebde1c6",
+                "receipt_id": "28ac26c5ca8451f1158572f10de131ea91a6e4bc8907075f151f9143388b6854"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "746",
+        "canonical_team_id": "api-football:746",
+        "display_name": "Sunderland",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Sunderland",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:03:23.985056+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1557370",
+                "side": "away",
+                "competition": "Premier League",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:03:23.985056+00:00",
+                "payload_sha256": "3a936b68d8ca2ed7ae7ffeab56fdbf8fa67aa2e4438a84eb7e5e01e2a7376fe3",
+                "receipt_id": "f0f11fc113b399520174882e3d6d76e76aaf2619d2480cef525c90fd2913a525"
               }
             ],
             "status": "VERIFIED"
@@ -671,7 +2733,7 @@
           {
             "display_name": "Angers",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -679,9 +2741,9 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe",
-                "receipt_id": "57f2ecbd595d76eb5b9bacced2d1b6362167158bb8819b8013b26341081cfdbf"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3",
+                "receipt_id": "c7531c3935b85e1465f1cf3035946f92b12438e1a37d585682ee51a3f142dac3"
               }
             ],
             "status": "VERIFIED"
@@ -700,7 +2762,7 @@
           {
             "display_name": "Lille",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -708,9 +2770,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "833c1940b36800b4fcebbb35f55fb92920e7de3852ee44b7ba11b11dcafdabbe",
-                "receipt_id": "57f2ecbd595d76eb5b9bacced2d1b6362167158bb8819b8013b26341081cfdbf"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "25e8422ab13bb222fe57c8a2089eb3104252a7ad7d6209ca25d873552f5c4ec3",
+                "receipt_id": "c7531c3935b85e1465f1cf3035946f92b12438e1a37d585682ee51a3f142dac3"
               }
             ],
             "status": "VERIFIED"
@@ -729,7 +2791,7 @@
           {
             "display_name": "Lyon",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -737,9 +2799,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840",
-                "receipt_id": "4687eae3fbca85e4873ba87d0317b2b87ab5cf7fa3c5feb8614abdf402b577f1"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a",
+                "receipt_id": "dedea2ccfb3a2e604f0494990ff7e8145afad38d8638381921c6887aa2ce6e3c"
               }
             ],
             "status": "VERIFIED"
@@ -758,7 +2820,7 @@
           {
             "display_name": "Marseille",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -766,9 +2828,9 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49",
-                "receipt_id": "ec2498dea1709b2d53d984a20f8b4cd78faf62c872c42bc4b857543ba5ace41c"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f",
+                "receipt_id": "294ae43c130f26040deee9f0647703ce7aa6f5dbd163863bdac52513e83bcda1"
               }
             ],
             "status": "VERIFIED"
@@ -787,7 +2849,7 @@
           {
             "display_name": "Nice",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -795,9 +2857,9 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c",
-                "receipt_id": "0c9e5832a4a7fc1e152e8dcdd71099d4b2ea5aaff879be1a90cfe0aa626ae852"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49",
+                "receipt_id": "740fffb2c55223490c7401350f1e07b5649aa9ad47426297a62e754cf50afaec"
               }
             ],
             "status": "VERIFIED"
@@ -816,7 +2878,7 @@
           {
             "display_name": "Paris Saint Germain",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -824,9 +2886,67 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a",
-                "receipt_id": "68cd5c145ab3041923539d2c93e8beac12003b146b4000b8e82f414b3da9b14a"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901",
+                "receipt_id": "fab0f079821141e89b8e0c4356f16b95a209c1d50ff7ca983a403615caf91c73"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "867",
+        "canonical_team_id": "api-football:867",
+        "display_name": "Lecce",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Lecce",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550096",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "f1650430ed73aa5a81de2b026614521328a205cb732396048614ea63506f570f",
+                "receipt_id": "8b92d3a551f199b8eddca3974fb9bb68a0df37bf6bd04f2646e641bbd452f461"
+              }
+            ],
+            "status": "VERIFIED"
+          }
+        ],
+        "status": "VERIFIED"
+      },
+      {
+        "provider": "api-football",
+        "provider_team_id": "895",
+        "canonical_team_id": "api-football:895",
+        "display_name": "Como",
+        "short_name": null,
+        "aliases": [],
+        "versions": [
+          {
+            "display_name": "Como",
+            "short_name": null,
+            "valid_from": "2026-07-28T15:12:52.821865+00:00",
+            "valid_to": null,
+            "sources": [
+              {
+                "fixture_id": "api-football:1550095",
+                "side": "away",
+                "competition": "Serie A",
+                "season": "2026",
+                "captured_at": "2026-07-28T15:12:52.821865+00:00",
+                "payload_sha256": "16161d4c6e9ae97bcfa747d9ec0d89bab810e6d17e415f80e00f6725bb60a8d1",
+                "receipt_id": "917d4a122083d79634edc42173ba0404ecad2ad3702ca693bf623ce0abfd6d1d"
               }
             ],
             "status": "VERIFIED"
@@ -845,7 +2965,7 @@
           {
             "display_name": "Monaco",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -853,9 +2973,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "af194c1caf6c3c6690cd3d3b9d9a0a813c5c89188f3d339dec7624ed4184f5f8",
-                "receipt_id": "80e609b3511034bfd1f78e28c77b3c15efc3c102c43685cd106c78d84b20e8a6"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "9c9609b2b179052f170361b408408ef174b349d4d077bbd75e2ba6f31491f243",
+                "receipt_id": "8162cc216210682722da1c24c983763de2db26e3498671f1181563b2964a0852"
               }
             ],
             "status": "VERIFIED"
@@ -874,7 +2994,7 @@
           {
             "display_name": "Rennes",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -882,9 +3002,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "734efdf07f4eff593ee0bddb85e120067ee5631921f8ecdd2219d7a46733dd7a",
-                "receipt_id": "68cd5c145ab3041923539d2c93e8beac12003b146b4000b8e82f414b3da9b14a"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "242132d32f9378f40d51ac19af1ddd0f0c01eb879ed369056e142f60e68d0901",
+                "receipt_id": "fab0f079821141e89b8e0c4356f16b95a209c1d50ff7ca983a403615caf91c73"
               }
             ],
             "status": "VERIFIED"
@@ -903,7 +3023,7 @@
           {
             "display_name": "Strasbourg",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -911,9 +3031,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "1d8722be6e43e6c1ce042f019ee0eccd2ab075d45cf8bca16fee8453b46fba49",
-                "receipt_id": "ec2498dea1709b2d53d984a20f8b4cd78faf62c872c42bc4b857543ba5ace41c"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "9f5a934f00a73acff8e97b09c1293ecb5b9aa2f0eb944bcea11e3d71d12add2f",
+                "receipt_id": "294ae43c130f26040deee9f0647703ce7aa6f5dbd163863bdac52513e83bcda1"
               }
             ],
             "status": "VERIFIED"
@@ -932,7 +3052,7 @@
           {
             "display_name": "Toulouse",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -940,9 +3060,9 @@
                 "side": "home",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "32ce5fcf7be4cf98e037df16e21f132565eaa6995ff5e3f44d2126476db2d840",
-                "receipt_id": "4687eae3fbca85e4873ba87d0317b2b87ab5cf7fa3c5feb8614abdf402b577f1"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "d1b2ae76b411c51278d9fcb7933a1150b44dfcddbed80cee76346513f934de3a",
+                "receipt_id": "dedea2ccfb3a2e604f0494990ff7e8145afad38d8638381921c6887aa2ce6e3c"
               }
             ],
             "status": "VERIFIED"
@@ -961,7 +3081,7 @@
           {
             "display_name": "Lorient",
             "short_name": null,
-            "valid_from": "2026-07-28T05:33:44.948310+00:00",
+            "valid_from": "2026-07-28T15:00:54.368704+00:00",
             "valid_to": null,
             "sources": [
               {
@@ -969,9 +3089,9 @@
                 "side": "away",
                 "competition": "Ligue 1",
                 "season": "2026",
-                "captured_at": "2026-07-28T05:33:44.948310+00:00",
-                "payload_sha256": "b3ff2517ef3afa68a38f3d17413b3f5d8f840d344156743c1ce2b45c977a933c",
-                "receipt_id": "0c9e5832a4a7fc1e152e8dcdd71099d4b2ea5aaff879be1a90cfe0aa626ae852"
+                "captured_at": "2026-07-28T15:00:54.368704+00:00",
+                "payload_sha256": "00688ae25d7a490243a9d5bb3e3d7995aff939b820bde108ab177856aa40ea49",
+                "receipt_id": "740fffb2c55223490c7401350f1e07b5649aa9ad47426297a62e754cf50afaec"
               }
             ],
             "status": "VERIFIED"
@@ -981,20 +3101,20 @@
       }
     ]
   },
-  "registry_sha256": "eaa6d296ba19464df74393d26ffb638145302b3a8173243571cb6d7f8ed951ff",
+  "registry_sha256": "7e693824b999cc1518a0a877e1c8596a6022a671d17dcf86e9f67f21b224f69f",
   "reads": {
     "r2": {
-      "list_requests": 1,
-      "get_requests": 36,
-      "bytes_read": 50002,
-      "receipt_objects_read": 18,
-      "payload_objects_read": 18,
+      "list_requests": 3,
+      "get_requests": 94,
+      "bytes_read": 132016,
+      "receipt_objects_read": 47,
+      "payload_objects_read": 47,
       "writes": 0
     },
     "postgresql": {
       "transactions": 1,
       "read_queries": 2,
-      "rows_read": 18,
+      "rows_read": 58,
       "writes": 0
     }
   },
@@ -1012,5 +3132,5 @@
     "provider_calls": 0,
     "odds_credits": 0
   },
-  "report_sha256": "977a94851d29828dc2cc5713d093f324da42204f0adb813ffe48e9ed32f87249"
+  "report_sha256": "19aa3390c7823a17f1615522d1ae7fa13221a5381e692785988ed57f4659a15d"
 }

@@ -77,3 +77,67 @@ n’est inventée.
 - aucun payload brut dans Git ;
 - aucune suppression R2 ;
 - aucun pari réel, bookmaker ou publication sociale.
+
+## Pilote réel borné du 28 juillet 2026
+
+Le registre réel est le run GitHub Actions `30371041646`. Son estimation
+signée autorisait 15 appels API-Football au maximum, soit exactement trois par
+ligue, et zéro crédit Odds. Le ledger durable confirme 15 appels physiques :
+le compteur de 12 du premier rapport compact sous-comptait les trois appels
+consommés avant l’exception Liga ; ce défaut de comptage a été corrigé sans
+relancer le registre.
+
+| Ligue | Fixtures | Équipes | Saison | Dates des fixtures | Identités | Kickoffs | Gate | Profil |
+|---|---:|---:|---:|---|---:|---:|---|---|
+| Ligue 1 | 9 | 18 | 2026 | 21–23 août 2026 | 18/18 | 9/9 | `ACTIVE_FULL` | `FULL` |
+| Premier League | 10 | 20 | 2026 | 21–24 août 2026 | 20/20 | 10/10 | `ACTIVE_ODDS_REDUCED` | `DEEP_FULL_ODDS_REDUCED` |
+| Liga | 0 | 0 | — | — | 0/0 | 0/0 | `BLOCKED_PROVIDER` | `DEEP_FULL_ODDS_REDUCED` |
+| Bundesliga | 0 | 0 | 2026 | aucune fixture publiée dans l’horizon | 0/0 | 0/0 | `BLOCKED_PROVIDER` | `DEEP_FULL_ODDS_REDUCED` |
+| Serie A | 10 | 20 | 2026 | 22–24 août 2026 | 20/20 | 10/10 | `ACTIVE_ODDS_REDUCED` | `DEEP_FULL_ODDS_REDUCED` |
+
+La Liga a rencontré une validation sur une fixture antérieure à l’horizon.
+Le filtrage précède désormais la construction du contrat, mais le pilote
+initial n’a pas été relancé afin de ne jamais dépasser trois appels par ligue.
+La Bundesliga a répondu sans fixture sur les trente jours demandés. Ces deux
+blocages n’ont pas empêché l’activation des trois autres compétitions.
+
+Le planificateur `30373123502` a créé 1 361 fenêtres actives et constaté
+zéro fenêtre due et zéro fenêtre manquée. Les collecteurs joueurs/blessures
+`30373961624`, lineups/formations `30374838033` et Odds `30375023103` ont tous
+retourné `NO_DUE_WINDOW_SUCCESS` : zéro appel supplémentaire, zéro crédit
+Odds, zéro tentative et zéro écriture de capture. Aucune fenêtre future n’a été
+forcée.
+
+## Preuves finales
+
+Le replay autonome `30375179062` puis le rapport final `30383448949` sont
+verts et sans fournisseur. Le dernier état vérifie :
+
+- 29 fixtures reconstruites sur 29 et 58 slots d’identité résolus sur 58 ;
+- 47 payloads/reçus live, 132 objets physiques uniques et 264 184 octets ;
+- zéro hash divergent, perte, suppression ou lag ;
+- 1 361 fenêtres actives, 531 fenêtres héritées inactives et 47 observations
+  temporellement admissibles ;
+- 12 tables PostgreSQL, zéro payload brut en base, replay de second passage
+  avec 0 insert et 47 doublons évités ;
+- 0 appel fournisseur et 0 crédit Odds pour le replay, les gates, les
+  identités et la reconstruction Robin Experience ;
+- 0 candidat, 0 décision, 0 mise et aucune promotion de modèle.
+
+Les preuves compactes suivies sont :
+
+- `reports/prospective-observatory/five-league-expansion-summary.json` ;
+- `reports/prospective-observatory/five-league-r2-replay-audit.json` ;
+- `reports/prospective-observatory/five-league-cost-projection.json` ;
+- `reports/ux/team-identity-provenance.json` ;
+- `reports/jalon12/next-due-windows.json`.
+
+Verdict réel :
+
+```text
+FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL
+```
+
+La PR #20 reste en brouillon et non fusionnée. Le verdict est partiel parce
+que la Liga et la Bundesliga n’ont aucune fixture active issue de cet audit,
+pas à cause d’un défaut R2, PostgreSQL, replay, identité, budget ou dashboard.

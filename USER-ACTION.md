@@ -183,3 +183,19 @@ MERGED
 POST_MERGE_VERIFIED
 PRIVATE_DEPLOYED_FROM_MAIN
 ```
+
+## Expansion prospective cinq ligues
+
+`AUCUNE ACTION AUTOMATIQUE REQUISE`
+
+Le pilote réel est terminé et la PR brouillon #20 reste volontairement non
+fusionnée. Trois ligues sur cinq sont actives ; Liga et Bundesliga restent
+`BLOCKED_PROVIDER` faute de fixture admissible dans l’audit borné. La CI, le
+replay, R2, PostgreSQL, les identités et Robin Experience sont verts.
+
+Action recommandée : examiner la
+[PR brouillon #20](https://github.com/dddur75/robin-stades-ng/pull/20) et le
+verdict `FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL`. Ne fusionner que par
+décision explicite après acceptation de ce périmètre partiel ou après un futur
+audit fournisseur autorisé. Aucun pari réel, secret supplémentaire, achat,
+publication sociale ou reprise P3/P4 n’est demandé.

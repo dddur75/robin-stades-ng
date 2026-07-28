@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 2026-07-28
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/robin-experience-v1-french-dashboard`
+Branche : `codex/prospective-five-league-expansion`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -689,3 +689,37 @@ bankroll fictive de 1 000 unités. Les workflows 60 à 66 restent actifs, dans
 
 La clôture n’a forcé aucun appel fournisseur, crédit Odds, écriture R2 ou
 PostgreSQL, pari réel ou publication sociale.
+
+## Expansion prospective cinq ligues — pilote réel
+
+Verdict : `FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL`.
+
+La branche `codex/prospective-five-league-expansion` et la PR brouillon #20
+étendent le registre, les profils de capture, les budgets, le replay, le
+protocole préquentiel et Robin Experience aux cinq grands championnats.
+
+Le pilote registre `30371041646` a respecté la borne initiale de 3 appels
+API-Football par ligue et 0 crédit Odds. Le ledger durable confirme 15 appels
+au total. Ligue 1 (9 fixtures), Premier League (10) et Serie A (10) sont
+actives. Liga et Bundesliga restent `BLOCKED_PROVIDER` avec zéro fixture
+admissible ; leur blocage n’empêche pas les trois autres ligues.
+
+Le planificateur et les collecteurs dus ont confirmé zéro fenêtre actuellement
+due, donc zéro appel ou crédit supplémentaire et aucune fenêtre future forcée.
+Le rapport final `30383448949` vérifie 29/29 fixtures, 58/58 identités,
+47 payloads/reçus live, 132 objets R2 uniques, 264 184 octets, 1 361 fenêtres
+actives, zéro perte, suppression, hash divergent ou lag, et une reconstruction
+PostgreSQL complète sans payload brut en base.
+
+Robin Experience expose cinq lignes de championnat, les filtres, profils,
+coûts, gates, couvertures et prochaines captures depuis le snapshot réel. Le
+typecheck, le build, 31 tests Cockpit, la CI complète et les preuves visuelles
+sont verts sur le commit `fda43caa3722ab5053625a06649ddbd0dff7a659`.
+
+La référence préquentielle reste gelée, le challenger ne peut être mis à jour
+qu’après règlement, les prédictions sont immuables et liées à leur cutoff,
+features, cote, version et hash. Aucune promotion de modèle n’est autorisée.
+
+La PR #20 reste en brouillon et non fusionnée. Une revue humaine doit décider
+si le verdict partiel est acceptable ou si l’on attend la publication de
+fixtures Liga et Bundesliga. Tous les invariants de sécurité restent actifs.
