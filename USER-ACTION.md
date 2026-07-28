@@ -183,3 +183,22 @@ MERGED
 POST_MERGE_VERIFIED
 PRIVATE_DEPLOYED_FROM_MAIN
 ```
+
+## Expansion prospective cinq ligues
+
+`AUCUNE ACTION AUTOMATIQUE REQUISE`
+
+Les cinq ligues sont actives. La Liga et la Bundesliga ont été validées par
+deux probes bornés à 3 appels API-Football chacun et 0 crédit Odds ; elles sont
+en `ACTIVE_ODDS_REDUCED`. Le verdict est
+`FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY`.
+
+La [PR #20](https://github.com/dddur75/robin-stades-ng/pull/20) peut être
+passée en Ready puis fusionnée par merge commit lorsque ses contrôles sont
+verts. Le replay R2, PostgreSQL, les 156 identités, les 3 615 fenêtres
+canoniques et Robin Experience sont cohérents. L’activation ultérieure d’une
+ligue en attente est automatique et testée.
+
+Aucun pari réel, bookmaker, secret supplémentaire, achat, publication sociale,
+backfill, recherche de pattern, promotion de modèle ou reprise P3/P4 n’est
+demandé.

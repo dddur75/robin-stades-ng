@@ -63,6 +63,63 @@ const catalogue: Record<string, StatusPresentation> = {
     icon: "◌",
     severity: 0,
   },
+  ACTIVE_FULL: {
+    short: "Actif en cadence complète",
+    long: "Le calendrier est disponible et toutes les fenêtres prévues par le profil complet sont planifiées.",
+    tone: "positive",
+    icon: "✓",
+    severity: 0,
+  },
+  ACTIVE_ODDS_REDUCED: {
+    short: "Actif avec cotes réduites",
+    long: "Le calendrier est disponible ; les données profondes sont suivies avec les trois fenêtres de cotes prioritaires.",
+    tone: "positive",
+    icon: "✓",
+    severity: 0,
+  },
+  WAITING_FOR_FIXTURES: {
+    short: "Calendrier en attente",
+    long: "Le fournisseur a répondu normalement, mais aucune rencontre admissible n’est encore publiée.",
+    tone: "information",
+    icon: "◌",
+    severity: 0,
+  },
+  NO_FIXTURES_IN_CURRENT_HORIZON: {
+    short: "Aucune rencontre dans l’horizon",
+    long: "Le fournisseur a répondu normalement, mais aucune rencontre ne se trouve dans l’horizon de découverte actuel.",
+    tone: "information",
+    icon: "◌",
+    severity: 0,
+  },
+  BLOCKED_PROVIDER_ERROR: {
+    short: "Erreur fournisseur",
+    long: "Une erreur HTTP, d’authentification, de délai ou de schéma empêche la découverte du calendrier.",
+    tone: "critical",
+    icon: "!",
+    severity: 3,
+    action: "Examiner le dernier passage du registre.",
+  },
+  BLOCKED_IDENTITY: {
+    short: "Identités incomplètes",
+    long: "Le calendrier existe, mais toutes les équipes ne sont pas encore résolues avec une provenance vérifiée.",
+    tone: "attention",
+    icon: "◔",
+    severity: 2,
+  },
+  BLOCKED_BUDGET: {
+    short: "Budget de collecte protégé",
+    long: "Le registre reste fermé afin de préserver les plafonds et la réserve fournisseur.",
+    tone: "attention",
+    icon: "◔",
+    severity: 2,
+  },
+  DISABLED: {
+    short: "Désactivé",
+    long: "Cette compétition est volontairement exclue de la collecte.",
+    tone: "neutral",
+    icon: "Ⅱ",
+    severity: 0,
+  },
   LIVE_PROSPECTIVE_CAPTURE: {
     short: "Observations pré-match en cours",
     long: "La collecte prospective est active et reste strictement antérieure au match.",
@@ -335,6 +392,8 @@ const catalogue: Record<string, StatusPresentation> = {
 
 const documentedTechnicalStatuses = `
 ADAPTER_ONLY
+ACTIVE_FULL
+ACTIVE_ODDS_REDUCED
 API_FOOTBALL_LIVE_PIPELINE_VERIFIED
 API_FOOTBALL_AUTHENTICATED
 API_MARKET_BASELINE_READY
@@ -344,6 +403,11 @@ API_TEAM_DATASET_READY
 AUDIT_COMPLETE_VERIFIED
 AVAILABLE
 CAMPAIGN_BLOCKED
+CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2
+BLOCKED_BUDGET
+BLOCKED_IDENTITY
+BLOCKED_PROVIDER_ERROR
+DISABLED
 COMPUTABLE
 CONTROLLED_WITH_CR1_CLUSTER_SIGN_FLIP_CLUSTER_BOOTSTRAP_AND_BH
 CONTROL_DATASET_READY
@@ -360,6 +424,10 @@ EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING
 EXTERNAL_DATASET_READY
 EXTERNAL_VALIDATION_FAILED
 EXTERNAL_VALIDATION_PROTOCOL_V1_LOCKED
+FIVE_LEAGUE_PROSPECTIVE_EXPANSION_FAILED
+FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL
+FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY
+FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY_WITH_SCHEDULE_WAIT
 FROZEN_TRANSFER_EVALUATED
 HISTORICAL_BACKFILL_ACTIVE
 HISTORICAL_PILOT_VERIFIED
@@ -379,6 +447,7 @@ MATCH_DATE_CLUSTERED_TEAM_SERIAL_DEPENDENCE_REMAINS_LIMITATION
 MODEL_ARENA_ACTIVE
 NOT_APPLICABLE_LINEUP_GATE_BLOCKED
 NOT_APPLICABLE_PLAYER_GATE_BLOCKED
+NO_FIXTURES_IN_CURRENT_HORIZON
 NO_1X2_MARKET_ATTRITION
 NO_CAUSAL_CLAIM
 NO_DECISION_NO_CANDIDATE
@@ -425,6 +494,7 @@ UNKNOWN
 UNSTABLE
 WAITING_FOR_BACKFILL_GATES
 WAITING_FOR_EXTERNAL_GATES
+WAITING_FOR_FIXTURES
 WARN
 WARNING
 WORKFLOW_SUCCESS_LIVE_DATA

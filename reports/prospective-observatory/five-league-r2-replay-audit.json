@@ -1,0 +1,275 @@
+{
+  "attempts_reconstructed": 0,
+  "budget_records_reconstructed": 25,
+  "capture_provenance": {
+    "cache_test_receipts": 0,
+    "live_provider_receipts": 96,
+    "provider_calls_recorded": 7,
+    "unverified_receipts": 0
+  },
+  "capture_set_sha256": "a6d2cf431da915d675dc8ed6a94a695b042e3b6efb02dc97281e8f18475ffe94",
+  "command": "replay-audit",
+  "complete_replay": true,
+  "data_loss": 0,
+  "dataset_hash": "5487f0c50a2a84cecf6ff878eb6698697354ef4e128c224ff6215e42ddb0413c",
+  "deletions": 0,
+  "demo_mode_enabled": false,
+  "fixture_ids_expected": 78,
+  "fixtures_reconstructed": 78,
+  "generated_at": "2026-07-28T22:09:51.939868+00:00",
+  "hash_mismatches": 0,
+  "logical_bytes_read": 304178,
+  "logical_payload_bytes_read": 165351,
+  "logical_receipt_bytes_read": 138827,
+  "logical_references": 96,
+  "namespace_verified": true,
+  "no_bet_default": true,
+  "objects_examined": 279,
+  "observatory": {
+    "captures": {
+      "attempted": 0,
+      "by_family": {
+        "EVENT_STATUS": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "FIXTURE": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "FORMATION": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "INJURY": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "LINEUP": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "ODDS": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "PLAYER_STATUS": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "SQUAD": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        },
+        "TEAM": {
+          "attempted": 0,
+          "bytes": 0,
+          "captured": 0,
+          "due": 0,
+          "empty": 0,
+          "hashes": 0,
+          "invalid": 0,
+          "missed": 0
+        }
+      },
+      "bytes": 0,
+      "captured": 0,
+      "empty": 0,
+      "hashes": 0,
+      "invalid": 0,
+      "missed": 0
+    },
+    "fixtures": {
+      "horizon_days": 45,
+      "tracked": 78,
+      "windows_due": 0,
+      "windows_planned": 4146
+    },
+    "gates": {
+      "by_name": {
+        "PROSPECTIVE_FORMATION_GATE": {
+          "passed": 0,
+          "reason": "NO_PROSPECTIVE_OBSERVATION",
+          "status": "BLOCKED_BY_COVERAGE",
+          "total": 0
+        },
+        "PROSPECTIVE_INJURY_GATE": {
+          "passed": 0,
+          "reason": "NO_PROSPECTIVE_OBSERVATION",
+          "status": "BLOCKED_BY_COVERAGE",
+          "total": 0
+        },
+        "PROSPECTIVE_LINEUP_GATE": {
+          "passed": 0,
+          "reason": "NO_PROSPECTIVE_OBSERVATION",
+          "status": "BLOCKED_BY_COVERAGE",
+          "total": 0
+        },
+        "PROSPECTIVE_MARKET_GATE": {
+          "passed": 0,
+          "reason": "NO_PROSPECTIVE_OBSERVATION",
+          "status": "BLOCKED_BY_COVERAGE",
+          "total": 0
+        },
+        "PROSPECTIVE_PLAYER_GATE": {
+          "passed": 0,
+          "reason": "NO_PROSPECTIVE_OBSERVATION",
+          "status": "BLOCKED_BY_COVERAGE",
+          "total": 0
+        }
+      }
+    },
+    "generated_at": "2026-07-28T22:09:51.939868+00:00",
+    "invariants": {
+      "demo_mode_enabled": false,
+      "no_bet_default": true,
+      "p3_p4_paused": true,
+      "production_status": "PRODUCTION_LOCKED",
+      "real_bets": false,
+      "social_publishing_enabled": false,
+      "storage_paused": true
+    },
+    "postgresql": {
+      "duplicates_avoided": 96,
+      "inserts": 0,
+      "migration": "0009_jalon12_observatory",
+      "payload_body_rows": 0,
+      "reconstruction_status": "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2",
+      "tables": 12
+    },
+    "providers": {
+      "api_football_calls": 0,
+      "budgets": {
+        "api_football": {
+          "per_competition_per_day": 240,
+          "per_competition_per_run": 80,
+          "per_day": 800,
+          "per_run": 250,
+          "per_season": 75000,
+          "provider_reserve": 5000
+        },
+        "odds_api": {
+          "circuit_breaker_cooldown_minutes": 15,
+          "circuit_breaker_failures": 3,
+          "internal_safety_reserve": 2,
+          "near_kickoff_reserve": 80,
+          "per_competition_per_day": 24,
+          "per_competition_per_run": 4,
+          "per_day": 120,
+          "per_run": 20,
+          "per_week": 600,
+          "provider_reserve": 4000,
+          "window_priority": [
+            "NEAR_KICKOFF",
+            "H-2",
+            "J-1",
+            "H-6",
+            "J-3",
+            "J-7"
+          ]
+        }
+      },
+      "errors": 0,
+      "odds_api_credits": 0,
+      "reserves": {
+        "api_football": 5000,
+        "odds_api": 4000,
+        "odds_api_internal_safety": 2,
+        "odds_near_kickoff": 80
+      }
+    },
+    "r2": {
+      "bytes": 652026,
+      "deletions": 0,
+      "lag": 0,
+      "objects_added": 279,
+      "recovery_bytes": 347848,
+      "recovery_objects": 87,
+      "replay_status": "R2_REPLAY_VERIFIED",
+      "verified": 279
+    },
+    "schema_version": "prospective-observatory-snapshot-v1",
+    "source": {
+      "revision": "b236c39984188e01ccd0b6611869d2b1dc7d05ef",
+      "run_id": "30403466803",
+      "workflow": "66 - Rapport des gates prospectifs"
+    },
+    "status": "R2_REPLAY_VERIFIED",
+    "temporal": {
+      "before_cutoff": 0,
+      "gates": 0,
+      "late": 0,
+      "rejected": 0
+    }
+  },
+  "odds_api_credits": 0,
+  "payloads_replayed": 96,
+  "physical_payload_bytes": 165351,
+  "physical_payload_objects": 96,
+  "physical_receipt_bytes": 138827,
+  "physical_receipt_objects": 96,
+  "physical_recovery_bytes": 347848,
+  "physical_recovery_objects": 87,
+  "physical_unique_bytes": 652026,
+  "physical_unique_objects": 279,
+  "policy_sha256": "143cd9348c28c60d488ce8ed2fba61f4f2fb3349c2eedf6befa3ae2b433da072",
+  "production_status": "PRODUCTION_LOCKED",
+  "provider_calls": 0,
+  "raw_payloads_in_git": 0,
+  "real_bets": false,
+  "report_sha256": "5f792bad559f0c916e837064cee08b8bb868a9b458737b3fd255a38f272f3508",
+  "schema_version": "prospective-observatory-operation-v1",
+  "second_pass_duplicates": 96,
+  "second_pass_inserts": 0,
+  "selection_truncated": false,
+  "social_publishing_enabled": false,
+  "status": "R2_REPLAY_VERIFIED"
+}

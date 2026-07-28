@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   formatBytes,
   formatDateTime,
@@ -8,6 +11,7 @@ import {
 import {
   dataFamilyLabels,
   gateRows,
+  leagueSummaries,
   matches,
   nextCaptures,
   operationalEvidence,
@@ -46,6 +50,31 @@ const stateLabels: Record<CoverageState, string> = {
 };
 
 export function ObservatoryPage() {
+  const [selectedCompetition, setSelectedCompetition] = useState("Ligue 1");
+  const providerErrorCount = leagueSummaries.filter(
+    (league) => league.gate === "BLOCKED_PROVIDER_ERROR",
+  ).length;
+  const visibleMatches = selectedCompetition === "ALL"
+    ? matches
+    : matches.filter((match) => match.competition === selectedCompetition);
+  const visibleFixtureIds = new Set(visibleMatches.map((match) => match.id));
+  const visibleCaptures = selectedCompetition === "ALL"
+    ? nextCaptures
+    : nextCaptures.filter((capture) =>
+        capture.fixtureIds.some((fixtureId) => visibleFixtureIds.has(fixtureId))
+      );
+  const selectedLeague = leagueSummaries.find(
+    (league) => league.competition === selectedCompetition,
+  );
+  const selectedFixtures = selectedCompetition === "ALL"
+    ? operationalEvidence.fixtures
+    : selectedLeague?.fixtures ?? 0;
+  const selectedWindows = selectedCompetition === "ALL"
+    ? operationalEvidence.activeWindows
+    : selectedLeague?.activeWindows ?? 0;
+  const selectedDeep = selectedCompetition === "ALL"
+    ? operationalEvidence.deepObservations
+    : selectedLeague?.deepObservations ?? 0;
   return (
     <>
       <PageHeader
@@ -58,12 +87,72 @@ export function ObservatoryPage() {
       </PageHeader>
 
       <section className="metrics-grid observatory-metrics" aria-label="Indicateurs de l’observatoire">
-        <MetricCard detail="registre prospectif" icon="◉" label={t("observatory.metrics.fixtures")} tone="blue" value={formatNumber(operationalEvidence.fixtures)} />
-        <MetricCard detail="politique versionnée" icon="◫" label={t("observatory.metrics.activeWindows")} tone="green" value={formatNumber(operationalEvidence.activeWindows)} />
+        <MetricCard detail="registre prospectif" icon="◉" label={t("observatory.metrics.fixtures")} tone="blue" value={formatNumber(selectedFixtures)} />
+        <MetricCard detail="politique versionnée" icon="◫" label={t("observatory.metrics.activeWindows")} tone="green" value={formatNumber(selectedWindows)} />
         <MetricCard detail="à cet instant" icon="◷" label={t("observatory.metrics.dueWindows")} value={formatNumber(operationalEvidence.dueWindows)} />
         <MetricCard detail="vérifiées dans R2" icon="✓" label={t("observatory.metrics.physical")} tone="green" value={formatNumber(operationalEvidence.physicalEvidence)} />
-        <MetricCard detail="collecte en attente" icon="◇" label={t("observatory.metrics.deep")} tone="violet" value={formatNumber(operationalEvidence.deepObservations)} />
-        <MetricCard detail="aucun incident actif" icon="!" label={t("observatory.metrics.errors")} value={formatNumber(operationalEvidence.errors)} />
+        <MetricCard detail="collecte en attente" icon="◇" label={t("observatory.metrics.deep")} tone="violet" value={formatNumber(selectedDeep)} />
+        <MetricCard
+          detail={providerErrorCount ? "erreur fournisseur réelle" : "aucun incident actif"}
+          icon="!"
+          label={t("observatory.metrics.errors")}
+          value={formatNumber(operationalEvidence.errors + providerErrorCount)}
+        />
+      </section>
+
+      <section className="section-card">
+        <SectionHeading
+          title="Résumé par championnat"
+          subtitle="La Ligue 1 reste sélectionnée par défaut ; « Tous » agrège les cinq ligues."
+        />
+        <div className="league-filter" aria-label="Filtrer par championnat">
+          <button
+            aria-pressed={selectedCompetition === "ALL"}
+            onClick={() => setSelectedCompetition("ALL")}
+            type="button"
+          >
+            Tous
+          </button>
+          {leagueSummaries.map((league) => (
+            <button
+              aria-pressed={selectedCompetition === league.competition}
+              key={league.competition}
+              onClick={() => setSelectedCompetition(league.competition)}
+              type="button"
+            >
+              {league.competition}
+            </button>
+          ))}
+        </div>
+        <div className="league-summary-grid">
+          {leagueSummaries.map((league) => (
+            <article
+              className={
+                selectedCompetition === "ALL"
+                || selectedCompetition === league.competition
+                  ? "league-summary-card selected"
+                  : "league-summary-card"
+              }
+              key={league.competition}
+            >
+              <div>
+                <strong>{league.competition}</strong>
+                <StatusBadge value={league.gate} />
+              </div>
+              <dl>
+                <div><dt>Matchs</dt><dd>{formatNumber(league.fixtures)}</dd></div>
+                <div><dt>Prochaines captures</dt><dd>{formatNumber(league.nextCaptures)}</dd></div>
+                <div><dt>Couverture</dt><dd>{formatPercent(league.coverage)}</dd></div>
+                <div><dt>Données profondes</dt><dd>{formatNumber(league.deepObservations)}</dd></div>
+                <div><dt>API-Football</dt><dd>{formatNumber(league.apiFootballCalls)}</dd></div>
+                <div><dt>Crédits Odds</dt><dd>{formatNumber(league.oddsApiCredits)}</dd></div>
+              </dl>
+              <ExpertOnly>
+                <code>{league.captureProfile}</code>
+              </ExpertOnly>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="section-card">
@@ -71,8 +160,8 @@ export function ObservatoryPage() {
           subtitle={t("observatory.timeline.subtitle")}
           title={t("observatory.timeline.title")}
         />
-        {nextCaptures.length ? <ol className="horizontal-timeline">
-          {nextCaptures.slice(0, 5).map((capture, index) => (
+        {visibleCaptures.length ? <ol className="horizontal-timeline">
+          {visibleCaptures.slice(0, 5).map((capture, index) => (
             <li key={capture.id}>
               <div>
                 <span>{index + 1}</span>
@@ -102,9 +191,9 @@ export function ObservatoryPage() {
             <span key={state}><i className={`coverage-${state}`} />{stateLabels[state]}</span>
           ))}
         </div>
-        {matches.length ? <div className="matrix-scroll" tabIndex={0}>
+        {visibleMatches.length ? <div className="matrix-scroll" tabIndex={0}>
           <table className="coverage-matrix">
-            <caption>Couverture des familles de données pour {formatNumber(matches.length)} rencontre{matches.length > 1 ? "s" : ""} suivie{matches.length > 1 ? "s" : ""}</caption>
+            <caption>Couverture des familles de données pour {formatNumber(visibleMatches.length)} rencontre{visibleMatches.length > 1 ? "s" : ""} suivie{visibleMatches.length > 1 ? "s" : ""}</caption>
             <thead>
               <tr>
                 <th scope="col">Rencontre</th>
@@ -112,7 +201,7 @@ export function ObservatoryPage() {
               </tr>
             </thead>
             <tbody>
-              {matches.map((match) => (
+              {visibleMatches.map((match) => (
                 <tr key={match.id}>
                   <th scope="row"><strong>{match.home}</strong><span>{match.away}</span></th>
                   {matrixFamilies.map((family) => {

@@ -21,6 +21,7 @@ import {
 import {
   dataFamilyLabels,
   hypotheses,
+  leagueSummaries,
   matches,
   nextCaptures,
   operationalEvidence,
@@ -29,6 +30,12 @@ import {
 
 export function DashboardPage() {
   const next = nextCaptures[0];
+  const activeLeagueCount = leagueSummaries.filter((league) =>
+    ["ACTIVE_FULL", "ACTIVE_ODDS_REDUCED"].includes(league.gate)
+  ).length;
+  const waitingLeagueCount = leagueSummaries.filter((league) =>
+    ["WAITING_FOR_FIXTURES", "NO_FIXTURES_IN_CURRENT_HORIZON"].includes(league.gate)
+  ).length;
   const progressSteps = [
     { label: "Rencontres enregistrées", done: operationalEvidence.fixtures > 0 },
     { label: "Fenêtres planifiées", done: operationalEvidence.activeWindows > 0 },
@@ -41,8 +48,11 @@ export function DashboardPage() {
       <section className="hero">
         <PageHeader
           eyebrow={t("home.eyebrow")}
-          title={t("home.title", { count: operationalEvidence.fixtures })}
-          subtitle={t("home.subtitle")}
+          title={t("home.title")}
+          subtitle={t("home.subtitle", {
+            active: activeLeagueCount,
+            waiting: waitingLeagueCount,
+          })}
         >
           <div className="hero-statuses">
             <StatusBadge value={operationalEvidence.status} />
@@ -60,7 +70,7 @@ export function DashboardPage() {
 
       <section className="metrics-grid metrics-home" aria-label="Indicateurs principaux">
         <MetricCard
-          detail="prochaine journée de Ligue 1"
+          detail={`${activeLeagueCount} actifs · ${waitingLeagueCount} en attente`}
           icon="◉"
           label={t("home.metrics.matches")}
           tone="blue"
@@ -100,6 +110,29 @@ export function DashboardPage() {
           label={t("home.metrics.bankroll")}
           value={formatUnits(presentationBankroll.currentUnits)}
         />
+      </section>
+
+      <section className="section-block">
+        <SectionHeading
+          title="Les cinq championnats"
+          subtitle="Une lecture compacte de l’activation, de la couverture et du coût observé."
+        />
+        <div className="league-summary-grid">
+          {leagueSummaries.map((league) => (
+            <article className="league-summary-card" key={league.competition}>
+              <div>
+                <strong>{league.competition}</strong>
+                <StatusBadge value={league.gate} />
+              </div>
+              <span>{formatNumber(league.fixtures)} matchs</span>
+              <small>
+                {formatNumber(league.deepObservations)} observations profondes ·{" "}
+                {formatNumber(league.apiFootballCalls)} appels ·{" "}
+                {formatNumber(league.oddsApiCredits)} crédits
+              </small>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="dashboard-grid">

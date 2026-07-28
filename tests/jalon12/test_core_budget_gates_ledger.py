@@ -91,8 +91,11 @@ def test_budget_caps_external_reserves_idempotence_and_circuit_breaker() -> None
         recorded_at=NOW,
         reason="FIXTURE_REGISTRY",
     )
+    # The former 250-credit pilot ceiling is now governed by the adaptive
+    # central policy. This low-level ledger retains only an absolute
+    # append-only corruption guard.
     with pytest.raises(BudgetExceeded):
-        ledger.authorize(ProviderKind.ODDS_API, 251)
+        ledger.authorize(ProviderKind.ODDS_API, 10_001)
 
     breaker = CircuitBreaker(failure_threshold=2, cooldown=timedelta(minutes=5))
     breaker.record_failure(now=NOW)

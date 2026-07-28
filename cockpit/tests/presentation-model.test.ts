@@ -24,6 +24,7 @@ type TestWindow = MutableRecord & {
 type TestSnapshot = MutableRecord & {
   prospectiveObservatory: MutableRecord & {
     generated_at: string;
+    competitions?: MutableRecord[];
     r2: MutableRecord & {
       objects_added: number;
       verified: number;
@@ -119,11 +120,47 @@ function addSyntheticFixture(
 
 test("cas A — le modèle reflète le snapshot réel sans constante frontend", () => {
   const model = buildPresentationModel(snapshot, { now: referenceNow });
-  assert.equal(model.matches.length, 9);
-  assert.equal(model.dashboard.operationalEvidence.activeWindows, 441);
-  assert.equal(model.dashboard.operationalEvidence.physicalEvidence, 18);
-  assert.equal(model.dashboard.operationalEvidence.deepObservations, 0);
-  assert.equal(model.dashboard.bankroll.currentUnits, 1000);
+  const activeFixtureIds = new Set(
+    snapshot.prospectiveObservatory.fixtures.registry
+      .filter(
+        (fixture) =>
+          fixture.cancelled !== true &&
+          !["CANCELLED", "CANCELED", "TOMBSTONED", "DELETED"].includes(
+            String(fixture.status),
+          ),
+      )
+      .map((fixture) => fixture.fixture_id),
+  );
+  const activeWindows = snapshot.prospectiveObservatory.windows.registry.filter(
+    (window) =>
+      window.active !== false && activeFixtureIds.has(window.fixture_id),
+  ).length;
+  const captureFamilies = snapshot.prospectiveObservatory.captures.by_family;
+  const deepObservations = [
+    "SQUAD",
+    "PLAYER_STATUS",
+    "INJURY",
+    "LINEUP",
+    "FORMATION",
+    "ODDS",
+  ].reduce(
+    (sum, family) => sum + Number(captureFamilies[family]?.captured ?? 0),
+    0,
+  );
+  assert.equal(model.matches.length, activeFixtureIds.size);
+  assert.equal(model.dashboard.operationalEvidence.activeWindows, activeWindows);
+  assert.equal(
+    model.dashboard.operationalEvidence.physicalEvidence,
+    snapshot.prospectiveObservatory.r2.objects_added,
+  );
+  assert.equal(
+    model.dashboard.operationalEvidence.deepObservations,
+    deepObservations,
+  );
+  assert.equal(
+    model.dashboard.bankroll.currentUnits,
+    snapshot.patternResearch.bankroll.currentUnits,
+  );
   assert.equal(model.system.freshness.status, "FRESHNESS_CURRENT");
 });
 
@@ -165,13 +202,102 @@ test("cas B — une capture et un gate évoluent par mutation du snapshot seul",
 
 test("cas C — une dixième fixture apparaît automatiquement", () => {
   const value = cloneSnapshot();
+  const initialFixtureCount = value.prospectiveObservatory.fixtures.registry.length;
   addSyntheticFixture(value, {
     fixtureId: "synthetic-test:fixture-10",
     kickoffShift: 7 * 86_400_000,
   });
   const model = buildPresentationModel(value, { now: referenceNow });
-  assert.equal(model.matches.length, 10);
+  assert.equal(model.matches.length, initialFixtureCount + 1);
   assert.ok(model.matches.some((match) => match.id === "synthetic-test:fixture-10"));
+});
+
+test("cinq ligues — les profils et gates restent pilotés par le snapshot", () => {
+  const value = cloneSnapshot();
+  value.prospectiveObservatory.competitions = [
+    {
+      competition: "Ligue 1",
+      capture_profile: "FULL",
+      fixtures: 9,
+      teams: 18,
+      identity_slots_verified: 18,
+      identity_slots_expected: 18,
+      windows: 441,
+      next_captures: 9,
+      captures: 18,
+      deep_observations: 0,
+      empty_responses: 0,
+      api_football_calls: 3,
+      odds_api_credits: 0,
+      gate: "ACTIVE_FULL",
+      r2: "VERIFIED",
+      postgresql: "VERIFIED",
+      replay: "VERIFIED",
+    },
+    ...["Premier League", "Liga", "Bundesliga", "Serie A"].map(
+      (competition) => ({
+        competition,
+        capture_profile: "DEEP_FULL_ODDS_REDUCED",
+        fixtures: 0,
+        teams: 0,
+        identity_slots_verified: 0,
+        identity_slots_expected: 0,
+        windows: 0,
+        next_captures: 0,
+        captures: 0,
+        deep_observations: 0,
+        empty_responses: 0,
+        api_football_calls: 3,
+        odds_api_credits: 0,
+        gate: "WAITING_FOR_FIXTURES",
+        r2: "PENDING",
+        postgresql: "PENDING",
+        replay: "PENDING",
+      }),
+    ),
+  ];
+
+  const model = buildPresentationModel(value, { now: referenceNow });
+  assert.deepEqual(
+    model.leagues.map((league) => league.competition),
+    ["Ligue 1", "Premier League", "Liga", "Bundesliga", "Serie A"],
+  );
+  assert.equal(model.leagues[0].captureProfile, "FULL");
+  assert.equal(model.leagues[0].gate, "ACTIVE_FULL");
+  assert.equal(
+    model.leagues[1].captureProfile,
+    "DEEP_FULL_ODDS_REDUCED",
+  );
+  assert.equal(model.leagues[1].gate, "WAITING_FOR_FIXTURES");
+});
+
+test("activation automatique — un calendrier publié active la ligue sans code frontend", () => {
+  const value = cloneSnapshot();
+  const bundesliga = value.prospectiveObservatory.competitions.find(
+    (league) => league.competition === "Bundesliga",
+  );
+  assert.ok(bundesliga);
+  bundesliga.gate = "WAITING_FOR_FIXTURES";
+  bundesliga.fixtures = 0;
+  let model = buildPresentationModel(value, { now: referenceNow });
+  assert.equal(
+    model.leagues.find((league) => league.competition === "Bundesliga")?.gate,
+    "WAITING_FOR_FIXTURES",
+  );
+
+  bundesliga.gate = "ACTIVE_ODDS_REDUCED";
+  bundesliga.fixtures = 9;
+  bundesliga.teams = 18;
+  bundesliga.identity_slots_expected = 18;
+  bundesliga.identity_slots_verified = 18;
+  bundesliga.windows = 414;
+  model = buildPresentationModel(value, { now: referenceNow });
+  const activated = model.leagues.find(
+    (league) => league.competition === "Bundesliga",
+  );
+  assert.equal(activated?.gate, "ACTIVE_ODDS_REDUCED");
+  assert.equal(activated?.fixtures, 9);
+  assert.equal(activated?.identitySlotsVerified, 18);
 });
 
 test("identité A — un nom vérifié du snapshot est affiché tel quel", () => {
@@ -214,15 +340,21 @@ test("identité C — une nouvelle équipe apparaît sans modification frontend"
 
 test("cas D — le report d’un match déplace kickoff et fenêtres", () => {
   const value = cloneSnapshot();
-  const fixture = value.prospectiveObservatory.fixtures.registry[0];
+  const fixture = value.prospectiveObservatory.fixtures.registry.find(
+    (candidate) =>
+      value.prospectiveObservatory.windows.registry.some(
+        (window) => window.fixture_id === candidate.fixture_id,
+      ),
+  );
+  assert.ok(fixture, "le snapshot doit contenir une fixture planifiée");
   const homeName = fixture.home_name;
   const awayName = fixture.away_name;
   const originalKickoff = fixture.kickoff_at;
-  const originalNext = value.prospectiveObservatory.windows.registry
+  const fixtureWindows = value.prospectiveObservatory.windows.registry
     .filter((window) => window.fixture_id === fixture.fixture_id)
-    .sort((left, right) =>
-      left.opens_at.localeCompare(right.opens_at),
-    )[0].due_at;
+    .sort((left, right) => left.opens_at.localeCompare(right.opens_at));
+  assert.ok(fixtureWindows.length > 0);
+  const originalNext = fixtureWindows[0].due_at;
   const shift = 24 * 3_600_000;
   fixture.kickoff_at = shiftIso(fixture.kickoff_at, shift);
   const temporalFields = [
@@ -338,7 +470,13 @@ test("la fraîcheur devient ancienne lorsqu’une fenêtre s’ouvre après le s
 });
 
 test("tous les statuts du snapshot réel sont traduits", () => {
-  const model = buildPresentationModel(snapshot, { now: referenceNow });
+  const value = cloneSnapshot();
+  value.prospectiveObservatory.postgresql = {
+    ...(value.prospectiveObservatory.postgresql as MutableRecord),
+    reconstruction_status:
+      "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2",
+  };
+  const model = buildPresentationModel(value, { now: referenceNow });
   assert.equal(model.system.statusCoverage.percentage, 1);
   assert.deepEqual(model.system.statusCoverage.unknown, []);
 });

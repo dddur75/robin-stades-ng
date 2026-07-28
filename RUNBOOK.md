@@ -831,6 +831,64 @@ groupe `prospective-deep-state` et `cancel-in-progress=false`. Leur inspection
 est en lecture seule : ne jamais forcer un dispatch fournisseur pour valider
 Robin Experience.
 
+## Registre cinq ligues — calendrier et probes ciblés
+
+Le workflow 60 découvre les fixtures sur 45 jours, tout en conservant trois
+journées maximum par compétition. Cette portée ne change aucune fenêtre de
+capture : J-21 reste la première échéance et aucun collecteur profond ou Odds
+n’est déclenché par la découverte.
+
+Le cycle planifié utilise toujours `competition=ALL`. Un probe manuel peut
+cibler exactement une compétition configurée, après estimation signée :
+
+```powershell
+gh workflow run prospective-fixture-registry.yml `
+  --ref <branche-ou-main> `
+  -f execute=true `
+  -f competition="Liga"
+```
+
+Le script valide le nom contre la politique centrale ; le workflow ne contient
+aucune liste de ligues codée en dur. Le budget maximal est alors de 3 appels
+API-Football et 0 crédit Odds. Répéter séparément pour `Bundesliga` uniquement
+si la mission l’autorise.
+
+Interprétation obligatoire :
+
+- `WAITING_FOR_FIXTURES` ou `NO_FIXTURES_IN_CURRENT_HORIZON` : réponse
+  fournisseur valide, sans incident ;
+- `BLOCKED_PROVIDER_ERROR` : erreur HTTP, authentification, timeout ou schéma ;
+- `BLOCKED_BUDGET` : plafond ou réserve protégée ;
+- `ACTIVE_FULL` ou `ACTIVE_ODDS_REDUCED` : fixtures et identités admissibles.
+
+Une compétition en attente est réévaluée chaque jour par le même workflow.
+L’arrivée d’un calendrier planifie automatiquement les fenêtres idempotentes et
+met à jour Robin Experience sans changement de code.
+
+Clôture du 28 juillet 2026 :
+
+- Liga : run `30387868451`, 3 appels, 30 fixtures, 60/60 identités,
+  `ACTIVE_ODDS_REDUCED` ;
+- Bundesliga : run `30390501082`, 3 appels, 19 fixtures, 38/38 identités,
+  `ACTIVE_ODDS_REDUCED` ;
+- budget de mission : 6 appels API-Football et 0 crédit Odds ;
+- planification sans fournisseur : run `30393664912`, 78 fixtures, 3 615
+  fenêtres canoniques, 0 fenêtre due ;
+- replay sans fournisseur : run `30396732141`, 279 objets R2, 652 026 octets,
+  0 perte, suppression, divergence ou lag ;
+- reconstruction finale : run `30403466803`, 78/78 fixtures, 156/156 slots
+  d’identité, 96 doublons évités sur la seconde passe PostgreSQL.
+
+Les écritures du planificateur et des gates sont groupées en transaction
+bornée. Les connexions PostgreSQL sont vérifiées avant réutilisation et
+recyclées pendant les longues lectures R2. Ces propriétés évitent les
+transactions unitaires lentes et les connexions devenues obsolètes, sans
+changer l’idempotence ni la provenance.
+
+Le test d’activation automatique doit conserver la transition
+`WAITING_FOR_FIXTURES` vers `ACTIVE_ODDS_REDUCED`, la planification
+idempotente et la mise à jour du snapshot sans mutation de configuration.
+
 État attendu :
 
 ```text

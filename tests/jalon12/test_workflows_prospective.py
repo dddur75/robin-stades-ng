@@ -67,12 +67,34 @@ def test_central_policy_owns_provider_caps_reserves_and_markets() -> None:
     )
     budgets = policy["provider_budgets"]
     assert budgets == {
-        "api_football_max_calls_total": 5000,
-        "odds_api_max_credits_total": 250,
-        "odds_api_internal_safety_reserve": 2,
-        "api_football_provider_reserve": 5000,
-        "odds_api_provider_reserve": 4000,
-        "odds_api_near_kickoff_reserve": 80,
+        "api_football": {
+            "per_run": 250,
+            "per_day": 800,
+            "per_competition_per_run": 80,
+            "per_competition_per_day": 240,
+            "per_season": 75000,
+            "provider_reserve": 5000,
+        },
+        "odds_api": {
+            "per_run": 20,
+            "per_day": 120,
+            "per_week": 600,
+            "per_competition_per_run": 4,
+            "per_competition_per_day": 24,
+            "provider_reserve": 4000,
+            "internal_safety_reserve": 2,
+            "near_kickoff_reserve": 80,
+            "circuit_breaker_failures": 3,
+            "circuit_breaker_cooldown_minutes": 15,
+            "window_priority": [
+                "NEAR_KICKOFF",
+                "H-2",
+                "J-1",
+                "H-6",
+                "J-3",
+                "J-7",
+            ],
+        },
     }
     assert policy["markets"] == ["1X2", "OVER_UNDER_2_5"]
 
@@ -107,13 +129,30 @@ def test_capture_workflows_estimate_before_explicit_bounded_execution() -> None:
 
 def test_fixture_registry_is_dynamic_bounded_and_persisted_r2_first() -> None:
     workflow = _workflow("prospective-fixture-registry.yml")
-    assert "--competition \"Ligue 1\"" in workflow
+    assert "run_five_league_expansion.py registry" in workflow
+    assert "--competition \"Ligue 1\"" not in workflow
+    assert 'default: "ALL"' in workflow
+    assert '--competition "${{ inputs.competition || \'ALL\' }}"' in workflow
+    assert 'type: string' in workflow
+    assert '"Liga"' not in workflow
+    assert '"Bundesliga"' not in workflow
     assert '--policy "$PROSPECTIVE_POLICY"' in workflow
     assert workflow.index("--estimate") < workflow.index("--execute")
     assert "API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}" in workflow
     assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
     assert "ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}" in workflow
     assert "alembic upgrade head" in workflow
+
+
+def test_registry_discovery_horizon_does_not_change_capture_windows() -> None:
+    policy = json.loads(
+        (ROOT / "configs" / "prospective_observatory_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert policy["fixture_registry"]["horizon_days"] == 45
+    assert policy["fixture_registry"]["max_matchdays_per_competition"] == 3
+    assert policy["capture_windows"]["FIXTURE"][0] == "J-21"
 
 
 def test_odds_scope_and_zero_cost_replay_are_explicit() -> None:
@@ -154,6 +193,16 @@ def test_gate_workflow_preserves_ledger_and_refreshes_robin_live_artifact() -> N
     assert "cockpit/app/cockpit-data.sha256" in workflow
     assert "next-due-report" in workflow
     assert "reports/jalon12/next-due-windows.json" in workflow
+    assert (
+        'TEAM_IDENTITY_PROVENANCE_INPUT: '
+        '"artifacts/prospective-observatory/team-identity-pending.json"'
+        in workflow
+    )
+    assert (
+        'TEAM_IDENTITY_PROVENANCE_INPUT: '
+        '"artifacts/prospective-observatory/team-identity-provenance.json"'
+        in workflow
+    )
     assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
     assert "R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}" in workflow
     assert "R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}" in workflow

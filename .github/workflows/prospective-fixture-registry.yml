@@ -8,6 +8,11 @@ on:
         required: false
         default: false
         type: boolean
+      competition:
+        description: "Périmètre du registre (ALL pour le cycle quotidien)"
+        required: false
+        default: "ALL"
+        type: string
   schedule:
     - cron: "7 3 * * *"
 
@@ -39,13 +44,12 @@ jobs:
         run: |
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
-      - name: Estimer le registre Ligue 1
+      - name: Estimer le registre borné des cinq ligues
         run: >-
-          python scripts/run_prospective_observatory.py fixture-registry
+          python scripts/run_five_league_expansion.py registry
           --estimate
-          --max-attempts 1
+          --competition "${{ inputs.competition || 'ALL' }}"
           --policy "$PROSPECTIVE_POLICY"
-          --competition "Ligue 1"
           --output artifacts/prospective-observatory
       - name: Appliquer les migrations
         if: github.event_name == 'schedule' || inputs.execute
@@ -55,7 +59,7 @@ jobs:
         run: |
           alembic upgrade head
           alembic current | grep -q "0009"
-      - name: Enregistrer les fixtures réelles dans R2 et PostgreSQL
+      - name: Enregistrer les cinq ligues dans R2 et PostgreSQL
         if: github.event_name == 'schedule' || inputs.execute
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -66,12 +70,11 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: >-
-          python scripts/run_prospective_observatory.py fixture-registry
+          python scripts/run_five_league_expansion.py registry
           --execute
-          --max-attempts 1
+          --competition "${{ inputs.competition || 'ALL' }}"
           --policy "$PROSPECTIVE_POLICY"
-          --estimate-file artifacts/prospective-observatory/fixture-registry-estimate.json
-          --competition "Ligue 1"
+          --estimate-file artifacts/prospective-observatory/five-league-registry-estimate.json
           --output artifacts/prospective-observatory
       - uses: actions/upload-artifact@v4
         with:

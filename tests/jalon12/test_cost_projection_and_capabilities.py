@@ -167,7 +167,8 @@ def test_capability_matrix_covers_all_families_and_fail_closed_limits() -> None:
         "`/v4/sports/{sport}/odds`",
     ):
         assert endpoint in document
-    assert "P1_OFF" in document
+    assert "DEEP_FULL_ODDS_REDUCED" in document
+    assert "R2, PostgreSQL, replay et budget" in document
     assert "horodatage fournisseur" in document
     assert "non mappé" in document
     assert "CAPTURED_EMPTY" in document

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from robin.storage import database as database_module
 from robin.storage.database import (
     DatabaseConfigurationError,
     alembic_database_url,
@@ -33,6 +34,35 @@ def test_url_sqlite_reste_compatible() -> None:
     assert normalize_database_url(value) == value
     with build_engine(value).connect() as connection:
         assert connection.exec_driver_sql("SELECT 1").scalar_one() == 1
+
+
+def test_postgresql_pool_revalide_les_connexions_longues(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+    sentinel = object()
+
+    def fake_create_engine(
+        url: object,
+        **options: object,
+    ) -> object:
+        captured["url"] = url
+        captured.update(options)
+        return sentinel
+
+    monkeypatch.setattr(
+        database_module,
+        "create_engine",
+        fake_create_engine,
+    )
+    engine = database_module.build_engine(
+        "postgresql+psycopg://robin:secret@localhost:5432/robin"
+    )
+
+    assert engine is sentinel
+    assert captured["pool_pre_ping"] is True
+    assert captured["pool_recycle"] == 240
+    assert captured["connect_args"] == {"connect_timeout": 10}
 
 
 def test_mot_de_passe_encode_et_sslmode_sont_preserves() -> None:

@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 2026-07-28
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/robin-experience-v1-french-dashboard`
+Branche : `codex/prospective-five-league-expansion`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
 
@@ -689,3 +689,44 @@ bankroll fictive de 1 000 unités. Les workflows 60 à 66 restent actifs, dans
 
 La clôture n’a forcé aucun appel fournisseur, crédit Odds, écriture R2 ou
 PostgreSQL, pari réel ou publication sociale.
+
+## Expansion prospective cinq ligues — gates fermées
+
+Verdict : `FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY`.
+
+La PR #20 étend le registre, les profils de capture, les budgets, le replay,
+le protocole préquentiel et Robin Experience aux cinq grands championnats.
+Les statuts distinguent une attente normale de calendrier, l’absence de
+fixture dans l’horizon et une véritable erreur fournisseur. La découverte
+porte sur 45 jours sans modifier les fenêtres de capture, dont la première
+reste J-21.
+
+Les probes ciblés `30387868451` (Liga) et `30390501082` (Bundesliga) ont
+consommé exactement 3 appels API-Football chacun et 0 crédit Odds. Ils ont
+activé 30 fixtures Liga avec 60/60 slots d’identité, puis 19 fixtures
+Bundesliga avec 38/38 slots. Les deux gates sont
+`ACTIVE_ODDS_REDUCED`. Les deux échecs intermédiaires Bundesliga ont eu lieu
+avant tout transport fournisseur et ont donc consommé 0 appel.
+
+Le planificateur fournisseur-free `30393664912` a traité les 78 fixtures
+suivies sans fenêtre due ni collecte forcée. Le replay autonome
+`30396732141` et le rapport composite final `30403466803` vérifient
+78/78 fixtures, 156/156 slots d’identité, 96 payloads/reçus live, 279 objets
+R2 uniques, 652 026 octets, 3 615 fenêtres canoniques, 0 perte, suppression,
+hash divergent ou lag, et une reconstruction PostgreSQL idempotente sans
+payload brut en base. La seconde passe évite 96 doublons et n’insère aucune
+ligne.
+
+Robin Experience expose les cinq championnats, tous actifs : Ligue 1 en
+`ACTIVE_FULL`, puis Premier League, Liga, Bundesliga et Serie A en
+`ACTIVE_ODDS_REDUCED`. La synthèse finale, les identités, les fenêtres, le
+replay et le snapshot sont produits sans appel fournisseur ni crédit Odds.
+L’activation automatique depuis `WAITING_FOR_FIXTURES` est couverte par les
+tests backend et frontend, sans changement de code ni duplication.
+
+La référence préquentielle reste gelée, le challenger ne peut être mis à jour
+qu’après règlement, les prédictions sont immuables et liées à leur cutoff,
+features, cote, version et hash. Aucune promotion de modèle n’est autorisée.
+La PR #20 est autorisée à quitter le brouillon et à être fusionnée par merge
+commit dès confirmation de la CI et de l’absence d’objection majeure. Tous les
+invariants de sécurité restent actifs.

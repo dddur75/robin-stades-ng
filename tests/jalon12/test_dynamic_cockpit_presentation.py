@@ -141,7 +141,7 @@ def test_real_snapshot_has_two_verified_identities_per_fixture() -> None:
     assert isinstance(fixtures, dict)
     registry = fixtures["registry"]
     assert isinstance(registry, list)
-    assert len(registry) == 9
+    assert len(registry) == fixtures["tracked"]
     assert all(
         isinstance(fixture, dict)
         and isinstance(fixture["home_name"], str)
@@ -156,8 +156,9 @@ def test_real_snapshot_has_two_verified_identities_per_fixture() -> None:
     )
     identity_registry = fixtures["identity_registry"]
     assert isinstance(identity_registry, dict)
-    assert identity_registry["team_slots_expected"] == 18
-    assert identity_registry["team_slots_resolved"] == 18
+    expected_team_slots = len(registry) * 2
+    assert identity_registry["team_slots_expected"] == expected_team_slots
+    assert identity_registry["team_slots_resolved"] == expected_team_slots
 
 
 def test_committed_team_identity_provenance_is_verified_and_provider_free() -> None:
@@ -168,21 +169,34 @@ def test_committed_team_identity_provenance_is_verified_and_provider_free() -> N
     )
     report_hash = report.pop("report_sha256")
     assert canonical_sha256(report) == report_hash
+    snapshot = _snapshot()
+    observatory = snapshot["prospectiveObservatory"]
+    assert isinstance(observatory, dict)
+    fixtures = observatory["fixtures"]
+    assert isinstance(fixtures, dict)
+    registry = fixtures["registry"]
+    identity_registry = fixtures["identity_registry"]
+    assert isinstance(registry, list)
+    assert isinstance(identity_registry, dict)
+    fixture_count = len(registry)
+    expected_team_slots = fixture_count * 2
     assert report["coverage"] == {
-        "fixtures_expected": 9,
-        "fixtures_resolved": 9,
-        "team_slots_expected": 18,
-        "team_slots_resolved": 18,
+        "fixtures_expected": fixture_count,
+        "fixtures_resolved": fixture_count,
+        "team_slots_expected": expected_team_slots,
+        "team_slots_resolved": expected_team_slots,
         "team_slots_unresolved": 0,
         "percentage": 100.0,
     }
+    assert identity_registry["team_slots_expected"] == expected_team_slots
+    assert identity_registry["team_slots_resolved"] == expected_team_slots
     assert report["provider_usage"] == {
         "api_football_calls": 0,
         "odds_api_credits": 0,
     }
     assert report["reads"]["r2"]["writes"] == 0
     assert report["reads"]["postgresql"]["writes"] == 0
-    assert len(report["identities"]) == 18
+    assert len(report["identities"]) == expected_team_slots
     assert all(
         identity["receipt_verified"] is True
         and identity["identity_status"] == "VERIFIED"
@@ -199,7 +213,12 @@ def test_public_presentation_contains_no_numeric_team_fallback() -> None:
         )
     )
     matches = presentation["matches"]
-    assert len(matches) == 9
+    snapshot = _snapshot()
+    observatory = snapshot["prospectiveObservatory"]
+    assert isinstance(observatory, dict)
+    fixtures = observatory["fixtures"]
+    assert isinstance(fixtures, dict)
+    assert len(matches) == fixtures["tracked"]
     assert all(
         re.fullmatch(r"Équipe\s+\d+", match[side]) is None
         for match in matches

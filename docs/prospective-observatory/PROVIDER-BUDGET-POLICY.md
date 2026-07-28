@@ -3,16 +3,19 @@
 Source machine canonique :
 `configs/prospective_observatory_v1.json#provider_budgets`.
 
-## Plafonds du pilote
+## Plafonds adaptatifs cinq ligues
 
 ```text
-MAX_API_FOOTBALL_CALLS_TOTAL=5000
-MAX_ODDS_API_CREDITS_TOTAL=250
-ODDS_API_INTERNAL_SAFETY_RESERVE=2
+API-Football : run=250, jour=800, ligue/run=80,
+               ligue/jour=240, saison=75000
+The Odds API : run=20, jour=120, semaine=600,
+               ligue/run=4, ligue/jour=24
 ```
 
-Ces plafonds sont cumulés sur l’ensemble du pilote initial Jalon 12, pas par
-workflow ni par run.
+Les caps run/jour/semaine/saison sont lus dans le journal durable avant chaque
+admission. Le scope `SCOPE=<competition>` porté par chaque réservation permet
+d’isoler les plafonds par ligue. Une ligue ne peut donc consommer la capacité
+réservée aux quatre autres.
 
 ## Réserves protégées
 
@@ -31,6 +34,13 @@ Deux crédits du plafond interne restent non planifiables. Ils absorbent une
 dérive d'un appel complet entre l'estimation signée et le header de coût réel ;
 toute divergence de coût est comptabilisée puis ferme le circuit.
 
+Le circuit The Odds API s’ouvre après trois échecs consécutifs et reste ouvert
+quinze minutes. L’ordre physique des requêtes de cote est :
+`NEAR_KICKOFF`, `H-2`, `J-1`, `H-6`, `J-3`, `J-7`. Le profil réduit des quatre
+ligues de niveau B ne planifie que les trois premières fenêtres. L’algorithme
+de réduction conserve les fenêtres proches et retire les plus lointaines sans
+jamais dépasser le budget.
+
 ## Préflight obligatoire
 
 Avant tout appel :
@@ -41,7 +51,7 @@ Avant tout appel :
 4. lire le ledger cumulatif du pilote ;
 5. lire quota restant et réserves ;
 6. refuser l’appel si le plafond ou la réserve serait franchi ;
-7. conserver la Ligue 1 et réduire P1 si nécessaire.
+7. autoriser ou bloquer séparément chaque compétition.
 
 Pour The Odds API, le solde externe est rafraîchi par `GET /v4/sports` avant
 toute capture de cote. La [documentation officielle V4](https://the-odds-api.com/liveapi/guides/v4/)
@@ -105,8 +115,9 @@ produit `R2_POSTGRESQL_PROVIDER_BUDGET_PARITY_FAILED`.
 
 | Mesure | Interprétation |
 |---|---|
-| `used` | consommation cumulée réelle |
-| `remaining` | plafond du pilote moins `used` |
+| `used` | consommation append-only réelle |
+| `remaining_run/day/week/season` | capacité restante dans chaque scope |
+| `remaining_competition_day` | capacité protégée de la ligue |
 | `provider_remaining` | quota communiqué par le fournisseur |
 | `reserve` | plancher externe à conserver |
 | `spendable` | minimum des capacités disponibles |
@@ -121,6 +132,5 @@ contournées par un paramètre manuel non audité.
 
 - aucun abonnement ou achat automatique ;
 - aucun backfill historique sur ce budget ;
-- aucune extension de ligue tant que P0 n’est pas vert ;
 - aucun appel uniquement destiné à embellir le cockpit ;
 - aucun retry en boucle.

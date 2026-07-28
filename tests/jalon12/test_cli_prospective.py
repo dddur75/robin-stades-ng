@@ -10,7 +10,7 @@ from typing import Any
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import MetaData, Table, func, select
+from sqlalchemy import MetaData, Table, event, func, select
 
 from robin.domain.enums import DataAvailability, DataOrigin
 from robin.prospective_observatory.budgets import BudgetExceeded, ProviderKind
@@ -688,7 +688,10 @@ def test_odds_internal_reserve_blocks_cost_drift_at_cap_boundary(
         include_quota_headers=True,
         actual_cost=3,
     )
-    with pytest.raises(BudgetExceeded, match="PROSPECTIVE_PROVIDER_CAP_EXCEEDED"):
+    with pytest.raises(
+        BudgetExceeded,
+        match="PROSPECTIVE_ADAPTIVE_BUDGET_BLOCKED.*BLOCKED_DAILY_BUDGET",
+    ):
         _execute_capture(
             "capture-odds",
             output=output,
@@ -1049,7 +1052,35 @@ def test_sqlite_restart_and_r2_reconstruction_are_idempotent(
         state=state,
         repository=repository,
     )
-    run_scheduler(_args("scheduler", output=output), state=state)
+    capture_window_inserts: list[bool] = []
+
+    def record_capture_window_insert(
+        _connection: object,
+        _cursor: object,
+        statement: str,
+        _parameters: object,
+        _context: object,
+        executemany: bool,
+    ) -> None:
+        if statement.lstrip().upper().startswith("INSERT INTO CAPTURE_WINDOWS"):
+            capture_window_inserts.append(executemany)
+
+    event.listen(
+        engine,
+        "before_cursor_execute",
+        record_capture_window_insert,
+    )
+    first_schedule = run_scheduler(
+        _args("scheduler", output=output),
+        state=state,
+    )
+    event.remove(
+        engine,
+        "before_cursor_execute",
+        record_capture_window_insert,
+    )
+    assert first_schedule["windows_inserted"] > 1
+    assert capture_window_inserts == [True]
     for capture_command in (
         "capture-general",
         "capture-player",
@@ -1066,7 +1097,45 @@ def test_sqlite_restart_and_r2_reconstruction_are_idempotent(
             state=state,
             repository=repository,
         )
-    run_gate_report(_args("gate-report", output=output), state=state)
+    temporal_gate_inserts: list[bool] = []
+
+    def record_temporal_gate_insert(
+        _connection: object,
+        _cursor: object,
+        statement: str,
+        _parameters: object,
+        _context: object,
+        executemany: bool,
+    ) -> None:
+        if statement.lstrip().upper().startswith(
+            "INSERT INTO TEMPORAL_DATA_GATES"
+        ):
+            temporal_gate_inserts.append(executemany)
+
+    event.listen(
+        engine,
+        "before_cursor_execute",
+        record_temporal_gate_insert,
+    )
+    first_gates = run_gate_report(
+        _args("gate-report", output=output),
+        state=state,
+    )
+    event.remove(
+        engine,
+        "before_cursor_execute",
+        record_temporal_gate_insert,
+    )
+    repeated_gates = run_gate_report(
+        _args("gate-report", output=output),
+        state=state,
+    )
+    assert first_gates["gate_rows_inserted"] > 1
+    assert temporal_gate_inserts == [True]
+    assert repeated_gates["gate_rows_inserted"] == 0
+    assert repeated_gates["gate_duplicates_avoided"] == first_gates[
+        "gate_evaluations"
+    ]
     engine.dispose()  # type: ignore[attr-defined]
 
     restarted_engine = build_engine(

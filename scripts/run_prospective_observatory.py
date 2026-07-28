@@ -30,7 +30,7 @@ from robin.domain.enums import DataAvailability, DataOrigin
 from robin.prospective_observatory.budgets import (
     MAX_API_FOOTBALL_CALLS_TOTAL,
     MAX_ODDS_API_CREDITS_TOTAL,
-    ODDS_API_INTERNAL_SAFETY_RESERVE,
+    BudgetEntry,
     BudgetExceeded,
     BudgetLedger,
     ProviderKind,
@@ -58,6 +58,15 @@ from robin.prospective_observatory.ledger import (
     PublicEvidenceLedgerV3,
     build_observatory_ledger,
     observatory_ledger_summary,
+)
+from robin.prospective_observatory.multi_league import (
+    ODDS_WINDOW_PRIORITY,
+    CaptureProfile,
+    ScopedBudgetUsage,
+    active_competitions,
+    authorize_scoped_budget,
+    competition_registry,
+    labels_for_profile,
 )
 from robin.prospective_observatory.r2 import (
     DurableProviderBudget,
@@ -216,21 +225,64 @@ class ObservatoryPolicy:
     @classmethod
     def load(cls, path: Path) -> ObservatoryPolicy:
         value = _mapping(_read_json(path), error="PROSPECTIVE_POLICY_INVALID")
-        if value.get("schema_version") != "prospective-observatory-policy-v1":
+        if value.get("schema_version") != "prospective-observatory-policy-v2":
             raise ValueError("PROSPECTIVE_POLICY_SCHEMA_INVALID")
         budgets = _mapping(
             value.get("provider_budgets"),
             error="PROSPECTIVE_POLICY_BUDGETS_INVALID",
         )
-        if budgets.get("api_football_max_calls_total") != MAX_API_FOOTBALL_CALLS_TOTAL:
-            raise ValueError("PROSPECTIVE_API_FOOTBALL_CAP_MUST_BE_5000")
-        if budgets.get("odds_api_max_credits_total") != MAX_ODDS_API_CREDITS_TOTAL:
-            raise ValueError("PROSPECTIVE_ODDS_CAP_MUST_BE_250")
-        if (
-            budgets.get("odds_api_internal_safety_reserve")
-            != ODDS_API_INTERNAL_SAFETY_RESERVE
+        api_budget = _mapping(
+            budgets.get("api_football"),
+            error="PROSPECTIVE_API_FOOTBALL_BUDGET_INVALID",
+        )
+        odds_budget = _mapping(
+            budgets.get("odds_api"),
+            error="PROSPECTIVE_ODDS_BUDGET_INVALID",
+        )
+        for budget, required in (
+            (
+                api_budget,
+                (
+                    "per_run",
+                    "per_day",
+                    "per_competition_per_run",
+                    "per_competition_per_day",
+                    "per_season",
+                    "provider_reserve",
+                ),
+            ),
+            (
+                odds_budget,
+                (
+                    "per_run",
+                    "per_day",
+                    "per_week",
+                    "per_competition_per_run",
+                    "per_competition_per_day",
+                    "provider_reserve",
+                    "internal_safety_reserve",
+                    "near_kickoff_reserve",
+                    "circuit_breaker_failures",
+                    "circuit_breaker_cooldown_minutes",
+                ),
+            ),
         ):
+            if any(
+                isinstance(budget.get(key), bool)
+                or not isinstance(budget.get(key), int)
+                or cast(int, budget.get(key)) <= 0
+                for key in required
+            ):
+                raise ValueError("PROSPECTIVE_PROVIDER_BUDGET_LIMIT_INVALID")
+        if api_budget["provider_reserve"] != 5_000:
+            raise ValueError("PROSPECTIVE_API_FOOTBALL_RESERVE_MUST_BE_5000")
+        if odds_budget["internal_safety_reserve"] != 2:
             raise ValueError("PROSPECTIVE_ODDS_INTERNAL_RESERVE_MUST_BE_2")
+        if odds_budget.get("window_priority") != list(ODDS_WINDOW_PRIORITY):
+            raise ValueError("PROSPECTIVE_ODDS_PRIORITY_INVALID")
+        competitions = competition_registry(value)
+        if len(competitions) != 5 or len(active_competitions(value)) != 5:
+            raise ValueError("PROSPECTIVE_FIVE_LEAGUE_REGISTRY_REQUIRED")
         storage = _mapping(value.get("storage"), error="PROSPECTIVE_STORAGE_POLICY_INVALID")
         if (
             storage.get("raw_primary") != "R2"
@@ -293,6 +345,244 @@ class ObservatoryPolicy:
         if len(matches) != 1:
             raise ValueError("PROSPECTIVE_COMPETITION_NOT_REGISTERED")
         return matches[0]
+
+    def competitions(self) -> tuple[dict[str, object], ...]:
+        registry = self.value.get("competition_registry")
+        if not isinstance(registry, list):
+            raise ValueError("PROSPECTIVE_COMPETITION_REGISTRY_INVALID")
+        return tuple(
+            _mapping(item, error="PROSPECTIVE_COMPETITION_INVALID")
+            for item in registry
+        )
+
+    def provider_budget(self, provider: ProviderKind) -> dict[str, object]:
+        key = (
+            "api_football"
+            if provider is ProviderKind.API_FOOTBALL
+            else "odds_api"
+        )
+        return _mapping(
+            self.budgets.get(key),
+            error="PROSPECTIVE_PROVIDER_BUDGET_INVALID",
+        )
+
+    def run_cap(self, provider: ProviderKind) -> int:
+        return _int_value(
+            self.provider_budget(provider).get("per_run"),
+            error="PROSPECTIVE_PROVIDER_RUN_CAP_INVALID",
+        )
+
+    def provider_reserve(self, provider: ProviderKind) -> int:
+        return _int_value(
+            self.provider_budget(provider).get("provider_reserve"),
+            error="PROSPECTIVE_PROVIDER_RESERVE_INVALID",
+        )
+
+    def internal_safety_reserve(self, provider: ProviderKind) -> int:
+        if provider is ProviderKind.API_FOOTBALL:
+            return 0
+        return _int_value(
+            self.provider_budget(provider).get("internal_safety_reserve"),
+            error="PROSPECTIVE_PROVIDER_INTERNAL_RESERVE_INVALID",
+        )
+
+    def near_kickoff_reserve(self) -> int:
+        return _int_value(
+            self.provider_budget(ProviderKind.ODDS_API).get(
+                "near_kickoff_reserve"
+            ),
+            error="PROSPECTIVE_ODDS_NEAR_KICKOFF_RESERVE_INVALID",
+        )
+
+    def circuit_breaker_failures(self, provider: ProviderKind) -> int:
+        if provider is not ProviderKind.ODDS_API:
+            return 3
+        return _int_value(
+            self.provider_budget(provider).get("circuit_breaker_failures"),
+            error="PROSPECTIVE_CIRCUIT_BREAKER_FAILURES_INVALID",
+        )
+
+    def circuit_breaker_cooldown_seconds(
+        self,
+        provider: ProviderKind,
+    ) -> float:
+        if provider is not ProviderKind.ODDS_API:
+            return 60.0
+        minutes = _int_value(
+            self.provider_budget(provider).get(
+                "circuit_breaker_cooldown_minutes"
+            ),
+            error="PROSPECTIVE_CIRCUIT_BREAKER_COOLDOWN_INVALID",
+        )
+        return float(minutes * 60)
+
+    def capture_profile(self, competition: str) -> CaptureProfile:
+        return CaptureProfile(str(self.competition(competition)["capture_profile"]))
+
+    def odds_sport_key(self, competition: str) -> str:
+        value = str(self.competition(competition).get("odds_sport_key", ""))
+        if not value:
+            raise ValueError("PROSPECTIVE_ODDS_SPORT_KEY_MISSING")
+        return value
+
+    def allowed_window_labels(
+        self,
+        competition: str,
+        family: CaptureFamily,
+    ) -> tuple[str, ...]:
+        capture_windows = _mapping(
+            self.value["capture_windows"],
+            error="PROSPECTIVE_CAPTURE_WINDOW_POLICY_INVALID",
+        )
+        raw_labels = capture_windows.get(family.value)
+        if not isinstance(raw_labels, list) or any(
+            not isinstance(label, str) for label in raw_labels
+        ):
+            raise ValueError("PROSPECTIVE_CAPTURE_WINDOW_LABELS_INVALID")
+        profile = self.capture_profile(competition)
+        profiles = _mapping(
+            self.value.get("capture_profiles"),
+            error="PROSPECTIVE_CAPTURE_PROFILES_INVALID",
+        )
+        profile_policy = _mapping(
+            profiles.get(profile.value),
+            error="PROSPECTIVE_CAPTURE_PROFILE_POLICY_INVALID",
+        )
+        families = profile_policy.get("families")
+        odds_windows = profile_policy.get("odds_windows")
+        if (
+            not isinstance(families, list)
+            or any(not isinstance(value, str) for value in families)
+            or not isinstance(odds_windows, list)
+            or any(not isinstance(value, str) for value in odds_windows)
+        ):
+            raise ValueError("PROSPECTIVE_CAPTURE_PROFILE_POLICY_INVALID")
+        if family.value not in families:
+            return ()
+        labels = labels_for_profile(
+            profile,
+            family,
+            cast(list[str], raw_labels),
+        )
+        if family is CaptureFamily.ODDS:
+            allowed = set(cast(list[str], odds_windows))
+            return tuple(label for label in labels if label in allowed)
+        return labels
+
+
+def _budget_scope(reason: str) -> str | None:
+    match = re.search(r"(?:^|;)SCOPE=([^;]+)(?:;|$)", reason)
+    return match.group(1) if match is not None else None
+
+
+def _budget_usage(
+    state: OperationalState,
+    *,
+    provider: ProviderKind,
+    competition: str,
+    now: datetime,
+) -> ScopedBudgetUsage:
+    now_utc = now.astimezone(UTC)
+    iso = now_utc.isocalendar()
+    entries = tuple(
+        entry
+        for entry in state.budget_entries()
+        if entry.provider is provider and entry.units > 0
+    )
+    day = sum(
+        entry.units
+        for entry in entries
+        if entry.recorded_at.astimezone(UTC).date() == now_utc.date()
+    )
+    week = sum(
+        entry.units
+        for entry in entries
+        if (
+            entry.recorded_at.astimezone(UTC).isocalendar().year,
+            entry.recorded_at.astimezone(UTC).isocalendar().week,
+        )
+        == (iso.year, iso.week)
+    )
+    competition_entries = tuple(
+        entry
+        for entry in entries
+        if _budget_scope(entry.reason) == competition
+    )
+    competition_day = sum(
+        entry.units
+        for entry in competition_entries
+        if entry.recorded_at.astimezone(UTC).date() == now_utc.date()
+    )
+    # The provider season follows the calendar-year label returned by
+    # API-Football. Entries without an old scope are intentionally excluded
+    # from the per-league count but remain included in global day/week usage.
+    season = sum(
+        entry.units
+        for entry in competition_entries
+        if entry.recorded_at.astimezone(UTC).year == now_utc.year
+    )
+    return ScopedBudgetUsage(
+        day=day,
+        week=week,
+        competition_day=competition_day,
+        season=season,
+    )
+
+
+def _authorize_budget_plan(
+    state: OperationalState,
+    *,
+    policy: ObservatoryPolicy,
+    provider: ProviderKind,
+    units_by_competition: Mapping[str, int],
+    provider_remaining: int,
+    now: datetime,
+) -> tuple[dict[str, object], ...]:
+    provider_key = (
+        "api_football"
+        if provider is ProviderKind.API_FOOTBALL
+        else "odds_api"
+    )
+    planned_before = 0
+    decisions: list[dict[str, object]] = []
+    for competition in sorted(units_by_competition):
+        units = units_by_competition[competition]
+        base = _budget_usage(
+            state,
+            provider=provider,
+            competition=competition,
+            now=now,
+        )
+        usage = ScopedBudgetUsage(
+            run=planned_before,
+            day=base.day + planned_before,
+            week=base.week + planned_before,
+            competition_run=0,
+            competition_day=base.competition_day,
+            season=base.season,
+        )
+        decision = authorize_scoped_budget(
+            policy=policy.value,
+            provider=provider_key,
+            competition=competition,
+            estimated_units=units,
+            provider_remaining=provider_remaining - planned_before,
+            usage=usage,
+        )
+        decisions.append(
+            {
+                **asdict(decision),
+                "competition": competition,
+                "provider": provider.value,
+            }
+        )
+        if not decision.allowed:
+            raise BudgetExceeded(
+                f"PROSPECTIVE_ADAPTIVE_BUDGET_BLOCKED:"
+                f"{provider.value}:{competition}:{decision.reason}"
+            )
+        planned_before += units
+    return tuple(decisions)
 
 
 class R2ObjectStore:
@@ -424,6 +714,11 @@ class OperationalState(Protocol):
 
     def schedule_window(self, window: CaptureWindow) -> bool: ...
 
+    def schedule_windows_batch(
+        self,
+        windows: Iterable[CaptureWindow],
+    ) -> tuple[int, int]: ...
+
     def windows(self) -> tuple[CaptureWindow, ...]: ...
 
     def append_attempt(self, attempt: CaptureAttempt) -> bool: ...
@@ -433,6 +728,8 @@ class OperationalState(Protocol):
     def persist_capture(self, capture: StoredCapture) -> bool: ...
 
     def budget_used(self, provider: ProviderKind) -> int: ...
+
+    def budget_entries(self) -> tuple[BudgetEntry, ...]: ...
 
     def external_quota_remaining(
         self,
@@ -468,6 +765,14 @@ class OperationalState(Protocol):
         code_revision: str,
     ) -> bool: ...
 
+    def append_gates_batch(
+        self,
+        evaluations: Iterable[GateEvaluation],
+        *,
+        evaluated_at: datetime,
+        code_revision: str,
+    ) -> tuple[int, int]: ...
+
 
 @dataclass(slots=True)
 class MemoryOperationalState:
@@ -476,7 +781,7 @@ class MemoryOperationalState:
     window_rows: dict[str, CaptureWindow] = field(default_factory=dict)
     attempt_rows: dict[str, CaptureAttempt] = field(default_factory=dict)
     receipt_rows: dict[str, CaptureReceipt] = field(default_factory=dict)
-    budget_rows: dict[str, tuple[ProviderKind, int]] = field(default_factory=dict)
+    budget_rows: dict[str, BudgetEntry] = field(default_factory=dict)
     gate_rows: dict[str, GateEvaluation] = field(default_factory=dict)
     sink: InMemoryProjectionSink = field(default_factory=InMemoryProjectionSink)
 
@@ -486,8 +791,19 @@ class MemoryOperationalState:
         capture: StoredCapture,
     ) -> bool:
         value = (fixture.registry_hash, fixture)
+        version_already_registered = (
+            fixture.registry_hash in self.fixture_version_rows
+        )
         self.fixture_version_rows.setdefault(fixture.registry_hash, fixture)
         existing = self.fixture_rows.get(fixture.fixture_id)
+        if version_already_registered:
+            self.persist_capture(capture)
+            if (
+                existing is None
+                or existing[1].registered_at <= fixture.registered_at
+            ):
+                self.fixture_rows[fixture.fixture_id] = value
+            return False
         if existing is not None and existing[0] == fixture.registry_hash:
             # Ingestion metadata (registered_at/code_revision) is deliberately
             # outside the business-version hash. Keep each R2 receipt while
@@ -518,6 +834,19 @@ class MemoryOperationalState:
             return False
         self.window_rows[window.window_id] = window
         return True
+
+    def schedule_windows_batch(
+        self,
+        windows: Iterable[CaptureWindow],
+    ) -> tuple[int, int]:
+        inserted = 0
+        duplicates = 0
+        for window in windows:
+            if self.schedule_window(window):
+                inserted += 1
+            else:
+                duplicates += 1
+        return inserted, duplicates
 
     def windows(self) -> tuple[CaptureWindow, ...]:
         return tuple(self.window_rows.values())
@@ -551,7 +880,14 @@ class MemoryOperationalState:
         return True
 
     def budget_used(self, provider: ProviderKind) -> int:
-        return sum(units for item, units in self.budget_rows.values() if item is provider)
+        return sum(
+            entry.units
+            for entry in self.budget_rows.values()
+            if entry.provider is provider
+        )
+
+    def budget_entries(self) -> tuple[BudgetEntry, ...]:
+        return tuple(self.budget_rows.values())
 
     def external_quota_remaining(
         self,
@@ -574,10 +910,16 @@ class MemoryOperationalState:
         reason: str,
         code_revision: str,
     ) -> bool:
-        del provider_remaining, provider_reserve, recorded_at, reason, code_revision
+        del provider_remaining, provider_reserve, code_revision
         if units < 0:
             raise ValueError("PROVIDER_BUDGET_UNITS_INVALID")
-        value = (provider, units)
+        value = BudgetEntry(
+            idempotency_key=idempotency_key,
+            provider=provider,
+            units=units,
+            recorded_at=recorded_at,
+            reason=reason,
+        )
         existing = self.budget_rows.get(idempotency_key)
         if existing is not None:
             if existing != value:
@@ -633,6 +975,26 @@ class MemoryOperationalState:
             return False
         self.gate_rows[key] = evaluation
         return True
+
+    def append_gates_batch(
+        self,
+        evaluations: Iterable[GateEvaluation],
+        *,
+        evaluated_at: datetime,
+        code_revision: str,
+    ) -> tuple[int, int]:
+        inserted = 0
+        duplicates = 0
+        for evaluation in evaluations:
+            if self.append_gate(
+                evaluation,
+                evaluated_at=evaluated_at,
+                code_revision=code_revision,
+            ):
+                inserted += 1
+            else:
+                duplicates += 1
+        return inserted, duplicates
 
 
 class SQLAlchemyOperationalState(MemoryOperationalState):
@@ -731,7 +1093,11 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                         "code_revision": row["code_revision"],
                         "cancelled": bool(row["cancelled"]),
                         "kickoff_reliable": True,
-                        "horizon_days": int(row.get("horizon_days", 30)),
+                        # The compact SQL projection predates this policy
+                        # metadata. Reconstruct it with the current discovery
+                        # default; the immutable provider identity deliberately
+                        # excludes the horizon.
+                        "horizon_days": int(row.get("horizon_days", 45)),
                         "lifecycle_version_hash": str(row["registry_hash"]),
                     }
                 )
@@ -773,9 +1139,12 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 self.receipt_rows[receipt.receipt_hash] = receipt
             for row in connection.execute(select(budget_table)).mappings():
                 key = str(row["idempotency_key"])
-                self.budget_rows[key] = (
-                    ProviderKind(str(row["provider"])),
-                    int(row["units"]),
+                self.budget_rows[key] = BudgetEntry(
+                    idempotency_key=key,
+                    provider=ProviderKind(str(row["provider"])),
+                    units=int(row["units"]),
+                    recorded_at=cast(datetime, _db_value(row["recorded_at"])),
+                    reason=str(row["reason"]),
                 )
 
     def register_fixture(
@@ -783,8 +1152,22 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         fixture: ProspectiveFixture,
         capture: StoredCapture,
     ) -> bool:
+        version_already_registered = (
+            fixture.registry_hash in self.fixture_version_rows
+        )
         self.fixture_version_rows.setdefault(fixture.registry_hash, fixture)
         existing = self.fixture_rows.get(fixture.fixture_id)
+        if version_already_registered:
+            self.persist_capture(capture)
+            if (
+                existing is None
+                or existing[1].registered_at <= fixture.registered_at
+            ):
+                self.fixture_rows[fixture.fixture_id] = (
+                    fixture.registry_hash,
+                    fixture,
+                )
+            return False
         if existing is not None and existing[0] == fixture.registry_hash:
             self.persist_capture(capture)
             self.fixture_rows[fixture.fixture_id] = (
@@ -814,51 +1197,72 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         return inserted
 
     def schedule_window(self, window: CaptureWindow) -> bool:
-        fixture_entry = self.fixture_rows.get(window.fixture_id)
-        if fixture_entry is None:
-            raise RuntimeError("CAPTURE_WINDOW_FIXTURE_MISSING")
-        fixture_record_id = _stable_id("fixture", fixture_entry[0])
-        values = window.model_dump()
-        values.update(
+        inserted, _ = self.schedule_windows_batch((window,))
+        return inserted == 1
+
+    def schedule_windows_batch(
+        self,
+        windows: Iterable[CaptureWindow],
+    ) -> tuple[int, int]:
+        immutable = (
+            "fixture_id",
+            "family",
+            "label",
+            "due_at",
+            "opens_at",
+            "cutoff_at",
+            "kickoff_at",
+            "operational_tolerance_seconds",
+            "policy_version",
+        )
+        pending: dict[str, tuple[CaptureWindow, dict[str, object]]] = {}
+        duplicates = 0
+        for window in windows:
+            fixture_entry = self.fixture_rows.get(window.fixture_id)
+            if fixture_entry is None:
+                raise RuntimeError("CAPTURE_WINDOW_FIXTURE_MISSING")
+            fixture_record_id = _stable_id("fixture", fixture_entry[0])
+            values = window.model_dump()
+            values.update(
+                {
+                    "id": _stable_id("window", window.window_id),
+                    "fixture_record_id": fixture_record_id,
+                    "append_only": True,
+                }
+            )
+            existing = self.window_rows.get(window.window_id)
+            if existing is not None:
+                for name in immutable:
+                    if _json_compatible(getattr(existing, name)) != _json_compatible(
+                        values[name]
+                    ):
+                        raise ValueError("CAPTURE_WINDOW_IDEMPOTENCY_CONFLICT")
+                duplicates += 1
+                continue
+            pending_existing = pending.get(window.window_id)
+            if pending_existing is not None:
+                if pending_existing[0] != window:
+                    raise ValueError("CAPTURE_WINDOW_IDEMPOTENCY_CONFLICT")
+                duplicates += 1
+                continue
+            pending[window.window_id] = (window, values)
+
+        if not pending:
+            return 0, duplicates
+        table = self.tables["capture_windows"]
+        rows = [
+            self._row_for(table, values)
+            for _, values in pending.values()
+        ]
+        with self.engine.begin() as connection:
+            connection.execute(table.insert(), rows)
+        self.window_rows.update(
             {
-                "id": _stable_id("window", window.window_id),
-                "fixture_record_id": fixture_record_id,
-                "append_only": True,
+                window_id: window
+                for window_id, (window, _) in pending.items()
             }
         )
-        table = self.tables["capture_windows"]
-        with self.engine.begin() as connection:
-            existing = connection.execute(
-                select(table).where(table.c.window_id == window.window_id)
-            ).mappings().first()
-            if existing is not None:
-                immutable = (
-                    "fixture_record_id",
-                    "fixture_id",
-                    "family",
-                    "label",
-                    "due_at",
-                    "opens_at",
-                    "cutoff_at",
-                    "kickoff_at",
-                    "operational_tolerance_seconds",
-                    "policy_version",
-                )
-                for name in immutable:
-                    if _json_compatible(existing[name]) != _json_compatible(values[name]):
-                        raise ValueError("CAPTURE_WINDOW_IDEMPOTENCY_CONFLICT")
-                restored = CaptureWindow.model_validate(
-                    {
-                        key: _db_value(existing[key])
-                        for key in CaptureWindow.model_fields
-                        if key in existing
-                    }
-                )
-                self.window_rows[window.window_id] = restored
-                return False
-            connection.execute(table.insert().values(**self._row_for(table, values)))
-        self.window_rows[window.window_id] = window
-        return True
+        return len(pending), duplicates
 
     def append_attempt(self, attempt: CaptureAttempt) -> bool:
         if attempt.window_id not in self.window_rows:
@@ -881,6 +1285,11 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
 
     def persist_capture(self, capture: StoredCapture) -> bool:
         receipt = capture.receipt
+        existing = self.receipt_rows.get(receipt.receipt_hash)
+        if existing is not None:
+            if existing != receipt:
+                raise ValueError("CAPTURE_RECEIPT_IDEMPOTENCY_CONFLICT")
+            return False
         values = receipt.model_dump()
         receipt_id = _stable_id("receipt", receipt.receipt_hash)
         values.update(
@@ -938,7 +1347,13 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
     ) -> bool:
         if units < 0 or provider_remaining < 0 or provider_reserve < 0:
             raise ValueError("PROVIDER_BUDGET_STATE_INVALID")
-        value = (provider, units)
+        value = BudgetEntry(
+            idempotency_key=idempotency_key,
+            provider=provider,
+            units=units,
+            recorded_at=recorded_at,
+            reason=reason,
+        )
         existing = self.budget_rows.get(idempotency_key)
         if existing is not None:
             if existing != value:
@@ -973,7 +1388,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             key_values={"idempotency_key": idempotency_key},
             values=values,
         )
-        self.budget_rows[idempotency_key] = (provider, units)
+        self.budget_rows[idempotency_key] = value
         return inserted
 
     def external_quota_remaining(
@@ -1073,40 +1488,103 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         evaluated_at: datetime,
         code_revision: str,
     ) -> bool:
-        evidence = asdict_gate(evaluation)
-        evidence_hash = canonical_sha256(evidence)
-        idempotency_key = canonical_sha256(
-            {
+        inserted, _ = self.append_gates_batch(
+            (evaluation,),
+            evaluated_at=evaluated_at,
+            code_revision=code_revision,
+        )
+        return inserted == 1
+
+    def append_gates_batch(
+        self,
+        evaluations: Iterable[GateEvaluation],
+        *,
+        evaluated_at: datetime,
+        code_revision: str,
+    ) -> tuple[int, int]:
+        table = self.tables["temporal_data_gates"]
+        pending: dict[str, tuple[GateEvaluation, dict[str, object]]] = {}
+        duplicates = 0
+        for evaluation in evaluations:
+            evidence = asdict_gate(evaluation)
+            evidence_hash = canonical_sha256(evidence)
+            idempotency_key = canonical_sha256(
+                {
+                    "evidence_hash": evidence_hash,
+                    "evaluated_at": evaluated_at.isoformat(),
+                }
+            )
+            fixture = self.fixture_rows.get(evaluation.fixture_id)
+            if fixture is None:
+                raise RuntimeError("TEMPORAL_GATE_FIXTURE_MISSING")
+            values: dict[str, object] = {
+                "id": _stable_id("gate", idempotency_key),
+                "idempotency_key": idempotency_key,
+                "fixture_id": evaluation.fixture_id,
+                "gate_name": evaluation.gate.value,
+                "status": evaluation.status.value,
+                "coverage": (
+                    1.0
+                    if evaluation.status is GateStatus.PASSED
+                    else 0.0
+                ),
+                "observations": evaluation.observations,
+                "reason": evaluation.reason,
+                "evidence": evidence,
                 "evidence_hash": evidence_hash,
-                "evaluated_at": evaluated_at.isoformat(),
+                "cutoff_at": fixture[1].kickoff_at
+                - timedelta(microseconds=1),
+                "evaluated_at": evaluated_at,
+                "code_revision": code_revision,
+                "append_only": True,
+            }
+            previous = pending.get(idempotency_key)
+            if previous is not None:
+                if previous[1] != values:
+                    raise ValueError(
+                        "TEMPORAL_GATE_IDEMPOTENCY_CONFLICT"
+                    )
+                duplicates += 1
+                continue
+            pending[idempotency_key] = (evaluation, values)
+
+        if not pending:
+            return 0, duplicates
+        keys = tuple(pending)
+        with self.engine.begin() as connection:
+            existing_rows = {
+                str(row["idempotency_key"]): row
+                for row in connection.execute(
+                    select(table).where(
+                        table.c.idempotency_key.in_(keys)
+                    )
+                ).mappings()
+            }
+            rows: list[dict[str, object]] = []
+            for key, (_, values) in pending.items():
+                existing = existing_rows.get(key)
+                if existing is not None:
+                    row = self._row_for(table, values)
+                    if any(
+                        _json_compatible(existing[name])
+                        != _json_compatible(value)
+                        for name, value in row.items()
+                    ):
+                        raise ValueError(
+                            "TEMPORAL_GATE_IDEMPOTENCY_CONFLICT"
+                        )
+                    duplicates += 1
+                    continue
+                rows.append(self._row_for(table, values))
+            if rows:
+                connection.execute(table.insert(), rows)
+        self.gate_rows.update(
+            {
+                key: evaluation
+                for key, (evaluation, _) in pending.items()
             }
         )
-        fixture = self.fixture_rows.get(evaluation.fixture_id)
-        if fixture is None:
-            raise RuntimeError("TEMPORAL_GATE_FIXTURE_MISSING")
-        values = {
-            "id": _stable_id("gate", idempotency_key),
-            "idempotency_key": idempotency_key,
-            "fixture_id": evaluation.fixture_id,
-            "gate_name": evaluation.gate.value,
-            "status": evaluation.status.value,
-            "coverage": (
-                1.0 if evaluation.status is GateStatus.PASSED else 0.0
-            ),
-            "observations": evaluation.observations,
-            "reason": evaluation.reason,
-            "evidence": evidence,
-            "evidence_hash": evidence_hash,
-            "cutoff_at": fixture[1].kickoff_at - timedelta(microseconds=1),
-            "evaluated_at": evaluated_at,
-            "code_revision": code_revision,
-            "append_only": True,
-        }
-        return self._insert_exact(
-            "temporal_data_gates",
-            key_values={"idempotency_key": idempotency_key},
-            values=values,
-        )
+        return len(rows), duplicates
 
     def projection_sink(self) -> ProjectionSink:
         return SQLAlchemyProjectionSink(self)
@@ -1115,8 +1593,14 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
 class SQLAlchemyProjectionSink:
     """Rebuild compact PostgreSQL projections from immutable R2 receipts."""
 
-    def __init__(self, state: SQLAlchemyOperationalState) -> None:
+    def __init__(
+        self,
+        state: SQLAlchemyOperationalState,
+        *,
+        skip_existing_projections: bool = False,
+    ) -> None:
         self.state = state
+        self.skip_existing_projections = skip_existing_projections
 
     def bootstrap(
         self,
@@ -1522,6 +2006,12 @@ class SQLAlchemyProjectionSink:
             receipt_created=False,
         )
         inserted = self.state.persist_capture(stored)
+        if not inserted and self.skip_existing_projections:
+            # Replay validates every compact table against a projection
+            # independently derived from R2 after this pass. Avoid thousands
+            # of duplicate point queries here; missing or extra rows still
+            # fail closed in _assert_r2_postgresql_projection_parity.
+            return False
         if receipt.quality_status is not AvailabilityStatus.CAPTURED:
             return inserted
         if receipt.family in {
@@ -1609,6 +2099,59 @@ def _fixture_records(result: ProviderResult) -> tuple[dict[str, object], ...]:
     return tuple(dict(record) for record in result.records)
 
 
+def _fixture_record_diagnostics(
+    records: Iterable[Mapping[str, object]],
+    *,
+    now: datetime,
+    until: datetime,
+) -> dict[str, int]:
+    """Describe a valid provider response without confusing emptiness and errors."""
+
+    received = 0
+    in_horizon = 0
+    outside_horizon = 0
+    schema_errors = 0
+    for record in records:
+        received += 1
+        fixture = record.get("fixture")
+        league = record.get("league")
+        teams = record.get("teams")
+        if not all(
+            isinstance(value, Mapping)
+            for value in (fixture, league, teams)
+        ):
+            schema_errors += 1
+            continue
+        fixture_map = cast(Mapping[str, object], fixture)
+        league_map = cast(Mapping[str, object], league)
+        teams_map = cast(Mapping[str, object], teams)
+        home = teams_map.get("home")
+        away = teams_map.get("away")
+        if (
+            not isinstance(home, Mapping)
+            or not isinstance(away, Mapping)
+            or not str(fixture_map.get("id", "")).strip()
+            or not str(league_map.get("season", "")).strip()
+        ):
+            schema_errors += 1
+            continue
+        try:
+            kickoff = _provider_datetime(fixture_map.get("date"))
+        except (TypeError, ValueError):
+            schema_errors += 1
+            continue
+        if now < kickoff <= until:
+            in_horizon += 1
+        else:
+            outside_horizon += 1
+    return {
+        "records_received": received,
+        "records_in_current_horizon": in_horizon,
+        "records_outside_current_horizon": outside_horizon,
+        "provider_payload_schema_errors": schema_errors,
+    }
+
+
 def _provider_datetime(value: object) -> datetime:
     parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
     if parsed.tzinfo is None or parsed.utcoffset() is None:
@@ -1652,6 +2195,10 @@ def _prospective_fixture(
         if require_reliable_utc_kickoff:
             return None
         raise
+    if not registered_at < kickoff <= (
+        registered_at + timedelta(days=horizon_days)
+    ):
+        return None
     provider_fixture_id = str(fixture_map.get("id", "")).strip()
     season = str(league_map.get("season", "")).strip()
     phase = str(league_map.get("round", "")).strip()
@@ -1880,18 +2427,8 @@ def _estimate(
     now: datetime,
     window_ids: tuple[str, ...] = (),
 ) -> dict[str, object]:
-    cap_key = (
-        "api_football_max_calls_total"
-        if provider is ProviderKind.API_FOOTBALL
-        else "odds_api_max_credits_total"
-    )
-    reserve_key = (
-        "api_football_provider_reserve"
-        if provider is ProviderKind.API_FOOTBALL
-        else "odds_api_provider_reserve"
-    )
     estimate: dict[str, object] = {
-        "schema_version": "prospective-provider-estimate-v1",
+        "schema_version": "prospective-provider-estimate-v2",
         "command": command,
         "generated_at": now.isoformat(),
         "policy_sha256": policy.sha256,
@@ -1899,14 +2436,8 @@ def _estimate(
         "estimated_units": units,
         "windows_due": windows_due,
         "window_ids_sha256": canonical_sha256(sorted(window_ids)),
-        "jalon12_cap": _int_value(
-            policy.budgets[cap_key],
-            error="PROSPECTIVE_PROVIDER_CAP_INVALID",
-        ),
-        "provider_reserve": _int_value(
-            policy.budgets[reserve_key],
-            error="PROSPECTIVE_PROVIDER_RESERVE_INVALID",
-        ),
+        "run_cap": policy.run_cap(provider),
+        "provider_reserve": policy.provider_reserve(provider),
         "production_status": "PRODUCTION_LOCKED",
         "real_bets": False,
         "no_bet_default": True,
@@ -1983,16 +2514,23 @@ def _base_snapshot(policy: ObservatoryPolicy, *, now: datetime) -> dict[str, obj
         "providers": {
             "api_football_calls": 0,
             "odds_api_credits": 0,
-            "budgets": dict(policy.budgets),
+            "budgets": {
+                "api_football": dict(
+                    policy.provider_budget(ProviderKind.API_FOOTBALL)
+                ),
+                "odds_api": dict(
+                    policy.provider_budget(ProviderKind.ODDS_API)
+                ),
+            },
             "reserves": {
-                "api_football": policy.budgets["api_football_provider_reserve"],
-                "odds_api": policy.budgets["odds_api_provider_reserve"],
-                "odds_api_internal_safety": policy.budgets[
-                    "odds_api_internal_safety_reserve"
-                ],
-                "odds_near_kickoff": policy.budgets[
-                    "odds_api_near_kickoff_reserve"
-                ],
+                "api_football": policy.provider_reserve(
+                    ProviderKind.API_FOOTBALL
+                ),
+                "odds_api": policy.provider_reserve(ProviderKind.ODDS_API),
+                "odds_api_internal_safety": policy.internal_safety_reserve(
+                    ProviderKind.ODDS_API
+                ),
+                "odds_near_kickoff": policy.near_kickoff_reserve(),
             },
             "errors": 0,
         },
@@ -2137,12 +2675,20 @@ def _record_provider_units_before_call(
     provider_reserve: int,
     recorded_at: datetime,
     code_revision: str,
+    budget_scope: str = "SHARED",
 ) -> None:
     """Durably journal a provider transport before control reaches it."""
 
     if units < 0:
         raise ValueError("PROVIDER_UNITS_NEGATIVE")
     idempotency_key = f"{operation_key}:provider-step:{step}"
+    if (
+        not budget_scope
+        or ";" in budget_scope
+        or len(budget_scope) > 120
+    ):
+        raise ValueError("PROVIDER_BUDGET_SCOPE_INVALID")
+    reason = f"RESERVED_BEFORE_PROVIDER_CALL:{step};SCOPE={budget_scope}"
     record = DurableProviderBudget(
         idempotency_key=idempotency_key,
         provider=provider.value,
@@ -2150,7 +2696,7 @@ def _record_provider_units_before_call(
         provider_remaining=max(provider_remaining, 0),
         provider_reserve=provider_reserve,
         recorded_at=recorded_at,
-        reason=f"RESERVED_BEFORE_PROVIDER_CALL:{step}",
+        reason=reason,
         code_revision=code_revision,
     )
     budget_writer = getattr(repository, "record_provider_budget", None)
@@ -2165,7 +2711,7 @@ def _record_provider_units_before_call(
         provider_remaining=max(provider_remaining, 0),
         provider_reserve=provider_reserve,
         recorded_at=recorded_at,
-        reason=f"RESERVED_BEFORE_PROVIDER_CALL:{step}",
+        reason=reason,
         code_revision=code_revision,
     )
 
@@ -2264,6 +2810,7 @@ def _reserve_provider_call_guards(
     provider_reserve: int,
     recorded_at: datetime,
     code_revision: str,
+    budget_scope: str = "SHARED",
 ) -> dict[str, str]:
     """Fail closed when a prior transport may have returned without a receipt.
 
@@ -2292,6 +2839,12 @@ def _reserve_provider_call_guards(
     completed = _provider_call_guard_completions(repository)
     for window_id, idempotency_key in guard_keys.items():
         attempt_number = prior_attempt_counts.get(window_id, 0) + 1
+        if (
+            not budget_scope
+            or ";" in budget_scope
+            or len(budget_scope) > 120
+        ):
+            raise ValueError("PROVIDER_BUDGET_SCOPE_INVALID")
         record = DurableProviderBudget(
             idempotency_key=idempotency_key,
             provider=provider.value,
@@ -2299,7 +2852,10 @@ def _reserve_provider_call_guards(
             provider_remaining=max(provider_remaining, 0),
             provider_reserve=provider_reserve,
             recorded_at=recorded_at,
-            reason=f"GUARDED_BEFORE_PROVIDER_CALL:{step}",
+            reason=(
+                f"GUARDED_BEFORE_PROVIDER_CALL:{step};"
+                f"SCOPE={budget_scope}"
+            ),
             code_revision=code_revision,
         )
         if not writer(record):
@@ -2321,7 +2877,7 @@ def _reserve_provider_call_guards(
             provider_remaining=max(provider_remaining, 0),
             provider_reserve=provider_reserve,
             recorded_at=recorded_at,
-            reason=f"GUARDED_BEFORE_PROVIDER_CALL:{step}",
+            reason=record.reason,
             code_revision=code_revision,
         )
     return guard_keys
@@ -2589,15 +3145,27 @@ def run_fixture_registry(
         repository=repository,
         policy=policy,
     )
-    if (
-        args.execute
-        and state.budget_used(ProviderKind.API_FOOTBALL) + 3
-        > _int_value(
-            policy.budgets["api_football_max_calls_total"],
-            error="PROSPECTIVE_API_FOOTBALL_CAP_INVALID",
+    budget_admissions: tuple[dict[str, object], ...] = ()
+    if args.execute:
+        provider_reserve = policy.provider_reserve(
+            ProviderKind.API_FOOTBALL
         )
-    ):
-        raise BudgetExceeded("PROSPECTIVE_API_FOOTBALL_CAP_EXCEEDED")
+        last_remaining = state.external_quota_remaining(
+            ProviderKind.API_FOOTBALL,
+            now=now,
+        )
+        budget_admissions = _authorize_budget_plan(
+            state,
+            policy=policy,
+            provider=ProviderKind.API_FOOTBALL,
+            units_by_competition={args.competition: 3},
+            provider_remaining=(
+                last_remaining
+                if last_remaining is not None
+                else provider_reserve + 3
+            ),
+            now=now,
+        )
     api_calls = 0
     quota_remaining: int | None = None
     current_season: int | None = None
@@ -2630,9 +3198,8 @@ def run_fixture_registry(
             offline=False,
             max_retries=0,
         )
-        provider_reserve = _int_value(
-            policy.budgets["api_football_provider_reserve"],
-            error="PROSPECTIVE_API_FOOTBALL_RESERVE_INVALID",
+        provider_reserve = policy.provider_reserve(
+            ProviderKind.API_FOOTBALL
         )
         operation_key = f"{command}:{uuid.uuid4()}"
         _record_provider_units_before_call(
@@ -2646,6 +3213,7 @@ def run_fixture_registry(
             provider_reserve=provider_reserve,
             recorded_at=now,
             code_revision=_code_revision(args.code_revision),
+            budget_scope=args.competition,
         )
         api_calls += 1
         status = provider.get_status()
@@ -2672,6 +3240,7 @@ def run_fixture_registry(
             provider_reserve=provider_reserve,
             recorded_at=now,
             code_revision=_code_revision(args.code_revision),
+            budget_scope=args.competition,
         )
         api_calls += 1
         competition_response = provider.get_competitions(
@@ -2698,6 +3267,7 @@ def run_fixture_registry(
             provider_reserve=provider_reserve,
             recorded_at=now,
             code_revision=_code_revision(args.code_revision),
+            budget_scope=args.competition,
         )
         api_calls += 1
         response = provider.get_fixtures(
@@ -2725,6 +3295,11 @@ def run_fixture_registry(
             else quota_remaining - 2
         )
 
+    diagnostics = _fixture_record_diagnostics(
+        records,
+        now=now,
+        until=until,
+    )
     selected = _filter_fixtures(
         records,
         policy=policy,
@@ -2733,6 +3308,29 @@ def run_fixture_registry(
         code_revision=_code_revision(args.code_revision),
         expected_season=current_season,
     )
+    admitted = selected
+    verified_identity_slots = 0
+    verified_team_ids: set[str] = set()
+    for fixture, raw_record in admitted:
+        teams = raw_record.get("teams")
+        if not isinstance(teams, Mapping):
+            continue
+        home = teams.get("home")
+        away = teams.get("away")
+        if not isinstance(home, Mapping) or not isinstance(away, Mapping):
+            continue
+        if (
+            str(home.get("name", "")).strip()
+            and str(home.get("id", "")).strip() == fixture.home_team_id
+        ):
+            verified_identity_slots += 1
+            verified_team_ids.add(fixture.home_team_id)
+        if (
+            str(away.get("name", "")).strip()
+            and str(away.get("id", "")).strip() == fixture.away_team_id
+        ):
+            verified_identity_slots += 1
+            verified_team_ids.add(fixture.away_team_id)
     lifecycle_tombstones = _fixture_lifecycle_tombstones(
         records,
         state=state,
@@ -2840,13 +3438,22 @@ def run_fixture_registry(
                 "max_matchdays_per_competition"
             ],
             "fixtures_received": len(records),
+            "provider_response_valid": True,
+            "provider_response_empty": len(records) == 0,
+            **diagnostics,
             "fixtures_registered": len(selected),
+            "fixtures_valid": len(admitted),
+            "kickoffs_reliable": len(admitted),
+            "identity_slots_expected": len(admitted) * 2,
+            "identity_slots_verified": verified_identity_slots,
+            "teams_verified": len(verified_team_ids),
             "fixture_tombstones_registered": len(lifecycle_tombstones),
             "fixtures_inserted": inserted,
             "duplicates_avoided": duplicates,
             "quota_remaining": quota_remaining,
             "provider_season": current_season,
             "provider_calls": api_calls,
+            "budget_admissions": list(budget_admissions),
         },
     )
     _write_json(output / "fixture-registry.json", report)
@@ -2861,28 +3468,32 @@ def run_scheduler(
     now = _parse_utc(args.now)
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
-    inserted = 0
-    duplicates = 0
     due = 0
     missed = 0
     by_family: Counter[str] = Counter()
+    planned_windows: list[CaptureWindow] = []
     for fixture in state.fixtures():
         for family in CaptureFamily:
+            allowed_labels = set(
+                policy.allowed_window_labels(fixture.competition, family)
+            )
+            if not allowed_labels:
+                continue
             for window in schedule_windows(
                 fixture,
                 family,
                 scheduled_at=now,
                 tolerance=policy.operational_tolerance,
             ):
+                if window.label not in allowed_labels:
+                    continue
                 status = classify_window(window, now=now)
                 stored_window = window.model_copy(update={"status": status})
-                if state.schedule_window(stored_window):
-                    inserted += 1
-                else:
-                    duplicates += 1
+                planned_windows.append(stored_window)
                 by_family[f"{family.value}:{status.value}"] += 1
                 due += int(status is AvailabilityStatus.DUE)
                 missed += int(status is AvailabilityStatus.MISSED_WINDOW)
+    inserted, duplicates = state.schedule_windows_batch(planned_windows)
     snapshot = _base_snapshot(policy, now=now)
     cast(dict[str, object], snapshot["fixtures"]).update(
         {
@@ -3083,9 +3694,21 @@ def _reconcile_receipt_attempts(state: OperationalState) -> int:
 def _capture_estimated_units(
     command: str,
     due: tuple[CaptureWindow, ...],
+    fixture_by_id: Mapping[str, ProspectiveFixture] | None = None,
 ) -> tuple[ProviderKind, int]:
     if command == "capture-odds":
-        return ProviderKind.ODDS_API, 2 if due else 0
+        if not due:
+            return ProviderKind.ODDS_API, 0
+        competitions = (
+            {
+                fixture.competition
+                for window in due
+                if (fixture := fixture_by_id.get(window.fixture_id)) is not None
+            }
+            if fixture_by_id is not None
+            else {"legacy-single-sport"}
+        )
+        return ProviderKind.ODDS_API, 2 * len(competitions)
     if not due:
         return ProviderKind.API_FOOTBALL, 0
     families_by_fixture: dict[str, set[CaptureFamily]] = {}
@@ -3126,6 +3749,7 @@ def _payload_for_cache(
 def _capture_request_key(
     command: str,
     window: CaptureWindow,
+    fixture_by_id: Mapping[str, ProspectiveFixture] | None = None,
 ) -> tuple[str, str]:
     family_group = (
         "injury-status"
@@ -3133,7 +3757,16 @@ def _capture_request_key(
         else window.family.value
     )
     return (
-        "global" if command == "capture-odds" else window.fixture_id,
+        (
+            (
+                fixture_by_id[window.fixture_id].competition
+                if fixture_by_id is not None
+                and window.fixture_id in fixture_by_id
+                else "legacy-single-sport"
+            )
+            if command == "capture-odds"
+            else window.fixture_id
+        ),
         "lineup"
         if command == "capture-lineup"
         else ("general" if command == "capture-general" else family_group),
@@ -3146,6 +3779,7 @@ def _provider_capture(
     fixture: ProspectiveFixture,
     family: CaptureFamily,
     provider: ApiFootballProvider | TheOddsApiProvider,
+    odds_sport_key: str | None = None,
     before_provider_call: Callable[[str, int, int], None] | None = None,
 ) -> tuple[ProviderResult, str, int, int]:
     def before(step: str, calls: int, credits: int) -> None:
@@ -3253,8 +3887,16 @@ def _provider_capture(
         )
         return result, "/fixtures/lineups", 1, 0
     before("odds", 1, 2)
-    result = cast(TheOddsApiProvider, provider).get_odds()
-    return result, "/sports/soccer_france_ligue_one/odds", 1, 2
+    odds_provider = cast(TheOddsApiProvider, provider)
+    if odds_sport_key is not None and hasattr(
+        odds_provider,
+        "get_odds_for_sport",
+    ):
+        result = odds_provider.get_odds_for_sport(odds_sport_key)
+    else:
+        result = odds_provider.get_odds()
+    sport_key = odds_sport_key or "soccer_france_ligue_one"
+    return result, f"/sports/{sport_key}/odds", 1, 2
 
 
 def _fixture_identities(
@@ -4201,10 +4843,21 @@ def run_capture(
     }[command]
     state = state or _database_state()
     _reject_non_durable_execution_inputs(args, state=state)
-    if (
-        args.estimate
+    provisional_due = _due_windows(
+        state,
+        families=families,
+        now=now,
+        maximum_attempts=args.max_attempts,
+    )
+    provider_free_noop = (
+        not provisional_due
         and repository is None
         and args.object_store_root is None
+    )
+    if (
+        repository is None
+        and args.object_store_root is None
+        and (args.estimate or provider_free_noop)
     ):
         _reconcile_receipt_attempts(state)
         recovery = {
@@ -4229,7 +4882,73 @@ def run_capture(
         now=now,
         maximum_attempts=args.max_attempts,
     )
-    provider_kind, units = _capture_estimated_units(command, due)
+    if command == "capture-odds":
+        priority = {
+            label: index for index, label in enumerate(ODDS_WINDOW_PRIORITY)
+        }
+        due = tuple(
+            sorted(
+                due,
+                key=lambda window: (
+                    priority.get(window.label, len(priority)),
+                    window.cutoff_at,
+                    window.window_id,
+                ),
+            )
+        )
+    fixture_by_id = {
+        fixture.fixture_id: fixture for fixture in state.fixtures()
+    }
+    provider_kind, units = _capture_estimated_units(
+        command,
+        due,
+        fixture_by_id,
+    )
+    due_by_competition: dict[str, tuple[CaptureWindow, ...]] = {}
+    for window in due:
+        fixture = fixture_by_id.get(window.fixture_id)
+        if fixture is None:
+            raise RuntimeError("CAPTURE_WINDOW_FIXTURE_MISSING")
+        due_by_competition[fixture.competition] = (
+            *due_by_competition.get(fixture.competition, ()),
+            window,
+        )
+    units_by_competition: dict[str, int] = {}
+    for competition, scoped_due in due_by_competition.items():
+        if provider_kind is ProviderKind.ODDS_API:
+            units_by_competition[competition] = 2
+        else:
+            _, scoped_units = _capture_estimated_units(
+                command,
+                scoped_due,
+                fixture_by_id,
+            )
+            units_by_competition[competition] = max(scoped_units - 1, 0)
+    if (
+        provider_kind is ProviderKind.API_FOOTBALL
+        and units_by_competition
+    ):
+        units_by_competition[sorted(units_by_competition)[0]] += 1
+    if sum(units_by_competition.values()) != units:
+        raise RuntimeError("PROSPECTIVE_PROVIDER_COMPETITION_COST_MISMATCH")
+    budget_admissions: tuple[dict[str, object], ...] = ()
+    if units:
+        last_remaining = state.external_quota_remaining(
+            provider_kind,
+            now=now,
+        )
+        budget_admissions = _authorize_budget_plan(
+            state,
+            policy=policy,
+            provider=provider_kind,
+            units_by_competition=units_by_competition,
+            provider_remaining=(
+                last_remaining
+                if last_remaining is not None
+                else policy.provider_reserve(provider_kind) + units
+            ),
+            now=now,
+        )
     estimate = _estimate(
         command=command,
         policy=policy,
@@ -4239,12 +4958,13 @@ def run_capture(
         now=now,
         window_ids=tuple(window.window_id for window in due),
     )
+    estimate.pop("estimate_sha256")
+    estimate["budget_admissions"] = list(budget_admissions)
+    estimate["estimate_sha256"] = canonical_sha256(estimate)
     report_prefix = CAPTURE_REPORT_NAMES[command]
     if args.estimate:
         _write_json(args.output / f"{report_prefix}-estimate.json", estimate)
         return estimate
-    if repository is None:
-        raise RuntimeError("PROSPECTIVE_R2_REPOSITORY_REQUIRED")
     if not args.execute and args.cache is None:
         raise ValueError("CAPTURE_MODE_REQUIRED")
     if args.execute:
@@ -4295,28 +5015,23 @@ def run_capture(
                 "capture_attempts": 0,
                 "attempts": 0,
                 "retries": 0,
+                "budget_admissions": [],
+                "estimated_units_by_competition": {},
                 "preflight_reconciliation": recovery,
             },
         )
         _write_json(args.output / f"{report_prefix}-report.json", report)
         return report
+    if repository is None:
+        raise RuntimeError("PROSPECTIVE_R2_REPOSITORY_REQUIRED")
 
-    cap_key = (
-        "api_football_max_calls_total"
-        if provider_kind is ProviderKind.API_FOOTBALL
-        else "odds_api_max_credits_total"
-    )
-    used = state.budget_used(provider_kind)
-    configured_cap = _int_value(
-        policy.budgets[cap_key],
-        error="PROSPECTIVE_PROVIDER_CAP_INVALID",
-    )
+    configured_cap = policy.run_cap(provider_kind)
     admission_cap = (
-        configured_cap - ODDS_API_INTERNAL_SAFETY_RESERVE
+        configured_cap - policy.internal_safety_reserve(provider_kind)
         if provider_kind is ProviderKind.ODDS_API and args.execute
         else configured_cap
     )
-    if used + units > admission_cap:
+    if units > admission_cap:
         raise BudgetExceeded(f"PROSPECTIVE_PROVIDER_CAP_EXCEEDED:{provider_kind.value}")
     cache: dict[str, object] | None = None
     provider_calls = 0
@@ -4353,9 +5068,8 @@ def run_capture(
                     offline=False,
                     max_retries=0,
                 )
-            provider_reserve = _int_value(
-                policy.budgets["api_football_provider_reserve"],
-                error="PROSPECTIVE_API_FOOTBALL_RESERVE_INVALID",
+            provider_reserve = policy.provider_reserve(
+                ProviderKind.API_FOOTBALL
             )
             _assert_provider_transport_available(provider)
             _record_provider_units_before_call(
@@ -4393,18 +5107,24 @@ def run_capture(
                     api_key=os.getenv("ODDS_API_KEY"),
                     offline=False,
                     max_retries=0,
+                    circuit_failure_threshold=(
+                        policy.circuit_breaker_failures(
+                            ProviderKind.ODDS_API
+                        )
+                    ),
+                    circuit_cooldown_seconds=(
+                        policy.circuit_breaker_cooldown_seconds(
+                            ProviderKind.ODDS_API
+                        )
+                    ),
                 )
             near_kickoff = any(
                 window.label == "NEAR_KICKOFF" for window in due
             )
-            provider_reserve = _int_value(
-                policy.budgets["odds_api_provider_reserve"],
-                error="PROSPECTIVE_ODDS_RESERVE_INVALID",
+            provider_reserve = policy.provider_reserve(
+                ProviderKind.ODDS_API
             ) + (
-                _int_value(
-                    policy.budgets["odds_api_near_kickoff_reserve"],
-                    error="PROSPECTIVE_ODDS_NEAR_KICKOFF_RESERVE_INVALID",
-                )
+                policy.near_kickoff_reserve()
                 if near_kickoff
                 else 0
             )
@@ -4440,7 +5160,6 @@ def run_capture(
                 near_kickoff=near_kickoff,
             )
 
-    fixture_by_id = {fixture.fixture_id: fixture for fixture in state.fixtures()}
     odds_identities = (
         _fixture_identities(repository) if command == "capture-odds" else {}
     )
@@ -4563,6 +5282,7 @@ def run_capture(
                 provider_reserve=provider_reserve,
                 recorded_at=operation_now,
                 code_revision=_code_revision(args.code_revision),
+                budget_scope=fixture.competition,
             )
             _record_provider_units_before_call(
                 state,
@@ -4575,6 +5295,7 @@ def run_capture(
                 provider_reserve=provider_reserve,
                 recorded_at=operation_now,
                 code_revision=_code_revision(args.code_revision),
+                budget_scope=fixture.competition,
             )
             provider_calls += 1
             provider_remaining = max(provider_remaining - 1, 0)
@@ -4764,11 +5485,20 @@ def run_capture(
             calls = 0
             credits = 0
         else:
-            request_key = _capture_request_key(command, window)
+            request_key = _capture_request_key(
+                command,
+                window,
+                fixture_by_id,
+            )
             request_windows = tuple(
                 candidate
                 for candidate in due
-                if _capture_request_key(command, candidate) == request_key
+                if _capture_request_key(
+                    command,
+                    candidate,
+                    fixture_by_id,
+                )
+                == request_key
                 and candidate.opens_at <= operation_now < candidate.cutoff_at
                 and (
                     candidate_fixture := fixture_by_id.get(
@@ -4822,6 +5552,7 @@ def run_capture(
                         code_revision=_code_revision(
                             args.code_revision
                         ),
+                        budget_scope=fixture.competition,
                     )
                     for guarded_window_id, guard_key in (
                         reserved_guards.items()
@@ -4848,6 +5579,7 @@ def run_capture(
                         code_revision=_code_revision(
                             args.code_revision
                         ),
+                        budget_scope=fixture.competition,
                     )
                     if provider_kind is ProviderKind.API_FOOTBALL:
                         provider_remaining = max(
@@ -4866,6 +5598,13 @@ def run_capture(
                             fixture=fixture,
                             family=window.family,
                             provider=provider,
+                            odds_sport_key=(
+                                policy.odds_sport_key(
+                                    fixture.competition
+                                )
+                                if command == "capture-odds"
+                                else None
+                            ),
                             before_provider_call=(
                                 record_before_provider_call
                             ),
@@ -4881,7 +5620,9 @@ def run_capture(
                 ) as error:
                     error_code = type(error).__name__.upper()
                     endpoint = (
-                        "/sports/soccer_france_ligue_one/odds"
+                        (
+                            f"/sports/{policy.odds_sport_key(fixture.competition)}/odds"
+                        )
                         if provider_kind is ProviderKind.ODDS_API
                         else (
                             "/players/squads"
@@ -4958,6 +5699,7 @@ def run_capture(
                                 code_revision=_code_revision(
                                     args.code_revision
                                 ),
+                                budget_scope=fixture.competition,
                             )
                         if actual_credits != request_credits:
                             odds_cost_contract_mismatch = True
@@ -5331,6 +6073,8 @@ def run_capture(
             "identity_errors": identity_errors,
             "circuit_open": circuit_open,
             "projection_inserts": projection_inserts,
+            "budget_admissions": list(budget_admissions),
+            "estimated_units_by_competition": units_by_competition,
             "preflight_reconciliation": recovery,
         },
     )
@@ -5374,6 +6118,10 @@ def run_replay_audit(
         bootstrap.bootstrap(
             stored_captures,
             tolerance=policy.operational_tolerance,
+        )
+        durable_sink = SQLAlchemyProjectionSink(
+            state,
+            skip_existing_projections=True,
         )
     durable = replay_from_r2(
         repository,
@@ -5676,13 +6424,10 @@ def run_gate_report(
             observations,
         )
     )
-    gate_inserts = sum(
-        state.append_gate(
-            evaluation,
-            evaluated_at=now,
-            code_revision=_code_revision(args.code_revision),
-        )
-        for evaluation in evaluations
+    gate_inserts, gate_duplicates = state.append_gates_batch(
+        evaluations,
+        evaluated_at=now,
+        code_revision=_code_revision(args.code_revision),
     )
     aggregates = aggregate_gate_evaluations(evaluations)
     ledger = build_observatory_ledger(
@@ -5892,6 +6637,7 @@ def run_gate_report(
             "temporally_admissible": admissible,
             "gate_evaluations": len(evaluations),
             "gate_rows_inserted": gate_inserts,
+            "gate_duplicates_avoided": gate_duplicates,
             "capture_set_sha256": _capture_set_sha256(receipts),
             "capture_provenance": _capture_provenance(receipts),
             "ledger_artifact": ledger_path.name,
