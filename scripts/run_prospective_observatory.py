@@ -1966,6 +1966,10 @@ def _prospective_fixture(
         if require_reliable_utc_kickoff:
             return None
         raise
+    if not registered_at < kickoff <= (
+        registered_at + timedelta(days=horizon_days)
+    ):
+        return None
     provider_fixture_id = str(fixture_map.get("id", "")).strip()
     season = str(league_map.get("season", "")).strip()
     phase = str(league_map.get("round", "")).strip()

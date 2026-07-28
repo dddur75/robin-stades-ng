@@ -220,6 +220,31 @@ def test_postponed_fixture_is_retained_as_an_immutable_tombstone() -> None:
     assert fixture.cancelled is True
 
 
+def test_provider_fixture_before_registry_time_is_skipped_not_fatal() -> None:
+    record = {
+        "fixture": {
+            "id": 101,
+            "date": (NOW - timedelta(hours=2)).isoformat(),
+            "status": {"short": "NS"},
+        },
+        "league": {"season": 2026, "round": "Regular Season - 1"},
+        "teams": {
+            "home": {"id": 1, "name": "Home"},
+            "away": {"id": 2, "name": "Away"},
+        },
+    }
+    assert _prospective_fixture(
+        record,
+        competition="Liga",
+        registered_at=NOW,
+        code_revision="test",
+        horizon_days=30,
+        excluded_statuses={"PST"},
+        require_verified_phase=True,
+        require_reliable_utc_kickoff=True,
+    ) is None
+
+
 def test_registry_pilot_isolates_one_league_failure(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -235,7 +260,7 @@ def test_registry_pilot_isolates_one_league_failure(
     )
     expansion.run_registry(estimate_args)
 
-    state = object()
+    state = MemoryOperationalState()
     repository = object()
     monkeypatch.setattr(expansion, "_database_state", lambda: state)
     monkeypatch.setattr(expansion, "_repository", lambda: repository)
@@ -246,9 +271,27 @@ def test_registry_pilot_isolates_one_league_failure(
         state: object,
         repository: object,
     ) -> dict[str, object]:
-        del state, repository
+        del repository
         if args.estimate:
             return {"status": "ESTIMATED"}
+        assert isinstance(state, MemoryOperationalState)
+        reserved_calls = 2 if args.competition == "Liga" else 3
+        for index in range(reserved_calls):
+            state.append_budget(
+                idempotency_key=(
+                    f"{args.competition}:provider-step:{index}"
+                ),
+                provider=ProviderKind.API_FOOTBALL,
+                units=1,
+                provider_remaining=6_000 - index,
+                provider_reserve=5_000,
+                recorded_at=NOW,
+                reason=(
+                    "RESERVED_BEFORE_PROVIDER_CALL:registry;"
+                    f"SCOPE={args.competition}"
+                ),
+                code_revision="test",
+            )
         if args.competition == "Liga":
             raise RuntimeError("SIMULATED_PROVIDER_FAILURE")
         return {
@@ -283,12 +326,13 @@ def test_registry_pilot_isolates_one_league_failure(
     report = expansion.run_registry(execute_args)
     assert report["status"] == "FIVE_LEAGUE_REGISTRY_PILOT_PARTIAL"
     assert report["competitions_active"] == 4
-    assert report["provider_calls"] == 12
+    assert report["provider_calls"] == 14
     rows = {
         row["competition"]: row
         for row in report["leagues"]  # type: ignore[union-attr]
     }
     assert rows["Liga"]["gate"] == LeagueActivationStatus.BLOCKED_PROVIDER.value
+    assert rows["Liga"]["provider_calls"] == 2
     assert rows["Premier League"]["gate"] == (
         LeagueActivationStatus.ACTIVE_ODDS_REDUCED.value
     )

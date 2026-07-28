@@ -175,6 +175,60 @@ def _verified_estimate(
     return recorded
 
 
+def _scoped_budget_units(
+    state: object,
+    *,
+    provider: ProviderKind,
+    competition: str,
+) -> int | None:
+    reader = getattr(state, "budget_entries", None)
+    if not callable(reader):
+        return None
+    return int(
+        sum(
+        entry.units
+        for entry in reader()
+        if entry.provider is provider
+        and entry.units > 0
+        and _budget_scope(entry.reason) == competition
+        )
+    )
+
+
+def _provider_remaining(
+    state: object,
+    *,
+    now: datetime,
+) -> int | None:
+    reader = getattr(state, "external_quota_remaining", None)
+    if not callable(reader):
+        return None
+    value = reader(ProviderKind.API_FOOTBALL, now=now)
+    return value if isinstance(value, int) and value >= 0 else None
+
+
+def _compact_error_details(error: Exception) -> list[dict[str, object]]:
+    reader = getattr(error, "errors", None)
+    if not callable(reader):
+        return []
+    details: list[dict[str, object]] = []
+    for item in reader():
+        if not isinstance(item, Mapping):
+            continue
+        location = item.get("loc")
+        details.append(
+            {
+                "type": str(item.get("type", "VALIDATION_ERROR"))[:120],
+                "location": (
+                    [str(value)[:80] for value in location]
+                    if isinstance(location, tuple | list)
+                    else []
+                ),
+            }
+        )
+    return details[:10]
+
+
 def _child_args(
     args: argparse.Namespace,
     *,
@@ -222,6 +276,11 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
     for competition in active_competitions(policy.value):
         child_output = args.output / ".five-league" / competition.competition
         child_estimate = child_output / "fixture-registry-estimate.json"
+        calls_before = _scoped_budget_units(
+            state,
+            provider=ProviderKind.API_FOOTBALL,
+            competition=competition.competition,
+        )
         try:
             run_fixture_registry(
                 _child_args(
@@ -270,7 +329,18 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
                 gate = LeagueActivationStatus.BLOCKED_BUDGET
             else:
                 gate = competition.expected_active_status
-            calls = int(str(report.get("provider_calls", 0)))
+            calls_after = _scoped_budget_units(
+                state,
+                provider=ProviderKind.API_FOOTBALL,
+                competition=competition.competition,
+            )
+            calls = (
+                calls_after - calls_before
+                if calls_before is not None and calls_after is not None
+                else int(str(report.get("provider_calls", 0)))
+            )
+            if not 0 <= calls <= 3:
+                raise RuntimeError("FIVE_LEAGUE_CALL_BOUND_VIOLATED")
             provider_calls += calls
             r2_objects += int(str(r2.get("objects_added", 0)))
             r2_bytes += int(str(r2.get("bytes", 0)))
@@ -300,9 +370,25 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
                     ),
                     "gate": gate.value,
                     "error": None,
+                    "error_details": [],
                 }
             )
         except Exception as error:  # isolate one league without hiding evidence
+            calls_after = _scoped_budget_units(
+                state,
+                provider=ProviderKind.API_FOOTBALL,
+                competition=competition.competition,
+            )
+            calls = (
+                calls_after - calls_before
+                if calls_before is not None and calls_after is not None
+                else 0
+            )
+            if not 0 <= calls <= 3:
+                raise RuntimeError(
+                    "FIVE_LEAGUE_CALL_BOUND_VIOLATED"
+                ) from error
+            provider_calls += calls
             league_rows.append(
                 {
                     "competition": competition.competition,
@@ -315,14 +401,15 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
                     "identity_slots_verified": 0,
                     "identity_slots_expected": 0,
                     "kickoffs_reliable": 0,
-                    "provider_calls": 0,
-                    "quota_remaining": None,
+                    "provider_calls": calls,
+                    "quota_remaining": _provider_remaining(state, now=now),
                     "r2_objects_added": 0,
                     "r2_bytes": 0,
                     "postgresql_inserts": 0,
                     "duplicates_avoided": 0,
                     "gate": LeagueActivationStatus.BLOCKED_PROVIDER.value,
                     "error": type(error).__name__,
+                    "error_details": _compact_error_details(error),
                 }
             )
 
