@@ -1257,6 +1257,11 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
 
     def persist_capture(self, capture: StoredCapture) -> bool:
         receipt = capture.receipt
+        existing = self.receipt_rows.get(receipt.receipt_hash)
+        if existing is not None:
+            if existing != receipt:
+                raise ValueError("CAPTURE_RECEIPT_IDEMPOTENCY_CONFLICT")
+            return False
         values = receipt.model_dump()
         receipt_id = _stable_id("receipt", receipt.receipt_hash)
         values.update(
@@ -1497,8 +1502,14 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
 class SQLAlchemyProjectionSink:
     """Rebuild compact PostgreSQL projections from immutable R2 receipts."""
 
-    def __init__(self, state: SQLAlchemyOperationalState) -> None:
+    def __init__(
+        self,
+        state: SQLAlchemyOperationalState,
+        *,
+        skip_existing_projections: bool = False,
+    ) -> None:
         self.state = state
+        self.skip_existing_projections = skip_existing_projections
 
     def bootstrap(
         self,
@@ -1904,6 +1915,12 @@ class SQLAlchemyProjectionSink:
             receipt_created=False,
         )
         inserted = self.state.persist_capture(stored)
+        if not inserted and self.skip_existing_projections:
+            # Replay validates every compact table against a projection
+            # independently derived from R2 after this pass. Avoid thousands
+            # of duplicate point queries here; missing or extra rows still
+            # fail closed in _assert_r2_postgresql_projection_parity.
+            return False
         if receipt.quality_status is not AvailabilityStatus.CAPTURED:
             return inserted
         if receipt.family in {
@@ -6010,6 +6027,10 @@ def run_replay_audit(
         bootstrap.bootstrap(
             stored_captures,
             tolerance=policy.operational_tolerance,
+        )
+        durable_sink = SQLAlchemyProjectionSink(
+            state,
+            skip_existing_projections=True,
         )
     durable = replay_from_r2(
         repository,

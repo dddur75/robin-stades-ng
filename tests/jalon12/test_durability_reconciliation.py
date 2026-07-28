@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import func, select
+from sqlalchemy import event, func, select
 
 from robin.domain.enums import DataAvailability, DataOrigin
 from robin.prospective_observatory import (
@@ -588,6 +588,38 @@ def test_replay_rejects_sql_receipt_and_index_absent_from_r2(
             state=state,
             repository=repository,
         )
+
+
+def test_duplicate_sql_receipt_uses_restored_exact_mirror_without_query(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repository = ProspectiveR2Repository(_CountingObjectStore())
+    capture = _provider_billed_capture(repository)
+    state = _migrated_state(tmp_path / "receipt-fast-path.db", monkeypatch)
+    assert state.persist_capture(capture) is True
+    statements: list[str] = []
+
+    def record_statement(
+        _connection: object,
+        _cursor: object,
+        statement: str,
+        _parameters: object,
+        _context: object,
+        _executemany: bool,
+    ) -> None:
+        statements.append(statement)
+
+    event.listen(state.engine, "before_cursor_execute", record_statement)
+    try:
+        assert state.persist_capture(capture) is False
+    finally:
+        event.remove(
+            state.engine,
+            "before_cursor_execute",
+            record_statement,
+        )
+    assert statements == []
 
 
 def test_r2_budget_journal_rebuilds_fresh_sqlite_idempotently(
