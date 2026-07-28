@@ -765,6 +765,14 @@ class OperationalState(Protocol):
         code_revision: str,
     ) -> bool: ...
 
+    def append_gates_batch(
+        self,
+        evaluations: Iterable[GateEvaluation],
+        *,
+        evaluated_at: datetime,
+        code_revision: str,
+    ) -> tuple[int, int]: ...
+
 
 @dataclass(slots=True)
 class MemoryOperationalState:
@@ -967,6 +975,26 @@ class MemoryOperationalState:
             return False
         self.gate_rows[key] = evaluation
         return True
+
+    def append_gates_batch(
+        self,
+        evaluations: Iterable[GateEvaluation],
+        *,
+        evaluated_at: datetime,
+        code_revision: str,
+    ) -> tuple[int, int]:
+        inserted = 0
+        duplicates = 0
+        for evaluation in evaluations:
+            if self.append_gate(
+                evaluation,
+                evaluated_at=evaluated_at,
+                code_revision=code_revision,
+            ):
+                inserted += 1
+            else:
+                duplicates += 1
+        return inserted, duplicates
 
 
 class SQLAlchemyOperationalState(MemoryOperationalState):
@@ -1460,40 +1488,103 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         evaluated_at: datetime,
         code_revision: str,
     ) -> bool:
-        evidence = asdict_gate(evaluation)
-        evidence_hash = canonical_sha256(evidence)
-        idempotency_key = canonical_sha256(
-            {
+        inserted, _ = self.append_gates_batch(
+            (evaluation,),
+            evaluated_at=evaluated_at,
+            code_revision=code_revision,
+        )
+        return inserted == 1
+
+    def append_gates_batch(
+        self,
+        evaluations: Iterable[GateEvaluation],
+        *,
+        evaluated_at: datetime,
+        code_revision: str,
+    ) -> tuple[int, int]:
+        table = self.tables["temporal_data_gates"]
+        pending: dict[str, tuple[GateEvaluation, dict[str, object]]] = {}
+        duplicates = 0
+        for evaluation in evaluations:
+            evidence = asdict_gate(evaluation)
+            evidence_hash = canonical_sha256(evidence)
+            idempotency_key = canonical_sha256(
+                {
+                    "evidence_hash": evidence_hash,
+                    "evaluated_at": evaluated_at.isoformat(),
+                }
+            )
+            fixture = self.fixture_rows.get(evaluation.fixture_id)
+            if fixture is None:
+                raise RuntimeError("TEMPORAL_GATE_FIXTURE_MISSING")
+            values: dict[str, object] = {
+                "id": _stable_id("gate", idempotency_key),
+                "idempotency_key": idempotency_key,
+                "fixture_id": evaluation.fixture_id,
+                "gate_name": evaluation.gate.value,
+                "status": evaluation.status.value,
+                "coverage": (
+                    1.0
+                    if evaluation.status is GateStatus.PASSED
+                    else 0.0
+                ),
+                "observations": evaluation.observations,
+                "reason": evaluation.reason,
+                "evidence": evidence,
                 "evidence_hash": evidence_hash,
-                "evaluated_at": evaluated_at.isoformat(),
+                "cutoff_at": fixture[1].kickoff_at
+                - timedelta(microseconds=1),
+                "evaluated_at": evaluated_at,
+                "code_revision": code_revision,
+                "append_only": True,
+            }
+            previous = pending.get(idempotency_key)
+            if previous is not None:
+                if previous[1] != values:
+                    raise ValueError(
+                        "TEMPORAL_GATE_IDEMPOTENCY_CONFLICT"
+                    )
+                duplicates += 1
+                continue
+            pending[idempotency_key] = (evaluation, values)
+
+        if not pending:
+            return 0, duplicates
+        keys = tuple(pending)
+        with self.engine.begin() as connection:
+            existing_rows = {
+                str(row["idempotency_key"]): row
+                for row in connection.execute(
+                    select(table).where(
+                        table.c.idempotency_key.in_(keys)
+                    )
+                ).mappings()
+            }
+            rows: list[dict[str, object]] = []
+            for key, (_, values) in pending.items():
+                existing = existing_rows.get(key)
+                if existing is not None:
+                    row = self._row_for(table, values)
+                    if any(
+                        _json_compatible(existing[name])
+                        != _json_compatible(value)
+                        for name, value in row.items()
+                    ):
+                        raise ValueError(
+                            "TEMPORAL_GATE_IDEMPOTENCY_CONFLICT"
+                        )
+                    duplicates += 1
+                    continue
+                rows.append(self._row_for(table, values))
+            if rows:
+                connection.execute(table.insert(), rows)
+        self.gate_rows.update(
+            {
+                key: evaluation
+                for key, (evaluation, _) in pending.items()
             }
         )
-        fixture = self.fixture_rows.get(evaluation.fixture_id)
-        if fixture is None:
-            raise RuntimeError("TEMPORAL_GATE_FIXTURE_MISSING")
-        values = {
-            "id": _stable_id("gate", idempotency_key),
-            "idempotency_key": idempotency_key,
-            "fixture_id": evaluation.fixture_id,
-            "gate_name": evaluation.gate.value,
-            "status": evaluation.status.value,
-            "coverage": (
-                1.0 if evaluation.status is GateStatus.PASSED else 0.0
-            ),
-            "observations": evaluation.observations,
-            "reason": evaluation.reason,
-            "evidence": evidence,
-            "evidence_hash": evidence_hash,
-            "cutoff_at": fixture[1].kickoff_at - timedelta(microseconds=1),
-            "evaluated_at": evaluated_at,
-            "code_revision": code_revision,
-            "append_only": True,
-        }
-        return self._insert_exact(
-            "temporal_data_gates",
-            key_values={"idempotency_key": idempotency_key},
-            values=values,
-        )
+        return len(rows), duplicates
 
     def projection_sink(self) -> ProjectionSink:
         return SQLAlchemyProjectionSink(self)
@@ -6333,13 +6424,10 @@ def run_gate_report(
             observations,
         )
     )
-    gate_inserts = sum(
-        state.append_gate(
-            evaluation,
-            evaluated_at=now,
-            code_revision=_code_revision(args.code_revision),
-        )
-        for evaluation in evaluations
+    gate_inserts, gate_duplicates = state.append_gates_batch(
+        evaluations,
+        evaluated_at=now,
+        code_revision=_code_revision(args.code_revision),
     )
     aggregates = aggregate_gate_evaluations(evaluations)
     ledger = build_observatory_ledger(
@@ -6549,6 +6637,7 @@ def run_gate_report(
             "temporally_admissible": admissible,
             "gate_evaluations": len(evaluations),
             "gate_rows_inserted": gate_inserts,
+            "gate_duplicates_avoided": gate_duplicates,
             "capture_set_sha256": _capture_set_sha256(receipts),
             "capture_provenance": _capture_provenance(receipts),
             "ledger_artifact": ledger_path.name,

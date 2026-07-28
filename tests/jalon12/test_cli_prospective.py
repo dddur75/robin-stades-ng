@@ -1097,7 +1097,45 @@ def test_sqlite_restart_and_r2_reconstruction_are_idempotent(
             state=state,
             repository=repository,
         )
-    run_gate_report(_args("gate-report", output=output), state=state)
+    temporal_gate_inserts: list[bool] = []
+
+    def record_temporal_gate_insert(
+        _connection: object,
+        _cursor: object,
+        statement: str,
+        _parameters: object,
+        _context: object,
+        executemany: bool,
+    ) -> None:
+        if statement.lstrip().upper().startswith(
+            "INSERT INTO TEMPORAL_DATA_GATES"
+        ):
+            temporal_gate_inserts.append(executemany)
+
+    event.listen(
+        engine,
+        "before_cursor_execute",
+        record_temporal_gate_insert,
+    )
+    first_gates = run_gate_report(
+        _args("gate-report", output=output),
+        state=state,
+    )
+    event.remove(
+        engine,
+        "before_cursor_execute",
+        record_temporal_gate_insert,
+    )
+    repeated_gates = run_gate_report(
+        _args("gate-report", output=output),
+        state=state,
+    )
+    assert first_gates["gate_rows_inserted"] > 1
+    assert temporal_gate_inserts == [True]
+    assert repeated_gates["gate_rows_inserted"] == 0
+    assert repeated_gates["gate_duplicates_avoided"] == first_gates[
+        "gate_evaluations"
+    ]
     engine.dispose()  # type: ignore[attr-defined]
 
     restarted_engine = build_engine(
