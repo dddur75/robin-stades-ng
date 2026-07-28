@@ -120,11 +120,47 @@ function addSyntheticFixture(
 
 test("cas A — le modèle reflète le snapshot réel sans constante frontend", () => {
   const model = buildPresentationModel(snapshot, { now: referenceNow });
-  assert.equal(model.matches.length, 9);
-  assert.equal(model.dashboard.operationalEvidence.activeWindows, 441);
-  assert.equal(model.dashboard.operationalEvidence.physicalEvidence, 18);
-  assert.equal(model.dashboard.operationalEvidence.deepObservations, 0);
-  assert.equal(model.dashboard.bankroll.currentUnits, 1000);
+  const activeFixtureIds = new Set(
+    snapshot.prospectiveObservatory.fixtures.registry
+      .filter(
+        (fixture) =>
+          fixture.cancelled !== true &&
+          !["CANCELLED", "CANCELED", "TOMBSTONED", "DELETED"].includes(
+            String(fixture.status),
+          ),
+      )
+      .map((fixture) => fixture.fixture_id),
+  );
+  const activeWindows = snapshot.prospectiveObservatory.windows.registry.filter(
+    (window) =>
+      window.active !== false && activeFixtureIds.has(window.fixture_id),
+  ).length;
+  const captureFamilies = snapshot.prospectiveObservatory.captures.by_family;
+  const deepObservations = [
+    "SQUAD",
+    "PLAYER_STATUS",
+    "INJURY",
+    "LINEUP",
+    "FORMATION",
+    "ODDS",
+  ].reduce(
+    (sum, family) => sum + Number(captureFamilies[family]?.captured ?? 0),
+    0,
+  );
+  assert.equal(model.matches.length, activeFixtureIds.size);
+  assert.equal(model.dashboard.operationalEvidence.activeWindows, activeWindows);
+  assert.equal(
+    model.dashboard.operationalEvidence.physicalEvidence,
+    snapshot.prospectiveObservatory.r2.objects_added,
+  );
+  assert.equal(
+    model.dashboard.operationalEvidence.deepObservations,
+    deepObservations,
+  );
+  assert.equal(
+    model.dashboard.bankroll.currentUnits,
+    snapshot.patternResearch.bankroll.currentUnits,
+  );
   assert.equal(model.system.freshness.status, "FRESHNESS_CURRENT");
 });
 
@@ -166,12 +202,13 @@ test("cas B — une capture et un gate évoluent par mutation du snapshot seul",
 
 test("cas C — une dixième fixture apparaît automatiquement", () => {
   const value = cloneSnapshot();
+  const initialFixtureCount = value.prospectiveObservatory.fixtures.registry.length;
   addSyntheticFixture(value, {
     fixtureId: "synthetic-test:fixture-10",
     kickoffShift: 7 * 86_400_000,
   });
   const model = buildPresentationModel(value, { now: referenceNow });
-  assert.equal(model.matches.length, 10);
+  assert.equal(model.matches.length, initialFixtureCount + 1);
   assert.ok(model.matches.some((match) => match.id === "synthetic-test:fixture-10"));
 });
 
