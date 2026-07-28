@@ -77,6 +77,197 @@ def test_registry_contains_exactly_five_active_leagues_and_profiles() -> None:
     assert len({item.odds_sport_key for item in registry}) == 5
 
 
+def test_registry_horizon_is_extended_without_changing_matchday_cap() -> None:
+    policy = _policy()
+    fixture_registry = policy["fixture_registry"]
+    assert isinstance(fixture_registry, dict)
+    assert fixture_registry["horizon_days"] == 45
+    assert fixture_registry["max_matchdays_per_competition"] == 3
+
+
+def test_registry_gate_distinguishes_waiting_horizon_and_provider_error() -> None:
+    policy = ObservatoryPolicy.load(POLICY_PATH)
+    liga = next(
+        item
+        for item in active_competitions(policy.value)
+        if item.competition == "Liga"
+    )
+    base = {
+        "fixtures_valid": 0,
+        "identity_slots_verified": 0,
+        "identity_slots_expected": 0,
+        "quota_remaining": 6_000,
+        "provider_response_valid": True,
+        "provider_payload_schema_errors": 0,
+    }
+    assert expansion._activation_from_registry_report(
+        {
+            **base,
+            "fixtures_received": 0,
+            "records_in_current_horizon": 0,
+            "records_outside_current_horizon": 0,
+        },
+        competition=liga,
+        provider_reserve=5_000,
+    ) is LeagueActivationStatus.WAITING_FOR_FIXTURES
+    assert expansion._activation_from_registry_report(
+        {
+            **base,
+            "fixtures_received": 2,
+            "records_in_current_horizon": 0,
+            "records_outside_current_horizon": 2,
+        },
+        competition=liga,
+        provider_reserve=5_000,
+    ) is LeagueActivationStatus.NO_FIXTURES_IN_CURRENT_HORIZON
+    assert expansion._activation_from_registry_report(
+        {
+            **base,
+            "fixtures_received": 1,
+            "records_in_current_horizon": 1,
+            "records_outside_current_horizon": 0,
+            "provider_payload_schema_errors": 1,
+        },
+        competition=liga,
+        provider_reserve=5_000,
+    ) is LeagueActivationStatus.BLOCKED_PROVIDER_ERROR
+
+
+def test_targeted_registry_estimate_never_spends_on_other_leagues(
+    tmp_path: Path,
+) -> None:
+    report = expansion.run_registry(
+        argparse.Namespace(
+            policy=POLICY_PATH,
+            output=tmp_path,
+            now=NOW.isoformat(),
+            code_revision="test",
+            estimate=True,
+            execute=False,
+            estimate_file=None,
+            competition="Bundesliga",
+        )
+    )
+    assert report["competition_scope"] == "Bundesliga"
+    assert report["estimated_calls"] == 3
+    assert report["odds_api_credits"] == 0
+    assert [
+        row["competition"]
+        for row in report["competitions"]  # type: ignore[union-attr]
+    ] == ["Bundesliga"]
+
+
+def test_waiting_league_activates_and_schedules_without_code_change(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    estimate_args = argparse.Namespace(
+        policy=POLICY_PATH,
+        output=tmp_path,
+        now=NOW.isoformat(),
+        code_revision="same-revision",
+        estimate=True,
+        execute=False,
+        estimate_file=None,
+        competition="Liga",
+    )
+    estimate = expansion.run_registry(estimate_args)
+    policy_hash = estimate["policy_sha256"]
+    state = MemoryOperationalState()
+    monkeypatch.setattr(expansion, "_database_state", lambda: state)
+    monkeypatch.setattr(expansion, "_repository", lambda: object())
+    executions = 0
+
+    def fake_registry(
+        args: argparse.Namespace,
+        *,
+        state: object,
+        repository: object,
+    ) -> dict[str, object]:
+        nonlocal executions
+        del repository
+        if args.estimate:
+            return {"status": "ESTIMATED"}
+        assert isinstance(state, MemoryOperationalState)
+        executions += 1
+        for index in range(3):
+            state.append_budget(
+                idempotency_key=f"liga-cycle-{executions}-{index}",
+                provider=ProviderKind.API_FOOTBALL,
+                units=1,
+                provider_remaining=6_000 - index,
+                provider_reserve=5_000,
+                recorded_at=NOW + timedelta(minutes=executions),
+                reason="RESERVED_BEFORE_PROVIDER_CALL:registry;SCOPE=Liga",
+                code_revision="same-revision",
+            )
+        fixtures_valid = int(executions > 1)
+        if fixtures_valid:
+            fixture = _fixture("Liga", 14_001)
+            state.fixture_rows[fixture.fixture_id] = (
+                fixture.registry_hash,
+                fixture,
+            )
+        return {
+            "provider_season": 2026,
+            "fixtures_received": fixtures_valid,
+            "provider_response_valid": True,
+            "provider_response_empty": fixtures_valid == 0,
+            "records_in_current_horizon": fixtures_valid,
+            "records_outside_current_horizon": 0,
+            "provider_payload_schema_errors": 0,
+            "fixtures_valid": fixtures_valid,
+            "identity_slots_verified": fixtures_valid * 2,
+            "identity_slots_expected": fixtures_valid * 2,
+            "teams_verified": fixtures_valid * 2,
+            "kickoffs_reliable": fixtures_valid,
+            "provider_calls": 3,
+            "quota_remaining": 6_000,
+            "observatory": {
+                "r2": {"objects_added": fixtures_valid * 2, "bytes": 100},
+                "postgresql": {
+                    "inserts": fixtures_valid,
+                    "duplicates_avoided": 0,
+                },
+            },
+        }
+
+    monkeypatch.setattr(expansion, "run_fixture_registry", fake_registry)
+    execute_args = argparse.Namespace(
+        **{
+            **vars(estimate_args),
+            "estimate": False,
+            "execute": True,
+            "estimate_file": tmp_path
+            / "five-league-registry-estimate.json",
+        }
+    )
+    waiting = expansion.run_registry(execute_args)
+    activated = expansion.run_registry(execute_args)
+    assert waiting["policy_sha256"] == activated["policy_sha256"] == policy_hash
+    assert waiting["leagues"][0]["gate"] == (  # type: ignore[index]
+        LeagueActivationStatus.WAITING_FOR_FIXTURES.value
+    )
+    assert activated["leagues"][0]["gate"] == (  # type: ignore[index]
+        LeagueActivationStatus.ACTIVE_ODDS_REDUCED.value
+    )
+    assert activated["odds_api_credits"] == 0
+
+    scheduler_args = argparse.Namespace(
+        policy=POLICY_PATH,
+        output=tmp_path,
+        now=NOW.isoformat(),
+        code_revision="same-revision",
+        cache=None,
+        object_store_root=None,
+    )
+    first_plan = run_scheduler(scheduler_args, state=state)
+    second_plan = run_scheduler(scheduler_args, state=state)
+    assert first_plan["windows_inserted"] > 0
+    assert second_plan["windows_inserted"] == 0
+    assert second_plan["duplicates_avoided"] == first_plan["windows_inserted"]
+
+
 def test_reduced_profile_keeps_all_deep_families_but_only_three_odds_windows() -> None:
     canonical = ("J-7", "J-3", "J-1", "H-6", "H-2", "NEAR_KICKOFF")
     assert labels_for_profile(
@@ -331,7 +522,9 @@ def test_registry_pilot_isolates_one_league_failure(
         row["competition"]: row
         for row in report["leagues"]  # type: ignore[union-attr]
     }
-    assert rows["Liga"]["gate"] == LeagueActivationStatus.BLOCKED_PROVIDER.value
+    assert rows["Liga"]["gate"] == (
+        LeagueActivationStatus.BLOCKED_PROVIDER_ERROR.value
+    )
     assert rows["Liga"]["provider_calls"] == 2
     assert rows["Premier League"]["gate"] == (
         LeagueActivationStatus.ACTIVE_ODDS_REDUCED.value
@@ -351,6 +544,33 @@ def test_cost_projection_is_bounded_and_never_authorizes_promotion() -> None:
     assert totals["bytes"] is None
     assert totals["storage_cost"] is None
     assert report["budgets"] == _policy()["provider_budgets"]
+
+
+def test_schedule_wait_is_ready_only_with_four_active_leagues() -> None:
+    assert expansion._expansion_verdict(
+        active=5,
+        waiting=0,
+        replay_green=True,
+        postgres_green=True,
+    ) == "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY"
+    assert expansion._expansion_verdict(
+        active=4,
+        waiting=1,
+        replay_green=True,
+        postgres_green=True,
+    ) == "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY_WITH_SCHEDULE_WAIT"
+    assert expansion._expansion_verdict(
+        active=3,
+        waiting=2,
+        replay_green=True,
+        postgres_green=True,
+    ) == "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL"
+    assert expansion._expansion_verdict(
+        active=4,
+        waiting=1,
+        replay_green=False,
+        postgres_green=True,
+    ) == "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL"
 
 
 def test_provider_free_summary_uses_durable_scoped_budget_and_all_gates(

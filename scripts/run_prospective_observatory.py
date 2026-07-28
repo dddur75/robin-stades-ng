@@ -1923,6 +1923,59 @@ def _fixture_records(result: ProviderResult) -> tuple[dict[str, object], ...]:
     return tuple(dict(record) for record in result.records)
 
 
+def _fixture_record_diagnostics(
+    records: Iterable[Mapping[str, object]],
+    *,
+    now: datetime,
+    until: datetime,
+) -> dict[str, int]:
+    """Describe a valid provider response without confusing emptiness and errors."""
+
+    received = 0
+    in_horizon = 0
+    outside_horizon = 0
+    schema_errors = 0
+    for record in records:
+        received += 1
+        fixture = record.get("fixture")
+        league = record.get("league")
+        teams = record.get("teams")
+        if not all(
+            isinstance(value, Mapping)
+            for value in (fixture, league, teams)
+        ):
+            schema_errors += 1
+            continue
+        fixture_map = cast(Mapping[str, object], fixture)
+        league_map = cast(Mapping[str, object], league)
+        teams_map = cast(Mapping[str, object], teams)
+        home = teams_map.get("home")
+        away = teams_map.get("away")
+        if (
+            not isinstance(home, Mapping)
+            or not isinstance(away, Mapping)
+            or not str(fixture_map.get("id", "")).strip()
+            or not str(league_map.get("season", "")).strip()
+        ):
+            schema_errors += 1
+            continue
+        try:
+            kickoff = _provider_datetime(fixture_map.get("date"))
+        except (TypeError, ValueError):
+            schema_errors += 1
+            continue
+        if now < kickoff <= until:
+            in_horizon += 1
+        else:
+            outside_horizon += 1
+    return {
+        "records_received": received,
+        "records_in_current_horizon": in_horizon,
+        "records_outside_current_horizon": outside_horizon,
+        "provider_payload_schema_errors": schema_errors,
+    }
+
+
 def _provider_datetime(value: object) -> datetime:
     parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
     if parsed.tzinfo is None or parsed.utcoffset() is None:
@@ -3066,6 +3119,11 @@ def run_fixture_registry(
             else quota_remaining - 2
         )
 
+    diagnostics = _fixture_record_diagnostics(
+        records,
+        now=now,
+        until=until,
+    )
     selected = _filter_fixtures(
         records,
         policy=policy,
@@ -3204,6 +3262,9 @@ def run_fixture_registry(
                 "max_matchdays_per_competition"
             ],
             "fixtures_received": len(records),
+            "provider_response_valid": True,
+            "provider_response_empty": len(records) == 0,
+            **diagnostics,
             "fixtures_registered": len(selected),
             "fixtures_valid": len(admitted),
             "kickoffs_reliable": len(admitted),

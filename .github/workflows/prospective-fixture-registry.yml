@@ -8,6 +8,11 @@ on:
         required: false
         default: false
         type: boolean
+      competition:
+        description: "Périmètre du registre (ALL pour le cycle quotidien)"
+        required: false
+        default: "ALL"
+        type: string
   schedule:
     - cron: "7 3 * * *"
 
@@ -43,6 +48,7 @@ jobs:
         run: >-
           python scripts/run_five_league_expansion.py registry
           --estimate
+          --competition "${{ inputs.competition || 'ALL' }}"
           --policy "$PROSPECTIVE_POLICY"
           --output artifacts/prospective-observatory
       - name: Appliquer les migrations
@@ -66,6 +72,7 @@ jobs:
         run: >-
           python scripts/run_five_league_expansion.py registry
           --execute
+          --competition "${{ inputs.competition || 'ALL' }}"
           --policy "$PROSPECTIVE_POLICY"
           --estimate-file artifacts/prospective-observatory/five-league-registry-estimate.json
           --output artifacts/prospective-observatory

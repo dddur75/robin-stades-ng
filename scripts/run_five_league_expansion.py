@@ -17,6 +17,7 @@ from robin.prospective_observatory.contracts import (
 )
 from robin.prospective_observatory.multi_league import (
     CaptureProfile,
+    CompetitionPolicy,
     LeagueActivationStatus,
     active_competitions,
 )
@@ -110,8 +111,28 @@ def _parse_now(value: str | None) -> datetime:
     return parsed.astimezone(UTC)
 
 
-def _estimate(policy: ObservatoryPolicy, *, now: datetime) -> dict[str, object]:
+def _selected_competitions(
+    policy: ObservatoryPolicy,
+    selection: str | None,
+) -> tuple[CompetitionPolicy, ...]:
     competitions = active_competitions(policy.value)
+    if selection is None or selection.strip().upper() == "ALL":
+        return competitions
+    selected = tuple(
+        item for item in competitions if item.competition == selection.strip()
+    )
+    if len(selected) != 1:
+        raise ValueError("FIVE_LEAGUE_COMPETITION_SCOPE_INVALID")
+    return selected
+
+
+def _estimate(
+    policy: ObservatoryPolicy,
+    *,
+    now: datetime,
+    competition: str | None,
+) -> dict[str, object]:
+    competitions = _selected_competitions(policy, competition)
     rows = [
         {
             "competition": item.competition,
@@ -128,6 +149,9 @@ def _estimate(policy: ObservatoryPolicy, *, now: datetime) -> dict[str, object]:
         "schema_version": "five-league-registry-estimate-v1",
         "generated_at": now.isoformat(),
         "policy_sha256": policy.sha256,
+        "competition_scope": (
+            "ALL" if len(competitions) == 5 else competitions[0].competition
+        ),
         "competitions": rows,
         "estimated_calls": estimated_calls,
         "run_cap": api_budget["per_run"],
@@ -154,6 +178,7 @@ def _verified_estimate(
     path: Path,
     *,
     policy: ObservatoryPolicy,
+    competition: str | None,
 ) -> dict[str, object]:
     recorded = _read_json(path)
     recorded_hash = recorded.pop("estimate_sha256", None)
@@ -162,7 +187,11 @@ def _verified_estimate(
     generated_at = recorded.get("generated_at")
     if not isinstance(generated_at, str):
         raise ValueError("FIVE_LEAGUE_ESTIMATE_TIMESTAMP_INVALID")
-    expected = _estimate(policy, now=_parse_now(generated_at))
+    expected = _estimate(
+        policy,
+        now=_parse_now(generated_at),
+        competition=competition,
+    )
     if recorded != {
         key: value
         for key, value in expected.items()
@@ -229,6 +258,63 @@ def _compact_error_details(error: Exception) -> list[dict[str, object]]:
     return details[:10]
 
 
+def _activation_from_registry_report(
+    report: Mapping[str, object],
+    *,
+    competition: CompetitionPolicy,
+    provider_reserve: int,
+) -> LeagueActivationStatus:
+    fixtures = int(str(report.get("fixtures_valid", 0)))
+    identities = int(str(report.get("identity_slots_verified", 0)))
+    expected_identities = int(
+        str(report.get("identity_slots_expected", 0))
+    )
+    schema_errors = int(
+        str(report.get("provider_payload_schema_errors", 0))
+    )
+    received = int(str(report.get("fixtures_received", 0)))
+    in_horizon = int(
+        str(report.get("records_in_current_horizon", received))
+    )
+    outside_horizon = int(
+        str(report.get("records_outside_current_horizon", 0))
+    )
+    quota_remaining = int(str(report.get("quota_remaining", 0)))
+    if report.get("provider_response_valid") is False or schema_errors:
+        return LeagueActivationStatus.BLOCKED_PROVIDER_ERROR
+    if fixtures == 0:
+        if received == 0:
+            return LeagueActivationStatus.WAITING_FOR_FIXTURES
+        if outside_horizon > 0 and in_horizon == 0:
+            return LeagueActivationStatus.NO_FIXTURES_IN_CURRENT_HORIZON
+        return LeagueActivationStatus.WAITING_FOR_FIXTURES
+    if identities != expected_identities:
+        return LeagueActivationStatus.BLOCKED_IDENTITY
+    if quota_remaining < provider_reserve:
+        return LeagueActivationStatus.BLOCKED_BUDGET
+    return competition.expected_active_status
+
+
+def _activation_from_exception(
+    error: Exception,
+) -> LeagueActivationStatus | None:
+    message = f"{type(error).__name__}:{error}".upper()
+    if "BUDGET" in message or "RESERVE" in message:
+        return LeagueActivationStatus.BLOCKED_BUDGET
+    if any(
+        marker in message
+        for marker in (
+            "API_FOOTBALL",
+            "PROVIDER",
+            "HTTP",
+            "AUTH",
+            "TIMEOUT",
+        )
+    ):
+        return LeagueActivationStatus.BLOCKED_PROVIDER_ERROR
+    return None
+
+
 def _child_args(
     args: argparse.Namespace,
     *,
@@ -257,14 +343,24 @@ def _child_args(
 def run_registry(args: argparse.Namespace) -> dict[str, object]:
     now = _parse_now(args.now)
     policy = ObservatoryPolicy.load(args.policy)
-    estimate = _estimate(policy, now=now)
+    competition_scope = getattr(args, "competition", None)
+    competitions = _selected_competitions(policy, competition_scope)
+    estimate = _estimate(
+        policy,
+        now=now,
+        competition=competition_scope,
+    )
     estimate_path = args.output / "five-league-registry-estimate.json"
     if args.estimate:
         _write_json(estimate_path, estimate)
         return estimate
     if not args.execute or args.estimate_file is None:
         raise ValueError("FIVE_LEAGUE_REGISTRY_EXECUTION_REQUIRES_ESTIMATE")
-    _verified_estimate(args.estimate_file, policy=policy)
+    _verified_estimate(
+        args.estimate_file,
+        policy=policy,
+        competition=competition_scope,
+    )
 
     state = _database_state()
     repository = _repository()
@@ -273,7 +369,7 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
     r2_objects = 0
     r2_bytes = 0
     postgresql_inserts = 0
-    for competition in active_competitions(policy.value):
+    for competition in competitions:
         child_output = args.output / ".five-league" / competition.competition
         child_estimate = child_output / "fixture-registry-estimate.json"
         calls_before = _scoped_budget_units(
@@ -313,22 +409,19 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
             postgresql = observatory.get("postgresql")
             if not isinstance(r2, Mapping) or not isinstance(postgresql, Mapping):
                 raise RuntimeError("FIVE_LEAGUE_CHILD_STORAGE_INVALID")
+            quota_remaining = int(str(report.get("quota_remaining", 0)))
             fixtures = int(str(report.get("fixtures_valid", 0)))
             identities = int(str(report.get("identity_slots_verified", 0)))
             expected_identities = int(
                 str(report.get("identity_slots_expected", 0))
             )
-            quota_remaining = int(str(report.get("quota_remaining", 0)))
-            if fixtures == 0:
-                gate = LeagueActivationStatus.BLOCKED_PROVIDER
-            elif identities != expected_identities:
-                gate = LeagueActivationStatus.BLOCKED_IDENTITY
-            elif quota_remaining < policy.provider_reserve(
-                ProviderKind.API_FOOTBALL
-            ):
-                gate = LeagueActivationStatus.BLOCKED_BUDGET
-            else:
-                gate = competition.expected_active_status
+            gate = _activation_from_registry_report(
+                report,
+                competition=competition,
+                provider_reserve=policy.provider_reserve(
+                    ProviderKind.API_FOOTBALL
+                ),
+            )
             calls_after = _scoped_budget_units(
                 state,
                 provider=ProviderKind.API_FOOTBALL,
@@ -354,6 +447,26 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
                     "horizon_to": report.get("horizon_to"),
                     "capture_profile": competition.capture_profile.value,
                     "fixtures_received": report.get("fixtures_received", 0),
+                    "provider_response_valid": report.get(
+                        "provider_response_valid",
+                        True,
+                    ),
+                    "provider_response_empty": report.get(
+                        "provider_response_empty",
+                        False,
+                    ),
+                    "records_in_current_horizon": report.get(
+                        "records_in_current_horizon",
+                        report.get("fixtures_received", 0),
+                    ),
+                    "records_outside_current_horizon": report.get(
+                        "records_outside_current_horizon",
+                        0,
+                    ),
+                    "provider_payload_schema_errors": report.get(
+                        "provider_payload_schema_errors",
+                        0,
+                    ),
                     "fixtures": fixtures,
                     "teams": report.get("teams_verified", 0),
                     "identity_slots_verified": identities,
@@ -388,6 +501,9 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
                 raise RuntimeError(
                     "FIVE_LEAGUE_CALL_BOUND_VIOLATED"
                 ) from error
+            error_gate = _activation_from_exception(error)
+            if error_gate is None:
+                raise
             provider_calls += calls
             league_rows.append(
                 {
@@ -407,7 +523,7 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
                     "r2_bytes": 0,
                     "postgresql_inserts": 0,
                     "duplicates_avoided": 0,
-                    "gate": LeagueActivationStatus.BLOCKED_PROVIDER.value,
+                    "gate": error_gate.value,
                     "error": type(error).__name__,
                     "error_details": _compact_error_details(error),
                 }
@@ -421,23 +537,36 @@ def run_registry(args: argparse.Namespace) -> dict[str, object]:
         }
         for row in league_rows
     )
+    waiting_statuses = {
+        LeagueActivationStatus.WAITING_FOR_FIXTURES.value,
+        LeagueActivationStatus.NO_FIXTURES_IN_CURRENT_HORIZON.value,
+    }
+    waiting = sum(row["gate"] in waiting_statuses for row in league_rows)
     status = (
         "FIVE_LEAGUE_REGISTRY_PILOT_VERIFIED"
-        if active == len(league_rows) == 5
-        else "FIVE_LEAGUE_REGISTRY_PILOT_PARTIAL"
+        if active == len(league_rows)
+        else (
+            "FIVE_LEAGUE_REGISTRY_PILOT_READY_WITH_SCHEDULE_WAIT"
+            if active + waiting == len(league_rows)
+            else "FIVE_LEAGUE_REGISTRY_PILOT_PARTIAL"
+        )
     )
     report = {
         "schema_version": "five-league-registry-pilot-v1",
         "generated_at": now.isoformat(),
         "policy_sha256": policy.sha256,
         "status": status,
-        "competitions_requested": 5,
+        "competition_scope": (
+            "ALL" if len(competitions) == 5 else competitions[0].competition
+        ),
+        "competitions_requested": len(competitions),
         "competitions_active": active,
+        "competitions_waiting": waiting,
         "leagues": league_rows,
         "fixtures": sum(int(str(row["fixtures"])) for row in league_rows),
         "teams": sum(int(str(row["teams"])) for row in league_rows),
         "provider_calls": provider_calls,
-        "max_provider_calls": 15,
+        "max_provider_calls": 3 * len(competitions),
         "odds_api_credits": 0,
         "r2_objects_added": r2_objects,
         "r2_bytes": r2_bytes,
@@ -539,6 +668,27 @@ def build_cost_projection(policy: ObservatoryPolicy) -> dict[str, object]:
     }
     report["report_sha256"] = canonical_sha256(report)
     return report
+
+
+def _expansion_verdict(
+    *,
+    active: int,
+    waiting: int,
+    replay_green: bool,
+    postgres_green: bool,
+) -> str:
+    if active == 5 and replay_green and postgres_green:
+        return "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY"
+    if (
+        active == 4
+        and waiting == 1
+        and replay_green
+        and postgres_green
+    ):
+        return "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY_WITH_SCHEDULE_WAIT"
+    if active > 0:
+        return "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL"
+    return "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_FAILED"
 
 
 def run_summary(args: argparse.Namespace) -> dict[str, object]:
@@ -656,15 +806,32 @@ def run_summary(args: argparse.Namespace) -> dict[str, object]:
         registry_gate = str(
             registry_rows.get(competition.competition, {}).get(
                 "gate",
-                LeagueActivationStatus.BLOCKED_PROVIDER.value,
+                LeagueActivationStatus.WAITING_FOR_FIXTURES.value,
             )
         )
+        waiting_statuses = {
+            LeagueActivationStatus.WAITING_FOR_FIXTURES.value,
+            LeagueActivationStatus.NO_FIXTURES_IN_CURRENT_HORIZON.value,
+        }
         if registered == 0:
-            activation = LeagueActivationStatus.BLOCKED_PROVIDER
+            activation = (
+                LeagueActivationStatus(registry_gate)
+                if registry_gate
+                in {
+                    *waiting_statuses,
+                    LeagueActivationStatus.BLOCKED_PROVIDER_ERROR.value,
+                    LeagueActivationStatus.BLOCKED_BUDGET.value,
+                    LeagueActivationStatus.DISABLED.value,
+                }
+                else LeagueActivationStatus.WAITING_FOR_FIXTURES
+            )
         elif identity_slots != registered * 2:
             activation = LeagueActivationStatus.BLOCKED_IDENTITY
-        elif not replay_green or not postgres_green:
-            activation = LeagueActivationStatus.BLOCKED_PROVIDER
+        elif (
+            registry_gate
+            == LeagueActivationStatus.BLOCKED_PROVIDER_ERROR.value
+        ):
+            activation = LeagueActivationStatus.BLOCKED_PROVIDER_ERROR
         elif registry_gate == LeagueActivationStatus.BLOCKED_BUDGET.value:
             activation = LeagueActivationStatus.BLOCKED_BUDGET
         else:
@@ -749,14 +916,19 @@ def run_summary(args: argparse.Namespace) -> dict[str, object]:
         }
         for row in league_rows
     )
-    verdict = (
-        "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_READY"
-        if active == 5
-        else (
-            "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_PARTIAL"
-            if active > 0
-            else "FIVE_LEAGUE_PROSPECTIVE_EXPANSION_FAILED"
-        )
+    waiting = sum(
+        row["gate"]
+        in {
+            LeagueActivationStatus.WAITING_FOR_FIXTURES.value,
+            LeagueActivationStatus.NO_FIXTURES_IN_CURRENT_HORIZON.value,
+        }
+        for row in league_rows
+    )
+    verdict = _expansion_verdict(
+        active=active,
+        waiting=waiting,
+        replay_green=replay_green,
+        postgres_green=postgres_green,
     )
     report: dict[str, object] = {
         "schema_version": "five-league-expansion-summary-v1",
@@ -765,6 +937,7 @@ def run_summary(args: argparse.Namespace) -> dict[str, object]:
         "verdict": verdict,
         "leagues": league_rows,
         "competitions_active": active,
+        "competitions_waiting": waiting,
         "fixtures": len(fixtures),
         "identity_slots_verified": sum(
             int(str(row["identity_slots_verified"])) for row in league_rows
@@ -817,6 +990,11 @@ def build_parser() -> argparse.ArgumentParser:
     registry.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     registry.add_argument("--now")
     registry.add_argument("--code-revision")
+    registry.add_argument(
+        "--competition",
+        default="ALL",
+        help="ALL or one configured competition name",
+    )
 
     projection = commands.add_parser("projection")
     projection.add_argument("--policy", type=Path, default=DEFAULT_POLICY)

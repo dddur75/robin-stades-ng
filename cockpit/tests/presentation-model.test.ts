@@ -249,7 +249,7 @@ test("cinq ligues — les profils et gates restent pilotés par le snapshot", ()
         empty_responses: 0,
         api_football_calls: 3,
         odds_api_credits: 0,
-        gate: "BLOCKED_PROVIDER",
+        gate: "WAITING_FOR_FIXTURES",
         r2: "PENDING",
         postgresql: "PENDING",
         replay: "PENDING",
@@ -268,7 +268,36 @@ test("cinq ligues — les profils et gates restent pilotés par le snapshot", ()
     model.leagues[1].captureProfile,
     "DEEP_FULL_ODDS_REDUCED",
   );
-  assert.equal(model.leagues[1].gate, "BLOCKED_PROVIDER");
+  assert.equal(model.leagues[1].gate, "WAITING_FOR_FIXTURES");
+});
+
+test("activation automatique — un calendrier publié active la ligue sans code frontend", () => {
+  const value = cloneSnapshot();
+  const bundesliga = value.prospectiveObservatory.competitions.find(
+    (league) => league.competition === "Bundesliga",
+  );
+  assert.ok(bundesliga);
+  bundesliga.gate = "WAITING_FOR_FIXTURES";
+  bundesliga.fixtures = 0;
+  let model = buildPresentationModel(value, { now: referenceNow });
+  assert.equal(
+    model.leagues.find((league) => league.competition === "Bundesliga")?.gate,
+    "WAITING_FOR_FIXTURES",
+  );
+
+  bundesliga.gate = "ACTIVE_ODDS_REDUCED";
+  bundesliga.fixtures = 9;
+  bundesliga.teams = 18;
+  bundesliga.identity_slots_expected = 18;
+  bundesliga.identity_slots_verified = 18;
+  bundesliga.windows = 414;
+  model = buildPresentationModel(value, { now: referenceNow });
+  const activated = model.leagues.find(
+    (league) => league.competition === "Bundesliga",
+  );
+  assert.equal(activated?.gate, "ACTIVE_ODDS_REDUCED");
+  assert.equal(activated?.fixtures, 9);
+  assert.equal(activated?.identitySlotsVerified, 18);
 });
 
 test("identité A — un nom vérifié du snapshot est affiché tel quel", () => {

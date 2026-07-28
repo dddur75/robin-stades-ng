@@ -6,7 +6,6 @@ const snapshot = JSON.parse(
   readFileSync(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
 ) as {
   prospectiveObservatory: {
-    competitions?: Array<{ competition: string }>;
     fixtures: {
       registry: Array<{
         fixture_id: string;
@@ -27,16 +26,7 @@ const matchId = firstFixture.fixture_id;
 const unresolvedTeam = "Équipe en cours d’identification";
 const matchHome = firstFixture.home_name ?? unresolvedTeam;
 const matchAway = firstFixture.away_name ?? unresolvedTeam;
-const fixtureCount = snapshot.prospectiveObservatory.fixtures.registry.filter(
-  (fixture) => !fixture.cancelled && fixture.status !== "TOMBSTONED",
-).length;
-const leagueCount = snapshot.prospectiveObservatory.competitions?.length
-  ?? new Set(
-    snapshot.prospectiveObservatory.fixtures.registry.map(
-      (fixture) => fixture.competition,
-    ),
-  ).size;
-const homeHeading = `Robin observe ${fixtureCount} rencontres dans ${leagueCount} championnats`;
+const homeHeading = "Robin suit les cinq grands championnats";
 const outputRoot = ".ci/visual-regression/captures";
 
 const routes = [

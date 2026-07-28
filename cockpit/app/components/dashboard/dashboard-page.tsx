@@ -30,6 +30,12 @@ import {
 
 export function DashboardPage() {
   const next = nextCaptures[0];
+  const activeLeagueCount = leagueSummaries.filter((league) =>
+    ["ACTIVE_FULL", "ACTIVE_ODDS_REDUCED"].includes(league.gate)
+  ).length;
+  const waitingLeagueCount = leagueSummaries.filter((league) =>
+    ["WAITING_FOR_FIXTURES", "NO_FIXTURES_IN_CURRENT_HORIZON"].includes(league.gate)
+  ).length;
   const progressSteps = [
     { label: "Rencontres enregistrées", done: operationalEvidence.fixtures > 0 },
     { label: "Fenêtres planifiées", done: operationalEvidence.activeWindows > 0 },
@@ -42,11 +48,11 @@ export function DashboardPage() {
       <section className="hero">
         <PageHeader
           eyebrow={t("home.eyebrow")}
-          title={t("home.title", {
-            count: operationalEvidence.fixtures,
-            leagues: leagueSummaries.length,
+          title={t("home.title")}
+          subtitle={t("home.subtitle", {
+            active: activeLeagueCount,
+            waiting: waitingLeagueCount,
           })}
-          subtitle={t("home.subtitle")}
         >
           <div className="hero-statuses">
             <StatusBadge value={operationalEvidence.status} />
@@ -64,7 +70,7 @@ export function DashboardPage() {
 
       <section className="metrics-grid metrics-home" aria-label="Indicateurs principaux">
         <MetricCard
-          detail={`${leagueSummaries.length} championnats actifs ou en gate`}
+          detail={`${activeLeagueCount} actifs · ${waitingLeagueCount} en attente`}
           icon="◉"
           label={t("home.metrics.matches")}
           tone="blue"

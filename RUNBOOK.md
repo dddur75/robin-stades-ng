@@ -831,6 +831,40 @@ groupe `prospective-deep-state` et `cancel-in-progress=false`. Leur inspection
 est en lecture seule : ne jamais forcer un dispatch fournisseur pour valider
 Robin Experience.
 
+## Registre cinq ligues — calendrier et probes ciblés
+
+Le workflow 60 découvre les fixtures sur 45 jours, tout en conservant trois
+journées maximum par compétition. Cette portée ne change aucune fenêtre de
+capture : J-21 reste la première échéance et aucun collecteur profond ou Odds
+n’est déclenché par la découverte.
+
+Le cycle planifié utilise toujours `competition=ALL`. Un probe manuel peut
+cibler exactement une compétition configurée, après estimation signée :
+
+```powershell
+gh workflow run prospective-fixture-registry.yml `
+  --ref <branche-ou-main> `
+  -f execute=true `
+  -f competition="Liga"
+```
+
+Le script valide le nom contre la politique centrale ; le workflow ne contient
+aucune liste de ligues codée en dur. Le budget maximal est alors de 3 appels
+API-Football et 0 crédit Odds. Répéter séparément pour `Bundesliga` uniquement
+si la mission l’autorise.
+
+Interprétation obligatoire :
+
+- `WAITING_FOR_FIXTURES` ou `NO_FIXTURES_IN_CURRENT_HORIZON` : réponse
+  fournisseur valide, sans incident ;
+- `BLOCKED_PROVIDER_ERROR` : erreur HTTP, authentification, timeout ou schéma ;
+- `BLOCKED_BUDGET` : plafond ou réserve protégée ;
+- `ACTIVE_FULL` ou `ACTIVE_ODDS_REDUCED` : fixtures et identités admissibles.
+
+Une compétition en attente est réévaluée chaque jour par le même workflow.
+L’arrivée d’un calendrier planifie automatiquement les fenêtres idempotentes et
+met à jour Robin Experience sans changement de code.
+
 État attendu :
 
 ```text

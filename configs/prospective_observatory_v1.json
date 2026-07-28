@@ -97,7 +97,7 @@
     }
   },
   "fixture_registry": {
-    "horizon_days": 30,
+    "horizon_days": 45,
     "max_matchdays_per_competition": 3,
     "resolve_season_from_provider_response": true,
     "require_verified_phase": true,

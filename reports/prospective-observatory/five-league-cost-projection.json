@@ -95,11 +95,11 @@
       "semantic_windows": 17480
     }
   ],
-  "policy_sha256": "dfcf8f6a01b3dd99abbc3fc96bf94d5c0387b5e2361954d84428fb5cf51b7501",
+  "policy_sha256": "143cd9348c28c60d488ce8ed2fba61f4f2fb3349c2eedf6befa3ae2b433da072",
   "production_status": "PRODUCTION_LOCKED",
   "promotion_authorized": false,
   "real_bets": false,
-  "report_sha256": "e86816c373b626aae7f2bac09db8021ef2fc01e9c2fb573f2a611d9ebdbe34d7",
+  "report_sha256": "8ff0ca750c282a85686b4a353e03136bbbf8af536c6aa127d8782a73b1204482",
   "schema_version": "five-league-season-cost-projection-v1",
   "totals": {
     "api_football_calls": 63859,

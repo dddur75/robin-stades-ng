@@ -685,7 +685,7 @@ export function buildPresentationModel(
             .filter((match) => match.competition === competition)
             .flatMap((match) => [match.homeTeamId, match.awayTeamId]),
         ).size,
-        gate: "BLOCKED_PROVIDER",
+        gate: "WAITING_FOR_FIXTURES",
       }),
     );
   const leagues = leagueRows.map(
@@ -712,7 +712,7 @@ export function buildPresentationModel(
         emptyResponses: numberValue(item.empty_responses),
         apiFootballCalls: numberValue(item.api_football_calls),
         oddsApiCredits: numberValue(item.odds_api_credits),
-        gate: text(item.gate, "BLOCKED_PROVIDER"),
+        gate: text(item.gate, "WAITING_FOR_FIXTURES"),
         r2: text(item.r2, "PENDING"),
         postgresql: text(item.postgresql, "PENDING"),
         replay: text(item.replay, "PENDING"),

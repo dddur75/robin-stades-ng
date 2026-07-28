@@ -1712,7 +1712,7 @@ def build_prospective_observatory() -> dict[str, Any]:
         and item.get("capture_profile")
     }
     compact["fixtures"]["horizon_days"] = int(
-        str(fixture_policy.get("horizon_days", 30))
+        str(fixture_policy.get("horizon_days", 45))
     )
     compact["fixtures"]["max_matchdays_per_competition"] = int(
         str(fixture_policy.get("max_matchdays_per_competition", 3))
@@ -2076,7 +2076,7 @@ def build_prospective_observatory() -> dict[str, Any]:
         ]
         observed_summary = summary_rows.get(competition, {})
         profile = str(configured["capture_profile"])
-        default_gate = "BLOCKED_PROVIDER"
+        default_gate = "WAITING_FOR_FIXTURES"
         competition_summaries.append(
             {
                 "competition": competition,

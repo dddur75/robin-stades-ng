@@ -61,7 +61,7 @@
       "freshness": {
         "status": "FRESHNESS_CURRENT",
         "generatedAt": "2026-07-28T17:39:18.396155+00:00",
-        "ageMinutes": 18,
+        "ageMinutes": 41,
         "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
         "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
         "lastWorkflowAt": "2026-07-24T13:02:12Z"
@@ -8971,7 +8971,7 @@
     "freshness": {
       "status": "FRESHNESS_CURRENT",
       "generatedAt": "2026-07-28T17:39:18.396155+00:00",
-      "ageMinutes": 18,
+      "ageMinutes": 41,
       "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
       "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
       "lastWorkflowAt": "2026-07-24T13:02:12Z"

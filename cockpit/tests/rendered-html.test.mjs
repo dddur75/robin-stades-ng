@@ -7,15 +7,6 @@ const snapshot = JSON.parse(
   await readFile(new URL("../app/cockpit-data.json", import.meta.url), "utf8"),
 );
 const firstFixture = snapshot.prospectiveObservatory.fixtures.registry[0];
-const fixtureCount = snapshot.prospectiveObservatory.fixtures.registry.filter(
-  (fixture) => !fixture.cancelled && fixture.status !== "TOMBSTONED",
-).length;
-const leagueCount = snapshot.prospectiveObservatory.competitions?.length
-  ?? new Set(
-    snapshot.prospectiveObservatory.fixtures.registry.map(
-      (fixture) => fixture.competition,
-    ),
-  ).size;
 const unresolvedTeam = "Équipe en cours d’identification";
 const firstHome = firstFixture.home_name ?? unresolvedTeam;
 const firstAway = firstFixture.away_name ?? unresolvedTeam;
@@ -44,7 +35,7 @@ function visibleText(html) {
 }
 
 const publicRoutes = [
-  ["/", `Robin observe ${fixtureCount} rencontres dans ${leagueCount} championnats`],
+  ["/", "Robin suit les cinq grands championnats"],
   ["/robin-live", "À comprendre aujourd’hui"],
   ["/matchs", "Les matchs observés"],
   ["/observatoire", "Matrice de couverture"],

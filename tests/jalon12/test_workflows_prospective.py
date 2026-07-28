@@ -131,12 +131,28 @@ def test_fixture_registry_is_dynamic_bounded_and_persisted_r2_first() -> None:
     workflow = _workflow("prospective-fixture-registry.yml")
     assert "run_five_league_expansion.py registry" in workflow
     assert "--competition \"Ligue 1\"" not in workflow
+    assert 'default: "ALL"' in workflow
+    assert '--competition "${{ inputs.competition || \'ALL\' }}"' in workflow
+    assert 'type: string' in workflow
+    assert '"Liga"' not in workflow
+    assert '"Bundesliga"' not in workflow
     assert '--policy "$PROSPECTIVE_POLICY"' in workflow
     assert workflow.index("--estimate") < workflow.index("--execute")
     assert "API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}" in workflow
     assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
     assert "ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}" in workflow
     assert "alembic upgrade head" in workflow
+
+
+def test_registry_discovery_horizon_does_not_change_capture_windows() -> None:
+    policy = json.loads(
+        (ROOT / "configs" / "prospective_observatory_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert policy["fixture_registry"]["horizon_days"] == 45
+    assert policy["fixture_registry"]["max_matchdays_per_competition"] == 3
+    assert policy["capture_windows"]["FIXTURE"][0] == "J-21"
 
 
 def test_odds_scope_and_zero_cost_replay_are_explicit() -> None:

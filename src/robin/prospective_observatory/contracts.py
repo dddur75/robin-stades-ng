@@ -187,7 +187,7 @@ class ProspectiveFixture(FrozenContract):
     code_revision: str = Field(min_length=1, max_length=80)
     cancelled: bool = False
     kickoff_reliable: bool = True
-    horizon_days: int = Field(default=30, ge=1, le=30)
+    horizon_days: int = Field(default=45, ge=1, le=90)
     lifecycle_version_hash: str | None = Field(
         default=None,
         min_length=64,

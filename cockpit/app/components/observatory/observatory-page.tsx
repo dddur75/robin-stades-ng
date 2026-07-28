@@ -51,6 +51,9 @@ const stateLabels: Record<CoverageState, string> = {
 
 export function ObservatoryPage() {
   const [selectedCompetition, setSelectedCompetition] = useState("Ligue 1");
+  const providerErrorCount = leagueSummaries.filter(
+    (league) => league.gate === "BLOCKED_PROVIDER_ERROR",
+  ).length;
   const visibleMatches = selectedCompetition === "ALL"
     ? matches
     : matches.filter((match) => match.competition === selectedCompetition);
@@ -89,7 +92,12 @@ export function ObservatoryPage() {
         <MetricCard detail="à cet instant" icon="◷" label={t("observatory.metrics.dueWindows")} value={formatNumber(operationalEvidence.dueWindows)} />
         <MetricCard detail="vérifiées dans R2" icon="✓" label={t("observatory.metrics.physical")} tone="green" value={formatNumber(operationalEvidence.physicalEvidence)} />
         <MetricCard detail="collecte en attente" icon="◇" label={t("observatory.metrics.deep")} tone="violet" value={formatNumber(selectedDeep)} />
-        <MetricCard detail="aucun incident actif" icon="!" label={t("observatory.metrics.errors")} value={formatNumber(operationalEvidence.errors)} />
+        <MetricCard
+          detail={providerErrorCount ? "erreur fournisseur réelle" : "aucun incident actif"}
+          icon="!"
+          label={t("observatory.metrics.errors")}
+          value={formatNumber(operationalEvidence.errors + providerErrorCount)}
+        />
       </section>
 
       <section className="section-card">

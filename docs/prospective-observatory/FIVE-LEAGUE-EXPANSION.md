@@ -22,7 +22,7 @@ Chaque ligue dispose de trois transports API-Football au maximum :
 
 1. quota `/status` ;
 2. saison/compétition ;
-3. fixtures des trente prochains jours.
+3. fixtures des quarante-cinq prochains jours.
 
 L’audit initial consomme exactement zéro crédit The Odds API. Il publie saison,
 horizon, fixtures reçues/admissibles, équipes, identités, kickoffs, quota,
@@ -55,8 +55,17 @@ Une compétition ne devient active que si :
 - le replay est vert ;
 - tous les caps et réserves sont respectés.
 
-Les seuls statuts sont `ACTIVE_FULL`, `ACTIVE_ODDS_REDUCED`,
-`BLOCKED_PROVIDER`, `BLOCKED_IDENTITY`, `BLOCKED_BUDGET` et `DISABLED`.
+Les statuts distinguent désormais explicitement :
+
+- `ACTIVE_FULL` et `ACTIVE_ODDS_REDUCED` pour une cadence active ;
+- `WAITING_FOR_FIXTURES` pour une réponse valide sans calendrier admissible ;
+- `NO_FIXTURES_IN_CURRENT_HORIZON` lorsque les réponses observées restent hors
+  des quarante-cinq jours de découverte ;
+- `BLOCKED_PROVIDER_ERROR` uniquement pour une erreur HTTP,
+  d’authentification, de timeout ou de schéma ;
+- `BLOCKED_IDENTITY`, `BLOCKED_BUDGET` et `DISABLED` pour les autres verrous.
+
+Le libellé historique `BLOCKED_PROVIDER` n’est plus produit.
 
 ## Projection centrale
 
