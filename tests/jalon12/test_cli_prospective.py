@@ -37,12 +37,14 @@ from scripts.run_prospective_observatory import (
     SQLAlchemyOperationalState,
     _capture_payload_complete,
     _filter_fixtures,
+    _fixture_freshness_error,
     _match_odds_records,
     _provider_quota_remaining,
     _renormalize_r2_payload,
     run_capture,
     run_fixture_registry,
     run_gate_report,
+    run_next_due_report,
     run_replay_audit,
     run_scheduler,
 )
@@ -752,7 +754,7 @@ def test_cache_capture_replay_and_second_operation_are_zero_cost(
 
     assert registry["provider_calls"] == 0
     assert first["provider_calls"] == 0
-    assert second["status"] == "NO_CAPTURE_DUE"
+    assert second["status"] == "NO_DUE_WINDOW_SUCCESS"
     assert second["provider_calls"] == 0
     assert second["odds_api_credits"] == 0
     assert replay["second_pass_inserts"] == 0
@@ -830,11 +832,123 @@ def test_gate_report_cockpit_preserves_full_replay_and_fixture_previews(
     assert cockpit["r2"]["replay_status"] == "R2_REPLAY_VERIFIED"
     assert (
         cockpit["postgresql"]["reconstruction_status"]
-        == "RECONSTRUCTIBLE_FROM_R2"
+        == "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
     )
     assert cockpit["postgresql"]["duplicates_avoided"] > 0
     assert cockpit["fixtures"]["next"]
     assert cockpit["windows"]["next"]
+
+
+def test_next_due_report_is_provider_free_and_covers_all_families(
+    tmp_path: Path,
+) -> None:
+    cache = _cache(tmp_path / "cache.json")
+    cache_value = json.loads(cache.read_text(encoding="utf-8"))
+    far_kickoff = NOW + timedelta(days=22)
+    cache_value["fixtures"][0]["fixture"]["date"] = far_kickoff.isoformat()
+    cache.write_text(json.dumps(cache_value), encoding="utf-8")
+    output = tmp_path / "reports"
+    repository = ProspectiveR2Repository(
+        DirectoryObjectStore(tmp_path / "objects")
+    )
+    state = MemoryOperationalState()
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output), state=state)
+    args = _args("next-due-report", output=output)
+    args.report_path = tmp_path / "next-due-windows.json"
+
+    report = run_next_due_report(args, state=state)
+
+    entries = report["entries"]
+    assert isinstance(entries, list)
+    assert len(entries) == len(CaptureFamily) == 9
+    assert {entry["family"] for entry in entries} == {
+        family.value for family in CaptureFamily
+    }
+    assert all(entry["workflow"] for entry in entries)
+    assert all(entry["max_cost"] for entry in entries)
+    assert report["active_windows"] == 49
+    assert report["provider_calls"] == 0
+    assert report["odds_api_credits"] == 0
+    assert report["capture_attempts"] == 0
+    assert args.report_path.exists()
+
+
+def test_fixture_freshness_rejects_kickoff_and_lifecycle_changes(
+    tmp_path: Path,
+) -> None:
+    cache = _cache(tmp_path / "cache.json")
+    state = MemoryOperationalState()
+    repository = ProspectiveR2Repository(
+        DirectoryObjectStore(tmp_path / "objects")
+    )
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=tmp_path / "reports",
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    fixture = state.fixtures()[0]
+    valid_record = _fixture_record(9001, fixture.kickoff_at)
+
+    def freshness(record: dict[str, object]) -> ProviderResult:
+        return ProviderResult(
+            provider="api-football",
+            endpoint="/fixtures",
+            availability=DataAvailability.PRESENT,
+            records=(record,),
+            observed_at=NOW,
+            origin=DataOrigin.LIVE_SOURCE,
+            http_status=200,
+            requested_at=NOW,
+            received_at=NOW,
+        )
+
+    assert _fixture_freshness_error(
+        freshness(valid_record),
+        fixture,
+    ) is None
+    stale_records: list[dict[str, object]] = []
+    for kickoff_delta in (-timedelta(minutes=30), timedelta(minutes=30)):
+        stale_records.append(
+            _fixture_record(9001, fixture.kickoff_at + kickoff_delta)
+        )
+    for lifecycle_status in (
+        "PST",
+        "CANC",
+        "TBD",
+        "ABD",
+        "1H",
+        "HT",
+        "2H",
+        "ET",
+        "FT",
+    ):
+        record = _fixture_record(9001, fixture.kickoff_at)
+        record["fixture"]["status"]["short"] = lifecycle_status  # type: ignore[index]
+        stale_records.append(record)
+    changed_team = _fixture_record(9001, fixture.kickoff_at)
+    changed_team["teams"]["home"]["id"] = 999_999  # type: ignore[index]
+    stale_records.append(changed_team)
+
+    assert all(
+        _fixture_freshness_error(freshness(record), fixture)
+        == "REGISTRY_STALE"
+        for record in stale_records
+    )
 
 
 def test_replay_is_complete_beyond_the_legacy_250_object_bound(
@@ -1137,7 +1251,7 @@ def test_exhausted_windows_make_no_fourth_provider_call(
         repository=repository,
         provider=unused_provider,
     )
-    assert fourth["status"] == "NO_CAPTURE_DUE"
+    assert fourth["status"] == "NO_DUE_WINDOW_SUCCESS"
     assert unused_provider.status_calls == 0
     assert unused_provider.fixture_calls == 0
 

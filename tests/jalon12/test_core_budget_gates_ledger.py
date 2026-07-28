@@ -171,6 +171,30 @@ def test_lineup_post_cutoff_and_incomplete_lineup_fail_closed() -> None:
     assert complete_gate.status is GateStatus.PASSED
 
 
+def test_empty_injury_response_is_valid_negative_point_in_time_evidence() -> None:
+    captured = _capture(
+        family=CaptureFamily.INJURY,
+        window="J-1",
+        observed_at=KICKOFF - timedelta(days=1),
+        payload={},
+    )
+    empty = GateObservation(
+        receipt=captured.receipt.model_copy(
+            update={
+                "complete": False,
+                "quality_status": AvailabilityStatus.CAPTURED_EMPTY,
+            }
+        ),
+        projection={},
+    )
+
+    injury_gate = evaluate_fixture_gates("fixture-1", (empty,))[1]
+
+    assert injury_gate.status is GateStatus.PASSED
+    assert injury_gate.observations == 1
+    assert injury_gate.reason == "NO_INJURY_REPORTED_AT_CAPTURE"
+
+
 def test_ledger_v3_chain_allowlist_and_recursive_betting_guard(tmp_path: object) -> None:
     ledger = PublicEvidenceLedgerV3()
     ledger.append(

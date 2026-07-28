@@ -37,11 +37,15 @@ def _required_windows(required_gates: list[str]) -> tuple[str, ...]:
     for gate in required_gates:
         normalized = gate.upper()
         if "LINEUP" in normalized or "FORMATION" in normalized:
-            windows.update({"H-2", "H-1", "H-0:45", "H-0:30", "H-0:15"})
+            windows.update({"H-2", "NEAR_KICKOFF"})
         elif "PLAYER" in normalized or "ABSENCE" in normalized or "INJURY" in normalized:
-            windows.update({"J-7", "J-3", "J-1", "H-6", "H-2", "H-1"})
+            windows.update(
+                {"J-7", "J-3", "J-1", "H-6", "H-2", "NEAR_KICKOFF"}
+            )
         elif "MARKET" in normalized:
-            windows.update({"J-7", "J-3", "J-1", "H-6", "H-2", "H-1", "H-0:30"})
+            windows.update(
+                {"J-7", "J-3", "J-1", "H-6", "H-2", "NEAR_KICKOFF"}
+            )
     return tuple(sorted(windows))
 
 

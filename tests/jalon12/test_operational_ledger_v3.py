@@ -46,7 +46,9 @@ def test_operational_ledger_reconstructs_capture_and_gate_evidence_only() -> Non
         tolerance=timedelta(hours=1),
     )
     captured_window = next(window for window in windows if window.label == "H-2")
-    failed_window = next(window for window in windows if window.label == "H-1")
+    failed_window = next(
+        window for window in windows if window.label == "NEAR_KICKOFF"
+    )
     repository = ProspectiveR2Repository(InMemoryObjectStore())
     stored = repository.capture(
         payload={"normalized_family_records": [{"team": "home"}]},
@@ -131,9 +133,114 @@ def test_operational_ledger_reconstructs_capture_and_gate_evidence_only() -> Non
     assert kinds[EvidenceEventKindV3.CAPTURE_ATTEMPTED] == 2
     assert kinds[EvidenceEventKindV3.CAPTURE_SUCCEEDED] == 1
     assert kinds[EvidenceEventKindV3.CAPTURE_FAILED] == 1
+    assert kinds[EvidenceEventKindV3.TEMPORAL_EVIDENCE_RECORDED] == 1
     assert kinds[EvidenceEventKindV3.CAPTURE_WINDOW_MISSED] == 1
     assert kinds[EvidenceEventKindV3.TEMPORAL_GATE_PASSED] == 1
     assert kinds[EvidenceEventKindV3.DATASET_VERSION_FROZEN] == 1
     assert summary["bet_decisions"] == 0
     assert summary["real_bets"] is False
     assert summary["social_publishing_enabled"] is False
+    assert summary["cardinality"] == {
+        "planned_events": 2,
+        "capture_attempt_events": 2,
+        "physical_capture_events": 1,
+        "physical_http_calls": 1,
+        "temporal_evidence_events": 1,
+        "gate_evaluation_events": 1,
+        "lifecycle_events": 2,
+        "receipts": 1,
+    }
+
+    reversed_ledger = build_observatory_ledger(
+        fixtures=(fixture,),
+        windows=tuple(reversed((captured_window, failed_window))),
+        attempts=tuple(reversed(attempts)),
+        receipts=(stored.receipt,),
+        gates=gates,
+        frozen_at=KICKOFF,
+        code_revision="revision-j12",
+    )
+    assert reversed_ledger.audit()["head_hash"] == ledger.audit()["head_hash"]
+    assert reversed_ledger.events == ledger.events
+
+
+def test_one_provider_response_cannot_inflate_temporal_evidence() -> None:
+    fixture = ProspectiveFixture(
+        fixture_id="fixture-alias",
+        competition="Ligue 1",
+        season="2026",
+        phase="Regular Season - 1",
+        home_team_id="home",
+        away_team_id="away",
+        kickoff_at=KICKOFF,
+        provider="api-football",
+        provider_fixture_id="9002",
+        registered_at=NOW - timedelta(hours=1),
+        code_revision="revision-j12",
+    )
+    lineup_window = next(
+        window
+        for window in schedule_windows(
+            fixture,
+            CaptureFamily.LINEUP,
+            scheduled_at=NOW,
+        )
+        if window.label == "H-2"
+    )
+    formation_window = next(
+        window
+        for window in schedule_windows(
+            fixture,
+            CaptureFamily.FORMATION,
+            scheduled_at=NOW,
+        )
+        if window.label == "H-2"
+    )
+    repository = ProspectiveR2Repository(InMemoryObjectStore())
+    receipts = tuple(
+        repository.capture(
+            payload={"normalized_family_records": [{"team": "home"}]},
+            context=CaptureContext(
+                window_id=window.window_id,
+                window_label=window.label,
+                fixture_id=fixture.fixture_id,
+                competition=fixture.competition,
+                season=fixture.season,
+                provider="api-football",
+                family=window.family,
+                requested_at=NOW,
+                response_received_at=NOW + timedelta(seconds=1),
+                observed_at=NOW + timedelta(seconds=1),
+                kickoff_at=fixture.kickoff_at,
+                cutoff_at=window.cutoff_at,
+                http_status=200,
+                source_endpoint="/fixtures/lineups",
+                complete=True,
+                quality_status=AvailabilityStatus.CAPTURED,
+                provider_calls=1 if index == 0 else 0,
+                code_revision=fixture.code_revision,
+            ),
+        ).receipt
+        for index, window in enumerate((lineup_window, formation_window))
+    )
+
+    ledger = build_observatory_ledger(
+        fixtures=(fixture,),
+        windows=(lineup_window, formation_window),
+        attempts=(),
+        receipts=receipts,
+        gates=(),
+        frozen_at=KICKOFF,
+        code_revision=fixture.code_revision,
+    )
+
+    assert observatory_ledger_summary(ledger)["cardinality"] == {
+        "planned_events": 2,
+        "capture_attempt_events": 0,
+        "physical_capture_events": 1,
+        "physical_http_calls": 1,
+        "temporal_evidence_events": 1,
+        "gate_evaluation_events": 0,
+        "lifecycle_events": 2,
+        "receipts": 2,
+    }

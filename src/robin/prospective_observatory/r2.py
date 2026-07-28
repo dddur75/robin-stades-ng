@@ -11,7 +11,7 @@ import re
 import zlib
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
-from datetime import UTC
+from datetime import UTC, datetime
 from typing import Protocol, runtime_checkable
 from urllib.parse import quote
 
@@ -21,12 +21,16 @@ from robin.prospective_observatory.contracts import (
     CaptureFamily,
     CaptureReceipt,
     canonical_json_bytes,
+    canonical_sha256,
+    ensure_utc,
     receipt_scope_sha256,
 )
 
 R2_NAMESPACE = "prospective-deep-data"
 R2_RECOVERY_NAMESPACE = "prospective-deep-data-recovery"
 R2_RECOVERY_SCHEMA_VERSION = "prospective-receipt-recovery-intent-v1"
+R2_BUDGET_NAMESPACE = "prospective-deep-budget"
+R2_BUDGET_SCHEMA_VERSION = "prospective-provider-budget-v1"
 
 
 class AppendOnlyViolation(RuntimeError):
@@ -143,6 +147,54 @@ class StoredCapture:
 
 
 @dataclass(frozen=True, slots=True)
+class DurableProviderBudget:
+    """Append-only billable-unit reservation stored independently from SQL."""
+
+    idempotency_key: str
+    provider: str
+    units: int
+    provider_remaining: int
+    provider_reserve: int
+    recorded_at: datetime
+    reason: str
+    code_revision: str
+
+    def __post_init__(self) -> None:
+        if (
+            not self.idempotency_key
+            or self.provider not in {"API_FOOTBALL", "ODDS_API"}
+            or self.units < 0
+            or self.provider_remaining < 0
+            or self.provider_reserve < 0
+            or not self.reason
+            or not self.code_revision
+        ):
+            raise ValueError("R2_PROVIDER_BUDGET_RECORD_INVALID")
+        object.__setattr__(
+            self,
+            "recorded_at",
+            ensure_utc(self.recorded_at, field="recorded_at"),
+        )
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "schema_version": R2_BUDGET_SCHEMA_VERSION,
+            "idempotency_key": self.idempotency_key,
+            "provider": self.provider,
+            "units": self.units,
+            "provider_remaining": self.provider_remaining,
+            "provider_reserve": self.provider_reserve,
+            "recorded_at": self.recorded_at.isoformat(),
+            "reason": self.reason,
+            "code_revision": self.code_revision,
+        }
+
+    @property
+    def record_hash(self) -> str:
+        return canonical_sha256(self.as_dict())
+
+
+@dataclass(frozen=True, slots=True)
 class _PayloadInspection:
     stored_bytes: int
     payload_bytes: int | None
@@ -172,6 +224,11 @@ _OBJECT_KEY_PATTERN = re.compile(
 _RECOVERY_INTENT_KEY_PATTERN = re.compile(
     rf"^{re.escape(R2_RECOVERY_NAMESPACE)}/{re.escape(R2_SCHEMA_VERSION)}/"
     r"intent-(?P<receipt_hash>[0-9a-f]{64})\.json$"
+)
+_BUDGET_KEY_PATTERN = re.compile(
+    rf"^{re.escape(R2_BUDGET_NAMESPACE)}/"
+    rf"{re.escape(R2_BUDGET_SCHEMA_VERSION)}/"
+    r"entry-(?P<idempotency_hash>[0-9a-f]{64})\.json$"
 )
 
 
@@ -368,6 +425,94 @@ class ProspectiveR2Repository:
         )
 
     @staticmethod
+    def _budget_key(idempotency_key: str) -> str:
+        if not idempotency_key:
+            raise ValueError("R2_PROVIDER_BUDGET_IDEMPOTENCY_KEY_REQUIRED")
+        return (
+            f"{R2_BUDGET_NAMESPACE}/{R2_BUDGET_SCHEMA_VERSION}/"
+            f"entry-{canonical_sha256(idempotency_key)}.json"
+        )
+
+    def record_provider_budget(
+        self,
+        record: DurableProviderBudget,
+    ) -> bool:
+        """Persist charged units before the corresponding provider transport."""
+
+        return self._put_immutable(
+            self.store,
+            self._budget_key(record.idempotency_key),
+            canonical_json_bytes(record.as_dict()),
+        )
+
+    def provider_budgets(self) -> tuple[DurableProviderBudget, ...]:
+        """Read and validate the complete durable provider budget journal."""
+
+        prefix = f"{R2_BUDGET_NAMESPACE}/{R2_BUDGET_SCHEMA_VERSION}/"
+        records: list[DurableProviderBudget] = []
+        for key in sorted(set(self.store.iter_keys(prefix))):
+            match = _BUDGET_KEY_PATTERN.fullmatch(key)
+            body = self.store.get_object(key)
+            if match is None or body is None:
+                raise PayloadIntegrityError("R2_PROVIDER_BUDGET_OBJECT_INVALID")
+            try:
+                value = json.loads(body)
+                if (
+                    not isinstance(value, dict)
+                    or set(value)
+                    != {
+                        "schema_version",
+                        "idempotency_key",
+                        "provider",
+                        "units",
+                        "provider_remaining",
+                        "provider_reserve",
+                        "recorded_at",
+                        "reason",
+                        "code_revision",
+                    }
+                    or value.get("schema_version") != R2_BUDGET_SCHEMA_VERSION
+                    or canonical_json_bytes(value) != body
+                ):
+                    raise ValueError("R2_PROVIDER_BUDGET_CONTRACT_INVALID")
+                record = DurableProviderBudget(
+                    idempotency_key=str(value["idempotency_key"]),
+                    provider=str(value["provider"]),
+                    units=int(value["units"]),
+                    provider_remaining=int(value["provider_remaining"]),
+                    provider_reserve=int(value["provider_reserve"]),
+                    recorded_at=datetime.fromisoformat(str(value["recorded_at"])),
+                    reason=str(value["reason"]),
+                    code_revision=str(value["code_revision"]),
+                )
+            except (
+                KeyError,
+                TypeError,
+                ValueError,
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+            ) as error:
+                raise PayloadIntegrityError(
+                    "R2_PROVIDER_BUDGET_OBJECT_INVALID"
+                ) from error
+            if (
+                match.group("idempotency_hash")
+                != canonical_sha256(record.idempotency_key)
+                or key != self._budget_key(record.idempotency_key)
+            ):
+                raise PayloadIntegrityError("R2_PROVIDER_BUDGET_KEY_MISMATCH")
+            records.append(record)
+        return tuple(
+            sorted(
+                records,
+                key=lambda item: (
+                    item.recorded_at,
+                    item.idempotency_key,
+                ),
+            )
+        )
+
+    @staticmethod
     def _payload_from_compressed(
         receipt: CaptureReceipt,
         compressed: bytes,
@@ -481,12 +626,12 @@ class ProspectiveR2Repository:
                 )
             try:
                 self._payload_from_compressed(receipt, compressed_payload)
-                self._put_immutable(
+                payload_created = self._put_immutable(
                     self.store,
                     receipt.r2_key,
                     compressed_payload,
                 )
-                created = self._put_immutable(
+                receipt_created = self._put_immutable(
                     self.store,
                     receipt.receipt_r2_key,
                     canonical_receipt,
@@ -499,7 +644,7 @@ class ProspectiveR2Repository:
                 raise ReceiptRecoveryIntegrityError(
                     "R2_RECEIPT_RECOVERY_PAYLOAD_INVALID"
                 ) from error
-            recovered += int(created)
+            recovered += int(payload_created) + int(receipt_created)
         return recovered
 
     def inventory_namespace(self) -> R2NamespaceInventory:

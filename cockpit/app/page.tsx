@@ -935,6 +935,17 @@ type ProspectiveObservatorySnapshot = {
     events: number;
     head_hash: string | null;
     allowed_event_types: string[];
+    event_counts: Record<string, number>;
+    cardinality: {
+      planned_events: number;
+      capture_attempt_events: number;
+      physical_capture_events: number;
+      physical_http_calls: number;
+      temporal_evidence_events: number;
+      gate_evaluation_events: number;
+      lifecycle_events: number;
+      receipts: number;
+    };
     bet_decisions: number;
   };
   decisions: number;
@@ -1665,6 +1676,10 @@ function DataObservatory() {
   const observatory = prospectiveObservatorySnapshot();
   const captureFamilies = Object.entries(observatory.captures.by_family);
   const gates = Object.entries(observatory.gates.by_name);
+  const historicalPlannedWindows = Math.max(
+    observatory.ledger.cardinality.planned_events - observatory.windows.planned,
+    0,
+  );
   const generatedAt = observatory.generated_at
     ? new Date(observatory.generated_at).getTime()
     : null;
@@ -1681,8 +1696,10 @@ function DataObservatory() {
     <>
       <section className="metric-grid">
         <Metric label="Fixtures suivies" value={String(observatory.fixtures.tracked)} detail={`${observatory.fixtures.horizon_days} jours · priorité ${observatory.fixtures.pilot_priority}`} />
-        <Metric label="Fenêtres prévues" value={String(observatory.windows.planned)} detail={`${observatory.windows.due} dues maintenant`} tone="cyan" />
-        <Metric label="Captures vérifiées" value={String(observatory.captures.captured)} detail={`${observatory.captures.empty} réponses vides observées`} />
+        <Metric label="Fenêtres actives" value={String(observatory.windows.planned)} detail={`${observatory.windows.due} dues · ${historicalPlannedWindows} historiques append-only · planifié n'est pas observé`} tone="cyan" />
+        <Metric label="Captures physiques" value={String(observatory.ledger.cardinality.physical_capture_events)} detail={`${observatory.ledger.cardinality.physical_http_calls} appels HTTP · ${observatory.ledger.cardinality.receipts} reçus immuables`} />
+        <Metric label="Preuves temporelles" value={String(observatory.ledger.cardinality.temporal_evidence_events)} detail="observations indépendantes, sans alias multiples" />
+        <Metric label="Tentatives" value={String(observatory.ledger.cardinality.capture_attempt_events)} detail="distinctes des planifications et captures" />
         <Metric label="Fenêtres manquées" value={String(observatory.windows.missed)} detail="jamais reconstruites après kickoff" tone="amber" />
         <Metric label="API-Football" value={`${observatory.providers.api_football_calls} / ${observatory.providers.budgets.api_football_max_total}`} detail="appels du pilote complet" />
         <Metric label="The Odds API" value={`${observatory.providers.odds_api_credits} / ${observatory.providers.budgets.odds_api_max_total}`} detail="crédits du pilote complet" />

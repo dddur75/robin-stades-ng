@@ -553,15 +553,24 @@ Politique : `configs/prospective_observatory_v1.json`. Migration :
 `0009_jalon12_observatory`. Verrou :
 `prospective-deep-state`.
 
+Politique temporelle active : `prospective-capture-window-v2`, Option B.
+`H-2` couvre `[H-3,H-1)` et `NEAR_KICKOFF` couvre `[H-1,kickoff)`. Pour neuf
+fixtures, 441 fenêtres v2 sont actives ; les 531 fenêtres v1 du pilote restent
+append-only mais inactives.
+
 Ordre d’exploitation :
 
 1. `prospective-fixture-registry.yml` enregistre les fixtures officielles ;
 2. `prospective-deep-scheduler.yml` publie les fenêtres dues et le budget ;
 3. les workflows player, lineup et odds capturent uniquement les fenêtres dues ;
-4. R2 reçoit le payload brut append-only et son reçu hashé ;
-5. PostgreSQL indexe et projette sans corps de payload ;
-6. `prospective-r2-replay-audit.yml` rejoue sans fournisseur ;
-7. `prospective-gate-report.yml` produit le rapport compact et Robin Live.
+4. player et lineup vérifient une fois le kickoff et `status.short=NS` de
+   chaque fixture due ;
+5. le budget maximal est journalisé append-only dans R2 avant transport ;
+6. R2 reçoit le payload brut append-only et son reçu hashé ;
+7. PostgreSQL indexe et projette sans corps de payload ;
+8. la parité bidirectionnelle reçus/index/budgets est vérifiée ;
+9. `prospective-r2-replay-audit.yml` rejoue sans fournisseur ;
+10. `prospective-gate-report.yml` produit le rapport compact et Robin Live.
 
 CLI canonique :
 
@@ -573,10 +582,33 @@ python scripts/run_prospective_observatory.py capture-lineup --help
 python scripts/run_prospective_observatory.py capture-odds --help
 python scripts/run_prospective_observatory.py replay-audit --help
 python scripts/run_prospective_observatory.py gate-report --help
+python scripts/run_prospective_observatory.py next-due-report --help
 ```
 
-`windows_due=0` doit terminer sans appel. Une fenêtre dépassée devient
-`MISSED_WINDOW`; un retry tardif reste `LATE_RETRY` et ne ferme pas le cutoff.
+`windows_due=0` doit terminer avec `NO_DUE_WINDOW_SUCCESS`,
+`provider_calls=0`, `odds_api_credits=0`, `r2_puts=0` et
+`capture_attempts=0`. Le preflight kickoff est alors interdit. Une fenêtre
+dépassée devient `MISSED_WINDOW`; un retry tardif reste `LATE_RETRY` et ne
+ferme pas le cutoff.
+
+`r2_puts` mesure seulement la capture courante. Si une intention antérieure
+répare un payload ou reçu manquant, publier ces écritures dans
+`recovery_r2_puts` sans changer `provider_calls=0`.
+
+Relire l’horloge avant le preflight, avant chaque transport et à réception.
+Avant transport, un cutoff franchi produit
+`WINDOW_CUTOFF_PASSED_BEFORE_PROVIDER_CALL` sans coût. À réception, il produit
+`TEMPORALITY_FAILED`. Le replay exige aussi
+`opens_at <= response_received_at < cutoff_at < kickoff_at`.
+
+`CAPTURED_EMPTY` sur `INJURY` peut faire passer le gate avec
+`NO_INJURY_REPORTED_AT_CAPTURE`; cette preuve signifie seulement « rien de
+rapporté par le fournisseur à cet instant », jamais zéro ni absence certaine.
+
+`next-due-report` est une estimation provider-free. Sa sortie canonique est
+`reports/jalon12/next-due-windows.json` ; elle liste pour chaque fixture et
+famille la prochaine fenêtre UTC, le workflow, le coût maximal et l’état
+attendu.
 
 Rafraîchissement cockpit borné :
 
@@ -605,9 +637,45 @@ mode replay-only, vérifier dans le run GitHub que les étapes registre,
 scheduler et captures sont toutes `skipped`. Ne jamais utiliser le replay-only
 pour simuler une capture : il ne fait que reconstruire l’état déjà durable.
 
+Avant toute sélection due, le replay réconcilie R2 vers PostgreSQL. Les reçus,
+index payloads et clés du journal budget doivent être identiques des deux
+côtés ; une ligne orpheline produit `R2_POSTGRESQL_*_PARITY_FAILED`.
+Comparer également l’ensemble exact des lignes de
+`prospective_player_status`, `prospective_injuries`, `prospective_lineups`,
+`prospective_formations` et `prospective_odds_snapshots`. Une ligne
+supplémentaire, absente ou mutée produit
+`R2_POSTGRESQL_PROJECTION_PARITY_FAILED:<table>`.
+
+Le seeding budget legacy est ligne-par-ligne et idempotent : compléter les clés
+SQL absentes de R2 même si le namespace est partiellement rempli, reprojeter
+R2 vers SQL, puis comparer toutes les valeurs.
+Le statut complet exact est :
+
+```text
+R2_REPLAY_VERIFIED
+CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2
+```
+
+Une fixture non reconstruite donne
+`R2_REPLAY_PARTIAL_FIXTURE_INDEX` / `RECONSTRUCTION_INCOMPLETE`.
+Tester les reprises après intention seule, payload sans reçu, reçu sans
+PostgreSQL, projection partielle et timeout après index, puis un replay complet
+et un replay répété. Aucun de ces chemins ne rappelle un fournisseur.
+
+Dans le ledger, `physical_capture_id` inclut la fixture pour API-Football mais
+la neutralise pour la réponse Odds globale. Contrôler séparément
+`physical_capture_events`, `physical_http_calls`, reçus et preuves temporelles
+par fixture.
+
 Preuve de référence finale : run `30314975830`, commit `2469e57`, 18 objets R2
 examinés pour 24 714 octets physiques, 9 payloads rejoués, 0 appel fournisseur,
 0 crédit, 0 mismatch, 0 perte et 0 suppression. L’artefact Cockpit doit
 afficher PostgreSQL `0009`, 12 tables, 54 écritures compactes, 9 doublons
 évités, lag 0 et zéro corps de payload. Son SHA-256 attendu est
 `f0ff76b0c476ef259eb73143f969a75f3c6904786e1d073ce9874c1cbd776f53`.
+
+Cette preuve appartient au pilote v1. La PR #17 reste non fusionnée tant que
+la revue 12.1 n’a pas sa propre suite verte ; les cron de branche ne prouvent
+pas une activation sur `main`. P0 reste Ligue 1, P1 reste `P1_OFF`, et
+`PRODUCTION_LOCKED`, `REAL_BETS=false`, `NO_BET_DEFAULT=true` restent
+obligatoires.

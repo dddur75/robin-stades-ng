@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Self
@@ -29,6 +30,9 @@ _SENSITIVE_NAMES = {
     "token",
     "x-apisports-key",
 }
+_WINDOW_LABEL_PATTERN = re.compile(
+    r"^(?P<unit>[JH])-(?P<whole>\d+)(?::(?P<minutes>\d{2}))?$"
+)
 
 
 class CaptureFamily(StrEnum):
@@ -112,6 +116,44 @@ def receipt_scope_sha256(
             "window_label": window_label,
         }
     )
+
+
+def _window_opens_at_from_receipt(
+    *,
+    window_id: str,
+    window_label: str,
+    kickoff_at: datetime,
+) -> datetime | None:
+    """Reconstruct the pre-registered opening bound without SQL state.
+
+    Receipt V1 predates an explicit ``opens_at`` field. Its immutable window
+    identifier and label still make the bound deterministic: all v1/v2
+    labels used the published one-hour tolerance, while v3 consolidates the
+    final hour into ``NEAR_KICKOFF``.
+    """
+
+    kickoff = ensure_utc(kickoff_at, field="kickoff_at")
+    if window_label == "NEAR_KICKOFF":
+        return (
+            kickoff - timedelta(hours=1)
+            if window_id.startswith("prospective-window-v3:")
+            else None
+        )
+    match = _WINDOW_LABEL_PATTERN.fullmatch(window_label)
+    if match is None:
+        return None
+    whole = int(match.group("whole"))
+    minutes = int(match.group("minutes") or 0)
+    if match.group("unit") == "J":
+        if minutes:
+            return None
+        offset = timedelta(days=whole)
+    else:
+        if minutes >= 60:
+            return None
+        offset = timedelta(hours=whole, minutes=minutes)
+    due_at = kickoff - offset
+    return due_at - timedelta(hours=1)
 
 
 def _validate_source_endpoint(value: str) -> str:
@@ -234,7 +276,7 @@ class CaptureAttempt(FrozenContract):
     retry_disposition: RetryDisposition = RetryDisposition.NOT_REQUIRED
     attempt_number: int = Field(ge=1, le=5)
     http_status: int | None = Field(default=None, ge=100, le=599)
-    provider_calls: int = Field(default=0, ge=0, le=1)
+    provider_calls: int = Field(default=0, ge=0, le=4)
     provider_credits: int = Field(default=0, ge=0)
     error_code: str | None = Field(default=None, max_length=120)
     code_revision: str = Field(min_length=1, max_length=80)
@@ -268,7 +310,7 @@ class CaptureContext(FrozenContract):
     source_endpoint: str = Field(min_length=1, max_length=500)
     complete: bool
     quality_status: AvailabilityStatus
-    provider_calls: int = Field(ge=0, le=1)
+    provider_calls: int = Field(ge=0, le=4)
     code_revision: str = Field(min_length=1, max_length=80)
     event_time: datetime | None = None
     provider_updated_at: datetime | None = None
@@ -322,7 +364,7 @@ class CaptureReceipt(FrozenContract):
     source_endpoint: str
     complete: bool
     quality_status: AvailabilityStatus
-    provider_calls: int = Field(ge=0, le=1)
+    provider_calls: int = Field(ge=0, le=4)
     code_revision: str
     event_time: datetime | None = None
     provider_updated_at: datetime | None = None
@@ -378,15 +420,57 @@ class CaptureReceipt(FrozenContract):
 
     @property
     def temporally_admissible(self) -> bool:
+        response_at = ensure_utc(
+            self.response_received_at,
+            field="response_received_at",
+        )
+        cutoff_at = ensure_utc(self.cutoff_at, field="cutoff_at")
+        kickoff_at = ensure_utc(self.kickoff_at, field="kickoff_at")
+        if self.window_id is None:
+            return response_at < cutoff_at < kickoff_at
+        opens_at = _window_opens_at_from_receipt(
+            window_id=self.window_id,
+            window_label=self.window_label,
+            kickoff_at=kickoff_at,
+        )
         return (
-            ensure_utc(
-                self.response_received_at,
-                field="response_received_at",
-            )
-            < ensure_utc(self.cutoff_at, field="cutoff_at")
-            < ensure_utc(self.kickoff_at, field="kickoff_at")
+            opens_at is not None
+            and opens_at <= response_at < cutoff_at < kickoff_at
         )
 
     @property
     def receipt_hash(self) -> str:
         return canonical_sha256(self.model_dump(mode="json"))
+
+    @property
+    def physical_capture_id(self) -> str:
+        """Stable partition-level identity for one provider response.
+
+        A single response may legitimately yield several semantic families for
+        the same fixture. Those receipts share this identifier and therefore
+        count as one physical capture, never several independent timepoints.
+        """
+
+        global_provider_response = (
+            self.provider == "the-odds-api"
+            and self.source_endpoint.startswith("/sports/")
+            and self.source_endpoint.endswith("/odds")
+        )
+        return canonical_sha256(
+            {
+                "fixture_id": (
+                    None if global_provider_response else self.fixture_id
+                ),
+                "provider": self.provider,
+                "source_endpoint": self.source_endpoint,
+                "requested_at": ensure_utc(
+                    self.requested_at,
+                    field="requested_at",
+                ).isoformat(),
+                "response_received_at": ensure_utc(
+                    self.response_received_at,
+                    field="response_received_at",
+                ).isoformat(),
+                "http_status": self.http_status,
+            }
+        )

@@ -648,6 +648,45 @@ def _validate_ledger_evidence(
         raise RuntimeError("ledger Jalon 12 absent")
     events = _non_negative_int(ledger.get("events"))
     head_hash = ledger.get("head_hash")
+    cardinality = ledger.get("cardinality")
+    cardinality_keys = {
+        "planned_events",
+        "capture_attempt_events",
+        "physical_capture_events",
+        "physical_http_calls",
+        "temporal_evidence_events",
+        "gate_evaluation_events",
+        "lifecycle_events",
+        "receipts",
+    }
+    physical_capture_events = (
+        _non_negative_int(cardinality.get("physical_capture_events"))
+        if isinstance(cardinality, dict)
+        else None
+    )
+    temporal_evidence_events = (
+        _non_negative_int(cardinality.get("temporal_evidence_events"))
+        if isinstance(cardinality, dict)
+        else None
+    )
+    receipt_count = (
+        _non_negative_int(cardinality.get("receipts"))
+        if isinstance(cardinality, dict)
+        else None
+    )
+    valid_cardinality = (
+        isinstance(cardinality, dict)
+        and cardinality_keys <= set(cardinality)
+        and all(
+            _non_negative_int(cardinality.get(key)) is not None
+            for key in cardinality_keys
+        )
+        and physical_capture_events is not None
+        and temporal_evidence_events is not None
+        and receipt_count is not None
+        and physical_capture_events <= receipt_count
+        and temporal_evidence_events <= receipt_count
+    )
     valid_head = (
         head_hash is None
         if expected_events == 0
@@ -657,6 +696,7 @@ def _validate_ledger_evidence(
     if (
         events != expected_events
         or not valid_head
+        or (expected_events > 0 and not valid_cardinality)
         or _non_negative_int(ledger.get("bet_decisions")) != 0
     ):
         raise RuntimeError("ledger Jalon 12 incohérent")
@@ -857,9 +897,9 @@ def merge_verified_replay_evidence(
         and r2_counts.get("objects_added") == physical_objects
         and r2_counts.get("recovery_objects") == physical_recovery_objects
         and r2_counts.get("recovery_bytes") == physical_recovery_bytes
-        and isinstance(replay_postgresql, dict)
-        and replay_postgresql.get("reconstruction_status")
-        == "RECONSTRUCTIBLE_FROM_R2"
+            and isinstance(replay_postgresql, dict)
+            and replay_postgresql.get("reconstruction_status")
+            == "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
         and replay_postgresql.get("migration") == "0009_jalon12_observatory"
         and postgresql_counts.get("tables") == 12
         and postgresql_inserts is not None
@@ -902,7 +942,9 @@ def merge_verified_replay_evidence(
             "tables": postgresql_counts["tables"],
             "payload_body_rows": postgresql_counts["payload_body_rows"],
             "lag": r2_counts["lag"],
-            "reconstruction_status": "RECONSTRUCTIBLE_FROM_R2",
+            "reconstruction_status": (
+                "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
+            ),
             "duplicates_avoided": report_counts["second_pass_duplicates"],
         }
     )
@@ -1066,7 +1108,7 @@ def build_prospective_observatory() -> dict[str, Any]:
             and compact["r2"]["replay_status"] == "R2_REPLAY_VERIFIED"
             and compact["r2"]["verified"] > 0
             and compact["postgresql"]["reconstruction_status"]
-            == "RECONSTRUCTIBLE_FROM_R2"
+            == "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
         )
         if has_live_evidence:
             compact["origin"] = "LIVE_PROSPECTIVE_CAPTURE"

@@ -57,11 +57,12 @@ Chaque observation possède des temps distincts : `event_time`,
 `kickoff_at` et `materialized_at`. La preuve d’admissibilité est :
 
 ```text
-response_received_at < cutoff_at < kickoff_at
+opens_at <= response_received_at < cutoff_at < kickoff_at
 ```
 
-Une règle plus stricte peut être gelée avant la capture. Elle ne peut pas être
-assouplie après observation.
+Les reçus `REGISTRY` sans fenêtre n’ont pas d’ouverture et conservent
+`response_received_at < cutoff_at < kickoff_at`. Une règle plus stricte peut
+être gelée avant la capture. Elle ne peut pas être assouplie après observation.
 
 ## États autorisés
 
@@ -81,9 +82,16 @@ RETRY_PENDING
 COMPLETE
 ```
 
-`CAPTURED_EMPTY` prouve une réponse vide observée. Il n’est ni remplacé par
-zéro, ni confondu avec un appel absent. `MISSED_WINDOW` est définitif pour le
-cutoff concerné.
+`CAPTURED_EMPTY` prouve une réponse vide observée. Cet état n’est admissible
+que pour `PLAYER_STATUS`, `INJURY`, `LINEUP` et `FORMATION` ; un `SQUAD` vide
+reste invalide. Il n’est ni remplacé par zéro, ni confondu avec un appel
+absent. `MISSED_WINDOW` est définitif pour le cutoff concerné.
+
+Pour `INJURY`, un vide admissible peut satisfaire le gate avec
+`NO_INJURY_REPORTED_AT_CAPTURE`, soit aucune blessure publiée par ce fournisseur
+à cet instant. Il ne prouve pas l’absence médicale. Pour les captures
+API-Football prospectives, seul le statut fixture exact `NS` est admissible ;
+tout autre statut est `REGISTRY_STALE`.
 
 ## Échantillons préenregistrés
 

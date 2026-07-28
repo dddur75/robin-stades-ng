@@ -7,7 +7,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
-from robin.prospective_observatory.contracts import CaptureFamily, CaptureReceipt
+from robin.prospective_observatory.contracts import (
+    AvailabilityStatus,
+    CaptureFamily,
+    CaptureReceipt,
+)
 
 
 class GateName(StrEnum):
@@ -75,6 +79,21 @@ def _pre_cutoff(
     return tuple(item for item in observations if item.receipt.temporally_admissible)
 
 
+def _independent_capture_count(
+    observations: tuple[GateObservation, ...],
+) -> int:
+    return len(
+        {
+            (
+                item.receipt.physical_capture_id,
+                item.receipt.fixture_id,
+                item.receipt.family,
+            )
+            for item in observations
+        }
+    )
+
+
 def _blocked(
     gate: GateName,
     fixture_id: str,
@@ -97,16 +116,18 @@ def _blocked(
             gate=gate,
             fixture_id=fixture_id,
             status=GateStatus.BLOCKED_BY_TEMPORALITY,
-            observations=len(observations),
+            observations=_independent_capture_count(observations),
             reason="NO_RESPONSE_RECEIVED_BEFORE_CUTOFF",
-            evidence={"late_observations": len(observations)},
+            evidence={
+                "late_observations": _independent_capture_count(observations)
+            },
         )
     if require_identity and any(not item.identity_ok for item in temporal):
         return GateEvaluation(
             gate=gate,
             fixture_id=fixture_id,
             status=GateStatus.BLOCKED_BY_IDENTITY,
-            observations=len(temporal),
+            observations=_independent_capture_count(temporal),
             reason="IDENTITY_NOT_CANONICAL",
             evidence={},
         )
@@ -132,10 +153,8 @@ def evaluate_player_gate(
     if blocked is not None:
         return blocked
     temporal = _pre_cutoff(selected)
-    # An unchanged squad/status captured in three pre-registered windows is three
-    # independent observations. Payload hashes may legitimately remain identical.
     distinct_captures = {
-        (item.receipt.window_id, item.receipt.observed_at) for item in temporal
+        item.receipt.physical_capture_id for item in temporal
     }
     if len(distinct_captures) < minimum_captures:
         return GateEvaluation(
@@ -151,7 +170,7 @@ def evaluate_player_gate(
             gate=GateName.PROSPECTIVE_PLAYER_GATE,
             fixture_id=fixture_id,
             status=GateStatus.INVALID_PAYLOAD,
-            observations=len(temporal),
+            observations=_independent_capture_count(temporal),
             reason="PLAYER_LIST_MISSING",
             evidence={},
         )
@@ -178,6 +197,22 @@ def evaluate_injury_gate(
     if blocked is not None:
         return blocked
     temporal = _pre_cutoff(selected)
+    if temporal and all(
+        item.receipt.quality_status is AvailabilityStatus.CAPTURED_EMPTY
+        for item in temporal
+    ):
+        observations_count = _independent_capture_count(temporal)
+        return GateEvaluation(
+            gate=GateName.PROSPECTIVE_INJURY_GATE,
+            fixture_id=fixture_id,
+            status=GateStatus.PASSED,
+            observations=observations_count,
+            reason="NO_INJURY_REPORTED_AT_CAPTURE",
+            evidence={
+                "empty_captures": observations_count,
+                "meaning": "NO_PROVIDER_REPORTED_INJURY_AT_CAPTURE_TIME",
+            },
+        )
     valid = tuple(
         item
         for item in temporal
@@ -190,7 +225,7 @@ def evaluate_injury_gate(
             gate=GateName.PROSPECTIVE_INJURY_GATE,
             fixture_id=fixture_id,
             status=GateStatus.INVALID_PAYLOAD,
-            observations=len(temporal),
+            observations=_independent_capture_count(temporal),
             reason="INJURY_PLAYER_STATUS_OR_SOURCE_MISSING",
             evidence={},
         )
@@ -198,7 +233,7 @@ def evaluate_injury_gate(
         gate=GateName.PROSPECTIVE_INJURY_GATE,
         fixture_id=fixture_id,
         status=GateStatus.PASSED,
-        observations=len(valid),
+        observations=_independent_capture_count(valid),
         reason="INJURY_OBSERVED_BEFORE_CUTOFF",
         evidence={"identified_injuries": len(valid)},
     )
@@ -244,7 +279,7 @@ def evaluate_lineup_gate(
             gate=GateName.PROSPECTIVE_LINEUP_GATE,
             fixture_id=fixture_id,
             status=GateStatus.INVALID_PAYLOAD,
-            observations=len(temporal),
+            observations=_independent_capture_count(temporal),
             reason="EXACTLY_TWO_COMPLETE_ELEVEN_PLAYER_LINEUPS_REQUIRED",
             evidence={
                 "complete_teams": len(valid_teams),
@@ -255,7 +290,7 @@ def evaluate_lineup_gate(
         gate=GateName.PROSPECTIVE_LINEUP_GATE,
         fixture_id=fixture_id,
         status=GateStatus.PASSED,
-        observations=len(temporal),
+        observations=_independent_capture_count(temporal),
         reason="BOTH_COMPLETE_LINEUPS_RECEIVED_BEFORE_KICKOFF",
         evidence={"teams": 2, "starter_count_per_team": 11},
     )
@@ -315,7 +350,7 @@ def evaluate_formation_gate(
             gate=GateName.PROSPECTIVE_FORMATION_GATE,
             fixture_id=fixture_id,
             status=GateStatus.INVALID_PAYLOAD,
-            observations=len(temporal),
+            observations=_independent_capture_count(temporal),
             reason="BOTH_TEAM_FORMATIONS_NOT_NORMALIZABLE",
             evidence={"complete_teams": len(valid), "expected_teams": 2},
         )
@@ -323,7 +358,7 @@ def evaluate_formation_gate(
         gate=GateName.PROSPECTIVE_FORMATION_GATE,
         fixture_id=fixture_id,
         status=GateStatus.PASSED,
-        observations=len(temporal),
+        observations=_independent_capture_count(temporal),
         reason="BOTH_FORMATIONS_NORMALIZED_AFTER_LINEUP_GATE",
         evidence={"formations": dict(sorted(valid.items()))},
     )
@@ -370,7 +405,7 @@ def evaluate_market_gate(
             gate=GateName.PROSPECTIVE_MARKET_GATE,
             fixture_id=fixture_id,
             status=GateStatus.INVALID_PAYLOAD,
-            observations=len(temporal),
+            observations=_independent_capture_count(temporal),
             reason="EXACT_ODDS_BOOKMAKER_MARGIN_OR_OBSERVED_AT_MISSING",
             evidence={},
         )
@@ -378,7 +413,7 @@ def evaluate_market_gate(
         gate=GateName.PROSPECTIVE_MARKET_GATE,
         fixture_id=fixture_id,
         status=GateStatus.PASSED,
-        observations=len(valid),
+        observations=_independent_capture_count(tuple(valid)),
         reason="MARKET_SNAPSHOT_MATCHED_WITHOUT_AMBIGUITY",
         evidence={"snapshots": len(valid)},
     )

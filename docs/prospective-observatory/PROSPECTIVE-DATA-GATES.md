@@ -11,12 +11,16 @@ Les gates sont évalués par fixture, puis agrégés sans masquer les échecs.
 
 ## PROSPECTIVE_INJURY_GATE
 
-- statut réellement observé ;
-- joueur identifié ;
-- source et reçu enregistrés ;
-- `response_received_at < cutoff_at`.
+- soit au moins une blessure réellement observée avec joueur identifié, source
+  et reçu enregistrés ;
+- soit une réponse vide admissible `CAPTURED_EMPTY`, reçue dans la fenêtre,
+  avec la preuve `NO_INJURY_REPORTED_AT_CAPTURE` ;
+- `opens_at <= response_received_at < cutoff_at < kickoff_at`.
 
-Une blessure historique post-match ne ferme pas ce gate.
+Le vide signifie seulement
+`NO_PROVIDER_REPORTED_INJURY_AT_CAPTURE_TIME`. Il ne prouve pas l’absence
+médicale et ne devient pas zéro. Une blessure historique post-match ne ferme
+pas ce gate.
 
 ## PROSPECTIVE_LINEUP_GATE
 
@@ -47,7 +51,9 @@ preuve. Une couverture agrégée ne ferme pas un gate individuel. Le statut
 global le plus favorable autorisé est borné par les fixtures en échec.
 
 `CAPTURED_EMPTY`, `MISSED_WINDOW`, `TEMPORALITY_FAILED` et `IDENTITY_FAILED`
-restent visibles dans le dénominateur.
+restent visibles dans le dénominateur. L’exception injury ci-dessus peut passer
+le gate comme preuve négative bornée ; les vides lineup/formation restent
+insuffisants pour leur gate.
 
 ## Features conditionnelles
 

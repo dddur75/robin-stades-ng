@@ -34,6 +34,7 @@ class EvidenceEventKindV3(StrEnum):
     CAPTURE_EMPTY = "CAPTURE_EMPTY"
     CAPTURE_FAILED = "CAPTURE_FAILED"
     CAPTURE_WINDOW_MISSED = "CAPTURE_WINDOW_MISSED"
+    TEMPORAL_EVIDENCE_RECORDED = "TEMPORAL_EVIDENCE_RECORDED"
     TEMPORAL_GATE_PASSED = "TEMPORAL_GATE_PASSED"
     TEMPORAL_GATE_FAILED = "TEMPORAL_GATE_FAILED"
     DATASET_VERSION_FROZEN = "DATASET_VERSION_FROZEN"
@@ -313,50 +314,133 @@ def build_observatory_ledger(
                 attempt.fixture_id,
                 (attempt_hash,),
                 attempt.status.value,
-                "DURABLE_PROVIDER_ATTEMPT",
+                (
+                    "DURABLE_PROVIDER_ATTEMPT"
+                    if attempt.provider_calls or attempt.provider_credits
+                    else "SEMANTIC_WINDOW_PROJECTION"
+                ),
                 {
                     "family": attempt.family.value,
                     "attempt_number": attempt.attempt_number,
                 },
             )
         )
-        matching_receipt = next(
-            (
-                item
-                for item in receipts_by_window.get(attempt.window_id, ())
-                if attempt.idempotency_key.endswith(
-                    f":{item.payload_sha256}"
+        if attempt.status not in {
+            AvailabilityStatus.CAPTURED,
+            AvailabilityStatus.CAPTURED_EMPTY,
+            AvailabilityStatus.COMPLETE,
+        }:
+            events.append(
+                (
+                    attempt.attempted_at,
+                    3,
+                    EvidenceEventKindV3.CAPTURE_FAILED,
+                    attempt.code_revision,
+                    attempt.fixture_id,
+                    (attempt_hash,),
+                    attempt.status.value,
+                    attempt.error_code or "CAPTURE_ATTEMPT_FAILED",
+                    {"family": attempt.family.value},
                 )
-                and item.requested_at == attempt.attempted_at
-                and item.provider == attempt.provider
-                and item.family is attempt.family
-                and item.http_status == attempt.http_status
-                and item.quality_status is attempt.status
-            ),
-            None,
+            )
+
+    receipts_by_physical: dict[str, list[CaptureReceipt]] = {}
+    for receipt in receipt_rows:
+        receipts_by_physical.setdefault(
+            receipt.physical_capture_id,
+            [],
+        ).append(receipt)
+    for physical_capture_id, scoped in receipts_by_physical.items():
+        fixture_ids = sorted({receipt.fixture_id for receipt in scoped})
+        successful = tuple(
+            receipt
+            for receipt in scoped
+            if receipt.quality_status
+            in {
+                AvailabilityStatus.CAPTURED,
+                AvailabilityStatus.CAPTURED_EMPTY,
+                AvailabilityStatus.COMPLETE,
+            }
         )
-        evidence_hash = (
-            matching_receipt.receipt_hash
-            if matching_receipt is not None
-            else attempt_hash
-        )
-        if attempt.status is AvailabilityStatus.CAPTURED:
+        if any(
+            receipt.quality_status
+            in {AvailabilityStatus.CAPTURED, AvailabilityStatus.COMPLETE}
+            for receipt in successful
+        ):
             kind = EvidenceEventKindV3.CAPTURE_SUCCEEDED
-        elif attempt.status is AvailabilityStatus.CAPTURED_EMPTY:
+            status = AvailabilityStatus.CAPTURED.value
+        elif successful:
             kind = EvidenceEventKindV3.CAPTURE_EMPTY
+            status = AvailabilityStatus.CAPTURED_EMPTY.value
         else:
             kind = EvidenceEventKindV3.CAPTURE_FAILED
+            status = scoped[0].quality_status.value
         events.append(
             (
-                attempt.attempted_at,
+                min(receipt.response_received_at for receipt in scoped),
                 3,
                 kind,
-                attempt.code_revision,
-                attempt.fixture_id,
-                (evidence_hash,),
-                attempt.status.value,
-                attempt.error_code or "CAPTURE_ATTEMPT_CLASSIFIED",
-                {"family": attempt.family.value},
+                scoped[0].code_revision,
+                fixture_ids[0] if len(fixture_ids) == 1 else None,
+                tuple(sorted(receipt.receipt_hash for receipt in scoped)),
+                status,
+                "IMMUTABLE_R2_PHYSICAL_CAPTURE",
+                {
+                    "physical_capture_id": physical_capture_id,
+                    "fixture_ids": fixture_ids,
+                    "families": sorted(
+                        {receipt.family.value for receipt in scoped}
+                    ),
+                    "receipts": len(scoped),
+                    "provider_http_calls": max(
+                        receipt.provider_calls for receipt in scoped
+                    ),
+                },
+            )
+        )
+
+    temporal_groups: dict[
+        tuple[str, str],
+        list[CaptureReceipt],
+    ] = {}
+    for receipt in receipt_rows:
+        if (
+            receipt.temporally_admissible
+            and receipt.quality_status
+            in {
+                AvailabilityStatus.CAPTURED,
+                AvailabilityStatus.CAPTURED_EMPTY,
+                AvailabilityStatus.COMPLETE,
+            }
+        ):
+            temporal_groups.setdefault(
+                (
+                    receipt.physical_capture_id,
+                    receipt.fixture_id,
+                ),
+                [],
+            ).append(receipt)
+    for (
+        physical_capture_id,
+        temporal_fixture_id,
+    ), scoped in temporal_groups.items():
+        events.append(
+            (
+                min(receipt.response_received_at for receipt in scoped),
+                4,
+                EvidenceEventKindV3.TEMPORAL_EVIDENCE_RECORDED,
+                scoped[0].code_revision,
+                temporal_fixture_id,
+                tuple(sorted(receipt.receipt_hash for receipt in scoped)),
+                AvailabilityStatus.COMPLETE.value,
+                "ONE_PHYSICAL_CAPTURE_ONE_TEMPORAL_EVIDENCE",
+                {
+                    "physical_capture_id": physical_capture_id,
+                    "families": sorted(
+                        {receipt.family.value for receipt in scoped}
+                    ),
+                    "technical_aliases": len(scoped),
+                },
             )
         )
     for evaluation in gate_rows:
@@ -373,7 +457,7 @@ def build_observatory_ledger(
         events.append(
             (
                 frozen_at,
-                5,
+                6,
                 (
                     EvidenceEventKindV3.TEMPORAL_GATE_PASSED
                     if evaluation.status is GateStatus.PASSED
@@ -393,7 +477,7 @@ def build_observatory_ledger(
     events.append(
         (
             frozen_at,
-            6,
+            7,
             EvidenceEventKindV3.DATASET_VERSION_FROZEN,
             code_revision,
             None,
@@ -408,23 +492,52 @@ def build_observatory_ledger(
         )
     )
 
+    def event_order_key(
+        item: tuple[
+            datetime,
+            int,
+            EvidenceEventKindV3,
+            str,
+            str | None,
+            tuple[str, ...],
+            str,
+            str,
+            dict[str, object],
+        ],
+    ) -> tuple[datetime, int, str, str, str]:
+        return (
+            item[0],
+            item[1],
+            item[4] or "",
+            item[2].value,
+            canonical_sha256(
+                {
+                    "revision": item[3],
+                    "evidence_hashes": item[5],
+                    "status": item[6],
+                    "reason": item[7],
+                    "payload": item[8],
+                }
+            ),
+        )
+
     ledger = PublicEvidenceLedgerV3()
     for (
         recorded_at,
         _,
         event_kind,
         revision,
-        fixture_id,
+        event_fixture_id,
         evidence_hashes,
         status,
         reason,
         payload,
-    ) in sorted(events, key=lambda item: (item[0], item[1], item[4] or "", item[2].value)):
+    ) in sorted(events, key=event_order_key):
         ledger.append(
             event_kind=event_kind,
             recorded_at=recorded_at,
             code_revision=revision,
-            fixture_id=fixture_id,
+            fixture_id=event_fixture_id,
             evidence_hashes=evidence_hashes,
             status=status,
             reason=reason,
@@ -438,12 +551,68 @@ def observatory_ledger_summary(
 ) -> dict[str, object]:
     audit = ledger.audit()
     counts = Counter(event.event_kind.value for event in ledger.events)
+    physical_capture_events = sum(
+        event.event_kind
+        in {
+            EvidenceEventKindV3.CAPTURE_SUCCEEDED,
+            EvidenceEventKindV3.CAPTURE_EMPTY,
+            EvidenceEventKindV3.CAPTURE_FAILED,
+        }
+        and "physical_capture_id" in event.payload
+        for event in ledger.events
+    )
+    gate_evaluation_events = (
+        counts[EvidenceEventKindV3.TEMPORAL_GATE_PASSED.value]
+        + counts[EvidenceEventKindV3.TEMPORAL_GATE_FAILED.value]
+    )
+    receipts = 0
+    physical_http_calls = 0
+    for event in ledger.events:
+        receipt_count = event.payload.get("receipts", 0)
+        provider_call_count = event.payload.get("provider_http_calls", 0)
+        if (
+            event.event_kind
+            in {
+                EvidenceEventKindV3.CAPTURE_SUCCEEDED,
+                EvidenceEventKindV3.CAPTURE_EMPTY,
+                EvidenceEventKindV3.CAPTURE_FAILED,
+            }
+            and isinstance(receipt_count, int)
+            and not isinstance(receipt_count, bool)
+            and receipt_count >= 0
+        ):
+            receipts += receipt_count
+            if (
+                isinstance(provider_call_count, int)
+                and not isinstance(provider_call_count, bool)
+                and provider_call_count >= 0
+            ):
+                physical_http_calls += provider_call_count
     return {
         "schema_version": "public-evidence-ledger-v3",
         "status": audit["status"],
         "events": len(ledger.events),
         "head_hash": audit.get("head_hash"),
         "event_counts": dict(sorted(counts.items())),
+        "cardinality": {
+            "planned_events": counts[
+                EvidenceEventKindV3.CAPTURE_WINDOW_SCHEDULED.value
+            ],
+            "capture_attempt_events": counts[
+                EvidenceEventKindV3.CAPTURE_ATTEMPTED.value
+            ],
+            "physical_capture_events": physical_capture_events,
+            "physical_http_calls": physical_http_calls,
+            "temporal_evidence_events": counts[
+                EvidenceEventKindV3.TEMPORAL_EVIDENCE_RECORDED.value
+            ],
+            "gate_evaluation_events": gate_evaluation_events,
+            "lifecycle_events": (
+                counts[EvidenceEventKindV3.FIXTURE_REGISTERED.value]
+                + counts[EvidenceEventKindV3.DATASET_VERSION_FROZEN.value]
+            ),
+            "receipts": receipts,
+        },
         "bet_decisions": 0,
         "real_bets": False,
         "social_publishing_enabled": False,

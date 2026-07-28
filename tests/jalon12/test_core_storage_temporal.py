@@ -111,7 +111,7 @@ def test_windows_due_not_due_missed_and_late_retry_are_fail_closed() -> None:
         CaptureFamily.LINEUP,
         scheduled_at=NOW,
     )
-    h1 = next(window for window in windows if window.label == "H-1")
+    h1 = next(window for window in windows if window.label == "NEAR_KICKOFF")
     assert classify_window(h1, now=h1.opens_at - timedelta(seconds=1)) is (
         AvailabilityStatus.NOT_DUE
     )
@@ -211,6 +211,52 @@ def test_registry_capture_has_no_fictitious_due_window() -> None:
     )
     assert stored.receipt.window_id is None
     assert stored.receipt.window_label == "REGISTRY"
+
+
+def test_physical_response_identity_handles_global_odds_batches() -> None:
+    observed_at = KICKOFF - timedelta(hours=1)
+    base = _context(
+        observed_at=observed_at,
+        cutoff_at=KICKOFF - timedelta(minutes=1),
+    )
+    repository = ProspectiveR2Repository(InMemoryObjectStore())
+    odds_a = repository.capture(
+        payload={"fixture": "a"},
+        context=base.model_copy(
+            update={
+                "fixture_id": "fixture-a",
+                "provider": "the-odds-api",
+                "family": CaptureFamily.ODDS,
+                "source_endpoint": "/sports/soccer_france_ligue_one/odds",
+            }
+        ),
+    )
+    odds_b = repository.capture(
+        payload={"fixture": "b"},
+        context=base.model_copy(
+            update={
+                "fixture_id": "fixture-b",
+                "provider": "the-odds-api",
+                "family": CaptureFamily.ODDS,
+                "source_endpoint": "/sports/soccer_france_ligue_one/odds",
+            }
+        ),
+    )
+    api_a = repository.capture(
+        payload={"fixture": "a"},
+        context=base.model_copy(update={"fixture_id": "fixture-a"}),
+    )
+    api_b = repository.capture(
+        payload={"fixture": "b"},
+        context=base.model_copy(update={"fixture_id": "fixture-b"}),
+    )
+
+    assert odds_a.receipt.physical_capture_id == (
+        odds_b.receipt.physical_capture_id
+    )
+    assert api_a.receipt.physical_capture_id != (
+        api_b.receipt.physical_capture_id
+    )
 
 
 def test_append_only_store_detects_existing_byte_divergence() -> None:

@@ -247,6 +247,15 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.equal(observatory.fixtures.pilot_priority, "Ligue 1");
   assert.equal(Object.keys(observatory.captures.by_family).length, 9);
   assert.equal(Object.keys(observatory.gates.by_name).length, 5);
+  assert.ok(observatory.ledger.cardinality.planned_events >= 0);
+  assert.ok(observatory.ledger.cardinality.capture_attempt_events >= 0);
+  assert.ok(observatory.ledger.cardinality.physical_capture_events >= 0);
+  assert.ok(observatory.ledger.cardinality.physical_http_calls >= 0);
+  assert.ok(observatory.ledger.cardinality.temporal_evidence_events >= 0);
+  assert.ok(
+    observatory.windows.planned <=
+      observatory.ledger.cardinality.planned_events,
+  );
   assert.equal(observatory.hypotheses.length, 8);
   const hypothesisStatuses = new Set([
     "WAITING_FOR_OBSERVATIONS",
@@ -305,7 +314,7 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   if (observatory.r2.replay_status === "R2_REPLAY_VERIFIED") {
     assert.equal(
       observatory.postgresql.reconstruction_status,
-      "RECONSTRUCTIBLE_FROM_R2",
+      "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2",
     );
     assert.ok(observatory.postgresql.duplicates_avoided > 0);
   }
@@ -350,6 +359,11 @@ test("ships a provenance-aware, disposable static snapshot", async () => {
   assert.match(page, /Matchup Lab/);
   assert.match(page, /Observatoire des données/);
   assert.match(page, /Ce qui était connu avant le match/);
+  assert.match(page, /physical_capture_events/);
+  assert.match(page, /physical_http_calls/);
+  assert.match(page, /temporal_evidence_events/);
+  assert.match(page, /capture_attempt_events/);
+  assert.match(page, /planifi.*n'est pas observ/);
   assert.match(page, /NO_PREMATURE_CONCLUSION/);
   assert.match(page, /Aucune décision lorsque zéro candidat existe/);
   assert.match(page, /Réserves fournisseur protégées/);

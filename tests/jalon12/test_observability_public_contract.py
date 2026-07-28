@@ -193,7 +193,9 @@ def valid_replay_report() -> dict[str, object]:
                 "inserts": 1,
                 "migration": "0009_jalon12_observatory",
                 "payload_body_rows": 0,
-                "reconstruction_status": "RECONSTRUCTIBLE_FROM_R2",
+                "reconstruction_status": (
+                    "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
+                ),
                 "tables": 12,
             },
         },
@@ -522,7 +524,9 @@ def test_gate_report_cannot_claim_replay_or_reconstruction(
             },
             "postgresql": {
                 "duplicates_avoided": 999,
-                "reconstruction_status": "RECONSTRUCTIBLE_FROM_R2",
+                "reconstruction_status": (
+                    "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
+                ),
             },
         },
     )
@@ -763,7 +767,7 @@ def test_gate_report_cannot_override_temporal_truth_rule(
     snapshot = build_cockpit_snapshot.build_prospective_observatory()
     assert (
         snapshot["temporal"]["truth_rule"]
-        == "response_received_at < cutoff_at < kickoff_at"
+        == "opens_at <= response_received_at < cutoff_at < kickoff_at"
     )
 
 

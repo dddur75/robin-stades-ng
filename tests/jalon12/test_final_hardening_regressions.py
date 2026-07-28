@@ -784,7 +784,7 @@ def test_attempt_never_links_to_a_receipt_created_after_the_attempt() -> None:
             scheduled_at=NOW - timedelta(minutes=30),
             tolerance=timedelta(hours=1),
         )
-        if item.label == "H-1"
+        if item.label == "NEAR_KICKOFF"
     )
     stored = ProspectiveR2Repository(InMemoryObjectStore()).capture(
         payload={"normalized_family_records": [{"team": "home"}]},
@@ -841,8 +841,16 @@ def test_attempt_never_links_to_a_receipt_created_after_the_attempt() -> None:
         if event.event_kind is EvidenceEventKindV3.CAPTURE_SUCCEEDED
     )
     attempt_hash = canonical_sha256(attempt.model_dump(mode="json"))
-    assert success.evidence_hashes == (attempt_hash,)
-    assert success.evidence_hashes != (stored.receipt.receipt_hash,)
+    attempted = next(
+        event
+        for event in ledger.events
+        if event.event_kind is EvidenceEventKindV3.CAPTURE_ATTEMPTED
+    )
+    assert attempted.evidence_hashes == (attempt_hash,)
+    assert success.evidence_hashes == (stored.receipt.receipt_hash,)
+    assert success.payload["physical_capture_id"] == (
+        stored.receipt.physical_capture_id
+    )
 
 
 def test_r2_replay_preserves_two_fixture_versions_and_window_foreign_keys(
