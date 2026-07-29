@@ -35,7 +35,7 @@ const routes = [
   ["fiche-match", `/matchs/${matchId}`, `${matchHome} – ${matchAway}`],
   ["observatoire", "/observatoire", "Observatoire des données"],
   ["apprentissage", "/apprentissage", "Apprentissage en direct"],
-  ["laboratoire", "/laboratoire", "Laboratoire des hypothèses"],
+  ["laboratoire", "/laboratoire", "Hypothèses et découvertes"],
   ["resultats", "/resultats", "Résultats"],
   ["methode", "/methode", "Comment Robin travaille"],
 ] as const;
@@ -47,11 +47,30 @@ async function assertPageFrame(page: Page, heading: string) {
   await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
   await expect
     .poll(() =>
-      page.evaluate(
-        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
-      ),
+      page.evaluate(() => {
+        const root = document.documentElement;
+        if (root.scrollWidth <= root.clientWidth) return "BOUNDED";
+        const offenders = [...document.querySelectorAll<HTMLElement>("body *")]
+          .map((element) => {
+            const bounds = element.getBoundingClientRect();
+            return {
+              tag: element.tagName,
+              className: element.className,
+              left: Math.round(bounds.left),
+              right: Math.round(bounds.right),
+              width: Math.round(bounds.width),
+            };
+          })
+          .filter((item) => item.left < 0 || item.right > root.clientWidth)
+          .slice(0, 8);
+        return JSON.stringify({
+          clientWidth: root.clientWidth,
+          scrollWidth: root.scrollWidth,
+          offenders,
+        });
+      }),
     )
-    .toBe(true);
+    .toBe("BOUNDED");
 }
 
 test.describe("captures Robin Experience V1", () => {
@@ -190,6 +209,35 @@ test.describe("captures Robin Experience V1", () => {
     });
     await expect(page.getByRole("main")).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Navigation principale" })).toBeVisible();
+  });
+
+  test("Expert — registre paginé et mobile 375 px", async ({ page }) => {
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await page.addInitScript(() => {
+      localStorage.setItem("robin-experience-view-mode", "expert");
+    });
+    await page.goto("/expert");
+    await assertPageFrame(page, "Espace Expert");
+    await expect(page.getByRole("heading", { name: "Explorateur des hypothèses" })).toBeVisible();
+    await expect(page.getByText("700 règles", { exact: true })).toBeVisible();
+    await expect(page.locator(".expert-rule-card")).toHaveCount(50);
+    await expect(page.getByText("Page 1 / 14")).toBeVisible();
+    await page.screenshot({
+      path: `${outputRoot}/desktop-hypotheses-expert.png`,
+    });
+
+    await page.setViewportSize({ height: 844, width: 375 });
+    await expect(page.getByRole("navigation", { name: "Navigation mobile" })).toBeVisible();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+        ),
+      )
+      .toBe(true);
+    await page.screenshot({
+      path: `${outputRoot}/mobile-375-hypotheses-expert.png`,
+    });
   });
 
   test("état snapshot modifié — preuve visuelle synthétique", async ({ page }) => {

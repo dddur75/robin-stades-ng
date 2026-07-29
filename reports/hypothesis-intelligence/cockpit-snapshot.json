@@ -1,0 +1,707 @@
+{
+  "blockedOrRejected": {
+    "archived": 0,
+    "insufficientSupport": 167,
+    "multipleTestingRejected": 533,
+    "prospectiveRejected": 0
+  },
+  "expertExplorer": {
+    "mobileLoadsAllCards": false,
+    "pageManifest": [
+      {
+        "page": 1,
+        "records": 50,
+        "sha256": "29a7c2cb9bbc814a867a16e09066c1ecff7be6b871b7d2a04bf9d9403d462792",
+        "url": "/hypotheses/page-01.json"
+      },
+      {
+        "page": 2,
+        "records": 50,
+        "sha256": "d665e9e36e2e3b070f43efe1ddd51610bcac97af189a128b197c8ca82aeb941a",
+        "url": "/hypotheses/page-02.json"
+      },
+      {
+        "page": 3,
+        "records": 50,
+        "sha256": "daf1a9e4a1f460d2b5b9c3fdcafc396e1292f6d7176cc83a1cc6ef9a7c9afbe5",
+        "url": "/hypotheses/page-03.json"
+      },
+      {
+        "page": 4,
+        "records": 50,
+        "sha256": "6ceb388afd4d654fa9c49475fdaf7d6458153f2b7f1f82e72abbbdfe364a677e",
+        "url": "/hypotheses/page-04.json"
+      },
+      {
+        "page": 5,
+        "records": 50,
+        "sha256": "c9d4cb57e340a7f4379c15cc0e1b3de2a598f1ea5e895b71150beaeaea6a72e1",
+        "url": "/hypotheses/page-05.json"
+      },
+      {
+        "page": 6,
+        "records": 50,
+        "sha256": "15383874e58b383be48acfa084aee0ccf3dc5f69fcc10b51f9eb45481f7c0ea0",
+        "url": "/hypotheses/page-06.json"
+      },
+      {
+        "page": 7,
+        "records": 50,
+        "sha256": "0fbc18c1941ff77ea2fd8fe9d263a5d9ed7fb8f3688ef6c04e459dcb387f221a",
+        "url": "/hypotheses/page-07.json"
+      },
+      {
+        "page": 8,
+        "records": 50,
+        "sha256": "d6e69cbc94c726b1ecb227034d55aee8aadceea0c132d20129658edc93c67b78",
+        "url": "/hypotheses/page-08.json"
+      },
+      {
+        "page": 9,
+        "records": 50,
+        "sha256": "5873360c8e8e0bc5b0d84f49563a8971433ded63ba5cbad5eec3bbbef43323c0",
+        "url": "/hypotheses/page-09.json"
+      },
+      {
+        "page": 10,
+        "records": 50,
+        "sha256": "46dfdc3c3c621b689c928cd5ba0cc6fc662029f5c5a105516a5d62618bb4a5bf",
+        "url": "/hypotheses/page-10.json"
+      },
+      {
+        "page": 11,
+        "records": 50,
+        "sha256": "b885d0c4d0f476026076f3f011871a1ebefb6ab0ef5dc1b18bacd0114d1c5e0e",
+        "url": "/hypotheses/page-11.json"
+      },
+      {
+        "page": 12,
+        "records": 50,
+        "sha256": "0d62f957acd9ae958e10dc6293f6d6763913ce552443a1b61abe8c632857e531",
+        "url": "/hypotheses/page-12.json"
+      },
+      {
+        "page": 13,
+        "records": 50,
+        "sha256": "f6aab1d5c6a684baff09d145f435fc31255a196137f89e4d192e25eedc31cac8",
+        "url": "/hypotheses/page-13.json"
+      },
+      {
+        "page": 14,
+        "records": 50,
+        "sha256": "c5902264c21f839909ca69425318ff60b02405224efa4b6da3af75c2cda995f1",
+        "url": "/hypotheses/page-14.json"
+      }
+    ],
+    "pageSize": 50,
+    "pages": 14,
+    "total": 700
+  },
+  "generatedAt": "2026-07-29T13:30:00+00:00",
+  "liveState": {
+    "fixturesVerified": 116,
+    "hypothesisObservations": 0,
+    "realPredictions": 0,
+    "realSettlements": 0,
+    "realTrainingRuns": 0
+  },
+  "machineDiscoveries": [
+    {
+      "competition": "La Liga",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "La Liga"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_away",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            2.0,
+            2.5
+          ]
+        }
+      ],
+      "explanation": {
+        "additional_data_needed": [
+          "snapshot de cote horodaté",
+          "marge de marché reproductible",
+          "résultat final vérifié"
+        ],
+        "explanation_generated_at": "2026-07-29T13:30:00+00:00",
+        "explanation_generated_by": "CODEX_RESEARCH_EXPLANATION",
+        "explanation_model": "gpt-5.6-sol",
+        "explanation_prompt_hash": "13dfeb0f4734ce15c380915ee934124349adf32a266fd01a9928e027dfb93416",
+        "explanation_source_hash": "8c00579c05064068457a55ac70305f4d2dc64b4c09cede7e6c780aa5543e0231",
+        "replication_experiment": "Observer sans ajustement la même ligue, sélection, bande de cote et marge au prix NEAR_KICKOFF.",
+        "text": "Association historique de prix et de résultat; aucun mécanisme causal ni rendement futur n’est établi."
+      },
+      "historical_confidence_interval": [
+        0.03360868411743898,
+        0.30770262226512224
+      ],
+      "historical_drawdown": 9.269999999999982,
+      "historical_p_value": 0.009949050710225124,
+      "historical_profit_units": 43.43,
+      "historical_q_value": 1.0,
+      "historical_roi": 0.1663984674329502,
+      "historical_support": 261,
+      "historical_walk_forward": {
+        "eligible_folds": 4,
+        "folds": [
+          {
+            "bets": 53,
+            "positive": true,
+            "roi": 0.09037735849056602,
+            "test_period": 2022,
+            "train_periods": [
+              2020,
+              2021
+            ]
+          },
+          {
+            "bets": 46,
+            "positive": true,
+            "roi": 0.22086956521739132,
+            "test_period": 2023,
+            "train_periods": [
+              2020,
+              2021,
+              2022
+            ]
+          },
+          {
+            "bets": 46,
+            "positive": true,
+            "roi": 0.3691304347826087,
+            "test_period": 2024,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023
+            ]
+          },
+          {
+            "bets": 15,
+            "positive": true,
+            "roi": 0.06600000000000002,
+            "test_period": 2025,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023,
+              2024
+            ]
+          }
+        ],
+        "positive_folds": 4,
+        "positive_ratio": 1.0,
+        "survived": true
+      },
+      "hypothesis_id": "J10-M001",
+      "live_observations": 0,
+      "market": "1X2_AWAY",
+      "origin": "MACHINE_DISCOVERED",
+      "payload_hash": "8c00579c05064068457a55ac70305f4d2dc64b4c09cede7e6c780aa5543e0231",
+      "prospective_contract_hash": "c2d56870f77f96f8fbc1235dae5ab7b95f5482d9e00cbaf24f952cff3b3249cc",
+      "prospective_status": "PROSPECTIVE_FROZEN",
+      "public_badge": "Découverte machine",
+      "public_label": "Découverte historique de Robin",
+      "rule_hash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+      "scientific_labels": [
+        "Signal exploratoire",
+        "Non validé après correction des tests multiples",
+        "Gelé pour observation prospective",
+        "Aucun pari réel"
+      ],
+      "selection": "AWAY",
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "title": "victoire à l’extérieur · La Liga",
+      "warning": "Ce résultat historique ne constitue pas une prévision de performance future."
+    },
+    {
+      "competition": "Serie A",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "Serie A"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_draw",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            2.5,
+            3.25
+          ]
+        }
+      ],
+      "explanation": {
+        "additional_data_needed": [
+          "snapshot de cote horodaté",
+          "marge de marché reproductible",
+          "résultat final vérifié"
+        ],
+        "explanation_generated_at": "2026-07-29T13:30:00+00:00",
+        "explanation_generated_by": "CODEX_RESEARCH_EXPLANATION",
+        "explanation_model": "gpt-5.6-sol",
+        "explanation_prompt_hash": "13dfeb0f4734ce15c380915ee934124349adf32a266fd01a9928e027dfb93416",
+        "explanation_source_hash": "e29c2789c519769ee1b55680ea782fcc8c76c5b8bfb2023194770d8367ecfbb7",
+        "replication_experiment": "Observer sans ajustement la même ligue, sélection, bande de cote et marge au prix NEAR_KICKOFF.",
+        "text": "Association historique de prix et de résultat; aucun mécanisme causal ni rendement futur n’est établi."
+      },
+      "historical_confidence_interval": [
+        0.0042719415204679045,
+        0.31393382749629106
+      ],
+      "historical_drawdown": 19.519999999999868,
+      "historical_p_value": 0.02547293414143248,
+      "historical_profit_units": 57.88,
+      "historical_q_value": 1.0,
+      "historical_roi": 0.1594490358126722,
+      "historical_support": 363,
+      "historical_walk_forward": {
+        "eligible_folds": 4,
+        "folds": [
+          {
+            "bets": 66,
+            "positive": true,
+            "roi": 0.042727272727272746,
+            "test_period": 2022,
+            "train_periods": [
+              2020,
+              2021
+            ]
+          },
+          {
+            "bets": 92,
+            "positive": true,
+            "roi": 0.04260869565217391,
+            "test_period": 2023,
+            "train_periods": [
+              2020,
+              2021,
+              2022
+            ]
+          },
+          {
+            "bets": 116,
+            "positive": true,
+            "roi": 0.23922413793103448,
+            "test_period": 2024,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023
+            ]
+          },
+          {
+            "bets": 27,
+            "positive": true,
+            "roi": 0.36962962962962964,
+            "test_period": 2025,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023,
+              2024
+            ]
+          }
+        ],
+        "positive_folds": 4,
+        "positive_ratio": 1.0,
+        "survived": true
+      },
+      "hypothesis_id": "J10-M002",
+      "live_observations": 0,
+      "market": "1X2_DRAW",
+      "origin": "MACHINE_DISCOVERED",
+      "payload_hash": "e29c2789c519769ee1b55680ea782fcc8c76c5b8bfb2023194770d8367ecfbb7",
+      "prospective_contract_hash": "f76569ef005bf75938a0ca24709468cbfba35441310e5c9f1a3cd680f0f513db",
+      "prospective_status": "PROSPECTIVE_FROZEN",
+      "public_badge": "Découverte machine",
+      "public_label": "Découverte historique de Robin",
+      "rule_hash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+      "scientific_labels": [
+        "Signal exploratoire",
+        "Non validé après correction des tests multiples",
+        "Gelé pour observation prospective",
+        "Aucun pari réel"
+      ],
+      "selection": "DRAW",
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "title": "match nul · Serie A",
+      "warning": "Ce résultat historique ne constitue pas une prévision de performance future."
+    },
+    {
+      "competition": "Serie A",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "Serie A"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_away",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            1.6,
+            2.0
+          ]
+        }
+      ],
+      "explanation": {
+        "additional_data_needed": [
+          "snapshot de cote horodaté",
+          "marge de marché reproductible",
+          "résultat final vérifié"
+        ],
+        "explanation_generated_at": "2026-07-29T13:30:00+00:00",
+        "explanation_generated_by": "CODEX_RESEARCH_EXPLANATION",
+        "explanation_model": "gpt-5.6-sol",
+        "explanation_prompt_hash": "13dfeb0f4734ce15c380915ee934124349adf32a266fd01a9928e027dfb93416",
+        "explanation_source_hash": "ff3530eccac2a6671b29f0d7ea9c2cb827c57b7b11b61890c233cf4591b63352",
+        "replication_experiment": "Observer sans ajustement la même ligue, sélection, bande de cote et marge au prix NEAR_KICKOFF.",
+        "text": "Association historique de prix et de résultat; aucun mécanisme causal ni rendement futur n’est établi."
+      },
+      "historical_confidence_interval": [
+        0.024913994885916647,
+        0.24270212811073993
+      ],
+      "historical_drawdown": 7.220000000000027,
+      "historical_p_value": 0.007478892043326665,
+      "historical_profit_units": 33.42,
+      "historical_q_value": 1.0,
+      "historical_roi": 0.1386721991701245,
+      "historical_support": 241,
+      "historical_walk_forward": {
+        "eligible_folds": 3,
+        "folds": [
+          {
+            "bets": 47,
+            "positive": true,
+            "roi": 0.05723404255319148,
+            "test_period": 2022,
+            "train_periods": [
+              2020,
+              2021
+            ]
+          },
+          {
+            "bets": 48,
+            "positive": true,
+            "roi": 0.07395833333333333,
+            "test_period": 2023,
+            "train_periods": [
+              2020,
+              2021,
+              2022
+            ]
+          },
+          {
+            "bets": 51,
+            "positive": true,
+            "roi": 0.1852941176470588,
+            "test_period": 2024,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023
+            ]
+          }
+        ],
+        "positive_folds": 3,
+        "positive_ratio": 1.0,
+        "survived": true
+      },
+      "hypothesis_id": "J10-M003",
+      "live_observations": 0,
+      "market": "1X2_AWAY",
+      "origin": "MACHINE_DISCOVERED",
+      "payload_hash": "ff3530eccac2a6671b29f0d7ea9c2cb827c57b7b11b61890c233cf4591b63352",
+      "prospective_contract_hash": "72760759963a7b31eac2dadacbf96cb60e6c5affc5cb6783757ff18ed87c9b36",
+      "prospective_status": "PROSPECTIVE_FROZEN",
+      "public_badge": "Découverte machine",
+      "public_label": "Découverte historique de Robin",
+      "rule_hash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+      "scientific_labels": [
+        "Signal exploratoire",
+        "Non validé après correction des tests multiples",
+        "Gelé pour observation prospective",
+        "Aucun pari réel"
+      ],
+      "selection": "AWAY",
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "title": "victoire à l’extérieur · Serie A",
+      "warning": "Ce résultat historique ne constitue pas une prévision de performance future."
+    }
+  ],
+  "ownerHypotheses": [
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "ABSENCE_GATE": "DATA_GATE_BLOCKED",
+        "PLAYER_FORM_GATE": "DATA_GATE_BLOCKED",
+        "STARTER_BASELINE_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-001",
+      "mechanism": "Une forme offensive antérieure interagit avec deux absences centrales prouvées.",
+      "minimumSupport": 80,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "eea4f1ac12fdfdcde1a0692db0e6dab7ce99dbbbda035aa407d470ab3a0f1932",
+      "requiredData": [
+        "PLAYER_FORM_GATE",
+        "ABSENCE_GATE",
+        "STARTER_BASELINE_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "Buteur en forme contre défense centrale amputée"
+    },
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "FORMATION_GATE": "DATA_GATE_BLOCKED",
+        "LINEUP_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-002",
+      "mechanism": "Association résiduelle ajustée entre deux structures tactiques.",
+      "minimumSupport": 120,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "e417115d9e65c7625a66ec771c7068adeed500700ac3b38fcca610e720e078d9",
+      "requiredData": [
+        "LINEUP_GATE",
+        "FORMATION_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "4-3-3 contre 4-4-2"
+    },
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "FOOTEDNESS_GATE": "DATA_GATE_BLOCKED",
+        "LINEUP_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-003",
+      "mechanism": "Asymétrie de pied observée dans les unités titulaires.",
+      "minimumSupport": 100,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "cea5693e0e47d8b7cfb8399c67dc6d85998d1e1e5fd0f972308f6884802e8610",
+      "requiredData": [
+        "LINEUP_GATE",
+        "FOOTEDNESS_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "Trois attaquants droitiers contre défense gauchère"
+    },
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "ABSENCE_GATE": "DATA_GATE_BLOCKED",
+        "STARTER_BASELINE_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-004",
+      "mechanism": "Perte point-in-time du gardien habituel avant le match.",
+      "minimumSupport": 80,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "297a45c10e63ff0155c200b91527375f93ab0846975465f19be7daa299e54603",
+      "requiredData": [
+        "ABSENCE_GATE",
+        "STARTER_BASELINE_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "Gardien titulaire absent"
+    },
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "LINEUP_GATE": "DATA_GATE_BLOCKED",
+        "STARTER_BASELINE_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-005",
+      "mechanism": "Faible continuité du duo central face à la force adverse.",
+      "minimumSupport": 100,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "14b43f3539457a27025f0fb253aeef11c2fd35c45810eaf1061b0f7c1bc1f411",
+      "requiredData": [
+        "LINEUP_GATE",
+        "STARTER_BASELINE_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "Deux centraux nouveaux ensemble"
+    },
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "ABSENCE_GATE": "DATA_GATE_BLOCKED",
+        "LINEUP_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-006",
+      "mechanism": "Interaction entre changements, importance, repos et marché.",
+      "minimumSupport": 120,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "bdfef06acb33e8b7d36e219c1f42d00f1cb1770784a28d7edb53c6f74c583e23",
+      "requiredData": [
+        "LINEUP_GATE",
+        "ABSENCE_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "Rupture du onze"
+    },
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "FORMATION_GATE": "DATA_GATE_BLOCKED",
+        "LINEUP_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-007",
+      "mechanism": "Congestion forte combinée à un changement tactique antérieur rare.",
+      "minimumSupport": 100,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "436dfaac52acec5251b2f933ece0c9749d2bb8a0aa02ebb3255b0d8243e20267",
+      "requiredData": [
+        "LINEUP_GATE",
+        "FORMATION_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "Congestion et tactique inhabituelle"
+    },
+    {
+      "badge": "Proposée par David",
+      "currentDataGates": {
+        "FORMATION_GATE": "DATA_GATE_BLOCKED",
+        "LINEUP_GATE": "DATA_GATE_BLOCKED"
+      },
+      "frozen": true,
+      "id": "H11-008",
+      "mechanism": "Front three/back three et front two/back four ajustés au marché.",
+      "minimumSupport": 120,
+      "observations": 0,
+      "origin": "OWNER_PROPOSED",
+      "preregistrationHash": "210281fbd53d625e04410ff4820fe669c4e59a232b071f042e5b235fc2c1d86a",
+      "requiredData": [
+        "LINEUP_GATE",
+        "FORMATION_GATE"
+      ],
+      "status": "DATA_GATE_BLOCKED",
+      "title": "Matchup structurel"
+    }
+  ],
+  "prospectiveObservations": [
+    {
+      "contractHash": "c2d56870f77f96f8fbc1235dae5ab7b95f5482d9e00cbaf24f952cff3b3249cc",
+      "currentSupport": 0,
+      "eligibleMatches": 0,
+      "fixturesExamined": 0,
+      "hypothesisId": "J10-M001",
+      "prospectiveProfitUnits": null,
+      "settledObservations": 0,
+      "status": "PROSPECTIVE_FROZEN"
+    },
+    {
+      "contractHash": "f76569ef005bf75938a0ca24709468cbfba35441310e5c9f1a3cd680f0f513db",
+      "currentSupport": 0,
+      "eligibleMatches": 0,
+      "fixturesExamined": 0,
+      "hypothesisId": "J10-M002",
+      "prospectiveProfitUnits": null,
+      "settledObservations": 0,
+      "status": "PROSPECTIVE_FROZEN"
+    },
+    {
+      "contractHash": "72760759963a7b31eac2dadacbf96cb60e6c5affc5cb6783757ff18ed87c9b36",
+      "currentSupport": 0,
+      "eligibleMatches": 0,
+      "fixturesExamined": 0,
+      "hypothesisId": "J10-M003",
+      "prospectiveProfitUnits": null,
+      "settledObservations": 0,
+      "status": "PROSPECTIVE_FROZEN"
+    }
+  ],
+  "registry": {
+    "canonical_rules": 700,
+    "duplicates": 0,
+    "families": 5,
+    "machine_discovered": 700,
+    "origins": {
+      "MACHINE_DISCOVERED": 700
+    },
+    "owners": 8,
+    "prospective_frozen": 3,
+    "registry_sha256": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+    "result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b",
+    "statuses": {
+      "DATA_GATE_BLOCKED": 167,
+      "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING": 533
+    },
+    "total": 700
+  },
+  "schemaVersion": "hypothesis-intelligence-cockpit-v1",
+  "security": {
+    "demoModeEnabled": false,
+    "noBetDefault": true,
+    "oddsApiCredits": 0,
+    "p3P4Paused": true,
+    "productionStatus": "PRODUCTION_LOCKED",
+    "promotionLocked": true,
+    "providerCalls": 0,
+    "r2Deletions": 0,
+    "realBets": false,
+    "socialPublishingEnabled": false,
+    "storagePaused": true
+  },
+  "title": "Hypothèses et découvertes"
+}

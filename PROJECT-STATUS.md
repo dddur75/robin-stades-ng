@@ -1,10 +1,23 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-28
+Dernière mise à jour : 2026-07-29
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/prospective-five-league-expansion`
+Branche : `codex/hypothesis-intelligence-factory-v1`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
+
+## Hypothesis Intelligence Factory V1 — 2026-07-29
+
+Le registre commun contient 700 découvertes machine J10 et 8 hypothèses
+propriétaire H11, avec origine immuable, fingerprint canonique, versions,
+métriques et historique de statut. Les trois premières découvertes J10 sont
+gelées pour observation prospective ; aucune n'est déclarée robuste ou validée.
+
+État live conservé : 116 fixtures, 0 prédiction réelle, 0 règlement réel et
+0 entraînement réel. Les appels fournisseurs, crédits odds, paris réels,
+publications sociales, suppressions R2 et déploiements restent verrouillés.
+
+Documentation : `docs/hypothesis-intelligence/`.
 
 ## Jalon 5.1 — revue pré-fusion
 

@@ -58,7 +58,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0010_prequential_v1"
+          alembic current | grep -q "0011_hypothesis_intelligence_v1"
       - name: Enregistrer les cinq ligues dans R2 et PostgreSQL
         if: github.event_name == 'schedule' || inputs.execute
         env:

@@ -3,6 +3,7 @@ import presentation from "../cockpit-presentation.json";
 
 import {
   type CoverageState,
+  type HypothesisIntelligencePresentation,
   type MatchPresentation,
   type PrequentialLearningPresentation,
   type PresentationModel,
@@ -10,6 +11,7 @@ import {
 
 export type {
   CoverageState,
+  HypothesisIntelligencePresentation,
   MatchPresentation,
   PrequentialLearningPresentation,
 };
@@ -26,6 +28,7 @@ export const oddsSnapshots = typedPresentation.oddsSnapshots;
 export const presentationSystem = typedPresentation.system;
 export const presentationBankroll = typedPresentation.dashboard.bankroll;
 export const prequentialLearning = typedPresentation.prequentialLearning;
+export const hypothesisIntelligence = typedPresentation.hypothesisIntelligence;
 
 export const dataFamilyLabels: Record<string, string> = {
   FIXTURE: "Rencontre",

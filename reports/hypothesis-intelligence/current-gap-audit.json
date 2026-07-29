@@ -1,0 +1,42 @@
+{
+  "answer": "Les patterns découverts par Robin n’étaient pas affichés parce qu’ils restaient confinés aux artefacts Jalon 10 et que la rubrique était alimentée par le seul registre H11 de David.",
+  "audited_at": "2026-07-29T13:30:00+00:00",
+  "chain": [
+    "robin.deep_football.matchups.owner_hypotheses()",
+    "scripts/build_cockpit_snapshot.py",
+    "cockpit/app/cockpit-data.json",
+    "Robin Experience / Hypothèses en observation"
+  ],
+  "machine_discoveries_before": {
+    "full_registry_in_git": false,
+    "full_registry_records_reconstructed": 700,
+    "visible_in_hypothesis_section": 0,
+    "visible_in_pattern_research_summary": 3
+  },
+  "missing_j10": {
+    "cross_league_survivors": 0,
+    "fdr_survivors": 0,
+    "raw_positive": 118,
+    "rules": 700,
+    "shadow_candidates": 0,
+    "support_rejected": 167,
+    "verdict": "NO_ROBUST_PATTERN_FOUND_IN_PREREGISTERED_MARKET_SLICE_SEARCH_SPACE",
+    "walk_forward_raw_positive": 24
+  },
+  "root_cause": "Le snapshot lisait exclusivement owner_hypotheses pour la rubrique, tandis que Pattern Research ne publiait qu’un résumé. Aucun schéma unifié ni contrat prospectif ne reliait J10 au cockpit ou au préquentiel.",
+  "schema_version": "hypothesis-current-gap-audit-v1",
+  "visible_before": {
+    "count": 8,
+    "ids": [
+      "H11-001",
+      "H11-002",
+      "H11-003",
+      "H11-004",
+      "H11-005",
+      "H11-006",
+      "H11-007",
+      "H11-008"
+    ],
+    "origin": "OWNER_PROPOSED"
+  }
+}

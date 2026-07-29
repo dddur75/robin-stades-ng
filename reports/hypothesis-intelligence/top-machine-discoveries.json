@@ -1,0 +1,374 @@
+{
+  "items": [
+    {
+      "competition": "La Liga",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "La Liga"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_away",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            2.0,
+            2.5
+          ]
+        }
+      ],
+      "explanation": {
+        "additional_data_needed": [
+          "snapshot de cote horodaté",
+          "marge de marché reproductible",
+          "résultat final vérifié"
+        ],
+        "explanation_generated_at": "2026-07-29T13:30:00+00:00",
+        "explanation_generated_by": "CODEX_RESEARCH_EXPLANATION",
+        "explanation_model": "gpt-5.6-sol",
+        "explanation_prompt_hash": "13dfeb0f4734ce15c380915ee934124349adf32a266fd01a9928e027dfb93416",
+        "explanation_source_hash": "8c00579c05064068457a55ac70305f4d2dc64b4c09cede7e6c780aa5543e0231",
+        "replication_experiment": "Observer sans ajustement la même ligue, sélection, bande de cote et marge au prix NEAR_KICKOFF.",
+        "text": "Association historique de prix et de résultat; aucun mécanisme causal ni rendement futur n’est établi."
+      },
+      "historical_confidence_interval": [
+        0.03360868411743898,
+        0.30770262226512224
+      ],
+      "historical_drawdown": 9.269999999999982,
+      "historical_p_value": 0.009949050710225124,
+      "historical_profit_units": 43.43,
+      "historical_q_value": 1.0,
+      "historical_roi": 0.1663984674329502,
+      "historical_support": 261,
+      "historical_walk_forward": {
+        "eligible_folds": 4,
+        "folds": [
+          {
+            "bets": 53,
+            "positive": true,
+            "roi": 0.09037735849056602,
+            "test_period": 2022,
+            "train_periods": [
+              2020,
+              2021
+            ]
+          },
+          {
+            "bets": 46,
+            "positive": true,
+            "roi": 0.22086956521739132,
+            "test_period": 2023,
+            "train_periods": [
+              2020,
+              2021,
+              2022
+            ]
+          },
+          {
+            "bets": 46,
+            "positive": true,
+            "roi": 0.3691304347826087,
+            "test_period": 2024,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023
+            ]
+          },
+          {
+            "bets": 15,
+            "positive": true,
+            "roi": 0.06600000000000002,
+            "test_period": 2025,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023,
+              2024
+            ]
+          }
+        ],
+        "positive_folds": 4,
+        "positive_ratio": 1.0,
+        "survived": true
+      },
+      "hypothesis_id": "J10-M001",
+      "live_observations": 0,
+      "market": "1X2_AWAY",
+      "origin": "MACHINE_DISCOVERED",
+      "payload_hash": "8c00579c05064068457a55ac70305f4d2dc64b4c09cede7e6c780aa5543e0231",
+      "prospective_contract_hash": "c2d56870f77f96f8fbc1235dae5ab7b95f5482d9e00cbaf24f952cff3b3249cc",
+      "prospective_status": "PROSPECTIVE_FROZEN",
+      "public_badge": "Découverte machine",
+      "public_label": "Découverte historique de Robin",
+      "rule_hash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+      "scientific_labels": [
+        "Signal exploratoire",
+        "Non validé après correction des tests multiples",
+        "Gelé pour observation prospective",
+        "Aucun pari réel"
+      ],
+      "selection": "AWAY",
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "title": "victoire à l’extérieur · La Liga",
+      "warning": "Ce résultat historique ne constitue pas une prévision de performance future."
+    },
+    {
+      "competition": "Serie A",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "Serie A"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_draw",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            2.5,
+            3.25
+          ]
+        }
+      ],
+      "explanation": {
+        "additional_data_needed": [
+          "snapshot de cote horodaté",
+          "marge de marché reproductible",
+          "résultat final vérifié"
+        ],
+        "explanation_generated_at": "2026-07-29T13:30:00+00:00",
+        "explanation_generated_by": "CODEX_RESEARCH_EXPLANATION",
+        "explanation_model": "gpt-5.6-sol",
+        "explanation_prompt_hash": "13dfeb0f4734ce15c380915ee934124349adf32a266fd01a9928e027dfb93416",
+        "explanation_source_hash": "e29c2789c519769ee1b55680ea782fcc8c76c5b8bfb2023194770d8367ecfbb7",
+        "replication_experiment": "Observer sans ajustement la même ligue, sélection, bande de cote et marge au prix NEAR_KICKOFF.",
+        "text": "Association historique de prix et de résultat; aucun mécanisme causal ni rendement futur n’est établi."
+      },
+      "historical_confidence_interval": [
+        0.0042719415204679045,
+        0.31393382749629106
+      ],
+      "historical_drawdown": 19.519999999999868,
+      "historical_p_value": 0.02547293414143248,
+      "historical_profit_units": 57.88,
+      "historical_q_value": 1.0,
+      "historical_roi": 0.1594490358126722,
+      "historical_support": 363,
+      "historical_walk_forward": {
+        "eligible_folds": 4,
+        "folds": [
+          {
+            "bets": 66,
+            "positive": true,
+            "roi": 0.042727272727272746,
+            "test_period": 2022,
+            "train_periods": [
+              2020,
+              2021
+            ]
+          },
+          {
+            "bets": 92,
+            "positive": true,
+            "roi": 0.04260869565217391,
+            "test_period": 2023,
+            "train_periods": [
+              2020,
+              2021,
+              2022
+            ]
+          },
+          {
+            "bets": 116,
+            "positive": true,
+            "roi": 0.23922413793103448,
+            "test_period": 2024,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023
+            ]
+          },
+          {
+            "bets": 27,
+            "positive": true,
+            "roi": 0.36962962962962964,
+            "test_period": 2025,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023,
+              2024
+            ]
+          }
+        ],
+        "positive_folds": 4,
+        "positive_ratio": 1.0,
+        "survived": true
+      },
+      "hypothesis_id": "J10-M002",
+      "live_observations": 0,
+      "market": "1X2_DRAW",
+      "origin": "MACHINE_DISCOVERED",
+      "payload_hash": "e29c2789c519769ee1b55680ea782fcc8c76c5b8bfb2023194770d8367ecfbb7",
+      "prospective_contract_hash": "f76569ef005bf75938a0ca24709468cbfba35441310e5c9f1a3cd680f0f513db",
+      "prospective_status": "PROSPECTIVE_FROZEN",
+      "public_badge": "Découverte machine",
+      "public_label": "Découverte historique de Robin",
+      "rule_hash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+      "scientific_labels": [
+        "Signal exploratoire",
+        "Non validé après correction des tests multiples",
+        "Gelé pour observation prospective",
+        "Aucun pari réel"
+      ],
+      "selection": "DRAW",
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "title": "match nul · Serie A",
+      "warning": "Ce résultat historique ne constitue pas une prévision de performance future."
+    },
+    {
+      "competition": "Serie A",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "Serie A"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_away",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            1.6,
+            2.0
+          ]
+        }
+      ],
+      "explanation": {
+        "additional_data_needed": [
+          "snapshot de cote horodaté",
+          "marge de marché reproductible",
+          "résultat final vérifié"
+        ],
+        "explanation_generated_at": "2026-07-29T13:30:00+00:00",
+        "explanation_generated_by": "CODEX_RESEARCH_EXPLANATION",
+        "explanation_model": "gpt-5.6-sol",
+        "explanation_prompt_hash": "13dfeb0f4734ce15c380915ee934124349adf32a266fd01a9928e027dfb93416",
+        "explanation_source_hash": "ff3530eccac2a6671b29f0d7ea9c2cb827c57b7b11b61890c233cf4591b63352",
+        "replication_experiment": "Observer sans ajustement la même ligue, sélection, bande de cote et marge au prix NEAR_KICKOFF.",
+        "text": "Association historique de prix et de résultat; aucun mécanisme causal ni rendement futur n’est établi."
+      },
+      "historical_confidence_interval": [
+        0.024913994885916647,
+        0.24270212811073993
+      ],
+      "historical_drawdown": 7.220000000000027,
+      "historical_p_value": 0.007478892043326665,
+      "historical_profit_units": 33.42,
+      "historical_q_value": 1.0,
+      "historical_roi": 0.1386721991701245,
+      "historical_support": 241,
+      "historical_walk_forward": {
+        "eligible_folds": 3,
+        "folds": [
+          {
+            "bets": 47,
+            "positive": true,
+            "roi": 0.05723404255319148,
+            "test_period": 2022,
+            "train_periods": [
+              2020,
+              2021
+            ]
+          },
+          {
+            "bets": 48,
+            "positive": true,
+            "roi": 0.07395833333333333,
+            "test_period": 2023,
+            "train_periods": [
+              2020,
+              2021,
+              2022
+            ]
+          },
+          {
+            "bets": 51,
+            "positive": true,
+            "roi": 0.1852941176470588,
+            "test_period": 2024,
+            "train_periods": [
+              2020,
+              2021,
+              2022,
+              2023
+            ]
+          }
+        ],
+        "positive_folds": 3,
+        "positive_ratio": 1.0,
+        "survived": true
+      },
+      "hypothesis_id": "J10-M003",
+      "live_observations": 0,
+      "market": "1X2_AWAY",
+      "origin": "MACHINE_DISCOVERED",
+      "payload_hash": "ff3530eccac2a6671b29f0d7ea9c2cb827c57b7b11b61890c233cf4591b63352",
+      "prospective_contract_hash": "72760759963a7b31eac2dadacbf96cb60e6c5affc5cb6783757ff18ed87c9b36",
+      "prospective_status": "PROSPECTIVE_FROZEN",
+      "public_badge": "Découverte machine",
+      "public_label": "Découverte historique de Robin",
+      "rule_hash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+      "scientific_labels": [
+        "Signal exploratoire",
+        "Non validé après correction des tests multiples",
+        "Gelé pour observation prospective",
+        "Aucun pari réel"
+      ],
+      "selection": "AWAY",
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "title": "victoire à l’extérieur · Serie A",
+      "warning": "Ce résultat historique ne constitue pas une prévision de performance future."
+    }
+  ],
+  "schema_version": "top-machine-discoveries-v1",
+  "source_result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b"
+}

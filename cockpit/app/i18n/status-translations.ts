@@ -134,6 +134,13 @@ const catalogue: Record<string, StatusPresentation> = {
     icon: "↗",
     severity: 0,
   },
+  PROSPECTIVE_FROZEN: {
+    short: "Gelée pour observation prospective",
+    long: "La règle et son contrat de prix ont été figés avant les nouvelles observations.",
+    tone: "research",
+    icon: "◇",
+    severity: 0,
+  },
   NO_DUE_WINDOW_SUCCESS: {
     short: "Aucune capture nécessaire",
     long: "Le planificateur a vérifié le calendrier : aucune fenêtre n’était due.",

@@ -61,7 +61,10 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert all(value not in workflow.casefold() for value in forbidden), name
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
         assert "alembic upgrade head" in workflow
-        assert 'alembic current | grep -q "0010_prequential_v1"' in workflow
+        assert (
+            'alembic current | grep -q "0011_hypothesis_intelligence_v1"'
+            in workflow
+        )
 
 
 def test_central_policy_owns_provider_caps_reserves_and_markets() -> None:
@@ -123,7 +126,7 @@ def test_prequential_workflows_share_state_lock_and_safety_contract() -> None:
         'SOCIAL_PUBLISHING_ENABLED: "false"',
         'DEMO_MODE_ENABLED: "false"',
         'ODDS_API_CREDITS_ALLOWED: "0"',
-        'alembic current | grep -q "0010_prequential_v1"',
+        'alembic current | grep -q "0011_hypothesis_intelligence_v1"',
         "retention-days: 90",
     )
     for name in PREQUENTIAL_WORKFLOWS:

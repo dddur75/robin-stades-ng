@@ -43,7 +43,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python -m alembic upgrade head
-          python -m alembic current | grep -q "0010_prequential_v1"
+          python -m alembic current | grep -q "0011_hypothesis_intelligence_v1"
       - name: Régler uniquement les résultats finaux vérifiés
         env:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}

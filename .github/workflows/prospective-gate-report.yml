@@ -40,7 +40,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0010_prequential_v1"
+          alembic current | grep -q "0011_hypothesis_intelligence_v1"
       - name: Rejouer R2 sans fournisseur sur le même état verrouillé
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
