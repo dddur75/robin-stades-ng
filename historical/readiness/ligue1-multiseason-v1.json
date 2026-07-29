@@ -59,7 +59,7 @@
       "status": "BLOCKED_BY_TEMPORALITY"
     }
   },
-  "generated_at": "2026-07-28T05:43:25.519569+00:00",
+  "generated_at": "2026-07-29T05:41:03.537463+00:00",
   "normalized_rows": 152895,
   "production_status": "PRODUCTION_LOCKED",
   "provenance_rows": 120699,
