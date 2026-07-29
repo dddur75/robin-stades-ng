@@ -62,6 +62,17 @@ type NodePageManifestEntry = {
   sha256?: string;
 };
 
+function frozenManifestHash(contents: Buffer) {
+  // The frozen pages were hashed after Python translated newlines to CRLF on
+  // Windows. Treat LF and CRLF as the same JSON artifact so a Linux checkout
+  // can reproduce the contract without weakening any content comparison.
+  const manifestNewlines = contents
+    .toString("utf8")
+    .replace(/\r\n?/g, "\n")
+    .replace(/\n/g, "\r\n");
+  return createHash("sha256").update(manifestNewlines).digest("hex");
+}
+
 async function nodeArtifactsMatchManifest(
   root: URL,
   manifest: NodePageManifestEntry[],
@@ -74,7 +85,7 @@ async function nodeArtifactsMatchManifest(
       const contents = await readFile(new URL(fileName, root));
       if (
         entry.sha256 &&
-        createHash("sha256").update(contents).digest("hex") !== entry.sha256
+        frozenManifestHash(contents) !== entry.sha256
       ) {
         return false;
       }
@@ -130,16 +141,14 @@ async function ensureHypothesisNodeArtifacts(): Promise<{
   }
 
   const repositoryRoot = fileURLToPath(new URL("../../", import.meta.url));
+  // Only the generator hash contributes to tree-node payloads. Passing the
+  // complete freeze provenance would also rebuild prospective contracts and
+  // require the intentionally untracked 700-rule J10 registry. The frozen page
+  // manifest below remains the authority for byte-for-byte equivalence.
   const args = [
     "scripts/build_universal_hypothesis_genome.py",
-    "--source-code-revision",
-    String(provenance.source_code_revision),
-    "--source-tree-hash",
-    String(provenance.source_tree_hash),
     "--generator-hash",
     String(provenance.generator_hash),
-    "--frozen-at",
-    String(provenance.frozen_at),
     "--output",
     temporaryReportRoot,
     "--artifact-output",

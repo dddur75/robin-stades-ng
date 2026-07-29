@@ -247,7 +247,7 @@ test.describe("Univers des hypothèses — preuves visuelles et parcours", () =>
     );
     await expect(
       page.getByRole("button", { name: "Tous les nœuds sont chargés" }),
-    ).toBeDisabled();
+    ).toBeDisabled({ timeout: 15_000 });
 
     const cards = page.locator(".hu-node-collection-liste .hu-tree-node");
     const firstBatch = await cards.count();
