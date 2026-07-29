@@ -15,6 +15,7 @@ const publicPresentation = {
   leagues: presentation.leagues,
   nextCaptures: presentation.nextCaptures,
   prequentialLearning: presentation.prequentialLearning,
+  hypothesisIntelligence: presentation.hypothesisIntelligence,
   observatory: presentation.observatory,
   hypotheses: presentation.hypotheses,
   system: presentation.system,

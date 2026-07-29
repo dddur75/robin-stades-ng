@@ -1,0 +1,348 @@
+{
+  "blocked_source_fields": 4,
+  "classified_source_fields": 48,
+  "inventory_hash": "d7ab39fdb41e4b8fa7f66d64138030e9a9558b37bd0e6c7d2068dea6df85cbf7",
+  "inventory_scope": "VERSIONED_FIELDS_EXPLICITLY_CONSUMED_BY_ROBIN_V1_AND_V2; OPAQUE_RAW_PROVIDER_PAYLOADS_ARE_NOT_CLAIMED_COMPLETE",
+  "items": [
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:strength_form:elo",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "elo_difference"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:strength_form:form",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "home_form_5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:strength_form:form",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "away_form_5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:strength_form:form",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "home_form_10"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:strength_form:form",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "away_form_10"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:goals_scored",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "home_goals_for_5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:goals_scored",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "away_goals_for_5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:defence:goals_conceded",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "home_goals_against_5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:defence:goals_conceded",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "away_goals_against_5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:calendar_fatigue:rest_days",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "home_rest_days"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:calendar_fatigue:rest_days",
+      "reason": "VERSIONED_DERIVED_FEATURE",
+      "source": "ROBIN_DEEP_FOOTBALL",
+      "source_field": "away_rest_days"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:competition",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "Div"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:data_quality:published_at",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "Date"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:local_kickoff_time",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "Time"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:venue_role",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "HomeTeam"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:venue_role",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "AwayTeam"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:goals_scored",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "FTHG"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:goals_scored",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "FTAG"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:event_game_state:score_state",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "FTR"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:shots",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "HS"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:shots",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "AS"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:shots_on_target",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "HST"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:attack:shots_on_target",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "AST"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:discipline_referee:fouls",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "HF"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:discipline_referee:fouls",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "AF"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:set_pieces:corners_for",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "HC"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:set_pieces:corners_for",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "AC"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:discipline_referee:yellow_cards",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "HY"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:discipline_referee:yellow_cards",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "AY"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:discipline_referee:red_cards",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "HR"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:discipline_referee:red_cards",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "AR"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:market:odds_decimal",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "B365H"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:market:odds_decimal",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "B365D"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:market:odds_decimal",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "B365A"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:market:odds_decimal",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "B365>2.5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:market:odds_decimal",
+      "reason": "HISTORICAL_SOURCE_FIELD_CLASSIFIED",
+      "source": "FOOTBALL_DATA",
+      "source_field": "B365<2.5"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:data_quality:provenance_hash",
+      "reason": "PROVIDER_IDENTITY_FIELD",
+      "source": "API_FOOTBALL",
+      "source_field": "fixture.id"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:local_kickoff_time",
+      "reason": "FIXTURE_PUBLICATION_FIELD",
+      "source": "API_FOOTBALL",
+      "source_field": "fixture.date"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:stadium_pitch:stadium",
+      "reason": "VENUE_FIELD_COVERAGE_PARTIAL",
+      "source": "API_FOOTBALL",
+      "source_field": "fixture.venue.id"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:competition",
+      "reason": "CANONICAL_PROVIDER_COMPETITION_ID",
+      "source": "API_FOOTBALL",
+      "source_field": "league.id"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:season",
+      "reason": "FIXTURE_PUBLICATION_FIELD",
+      "source": "API_FOOTBALL",
+      "source_field": "league.season"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:round",
+      "reason": "FIXTURE_PUBLICATION_FIELD",
+      "source": "API_FOOTBALL",
+      "source_field": "league.round"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:venue_role",
+      "reason": "TEAM_IDENTITY_FIELD",
+      "source": "API_FOOTBALL",
+      "source_field": "teams.home.id"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:match_competition:venue_role",
+      "reason": "TEAM_IDENTITY_FIELD",
+      "source": "API_FOOTBALL",
+      "source_field": "teams.away.id"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:formation_structure:formation",
+      "reason": "BLOCKED_BY_TEMPORALITY",
+      "source": "API_FOOTBALL",
+      "source_field": "lineups.formation"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:lineup_continuity:official_xi",
+      "reason": "BLOCKED_BY_TEMPORALITY",
+      "source": "API_FOOTBALL",
+      "source_field": "lineups.startXI.player.id"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:player:position",
+      "reason": "BLOCKED_BY_TEMPORALITY",
+      "source": "API_FOOTBALL",
+      "source_field": "players.statistics.games.position"
+    },
+    {
+      "classification": "PROPERTY",
+      "property_id": "football:absence_return:injured",
+      "reason": "BLOCKED_BY_TEMPORALITY",
+      "source": "API_FOOTBALL",
+      "source_field": "injuries.player.id"
+    }
+  ],
+  "schema_version": "football-source-field-audit-v1",
+  "source_fields": 48,
+  "unclassified": [],
+  "unclassified_source_fields": 0
+}

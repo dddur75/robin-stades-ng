@@ -1,0 +1,66 @@
+{
+  "counts": {
+    "canonical_rules": 700,
+    "duplicates": 0,
+    "families": 5,
+    "machine_discovered": 700,
+    "origins": {
+      "MACHINE_DISCOVERED": 700
+    },
+    "owners": 8,
+    "prospective_frozen": 3,
+    "registry_sha256": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+    "result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b",
+    "statuses": {
+      "DATA_GATE_BLOCKED": 167,
+      "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING": 533
+    },
+    "total": 700
+  },
+  "future_search_policy": {
+    "descriptive_update": "AFTER_EACH_MATCHDAY",
+    "exploratory_campaign": "AFTER_80_NEW_SETTLED_MATCHES",
+    "major_campaign": "AFTER_300_NEW_SETTLED_MATCHES",
+    "silent_rule_addition": "FORBIDDEN"
+  },
+  "generated_at": "2026-07-29T13:30:00+00:00",
+  "ranking": {
+    "components": [
+      "raw_roi_rank",
+      "support_rank",
+      "uncertainty_rank",
+      "walk_forward_rank",
+      "drawdown_rank",
+      "stability_rank",
+      "concentration_risk",
+      "replicability_rank",
+      "live_observability_rank",
+      "overall_exploratory_priority"
+    ],
+    "roi_alone_sufficient": false,
+    "version": "hypothesis-exploratory-priority-v1"
+  },
+  "schema_version": "hypothesis-registry-summary-v1",
+  "security": {
+    "no_bet_default": true,
+    "production_status": "PRODUCTION_LOCKED",
+    "promotion_locked": true,
+    "real_bets": false,
+    "social_publishing_enabled": false
+  },
+  "source": {
+    "campaign_id": "jalon10-cache-only-20260727",
+    "odds_api_credits": 0,
+    "provider_calls": 0,
+    "records": 700,
+    "registry_sha256": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+    "replay_identical": true,
+    "result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b"
+  },
+  "storage": {
+    "git": "COMPACT_INDEX_SUMMARIES_HASHES_ONLY",
+    "heavy_registry": "R2_OR_RECONSTRUCTED_CACHE_ONLY",
+    "postgresql": "SEVEN_APPEND_ONLY_INDEXED_TABLES",
+    "raw_provider_payloads": 0
+  }
+}

@@ -43,7 +43,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python -m alembic upgrade head
-          python -m alembic current | grep -q "0010_prequential_v1"
+          python -m alembic current | grep -q "0012_universal_genome_v2"
       - name: Figer uniquement les prévisions dues
         env:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}

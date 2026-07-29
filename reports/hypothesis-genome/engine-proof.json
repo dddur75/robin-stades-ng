@@ -1,0 +1,89 @@
+{
+  "ai_compiler": {
+    "expression_hash": "e5b38d2a617a485b189838f304196f42bc2eece678817aba7962f72ab63fb788",
+    "numbers_generated": 0,
+    "promotion_allowed": false,
+    "version": "ai-proposal-compiler-v2"
+  },
+  "apriori": {
+    "frequent_itemsets": 17,
+    "result_hash": "e3913f016102428b23767fa4f2e907da1f1205c73dda034f893c646580a176f6",
+    "version": "apriori-v2"
+  },
+  "beam_search": {
+    "score_policy": "SUPPORT_QUALITY_COMPLEXITY;ROI_NOT_USED",
+    "version": "hierarchical-beam-v2"
+  },
+  "genetic_programming": {
+    "mutated_predicate_hash": "b2cdb1e526a4fd154af1c355b7903935a4a7835b18a7abc0055838ba19bc7cf2",
+    "seed": 20260729,
+    "version": "genetic-programming-v2"
+  },
+  "graph_patterns": {
+    "graph_hash": "439deb5653ca4c933966bc67f74c9547e178938df2f140399161737016a94adb",
+    "motifs": [
+      [
+        "fullback",
+        2
+      ],
+      [
+        "defence",
+        1
+      ],
+      [
+        "winger",
+        1
+      ]
+    ],
+    "version": "graph-pattern-v2"
+  },
+  "mcts": {
+    "choice": {
+      "action": "BOOSTING",
+      "mean_reward": 0.009429436175044935,
+      "ucb_score": 1.0290964263438538,
+      "visits": 4
+    },
+    "version": "mcts-ucb-v2"
+  },
+  "residual_mining": {
+    "signals": [
+      {
+        "correlation": 0.9393389877959605,
+        "property_id": "football:data_quality:coverage_bias",
+        "support": 4
+      }
+    ],
+    "version": "residual-mining-v2"
+  },
+  "rule_paths": {
+    "predicate_hash": "ff2b192d2593c338fde90c41d3e557c71dbf32c160ac29c30119d5c44eaaae15",
+    "threshold_learned_from": "TRAIN_ONLY",
+    "version": "train-only-rule-path-v2"
+  },
+  "schema_version": "universal-engine-proof-v1",
+  "subgroup_discovery": {
+    "result_hash": "ec25c68e5da050c794b98416c1ab718e3660cf83453966bda077affac1b07bae",
+    "subgroups": 2,
+    "version": "subgroup-wracc-v2"
+  },
+  "symbolic_regression": {
+    "term": {
+      "complexity_cost": 0.02,
+      "left_property": "football:data_quality:coverage_bias",
+      "operation": "DIFFERENCE",
+      "right_property": "football:strength_form:form",
+      "score": 0.688604055185602
+    },
+    "version": "symbolic-regression-v2"
+  },
+  "temporal_motifs": {
+    "motifs": 5,
+    "result_hash": "82e0f2e79b3fe906dde98a50365b086d3dbb6c4a1a780a4902d15dc45e1abf35",
+    "version": "temporal-motif-v2"
+  },
+  "typed_enumeration": {
+    "input_predicates": 13,
+    "version": "typed-enumeration-v2"
+  }
+}

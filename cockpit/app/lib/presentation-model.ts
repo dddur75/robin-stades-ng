@@ -272,6 +272,89 @@ export type PrequentialLearningPresentation = {
   invariants: Record<string, boolean | string | number>;
 };
 
+export type HypothesisIntelligencePresentation = {
+  schemaVersion: string;
+  generatedAt: string;
+  title: string;
+  registry: {
+    machineDiscovered: number;
+    owners: number;
+    prospectiveFrozen: number;
+    families: number;
+    duplicates: number;
+  };
+  machineDiscoveries: Array<{
+    id: string;
+    origin: string;
+    badge: string;
+    title: string;
+    competition: string;
+    market: string;
+    selection: string;
+    historicalSupport: number;
+    historicalProfitUnits: number | null;
+    historicalRoi: number | null;
+    confidenceInterval: number[];
+    qValue: number | null;
+    positiveFolds: number;
+    eligibleFolds: number;
+    status: string;
+    prospectiveStatus: string;
+    liveObservations: number;
+    warning: string;
+    ruleHash: string;
+    contractHash: string;
+  }>;
+  ownerHypotheses: Array<{
+    id: string;
+    origin: string;
+    badge: string;
+    title: string;
+    mechanism: string;
+    requiredData: string[];
+    currentDataGates: Record<string, string>;
+    minimumSupport: number;
+    observations: number;
+    status: string;
+    frozen: boolean;
+  }>;
+  prospectiveObservations: Array<{
+    hypothesisId: string;
+    status: string;
+    fixturesExamined: number;
+    eligibleMatches: number;
+    settledObservations: number;
+    currentSupport: number;
+    prospectiveProfitUnits: number | null;
+    contractHash: string;
+  }>;
+  blockedOrRejected: {
+    multipleTestingRejected: number;
+    insufficientSupport: number;
+    prospectiveRejected: number;
+    archived: number;
+  };
+  expertExplorer: {
+    total: number;
+    pageSize: number;
+    pages: number;
+    mobileLoadsAllCards: boolean;
+    pageManifest: Array<{
+      page: number;
+      url: string;
+      records: number;
+      sha256: string;
+    }>;
+  };
+  liveState: {
+    fixturesVerified: number;
+    realPredictions: number;
+    realSettlements: number;
+    realTrainingRuns: number;
+    hypothesisObservations: number;
+  };
+};
+
 export type PresentationModel = {
   dashboard: {
     operationalEvidence: OperationalEvidence;
@@ -285,6 +368,7 @@ export type PresentationModel = {
   leagues: LeaguePresentation[];
   nextCaptures: NextCapturePresentation[];
   prequentialLearning: PrequentialLearningPresentation;
+  hypothesisIntelligence: HypothesisIntelligencePresentation;
   observatory: {
     gateRows: Array<{
       name: string;
@@ -932,6 +1016,107 @@ export function buildPresentationModel(
     status: text(item.status, "WAITING_FOR_OBSERVATIONS"),
     frozen: booleanValue(item.frozen),
   }));
+  const hypothesisRoot = record(snapshot.hypothesisIntelligence);
+  const registryRoot = record(hypothesisRoot.registry);
+  const blockedRoot = record(hypothesisRoot.blockedOrRejected);
+  const explorerRoot = record(hypothesisRoot.expertExplorer);
+  const liveHypothesisRoot = record(hypothesisRoot.liveState);
+  const hypothesisIntelligence: HypothesisIntelligencePresentation = {
+    schemaVersion: text(hypothesisRoot.schemaVersion),
+    generatedAt: text(hypothesisRoot.generatedAt),
+    title: text(hypothesisRoot.title, "Hypothèses et découvertes"),
+    registry: {
+      machineDiscovered: numberValue(registryRoot.machine_discovered),
+      owners: numberValue(registryRoot.owners),
+      prospectiveFrozen: numberValue(registryRoot.prospective_frozen),
+      families: numberValue(registryRoot.families),
+      duplicates: numberValue(registryRoot.duplicates),
+    },
+    machineDiscoveries: records(hypothesisRoot.machineDiscoveries).map((item) => {
+      const walkForward = record(item.historical_walk_forward);
+      return {
+        id: text(item.hypothesis_id),
+        origin: text(item.origin),
+        badge: text(item.public_badge),
+        title: text(item.title),
+        competition: text(item.competition),
+        market: text(item.market),
+        selection: text(item.selection),
+        historicalSupport: numberValue(item.historical_support),
+        historicalProfitUnits: optionalNumber(item.historical_profit_units),
+        historicalRoi: optionalNumber(item.historical_roi),
+        confidenceInterval: Array.isArray(item.historical_confidence_interval)
+          ? item.historical_confidence_interval.map((value) => numberValue(value))
+          : [],
+        qValue: optionalNumber(item.historical_q_value),
+        positiveFolds: numberValue(walkForward.positive_folds),
+        eligibleFolds: numberValue(walkForward.eligible_folds),
+        status: text(item.status),
+        prospectiveStatus: text(item.prospective_status),
+        liveObservations: numberValue(item.live_observations),
+        warning: text(item.warning),
+        ruleHash: text(item.rule_hash),
+        contractHash: text(item.prospective_contract_hash),
+      };
+    }),
+    ownerHypotheses: records(hypothesisRoot.ownerHypotheses).map((item) => ({
+      id: text(item.id),
+      origin: text(item.origin),
+      badge: text(item.badge),
+      title: text(item.title),
+      mechanism: text(item.mechanism),
+      requiredData: stringList(item.requiredData),
+      currentDataGates: Object.fromEntries(
+        Object.entries(record(item.currentDataGates)).map(([key, value]) => [
+          key,
+          text(value),
+        ]),
+      ),
+      minimumSupport: numberValue(item.minimumSupport),
+      observations: numberValue(item.observations),
+      status: text(item.status),
+      frozen: booleanValue(item.frozen),
+    })),
+    prospectiveObservations: records(hypothesisRoot.prospectiveObservations).map(
+      (item) => ({
+        hypothesisId: text(item.hypothesisId),
+        status: text(item.status),
+        fixturesExamined: numberValue(item.fixturesExamined),
+        eligibleMatches: numberValue(item.eligibleMatches),
+        settledObservations: numberValue(item.settledObservations),
+        currentSupport: numberValue(item.currentSupport),
+        prospectiveProfitUnits: optionalNumber(item.prospectiveProfitUnits),
+        contractHash: text(item.contractHash),
+      }),
+    ),
+    blockedOrRejected: {
+      multipleTestingRejected: numberValue(blockedRoot.multipleTestingRejected),
+      insufficientSupport: numberValue(blockedRoot.insufficientSupport),
+      prospectiveRejected: numberValue(blockedRoot.prospectiveRejected),
+      archived: numberValue(blockedRoot.archived),
+    },
+    expertExplorer: {
+      total: numberValue(explorerRoot.total),
+      pageSize: numberValue(explorerRoot.pageSize),
+      pages: numberValue(explorerRoot.pages),
+      mobileLoadsAllCards: booleanValue(explorerRoot.mobileLoadsAllCards),
+      pageManifest: records(explorerRoot.pageManifest).map((item) => ({
+        page: numberValue(item.page),
+        url: text(item.url),
+        records: numberValue(item.records),
+        sha256: text(item.sha256),
+      })),
+    },
+    liveState: {
+      fixturesVerified: numberValue(liveHypothesisRoot.fixturesVerified),
+      realPredictions: numberValue(liveHypothesisRoot.realPredictions),
+      realSettlements: numberValue(liveHypothesisRoot.realSettlements),
+      realTrainingRuns: numberValue(liveHypothesisRoot.realTrainingRuns),
+      hypothesisObservations: numberValue(
+        liveHypothesisRoot.hypothesisObservations,
+      ),
+    },
+  };
 
   const oddsSnapshots = records(observatory.odds).map((item, index) => {
     const probabilities = record(item.probabilities);
@@ -1268,6 +1453,7 @@ export function buildPresentationModel(
     leagues,
     nextCaptures,
     prequentialLearning,
+    hypothesisIntelligence,
     observatory: { gateRows },
     hypotheses,
     results: patternResearch,

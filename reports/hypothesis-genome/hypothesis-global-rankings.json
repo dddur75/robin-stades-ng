@@ -1,0 +1,604 @@
+{
+  "longue_traine_a_surveiller": [
+    {
+      "children_count": 0,
+      "data_gates": [
+        "READY"
+      ],
+      "display_rule_fr": "valeur manquante",
+      "family": "DATA_QUALITY",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4",
+      "parent_id": null,
+      "parent_ids": [],
+      "payload_hash": "95c55c8f27565d3d6a5954b24abecd2db377352fc8c782b447c55954f50ee2da",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "MISSINGNESS",
+      "support": null,
+      "tags": [
+        "Qualité et provenance",
+        "DATA_QUALITY"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    },
+    {
+      "children_count": 0,
+      "data_gates": [
+        "PARTIAL",
+        "READY"
+      ],
+      "display_rule_fr": "forme et valeur manquante",
+      "family": "STRENGTH_FORM",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1",
+      "parent_id": "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9",
+      "parent_ids": [
+        "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9",
+        "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+      ],
+      "payload_hash": "743a32196d98c6a2042ff30ab8848503d0ac1e66279f0e769ce1ec34911491fe",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "FORM",
+      "support": null,
+      "tags": [
+        "Force et forme",
+        "STRENGTH_FORM"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "TRAIN_ONLY",
+            "operator": "GE",
+            "property_id": "football:strength_form:form",
+            "relation": "APPLIES_TO",
+            "transform": "ROLLING_MEAN",
+            "value": 0.5,
+            "window": "MATCHES_5"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    },
+    {
+      "children_count": 0,
+      "data_gates": [
+        "PARTIAL",
+        "READY"
+      ],
+      "display_rule_fr": "Elo et valeur manquante",
+      "family": "STRENGTH_FORM",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+      "parent_id": "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9",
+      "parent_ids": [
+        "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9",
+        "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+      ],
+      "payload_hash": "047180a4c2acd07ff0f33204921ee856bdd7c40e1d30f460a25d0048e636f7b9",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "ELO",
+      "support": null,
+      "tags": [
+        "Force et forme",
+        "STRENGTH_FORM"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "FIXED_DIAGNOSTIC",
+            "operator": "GE",
+            "property_id": "football:strength_form:elo",
+            "relation": "APPLIES_TO",
+            "transform": "DIFFERENCE",
+            "value": 0.0,
+            "window": "CURRENT"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    },
+    {
+      "children_count": 0,
+      "data_gates": [
+        "READY",
+        "PARTIAL"
+      ],
+      "display_rule_fr": "valeur manquante et jours de repos",
+      "family": "DATA_QUALITY",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd",
+      "parent_id": "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce",
+      "parent_ids": [
+        "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce",
+        "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+      ],
+      "payload_hash": "3977762065ed8f29384a59be5e6bc2b162aec789d14079cbe6fefd8ee14ddd4f",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "MISSINGNESS",
+      "support": null,
+      "tags": [
+        "Qualité et provenance",
+        "DATA_QUALITY"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "FIXED_DIAGNOSTIC",
+            "operator": "LE",
+            "property_id": "football:calendar_fatigue:rest_days",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 3.0,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    },
+    {
+      "children_count": 0,
+      "data_gates": [
+        "READY",
+        "PARTIAL"
+      ],
+      "display_rule_fr": "valeur manquante et marge de marché",
+      "family": "DATA_QUALITY",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+      "parent_id": "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc",
+      "parent_ids": [
+        "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc",
+        "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+      ],
+      "payload_hash": "da1ca2366c47fc78b0eac24ec1ce257da3b514d96c8733a984cbf64166a48cc3",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "MISSINGNESS",
+      "support": null,
+      "tags": [
+        "Qualité et provenance",
+        "DATA_QUALITY"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "FIXED_HISTORICAL_PRICE_CLASS",
+            "operator": "LE",
+            "property_id": "football:market:market_margin",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.08,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    },
+    {
+      "children_count": 0,
+      "data_gates": [
+        "PARTIAL",
+        "PARTIAL",
+        "READY"
+      ],
+      "display_rule_fr": "forme et Elo et valeur manquante",
+      "family": "STRENGTH_FORM",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-6b5e98af6e9796829e22fa9561a9dc313e711a90d4edb825b2dfa18730b270d5",
+      "parent_id": "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+      "parent_ids": [
+        "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+        "hypothesis-node-5f93fdd923f22324f6ae1018f11d5ab3791f13339a08995fc9b5ad4de141fe3c",
+        "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1"
+      ],
+      "payload_hash": "fa84040882968341acb08e516f6ad8417e67015cd77468a26614de5a3a944002",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "FORM",
+      "support": null,
+      "tags": [
+        "Force et forme",
+        "STRENGTH_FORM"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "TRAIN_ONLY",
+            "operator": "GE",
+            "property_id": "football:strength_form:form",
+            "relation": "APPLIES_TO",
+            "transform": "ROLLING_MEAN",
+            "value": 0.5,
+            "window": "MATCHES_5"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "FIXED_DIAGNOSTIC",
+            "operator": "GE",
+            "property_id": "football:strength_form:elo",
+            "relation": "APPLIES_TO",
+            "transform": "DIFFERENCE",
+            "value": 0.0,
+            "window": "CURRENT"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    },
+    {
+      "children_count": 0,
+      "data_gates": [
+        "PARTIAL",
+        "READY",
+        "PARTIAL"
+      ],
+      "display_rule_fr": "forme et valeur manquante et jours de repos",
+      "family": "STRENGTH_FORM",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-544925f5ec28d8a5d53bfe9fbbe3a2d0a2b1e67957f2b3a83673be68846214d2",
+      "parent_id": "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8",
+      "parent_ids": [
+        "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8",
+        "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd",
+        "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1"
+      ],
+      "payload_hash": "25d04a7d51e7b5bbbfc8101c83613837e1ef18845e3f574b91d05d477adb5b1b",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "FORM",
+      "support": null,
+      "tags": [
+        "Force et forme",
+        "STRENGTH_FORM"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "TRAIN_ONLY",
+            "operator": "GE",
+            "property_id": "football:strength_form:form",
+            "relation": "APPLIES_TO",
+            "transform": "ROLLING_MEAN",
+            "value": 0.5,
+            "window": "MATCHES_5"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "FIXED_DIAGNOSTIC",
+            "operator": "LE",
+            "property_id": "football:calendar_fatigue:rest_days",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 3.0,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    },
+    {
+      "children_count": 0,
+      "data_gates": [
+        "PARTIAL",
+        "READY",
+        "PARTIAL"
+      ],
+      "display_rule_fr": "forme et valeur manquante et marge de marché",
+      "family": "STRENGTH_FORM",
+      "historical_metrics": null,
+      "materialization_disposition": "LONG_TAIL_WATCHLIST",
+      "node_id": "hypothesis-node-14687631fc395fc3d6ac25e2f3f453cfee22c6222632b8fd811e5a48b250988c",
+      "parent_id": "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+      "parent_ids": [
+        "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+        "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1",
+        "hypothesis-node-f1e889eb612319659b1301ed298ec973a95fed53ed864bb69a61a528994c3be0"
+      ],
+      "payload_hash": "dc2a25ba9de3c835b799b8a74186d3a8cc3eb8ba6940dea83b742a074030bc95",
+      "prospective_metrics": null,
+      "rankings": null,
+      "status": "NOT_TESTED",
+      "subfamily": "FORM",
+      "support": null,
+      "tags": [
+        "Force et forme",
+        "STRENGTH_FORM"
+      ],
+      "technical_rule": {
+        "context": [
+          "PRE_MATCH"
+        ],
+        "cutoff": "H-2",
+        "entity_scope": "TEAM_FIXTURE",
+        "graph_pattern": null,
+        "logical_operator": "ALL",
+        "market": null,
+        "predicates": [
+          {
+            "binding": "subject",
+            "learned_on": "TRAIN_ONLY",
+            "operator": "GE",
+            "property_id": "football:strength_form:form",
+            "relation": "APPLIES_TO",
+            "transform": "ROLLING_MEAN",
+            "value": 0.5,
+            "window": "MATCHES_5"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+            "operator": "GE",
+            "property_id": "football:data_quality:missingness",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.25,
+            "window": "CURRENT"
+          },
+          {
+            "binding": "subject",
+            "learned_on": "FIXED_HISTORICAL_PRICE_CLASS",
+            "operator": "LE",
+            "property_id": "football:market:market_margin",
+            "relation": "APPLIES_TO",
+            "transform": "RAW",
+            "value": 0.08,
+            "window": "CURRENT"
+          }
+        ],
+        "price_contract": null,
+        "relation": "INTERACTS_WITH",
+        "target": "MATCH_RESULT",
+        "temporal_window": "AS_OF_CUTOFF"
+      }
+    }
+  ],
+  "meilleures_observations_prospectives": [],
+  "meilleures_priorites_exploratoires": [
+    {
+      "competition": "La Liga",
+      "family": "MARKET",
+      "historical_roi": 0.1663984674329502,
+      "historical_support": 261,
+      "hypothesis_id": "J10-M001",
+      "label_fr": "Meilleur signal historique brut",
+      "q_value": 1.0,
+      "rank": 1,
+      "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+    },
+    {
+      "competition": "Serie A",
+      "family": "MARKET",
+      "historical_roi": 0.1594490358126722,
+      "historical_support": 363,
+      "hypothesis_id": "J10-M002",
+      "label_fr": "Meilleur signal historique brut",
+      "q_value": 1.0,
+      "rank": 2,
+      "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+    },
+    {
+      "competition": "Serie A",
+      "family": "MARKET",
+      "historical_roi": 0.1386721991701245,
+      "historical_support": 241,
+      "hypothesis_id": "J10-M003",
+      "label_fr": "Meilleur signal historique brut",
+      "q_value": 1.0,
+      "rank": 3,
+      "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+    }
+  ],
+  "meilleurs_signaux_historiques_bruts": [
+    {
+      "competition": "La Liga",
+      "family": "MARKET",
+      "historical_roi": 0.1663984674329502,
+      "historical_support": 261,
+      "hypothesis_id": "J10-M001",
+      "label_fr": "Meilleur signal historique brut",
+      "q_value": 1.0,
+      "rank": 1,
+      "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+    },
+    {
+      "competition": "Serie A",
+      "family": "MARKET",
+      "historical_roi": 0.1594490358126722,
+      "historical_support": 363,
+      "hypothesis_id": "J10-M002",
+      "label_fr": "Meilleur signal historique brut",
+      "q_value": 1.0,
+      "rank": 2,
+      "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+    },
+    {
+      "competition": "Serie A",
+      "family": "MARKET",
+      "historical_roi": 0.1386721991701245,
+      "historical_support": 241,
+      "hypothesis_id": "J10-M003",
+      "label_fr": "Meilleur signal historique brut",
+      "q_value": 1.0,
+      "rank": 3,
+      "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+    }
+  ],
+  "schema_version": "hypothesis-global-rankings-v1",
+  "strategies_validees": [],
+  "warning_fr": "Un signal historique ou une priorité exploratoire n’est pas une stratégie validée."
+}

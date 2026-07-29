@@ -1,10 +1,23 @@
 # Robin des Stades — État du projet
 
-Dernière mise à jour : 2026-07-28
+Dernière mise à jour : 2026-07-29
 Dépôt : `dddur75/robin-stades-ng`
-Branche : `codex/prospective-five-league-expansion`
+Branche : `codex/hypothesis-intelligence-factory-v1`
 Mode : `SHADOW`
 Paris réels : `PRODUCTION_LOCKED`
+
+## Hypothesis Intelligence Factory V1 — 2026-07-29
+
+Le registre commun contient 700 découvertes machine J10 et 8 hypothèses
+propriétaire H11, avec origine immuable, fingerprint canonique, versions,
+métriques et historique de statut. Les trois premières découvertes J10 sont
+gelées pour observation prospective ; aucune n'est déclarée robuste ou validée.
+
+État live conservé : 116 fixtures, 0 prédiction réelle, 0 règlement réel et
+0 entraînement réel. Les appels fournisseurs, crédits odds, paris réels,
+publications sociales, suppressions R2 et déploiements restent verrouillés.
+
+Documentation : `docs/hypothesis-intelligence/`.
 
 ## Jalon 5.1 — revue pré-fusion
 
@@ -764,3 +777,25 @@ preuves versionnées sont
 `reports/prequential-learning/factory-readiness.json` et
 `reports/prequential-learning/status.json`. La validation locale finale compte
 817 tests Python, 35 tests cockpit et 11 scénarios Playwright verts.
+
+## Universal Football Hypothesis Genome V2
+
+La PR #24 est prolongée par un univers symbolique versionné :
+
+- 486 propriétés ;
+- 28 familles natives, météo comprise ;
+- 44 relations ;
+- 34 transformations ;
+- profondeur scientifique non bornée, profondeur technique budgétée ;
+- DAG parent/enfant, pruning traçable, calcul différé et longue traîne ;
+- onze moteurs de génération et découverte exécutables ;
+- contrats dashboard compacts et pages détaillées hors Git.
+
+Le pilote reste cache-only et ne valide aucune stratégie. Les données cinq
+ligues disponibles restent limitées à 10 732 lignes marché, 7 081 lignes
+d'évaluation et 11 variables équipe/calendrier sans frontière source
+strictement pré-kickoff prouvée. Tous les domaines non admissibles restent
+`DATA_GATE_BLOCKED`.
+
+La migration active est `0012_universal_genome_v2`. Tous les verrous de
+production, promotion, paris et publication restent fermés.

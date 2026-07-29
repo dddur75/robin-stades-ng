@@ -1,5 +1,14 @@
 # Action utilisateur
 
+## Hypothesis Intelligence Factory V1
+
+Pendant la PR brouillon : aucune action, aucun achat de crédits fournisseur,
+aucun déploiement et aucun déverrouillage ne sont requis.
+
+Après CI verte, examiner la séparation entre découvertes machine et hypothèses
+de David, les trois contrats prospectifs et le rapport final. La fusion reste
+une décision manuelle ; Codex ne la déclenche pas automatiquement.
+
 Action après validation verte de la PR #6 :
 
 Le Jalon 6 ne demande aucune manipulation pendant la construction et la CI.
@@ -202,3 +211,12 @@ ligue en attente est automatique et testée.
 Aucun pari réel, bookmaker, secret supplémentaire, achat, publication sociale,
 backfill, recherche de pattern, promotion de modèle ou reprise P3/P4 n’est
 demandé.
+
+## Universal Football Hypothesis Genome V2
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Le Genome V2 reste cache-only dans la PR #24 en brouillon. Aucun abonnement
+météo, appel fournisseur, pari, promotion, publication sociale, fusion ou
+déploiement du dashboard n'est demandé. Les nouvelles familles indisponibles
+sont conservées symboliquement derrière leurs conditions de disponibilité.

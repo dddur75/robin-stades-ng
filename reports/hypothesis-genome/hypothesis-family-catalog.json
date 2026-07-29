@@ -1,0 +1,286 @@
+{
+  "catalog_hash": "33a39a5cfaa8e5407e0efb4119e26b736d5122929f02327bc042bac9e2548f93",
+  "items": [
+    {
+      "availability_status": "PARTIAL",
+      "blocking_reason": "HISTORICAL_POINT_IN_TIME_COVERAGE_PARTIAL",
+      "display_name_fr": "Match et compétition",
+      "entities": [
+        "MATCH"
+      ],
+      "family": "MATCH_COMPETITION",
+      "property_count": 27
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "NO_VERSIONED_HISTORICAL_PITCH_SOURCE",
+      "display_name_fr": "Stade et terrain",
+      "entities": [
+        "VENUE_VERSION"
+      ],
+      "family": "STADIUM_PITCH",
+      "property_count": 20
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "NO_FREE_LICENSED_POINT_IN_TIME_WEATHER_ARCHIVE",
+      "display_name_fr": "Météo",
+      "entities": [
+        "WEATHER_OBSERVATION"
+      ],
+      "family": "WEATHER",
+      "property_count": 25
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "REAL_TRAVEL_ITINERARY_AND_ARRIVAL_TIMES_UNAVAILABLE",
+      "display_name_fr": "Déplacements et logistique",
+      "entities": [
+        "TRAVEL_LEG"
+      ],
+      "family": "TRAVEL_LOGISTICS",
+      "property_count": 16
+    },
+    {
+      "availability_status": "PARTIAL",
+      "blocking_reason": "REST_DAYS_READY_OTHER_LOAD_FIELDS_BLOCKED",
+      "display_name_fr": "Calendrier et fatigue",
+      "entities": [
+        "TEAM_FIXTURE"
+      ],
+      "family": "CALENDAR_FATIGUE",
+      "property_count": 17
+    },
+    {
+      "availability_status": "PARTIAL",
+      "blocking_reason": "SOURCE_OBSERVED_AT_NOT_PROVEN_ROW_BY_ROW",
+      "display_name_fr": "Force et forme",
+      "entities": [
+        "TEAM_FIXTURE"
+      ],
+      "family": "STRENGTH_FORM",
+      "property_count": 16
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "EVENT_LEVEL_ATTACK_HISTORY_NOT_POINT_IN_TIME",
+      "display_name_fr": "Attaque",
+      "entities": [
+        "TEAM_FIXTURE"
+      ],
+      "family": "ATTACK",
+      "property_count": 21
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "EVENT_LEVEL_DEFENCE_HISTORY_NOT_POINT_IN_TIME",
+      "display_name_fr": "Défense",
+      "entities": [
+        "TEAM_FIXTURE"
+      ],
+      "family": "DEFENCE",
+      "property_count": 19
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "EVENT_AND_TRACKING_COVERAGE_UNAVAILABLE",
+      "display_name_fr": "Possession, relance et pressing",
+      "entities": [
+        "TEAM_FIXTURE"
+      ],
+      "family": "POSSESSION_PRESSING",
+      "property_count": 19
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "SET_PIECE_ROUTINES_AND_TRAJECTORIES_UNAVAILABLE",
+      "display_name_fr": "Coups de pied arrêtés",
+      "entities": [
+        "SET_PIECE_ROUTINE"
+      ],
+      "family": "SET_PIECES",
+      "property_count": 15
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "PLAYER_HISTORY_NOT_POINT_IN_TIME_ACROSS_FIVE_LEAGUES",
+      "display_name_fr": "Joueurs",
+      "entities": [
+        "PLAYER_FIXTURE"
+      ],
+      "family": "PLAYER",
+      "property_count": 33
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "SOURCED_FOOTEDNESS_COVERAGE_ZERO",
+      "display_name_fr": "Pieds, côtés et latéralité",
+      "entities": [
+        "PLAYER_ROLE_ASSIGNMENT"
+      ],
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_count": 11
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "HISTORICAL_LINEUPS_OBSERVED_POST_MATCH",
+      "display_name_fr": "Compositions et continuité",
+      "entities": [
+        "LINEUP_UNIT"
+      ],
+      "family": "LINEUP_CONTINUITY",
+      "property_count": 16
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "ABSENCE_PUBLICATION_TIME_NOT_PROVEN",
+      "display_name_fr": "Absences et retours",
+      "entities": [
+        "PLAYER_AVAILABILITY"
+      ],
+      "family": "ABSENCE_RETURN",
+      "property_count": 19
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "REFEREE_ASSIGNMENT_AND_DISCIPLINE_CUTOFF_NOT_PROVEN",
+      "display_name_fr": "Discipline et arbitrage",
+      "entities": [
+        "OFFICIAL_ASSIGNMENT"
+      ],
+      "family": "DISCIPLINE_REFEREE",
+      "property_count": 19
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "FORMATION_OBSERVATION_NOT_POINT_IN_TIME",
+      "display_name_fr": "Formations et structures",
+      "entities": [
+        "TACTICAL_STATE"
+      ],
+      "family": "FORMATION_STRUCTURE",
+      "property_count": 14
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "ROLE_ASSIGNMENTS_AND_DYNAMIC_TACTICS_UNAVAILABLE",
+      "display_name_fr": "Rôles et tactiques",
+      "entities": [
+        "PLAYER_ROLE_ASSIGNMENT"
+      ],
+      "family": "ROLE_TACTICS",
+      "property_count": 25
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "COACH_DECISION_HISTORY_INCOMPLETE",
+      "display_name_fr": "Entraîneur et staff",
+      "entities": [
+        "COACH_TENURE"
+      ],
+      "family": "COACH",
+      "property_count": 16
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "GOALKEEPER_ADVANCED_HISTORY_UNAVAILABLE",
+      "display_name_fr": "Gardien",
+      "entities": [
+        "PLAYER_FIXTURE"
+      ],
+      "family": "GOALKEEPER",
+      "property_count": 12
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "BENCH_POINT_IN_TIME_AND_ROLE_HISTORY_UNAVAILABLE",
+      "display_name_fr": "Banc et substitutions",
+      "entities": [
+        "BENCH_UNIT"
+      ],
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_count": 12
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "PASS_NETWORK_AND_POINT_IN_TIME_COHESION_UNAVAILABLE",
+      "display_name_fr": "Réseaux et complémentarités",
+      "entities": [
+        "TACTICAL_UNIT"
+      ],
+      "family": "CHEMISTRY_NETWORKS",
+      "property_count": 13
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "NO_VERSIONED_CLAIM_AND_RETRACTION_PIPELINE",
+      "display_name_fr": "Information et actualité",
+      "entities": [
+        "CLAIM"
+      ],
+      "family": "INFORMATION_NEWS",
+      "property_count": 17
+    },
+    {
+      "availability_status": "PARTIAL",
+      "blocking_reason": "HISTORICAL_PRICES_HAVE_NO_EXACT_INTRADAY_TIMESTAMP",
+      "display_name_fr": "Marché",
+      "entities": [
+        "MARKET_SNAPSHOT"
+      ],
+      "family": "MARKET",
+      "property_count": 22
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "PRIVATE_HEALTH_AND_TRAINING_DATA_UNAVAILABLE",
+      "display_name_fr": "Entraînement et charge",
+      "entities": [
+        "TRAINING_SESSION"
+      ],
+      "family": "TRAINING_LOAD",
+      "property_count": 14
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "POINT_IN_TIME_AND_GOVERNED_MEDICAL_DATA_UNAVAILABLE",
+      "display_name_fr": "Santé et réathlétisation",
+      "entities": [
+        "MEDICAL_EPISODE"
+      ],
+      "family": "MEDICAL",
+      "property_count": 13
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "TARGET_MATCH_EVENTS_ARE_POST_CUTOFF",
+      "display_name_fr": "État du match et événements",
+      "entities": [
+        "EVENT"
+      ],
+      "family": "EVENT_GAME_STATE",
+      "property_count": 12
+    },
+    {
+      "availability_status": "DATA_GATE_BLOCKED",
+      "blocking_reason": "POINT_IN_TIME_REGISTRATION_HISTORY_UNAVAILABLE",
+      "display_name_fr": "Organisation et effectif",
+      "entities": [
+        "REGISTRATION"
+      ],
+      "family": "ORGANISATION_SQUAD",
+      "property_count": 10
+    },
+    {
+      "availability_status": "READY",
+      "blocking_reason": null,
+      "display_name_fr": "Qualité et provenance",
+      "entities": [
+        "OBSERVATION"
+      ],
+      "family": "DATA_QUALITY",
+      "property_count": 13
+    }
+  ],
+  "schema_version": "hypothesis-family-catalog-v1"
+}

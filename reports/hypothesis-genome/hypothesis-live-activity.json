@@ -1,0 +1,9 @@
+{
+  "hypothesis_observations": 0,
+  "last_activity": null,
+  "prospective_settlements": 0,
+  "real_bets": 0,
+  "real_predictions": 0,
+  "real_training_runs": 0,
+  "schema_version": "hypothesis-live-activity-v1"
+}

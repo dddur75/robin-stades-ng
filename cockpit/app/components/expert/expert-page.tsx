@@ -23,6 +23,7 @@ import {
   TechnicalList,
 } from "../common/ui";
 import { useViewMode, ViewModeSwitch } from "../common/view-mode";
+import { HypothesisExplorer } from "./hypothesis-explorer";
 
 function displayText(value: unknown) {
   return String(value ?? "—");
@@ -174,6 +175,18 @@ export function ExpertPage() {
         </>
       ) : (
         <div className="expert-content">
+          <section className="expert-section" id="hypotheses">
+            <SectionHeading
+              subtitle="Projection paginée des 700 règles Jalon 10; une seule page de 50 règles est chargée à la fois."
+              title="Explorateur des hypothèses"
+            />
+            <EvidenceNote>
+              Les tris et métriques restent exploratoires. Un ROI historique brut
+              ne constitue ni une validation, ni un rendement attendu.
+            </EvidenceNote>
+            <HypothesisExplorer />
+          </section>
+
           <section className="expert-section" id="donnees">
             <SectionHeading subtitle={t("expert.data.subtitle")} title={t("expert.data.title")} />
             <div className="metrics-grid">

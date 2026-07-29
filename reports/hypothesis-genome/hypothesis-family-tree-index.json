@@ -1,0 +1,141 @@
+{
+  "families": {
+    "ABSENCE_RETURN": {
+      "label_fr": "Absences et retours",
+      "root_node_ids": []
+    },
+    "ATTACK": {
+      "label_fr": "Attaque",
+      "root_node_ids": [
+        "hypothesis-node-636251d5e1c9f22b27a20a995fdd337f8119b1274a274d44278d60dcbfcaffa5"
+      ]
+    },
+    "BENCH_SUBSTITUTIONS": {
+      "label_fr": "Banc et substitutions",
+      "root_node_ids": []
+    },
+    "CALENDAR_FATIGUE": {
+      "label_fr": "Calendrier et fatigue",
+      "root_node_ids": [
+        "hypothesis-node-f6a57e02fec00b8750003ced60fd6881a994c84758eb175ff05fefd8b3092bd7",
+        "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce"
+      ]
+    },
+    "CHEMISTRY_NETWORKS": {
+      "label_fr": "Réseaux et complémentarités",
+      "root_node_ids": []
+    },
+    "COACH": {
+      "label_fr": "Entraîneur et staff",
+      "root_node_ids": []
+    },
+    "DATA_QUALITY": {
+      "label_fr": "Qualité et provenance",
+      "root_node_ids": [
+        "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+      ]
+    },
+    "DEFENCE": {
+      "label_fr": "Défense",
+      "root_node_ids": [
+        "hypothesis-node-96d7c678549e799fa6d0961ed122b4e657661543b240378a31617228574ab329"
+      ]
+    },
+    "DISCIPLINE_REFEREE": {
+      "label_fr": "Discipline et arbitrage",
+      "root_node_ids": [
+        "hypothesis-node-efc0310231b74b20fdd21f281b5d547eeb9c107e129b9878780c72f67a460049"
+      ]
+    },
+    "EVENT_GAME_STATE": {
+      "label_fr": "État du match et événements",
+      "root_node_ids": []
+    },
+    "FOOTEDNESS_LATERALITY": {
+      "label_fr": "Pieds, côtés et latéralité",
+      "root_node_ids": []
+    },
+    "FORMATION_STRUCTURE": {
+      "label_fr": "Formations et structures",
+      "root_node_ids": [
+        "hypothesis-node-5e0d245712718834b994e7dcb0b28f69e85a7fef2f9816c1a0cee63395a1251a"
+      ]
+    },
+    "GOALKEEPER": {
+      "label_fr": "Gardien",
+      "root_node_ids": []
+    },
+    "INFORMATION_NEWS": {
+      "label_fr": "Information et actualité",
+      "root_node_ids": []
+    },
+    "LINEUP_CONTINUITY": {
+      "label_fr": "Compositions et continuité",
+      "root_node_ids": []
+    },
+    "MARKET": {
+      "label_fr": "Marché",
+      "root_node_ids": [
+        "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc"
+      ]
+    },
+    "MATCH_COMPETITION": {
+      "label_fr": "Match et compétition",
+      "root_node_ids": []
+    },
+    "MEDICAL": {
+      "label_fr": "Santé et réathlétisation",
+      "root_node_ids": []
+    },
+    "ORGANISATION_SQUAD": {
+      "label_fr": "Organisation et effectif",
+      "root_node_ids": []
+    },
+    "PLAYER": {
+      "label_fr": "Joueurs",
+      "root_node_ids": [
+        "hypothesis-node-77f02f9f69c7b53e2c3a95ab6c4b565f0b4650de52bf0d947b397858dc122717"
+      ]
+    },
+    "POSSESSION_PRESSING": {
+      "label_fr": "Possession, relance et pressing",
+      "root_node_ids": []
+    },
+    "ROLE_TACTICS": {
+      "label_fr": "Rôles et tactiques",
+      "root_node_ids": []
+    },
+    "SET_PIECES": {
+      "label_fr": "Coups de pied arrêtés",
+      "root_node_ids": []
+    },
+    "STADIUM_PITCH": {
+      "label_fr": "Stade et terrain",
+      "root_node_ids": []
+    },
+    "STRENGTH_FORM": {
+      "label_fr": "Force et forme",
+      "root_node_ids": [
+        "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9",
+        "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9"
+      ]
+    },
+    "TRAINING_LOAD": {
+      "label_fr": "Entraînement et charge",
+      "root_node_ids": []
+    },
+    "TRAVEL_LOGISTICS": {
+      "label_fr": "Déplacements et logistique",
+      "root_node_ids": [
+        "hypothesis-node-233c572f7919f26eb277d32505141b2afb2346217d9c9675a0c7d630d953e04d"
+      ]
+    },
+    "WEATHER": {
+      "label_fr": "Météo",
+      "root_node_ids": [
+        "hypothesis-node-c1477389ec429b753d55301768ef984859ab00b823006988dff6d4752686d67a"
+      ]
+    }
+  },
+  "schema_version": "hypothesis-family-tree-index-v1"
+}

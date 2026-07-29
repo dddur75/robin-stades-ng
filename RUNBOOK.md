@@ -1,5 +1,25 @@
 # Runbook
 
+## Hypothesis Intelligence Factory V1
+
+Reconstruire les artefacts bornés avec :
+
+`python scripts/build_hypothesis_intelligence.py`
+
+Le script exige le registre J10 cache-only dont le hash est
+`cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731`
+et le résultat
+`edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b`.
+Un écart arrête la construction.
+
+Le registre Expert est paginé en 14 fichiers de 50 règles. Ne pas consolider
+ces pages dans le bundle navigateur. Pour toute observation future, respecter
+le contrat gelé, écrire un événement append-only et conserver une intervention
+humaine obligatoire avant `VALIDATED`.
+
+Le runbook prospectif complet se trouve dans
+`docs/hypothesis-intelligence/PROSPECTIVE-HYPOTHESIS-PROTOCOL.md`.
+
 ## Jalon 5.1
 
 Les restaurations historiques lisent `historical-data`; les publications
@@ -955,7 +975,8 @@ différent crée une version `CORRECTED` liée à la précédente.
 
 Les workflows Prévision, Règlement et Entraînement utilisent tous
 `prospective-deep-state` et `cancel-in-progress=false`. Avant chaque écriture,
-ils appliquent Alembic puis exigent exactement `0010_prequential_v1`. Les
+ils appliquent Alembic puis exigent exactement
+`0012_universal_genome_v2`. Les
 artifacts JSON sont conservés 90 jours.
 
 Le replay et l’entraînement doivent conserver :
@@ -983,3 +1004,30 @@ synthétique isolée. Ne pas l’agréger aux métriques prospectives réelles.
 Le verdict `PREQUENTIAL_LEARNING_FACTORY_READY` signifie que la factory attend
 les premiers cutoffs et résultats réels. Il ne valide ni un modèle, ni une
 stratégie, ni une rentabilité.
+
+## Universal Football Hypothesis Genome V2
+
+Le générateur cache-only s'exécute sans clé ni réseau :
+
+```powershell
+python scripts/build_universal_hypothesis_genome.py `
+  --preview-output cockpit/app/universal-genome-preview.json
+```
+
+Les contrats compacts sont écrits dans `reports/hypothesis-genome/`. Les pages
+détaillées sont écrites dans `artifacts/hypothesis-genome/` et ne doivent
+jamais être ajoutées à Git.
+
+Avant une campagne :
+
+- vérifier `unclassified_source_fields=0` dans le périmètre du manifeste ;
+- conserver `DATA_GATE_BLOCKED` pour toute propriété sans temporalité prouvée ;
+- vérifier que les seuils appris portent `TRAIN_ONLY` ;
+- comparer enfant, parent, baseline et marché sur les mêmes lignes ;
+- conserver une famille de multiplicité distincte par campagne ;
+- ne jamais transformer `COMPUTE_DEFERRED` en rejet scientifique ;
+- ne jamais promouvoir automatiquement.
+
+Le freeze V2 nécessite deux commits. Le second doit référencer le premier par
+`source_code_revision` et son arbre Git exact, puis être lié au contrat V1 avec
+`supersedes`.

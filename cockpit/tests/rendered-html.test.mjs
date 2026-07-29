@@ -40,7 +40,7 @@ const publicRoutes = [
   ["/matchs", "Les matchs observés"],
   ["/observatoire", "Matrice de couverture"],
   ["/apprentissage", "Robin apprend uniquement après les matchs"],
-  ["/laboratoire", "Laboratoire des hypothèses"],
+  ["/laboratoire", "Hypothèses et découvertes"],
   ["/resultats", "Aucun pari simulé pour le moment"],
   ["/methode", "Comment Robin travaille"],
   ["/expert", "Activez la vue expert"],

@@ -1,0 +1,10 @@
+{
+  "Baisse maximale de la bankroll simulée": "Drawdown",
+  "Condition de disponibilité": "Gate",
+  "Correction du risque de faux positifs": "FDR",
+  "Risque de faux positif après correction": "q-value",
+  "Validation chronologique glissante": "Walk-forward",
+  "Variable analysée": "Feature",
+  "note": "Les termes techniques originaux sont réservés à la Vue Expert.",
+  "schema_version": "hypothesis-glossary-fr-v1"
+}

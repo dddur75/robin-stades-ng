@@ -39,6 +39,9 @@ PROSPECTIVE_POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
 PREQUENTIAL_LEARNING_STATUS = (
     ROOT / "reports" / "prequential-learning" / "status.json"
 )
+HYPOTHESIS_INTELLIGENCE_SNAPSHOT = (
+    ROOT / "reports" / "hypothesis-intelligence" / "cockpit-snapshot.json"
+)
 TEAM_IDENTITY_PROVENANCE = (
     ROOT / "reports" / "ux" / "team-identity-provenance.json"
 )
@@ -5012,6 +5015,21 @@ def main() -> None:
     matchup_lab = build_matchup_lab()
     prospective_observatory = build_prospective_observatory()
     prequential_learning = build_prequential_learning()
+    hypothesis_intelligence = read_json(
+        HYPOTHESIS_INTELLIGENCE_SNAPSHOT,
+        {},
+    )
+    if hypothesis_intelligence and (
+        hypothesis_intelligence.get("schemaVersion")
+        != "hypothesis-intelligence-cockpit-v1"
+        or hypothesis_intelligence.get("security", {}).get("realBets")
+        is not False
+        or hypothesis_intelligence.get("security", {}).get(
+            "promotionLocked"
+        )
+        is not True
+    ):
+        raise RuntimeError("HYPOTHESIS_INTELLIGENCE_SNAPSHOT_UNSAFE")
     snapshot = {
         "generatedAt": datetime.now(UTC).isoformat(),
         "sourceCapturedAt": durable["captured_at"],
@@ -5172,6 +5190,7 @@ def main() -> None:
         "matchupLab": matchup_lab,
         "prospectiveObservatory": prospective_observatory,
         "prequentialLearning": prequential_learning,
+        "hypothesisIntelligence": hypothesis_intelligence,
     }
     write_snapshot(snapshot)
 

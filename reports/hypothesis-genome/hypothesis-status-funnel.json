@@ -1,0 +1,12 @@
+{
+  "counts": {
+    "COMPUTE_DEFERRED": 912,
+    "DATA_GATE_BLOCKED": 149,
+    "EXECUTED": 13,
+    "LONG_TAIL_WATCHLIST": 8,
+    "PRUNED": 10
+  },
+  "schema_version": "hypothesis-status-funnel-v1",
+  "scientific_rejections": 0,
+  "validated_strategies": 0
+}
