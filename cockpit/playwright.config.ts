@@ -24,7 +24,8 @@ export default defineConfig({
     timezoneId: "Europe/Paris",
   },
   webServer: {
-    command: "pnpm exec vinext dev -p 4173 -H 127.0.0.1",
+    command:
+      "pnpm run build:data && pnpm exec vinext dev -p 4173 -H 127.0.0.1",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     url: "http://127.0.0.1:4173/robin-live",

@@ -119,6 +119,9 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
           node-version: "22.13.0"
@@ -128,6 +131,7 @@ jobs:
       - name: Installer le Cockpit et Chromium
         working-directory: cockpit
         run: |
+          python -m pip install "pydantic>=2.9,<3"
           pnpm install --frozen-lockfile
           pnpm exec playwright install --with-deps chromium
       - name: Capturer les vues de référence

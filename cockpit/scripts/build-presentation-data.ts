@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
-import { join, sep } from "node:path";
+import { delimiter, join, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { buildPresentationModel } from "../app/lib/presentation-model";
@@ -168,6 +168,12 @@ async function ensureHypothesisNodeArtifacts(): Promise<{
     const result = spawnSync(command, args, {
       cwd: repositoryRoot,
       encoding: "utf8",
+      env: {
+        ...process.env,
+        PYTHONPATH: [join(repositoryRoot, "src"), process.env.PYTHONPATH]
+          .filter((entry): entry is string => Boolean(entry))
+          .join(delimiter),
+      },
       stdio: "pipe",
     });
     return result.status === 0;
