@@ -1,17 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { formatDateTime, t } from "../../i18n";
 import { glossary } from "../../i18n/glossary";
 import { operationalEvidence } from "../../lib/presentation";
 import { StatusBadge } from "../common/ui";
-import { ViewModeProvider, ViewModeSwitch } from "../common/view-mode";
+import {
+  ExpertOnly,
+  ViewModeProvider,
+  ViewModeSwitch,
+} from "../common/view-mode";
 
 export type PublicSection =
   | "home"
   | "matches"
+  | "hypotheses"
   | "observatory"
   | "learning"
   | "laboratory"
@@ -23,27 +28,29 @@ const publicNavigation: Array<{
   key: PublicSection;
   href: string;
   label: ReturnType<typeof t>;
-  mobileLabel?: ReturnType<typeof t>;
   icon: string;
 }> = [
   { key: "home", href: "/robin-live", label: t("nav.home"), icon: "⌂" },
   { key: "matches", href: "/matchs", label: t("nav.matches"), icon: "◉" },
-  { key: "observatory", href: "/observatoire", label: t("nav.observatory"), icon: "◫" },
   {
-    key: "learning",
-    href: "/apprentissage",
-    label: t("nav.learning"),
-    mobileLabel: t("nav.learningShort"),
-    icon: "↻",
+    key: "hypotheses",
+    href: "/hypotheses",
+    label: t("home.hypotheses.title"),
+    icon: "◇",
   },
-  { key: "laboratory", href: "/laboratoire", label: t("nav.laboratory"), icon: "◇" },
+  { key: "observatory", href: "/observatoire", label: t("nav.observatory"), icon: "◫" },
   { key: "results", href: "/resultats", label: t("nav.results"), icon: "↗" },
   { key: "method", href: "/methode", label: t("nav.method"), icon: "?" },
 ];
 
-const mobileNavigation = publicNavigation.filter((item) => item.key !== "method");
-
-const expertNavigation = [
+const expertNavigation: Array<{
+  activeSection?: PublicSection;
+  href: string;
+  label: ReturnType<typeof t>;
+}> = [
+  { activeSection: "expert", href: "/expert", label: t("nav.expert") },
+  { activeSection: "learning", href: "/apprentissage", label: t("nav.learning") },
+  { activeSection: "laboratory", href: "/laboratoire", label: t("nav.laboratory") },
   { href: "/expert#donnees", label: t("nav.expert.data") },
   { href: "/expert#modeles", label: t("nav.expert.models") },
   { href: "/expert#simulations", label: t("nav.expert.simulations") },
@@ -59,6 +66,44 @@ export function ExperienceShell({
   children: ReactNode;
 }) {
   const [glossaryOpen, setGlossaryOpen] = useState(false);
+  const glossaryRef = useRef<HTMLElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const isExpertNavigationActive =
+    active === "expert" || active === "learning" || active === "laboratory";
+
+  useEffect(() => {
+    if (!glossaryOpen) return;
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const dialog = glossaryRef.current;
+    const focusable = dialog?.querySelectorAll<HTMLElement>(
+      "button, summary, a[href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+    );
+    focusable?.[0]?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setGlossaryOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      previousFocusRef.current?.focus();
+    };
+  }, [glossaryOpen]);
 
   return (
     <ViewModeProvider>
@@ -93,14 +138,20 @@ export function ExperienceShell({
                 {item.label}
               </Link>
             ))}
-            <details className="expert-nav" open={active === "expert"}>
-              <summary className={active === "expert" ? "active" : ""}>
+            <details className="expert-nav" open={isExpertNavigationActive}>
+              <summary className={isExpertNavigationActive ? "active" : ""}>
                 <span aria-hidden="true">⌘</span>
                 {t("nav.expert")}
               </summary>
               <div>
                 {expertNavigation.map((item) => (
-                  <Link href={item.href} key={item.href}>
+                  <Link
+                    aria-current={
+                      item.activeSection === active ? "page" : undefined
+                    }
+                    href={item.href}
+                    key={item.href}
+                  >
                     {item.label}
                   </Link>
                 ))}
@@ -156,7 +207,7 @@ export function ExperienceShell({
         </div>
 
         <nav className="mobile-nav" aria-label="Navigation mobile">
-          {mobileNavigation.map((item) => (
+          {publicNavigation.map((item) => (
             <Link
               aria-current={active === item.key ? "page" : undefined}
               className={active === item.key ? "active" : ""}
@@ -164,12 +215,12 @@ export function ExperienceShell({
               key={item.key}
             >
               <span aria-hidden="true">{item.icon}</span>
-              {item.mobileLabel ?? item.label}
+              {item.label}
             </Link>
           ))}
           <Link
-            aria-current={active === "expert" ? "page" : undefined}
-            className={active === "expert" ? "active" : ""}
+            aria-current={isExpertNavigationActive ? "page" : undefined}
+            className={isExpertNavigationActive ? "active" : ""}
             href="/expert"
           >
             <span aria-hidden="true">⌘</span>
@@ -188,6 +239,7 @@ export function ExperienceShell({
               aria-label={t("glossary.title")}
               aria-modal="true"
               className="glossary-drawer"
+              ref={glossaryRef}
               role="dialog"
             >
               <div className="drawer-head">
@@ -207,11 +259,15 @@ export function ExperienceShell({
                 {glossary.map((entry) => (
                   <details key={entry.term}>
                     <summary>
-                      <strong>{entry.term}</strong>
-                      <span>{entry.publicName}</span>
+                      <strong>{entry.publicName}</strong>
+                      <ExpertOnly>
+                        <span>{entry.term}</span>
+                      </ExpertOnly>
                     </summary>
                     <p>{entry.simple}</p>
-                    <small>{entry.expert}</small>
+                    <ExpertOnly>
+                      <small>{entry.expert}</small>
+                    </ExpertOnly>
                   </details>
                 ))}
               </div>

@@ -10,7 +10,11 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never", outputFolder: ".ci/visual-regression/report" }]],
   retries: process.env.CI ? 1 : 0,
   testDir: "./tests",
-  testMatch: "visual-regression.spec.ts",
+  testMatch: [
+    "visual-regression.spec.ts",
+    "hypothesis-universe.spec.ts",
+    "hypothesis-accessibility.spec.ts",
+  ],
   timeout: 30_000,
   use: {
     baseURL: "http://127.0.0.1:4173",

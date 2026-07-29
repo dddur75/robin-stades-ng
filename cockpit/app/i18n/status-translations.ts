@@ -242,7 +242,7 @@ const catalogue: Record<string, StatusPresentation> = {
   },
   VERIFIED: {
     short: "Identité vérifiée",
-    long: "Le nom est relié à un payload de fixture et à son reçu cryptographiquement vérifié.",
+    long: "Le nom est relié à une capture de rencontre et à son reçu cryptographiquement vérifié.",
     tone: "positive",
     icon: "✓",
     severity: 0,
@@ -311,7 +311,7 @@ const catalogue: Record<string, StatusPresentation> = {
     severity: 0,
   },
   R2_REPLAY_VERIFIED: {
-    short: "Replay R2 vérifié",
+    short: "Reconstruction R2 vérifiée",
     long: "Les preuves ont été reconstruites depuis R2 sans appeler de fournisseur.",
     tone: "positive",
     icon: "✓",
@@ -383,7 +383,7 @@ const catalogue: Record<string, StatusPresentation> = {
   },
   PREQUENTIAL_LEARNING_FACTORY_READY: {
     short: "Usine prête",
-    long: "L’évaluation préquentielle est prête à attendre les premiers cutoffs et résultats réels.",
+    long: "L’évaluation préquentielle est prête à attendre les premières heures limites et les premiers résultats réels.",
     tone: "positive",
     icon: "✓",
     severity: 0,
@@ -404,7 +404,7 @@ const catalogue: Record<string, StatusPresentation> = {
   },
   REJECTED_LATE: {
     short: "Prédiction trop tardive",
-    long: "La tentative a été rejetée parce que son cutoff était dépassé.",
+    long: "La tentative a été rejetée parce que son heure limite était dépassée.",
     tone: "critical",
     icon: "◷",
     severity: 2,

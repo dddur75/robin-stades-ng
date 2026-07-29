@@ -1,0 +1,4666 @@
+{
+  "contracts": {
+    "hypothesis-universe-summary": {
+      "campaign_hash": "824c1cc0a61132f578a58741d734eebb63162e4190695f13e5f9854466eee997",
+      "completeness_scope": "CLOSURE_OF_THE_VERSIONED_V1_PROPERTY_RELATION_TRANSFORMATION CATALOGUE;NOT_A_CLAIM_TO_ALL_POSSIBLE_FOOTBALL_IDEAS",
+      "compute_deferred_candidates": 912,
+      "data_gate_blocked_candidates": 149,
+      "data_hash": "886be285fc47b38aae77e9fa8c96dfc240a54707060850e3c3fd9c9b16d0c7c8",
+      "day_windows": [
+        5,
+        7,
+        10,
+        14,
+        21,
+        30,
+        60,
+        90
+      ],
+      "executed_candidates": 13,
+      "long_tail_candidates": 8,
+      "match_windows": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        12,
+        15,
+        20
+      ],
+      "materialized_candidates": 180,
+      "ontology_hash": "69cca06408ab6bbea3e16f5c5252c505c6bd4175b533c7e0d08283a6036ba186",
+      "properties": 486,
+      "property_families": 28,
+      "prospectively_frozen_candidates": 3,
+      "pruned_candidates": 10,
+      "relations": 44,
+      "schema_version": "hypothesis-universe-summary-v2",
+      "scientific_depth_limit": null,
+      "symbolic_templates": 486,
+      "technical_depth_default": 4,
+      "theoretical_formula": "recursive_typed_expressions(properties, transforms, windows, relations, targets, optional_markets, unbounded_scientific_depth)",
+      "theoretical_universe_size": "COUNTABLY_INFINITE",
+      "transformations": 34,
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1",
+      "verdict": "HYPOTHESIS_UNIVERSE_SYMBOLICALLY_COMPLETE"
+    },
+    "hypothesis-family-catalog": {
+      "catalog_hash": "33a39a5cfaa8e5407e0efb4119e26b736d5122929f02327bc042bac9e2548f93",
+      "items": [
+        {
+          "availability_status": "PARTIAL",
+          "blocking_reason": "HISTORICAL_POINT_IN_TIME_COVERAGE_PARTIAL",
+          "display_name_fr": "Match et compétition",
+          "entities": [
+            "MATCH"
+          ],
+          "family": "MATCH_COMPETITION",
+          "property_count": 27
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "NO_VERSIONED_HISTORICAL_PITCH_SOURCE",
+          "display_name_fr": "Stade et terrain",
+          "entities": [
+            "VENUE_VERSION"
+          ],
+          "family": "STADIUM_PITCH",
+          "property_count": 20
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "NO_FREE_LICENSED_POINT_IN_TIME_WEATHER_ARCHIVE",
+          "display_name_fr": "Météo",
+          "entities": [
+            "WEATHER_OBSERVATION"
+          ],
+          "family": "WEATHER",
+          "property_count": 25
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "REAL_TRAVEL_ITINERARY_AND_ARRIVAL_TIMES_UNAVAILABLE",
+          "display_name_fr": "Déplacements et logistique",
+          "entities": [
+            "TRAVEL_LEG"
+          ],
+          "family": "TRAVEL_LOGISTICS",
+          "property_count": 16
+        },
+        {
+          "availability_status": "PARTIAL",
+          "blocking_reason": "REST_DAYS_READY_OTHER_LOAD_FIELDS_BLOCKED",
+          "display_name_fr": "Calendrier et fatigue",
+          "entities": [
+            "TEAM_FIXTURE"
+          ],
+          "family": "CALENDAR_FATIGUE",
+          "property_count": 17
+        },
+        {
+          "availability_status": "PARTIAL",
+          "blocking_reason": "SOURCE_OBSERVED_AT_NOT_PROVEN_ROW_BY_ROW",
+          "display_name_fr": "Force et forme",
+          "entities": [
+            "TEAM_FIXTURE"
+          ],
+          "family": "STRENGTH_FORM",
+          "property_count": 16
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "EVENT_LEVEL_ATTACK_HISTORY_NOT_POINT_IN_TIME",
+          "display_name_fr": "Attaque",
+          "entities": [
+            "TEAM_FIXTURE"
+          ],
+          "family": "ATTACK",
+          "property_count": 21
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "EVENT_LEVEL_DEFENCE_HISTORY_NOT_POINT_IN_TIME",
+          "display_name_fr": "Défense",
+          "entities": [
+            "TEAM_FIXTURE"
+          ],
+          "family": "DEFENCE",
+          "property_count": 19
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "EVENT_AND_TRACKING_COVERAGE_UNAVAILABLE",
+          "display_name_fr": "Possession, relance et pressing",
+          "entities": [
+            "TEAM_FIXTURE"
+          ],
+          "family": "POSSESSION_PRESSING",
+          "property_count": 19
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "SET_PIECE_ROUTINES_AND_TRAJECTORIES_UNAVAILABLE",
+          "display_name_fr": "Coups de pied arrêtés",
+          "entities": [
+            "SET_PIECE_ROUTINE"
+          ],
+          "family": "SET_PIECES",
+          "property_count": 15
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "PLAYER_HISTORY_NOT_POINT_IN_TIME_ACROSS_FIVE_LEAGUES",
+          "display_name_fr": "Joueurs",
+          "entities": [
+            "PLAYER_FIXTURE"
+          ],
+          "family": "PLAYER",
+          "property_count": 33
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "SOURCED_FOOTEDNESS_COVERAGE_ZERO",
+          "display_name_fr": "Pieds, côtés et latéralité",
+          "entities": [
+            "PLAYER_ROLE_ASSIGNMENT"
+          ],
+          "family": "FOOTEDNESS_LATERALITY",
+          "property_count": 11
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "HISTORICAL_LINEUPS_OBSERVED_POST_MATCH",
+          "display_name_fr": "Compositions et continuité",
+          "entities": [
+            "LINEUP_UNIT"
+          ],
+          "family": "LINEUP_CONTINUITY",
+          "property_count": 16
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "ABSENCE_PUBLICATION_TIME_NOT_PROVEN",
+          "display_name_fr": "Absences et retours",
+          "entities": [
+            "PLAYER_AVAILABILITY"
+          ],
+          "family": "ABSENCE_RETURN",
+          "property_count": 19
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "REFEREE_ASSIGNMENT_AND_DISCIPLINE_CUTOFF_NOT_PROVEN",
+          "display_name_fr": "Discipline et arbitrage",
+          "entities": [
+            "OFFICIAL_ASSIGNMENT"
+          ],
+          "family": "DISCIPLINE_REFEREE",
+          "property_count": 19
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "FORMATION_OBSERVATION_NOT_POINT_IN_TIME",
+          "display_name_fr": "Formations et structures",
+          "entities": [
+            "TACTICAL_STATE"
+          ],
+          "family": "FORMATION_STRUCTURE",
+          "property_count": 14
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "ROLE_ASSIGNMENTS_AND_DYNAMIC_TACTICS_UNAVAILABLE",
+          "display_name_fr": "Rôles et tactiques",
+          "entities": [
+            "PLAYER_ROLE_ASSIGNMENT"
+          ],
+          "family": "ROLE_TACTICS",
+          "property_count": 25
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "COACH_DECISION_HISTORY_INCOMPLETE",
+          "display_name_fr": "Entraîneur et staff",
+          "entities": [
+            "COACH_TENURE"
+          ],
+          "family": "COACH",
+          "property_count": 16
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "GOALKEEPER_ADVANCED_HISTORY_UNAVAILABLE",
+          "display_name_fr": "Gardien",
+          "entities": [
+            "PLAYER_FIXTURE"
+          ],
+          "family": "GOALKEEPER",
+          "property_count": 12
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "BENCH_POINT_IN_TIME_AND_ROLE_HISTORY_UNAVAILABLE",
+          "display_name_fr": "Banc et substitutions",
+          "entities": [
+            "BENCH_UNIT"
+          ],
+          "family": "BENCH_SUBSTITUTIONS",
+          "property_count": 12
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "PASS_NETWORK_AND_POINT_IN_TIME_COHESION_UNAVAILABLE",
+          "display_name_fr": "Réseaux et complémentarités",
+          "entities": [
+            "TACTICAL_UNIT"
+          ],
+          "family": "CHEMISTRY_NETWORKS",
+          "property_count": 13
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "NO_VERSIONED_CLAIM_AND_RETRACTION_PIPELINE",
+          "display_name_fr": "Information et actualité",
+          "entities": [
+            "CLAIM"
+          ],
+          "family": "INFORMATION_NEWS",
+          "property_count": 17
+        },
+        {
+          "availability_status": "PARTIAL",
+          "blocking_reason": "HISTORICAL_PRICES_HAVE_NO_EXACT_INTRADAY_TIMESTAMP",
+          "display_name_fr": "Marché",
+          "entities": [
+            "MARKET_SNAPSHOT"
+          ],
+          "family": "MARKET",
+          "property_count": 22
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "PRIVATE_HEALTH_AND_TRAINING_DATA_UNAVAILABLE",
+          "display_name_fr": "Entraînement et charge",
+          "entities": [
+            "TRAINING_SESSION"
+          ],
+          "family": "TRAINING_LOAD",
+          "property_count": 14
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "POINT_IN_TIME_AND_GOVERNED_MEDICAL_DATA_UNAVAILABLE",
+          "display_name_fr": "Santé et réathlétisation",
+          "entities": [
+            "MEDICAL_EPISODE"
+          ],
+          "family": "MEDICAL",
+          "property_count": 13
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "TARGET_MATCH_EVENTS_ARE_POST_CUTOFF",
+          "display_name_fr": "État du match et événements",
+          "entities": [
+            "EVENT"
+          ],
+          "family": "EVENT_GAME_STATE",
+          "property_count": 12
+        },
+        {
+          "availability_status": "DATA_GATE_BLOCKED",
+          "blocking_reason": "POINT_IN_TIME_REGISTRATION_HISTORY_UNAVAILABLE",
+          "display_name_fr": "Organisation et effectif",
+          "entities": [
+            "REGISTRATION"
+          ],
+          "family": "ORGANISATION_SQUAD",
+          "property_count": 10
+        },
+        {
+          "availability_status": "READY",
+          "blocking_reason": null,
+          "display_name_fr": "Qualité et provenance",
+          "entities": [
+            "OBSERVATION"
+          ],
+          "family": "DATA_QUALITY",
+          "property_count": 13
+        }
+      ],
+      "schema_version": "hypothesis-family-catalog-v1"
+    },
+    "hypothesis-tags-catalog": {
+      "families": [
+        {
+          "id": "MATCH_COMPETITION",
+          "label_fr": "Match et compétition"
+        },
+        {
+          "id": "STADIUM_PITCH",
+          "label_fr": "Stade et terrain"
+        },
+        {
+          "id": "WEATHER",
+          "label_fr": "Météo"
+        },
+        {
+          "id": "TRAVEL_LOGISTICS",
+          "label_fr": "Déplacements et logistique"
+        },
+        {
+          "id": "CALENDAR_FATIGUE",
+          "label_fr": "Calendrier et fatigue"
+        },
+        {
+          "id": "STRENGTH_FORM",
+          "label_fr": "Force et forme"
+        },
+        {
+          "id": "ATTACK",
+          "label_fr": "Attaque"
+        },
+        {
+          "id": "DEFENCE",
+          "label_fr": "Défense"
+        },
+        {
+          "id": "POSSESSION_PRESSING",
+          "label_fr": "Possession, relance et pressing"
+        },
+        {
+          "id": "SET_PIECES",
+          "label_fr": "Coups de pied arrêtés"
+        },
+        {
+          "id": "PLAYER",
+          "label_fr": "Joueurs"
+        },
+        {
+          "id": "FOOTEDNESS_LATERALITY",
+          "label_fr": "Pieds, côtés et latéralité"
+        },
+        {
+          "id": "LINEUP_CONTINUITY",
+          "label_fr": "Compositions et continuité"
+        },
+        {
+          "id": "ABSENCE_RETURN",
+          "label_fr": "Absences et retours"
+        },
+        {
+          "id": "DISCIPLINE_REFEREE",
+          "label_fr": "Discipline et arbitrage"
+        },
+        {
+          "id": "FORMATION_STRUCTURE",
+          "label_fr": "Formations et structures"
+        },
+        {
+          "id": "ROLE_TACTICS",
+          "label_fr": "Rôles et tactiques"
+        },
+        {
+          "id": "COACH",
+          "label_fr": "Entraîneur et staff"
+        },
+        {
+          "id": "GOALKEEPER",
+          "label_fr": "Gardien"
+        },
+        {
+          "id": "BENCH_SUBSTITUTIONS",
+          "label_fr": "Banc et substitutions"
+        },
+        {
+          "id": "CHEMISTRY_NETWORKS",
+          "label_fr": "Réseaux et complémentarités"
+        },
+        {
+          "id": "INFORMATION_NEWS",
+          "label_fr": "Information et actualité"
+        },
+        {
+          "id": "MARKET",
+          "label_fr": "Marché"
+        },
+        {
+          "id": "TRAINING_LOAD",
+          "label_fr": "Entraînement et charge"
+        },
+        {
+          "id": "MEDICAL",
+          "label_fr": "Santé et réathlétisation"
+        },
+        {
+          "id": "EVENT_GAME_STATE",
+          "label_fr": "État du match et événements"
+        },
+        {
+          "id": "ORGANISATION_SQUAD",
+          "label_fr": "Organisation et effectif"
+        },
+        {
+          "id": "DATA_QUALITY",
+          "label_fr": "Qualité et provenance"
+        }
+      ],
+      "origins": {
+        "AI_PROPOSED": "Proposition compilée par IA",
+        "LITERATURE_PROPOSED": "Recherche externe",
+        "MACHINE_DISCOVERED": "Découverte de Robin",
+        "MODEL_DISCOVERED": "Découverte d’un modèle",
+        "OWNER_PROPOSED": "Proposition de David"
+      },
+      "public_language": "fr",
+      "schema_version": "hypothesis-tags-catalog-v1",
+      "subfamilies": [
+        "ACADEMY",
+        "ACCELERATION",
+        "ACCELERATIONS",
+        "ACOUSTIC",
+        "ACTION",
+        "ACTUAL",
+        "ACUTE",
+        "AERIAL",
+        "AFTER",
+        "AGE",
+        "AGGREGATE",
+        "AIR",
+        "ALTITUDE",
+        "ANNOUNCED",
+        "ARRIVAL",
+        "ASIAN",
+        "ASSISTANT",
+        "ASSISTS",
+        "ATTACKING",
+        "AVAILABLE",
+        "AVERAGE",
+        "BALL",
+        "BEHIND",
+        "BENCH",
+        "BIG",
+        "BILATERALITY",
+        "BLOCKED",
+        "BODY",
+        "BOOKMAKER",
+        "BTTS",
+        "BUILD",
+        "CALL",
+        "CARD",
+        "CARDS",
+        "CENTRAL",
+        "CENTRALITY",
+        "CENTRE",
+        "CHANGES",
+        "CIRCADIAN",
+        "CIRCULATION",
+        "CLIMATE",
+        "CLOUD",
+        "CO",
+        "COLLECTIVE",
+        "COMMON",
+        "COMPETITION",
+        "CONCUSSION",
+        "CONGESTION",
+        "CONSECUTIVE",
+        "CONTINUITY",
+        "CONTRACT",
+        "COORDINATES",
+        "CORNER",
+        "CORNERS",
+        "CORRECT",
+        "CORRECTION",
+        "COUNTER",
+        "COVER",
+        "COVERAGE",
+        "CREATOR",
+        "CROSSES",
+        "CROSSWIND",
+        "CROWD",
+        "CUMULATIVE",
+        "CUTBACKS",
+        "DANGEROUS",
+        "DECLARATION",
+        "DEFENCE",
+        "DEFENSIVE",
+        "DELIVERY",
+        "DEPARTURE",
+        "DEPENDENCY",
+        "DEPTH",
+        "DERBY",
+        "DEW",
+        "DIRECT",
+        "DIRECTNESS",
+        "DISTRIBUTION",
+        "DOMINANT",
+        "DOUBLE",
+        "DOUBTFUL",
+        "DRAINAGE",
+        "DUELS",
+        "EARLY",
+        "ELO",
+        "ENDURANCE",
+        "ERRORS",
+        "EXCLUDED",
+        "EXPERIENCE",
+        "EXTERNAL",
+        "FALSE",
+        "FAVOURITE",
+        "FEELS",
+        "FIELD",
+        "FINANCIAL",
+        "FINISHING",
+        "FIRST",
+        "FOG",
+        "FOOTWEAR",
+        "FORCED",
+        "FORECAST",
+        "FORM",
+        "FORMATION",
+        "FORMATIONS",
+        "FORWARD",
+        "FOULS",
+        "FREE",
+        "FRONT",
+        "FROST",
+        "FULL",
+        "FULLBACK",
+        "GAME",
+        "GOAL",
+        "GOALKEEPER",
+        "GOALS",
+        "GRASS",
+        "HALF",
+        "HEART",
+        "HEIGHT",
+        "HIGH",
+        "HISTORICAL",
+        "HOLDING",
+        "HOME",
+        "HUMIDITY",
+        "IDENTITY",
+        "ILL",
+        "ILLNESS",
+        "IN",
+        "INDIVIDUAL",
+        "INFORMATION",
+        "INGESTED",
+        "INJURED",
+        "INJURY",
+        "INTERCEPTIONS",
+        "INTERNAL",
+        "INTERNATIONAL",
+        "INVERTED",
+        "JUMP",
+        "KEY",
+        "KICKOFF",
+        "KNOCKOUT",
+        "LAST",
+        "LATE",
+        "LATITUDE",
+        "LEFT",
+        "LIMITS",
+        "LINE",
+        "LIQUIDITY",
+        "LOAD",
+        "LOAN",
+        "LOCAL",
+        "LONG",
+        "LONGITUDE",
+        "LOSSES",
+        "LOW",
+        "MARKET",
+        "MARKING",
+        "MATCHDAY",
+        "MATCHES",
+        "MEDICAL",
+        "MICROCYCLE",
+        "MIDFIELD",
+        "MINUTE",
+        "MINUTES",
+        "MISSING",
+        "MISSINGNESS",
+        "MONTH",
+        "NATURAL",
+        "NETWORK",
+        "NEUTRAL",
+        "NEXT",
+        "NIGHTS",
+        "NUMERICAL",
+        "OBSERVED",
+        "ODDS",
+        "OFFENSIVE",
+        "OFFICIAL",
+        "OPPONENT",
+        "OUT",
+        "OVERLAP",
+        "PARTIAL",
+        "PARTNER",
+        "PASS",
+        "PASSES",
+        "PENALTIES",
+        "PERCEIVED",
+        "PHASE",
+        "PITCH",
+        "PLAYER",
+        "PLAYMAKER",
+        "POINTS",
+        "POSITION",
+        "POSSESSION",
+        "POST",
+        "PPDA",
+        "PREFERRED",
+        "PRESS",
+        "PRESSING",
+        "PRESSURE",
+        "PRIVACY",
+        "PROFILE",
+        "PROFILES",
+        "PROGRESSIVE",
+        "PROVENANCE",
+        "PROVIDER",
+        "PUBLISHED",
+        "QUALIFICATION",
+        "RAIN",
+        "RANKING",
+        "RARE",
+        "RECENT",
+        "RECOVERY",
+        "RED",
+        "REFEREE",
+        "REGIME",
+        "REGISTRATION",
+        "RELAPSE",
+        "RELATIVE",
+        "RELEGATION",
+        "RELIABILITY",
+        "REPLACEMENT",
+        "REST",
+        "RESTART",
+        "RETRACTION",
+        "RETURN",
+        "RETURNING",
+        "RIGHT",
+        "RIVALRY",
+        "ROLE",
+        "ROOF",
+        "ROTATION",
+        "ROUND",
+        "ROUTINE",
+        "RPE",
+        "SAME",
+        "SAVE",
+        "SAVES",
+        "SCHEMA",
+        "SCORE",
+        "SEASON",
+        "SET",
+        "SETTLED",
+        "SETTLEMENT",
+        "SEVERITY",
+        "SHORT",
+        "SHOTS",
+        "SIDE",
+        "SIMULTANEOUS",
+        "SLEEP",
+        "SNOW",
+        "SOLAR",
+        "SORENESS",
+        "SOURCE",
+        "SPEED",
+        "SPRINTS",
+        "SQUAD",
+        "STADIUM",
+        "STAFF",
+        "STANDINGS",
+        "STARTER",
+        "STARTS",
+        "STATEMENT",
+        "STOPPER",
+        "STREAK",
+        "STYLE",
+        "SUBSTITUTE",
+        "SUBSTITUTION",
+        "SUBSTITUTIONS",
+        "SURFACE",
+        "SUSPENDED",
+        "SUSPENSION",
+        "SWEEPER",
+        "TACKLES",
+        "TAKER",
+        "TARGET",
+        "TEAM",
+        "TEMPERATURE",
+        "TEMPORARY",
+        "TENURE",
+        "THERMAL",
+        "THIRD",
+        "THREATENED",
+        "THROUGH",
+        "THUNDERSTORM",
+        "TIE",
+        "TIME",
+        "TIMEZONE",
+        "TITLE",
+        "TOP",
+        "TRANSFER",
+        "TRANSITION",
+        "TRANSITIONS",
+        "TRAVEL",
+        "UNDERLAP",
+        "USUAL",
+        "VALID",
+        "VAR",
+        "VENUE",
+        "VERSATILITY",
+        "VISIBILITY",
+        "VOLATILITY",
+        "VOLUNTARY",
+        "WEATHER",
+        "WEEKDAY",
+        "WEIGHTED",
+        "WET",
+        "WIDE",
+        "WIDTH",
+        "WIND",
+        "WING",
+        "WINGBACK",
+        "XA",
+        "XG",
+        "XGA",
+        "YELLOW"
+      ]
+    },
+    "hypothesis-facets": {
+      "campaigns": 9,
+      "cutoffs": [
+        "H-24",
+        "H-2",
+        "NEAR_KICKOFF",
+        "POST_LINEUP"
+      ],
+      "families": {
+        "ABSENCE_RETURN": 19,
+        "ATTACK": 21,
+        "BENCH_SUBSTITUTIONS": 12,
+        "CALENDAR_FATIGUE": 17,
+        "CHEMISTRY_NETWORKS": 13,
+        "COACH": 16,
+        "DATA_QUALITY": 13,
+        "DEFENCE": 19,
+        "DISCIPLINE_REFEREE": 19,
+        "EVENT_GAME_STATE": 12,
+        "FOOTEDNESS_LATERALITY": 11,
+        "FORMATION_STRUCTURE": 14,
+        "GOALKEEPER": 12,
+        "INFORMATION_NEWS": 17,
+        "LINEUP_CONTINUITY": 16,
+        "MARKET": 22,
+        "MATCH_COMPETITION": 27,
+        "MEDICAL": 13,
+        "ORGANISATION_SQUAD": 10,
+        "PLAYER": 33,
+        "POSSESSION_PRESSING": 19,
+        "ROLE_TACTICS": 25,
+        "SET_PIECES": 15,
+        "STADIUM_PITCH": 20,
+        "STRENGTH_FORM": 16,
+        "TRAINING_LOAD": 14,
+        "TRAVEL_LOGISTICS": 16,
+        "WEATHER": 25
+      },
+      "markets": [
+        "1X2",
+        "CARDS_IF_PRICED",
+        "GOALS_TOTAL",
+        "NO_MARKET_REQUIRED",
+        "OPTIONAL_MARKET",
+        "OVER_UNDER_2_5",
+        "PLAYER_PROPS_IF_PRICED"
+      ],
+      "origins": {
+        "AI_PROPOSED": "Proposition compilée par IA",
+        "LITERATURE_PROPOSED": "Recherche externe",
+        "MACHINE_DISCOVERED": "Découverte de Robin",
+        "MODEL_DISCOVERED": "Découverte d’un modèle",
+        "OWNER_PROPOSED": "Proposition de David"
+      },
+      "schema_version": "hypothesis-facets-v1",
+      "sources": [
+        "ALL_VERSIONED_SOURCES",
+        "API_FOOTBALL_COACH_AND_MATCH_EVENTS",
+        "API_FOOTBALL_EVENTS",
+        "API_FOOTBALL_FIXTURE",
+        "API_FOOTBALL_INJURY_AND_OFFICIAL_INFORMATION",
+        "API_FOOTBALL_LINEUP",
+        "API_FOOTBALL_LINEUP_AND_EVENTS",
+        "API_FOOTBALL_LINEUP_OR_TRACKING",
+        "API_FOOTBALL_OR_OFFICIAL_REPORT",
+        "API_FOOTBALL_PLAYER",
+        "API_FOOTBALL_PLAYER_OR_EVENT_SOURCE",
+        "API_FOOTBALL_VENUE_OR_OPEN_DATA",
+        "DERIVED_SCHEDULE_AND_UNCONFIGURED_ROUTE_SOURCE",
+        "EVENT_OR_TRACKING_SOURCE_NOT_CONFIGURED",
+        "FOOTBALL_DATA_AND_THE_ODDS_API",
+        "FREE_ARCHIVED_FORECAST_NOT_CONFIGURED",
+        "HISTORICAL_MATCH_RESULTS_AND_EVENT_SOURCE",
+        "OFFICIAL_INJURY_REPORT_OR_PRIVATE_MEDICAL_DATA",
+        "OFFICIAL_PUBLICATION_NOT_CONFIGURED",
+        "OFFICIAL_REGISTRATION_OR_TRANSFER_SOURCE",
+        "PRIVATE_CLUB_DATA_NOT_AVAILABLE",
+        "ROBIN_DEEP_FOOTBALL",
+        "SOURCED_PLAYER_PROFILE"
+      ],
+      "statuses": {
+        "COMPUTE_DEFERRED": 912,
+        "DATA_GATE_BLOCKED": 149,
+        "EXECUTED": 13,
+        "LONG_TAIL_WATCHLIST": 8,
+        "PRUNED": 10
+      },
+      "tree_depths": [
+        1,
+        2,
+        3
+      ]
+    },
+    "hypothesis-tree-root-index": {
+      "detail_pages_storage": "BUILD_ARTIFACT_NOT_GIT",
+      "node_count": 180,
+      "page_manifest": [
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-001.json",
+          "bytes": 100926,
+          "page": 1,
+          "records": 50,
+          "sha256": "99b22d395e8fef27611b66aaebb1e39379f247e577a5d1e4c0db4b21972602a7"
+        },
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-002.json",
+          "bytes": 113967,
+          "page": 2,
+          "records": 50,
+          "sha256": "663fccb93ffaba8de6495a92da5218f77286bc8ebf6a843b149c55402a4613b8"
+        },
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-003.json",
+          "bytes": 132813,
+          "page": 3,
+          "records": 50,
+          "sha256": "a5538821cb169844b9865b0670f94443dbc23f4796dae16791da76d9cf0412da"
+        },
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-004.json",
+          "bytes": 79805,
+          "page": 4,
+          "records": 30,
+          "sha256": "8fdd85dbce8b3cc04322d8b0d24f6fb12ab475b0c8aa9cf3da52a649630652d2"
+        }
+      ],
+      "page_size": 50,
+      "replay_hash": "1a3fbbd00ff357b76e82705e6748a666f43786609fb34039d34f150a0fecf8c8",
+      "roots": [
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL"
+          ],
+          "display_rule_fr": "forme",
+          "family": "STRENGTH_FORM",
+          "historical_metrics": null,
+          "materialization_disposition": "EXECUTED",
+          "node_id": "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "aa53d88b40606ced8b2f114238be6e266c44ce669b61855ba92fc8777fd507b0",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "FORM",
+          "support": 7081,
+          "tags": [
+            "Force et forme",
+            "STRENGTH_FORM"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "TRAIN_ONLY",
+                "operator": "GE",
+                "property_id": "football:strength_form:form",
+                "relation": "APPLIES_TO",
+                "transform": "ROLLING_MEAN",
+                "value": 0.5,
+                "window": "MATCHES_5"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "DATA_GATE_BLOCKED"
+          ],
+          "display_rule_fr": "buts marqués",
+          "family": "ATTACK",
+          "historical_metrics": null,
+          "materialization_disposition": "DATA_GATE_BLOCKED",
+          "node_id": "hypothesis-node-636251d5e1c9f22b27a20a995fdd337f8119b1274a274d44278d60dcbfcaffa5",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "0117bcf650ee728e0d55e055cd8043b194085c49f2973bf8cfeca13c3bc4efa8",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "GOALS",
+          "support": null,
+          "tags": [
+            "Attaque",
+            "ATTACK"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "TRAIN_ONLY",
+                "operator": "GE",
+                "property_id": "football:attack:goals_scored",
+                "relation": "APPLIES_TO",
+                "transform": "ROLLING_MEAN",
+                "value": 1,
+                "window": "MATCHES_5"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "DATA_GATE_BLOCKED"
+          ],
+          "display_rule_fr": "déplacements consécutifs",
+          "family": "TRAVEL_LOGISTICS",
+          "historical_metrics": null,
+          "materialization_disposition": "DATA_GATE_BLOCKED",
+          "node_id": "hypothesis-node-233c572f7919f26eb277d32505141b2afb2346217d9c9675a0c7d630d953e04d",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "f8fb9e18f86fd6b9a5fc7af94a1ef6fb5fcc46f9e4167e3a4b87a672065cfce3",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "CONSECUTIVE",
+          "support": null,
+          "tags": [
+            "Déplacements et logistique",
+            "TRAVEL_LOGISTICS"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_TEMPLATE_ONLY",
+                "operator": "GE",
+                "property_id": "football:travel_logistics:consecutive_away_matches",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 3,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL"
+          ],
+          "display_rule_fr": "jours de repos",
+          "family": "CALENDAR_FATIGUE",
+          "historical_metrics": null,
+          "materialization_disposition": "PRUNED",
+          "node_id": "hypothesis-node-f6a57e02fec00b8750003ced60fd6881a994c84758eb175ff05fefd8b3092bd7",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "a54343b51eb018f071ba733acef9e6d3b0cba76741cfc65d5045cda5af05c649",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "REST",
+          "support": 0,
+          "tags": [
+            "Calendrier et fatigue",
+            "CALENDAR_FATIGUE"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "LOGICAL_NEGATIVE_CONTROL",
+                "operator": "LT",
+                "property_id": "football:calendar_fatigue:rest_days",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL"
+          ],
+          "display_rule_fr": "Elo",
+          "family": "STRENGTH_FORM",
+          "historical_metrics": null,
+          "materialization_disposition": "EXECUTED",
+          "node_id": "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "dd9eae652cc03ea810b22f23e717767c8a721aa41cfa9d267952a30ae54ea460",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "ELO",
+          "support": 7081,
+          "tags": [
+            "Force et forme",
+            "STRENGTH_FORM"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_DIAGNOSTIC",
+                "operator": "GE",
+                "property_id": "football:strength_form:elo",
+                "relation": "APPLIES_TO",
+                "transform": "DIFFERENCE",
+                "value": 0,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "READY"
+          ],
+          "display_rule_fr": "valeur manquante",
+          "family": "DATA_QUALITY",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "95c55c8f27565d3d6a5954b24abecd2db377352fc8c782b447c55954f50ee2da",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "MISSINGNESS",
+          "support": null,
+          "tags": [
+            "Qualité et provenance",
+            "DATA_QUALITY"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL"
+          ],
+          "display_rule_fr": "jours de repos",
+          "family": "CALENDAR_FATIGUE",
+          "historical_metrics": null,
+          "materialization_disposition": "EXECUTED",
+          "node_id": "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "8a7fd1acd61d729e283af5b3d9f32162241f5b60a6354b0791ee3bd9c74fb65a",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "REST",
+          "support": 7081,
+          "tags": [
+            "Calendrier et fatigue",
+            "CALENDAR_FATIGUE"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_DIAGNOSTIC",
+                "operator": "LE",
+                "property_id": "football:calendar_fatigue:rest_days",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 3,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "DATA_GATE_BLOCKED"
+          ],
+          "display_rule_fr": "vent par rapport à l’axe du terrain",
+          "family": "WEATHER",
+          "historical_metrics": null,
+          "materialization_disposition": "DATA_GATE_BLOCKED",
+          "node_id": "hypothesis-node-c1477389ec429b753d55301768ef984859ab00b823006988dff6d4752686d67a",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "c83fdf639cbc9ac51bc17300da4c0bd2bf717cb56ab2fff0b6f9512f41c0c89a",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "CROSSWIND",
+          "support": null,
+          "tags": [
+            "Météo",
+            "WEATHER"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_TEMPLATE_ONLY",
+                "operator": "GE",
+                "property_id": "football:weather:crosswind_component",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 10,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "DATA_GATE_BLOCKED"
+          ],
+          "display_rule_fr": "pied préféré sourcé",
+          "family": "PLAYER",
+          "historical_metrics": null,
+          "materialization_disposition": "DATA_GATE_BLOCKED",
+          "node_id": "hypothesis-node-77f02f9f69c7b53e2c3a95ab6c4b565f0b4650de52bf0d947b397858dc122717",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "76aa09c37f4f7c16d2e6b4c12483b6c230dfe239eaa9f8bc191b258f2d50574c",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "PREFERRED",
+          "support": null,
+          "tags": [
+            "Joueurs",
+            "PLAYER"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_TEMPLATE_ONLY_NEVER_INFER",
+                "operator": "EQ",
+                "property_id": "football:player:preferred_foot",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": "LEFT",
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL"
+          ],
+          "display_rule_fr": "marge de marché",
+          "family": "MARKET",
+          "historical_metrics": null,
+          "materialization_disposition": "EXECUTED",
+          "node_id": "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "5357f507f3cccc07ad87b4d73bae3576a9458cc5f1e439b7665efcf1643183dd",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "MARKET",
+          "support": 7081,
+          "tags": [
+            "Marché",
+            "MARKET"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_HISTORICAL_PRICE_CLASS",
+                "operator": "LE",
+                "property_id": "football:market:market_margin",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.08,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "DATA_GATE_BLOCKED"
+          ],
+          "display_rule_fr": "formation",
+          "family": "FORMATION_STRUCTURE",
+          "historical_metrics": null,
+          "materialization_disposition": "DATA_GATE_BLOCKED",
+          "node_id": "hypothesis-node-5e0d245712718834b994e7dcb0b28f69e85a7fef2f9816c1a0cee63395a1251a",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "1cb00d9b01a045908e7c49767d79e1b71d8ef4961a8323ca71937a62a8e2c594",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "FORMATION",
+          "support": null,
+          "tags": [
+            "Formations et structures",
+            "FORMATION_STRUCTURE"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_TEMPLATE_ONLY",
+                "operator": "EQ",
+                "property_id": "football:formation_structure:formation",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": "4-3-3",
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "DATA_GATE_BLOCKED"
+          ],
+          "display_rule_fr": "joueur sous menace de suspension",
+          "family": "DISCIPLINE_REFEREE",
+          "historical_metrics": null,
+          "materialization_disposition": "DATA_GATE_BLOCKED",
+          "node_id": "hypothesis-node-efc0310231b74b20fdd21f281b5d547eeb9c107e129b9878780c72f67a460049",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "94bfc39f2a40e95a1e5edad28c417e749dd624562dd1b86171f6ff6a648221cd",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "SUSPENSION",
+          "support": null,
+          "tags": [
+            "Discipline et arbitrage",
+            "DISCIPLINE_REFEREE"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_TEMPLATE_ONLY",
+                "operator": "EQ",
+                "property_id": "football:discipline_referee:suspension_threat",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": true,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "DATA_GATE_BLOCKED"
+          ],
+          "display_rule_fr": "buts encaissés",
+          "family": "DEFENCE",
+          "historical_metrics": null,
+          "materialization_disposition": "DATA_GATE_BLOCKED",
+          "node_id": "hypothesis-node-96d7c678549e799fa6d0961ed122b4e657661543b240378a31617228574ab329",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "a1f9363078214ca7f668d2911ac0d5b47ebe95da5dec377a531d6e9ddfbee57d",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "GOALS",
+          "support": null,
+          "tags": [
+            "Défense",
+            "DEFENCE"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "TRAIN_ONLY",
+                "operator": "GE",
+                "property_id": "football:defence:goals_conceded",
+                "relation": "APPLIES_TO",
+                "transform": "ROLLING_MEAN",
+                "value": 1,
+                "window": "MATCHES_5"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        }
+      ],
+      "schema_version": "hypothesis-tree-root-index-v1",
+      "tree_id": "UNIVERSAL_FOOTBALL_TREE_V1"
+    },
+    "hypothesis-family-tree-index": {
+      "families": {
+        "ABSENCE_RETURN": {
+          "label_fr": "Absences et retours",
+          "root_node_ids": []
+        },
+        "ATTACK": {
+          "label_fr": "Attaque",
+          "root_node_ids": [
+            "hypothesis-node-636251d5e1c9f22b27a20a995fdd337f8119b1274a274d44278d60dcbfcaffa5"
+          ]
+        },
+        "BENCH_SUBSTITUTIONS": {
+          "label_fr": "Banc et substitutions",
+          "root_node_ids": []
+        },
+        "CALENDAR_FATIGUE": {
+          "label_fr": "Calendrier et fatigue",
+          "root_node_ids": [
+            "hypothesis-node-f6a57e02fec00b8750003ced60fd6881a994c84758eb175ff05fefd8b3092bd7",
+            "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce"
+          ]
+        },
+        "CHEMISTRY_NETWORKS": {
+          "label_fr": "Réseaux et complémentarités",
+          "root_node_ids": []
+        },
+        "COACH": {
+          "label_fr": "Entraîneur et staff",
+          "root_node_ids": []
+        },
+        "DATA_QUALITY": {
+          "label_fr": "Qualité et provenance",
+          "root_node_ids": [
+            "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+          ]
+        },
+        "DEFENCE": {
+          "label_fr": "Défense",
+          "root_node_ids": [
+            "hypothesis-node-96d7c678549e799fa6d0961ed122b4e657661543b240378a31617228574ab329"
+          ]
+        },
+        "DISCIPLINE_REFEREE": {
+          "label_fr": "Discipline et arbitrage",
+          "root_node_ids": [
+            "hypothesis-node-efc0310231b74b20fdd21f281b5d547eeb9c107e129b9878780c72f67a460049"
+          ]
+        },
+        "EVENT_GAME_STATE": {
+          "label_fr": "État du match et événements",
+          "root_node_ids": []
+        },
+        "FOOTEDNESS_LATERALITY": {
+          "label_fr": "Pieds, côtés et latéralité",
+          "root_node_ids": []
+        },
+        "FORMATION_STRUCTURE": {
+          "label_fr": "Formations et structures",
+          "root_node_ids": [
+            "hypothesis-node-5e0d245712718834b994e7dcb0b28f69e85a7fef2f9816c1a0cee63395a1251a"
+          ]
+        },
+        "GOALKEEPER": {
+          "label_fr": "Gardien",
+          "root_node_ids": []
+        },
+        "INFORMATION_NEWS": {
+          "label_fr": "Information et actualité",
+          "root_node_ids": []
+        },
+        "LINEUP_CONTINUITY": {
+          "label_fr": "Compositions et continuité",
+          "root_node_ids": []
+        },
+        "MARKET": {
+          "label_fr": "Marché",
+          "root_node_ids": [
+            "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc"
+          ]
+        },
+        "MATCH_COMPETITION": {
+          "label_fr": "Match et compétition",
+          "root_node_ids": []
+        },
+        "MEDICAL": {
+          "label_fr": "Santé et réathlétisation",
+          "root_node_ids": []
+        },
+        "ORGANISATION_SQUAD": {
+          "label_fr": "Organisation et effectif",
+          "root_node_ids": []
+        },
+        "PLAYER": {
+          "label_fr": "Joueurs",
+          "root_node_ids": [
+            "hypothesis-node-77f02f9f69c7b53e2c3a95ab6c4b565f0b4650de52bf0d947b397858dc122717"
+          ]
+        },
+        "POSSESSION_PRESSING": {
+          "label_fr": "Possession, relance et pressing",
+          "root_node_ids": []
+        },
+        "ROLE_TACTICS": {
+          "label_fr": "Rôles et tactiques",
+          "root_node_ids": []
+        },
+        "SET_PIECES": {
+          "label_fr": "Coups de pied arrêtés",
+          "root_node_ids": []
+        },
+        "STADIUM_PITCH": {
+          "label_fr": "Stade et terrain",
+          "root_node_ids": []
+        },
+        "STRENGTH_FORM": {
+          "label_fr": "Force et forme",
+          "root_node_ids": [
+            "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9",
+            "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9"
+          ]
+        },
+        "TRAINING_LOAD": {
+          "label_fr": "Entraînement et charge",
+          "root_node_ids": []
+        },
+        "TRAVEL_LOGISTICS": {
+          "label_fr": "Déplacements et logistique",
+          "root_node_ids": [
+            "hypothesis-node-233c572f7919f26eb277d32505141b2afb2346217d9c9675a0c7d630d953e04d"
+          ]
+        },
+        "WEATHER": {
+          "label_fr": "Météo",
+          "root_node_ids": [
+            "hypothesis-node-c1477389ec429b753d55301768ef984859ab00b823006988dff6d4752686d67a"
+          ]
+        }
+      },
+      "schema_version": "hypothesis-family-tree-index-v1"
+    },
+    "hypothesis-global-rankings": {
+      "longue_traine_a_surveiller": [
+        {
+          "children_count": 0,
+          "data_gates": [
+            "READY"
+          ],
+          "display_rule_fr": "valeur manquante",
+          "family": "DATA_QUALITY",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4",
+          "parent_id": null,
+          "parent_ids": [],
+          "payload_hash": "95c55c8f27565d3d6a5954b24abecd2db377352fc8c782b447c55954f50ee2da",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "MISSINGNESS",
+          "support": null,
+          "tags": [
+            "Qualité et provenance",
+            "DATA_QUALITY"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL",
+            "READY"
+          ],
+          "display_rule_fr": "forme et valeur manquante",
+          "family": "STRENGTH_FORM",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1",
+          "parent_id": "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9",
+          "parent_ids": [
+            "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9",
+            "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+          ],
+          "payload_hash": "743a32196d98c6a2042ff30ab8848503d0ac1e66279f0e769ce1ec34911491fe",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "FORM",
+          "support": null,
+          "tags": [
+            "Force et forme",
+            "STRENGTH_FORM"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "TRAIN_ONLY",
+                "operator": "GE",
+                "property_id": "football:strength_form:form",
+                "relation": "APPLIES_TO",
+                "transform": "ROLLING_MEAN",
+                "value": 0.5,
+                "window": "MATCHES_5"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL",
+            "READY"
+          ],
+          "display_rule_fr": "Elo et valeur manquante",
+          "family": "STRENGTH_FORM",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+          "parent_id": "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9",
+          "parent_ids": [
+            "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9",
+            "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+          ],
+          "payload_hash": "047180a4c2acd07ff0f33204921ee856bdd7c40e1d30f460a25d0048e636f7b9",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "ELO",
+          "support": null,
+          "tags": [
+            "Force et forme",
+            "STRENGTH_FORM"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_DIAGNOSTIC",
+                "operator": "GE",
+                "property_id": "football:strength_form:elo",
+                "relation": "APPLIES_TO",
+                "transform": "DIFFERENCE",
+                "value": 0,
+                "window": "CURRENT"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "READY",
+            "PARTIAL"
+          ],
+          "display_rule_fr": "valeur manquante et jours de repos",
+          "family": "DATA_QUALITY",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd",
+          "parent_id": "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce",
+          "parent_ids": [
+            "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce",
+            "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+          ],
+          "payload_hash": "3977762065ed8f29384a59be5e6bc2b162aec789d14079cbe6fefd8ee14ddd4f",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "MISSINGNESS",
+          "support": null,
+          "tags": [
+            "Qualité et provenance",
+            "DATA_QUALITY"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_DIAGNOSTIC",
+                "operator": "LE",
+                "property_id": "football:calendar_fatigue:rest_days",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 3,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "READY",
+            "PARTIAL"
+          ],
+          "display_rule_fr": "valeur manquante et marge de marché",
+          "family": "DATA_QUALITY",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+          "parent_id": "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc",
+          "parent_ids": [
+            "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc",
+            "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
+          ],
+          "payload_hash": "da1ca2366c47fc78b0eac24ec1ce257da3b514d96c8733a984cbf64166a48cc3",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "MISSINGNESS",
+          "support": null,
+          "tags": [
+            "Qualité et provenance",
+            "DATA_QUALITY"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_HISTORICAL_PRICE_CLASS",
+                "operator": "LE",
+                "property_id": "football:market:market_margin",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.08,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL",
+            "PARTIAL",
+            "READY"
+          ],
+          "display_rule_fr": "forme et Elo et valeur manquante",
+          "family": "STRENGTH_FORM",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-6b5e98af6e9796829e22fa9561a9dc313e711a90d4edb825b2dfa18730b270d5",
+          "parent_id": "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+          "parent_ids": [
+            "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+            "hypothesis-node-5f93fdd923f22324f6ae1018f11d5ab3791f13339a08995fc9b5ad4de141fe3c",
+            "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1"
+          ],
+          "payload_hash": "fa84040882968341acb08e516f6ad8417e67015cd77468a26614de5a3a944002",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "FORM",
+          "support": null,
+          "tags": [
+            "Force et forme",
+            "STRENGTH_FORM"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "TRAIN_ONLY",
+                "operator": "GE",
+                "property_id": "football:strength_form:form",
+                "relation": "APPLIES_TO",
+                "transform": "ROLLING_MEAN",
+                "value": 0.5,
+                "window": "MATCHES_5"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_DIAGNOSTIC",
+                "operator": "GE",
+                "property_id": "football:strength_form:elo",
+                "relation": "APPLIES_TO",
+                "transform": "DIFFERENCE",
+                "value": 0,
+                "window": "CURRENT"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL",
+            "READY",
+            "PARTIAL"
+          ],
+          "display_rule_fr": "forme et valeur manquante et jours de repos",
+          "family": "STRENGTH_FORM",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-544925f5ec28d8a5d53bfe9fbbe3a2d0a2b1e67957f2b3a83673be68846214d2",
+          "parent_id": "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8",
+          "parent_ids": [
+            "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8",
+            "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd",
+            "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1"
+          ],
+          "payload_hash": "25d04a7d51e7b5bbbfc8101c83613837e1ef18845e3f574b91d05d477adb5b1b",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "FORM",
+          "support": null,
+          "tags": [
+            "Force et forme",
+            "STRENGTH_FORM"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "TRAIN_ONLY",
+                "operator": "GE",
+                "property_id": "football:strength_form:form",
+                "relation": "APPLIES_TO",
+                "transform": "ROLLING_MEAN",
+                "value": 0.5,
+                "window": "MATCHES_5"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_DIAGNOSTIC",
+                "operator": "LE",
+                "property_id": "football:calendar_fatigue:rest_days",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 3,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        },
+        {
+          "children_count": 0,
+          "data_gates": [
+            "PARTIAL",
+            "READY",
+            "PARTIAL"
+          ],
+          "display_rule_fr": "forme et valeur manquante et marge de marché",
+          "family": "STRENGTH_FORM",
+          "historical_metrics": null,
+          "materialization_disposition": "LONG_TAIL_WATCHLIST",
+          "node_id": "hypothesis-node-14687631fc395fc3d6ac25e2f3f453cfee22c6222632b8fd811e5a48b250988c",
+          "parent_id": "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+          "parent_ids": [
+            "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+            "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1",
+            "hypothesis-node-f1e889eb612319659b1301ed298ec973a95fed53ed864bb69a61a528994c3be0"
+          ],
+          "payload_hash": "dc2a25ba9de3c835b799b8a74186d3a8cc3eb8ba6940dea83b742a074030bc95",
+          "prospective_metrics": null,
+          "rankings": null,
+          "status": "NOT_TESTED",
+          "subfamily": "FORM",
+          "support": null,
+          "tags": [
+            "Force et forme",
+            "STRENGTH_FORM"
+          ],
+          "technical_rule": {
+            "context": [
+              "PRE_MATCH"
+            ],
+            "cutoff": "H-2",
+            "entity_scope": "TEAM_FIXTURE",
+            "graph_pattern": null,
+            "logical_operator": "ALL",
+            "market": null,
+            "predicates": [
+              {
+                "binding": "subject",
+                "learned_on": "TRAIN_ONLY",
+                "operator": "GE",
+                "property_id": "football:strength_form:form",
+                "relation": "APPLIES_TO",
+                "transform": "ROLLING_MEAN",
+                "value": 0.5,
+                "window": "MATCHES_5"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+                "operator": "GE",
+                "property_id": "football:data_quality:missingness",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.25,
+                "window": "CURRENT"
+              },
+              {
+                "binding": "subject",
+                "learned_on": "FIXED_HISTORICAL_PRICE_CLASS",
+                "operator": "LE",
+                "property_id": "football:market:market_margin",
+                "relation": "APPLIES_TO",
+                "transform": "RAW",
+                "value": 0.08,
+                "window": "CURRENT"
+              }
+            ],
+            "price_contract": null,
+            "relation": "INTERACTS_WITH",
+            "target": "MATCH_RESULT",
+            "temporal_window": "AS_OF_CUTOFF"
+          }
+        }
+      ],
+      "meilleures_observations_prospectives": [],
+      "meilleures_priorites_exploratoires": [
+        {
+          "competition": "La Liga",
+          "family": "MARKET",
+          "historical_roi": 0.1663984674329502,
+          "historical_support": 261,
+          "hypothesis_id": "J10-M001",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1,
+          "rank": 1,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        },
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1594490358126722,
+          "historical_support": 363,
+          "hypothesis_id": "J10-M002",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1,
+          "rank": 2,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        },
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1386721991701245,
+          "historical_support": 241,
+          "hypothesis_id": "J10-M003",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1,
+          "rank": 3,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        }
+      ],
+      "meilleurs_signaux_historiques_bruts": [
+        {
+          "competition": "La Liga",
+          "family": "MARKET",
+          "historical_roi": 0.1663984674329502,
+          "historical_support": 261,
+          "hypothesis_id": "J10-M001",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1,
+          "rank": 1,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        },
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1594490358126722,
+          "historical_support": 363,
+          "hypothesis_id": "J10-M002",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1,
+          "rank": 2,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        },
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1386721991701245,
+          "historical_support": 241,
+          "hypothesis_id": "J10-M003",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1,
+          "rank": 3,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        }
+      ],
+      "schema_version": "hypothesis-global-rankings-v1",
+      "strategies_validees": [],
+      "warning_fr": "Un signal historique ou une priorité exploratoire n’est pas une stratégie validée."
+    },
+    "hypothesis-rankings-by-competition": {
+      "competitions": {
+        "La Liga": {
+          "meilleurs_signaux_historiques_bruts": [
+            {
+              "competition": "La Liga",
+              "family": "MARKET",
+              "historical_roi": 0.1663984674329502,
+              "historical_support": 261,
+              "hypothesis_id": "J10-M001",
+              "label_fr": "Meilleur signal historique brut",
+              "q_value": 1,
+              "rank": 1,
+              "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+            }
+          ],
+          "strategies_validees": []
+        },
+        "Serie A": {
+          "meilleurs_signaux_historiques_bruts": [
+            {
+              "competition": "Serie A",
+              "family": "MARKET",
+              "historical_roi": 0.1594490358126722,
+              "historical_support": 363,
+              "hypothesis_id": "J10-M002",
+              "label_fr": "Meilleur signal historique brut",
+              "q_value": 1,
+              "rank": 2,
+              "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+            },
+            {
+              "competition": "Serie A",
+              "family": "MARKET",
+              "historical_roi": 0.1386721991701245,
+              "historical_support": 241,
+              "hypothesis_id": "J10-M003",
+              "label_fr": "Meilleur signal historique brut",
+              "q_value": 1,
+              "rank": 3,
+              "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+            }
+          ],
+          "strategies_validees": []
+        }
+      },
+      "schema_version": "hypothesis-rankings-by-competition-v1"
+    },
+    "hypothesis-rankings-by-family": {
+      "families": {
+        "ABSENCE_RETURN": {
+          "label_fr": "Absences et retours",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "ATTACK": {
+          "label_fr": "Attaque",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "BENCH_SUBSTITUTIONS": {
+          "label_fr": "Banc et substitutions",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "CALENDAR_FATIGUE": {
+          "label_fr": "Calendrier et fatigue",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "CHEMISTRY_NETWORKS": {
+          "label_fr": "Réseaux et complémentarités",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "COACH": {
+          "label_fr": "Entraîneur et staff",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "DATA_QUALITY": {
+          "label_fr": "Qualité et provenance",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "DEFENCE": {
+          "label_fr": "Défense",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "DISCIPLINE_REFEREE": {
+          "label_fr": "Discipline et arbitrage",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "EVENT_GAME_STATE": {
+          "label_fr": "État du match et événements",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "FOOTEDNESS_LATERALITY": {
+          "label_fr": "Pieds, côtés et latéralité",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "FORMATION_STRUCTURE": {
+          "label_fr": "Formations et structures",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "GOALKEEPER": {
+          "label_fr": "Gardien",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "INFORMATION_NEWS": {
+          "label_fr": "Information et actualité",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "LINEUP_CONTINUITY": {
+          "label_fr": "Compositions et continuité",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "MARKET": {
+          "label_fr": "Marché",
+          "meilleurs_signaux_historiques_bruts": [
+            {
+              "competition": "La Liga",
+              "family": "MARKET",
+              "historical_roi": 0.1663984674329502,
+              "historical_support": 261,
+              "hypothesis_id": "J10-M001",
+              "label_fr": "Meilleur signal historique brut",
+              "q_value": 1,
+              "rank": 1,
+              "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+            },
+            {
+              "competition": "Serie A",
+              "family": "MARKET",
+              "historical_roi": 0.1594490358126722,
+              "historical_support": 363,
+              "hypothesis_id": "J10-M002",
+              "label_fr": "Meilleur signal historique brut",
+              "q_value": 1,
+              "rank": 2,
+              "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+            },
+            {
+              "competition": "Serie A",
+              "family": "MARKET",
+              "historical_roi": 0.1386721991701245,
+              "historical_support": 241,
+              "hypothesis_id": "J10-M003",
+              "label_fr": "Meilleur signal historique brut",
+              "q_value": 1,
+              "rank": 3,
+              "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+            }
+          ],
+          "strategies_validees": []
+        },
+        "MATCH_COMPETITION": {
+          "label_fr": "Match et compétition",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "MEDICAL": {
+          "label_fr": "Santé et réathlétisation",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "ORGANISATION_SQUAD": {
+          "label_fr": "Organisation et effectif",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "PLAYER": {
+          "label_fr": "Joueurs",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "POSSESSION_PRESSING": {
+          "label_fr": "Possession, relance et pressing",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "ROLE_TACTICS": {
+          "label_fr": "Rôles et tactiques",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "SET_PIECES": {
+          "label_fr": "Coups de pied arrêtés",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "STADIUM_PITCH": {
+          "label_fr": "Stade et terrain",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "STRENGTH_FORM": {
+          "label_fr": "Force et forme",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "TRAINING_LOAD": {
+          "label_fr": "Entraînement et charge",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "TRAVEL_LOGISTICS": {
+          "label_fr": "Déplacements et logistique",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        },
+        "WEATHER": {
+          "label_fr": "Météo",
+          "meilleurs_signaux_historiques_bruts": [],
+          "strategies_validees": []
+        }
+      },
+      "schema_version": "hypothesis-rankings-by-family-v1"
+    },
+    "hypothesis-status-funnel": {
+      "counts": {
+        "COMPUTE_DEFERRED": 912,
+        "DATA_GATE_BLOCKED": 149,
+        "EXECUTED": 13,
+        "LONG_TAIL_WATCHLIST": 8,
+        "PRUNED": 10
+      },
+      "schema_version": "hypothesis-status-funnel-v1",
+      "scientific_rejections": 0,
+      "validated_strategies": 0
+    },
+    "hypothesis-live-activity": {
+      "hypothesis_observations": 0,
+      "last_activity": null,
+      "prospective_settlements": 0,
+      "real_bets": 0,
+      "real_predictions": 0,
+      "real_training_runs": 0,
+      "schema_version": "hypothesis-live-activity-v1"
+    },
+    "hypothesis-glossary-fr": {
+      "Baisse maximale de la bankroll simulée": "Drawdown",
+      "Condition de disponibilité": "Gate",
+      "Correction du risque de faux positifs": "FDR",
+      "Risque de faux positif après correction": "q-value",
+      "Validation chronologique glissante": "Walk-forward",
+      "Variable analysée": "Feature",
+      "note": "Les termes techniques originaux sont réservés à la Vue Expert.",
+      "schema_version": "hypothesis-glossary-fr-v1"
+    },
+    "competition-identity-catalog": {
+      "items": [
+        {
+          "canonical_competition_key": "api-football:61",
+          "display_name_en": "Ligue 1",
+          "display_name_fr": "Ligue 1",
+          "historical_aliases": [
+            "France Ligue 1",
+            "F1"
+          ],
+          "identity_hash": "692184aae3e09a097edf3474fd4bce1419947d13ce7cd898c524ad13a0c34792",
+          "provider": "API_FOOTBALL",
+          "provider_aliases": [
+            "Ligue 1"
+          ],
+          "provider_competition_id": "61"
+        },
+        {
+          "canonical_competition_key": "api-football:39",
+          "display_name_en": "Premier League",
+          "display_name_fr": "Premier League",
+          "historical_aliases": [
+            "English Premier League",
+            "E0"
+          ],
+          "identity_hash": "77ea14289c9a1c8b86cfe56c9fc2369c034ad991f4f13d14af4f51e9fa154aaa",
+          "provider": "API_FOOTBALL",
+          "provider_aliases": [
+            "Premier League"
+          ],
+          "provider_competition_id": "39"
+        },
+        {
+          "canonical_competition_key": "api-football:140",
+          "display_name_en": "La Liga",
+          "display_name_fr": "Liga",
+          "historical_aliases": [
+            "La Liga",
+            "Primera División",
+            "SP1"
+          ],
+          "identity_hash": "790bf021fa1b27f7542856d7a1db58ebb9239534e6a61ac59ab6722bce37b863",
+          "provider": "API_FOOTBALL",
+          "provider_aliases": [
+            "Liga",
+            "LaLiga"
+          ],
+          "provider_competition_id": "140"
+        },
+        {
+          "canonical_competition_key": "api-football:78",
+          "display_name_en": "Bundesliga",
+          "display_name_fr": "Bundesliga",
+          "historical_aliases": [
+            "Germany Bundesliga",
+            "D1"
+          ],
+          "identity_hash": "14716a95012e74480295cb3650e4a260ade9c3945e2f5be5be6841b6ea2f9ba1",
+          "provider": "API_FOOTBALL",
+          "provider_aliases": [
+            "Bundesliga"
+          ],
+          "provider_competition_id": "78"
+        },
+        {
+          "canonical_competition_key": "api-football:135",
+          "display_name_en": "Serie A",
+          "display_name_fr": "Serie A",
+          "historical_aliases": [
+            "Italy Serie A",
+            "I1"
+          ],
+          "identity_hash": "eb4f13c506a4c53fc9b9f8d1d7ed53f28c76fc8502a9e5bfe97b73e369d01a06",
+          "provider": "API_FOOTBALL",
+          "provider_aliases": [
+            "Serie A"
+          ],
+          "provider_competition_id": "135"
+        }
+      ],
+      "schema_version": "competition-identity-catalog-v1"
+    },
+    "campaign-catalog": {
+      "items": [
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "4268878ddc2f4d102d5c5377dcf7aaf0897abbed43abbbea8e48a0dd0f226640",
+          "campaign_id": "J10_MARKET_SLICE_V1",
+          "data_gate": "HISTORICAL_RESEARCH_ONLY",
+          "markets": [
+            "1X2",
+            "OVER_UNDER_2_5"
+          ],
+          "multiplicity_family": "J10_MARKET_SLICE_V1",
+          "property_families": [
+            "MARKET",
+            "MATCH_COMPETITION"
+          ],
+          "replay_policy": "CACHE_ONLY_IDENTICAL_HASH",
+          "revision": "1.0.0",
+          "sources": [
+            "FOOTBALL_DATA"
+          ],
+          "targets": [
+            "MATCH_RESULT",
+            "GOALS_TOTAL"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "b52bdefaaa47c732dd018e4980ebf8c88d771059d39ad9b8c800c335ad0f9aea",
+          "campaign_id": "UNIVERSAL_TEAM_FEATURES_V1",
+          "data_gate": "PARTIAL_SOURCE_OBSERVED_AT",
+          "markets": [
+            "1X2"
+          ],
+          "multiplicity_family": "UNIVERSAL_TEAM_FEATURES_V1",
+          "property_families": [
+            "STRENGTH_FORM",
+            "CALENDAR_FATIGUE",
+            "MATCH_COMPETITION"
+          ],
+          "replay_policy": "CACHE_ONLY_IDENTICAL_HASH",
+          "revision": "1.0.0",
+          "sources": [
+            "ROBIN_DEEP_FOOTBALL"
+          ],
+          "targets": [
+            "MATCH_RESULT",
+            "RESIDUAL_PERFORMANCE"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "756a0e8f74f5545cf96b500150e4aaedf91f2bfd8d56dbe0645bb76521de6d7f",
+          "campaign_id": "FORMATION_GRAPH_V1",
+          "data_gate": "DATA_GATE_BLOCKED",
+          "markets": [
+            "1X2",
+            "GOALS_TOTAL"
+          ],
+          "multiplicity_family": "FORMATION_GRAPH_V1",
+          "property_families": [
+            "FORMATION_STRUCTURE",
+            "ROLE_TACTICS",
+            "CHEMISTRY_NETWORKS"
+          ],
+          "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+          "revision": "1.0.0",
+          "sources": [
+            "API_FOOTBALL_LINEUP"
+          ],
+          "targets": [
+            "MATCH_RESULT",
+            "TEAM_GOALS"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "03cda825231116de643d149cecb444584abad56af15940f50bb5f77a11aec1d4",
+          "campaign_id": "PLAYER_ROLE_GRAPH_V1",
+          "data_gate": "DATA_GATE_BLOCKED",
+          "markets": [
+            "PLAYER_PROPS_IF_PRICED"
+          ],
+          "multiplicity_family": "PLAYER_ROLE_GRAPH_V1",
+          "property_families": [
+            "PLAYER",
+            "FOOTEDNESS_LATERALITY",
+            "ROLE_TACTICS"
+          ],
+          "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+          "revision": "1.0.0",
+          "sources": [
+            "API_FOOTBALL_PLAYER",
+            "TRACKING_NOT_CONFIGURED"
+          ],
+          "targets": [
+            "EVENT_COUNT",
+            "PLAYER_AVAILABILITY"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "75c5acab979b4078c7774289ccb027cdf1826d2650c34d2c08992c90b7034178",
+          "campaign_id": "WEATHER_TACTICS_V1",
+          "data_gate": "DATA_GATE_BLOCKED",
+          "markets": [
+            "NO_MARKET_REQUIRED"
+          ],
+          "multiplicity_family": "WEATHER_TACTICS_V1",
+          "property_families": [
+            "WEATHER",
+            "STADIUM_PITCH",
+            "ROLE_TACTICS"
+          ],
+          "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+          "revision": "1.0.0",
+          "sources": [
+            "FREE_ARCHIVED_FORECAST_NOT_CONFIGURED"
+          ],
+          "targets": [
+            "MATCH_RESULT",
+            "EVENT_COUNT"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "e7ce5ef1c979b3afc1fa0d362ab3ee5e9171c8c9ae0648dd3e955a5a53680524",
+          "campaign_id": "TRAVEL_FATIGUE_V1",
+          "data_gate": "DATA_GATE_BLOCKED",
+          "markets": [
+            "NO_MARKET_REQUIRED"
+          ],
+          "multiplicity_family": "TRAVEL_FATIGUE_V1",
+          "property_families": [
+            "TRAVEL_LOGISTICS",
+            "CALENDAR_FATIGUE",
+            "PLAYER"
+          ],
+          "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+          "revision": "1.0.0",
+          "sources": [
+            "ROBIN_SCHEDULE",
+            "ROUTE_SOURCE_NOT_CONFIGURED"
+          ],
+          "targets": [
+            "RESIDUAL_PERFORMANCE",
+            "PLAYER_AVAILABILITY"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "933fdff689f429e4b7e842a1a270d1a995e90b5b6b11dab85471d1a2055edb94",
+          "campaign_id": "DISCIPLINE_REFEREE_V1",
+          "data_gate": "DATA_GATE_BLOCKED",
+          "markets": [
+            "CARDS_IF_PRICED",
+            "1X2"
+          ],
+          "multiplicity_family": "DISCIPLINE_REFEREE_V1",
+          "property_families": [
+            "DISCIPLINE_REFEREE",
+            "MATCH_COMPETITION"
+          ],
+          "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+          "revision": "1.0.0",
+          "sources": [
+            "OFFICIAL_REPORT_NOT_CONFIGURED"
+          ],
+          "targets": [
+            "EVENT_COUNT",
+            "MATCH_RESULT"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 6,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 5000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "1c4a3dceb4d340f6f4dfd91248ef01f211778d060ba67da3b55c602b63282bac",
+          "campaign_id": "ATTACK_DEFENSE_V1",
+          "data_gate": "PARTIAL_GOALS_ONLY",
+          "markets": [
+            "1X2",
+            "OVER_UNDER_2_5"
+          ],
+          "multiplicity_family": "ATTACK_DEFENSE_V1",
+          "property_families": [
+            "ATTACK",
+            "DEFENCE",
+            "POSSESSION_PRESSING",
+            "GOALKEEPER"
+          ],
+          "replay_policy": "CACHE_ONLY_IDENTICAL_HASH",
+          "revision": "1.0.0",
+          "sources": [
+            "ROBIN_DEEP_FOOTBALL",
+            "EVENT_SOURCE_NOT_CONFIGURED"
+          ],
+          "targets": [
+            "MATCH_RESULT",
+            "TEAM_GOALS",
+            "GOALS_TOTAL"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        },
+        {
+          "budget": {
+            "beam_width": 32,
+            "checkpoint_frequency": 100,
+            "expansion_batch_size": 128,
+            "maximum_depth": 12,
+            "maximum_evaluated_nodes": 2000,
+            "maximum_materialized_nodes": 10000,
+            "memory_budget_bytes": 536870912,
+            "wall_clock_budget_seconds": 30
+          },
+          "campaign_hash": "824c1cc0a61132f578a58741d734eebb63162e4190695f13e5f9854466eee997",
+          "campaign_id": "LONG_TAIL_FOOTBALL_TREE_V1",
+          "data_gate": "MIXED_DATA_GATES",
+          "markets": [
+            "OPTIONAL_MARKET"
+          ],
+          "multiplicity_family": "LONG_TAIL_FOOTBALL_TREE_V1",
+          "property_families": [],
+          "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+          "revision": "1.0.0",
+          "sources": [
+            "ALL_VERSIONED_SOURCES"
+          ],
+          "targets": [
+            "MATCH_RESULT",
+            "TEAM_GOALS",
+            "EVENT_COUNT",
+            "PLAYER_AVAILABILITY",
+            "NO_MARKET_TARGET"
+          ],
+          "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+        }
+      ],
+      "schema_version": "hypothesis-campaign-catalog-v1"
+    },
+    "prospective-freeze-provenance-v2": {
+      "contracts": [
+        {
+          "contract_hash": "efdfa052a0e685d9190b6fd4878ad82e37e14c9f36f0dd8a0e0269d2ba1b394b",
+          "contract_id": "J10-M001:2.0.0",
+          "contract_version": "2.0.0",
+          "eligibility_contract": "CANONICAL_COMPETITION_IDENTITY;STRICT_PRICE_AND_TEMPORAL_GATES;FAIL_CLOSED_UNKNOWN_IDENTITY",
+          "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+          "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
+          "hypothesis_id": "J10-M001",
+          "hypothesis_version": "1.0.0",
+          "price_contract_hash": "061b8d98a78e31918e7c5a5cefe2b809c86b0caca52b342bf14309140344aa31",
+          "primary_price": {
+            "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+            "bookmaker_scope": [
+              "CONFIGURED_EU_BOOKMAKERS"
+            ],
+            "cutoff_name": "NEAR_KICKOFF",
+            "cutoff_tolerance": "[-10m,+0m]",
+            "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+            "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+            "market": "h2h",
+            "maximum_margin": 0.06,
+            "maximum_odds": 2.5,
+            "minimum_odds": 2,
+            "missing_price_policy": "REJECTED_MISSING_PRICE",
+            "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+            "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+            "price_contract_version": "prospective-price-v1",
+            "provider": "THE_ODDS_API",
+            "selection": "AWAY",
+            "sport_key": "soccer_spain_la_liga"
+          },
+          "promotion_locked": true,
+          "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+          "rule_hash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+          "secondary_price": {
+            "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+            "bookmaker_scope": [
+              "CONFIGURED_EU_BOOKMAKERS"
+            ],
+            "cutoff_name": "H-2",
+            "cutoff_tolerance": "[-15m,+15m]",
+            "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+            "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+            "market": "h2h",
+            "maximum_margin": 0.06,
+            "maximum_odds": 2.5,
+            "minimum_odds": 2,
+            "missing_price_policy": "REJECTED_MISSING_PRICE",
+            "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+            "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+            "price_contract_version": "prospective-price-v1",
+            "provider": "THE_ODDS_API",
+            "selection": "AWAY",
+            "sport_key": "soccer_spain_la_liga"
+          },
+          "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+          "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+          "supersedes": "J10-M001:1.0.0"
+        },
+        {
+          "contract_hash": "a9bdf10e0bf1cbf464f5b3221146c64fdb8989f7ef87d2f3dc51189034e1caeb",
+          "contract_id": "J10-M002:2.0.0",
+          "contract_version": "2.0.0",
+          "eligibility_contract": "CANONICAL_COMPETITION_IDENTITY;STRICT_PRICE_AND_TEMPORAL_GATES;FAIL_CLOSED_UNKNOWN_IDENTITY",
+          "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+          "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
+          "hypothesis_id": "J10-M002",
+          "hypothesis_version": "1.0.0",
+          "price_contract_hash": "3c4a8a407eef936c5e0857e611ed7860a7c587bf70b655a689b2247d447bb8da",
+          "primary_price": {
+            "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+            "bookmaker_scope": [
+              "CONFIGURED_EU_BOOKMAKERS"
+            ],
+            "cutoff_name": "NEAR_KICKOFF",
+            "cutoff_tolerance": "[-10m,+0m]",
+            "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+            "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+            "market": "h2h",
+            "maximum_margin": 0.06,
+            "maximum_odds": 3.25,
+            "minimum_odds": 2.5,
+            "missing_price_policy": "REJECTED_MISSING_PRICE",
+            "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+            "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+            "price_contract_version": "prospective-price-v1",
+            "provider": "THE_ODDS_API",
+            "selection": "DRAW",
+            "sport_key": "soccer_italy_serie_a"
+          },
+          "promotion_locked": true,
+          "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+          "rule_hash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+          "secondary_price": {
+            "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+            "bookmaker_scope": [
+              "CONFIGURED_EU_BOOKMAKERS"
+            ],
+            "cutoff_name": "H-2",
+            "cutoff_tolerance": "[-15m,+15m]",
+            "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+            "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+            "market": "h2h",
+            "maximum_margin": 0.06,
+            "maximum_odds": 3.25,
+            "minimum_odds": 2.5,
+            "missing_price_policy": "REJECTED_MISSING_PRICE",
+            "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+            "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+            "price_contract_version": "prospective-price-v1",
+            "provider": "THE_ODDS_API",
+            "selection": "DRAW",
+            "sport_key": "soccer_italy_serie_a"
+          },
+          "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+          "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+          "supersedes": "J10-M002:1.0.0"
+        },
+        {
+          "contract_hash": "e7d9003b067a59b34830d65e877e2f8426d1745424597a3fe74352ea7595014c",
+          "contract_id": "J10-M003:2.0.0",
+          "contract_version": "2.0.0",
+          "eligibility_contract": "CANONICAL_COMPETITION_IDENTITY;STRICT_PRICE_AND_TEMPORAL_GATES;FAIL_CLOSED_UNKNOWN_IDENTITY",
+          "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+          "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
+          "hypothesis_id": "J10-M003",
+          "hypothesis_version": "1.0.0",
+          "price_contract_hash": "ed0f2a0f2a120f885b9ed481f432b64a5ab553c3d45593b7e89a1700b1a6312e",
+          "primary_price": {
+            "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+            "bookmaker_scope": [
+              "CONFIGURED_EU_BOOKMAKERS"
+            ],
+            "cutoff_name": "NEAR_KICKOFF",
+            "cutoff_tolerance": "[-10m,+0m]",
+            "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+            "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+            "market": "h2h",
+            "maximum_margin": 0.06,
+            "maximum_odds": 2,
+            "minimum_odds": 1.6,
+            "missing_price_policy": "REJECTED_MISSING_PRICE",
+            "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+            "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+            "price_contract_version": "prospective-price-v1",
+            "provider": "THE_ODDS_API",
+            "selection": "AWAY",
+            "sport_key": "soccer_italy_serie_a"
+          },
+          "promotion_locked": true,
+          "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+          "rule_hash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+          "secondary_price": {
+            "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+            "bookmaker_scope": [
+              "CONFIGURED_EU_BOOKMAKERS"
+            ],
+            "cutoff_name": "H-2",
+            "cutoff_tolerance": "[-15m,+15m]",
+            "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+            "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+            "market": "h2h",
+            "maximum_margin": 0.06,
+            "maximum_odds": 2,
+            "minimum_odds": 1.6,
+            "missing_price_policy": "REJECTED_MISSING_PRICE",
+            "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+            "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+            "price_contract_version": "prospective-price-v1",
+            "provider": "THE_ODDS_API",
+            "selection": "AWAY",
+            "sport_key": "soccer_italy_serie_a"
+          },
+          "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+          "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+          "supersedes": "J10-M003:1.0.0"
+        }
+      ],
+      "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+      "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
+      "legacy_v1": {
+        "active": false,
+        "provenance_complete": false,
+        "reason": "SUPERSEDED_BY_CORRECTIVE_V2",
+        "source_code_revision": "0057e1caf57bd4d6084ab456f7ee386fff728c2c"
+      },
+      "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+      "schema_version": "prospective-freeze-provenance-v2",
+      "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+      "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+      "status": "ACTIVE_CORRECTIVE_V2"
+    },
+    "security-locks": {
+      "DEMO_MODE_ENABLED": false,
+      "NO_BET_DEFAULT": true,
+      "P3_P4_PAUSED": true,
+      "PRODUCTION_LOCKED": true,
+      "PROMOTION_LOCKED": true,
+      "REAL_BETS": false,
+      "SOCIAL_PUBLISHING_ENABLED": false,
+      "STORAGE_PAUSED": true,
+      "odds_api_credits": 0,
+      "paid_weather_calls": 0,
+      "provider_calls": 0
+    },
+    "manifest": {
+      "detail_pages": [
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-001.json",
+          "bytes": 100926,
+          "page": 1,
+          "records": 50,
+          "sha256": "99b22d395e8fef27611b66aaebb1e39379f247e577a5d1e4c0db4b21972602a7"
+        },
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-002.json",
+          "bytes": 113967,
+          "page": 2,
+          "records": 50,
+          "sha256": "663fccb93ffaba8de6495a92da5218f77286bc8ebf6a843b149c55402a4613b8"
+        },
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-003.json",
+          "bytes": 132813,
+          "page": 3,
+          "records": 50,
+          "sha256": "a5538821cb169844b9865b0670f94443dbc23f4796dae16791da76d9cf0412da"
+        },
+        {
+          "artifact_path": "hypothesis-tree-node-pages/page-004.json",
+          "bytes": 79805,
+          "page": 4,
+          "records": 30,
+          "sha256": "8fdd85dbce8b3cc04322d8b0d24f6fb12ab475b0c8aa9cf3da52a649630652d2"
+        }
+      ],
+      "detail_pages_storage": "BUILD_ARTIFACT_NOT_GIT",
+      "files": [
+        {
+          "bytes": 9616,
+          "file": "campaign-catalog.json",
+          "sha256": "1adc66370c7a222b5011767fb3f49f92465c9e7e8565ff5a08349b57df3b736e"
+        },
+        {
+          "bytes": 2412,
+          "file": "competition-identity-catalog.json",
+          "sha256": "b2b858203c0117e7d1da6a339140747eca457efff6c05050693e27417ab0de21"
+        },
+        {
+          "bytes": 2513,
+          "file": "engine-proof.json",
+          "sha256": "2813cafabc3639c1315b5b4053b1becfd7e894dee21c3297e51c1e374e773395"
+        },
+        {
+          "bytes": 2522,
+          "file": "hypothesis-facets.json",
+          "sha256": "33034931ac81f782cf5993f3673a79f531bff83ea2b51c52b3c8c394606b093d"
+        },
+        {
+          "bytes": 8686,
+          "file": "hypothesis-family-catalog.json",
+          "sha256": "b0be797d179f8de4e4ec9c7e5a027189fb02d2b97d89a826ba90b9e20d5b36b6"
+        },
+        {
+          "bytes": 4232,
+          "file": "hypothesis-family-tree-index.json",
+          "sha256": "bf6ebb8d06a026d5f5ae33583cabacc780b4d0bfde7bcc40c3dbc009336a59ba"
+        },
+        {
+          "bytes": 20505,
+          "file": "hypothesis-global-rankings.json",
+          "sha256": "5c4579e02bb30564135d73900a20a61ace18cce976dad95467f9881725a65c35"
+        },
+        {
+          "bytes": 437,
+          "file": "hypothesis-glossary-fr.json",
+          "sha256": "8241c06762bcaeb52e886f264a52641a37ea2b8539e6670d010ded37b8fb666c"
+        },
+        {
+          "bytes": 222,
+          "file": "hypothesis-live-activity.json",
+          "sha256": "dc9f25d1e1be574615d5cab63c499b982390cfc4baf0f8f990d8d36c5c82ea56"
+        },
+        {
+          "bytes": 1459,
+          "file": "hypothesis-rankings-by-competition.json",
+          "sha256": "dfcfbf3ebb6c6a50bb36eb23ae653b2cc11b66eff6869811268f67c3f6fa185d"
+        },
+        {
+          "bytes": 5656,
+          "file": "hypothesis-rankings-by-family.json",
+          "sha256": "638df1ee85e28d3fe36baf1b702914810633e9eb2eefbe7d2634841b1060c63e"
+        },
+        {
+          "bytes": 270,
+          "file": "hypothesis-status-funnel.json",
+          "sha256": "9b631c057a50143586c1fe43a2dc7850170155990490b276f8a3cbd38b1f3f88"
+        },
+        {
+          "bytes": 7848,
+          "file": "hypothesis-tags-catalog.json",
+          "sha256": "f8ff4ea6d150707a43ae7fa70de09978edf3ef542cee0d09818a9e420cf958eb"
+        },
+        {
+          "bytes": 21095,
+          "file": "hypothesis-tree-root-index.json",
+          "sha256": "228ba1d425aefdefea685ce9bdc5af3a4183d89dc0d15d45e086de98b32cc75b"
+        },
+        {
+          "bytes": 1433,
+          "file": "hypothesis-universe-summary.json",
+          "sha256": "6671f4a915be9741d8efe0debcf4729ece98594754cafba4666a7c0d27788542"
+        },
+        {
+          "bytes": 9447,
+          "file": "prospective-freeze-provenance-v2.json",
+          "sha256": "9803e9283d23a2350f9c667eff1555e7d004fa267311cc45103cbac715cbc664"
+        },
+        {
+          "bytes": 314,
+          "file": "security-locks.json",
+          "sha256": "1cdb8c3b9503c8a41e475645b1f5ca32c432c60d99bf9c5d17ac9a15db62ce63"
+        },
+        {
+          "bytes": 11547,
+          "file": "source-field-audit.json",
+          "sha256": "5f1381c2fe45bcd9fa4a6a1a73bd80cc258021cce1df6b4ba2b4bd0074020e86"
+        },
+        {
+          "bytes": 2221,
+          "file": "universal-cache-only-pilot.json",
+          "sha256": "1c9207ca99e2f69145c2b63d03ec1a0c275fa0efe6c17be15b6e7c06e8fb6b16"
+        }
+      ],
+      "provider_calls": 0,
+      "real_bets": 0,
+      "schema_version": "hypothesis-dashboard-contract-manifest-v2"
+    }
+  },
+  "derivedTreeIndex": {
+    "childrenByParent": {
+      "hypothesis-node-636251d5e1c9f22b27a20a995fdd337f8119b1274a274d44278d60dcbfcaffa5": [
+        "hypothesis-node-84b690d199430f6bc2da24624db0b81aa482ae5e1607c76bd0c84ccf2f7d3449",
+        "hypothesis-node-8b42fb0db781dbd14cd399e035b648de995f94f8d381d7a30678c2adf145b82f",
+        "hypothesis-node-b359b02d9171286a7257d353946ca0028ce024b86f66da03a3171128c5969058",
+        "hypothesis-node-ce1f0f0a209bb899a64140abe3e7b68d4bb29eef8be5b9ca27d3b48fa645c41c",
+        "hypothesis-node-a0e4c447cb9d824e1509c76a826de87bc262c5dc0f2a4503d32669d73d548f64",
+        "hypothesis-node-1bbff3f351f93de248851f0522438755a8fb054fc0cc31b12d543315812d8a9b",
+        "hypothesis-node-3b50acf6b933b75b2e3cd2b660b5a67956958b9f81670d3d1677e1ca7788866a",
+        "hypothesis-node-9405b2d50b98537dfeee622ceb3160811243143afe27762cd19c3770dd54112d",
+        "hypothesis-node-9e9d33d66ae0addac5ec9a03e2d1e9152cce40b4b20bbd212a82a72b022e8772",
+        "hypothesis-node-2892f41737cbdbcbe7a835b993f73f1dfe38ff8d937718e42f31f1e884478a38",
+        "hypothesis-node-858eb69ae9605c1d719ab060681c0e16135a24aa7a8023901878f3b55cd72579",
+        "hypothesis-node-f6808ba5e00db6f480f1f31dc652ebd1f862d52d3e0fb025f81109681e2163d1"
+      ],
+      "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9": [
+        "hypothesis-node-84b690d199430f6bc2da24624db0b81aa482ae5e1607c76bd0c84ccf2f7d3449",
+        "hypothesis-node-a3763bda1156b039d7da2b2e2e6a2a2aa60cc223046ada1048d3b4a217506653",
+        "hypothesis-node-cbf6e114684def2c4499d3162f381c4c2e1929cf778bdac736804725a420341e",
+        "hypothesis-node-5f93fdd923f22324f6ae1018f11d5ab3791f13339a08995fc9b5ad4de141fe3c",
+        "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1",
+        "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8",
+        "hypothesis-node-6bdd59010a41ba7fd6e3af2df820202bdb7a82f4ea30e406777ef0f2e5341478",
+        "hypothesis-node-f9f4daf3da54a81df612009fa4a51e70c7c9018f9e8b804d749ad7de2ab1d986",
+        "hypothesis-node-f1e889eb612319659b1301ed298ec973a95fed53ed864bb69a61a528994c3be0",
+        "hypothesis-node-7eb029d879121f563620e982bb31e47751da26ed6719e82806fb370b1f05e7a8",
+        "hypothesis-node-5f194708fd079036c97ef426d17c17fdf32b7e2ebc1fb54402f03116099b5779",
+        "hypothesis-node-25fccfa87a6b38451554bc577be663092475519f13556579191dbabc4f7940dc"
+      ],
+      "hypothesis-node-233c572f7919f26eb277d32505141b2afb2346217d9c9675a0c7d630d953e04d": [
+        "hypothesis-node-a3763bda1156b039d7da2b2e2e6a2a2aa60cc223046ada1048d3b4a217506653",
+        "hypothesis-node-8b42fb0db781dbd14cd399e035b648de995f94f8d381d7a30678c2adf145b82f",
+        "hypothesis-node-d524b7fb36930420c36bd6949e51f4d9e2c887b0cc66b886b73f4ab9200a7fa8",
+        "hypothesis-node-e4ac7cc8352b48505f4800bfb3c71a03e23b67715a24a26567a34131a7be98b8",
+        "hypothesis-node-6990e2f590806f5bc5dbc9809c9d76d9cce692a377946f44d34a40183ec18d1a",
+        "hypothesis-node-001b456cc654a9a86c4d78b5ba74f4e08261e8fc3f06ad7c41c3e4c70270f767",
+        "hypothesis-node-792495d873f41d603bc8a2072d62aa4dcc3f55a359dc18adb77fc6d3883003c0",
+        "hypothesis-node-f56e9b06c69ee71de048b4f5e33498cc1de48e81e78a8ba1b45d416d3c64bab9",
+        "hypothesis-node-78ad6e4ec829b4d68f48ec513cd01ce523b2789d1d0f281e0a151ede76a0b4d4",
+        "hypothesis-node-eb5dff92495930e03fa8b4141390f05c0cf6798a7975a2de7593c2c116914333",
+        "hypothesis-node-47ffbe331610da0900a1994f888dff66f036f4c91e2091c63b3b0570f15dfbbc",
+        "hypothesis-node-e0e10b2e8015a9ee30a5285030b647d090b936ce59f9757105bd3c8ab1a4ea84"
+      ],
+      "hypothesis-node-f6a57e02fec00b8750003ced60fd6881a994c84758eb175ff05fefd8b3092bd7": [
+        "hypothesis-node-cbf6e114684def2c4499d3162f381c4c2e1929cf778bdac736804725a420341e",
+        "hypothesis-node-b359b02d9171286a7257d353946ca0028ce024b86f66da03a3171128c5969058",
+        "hypothesis-node-d524b7fb36930420c36bd6949e51f4d9e2c887b0cc66b886b73f4ab9200a7fa8",
+        "hypothesis-node-f2e79cd08a2154e3895a5ac14c0cbc0b44805294aa1777933ee822a4ece78848",
+        "hypothesis-node-3942b4434e22771482ffb19dfa4b9a108ecb1cee309c797601ee94da4aa1a5eb",
+        "hypothesis-node-f50337e3e6f2571d198b9ca555d7047b038f386e0694604b912f8751a690652b",
+        "hypothesis-node-a44eb6c7ea8b621c9732ebb0a8f82919db583fe7fef6e7b05ed04c14edaa2237",
+        "hypothesis-node-65ec95e20a3a7415b49da41efb47982bfd6f064501dc91a407638c7c5f5ef95c",
+        "hypothesis-node-33fe603cff0fca9e4c91014625f0581fceed9e451f7251686e3198f51a7cdc2e",
+        "hypothesis-node-4c201aec0d28957681c142befe7530fec5450d889077d3e183676b9541235759",
+        "hypothesis-node-37f6d981fdf6083f2d806b05b46381eee9a785ea671c2eec996fe4950efe3679",
+        "hypothesis-node-b081fb26bc4161c5d6fa49c7c12ac0039a9b95b9293909b62b1f6e65ea2fcb72"
+      ],
+      "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9": [
+        "hypothesis-node-5f93fdd923f22324f6ae1018f11d5ab3791f13339a08995fc9b5ad4de141fe3c",
+        "hypothesis-node-ce1f0f0a209bb899a64140abe3e7b68d4bb29eef8be5b9ca27d3b48fa645c41c",
+        "hypothesis-node-e4ac7cc8352b48505f4800bfb3c71a03e23b67715a24a26567a34131a7be98b8",
+        "hypothesis-node-f2e79cd08a2154e3895a5ac14c0cbc0b44805294aa1777933ee822a4ece78848",
+        "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+        "hypothesis-node-69db796c31a9f6d8d2db976a3d7b0cfa1b6e4914ed3b5d62875beb406bdf2f57",
+        "hypothesis-node-83fc0d521e805304d1ece0598ba64a1cdb5b245f97ec930cbf807ee41a563374",
+        "hypothesis-node-27ef179f8b36b4ed5be0916fc8602acb0d545c14c8651ac96995de76675c6de7",
+        "hypothesis-node-394817b1182e28da260b7dac0f5f8c11fe5887b75907a5b242db1dc2a5e27c15",
+        "hypothesis-node-66eef87f8573b6f47c3c847ac8a1ee1820fb75a47d6bcb497c9ce1e9d2910e9c",
+        "hypothesis-node-c965b25d56efe980beadc93d3a92f0dcab0922404edc176a6ea2d022148e291e",
+        "hypothesis-node-1efb7b3ab1938c8cce564623c67f3fb992ffd869238f29550e181877ce53ea59"
+      ],
+      "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4": [
+        "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1",
+        "hypothesis-node-a0e4c447cb9d824e1509c76a826de87bc262c5dc0f2a4503d32669d73d548f64",
+        "hypothesis-node-6990e2f590806f5bc5dbc9809c9d76d9cce692a377946f44d34a40183ec18d1a",
+        "hypothesis-node-3942b4434e22771482ffb19dfa4b9a108ecb1cee309c797601ee94da4aa1a5eb",
+        "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09",
+        "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd",
+        "hypothesis-node-769d92da6ab98d9511136bf7d5c9610cab149cbdf3ee57ab7578b725701e515e",
+        "hypothesis-node-e61b75c751598106958ab6e68384ba7de4d3f9e9f692239f5c9ab4dd5dc1af3b",
+        "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+        "hypothesis-node-c798795bf745e8f169a801ad2132dfc5c5847b623998282171961f8e9d615ca9",
+        "hypothesis-node-0918dd3ec6cbe3a2c1763c8007c6de0c52683fa8eb82b08552f6f04e061d5dc6",
+        "hypothesis-node-f563a4d2f66a936ec5b599b6322541354f5e3d1f840df291489bc212fe17adb1"
+      ],
+      "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce": [
+        "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8",
+        "hypothesis-node-1bbff3f351f93de248851f0522438755a8fb054fc0cc31b12d543315812d8a9b",
+        "hypothesis-node-001b456cc654a9a86c4d78b5ba74f4e08261e8fc3f06ad7c41c3e4c70270f767",
+        "hypothesis-node-f50337e3e6f2571d198b9ca555d7047b038f386e0694604b912f8751a690652b",
+        "hypothesis-node-69db796c31a9f6d8d2db976a3d7b0cfa1b6e4914ed3b5d62875beb406bdf2f57",
+        "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd",
+        "hypothesis-node-0d4d17542c9d61318b7ddcc588e35de70f67ec5ae0a590b124ddd43db129daf7",
+        "hypothesis-node-8ce3ad5149c34804fa7a1e873e9d64b1fac248f42f2602c32db72644d3ef05a2",
+        "hypothesis-node-8a534dfb32166859aba3096bec5d6e69ed907c4facd469524dd0fc8852dd5ec1",
+        "hypothesis-node-edaa1f48492173e6fe6299e915caa2c50c4cdb150ab7f324eafae04755cf5bb3",
+        "hypothesis-node-557004078947c91c2f128411c444eca6f083a3fe17a421edb4c959212803318f",
+        "hypothesis-node-a96a3e2f31c8c9a8339bfb0d7315c10e08d92368c9beecee7abf8d8976ddd6ce"
+      ],
+      "hypothesis-node-c1477389ec429b753d55301768ef984859ab00b823006988dff6d4752686d67a": [
+        "hypothesis-node-6bdd59010a41ba7fd6e3af2df820202bdb7a82f4ea30e406777ef0f2e5341478",
+        "hypothesis-node-3b50acf6b933b75b2e3cd2b660b5a67956958b9f81670d3d1677e1ca7788866a",
+        "hypothesis-node-792495d873f41d603bc8a2072d62aa4dcc3f55a359dc18adb77fc6d3883003c0",
+        "hypothesis-node-a44eb6c7ea8b621c9732ebb0a8f82919db583fe7fef6e7b05ed04c14edaa2237",
+        "hypothesis-node-83fc0d521e805304d1ece0598ba64a1cdb5b245f97ec930cbf807ee41a563374",
+        "hypothesis-node-769d92da6ab98d9511136bf7d5c9610cab149cbdf3ee57ab7578b725701e515e",
+        "hypothesis-node-0d4d17542c9d61318b7ddcc588e35de70f67ec5ae0a590b124ddd43db129daf7",
+        "hypothesis-node-8b5ef667e907932c6aabe69e357fca7b120e4546a3bc227d16a552e3aea7f5b5",
+        "hypothesis-node-ec72c8cc305ec64fa864f3d0b2b75ee9cdcdce7a819e0e9d0bc5f06db4a09757",
+        "hypothesis-node-e27ac23f0033e8b023c1dc9757ab98ede03012f5b908886b5e87dde5ca65fb79",
+        "hypothesis-node-2a2acbcbf3664a010a347d78d5945acb972d12d2a0ac4f45618eb3e88bf42c8b",
+        "hypothesis-node-a4f860ab8f2220c3cfc9983876f50d06b4cea8f5abdaed1a794f6e058370a143"
+      ],
+      "hypothesis-node-77f02f9f69c7b53e2c3a95ab6c4b565f0b4650de52bf0d947b397858dc122717": [
+        "hypothesis-node-f9f4daf3da54a81df612009fa4a51e70c7c9018f9e8b804d749ad7de2ab1d986",
+        "hypothesis-node-9405b2d50b98537dfeee622ceb3160811243143afe27762cd19c3770dd54112d",
+        "hypothesis-node-f56e9b06c69ee71de048b4f5e33498cc1de48e81e78a8ba1b45d416d3c64bab9",
+        "hypothesis-node-65ec95e20a3a7415b49da41efb47982bfd6f064501dc91a407638c7c5f5ef95c",
+        "hypothesis-node-27ef179f8b36b4ed5be0916fc8602acb0d545c14c8651ac96995de76675c6de7",
+        "hypothesis-node-e61b75c751598106958ab6e68384ba7de4d3f9e9f692239f5c9ab4dd5dc1af3b",
+        "hypothesis-node-8ce3ad5149c34804fa7a1e873e9d64b1fac248f42f2602c32db72644d3ef05a2",
+        "hypothesis-node-8b5ef667e907932c6aabe69e357fca7b120e4546a3bc227d16a552e3aea7f5b5",
+        "hypothesis-node-7ddb3854302e9f353cabaa460e6bec6d84f0dafbcc484bd43688d2fb010c6a2d",
+        "hypothesis-node-407cd49546472acb46abf601a0287175534e840f8f6bd52a7bf7b102e7bc80e6",
+        "hypothesis-node-1e80b0116b009578d3e7bfc1ac2ada57d13ccf39e9aeb64ca247f97679a445d5",
+        "hypothesis-node-2776e97fbbeb100eba1b1b72a2af71b06265420fa687c511eb43a515ad213f5c"
+      ],
+      "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc": [
+        "hypothesis-node-f1e889eb612319659b1301ed298ec973a95fed53ed864bb69a61a528994c3be0",
+        "hypothesis-node-9e9d33d66ae0addac5ec9a03e2d1e9152cce40b4b20bbd212a82a72b022e8772",
+        "hypothesis-node-78ad6e4ec829b4d68f48ec513cd01ce523b2789d1d0f281e0a151ede76a0b4d4",
+        "hypothesis-node-33fe603cff0fca9e4c91014625f0581fceed9e451f7251686e3198f51a7cdc2e",
+        "hypothesis-node-394817b1182e28da260b7dac0f5f8c11fe5887b75907a5b242db1dc2a5e27c15",
+        "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6",
+        "hypothesis-node-8a534dfb32166859aba3096bec5d6e69ed907c4facd469524dd0fc8852dd5ec1",
+        "hypothesis-node-ec72c8cc305ec64fa864f3d0b2b75ee9cdcdce7a819e0e9d0bc5f06db4a09757",
+        "hypothesis-node-7ddb3854302e9f353cabaa460e6bec6d84f0dafbcc484bd43688d2fb010c6a2d",
+        "hypothesis-node-b715ed1438970ba76647d7373ea8c62fcd8bb928b394d13509dc10509d3e9ecf",
+        "hypothesis-node-7eda17b0d5e156ba2f1af24daeb0b953217ff3cf2148b1765a7dcf86829295bf",
+        "hypothesis-node-7f5a42b5659e196c5a630a887dab38c7921c8f5dec3e4e7ee83bb89e38631103"
+      ],
+      "hypothesis-node-5e0d245712718834b994e7dcb0b28f69e85a7fef2f9816c1a0cee63395a1251a": [
+        "hypothesis-node-7eb029d879121f563620e982bb31e47751da26ed6719e82806fb370b1f05e7a8",
+        "hypothesis-node-2892f41737cbdbcbe7a835b993f73f1dfe38ff8d937718e42f31f1e884478a38",
+        "hypothesis-node-eb5dff92495930e03fa8b4141390f05c0cf6798a7975a2de7593c2c116914333",
+        "hypothesis-node-4c201aec0d28957681c142befe7530fec5450d889077d3e183676b9541235759",
+        "hypothesis-node-66eef87f8573b6f47c3c847ac8a1ee1820fb75a47d6bcb497c9ce1e9d2910e9c",
+        "hypothesis-node-c798795bf745e8f169a801ad2132dfc5c5847b623998282171961f8e9d615ca9",
+        "hypothesis-node-edaa1f48492173e6fe6299e915caa2c50c4cdb150ab7f324eafae04755cf5bb3",
+        "hypothesis-node-e27ac23f0033e8b023c1dc9757ab98ede03012f5b908886b5e87dde5ca65fb79",
+        "hypothesis-node-407cd49546472acb46abf601a0287175534e840f8f6bd52a7bf7b102e7bc80e6",
+        "hypothesis-node-b715ed1438970ba76647d7373ea8c62fcd8bb928b394d13509dc10509d3e9ecf",
+        "hypothesis-node-0ef836e195659da8db94d2c88baca474faa9f66ae17f9d48eaba4406cd14559c",
+        "hypothesis-node-18aa83715d3838639744c01a771d6538ad82f64630809ee4da770cfff6c9633b"
+      ],
+      "hypothesis-node-efc0310231b74b20fdd21f281b5d547eeb9c107e129b9878780c72f67a460049": [
+        "hypothesis-node-5f194708fd079036c97ef426d17c17fdf32b7e2ebc1fb54402f03116099b5779",
+        "hypothesis-node-858eb69ae9605c1d719ab060681c0e16135a24aa7a8023901878f3b55cd72579",
+        "hypothesis-node-47ffbe331610da0900a1994f888dff66f036f4c91e2091c63b3b0570f15dfbbc",
+        "hypothesis-node-37f6d981fdf6083f2d806b05b46381eee9a785ea671c2eec996fe4950efe3679",
+        "hypothesis-node-c965b25d56efe980beadc93d3a92f0dcab0922404edc176a6ea2d022148e291e",
+        "hypothesis-node-0918dd3ec6cbe3a2c1763c8007c6de0c52683fa8eb82b08552f6f04e061d5dc6",
+        "hypothesis-node-557004078947c91c2f128411c444eca6f083a3fe17a421edb4c959212803318f",
+        "hypothesis-node-2a2acbcbf3664a010a347d78d5945acb972d12d2a0ac4f45618eb3e88bf42c8b",
+        "hypothesis-node-1e80b0116b009578d3e7bfc1ac2ada57d13ccf39e9aeb64ca247f97679a445d5",
+        "hypothesis-node-7eda17b0d5e156ba2f1af24daeb0b953217ff3cf2148b1765a7dcf86829295bf",
+        "hypothesis-node-0ef836e195659da8db94d2c88baca474faa9f66ae17f9d48eaba4406cd14559c",
+        "hypothesis-node-e333b57b0ac83b2d98a0b743252efa69c332fbaade1f1e3bc294165655cb1185"
+      ],
+      "hypothesis-node-96d7c678549e799fa6d0961ed122b4e657661543b240378a31617228574ab329": [
+        "hypothesis-node-25fccfa87a6b38451554bc577be663092475519f13556579191dbabc4f7940dc",
+        "hypothesis-node-f6808ba5e00db6f480f1f31dc652ebd1f862d52d3e0fb025f81109681e2163d1",
+        "hypothesis-node-e0e10b2e8015a9ee30a5285030b647d090b936ce59f9757105bd3c8ab1a4ea84",
+        "hypothesis-node-b081fb26bc4161c5d6fa49c7c12ac0039a9b95b9293909b62b1f6e65ea2fcb72",
+        "hypothesis-node-1efb7b3ab1938c8cce564623c67f3fb992ffd869238f29550e181877ce53ea59",
+        "hypothesis-node-f563a4d2f66a936ec5b599b6322541354f5e3d1f840df291489bc212fe17adb1",
+        "hypothesis-node-a96a3e2f31c8c9a8339bfb0d7315c10e08d92368c9beecee7abf8d8976ddd6ce",
+        "hypothesis-node-a4f860ab8f2220c3cfc9983876f50d06b4cea8f5abdaed1a794f6e058370a143",
+        "hypothesis-node-2776e97fbbeb100eba1b1b72a2af71b06265420fa687c511eb43a515ad213f5c",
+        "hypothesis-node-7f5a42b5659e196c5a630a887dab38c7921c8f5dec3e4e7ee83bb89e38631103",
+        "hypothesis-node-18aa83715d3838639744c01a771d6538ad82f64630809ee4da770cfff6c9633b",
+        "hypothesis-node-e333b57b0ac83b2d98a0b743252efa69c332fbaade1f1e3bc294165655cb1185"
+      ],
+      "hypothesis-node-84b690d199430f6bc2da24624db0b81aa482ae5e1607c76bd0c84ccf2f7d3449": [
+        "hypothesis-node-dd4245164c7e655908f6882b15d894f1a7e588d48c6a757f30f66ef96e6643e8",
+        "hypothesis-node-33d5af35659a35af38e0f1e8535409cfd66764e5728ff94172681ae3617ba317",
+        "hypothesis-node-d726a71553f7b77ba0147a795700f97c5f537c7bc9b17dc9e349f26e6df3f168",
+        "hypothesis-node-6f200f4092c1387b4508d84dfce5e242eeb06bb6671e6f5e59c58547cf37f910",
+        "hypothesis-node-d929725b2d1f6ac24b9c946ab8232b80714adf8f1dca22080a92331e847105e3",
+        "hypothesis-node-28480222af226a9b0016dee14c20114dd17535c483323d77ac7a39eaaa3066f3",
+        "hypothesis-node-045ad4b726bd319462859c595625719d7373a32a36e2ba6b599aecb6f640d2ae",
+        "hypothesis-node-28b415d33e641d9f29914c66f3c54c41c8b0bff5dd186cf9693c3797b6fb3506",
+        "hypothesis-node-172f1585c50225a6c82836cffa16cfcd3d5177395cb627a3ab41ee98004ee661",
+        "hypothesis-node-f4a95948c86cddebdd77d1e4ac016808074c45ec4f6d993f7e65849d375974a7",
+        "hypothesis-node-ff55015aef7943b267daf735e3d1c9ed63c39bdf98417694d6eb6d22c4fbb9be"
+      ],
+      "hypothesis-node-8b42fb0db781dbd14cd399e035b648de995f94f8d381d7a30678c2adf145b82f": [
+        "hypothesis-node-dd4245164c7e655908f6882b15d894f1a7e588d48c6a757f30f66ef96e6643e8",
+        "hypothesis-node-a21474b5299dbe695aaf0ae18de14cd3cc8aca67948dc06d149748eace7ca4d8",
+        "hypothesis-node-0377b1894f617bab3b97d2eab5bf73a2f48ae4a177d56ed29d51a8115b703632",
+        "hypothesis-node-ec0dbe87f48878c95240afa1be193c7bdcfc13bfc73d68950ebb468e947fa83d",
+        "hypothesis-node-16cf89b89aff568fe35f8616ae76d518a32d9ee16b39210be0052c203a1d1506",
+        "hypothesis-node-f57133a81afc11a48441aefb5589faa1afc3b342d4f8674ee5e9ebc39f09d976",
+        "hypothesis-node-7bdff6a3d8158c3cdf4916712d776960c48838e5aa97e6c8d6fe381a035b1f0d",
+        "hypothesis-node-1baf663bb1d829b9ccbd07c7215c0b4c89c917d822f97d18fba283760eb73af3",
+        "hypothesis-node-f3c8be7203c0b1c8ae3a72bdbeeda4f9ee4e6517e0b568b8042c5ee6ca4537d0",
+        "hypothesis-node-ee768f9fc91416c066f2fa4cc643538bd2911b16ca2e28e1f27221f15d60ab06",
+        "hypothesis-node-f116d29582826ee1cd78054e9234efe579719ddba072fff7e1fd17adbd536d76"
+      ],
+      "hypothesis-node-a3763bda1156b039d7da2b2e2e6a2a2aa60cc223046ada1048d3b4a217506653": [
+        "hypothesis-node-dd4245164c7e655908f6882b15d894f1a7e588d48c6a757f30f66ef96e6643e8",
+        "hypothesis-node-4c915c2883d10351bfbf2e9809ab4b07037b615dac51a8658616096aea67dde4",
+        "hypothesis-node-697095d2d98679609b5f1178dd88cf7fd97c979d4eee26d29e44beb8e199b67f",
+        "hypothesis-node-12a7c4f7a49b2e51f948426360586163b977dacfa0d84aa4410b52a4b8d4421c",
+        "hypothesis-node-b06f6866dcdd1edea8a9079fabec637205d2b0c89d5c3973deef1da8b4c68deb",
+        "hypothesis-node-107d65836feb353d2f0e5360a794a539434aa8149c542f98787bec15047c18c2",
+        "hypothesis-node-73ccf954c7297763e011a96e8db8470e63a4092427bf18f5560de96511c450fc",
+        "hypothesis-node-40cf4fe393515a693e29277674dc82b74db78fb812dc4c89724512a1d9508755",
+        "hypothesis-node-aa423fd587bc0b02870f74868d6be990192d862264944e0de93e1c6a7d41ded9",
+        "hypothesis-node-b2112c2205914f9f4bda8f6e82e957c7fadc4ebb08cccc654e20743b19ef406d",
+        "hypothesis-node-82c3d39845eee21b0e47ecc0d2b1fbee6e9cc11fcd7186911d53d7ffe794c0f8"
+      ],
+      "hypothesis-node-b359b02d9171286a7257d353946ca0028ce024b86f66da03a3171128c5969058": [
+        "hypothesis-node-33d5af35659a35af38e0f1e8535409cfd66764e5728ff94172681ae3617ba317",
+        "hypothesis-node-a21474b5299dbe695aaf0ae18de14cd3cc8aca67948dc06d149748eace7ca4d8",
+        "hypothesis-node-1fc9f9b6c96f4c3ee616d14f339abf4888ec6d65267fa9d98d22f3687bfb9fe4",
+        "hypothesis-node-714564a85632f6aedf692420b8ef7bc7e676fa13019533e5a3009d7da3ec639a",
+        "hypothesis-node-ea474c45f7415531eff41b87dab94554b542516db86445dffba1159237228a53",
+        "hypothesis-node-616ebbdd0b1cb2e1d0edb8cc88af69d38a900dc880b81d424e8d46ced9006e75",
+        "hypothesis-node-275cd109a14228c43e67541173a702da5e5a611ca6685edb19b59e4e6aa16669",
+        "hypothesis-node-f8c02dbd9e1f779ea6fc44cbade73bd305757de6de04fde610ce2477c8f417b5",
+        "hypothesis-node-0014d2f2f5c0cdda6854dbe500f540aaee528756513e0427ebbf2194ccbe9228",
+        "hypothesis-node-02a487b6448dcc1d75fe58af23573aa8740003da7e50419f024fb47c7afab083",
+        "hypothesis-node-2a8c99c5952fa6fd37452b7e382d5d2422659f2510cd515252eca74bdba1ed2b"
+      ],
+      "hypothesis-node-cbf6e114684def2c4499d3162f381c4c2e1929cf778bdac736804725a420341e": [
+        "hypothesis-node-33d5af35659a35af38e0f1e8535409cfd66764e5728ff94172681ae3617ba317",
+        "hypothesis-node-4c915c2883d10351bfbf2e9809ab4b07037b615dac51a8658616096aea67dde4",
+        "hypothesis-node-5b74417c758f1ff721786f85e3e388356aba666cd102bf934ac0c44dbe2cae22",
+        "hypothesis-node-f92eb5d880b41579258d1d5921e2c45bdef595612c2c8badacd4373f2eaba54a",
+        "hypothesis-node-ef66a2c429efdf6ca5686e2ca509b832fd00659060ec95403ad859af12fd55b2",
+        "hypothesis-node-a7dfb1e67c62c8383ca59962d4cc2332a7e9c1388fde9af7baf8ad8d4ad9f51b",
+        "hypothesis-node-52eca6252ed4be8de3bd3db9647ed366703d41a79f94b074c05b54efcf58bf21",
+        "hypothesis-node-ff6697315ebb7d38ed82f0cf7aa340b16ab12a3a92748a6ff41b33da9b664653",
+        "hypothesis-node-4d44b8049a3982d33b652f11fc63d8baa318e9135e19283efd91ccdaf8429976",
+        "hypothesis-node-224ca1e700bb128807b787094befd61ef6a12aae14ce33b1516fb40c288415de",
+        "hypothesis-node-c66fdd3fd339ce143f155e410d85180b48741849249dbd494ab77ec6f16460bd"
+      ],
+      "hypothesis-node-5f93fdd923f22324f6ae1018f11d5ab3791f13339a08995fc9b5ad4de141fe3c": [
+        "hypothesis-node-d726a71553f7b77ba0147a795700f97c5f537c7bc9b17dc9e349f26e6df3f168",
+        "hypothesis-node-697095d2d98679609b5f1178dd88cf7fd97c979d4eee26d29e44beb8e199b67f",
+        "hypothesis-node-5b74417c758f1ff721786f85e3e388356aba666cd102bf934ac0c44dbe2cae22",
+        "hypothesis-node-6b5e98af6e9796829e22fa9561a9dc313e711a90d4edb825b2dfa18730b270d5",
+        "hypothesis-node-042b73f778b720f08b9489560cf7f16955329cac535cfad7329c92623d526569",
+        "hypothesis-node-7a1d242542cecaea692df3099b424016ce05055bf5c7bdbaba0aad450fe7479b",
+        "hypothesis-node-ad062c2f2b9eff1cef5dd1d9408e526e75b2649bce51037e12c6cb006e60e33e",
+        "hypothesis-node-8ea1cf348e2b97f63c5c2b8d3b55a361c2eb84743b3cb0c0175e41ad6f071865",
+        "hypothesis-node-da27f25be1c9bbba40085f90881a72da0b233270c342aa1aefd61ad9d6b824f6",
+        "hypothesis-node-14651cb556895f52c0eb43d03fbf90f8560b1882e74dafc49d82e938dddc99b1",
+        "hypothesis-node-f244ccdd5cf200725df0526979e4fd725495028c394a03c8b575898f9db2af7d"
+      ],
+      "hypothesis-node-ce1f0f0a209bb899a64140abe3e7b68d4bb29eef8be5b9ca27d3b48fa645c41c": [
+        "hypothesis-node-d726a71553f7b77ba0147a795700f97c5f537c7bc9b17dc9e349f26e6df3f168",
+        "hypothesis-node-0377b1894f617bab3b97d2eab5bf73a2f48ae4a177d56ed29d51a8115b703632",
+        "hypothesis-node-1fc9f9b6c96f4c3ee616d14f339abf4888ec6d65267fa9d98d22f3687bfb9fe4",
+        "hypothesis-node-4df9e8af6def8003991098e3df1b3e0053c45248a3a8f82160d73199e401e877",
+        "hypothesis-node-6cc706cffd093b06fd7679ab18c2bd7aa8bb93d34208f33eb9750a6f67fbb03f",
+        "hypothesis-node-81fa41efada5638b1a92ff15712f7c9e4088d26570b90ed424780e617688c54d",
+        "hypothesis-node-8080aa541e38aa24ff622648d305a84ed04e712dfd13e81bd657fa87430f2cc7"
+      ],
+      "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1": [
+        "hypothesis-node-6f200f4092c1387b4508d84dfce5e242eeb06bb6671e6f5e59c58547cf37f910",
+        "hypothesis-node-12a7c4f7a49b2e51f948426360586163b977dacfa0d84aa4410b52a4b8d4421c",
+        "hypothesis-node-f92eb5d880b41579258d1d5921e2c45bdef595612c2c8badacd4373f2eaba54a",
+        "hypothesis-node-6b5e98af6e9796829e22fa9561a9dc313e711a90d4edb825b2dfa18730b270d5",
+        "hypothesis-node-544925f5ec28d8a5d53bfe9fbbe3a2d0a2b1e67957f2b3a83673be68846214d2",
+        "hypothesis-node-ef7fac109c6398a23661ef7f1ccaf8be9b8ec4006c9f04613fb9c4edff6f7f46",
+        "hypothesis-node-be5c8d4bae7e4747c08cda417ece0b42c1aab5b3c25a511ea656e84a7ecd5b7a",
+        "hypothesis-node-14687631fc395fc3d6ac25e2f3f453cfee22c6222632b8fd811e5a48b250988c",
+        "hypothesis-node-521e79602dccc591ab1abc15651ef8b63c473f1aebafd98e6ecd704216cd9bdc",
+        "hypothesis-node-e9b26945b996f019bee9eafff40486f7324d15b972ec9c9e2bd8d9ab3b875092",
+        "hypothesis-node-fbba858b69ed19451dfd207cf115a3799a0535e7231a9877c7f0c61600b04924"
+      ],
+      "hypothesis-node-a0e4c447cb9d824e1509c76a826de87bc262c5dc0f2a4503d32669d73d548f64": [
+        "hypothesis-node-6f200f4092c1387b4508d84dfce5e242eeb06bb6671e6f5e59c58547cf37f910",
+        "hypothesis-node-ec0dbe87f48878c95240afa1be193c7bdcfc13bfc73d68950ebb468e947fa83d",
+        "hypothesis-node-714564a85632f6aedf692420b8ef7bc7e676fa13019533e5a3009d7da3ec639a",
+        "hypothesis-node-4df9e8af6def8003991098e3df1b3e0053c45248a3a8f82160d73199e401e877"
+      ],
+      "hypothesis-node-1bbff3f351f93de248851f0522438755a8fb054fc0cc31b12d543315812d8a9b": [
+        "hypothesis-node-d929725b2d1f6ac24b9c946ab8232b80714adf8f1dca22080a92331e847105e3",
+        "hypothesis-node-16cf89b89aff568fe35f8616ae76d518a32d9ee16b39210be0052c203a1d1506",
+        "hypothesis-node-ea474c45f7415531eff41b87dab94554b542516db86445dffba1159237228a53",
+        "hypothesis-node-6cc706cffd093b06fd7679ab18c2bd7aa8bb93d34208f33eb9750a6f67fbb03f"
+      ],
+      "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8": [
+        "hypothesis-node-d929725b2d1f6ac24b9c946ab8232b80714adf8f1dca22080a92331e847105e3",
+        "hypothesis-node-b06f6866dcdd1edea8a9079fabec637205d2b0c89d5c3973deef1da8b4c68deb",
+        "hypothesis-node-ef66a2c429efdf6ca5686e2ca509b832fd00659060ec95403ad859af12fd55b2",
+        "hypothesis-node-042b73f778b720f08b9489560cf7f16955329cac535cfad7329c92623d526569",
+        "hypothesis-node-544925f5ec28d8a5d53bfe9fbbe3a2d0a2b1e67957f2b3a83673be68846214d2",
+        "hypothesis-node-942a582e1f7800f826b9124d9548374c003f3544d4b445c475be89916a6a30c6",
+        "hypothesis-node-10823353b6d0813090978e20da130fe957fe2b2df2b70a1d6304e26d08f93f73",
+        "hypothesis-node-149d8427b6728307e0896b970ff007b7bf36942ed9adc5ba627ffdb70960d314",
+        "hypothesis-node-2d86de41d88784689dc007e071290516b1999658f603d3f94fe5eaf533200f89",
+        "hypothesis-node-2594f67ff5e30a859b11781e0e55850c1df9b8f57aa340f3313c3adf55913569",
+        "hypothesis-node-4e6128a3162f1b697153fc6f73f292c256d7d043077f040830b21f2983d4e403"
+      ],
+      "hypothesis-node-3b50acf6b933b75b2e3cd2b660b5a67956958b9f81670d3d1677e1ca7788866a": [
+        "hypothesis-node-28480222af226a9b0016dee14c20114dd17535c483323d77ac7a39eaaa3066f3",
+        "hypothesis-node-f57133a81afc11a48441aefb5589faa1afc3b342d4f8674ee5e9ebc39f09d976",
+        "hypothesis-node-616ebbdd0b1cb2e1d0edb8cc88af69d38a900dc880b81d424e8d46ced9006e75",
+        "hypothesis-node-81fa41efada5638b1a92ff15712f7c9e4088d26570b90ed424780e617688c54d"
+      ],
+      "hypothesis-node-6bdd59010a41ba7fd6e3af2df820202bdb7a82f4ea30e406777ef0f2e5341478": [
+        "hypothesis-node-28480222af226a9b0016dee14c20114dd17535c483323d77ac7a39eaaa3066f3",
+        "hypothesis-node-107d65836feb353d2f0e5360a794a539434aa8149c542f98787bec15047c18c2",
+        "hypothesis-node-a7dfb1e67c62c8383ca59962d4cc2332a7e9c1388fde9af7baf8ad8d4ad9f51b",
+        "hypothesis-node-7a1d242542cecaea692df3099b424016ce05055bf5c7bdbaba0aad450fe7479b",
+        "hypothesis-node-ef7fac109c6398a23661ef7f1ccaf8be9b8ec4006c9f04613fb9c4edff6f7f46",
+        "hypothesis-node-942a582e1f7800f826b9124d9548374c003f3544d4b445c475be89916a6a30c6",
+        "hypothesis-node-6c18a2de430072b15f4070a7d5fc99211bac8bc9b73bb1ff4571bf5dd42ce105",
+        "hypothesis-node-1c554642bc2c1ac29dd757e4bd36a4e025b19ebdf149ccbe809febc9c4db2e57",
+        "hypothesis-node-5df4fb54ca68a63f9e979d48a915ef3b66dfc652c2c2aa781988c35881193074",
+        "hypothesis-node-28006a1cd487cac0066515bda6ec6c253ceaabb237d9ebc7a203c266fc2eea76",
+        "hypothesis-node-a90df254e080fd898a36b694a3ef3ee6c399e2ef326a311f59b66d94dd79b6a6"
+      ],
+      "hypothesis-node-9405b2d50b98537dfeee622ceb3160811243143afe27762cd19c3770dd54112d": [
+        "hypothesis-node-045ad4b726bd319462859c595625719d7373a32a36e2ba6b599aecb6f640d2ae",
+        "hypothesis-node-7bdff6a3d8158c3cdf4916712d776960c48838e5aa97e6c8d6fe381a035b1f0d",
+        "hypothesis-node-275cd109a14228c43e67541173a702da5e5a611ca6685edb19b59e4e6aa16669",
+        "hypothesis-node-8080aa541e38aa24ff622648d305a84ed04e712dfd13e81bd657fa87430f2cc7"
+      ],
+      "hypothesis-node-f9f4daf3da54a81df612009fa4a51e70c7c9018f9e8b804d749ad7de2ab1d986": [
+        "hypothesis-node-045ad4b726bd319462859c595625719d7373a32a36e2ba6b599aecb6f640d2ae",
+        "hypothesis-node-73ccf954c7297763e011a96e8db8470e63a4092427bf18f5560de96511c450fc",
+        "hypothesis-node-52eca6252ed4be8de3bd3db9647ed366703d41a79f94b074c05b54efcf58bf21",
+        "hypothesis-node-ad062c2f2b9eff1cef5dd1d9408e526e75b2649bce51037e12c6cb006e60e33e",
+        "hypothesis-node-be5c8d4bae7e4747c08cda417ece0b42c1aab5b3c25a511ea656e84a7ecd5b7a",
+        "hypothesis-node-10823353b6d0813090978e20da130fe957fe2b2df2b70a1d6304e26d08f93f73",
+        "hypothesis-node-6c18a2de430072b15f4070a7d5fc99211bac8bc9b73bb1ff4571bf5dd42ce105",
+        "hypothesis-node-981a3a7172c69e7459ee7a740b1ebc83bf0f86e475f0e81cea67636c7e93a74b",
+        "hypothesis-node-e562e04815a148345e39ae7796ce3fadf29393e1e5612f2cf1e704553a03771d",
+        "hypothesis-node-6db3773530de3d9182965f261a4ba12117be2eabe24b2b89f4daa2c87bbdd003",
+        "hypothesis-node-ae4b77cdee3154e9ecf5f47abf05206e51792a16ab9fc98ef6323db4bf39f9c3"
+      ],
+      "hypothesis-node-9e9d33d66ae0addac5ec9a03e2d1e9152cce40b4b20bbd212a82a72b022e8772": [
+        "hypothesis-node-28b415d33e641d9f29914c66f3c54c41c8b0bff5dd186cf9693c3797b6fb3506",
+        "hypothesis-node-1baf663bb1d829b9ccbd07c7215c0b4c89c917d822f97d18fba283760eb73af3",
+        "hypothesis-node-f8c02dbd9e1f779ea6fc44cbade73bd305757de6de04fde610ce2477c8f417b5"
+      ],
+      "hypothesis-node-f1e889eb612319659b1301ed298ec973a95fed53ed864bb69a61a528994c3be0": [
+        "hypothesis-node-28b415d33e641d9f29914c66f3c54c41c8b0bff5dd186cf9693c3797b6fb3506",
+        "hypothesis-node-40cf4fe393515a693e29277674dc82b74db78fb812dc4c89724512a1d9508755",
+        "hypothesis-node-ff6697315ebb7d38ed82f0cf7aa340b16ab12a3a92748a6ff41b33da9b664653",
+        "hypothesis-node-8ea1cf348e2b97f63c5c2b8d3b55a361c2eb84743b3cb0c0175e41ad6f071865",
+        "hypothesis-node-14687631fc395fc3d6ac25e2f3f453cfee22c6222632b8fd811e5a48b250988c",
+        "hypothesis-node-149d8427b6728307e0896b970ff007b7bf36942ed9adc5ba627ffdb70960d314",
+        "hypothesis-node-1c554642bc2c1ac29dd757e4bd36a4e025b19ebdf149ccbe809febc9c4db2e57",
+        "hypothesis-node-981a3a7172c69e7459ee7a740b1ebc83bf0f86e475f0e81cea67636c7e93a74b",
+        "hypothesis-node-df8bdbc90f82e692c1416fd94f62a406a4dcfd3a6cf1f398fb6c30964dffb076",
+        "hypothesis-node-285cd3b1cba55cf1e2346687f10cfb66269d4f9b561fd07c3e2b6fd16029bab6",
+        "hypothesis-node-d1b3dc12c50ce0e78f84b56c6f76830eabf946098bfd463411c8352f010a9834"
+      ],
+      "hypothesis-node-2892f41737cbdbcbe7a835b993f73f1dfe38ff8d937718e42f31f1e884478a38": [
+        "hypothesis-node-172f1585c50225a6c82836cffa16cfcd3d5177395cb627a3ab41ee98004ee661",
+        "hypothesis-node-f3c8be7203c0b1c8ae3a72bdbeeda4f9ee4e6517e0b568b8042c5ee6ca4537d0",
+        "hypothesis-node-0014d2f2f5c0cdda6854dbe500f540aaee528756513e0427ebbf2194ccbe9228"
+      ],
+      "hypothesis-node-7eb029d879121f563620e982bb31e47751da26ed6719e82806fb370b1f05e7a8": [
+        "hypothesis-node-172f1585c50225a6c82836cffa16cfcd3d5177395cb627a3ab41ee98004ee661",
+        "hypothesis-node-aa423fd587bc0b02870f74868d6be990192d862264944e0de93e1c6a7d41ded9",
+        "hypothesis-node-4d44b8049a3982d33b652f11fc63d8baa318e9135e19283efd91ccdaf8429976",
+        "hypothesis-node-da27f25be1c9bbba40085f90881a72da0b233270c342aa1aefd61ad9d6b824f6",
+        "hypothesis-node-521e79602dccc591ab1abc15651ef8b63c473f1aebafd98e6ecd704216cd9bdc",
+        "hypothesis-node-2d86de41d88784689dc007e071290516b1999658f603d3f94fe5eaf533200f89",
+        "hypothesis-node-5df4fb54ca68a63f9e979d48a915ef3b66dfc652c2c2aa781988c35881193074",
+        "hypothesis-node-e562e04815a148345e39ae7796ce3fadf29393e1e5612f2cf1e704553a03771d",
+        "hypothesis-node-df8bdbc90f82e692c1416fd94f62a406a4dcfd3a6cf1f398fb6c30964dffb076",
+        "hypothesis-node-736cd973a2a52e2e3da880ee4d2200245a3679433a852fed15c1f6f695e9badf",
+        "hypothesis-node-162c7ff614a26c5fab085e9456f2e1657d19ced39d0af20949dc946f8c822186"
+      ],
+      "hypothesis-node-5f194708fd079036c97ef426d17c17fdf32b7e2ebc1fb54402f03116099b5779": [
+        "hypothesis-node-f4a95948c86cddebdd77d1e4ac016808074c45ec4f6d993f7e65849d375974a7",
+        "hypothesis-node-b2112c2205914f9f4bda8f6e82e957c7fadc4ebb08cccc654e20743b19ef406d",
+        "hypothesis-node-224ca1e700bb128807b787094befd61ef6a12aae14ce33b1516fb40c288415de",
+        "hypothesis-node-14651cb556895f52c0eb43d03fbf90f8560b1882e74dafc49d82e938dddc99b1",
+        "hypothesis-node-e9b26945b996f019bee9eafff40486f7324d15b972ec9c9e2bd8d9ab3b875092",
+        "hypothesis-node-2594f67ff5e30a859b11781e0e55850c1df9b8f57aa340f3313c3adf55913569",
+        "hypothesis-node-28006a1cd487cac0066515bda6ec6c253ceaabb237d9ebc7a203c266fc2eea76",
+        "hypothesis-node-6db3773530de3d9182965f261a4ba12117be2eabe24b2b89f4daa2c87bbdd003",
+        "hypothesis-node-285cd3b1cba55cf1e2346687f10cfb66269d4f9b561fd07c3e2b6fd16029bab6",
+        "hypothesis-node-736cd973a2a52e2e3da880ee4d2200245a3679433a852fed15c1f6f695e9badf",
+        "hypothesis-node-075e14cdf3d233bafb5e61214063cc3cae7043861639a8b5dd2258cd53be556c"
+      ],
+      "hypothesis-node-858eb69ae9605c1d719ab060681c0e16135a24aa7a8023901878f3b55cd72579": [
+        "hypothesis-node-f4a95948c86cddebdd77d1e4ac016808074c45ec4f6d993f7e65849d375974a7",
+        "hypothesis-node-ee768f9fc91416c066f2fa4cc643538bd2911b16ca2e28e1f27221f15d60ab06",
+        "hypothesis-node-02a487b6448dcc1d75fe58af23573aa8740003da7e50419f024fb47c7afab083"
+      ],
+      "hypothesis-node-25fccfa87a6b38451554bc577be663092475519f13556579191dbabc4f7940dc": [
+        "hypothesis-node-ff55015aef7943b267daf735e3d1c9ed63c39bdf98417694d6eb6d22c4fbb9be",
+        "hypothesis-node-82c3d39845eee21b0e47ecc0d2b1fbee6e9cc11fcd7186911d53d7ffe794c0f8",
+        "hypothesis-node-c66fdd3fd339ce143f155e410d85180b48741849249dbd494ab77ec6f16460bd",
+        "hypothesis-node-f244ccdd5cf200725df0526979e4fd725495028c394a03c8b575898f9db2af7d",
+        "hypothesis-node-fbba858b69ed19451dfd207cf115a3799a0535e7231a9877c7f0c61600b04924",
+        "hypothesis-node-4e6128a3162f1b697153fc6f73f292c256d7d043077f040830b21f2983d4e403",
+        "hypothesis-node-a90df254e080fd898a36b694a3ef3ee6c399e2ef326a311f59b66d94dd79b6a6",
+        "hypothesis-node-ae4b77cdee3154e9ecf5f47abf05206e51792a16ab9fc98ef6323db4bf39f9c3",
+        "hypothesis-node-d1b3dc12c50ce0e78f84b56c6f76830eabf946098bfd463411c8352f010a9834",
+        "hypothesis-node-162c7ff614a26c5fab085e9456f2e1657d19ced39d0af20949dc946f8c822186",
+        "hypothesis-node-075e14cdf3d233bafb5e61214063cc3cae7043861639a8b5dd2258cd53be556c"
+      ],
+      "hypothesis-node-f6808ba5e00db6f480f1f31dc652ebd1f862d52d3e0fb025f81109681e2163d1": [
+        "hypothesis-node-ff55015aef7943b267daf735e3d1c9ed63c39bdf98417694d6eb6d22c4fbb9be",
+        "hypothesis-node-f116d29582826ee1cd78054e9234efe579719ddba072fff7e1fd17adbd536d76",
+        "hypothesis-node-2a8c99c5952fa6fd37452b7e382d5d2422659f2510cd515252eca74bdba1ed2b"
+      ],
+      "hypothesis-node-d524b7fb36930420c36bd6949e51f4d9e2c887b0cc66b886b73f4ab9200a7fa8": [
+        "hypothesis-node-4c915c2883d10351bfbf2e9809ab4b07037b615dac51a8658616096aea67dde4",
+        "hypothesis-node-a21474b5299dbe695aaf0ae18de14cd3cc8aca67948dc06d149748eace7ca4d8"
+      ],
+      "hypothesis-node-e4ac7cc8352b48505f4800bfb3c71a03e23b67715a24a26567a34131a7be98b8": [
+        "hypothesis-node-697095d2d98679609b5f1178dd88cf7fd97c979d4eee26d29e44beb8e199b67f",
+        "hypothesis-node-0377b1894f617bab3b97d2eab5bf73a2f48ae4a177d56ed29d51a8115b703632"
+      ],
+      "hypothesis-node-6990e2f590806f5bc5dbc9809c9d76d9cce692a377946f44d34a40183ec18d1a": [
+        "hypothesis-node-12a7c4f7a49b2e51f948426360586163b977dacfa0d84aa4410b52a4b8d4421c",
+        "hypothesis-node-ec0dbe87f48878c95240afa1be193c7bdcfc13bfc73d68950ebb468e947fa83d"
+      ],
+      "hypothesis-node-001b456cc654a9a86c4d78b5ba74f4e08261e8fc3f06ad7c41c3e4c70270f767": [
+        "hypothesis-node-b06f6866dcdd1edea8a9079fabec637205d2b0c89d5c3973deef1da8b4c68deb",
+        "hypothesis-node-16cf89b89aff568fe35f8616ae76d518a32d9ee16b39210be0052c203a1d1506"
+      ],
+      "hypothesis-node-792495d873f41d603bc8a2072d62aa4dcc3f55a359dc18adb77fc6d3883003c0": [
+        "hypothesis-node-107d65836feb353d2f0e5360a794a539434aa8149c542f98787bec15047c18c2",
+        "hypothesis-node-f57133a81afc11a48441aefb5589faa1afc3b342d4f8674ee5e9ebc39f09d976"
+      ],
+      "hypothesis-node-f56e9b06c69ee71de048b4f5e33498cc1de48e81e78a8ba1b45d416d3c64bab9": [
+        "hypothesis-node-73ccf954c7297763e011a96e8db8470e63a4092427bf18f5560de96511c450fc",
+        "hypothesis-node-7bdff6a3d8158c3cdf4916712d776960c48838e5aa97e6c8d6fe381a035b1f0d"
+      ],
+      "hypothesis-node-78ad6e4ec829b4d68f48ec513cd01ce523b2789d1d0f281e0a151ede76a0b4d4": [
+        "hypothesis-node-40cf4fe393515a693e29277674dc82b74db78fb812dc4c89724512a1d9508755",
+        "hypothesis-node-1baf663bb1d829b9ccbd07c7215c0b4c89c917d822f97d18fba283760eb73af3"
+      ],
+      "hypothesis-node-eb5dff92495930e03fa8b4141390f05c0cf6798a7975a2de7593c2c116914333": [
+        "hypothesis-node-aa423fd587bc0b02870f74868d6be990192d862264944e0de93e1c6a7d41ded9",
+        "hypothesis-node-f3c8be7203c0b1c8ae3a72bdbeeda4f9ee4e6517e0b568b8042c5ee6ca4537d0"
+      ],
+      "hypothesis-node-47ffbe331610da0900a1994f888dff66f036f4c91e2091c63b3b0570f15dfbbc": [
+        "hypothesis-node-b2112c2205914f9f4bda8f6e82e957c7fadc4ebb08cccc654e20743b19ef406d",
+        "hypothesis-node-ee768f9fc91416c066f2fa4cc643538bd2911b16ca2e28e1f27221f15d60ab06"
+      ],
+      "hypothesis-node-e0e10b2e8015a9ee30a5285030b647d090b936ce59f9757105bd3c8ab1a4ea84": [
+        "hypothesis-node-82c3d39845eee21b0e47ecc0d2b1fbee6e9cc11fcd7186911d53d7ffe794c0f8",
+        "hypothesis-node-f116d29582826ee1cd78054e9234efe579719ddba072fff7e1fd17adbd536d76"
+      ],
+      "hypothesis-node-f2e79cd08a2154e3895a5ac14c0cbc0b44805294aa1777933ee822a4ece78848": [
+        "hypothesis-node-5b74417c758f1ff721786f85e3e388356aba666cd102bf934ac0c44dbe2cae22",
+        "hypothesis-node-1fc9f9b6c96f4c3ee616d14f339abf4888ec6d65267fa9d98d22f3687bfb9fe4"
+      ],
+      "hypothesis-node-3942b4434e22771482ffb19dfa4b9a108ecb1cee309c797601ee94da4aa1a5eb": [
+        "hypothesis-node-f92eb5d880b41579258d1d5921e2c45bdef595612c2c8badacd4373f2eaba54a",
+        "hypothesis-node-714564a85632f6aedf692420b8ef7bc7e676fa13019533e5a3009d7da3ec639a"
+      ],
+      "hypothesis-node-f50337e3e6f2571d198b9ca555d7047b038f386e0694604b912f8751a690652b": [
+        "hypothesis-node-ef66a2c429efdf6ca5686e2ca509b832fd00659060ec95403ad859af12fd55b2",
+        "hypothesis-node-ea474c45f7415531eff41b87dab94554b542516db86445dffba1159237228a53"
+      ],
+      "hypothesis-node-a44eb6c7ea8b621c9732ebb0a8f82919db583fe7fef6e7b05ed04c14edaa2237": [
+        "hypothesis-node-a7dfb1e67c62c8383ca59962d4cc2332a7e9c1388fde9af7baf8ad8d4ad9f51b",
+        "hypothesis-node-616ebbdd0b1cb2e1d0edb8cc88af69d38a900dc880b81d424e8d46ced9006e75"
+      ],
+      "hypothesis-node-65ec95e20a3a7415b49da41efb47982bfd6f064501dc91a407638c7c5f5ef95c": [
+        "hypothesis-node-52eca6252ed4be8de3bd3db9647ed366703d41a79f94b074c05b54efcf58bf21",
+        "hypothesis-node-275cd109a14228c43e67541173a702da5e5a611ca6685edb19b59e4e6aa16669"
+      ],
+      "hypothesis-node-33fe603cff0fca9e4c91014625f0581fceed9e451f7251686e3198f51a7cdc2e": [
+        "hypothesis-node-ff6697315ebb7d38ed82f0cf7aa340b16ab12a3a92748a6ff41b33da9b664653",
+        "hypothesis-node-f8c02dbd9e1f779ea6fc44cbade73bd305757de6de04fde610ce2477c8f417b5"
+      ],
+      "hypothesis-node-4c201aec0d28957681c142befe7530fec5450d889077d3e183676b9541235759": [
+        "hypothesis-node-4d44b8049a3982d33b652f11fc63d8baa318e9135e19283efd91ccdaf8429976",
+        "hypothesis-node-0014d2f2f5c0cdda6854dbe500f540aaee528756513e0427ebbf2194ccbe9228"
+      ],
+      "hypothesis-node-37f6d981fdf6083f2d806b05b46381eee9a785ea671c2eec996fe4950efe3679": [
+        "hypothesis-node-224ca1e700bb128807b787094befd61ef6a12aae14ce33b1516fb40c288415de",
+        "hypothesis-node-02a487b6448dcc1d75fe58af23573aa8740003da7e50419f024fb47c7afab083"
+      ],
+      "hypothesis-node-b081fb26bc4161c5d6fa49c7c12ac0039a9b95b9293909b62b1f6e65ea2fcb72": [
+        "hypothesis-node-c66fdd3fd339ce143f155e410d85180b48741849249dbd494ab77ec6f16460bd",
+        "hypothesis-node-2a8c99c5952fa6fd37452b7e382d5d2422659f2510cd515252eca74bdba1ed2b"
+      ],
+      "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09": [
+        "hypothesis-node-6b5e98af6e9796829e22fa9561a9dc313e711a90d4edb825b2dfa18730b270d5",
+        "hypothesis-node-4df9e8af6def8003991098e3df1b3e0053c45248a3a8f82160d73199e401e877"
+      ],
+      "hypothesis-node-69db796c31a9f6d8d2db976a3d7b0cfa1b6e4914ed3b5d62875beb406bdf2f57": [
+        "hypothesis-node-042b73f778b720f08b9489560cf7f16955329cac535cfad7329c92623d526569",
+        "hypothesis-node-6cc706cffd093b06fd7679ab18c2bd7aa8bb93d34208f33eb9750a6f67fbb03f"
+      ],
+      "hypothesis-node-83fc0d521e805304d1ece0598ba64a1cdb5b245f97ec930cbf807ee41a563374": [
+        "hypothesis-node-7a1d242542cecaea692df3099b424016ce05055bf5c7bdbaba0aad450fe7479b",
+        "hypothesis-node-81fa41efada5638b1a92ff15712f7c9e4088d26570b90ed424780e617688c54d"
+      ],
+      "hypothesis-node-27ef179f8b36b4ed5be0916fc8602acb0d545c14c8651ac96995de76675c6de7": [
+        "hypothesis-node-ad062c2f2b9eff1cef5dd1d9408e526e75b2649bce51037e12c6cb006e60e33e",
+        "hypothesis-node-8080aa541e38aa24ff622648d305a84ed04e712dfd13e81bd657fa87430f2cc7"
+      ],
+      "hypothesis-node-394817b1182e28da260b7dac0f5f8c11fe5887b75907a5b242db1dc2a5e27c15": [
+        "hypothesis-node-8ea1cf348e2b97f63c5c2b8d3b55a361c2eb84743b3cb0c0175e41ad6f071865"
+      ],
+      "hypothesis-node-66eef87f8573b6f47c3c847ac8a1ee1820fb75a47d6bcb497c9ce1e9d2910e9c": [
+        "hypothesis-node-da27f25be1c9bbba40085f90881a72da0b233270c342aa1aefd61ad9d6b824f6"
+      ],
+      "hypothesis-node-c965b25d56efe980beadc93d3a92f0dcab0922404edc176a6ea2d022148e291e": [
+        "hypothesis-node-14651cb556895f52c0eb43d03fbf90f8560b1882e74dafc49d82e938dddc99b1"
+      ],
+      "hypothesis-node-1efb7b3ab1938c8cce564623c67f3fb992ffd869238f29550e181877ce53ea59": [
+        "hypothesis-node-f244ccdd5cf200725df0526979e4fd725495028c394a03c8b575898f9db2af7d"
+      ],
+      "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd": [
+        "hypothesis-node-544925f5ec28d8a5d53bfe9fbbe3a2d0a2b1e67957f2b3a83673be68846214d2"
+      ],
+      "hypothesis-node-769d92da6ab98d9511136bf7d5c9610cab149cbdf3ee57ab7578b725701e515e": [
+        "hypothesis-node-ef7fac109c6398a23661ef7f1ccaf8be9b8ec4006c9f04613fb9c4edff6f7f46"
+      ],
+      "hypothesis-node-e61b75c751598106958ab6e68384ba7de4d3f9e9f692239f5c9ab4dd5dc1af3b": [
+        "hypothesis-node-be5c8d4bae7e4747c08cda417ece0b42c1aab5b3c25a511ea656e84a7ecd5b7a"
+      ],
+      "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6": [
+        "hypothesis-node-14687631fc395fc3d6ac25e2f3f453cfee22c6222632b8fd811e5a48b250988c"
+      ],
+      "hypothesis-node-c798795bf745e8f169a801ad2132dfc5c5847b623998282171961f8e9d615ca9": [
+        "hypothesis-node-521e79602dccc591ab1abc15651ef8b63c473f1aebafd98e6ecd704216cd9bdc"
+      ],
+      "hypothesis-node-0918dd3ec6cbe3a2c1763c8007c6de0c52683fa8eb82b08552f6f04e061d5dc6": [
+        "hypothesis-node-e9b26945b996f019bee9eafff40486f7324d15b972ec9c9e2bd8d9ab3b875092"
+      ],
+      "hypothesis-node-f563a4d2f66a936ec5b599b6322541354f5e3d1f840df291489bc212fe17adb1": [
+        "hypothesis-node-fbba858b69ed19451dfd207cf115a3799a0535e7231a9877c7f0c61600b04924"
+      ],
+      "hypothesis-node-0d4d17542c9d61318b7ddcc588e35de70f67ec5ae0a590b124ddd43db129daf7": [
+        "hypothesis-node-942a582e1f7800f826b9124d9548374c003f3544d4b445c475be89916a6a30c6"
+      ],
+      "hypothesis-node-8ce3ad5149c34804fa7a1e873e9d64b1fac248f42f2602c32db72644d3ef05a2": [
+        "hypothesis-node-10823353b6d0813090978e20da130fe957fe2b2df2b70a1d6304e26d08f93f73"
+      ],
+      "hypothesis-node-8a534dfb32166859aba3096bec5d6e69ed907c4facd469524dd0fc8852dd5ec1": [
+        "hypothesis-node-149d8427b6728307e0896b970ff007b7bf36942ed9adc5ba627ffdb70960d314"
+      ],
+      "hypothesis-node-edaa1f48492173e6fe6299e915caa2c50c4cdb150ab7f324eafae04755cf5bb3": [
+        "hypothesis-node-2d86de41d88784689dc007e071290516b1999658f603d3f94fe5eaf533200f89"
+      ],
+      "hypothesis-node-557004078947c91c2f128411c444eca6f083a3fe17a421edb4c959212803318f": [
+        "hypothesis-node-2594f67ff5e30a859b11781e0e55850c1df9b8f57aa340f3313c3adf55913569"
+      ],
+      "hypothesis-node-a96a3e2f31c8c9a8339bfb0d7315c10e08d92368c9beecee7abf8d8976ddd6ce": [
+        "hypothesis-node-4e6128a3162f1b697153fc6f73f292c256d7d043077f040830b21f2983d4e403"
+      ],
+      "hypothesis-node-8b5ef667e907932c6aabe69e357fca7b120e4546a3bc227d16a552e3aea7f5b5": [
+        "hypothesis-node-6c18a2de430072b15f4070a7d5fc99211bac8bc9b73bb1ff4571bf5dd42ce105"
+      ],
+      "hypothesis-node-ec72c8cc305ec64fa864f3d0b2b75ee9cdcdce7a819e0e9d0bc5f06db4a09757": [
+        "hypothesis-node-1c554642bc2c1ac29dd757e4bd36a4e025b19ebdf149ccbe809febc9c4db2e57"
+      ],
+      "hypothesis-node-e27ac23f0033e8b023c1dc9757ab98ede03012f5b908886b5e87dde5ca65fb79": [
+        "hypothesis-node-5df4fb54ca68a63f9e979d48a915ef3b66dfc652c2c2aa781988c35881193074"
+      ],
+      "hypothesis-node-2a2acbcbf3664a010a347d78d5945acb972d12d2a0ac4f45618eb3e88bf42c8b": [
+        "hypothesis-node-28006a1cd487cac0066515bda6ec6c253ceaabb237d9ebc7a203c266fc2eea76"
+      ],
+      "hypothesis-node-a4f860ab8f2220c3cfc9983876f50d06b4cea8f5abdaed1a794f6e058370a143": [
+        "hypothesis-node-a90df254e080fd898a36b694a3ef3ee6c399e2ef326a311f59b66d94dd79b6a6"
+      ],
+      "hypothesis-node-7ddb3854302e9f353cabaa460e6bec6d84f0dafbcc484bd43688d2fb010c6a2d": [
+        "hypothesis-node-981a3a7172c69e7459ee7a740b1ebc83bf0f86e475f0e81cea67636c7e93a74b"
+      ],
+      "hypothesis-node-407cd49546472acb46abf601a0287175534e840f8f6bd52a7bf7b102e7bc80e6": [
+        "hypothesis-node-e562e04815a148345e39ae7796ce3fadf29393e1e5612f2cf1e704553a03771d"
+      ],
+      "hypothesis-node-1e80b0116b009578d3e7bfc1ac2ada57d13ccf39e9aeb64ca247f97679a445d5": [
+        "hypothesis-node-6db3773530de3d9182965f261a4ba12117be2eabe24b2b89f4daa2c87bbdd003"
+      ],
+      "hypothesis-node-2776e97fbbeb100eba1b1b72a2af71b06265420fa687c511eb43a515ad213f5c": [
+        "hypothesis-node-ae4b77cdee3154e9ecf5f47abf05206e51792a16ab9fc98ef6323db4bf39f9c3"
+      ],
+      "hypothesis-node-b715ed1438970ba76647d7373ea8c62fcd8bb928b394d13509dc10509d3e9ecf": [
+        "hypothesis-node-df8bdbc90f82e692c1416fd94f62a406a4dcfd3a6cf1f398fb6c30964dffb076"
+      ],
+      "hypothesis-node-7eda17b0d5e156ba2f1af24daeb0b953217ff3cf2148b1765a7dcf86829295bf": [
+        "hypothesis-node-285cd3b1cba55cf1e2346687f10cfb66269d4f9b561fd07c3e2b6fd16029bab6"
+      ],
+      "hypothesis-node-7f5a42b5659e196c5a630a887dab38c7921c8f5dec3e4e7ee83bb89e38631103": [
+        "hypothesis-node-d1b3dc12c50ce0e78f84b56c6f76830eabf946098bfd463411c8352f010a9834"
+      ],
+      "hypothesis-node-0ef836e195659da8db94d2c88baca474faa9f66ae17f9d48eaba4406cd14559c": [
+        "hypothesis-node-736cd973a2a52e2e3da880ee4d2200245a3679433a852fed15c1f6f695e9badf"
+      ],
+      "hypothesis-node-18aa83715d3838639744c01a771d6538ad82f64630809ee4da770cfff6c9633b": [
+        "hypothesis-node-162c7ff614a26c5fab085e9456f2e1657d19ced39d0af20949dc946f8c822186"
+      ],
+      "hypothesis-node-e333b57b0ac83b2d98a0b743252efa69c332fbaade1f1e3bc294165655cb1185": [
+        "hypothesis-node-075e14cdf3d233bafb5e61214063cc3cae7043861639a8b5dd2258cd53be556c"
+      ]
+    },
+    "familyNodeStats": {
+      "MATCH_COMPETITION": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "STADIUM_PITCH": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "WEATHER": {
+        "blocked": 6,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 6,
+        "pruned": 0
+      },
+      "TRAVEL_LOGISTICS": {
+        "blocked": 11,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 11,
+        "pruned": 0
+      },
+      "CALENDAR_FATIGUE": {
+        "blocked": 10,
+        "deferred": 0,
+        "executed": 2,
+        "longTail": 0,
+        "materialized": 17,
+        "pruned": 5
+      },
+      "STRENGTH_FORM": {
+        "blocked": 68,
+        "deferred": 0,
+        "executed": 10,
+        "longTail": 5,
+        "materialized": 88,
+        "pruned": 5
+      },
+      "ATTACK": {
+        "blocked": 35,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 35,
+        "pruned": 0
+      },
+      "DEFENCE": {
+        "blocked": 1,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 1,
+        "pruned": 0
+      },
+      "POSSESSION_PRESSING": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "SET_PIECES": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "PLAYER": {
+        "blocked": 5,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 5,
+        "pruned": 0
+      },
+      "FOOTEDNESS_LATERALITY": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "LINEUP_CONTINUITY": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "ABSENCE_RETURN": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "DISCIPLINE_REFEREE": {
+        "blocked": 2,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 2,
+        "pruned": 0
+      },
+      "FORMATION_STRUCTURE": {
+        "blocked": 3,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 3,
+        "pruned": 0
+      },
+      "ROLE_TACTICS": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "COACH": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "GOALKEEPER": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "BENCH_SUBSTITUTIONS": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "CHEMISTRY_NETWORKS": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "INFORMATION_NEWS": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "MARKET": {
+        "blocked": 3,
+        "deferred": 0,
+        "executed": 1,
+        "longTail": 0,
+        "materialized": 4,
+        "pruned": 0
+      },
+      "TRAINING_LOAD": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "MEDICAL": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "EVENT_GAME_STATE": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "ORGANISATION_SQUAD": {
+        "blocked": 0,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 0,
+        "materialized": 0,
+        "pruned": 0
+      },
+      "DATA_QUALITY": {
+        "blocked": 5,
+        "deferred": 0,
+        "executed": 0,
+        "longTail": 3,
+        "materialized": 8,
+        "pruned": 0
+      }
+    },
+    "nodeLocator": {
+      "hypothesis-node-b7e58ce9969e7727bdf07db03af2c204e1b8899e6c4fdaf4a55bb762437e1de9": 1,
+      "hypothesis-node-636251d5e1c9f22b27a20a995fdd337f8119b1274a274d44278d60dcbfcaffa5": 1,
+      "hypothesis-node-233c572f7919f26eb277d32505141b2afb2346217d9c9675a0c7d630d953e04d": 1,
+      "hypothesis-node-f6a57e02fec00b8750003ced60fd6881a994c84758eb175ff05fefd8b3092bd7": 1,
+      "hypothesis-node-d785887a4d02877e9dfea16b3e5781a194b9c67eea3e8880701b76fb3bf275a9": 1,
+      "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4": 1,
+      "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce": 1,
+      "hypothesis-node-c1477389ec429b753d55301768ef984859ab00b823006988dff6d4752686d67a": 1,
+      "hypothesis-node-77f02f9f69c7b53e2c3a95ab6c4b565f0b4650de52bf0d947b397858dc122717": 1,
+      "hypothesis-node-4d610d82b193dfb3846ee72f874dbf2790693ca8a28ee9986c2165312c1a0fcc": 1,
+      "hypothesis-node-5e0d245712718834b994e7dcb0b28f69e85a7fef2f9816c1a0cee63395a1251a": 1,
+      "hypothesis-node-efc0310231b74b20fdd21f281b5d547eeb9c107e129b9878780c72f67a460049": 1,
+      "hypothesis-node-96d7c678549e799fa6d0961ed122b4e657661543b240378a31617228574ab329": 1,
+      "hypothesis-node-84b690d199430f6bc2da24624db0b81aa482ae5e1607c76bd0c84ccf2f7d3449": 1,
+      "hypothesis-node-a3763bda1156b039d7da2b2e2e6a2a2aa60cc223046ada1048d3b4a217506653": 1,
+      "hypothesis-node-cbf6e114684def2c4499d3162f381c4c2e1929cf778bdac736804725a420341e": 1,
+      "hypothesis-node-5f93fdd923f22324f6ae1018f11d5ab3791f13339a08995fc9b5ad4de141fe3c": 1,
+      "hypothesis-node-76172163c85138312c9f372b63bc0e57ba4f9b7db11888929fb7defb843490d1": 1,
+      "hypothesis-node-379e1a5090b420d8d096d60d9c405c8af6386881a0d35568bbec1d6e85df38b8": 1,
+      "hypothesis-node-6bdd59010a41ba7fd6e3af2df820202bdb7a82f4ea30e406777ef0f2e5341478": 1,
+      "hypothesis-node-f9f4daf3da54a81df612009fa4a51e70c7c9018f9e8b804d749ad7de2ab1d986": 1,
+      "hypothesis-node-f1e889eb612319659b1301ed298ec973a95fed53ed864bb69a61a528994c3be0": 1,
+      "hypothesis-node-7eb029d879121f563620e982bb31e47751da26ed6719e82806fb370b1f05e7a8": 1,
+      "hypothesis-node-5f194708fd079036c97ef426d17c17fdf32b7e2ebc1fb54402f03116099b5779": 1,
+      "hypothesis-node-25fccfa87a6b38451554bc577be663092475519f13556579191dbabc4f7940dc": 1,
+      "hypothesis-node-8b42fb0db781dbd14cd399e035b648de995f94f8d381d7a30678c2adf145b82f": 1,
+      "hypothesis-node-b359b02d9171286a7257d353946ca0028ce024b86f66da03a3171128c5969058": 1,
+      "hypothesis-node-ce1f0f0a209bb899a64140abe3e7b68d4bb29eef8be5b9ca27d3b48fa645c41c": 1,
+      "hypothesis-node-a0e4c447cb9d824e1509c76a826de87bc262c5dc0f2a4503d32669d73d548f64": 1,
+      "hypothesis-node-1bbff3f351f93de248851f0522438755a8fb054fc0cc31b12d543315812d8a9b": 1,
+      "hypothesis-node-3b50acf6b933b75b2e3cd2b660b5a67956958b9f81670d3d1677e1ca7788866a": 1,
+      "hypothesis-node-9405b2d50b98537dfeee622ceb3160811243143afe27762cd19c3770dd54112d": 1,
+      "hypothesis-node-9e9d33d66ae0addac5ec9a03e2d1e9152cce40b4b20bbd212a82a72b022e8772": 1,
+      "hypothesis-node-2892f41737cbdbcbe7a835b993f73f1dfe38ff8d937718e42f31f1e884478a38": 1,
+      "hypothesis-node-858eb69ae9605c1d719ab060681c0e16135a24aa7a8023901878f3b55cd72579": 1,
+      "hypothesis-node-f6808ba5e00db6f480f1f31dc652ebd1f862d52d3e0fb025f81109681e2163d1": 1,
+      "hypothesis-node-d524b7fb36930420c36bd6949e51f4d9e2c887b0cc66b886b73f4ab9200a7fa8": 1,
+      "hypothesis-node-e4ac7cc8352b48505f4800bfb3c71a03e23b67715a24a26567a34131a7be98b8": 1,
+      "hypothesis-node-6990e2f590806f5bc5dbc9809c9d76d9cce692a377946f44d34a40183ec18d1a": 1,
+      "hypothesis-node-001b456cc654a9a86c4d78b5ba74f4e08261e8fc3f06ad7c41c3e4c70270f767": 1,
+      "hypothesis-node-792495d873f41d603bc8a2072d62aa4dcc3f55a359dc18adb77fc6d3883003c0": 1,
+      "hypothesis-node-f56e9b06c69ee71de048b4f5e33498cc1de48e81e78a8ba1b45d416d3c64bab9": 1,
+      "hypothesis-node-78ad6e4ec829b4d68f48ec513cd01ce523b2789d1d0f281e0a151ede76a0b4d4": 1,
+      "hypothesis-node-eb5dff92495930e03fa8b4141390f05c0cf6798a7975a2de7593c2c116914333": 1,
+      "hypothesis-node-47ffbe331610da0900a1994f888dff66f036f4c91e2091c63b3b0570f15dfbbc": 1,
+      "hypothesis-node-e0e10b2e8015a9ee30a5285030b647d090b936ce59f9757105bd3c8ab1a4ea84": 1,
+      "hypothesis-node-f2e79cd08a2154e3895a5ac14c0cbc0b44805294aa1777933ee822a4ece78848": 1,
+      "hypothesis-node-3942b4434e22771482ffb19dfa4b9a108ecb1cee309c797601ee94da4aa1a5eb": 1,
+      "hypothesis-node-f50337e3e6f2571d198b9ca555d7047b038f386e0694604b912f8751a690652b": 1,
+      "hypothesis-node-a44eb6c7ea8b621c9732ebb0a8f82919db583fe7fef6e7b05ed04c14edaa2237": 1,
+      "hypothesis-node-65ec95e20a3a7415b49da41efb47982bfd6f064501dc91a407638c7c5f5ef95c": 2,
+      "hypothesis-node-33fe603cff0fca9e4c91014625f0581fceed9e451f7251686e3198f51a7cdc2e": 2,
+      "hypothesis-node-4c201aec0d28957681c142befe7530fec5450d889077d3e183676b9541235759": 2,
+      "hypothesis-node-37f6d981fdf6083f2d806b05b46381eee9a785ea671c2eec996fe4950efe3679": 2,
+      "hypothesis-node-b081fb26bc4161c5d6fa49c7c12ac0039a9b95b9293909b62b1f6e65ea2fcb72": 2,
+      "hypothesis-node-375d8aae9d3873ddc0da3f9f217ad13f5c3722df6d9bc51ef87c2f99504bff09": 2,
+      "hypothesis-node-69db796c31a9f6d8d2db976a3d7b0cfa1b6e4914ed3b5d62875beb406bdf2f57": 2,
+      "hypothesis-node-83fc0d521e805304d1ece0598ba64a1cdb5b245f97ec930cbf807ee41a563374": 2,
+      "hypothesis-node-27ef179f8b36b4ed5be0916fc8602acb0d545c14c8651ac96995de76675c6de7": 2,
+      "hypothesis-node-394817b1182e28da260b7dac0f5f8c11fe5887b75907a5b242db1dc2a5e27c15": 2,
+      "hypothesis-node-66eef87f8573b6f47c3c847ac8a1ee1820fb75a47d6bcb497c9ce1e9d2910e9c": 2,
+      "hypothesis-node-c965b25d56efe980beadc93d3a92f0dcab0922404edc176a6ea2d022148e291e": 2,
+      "hypothesis-node-1efb7b3ab1938c8cce564623c67f3fb992ffd869238f29550e181877ce53ea59": 2,
+      "hypothesis-node-6246ad771d61d8c39eb338a2918ae83986cef2a3e52e78450302e7f8647ccedd": 2,
+      "hypothesis-node-769d92da6ab98d9511136bf7d5c9610cab149cbdf3ee57ab7578b725701e515e": 2,
+      "hypothesis-node-e61b75c751598106958ab6e68384ba7de4d3f9e9f692239f5c9ab4dd5dc1af3b": 2,
+      "hypothesis-node-1d857ff9df7b0450b6820a520db0b754ce2d8436bc0a44d35822c727490428e6": 2,
+      "hypothesis-node-c798795bf745e8f169a801ad2132dfc5c5847b623998282171961f8e9d615ca9": 2,
+      "hypothesis-node-0918dd3ec6cbe3a2c1763c8007c6de0c52683fa8eb82b08552f6f04e061d5dc6": 2,
+      "hypothesis-node-f563a4d2f66a936ec5b599b6322541354f5e3d1f840df291489bc212fe17adb1": 2,
+      "hypothesis-node-0d4d17542c9d61318b7ddcc588e35de70f67ec5ae0a590b124ddd43db129daf7": 2,
+      "hypothesis-node-8ce3ad5149c34804fa7a1e873e9d64b1fac248f42f2602c32db72644d3ef05a2": 2,
+      "hypothesis-node-8a534dfb32166859aba3096bec5d6e69ed907c4facd469524dd0fc8852dd5ec1": 2,
+      "hypothesis-node-edaa1f48492173e6fe6299e915caa2c50c4cdb150ab7f324eafae04755cf5bb3": 2,
+      "hypothesis-node-557004078947c91c2f128411c444eca6f083a3fe17a421edb4c959212803318f": 2,
+      "hypothesis-node-a96a3e2f31c8c9a8339bfb0d7315c10e08d92368c9beecee7abf8d8976ddd6ce": 2,
+      "hypothesis-node-8b5ef667e907932c6aabe69e357fca7b120e4546a3bc227d16a552e3aea7f5b5": 2,
+      "hypothesis-node-ec72c8cc305ec64fa864f3d0b2b75ee9cdcdce7a819e0e9d0bc5f06db4a09757": 2,
+      "hypothesis-node-e27ac23f0033e8b023c1dc9757ab98ede03012f5b908886b5e87dde5ca65fb79": 2,
+      "hypothesis-node-2a2acbcbf3664a010a347d78d5945acb972d12d2a0ac4f45618eb3e88bf42c8b": 2,
+      "hypothesis-node-a4f860ab8f2220c3cfc9983876f50d06b4cea8f5abdaed1a794f6e058370a143": 2,
+      "hypothesis-node-7ddb3854302e9f353cabaa460e6bec6d84f0dafbcc484bd43688d2fb010c6a2d": 2,
+      "hypothesis-node-407cd49546472acb46abf601a0287175534e840f8f6bd52a7bf7b102e7bc80e6": 2,
+      "hypothesis-node-1e80b0116b009578d3e7bfc1ac2ada57d13ccf39e9aeb64ca247f97679a445d5": 2,
+      "hypothesis-node-2776e97fbbeb100eba1b1b72a2af71b06265420fa687c511eb43a515ad213f5c": 2,
+      "hypothesis-node-b715ed1438970ba76647d7373ea8c62fcd8bb928b394d13509dc10509d3e9ecf": 2,
+      "hypothesis-node-7eda17b0d5e156ba2f1af24daeb0b953217ff3cf2148b1765a7dcf86829295bf": 2,
+      "hypothesis-node-7f5a42b5659e196c5a630a887dab38c7921c8f5dec3e4e7ee83bb89e38631103": 2,
+      "hypothesis-node-0ef836e195659da8db94d2c88baca474faa9f66ae17f9d48eaba4406cd14559c": 2,
+      "hypothesis-node-18aa83715d3838639744c01a771d6538ad82f64630809ee4da770cfff6c9633b": 2,
+      "hypothesis-node-e333b57b0ac83b2d98a0b743252efa69c332fbaade1f1e3bc294165655cb1185": 2,
+      "hypothesis-node-dd4245164c7e655908f6882b15d894f1a7e588d48c6a757f30f66ef96e6643e8": 2,
+      "hypothesis-node-33d5af35659a35af38e0f1e8535409cfd66764e5728ff94172681ae3617ba317": 2,
+      "hypothesis-node-d726a71553f7b77ba0147a795700f97c5f537c7bc9b17dc9e349f26e6df3f168": 2,
+      "hypothesis-node-6f200f4092c1387b4508d84dfce5e242eeb06bb6671e6f5e59c58547cf37f910": 2,
+      "hypothesis-node-d929725b2d1f6ac24b9c946ab8232b80714adf8f1dca22080a92331e847105e3": 2,
+      "hypothesis-node-28480222af226a9b0016dee14c20114dd17535c483323d77ac7a39eaaa3066f3": 2,
+      "hypothesis-node-045ad4b726bd319462859c595625719d7373a32a36e2ba6b599aecb6f640d2ae": 2,
+      "hypothesis-node-28b415d33e641d9f29914c66f3c54c41c8b0bff5dd186cf9693c3797b6fb3506": 2,
+      "hypothesis-node-172f1585c50225a6c82836cffa16cfcd3d5177395cb627a3ab41ee98004ee661": 2,
+      "hypothesis-node-f4a95948c86cddebdd77d1e4ac016808074c45ec4f6d993f7e65849d375974a7": 3,
+      "hypothesis-node-ff55015aef7943b267daf735e3d1c9ed63c39bdf98417694d6eb6d22c4fbb9be": 3,
+      "hypothesis-node-4c915c2883d10351bfbf2e9809ab4b07037b615dac51a8658616096aea67dde4": 3,
+      "hypothesis-node-697095d2d98679609b5f1178dd88cf7fd97c979d4eee26d29e44beb8e199b67f": 3,
+      "hypothesis-node-12a7c4f7a49b2e51f948426360586163b977dacfa0d84aa4410b52a4b8d4421c": 3,
+      "hypothesis-node-b06f6866dcdd1edea8a9079fabec637205d2b0c89d5c3973deef1da8b4c68deb": 3,
+      "hypothesis-node-107d65836feb353d2f0e5360a794a539434aa8149c542f98787bec15047c18c2": 3,
+      "hypothesis-node-73ccf954c7297763e011a96e8db8470e63a4092427bf18f5560de96511c450fc": 3,
+      "hypothesis-node-40cf4fe393515a693e29277674dc82b74db78fb812dc4c89724512a1d9508755": 3,
+      "hypothesis-node-aa423fd587bc0b02870f74868d6be990192d862264944e0de93e1c6a7d41ded9": 3,
+      "hypothesis-node-b2112c2205914f9f4bda8f6e82e957c7fadc4ebb08cccc654e20743b19ef406d": 3,
+      "hypothesis-node-82c3d39845eee21b0e47ecc0d2b1fbee6e9cc11fcd7186911d53d7ffe794c0f8": 3,
+      "hypothesis-node-5b74417c758f1ff721786f85e3e388356aba666cd102bf934ac0c44dbe2cae22": 3,
+      "hypothesis-node-f92eb5d880b41579258d1d5921e2c45bdef595612c2c8badacd4373f2eaba54a": 3,
+      "hypothesis-node-ef66a2c429efdf6ca5686e2ca509b832fd00659060ec95403ad859af12fd55b2": 3,
+      "hypothesis-node-a7dfb1e67c62c8383ca59962d4cc2332a7e9c1388fde9af7baf8ad8d4ad9f51b": 3,
+      "hypothesis-node-52eca6252ed4be8de3bd3db9647ed366703d41a79f94b074c05b54efcf58bf21": 3,
+      "hypothesis-node-ff6697315ebb7d38ed82f0cf7aa340b16ab12a3a92748a6ff41b33da9b664653": 3,
+      "hypothesis-node-4d44b8049a3982d33b652f11fc63d8baa318e9135e19283efd91ccdaf8429976": 3,
+      "hypothesis-node-224ca1e700bb128807b787094befd61ef6a12aae14ce33b1516fb40c288415de": 3,
+      "hypothesis-node-c66fdd3fd339ce143f155e410d85180b48741849249dbd494ab77ec6f16460bd": 3,
+      "hypothesis-node-6b5e98af6e9796829e22fa9561a9dc313e711a90d4edb825b2dfa18730b270d5": 3,
+      "hypothesis-node-042b73f778b720f08b9489560cf7f16955329cac535cfad7329c92623d526569": 3,
+      "hypothesis-node-7a1d242542cecaea692df3099b424016ce05055bf5c7bdbaba0aad450fe7479b": 3,
+      "hypothesis-node-ad062c2f2b9eff1cef5dd1d9408e526e75b2649bce51037e12c6cb006e60e33e": 3,
+      "hypothesis-node-8ea1cf348e2b97f63c5c2b8d3b55a361c2eb84743b3cb0c0175e41ad6f071865": 3,
+      "hypothesis-node-da27f25be1c9bbba40085f90881a72da0b233270c342aa1aefd61ad9d6b824f6": 3,
+      "hypothesis-node-14651cb556895f52c0eb43d03fbf90f8560b1882e74dafc49d82e938dddc99b1": 3,
+      "hypothesis-node-f244ccdd5cf200725df0526979e4fd725495028c394a03c8b575898f9db2af7d": 3,
+      "hypothesis-node-544925f5ec28d8a5d53bfe9fbbe3a2d0a2b1e67957f2b3a83673be68846214d2": 3,
+      "hypothesis-node-ef7fac109c6398a23661ef7f1ccaf8be9b8ec4006c9f04613fb9c4edff6f7f46": 3,
+      "hypothesis-node-be5c8d4bae7e4747c08cda417ece0b42c1aab5b3c25a511ea656e84a7ecd5b7a": 3,
+      "hypothesis-node-14687631fc395fc3d6ac25e2f3f453cfee22c6222632b8fd811e5a48b250988c": 3,
+      "hypothesis-node-521e79602dccc591ab1abc15651ef8b63c473f1aebafd98e6ecd704216cd9bdc": 3,
+      "hypothesis-node-e9b26945b996f019bee9eafff40486f7324d15b972ec9c9e2bd8d9ab3b875092": 3,
+      "hypothesis-node-fbba858b69ed19451dfd207cf115a3799a0535e7231a9877c7f0c61600b04924": 3,
+      "hypothesis-node-942a582e1f7800f826b9124d9548374c003f3544d4b445c475be89916a6a30c6": 3,
+      "hypothesis-node-10823353b6d0813090978e20da130fe957fe2b2df2b70a1d6304e26d08f93f73": 3,
+      "hypothesis-node-149d8427b6728307e0896b970ff007b7bf36942ed9adc5ba627ffdb70960d314": 3,
+      "hypothesis-node-2d86de41d88784689dc007e071290516b1999658f603d3f94fe5eaf533200f89": 3,
+      "hypothesis-node-2594f67ff5e30a859b11781e0e55850c1df9b8f57aa340f3313c3adf55913569": 3,
+      "hypothesis-node-4e6128a3162f1b697153fc6f73f292c256d7d043077f040830b21f2983d4e403": 3,
+      "hypothesis-node-6c18a2de430072b15f4070a7d5fc99211bac8bc9b73bb1ff4571bf5dd42ce105": 3,
+      "hypothesis-node-1c554642bc2c1ac29dd757e4bd36a4e025b19ebdf149ccbe809febc9c4db2e57": 3,
+      "hypothesis-node-5df4fb54ca68a63f9e979d48a915ef3b66dfc652c2c2aa781988c35881193074": 3,
+      "hypothesis-node-28006a1cd487cac0066515bda6ec6c253ceaabb237d9ebc7a203c266fc2eea76": 3,
+      "hypothesis-node-a90df254e080fd898a36b694a3ef3ee6c399e2ef326a311f59b66d94dd79b6a6": 3,
+      "hypothesis-node-981a3a7172c69e7459ee7a740b1ebc83bf0f86e475f0e81cea67636c7e93a74b": 3,
+      "hypothesis-node-e562e04815a148345e39ae7796ce3fadf29393e1e5612f2cf1e704553a03771d": 3,
+      "hypothesis-node-6db3773530de3d9182965f261a4ba12117be2eabe24b2b89f4daa2c87bbdd003": 3,
+      "hypothesis-node-ae4b77cdee3154e9ecf5f47abf05206e51792a16ab9fc98ef6323db4bf39f9c3": 4,
+      "hypothesis-node-df8bdbc90f82e692c1416fd94f62a406a4dcfd3a6cf1f398fb6c30964dffb076": 4,
+      "hypothesis-node-285cd3b1cba55cf1e2346687f10cfb66269d4f9b561fd07c3e2b6fd16029bab6": 4,
+      "hypothesis-node-d1b3dc12c50ce0e78f84b56c6f76830eabf946098bfd463411c8352f010a9834": 4,
+      "hypothesis-node-736cd973a2a52e2e3da880ee4d2200245a3679433a852fed15c1f6f695e9badf": 4,
+      "hypothesis-node-162c7ff614a26c5fab085e9456f2e1657d19ced39d0af20949dc946f8c822186": 4,
+      "hypothesis-node-075e14cdf3d233bafb5e61214063cc3cae7043861639a8b5dd2258cd53be556c": 4,
+      "hypothesis-node-a21474b5299dbe695aaf0ae18de14cd3cc8aca67948dc06d149748eace7ca4d8": 4,
+      "hypothesis-node-0377b1894f617bab3b97d2eab5bf73a2f48ae4a177d56ed29d51a8115b703632": 4,
+      "hypothesis-node-ec0dbe87f48878c95240afa1be193c7bdcfc13bfc73d68950ebb468e947fa83d": 4,
+      "hypothesis-node-16cf89b89aff568fe35f8616ae76d518a32d9ee16b39210be0052c203a1d1506": 4,
+      "hypothesis-node-f57133a81afc11a48441aefb5589faa1afc3b342d4f8674ee5e9ebc39f09d976": 4,
+      "hypothesis-node-7bdff6a3d8158c3cdf4916712d776960c48838e5aa97e6c8d6fe381a035b1f0d": 4,
+      "hypothesis-node-1baf663bb1d829b9ccbd07c7215c0b4c89c917d822f97d18fba283760eb73af3": 4,
+      "hypothesis-node-f3c8be7203c0b1c8ae3a72bdbeeda4f9ee4e6517e0b568b8042c5ee6ca4537d0": 4,
+      "hypothesis-node-ee768f9fc91416c066f2fa4cc643538bd2911b16ca2e28e1f27221f15d60ab06": 4,
+      "hypothesis-node-f116d29582826ee1cd78054e9234efe579719ddba072fff7e1fd17adbd536d76": 4,
+      "hypothesis-node-1fc9f9b6c96f4c3ee616d14f339abf4888ec6d65267fa9d98d22f3687bfb9fe4": 4,
+      "hypothesis-node-714564a85632f6aedf692420b8ef7bc7e676fa13019533e5a3009d7da3ec639a": 4,
+      "hypothesis-node-ea474c45f7415531eff41b87dab94554b542516db86445dffba1159237228a53": 4,
+      "hypothesis-node-616ebbdd0b1cb2e1d0edb8cc88af69d38a900dc880b81d424e8d46ced9006e75": 4,
+      "hypothesis-node-275cd109a14228c43e67541173a702da5e5a611ca6685edb19b59e4e6aa16669": 4,
+      "hypothesis-node-f8c02dbd9e1f779ea6fc44cbade73bd305757de6de04fde610ce2477c8f417b5": 4,
+      "hypothesis-node-0014d2f2f5c0cdda6854dbe500f540aaee528756513e0427ebbf2194ccbe9228": 4,
+      "hypothesis-node-02a487b6448dcc1d75fe58af23573aa8740003da7e50419f024fb47c7afab083": 4,
+      "hypothesis-node-2a8c99c5952fa6fd37452b7e382d5d2422659f2510cd515252eca74bdba1ed2b": 4,
+      "hypothesis-node-4df9e8af6def8003991098e3df1b3e0053c45248a3a8f82160d73199e401e877": 4,
+      "hypothesis-node-6cc706cffd093b06fd7679ab18c2bd7aa8bb93d34208f33eb9750a6f67fbb03f": 4,
+      "hypothesis-node-81fa41efada5638b1a92ff15712f7c9e4088d26570b90ed424780e617688c54d": 4,
+      "hypothesis-node-8080aa541e38aa24ff622648d305a84ed04e712dfd13e81bd657fa87430f2cc7": 4
+    }
+  },
+  "generatedNodePages": [
+    {
+      "bytes": 68254,
+      "page": 1,
+      "records": 50,
+      "sha256": "32a4fdd913f3ea7c0eb2a878db46ac61e022809c53d12eb91af829a666e81a3a",
+      "source": "artifact",
+      "sourceSha256": "99b22d395e8fef27611b66aaebb1e39379f247e577a5d1e4c0db4b21972602a7",
+      "url": "/data/hypotheses/nodes/page-001.json"
+    },
+    {
+      "bytes": 77455,
+      "page": 2,
+      "records": 50,
+      "sha256": "1ea37c9757b775edce7a61c08d3e23ce9d0c82a152ee2f246fe13b41649ea9a4",
+      "source": "artifact",
+      "sourceSha256": "663fccb93ffaba8de6495a92da5218f77286bc8ebf6a843b149c55402a4613b8",
+      "url": "/data/hypotheses/nodes/page-002.json"
+    },
+    {
+      "bytes": 89563,
+      "page": 3,
+      "records": 50,
+      "sha256": "770000881d07d2e1cf7f9cd373528b8dc449b76e92277b884408760285ae7887",
+      "source": "artifact",
+      "sourceSha256": "a5538821cb169844b9865b0670f94443dbc23f4796dae16791da76d9cf0412da",
+      "url": "/data/hypotheses/nodes/page-003.json"
+    },
+    {
+      "bytes": 53791,
+      "page": 4,
+      "records": 30,
+      "sha256": "06aa80a0c162dda78578e6705a2be9d75871d95871e21ccd916a307806c9aad2",
+      "source": "artifact",
+      "sourceSha256": "8fdd85dbce8b3cc04322d8b0d24f6fb12ab475b0c8aa9cf3da52a649630652d2",
+      "url": "/data/hypotheses/nodes/page-004.json"
+    }
+  ],
+  "presentation": {
+    "hypothesisIntelligence": {
+      "schemaVersion": "hypothesis-intelligence-cockpit-v1",
+      "generatedAt": "2026-07-29T13:30:00+00:00",
+      "title": "Hypothèses et découvertes",
+      "registry": {
+        "machineDiscovered": 700,
+        "owners": 8,
+        "prospectiveFrozen": 3,
+        "families": 5,
+        "duplicates": 0
+      },
+      "machineDiscoveries": [
+        {
+          "id": "J10-M001",
+          "origin": "MACHINE_DISCOVERED",
+          "badge": "Découverte machine",
+          "title": "victoire à l’extérieur · La Liga",
+          "competition": "La Liga",
+          "market": "1X2_AWAY",
+          "selection": "AWAY",
+          "historicalSupport": 261,
+          "historicalProfitUnits": 43.43,
+          "historicalRoi": 0.1663984674329502,
+          "confidenceInterval": [
+            0.03360868411743898,
+            0.30770262226512224
+          ],
+          "qValue": 1,
+          "positiveFolds": 4,
+          "eligibleFolds": 4,
+          "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+          "prospectiveStatus": "PROSPECTIVE_FROZEN",
+          "liveObservations": 0,
+          "warning": "Ce résultat historique ne constitue pas une prévision de performance future.",
+          "ruleHash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+          "contractHash": "c2d56870f77f96f8fbc1235dae5ab7b95f5482d9e00cbaf24f952cff3b3249cc"
+        },
+        {
+          "id": "J10-M002",
+          "origin": "MACHINE_DISCOVERED",
+          "badge": "Découverte machine",
+          "title": "match nul · Serie A",
+          "competition": "Serie A",
+          "market": "1X2_DRAW",
+          "selection": "DRAW",
+          "historicalSupport": 363,
+          "historicalProfitUnits": 57.88,
+          "historicalRoi": 0.1594490358126722,
+          "confidenceInterval": [
+            0.0042719415204679045,
+            0.31393382749629106
+          ],
+          "qValue": 1,
+          "positiveFolds": 4,
+          "eligibleFolds": 4,
+          "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+          "prospectiveStatus": "PROSPECTIVE_FROZEN",
+          "liveObservations": 0,
+          "warning": "Ce résultat historique ne constitue pas une prévision de performance future.",
+          "ruleHash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+          "contractHash": "f76569ef005bf75938a0ca24709468cbfba35441310e5c9f1a3cd680f0f513db"
+        },
+        {
+          "id": "J10-M003",
+          "origin": "MACHINE_DISCOVERED",
+          "badge": "Découverte machine",
+          "title": "victoire à l’extérieur · Serie A",
+          "competition": "Serie A",
+          "market": "1X2_AWAY",
+          "selection": "AWAY",
+          "historicalSupport": 241,
+          "historicalProfitUnits": 33.42,
+          "historicalRoi": 0.1386721991701245,
+          "confidenceInterval": [
+            0.024913994885916647,
+            0.24270212811073993
+          ],
+          "qValue": 1,
+          "positiveFolds": 3,
+          "eligibleFolds": 3,
+          "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+          "prospectiveStatus": "PROSPECTIVE_FROZEN",
+          "liveObservations": 0,
+          "warning": "Ce résultat historique ne constitue pas une prévision de performance future.",
+          "ruleHash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+          "contractHash": "72760759963a7b31eac2dadacbf96cb60e6c5affc5cb6783757ff18ed87c9b36"
+        }
+      ],
+      "ownerHypotheses": [
+        {
+          "id": "H11-001",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "Buteur en forme contre défense centrale amputée",
+          "mechanism": "Une forme offensive antérieure interagit avec deux absences centrales prouvées.",
+          "requiredData": [
+            "PLAYER_FORM_GATE",
+            "ABSENCE_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "currentDataGates": {
+            "ABSENCE_GATE": "DATA_GATE_BLOCKED",
+            "PLAYER_FORM_GATE": "DATA_GATE_BLOCKED",
+            "STARTER_BASELINE_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 80,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        },
+        {
+          "id": "H11-002",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "4-3-3 contre 4-4-2",
+          "mechanism": "Association résiduelle ajustée entre deux structures tactiques.",
+          "requiredData": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "currentDataGates": {
+            "FORMATION_GATE": "DATA_GATE_BLOCKED",
+            "LINEUP_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 120,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        },
+        {
+          "id": "H11-003",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "Trois attaquants droitiers contre défense gauchère",
+          "mechanism": "Asymétrie de pied observée dans les unités titulaires.",
+          "requiredData": [
+            "LINEUP_GATE",
+            "FOOTEDNESS_GATE"
+          ],
+          "currentDataGates": {
+            "FOOTEDNESS_GATE": "DATA_GATE_BLOCKED",
+            "LINEUP_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 100,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        },
+        {
+          "id": "H11-004",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "Gardien titulaire absent",
+          "mechanism": "Perte point-in-time du gardien habituel avant le match.",
+          "requiredData": [
+            "ABSENCE_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "currentDataGates": {
+            "ABSENCE_GATE": "DATA_GATE_BLOCKED",
+            "STARTER_BASELINE_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 80,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        },
+        {
+          "id": "H11-005",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "Deux centraux nouveaux ensemble",
+          "mechanism": "Faible continuité du duo central face à la force adverse.",
+          "requiredData": [
+            "LINEUP_GATE",
+            "STARTER_BASELINE_GATE"
+          ],
+          "currentDataGates": {
+            "LINEUP_GATE": "DATA_GATE_BLOCKED",
+            "STARTER_BASELINE_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 100,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        },
+        {
+          "id": "H11-006",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "Rupture du onze",
+          "mechanism": "Interaction entre changements, importance, repos et marché.",
+          "requiredData": [
+            "LINEUP_GATE",
+            "ABSENCE_GATE"
+          ],
+          "currentDataGates": {
+            "ABSENCE_GATE": "DATA_GATE_BLOCKED",
+            "LINEUP_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 120,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        },
+        {
+          "id": "H11-007",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "Congestion et tactique inhabituelle",
+          "mechanism": "Congestion forte combinée à un changement tactique antérieur rare.",
+          "requiredData": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "currentDataGates": {
+            "FORMATION_GATE": "DATA_GATE_BLOCKED",
+            "LINEUP_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 100,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        },
+        {
+          "id": "H11-008",
+          "origin": "OWNER_PROPOSED",
+          "badge": "Proposée par David",
+          "title": "Matchup structurel",
+          "mechanism": "Front three/back three et front two/back four ajustés au marché.",
+          "requiredData": [
+            "LINEUP_GATE",
+            "FORMATION_GATE"
+          ],
+          "currentDataGates": {
+            "FORMATION_GATE": "DATA_GATE_BLOCKED",
+            "LINEUP_GATE": "DATA_GATE_BLOCKED"
+          },
+          "minimumSupport": 120,
+          "observations": 0,
+          "status": "DATA_GATE_BLOCKED",
+          "frozen": true
+        }
+      ],
+      "prospectiveObservations": [
+        {
+          "hypothesisId": "J10-M001",
+          "status": "PROSPECTIVE_FROZEN",
+          "fixturesExamined": 0,
+          "eligibleMatches": 0,
+          "settledObservations": 0,
+          "currentSupport": 0,
+          "prospectiveProfitUnits": null,
+          "contractHash": "c2d56870f77f96f8fbc1235dae5ab7b95f5482d9e00cbaf24f952cff3b3249cc"
+        },
+        {
+          "hypothesisId": "J10-M002",
+          "status": "PROSPECTIVE_FROZEN",
+          "fixturesExamined": 0,
+          "eligibleMatches": 0,
+          "settledObservations": 0,
+          "currentSupport": 0,
+          "prospectiveProfitUnits": null,
+          "contractHash": "f76569ef005bf75938a0ca24709468cbfba35441310e5c9f1a3cd680f0f513db"
+        },
+        {
+          "hypothesisId": "J10-M003",
+          "status": "PROSPECTIVE_FROZEN",
+          "fixturesExamined": 0,
+          "eligibleMatches": 0,
+          "settledObservations": 0,
+          "currentSupport": 0,
+          "prospectiveProfitUnits": null,
+          "contractHash": "72760759963a7b31eac2dadacbf96cb60e6c5affc5cb6783757ff18ed87c9b36"
+        }
+      ],
+      "blockedOrRejected": {
+        "multipleTestingRejected": 533,
+        "insufficientSupport": 167,
+        "prospectiveRejected": 0,
+        "archived": 0
+      },
+      "expertExplorer": {
+        "total": 700,
+        "pageSize": 50,
+        "pages": 14,
+        "mobileLoadsAllCards": false,
+        "pageManifest": []
+      },
+      "liveState": {
+        "fixturesVerified": 116,
+        "realPredictions": 0,
+        "realSettlements": 0,
+        "realTrainingRuns": 0,
+        "hypothesisObservations": 0
+      }
+    },
+    "sourceContracts": [
+      "hypothesis-universe-summary",
+      "hypothesis-family-catalog",
+      "hypothesis-tags-catalog",
+      "hypothesis-facets",
+      "hypothesis-tree-root-index",
+      "hypothesis-family-tree-index",
+      "hypothesis-global-rankings",
+      "hypothesis-rankings-by-competition",
+      "hypothesis-rankings-by-family",
+      "hypothesis-status-funnel",
+      "hypothesis-live-activity",
+      "hypothesis-glossary-fr",
+      "competition-identity-catalog",
+      "campaign-catalog",
+      "prospective-freeze-provenance-v2",
+      "security-locks",
+      "manifest"
+    ]
+  },
+  "schemaVersion": "hypothesis-universe-presentation-v1"
+}

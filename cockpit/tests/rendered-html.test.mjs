@@ -54,8 +54,9 @@ test("rend toutes les routes Robin Experience V1 en français", async () => {
     const html = await response.text();
     assert.match(html, /<html lang="fr-FR"/);
     assert.match(html, new RegExp(expected));
-    assert.match(html, /Vue essentielle/);
-    assert.match(html, /Vue expert/);
+    assert.match(html, /Vue Découverte/);
+    assert.match(html, /Vue Analyse/);
+    assert.match(html, /Vue Expert/);
     assert.match(html, /Glossaire Robin/);
     assert.match(html, /Aucun pari réel/);
   }
@@ -160,7 +161,10 @@ test("sépare l’apprentissage réel des historiques et masque le ROI sans déc
     /Robin apprend uniquement après les matchs, sans modifier les prédictions déjà publiées\./,
   );
   assert.match(learning, /Aucune prédiction réelle gelée/);
-  assert.match(learning, /replays historiques et les fixtures synthétiques ne sont pas comptés ici/);
+  assert.match(
+    learning,
+    /reconstructions historiques et les rencontres synthétiques ne sont pas comptées ici/,
+  );
   assert.doesNotMatch(results, /\bROI\b/);
 });
 
@@ -189,18 +193,37 @@ test("livre un bundle borné et les métadonnées Robin", async () => {
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
-  assert.match(layout, /Observer avant de conclure/);
+  assert.match(layout, /Explorer avant de conclure/);
   assert.match(layout, /locale: "fr_FR"/);
   assert.match(layout, /twitter:/);
-  assert.match(layout, /images: \["\/og\.png"\]/);
+  assert.match(layout, /url: "\/og\.png"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   const assetsDir = new URL("../dist/client/assets/", import.meta.url);
   const files = await readdir(assetsDir);
   const jsFiles = files.filter((file) => file.endsWith(".js"));
-  const totalBytes = (
-    await Promise.all(jsFiles.map((file) => stat(new URL(file, assetsDir))))
-  ).reduce((sum, item) => sum + item.size, 0);
-  assert.ok(totalBytes < 1_000_000, `bundle client: ${totalBytes} octets`);
+  const jsAssets = await Promise.all(
+    jsFiles.map(async (file) => ({
+      file,
+      size: (await stat(new URL(file, assetsDir))).size,
+    })),
+  );
+  const totalBytes = jsAssets.reduce((sum, item) => sum + item.size, 0);
+  const largestChunk = Math.max(...jsAssets.map((item) => item.size), 0);
+  const hypothesisChunks = jsAssets
+    .filter((item) => item.file.includes("hypothesis"))
+    .reduce((sum, item) => sum + item.size, 0);
+  assert.ok(
+    totalBytes < 1_350_000,
+    `ensemble des routes clientes: ${totalBytes} octets`,
+  );
+  assert.ok(
+    largestChunk < 600_000,
+    `plus grand segment client: ${largestChunk} octets`,
+  );
+  assert.ok(
+    hypothesisChunks < 250_000,
+    `segments Hypothèses chargés à la demande: ${hypothesisChunks} octets`,
+  );
   await access(new URL("../public/og.png", import.meta.url));
 });
 

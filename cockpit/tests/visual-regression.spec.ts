@@ -98,7 +98,7 @@ test.describe("captures Robin Experience V1", () => {
     });
     await page.goto("/robin-live");
     await assertPageFrame(page, homeHeading);
-    await expect(page.getByRole("button", { name: "Vue expert" })).toHaveAttribute(
+    await expect(page.getByRole("button", { name: /Vue Expert/ })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
