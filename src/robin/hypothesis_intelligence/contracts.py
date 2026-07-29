@@ -37,15 +37,11 @@ class HypothesisOrigin(StrEnum):
 
 class HypothesisStatus(StrEnum):
     DISCOVERED = "DISCOVERED"
-    EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING = (
-        "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
-    )
+    EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING = "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
     PROSPECTIVE_OBSERVATION_CANDIDATE = "PROSPECTIVE_OBSERVATION_CANDIDATE"
     PROSPECTIVE_FROZEN = "PROSPECTIVE_FROZEN"
     OBSERVATION_ACTIVE = "OBSERVATION_ACTIVE"
-    VALIDATION_DEFERRED_INSUFFICIENT_SUPPORT = (
-        "VALIDATION_DEFERRED_INSUFFICIENT_SUPPORT"
-    )
+    VALIDATION_DEFERRED_INSUFFICIENT_SUPPORT = "VALIDATION_DEFERRED_INSUFFICIENT_SUPPORT"
     SHADOW_ELIGIBLE = "SHADOW_ELIGIBLE"
     VALIDATED = "VALIDATED"
     REJECTED_PROSPECTIVE = "REJECTED_PROSPECTIVE"
@@ -123,9 +119,7 @@ ALLOWED_TRANSITIONS: dict[HypothesisStatus, frozenset[HypothesisStatus]] = {
         }
     ),
     HypothesisStatus.VALIDATED: frozenset({HypothesisStatus.ARCHIVED}),
-    HypothesisStatus.REJECTED_PROSPECTIVE: frozenset(
-        {HypothesisStatus.ARCHIVED}
-    ),
+    HypothesisStatus.REJECTED_PROSPECTIVE: frozenset({HypothesisStatus.ARCHIVED}),
     HypothesisStatus.DATA_GATE_BLOCKED: frozenset(
         {
             HypothesisStatus.DISCOVERED,
@@ -144,9 +138,7 @@ def validate_transition(
     automatic: bool = True,
 ) -> None:
     if target not in ALLOWED_TRANSITIONS[previous]:
-        raise ValueError(
-            f"HYPOTHESIS_STATUS_TRANSITION_FORBIDDEN:{previous.value}:{target.value}"
-        )
+        raise ValueError(f"HYPOTHESIS_STATUS_TRANSITION_FORBIDDEN:{previous.value}:{target.value}")
     if automatic and target is HypothesisStatus.VALIDATED:
         raise ValueError("AUTOMATIC_HYPOTHESIS_VALIDATION_FORBIDDEN")
 
@@ -373,9 +365,7 @@ class HypothesisObservation:
         if cutoff >= kickoff:
             raise ValueError("HYPOTHESIS_CUTOFF_MUST_PRECEDE_KICKOFF")
         if self.status is ObservationStatus.ELIGIBLE_FROZEN and (
-            self.odds is None
-            or self.margin is None
-            or observed > cutoff
+            self.odds is None or self.margin is None or observed > cutoff
         ):
             raise ValueError("ELIGIBLE_HYPOTHESIS_OBSERVATION_INVALID")
 

@@ -777,3 +777,25 @@ preuves versionnées sont
 `reports/prequential-learning/factory-readiness.json` et
 `reports/prequential-learning/status.json`. La validation locale finale compte
 817 tests Python, 35 tests cockpit et 11 scénarios Playwright verts.
+
+## Universal Football Hypothesis Genome V2
+
+La PR #24 est prolongée par un univers symbolique versionné :
+
+- 486 propriétés ;
+- 28 familles natives, météo comprise ;
+- 44 relations ;
+- 34 transformations ;
+- profondeur scientifique non bornée, profondeur technique budgétée ;
+- DAG parent/enfant, pruning traçable, calcul différé et longue traîne ;
+- onze moteurs de génération et découverte exécutables ;
+- contrats dashboard compacts et pages détaillées hors Git.
+
+Le pilote reste cache-only et ne valide aucune stratégie. Les données cinq
+ligues disponibles restent limitées à 10 732 lignes marché, 7 081 lignes
+d'évaluation et 11 variables équipe/calendrier sans frontière source
+strictement pré-kickoff prouvée. Tous les domaines non admissibles restent
+`DATA_GATE_BLOCKED`.
+
+La migration active est `0012_universal_genome_v2`. Tous les verrous de
+production, promotion, paris et publication restent fermés.

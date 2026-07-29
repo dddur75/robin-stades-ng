@@ -1,0 +1,179 @@
+{
+  "families": {
+    "ABSENCE_RETURN": {
+      "label_fr": "Absences et retours",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "ATTACK": {
+      "label_fr": "Attaque",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "BENCH_SUBSTITUTIONS": {
+      "label_fr": "Banc et substitutions",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "CALENDAR_FATIGUE": {
+      "label_fr": "Calendrier et fatigue",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "CHEMISTRY_NETWORKS": {
+      "label_fr": "Réseaux et complémentarités",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "COACH": {
+      "label_fr": "Entraîneur et staff",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "DATA_QUALITY": {
+      "label_fr": "Qualité et provenance",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "DEFENCE": {
+      "label_fr": "Défense",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "DISCIPLINE_REFEREE": {
+      "label_fr": "Discipline et arbitrage",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "EVENT_GAME_STATE": {
+      "label_fr": "État du match et événements",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "FOOTEDNESS_LATERALITY": {
+      "label_fr": "Pieds, côtés et latéralité",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "FORMATION_STRUCTURE": {
+      "label_fr": "Formations et structures",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "GOALKEEPER": {
+      "label_fr": "Gardien",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "INFORMATION_NEWS": {
+      "label_fr": "Information et actualité",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "LINEUP_CONTINUITY": {
+      "label_fr": "Compositions et continuité",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "MARKET": {
+      "label_fr": "Marché",
+      "meilleurs_signaux_historiques_bruts": [
+        {
+          "competition": "La Liga",
+          "family": "MARKET",
+          "historical_roi": 0.1663984674329502,
+          "historical_support": 261,
+          "hypothesis_id": "J10-M001",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1.0,
+          "rank": 1,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        },
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1594490358126722,
+          "historical_support": 363,
+          "hypothesis_id": "J10-M002",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1.0,
+          "rank": 2,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        },
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1386721991701245,
+          "historical_support": 241,
+          "hypothesis_id": "J10-M003",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1.0,
+          "rank": 3,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        }
+      ],
+      "strategies_validees": []
+    },
+    "MATCH_COMPETITION": {
+      "label_fr": "Match et compétition",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "MEDICAL": {
+      "label_fr": "Santé et réathlétisation",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "ORGANISATION_SQUAD": {
+      "label_fr": "Organisation et effectif",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "PLAYER": {
+      "label_fr": "Joueurs",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "POSSESSION_PRESSING": {
+      "label_fr": "Possession, relance et pressing",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "ROLE_TACTICS": {
+      "label_fr": "Rôles et tactiques",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "SET_PIECES": {
+      "label_fr": "Coups de pied arrêtés",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "STADIUM_PITCH": {
+      "label_fr": "Stade et terrain",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "STRENGTH_FORM": {
+      "label_fr": "Force et forme",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "TRAINING_LOAD": {
+      "label_fr": "Entraînement et charge",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "TRAVEL_LOGISTICS": {
+      "label_fr": "Déplacements et logistique",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    },
+    "WEATHER": {
+      "label_fr": "Météo",
+      "meilleurs_signaux_historiques_bruts": [],
+      "strategies_validees": []
+    }
+  },
+  "schema_version": "hypothesis-rankings-by-family-v1"
+}

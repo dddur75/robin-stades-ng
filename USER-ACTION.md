@@ -211,3 +211,12 @@ ligue en attente est automatique et testée.
 Aucun pari réel, bookmaker, secret supplémentaire, achat, publication sociale,
 backfill, recherche de pattern, promotion de modèle ou reprise P3/P4 n’est
 demandé.
+
+## Universal Football Hypothesis Genome V2
+
+`AUCUNE ACTION UTILISATEUR REQUISE`
+
+Le Genome V2 reste cache-only dans la PR #24 en brouillon. Aucun abonnement
+météo, appel fournisseur, pari, promotion, publication sociale, fusion ou
+déploiement du dashboard n'est demandé. Les nouvelles familles indisponibles
+sont conservées symboliquement derrière leurs conditions de disponibilité.

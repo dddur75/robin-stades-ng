@@ -1,0 +1,48 @@
+{
+  "competitions": {
+    "La Liga": {
+      "meilleurs_signaux_historiques_bruts": [
+        {
+          "competition": "La Liga",
+          "family": "MARKET",
+          "historical_roi": 0.1663984674329502,
+          "historical_support": 261,
+          "hypothesis_id": "J10-M001",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1.0,
+          "rank": 1,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        }
+      ],
+      "strategies_validees": []
+    },
+    "Serie A": {
+      "meilleurs_signaux_historiques_bruts": [
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1594490358126722,
+          "historical_support": 363,
+          "hypothesis_id": "J10-M002",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1.0,
+          "rank": 2,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        },
+        {
+          "competition": "Serie A",
+          "family": "MARKET",
+          "historical_roi": 0.1386721991701245,
+          "historical_support": 241,
+          "hypothesis_id": "J10-M003",
+          "label_fr": "Meilleur signal historique brut",
+          "q_value": 1.0,
+          "rank": 3,
+          "status": "NON_VALIDÉ_APRÈS_CORRECTION"
+        }
+      ],
+      "strategies_validees": []
+    }
+  },
+  "schema_version": "hypothesis-rankings-by-competition-v1"
+}

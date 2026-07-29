@@ -34,7 +34,12 @@ DEFAULT_CAMPAIGN = ROOT / "reports" / "pattern-research" / "campaign-summary.jso
 DEFAULT_OUTPUT = ROOT / "reports" / "hypothesis-intelligence"
 DEFAULT_COCKPIT_OUTPUT = ROOT / "cockpit" / "app" / "cockpit-data.json"
 DEFAULT_COCKPIT_HASH = ROOT / "cockpit" / "app" / "cockpit-data.sha256"
-EXPERT_PAGE_ROOT = ROOT / "cockpit" / "public" / "hypotheses"
+EXPERT_PAGE_ROOT = (
+    ROOT
+    / "artifacts"
+    / "hypothesis-intelligence"
+    / "j10-expert-pages"
+)
 GENERATED_AT = "2026-07-29T13:30:00+00:00"
 PUBLIC_WARNING = (
     "Ce résultat historique ne constitue pas une prévision de performance future."
@@ -249,7 +254,7 @@ def build_artifacts(
         page_manifest.append(
             {
                 "page": page_number,
-                "url": f"/hypotheses/{filename}",
+                "artifact_path": f"j10-expert-pages/{filename}",
                 "records": len(page_items),
                 "sha256": hashlib.sha256(page_path.read_bytes()).hexdigest(),
             }
@@ -437,7 +442,8 @@ def build_artifacts(
             "pageSize": page_size,
             "pages": len(page_manifest),
             "mobileLoadsAllCards": False,
-            "pageManifest": page_manifest,
+            "storage": "BUILD_ARTIFACT_NOT_GIT",
+            "pageManifest": [],
         },
         "liveState": {
             "fixturesVerified": 116,

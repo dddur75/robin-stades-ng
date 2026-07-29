@@ -48,7 +48,7 @@ def test_upgrade_downgrade_upgrade_and_append_only_guards(tmp_path: Path) -> Non
     assert JALON12_TABLES <= set(sa.inspect(engine).get_table_names())
     with engine.connect() as connection:
         assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == (
-            "0011_hypothesis_intelligence_v1"
+            "0012_universal_genome_v2"
         )
 
     fixture = sa.Table(
@@ -134,7 +134,7 @@ def test_raw_payload_key_is_shareable_but_receipt_key_stays_unique(
 def test_revision_fits_alembic_version_column_and_postgresql_ddl_compiles() -> None:
     config = _config("sqlite+pysqlite:///:memory:")
     revision = ScriptDirectory.from_config(config).get_current_head()
-    assert revision == "0011_hypothesis_intelligence_v1"
+    assert revision == "0012_universal_genome_v2"
     assert len(revision) <= 32
     for table_name in JALON12_TABLES:
         ddl = str(

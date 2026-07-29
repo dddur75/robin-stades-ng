@@ -1,0 +1,69 @@
+{
+  "api_football_calls": 0,
+  "automatic_promotions": 0,
+  "availability": {
+    "attack_defence": "PARTIAL_GOALS_ONLY",
+    "calendar": "PARTIAL_REST_AND_CONGESTION",
+    "discipline": "DATA_GATE_BLOCKED_BY_TEMPORALITY",
+    "force_form": "DESCRIPTIVE_RETROSPECTIVE_DIAGNOSTIC",
+    "formation": "DATA_GATE_BLOCKED_BY_TEMPORALITY",
+    "market": "HISTORICAL_RESEARCH_ONLY_NO_EXACT_INTRADAY_TIMESTAMP",
+    "players": "DATA_GATE_BLOCKED_BY_TEMPORALITY",
+    "travel": "DATA_GATE_BLOCKED_REAL_LOGISTICS",
+    "weather": "DATA_GATE_BLOCKED_NO_FREE_LICENSED_ARCHIVE"
+  },
+  "budget": {
+    "beam_width": 16,
+    "checkpoint_frequency": 25,
+    "expansion_batch_size": 32,
+    "maximum_depth": 4,
+    "maximum_evaluated_nodes": 80,
+    "maximum_materialized_nodes": 180,
+    "memory_budget_bytes": 536870912,
+    "wall_clock_budget_seconds": 30.0
+  },
+  "checkpoint_hash": "ab94f842e19d10a2b3246060ac01e7138ee5783e12698952f2301f678049335d",
+  "compute": {
+    "compute_time_seconds": 0.662032,
+    "memory_measurement": "PYTHON_HEAP_TRACEMALLOC_NOT_PROCESS_RSS",
+    "python_heap_peak_bytes": 683190
+  },
+  "counts": {
+    "long_tail_candidates": 8,
+    "maximum_depth_reached": 4,
+    "parents_expanded": 180,
+    "rules_blocked": 149,
+    "rules_compute_deferred": 912,
+    "rules_executed": 13,
+    "rules_generated": 1092,
+    "rules_materialized": 180,
+    "rules_pruned": 10
+  },
+  "mode": "CACHE_ONLY",
+  "model_diagnostic": {
+    "global_q_value": 1.0,
+    "team_plus_market_delta_log_loss": 0.00170221115952107,
+    "validated_strategy": false
+  },
+  "odds_api_credits": 0,
+  "paid_weather_calls": 0,
+  "provider_calls": 0,
+  "real_bets": 0,
+  "replay_hash": "1a3fbbd00ff357b76e82705e6748a666f43786609fb34039d34f150a0fecf8c8",
+  "replay_identical": true,
+  "schema_version": "universal-cache-only-pilot-v1",
+  "social_publications": 0,
+  "source": {
+    "five_league_market_rows": 10732,
+    "legacy_matches": {
+      "columns": 27,
+      "leagues": 9,
+      "raw_provenance": "ABSENT",
+      "rows": 36423,
+      "seasons": 11
+    },
+    "strictly_pre_kickoff_feature_boundaries": 0,
+    "team_feature_rows": 7081,
+    "team_features": 11
+  }
+}

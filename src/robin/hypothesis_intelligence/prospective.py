@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from robin.hypothesis_intelligence.competition_identity import same_competition
 from robin.hypothesis_intelligence.contracts import (
     HypothesisObservation,
     HypothesisRecord,
@@ -45,9 +46,7 @@ def _price(record: HypothesisRecord, cutoff: str) -> PriceContract:
         maximum_odds=float(band[1]),
         maximum_margin=float(maximum_margin),
         cutoff_name=cutoff,
-        cutoff_tolerance=(
-            "[-10m,+0m]" if cutoff == "NEAR_KICKOFF" else "[-15m,+15m]"
-        ),
+        cutoff_tolerance=("[-10m,+0m]" if cutoff == "NEAR_KICKOFF" else "[-15m,+15m]"),
         observed_at_rule="LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
         kickoff_change_policy="RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
         missing_price_policy="REJECTED_MISSING_PRICE",
@@ -121,13 +120,37 @@ def evaluate_fixture(
         )
     elif market != price.market or selection != price.selection:
         status, reason = ObservationStatus.NOT_ELIGIBLE, "MARKET_OR_SELECTION_MISMATCH"
-    elif competition not in {
-        "La Liga" if "spain" in price.sport_key else "Serie A"
-    }:
-        status, reason = ObservationStatus.NOT_ELIGIBLE, "COMPETITION_MISMATCH"
-    elif not price.minimum_odds <= odds <= price.maximum_odds:
+    else:
+        expected_competition = (
+            "api-football:140" if "spain" in price.sport_key else "api-football:135"
+        )
+        try:
+            competition_matches = same_competition(
+                competition,
+                expected_competition,
+            )
+        except ValueError:
+            status, reason = (
+                ObservationStatus.NOT_ELIGIBLE,
+                "UNKNOWN_COMPETITION_IDENTITY",
+            )
+            competition_matches = True
+        if not competition_matches:
+            status, reason = (
+                ObservationStatus.NOT_ELIGIBLE,
+                "COMPETITION_MISMATCH",
+            )
+    if (
+        status is ObservationStatus.ELIGIBLE_FROZEN
+        and odds is not None
+        and not price.minimum_odds <= odds <= price.maximum_odds
+    ):
         status, reason = ObservationStatus.NOT_ELIGIBLE, "ODDS_OUTSIDE_FROZEN_BAND"
-    elif margin > price.maximum_margin:
+    elif (
+        status is ObservationStatus.ELIGIBLE_FROZEN
+        and margin is not None
+        and margin > price.maximum_margin
+    ):
         status, reason = ObservationStatus.NOT_ELIGIBLE, "MARGIN_ABOVE_FROZEN_MAXIMUM"
     identity = canonical_sha256(
         {
@@ -165,11 +188,7 @@ class HypothesisSettlementRegistry:
 
     @property
     def settlements(self) -> tuple[HypothesisSettlement, ...]:
-        return tuple(
-            settlement
-            for versions in self._versions.values()
-            for settlement in versions
-        )
+        return tuple(settlement for versions in self._versions.values() for settlement in versions)
 
     def settle(
         self,
@@ -192,9 +211,7 @@ class HypothesisSettlementRegistry:
                 "result_version": result_version,
             }
         )
-        versions = self._versions.setdefault(
-            observation.hypothesis_observation_id, []
-        )
+        versions = self._versions.setdefault(observation.hypothesis_observation_id, [])
         if versions and versions[-1].result_hash == result_hash:
             return versions[-1], False
         if versions and result_version <= versions[-1].result_version:
@@ -205,11 +222,9 @@ class HypothesisSettlementRegistry:
             if home_goals is None or away_goals is None or observation.odds is None:
                 raise ValueError("HYPOTHESIS_FINAL_SCORE_REQUIRED")
             won = (
-                observation.selection == "HOME" and home_goals > away_goals
-            ) or (
-                observation.selection == "AWAY" and away_goals > home_goals
-            ) or (
-                observation.selection == "DRAW" and home_goals == away_goals
+                (observation.selection == "HOME" and home_goals > away_goals)
+                or (observation.selection == "AWAY" and away_goals > home_goals)
+                or (observation.selection == "DRAW" and home_goals == away_goals)
             )
             profit = observation.odds - 1 if won else -1.0
         settlement_id = "hypothesis-settlement-" + canonical_sha256(

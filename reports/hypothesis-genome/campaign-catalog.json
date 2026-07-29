@@ -1,0 +1,317 @@
+{
+  "items": [
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "4268878ddc2f4d102d5c5377dcf7aaf0897abbed43abbbea8e48a0dd0f226640",
+      "campaign_id": "J10_MARKET_SLICE_V1",
+      "data_gate": "HISTORICAL_RESEARCH_ONLY",
+      "markets": [
+        "1X2",
+        "OVER_UNDER_2_5"
+      ],
+      "multiplicity_family": "J10_MARKET_SLICE_V1",
+      "property_families": [
+        "MARKET",
+        "MATCH_COMPETITION"
+      ],
+      "replay_policy": "CACHE_ONLY_IDENTICAL_HASH",
+      "revision": "1.0.0",
+      "sources": [
+        "FOOTBALL_DATA"
+      ],
+      "targets": [
+        "MATCH_RESULT",
+        "GOALS_TOTAL"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "b52bdefaaa47c732dd018e4980ebf8c88d771059d39ad9b8c800c335ad0f9aea",
+      "campaign_id": "UNIVERSAL_TEAM_FEATURES_V1",
+      "data_gate": "PARTIAL_SOURCE_OBSERVED_AT",
+      "markets": [
+        "1X2"
+      ],
+      "multiplicity_family": "UNIVERSAL_TEAM_FEATURES_V1",
+      "property_families": [
+        "STRENGTH_FORM",
+        "CALENDAR_FATIGUE",
+        "MATCH_COMPETITION"
+      ],
+      "replay_policy": "CACHE_ONLY_IDENTICAL_HASH",
+      "revision": "1.0.0",
+      "sources": [
+        "ROBIN_DEEP_FOOTBALL"
+      ],
+      "targets": [
+        "MATCH_RESULT",
+        "RESIDUAL_PERFORMANCE"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "756a0e8f74f5545cf96b500150e4aaedf91f2bfd8d56dbe0645bb76521de6d7f",
+      "campaign_id": "FORMATION_GRAPH_V1",
+      "data_gate": "DATA_GATE_BLOCKED",
+      "markets": [
+        "1X2",
+        "GOALS_TOTAL"
+      ],
+      "multiplicity_family": "FORMATION_GRAPH_V1",
+      "property_families": [
+        "FORMATION_STRUCTURE",
+        "ROLE_TACTICS",
+        "CHEMISTRY_NETWORKS"
+      ],
+      "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+      "revision": "1.0.0",
+      "sources": [
+        "API_FOOTBALL_LINEUP"
+      ],
+      "targets": [
+        "MATCH_RESULT",
+        "TEAM_GOALS"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "03cda825231116de643d149cecb444584abad56af15940f50bb5f77a11aec1d4",
+      "campaign_id": "PLAYER_ROLE_GRAPH_V1",
+      "data_gate": "DATA_GATE_BLOCKED",
+      "markets": [
+        "PLAYER_PROPS_IF_PRICED"
+      ],
+      "multiplicity_family": "PLAYER_ROLE_GRAPH_V1",
+      "property_families": [
+        "PLAYER",
+        "FOOTEDNESS_LATERALITY",
+        "ROLE_TACTICS"
+      ],
+      "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+      "revision": "1.0.0",
+      "sources": [
+        "API_FOOTBALL_PLAYER",
+        "TRACKING_NOT_CONFIGURED"
+      ],
+      "targets": [
+        "EVENT_COUNT",
+        "PLAYER_AVAILABILITY"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "75c5acab979b4078c7774289ccb027cdf1826d2650c34d2c08992c90b7034178",
+      "campaign_id": "WEATHER_TACTICS_V1",
+      "data_gate": "DATA_GATE_BLOCKED",
+      "markets": [
+        "NO_MARKET_REQUIRED"
+      ],
+      "multiplicity_family": "WEATHER_TACTICS_V1",
+      "property_families": [
+        "WEATHER",
+        "STADIUM_PITCH",
+        "ROLE_TACTICS"
+      ],
+      "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+      "revision": "1.0.0",
+      "sources": [
+        "FREE_ARCHIVED_FORECAST_NOT_CONFIGURED"
+      ],
+      "targets": [
+        "MATCH_RESULT",
+        "EVENT_COUNT"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "e7ce5ef1c979b3afc1fa0d362ab3ee5e9171c8c9ae0648dd3e955a5a53680524",
+      "campaign_id": "TRAVEL_FATIGUE_V1",
+      "data_gate": "DATA_GATE_BLOCKED",
+      "markets": [
+        "NO_MARKET_REQUIRED"
+      ],
+      "multiplicity_family": "TRAVEL_FATIGUE_V1",
+      "property_families": [
+        "TRAVEL_LOGISTICS",
+        "CALENDAR_FATIGUE",
+        "PLAYER"
+      ],
+      "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+      "revision": "1.0.0",
+      "sources": [
+        "ROBIN_SCHEDULE",
+        "ROUTE_SOURCE_NOT_CONFIGURED"
+      ],
+      "targets": [
+        "RESIDUAL_PERFORMANCE",
+        "PLAYER_AVAILABILITY"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "933fdff689f429e4b7e842a1a270d1a995e90b5b6b11dab85471d1a2055edb94",
+      "campaign_id": "DISCIPLINE_REFEREE_V1",
+      "data_gate": "DATA_GATE_BLOCKED",
+      "markets": [
+        "CARDS_IF_PRICED",
+        "1X2"
+      ],
+      "multiplicity_family": "DISCIPLINE_REFEREE_V1",
+      "property_families": [
+        "DISCIPLINE_REFEREE",
+        "MATCH_COMPETITION"
+      ],
+      "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+      "revision": "1.0.0",
+      "sources": [
+        "OFFICIAL_REPORT_NOT_CONFIGURED"
+      ],
+      "targets": [
+        "EVENT_COUNT",
+        "MATCH_RESULT"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 6,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 5000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "1c4a3dceb4d340f6f4dfd91248ef01f211778d060ba67da3b55c602b63282bac",
+      "campaign_id": "ATTACK_DEFENSE_V1",
+      "data_gate": "PARTIAL_GOALS_ONLY",
+      "markets": [
+        "1X2",
+        "OVER_UNDER_2_5"
+      ],
+      "multiplicity_family": "ATTACK_DEFENSE_V1",
+      "property_families": [
+        "ATTACK",
+        "DEFENCE",
+        "POSSESSION_PRESSING",
+        "GOALKEEPER"
+      ],
+      "replay_policy": "CACHE_ONLY_IDENTICAL_HASH",
+      "revision": "1.0.0",
+      "sources": [
+        "ROBIN_DEEP_FOOTBALL",
+        "EVENT_SOURCE_NOT_CONFIGURED"
+      ],
+      "targets": [
+        "MATCH_RESULT",
+        "TEAM_GOALS",
+        "GOALS_TOTAL"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    },
+    {
+      "budget": {
+        "beam_width": 32,
+        "checkpoint_frequency": 100,
+        "expansion_batch_size": 128,
+        "maximum_depth": 12,
+        "maximum_evaluated_nodes": 2000,
+        "maximum_materialized_nodes": 10000,
+        "memory_budget_bytes": 536870912,
+        "wall_clock_budget_seconds": 30.0
+      },
+      "campaign_hash": "824c1cc0a61132f578a58741d734eebb63162e4190695f13e5f9854466eee997",
+      "campaign_id": "LONG_TAIL_FOOTBALL_TREE_V1",
+      "data_gate": "MIXED_DATA_GATES",
+      "markets": [
+        "OPTIONAL_MARKET"
+      ],
+      "multiplicity_family": "LONG_TAIL_FOOTBALL_TREE_V1",
+      "property_families": [],
+      "replay_policy": "CHECKPOINTED_CANONICAL_QUEUE",
+      "revision": "1.0.0",
+      "sources": [
+        "ALL_VERSIONED_SOURCES"
+      ],
+      "targets": [
+        "MATCH_RESULT",
+        "TEAM_GOALS",
+        "EVENT_COUNT",
+        "PLAYER_AVAILABILITY",
+        "NO_MARKET_TARGET"
+      ],
+      "universe_id": "FOOTBALL_PROPERTY_UNIVERSE_V1"
+    }
+  ],
+  "schema_version": "hypothesis-campaign-catalog-v1"
+}

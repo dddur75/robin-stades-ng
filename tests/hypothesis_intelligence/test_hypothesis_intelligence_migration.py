@@ -14,7 +14,7 @@ from robin.storage.database import build_engine
 from robin.storage.hypothesis_models import HYPOTHESIS_TABLES
 from robin.storage.models import Base
 
-HEAD = "0011_hypothesis_intelligence_v1"
+HEAD = "0012_universal_genome_v2"
 
 
 def _config(url: str) -> Config:
@@ -33,9 +33,7 @@ def test_migration_round_trip_and_append_only_guards(tmp_path: Path) -> None:
     engine = build_engine(url)
     assert HYPOTHESIS_TABLES <= set(sa.inspect(engine).get_table_names())
     with engine.connect() as connection:
-        assert connection.scalar(
-            sa.text("SELECT version_num FROM alembic_version")
-        ) == HEAD
+        assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == HEAD
 
     registry = sa.Table(
         "hypothesis_registry",
@@ -59,9 +57,7 @@ def test_migration_round_trip_and_append_only_guards(tmp_path: Path) -> None:
         connection.execute(registry.insert().values(**row))
     with pytest.raises(IntegrityError), engine.begin() as connection:
         connection.execute(
-            registry.update()
-            .where(registry.c.id == row["id"])
-            .values(status="VALIDATED")
+            registry.update().where(registry.c.id == row["id"]).values(status="VALIDATED")
         )
     with pytest.raises(IntegrityError), engine.begin() as connection:
         connection.execute(registry.delete().where(registry.c.id == row["id"]))

@@ -101,7 +101,7 @@ from robin.storage.database import build_engine
 DEFAULT_POLICY = Path("configs/prospective_observatory_v1.json")
 SCHEMA_VERSION = "prospective-observatory-operation-v1"
 SNAPSHOT_SCHEMA_VERSION = "prospective-observatory-snapshot-v1"
-EXPECTED_ALEMBIC_PREFIX = "0011_hypothesis_intelligence_v1"
+EXPECTED_ALEMBIC_PREFIX = "0012_universal_genome_v2"
 OBSERVATORY_SCHEMA_REVISION = "0009_jalon12_observatory"
 SAFE_CODE_REVISION = "local-uncommitted"
 PLAYER_FAMILIES = (

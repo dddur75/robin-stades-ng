@@ -32,7 +32,6 @@ from robin.hypothesis_intelligence.registry import (
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORTS = ROOT / "reports" / "hypothesis-intelligence"
-PAGES = ROOT / "cockpit" / "public" / "hypotheses"
 
 
 def _json(path: Path) -> dict[str, object]:
@@ -199,22 +198,15 @@ def test_committed_registry_is_complete_bounded_unique_and_replayable() -> None:
     assert source["provider_calls"] == source["odds_api_credits"] == 0
     assert source["replay_identical"] is True
 
-    page_paths = sorted(PAGES.glob("page-*.json"))
-    assert len(page_paths) == 14
-    items = []
-    for page_number, path in enumerate(page_paths, start=1):
-        page = _json(path)
-        assert page["page"] == page_number
-        assert page["page_size"] == 50
-        page_items = page["items"]
-        assert isinstance(page_items, list)
-        assert len(page_items) == 50
-        items.extend(page_items)
-    assert len(items) == 700
-    assert len({item["id"] for item in items}) == 700
-    assert len({item["ruleHash"] for item in items}) == 700
-    assert len({item["canonicalFingerprint"] for item in items}) == 700
-    assert {item["origin"] for item in items} == {"MACHINE_DISCOVERED"}
+    index = _json(REPORTS / "registry-index.json")
+    pages = index["pages"]
+    assert isinstance(pages, list)
+    assert index["total"] == 700
+    assert index["page_size"] == 50
+    assert len(pages) == 14
+    assert sum(int(item["records"]) for item in pages) == 700
+    assert all(str(item["artifact_path"]).startswith("j10-expert-pages/") for item in pages)
+    assert not list((ROOT / "cockpit" / "public" / "hypotheses").glob("*.json"))
 
 
 @pytest.mark.parametrize(
@@ -289,9 +281,7 @@ def test_top_three_freeze_is_stable_immutable_and_promotion_locked() -> None:
     assert all(item.minimum_descriptive_support == 30 for item in first)
     assert all(item.minimum_exploratory_support == 80 for item in first)
     assert all(item.minimum_seasons == 1 and item.promotion_locked for item in first)
-    assert [item.contract_hash for item in first] == [
-        item.contract_hash for item in second
-    ]
+    assert [item.contract_hash for item in first] == [item.contract_hash for item in second]
     with pytest.raises(AttributeError):
         first[0].promotion_locked = False  # type: ignore[misc]
 

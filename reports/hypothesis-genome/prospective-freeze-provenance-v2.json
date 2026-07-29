@@ -1,0 +1,11 @@
+{
+  "contracts": [],
+  "legacy_v1": {
+    "active": false,
+    "provenance_complete": false,
+    "reason": "SUPERSEDED_BY_CORRECTIVE_V2",
+    "source_code_revision": "0057e1caf57bd4d6084ab456f7ee386fff728c2c"
+  },
+  "schema_version": "prospective-freeze-provenance-v2",
+  "status": "PENDING_SOURCE_COMMIT"
+}

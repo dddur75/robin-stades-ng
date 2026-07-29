@@ -61,7 +61,7 @@
       "freshness": {
         "status": "FRESHNESS_CURRENT",
         "generatedAt": "2026-07-29T13:01:53.939288+00:00",
-        "ageMinutes": 102,
+        "ageMinutes": 225,
         "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
         "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
         "lastWorkflowAt": "2026-07-24T13:02:12Z"
@@ -21200,92 +21200,7 @@
       "pageSize": 50,
       "pages": 14,
       "mobileLoadsAllCards": false,
-      "pageManifest": [
-        {
-          "page": 1,
-          "url": "/hypotheses/page-01.json",
-          "records": 50,
-          "sha256": "29a7c2cb9bbc814a867a16e09066c1ecff7be6b871b7d2a04bf9d9403d462792"
-        },
-        {
-          "page": 2,
-          "url": "/hypotheses/page-02.json",
-          "records": 50,
-          "sha256": "d665e9e36e2e3b070f43efe1ddd51610bcac97af189a128b197c8ca82aeb941a"
-        },
-        {
-          "page": 3,
-          "url": "/hypotheses/page-03.json",
-          "records": 50,
-          "sha256": "daf1a9e4a1f460d2b5b9c3fdcafc396e1292f6d7176cc83a1cc6ef9a7c9afbe5"
-        },
-        {
-          "page": 4,
-          "url": "/hypotheses/page-04.json",
-          "records": 50,
-          "sha256": "6ceb388afd4d654fa9c49475fdaf7d6458153f2b7f1f82e72abbbdfe364a677e"
-        },
-        {
-          "page": 5,
-          "url": "/hypotheses/page-05.json",
-          "records": 50,
-          "sha256": "c9d4cb57e340a7f4379c15cc0e1b3de2a598f1ea5e895b71150beaeaea6a72e1"
-        },
-        {
-          "page": 6,
-          "url": "/hypotheses/page-06.json",
-          "records": 50,
-          "sha256": "15383874e58b383be48acfa084aee0ccf3dc5f69fcc10b51f9eb45481f7c0ea0"
-        },
-        {
-          "page": 7,
-          "url": "/hypotheses/page-07.json",
-          "records": 50,
-          "sha256": "0fbc18c1941ff77ea2fd8fe9d263a5d9ed7fb8f3688ef6c04e459dcb387f221a"
-        },
-        {
-          "page": 8,
-          "url": "/hypotheses/page-08.json",
-          "records": 50,
-          "sha256": "d6e69cbc94c726b1ecb227034d55aee8aadceea0c132d20129658edc93c67b78"
-        },
-        {
-          "page": 9,
-          "url": "/hypotheses/page-09.json",
-          "records": 50,
-          "sha256": "5873360c8e8e0bc5b0d84f49563a8971433ded63ba5cbad5eec3bbbef43323c0"
-        },
-        {
-          "page": 10,
-          "url": "/hypotheses/page-10.json",
-          "records": 50,
-          "sha256": "46dfdc3c3c621b689c928cd5ba0cc6fc662029f5c5a105516a5d62618bb4a5bf"
-        },
-        {
-          "page": 11,
-          "url": "/hypotheses/page-11.json",
-          "records": 50,
-          "sha256": "b885d0c4d0f476026076f3f011871a1ebefb6ab0ef5dc1b18bacd0114d1c5e0e"
-        },
-        {
-          "page": 12,
-          "url": "/hypotheses/page-12.json",
-          "records": 50,
-          "sha256": "0d62f957acd9ae958e10dc6293f6d6763913ce552443a1b61abe8c632857e531"
-        },
-        {
-          "page": 13,
-          "url": "/hypotheses/page-13.json",
-          "records": 50,
-          "sha256": "f6aab1d5c6a684baff09d145f435fc31255a196137f89e4d192e25eedc31cac8"
-        },
-        {
-          "page": 14,
-          "url": "/hypotheses/page-14.json",
-          "records": 50,
-          "sha256": "c5902264c21f839909ca69425318ff60b02405224efa4b6da3af75c2cda995f1"
-        }
-      ]
+      "pageManifest": []
     },
     "liveState": {
       "fixturesVerified": 116,
@@ -21461,7 +21376,7 @@
     "freshness": {
       "status": "FRESHNESS_CURRENT",
       "generatedAt": "2026-07-29T13:01:53.939288+00:00",
-      "ageMinutes": 102,
+      "ageMinutes": 225,
       "reason": "Aucune nouvelle fenêtre de capture n’était attendue depuis ce snapshot.",
       "threshold": "24 h hors fenêtre ; 1 h lorsqu’une fenêtre est ouverte.",
       "lastWorkflowAt": "2026-07-24T13:02:12Z"

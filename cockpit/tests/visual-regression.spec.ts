@@ -211,7 +211,7 @@ test.describe("captures Robin Experience V1", () => {
     await expect(page.getByRole("navigation", { name: "Navigation principale" })).toBeVisible();
   });
 
-  test("Expert — registre paginé et mobile 375 px", async ({ page }) => {
+  test("Expert — aperçu technique du génome et mobile 375 px", async ({ page }) => {
     await page.setViewportSize({ height: 900, width: 1440 });
     await page.addInitScript(() => {
       localStorage.setItem("robin-experience-view-mode", "expert");
@@ -219,9 +219,11 @@ test.describe("captures Robin Experience V1", () => {
     await page.goto("/expert");
     await assertPageFrame(page, "Espace Expert");
     await expect(page.getByRole("heading", { name: "Explorateur des hypothèses" })).toBeVisible();
-    await expect(page.getByText("700 règles", { exact: true })).toBeVisible();
-    await expect(page.locator(".expert-rule-card")).toHaveCount(50);
-    await expect(page.getByText("Page 1 / 14")).toBeVisible();
+    await expect(page.getByText("700 règles Jalon 10", { exact: true })).toBeVisible();
+    await expect(page.getByText("Génome universel V2")).toBeVisible();
+    await expect(page.getByText("Aucune duplication complète dans Git")).toBeVisible();
+    await expect(page.getByText("486")).toBeVisible();
+    await expect(page.getByText("Stratégies validées")).toBeVisible();
     await page.screenshot({
       path: `${outputRoot}/desktop-hypotheses-expert.png`,
     });

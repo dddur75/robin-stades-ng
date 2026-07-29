@@ -1,0 +1,133 @@
+{
+  "detail_pages": [
+    {
+      "artifact_path": "hypothesis-tree-node-pages/page-001.json",
+      "bytes": 100926,
+      "page": 1,
+      "records": 50,
+      "sha256": "99b22d395e8fef27611b66aaebb1e39379f247e577a5d1e4c0db4b21972602a7"
+    },
+    {
+      "artifact_path": "hypothesis-tree-node-pages/page-002.json",
+      "bytes": 113967,
+      "page": 2,
+      "records": 50,
+      "sha256": "663fccb93ffaba8de6495a92da5218f77286bc8ebf6a843b149c55402a4613b8"
+    },
+    {
+      "artifact_path": "hypothesis-tree-node-pages/page-003.json",
+      "bytes": 132813,
+      "page": 3,
+      "records": 50,
+      "sha256": "a5538821cb169844b9865b0670f94443dbc23f4796dae16791da76d9cf0412da"
+    },
+    {
+      "artifact_path": "hypothesis-tree-node-pages/page-004.json",
+      "bytes": 79805,
+      "page": 4,
+      "records": 30,
+      "sha256": "8fdd85dbce8b3cc04322d8b0d24f6fb12ab475b0c8aa9cf3da52a649630652d2"
+    }
+  ],
+  "detail_pages_storage": "BUILD_ARTIFACT_NOT_GIT",
+  "files": [
+    {
+      "bytes": 9616,
+      "file": "campaign-catalog.json",
+      "sha256": "1adc66370c7a222b5011767fb3f49f92465c9e7e8565ff5a08349b57df3b736e"
+    },
+    {
+      "bytes": 2412,
+      "file": "competition-identity-catalog.json",
+      "sha256": "b2b858203c0117e7d1da6a339140747eca457efff6c05050693e27417ab0de21"
+    },
+    {
+      "bytes": 2513,
+      "file": "engine-proof.json",
+      "sha256": "2813cafabc3639c1315b5b4053b1becfd7e894dee21c3297e51c1e374e773395"
+    },
+    {
+      "bytes": 2522,
+      "file": "hypothesis-facets.json",
+      "sha256": "33034931ac81f782cf5993f3673a79f531bff83ea2b51c52b3c8c394606b093d"
+    },
+    {
+      "bytes": 8686,
+      "file": "hypothesis-family-catalog.json",
+      "sha256": "b0be797d179f8de4e4ec9c7e5a027189fb02d2b97d89a826ba90b9e20d5b36b6"
+    },
+    {
+      "bytes": 4232,
+      "file": "hypothesis-family-tree-index.json",
+      "sha256": "bf6ebb8d06a026d5f5ae33583cabacc780b4d0bfde7bcc40c3dbc009336a59ba"
+    },
+    {
+      "bytes": 20505,
+      "file": "hypothesis-global-rankings.json",
+      "sha256": "5c4579e02bb30564135d73900a20a61ace18cce976dad95467f9881725a65c35"
+    },
+    {
+      "bytes": 437,
+      "file": "hypothesis-glossary-fr.json",
+      "sha256": "8241c06762bcaeb52e886f264a52641a37ea2b8539e6670d010ded37b8fb666c"
+    },
+    {
+      "bytes": 222,
+      "file": "hypothesis-live-activity.json",
+      "sha256": "dc9f25d1e1be574615d5cab63c499b982390cfc4baf0f8f990d8d36c5c82ea56"
+    },
+    {
+      "bytes": 1459,
+      "file": "hypothesis-rankings-by-competition.json",
+      "sha256": "dfcfbf3ebb6c6a50bb36eb23ae653b2cc11b66eff6869811268f67c3f6fa185d"
+    },
+    {
+      "bytes": 5656,
+      "file": "hypothesis-rankings-by-family.json",
+      "sha256": "638df1ee85e28d3fe36baf1b702914810633e9eb2eefbe7d2634841b1060c63e"
+    },
+    {
+      "bytes": 270,
+      "file": "hypothesis-status-funnel.json",
+      "sha256": "9b631c057a50143586c1fe43a2dc7850170155990490b276f8a3cbd38b1f3f88"
+    },
+    {
+      "bytes": 7848,
+      "file": "hypothesis-tags-catalog.json",
+      "sha256": "f8ff4ea6d150707a43ae7fa70de09978edf3ef542cee0d09818a9e420cf958eb"
+    },
+    {
+      "bytes": 21095,
+      "file": "hypothesis-tree-root-index.json",
+      "sha256": "228ba1d425aefdefea685ce9bdc5af3a4183d89dc0d15d45e086de98b32cc75b"
+    },
+    {
+      "bytes": 1433,
+      "file": "hypothesis-universe-summary.json",
+      "sha256": "6671f4a915be9741d8efe0debcf4729ece98594754cafba4666a7c0d27788542"
+    },
+    {
+      "bytes": 319,
+      "file": "prospective-freeze-provenance-v2.json",
+      "sha256": "0f4f5dc4c00c564cc489087b9c83385fbe6163cbfea0925d068c39f78aa9d886"
+    },
+    {
+      "bytes": 314,
+      "file": "security-locks.json",
+      "sha256": "1cdb8c3b9503c8a41e475645b1f5ca32c432c60d99bf9c5d17ac9a15db62ce63"
+    },
+    {
+      "bytes": 11547,
+      "file": "source-field-audit.json",
+      "sha256": "5f1381c2fe45bcd9fa4a6a1a73bd80cc258021cce1df6b4ba2b4bd0074020e86"
+    },
+    {
+      "bytes": 2221,
+      "file": "universal-cache-only-pilot.json",
+      "sha256": "4c27739aad51a6ded7db6272228c75c4c9ab73debe0c8c470951a16bfae7925d"
+    }
+  ],
+  "provider_calls": 0,
+  "real_bets": 0,
+  "schema_version": "hypothesis-dashboard-contract-manifest-v2"
+}

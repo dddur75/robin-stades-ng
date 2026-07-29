@@ -18,12 +18,8 @@ from robin.hypothesis_intelligence.contracts import (
 )
 
 J10_EXPECTED_RULES = 700
-J10_REGISTRY_SHA256 = (
-    "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731"
-)
-J10_RESULT_HASH = (
-    "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b"
-)
+J10_REGISTRY_SHA256 = "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731"
+J10_RESULT_HASH = "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b"
 J10_TOP_IDS = {
     "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867": "J10-M001",
     "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2": "J10-M002",
@@ -33,11 +29,7 @@ RANKING_VERSION = "hypothesis-exploratory-priority-v1"
 
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
-    return [
-        json.loads(line)
-        for line in path.read_text("utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in path.read_text("utf-8").splitlines() if line.strip()]
 
 
 def _condition_value(
@@ -45,11 +37,7 @@ def _condition_value(
     feature: str,
 ) -> object | None:
     return next(
-        (
-            item.get("value")
-            for item in conditions
-            if item.get("feature") == feature
-        ),
+        (item.get("value") for item in conditions if item.get("feature") == feature),
         None,
     )
 
@@ -72,11 +60,7 @@ def canonical_rule_fingerprint(
         None,
     )
     margin = next(
-        (
-            item.get("value")
-            for item in conditions_list
-            if "margin" in str(item.get("feature", ""))
-        ),
+        (item.get("value") for item in conditions_list if "margin" in str(item.get("feature", ""))),
         None,
     )
     return canonical_sha256(
@@ -120,16 +104,12 @@ def import_j10_registry(
     ).astimezone(UTC)
     dataset_hashes = campaign.get("dataset_hashes", [])
     discovery_dataset = str(dataset_hashes[0]) if dataset_hashes else ""
-    negative_controls = tuple(
-        sorted(str(key) for key in campaign.get("negative_controls", {}))
-    )
+    negative_controls = tuple(sorted(str(key) for key in campaign.get("negative_controls", {})))
     output: list[HypothesisRecord] = []
     for raw in rules:
         rule_hash = str(raw["rule_hash"])
         conditions = tuple(dict(item) for item in raw.get("conditions", []))
-        competition = str(
-            _condition_value(conditions, "competition") or "ALL_AVAILABLE"
-        )
+        competition = str(_condition_value(conditions, "competition") or "ALL_AVAILABLE")
         market = str(raw["market"])
         selection = str(raw["selection"])
         support = dict(raw.get("support") or {})
@@ -163,19 +143,11 @@ def import_j10_registry(
             else "Q_VALUE_ABOVE_FROZEN_FDR_ALPHA;NO_LIVE_POINT_IN_TIME_VALIDATION"
         )
         odds_condition = next(
-            (
-                item
-                for item in conditions
-                if str(item.get("feature", "")).startswith("odds_")
-            ),
+            (item for item in conditions if str(item.get("feature", "")).startswith("odds_")),
             {},
         )
         margin_condition = next(
-            (
-                item
-                for item in conditions
-                if "margin" in str(item.get("feature", ""))
-            ),
+            (item for item in conditions if "margin" in str(item.get("feature", ""))),
             {},
         )
         output.append(
@@ -207,21 +179,15 @@ def import_j10_registry(
                 discovery_code_revision=str(campaign["code_revision"]),
                 discovery_timestamp=created_at,
                 historical_support=int(support.get("observations", 0)),
-                historical_profit=(
-                    float(metrics["profit_units"]) if metrics else None
-                ),
+                historical_profit=(float(metrics["profit_units"]) if metrics else None),
                 historical_roi=float(metrics["roi"]) if metrics else None,
                 historical_confidence_interval=(
-                    (float(bootstrap["lower"]), float(bootstrap["upper"]))
-                    if bootstrap
-                    else None
+                    (float(bootstrap["lower"]), float(bootstrap["upper"])) if bootstrap else None
                 ),
                 historical_p_value=float(raw.get("p_value", 1.0)),
                 historical_q_value=float(raw.get("q_value", 1.0)),
                 historical_walk_forward=walk_forward,
-                historical_drawdown=(
-                    float(metrics["max_drawdown_units"]) if metrics else None
-                ),
+                historical_drawdown=(float(metrics["max_drawdown_units"]) if metrics else None),
                 historical_cross_league_stability=stability,
                 team_concentration=concentration,
                 time_concentration={
@@ -230,9 +196,7 @@ def import_j10_registry(
                 },
                 negative_controls=negative_controls,
                 required_data_gates=("PROSPECTIVE_MARKET_GATE",),
-                current_data_gates={
-                    "PROSPECTIVE_MARKET_GATE": "WAITING_FOR_DUE_CUTOFF"
-                },
+                current_data_gates={"PROSPECTIVE_MARKET_GATE": "WAITING_FOR_DUE_CUTOFF"},
                 status=status,
                 status_reason=status_reason,
                 preregistered_at=None,
@@ -298,10 +262,7 @@ def owner_registry() -> tuple[HypothesisRecord, ...]:
                 time_concentration={},
                 negative_controls=(contract.negative_control,),
                 required_data_gates=tuple(contract.required_gates),
-                current_data_gates={
-                    gate: "DATA_GATE_BLOCKED"
-                    for gate in contract.required_gates
-                },
+                current_data_gates={gate: "DATA_GATE_BLOCKED" for gate in contract.required_gates},
                 status=HypothesisStatus.DATA_GATE_BLOCKED,
                 status_reason="REQUIRED_PROSPECTIVE_DATA_GATES_NOT_READY",
                 preregistered_at=created_at,
@@ -381,16 +342,12 @@ def rank_hypotheses(
     )
     stability = _rank(
         eligible,
-        lambda item: int(
-            item.historical_cross_league_stability.get("survived") is True
-        ),
+        lambda item: int(item.historical_cross_league_stability.get("survived") is True),
         reverse=True,
     )
     live = _rank(
         eligible,
-        lambda item: int(
-            item.price_contract.get("exact_observed_at") is True
-        ),
+        lambda item: int(item.price_contract.get("exact_observed_at") is True),
         reverse=True,
     )
     count = max(1, len(eligible))
@@ -398,14 +355,15 @@ def rank_hypotheses(
     for item in eligible:
         concentration_risk = (
             1.0
-            if item.team_concentration
-            and item.team_concentration.get("passed") is not True
+            if item.team_concentration and item.team_concentration.get("passed") is not True
             else 0.0
         )
         q_penalty = 1.0 if (item.historical_q_value or 1.0) > 0.05 else 0.0
         complexity_penalty = min(len(item.conditions) / 4, 1.0)
+
         def normalized(rank: int) -> float:
             return 1 - ((rank - 1) / count)
+
         priority = 100 * (
             0.16 * normalized(roi[item.hypothesis_id])
             + 0.16 * normalized(support[item.hypothesis_id])

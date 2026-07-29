@@ -1,0 +1,13 @@
+{
+  "DEMO_MODE_ENABLED": false,
+  "NO_BET_DEFAULT": true,
+  "P3_P4_PAUSED": true,
+  "PRODUCTION_LOCKED": true,
+  "PROMOTION_LOCKED": true,
+  "REAL_BETS": false,
+  "SOCIAL_PUBLISHING_ENABLED": false,
+  "STORAGE_PAUSED": true,
+  "odds_api_credits": 0,
+  "paid_weather_calls": 0,
+  "provider_calls": 0
+}

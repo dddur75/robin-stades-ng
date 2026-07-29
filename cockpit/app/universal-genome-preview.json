@@ -1,0 +1,15 @@
+{
+  "artifactPages": 4,
+  "blocked": 149,
+  "deferred": 912,
+  "executed": 13,
+  "families": 28,
+  "materialized": 180,
+  "properties": 486,
+  "relations": 44,
+  "replayIdentical": true,
+  "symbolicStatus": "Univers symboliquement complet",
+  "title": "Génome universel des hypothèses",
+  "validatedStrategies": 0,
+  "warning": "Complétude de la grammaire et du catalogue V1, sans stratégie validée ni promesse de performance."
+}

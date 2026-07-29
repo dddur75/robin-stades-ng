@@ -1,5 +1,6 @@
 import { formatNumber, formatPercent, t } from "../../i18n";
 import { hypothesisIntelligence } from "../../lib/presentation";
+import preview from "../../universal-genome-preview.json";
 import {
   EvidenceNote,
   MetricCard,
@@ -26,6 +27,39 @@ export function LaboratoryPage() {
         performance future n’est annoncée, aucun pari réel n’est envoyé et
         aucune validation n’est automatique.
       </EvidenceNote>
+
+      <section className="expert-section hypothesis-section" id="genome-universel">
+        <SectionHeading
+          subtitle="La grammaire représente les familles compatibles sans matérialiser toutes les combinaisons."
+          title="Génome universel des hypothèses"
+        />
+        <div className="metrics-grid">
+          <MetricCard
+            detail={preview.symbolicStatus}
+            label="Propriétés classées"
+            tone="blue"
+            value={formatNumber(preview.properties)}
+          />
+          <MetricCard
+            detail="ontologie ouverte"
+            label="Familles"
+            tone="violet"
+            value={formatNumber(preview.families)}
+          />
+          <MetricCard
+            detail="replay identique"
+            label="Nœuds exécutés"
+            tone="green"
+            value={formatNumber(preview.executed)}
+          />
+          <MetricCard
+            detail="aucune promotion"
+            label="Stratégies validées"
+            value={formatNumber(preview.validatedStrategies)}
+          />
+        </div>
+        <EvidenceNote>{preview.warning}</EvidenceNote>
+      </section>
 
       <section className="expert-section hypothesis-section" id="decouvertes-robin">
         <SectionHeading

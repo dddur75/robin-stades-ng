@@ -1,0 +1,82 @@
+{
+  "items": [
+    {
+      "canonical_competition_key": "api-football:61",
+      "display_name_en": "Ligue 1",
+      "display_name_fr": "Ligue 1",
+      "historical_aliases": [
+        "France Ligue 1",
+        "F1"
+      ],
+      "identity_hash": "692184aae3e09a097edf3474fd4bce1419947d13ce7cd898c524ad13a0c34792",
+      "provider": "API_FOOTBALL",
+      "provider_aliases": [
+        "Ligue 1"
+      ],
+      "provider_competition_id": "61"
+    },
+    {
+      "canonical_competition_key": "api-football:39",
+      "display_name_en": "Premier League",
+      "display_name_fr": "Premier League",
+      "historical_aliases": [
+        "English Premier League",
+        "E0"
+      ],
+      "identity_hash": "77ea14289c9a1c8b86cfe56c9fc2369c034ad991f4f13d14af4f51e9fa154aaa",
+      "provider": "API_FOOTBALL",
+      "provider_aliases": [
+        "Premier League"
+      ],
+      "provider_competition_id": "39"
+    },
+    {
+      "canonical_competition_key": "api-football:140",
+      "display_name_en": "La Liga",
+      "display_name_fr": "Liga",
+      "historical_aliases": [
+        "La Liga",
+        "Primera División",
+        "SP1"
+      ],
+      "identity_hash": "790bf021fa1b27f7542856d7a1db58ebb9239534e6a61ac59ab6722bce37b863",
+      "provider": "API_FOOTBALL",
+      "provider_aliases": [
+        "Liga",
+        "LaLiga"
+      ],
+      "provider_competition_id": "140"
+    },
+    {
+      "canonical_competition_key": "api-football:78",
+      "display_name_en": "Bundesliga",
+      "display_name_fr": "Bundesliga",
+      "historical_aliases": [
+        "Germany Bundesliga",
+        "D1"
+      ],
+      "identity_hash": "14716a95012e74480295cb3650e4a260ade9c3945e2f5be5be6841b6ea2f9ba1",
+      "provider": "API_FOOTBALL",
+      "provider_aliases": [
+        "Bundesliga"
+      ],
+      "provider_competition_id": "78"
+    },
+    {
+      "canonical_competition_key": "api-football:135",
+      "display_name_en": "Serie A",
+      "display_name_fr": "Serie A",
+      "historical_aliases": [
+        "Italy Serie A",
+        "I1"
+      ],
+      "identity_hash": "eb4f13c506a4c53fc9b9f8d1d7ed53f28c76fc8502a9e5bfe97b73e369d01a06",
+      "provider": "API_FOOTBALL",
+      "provider_aliases": [
+        "Serie A"
+      ],
+      "provider_competition_id": "135"
+    }
+  ],
+  "schema_version": "competition-identity-catalog-v1"
+}

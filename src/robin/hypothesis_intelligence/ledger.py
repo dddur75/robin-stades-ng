@@ -41,10 +41,7 @@ class HypothesisLedgerEvent:
             or self.promoted
         ):
             raise ValueError("HYPOTHESIS_LEDGER_EVENT_INVALID")
-        if (
-            self.kind is HypothesisEventKind.HYPOTHESIS_VALIDATED
-            and self.automatic
-        ):
+        if self.kind is HypothesisEventKind.HYPOTHESIS_VALIDATED and self.automatic:
             raise ValueError("AUTOMATIC_HYPOTHESIS_VALIDATION_FORBIDDEN")
 
     @property
@@ -113,8 +110,7 @@ class HypothesisLedger:
             "head_hash": previous,
             "valid": True,
             "automatic_validation_events": sum(
-                event.kind is HypothesisEventKind.HYPOTHESIS_VALIDATED
-                and event.automatic
+                event.kind is HypothesisEventKind.HYPOTHESIS_VALIDATED and event.automatic
                 for event in self._events
             ),
         }

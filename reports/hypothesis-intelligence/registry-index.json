@@ -2,88 +2,88 @@
   "page_size": 50,
   "pages": [
     {
+      "artifact_path": "j10-expert-pages/page-01.json",
       "page": 1,
       "records": 50,
-      "sha256": "29a7c2cb9bbc814a867a16e09066c1ecff7be6b871b7d2a04bf9d9403d462792",
-      "url": "/hypotheses/page-01.json"
+      "sha256": "29a7c2cb9bbc814a867a16e09066c1ecff7be6b871b7d2a04bf9d9403d462792"
     },
     {
+      "artifact_path": "j10-expert-pages/page-02.json",
       "page": 2,
       "records": 50,
-      "sha256": "d665e9e36e2e3b070f43efe1ddd51610bcac97af189a128b197c8ca82aeb941a",
-      "url": "/hypotheses/page-02.json"
+      "sha256": "d665e9e36e2e3b070f43efe1ddd51610bcac97af189a128b197c8ca82aeb941a"
     },
     {
+      "artifact_path": "j10-expert-pages/page-03.json",
       "page": 3,
       "records": 50,
-      "sha256": "daf1a9e4a1f460d2b5b9c3fdcafc396e1292f6d7176cc83a1cc6ef9a7c9afbe5",
-      "url": "/hypotheses/page-03.json"
+      "sha256": "daf1a9e4a1f460d2b5b9c3fdcafc396e1292f6d7176cc83a1cc6ef9a7c9afbe5"
     },
     {
+      "artifact_path": "j10-expert-pages/page-04.json",
       "page": 4,
       "records": 50,
-      "sha256": "6ceb388afd4d654fa9c49475fdaf7d6458153f2b7f1f82e72abbbdfe364a677e",
-      "url": "/hypotheses/page-04.json"
+      "sha256": "6ceb388afd4d654fa9c49475fdaf7d6458153f2b7f1f82e72abbbdfe364a677e"
     },
     {
+      "artifact_path": "j10-expert-pages/page-05.json",
       "page": 5,
       "records": 50,
-      "sha256": "c9d4cb57e340a7f4379c15cc0e1b3de2a598f1ea5e895b71150beaeaea6a72e1",
-      "url": "/hypotheses/page-05.json"
+      "sha256": "c9d4cb57e340a7f4379c15cc0e1b3de2a598f1ea5e895b71150beaeaea6a72e1"
     },
     {
+      "artifact_path": "j10-expert-pages/page-06.json",
       "page": 6,
       "records": 50,
-      "sha256": "15383874e58b383be48acfa084aee0ccf3dc5f69fcc10b51f9eb45481f7c0ea0",
-      "url": "/hypotheses/page-06.json"
+      "sha256": "15383874e58b383be48acfa084aee0ccf3dc5f69fcc10b51f9eb45481f7c0ea0"
     },
     {
+      "artifact_path": "j10-expert-pages/page-07.json",
       "page": 7,
       "records": 50,
-      "sha256": "0fbc18c1941ff77ea2fd8fe9d263a5d9ed7fb8f3688ef6c04e459dcb387f221a",
-      "url": "/hypotheses/page-07.json"
+      "sha256": "0fbc18c1941ff77ea2fd8fe9d263a5d9ed7fb8f3688ef6c04e459dcb387f221a"
     },
     {
+      "artifact_path": "j10-expert-pages/page-08.json",
       "page": 8,
       "records": 50,
-      "sha256": "d6e69cbc94c726b1ecb227034d55aee8aadceea0c132d20129658edc93c67b78",
-      "url": "/hypotheses/page-08.json"
+      "sha256": "d6e69cbc94c726b1ecb227034d55aee8aadceea0c132d20129658edc93c67b78"
     },
     {
+      "artifact_path": "j10-expert-pages/page-09.json",
       "page": 9,
       "records": 50,
-      "sha256": "5873360c8e8e0bc5b0d84f49563a8971433ded63ba5cbad5eec3bbbef43323c0",
-      "url": "/hypotheses/page-09.json"
+      "sha256": "5873360c8e8e0bc5b0d84f49563a8971433ded63ba5cbad5eec3bbbef43323c0"
     },
     {
+      "artifact_path": "j10-expert-pages/page-10.json",
       "page": 10,
       "records": 50,
-      "sha256": "46dfdc3c3c621b689c928cd5ba0cc6fc662029f5c5a105516a5d62618bb4a5bf",
-      "url": "/hypotheses/page-10.json"
+      "sha256": "46dfdc3c3c621b689c928cd5ba0cc6fc662029f5c5a105516a5d62618bb4a5bf"
     },
     {
+      "artifact_path": "j10-expert-pages/page-11.json",
       "page": 11,
       "records": 50,
-      "sha256": "b885d0c4d0f476026076f3f011871a1ebefb6ab0ef5dc1b18bacd0114d1c5e0e",
-      "url": "/hypotheses/page-11.json"
+      "sha256": "b885d0c4d0f476026076f3f011871a1ebefb6ab0ef5dc1b18bacd0114d1c5e0e"
     },
     {
+      "artifact_path": "j10-expert-pages/page-12.json",
       "page": 12,
       "records": 50,
-      "sha256": "0d62f957acd9ae958e10dc6293f6d6763913ce552443a1b61abe8c632857e531",
-      "url": "/hypotheses/page-12.json"
+      "sha256": "0d62f957acd9ae958e10dc6293f6d6763913ce552443a1b61abe8c632857e531"
     },
     {
+      "artifact_path": "j10-expert-pages/page-13.json",
       "page": 13,
       "records": 50,
-      "sha256": "f6aab1d5c6a684baff09d145f435fc31255a196137f89e4d192e25eedc31cac8",
-      "url": "/hypotheses/page-13.json"
+      "sha256": "f6aab1d5c6a684baff09d145f435fc31255a196137f89e4d192e25eedc31cac8"
     },
     {
+      "artifact_path": "j10-expert-pages/page-14.json",
       "page": 14,
       "records": 50,
-      "sha256": "c5902264c21f839909ca69425318ff60b02405224efa4b6da3af75c2cda995f1",
-      "url": "/hypotheses/page-14.json"
+      "sha256": "c5902264c21f839909ca69425318ff60b02405224efa4b6da3af75c2cda995f1"
     }
   ],
   "schema_version": "hypothesis-registry-compact-page-manifest-v1",
