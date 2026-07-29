@@ -1,0 +1,73 @@
+{
+  "schema_version": "prequential-learning-factory-v1",
+  "verdict_ready": "PREQUENTIAL_LEARNING_FACTORY_READY",
+  "feature_contract": {
+    "version": "prequential-features-v1",
+    "families": [
+      "market",
+      "team",
+      "rest",
+      "form",
+      "players",
+      "injuries",
+      "lineup",
+      "formation",
+      "tactical_matchup"
+    ],
+    "missing_value_policy": "NULL_WITH_AVAILABILITY_PROVENANCE_AND_QUALITY",
+    "post_cutoff_observations": "FORBIDDEN",
+    "blocked_family_zero_fill": "FORBIDDEN"
+  },
+  "cutoffs": {
+    "H-2": {
+      "before_kickoff_minutes": 120,
+      "opens_before_kickoff_minutes": 150
+    },
+    "NEAR_KICKOFF": {
+      "before_kickoff_minutes": 1,
+      "opens_before_kickoff_minutes": 15
+    }
+  },
+  "markets": [
+    "1X2",
+    "OVER_UNDER_2_5"
+  ],
+  "model_scopes": [
+    "GLOBAL_FIVE_LEAGUES",
+    "LIGUE_1",
+    "PREMIER_LEAGUE",
+    "LIGA",
+    "BUNDESLIGA",
+    "SERIE_A"
+  ],
+  "reference": {
+    "family": "DEVIGGED_MARKET_REFERENCE",
+    "version": "market-devigged-v1",
+    "immutable": true
+  },
+  "training": {
+    "minimum_new_settled_fixtures": 30,
+    "minimum_represented_leagues": 2,
+    "minimum_interval_hours": 24,
+    "under_support_status": "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT"
+  },
+  "settlement": {
+    "minimum_minutes_after_kickoff": 90,
+    "retry_interval_hours": 6,
+    "maximum_attempts_per_fixture": 5,
+    "max_provider_calls_per_run": 10
+  },
+  "storage": {
+    "r2_namespace": "prequential-learning/schema-v1",
+    "postgresql": "INDEXES_PREDICTIONS_SETTLEMENTS_METRICS_VERSIONS",
+    "raw_payloads_in_postgresql": false
+  },
+  "security": {
+    "production_locked": true,
+    "real_bets": false,
+    "no_bet_default": true,
+    "promotion_status": "PROMOTION_LOCKED",
+    "social_publishing_enabled": false,
+    "demo_mode_enabled": false
+  }
+}

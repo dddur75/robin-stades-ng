@@ -40,7 +40,9 @@ export function ResultsPage() {
         <MetricCard detail="politique scientifique versionnée" label={t("results.bankrollInitial")} tone="blue" value={formatUnits(bankroll.initialUnits)} />
         <MetricCard detail="registre shadow" label={t("results.bankrollCurrent")} tone="green" value={formatUnits(bankroll.currentUnits)} />
         <MetricCard detail="preuve du ledger" label={t("results.profit")} value={formatUnits(results.profitUnits)} />
-        <MetricCard detail="calculé après règlement" label={t("results.roi")} value={formatPercent(results.roi)} />
+        {operationalEvidence.decisions > 0 ? (
+          <MetricCard detail="calculé après règlement" label={t("results.roi")} value={formatPercent(results.roi)} />
+        ) : null}
         <MetricCard detail="preuve du ledger" label={t("results.drawdown")} value={formatUnits(bankroll.maxDrawdownUnits)} />
         <MetricCard detail="registre prospectif" label={t("results.decisions")} value={formatNumber(operationalEvidence.decisions)} />
       </section>

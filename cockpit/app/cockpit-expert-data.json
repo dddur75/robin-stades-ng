@@ -3328,5 +3328,81 @@
     "noBetDefault": true,
     "socialPublishingEnabled": false,
     "demoModeEnabled": false
+  },
+  "prequentialLearning": {
+    "status": "PREQUENTIAL_LEARNING_FACTORY_READY",
+    "origin": "NO_REAL_PREQUENTIAL_ACTIVITY",
+    "generatedAt": "2026-07-28T22:27:21.119847+00:00",
+    "markets": [
+      "1X2",
+      "OVER_UNDER_2_5"
+    ],
+    "cutoffs": [
+      "H-2",
+      "NEAR_KICKOFF"
+    ],
+    "frozenPredictions": 0,
+    "rejectedPredictions": 0,
+    "settledPredictions": 0,
+    "settledFixtures": 0,
+    "realTrainingRuns": 0,
+    "models": [],
+    "activeModels": 0,
+    "predictions": [],
+    "nextPrediction": {
+      "fixtureId": "api-football:1570333",
+      "competition": "Liga",
+      "match": "Alaves — Getafe",
+      "market": "1X2 · OVER_UNDER_2_5",
+      "cutoffName": "H-2",
+      "cutoffAt": "2026-08-15T15:30:00+00:00",
+      "status": "NOT_DUE"
+    },
+    "training": {
+      "status": "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
+      "eligibleFixtures": 0,
+      "newSupport": 0,
+      "minimumFixtures": 30,
+      "representedLeagues": 0,
+      "minimumLeagues": 2,
+      "nextPossibleAt": null,
+      "lastTrainingAt": null,
+      "lastVersion": null,
+      "latestManifestHash": null
+    },
+    "comparison": {
+      "status": "NO_COMPARABLE_SETTLEMENT",
+      "referenceModelId": null,
+      "referenceVersion": null,
+      "challengerModelId": null,
+      "challengerVersion": null,
+      "logLossReference": null,
+      "logLossChallenger": null,
+      "brierReference": null,
+      "brierChallenger": null,
+      "calibrationReference": null,
+      "calibrationChallenger": null,
+      "coverage": null,
+      "missingness": null
+    },
+    "leagueResults": [],
+    "manifests": [],
+    "ledger": {
+      "events": 0,
+      "headHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "status": "PREQUENTIAL_LEDGER_VERIFIED",
+      "recent": []
+    },
+    "promotion": {
+      "status": "PROMOTION_LOCKED",
+      "authorized": false
+    },
+    "invariants": {
+      "PRODUCTION_LOCKED": true,
+      "REAL_BETS": false,
+      "NO_BET_DEFAULT": true,
+      "SOCIAL_PUBLISHING_ENABLED": false,
+      "PROMOTION_LOCKED": true
+    }
   }
 }

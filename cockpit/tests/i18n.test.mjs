@@ -48,6 +48,8 @@ test("le catalogue français conserve accents, apostrophes et pluriels", async (
   assert.match(fr, /l’essentiel/);
   assert.match(fr, /rencontres/);
   assert.match(fr, /Aucun pari simulé/);
+  assert.match(fr, /Apprentissage en direct/);
+  assert.match(fr, /prédictions déjà publiées/);
   assert.doesNotMatch(fr, /Ã.|â€™|Â·/);
 });
 
@@ -76,6 +78,17 @@ test("le catalogue des statuts contient une présentation complète", async () =
     "STORAGE_PAUSED",
     "NO_CANDIDATE",
     "NOT_DUE",
+    "FROZEN",
+    "REJECTED_LATE",
+    "REJECTED_MISSING_GATE",
+    "NO_ODDS_REFERENCE",
+    "SETTLED",
+    "VOID",
+    "INSUFFICIENT_TRAINING_SUPPORT",
+    "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
+    "REFERENCE_UNCHANGED",
+    "PROMOTION_LOCKED",
+    "PREQUENTIAL_LEDGER_VERIFIED",
   ]) {
     assert.match(source, new RegExp(`${status}: \\{`));
   }

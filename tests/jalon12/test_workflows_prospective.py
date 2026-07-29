@@ -20,6 +20,11 @@ CAPTURE_WORKFLOWS = (
     "prospective-lineup-capture.yml",
     "prospective-odds-capture.yml",
 )
+PREQUENTIAL_WORKFLOWS = (
+    "prequential-prediction.yml",
+    "prequential-settlement.yml",
+    "prequential-training.yml",
+)
 
 
 def _workflow(name: str) -> str:
@@ -56,7 +61,7 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert all(value not in workflow.casefold() for value in forbidden), name
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
         assert "alembic upgrade head" in workflow
-        assert 'alembic current | grep -q "0009"' in workflow
+        assert 'alembic current | grep -q "0010_prequential_v1"' in workflow
 
 
 def test_central_policy_owns_provider_caps_reserves_and_markets() -> None:
@@ -97,6 +102,49 @@ def test_central_policy_owns_provider_caps_reserves_and_markets() -> None:
         },
     }
     assert policy["markets"] == ["1X2", "OVER_UNDER_2_5"]
+
+
+def test_prequential_workflows_share_state_lock_and_safety_contract() -> None:
+    commands = {
+        "prequential-prediction.yml": ("forecast", "status"),
+        "prequential-settlement.yml": ("settle", "status"),
+        "prequential-training.yml": ("train", "replay", "status"),
+    }
+    required = (
+        "group: prospective-deep-state",
+        "cancel-in-progress: false",
+        "contents: read",
+        'STORAGE_PAUSED: "true"',
+        'P3_P4_PAUSED: "true"',
+        'PRODUCTION_LOCKED: "true"',
+        'REAL_BETS: "false"',
+        'NO_BET_DEFAULT: "true"',
+        'PROMOTION_LOCKED: "true"',
+        'SOCIAL_PUBLISHING_ENABLED: "false"',
+        'DEMO_MODE_ENABLED: "false"',
+        'ODDS_API_CREDITS_ALLOWED: "0"',
+        'alembic current | grep -q "0010_prequential_v1"',
+        "retention-days: 90",
+    )
+    for name in PREQUENTIAL_WORKFLOWS:
+        workflow = _workflow(name)
+        assert all(value in workflow for value in required), name
+        expected_api_calls = (
+            'API_FOOTBALL_CALLS_ALLOWED: "10"'
+            if name == "prequential-settlement.yml"
+            else 'API_FOOTBALL_CALLS_ALLOWED: "0"'
+        )
+        assert expected_api_calls in workflow
+        assert "contents: write" not in workflow
+        if name == "prequential-settlement.yml":
+            assert "secrets.API_FOOTBALL_KEY" in workflow
+        else:
+            assert "secrets.API_FOOTBALL_KEY" not in workflow
+        assert "secrets.ODDS_API_KEY" not in workflow
+        for command in commands[name]:
+            assert (
+                f"run_prequential_learning_factory.py {command}" in workflow
+            ), name
 
 
 def test_programmed_frequency_is_never_more_frequent_than_hourly() -> None:

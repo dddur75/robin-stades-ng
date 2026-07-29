@@ -280,3 +280,27 @@ sous `prospective-deep-data/schema-v1`. La preuve temporelle est
 Les états de disponibilité sont `NOT_DUE`, `DUE`, `CAPTURED`,
 `CAPTURED_EMPTY`, `PROVIDER_UNAVAILABLE`, `MISSED_WINDOW`, `INVALID_PAYLOAD`,
 `TEMPORALITY_FAILED`, `IDENTITY_FAILED`, `RETRY_PENDING` et `COMPLETE`.
+
+## Entités Prequential Learning Factory V1
+
+La révision `0010_prequential_v1` ajoute :
+
+| Entité | Grain | Rôle |
+|---|---|---|
+| `prequential_feature_snapshots` | fixture × cutoff × marché × contrat | valeurs, missingness, provenance et hash immuables |
+| `prequential_model_versions` | modèle × version | référence ou challenger gelé, artifact et cutoff d’entraînement |
+| `prequential_predictions` | fixture × cutoff × marché × modèle/version | probabilités et contexte exact de la prédiction |
+| `prequential_fixture_settlements` | fixture × version de résultat | résultat final vérifié ou correction chaînée |
+| `prequential_prediction_scores` | prédiction × règlement | Log Loss, Brier et résultat descriptif |
+| `prequential_metric_snapshots` | segment × instant d’évaluation | métriques cumulées et couverture |
+| `prequential_training_runs` | version de dataset × run | support, manifest, artifact et statut d’entraînement |
+| `prequential_ledger_events` | séquence append-only | événement métier et chaîne de hashes |
+
+Un snapshot ou une prédiction existante ne peut être remplacé. Une correction
+crée une nouvelle version liée à la précédente. PostgreSQL ne contient ni
+payload fournisseur brut, ni gros dataset, ni modèle binaire ; ces objets
+restent dans R2 et ne sont référencés que par clé, taille et SHA-256.
+
+Les marchés sont `1X2` et `OVER_UNDER_2_5`. Les cutoffs sont `H-2` et
+`NEAR_KICKOFF`. Les statuts d’une prédiction sont `FROZEN`, `REJECTED_LATE`,
+`REJECTED_MISSING_GATE`, `NO_ODDS_REFERENCE`, `SETTLED` et `VOID`.

@@ -4,10 +4,15 @@ import presentation from "../cockpit-presentation.json";
 import {
   type CoverageState,
   type MatchPresentation,
+  type PrequentialLearningPresentation,
   type PresentationModel,
 } from "./presentation-model";
 
-export type { CoverageState, MatchPresentation };
+export type {
+  CoverageState,
+  MatchPresentation,
+  PrequentialLearningPresentation,
+};
 
 const typedPresentation = presentation as unknown as PresentationModel;
 
@@ -20,6 +25,7 @@ export const gateRows = typedPresentation.observatory.gateRows;
 export const oddsSnapshots = typedPresentation.oddsSnapshots;
 export const presentationSystem = typedPresentation.system;
 export const presentationBankroll = typedPresentation.dashboard.bankroll;
+export const prequentialLearning = typedPresentation.prequentialLearning;
 
 export const dataFamilyLabels: Record<string, string> = {
   FIXTURE: "Rencontre",
@@ -46,6 +52,7 @@ export const expertData = {
   externalValidation: expertSnapshot.externalValidation,
   matchup: expertSnapshot.matchup,
   patternResearch: expertSnapshot.patternResearch,
+  prequentialLearning: typedPresentation.prequentialLearning,
 };
 
 export const scientificInvariants = expertSnapshot.patternResearch;

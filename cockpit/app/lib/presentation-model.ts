@@ -147,6 +147,131 @@ export type LeaguePresentation = {
   coverage: number;
 };
 
+export type PrequentialModelPresentation = {
+  modelId: string;
+  name: string;
+  role: string;
+  scope: string;
+  version: string;
+  status: string;
+  createdAt: string | null;
+  trainingCutoff: string | null;
+  featureContractHash: string | null;
+  artifactHash: string | null;
+  codeRevision: string | null;
+};
+
+export type PrequentialPredictionPresentation = {
+  predictionId: string;
+  fixtureId: string;
+  competition: string;
+  match: string;
+  market: string;
+  cutoffName: string;
+  cutoffAt: string;
+  predictedAt: string | null;
+  modelId: string;
+  modelVersion: string;
+  featureSnapshotId: string | null;
+  featureSnapshotHash: string | null;
+  payloadHash: string | null;
+  status: string;
+};
+
+export type PrequentialLearningPresentation = {
+  status: string;
+  origin: string;
+  generatedAt: string;
+  markets: string[];
+  cutoffs: string[];
+  frozenPredictions: number;
+  rejectedPredictions: number;
+  settledPredictions: number;
+  settledFixtures: number;
+  realTrainingRuns: number;
+  models: PrequentialModelPresentation[];
+  activeModels: number;
+  predictions: PrequentialPredictionPresentation[];
+  nextPrediction: {
+    fixtureId: string;
+    competition: string;
+    match: string;
+    market: string;
+    cutoffName: string;
+    cutoffAt: string;
+    status: string;
+  } | null;
+  training: {
+    status: string;
+    eligibleFixtures: number;
+    newSupport: number;
+    minimumFixtures: number;
+    representedLeagues: number;
+    minimumLeagues: number;
+    nextPossibleAt: string | null;
+    lastTrainingAt: string | null;
+    lastVersion: string | null;
+    latestManifestHash: string | null;
+  };
+  comparison: {
+    status: string;
+    referenceModelId: string | null;
+    referenceVersion: string | null;
+    challengerModelId: string | null;
+    challengerVersion: string | null;
+    logLossReference: number | null;
+    logLossChallenger: number | null;
+    brierReference: number | null;
+    brierChallenger: number | null;
+    calibrationReference: number | null;
+    calibrationChallenger: number | null;
+    coverage: number | null;
+    missingness: number | null;
+  };
+  leagueResults: Array<{
+    competition: string;
+    predictions: number;
+    settledFixtures: number;
+    logLossReference: number | null;
+    logLossChallenger: number | null;
+    brierReference: number | null;
+    brierChallenger: number | null;
+    status: string;
+  }>;
+  manifests: Array<{
+    manifestId: string;
+    modelId: string;
+    modelVersion: string;
+    createdAt: string | null;
+    fixtureCount: number;
+    leagues: string[];
+    datasetHash: string | null;
+    featureContractHash: string | null;
+    artifactHash: string | null;
+    status: string;
+  }>;
+  ledger: {
+    events: number;
+    headHash: string;
+    status: string;
+    recent: Array<{
+      sequence: number;
+      kind: string;
+      recordedAt: string | null;
+      fixtureId: string | null;
+      modelId: string | null;
+      modelVersion: string | null;
+      eventHash: string | null;
+      previousHash: string | null;
+    }>;
+  };
+  promotion: {
+    status: string;
+    authorized: boolean;
+  };
+  invariants: Record<string, boolean | string | number>;
+};
+
 export type PresentationModel = {
   dashboard: {
     operationalEvidence: OperationalEvidence;
@@ -159,6 +284,7 @@ export type PresentationModel = {
   matches: MatchPresentation[];
   leagues: LeaguePresentation[];
   nextCaptures: NextCapturePresentation[];
+  prequentialLearning: PrequentialLearningPresentation;
   observatory: {
     gateRows: Array<{
       name: string;
@@ -381,6 +507,299 @@ function collectStatusValues(value: unknown, output = new Set<string>()): Set<st
     collectStatusValues(child, output);
   }
   return output;
+}
+
+function prequentialModel(
+  value: unknown,
+  fallbackRole: string,
+  index: number,
+): PrequentialModelPresentation | null {
+  const item = record(value);
+  if (!Object.keys(item).length) return null;
+  const modelId = text(item.model_id, text(item.modelId, text(item.name)));
+  const scope = text(item.scope, text(item.competition, "GLOBAL_FIVE_LEAGUES"));
+  const role = text(item.role, fallbackRole);
+  return {
+    modelId: modelId || `${role}:${scope}:${index}`,
+    name: text(item.display_name, text(item.name, modelId || "Modèle préquentiel")),
+    role,
+    scope,
+    version: text(item.version, text(item.model_version, "Non publiée")),
+    status: text(item.status, "INSUFFICIENT_TRAINING_SUPPORT"),
+    createdAt: optionalText(item.created_at) ?? optionalText(item.createdAt),
+    trainingCutoff:
+      optionalText(item.training_cutoff) ?? optionalText(item.trainingCutoff),
+    featureContractHash:
+      optionalText(item.feature_contract_hash)
+      ?? optionalText(item.featureContractHash),
+    artifactHash:
+      optionalText(item.artifact_sha256)
+      ?? optionalText(item.artifact_hash)
+      ?? optionalText(item.artifactHash),
+    codeRevision:
+      optionalText(item.code_revision) ?? optionalText(item.codeRevision),
+  };
+}
+
+function buildPrequentialLearningPresentation(
+  snapshot: UnknownRecord,
+  fallbackGeneratedAt: string,
+): PrequentialLearningPresentation {
+  const raw = record(snapshot.prequentialLearning);
+  const predictionRoot = record(raw.predictions);
+  const settlementRoot = record(raw.settlements);
+  const trainingRoot = record(raw.training);
+  const modelsRoot = record(raw.models);
+  const performanceRoot = record(raw.performance);
+  const comparisonRoot = record(performanceRoot.reference_vs_challenger);
+  const expertRoot = record(raw.expert);
+  const securityRoot = record(raw.security);
+
+  const models = [
+    prequentialModel(modelsRoot.reference, "REFERENCE", 0),
+    prequentialModel(modelsRoot.challenger, "CHALLENGER", 1),
+    ...records(modelsRoot.scopes).map((item, index) =>
+      prequentialModel(item, text(item.role, "CHALLENGER"), index + 2)
+    ),
+  ].filter((item): item is PrequentialModelPresentation => item !== null);
+
+  const predictions = records(predictionRoot.items).map(
+    (item, index): PrequentialPredictionPresentation => ({
+      predictionId: text(
+        item.prediction_id,
+        text(item.predictionId, `prediction-${index}`),
+      ),
+      fixtureId: text(item.fixture_id, text(item.fixtureId)),
+      competition: text(item.competition),
+      match: text(item.match, text(item.fixture_label, "Rencontre suivie")),
+      market: text(item.market),
+      cutoffName: text(item.cutoff_name, text(item.cutoffName)),
+      cutoffAt: text(item.cutoff_at, text(item.cutoffAt)),
+      predictedAt:
+        optionalText(item.predicted_at) ?? optionalText(item.predictedAt),
+      modelId: text(item.model_id, text(item.modelId)),
+      modelVersion: text(item.model_version, text(item.modelVersion)),
+      featureSnapshotId:
+        optionalText(item.feature_snapshot_id)
+        ?? optionalText(item.featureSnapshotId),
+      featureSnapshotHash:
+        optionalText(item.feature_snapshot_hash)
+        ?? optionalText(item.featureSnapshotHash),
+      payloadHash:
+        optionalText(item.payload_hash) ?? optionalText(item.payloadHash),
+      status: text(item.status, "FROZEN"),
+    }),
+  );
+
+  const nextRoot = record(
+    predictionRoot.next_prediction ?? predictionRoot.nextPrediction,
+  );
+  const nextDueAt =
+    optionalText(nextRoot.cutoff_at)
+    ?? optionalText(nextRoot.cutoffAt)
+    ?? optionalText(predictionRoot.next_due_at)
+    ?? optionalText(predictionRoot.nextDueAt);
+  const nextPrediction = nextDueAt
+    ? {
+        fixtureId: text(nextRoot.fixture_id, text(nextRoot.fixtureId)),
+        competition: text(nextRoot.competition),
+        match: text(
+          nextRoot.match,
+          text(nextRoot.fixture_label, "Prochaine rencontre suivie"),
+        ),
+        market: text(nextRoot.market),
+        cutoffName: text(
+          nextRoot.cutoff_name,
+          text(nextRoot.cutoffName, "Cutoff à confirmer"),
+        ),
+        cutoffAt: nextDueAt,
+        status: text(nextRoot.status, "NOT_DUE"),
+      }
+    : null;
+
+  const comparison = {
+    status: text(comparisonRoot.status, "NO_COMPARABLE_SETTLEMENT"),
+    referenceModelId:
+      optionalText(comparisonRoot.reference_model_id)
+      ?? optionalText(comparisonRoot.referenceModelId),
+    referenceVersion:
+      optionalText(comparisonRoot.reference_version)
+      ?? optionalText(comparisonRoot.referenceVersion),
+    challengerModelId:
+      optionalText(comparisonRoot.challenger_model_id)
+      ?? optionalText(comparisonRoot.challengerModelId),
+    challengerVersion:
+      optionalText(comparisonRoot.challenger_version)
+      ?? optionalText(comparisonRoot.challengerVersion),
+    logLossReference:
+      optionalNumber(comparisonRoot.log_loss_reference)
+      ?? optionalNumber(comparisonRoot.logLossReference),
+    logLossChallenger:
+      optionalNumber(comparisonRoot.log_loss_challenger)
+      ?? optionalNumber(comparisonRoot.logLossChallenger),
+    brierReference:
+      optionalNumber(comparisonRoot.brier_reference)
+      ?? optionalNumber(comparisonRoot.brierReference),
+    brierChallenger:
+      optionalNumber(comparisonRoot.brier_challenger)
+      ?? optionalNumber(comparisonRoot.brierChallenger),
+    calibrationReference:
+      optionalNumber(comparisonRoot.calibration_reference)
+      ?? optionalNumber(comparisonRoot.calibrationReference),
+    calibrationChallenger:
+      optionalNumber(comparisonRoot.calibration_challenger)
+      ?? optionalNumber(comparisonRoot.calibrationChallenger),
+    coverage: optionalNumber(comparisonRoot.coverage),
+    missingness: optionalNumber(comparisonRoot.missingness),
+  };
+
+  const leagueResults = records(performanceRoot.by_league).map((item) => ({
+    competition: text(item.competition, text(item.league)),
+    predictions: numberValue(item.predictions),
+    settledFixtures: numberValue(
+      item.settled_fixtures,
+      numberValue(item.settledFixtures),
+    ),
+    logLossReference:
+      optionalNumber(item.log_loss_reference)
+      ?? optionalNumber(item.logLossReference),
+    logLossChallenger:
+      optionalNumber(item.log_loss_challenger)
+      ?? optionalNumber(item.logLossChallenger),
+    brierReference:
+      optionalNumber(item.brier_reference)
+      ?? optionalNumber(item.brierReference),
+    brierChallenger:
+      optionalNumber(item.brier_challenger)
+      ?? optionalNumber(item.brierChallenger),
+    status: text(item.status, "WAITING_FOR_RESULTS"),
+  }));
+
+  const manifests = records(trainingRoot.manifests).map((item, index) => ({
+    manifestId: text(
+      item.manifest_id,
+      text(item.manifestId, `manifest-${index}`),
+    ),
+    modelId: text(item.model_id, text(item.modelId)),
+    modelVersion: text(item.model_version, text(item.modelVersion)),
+    createdAt: optionalText(item.created_at) ?? optionalText(item.createdAt),
+    fixtureCount: numberValue(
+      item.fixture_count,
+      numberValue(item.fixtureCount),
+    ),
+    leagues: stringList(item.leagues),
+    datasetHash:
+      optionalText(item.dataset_sha256) ?? optionalText(item.datasetHash),
+    featureContractHash:
+      optionalText(item.feature_contract_hash)
+      ?? optionalText(item.featureContractHash),
+    artifactHash:
+      optionalText(item.artifact_sha256) ?? optionalText(item.artifactHash),
+    status: text(item.status, "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT"),
+  }));
+
+  const recentEvents = records(expertRoot.recent_events).map((item, index) => ({
+    sequence: numberValue(
+      item.sequence_no,
+      numberValue(item.sequence, index),
+    ),
+    kind: text(item.kind, text(item.event_type, "Événement préquentiel")),
+    recordedAt:
+      optionalText(item.recorded_at) ?? optionalText(item.recordedAt),
+    fixtureId: optionalText(item.fixture_id) ?? optionalText(item.fixtureId),
+    modelId: optionalText(item.model_id) ?? optionalText(item.modelId),
+    modelVersion:
+      optionalText(item.model_version) ?? optionalText(item.modelVersion),
+    eventHash:
+      optionalText(item.event_hash) ?? optionalText(item.eventHash),
+    previousHash:
+      optionalText(item.previous_hash) ?? optionalText(item.previousHash),
+  }));
+
+  const activeModels = numberValue(
+    modelsRoot.active_count,
+    models.filter((model) =>
+      /ACTIVE|FROZEN|REFERENCE_READY|CHALLENGER_READY/.test(model.status)
+    ).length,
+  );
+  const frozenPredictions = numberValue(predictionRoot.frozen);
+  const rejectedPredictions = numberValue(predictionRoot.rejected);
+  const settledPredictions = numberValue(
+    predictionRoot.settled,
+    numberValue(settlementRoot.scored),
+  );
+  const settledFixtures = numberValue(settlementRoot.fixtures);
+
+  return {
+    status: text(raw.verdict, text(raw.status, "PREQUENTIAL_LEARNING_FACTORY_READY")),
+    origin: text(raw.origin, "NO_REAL_PREQUENTIAL_ACTIVITY"),
+    generatedAt: text(raw.generated_at, fallbackGeneratedAt),
+    markets: stringList(raw.markets),
+    cutoffs: stringList(raw.cutoffs),
+    frozenPredictions,
+    rejectedPredictions,
+    settledPredictions,
+    settledFixtures,
+    realTrainingRuns: numberValue(trainingRoot.runs),
+    models,
+    activeModels,
+    predictions,
+    nextPrediction,
+    training: {
+      status: text(
+        trainingRoot.next_status,
+        text(
+          trainingRoot.status,
+          "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
+        ),
+      ),
+      eligibleFixtures: numberValue(trainingRoot.eligible_fixtures),
+      newSupport: numberValue(
+        trainingRoot.new_support,
+        numberValue(trainingRoot.eligible_fixtures),
+      ),
+      minimumFixtures: numberValue(trainingRoot.minimum_fixtures, 30),
+      representedLeagues: numberValue(trainingRoot.represented_leagues),
+      minimumLeagues: numberValue(trainingRoot.minimum_leagues, 2),
+      nextPossibleAt:
+        optionalText(trainingRoot.next_possible_at)
+        ?? optionalText(trainingRoot.nextPossibleAt),
+      lastTrainingAt:
+        optionalText(trainingRoot.last_training_at)
+        ?? optionalText(trainingRoot.lastTrainingAt),
+      lastVersion:
+        optionalText(trainingRoot.last_version)
+        ?? optionalText(trainingRoot.lastVersion),
+      latestManifestHash:
+        optionalText(expertRoot.latest_manifest_hash)
+        ?? optionalText(expertRoot.latestManifestHash),
+    },
+    comparison,
+    leagueResults,
+    manifests,
+    ledger: {
+      events: numberValue(expertRoot.ledger_events),
+      headHash: text(expertRoot.ledger_head_hash, "0".repeat(64)),
+      status: text(expertRoot.ledger_status, "PREQUENTIAL_LEDGER_VERIFIED"),
+      recent: recentEvents,
+    },
+    promotion: {
+      status: text(raw.promotion_status, "PROMOTION_LOCKED"),
+      authorized: booleanValue(raw.promotion_authorized, false),
+    },
+    invariants: {
+      PRODUCTION_LOCKED: booleanValue(securityRoot.production_locked, true),
+      REAL_BETS: booleanValue(securityRoot.real_bets, false),
+      NO_BET_DEFAULT: booleanValue(securityRoot.no_bet_default, true),
+      SOCIAL_PUBLISHING_ENABLED: booleanValue(
+        securityRoot.social_publishing_enabled,
+        false,
+      ),
+      PROMOTION_LOCKED:
+        text(raw.promotion_status, "PROMOTION_LOCKED")
+        === "PROMOTION_LOCKED",
+    },
+  };
 }
 
 function freshnessModel(
@@ -746,6 +1165,10 @@ export function buildPresentationModel(
     validationErrors,
     now,
   );
+  const prequentialLearning = buildPrequentialLearningPresentation(
+    snapshot,
+    freshness.generatedAt,
+  );
   const statuses = [...collectStatusValues(snapshot)].sort();
   const unknownStatuses = statuses.filter((status) => !(status in statusCatalogue));
   const statusCoverage = {
@@ -844,6 +1267,7 @@ export function buildPresentationModel(
     matches,
     leagues,
     nextCaptures,
+    prequentialLearning,
     observatory: { gateRows },
     hypotheses,
     results: patternResearch,

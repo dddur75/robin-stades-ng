@@ -900,3 +900,86 @@ NO_BET_DEFAULT=true
 SOCIAL_PUBLISHING_ENABLED=false
 DEMO_MODE_ENABLED=false
 ```
+
+## Prequential Learning Factory V1
+
+### Commandes
+
+Les commandes utilisent la configuration versionnée et un répertoire de preuves
+compactes :
+
+```powershell
+python scripts/run_prequential_learning_factory.py forecast `
+  --config configs/prequential_learning_v1.json `
+  --output artifacts/prequential-learning
+
+python scripts/run_prequential_learning_factory.py settle `
+  --config configs/prequential_learning_v1.json `
+  --output artifacts/prequential-learning
+
+python scripts/run_prequential_learning_factory.py train `
+  --config configs/prequential_learning_v1.json `
+  --output artifacts/prequential-learning
+
+python scripts/run_prequential_learning_factory.py replay `
+  --config configs/prequential_learning_v1.json `
+  --output artifacts/prequential-learning
+
+python scripts/run_prequential_learning_factory.py status `
+  --config configs/prequential_learning_v1.json `
+  --output artifacts/prequential-learning
+
+python scripts/run_prequential_learning_factory.py pilot `
+  --synthetic `
+  --config configs/prequential_learning_v1.json `
+  --output artifacts/prequential-learning
+```
+
+`forecast` et `settle` lisent PostgreSQL et terminent avec
+`WORKFLOW_SUCCESS_NO_DATA` lorsqu’aucun cutoff ou résultat final n’est
+éligible. `forecast` refuse un cutoff dépassé. `settle` refuse un statut non
+final. `train` diffère sous 30 nouvelles fixtures ou sous deux ligues et ne
+promeut jamais. `replay` n’effectue aucun appel fournisseur.
+
+Le règlement automatique sélectionne seulement les fixtures échues, non réglées
+ou encore dans leur suivi borné de correction. Après 90 minutes, il peut
+vérifier leur statut final via
+API-Football, avec guard R2 avant appel, réponse immuable avant projection,
+maximum 10 appels par run et une tentative par fixture. Les retries sont espacés
+de six heures, limités à cinq par fixture. The Odds API reste à zéro crédit.
+Les tentatives restantes après un premier règlement servent aussi à détecter
+une éventuelle correction : un score inchangé est un no-op idempotent, un score
+différent crée une version `CORRECTED` liée à la précédente.
+
+### Workflows
+
+Les workflows Prévision, Règlement et Entraînement utilisent tous
+`prospective-deep-state` et `cancel-in-progress=false`. Avant chaque écriture,
+ils appliquent Alembic puis exigent exactement `0010_prequential_v1`. Les
+artifacts JSON sont conservés 90 jours.
+
+Le replay et l’entraînement doivent conserver :
+
+```text
+API_FOOTBALL_CALLS_ALLOWED=0
+ODDS_API_CREDITS_ALLOWED=0
+API_FOOTBALL_KEY=""
+ODDS_API_KEY=""
+```
+
+Pour un pilote mécanique sans match réel, utiliser exclusivement une fixture
+synthétique isolée. Ne pas l’agréger aux métriques prospectives réelles.
+
+### Contrôles avant verdict
+
+- aucune observation postérieure au cutoff ;
+- prédictions et snapshots immuables ;
+- résultat final vérifié et règlement idempotent ;
+- entraînement exclusivement sur les fixtures réglées avant son cutoff ;
+- replay identique sans fournisseur ;
+- référence inchangée et `PROMOTION_LOCKED` ;
+- zéro ROI lorsqu’il n’existe aucune décision shadow.
+
+Le verdict `PREQUENTIAL_LEARNING_FACTORY_READY` signifie que la factory attend
+les premiers cutoffs et résultats réels. Il ne valide ni un modèle, ni une
+stratégie, ni une rentabilité.

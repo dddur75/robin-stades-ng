@@ -13,6 +13,7 @@ export type PublicSection =
   | "home"
   | "matches"
   | "observatory"
+  | "learning"
   | "laboratory"
   | "results"
   | "method"
@@ -22,15 +23,25 @@ const publicNavigation: Array<{
   key: PublicSection;
   href: string;
   label: ReturnType<typeof t>;
+  mobileLabel?: ReturnType<typeof t>;
   icon: string;
 }> = [
   { key: "home", href: "/robin-live", label: t("nav.home"), icon: "⌂" },
   { key: "matches", href: "/matchs", label: t("nav.matches"), icon: "◉" },
   { key: "observatory", href: "/observatoire", label: t("nav.observatory"), icon: "◫" },
+  {
+    key: "learning",
+    href: "/apprentissage",
+    label: t("nav.learning"),
+    mobileLabel: t("nav.learningShort"),
+    icon: "↻",
+  },
   { key: "laboratory", href: "/laboratoire", label: t("nav.laboratory"), icon: "◇" },
   { key: "results", href: "/resultats", label: t("nav.results"), icon: "↗" },
   { key: "method", href: "/methode", label: t("nav.method"), icon: "?" },
 ];
+
+const mobileNavigation = publicNavigation.filter((item) => item.key !== "method");
 
 const expertNavigation = [
   { href: "/expert#donnees", label: t("nav.expert.data") },
@@ -145,7 +156,7 @@ export function ExperienceShell({
         </div>
 
         <nav className="mobile-nav" aria-label="Navigation mobile">
-          {publicNavigation.slice(0, 5).map((item) => (
+          {mobileNavigation.map((item) => (
             <Link
               aria-current={active === item.key ? "page" : undefined}
               className={active === item.key ? "active" : ""}
@@ -153,7 +164,7 @@ export function ExperienceShell({
               key={item.key}
             >
               <span aria-hidden="true">{item.icon}</span>
-              {item.label}
+              {item.mobileLabel ?? item.label}
             </Link>
           ))}
           <Link

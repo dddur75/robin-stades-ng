@@ -1,0 +1,71 @@
+{
+  "schema_version": "prequential-learning-status-v1",
+  "generated_at": "2026-07-29T08:12:17.641720+00:00",
+  "verdict": "PREQUENTIAL_LEARNING_FACTORY_READY",
+  "origin": "NO_REAL_PREQUENTIAL_ACTIVITY",
+  "markets": [
+    "1X2",
+    "OVER_UNDER_2_5"
+  ],
+  "cutoffs": [
+    "H-2",
+    "NEAR_KICKOFF"
+  ],
+  "predictions": {
+    "frozen": 0,
+    "rejected": 0,
+    "settled": 0,
+    "next_due_at": "2026-08-15T15:30:00+00:00",
+    "next_prediction": {
+      "fixture_id": "api-football:1570333",
+      "competition": "Liga",
+      "match": "Alaves — Getafe",
+      "market": "1X2 · OVER_UNDER_2_5",
+      "cutoff_name": "H-2",
+      "cutoff_at": "2026-08-15T15:30:00+00:00",
+      "status": "NOT_DUE"
+    },
+    "items": []
+  },
+  "settlements": {
+    "fixtures": 0,
+    "scored": 0,
+    "items": []
+  },
+  "training": {
+    "eligible_fixtures": 0,
+    "new_support": 0,
+    "represented_leagues": 0,
+    "minimum_fixtures": 30,
+    "minimum_leagues": 2,
+    "next_status": "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
+    "next_possible_at": null,
+    "last_training_at": null,
+    "runs": 0,
+    "last_version": null,
+    "manifests": []
+  },
+  "models": {
+    "reference": null,
+    "challenger": null,
+    "scopes": []
+  },
+  "performance": {
+    "by_league": [],
+    "reference_vs_challenger": null
+  },
+  "promotion_status": "PROMOTION_LOCKED",
+  "security": {
+    "production_locked": true,
+    "real_bets": false,
+    "no_bet_default": true,
+    "social_publishing_enabled": false
+  },
+  "expert": {
+    "ledger_events": 0,
+    "ledger_head_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "ledger_status": "PREQUENTIAL_LEDGER_VERIFIED",
+    "recent_events": [],
+    "latest_manifest_hash": null
+  }
+}

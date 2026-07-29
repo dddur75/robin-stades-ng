@@ -454,6 +454,171 @@ test("cas G — une décision shadow future dérive résultats et bankroll", () 
   assert.equal((model.results.results as MutableRecord).roi, 0.2);
 });
 
+test("apprentissage A — les compteurs réels restent séparés du shadow et de l’historique", () => {
+  const value = cloneSnapshot();
+  value.metrics = { predictions: 999 };
+  value.patternResearch.results.settlements = 888;
+  value.prequentialLearning = {
+    schema_version: "prequential-learning-status-v1",
+    generated_at: "2026-07-29T08:00:00+00:00",
+    verdict: "PREQUENTIAL_LEARNING_FACTORY_READY",
+    origin: "NO_REAL_PREQUENTIAL_ACTIVITY",
+    predictions: { frozen: 0, rejected: 0, settled: 0, next_due_at: null },
+    settlements: { fixtures: 0, scored: 0 },
+    training: {
+      eligible_fixtures: 0,
+      new_support: 0,
+      represented_leagues: 0,
+      minimum_fixtures: 30,
+      minimum_leagues: 2,
+      next_status: "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
+      runs: 0,
+    },
+    models: { reference: null, challenger: null, scopes: [] },
+    performance: { by_league: [], reference_vs_challenger: null },
+    promotion_status: "PROMOTION_LOCKED",
+    security: {
+      production_locked: true,
+      real_bets: false,
+      no_bet_default: true,
+      social_publishing_enabled: false,
+    },
+    expert: {
+      ledger_events: 0,
+      ledger_head_hash: "0".repeat(64),
+      ledger_status: "PREQUENTIAL_LEDGER_VERIFIED",
+    },
+  };
+
+  const learning = buildPresentationModel(value, {
+    now: referenceNow,
+  }).prequentialLearning;
+  assert.equal(learning.frozenPredictions, 0);
+  assert.equal(learning.settledFixtures, 0);
+  assert.equal(learning.realTrainingRuns, 0);
+  assert.equal(learning.nextPrediction, null);
+  assert.equal(learning.promotion.authorized, false);
+  assert.equal(learning.promotion.status, "PROMOTION_LOCKED");
+});
+
+test("apprentissage B — une mutation du statut compact suffit à publier versions et métriques", () => {
+  const value = cloneSnapshot();
+  value.prequentialLearning = {
+    schema_version: "prequential-learning-status-v1",
+    generated_at: "2026-08-10T10:00:00+00:00",
+    verdict: "PREQUENTIAL_LEARNING_FACTORY_READY",
+    origin: "LIVE_PREQUENTIAL_LEDGER",
+    markets: ["1X2", "OVER_UNDER_2_5"],
+    cutoffs: ["H-2", "NEAR_KICKOFF"],
+    predictions: {
+      frozen: 4,
+      rejected: 1,
+      settled: 2,
+      next_due_at: "2026-08-10T16:00:00+00:00",
+      items: [
+        {
+          prediction_id: "prediction-test-1",
+          fixture_id: "fixture-test-1",
+          fixture_label: "Équipe A – Équipe B",
+          competition: "Ligue 1",
+          market: "1X2",
+          cutoff_name: "H-2",
+          cutoff_at: "2026-08-10T16:00:00+00:00",
+          predicted_at: "2026-08-10T15:59:00+00:00",
+          model_id: "challenger-five",
+          model_version: "1.1.0",
+          feature_snapshot_hash: "a".repeat(64),
+          payload_hash: "b".repeat(64),
+          status: "FROZEN",
+        },
+      ],
+    },
+    settlements: { fixtures: 1, scored: 2 },
+    training: {
+      eligible_fixtures: 1,
+      new_support: 1,
+      represented_leagues: 1,
+      minimum_fixtures: 30,
+      minimum_leagues: 2,
+      next_status: "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
+      runs: 0,
+      last_version: "1.1.0",
+    },
+    models: {
+      reference: {
+        model_id: "market-reference",
+        display_name: "Marché dé-vigué",
+        role: "REFERENCE",
+        scope: "GLOBAL_FIVE_LEAGUES",
+        version: "1.0.0",
+        status: "ACTIVE_REFERENCE",
+        artifact_sha256: "c".repeat(64),
+      },
+      challenger: {
+        model_id: "challenger-five",
+        display_name: "Challenger cinq ligues",
+        role: "CHALLENGER",
+        scope: "GLOBAL_FIVE_LEAGUES",
+        version: "1.1.0",
+        status: "ACTIVE_CHALLENGER",
+        artifact_sha256: "d".repeat(64),
+      },
+      scopes: [],
+    },
+    performance: {
+      by_league: [
+        {
+          competition: "Ligue 1",
+          predictions: 2,
+          settled_fixtures: 1,
+          log_loss_reference: 1.01,
+          log_loss_challenger: 0.99,
+          brier_reference: 0.65,
+          brier_challenger: 0.63,
+          status: "SETTLED",
+        },
+      ],
+      reference_vs_challenger: {
+        status: "SETTLED",
+        reference_model_id: "market-reference",
+        challenger_model_id: "challenger-five",
+        log_loss_reference: 1.01,
+        log_loss_challenger: 0.99,
+        brier_reference: 0.65,
+        brier_challenger: 0.63,
+        coverage: 1,
+        missingness: 0,
+      },
+    },
+    promotion_status: "PROMOTION_LOCKED",
+    security: {
+      production_locked: true,
+      real_bets: false,
+      no_bet_default: true,
+      social_publishing_enabled: false,
+    },
+    expert: {
+      ledger_events: 5,
+      ledger_head_hash: "e".repeat(64),
+      ledger_status: "PREQUENTIAL_LEDGER_VERIFIED",
+      latest_manifest_hash: null,
+    },
+  };
+
+  const learning = buildPresentationModel(value, {
+    now: referenceNow,
+  }).prequentialLearning;
+  assert.equal(learning.frozenPredictions, 4);
+  assert.equal(learning.settledFixtures, 1);
+  assert.equal(learning.models.length, 2);
+  assert.equal(learning.models[1].version, "1.1.0");
+  assert.equal(learning.nextPrediction?.cutoffName, "Cutoff à confirmer");
+  assert.equal(learning.predictions[0].featureSnapshotHash, "a".repeat(64));
+  assert.equal(learning.comparison.logLossChallenger, 0.99);
+  assert.equal(learning.leagueResults[0].competition, "Ligue 1");
+  assert.equal(learning.ledger.headHash, "e".repeat(64));
+});
+
 test("les captures simultanées regroupent les rencontres sans choisir la première", () => {
   const model = buildPresentationModel(snapshot, { now: referenceNow });
   const simultaneous = model.nextCaptures.find((capture) => capture.fixtureCount > 1);
