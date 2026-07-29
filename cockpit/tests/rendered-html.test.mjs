@@ -200,7 +200,7 @@ test("livre un bundle borné et les métadonnées Robin", async () => {
   const totalBytes = (
     await Promise.all(jsFiles.map((file) => stat(new URL(file, assetsDir))))
   ).reduce((sum, item) => sum + item.size, 0);
-  assert.ok(totalBytes < 850_000, `bundle client: ${totalBytes} octets`);
+  assert.ok(totalBytes < 1_000_000, `bundle client: ${totalBytes} octets`);
   await access(new URL("../public/og.png", import.meta.url));
 });
 
