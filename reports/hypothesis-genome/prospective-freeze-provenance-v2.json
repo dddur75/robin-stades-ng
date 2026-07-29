@@ -1,11 +1,194 @@
 {
-  "contracts": [],
+  "contracts": [
+    {
+      "contract_hash": "efdfa052a0e685d9190b6fd4878ad82e37e14c9f36f0dd8a0e0269d2ba1b394b",
+      "contract_id": "J10-M001:2.0.0",
+      "contract_version": "2.0.0",
+      "eligibility_contract": "CANONICAL_COMPETITION_IDENTITY;STRICT_PRICE_AND_TEMPORAL_GATES;FAIL_CLOSED_UNKNOWN_IDENTITY",
+      "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+      "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
+      "hypothesis_id": "J10-M001",
+      "hypothesis_version": "1.0.0",
+      "price_contract_hash": "061b8d98a78e31918e7c5a5cefe2b809c86b0caca52b342bf14309140344aa31",
+      "primary_price": {
+        "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+        "bookmaker_scope": [
+          "CONFIGURED_EU_BOOKMAKERS"
+        ],
+        "cutoff_name": "NEAR_KICKOFF",
+        "cutoff_tolerance": "[-10m,+0m]",
+        "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+        "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+        "market": "h2h",
+        "maximum_margin": 0.06,
+        "maximum_odds": 2.5,
+        "minimum_odds": 2.0,
+        "missing_price_policy": "REJECTED_MISSING_PRICE",
+        "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+        "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+        "price_contract_version": "prospective-price-v1",
+        "provider": "THE_ODDS_API",
+        "selection": "AWAY",
+        "sport_key": "soccer_spain_la_liga"
+      },
+      "promotion_locked": true,
+      "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+      "rule_hash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+      "secondary_price": {
+        "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+        "bookmaker_scope": [
+          "CONFIGURED_EU_BOOKMAKERS"
+        ],
+        "cutoff_name": "H-2",
+        "cutoff_tolerance": "[-15m,+15m]",
+        "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+        "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+        "market": "h2h",
+        "maximum_margin": 0.06,
+        "maximum_odds": 2.5,
+        "minimum_odds": 2.0,
+        "missing_price_policy": "REJECTED_MISSING_PRICE",
+        "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+        "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+        "price_contract_version": "prospective-price-v1",
+        "provider": "THE_ODDS_API",
+        "selection": "AWAY",
+        "sport_key": "soccer_spain_la_liga"
+      },
+      "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+      "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+      "supersedes": "J10-M001:1.0.0"
+    },
+    {
+      "contract_hash": "a9bdf10e0bf1cbf464f5b3221146c64fdb8989f7ef87d2f3dc51189034e1caeb",
+      "contract_id": "J10-M002:2.0.0",
+      "contract_version": "2.0.0",
+      "eligibility_contract": "CANONICAL_COMPETITION_IDENTITY;STRICT_PRICE_AND_TEMPORAL_GATES;FAIL_CLOSED_UNKNOWN_IDENTITY",
+      "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+      "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
+      "hypothesis_id": "J10-M002",
+      "hypothesis_version": "1.0.0",
+      "price_contract_hash": "3c4a8a407eef936c5e0857e611ed7860a7c587bf70b655a689b2247d447bb8da",
+      "primary_price": {
+        "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+        "bookmaker_scope": [
+          "CONFIGURED_EU_BOOKMAKERS"
+        ],
+        "cutoff_name": "NEAR_KICKOFF",
+        "cutoff_tolerance": "[-10m,+0m]",
+        "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+        "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+        "market": "h2h",
+        "maximum_margin": 0.06,
+        "maximum_odds": 3.25,
+        "minimum_odds": 2.5,
+        "missing_price_policy": "REJECTED_MISSING_PRICE",
+        "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+        "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+        "price_contract_version": "prospective-price-v1",
+        "provider": "THE_ODDS_API",
+        "selection": "DRAW",
+        "sport_key": "soccer_italy_serie_a"
+      },
+      "promotion_locked": true,
+      "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+      "rule_hash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+      "secondary_price": {
+        "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+        "bookmaker_scope": [
+          "CONFIGURED_EU_BOOKMAKERS"
+        ],
+        "cutoff_name": "H-2",
+        "cutoff_tolerance": "[-15m,+15m]",
+        "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+        "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+        "market": "h2h",
+        "maximum_margin": 0.06,
+        "maximum_odds": 3.25,
+        "minimum_odds": 2.5,
+        "missing_price_policy": "REJECTED_MISSING_PRICE",
+        "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+        "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+        "price_contract_version": "prospective-price-v1",
+        "provider": "THE_ODDS_API",
+        "selection": "DRAW",
+        "sport_key": "soccer_italy_serie_a"
+      },
+      "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+      "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+      "supersedes": "J10-M002:1.0.0"
+    },
+    {
+      "contract_hash": "e7d9003b067a59b34830d65e877e2f8426d1745424597a3fe74352ea7595014c",
+      "contract_id": "J10-M003:2.0.0",
+      "contract_version": "2.0.0",
+      "eligibility_contract": "CANONICAL_COMPETITION_IDENTITY;STRICT_PRICE_AND_TEMPORAL_GATES;FAIL_CLOSED_UNKNOWN_IDENTITY",
+      "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+      "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
+      "hypothesis_id": "J10-M003",
+      "hypothesis_version": "1.0.0",
+      "price_contract_hash": "ed0f2a0f2a120f885b9ed481f432b64a5ab553c3d45593b7e89a1700b1a6312e",
+      "primary_price": {
+        "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+        "bookmaker_scope": [
+          "CONFIGURED_EU_BOOKMAKERS"
+        ],
+        "cutoff_name": "NEAR_KICKOFF",
+        "cutoff_tolerance": "[-10m,+0m]",
+        "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+        "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+        "market": "h2h",
+        "maximum_margin": 0.06,
+        "maximum_odds": 2.0,
+        "minimum_odds": 1.6,
+        "missing_price_policy": "REJECTED_MISSING_PRICE",
+        "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+        "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+        "price_contract_version": "prospective-price-v1",
+        "provider": "THE_ODDS_API",
+        "selection": "AWAY",
+        "sport_key": "soccer_italy_serie_a"
+      },
+      "promotion_locked": true,
+      "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
+      "rule_hash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+      "secondary_price": {
+        "aggregation_method": "MEDIAN_DECIMAL_ODDS_ACROSS_ELIGIBLE_BOOKMAKERS",
+        "bookmaker_scope": [
+          "CONFIGURED_EU_BOOKMAKERS"
+        ],
+        "cutoff_name": "H-2",
+        "cutoff_tolerance": "[-15m,+15m]",
+        "de_vig_method": "PROPORTIONAL_IMPLIED_PROBABILITY",
+        "kickoff_change_policy": "RECOMPUTE_FUTURE_WINDOW_BEFORE_OPEN;NEVER_MUTATE_FROZEN_OBSERVATION",
+        "market": "h2h",
+        "maximum_margin": 0.06,
+        "maximum_odds": 2.0,
+        "minimum_odds": 1.6,
+        "missing_price_policy": "REJECTED_MISSING_PRICE",
+        "multiple_bookmaker_policy": "FIXED_SCOPE_MEDIAN;NO_POST_RESULT_SELECTION",
+        "observed_at_rule": "LATEST_OBSERVATION_NOT_AFTER_CUTOFF",
+        "price_contract_version": "prospective-price-v1",
+        "provider": "THE_ODDS_API",
+        "selection": "AWAY",
+        "sport_key": "soccer_italy_serie_a"
+      },
+      "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+      "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+      "supersedes": "J10-M003:1.0.0"
+    }
+  ],
+  "frozen_at": "2026-07-29T17:00:38.032546+00:00",
+  "generator_hash": "fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd",
   "legacy_v1": {
     "active": false,
     "provenance_complete": false,
     "reason": "SUPERSEDED_BY_CORRECTIVE_V2",
     "source_code_revision": "0057e1caf57bd4d6084ab456f7ee386fff728c2c"
   },
+  "registry_hash": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731",
   "schema_version": "prospective-freeze-provenance-v2",
-  "status": "PENDING_SOURCE_COMMIT"
+  "source_code_revision": "550b492a078487ccde33479424a61617ac7742da",
+  "source_tree_hash": "6272b76f7350fbf56f44916e2782018949675bce",
+  "status": "ACTIVE_CORRECTIVE_V2"
 }

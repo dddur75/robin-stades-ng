@@ -25,3 +25,28 @@ supersedes
 
 `frozen_at` est l'instant réel de génération du second commit. Aucun commit
 n'est antidaté et aucun contrat V1 n'est réécrit.
+
+## Ancre corrective effective
+
+- source Git : `550b492a078487ccde33479424a61617ac7742da`
+- tree Git : `6272b76f7350fbf56f44916e2782018949675bce`
+- génération UTC : `2026-07-29T17:00:38.032546+00:00`
+- hash générateur : `fdf1813fa44aac4432c0acf43a7b5a5fec6aeee04f62c2b1d64cc20da1f9a6fd`
+
+Le hash générateur est le SHA-256 du JSON canonique `{chemin: blob Git}` des
+huit sources exécutables suivantes, toutes lues dans le commit source :
+
+```text
+scripts/build_universal_hypothesis_genome.py
+src/robin/hypothesis_intelligence/competition_identity.py
+src/robin/hypothesis_intelligence/contracts.py
+src/robin/hypothesis_intelligence/freeze_v2.py
+src/robin/hypothesis_intelligence/grammar.py
+src/robin/hypothesis_intelligence/prospective.py
+src/robin/hypothesis_intelligence/registry.py
+src/robin/hypothesis_intelligence/universal_engines.py
+```
+
+Le test de provenance recalcule ce hash depuis Git, vérifie la tree, impose
+`frozen_at > commit_at`, contrôle les trois `supersedes` et le verrou de
+promotion. Le commit de gel ne modifie aucun de ces huit fichiers.

@@ -22,9 +22,9 @@
     "memory_budget_bytes": 536870912,
     "wall_clock_budget_seconds": 30.0
   },
-  "checkpoint_hash": "ab94f842e19d10a2b3246060ac01e7138ee5783e12698952f2301f678049335d",
+  "checkpoint_hash": "adeb1ea196ad864a2c8d7cbb6804d771f90f770e8e8336857131b8dbbb82296b",
   "compute": {
-    "compute_time_seconds": 0.662032,
+    "compute_time_seconds": 0.670177,
     "memory_measurement": "PYTHON_HEAP_TRACEMALLOC_NOT_PROCESS_RSS",
     "python_heap_peak_bytes": 683190
   },

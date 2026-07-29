@@ -107,9 +107,9 @@
       "sha256": "6671f4a915be9741d8efe0debcf4729ece98594754cafba4666a7c0d27788542"
     },
     {
-      "bytes": 319,
+      "bytes": 9447,
       "file": "prospective-freeze-provenance-v2.json",
-      "sha256": "0f4f5dc4c00c564cc489087b9c83385fbe6163cbfea0925d068c39f78aa9d886"
+      "sha256": "9803e9283d23a2350f9c667eff1555e7d004fa267311cc45103cbac715cbc664"
     },
     {
       "bytes": 314,
@@ -124,7 +124,7 @@
     {
       "bytes": 2221,
       "file": "universal-cache-only-pilot.json",
-      "sha256": "4c27739aad51a6ded7db6272228c75c4c9ab73debe0c8c470951a16bfae7925d"
+      "sha256": "1c9207ca99e2f69145c2b63d03ec1a0c275fa0efe6c17be15b6e7c06e8fb6b16"
     }
   ],
   "provider_calls": 0,

@@ -12,6 +12,7 @@ from robin.hypothesis_intelligence.competition_identity import (
     resolve_provider_competition,
     same_competition,
 )
+from robin.hypothesis_intelligence.contracts import canonical_sha256
 from robin.hypothesis_intelligence.grammar import (
     GraphEdge,
     GraphNode,
@@ -495,3 +496,60 @@ def test_git_footprint_contains_no_detailed_700_rule_pages() -> None:
     assert all(not (ROOT / path).exists() for path in tracked)
     cockpit_data = (ROOT / "cockpit" / "app" / "cockpit-data.json").read_text("utf-8")
     assert cockpit_data.count('"ruleHash"') <= 3
+
+
+def test_corrective_freeze_v2_has_exact_non_backdated_git_provenance() -> None:
+    payload = _json(REPORTS / "prospective-freeze-provenance-v2.json")
+    assert payload["status"] == "ACTIVE_CORRECTIVE_V2"
+    source_revision = str(payload["source_code_revision"])
+    source_tree_hash = str(payload["source_tree_hash"])
+    assert (
+        subprocess.run(
+            ["git", "show", "-s", "--format=%T", source_revision],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        == source_tree_hash
+    )
+    generator_paths = (
+        "scripts/build_universal_hypothesis_genome.py",
+        "src/robin/hypothesis_intelligence/competition_identity.py",
+        "src/robin/hypothesis_intelligence/contracts.py",
+        "src/robin/hypothesis_intelligence/freeze_v2.py",
+        "src/robin/hypothesis_intelligence/grammar.py",
+        "src/robin/hypothesis_intelligence/prospective.py",
+        "src/robin/hypothesis_intelligence/registry.py",
+        "src/robin/hypothesis_intelligence/universal_engines.py",
+    )
+    blobs = {
+        path: subprocess.run(
+            ["git", "rev-parse", f"{source_revision}:{path}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        for path in generator_paths
+    }
+    assert canonical_sha256(blobs) == payload["generator_hash"]
+    source_committed_at = datetime.fromisoformat(
+        subprocess.run(
+            ["git", "show", "-s", "--format=%cI", source_revision],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    )
+    assert datetime.fromisoformat(str(payload["frozen_at"])) > source_committed_at
+    contracts = payload["contracts"]
+    assert isinstance(contracts, list) and len(contracts) == 3
+    for contract in contracts:
+        assert contract["source_code_revision"] == source_revision
+        assert contract["source_tree_hash"] == source_tree_hash
+        assert contract["generator_hash"] == payload["generator_hash"]
+        assert contract["contract_version"] == "2.0.0"
+        assert contract["supersedes"].endswith(":1.0.0")
+        assert contract["promotion_locked"] is True
