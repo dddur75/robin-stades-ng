@@ -53,12 +53,13 @@ jobs:
       - name: Linting
         run: >-
           python -m ruff check
-          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12 tests/jalon13
+          src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12 tests/jalon13 tests/jalon14
           scripts migrations
       - name: Typage strict
         run: |
           python -m mypy src/robin scripts/run_prospective_observatory.py
           python -m mypy --explicit-package-bases scripts/run_five_league_expansion.py
+          python -m mypy --explicit-package-bases scripts/run_prequential_learning_factory.py
       - name: Securite basique
         run: python -m bandit -q -r src/robin
       - name: Verification des secrets
@@ -72,7 +73,7 @@ jobs:
           ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
         run: |
           python -m alembic upgrade head
-          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger'} <= names"
+          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger','prequential_feature_snapshots','prequential_model_versions','prequential_predictions','prequential_fixture_settlements','prequential_prediction_scores','prequential_metric_snapshots','prequential_training_runs','prequential_ledger_events'} <= names"
           python -m alembic downgrade 0002_jalon2_shadow
           python -m alembic upgrade head
           python -m alembic downgrade base
@@ -80,9 +81,11 @@ jobs:
         run: python -m pytest -q
       - name: Tester Parquet et les protections anti-fuite
         run: python -m pytest -q tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9
+      - name: Tester la factory préquentielle et la sécurité temporelle
+        run: python -m pytest -q tests/jalon14
       - name: Tester les configurations et le pipeline mock
         run: |
-          python -c "import json,pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github').rglob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text()); json.loads(pathlib.Path('configs/prospective_observatory_v1.json').read_text())"
+          python -c "import json,pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github').rglob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text()); json.loads(pathlib.Path('configs/prospective_observatory_v1.json').read_text()); json.loads(pathlib.Path('configs/prequential_learning_v1.json').read_text())"
           python scripts/run_shadow_pipeline.py collect-fixtures --mock --output .ci/shadow
           python scripts/run_shadow_pipeline.py collect-odds --mock --output .ci/shadow
           python scripts/run_shadow_pipeline.py pre-match-shadow --mock --output .ci/shadow
@@ -199,13 +202,13 @@ jobs:
               exit 1
             fi
           done
-      - name: Migrer PostgreSQL Neon en 0009
+      - name: Migrer PostgreSQL Neon en 0010
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python -m alembic upgrade head
-          python -m alembic current | grep -q "0009_jalon12_observatory"
+          python -m alembic current | grep -q "0010_prequential_v1"
       - name: Estimer puis enregistrer les fixtures Ligue 1
         if: >-
           contains(github.event.head_commit.message, '[run-j12-pilot]') &&

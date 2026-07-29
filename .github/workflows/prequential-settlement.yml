@@ -1,0 +1,74 @@
+name: "68 - Règlement préquentiel"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "43 5,11,17,23 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prospective-deep-state
+  cancel-in-progress: false
+
+jobs:
+  settle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PREQUENTIAL_CONFIG: "configs/prequential_learning_v1.json"
+      PREQUENTIAL_OUTPUT: "artifacts/prequential-learning"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "10"
+      ODDS_API_CREDITS_ALLOWED: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - name: Installer le runtime préquentiel
+        run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Appliquer la migration préquentielle
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+          python -m alembic current | grep -q "0010_prequential_v1"
+      - name: Régler uniquement les résultats finaux vérifiés
+        env:
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_prequential_learning_factory.py settle
+          --config "$PREQUENTIAL_CONFIG"
+          --output "$PREQUENTIAL_OUTPUT"
+      - name: Publier le statut factuel
+        if: always()
+        env:
+          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: >-
+          python scripts/run_prequential_learning_factory.py status
+          --config "$PREQUENTIAL_CONFIG"
+          --output "$PREQUENTIAL_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prequential-settlement-${{ github.run_id }}
+          path: artifacts/prequential-learning/*.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

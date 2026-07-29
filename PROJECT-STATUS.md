@@ -730,3 +730,37 @@ features, cote, version et hash. Aucune promotion de modèle n’est autorisée.
 La PR #20 est autorisée à quitter le brouillon et à être fusionnée par merge
 commit dès confirmation de la CI et de l’absence d’objection majeure. Tous les
 invariants de sécurité restent actifs.
+
+## Prequential Learning Factory V1 — infrastructure
+
+La branche `codex/prequential-learning-factory-v1` ajoute l’infrastructure
+d’évaluation ordonnée dans le temps pour les cinq ligues, les marchés `1X2` et
+`OVER_UNDER_2_5`, aux cutoffs `H-2` et `NEAR_KICKOFF`.
+
+La révision `0010_prequential_v1` sépare snapshots de features, versions de
+modèles, prédictions gelées, règlements, scores, métriques, entraînements et
+ledger. Trois workflows isolent prévision, règlement et entraînement dans le
+verrou existant `prospective-deep-state`.
+
+L’état réel reste volontairement vide tant qu’aucun cutoff ni résultat réel
+n’est dû :
+
+```text
+0 prédiction réelle
+0 règlement réel
+0 entraînement réel
+PROMOTION_LOCKED
+```
+
+Les fixtures synthétiques et replays historiques servent uniquement à valider
+la mécanique. `PREQUENTIAL_LEARNING_FACTORY_READY`, lorsqu’il est émis, signifie
+que l’usine attend les premières observations réelles ; il ne signifie ni
+rentabilité, ni challenger supérieur, ni promotion autorisée.
+
+Au snapshot compact du 29 juillet 2026, les 78 fixtures restent suivies et
+aucun cutoff préquentiel n’est dû. La première fenêtre `H-2` connue s’ouvre le
+15 août 2026 à 15:00 UTC pour Alaves — Getafe, avec cutoff à 15:30 UTC. Les
+preuves versionnées sont
+`reports/prequential-learning/factory-readiness.json` et
+`reports/prequential-learning/status.json`. La validation locale finale compte
+817 tests Python, 35 tests cockpit et 11 scénarios Playwright verts.

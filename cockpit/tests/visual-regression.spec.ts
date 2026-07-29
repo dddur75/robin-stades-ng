@@ -34,6 +34,7 @@ const routes = [
   ["matchs", "/matchs", "Les matchs observés"],
   ["fiche-match", `/matchs/${matchId}`, `${matchHome} – ${matchAway}`],
   ["observatoire", "/observatoire", "Observatoire des données"],
+  ["apprentissage", "/apprentissage", "Apprentissage en direct"],
   ["laboratoire", "/laboratoire", "Laboratoire des hypothèses"],
   ["resultats", "/resultats", "Résultats"],
   ["methode", "/methode", "Comment Robin travaille"],
@@ -62,7 +63,7 @@ test.describe("captures Robin Experience V1", () => {
       await assertPageFrame(page, heading);
       if (route === "/resultats") {
         await expect(page.getByText("Aucun pari simulé pour le moment")).toBeVisible();
-        await expect(page.getByText("Non applicable").first()).toBeVisible();
+        await expect(page.getByText("ROI", { exact: true })).toHaveCount(0);
       }
       await page.screenshot({
         fullPage: true,
@@ -89,6 +90,23 @@ test.describe("captures Robin Experience V1", () => {
     });
   });
 
+  test("desktop — apprentissage Expert et preuves techniques", async ({ page }) => {
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await page.addInitScript(() => {
+      localStorage.setItem("robin-experience-view-mode", "expert");
+    });
+    await page.goto("/apprentissage");
+    await assertPageFrame(page, "Apprentissage en direct");
+    await expect(page.getByText("Registre des prédictions")).toBeVisible();
+    await expect(page.getByText("Manifests d’entraînement")).toBeVisible();
+    await expect(page.getByText("Événements du ledger")).toBeVisible();
+    await expect(page.getByText("PROMOTION_LOCKED")).toBeVisible();
+    await page.screenshot({
+      fullPage: true,
+      path: `${outputRoot}/desktop-apprentissage-expert.png`,
+    });
+  });
+
   test("mobile — navigation, contenus longs et absence de débordement", async ({
     page,
   }) => {
@@ -103,6 +121,26 @@ test.describe("captures Robin Experience V1", () => {
         path: `${outputRoot}/mobile-${name}.png`,
       });
     }
+  });
+
+  test("mobile 360 px — apprentissage et sept destinations sans débordement", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ height: 800, width: 360 });
+    await page.goto("/apprentissage");
+    await assertPageFrame(page, "Apprentissage en direct");
+    const navigation = page.getByRole("navigation", { name: "Navigation mobile" });
+    await expect(navigation).toBeVisible();
+    await expect(navigation.getByRole("link")).toHaveCount(7);
+    await expect(
+      page.getByText(
+        "Robin apprend uniquement après les matchs, sans modifier les prédictions déjà publiées.",
+      ),
+    ).toBeVisible();
+    await page.screenshot({
+      fullPage: true,
+      path: `${outputRoot}/mobile-360-apprentissage.png`,
+    });
   });
 
   test("tablette — matrice de couverture et glossaire", async ({ page }) => {

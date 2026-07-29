@@ -36,6 +36,9 @@ OUTPUT_HASH = ROOT / "cockpit" / "app" / "cockpit-data.sha256"
 PRIVATE_DEPLOYMENT = ROOT / "configs" / "cockpit-private-deployment.json"
 PROSPECTIVE_COMPACT = ROOT / "reports" / "jalon12" / "observatory-snapshot.json"
 PROSPECTIVE_POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
+PREQUENTIAL_LEARNING_STATUS = (
+    ROOT / "reports" / "prequential-learning" / "status.json"
+)
 TEAM_IDENTITY_PROVENANCE = (
     ROOT / "reports" / "ux" / "team-identity-provenance.json"
 )
@@ -182,6 +185,103 @@ def read_json(path: Path, default: Any) -> Any:
     if not path.exists():
         return default
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def _empty_prequential_learning_status() -> dict[str, Any]:
+    """État public sûr avant le premier cutoff réellement dû."""
+
+    return {
+        "schema_version": "prequential-learning-status-v1",
+        "generated_at": datetime.now(UTC).isoformat(),
+        "verdict": "PREQUENTIAL_LEARNING_FACTORY_READY",
+        "origin": "NO_REAL_PREQUENTIAL_ACTIVITY",
+        "markets": ["1X2", "OVER_UNDER_2_5"],
+        "cutoffs": ["H-2", "NEAR_KICKOFF"],
+        "predictions": {
+            "frozen": 0,
+            "rejected": 0,
+            "settled": 0,
+            "next_due_at": None,
+            "items": [],
+        },
+        "settlements": {"fixtures": 0, "scored": 0, "items": []},
+        "training": {
+            "eligible_fixtures": 0,
+            "new_support": 0,
+            "represented_leagues": 0,
+            "minimum_fixtures": 30,
+            "minimum_leagues": 2,
+            "next_status": "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
+            "next_possible_at": None,
+            "last_training_at": None,
+            "runs": 0,
+            "last_version": None,
+            "manifests": [],
+        },
+        "models": {"reference": None, "challenger": None, "scopes": []},
+        "performance": {
+            "by_league": [],
+            "reference_vs_challenger": None,
+        },
+        "promotion_status": "PROMOTION_LOCKED",
+        "security": {
+            "production_locked": True,
+            "real_bets": False,
+            "no_bet_default": True,
+            "social_publishing_enabled": False,
+        },
+        "expert": {
+            "ledger_events": 0,
+            "ledger_head_hash": "0" * 64,
+            "ledger_status": "PREQUENTIAL_LEDGER_VERIFIED",
+            "recent_events": [],
+            "latest_manifest_hash": None,
+        },
+    }
+
+
+def build_prequential_learning(
+    existing: object | None = None,
+) -> dict[str, Any]:
+    """Lire le statut compact préquentiel sans réutiliser le shadow historique."""
+
+    configured = os.environ.get("PREQUENTIAL_LEARNING_STATUS")
+    status_path = Path(configured) if configured else PREQUENTIAL_LEARNING_STATUS
+    source = read_json(status_path, None)
+    if source is None and isinstance(existing, dict):
+        source = existing
+    if source is None:
+        return _empty_prequential_learning_status()
+    if not isinstance(source, dict):
+        raise RuntimeError("statut préquentiel compact invalide")
+    if source.get("schema_version") != "prequential-learning-status-v1":
+        raise RuntimeError("version du statut préquentiel compact invalide")
+    security = source.get("security")
+    if not isinstance(security, dict) or security != {
+        "production_locked": True,
+        "real_bets": False,
+        "no_bet_default": True,
+        "social_publishing_enabled": False,
+    }:
+        raise RuntimeError("invariants du statut préquentiel compact invalides")
+    if source.get("promotion_status") != "PROMOTION_LOCKED":
+        raise RuntimeError("promotion préquentielle non verrouillée")
+    for section_name, field_names in {
+        "predictions": ("frozen", "rejected"),
+        "settlements": ("fixtures", "scored"),
+        "training": ("eligible_fixtures", "represented_leagues"),
+    }.items():
+        section = source.get(section_name)
+        if not isinstance(section, dict):
+            raise RuntimeError(f"section préquentielle absente : {section_name}")
+        if any(
+            not isinstance(section.get(field), int) or section[field] < 0
+            for field in field_names
+        ):
+            raise RuntimeError(
+                f"compteur préquentiel invalide : {section_name}"
+            )
+    return cast(dict[str, Any], source)
 
 
 def read_verified_cockpit_snapshot(path: Path) -> dict[str, Any]:
@@ -4688,6 +4788,9 @@ def main() -> None:
         snapshot["generatedAt"] = datetime.now(UTC).isoformat()
         snapshot["prospectiveObservatory"] = build_prospective_observatory()
         snapshot["patternResearch"] = build_pattern_research()
+        snapshot["prequentialLearning"] = build_prequential_learning(
+            snapshot.get("prequentialLearning")
+        )
         write_snapshot(snapshot)
         return
 
@@ -4908,6 +5011,7 @@ def main() -> None:
     pattern_research = build_pattern_research()
     matchup_lab = build_matchup_lab()
     prospective_observatory = build_prospective_observatory()
+    prequential_learning = build_prequential_learning()
     snapshot = {
         "generatedAt": datetime.now(UTC).isoformat(),
         "sourceCapturedAt": durable["captured_at"],
@@ -5067,6 +5171,7 @@ def main() -> None:
         "patternResearch": pattern_research,
         "matchupLab": matchup_lab,
         "prospectiveObservatory": prospective_observatory,
+        "prequentialLearning": prequential_learning,
     }
     write_snapshot(snapshot)
 

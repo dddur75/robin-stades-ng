@@ -39,6 +39,7 @@ const publicRoutes = [
   ["/robin-live", "À comprendre aujourd’hui"],
   ["/matchs", "Les matchs observés"],
   ["/observatoire", "Matrice de couverture"],
+  ["/apprentissage", "Robin apprend uniquement après les matchs"],
   ["/laboratoire", "Laboratoire des hypothèses"],
   ["/resultats", "Aucun pari simulé pour le moment"],
   ["/methode", "Comment Robin travaille"],
@@ -100,6 +101,8 @@ test("n’expose ni anciens libellés anglais ni statuts techniques bruts en vue
     "PROSPECTIVE_GATES_ACCUMULATING",
     "PRODUCTION_LOCKED",
     "STORAGE_PAUSED",
+    "PROMOTION_LOCKED",
+    "TRAINING_DEFERRED_INSUFFICIENT_NEW_SUPPORT",
   ];
   for (const [path] of publicRoutes.filter(([route]) => route !== "/expert")) {
     const text = visibleText(await (await render(path)).text());
@@ -136,12 +139,36 @@ test("préserve exactement les invariants et les résultats scientifiques du sna
   assert.equal(data.matchupLab.replay.providerCalls, 0);
   assert.equal(data.matchupLab.replay.oddsApiCredits, 0);
   assert.equal(data.prospectiveObservatory.invariants.raw_payloads_in_git, 0);
+  assert.equal(data.prequentialLearning.schema_version, "prequential-learning-status-v1");
+  assert.equal(data.prequentialLearning.predictions.frozen, 0);
+  assert.equal(data.prequentialLearning.settlements.fixtures, 0);
+  assert.equal(data.prequentialLearning.training.runs, 0);
+  assert.equal(data.prequentialLearning.promotion_status, "PROMOTION_LOCKED");
+  assert.deepEqual(data.prequentialLearning.security, {
+    production_locked: true,
+    real_bets: false,
+    no_bet_default: true,
+    social_publishing_enabled: false,
+  });
+});
+
+test("sépare l’apprentissage réel des historiques et masque le ROI sans décision", async () => {
+  const learning = visibleText(await (await render("/apprentissage")).text());
+  const results = visibleText(await (await render("/resultats")).text());
+  assert.match(
+    learning,
+    /Robin apprend uniquement après les matchs, sans modifier les prédictions déjà publiées\./,
+  );
+  assert.match(learning, /Aucune prédiction réelle gelée/);
+  assert.match(learning, /replays historiques et les fixtures synthétiques ne sont pas comptés ici/);
+  assert.doesNotMatch(results, /\bROI\b/);
 });
 
 test("inclut navigation, accessibilité structurelle et formats français", async () => {
   const html = await (await render("/robin-live")).text();
   assert.match(html, /href="\/matchs"/);
   assert.match(html, /href="\/observatoire"/);
+  assert.match(html, /href="\/apprentissage"/);
   assert.match(html, /href="\/laboratoire"/);
   assert.match(html, /href="\/resultats"/);
   assert.match(html, /href="\/methode"/);

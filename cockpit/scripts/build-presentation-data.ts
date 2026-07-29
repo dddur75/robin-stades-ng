@@ -14,6 +14,7 @@ const publicPresentation = {
   matches: presentation.matches,
   leagues: presentation.leagues,
   nextCaptures: presentation.nextCaptures,
+  prequentialLearning: presentation.prequentialLearning,
   observatory: presentation.observatory,
   hypotheses: presentation.hypotheses,
   system: presentation.system,
@@ -40,6 +41,7 @@ await writeFile(
     externalValidation: deepData.externalValidation,
     matchup: snapshotRecord.matchupLab,
     patternResearch: snapshotRecord.patternResearch,
+    prequentialLearning: presentation.prequentialLearning,
   }, null, 2)}\n`,
   "utf8",
 );

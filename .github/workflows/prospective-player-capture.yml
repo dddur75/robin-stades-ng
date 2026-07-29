@@ -44,7 +44,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0009"
+          alembic current | grep -q "0010_prequential_v1"
       - name: Estimer le coût des fenêtres joueur dues
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

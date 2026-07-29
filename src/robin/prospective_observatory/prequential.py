@@ -7,54 +7,18 @@ from datetime import datetime
 from enum import StrEnum
 
 from robin.prospective_observatory.contracts import canonical_sha256, ensure_utc
-
-
-class PrequentialEventKind(StrEnum):
-    PREDICTION_FROZEN = "PREDICTION_FROZEN"
-    MATCH_SETTLED = "MATCH_SETTLED"
-    CHALLENGER_TRAINING_ELIGIBLE = "CHALLENGER_TRAINING_ELIGIBLE"
-    CHALLENGER_UPDATED = "CHALLENGER_UPDATED"
-    REFERENCE_UNCHANGED = "REFERENCE_UNCHANGED"
-
-
-class ModelScope(StrEnum):
-    GLOBAL_FIVE_LEAGUES = "GLOBAL_FIVE_LEAGUES"
-    LIGUE_1 = "LIGUE_1"
-    PREMIER_LEAGUE = "PREMIER_LEAGUE"
-    LIGA = "LIGA"
-    BUNDESLIGA = "BUNDESLIGA"
-    SERIE_A = "SERIE_A"
-
-
-class ModelRole(StrEnum):
-    REFERENCE = "REFERENCE"
-    CHALLENGER = "CHALLENGER"
+from robin.prospective_observatory.prequential_contracts import (
+    FIVE_LEAGUE_NAMES,
+    ModelRole,
+    ModelScope,
+    ModelVersion,
+    PrequentialEventKind,
+)
 
 
 class ShadowAction(StrEnum):
     NO_BET = "NO_BET"
     SHADOW_DECISION = "SHADOW_DECISION"
-
-
-@dataclass(frozen=True, slots=True)
-class ModelVersion:
-    model_id: str
-    scope: ModelScope
-    role: ModelRole
-    version: str
-    artifact_sha256: str
-    created_at: datetime
-    frozen: bool = True
-
-    def __post_init__(self) -> None:
-        ensure_utc(self.created_at, field="created_at")
-        if (
-            not self.model_id
-            or not self.version
-            or len(self.artifact_sha256) != 64
-            or not self.frozen
-        ):
-            raise ValueError("PREQUENTIAL_MODEL_VERSION_INVALID")
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,7 +50,7 @@ class FrozenPrediction:
             or not self.model_id
             or not self.model_version
             or any(len(value) != 64 for value in hashes)
-            or not cutoff <= frozen < kickoff
+            or not frozen <= cutoff < kickoff
         ):
             raise ValueError("PREQUENTIAL_PREDICTION_INVALID")
 
@@ -207,13 +171,7 @@ class PrequentialLedger:
         model = self._models.get(model_key)
         if model is None or not model.frozen:
             raise ValueError("PREQUENTIAL_MODEL_VERSION_NOT_FROZEN")
-        expected_competition = {
-            ModelScope.LIGUE_1: "Ligue 1",
-            ModelScope.PREMIER_LEAGUE: "Premier League",
-            ModelScope.LIGA: "Liga",
-            ModelScope.BUNDESLIGA: "Bundesliga",
-            ModelScope.SERIE_A: "Serie A",
-        }.get(model.scope)
+        expected_competition = FIVE_LEAGUE_NAMES.get(model.scope)
         if (
             expected_competition is not None
             and prediction.competition != expected_competition

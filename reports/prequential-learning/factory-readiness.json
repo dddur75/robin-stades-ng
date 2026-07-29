@@ -1,0 +1,71 @@
+{
+  "schema_version": "prequential-learning-factory-readiness-v1",
+  "generated_at": "2026-07-29T08:12:17.641720+00:00",
+  "verdict": "PREQUENTIAL_LEARNING_FACTORY_READY",
+  "audit_case": "B",
+  "base_main_sha": "cb0daaa15865fdf20f35645a417905c5c1e3e012",
+  "branch": "codex/prequential-learning-factory-v1",
+  "scope": {
+    "competitions": 5,
+    "tracked_fixtures": 78,
+    "markets": [
+      "1X2",
+      "OVER_UNDER_2_5"
+    ],
+    "cutoffs": [
+      "H-2",
+      "NEAR_KICKOFF"
+    ]
+  },
+  "real_state": {
+    "cutoffs_due": 0,
+    "next_prediction_window_opens_at": "2026-08-15T15:00:00+00:00",
+    "next_prediction_cutoff_at": "2026-08-15T15:30:00+00:00",
+    "predictions": 0,
+    "settlements": 0,
+    "training_runs": 0,
+    "provider_calls_for_validation": 0,
+    "odds_api_credits_for_validation": 0,
+    "promotion_status": "PROMOTION_LOCKED"
+  },
+  "synthetic_mechanical_validation": {
+    "fixtures": 30,
+    "predictions": 120,
+    "settlements": 30,
+    "scores": 120,
+    "idempotent_settlement_retries": 30,
+    "training_support": 30,
+    "represented_leagues": 2,
+    "ledger_events_verified": 544,
+    "provider_calls": 0,
+    "odds_api_credits": 0
+  },
+  "validation": {
+    "pytest": "817_PASSED",
+    "jalon14": "31_PASSED",
+    "ruff": "PASSED",
+    "mypy": "PASSED",
+    "bandit": "PASSED",
+    "secret_scan": "PASSED",
+    "pip_check": "PASSED",
+    "compileall": "PASSED",
+    "yaml_json": "PASSED",
+    "cockpit_tests": "35_PASSED",
+    "eslint": "PASSED",
+    "playwright": "11_PASSED"
+  },
+  "private_site": {
+    "version": 19,
+    "access": "OWNER_ONLY_CUSTOM_ALLOWLIST",
+    "deployment_in_this_change": false
+  },
+  "security": {
+    "storage_paused": true,
+    "p3_p4_paused": true,
+    "production_locked": true,
+    "real_bets": false,
+    "no_bet_default": true,
+    "social_publishing_enabled": false,
+    "demo_mode_enabled": false
+  }
+}

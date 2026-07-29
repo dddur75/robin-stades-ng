@@ -156,3 +156,26 @@ La preuve autoritative porte le hash campagne
 `437efb112c25891692420faafd3364f691f6e0a303e3524470992e9838f63355`
 et la source
 `historical-data@033a98b11b80c059f8986c33c69f1401ce8cf05c`.
+
+## Prequential Learning Factory V1
+
+La factory prépare six scopes :
+
+| Scope | Référence initiale | Challenger initial |
+|---|---|---|
+| `GLOBAL_FIVE_LEAGUES` | marché dé-vigué, version gelée | admissible lorsque le support temporel est suffisant |
+| `LIGUE_1` | marché dé-vigué, version gelée | `INSUFFICIENT_TRAINING_SUPPORT` autorisé |
+| `PREMIER_LEAGUE` | marché dé-vigué, version gelée | `INSUFFICIENT_TRAINING_SUPPORT` autorisé |
+| `LIGA` | marché dé-vigué, version gelée | `INSUFFICIENT_TRAINING_SUPPORT` autorisé |
+| `BUNDESLIGA` | marché dé-vigué, version gelée | `INSUFFICIENT_TRAINING_SUPPORT` autorisé |
+| `SERIE_A` | marché dé-vigué, version gelée | `INSUFFICIENT_TRAINING_SUPPORT` autorisé |
+
+Une version conserve `model_id`, `model_version`, `created_at`,
+`training_cutoff`, `feature_contract_hash`, `code_revision`, son artifact et
+son statut. Une référence active n’est jamais mise à jour en place. Le
+challenger exige au moins 30 nouvelles fixtures réglées et éligibles dans deux
+ligues ; sinon l’entraînement est différé.
+
+Le gate de promotion reste `PROMOTION_LOCKED`. La comparaison
+référence/challenger est une évaluation descriptive : elle ne crée ni pari
+réel, ni candidat automatiquement promu, ni déclaration de rentabilité.

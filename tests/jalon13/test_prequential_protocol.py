@@ -58,7 +58,7 @@ def _prediction(model: ModelVersion) -> FrozenPrediction:
         model_id=model.model_id,
         model_version=model.version,
         features_sha256=HASH_A,
-        cutoff_at=NOW - timedelta(minutes=1),
+        cutoff_at=NOW + timedelta(hours=1),
         frozen_at=NOW,
         kickoff_at=NOW + timedelta(hours=2),
         odds_sha256=HASH_B,
@@ -186,7 +186,7 @@ def test_prediction_rejects_future_feature_cutoff_and_wrong_league_scope() -> No
                     ModelRole.REFERENCE,
                 )
             ),
-            cutoff_at=NOW + timedelta(minutes=1),
+            cutoff_at=NOW - timedelta(minutes=1),
         )
     league_model = _model(
         ModelScope.PREMIER_LEAGUE,
