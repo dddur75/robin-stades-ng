@@ -15,7 +15,7 @@ concurrency:
 jobs:
   gates:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     env:
       PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
       STORAGE_PAUSED: "true"
