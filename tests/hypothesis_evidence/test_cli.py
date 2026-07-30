@@ -4,6 +4,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
+import robin.hypothesis_evidence.runtime as evidence_runtime
 from robin.hypothesis_evidence.runtime import process_peak_memory_bytes
 
 
@@ -31,3 +34,15 @@ def test_cli_memory_metric_is_explicit_and_positive() -> None:
     assert isinstance(peak_bytes, int)
     assert peak_bytes > 0
     assert measurement in {"WINDOWS_PEAK_WORKING_SET", "RU_MAXRSS"}
+
+
+def test_cli_memory_metric_fails_closed_without_windows_api(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(evidence_runtime.os, "name", "nt")
+    monkeypatch.delattr(evidence_runtime.ctypes, "WinDLL", raising=False)
+
+    assert evidence_runtime.process_peak_memory_bytes() == (
+        None,
+        "WINDOWS_PEAK_WORKING_SET_UNAVAILABLE",
+    )
