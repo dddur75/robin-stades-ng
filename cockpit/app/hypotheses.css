@@ -752,6 +752,11 @@ button.hu-primary-action {
   background: linear-gradient(90deg, #d6efe7, #83d5bc);
 }
 
+.hu-funnel li > span[data-zero="true"] {
+  min-width: 0;
+  width: 0 !important;
+}
+
 .hu-funnel li:nth-child(2) > span { background: linear-gradient(90deg, #e3ecfa, #91b7e6); }
 .hu-funnel li:nth-child(3) > span { background: linear-gradient(90deg, #f9ebd4, #dbac6a); }
 .hu-funnel li:nth-child(4) > span { background: linear-gradient(90deg, #eee8fa, #b5a0df); }
