@@ -240,7 +240,7 @@
       "eta_full_days": 1.94,
       "eta_priority_a_days": 0.05,
       "eta_priority_b_days": 0.97,
-      "storage_projected_bytes": 2542192379
+      "storage_projected_bytes": 2804216213
     },
     "high": {
       "calls_by_priority": {
@@ -253,7 +253,7 @@
       "eta_full_days": 2.17,
       "eta_priority_a_days": 0.05,
       "eta_priority_b_days": 1.07,
-      "storage_projected_bytes": 3314651233
+      "storage_projected_bytes": 3576675067
     },
     "low": {
       "calls_by_priority": {
@@ -266,22 +266,22 @@
       "eta_full_days": 1.45,
       "eta_priority_a_days": 0.04,
       "eta_priority_b_days": 0.73,
-      "storage_projected_bytes": 1913882144
+      "storage_projected_bytes": 2175905978
     }
   },
   "status": "COMPLETE_LATENT_TASK_FORECAST",
   "storage_current": {
-    "bundles": 56,
-    "bytes": 1404719688,
-    "files": 25507,
+    "bundles": 66,
+    "bytes": 1666743522,
+    "files": 25537,
     "parquet": 483,
     "payloads": 12259
   },
   "storage_pause_bytes": 900000000,
-  "storage_projected_base": 2542192379,
-  "storage_projected_bytes": 2542192379,
-  "storage_projected_high": 3314651233,
-  "storage_projected_low": 1913882144,
+  "storage_projected_base": 2804216213,
+  "storage_projected_bytes": 2804216213,
+  "storage_projected_high": 3576675067,
+  "storage_projected_low": 2175905978,
   "storage_warning_bytes": 750000000,
   "unavailable_endpoint_rate": 0.0074572634784414145
 }
