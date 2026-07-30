@@ -273,19 +273,29 @@ test.describe("captures Robin Experience V1", () => {
   test("état vide mobile — fixture visuelle synthétique", async ({ page }) => {
     await page.setViewportSize({ height: 844, width: 390 });
     await page.goto("/matchs");
+    await assertPageFrame(page, "Les matchs observés");
     await page.evaluate(() => {
-      document.querySelector(".matches-grid")?.remove();
-      const main = document.querySelector("main");
+      const matchesGrid = document.querySelector(".matches-grid");
+      if (!matchesGrid) {
+        throw new Error("La grille des matchs hydratée est introuvable.");
+      }
       const empty = document.createElement("section");
       empty.className = "empty-state";
       empty.dataset.visualFixture = "zero-fixture";
       empty.innerHTML = "<span class=\"empty-state-mark\" aria-hidden=\"true\">○</span><div><h3>Aucune rencontre suivie</h3><p>Le registre prospectif ne contient actuellement aucune fixture active.</p></div>";
-      main?.append(empty);
+      matchesGrid.replaceWith(empty);
     });
-    await expect(page.getByRole("heading", { name: "Aucune rencontre suivie" })).toBeVisible();
+    const emptyFixture = page.locator(
+      '[data-visual-fixture="zero-fixture"]',
+    );
+    await expect(emptyFixture).toBeVisible();
+    await expect(
+      emptyFixture.getByRole("heading", { name: "Aucune rencontre suivie" }),
+    ).toBeVisible();
     await page.screenshot({
       fullPage: true,
       path: `${outputRoot}/mobile-etat-vide.png`,
     });
+    await expect(emptyFixture).toBeVisible();
   });
 });

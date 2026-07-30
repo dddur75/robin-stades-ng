@@ -148,20 +148,101 @@ async function capture(
     });
     return;
   }
-  await page.evaluate(() => {
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+  const captureState = await page.evaluate(async () => {
+    const previousUrl =
+      window.location.pathname +
+      window.location.search +
+      window.location.hash;
+    if (window.location.hash) {
+      await new Promise<void>((resolve) => {
+        window.addEventListener(
+          "hashchange",
+          () => resolve(),
+          { once: true },
+        );
+        window.location.replace("#__robin_capture_top__");
+      });
+    }
+    await document.fonts.ready;
+    const root = document.documentElement;
+    const previousOverflowAnchor = root.style.overflowAnchor;
+    root.style.overflowAnchor = "none";
+    const captureWindow = window as typeof window & {
+      __robinCaptureScrollGuard?: () => void;
+    };
+    const scrollGuard = () => {
+      const scrollingElement = document.scrollingElement;
+      const offset = Math.max(
+        Math.abs(scrollingElement?.scrollLeft ?? window.scrollX),
+        Math.abs(scrollingElement?.scrollTop ?? window.scrollY),
+      );
+      if (offset >= 1) {
+        window.scrollTo({
+          behavior: "instant",
+          left: 0,
+          top: 0,
+        });
+      }
+    };
+    captureWindow.__robinCaptureScrollGuard = scrollGuard;
+    window.addEventListener("scroll", scrollGuard, { passive: true });
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      behavior: "instant",
+      left: 0,
+      top: 0,
+    });
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => resolve());
+      });
+    });
+    return {
+      previousOverflowAnchor,
+      previousUrl,
+    };
   });
-  await page.waitForFunction(
-    () => window.scrollX === 0 && window.scrollY === 0,
-  );
-  await page.screenshot({
-    animations: "disabled",
-    fullPage: true,
-    path: `${outputRoot}/${name}.png`,
-  });
+  try {
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const scrollingElement = document.scrollingElement;
+          return Math.max(
+            Math.abs(scrollingElement?.scrollLeft ?? window.scrollX),
+            Math.abs(scrollingElement?.scrollTop ?? window.scrollY),
+          );
+        }),
+      )
+      .toBeLessThan(1);
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: `${outputRoot}/${name}.png`,
+    });
+  } finally {
+    await page.evaluate((state) => {
+      const captureWindow = window as typeof window & {
+        __robinCaptureScrollGuard?: () => void;
+      };
+      if (captureWindow.__robinCaptureScrollGuard) {
+        window.removeEventListener(
+          "scroll",
+          captureWindow.__robinCaptureScrollGuard,
+        );
+        delete captureWindow.__robinCaptureScrollGuard;
+      }
+      document.documentElement.style.overflowAnchor =
+        state.previousOverflowAnchor;
+      window.history.replaceState(
+        window.history.state,
+        "",
+        state.previousUrl,
+      );
+    }, captureState);
+  }
 }
 
 function definitionValue(scope: Locator | Page, label: string) {
@@ -601,6 +682,11 @@ test.describe("Univers des hypothèses V1.2 — preuves auditables", () => {
     });
     await expect(page.getByRole("main")).toBeVisible();
     await assertNoDocumentOverflow(page);
+    await expect(
+      page.getByRole("heading", {
+        name: "Décomposer la preuve historique",
+      }),
+    ).toBeVisible();
     await capture(page, "zoom-200-hypothesis-detail");
   });
 });
