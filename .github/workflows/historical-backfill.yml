@@ -31,7 +31,7 @@ on:
         type: string
         default: ""
       priority:
-        description: "Priorité A, B, C ou D"
+        description: "Priorité A-D, ou HISTORICAL_DEEP_V1 pour le bootstrap R2"
         type: string
         default: ""
       max_calls:
@@ -53,12 +53,17 @@ on:
   schedule:
     - cron: "37 */2 * * *"
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: historical-state
   cancel-in-progress: false
 jobs:
   backfill:
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      inputs.priority != 'HISTORICAL_DEEP_V1'
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -137,3 +142,17 @@ jobs:
         run: |
           echo "::error::Provenance incomplète; données conservées dans le pont durable."
           exit 1
+
+  historical-deep-night:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.priority == 'HISTORICAL_DEEP_V1'
+    uses: ./.github/workflows/79-historical-deep-night-controller.yml
+    with:
+      execute: true
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
