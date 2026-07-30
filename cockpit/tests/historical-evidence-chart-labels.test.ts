@@ -106,3 +106,26 @@ test("graphiques et tableaux accessibles n’exposent jamais l’identifiant tec
   );
   assert.doesNotMatch(publicMarkup, /api-football(?::|%3A)/iu);
 });
+
+test("la décomposition saisonnière affiche le taux de réussite dérivé", () => {
+  const html = renderToStaticMarkup(
+    createElement(HypothesisSeasonBreakdown, {
+      seasons: [
+        {
+          ...reference,
+          losses: 1,
+          matches: 2,
+          profitUnits: 1,
+          roi: 0.5,
+          season: "2024",
+          wins: 1,
+        },
+      ],
+    }),
+  );
+  const text = html.replace(/<[^>]+>/gu, " ").replace(/\s+/gu, " ").trim();
+
+  assert.match(text, /Taux de réussite/u);
+  assert.match(text, /50(?:,0)?\s*%/u);
+  assert.match(html, /taux de réussite 50(?:,0)?\s*%/u);
+});

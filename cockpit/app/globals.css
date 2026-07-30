@@ -502,6 +502,7 @@ td { padding: 11px 10px; border-top: 1px solid var(--line); font-size: .7rem; }
 .matrix-cell { display: flex; align-items: center; gap: 5px; font-size: .6rem; white-space: nowrap; }
 .matrix-cell i { width: 7px; height: 7px; border-radius: 50%; }
 .two-columns { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; }
+.two-columns > * { min-width: 0; }
 .two-columns > div > .section-card:last-child { margin-bottom: 0; }
 .gate-list { display: grid; gap: 11px; }
 .gate-list > article { padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }

@@ -12,6 +12,7 @@ import {
   hypothesisActivity,
   hypothesisFamilies,
   hypothesisFunnel,
+  hypothesisProspectiveFreeze,
   hypothesisRankings,
   hypothesisSecurity,
   hypothesisSummary,
@@ -140,7 +141,10 @@ function SinceLastVisit() {
   );
 }
 
-function ScientificFunnel() {
+export function ScientificFunnel() {
+  const frozenContracts = hypothesisProspectiveFreeze.contracts.length;
+  const realObservations = hypothesisActivity.hypothesis_observations;
+  const settledObservations = hypothesisActivity.prospective_settlements;
   const stages = [
     {
       label: "Règles générées",
@@ -155,8 +159,16 @@ function ScientificFunnel() {
       value: hypothesisSummary.executed_candidates,
     },
     {
-      label: "Observations prospectives",
-      value: hypothesisSummary.prospectively_frozen_candidates,
+      label: "Contrats gelés",
+      value: frozenContracts,
+    },
+    {
+      label: "Observations réelles",
+      value: realObservations,
+    },
+    {
+      label: "Observations réglées",
+      value: settledObservations,
     },
     {
       label: "Stratégies validées",
@@ -174,8 +186,8 @@ function ScientificFunnel() {
       <figcaption>
         <strong>Entonnoir scientifique</strong>
         <span>
-          Chaque étage exige davantage de preuves. Les catégories ne sont pas
-          des promesses de performance.
+          Chaque étage exige davantage de preuves. L’état prospectif sépare le
+          gel des contrats, les observations réelles et leur règlement.
         </span>
       </figcaption>
       <ol>
@@ -205,9 +217,10 @@ function ScientificFunnel() {
         {" "}
         {formatNumber(hypothesisSummary.executed_candidates)} déjà testées,
         {" "}
-        {formatNumber(hypothesisSummary.prospectively_frozen_candidates)} en
-        observation prospective et {formatNumber(hypothesisFunnel.validated_strategies)}{" "}
-        validée.
+        {formatNumber(frozenContracts)} contrats gelés,{" "}
+        {formatNumber(realObservations)} observations réelles,{" "}
+        {formatNumber(settledObservations)} observations réglées et{" "}
+        {formatNumber(hypothesisFunnel.validated_strategies)} stratégies validées.
       </p>
     </figure>
   );

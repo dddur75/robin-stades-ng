@@ -190,7 +190,7 @@ export function HistoricalRankingCard({
   );
 }
 
-function EvidenceComparisonTable({
+export function EvidenceComparisonTable({
   entries,
 }: {
   entries: readonly HistoricalEvidenceRankingEntry[];
@@ -210,12 +210,19 @@ function EvidenceComparisonTable({
           <tr>
             <th scope="col">Rang</th>
             <th scope="col">Hypothèse</th>
+            <th scope="col">Championnat</th>
             <th scope="col">Occurrences historiques</th>
-            <th scope="col">Résultat brut</th>
+            <th scope="col">Gagnés</th>
+            <th scope="col">Perdus</th>
+            <th scope="col">Taux de réussite</th>
+            <th scope="col">Cote moyenne</th>
+            <th scope="col">ROI historique brut</th>
             <th scope="col">Profit simulé</th>
             <th scope="col">Baisse maximale</th>
             <th scope="col">Périodes positives</th>
+            <th scope="col">Validation chronologique</th>
             <th scope="col">Risque corrigé</th>
+            <th scope="col">Statut scientifique</th>
           </tr>
         </thead>
         <tbody>
@@ -227,7 +234,12 @@ function EvidenceComparisonTable({
                   {entry.hypothesisId}
                 </Link>
               </th>
+              <td>{entry.competition ?? "Tous championnats disponibles"}</td>
               <td>{formatNumber(entry.metrics.occurrences)}</td>
+              <td>{formatNumber(entry.metrics.wins)}</td>
+              <td>{formatNumber(entry.metrics.losses)}</td>
+              <td>{formatEvidencePercent(entry.metrics.hitRate)}</td>
+              <td>{formatEvidenceNumber(entry.metrics.averageOdds)}</td>
               <td>{formatEvidencePercent(entry.metrics.roi, true)}</td>
               <td>{formatEvidenceUnits(entry.metrics.profitUnits, true)}</td>
               <td>
@@ -240,9 +252,17 @@ function EvidenceComparisonTable({
                 {entry.metrics.eligibleFolds}
               </td>
               <td>
+                Validation chronologique glissante ·{" "}
+                {entry.metrics.positiveFolds}/{entry.metrics.eligibleFolds}{" "}
+                périodes positives
+              </td>
+              <td>
                 {formatEvidenceNumber(
                   entry.metrics.correctedFalsePositiveRisk,
                 )}
+              </td>
+              <td>
+                <ScientificStatusBadge status={entry.scientificStatus} />
               </td>
             </tr>
           ))}

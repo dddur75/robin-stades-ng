@@ -31,6 +31,7 @@ import {
   type NormalizedHistoricalMatchDetail,
 } from "./historical-match-evidence";
 import { createPaginationContract } from "./query-params";
+import { currentStaticAssetFetcher } from "./static-asset-fetcher-context";
 
 export const MAX_QUERY_INDEX_ITEMS = 2_000;
 
@@ -626,6 +627,16 @@ export function historicalEvidenceOriginFromHeaders(
       { cause: error },
     );
   }
+}
+
+export function historicalEvidenceLoaderOptionsFromHeaders(
+  input: Pick<Headers, "get">,
+): EvidenceAssetLoaderOptions {
+  const fetcher = currentStaticAssetFetcher();
+  return {
+    baseUrl: historicalEvidenceOriginFromHeaders(input),
+    ...(fetcher ? { fetcher } : {}),
+  };
 }
 
 export function isHistoricalEvidenceNotFound(error: unknown): boolean {

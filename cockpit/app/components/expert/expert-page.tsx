@@ -12,6 +12,11 @@ import {
   t,
 } from "../../i18n";
 import { statusPresentation } from "../../i18n/status-translations";
+import {
+  buildCurrentQualityRows,
+  buildHistoricalQualityRows,
+  HISTORICAL_DATA_LABEL,
+} from "../../lib/expert-quality-presentation";
 import { RichTable } from "../common/rich-table";
 import {
   EvidenceNote,
@@ -92,13 +97,25 @@ const backtestRows: Array<Record<string, unknown>> = expertData.backtests.map((r
   origine: sourceLabel(row.origin),
 }));
 
-const qualityRows: Array<Record<string, unknown>> = expertData.qualityChecks.map((row) => ({
+const qualityRows: Array<Record<string, unknown>> = buildHistoricalQualityRows(
+  expertData.qualityChecks,
+  expertData.provenance,
+).map((row) => ({
   controle: displayText(row.check),
   resultat: statusPresentation(row.status).short,
   valeur: displayText(row.value),
   seuil: displayText(row.threshold),
-  origine: sourceLabel(row.origin),
+  origine: `${row.provenance} · ${sourceLabel(row.origin)} au snapshot`,
 }));
+
+const currentQualityRows: Array<Record<string, unknown>> =
+  buildCurrentQualityRows(operationalEvidence).map((row) => ({
+    controle: row.control,
+    resultat: statusPresentation(row.status).short,
+    preuve: row.evidence,
+    limites: row.limits,
+    source: row.source,
+  }));
 
 const externalReadinessRows: Array<Record<string, unknown>> =
   expertData.externalValidation.readiness.map((row) => ({
@@ -222,9 +239,36 @@ export function ExpertPage() {
               />
             </div>
             <div className="section-card">
-              <SectionHeading title="Contrôles de qualité" />
+              <SectionHeading title="État vérifiable au snapshot" />
+              <EvidenceNote>
+                Source horodatée : <code>{operationalEvidence.generatedAt}</code>.
+                L’état de fraîcheur et son âge sont calculés au moment de ce snapshot,
+                pas en temps réel. Les champs absents restent explicitement non vérifiables ;
+                aucun secret n’est affiché et cette consultation ne déclenche aucun appel
+                fournisseur.
+              </EvidenceNote>
               <RichTable
-                caption="Contrôles, seuils et provenance"
+                caption="État opérationnel vérifiable, limites et provenance"
+                columns={[
+                  { key: "controle", label: "Système ou fournisseur" },
+                  { key: "resultat", label: "État au snapshot" },
+                  { key: "preuve", label: "Preuve disponible" },
+                  { key: "limites", label: "Limites de la preuve" },
+                  { key: "source", label: "Source" },
+                ]}
+                filename="robin-etat-operationnel-snapshot.csv"
+                rows={currentQualityRows}
+              />
+            </div>
+            <div className="section-card">
+              <SectionHeading title="Contrôles de qualité" />
+              <EvidenceNote>
+                <strong>{HISTORICAL_DATA_LABEL}</strong> — ces contrôles sont conservés
+                pour la traçabilité du snapshot legacy. Ils ne décrivent pas l’état
+                opérationnel courant affiché dans le tableau précédent.
+              </EvidenceNote>
+              <RichTable
+                caption="Contrôles historiques, seuils et provenance"
                 columns={[
                   { key: "controle", label: "Contrôle" },
                   { key: "resultat", label: "Résultat" },
@@ -466,8 +510,8 @@ export function ExpertPage() {
                 { label: "Révision", value: <code>{operationalEvidence.sourceRevision}</code> },
                 { label: "Workflow", value: <code>{operationalEvidence.sourceWorkflow}</code> },
                 { label: "Généré à (UTC)", value: <code>{operationalEvidence.generatedAt}</code> },
-                { label: "Âge du snapshot", value: operationalEvidence.freshness.ageMinutes == null ? t("common.notApplicable") : `${formatNumber(operationalEvidence.freshness.ageMinutes)} min` },
-                { label: "Fraîcheur", value: <StatusBadge value={operationalEvidence.freshness.status} showTechnical /> },
+                { label: "Âge de la preuve au moment du snapshot", value: operationalEvidence.freshness.ageMinutes == null ? t("common.notApplicable") : `${formatNumber(operationalEvidence.freshness.ageMinutes)} min` },
+                { label: "Fraîcheur calculée au snapshot", value: <StatusBadge value={operationalEvidence.freshness.status} showTechnical /> },
                 { label: "Motif de fraîcheur", value: operationalEvidence.freshness.reason },
                 { label: "Tête du registre", value: <code>{operationalEvidence.ledger.headHash}</code> },
                 { label: "Payloads PostgreSQL", value: operationalEvidence.postgresql.payloadBodyRows },

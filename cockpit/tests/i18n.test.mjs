@@ -97,6 +97,7 @@ test("le catalogue des statuts contient une présentation complète", async () =
   assert.match(source, /tone:/);
   assert.match(source, /icon:/);
   assert.match(source, /severity:/);
+  assert.match(source, /À jour au moment du snapshot/);
 });
 
 test("aucune valeur opérationnelle connue n’est recopiée dans la couche frontend", async () => {

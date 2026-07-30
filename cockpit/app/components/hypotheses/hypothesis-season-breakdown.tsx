@@ -35,7 +35,7 @@ export type HypothesisSeasonBreakdownProps = {
 export function HypothesisSeasonBreakdown({
   seasons,
   sourceNote,
-  subtitle = "Profit simulé par saison ; les volumes et le ROI restent disponibles dans le tableau.",
+  subtitle = "Profit simulé par saison ; les volumes, le taux de réussite et le ROI restent disponibles dans le tableau.",
   title = "Résultat historique par saison",
 }: HypothesisSeasonBreakdownProps) {
   if (seasons.length === 0) {
@@ -74,6 +74,7 @@ export function HypothesisSeasonBreakdown({
             "Observations",
             "Victoires",
             "Défaites",
+            "Taux de réussite",
             "Profit",
             "ROI",
           ]}
@@ -93,6 +94,9 @@ export function HypothesisSeasonBreakdown({
               season.losses == null
                 ? "Non disponible"
                 : formatChartInteger(season.losses),
+              season.wins == null || season.matches <= 0
+                ? "Non disponible"
+                : formatChartPercent(season.wins / season.matches),
               formatSignedUnits(season.profitUnits),
               formatChartPercent(season.roi),
             ],
@@ -181,7 +185,11 @@ export function HypothesisSeasonBreakdown({
               y={bar.y}
             >
               <title>
-                {`${season.season} : ${formatSignedUnits(season.profitUnits)}, ROI ${formatChartPercent(season.roi)}, ${formatChartInteger(season.matches)} observations, référence ${historicalMatchAccessibleLabel(season)}`}
+                {`${season.season} : ${formatSignedUnits(season.profitUnits)}, taux de réussite ${
+                  season.wins == null || season.matches <= 0
+                    ? "non disponible"
+                    : formatChartPercent(season.wins / season.matches)
+                }, ROI ${formatChartPercent(season.roi)}, ${formatChartInteger(season.matches)} observations, référence ${historicalMatchAccessibleLabel(season)}`}
               </title>
             </rect>
           );

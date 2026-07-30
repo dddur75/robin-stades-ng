@@ -299,6 +299,8 @@ export function HistoricalMatchDetailPage({
 }) {
   const { activeRelation, detail, navigation } = data;
   const fixture = detail.fixture;
+  const aggregateConditionsMatched =
+    activeRelation.reason.codes.includes("ALL_CONDITIONS_MATCH");
   const finalScore =
     `${fixture.finalScore.home} – ${fixture.finalScore.away}`;
   const matchTitle =
@@ -449,8 +451,10 @@ export function HistoricalMatchDetailPage({
           <h2>Pourquoi ce match appartenait à cette hypothèse</h2>
           <p className={styles.panelIntro}>
             La règle {activeRelation.hypothesisId} comportait les conditions
-            suivantes. L’artefact atteste l’appartenance globale et le
-            règlement du résultat.
+            suivantes. Le code d’éligibilité{" "}
+            <code>ALL_CONDITIONS_MATCH</code> atteste que leur conjonction était
+            satisfaite pour cette appartenance, puis que le résultat a été
+            réglé.
           </p>
 
           <dl className={styles.metrics}>
@@ -542,16 +546,22 @@ export function HistoricalMatchDetailPage({
                     </ExpertOnly>
                   </p>
                 </div>
-                <span>Condition documentée</span>
+                <span>
+                  {aggregateConditionsMatched
+                    ? "Incluse dans la validation globale"
+                    : "Condition documentée"}
+                </span>
               </li>
             ))}
           </ol>
 
           <p className={styles.reasonNote}>
-            L’artefact source ne stocke pas de booléen par condition. Robin ne
-            prétend donc pas reconstituer ici une évaluation unitaire : il
-            affiche les conditions de la règle et les codes d’éligibilité
-            globaux, exactement séparés.
+            Preuve condition par condition : chaque condition ci-dessus
+            participe à la conjonction attestée par{" "}
+            <code>ALL_CONDITIONS_MATCH</code>. L’artefact source ne stocke
+            toutefois ni booléen ni valeur observée atomique par condition ;
+            Robin ne les invente donc pas et conserve séparément cette limite
+            de granularité.
           </p>
           <div
             aria-label="Codes d’éligibilité historiques"

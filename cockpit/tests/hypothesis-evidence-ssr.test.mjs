@@ -1,7 +1,5 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
-import { createServer } from "node:http";
-import { once } from "node:events";
 import { fileURLToPath } from "node:url";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import test from "node:test";
@@ -91,89 +89,31 @@ function publishedAssets(requestedPaths) {
   };
 }
 
-async function localAssetOrigin(assets) {
-  let origin = "";
-  const server = createServer((request, response) => {
-    void (async () => {
-      const assetResponse = await assets.fetch(
-        new Request(new URL(request.url ?? "/", origin), {
-          headers: request.headers,
-          method: request.method,
-        }),
-      );
-      response.statusCode = assetResponse.status;
-      assetResponse.headers.forEach((value, key) => {
-        response.setHeader(key, value);
-      });
-      response.end(Buffer.from(await assetResponse.arrayBuffer()));
-    })().catch(() => {
-      response.statusCode = 500;
-      response.end("Asset binding failure");
-    });
-  });
-  server.listen(0, "127.0.0.1");
-  await once(server, "listening");
-  const address = server.address();
-  assert.ok(address && typeof address === "object");
-  origin = `http://127.0.0.1:${address.port}`;
-  return {
-    close: () =>
-      new Promise((resolveClose, rejectClose) => {
-        server.close((error) => {
-          if (error) rejectClose(error);
-          else resolveClose();
-        });
-      }),
-    origin,
-  };
-}
-
-async function render(
-  path,
-  {
-    assets = missingAssets,
-    servePublishedAssets = false,
-  } = {},
-) {
-  const assetOrigin = servePublishedAssets
-    ? await localAssetOrigin(assets)
-    : null;
-  const origin = assetOrigin?.origin ?? "http://localhost";
+async function render(path, { assets = missingAssets } = {}) {
+  const origin = "http://localhost";
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set(
     "historical-evidence-test",
     `${process.pid}-${Date.now()}-${path}`,
   );
   const { default: worker } = await import(workerUrl.href);
-  try {
-    const response = await worker.fetch(
-      new Request(`${origin}${path}`, {
-        headers: {
-          accept: "text/html",
-          host: new URL(origin).host,
-          "x-forwarded-proto": "http",
-        },
-      }),
-      { ASSETS: assets },
-      { passThroughOnException() {}, waitUntil() {} },
-    );
-    if (assetOrigin === null) return response;
-    const body = await response.arrayBuffer();
-    return new Response(body, {
-      headers: response.headers,
-      status: response.status,
-      statusText: response.statusText,
-    });
-  } finally {
-    await assetOrigin?.close();
-  }
+  return worker.fetch(
+    new Request(`${origin}${path}`, {
+      headers: {
+        accept: "text/html",
+        host: new URL(origin).host,
+        "x-forwarded-proto": "http",
+      },
+    }),
+    { ASSETS: assets },
+    { passThroughOnException() {}, waitUntil() {} },
+  );
 }
 
 async function renderWithPublishedAssets(path) {
   const requestedPaths = [];
   const response = await render(path, {
     assets: publishedAssets(requestedPaths),
-    servePublishedAssets: true,
   });
   return { requestedPaths, response };
 }

@@ -11,8 +11,8 @@ export type StatusPresentation = {
 
 const catalogue: Record<string, StatusPresentation> = {
   FRESHNESS_CURRENT: {
-    short: "À jour",
-    long: "Aucune nouvelle capture n’était attendue depuis la génération du snapshot.",
+    short: "À jour au moment du snapshot",
+    long: "Au moment du snapshot, aucune nouvelle capture n’était attendue depuis sa génération.",
     tone: "positive",
     icon: "✓",
     severity: 0,
@@ -125,6 +125,34 @@ const catalogue: Record<string, StatusPresentation> = {
     long: "La collecte prospective est active et reste strictement antérieure au match.",
     tone: "information",
     icon: "●",
+    severity: 0,
+  },
+  CAPTURES_RECORDED: {
+    short: "Captures consignées",
+    long: "Le snapshot contient des appels ou crédits fournisseur enregistrés.",
+    tone: "information",
+    icon: "●",
+    severity: 0,
+  },
+  NO_CAPTURE_RECORDED: {
+    short: "Aucune capture consignée",
+    long: "Le snapshot ne contient aucun appel ou crédit pour ce fournisseur.",
+    tone: "neutral",
+    icon: "∅",
+    severity: 0,
+  },
+  NO_CURRENT_OPERATIONAL_EVIDENCE: {
+    short: "Aucune preuve opérationnelle courante",
+    long: "Le snapshot courant ne permet pas d’attester l’état opérationnel de cette source.",
+    tone: "neutral",
+    icon: "∅",
+    severity: 0,
+  },
+  HISTORICAL_SOURCE_ONLY: {
+    short: "Source historique uniquement",
+    long: "Cette source intervient dans les données historiques, pas dans l’état fournisseur courant.",
+    tone: "research",
+    icon: "◇",
     severity: 0,
   },
   PROSPECTIVE_GATES_ACCUMULATING: {

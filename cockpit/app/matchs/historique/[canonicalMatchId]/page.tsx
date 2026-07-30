@@ -7,7 +7,7 @@ import { HistoricalMatchDetailPage } from "../../../components/matches/historica
 import { ExperienceShell } from "../../../components/navigation/experience-shell";
 import {
   historicalEvidenceErrorCode,
-  historicalEvidenceOriginFromHeaders,
+  historicalEvidenceLoaderOptionsFromHeaders,
   isHistoricalEvidenceNotFound,
   loadHistoricalMatchDetailPage,
 } from "../../../lib/historical-match-evidence.server";
@@ -57,9 +57,7 @@ export default async function HistoricalMatchDetailRoute({
     data = await loadHistoricalMatchDetailPage(
       canonicalMatchId,
       context,
-      {
-        baseUrl: historicalEvidenceOriginFromHeaders(requestHeaders),
-      },
+      historicalEvidenceLoaderOptionsFromHeaders(requestHeaders),
     );
   } catch (error) {
     if (isHistoricalEvidenceNotFound(error)) notFound();

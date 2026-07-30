@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { HistoricalEvidenceUnavailableContent } from "../app/components/common/historical-evidence-unavailable-content";
 import {
+  EvidenceComparisonTable,
   HistoricalRankingAnalysisMetrics,
   HistoricalRankingCard,
 } from "../app/components/hypotheses/historical-evidence-rankings-page";
@@ -99,6 +100,33 @@ test("le complément Analyse publie l’intervalle et explicite les absences", (
     text,
     /Concentration Non disponible dans le classement compact/u,
   );
+});
+
+test("le tableau de classement expose les dimensions de décision et leur statut", () => {
+  const text = visibleText(
+    renderToStaticMarkup(
+      createElement(EvidenceComparisonTable, { entries: [entry] }),
+    ),
+  );
+
+  for (const heading of [
+    "Championnat",
+    "Gagnés",
+    "Perdus",
+    "Taux de réussite",
+    "Cote moyenne",
+    "ROI historique brut",
+    "Validation chronologique",
+    "Statut scientifique",
+  ]) {
+    assert.match(text, new RegExp(heading, "u"));
+  }
+  assert.match(text, /Serie A 363 136 227 37,47\s*% 3,09 \+15,94\s*%/u);
+  assert.match(
+    text,
+    /Validation chronologique glissante · 4\/4 périodes positives/u,
+  );
+  assert.match(text, /Exploratoire, non validée après correction/u);
 });
 
 test("les explications techniques de mesure ne sont pas rendues hors Expert", () => {
