@@ -1,5 +1,12 @@
 import { defineConfig } from "@playwright/test";
 
+const nodeExecutable = JSON.stringify(process.execPath);
+const webServerCommand =
+  process.platform === "win32"
+    ? `${nodeExecutable} node_modules/vinext/dist/cli.js dev -p 4173 -H 127.0.0.1`
+    : `${nodeExecutable} node_modules/vinext/dist/cli.js start -p 4173 -H 127.0.0.1`;
+const usesExternalServer = process.env.PLAYWRIGHT_EXTERNAL_SERVER === "1";
+
 export default defineConfig({
   expect: {
     timeout: 5_000,
@@ -23,11 +30,12 @@ export default defineConfig({
     reducedMotion: "reduce",
     timezoneId: "Europe/Paris",
   },
-  webServer: {
-    command:
-      "pnpm run build:data && pnpm exec vinext dev -p 4173 -H 127.0.0.1",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    url: "http://127.0.0.1:4173/robin-live",
-  },
+  webServer: usesExternalServer
+    ? undefined
+    : {
+        command: webServerCommand,
+        reuseExistingServer: false,
+        timeout: 120_000,
+        url: "http://127.0.0.1:4173/robin-live",
+      },
 });

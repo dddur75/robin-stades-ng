@@ -25,7 +25,7 @@ concurrency:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     services:
       postgres:
         image: postgres:16-alpine
@@ -52,19 +52,50 @@ jobs:
         run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
+      - name: Reconstruire les entrees Jalon 10 depuis le commit gele
+        shell: bash
+        run: |
+          git diff --quiet \
+            423fb7e77ba52286b660956161f02f8a2c1be7f8..HEAD -- \
+            src/robin/patterns \
+            scripts/run_pattern_campaign.py \
+            configs/pattern-research-v1.json
+          mkdir -p "$RUNNER_TEMP/j10"
+          git archive 5c85cf20b932df44dca8665de00e52e3f1e02236 -- \
+            ':(glob)historical/parquet/competition=*/season=*/entity_type=historical_market/dataset_version=historical_market_v1/*.parquet' \
+            | tar -x -C "$RUNNER_TEMP/j10"
+          python scripts/run_pattern_campaign.py \
+            --state "$RUNNER_TEMP/j10/historical" \
+            --output .ci/hypothesis-j10 \
+            --code-revision 423fb7e77ba52286b660956161f02f8a2c1be7f8 \
+            --config configs/pattern-research-v1.json
+          python scripts/run_pattern_campaign.py \
+            --state "$RUNNER_TEMP/j10/historical" \
+            --output .ci/hypothesis-j10 \
+            --code-revision 423fb7e77ba52286b660956161f02f8a2c1be7f8 \
+            --config configs/pattern-research-v1.json \
+            --replay
+          python -c "from pathlib import Path; from robin.hypothesis_evidence.contracts import FULL_CAMPAIGN_SHA256, REGISTRY_SHA256, sha256_file; assert sha256_file(Path('.ci/hypothesis-j10/campaign-summary.json')) == FULL_CAMPAIGN_SHA256; assert sha256_file(Path('.ci/hypothesis-j10/hypothesis-registry.jsonl')) == REGISTRY_SHA256"
       - name: Linting
         run: >-
           python -m ruff check
           src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12 tests/jalon13 tests/jalon14
-          tests/hypothesis_intelligence scripts migrations
+          tests/hypothesis_intelligence tests/hypothesis_evidence
+          scripts migrations
       - name: Typage strict
         run: |
           python -m mypy src/robin scripts/run_prospective_observatory.py
           python -m mypy --explicit-package-bases scripts/run_five_league_expansion.py
           python -m mypy --explicit-package-bases scripts/run_prequential_learning_factory.py
           python -m mypy --explicit-package-bases scripts/build_hypothesis_intelligence.py
+          python -m mypy --strict scripts/build_hypothesis_evidence.py scripts/build_hypothesis_evidence_site_pages.py
       - name: Securite basique
-        run: python -m bandit -q -r src/robin
+        run: >-
+          python -m bandit -q -r
+          src/robin
+          scripts/build_hypothesis_evidence.py
+          scripts/build_hypothesis_evidence_site_pages.py
+          migrations/versions/0013_historical_evidence_index.py
       - name: Verification des secrets
         run: python scripts/check_no_secrets.py
       - name: Cohérence des dépendances
@@ -76,7 +107,7 @@ jobs:
           ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
         run: |
           python -m alembic upgrade head
-          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger','prequential_feature_snapshots','prequential_model_versions','prequential_predictions','prequential_fixture_settlements','prequential_prediction_scores','prequential_metric_snapshots','prequential_training_runs','prequential_ledger_events','hypothesis_registry','hypothesis_versions','hypothesis_discovery_metrics','hypothesis_prospective_contracts','hypothesis_observations','hypothesis_settlements','hypothesis_status_events'} <= names"
+          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger','prequential_feature_snapshots','prequential_model_versions','prequential_predictions','prequential_fixture_settlements','prequential_prediction_scores','prequential_metric_snapshots','prequential_training_runs','prequential_ledger_events','hypothesis_registry','hypothesis_versions','hypothesis_discovery_metrics','hypothesis_prospective_contracts','hypothesis_observations','hypothesis_settlements','hypothesis_status_events','hypothesis_historical_evidence_summaries','hypothesis_evidence_artifact_indexes','historical_fixture_evidence_indexes','hypothesis_fixture_membership_indexes'} <= names"
           python -m alembic downgrade 0002_jalon2_shadow
           python -m alembic upgrade head
           python -m alembic downgrade base
@@ -110,15 +141,34 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm test
+      - name: Conserver les entrees de preuve pour la regression visuelle
+        uses: actions/upload-artifact@v4
+        with:
+          name: hypothesis-evidence-campaign-inputs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .ci/hypothesis-j10/campaign-summary.json
+            .ci/hypothesis-j10/hypothesis-registry.jsonl
+            .ci/hypothesis-j10/replay.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 1
 
   visual-regression:
+    needs: tests
     name: "Robin Experience — preuves visuelles"
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restaurer les entrees de preuve verifiees
+        uses: actions/download-artifact@v4
+        with:
+          name: hypothesis-evidence-campaign-inputs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci/hypothesis-j10
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -131,19 +181,39 @@ jobs:
       - name: Installer le Cockpit et Chromium
         working-directory: cockpit
         run: |
-          python -m pip install "pydantic>=2.9,<3"
+          python -m pip install -r ../requirements.txt
+          python -m pip install --no-deps -e ..
           pnpm install --frozen-lockfile
           pnpm exec playwright install --with-deps chromium
+      - name: Reconstruire les preuves historiques bornees
+        run: |
+          python scripts/build_hypothesis_evidence.py --git-blobs --no-resume
+          python scripts/build_hypothesis_evidence_site_pages.py
+          git diff --exit-code -- reports/hypothesis-evidence
+      - name: Verifier la publication locale des preuves
+        working-directory: cockpit
+        run: |
+          pnpm run build:data
+          git diff --exit-code -- app/cockpit-presentation.json
+          pnpm run prepare:evidence-assets:required
+          pnpm exec vinext build
+          pnpm run test:ssr
       - name: Capturer les vues de référence
         working-directory: cockpit
-        run: pnpm run test:visual
+        run: pnpm run test:visual:prepared
       - name: Publier les preuves visuelles
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: robin-experience-visual-${{ github.run_id }}
-          path: cockpit/.ci/visual-regression
+          name: robin-experience-visual-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            cockpit/.ci/visual-regression
+            artifacts/hypothesis-evidence/artifact-manifest.json
+            artifacts/hypothesis-evidence/run-metrics.json
+            artifacts/hypothesis-evidence-site-pages/manifest.json
+            .ci/hypothesis-j10/replay.json
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 30
 
   jalon12-pilot:

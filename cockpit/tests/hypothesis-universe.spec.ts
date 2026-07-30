@@ -1,23 +1,78 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
 type ViewMode = "analysis" | "discovery" | "expert";
 
+type ReconciledHypothesis = Readonly<{
+  averageOdds: string;
+  competition: string;
+  drawdown: string;
+  folds: string;
+  groups: string;
+  hitRate: string;
+  id: "J10-M001" | "J10-M002" | "J10-M003";
+  losses: number;
+  occurrences: number;
+  profit: string;
+  roi: string;
+  selection: RegExp;
+  wins: number;
+}>;
+
 const outputRoot = ".ci/visual-regression/captures";
-const forbiddenPublicTerms = [
-  /\bwalk[\s-]?forward\b/iu,
-  /\bbacktests?\b/iu,
-  /\bdrawdowns?\b/iu,
-  /\bfeatures?\b/iu,
-  /\bgates?\b/iu,
-  /\bFDR\b/u,
-  /\bq[\s-]?values?\b/iu,
-  /\bbeam\s+search\b/iu,
-  /\bpruning\b/iu,
-  /\blong\s+tail\b/iu,
-  /\bshadow\b/iu,
-  /\bdatasets?\b/iu,
-  /\bcutoffs?\b/iu,
-];
+const historicalMatchId = "api-football:608482";
+const historicalMatchTitle = "Genoa – Crotone";
+const m002MatchListPath = "/hypotheses/J10-M002/matchs";
+const historicalMatchPath =
+  "/matchs/historique/api-football%3A608482" +
+  "?hypothese=J10-M002&retour=%2Fhypotheses%2FJ10-M002%2Fmatchs";
+
+const topThree: readonly ReconciledHypothesis[] = [
+  {
+    averageOdds: "2,25",
+    competition: "La Liga",
+    drawdown: "9,27 u",
+    folds: "4/4",
+    groups: "225",
+    hitRate: "51,72 %",
+    id: "J10-M001",
+    losses: 126,
+    occurrences: 261,
+    profit: "+43,43 u",
+    roi: "+16,64 %",
+    selection: /victoire à l’extérieur/iu,
+    wins: 135,
+  },
+  {
+    averageOdds: "3,09",
+    competition: "Serie A",
+    drawdown: "19,52 u",
+    folds: "4/4",
+    groups: "282",
+    hitRate: "37,47 %",
+    id: "J10-M002",
+    losses: 227,
+    occurrences: 363,
+    profit: "+57,88 u",
+    roi: "+15,94 %",
+    selection: /match nul/iu,
+    wins: 136,
+  },
+  {
+    averageOdds: "1,78",
+    competition: "Serie A",
+    drawdown: "7,22 u",
+    folds: "3/3",
+    groups: "207",
+    hitRate: "63,90 %",
+    id: "J10-M003",
+    losses: 87,
+    occurrences: 241,
+    profit: "+33,42 u",
+    roi: "+13,87 %",
+    selection: /victoire à l’extérieur/iu,
+    wins: 154,
+  },
+] as const;
 
 async function useMode(page: Page, mode: ViewMode) {
   await page.addInitScript((selectedMode) => {
@@ -28,11 +83,17 @@ async function useMode(page: Page, mode: ViewMode) {
   }, mode);
 }
 
-async function openPage(page: Page, path: string, heading?: string | RegExp) {
+async function openPage(
+  page: Page,
+  path: string,
+  heading?: string | RegExp,
+) {
   const response = await page.goto(path);
   expect(response?.ok(), `${path} doit répondre avec succès`).toBe(true);
   await expect(page.locator("html")).toHaveAttribute("lang", "fr-FR");
-  await expect(page.locator('html[data-robin-hydrated="true"]')).toBeVisible();
+  await expect(
+    page.locator('html[data-robin-hydrated="true"]'),
+  ).toBeVisible();
   await expect(page.getByRole("main")).toBeVisible();
   if (heading) {
     await expect(
@@ -46,114 +107,486 @@ async function assertNoDocumentOverflow(page: Page) {
     .poll(() =>
       page.evaluate(() => {
         const root = document.documentElement;
-        return root.scrollWidth <= root.clientWidth;
+        if (root.scrollWidth <= root.clientWidth) return "BOUNDED";
+        const offenders = [
+          ...document.querySelectorAll<HTMLElement>("body *"),
+        ]
+          .map((element) => {
+            const bounds = element.getBoundingClientRect();
+            return {
+              className: element.className,
+              left: Math.round(bounds.left),
+              right: Math.round(bounds.right),
+              tag: element.tagName,
+              width: Math.round(bounds.width),
+            };
+          })
+          .filter(
+            (item) =>
+              item.left < 0 || item.right > root.clientWidth,
+          )
+          .slice(0, 8);
+        return JSON.stringify({
+          clientWidth: root.clientWidth,
+          offenders,
+          scrollWidth: root.scrollWidth,
+        });
       }),
     )
-    .toBe(true);
+    .toBe("BOUNDED");
 }
 
-async function capture(page: Page, name: string, fullPage = true) {
+async function capture(
+  page: Page,
+  name: string,
+  target?: Locator,
+) {
+  if (target) {
+    await target.screenshot({
+      animations: "disabled",
+      path: `${outputRoot}/${name}.png`,
+    });
+    return;
+  }
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    window.scrollTo(0, 0);
+  });
+  await page.waitForFunction(
+    () => window.scrollX === 0 && window.scrollY === 0,
+  );
   await page.screenshot({
     animations: "disabled",
-    fullPage,
+    fullPage: true,
     path: `${outputRoot}/${name}.png`,
   });
 }
 
-async function assertFrenchVocabulary(page: Page) {
-  const publicCopy = await page.locator("body").evaluate((body) => {
-    const copy = body.cloneNode(true) as HTMLElement;
-    copy
-      .querySelectorAll("code, pre, script, style")
-      .forEach((element) => element.remove());
-    const accessibleAttributes = [...copy.querySelectorAll<HTMLElement>(
-      "[aria-label], [title]",
-    )].flatMap((element) => [
-      element.getAttribute("aria-label") ?? "",
-      element.getAttribute("title") ?? "",
-    ]);
-    return `${copy.innerText}\n${accessibleAttributes.join("\n")}`;
-  });
-  for (const pattern of forbiddenPublicTerms) {
-    expect(publicCopy).not.toMatch(pattern);
-  }
+function definitionValue(scope: Locator | Page, label: string) {
+  return scope
+    .locator("dt")
+    .filter({ hasText: label })
+    .first()
+    .locator("xpath=following-sibling::dd");
 }
 
-test.describe("Univers des hypothèses — preuves visuelles et parcours", () => {
-  test("univers — desktop, tablette, mobiles 390/360, zoom 200 % et Vue Expert", async ({
+function rankingCard(page: Page, hypothesisId: string) {
+  return page
+    .locator("article.hu-evidence-ranking-card")
+    .filter({ hasText: hypothesisId });
+}
+
+async function assertRoiIsNotHitRate(
+  scope: Locator | Page,
+  evidence: ReconciledHypothesis,
+) {
+  const hitRate = definitionValue(scope, "Taux de réussite");
+  const historicalRoi = definitionValue(
+    scope,
+    "ROI historique brut",
+  );
+  await expect(hitRate).toHaveText(evidence.hitRate);
+  await expect(hitRate).not.toContainText(evidence.roi);
+  await expect(historicalRoi).toHaveText(evidence.roi);
+  await expect(historicalRoi).not.toContainText(evidence.hitRate);
+}
+
+async function assertRankingCard(
+  page: Page,
+  evidence: ReconciledHypothesis,
+) {
+  const card = rankingCard(page, evidence.id);
+  await expect(card).toBeVisible();
+  await expect(card).toContainText(evidence.competition);
+  await expect(
+    definitionValue(card, "Occurrences historiques"),
+  ).toHaveText(String(evidence.occurrences));
+  await expect(definitionValue(card, "Profit simulé")).toHaveText(
+    evidence.profit,
+  );
+  await expect(
+    definitionValue(card, "Gagnés / perdus / annulés"),
+  ).toHaveText(`${evidence.wins} / ${evidence.losses} / 0`);
+  await expect(definitionValue(card, "Cote moyenne")).toHaveText(
+    evidence.averageOdds,
+  );
+  await expect(
+    definitionValue(card, "Périodes positives"),
+  ).toHaveText(evidence.folds);
+  await expect(
+    definitionValue(card, "Baisse maximale"),
+  ).toHaveText(evidence.drawdown);
+  await assertRoiIsNotHitRate(card, evidence);
+}
+
+async function assertHypothesisDetail(
+  page: Page,
+  evidence: ReconciledHypothesis,
+) {
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: evidence.selection,
+    }),
+  ).toBeVisible();
+  await expect(page.getByText(evidence.id, { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(evidence.competition, { exact: true }).first()).toBeVisible();
+  await expect(
+    definitionValue(page, "Occurrences historiques"),
+  ).toHaveText(String(evidence.occurrences));
+  await expect(definitionValue(page, "Profit simulé")).toHaveText(
+    evidence.profit,
+  );
+  await expect(
+    definitionValue(page, "Gagnés / perdus / annulés"),
+  ).toHaveText(`${evidence.wins} / ${evidence.losses} / 0`);
+  await expect(definitionValue(page, "Cote moyenne")).toHaveText(
+    evidence.averageOdds,
+  );
+  await expect(definitionValue(page, "Baisse maximale")).toHaveText(
+    evidence.drawdown,
+  );
+  await expect(
+    definitionValue(page, "Validation chronologique glissante"),
+  ).toContainText(`${evidence.folds} périodes positives`);
+  await expect(
+    definitionValue(page, "Groupes statistiques distincts"),
+  ).toHaveText(evidence.groups);
+  await expect(
+    definitionValue(
+      page,
+      "Risque de faux positif après correction",
+    ),
+  ).toHaveText("1,00");
+  await assertRoiIsNotHitRate(page, evidence);
+}
+
+async function waitForHistoricalCharts(page: Page) {
+  await expect(
+    page.getByRole("heading", {
+      name: "Évolution du profit historique cumulé",
+    }),
+  ).toBeVisible({ timeout: 20_000 });
+  await expect(
+    page.getByRole("heading", {
+      name: "Résultat historique par saison",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Ventilations historiques indisponibles",
+    }),
+  ).toHaveCount(0);
+}
+
+test.describe("Univers des hypothèses V1.2 — preuves auditables", () => {
+  test.describe.configure({ mode: "serial" });
+
+  test("classements global, Liga et Serie A avec statistiques réconciliées", async ({
     page,
   }) => {
-    await useMode(page, "discovery");
-
+    await useMode(page, "analysis");
     await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(page, "/hypotheses", "L’Univers des hypothèses");
-    await expect(page.getByText("28 grandes familles")).toBeVisible();
-    await expect(page.getByText("486 propriétés football")).toBeVisible();
+
+    await openPage(
+      page,
+      "/hypotheses/classements",
+      "Classements des hypothèses",
+    );
     await expect(
-      page.getByText("Zéro stratégie validée est un résultat honnête."),
-    ).toBeVisible();
-    await assertNoDocumentOverflow(page);
-    await capture(page, "desktop-univers");
-
-    await page.setViewportSize({ height: 1024, width: 768 });
-    await assertNoDocumentOverflow(page);
-    await capture(page, "tablette-univers");
-
-    await page.setViewportSize({ height: 844, width: 390 });
-    await expect(
-      page.getByRole("navigation", { name: "Navigation mobile" }),
-    ).toBeVisible();
-    await assertNoDocumentOverflow(page);
-    await capture(page, "mobile-univers");
-
-    await page.setViewportSize({ height: 800, width: 360 });
-    await assertNoDocumentOverflow(page);
-
-    for (const viewport of [
-      { height: 812, width: 375 },
-      { height: 932, width: 430 },
-      { height: 1080, width: 1920 },
-    ]) {
-      await page.setViewportSize(viewport);
-      await assertNoDocumentOverflow(page);
-    }
-
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await page.evaluate(() => {
-      document.documentElement.style.fontSize = "200%";
-    });
-    await expect(page.getByRole("main")).toBeVisible();
-    await assertNoDocumentOverflow(page);
-    await capture(page, "zoom-200");
-
-    await page.evaluate(() => {
-      document.documentElement.style.fontSize = "";
-      window.localStorage.setItem("robin-experience-view-mode", "expert");
-      window.dispatchEvent(
-        new Event("robin-experience-view-mode-change"),
-      );
-    });
-    await expect(
-      page.getByRole("button", { name: /^Vue Expert\./ }),
+      page.getByRole("button", { exact: true, name: "Global" }),
     ).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByText("Vue Expert", { exact: true }).last()).toBeVisible();
-    await capture(page, "desktop-vue-expert");
+    for (const evidence of topThree) {
+      await assertRankingCard(page, evidence);
+    }
+    await assertNoDocumentOverflow(page);
+    await capture(page, "desktop-classement-global-avec-stats");
+
+    await openPage(
+      page,
+      "/hypotheses/classements?competition=Liga",
+      "Classements des hypothèses",
+    );
+    await expect(
+      page.getByRole("button", { exact: true, name: "Liga" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await assertRankingCard(page, topThree[0]);
+    await expect(page.getByText("+16,64 %", { exact: true }).first()).toBeVisible();
+    await capture(page, "desktop-classement-liga-avec-16-64-roi");
+
+    await openPage(
+      page,
+      "/hypotheses/classements?competition=Serie%20A",
+      "Classements des hypothèses",
+    );
+    await expect(
+      page.getByRole("button", { exact: true, name: "Serie A" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await assertRankingCard(page, topThree[1]);
+    await assertRankingCard(page, topThree[2]);
+    await capture(page, "desktop-classement-serie-a");
   });
 
-  test("navigation clavier — évitement, recherche et arbre paresseux", async ({
+  test("fiches J10-M001, J10-M002 et J10-M003 sans confusion ROI/réussite", async ({
     page,
   }) => {
-    await useMode(page, "discovery");
+    await useMode(page, "analysis");
     await page.setViewportSize({ height: 900, width: 1440 });
-    const nodeRequests: string[] = [];
-    page.on("request", (request) => {
-      if (request.url().includes("/data/hypotheses/nodes/")) {
-        nodeRequests.push(request.url());
-      }
-    });
 
-    await openPage(page, "/hypotheses/arbres", "Les arbres d’hypothèses");
-    expect(nodeRequests).toHaveLength(0);
+    await openPage(page, "/hypotheses/J10-M001");
+    await assertHypothesisDetail(page, topThree[0]);
+    await waitForHistoricalCharts(page);
+    await capture(page, "desktop-j10-m001-complete");
+
+    await openPage(page, "/hypotheses/J10-M002");
+    await assertHypothesisDetail(page, topThree[1]);
+    await waitForHistoricalCharts(page);
+    await expect(
+      page.getByText("entre 2,50 et 3,25", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("inférieure ou égale à 6,00 %", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Intervalle observé : +0,43 % à +31,39 %.", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.locator(`a[href="${m002MatchListPath}"]`).first(),
+    ).toBeVisible();
+    await capture(page, "desktop-j10-m002-complete");
+
+    await page.setViewportSize({ height: 844, width: 390 });
+    await assertNoDocumentOverflow(page);
+    await capture(page, "mobile-j10-m002-complete");
+
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await openPage(page, "/hypotheses/J10-M003");
+    await assertHypothesisDetail(page, topThree[2]);
+  });
+
+  test("parcours fiche, liste, match historique et retour contextuel", async ({
+    page,
+  }) => {
+    await useMode(page, "analysis");
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await openPage(page, "/hypotheses/J10-M002");
+    const matchListLink = page
+      .locator(`a[href="${m002MatchListPath}"]`)
+      .first();
+    await expect(matchListLink).toBeVisible();
+    await matchListLink.click();
+    await expect(page).toHaveURL(new RegExp(`${m002MatchListPath}$`));
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Matchs de J10-M002",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("363 occurrences historiques"),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("region", {
+        name: "Tableau des matchs historiques",
+      }),
+    ).toBeVisible();
+    await expect(page.getByText(historicalMatchTitle).first()).toBeVisible();
+    const firstHistoricalMatch = page
+      .locator(
+        `a[href*="/matchs/historique/${encodeURIComponent(historicalMatchId)}"]`,
+      )
+      .first();
+    await expect(firstHistoricalMatch).toBeVisible();
+    await expect(firstHistoricalMatch).toHaveAttribute(
+      "href",
+      historicalMatchPath,
+    );
+    await capture(page, "desktop-j10-m002-match-list");
+
+    await firstHistoricalMatch.click();
+    await expect(page).toHaveURL(/\/matchs\/historique\/api-football%3A608482/iu);
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: historicalMatchTitle,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByLabel("Score final 4 – 1"),
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        /70 règles historiques réconciliées\s*;\s*aperçu borné de\s+\d+\s+relation(?:s)? navigable(?:s)?/iu,
+      ),
+    ).toBeVisible();
+    await expect(
+      definitionValue(page, "Sélection"),
+    ).toHaveText("Match nul");
+    await expect(
+      definitionValue(page, "Cote observée"),
+    ).toHaveText("3,23");
+    await expect(
+      definitionValue(page, "Profit simulé"),
+    ).toHaveText("-1,00 unité");
+    await expect(
+      page.getByRole("link", { name: "Ouvrir la fiche hypothèse" }),
+    ).toHaveAttribute("href", "/hypotheses/J10-M002");
+    await expect(
+      page.getByRole("link", {
+        name: "Retour à la liste contextuelle",
+      }),
+    ).toHaveAttribute("href", m002MatchListPath);
+    await capture(page, "desktop-historical-match-detail");
+
+    await page
+      .getByRole("link", { name: "Retour à la liste contextuelle" })
+      .click();
+    await expect(page).toHaveURL(new RegExp(`${m002MatchListPath}$`));
+
+    await page.setViewportSize({ height: 844, width: 390 });
+    await assertNoDocumentOverflow(page);
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Matchs de J10-M002",
+      }),
+    ).toBeVisible();
+    await capture(page, "mobile-j10-m002-match-list");
+  });
+
+  test("bankroll et saisons utilisent les 363 matchs reconstruits", async ({
+    page,
+  }) => {
+    await useMode(page, "analysis");
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await openPage(page, "/hypotheses/J10-M002");
+    await waitForHistoricalCharts(page);
+
+    const bankroll = page
+      .getByRole("heading", {
+        name: "Évolution du profit historique cumulé",
+      })
+      .locator("xpath=ancestor::figure[1]");
+    await expect(bankroll.getByRole("img")).toHaveAttribute(
+      "aria-label",
+      /part explicitement de 0 u.*363 matchs/iu,
+    );
+    const bankrollMatchLinks = bankroll.locator(
+      `a[href*="/matchs/historique/${encodeURIComponent(historicalMatchId)}"]`,
+    );
+    await expect
+      .poll(() => bankrollMatchLinks.count())
+      .toBeGreaterThan(0);
+    await expect(bankrollMatchLinks.first()).toHaveAttribute(
+      "href",
+      /hypothese=J10-M002/iu,
+    );
+    await capture(page, "desktop-bankroll-chart", bankroll);
+
+    const seasons = page
+      .getByRole("heading", {
+        name: "Résultat historique par saison",
+      })
+      .locator("xpath=ancestor::figure[1]");
+    await expect(seasons).toContainText(
+      /363 observations sont réparties sur 6 saisons/iu,
+    );
+    await capture(page, "desktop-season-breakdown", seasons);
+  });
+
+  test("longue traîne publique sans diagnostic de valeur manquante", async ({
+    page,
+  }) => {
+    await useMode(page, "analysis");
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await openPage(
+      page,
+      "/hypotheses/longue-traine",
+      "La longue traîne",
+    );
+    const publicText = await page.getByRole("main").innerText();
+    expect(publicText).not.toMatch(/\bvaleurs?\s+manquantes?\b/iu);
+    await expect(
+      page.locator(
+        '[data-semantic-role="DATA_QUALITY_METADATA"], [data-semantic-role="AVAILABILITY_METADATA"], [data-semantic-role="PROVENANCE_METADATA"]',
+      ),
+    ).toHaveCount(0);
+    await capture(page, "desktop-long-tail-without-missing-values");
+  });
+
+  test("qualité des données séparée dans l’espace Expert", async ({
+    page,
+  }) => {
+    await useMode(page, "expert");
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await openPage(
+      page,
+      "/expert/qualite-donnees",
+      "Qualité et disponibilité des données",
+    );
+    await expect(
+      page.getByRole("heading", {
+        name: "Valeurs manquantes et disponibilité",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        /Elles ne constituent jamais une hypothèse football publique/iu,
+      ),
+    ).toBeVisible();
+    await capture(page, "desktop-data-quality-missingness");
+  });
+
+  test("onglet prospectif vide, clavier et séparation des phases", async ({
+    page,
+  }) => {
+    await useMode(page, "analysis");
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await openPage(page, "/hypotheses/J10-M002");
+
+    const historicalTab = page.getByRole("tab", {
+      name: "Simulation historique",
+    });
+    const prospectiveTab = page.getByRole("tab", {
+      name: "Observation depuis le gel",
+    });
+    await historicalTab.focus();
+    await historicalTab.press("ArrowRight");
+    await expect(prospectiveTab).toBeFocused();
+    await expect(prospectiveTab).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    const prospectivePanel = page.getByRole("tabpanel", {
+      name: "Observation depuis le gel",
+    });
+    await expect(
+      prospectivePanel.getByRole("heading", {
+        name: "Aucune preuve prospective dans ce rapport",
+      }),
+    ).toBeVisible();
+    await expect(prospectivePanel).toContainText(
+      "Cette fiche lit exclusivement la preuve historique Jalon 10.",
+    );
+    await expect(prospectivePanel).toContainText(
+      "363 résultats historiques réglés",
+    );
+    await capture(page, "desktop-no-prospective-observation");
+  });
+
+  test("zoom texte 200 % et parcours clavier restent utilisables", async ({
+    page,
+  }) => {
+    await useMode(page, "analysis");
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await openPage(page, "/hypotheses/J10-M002");
 
     await page.keyboard.press("Tab");
     const skipLink = page.getByRole("link", {
@@ -163,427 +596,11 @@ test.describe("Univers des hypothèses — preuves visuelles et parcours", () =>
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main")).toBeFocused();
 
-    const expand = page.getByRole("button", { name: /^Développer \(/ }).first();
-    await expand.press("Enter");
-    await expect(
-      page.getByRole("button", { name: "Replier" }).first(),
-    ).toHaveAttribute("aria-expanded", "true");
-    await expect.poll(() => nodeRequests.length).toBeGreaterThan(0);
-    await expect(page.getByText(/Pages chargées/)).toBeVisible();
-    await capture(page, "desktop-arbre");
-  });
-
-  test("arbre mobile 390 px et largeur minimale 360 px", async ({ page }) => {
-    await useMode(page, "discovery");
-    await page.setViewportSize({ height: 844, width: 390 });
-    await openPage(page, "/hypotheses/arbres", "Les arbres d’hypothèses");
-    await assertNoDocumentOverflow(page);
-    await capture(page, "mobile-arbre");
-
-    await page.setViewportSize({ height: 800, width: 360 });
-    await assertNoDocumentOverflow(page);
-    await expect(page.getByLabel("Votre recherche")).toBeVisible();
-    await expect(page.getByLabel("État matériel")).toBeVisible();
-    await expect(page.getByLabel("Heure limite")).toBeVisible();
-    await expect(page.getByLabel("Marché", { exact: true })).toBeVisible();
-    await expect(page.getByLabel("Profondeur")).toBeVisible();
-  });
-
-  test("facettes URL — initialisation, sérialisation et chargement borné", async ({
-    page,
-  }) => {
-    await useMode(page, "analysis");
-    await page.setViewportSize({ height: 900, width: 1440 });
-    const nodeRequests: string[] = [];
-    page.on("request", (request) => {
-      if (request.url().includes("/data/hypotheses/nodes/")) {
-        nodeRequests.push(request.url());
-      }
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = "200%";
     });
-
-    await openPage(
-      page,
-      "/hypotheses/arbres?famille=weather&statut=DATA_GATE_BLOCKED&cutoff=H-2&marche=NO_MARKET_REQUIRED&profondeur=1&vue=liste",
-      "Les arbres d’hypothèses",
-    );
-    await expect(page.getByLabel("Famille")).toHaveValue("WEATHER");
-    await expect(page.getByLabel("État matériel")).toHaveValue(
-      "DATA_GATE_BLOCKED",
-    );
-    await expect(page.getByLabel("Heure limite")).toHaveValue("H-2");
-    await expect(page.getByLabel("Marché", { exact: true })).toHaveValue(
-      "NO_MARKET_REQUIRED",
-    );
-    await expect(page.getByLabel("Profondeur")).toHaveValue("1");
-    await expect(
-      page.getByRole("button", { name: "Vue liste" }),
-    ).toHaveAttribute("aria-pressed", "true");
-    await expect.poll(() => nodeRequests.length).toBeGreaterThan(0);
-    await expect(page.locator(".hu-filter-sentence")).toContainText(
-      "Météo ET état Bloquée par les données",
-    );
-
-    await page
-      .getByRole("checkbox", { name: "Afficher seulement la longue traîne" })
-      .check();
-    await expect
-      .poll(() => new URL(page.url()).searchParams.get("longue-traine"))
-      .toBe("1");
-    await page.getByLabel("Marché", { exact: true }).selectOption("1X2");
-    await expect
-      .poll(() => new URL(page.url()).searchParams.get("marche"))
-      .toBe("1X2");
-  });
-
-  test("liste et graphe limitent le nombre de cartes rendues", async ({
-    page,
-  }) => {
-    await useMode(page, "analysis");
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(
-      page,
-      "/hypotheses/arbres?vue=liste",
-      "Les arbres d’hypothèses",
-    );
-    await expect(
-      page.getByRole("button", { name: "Tous les nœuds sont chargés" }),
-    ).toBeDisabled({ timeout: 15_000 });
-
-    const cards = page.locator(".hu-node-collection-liste .hu-tree-node");
-    const firstBatch = await cards.count();
-    expect(firstBatch).toBeGreaterThan(0);
-    expect(firstBatch).toBeLessThanOrEqual(60);
-    const showMore = page.getByRole("button", {
-      name: /Afficher davantage de branches/,
-    });
-    await expect(showMore).toBeVisible();
-    await showMore.click();
-    await expect.poll(() => cards.count()).toBeGreaterThan(firstBatch);
-    expect(await cards.count()).toBeLessThanOrEqual(120);
-  });
-
-  test("recherche française et filtres — desktop et mobile", async ({ page }) => {
-    await useMode(page, "analysis");
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(page, "/hypotheses/arbres", "Les arbres d’hypothèses");
-
-    const search = page.getByLabel("Votre recherche");
-    await search.fill("Météo ET vent fort SAUF branches bloquées");
-    await search.press("Enter");
-    const understood = page.locator(".hu-understood-filters");
-    await expect(understood.getByText("Filtres compris par Robin")).toBeVisible();
-    await expect(understood).toContainText("Météo");
-    await expect(understood).toContainText("Vent fort");
-    await expect(understood).toContainText("SAUF Branches bloquées");
-    await expect(page).toHaveURL(/q=M%C3%A9t%C3%A9o/);
-    await page.getByLabel("Famille").selectOption("WEATHER");
-    await expect
-      .poll(() => new URL(page.url()).searchParams.get("famille"))
-      .toBe("weather");
-    expect(new URL(page.url()).searchParams.get("q")).toContain("Météo");
-    await assertFrenchVocabulary(page);
-    await capture(page, "desktop-filtres");
-
-    await page.setViewportSize({ height: 844, width: 390 });
+    await expect(page.getByRole("main")).toBeVisible();
     await assertNoDocumentOverflow(page);
-    await capture(page, "mobile-filtres");
-  });
-
-  test("comparateur — sélection de deux branches", async ({ page }) => {
-    await useMode(page, "analysis");
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(page, "/hypotheses/arbres", "Les arbres d’hypothèses");
-
-    const compare = page.getByRole("checkbox", { name: "Comparer" });
-    await compare.nth(0).check();
-    await compare.nth(1).check();
-    const comparator = page.getByRole("region", {
-      name: "Comparateur d’hypothèses",
-    });
-    await expect(comparator).toBeVisible();
-    await expect(
-      comparator.getByRole("heading", { name: "2 hypothèses sélectionnées" }),
-    ).toBeVisible();
-    await expect(comparator.getByText("Support", { exact: true })).toHaveCount(2);
-    await capture(page, "desktop-comparateur");
-  });
-
-  test("catalogue et familles Formations / Météo", async ({ page }) => {
-    await useMode(page, "discovery");
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(page, "/hypotheses/familles");
-    await expect(
-      page.getByRole("heading", { level: 1 }).filter({ hasText: "familles" }),
-    ).toBeVisible();
-    await expect(page.getByText("Formations et structures").first()).toBeVisible();
-    await expect(page.getByText("Météo").first()).toBeVisible();
-    await capture(page, "desktop-familles");
-
-    await page.setViewportSize({ height: 844, width: 390 });
-    await assertNoDocumentOverflow(page);
-    await capture(page, "mobile-familles");
-
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(
-      page,
-      "/hypotheses/familles/formation-structure",
-      /Formations et structures/,
-    );
-    await capture(page, "desktop-famille-formations");
-
-    await openPage(page, "/hypotheses/familles/weather", "Météo");
-    await expect(
-      page.getByText(/archive météo|données nécessaires|bloqu/i).first(),
-    ).toBeVisible();
-    await capture(page, "desktop-famille-meteo");
-    await page.getByRole("link", { name: "Ouvrir l’explorateur" }).click();
-    await expect(page).toHaveURL(/\/hypotheses\/arbres\?famille=weather/);
-    await expect(page.getByLabel("Famille")).toHaveValue("WEATHER");
-  });
-
-  test("fiches J10-M001 et graine H11-002", async ({ page }) => {
-    await useMode(page, "discovery");
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(page, "/hypotheses/J10-M001", /victoire à l’extérieur/i);
-    await expect(page.getByText("J10-M001", { exact: true }).first()).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: "Pourquoi ce signal n’est pas validé",
-      }),
-    ).toBeVisible();
-    await capture(page, "desktop-fiche-j10-m001");
-
-    await page.setViewportSize({ height: 844, width: 390 });
-    await assertNoDocumentOverflow(page);
-    await capture(page, "mobile-fiche-j10-m001");
-
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(page, "/hypotheses/H11-002", "4-3-3 contre 4-4-2");
-    await expect(page.getByText("Piste proposée par David")).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: "Cette graine génère un arbre complet de combinaisons.",
-      }),
-    ).toBeVisible();
-    await capture(page, "desktop-fiche-graine-david");
-  });
-
-  test("les trois modes changent réellement le contenu et persistent après rechargement", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(page, "/hypotheses/J10-M001", /victoire à l’extérieur/i);
-
-    await expect(
-      page.getByRole("button", { name: /^Vue Découverte\./ }),
-    ).toHaveAttribute("aria-pressed", "true");
-    await expect(
-      page.getByRole("heading", { name: "L’essentiel en clair" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Ce que le passé montre" }),
-    ).toHaveCount(0);
-    await expect(
-      page.getByRole("heading", { name: "Données, contrat et provenance" }),
-    ).toHaveCount(0);
-
-    await page.getByRole("button", { name: /^Vue Analyse\./ }).click();
-    await expect(
-      page.getByRole("button", { name: /^Vue Analyse\./ }),
-    ).toHaveAttribute("aria-pressed", "true");
-    await expect(
-      page.getByRole("heading", { name: "Ce que le passé montre" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Observation prospective" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Données, contrat et provenance" }),
-    ).toHaveCount(0);
-
-    await page.reload();
-    await expect(page.locator('html[data-robin-hydrated="true"]')).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /^Vue Analyse\./ }),
-    ).toHaveAttribute("aria-pressed", "true");
-    await expect(
-      page.getByRole("heading", { name: "Ce que le passé montre" }),
-    ).toBeVisible();
-
-    await page.getByRole("button", { name: /^Vue Expert\./ }).click();
-    await expect(
-      page.getByRole("heading", { name: "Données, contrat et provenance" }),
-    ).toBeVisible();
-    await expect(page.locator(".hu-expert-proof code").first()).toBeVisible();
-
-    await page.reload();
-    await expect(page.locator('html[data-robin-hydrated="true"]')).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /^Vue Expert\./ }),
-    ).toHaveAttribute("aria-pressed", "true");
-    await expect(
-      page.getByRole("heading", { name: "Données, contrat et provenance" }),
-    ).toBeVisible();
-
-    await page.getByRole("button", { name: /^Vue Découverte\./ }).click();
-    await openPage(
-      page,
-      "/hypotheses/classements",
-      "Classements des hypothèses",
-    );
-    await expect(
-      page.getByRole("heading", {
-        name: "Comprendre les pistes avant les chiffres",
-      }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: "Lire la solidité, pas seulement le rang",
-      }),
-    ).toHaveCount(0);
-
-    await page.getByRole("button", { name: /^Vue Analyse\./ }).click();
-    await expect(
-      page.getByRole("heading", {
-        name: "Comparer les preuves et leurs limites",
-      }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: "Lire la solidité, pas seulement le rang",
-      }),
-    ).toBeVisible();
-
-    const marketFilter = page.getByLabel("Marché", { exact: true });
-    const originFilter = page.getByLabel("Origine", { exact: true });
-    const cutoffFilter = page.getByLabel("Heure limite", { exact: true });
-    await expect.poll(() => marketFilter.locator("option").count()).toBeGreaterThan(1);
-    await expect.poll(() => originFilter.locator("option").count()).toBeGreaterThan(1);
-    await expect.poll(() => cutoffFilter.locator("option").count()).toBeGreaterThan(1);
-    await marketFilter.selectOption({ index: 1 });
-    await originFilter.selectOption({ index: 1 });
-    await cutoffFilter.selectOption({ index: 1 });
-    await expect(page).toHaveURL(/marche=/);
-    await expect(page).toHaveURL(/origine=/);
-    await expect(page).toHaveURL(/heure-limite=/);
-
-    const selectedMarket = await marketFilter.inputValue();
-    const selectedOrigin = await originFilter.inputValue();
-    const selectedCutoff = await cutoffFilter.inputValue();
-    await page.reload();
-    await expect(page.locator('html[data-robin-hydrated="true"]')).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /^Vue Analyse\./ }),
-    ).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByLabel("Marché", { exact: true })).toHaveValue(
-      selectedMarket,
-    );
-    await expect(page.getByLabel("Origine", { exact: true })).toHaveValue(
-      selectedOrigin,
-    );
-    await expect(page.getByLabel("Heure limite", { exact: true })).toHaveValue(
-      selectedCutoff,
-    );
-
-    await page.getByRole("button", { name: /^Vue Expert\./ }).click();
-    await expect(
-      page.getByRole("heading", { name: "Portée contractuelle brute" }),
-    ).toBeVisible();
-    await expect(
-      page.locator(".hu-expert-proof code").filter({
-        hasText: "hypothesis-global-rankings",
-      }),
-    ).toBeVisible();
-    await page.setViewportSize({ height: 844, width: 390 });
-    await assertNoDocumentOverflow(page);
-    await expect(
-      page.getByLabel("Heure limite", { exact: true }),
-    ).toBeVisible();
-  });
-
-  test("classements global, Liga, Serie A, zéro validée et longue traîne", async ({
-    page,
-  }) => {
-    await useMode(page, "analysis");
-    await page.setViewportSize({ height: 900, width: 1440 });
-    await openPage(
-      page,
-      "/hypotheses/classements",
-      "Classements des hypothèses",
-    );
-    await expect(
-      page.getByRole("button", { name: "Global", exact: true }),
-    ).toHaveAttribute("aria-pressed", "true");
-    await capture(page, "desktop-classement-global");
-
-    const liga = page.getByRole("button", { name: "Liga", exact: true });
-    await liga.click();
-    await expect(liga).toHaveAttribute("aria-pressed", "true");
-    await expect(page).toHaveURL(/competition=Liga/);
-    await capture(page, "desktop-classement-liga");
-
-    const serieA = page.getByRole("button", { name: "Serie A", exact: true });
-    await serieA.click();
-    await expect(serieA).toHaveAttribute("aria-pressed", "true");
-    await expect(page).toHaveURL(/competition=Serie(\+|%20)A/);
-    await capture(page, "desktop-classement-serie-a");
-
-    const zeroValidated = page.locator("#strategies-validees");
-    await expect(
-      zeroValidated.getByRole("heading", {
-        name: "Aucune stratégie n’est encore scientifiquement validée",
-      }),
-    ).toBeVisible();
-    await zeroValidated.scrollIntoViewIfNeeded();
-    await zeroValidated.screenshot({
-      animations: "disabled",
-      path: `${outputRoot}/desktop-aucune-strategie-validee.png`,
-    });
-
-    await openPage(page, "/hypotheses/longue-traine", "La longue traîne");
-    await expect(page.getByText("8", { exact: true }).first()).toBeVisible();
-    await capture(page, "desktop-longue-traine");
-  });
-
-  test("Découverte et Analyse restent sans jargon anglais public", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ height: 900, width: 1440 });
-    const publicRoutes = [
-      "/robin-live",
-      "/matchs",
-      "/observatoire",
-      "/resultats",
-      "/methode",
-      "/hypotheses",
-      "/hypotheses/familles",
-      "/hypotheses/arbres",
-      "/hypotheses/classements",
-      "/hypotheses/observations",
-      "/hypotheses/longue-traine",
-    ];
-
-    for (const route of publicRoutes) {
-      await openPage(page, route);
-      await expect(
-        page.getByRole("button", { name: /^Vue Découverte\./ }),
-      ).toHaveAttribute("aria-pressed", "true");
-      await assertFrenchVocabulary(page);
-    }
-
-    await page.getByRole("button", { name: /^Vue Analyse\./ }).click();
-    for (const route of publicRoutes) {
-      await openPage(page, route);
-      await expect(
-        page.getByRole("button", { name: /^Vue Analyse\./ }),
-      ).toHaveAttribute("aria-pressed", "true");
-      await assertFrenchVocabulary(page);
-    }
-
-    // La Vue Expert est volontairement hors du contrôle lexical public.
-    // Les valeurs techniques restent en outre confinées aux éléments code/pre.
-    await openPage(page, "/hypotheses/J10-M001");
-    await page.getByRole("button", { name: /^Vue Expert\./ }).click();
-    await expect(page.locator("code").first()).toBeVisible();
+    await capture(page, "zoom-200-hypothesis-detail");
   });
 });

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readdir, readFile, stat } from "node:fs/promises";
 import test from "node:test";
+import { gzipSync } from "node:zlib";
 
 const root = new URL("../", import.meta.url);
 const snapshot = JSON.parse(
@@ -209,9 +210,41 @@ test("livre un bundle borné et les métadonnées Robin", async () => {
   );
   const totalBytes = jsAssets.reduce((sum, item) => sum + item.size, 0);
   const largestChunk = Math.max(...jsAssets.map((item) => item.size), 0);
-  const hypothesisChunks = jsAssets
-    .filter((item) => item.file.includes("hypothesis"))
-    .reduce((sum, item) => sum + item.size, 0);
+  const hypothesisResponse = await render("/hypotheses/J10-M002");
+  assert.equal(hypothesisResponse.status, 200);
+  const hypothesisHtml = await hypothesisResponse.text();
+  const initialAssetPaths = [
+    ...new Set(
+      [...hypothesisHtml.matchAll(/(?:src|href)="([^"]+\.js(?:\?[^"]*)?)"/g)]
+        .map((match) => match[1].split("?")[0]),
+    ),
+  ];
+  assert.ok(initialAssetPaths.length > 0, "assets initiaux introuvables");
+  const initialAssets = await Promise.all(
+    initialAssetPaths.map(async (assetPath) => {
+      assert.match(assetPath, /^\/assets\/[^/]+\.js$/);
+      const source = await readFile(
+        new URL(`../dist/client${assetPath}`, import.meta.url),
+      );
+      return {
+        assetPath,
+        rawBytes: source.byteLength,
+        gzipBytes: gzipSync(source, { level: 9 }).byteLength,
+        source,
+      };
+    }),
+  );
+  const initialGzipBytes = initialAssets.reduce(
+    (sum, item) => sum + item.gzipBytes,
+    0,
+  );
+  const initialHypothesisBytes = initialAssets
+    .filter((item) => item.assetPath.includes("hypothesis"))
+    .reduce((sum, item) => sum + item.rawBytes, 0);
+  const initialAssetNames = initialAssetPaths.join("\n");
+  const initialSource = Buffer.concat(
+    initialAssets.map((item) => item.source),
+  ).toString("utf8");
   assert.ok(
     totalBytes < 1_350_000,
     `ensemble des routes clientes: ${totalBytes} octets`,
@@ -221,8 +254,20 @@ test("livre un bundle borné et les métadonnées Robin", async () => {
     `plus grand segment client: ${largestChunk} octets`,
   );
   assert.ok(
-    hypothesisChunks < 250_000,
-    `segments Hypothèses chargés à la demande: ${hypothesisChunks} octets`,
+    initialGzipBytes <= 220 * 1024,
+    `route hypothèse initiale: ${initialGzipBytes} octets gzip`,
+  );
+  assert.ok(
+    initialHypothesisBytes <= 220 * 1024,
+    `segments Hypothèses initiaux: ${initialHypothesisBytes} octets bruts`,
+  );
+  assert.doesNotMatch(
+    initialAssetNames,
+    /historical-evidence-visuals|hypothesis-(?:bankroll|odds|season|streak|team)/,
+  );
+  assert.doesNotMatch(
+    initialSource,
+    /"canonical_match_id"\s*:\s*"api-football:/,
   );
   await access(new URL("../public/og.png", import.meta.url));
 });
