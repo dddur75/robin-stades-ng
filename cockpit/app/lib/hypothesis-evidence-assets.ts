@@ -276,7 +276,6 @@ async function fetchJsonAsset(
       : new URL(url, options.baseUrl).toString();
   try {
     response = await fetcher(requestUrl, {
-      cache: "force-cache",
       headers: { Accept: "application/json" },
       signal: options.signal,
     });

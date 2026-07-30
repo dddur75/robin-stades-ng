@@ -301,6 +301,19 @@ test("le loader SSR résout l'asset contre une origine explicite", async () => {
   ]);
 });
 
+test("le transport SSR n'impose pas de mode cache incompatible avec Workers", async () => {
+  let observedInit: RequestInit | undefined;
+  const fetcher: typeof fetch = async (_input, init) => {
+    observedInit = init;
+    return jsonResponse(summaryPayload);
+  };
+
+  await loadHypothesisEvidenceSummary(hypothesisId, { fetcher });
+
+  assert.equal(observedInit?.cache, undefined);
+  assert.equal(new Headers(observedInit?.headers).get("accept"), "application/json");
+});
+
 test("un payload trop gros ou incohérent est rejeté avant usage", async () => {
   const oversized: typeof fetch = async () =>
     new Response("{}", {
