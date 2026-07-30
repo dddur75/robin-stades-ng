@@ -76,7 +76,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             throw "JALON_10_REPLAY_FAILED"
           }
-          python -c "from pathlib import Path; from robin.hypothesis_evidence.contracts import FULL_CAMPAIGN_SHA256, REGISTRY_SHA256, sha256_file; assert sha256_file(Path('.ci/hypothesis-j10/campaign-summary.json')) == FULL_CAMPAIGN_SHA256; assert sha256_file(Path('.ci/hypothesis-j10/hypothesis-registry.jsonl')) == REGISTRY_SHA256"
+          python -c "from pathlib import Path; path=Path('reports/pattern-research/campaign-summary.json'); data=path.read_bytes().replace(b'\r\n', b'\n'); assert b'\r' not in data; path.write_bytes(data.replace(b'\n', b'\r\n'))"
+          if ($LASTEXITCODE -ne 0) {
+            throw "JALON_10_COMPACT_LINE_ENDINGS_FAILED"
+          }
+          python -c "from pathlib import Path; from robin.hypothesis_evidence.contracts import COMPACT_CAMPAIGN_SHA256, FULL_CAMPAIGN_SHA256, REGISTRY_SHA256, sha256_file; assert sha256_file(Path('.ci/hypothesis-j10/campaign-summary.json')) == FULL_CAMPAIGN_SHA256; assert sha256_file(Path('.ci/hypothesis-j10/hypothesis-registry.jsonl')) == REGISTRY_SHA256; assert sha256_file(Path('reports/pattern-research/campaign-summary.json')) == COMPACT_CAMPAIGN_SHA256"
           if ($LASTEXITCODE -ne 0) {
             throw "JALON_10_FROZEN_HASH_MISMATCH"
           }
@@ -90,6 +94,13 @@ jobs:
             .ci/hypothesis-j10/replay.json
           if-no-files-found: error
           include-hidden-files: true
+          retention-days: 1
+      - name: Conserver la campagne compacte byte-identique
+        uses: actions/upload-artifact@v4
+        with:
+          name: hypothesis-evidence-compact-campaign-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/pattern-research/campaign-summary.json
+          if-no-files-found: error
           retention-days: 1
 
   tests:
@@ -119,6 +130,11 @@ jobs:
         with:
           name: hypothesis-evidence-campaign-inputs-${{ github.run_id }}-${{ github.run_attempt }}
           path: .ci/hypothesis-j10
+      - name: Restaurer la campagne compacte byte-identique
+        uses: actions/download-artifact@v4
+        with:
+          name: hypothesis-evidence-compact-campaign-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/pattern-research
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -211,6 +227,11 @@ jobs:
         with:
           name: hypothesis-evidence-campaign-inputs-${{ github.run_id }}-${{ github.run_attempt }}
           path: .ci/hypothesis-j10
+      - name: Restaurer la campagne compacte byte-identique
+        uses: actions/download-artifact@v4
+        with:
+          name: hypothesis-evidence-compact-campaign-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/pattern-research
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

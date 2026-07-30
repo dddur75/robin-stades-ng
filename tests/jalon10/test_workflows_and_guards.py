@@ -117,33 +117,44 @@ def test_ci_replays_frozen_jalon10_on_windows_before_linux_checks() -> None:
     assert "5c85cf20b932df44dca8665de00e52e3f1e02236" in evidence_commands
     assert "JALON_10_EXPECTED_30_PARTITIONS" in evidence_commands
     assert "--replay" in evidence_commands
+    assert "COMPACT_CAMPAIGN_SHA256" in evidence_commands
     assert "FULL_CAMPAIGN_SHA256" in evidence_commands
     assert "REGISTRY_SHA256" in evidence_commands
 
-    upload_step = next(
-        step
+    upload_steps = {
+        step["with"]["name"]: step["with"]
         for step in evidence_job["steps"]
         if step.get("uses") == "actions/upload-artifact@v4"
-    )
+    }
     artifact_name = (
         "hypothesis-evidence-campaign-inputs-"
         "${{ github.run_id }}-${{ github.run_attempt }}"
     )
-    assert upload_step["with"]["name"] == artifact_name
-    assert set(upload_step["with"]["path"].splitlines()) == {
+    compact_artifact_name = (
+        "hypothesis-evidence-compact-campaign-"
+        "${{ github.run_id }}-${{ github.run_attempt }}"
+    )
+    assert set(upload_steps[artifact_name]["path"].splitlines()) == {
         ".ci/hypothesis-j10/campaign-summary.json",
         ".ci/hypothesis-j10/hypothesis-registry.jsonl",
         ".ci/hypothesis-j10/replay.json",
     }
+    assert upload_steps[compact_artifact_name]["path"] == (
+        "reports/pattern-research/campaign-summary.json"
+    )
     for consumer_job in (tests_job, visual_job):
-        download_step = next(
-            step
+        download_steps = {
+            step["with"]["name"]: step["with"]
             for step in consumer_job["steps"]
             if step.get("uses") == "actions/download-artifact@v4"
-        )
-        assert download_step["with"] == {
+        }
+        assert download_steps[artifact_name] == {
             "name": artifact_name,
             "path": ".ci/hypothesis-j10",
+        }
+        assert download_steps[compact_artifact_name] == {
+            "name": compact_artifact_name,
+            "path": "reports/pattern-research",
         }
 
 
