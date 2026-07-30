@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "database_writes": 0,
+    "duplicate_rule_canonical_match": 0,
+    "fixtures": 10732,
+    "partitions": 30,
+    "postgresql_rows": 0,
+    "provider_calls": 0,
+    "q_values_recomputed": true,
+    "r2_operations": 0,
+    "raw_memberships": 681490,
+    "raw_strict_delta": 24,
+    "rules": 700,
+    "strict_memberships": 681466,
+    "summaries_reconciled": 700,
+    "temporary_database_rows": 0,
+    "top_three_exact": true,
+    "unique_fixtures": 10732
+  },
+  "dataset_hash": "3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495",
+  "generated_at": "2026-07-27T11:00:02Z",
+  "replay_hash": "6c5311448cc38a01e81a0c8a1f6e03cbeedc3a62f790aa7f929a2439bb5b9826",
+  "schema_version": "j10-hypothesis-evidence-reconciliation-v1",
+  "source_result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b",
+  "status": "RECONCILED",
+  "summary_hashes_sha256": "afaf5c283dfa4575ca4d46e5dd8ffdf06043b6b419681ef55a4e203e0013b422"
+}

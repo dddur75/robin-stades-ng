@@ -222,7 +222,7 @@ export function ObservatoryPage() {
         </div> : (
           <EmptyState
             title="Aucune rencontre suivie"
-            text="La matrice se remplira automatiquement lorsque le registre prospectif contiendra une fixture active."
+            text="La matrice se remplira automatiquement lorsque le registre prospectif contiendra une rencontre active."
           />
         )}
         <EvidenceNote>
@@ -299,7 +299,7 @@ export function ObservatoryPage() {
                 ? operationalEvidence.activeWindows / (operationalEvidence.activeWindows + operationalEvidence.inactiveLegacyWindows)
                 : null,
             ) },
-            { label: "Fenêtres legacy", value: `${formatNumber(operationalEvidence.inactiveLegacyWindows)} · replay uniquement` },
+            { label: "Anciennes fenêtres", value: `${formatNumber(operationalEvidence.inactiveLegacyWindows)} · reconstruction uniquement` },
             { label: "Fraîcheur", value: <StatusBadge value={operationalEvidence.freshness.status} showTechnical /> },
             { label: "Motif fraîcheur", value: operationalEvidence.freshness.reason },
           ]} />

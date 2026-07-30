@@ -13,7 +13,6 @@
     "CALENDAR_FATIGUE": 17,
     "CHEMISTRY_NETWORKS": 13,
     "COACH": 16,
-    "DATA_QUALITY": 13,
     "DEFENCE": 19,
     "DISCIPLINE_REFEREE": 19,
     "EVENT_GAME_STATE": 12,
@@ -79,11 +78,11 @@
     "SOURCED_PLAYER_PROFILE"
   ],
   "statuses": {
-    "COMPUTE_DEFERRED": 912,
-    "DATA_GATE_BLOCKED": 149,
-    "EXECUTED": 13,
-    "LONG_TAIL_WATCHLIST": 8,
-    "PRUNED": 10
+    "COMPUTE_DEFERRED": 381,
+    "DATA_GATE_BLOCKED": 166,
+    "EXECUTED": 14,
+    "LONG_TAIL_WATCHLIST": 0,
+    "PRUNED": 0
   },
   "tree_depths": [
     1,

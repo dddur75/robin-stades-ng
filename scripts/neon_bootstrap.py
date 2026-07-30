@@ -9,7 +9,7 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import func, inspect, select, text
+from sqlalchemy import MetaData, func, inspect, select, text
 
 from robin.storage.database import (
     DatabaseConfigurationError,
@@ -25,6 +25,14 @@ else:
     from manage_durable_registry import audit_database, persist_registry
 
 ROOT = Path(__file__).resolve().parents[1]
+HISTORICAL_EVIDENCE_INDEX_TABLES = frozenset(
+    {
+        "historical_fixture_evidence_indexes",
+        "hypothesis_evidence_artifact_indexes",
+        "hypothesis_fixture_membership_indexes",
+        "hypothesis_historical_evidence_summaries",
+    }
+)
 
 
 def alembic_config(database_url: str) -> Config:
@@ -40,14 +48,24 @@ def table_row_counts(database_url: str) -> dict[str, int]:
         for name in inspect(engine).get_table_names()
         if name != "alembic_version"
     )
-    unknown_tables = set(names) - set(metadata.tables)
+    known_tables = set(metadata.tables) | HISTORICAL_EVIDENCE_INDEX_TABLES
+    unknown_tables = set(names) - known_tables
     if unknown_tables:
         raise RuntimeError("tables inconnues présentes ; rollback refusé")
+    reflected_metadata = MetaData()
+    reflected_names = sorted(set(names) & HISTORICAL_EVIDENCE_INDEX_TABLES)
+    if reflected_names:
+        reflected_metadata.reflect(bind=engine, only=reflected_names)
     counts: dict[str, int] = {}
     with engine.connect() as connection:
         for name in names:
             table = metadata.tables.get(name)
-            assert table is not None
+            if table is None:
+                table = reflected_metadata.tables.get(name)
+            if table is None:
+                raise RuntimeError(
+                    "table connue introuvable ; rollback refusé"
+                )
             counts[name] = int(
                 connection.execute(
                     select(func.count()).select_from(table)

@@ -1,9 +1,11 @@
 .venv/
 .codex-venv/
+.pnpm-store/
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+.pytest-tmp-*/
 .mypy_cache/
 .ruff_cache/
 .coverage

@@ -51,7 +51,7 @@ from scripts.manage_durable_registry import (
     stage,
     verify_registry,
 )
-from scripts.neon_bootstrap import bootstrap
+from scripts.neon_bootstrap import bootstrap, table_row_counts
 from scripts.run_shadow_pipeline import (
     daily_health,
     latest_quota_observation,
@@ -774,6 +774,21 @@ def test_bootstrap_vide_fait_rollback_upgrade_et_double_replay(
     assert result["second_persistence"]["records_inserted"] == 0
     assert result["replay"]["provider_calls"] == 0
     assert result["replay"]["quota_consumed"] == 0
+
+
+def test_comptage_pre_rollback_refuse_une_table_inconnue(
+    tmp_path: Path,
+) -> None:
+    database = tmp_path / "unknown-table.db"
+    url = f"sqlite+pysqlite:///{database.as_posix()}"
+    engine = build_engine(url)
+    with engine.begin() as connection:
+        connection.exec_driver_sql(
+            "CREATE TABLE unexpected_live_data (id INTEGER PRIMARY KEY)"
+        )
+
+    with pytest.raises(RuntimeError, match="tables inconnues"):
+        table_row_counts(url)
 
 
 def test_indisponibilite_postgresql_ouvre_un_incident_sans_perte(

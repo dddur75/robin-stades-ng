@@ -38,7 +38,7 @@ const sections = [
   },
   {
     key: "bankroll",
-    text: "La bankroll fictive est un compteur en unités, sans valeur monétaire. Elle sert à mesurer une méthode sans engager d’argent.",
+    text: "Le capital de simulation est un compteur en unités, sans valeur monétaire. Il sert à mesurer une méthode sans engager d’argent.",
   },
 ] as const;
 

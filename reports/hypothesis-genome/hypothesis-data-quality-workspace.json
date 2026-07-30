@@ -1,0 +1,143 @@
+{
+  "diagnostic_properties": [
+    {
+      "display_name_fr": "biais de couverture",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:coverage_bias",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "confiance d’identité",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:identity_confidence",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "instant d’ingestion",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:ingested_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "valeur manquante",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:missingness",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "instant d’observation",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:observed_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "hash de provenance",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:provenance_hash",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "PROVENANCE_METADATA"
+    },
+    {
+      "display_name_fr": "instant de mise à jour fournisseur",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:provider_updated_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "instant de publication",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:published_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "changement de schéma",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:schema_change",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "source",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:source",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "PROVENANCE_METADATA"
+    },
+    {
+      "display_name_fr": "hash du schéma source",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:source_schema_hash",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "PROVENANCE_METADATA"
+    },
+    {
+      "display_name_fr": "début de validité",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:valid_from",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "fin de validité",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:valid_to",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    }
+  ],
+  "diagnostics": {
+    "availability_bias": true,
+    "blocked_families": 23,
+    "coverage": true,
+    "missing_values": true,
+    "partial_families": 4,
+    "pre_match_unavailability": true,
+    "source_errors": true
+  },
+  "internal_controls": [
+    {
+      "property_id": "football:calendar_fatigue:rest_days",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "NEGATIVE_CONTROL",
+      "technical_rule": {
+        "binding": "subject",
+        "learned_on": "LOGICAL_NEGATIVE_CONTROL",
+        "operator": "LT",
+        "property_id": "football:calendar_fatigue:rest_days",
+        "relation": "APPLIES_TO",
+        "transform": "RAW",
+        "value": 0.0,
+        "window": "CURRENT"
+      }
+    },
+    {
+      "property_id": "football:data_quality:missingness",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA",
+      "technical_rule": {
+        "binding": "subject",
+        "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
+        "operator": "GE",
+        "property_id": "football:data_quality:missingness",
+        "relation": "APPLIES_TO",
+        "transform": "RAW",
+        "value": 0.25,
+        "window": "CURRENT"
+      }
+    }
+  ],
+  "legacy_public_false_hypothesis_branches_removed": 8,
+  "live_writes": 0,
+  "provider_calls": 0,
+  "public_hypothesis_surface": false,
+  "schema_version": "hypothesis-data-quality-workspace-v1",
+  "title_fr": "Qualité et disponibilité des données",
+  "workspace_path": "/expert/qualite-donnees"
+}

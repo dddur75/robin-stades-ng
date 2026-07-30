@@ -107,10 +107,6 @@
     {
       "id": "ORGANISATION_SQUAD",
       "label_fr": "Organisation et effectif"
-    },
-    {
-      "id": "DATA_QUALITY",
-      "label_fr": "Qualité et provenance"
     }
   ],
   "origins": {

@@ -41,3 +41,5 @@ next-env.d.ts
 /outputs/
 /work/
 /.codex-dev.*
+/public/data/hypotheses/nodes/
+/public/data/hypothesis-evidence/

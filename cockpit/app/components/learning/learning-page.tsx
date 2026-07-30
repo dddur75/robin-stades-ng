@@ -114,7 +114,7 @@ export function LearningPage() {
   const flow = [
     {
       label: t("learning.flow.features"),
-      detail: "Valeurs, disponibilité, provenance et cutoff",
+      detail: "Valeurs, disponibilité, provenance et heure limite",
       status:
         prequentialLearning.nextPrediction
         || prequentialLearning.frozenPredictions > 0
@@ -202,8 +202,8 @@ export function LearningPage() {
         <MetricCard
           detail={
             prequentialLearning.nextPrediction
-              ? `${prequentialLearning.nextPrediction.cutoffName} · ${prequentialLearning.nextPrediction.match}`
-              : "Aucun cutoff réel n’est encore dû"
+              ? `${prequentialLearning.nextPrediction.cutoffName === "NEAR_KICKOFF" ? "Près du coup d’envoi" : prequentialLearning.nextPrediction.cutoffName} · ${prequentialLearning.nextPrediction.match}`
+              : "Aucune heure limite réelle n’est encore atteinte"
           }
           icon="◷"
           label={t("learning.metrics.nextPrediction")}

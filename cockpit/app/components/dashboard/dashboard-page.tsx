@@ -200,7 +200,7 @@ export function DashboardPage() {
         <ExpertOnly>
           <EvidenceNote>
             {formatNumber(operationalEvidence.inactiveLegacyWindows)} fenêtres
-            legacy sont conservées pour le replay uniquement. Les{" "}
+            anciennes sont conservées pour la reconstruction uniquement. Les{" "}
             {formatNumber(operationalEvidence.activeWindows)} fenêtres actives
             proviennent de la politique versionnée du snapshot.
           </EvidenceNote>

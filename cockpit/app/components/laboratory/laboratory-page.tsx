@@ -47,7 +47,7 @@ export function LaboratoryPage() {
             value={formatNumber(preview.families)}
           />
           <MetricCard
-            detail="replay identique"
+            detail="reconstruction identique"
             label="Nœuds exécutés"
             tone="green"
             value={formatNumber(preview.executed)}
@@ -101,8 +101,8 @@ export function LaboratoryPage() {
               <dl className="discovery-metrics">
                 <div><dt>Support historique</dt><dd>{formatNumber(discovery.historicalSupport)}</dd></div>
                 <div><dt>ROI historique brut observé</dt><dd>{formatPercent(discovery.historicalRoi)}</dd></div>
-                <div><dt>Walk-forward brut</dt><dd>{discovery.positiveFolds}/{discovery.eligibleFolds}</dd></div>
-                <div><dt>q-value</dt><dd>{formatNumber(discovery.qValue ?? 0, 2)}</dd></div>
+                <div><dt>Validation chronologique brute</dt><dd>{discovery.positiveFolds}/{discovery.eligibleFolds}</dd></div>
+                <div><dt>Risque de faux positif corrigé</dt><dd>{formatNumber(discovery.qValue ?? 0, 2)}</dd></div>
               </dl>
               <div className="scientific-labels">
                 <span>Signal exploratoire</span>
@@ -150,7 +150,7 @@ export function LaboratoryPage() {
                 value={0}
               />
               <div className="blocked-reason">
-                <strong>Gates manquants</strong>
+                <strong>Conditions de disponibilité manquantes</strong>
                 <p>{Object.keys(hypothesis.currentDataGates).join(" · ")}</p>
               </div>
               <StatusBadge value={hypothesis.status} />
@@ -161,7 +161,7 @@ export function LaboratoryPage() {
 
       <section className="expert-section hypothesis-section" id="observation-prospective">
         <SectionHeading
-          subtitle="Les métriques prospectives restent vides jusqu’aux premiers cutoffs réellement dus."
+          subtitle="Les métriques prospectives restent vides jusqu’aux premières heures limites réellement arrivées."
           title="C. En observation prospective"
         />
         <div className="prospective-contract-grid">

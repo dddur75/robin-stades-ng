@@ -1,8 +1,8 @@
 {
   "campaign_hash": "824c1cc0a61132f578a58741d734eebb63162e4190695f13e5f9854466eee997",
   "completeness_scope": "CLOSURE_OF_THE_VERSIONED_V1_PROPERTY_RELATION_TRANSFORMATION CATALOGUE;NOT_A_CLAIM_TO_ALL_POSSIBLE_FOOTBALL_IDEAS",
-  "compute_deferred_candidates": 912,
-  "data_gate_blocked_candidates": 149,
+  "compute_deferred_candidates": 381,
+  "data_gate_blocked_candidates": 166,
   "data_hash": "886be285fc47b38aae77e9fa8c96dfc240a54707060850e3c3fd9c9b16d0c7c8",
   "day_windows": [
     5,
@@ -14,8 +14,9 @@
     60,
     90
   ],
-  "executed_candidates": 13,
-  "long_tail_candidates": 8,
+  "diagnostic_metadata_properties": 13,
+  "executed_candidates": 14,
+  "long_tail_candidates": 0,
   "match_windows": [
     1,
     2,
@@ -30,11 +31,13 @@
     20
   ],
   "materialized_candidates": 180,
+  "non_public_hypothesis_properties": 30,
   "ontology_hash": "69cca06408ab6bbea3e16f5c5252c505c6bd4175b533c7e0d08283a6036ba186",
   "properties": 486,
   "property_families": 28,
   "prospectively_frozen_candidates": 3,
-  "pruned_candidates": 10,
+  "pruned_candidates": 0,
+  "public_hypothesis_properties": 456,
   "relations": 44,
   "schema_version": "hypothesis-universe-summary-v2",
   "scientific_depth_limit": null,

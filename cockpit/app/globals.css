@@ -8,7 +8,7 @@
   --paper-deep: #eeece4;
   --white: #fff;
   --ink: #102a36;
-  --muted: #60737c;
+  --muted: #52656e;
   --line: #d9dedc;
   --line-strong: #bdc9c5;
   --robin: #16976a;
@@ -119,7 +119,7 @@ code { font: .78rem var(--font-geist-mono), monospace; overflow-wrap: anywhere; 
 .topbar-actions { display: flex; align-items: center; gap: 12px; }
 .mobile-logo { display: none; }
 .glossary-button {
-  display: flex; align-items: center; gap: 7px; min-height: 42px; padding: 6px 9px;
+  display: flex; align-items: center; gap: 7px; min-height: 44px; min-width: 44px; padding: 6px 9px;
   border: 0; background: transparent; color: var(--muted); font-size: .76rem;
 }
 .glossary-button > span:first-child {
@@ -128,8 +128,8 @@ code { font: .78rem var(--font-geist-mono), monospace; overflow-wrap: anywhere; 
 }
 .view-switch { display: flex; padding: 3px; border-radius: 12px; background: #e6e8e3; }
 .view-switch button {
-  min-height: 34px; padding: 7px 11px; border: 0; border-radius: 9px;
-  background: transparent; color: #67767c; font-size: .72rem; white-space: nowrap;
+  min-height: 44px; padding: 7px 11px; border: 0; border-radius: 9px;
+  background: transparent; color: #4f626a; font-size: .72rem; white-space: nowrap;
 }
 .view-switch button.active {
   background: #fff; color: var(--ink); font-weight: 650; box-shadow: 0 2px 8px rgba(6,23,34,.08);
@@ -502,6 +502,7 @@ td { padding: 11px 10px; border-top: 1px solid var(--line); font-size: .7rem; }
 .matrix-cell { display: flex; align-items: center; gap: 5px; font-size: .6rem; white-space: nowrap; }
 .matrix-cell i { width: 7px; height: 7px; border-radius: 50%; }
 .two-columns { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; }
+.two-columns > * { min-width: 0; }
 .two-columns > div > .section-card:last-child { margin-bottom: 0; }
 .gate-list { display: grid; gap: 11px; }
 .gate-list > article { padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
@@ -561,9 +562,24 @@ td { padding: 11px 10px; border-top: 1px solid var(--line); font-size: .7rem; }
 .expert-rule-card > p { color: var(--muted); font-size: .7rem; }
 .expert-rule-card details { margin-top: 10px; }
 .expert-rule-card summary { cursor: pointer; font-size: .7rem; font-weight: 700; }
-.pagination { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.pagination-summary { margin: 0; }
+.pagination-pages,
+.pagination-sizes { display: flex; align-items: center; gap: 6px; }
+.pagination-pages a,
+.pagination-pages [aria-disabled="true"],
+.pagination-sizes a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 32px; padding: 5px 8px;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: #fff; text-decoration: none;
+}
+.pagination a[aria-current] { border-color: var(--robin); background: var(--robin); color: #fff; }
+.pagination [aria-disabled="true"] { opacity: .45; }
 .pagination button { min-height: 40px; padding: 8px 13px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
 .pagination button:disabled { opacity: .45; }
+.pagination-sizes { margin: 0; padding: 0; border: 0; }
+.pagination-sizes legend { margin-right: 4px; padding: 0; }
 .research-journey { display: grid; grid-template-columns: repeat(6,1fr); width: 100%; min-width: 0; max-width: 100%; margin: 23px 0; }
 .research-journey > span { position: relative; min-width: 0; text-align: center; }
 .research-journey > span:not(:last-child)::after {
@@ -888,9 +904,13 @@ td { padding: 11px 10px; border-top: 1px solid var(--line); font-size: .7rem; }
 
 @media (max-width: 620px) {
   body { font-size: 14px; }
-  .topbar { padding: 0 12px; }
+  .topbar {
+    align-content: center; flex-wrap: wrap; gap: 4px; height: auto; min-height: 108px; padding: 8px 12px;
+  }
+  .topbar-actions { width: 100%; justify-content: space-between; gap: 6px; }
   .glossary-button > span:last-child { display: none; }
-  .view-switch button { padding: 6px 8px; font-size: .62rem; }
+  .view-switch { flex: 1; }
+  .view-switch button { flex: 1; min-height: 44px; padding: 6px 5px; font-size: .62rem; }
   .content { padding: 25px 12px 100px; }
   .site-footer { display: block; margin: 0 12px 78px; }
   .site-footer p + p { margin-top: 5px; }

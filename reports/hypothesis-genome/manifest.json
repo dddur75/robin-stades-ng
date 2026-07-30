@@ -2,31 +2,31 @@
   "detail_pages": [
     {
       "artifact_path": "hypothesis-tree-node-pages/page-001.json",
-      "bytes": 100926,
+      "bytes": 108842,
       "page": 1,
       "records": 50,
-      "sha256": "99b22d395e8fef27611b66aaebb1e39379f247e577a5d1e4c0db4b21972602a7"
+      "sha256": "269c5a775b6fa01dac350202733a82715162d3a5a1f1973f4b5daafa707072ec"
     },
     {
       "artifact_path": "hypothesis-tree-node-pages/page-002.json",
-      "bytes": 113967,
+      "bytes": 133613,
       "page": 2,
       "records": 50,
-      "sha256": "663fccb93ffaba8de6495a92da5218f77286bc8ebf6a843b149c55402a4613b8"
+      "sha256": "2402d8b4e5f21d839b3aacca441d8e18560d4900ab11367bb8df73c258f8d7ec"
     },
     {
       "artifact_path": "hypothesis-tree-node-pages/page-003.json",
-      "bytes": 132813,
+      "bytes": 141787,
       "page": 3,
       "records": 50,
-      "sha256": "a5538821cb169844b9865b0670f94443dbc23f4796dae16791da76d9cf0412da"
+      "sha256": "f9825d7b717cd5b1b7394699cb1798b4288e31b7f3828a6931fa8a5effcf4bdc"
     },
     {
       "artifact_path": "hypothesis-tree-node-pages/page-004.json",
-      "bytes": 79805,
+      "bytes": 86839,
       "page": 4,
       "records": 30,
-      "sha256": "8fdd85dbce8b3cc04322d8b0d24f6fb12ab475b0c8aa9cf3da52a649630652d2"
+      "sha256": "d3d47c66e2b8441ed191383beb9515d2c29f3c7739c84bf04f45ab6c9c0e27c7"
     }
   ],
   "detail_pages_storage": "BUILD_ARTIFACT_NOT_GIT",
@@ -44,27 +44,32 @@
     {
       "bytes": 2513,
       "file": "engine-proof.json",
-      "sha256": "2813cafabc3639c1315b5b4053b1becfd7e894dee21c3297e51c1e374e773395"
+      "sha256": "70ebf5a62e4c4a76b8b87040bd5aff7562d15effa64f309b3de2e77df0330e04"
     },
     {
-      "bytes": 2522,
+      "bytes": 4848,
+      "file": "hypothesis-data-quality-workspace.json",
+      "sha256": "f68795c58273afbda1748558f2108794a8a5a54d971305c49c72f12ff160e55f"
+    },
+    {
+      "bytes": 2496,
       "file": "hypothesis-facets.json",
-      "sha256": "33034931ac81f782cf5993f3673a79f531bff83ea2b51c52b3c8c394606b093d"
+      "sha256": "f4b318c5a56d99be26a8a57ebd5e8c6725d39e827edfd099ec53d8dd80b5b9c4"
     },
     {
-      "bytes": 8686,
+      "bytes": 10797,
       "file": "hypothesis-family-catalog.json",
-      "sha256": "b0be797d179f8de4e4ec9c7e5a027189fb02d2b97d89a826ba90b9e20d5b36b6"
+      "sha256": "ad1a3261e4a728072ca5d1fae06406d19f1a0731f687acc2cb147d3199e56013"
     },
     {
-      "bytes": 4232,
+      "bytes": 3936,
       "file": "hypothesis-family-tree-index.json",
-      "sha256": "bf6ebb8d06a026d5f5ae33583cabacc780b4d0bfde7bcc40c3dbc009336a59ba"
+      "sha256": "0bf86bd40d2fbd88707ab7a0c3d577d5c43b78292614c9eb1014c8b90627c1b1"
     },
     {
-      "bytes": 20505,
+      "bytes": 2382,
       "file": "hypothesis-global-rankings.json",
-      "sha256": "5c4579e02bb30564135d73900a20a61ace18cce976dad95467f9881725a65c35"
+      "sha256": "a1d33801848d5870f52bc9f4f6a18ef08bb5cba93270910a85245d4452b222d0"
     },
     {
       "bytes": 437,
@@ -82,29 +87,34 @@
       "sha256": "dfcfbf3ebb6c6a50bb36eb23ae653b2cc11b66eff6869811268f67c3f6fa185d"
     },
     {
-      "bytes": 5656,
+      "bytes": 5497,
       "file": "hypothesis-rankings-by-family.json",
-      "sha256": "638df1ee85e28d3fe36baf1b702914810633e9eb2eefbe7d2634841b1060c63e"
+      "sha256": "4e356a65e8682de42d6dc1a91c3e23494bd32acbf0273eef20e3f9b561cb614b"
     },
     {
-      "bytes": 270,
+      "bytes": 269,
       "file": "hypothesis-status-funnel.json",
-      "sha256": "9b631c057a50143586c1fe43a2dc7850170155990490b276f8a3cbd38b1f3f88"
+      "sha256": "90a3af4888b67b5f8cc23b4188f098e00d7e96d130bd51b401d86fca72197c4b"
     },
     {
-      "bytes": 7848,
+      "bytes": 7760,
       "file": "hypothesis-tags-catalog.json",
-      "sha256": "f8ff4ea6d150707a43ae7fa70de09978edf3ef542cee0d09818a9e420cf958eb"
+      "sha256": "62358d1f54d4c434b34ed0f82fbf2df514148c563b2f7623cbcb9f1d4796acd7"
     },
     {
-      "bytes": 21095,
+      "bytes": 19236,
       "file": "hypothesis-tree-root-index.json",
-      "sha256": "228ba1d425aefdefea685ce9bdc5af3a4183d89dc0d15d45e086de98b32cc75b"
+      "sha256": "fc2622967091ea5fd296a8d4ec4809f86cb3050ab01fd1d95a58932746ab8b87"
     },
     {
-      "bytes": 1433,
+      "bytes": 1556,
       "file": "hypothesis-universe-summary.json",
-      "sha256": "6671f4a915be9741d8efe0debcf4729ece98594754cafba4666a7c0d27788542"
+      "sha256": "04e61ae46049e66938842959fd549e4b8d121405c41604a7c9cf79b75bb322fa"
+    },
+    {
+      "bytes": 118565,
+      "file": "property-semantic-roles.json",
+      "sha256": "13d30fbe1a0d4a5b18bc3f642887b4ae0ce1153bfca1b44d8c787fbe85497cfc"
     },
     {
       "bytes": 9447,
@@ -122,9 +132,9 @@
       "sha256": "5f1381c2fe45bcd9fa4a6a1a73bd80cc258021cce1df6b4ba2b4bd0074020e86"
     },
     {
-      "bytes": 2221,
+      "bytes": 2219,
       "file": "universal-cache-only-pilot.json",
-      "sha256": "1c9207ca99e2f69145c2b63d03ec1a0c275fa0efe6c17be15b6e7c06e8fb6b16"
+      "sha256": "8aee996336e3477b4adf34a12c6e42fedb3667c71c371a8df103f481919579cc"
     }
   ],
   "provider_calls": 0,

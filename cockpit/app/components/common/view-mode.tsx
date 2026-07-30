@@ -11,7 +11,7 @@ import {
 
 import { t } from "../../i18n";
 
-export type ViewMode = "essential" | "expert";
+export type ViewMode = "discovery" | "analysis" | "expert";
 
 type ViewModeContextValue = {
   mode: ViewMode;
@@ -20,13 +20,34 @@ type ViewModeContextValue = {
 };
 
 const ViewModeContext = createContext<ViewModeContextValue>({
-  mode: "essential",
+  mode: "discovery",
   setMode: () => undefined,
   isExpert: false,
 });
 
 const storageKey = "robin-experience-view-mode";
 const storageEvent = "robin-experience-view-mode-change";
+const viewModeOptions: ReadonlyArray<{
+  hint: string;
+  label: string;
+  mode: ViewMode;
+}> = [
+  {
+    mode: "discovery",
+    label: t("view.essential"),
+    hint: t("view.essentialHint"),
+  },
+  {
+    mode: "analysis",
+    label: "Vue Analyse",
+    hint: "Affiche les comparaisons, les tendances et les éléments d’interprétation.",
+  },
+  {
+    mode: "expert",
+    label: t("view.expert"),
+    hint: t("view.expertHint"),
+  },
+];
 
 function subscribeMode(onStoreChange: () => void) {
   window.addEventListener("storage", onStoreChange);
@@ -38,20 +59,23 @@ function subscribeMode(onStoreChange: () => void) {
 }
 
 function readMode(): ViewMode {
-  return window.localStorage.getItem(storageKey) === "expert"
-    ? "expert"
-    : "essential";
+  const storedMode = window.localStorage.getItem(storageKey);
+  if (storedMode === "analysis" || storedMode === "expert") return storedMode;
+  return "discovery";
 }
 
 export function ViewModeProvider({ children }: { children: ReactNode }) {
   const mode = useSyncExternalStore<ViewMode>(
     subscribeMode,
     readMode,
-    () => "essential",
+    () => "discovery",
   );
 
   useEffect(() => {
     document.documentElement.dataset.robinHydrated = "true";
+    if (window.localStorage.getItem(storageKey) === "essential") {
+      window.localStorage.setItem(storageKey, "discovery");
+    }
     return () => {
       delete document.documentElement.dataset.robinHydrated;
     };
@@ -80,33 +104,28 @@ export function useViewMode() {
 
 export function ViewModeSwitch() {
   const { mode, setMode } = useViewMode();
+  const activeOption =
+    viewModeOptions.find((option) => option.mode === mode) ?? viewModeOptions[0];
+
   return (
     <div
       className="view-switch"
       role="group"
-      aria-label="Niveau de détail"
-      title={
-        mode === "essential"
-          ? t("view.essentialHint")
-          : t("view.expertHint")
-      }
+      aria-label="Niveau de lecture"
+      title={activeOption.hint}
     >
-      <button
-        aria-pressed={mode === "essential"}
-        className={mode === "essential" ? "active" : ""}
-        onClick={() => setMode("essential")}
-        type="button"
-      >
-        {t("view.essential")}
-      </button>
-      <button
-        aria-pressed={mode === "expert"}
-        className={mode === "expert" ? "active" : ""}
-        onClick={() => setMode("expert")}
-        type="button"
-      >
-        {t("view.expert")}
-      </button>
+      {viewModeOptions.map((option) => (
+        <button
+          aria-label={`${option.label}. ${option.hint}`}
+          aria-pressed={mode === option.mode}
+          className={mode === option.mode ? "active" : ""}
+          key={option.mode}
+          onClick={() => setMode(option.mode)}
+          type="button"
+        >
+          {option.label}
+        </button>
+      ))}
     </div>
   );
 }
@@ -114,5 +133,11 @@ export function ViewModeSwitch() {
 export function ExpertOnly({ children }: { children: ReactNode }) {
   const { isExpert } = useViewMode();
   if (!isExpert) return null;
+  return <>{children}</>;
+}
+
+export function AnalysisOnly({ children }: { children: ReactNode }) {
+  const { mode } = useViewMode();
+  if (mode === "discovery") return null;
   return <>{children}</>;
 }

@@ -1,0 +1,707 @@
+{
+  "schema_version": "j10-hypothesis-evidence-v1",
+  "tables": {
+    "historical_fixture_evidence": {
+      "fields": [
+        {
+          "name": "schema_version",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "dataset_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "historical_data_revision",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "historical_parquet_tree",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "source_partition",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "source_partition_sha256",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "record_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "source_dataset_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "source_row_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "canonical_match_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "provider_fixture_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "fixture_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "competition_key",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "competition_name",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "competition",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "season",
+          "nullable": false,
+          "type": "int16"
+        },
+        {
+          "name": "round",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "final_status",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "match_date",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "kickoff_at",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "home_team_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "away_team_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "home_team_name",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "away_team_name",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "home_source_name",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "away_source_name",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "home_goals",
+          "nullable": false,
+          "type": "int16"
+        },
+        {
+          "name": "away_goals",
+          "nullable": false,
+          "type": "int16"
+        },
+        {
+          "name": "odds_home",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "odds_draw",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "odds_away",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "odds_over_25",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "odds_under_25",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bookmaker_1x2",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "bookmaker_totals",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "price_type",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "totals_price_type",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "observed_time_status",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "quality_status",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "source",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "raw_payload_hash",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "mapping_status",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "market_margin_1x2",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "market_margin_totals",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "de_vig_home",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "de_vig_draw",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "de_vig_away",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "de_vig_over_25",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "de_vig_under_25",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "quality",
+          "nullable": true,
+          "type": "string"
+        }
+      ],
+      "grain": "one frozen historical market source record per fixture",
+      "primary_key": [
+        "source_dataset_hash",
+        "canonical_match_id"
+      ]
+    },
+    "hypothesis_fixture_membership": {
+      "fields": [
+        {
+          "name": "schema_version",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "dataset_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "campaign_result_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "registry_sha256",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "historical_data_revision",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "hypothesis_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "hypothesis_version",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "rule_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "membership_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "canonical_match_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "market",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "price_class",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "observed_time_status",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "observed_odds",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "market_margin",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "stake_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "won",
+          "nullable": false,
+          "type": "bool"
+        },
+        {
+          "name": "lost",
+          "nullable": false,
+          "type": "bool"
+        },
+        {
+          "name": "void",
+          "nullable": false,
+          "type": "bool"
+        },
+        {
+          "name": "gross_return_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "profit_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "cumulative_profit_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "occurrence_index",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "chronological_fold",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "statistical_group",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "eligibility_status",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "eligibility_reason",
+          "nullable": false,
+          "type": "string"
+        }
+      ],
+      "foreign_key": {
+        "canonical_match_id": "historical_fixture_evidence.canonical_match_id"
+      },
+      "grain": "one strict eligible settled fixture per J10 rule",
+      "membership_hash_contract": "SHA256_CANONICAL_JSON_OF_STORED_FIELDS_PLUS_SOURCE_ROW_HASH_AND_MEMBERSHIP_SET_HASH",
+      "primary_key": [
+        "dataset_hash",
+        "rule_hash",
+        "canonical_match_id"
+      ]
+    },
+    "hypothesis_historical_evidence_summary": {
+      "fields": [
+        {
+          "name": "schema_version",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "dataset_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "campaign_result_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "registry_sha256",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "historical_data_revision",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "hypothesis_id",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "rule_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "summary_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "membership_set_hash",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "market",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "family",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "competition_scope",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "condition_count",
+          "nullable": false,
+          "type": "int8"
+        },
+        {
+          "name": "conditions_json",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "raw_occurrences",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "occurrences",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "settled_occurrences",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "settled_bets",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "wins",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "losses",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "voids",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "hit_rate",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "average_odds",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "median_odds",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "stake_per_bet",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "total_staked_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "gross_returns_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "total_return_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "profit_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "roi",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "maximum_drawdown_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "max_drawdown_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "longest_losing_streak",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "max_losing_streak",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "gross_profit_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "gross_loss_units",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "profit_factor",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "confidence_interval",
+          "nullable": true,
+          "type": "string"
+        },
+        {
+          "name": "confidence_lower",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "confidence_upper",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "confidence_level",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bootstrap_groups",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "eligible_folds",
+          "nullable": false,
+          "type": "int16"
+        },
+        {
+          "name": "positive_folds",
+          "nullable": false,
+          "type": "int16"
+        },
+        {
+          "name": "walk_forward_survived",
+          "nullable": false,
+          "type": "bool"
+        },
+        {
+          "name": "distinct_seasons",
+          "nullable": false,
+          "type": "int16"
+        },
+        {
+          "name": "distinct_teams",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "statistical_groups",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "distinct_groups",
+          "nullable": false,
+          "type": "int32"
+        },
+        {
+          "name": "p_value",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "q_value",
+          "nullable": false,
+          "type": "double"
+        },
+        {
+          "name": "support_sufficient",
+          "nullable": false,
+          "type": "bool"
+        },
+        {
+          "name": "hypothesis_status",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "evidence_scope",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "reconciled",
+          "nullable": false,
+          "type": "bool"
+        }
+      ],
+      "grain": "one aggregate historical evidence record per J10 rule",
+      "primary_key": [
+        "dataset_hash",
+        "rule_hash"
+      ]
+    }
+  }
+}

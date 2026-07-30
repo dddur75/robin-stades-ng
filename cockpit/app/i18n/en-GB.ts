@@ -30,6 +30,8 @@ export const enGB: Record<TranslationKey, string> = {
   "action.backMatches": "Back to matches",
   "view.essential": "Essential view",
   "view.expert": "Expert view",
+  "view.essentialLegacy": "Essential view",
+  "view.expertLegacy": "Expert view",
   "view.expertHint": "Shows evidence, identifiers and technical detail.",
   "view.essentialHint": "Shows key information with plain explanations.",
   "glossary.title": "Robin glossary",

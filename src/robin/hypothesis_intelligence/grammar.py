@@ -9,8 +9,10 @@ from typing import TypeAlias
 from robin.hypothesis_intelligence.contracts import canonical_sha256
 from robin.hypothesis_intelligence.ontology import (
     PROPERTY_BY_ID,
+    PUBLIC_HYPOTHESIS_SEMANTIC_ROLES,
     PropertyDataType,
     PropertyDefinition,
+    SemanticRole,
 )
 
 
@@ -132,6 +134,19 @@ class Predicate:
     def fingerprint(self) -> str:
         return canonical_sha256(self.canonical_payload())
 
+    @property
+    def semantic_role(self) -> SemanticRole:
+        if self.learned_on == "LOGICAL_NEGATIVE_CONTROL":
+            return SemanticRole.NEGATIVE_CONTROL
+        definition = PROPERTY_BY_ID.get(self.property_id)
+        if definition is None:
+            raise ValueError(f"UNKNOWN_FOOTBALL_PROPERTY:{self.property_id}")
+        return definition.semantic_role
+
+    @property
+    def public_hypothesis_eligible(self) -> bool:
+        return self.semantic_role in PUBLIC_HYPOTHESIS_SEMANTIC_ROLES
+
 
 @dataclass(frozen=True, slots=True)
 class GraphNode:
@@ -249,6 +264,23 @@ class HypothesisExpression:
     @property
     def semantic_fingerprint(self) -> str:
         return canonical_sha256(self.canonical_payload())
+
+    @property
+    def semantic_roles(self) -> tuple[SemanticRole, ...]:
+        return tuple(predicate.semantic_role for predicate in self.predicates)
+
+    @property
+    def public_hypothesis_eligible(self) -> bool:
+        """Admit only substantive football predicates; unknown roles fail closed."""
+
+        return bool(self.predicates) and all(
+            role in PUBLIC_HYPOTHESIS_SEMANTIC_ROLES for role in self.semantic_roles
+        )
+
+    def require_public_hypothesis(self) -> None:
+        if not self.public_hypothesis_eligible:
+            roles = ",".join(role.value for role in self.semantic_roles) or "EMPTY"
+            raise ValueError(f"PUBLIC_HYPOTHESIS_SEMANTIC_ROLE_FORBIDDEN:{roles}")
 
 
 @dataclass(frozen=True, slots=True)

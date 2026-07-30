@@ -44,7 +44,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0012_universal_genome_v2"
+          alembic current | grep -q "0013_historical_evidence_index"
       - name: Planifier seulement les fenêtres dues
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

@@ -216,7 +216,7 @@ def test_upgrade_downgrade_upgrade_cree_le_schema_jalon11(
         revision = connection.scalar(
             sa.text("SELECT version_num FROM alembic_version")
         )
-    assert revision == "0012_universal_genome_v2"
+    assert revision == "0013_historical_evidence_index"
 
 
 def test_modeles_et_migration_portent_timestamps_utc_hashes_et_versions() -> None:

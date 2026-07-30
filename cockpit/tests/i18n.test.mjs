@@ -45,7 +45,7 @@ test("chaque clé statique utilisée existe dans le catalogue français", async 
 test("le catalogue français conserve accents, apostrophes et pluriels", async () => {
   const fr = await readFile(new URL("../app/i18n/fr-FR.ts", import.meta.url), "utf8");
   assert.match(fr, /État/);
-  assert.match(fr, /l’essentiel/);
+  assert.match(fr, /repères essentiels/);
   assert.match(fr, /rencontres/);
   assert.match(fr, /Aucun pari simulé/);
   assert.match(fr, /Apprentissage en direct/);
@@ -97,6 +97,7 @@ test("le catalogue des statuts contient une présentation complète", async () =
   assert.match(source, /tone:/);
   assert.match(source, /icon:/);
   assert.match(source, /severity:/);
+  assert.match(source, /À jour au moment du snapshot/);
 });
 
 test("aucune valeur opérationnelle connue n’est recopiée dans la couche frontend", async () => {

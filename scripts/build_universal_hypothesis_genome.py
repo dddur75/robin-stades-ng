@@ -89,6 +89,8 @@ def _sha256(path: Path) -> str:
 
 
 def _pilot_predicates() -> tuple[Predicate, ...]:
+    """Substantive predicates admitted to the public football universe."""
+
     return (
         Predicate(
             "football:strength_form:elo",
@@ -129,22 +131,10 @@ def _pilot_predicates() -> tuple[Predicate, ...]:
             learned_on="FIXED_DIAGNOSTIC",
         ),
         Predicate(
-            "football:calendar_fatigue:rest_days",
-            Operator.LT,
-            0.0,
-            learned_on="LOGICAL_NEGATIVE_CONTROL",
-        ),
-        Predicate(
             "football:market:market_margin",
             Operator.LE,
             0.08,
             learned_on="FIXED_HISTORICAL_PRICE_CLASS",
-        ),
-        Predicate(
-            "football:data_quality:missingness",
-            Operator.GE,
-            0.25,
-            learned_on="SYMBOLIC_LONG_TAIL_TEMPLATE",
         ),
         Predicate(
             "football:formation_structure:formation",
@@ -179,6 +169,25 @@ def _pilot_predicates() -> tuple[Predicate, ...]:
     )
 
 
+def _internal_diagnostic_predicates() -> tuple[Predicate, ...]:
+    """Controls retained for diagnostics, never projected as public hypotheses."""
+
+    return (
+        Predicate(
+            "football:calendar_fatigue:rest_days",
+            Operator.LT,
+            0.0,
+            learned_on="LOGICAL_NEGATIVE_CONTROL",
+        ),
+        Predicate(
+            "football:data_quality:missingness",
+            Operator.GE,
+            0.25,
+            learned_on="SYMBOLIC_LONG_TAIL_TEMPLATE",
+        ),
+    )
+
+
 def _support_map(
     predicates: tuple[Predicate, ...],
     *,
@@ -188,19 +197,13 @@ def _support_map(
     output: dict[str, int] = {}
     enumerator = TypedEnumerationEngine()
     for expression in enumerator.iter_expressions(predicates, maximum_depth=4):
+        if not expression.public_hypothesis_eligible:
+            continue
         property_ids = {predicate.property_id for predicate in expression.predicates}
         if any(
             PROPERTY_BY_ID[property_id].availability_status.value == "DATA_GATE_BLOCKED"
             for property_id in property_ids
         ):
-            continue
-        if any(
-            predicate.learned_on == "LOGICAL_NEGATIVE_CONTROL"
-            for predicate in expression.predicates
-        ):
-            output[expression.semantic_fingerprint] = 0
-            continue
-        if "football:data_quality:missingness" in property_ids:
             continue
         support = (
             min(team_rows, market_rows)
@@ -358,6 +361,7 @@ def _node_projection(node: object) -> dict[str, object]:
     if not hasattr(node, "expression"):
         raise TypeError("HYPOTHESIS_TREE_NODE_REQUIRED")
     expression = node.expression
+    expression.require_public_hypothesis()
     first = PROPERTY_BY_ID[expression.predicates[0].property_id]
     return {
         "node_id": node.node_id,
@@ -372,6 +376,8 @@ def _node_projection(node: object) -> dict[str, object]:
             for predicate in expression.predicates
         ),
         "technical_rule": expression.canonical_payload(),
+        "semantic_roles": [role.value for role in expression.semantic_roles],
+        "public_hypothesis_eligible": True,
         "support": node.support,
         "status": node.scientific_status.value,
         "materialization_disposition": node.materialization_disposition.value,
@@ -483,14 +489,84 @@ def build(
     family_catalog = [
         {
             "family": seed.family,
-            "display_name_fr": seed.display_fr,
+            "display_name_fr": (
+                "Qualité et disponibilité des données"
+                if seed.family == "DATA_QUALITY"
+                else seed.display_fr
+            ),
             "entities": [seed.entity],
             "property_count": len(seed.properties),
             "availability_status": seed.availability.value,
             "blocking_reason": seed.blocking_reason,
+            "public_hypothesis_eligible": seed.family != "DATA_QUALITY",
+            "workspace_path": (
+                "/expert/qualite-donnees" if seed.family == "DATA_QUALITY" else None
+            ),
         }
         for seed in FAMILY_SEEDS
     ]
+    semantic_role_items = [
+        {
+            "property_id": item.property_id,
+            "family": item.family,
+            "display_name_fr": item.display_name_fr,
+            "semantic_role": item.semantic_role.value,
+            "public_hypothesis_eligible": item.semantic_role.value
+            in {
+                "FOOTBALL_PREDICTOR",
+                "FOOTBALL_CONTEXT",
+                "FOOTBALL_RELATION",
+                "MARKET_PROPERTY",
+            },
+        }
+        for item in PROPERTY_UNIVERSE
+    ]
+    semantic_role_counts: dict[str, int] = {}
+    for item in semantic_role_items:
+        role = str(item["semantic_role"])
+        semantic_role_counts[role] = semantic_role_counts.get(role, 0) + 1
+    diagnostic_predicates = _internal_diagnostic_predicates()
+    data_quality_workspace = {
+        "schema_version": "hypothesis-data-quality-workspace-v1",
+        "title_fr": "Qualité et disponibilité des données",
+        "workspace_path": "/expert/qualite-donnees",
+        "public_hypothesis_surface": False,
+        "legacy_public_false_hypothesis_branches_removed": 8,
+        "diagnostic_properties": [
+            item
+            for item in semantic_role_items
+            if item["semantic_role"]
+            in {
+                "DATA_QUALITY_METADATA",
+                "AVAILABILITY_METADATA",
+                "PROVENANCE_METADATA",
+            }
+        ],
+        "internal_controls": [
+            {
+                "property_id": predicate.property_id,
+                "semantic_role": predicate.semantic_role.value,
+                "technical_rule": predicate.canonical_payload(),
+                "public_hypothesis_eligible": False,
+            }
+            for predicate in diagnostic_predicates
+        ],
+        "diagnostics": {
+            "missing_values": True,
+            "pre_match_unavailability": True,
+            "coverage": True,
+            "availability_bias": True,
+            "source_errors": True,
+            "blocked_families": sum(
+                seed.availability.value == "DATA_GATE_BLOCKED" for seed in FAMILY_SEEDS
+            ),
+            "partial_families": sum(
+                seed.availability.value == "PARTIAL" for seed in FAMILY_SEEDS
+            ),
+        },
+        "provider_calls": 0,
+        "live_writes": 0,
+    }
     tags_catalog = {
         "schema_version": "hypothesis-tags-catalog-v1",
         "origins": {
@@ -506,6 +582,7 @@ def build(
                 "label_fr": item["display_name_fr"],
             }
             for item in family_catalog
+            if item["public_hypothesis_eligible"]
         ],
         "subfamilies": sorted({item.subfamily for item in PROPERTY_UNIVERSE}),
         "public_language": "fr",
@@ -535,6 +612,21 @@ def build(
         "symbolic_templates": len(PROPERTY_UNIVERSE),
         "property_families": len(FAMILY_SEEDS),
         "properties": len(PROPERTY_UNIVERSE),
+        "public_hypothesis_properties": sum(
+            bool(item["public_hypothesis_eligible"]) for item in semantic_role_items
+        ),
+        "diagnostic_metadata_properties": sum(
+            item["semantic_role"]
+            in {
+                "DATA_QUALITY_METADATA",
+                "AVAILABILITY_METADATA",
+                "PROVENANCE_METADATA",
+            }
+            for item in semantic_role_items
+        ),
+        "non_public_hypothesis_properties": sum(
+            not bool(item["public_hypothesis_eligible"]) for item in semantic_role_items
+        ),
         "relations": len(RELATION_CATALOG),
         "transformations": len(TRANSFORMATION_CATALOG),
         "match_windows": list(MATCH_WINDOWS),
@@ -667,6 +759,7 @@ def build(
                 "strategies_validees": [],
             }
             for item in family_catalog
+            if item["public_hypothesis_eligible"]
         },
     }
     freeze_payload: dict[str, object] = {
@@ -728,7 +821,11 @@ def build(
     facets = {
         "schema_version": "hypothesis-facets-v1",
         "origins": tags_catalog["origins"],
-        "families": {item["family"]: item["property_count"] for item in family_catalog},
+        "families": {
+            item["family"]: item["property_count"]
+            for item in family_catalog
+            if item["public_hypothesis_eligible"]
+        },
         "campaigns": len(CAMPAIGNS),
         "statuses": status_counts,
         "tree_depths": sorted({node.depth for node in first.nodes}),
@@ -757,6 +854,7 @@ def build(
                 ],
             }
             for family in family_catalog
+            if family["public_hypothesis_eligible"]
         },
     }
     glossary = {
@@ -798,6 +896,20 @@ def build(
             "items": family_catalog,
             "catalog_hash": canonical_sha256(family_catalog),
         },
+        "property-semantic-roles.json": {
+            "schema_version": "property-semantic-roles-v1",
+            "classification_complete": len(semantic_role_items) == len(PROPERTY_UNIVERSE),
+            "property_count": len(semantic_role_items),
+            "role_counts": semantic_role_counts,
+            "public_allowed_roles": [
+                "FOOTBALL_PREDICTOR",
+                "FOOTBALL_CONTEXT",
+                "FOOTBALL_RELATION",
+                "MARKET_PROPERTY",
+            ],
+            "items": semantic_role_items,
+        },
+        "hypothesis-data-quality-workspace.json": data_quality_workspace,
         "hypothesis-tags-catalog.json": tags_catalog,
         "hypothesis-facets.json": facets,
         "hypothesis-tree-root-index.json": root_index,
