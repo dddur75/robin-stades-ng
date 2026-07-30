@@ -626,6 +626,28 @@ test("les captures simultanées regroupent les rencontres sans choisir la premi�
   assert.equal(simultaneous.match, `${simultaneous.fixtureCount} rencontres concernées`);
 });
 
+test("la fraîcheur publiée utilise l’horloge déterministe du snapshot", () => {
+  const snapshotGeneratedAt = String(snapshot.generatedAt);
+  const observatoryGeneratedAt =
+    snapshot.prospectiveObservatory.generated_at;
+  const model = buildPresentationModel(snapshot, {
+    now: new Date(snapshotGeneratedAt),
+  });
+  const expectedAgeMinutes = Math.floor(
+    (
+      new Date(snapshotGeneratedAt).getTime() -
+      new Date(observatoryGeneratedAt).getTime()
+    ) / 60_000,
+  );
+
+  assert.equal(expectedAgeMinutes, 19);
+  assert.equal(model.system.freshness.ageMinutes, expectedAgeMinutes);
+  assert.equal(
+    model.dashboard.operationalEvidence.freshness.ageMinutes,
+    expectedAgeMinutes,
+  );
+});
+
 test("la fraîcheur devient ancienne lorsqu’une fenêtre s’ouvre après le snapshot", () => {
   const model = buildPresentationModel(snapshot, {
     now: new Date("2026-08-01T18:00:00+00:00"),

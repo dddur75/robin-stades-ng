@@ -6,6 +6,7 @@ import { delimiter, join, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { buildPresentationModel } from "../app/lib/presentation-model";
+import { requiredIsoInstant } from "./presentation-build-clock";
 
 const inputUrl = new URL("../app/cockpit-data.json", import.meta.url);
 const outputUrl = new URL("../app/cockpit-presentation.json", import.meta.url);
@@ -193,8 +194,13 @@ async function ensureHypothesisNodeArtifacts(): Promise<{
   return { root: temporaryNodeRoot, temporaryRoot };
 }
 const snapshot = JSON.parse(await readFile(inputUrl, "utf8")) as unknown;
-const presentation = buildPresentationModel(snapshot);
 const snapshotRecord = snapshot as Record<string, unknown>;
+const presentation = buildPresentationModel(snapshot, {
+  now: requiredIsoInstant(
+    snapshotRecord.generatedAt,
+    "COCKPIT_SNAPSHOT_GENERATED_AT_INVALID",
+  ),
+});
 const deepData = snapshotRecord.deepData as Record<string, unknown>;
 const publicPresentation = {
   dashboard: presentation.dashboard,
