@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { fileURLToPath } from "node:url";
@@ -10,6 +10,31 @@ const publicRoot = fileURLToPath(new URL("../public/", import.meta.url));
 const missingAssets = {
   fetch: async () => new Response("Not found", { status: 404 }),
 };
+
+async function exists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "ENOENT"
+    ) {
+      return false;
+    }
+    throw error;
+  }
+}
+
+const publishedEvidenceAvailable = await exists(resolve(
+  publicRoot,
+  "data/hypothesis-evidence/manifest.json",
+));
+const publishedEvidenceTestOptions = publishedEvidenceAvailable
+  ? {}
+  : { skip: "les preuves historiques publiees sont absentes" };
 
 function publishedAssets(requestedPaths) {
   return {
@@ -222,7 +247,10 @@ test("une hypothèse du top 10 absente de l’ancien modèle possède sa fiche",
   assert.match(text, /Pourquoi ce signal n’est pas validé/u);
 });
 
-test("la liste SSR J10-M002 charge ses fragments publiés et mène vers la preuve du match", async () => {
+test(
+  "la liste SSR J10-M002 charge ses fragments publiés et mène vers la preuve du match",
+  publishedEvidenceTestOptions,
+  async () => {
   const { requestedPaths, response } = await renderWithPublishedAssets(
     "/hypotheses/J10-M002/matchs",
   );
@@ -250,7 +278,10 @@ test("la liste SSR J10-M002 charge ses fragments publiés et mène vers la preuv
   );
 });
 
-test("la fiche SSR du match reconstruit score, contexte et navigation chronologique", async () => {
+test(
+  "la fiche SSR du match reconstruit score, contexte et navigation chronologique",
+  publishedEvidenceTestOptions,
+  async () => {
   const { requestedPaths, response } = await renderWithPublishedAssets(
     "/matchs/historique/api-football%3A608482",
   );
