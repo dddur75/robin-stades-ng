@@ -1,0 +1,163 @@
+{
+  "schema_version": "historical-deep-data-harvest-v1",
+  "campaign_id": "historical-deep-data-harvest-v1",
+  "provider": "api-football",
+  "provider_secret_name": "API_FOOTBALL_KEY",
+  "subscription_requirements": {
+    "plan": "Mega",
+    "active": true
+  },
+  "competitions": [
+    {
+      "canonical_key": "api-football:61",
+      "name": "Ligue 1",
+      "provider_league_id": 61
+    },
+    {
+      "canonical_key": "api-football:39",
+      "name": "Premier League",
+      "provider_league_id": 39
+    },
+    {
+      "canonical_key": "api-football:140",
+      "name": "Liga",
+      "provider_league_id": 140
+    },
+    {
+      "canonical_key": "api-football:78",
+      "name": "Bundesliga",
+      "provider_league_id": 78
+    },
+    {
+      "canonical_key": "api-football:135",
+      "name": "Serie A",
+      "provider_league_id": 135
+    }
+  ],
+  "season_priorities": {
+    "P0": [2020, 2021, 2022, 2023, 2024, 2025],
+    "P1": [2018, 2019],
+    "P2": "all_older_seasons_with_verified_coverage",
+    "P3": "expensive_secondary_families_after_P0_and_P1"
+  },
+  "families": {
+    "P0": [
+      "fixtures",
+      "events",
+      "lineups",
+      "lineup_players",
+      "formations",
+      "team_match_statistics",
+      "player_match_statistics",
+      "referees",
+      "venues",
+      "teams",
+      "standings",
+      "rounds",
+      "players",
+      "player_season_statistics",
+      "injuries",
+      "suspensions"
+    ],
+    "P3": [
+      "careers",
+      "transfers",
+      "sidelined_periods",
+      "coaches",
+      "trophies",
+      "other_profiles"
+    ]
+  },
+  "quota": {
+    "daily_limit_source": "provider_status_and_headers",
+    "daily_remaining_source": "provider_status_and_headers",
+    "mandatory_reserve_minimum": 20000,
+    "mandatory_reserve_fraction": 0.2,
+    "mission_call_cap": 100000,
+    "initial_requests_per_second": 8,
+    "initial_requests_per_minute": 480,
+    "max_retries": 3,
+    "checkpoint_max_calls": 500,
+    "checkpoint_max_minutes": 20
+  },
+  "bundle_pilot": {
+    "preferred_competition": "api-football:39",
+    "preferred_season": 2024,
+    "candidate_sizes": [20, 10, 5, 1]
+  },
+  "storage": {
+    "mode": "R2_FIRST_APPEND_ONLY",
+    "namespace": "historical-deep-data/schema-v1",
+    "payload_key_template": "competition={competition}/season={season}/family={family}/endpoint={endpoint}/task={task_id}/payload-{sha256}.json.gz",
+    "receipt_name": "receipt.json",
+    "raw_payloads_in_git": false,
+    "deletions_allowed": false
+  },
+  "task_statuses": [
+    "PENDING",
+    "RUNNING",
+    "COMPLETE",
+    "EMPTY_VALID",
+    "RETRYABLE",
+    "BLOCKED_COVERAGE",
+    "BLOCKED_PROVIDER",
+    "FAILED"
+  ],
+  "temporal_classes": [
+    "STATIC_PROFILE",
+    "EVENT_TIME_USABLE",
+    "PRIOR_MATCH_USABLE",
+    "POST_LINEUP_RECONSTRUCTED",
+    "POST_MATCH_ONLY",
+    "ANNOUNCEMENT_TIME_UNKNOWN",
+    "SEASON_FINAL_AGGREGATE",
+    "PROSPECTIVE_POINT_IN_TIME",
+    "HISTORICAL_INTERVAL_RECONSTRUCTED",
+    "FIXTURE_SPECIFIC_POST_HOC"
+  ],
+  "datasets": [
+    "TEAM_PREMATCH_STRICT",
+    "PLAYER_PREMATCH_STRICT",
+    "LINEUP_HISTORY_PREMATCH_STRICT",
+    "TARGET_POST_LINEUP_RECONSTRUCTED",
+    "INJURY_INTERVAL_RECONSTRUCTED",
+    "POST_MATCH_DESCRIPTIVE"
+  ],
+  "gate_statuses": [
+    "READY_STRICT",
+    "READY_RECONSTRUCTED",
+    "PARTIAL",
+    "BLOCKED_BY_COVERAGE",
+    "BLOCKED_BY_TEMPORALITY",
+    "BLOCKED_BY_SOURCE"
+  ],
+  "workflows": [
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78
+  ],
+  "safety": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false,
+    "POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES": false,
+    "THE_ODDS_API_HISTORICAL_CREDITS": false
+  },
+  "verdicts": [
+    "HISTORICAL_DEEP_DATA_HARVEST_READY",
+    "HISTORICAL_DEEP_DATA_HARVEST_PARTIAL",
+    "HISTORICAL_DEEP_DATA_HARVEST_BLOCKED_BY_PROVIDER",
+    "HISTORICAL_DEEP_DATA_HARVEST_FAILED"
+  ]
+}

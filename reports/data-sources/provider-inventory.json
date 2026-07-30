@@ -1,0 +1,51 @@
+{
+  "schema_version": "provider-inventory-v1",
+  "checked_at": "2026-07-30T21:15:00Z",
+  "secret_values_read": false,
+  "providers": [
+    {
+      "id": "api-football",
+      "display_name": "API-Football / API-Sports",
+      "role": "historical_deep_primary",
+      "secret_name": "API_FOOTBALL_KEY",
+      "secret_name_present": true,
+      "plan_required": "Mega",
+      "subscription_status": "PENDING_PROVIDER_STATUS_CHECK",
+      "mission_usage": "ALLOWED_WITHIN_DYNAMIC_QUOTA"
+    },
+    {
+      "id": "football-data-co-uk",
+      "display_name": "Football-Data.co.uk",
+      "role": "historical_market_csv_corpus",
+      "secret_name": null,
+      "secret_name_present": null,
+      "subscription_status": "PUBLIC_DATASET",
+      "mission_usage": "CACHE_ONLY_BASELINE"
+    },
+    {
+      "id": "football-data-org",
+      "display_name": "football-data.org",
+      "role": "distinct_api_unassigned",
+      "secret_name": null,
+      "secret_name_present": false,
+      "subscription_status": "NOT_PROVEN",
+      "mission_usage": "DISABLED"
+    },
+    {
+      "id": "the-odds-api",
+      "display_name": "The Odds API",
+      "role": "prospective_price_capture",
+      "secret_name": "ODDS_API_KEY",
+      "secret_name_present": true,
+      "subscription_status": "OUT_OF_SCOPE",
+      "mission_usage": "HISTORICAL_CREDITS_FORBIDDEN"
+    }
+  ],
+  "infrastructure_secret_names_present": [
+    "DATABASE_URL",
+    "R2_ACCESS_KEY_ID",
+    "R2_ACCOUNT_ID",
+    "R2_BUCKET_NAME",
+    "R2_SECRET_ACCESS_KEY"
+  ]
+}
