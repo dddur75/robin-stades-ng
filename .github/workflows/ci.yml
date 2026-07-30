@@ -215,7 +215,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python -m alembic upgrade head
-          python -m alembic current | grep -q "0012_universal_genome_v2"
+          python -m alembic current | grep -q "0013_historical_evidence_index"
       - name: Estimer puis enregistrer les fixtures Ligue 1
         if: >-
           contains(github.event.head_commit.message, '[run-j12-pilot]') &&

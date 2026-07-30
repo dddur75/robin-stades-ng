@@ -188,7 +188,7 @@ def test_migration_creates_eight_append_only_tables_and_round_trips(
     with engine.connect() as connection:
         assert connection.scalar(
             sa.text("SELECT version_num FROM alembic_version")
-        ) == "0012_universal_genome_v2"
+        ) == "0013_historical_evidence_index"
 
     command.downgrade(_config(url), "0009_jalon12_observatory")
     assert PREQUENTIAL_TABLES.isdisjoint(sa.inspect(engine).get_table_names())

@@ -1,0 +1,229 @@
+{
+  "byte_identical_replicas_not_logical_sources": {
+    "4678a30a72bc1cbe138508c4f5881275d97e9b47": "986010a776cb7c0f4948098660febea9577f159e",
+    "518cb4b708b214f550e38c519d1226a0d34f1e38": "986010a776cb7c0f4948098660febea9577f159e"
+  },
+  "logical_campaign_source": {
+    "dataset_hash": "3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495",
+    "historical_data_revision": "5c85cf20b932df44dca8665de00e52e3f1e02236",
+    "historical_parquet_tree": "986010a776cb7c0f4948098660febea9577f159e"
+  },
+  "partitions": [
+    {
+      "competition": "Bundesliga",
+      "path": "historical/parquet/competition=Bundesliga/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2020,
+      "sha256": "fcea7c9fbfa406ad235c9bc850ba596029cdcdfd9c4942cf4db9c8d39034eb7c"
+    },
+    {
+      "competition": "Bundesliga",
+      "path": "historical/parquet/competition=Bundesliga/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2021,
+      "sha256": "7102e665e3728d0fcb2e02719371a46cf528fe7b8fc1f4a78011521ef11f953a"
+    },
+    {
+      "competition": "Bundesliga",
+      "path": "historical/parquet/competition=Bundesliga/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2022,
+      "sha256": "4adfd571facbb812ba5ce768b4738b603910ec068c9dfab3aed3892a9017d929"
+    },
+    {
+      "competition": "Bundesliga",
+      "path": "historical/parquet/competition=Bundesliga/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2023,
+      "sha256": "606bada245f6177ddab04a27f8af1d98e37468d7830adb63f5e81e2f1c3bca89"
+    },
+    {
+      "competition": "Bundesliga",
+      "path": "historical/parquet/competition=Bundesliga/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 305,
+      "season": 2024,
+      "sha256": "eb9d24b4f7c496552f3147bce2ca2e13d2062baf3b9e86eb3bf839716e502cca"
+    },
+    {
+      "competition": "Bundesliga",
+      "path": "historical/parquet/competition=Bundesliga/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2025,
+      "sha256": "6097a786149b8cdb306c34c9bd6889444fc180ae95016ae469d3aed9ecdbba4f"
+    },
+    {
+      "competition": "La Liga",
+      "path": "historical/parquet/competition=La-Liga/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2020,
+      "sha256": "357806cce28352594edec1baf4e8e97fb6a4bca3e01d77a84019e0c8b1402b54"
+    },
+    {
+      "competition": "La Liga",
+      "path": "historical/parquet/competition=La-Liga/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2021,
+      "sha256": "307301378df58e3aad0751e10da82695f1d8b3e309f8c0445baaf410a3379d2d"
+    },
+    {
+      "competition": "La Liga",
+      "path": "historical/parquet/competition=La-Liga/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2022,
+      "sha256": "89cd61b7a9383194cc64d5be3e0f82aeebc4bf87219a98ff8a5c171758581931"
+    },
+    {
+      "competition": "La Liga",
+      "path": "historical/parquet/competition=La-Liga/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2023,
+      "sha256": "ef1d84da487af979793d4c9d2b2e2c8027f3c1b11c3393ec33b00d1f576ab075"
+    },
+    {
+      "competition": "La Liga",
+      "path": "historical/parquet/competition=La-Liga/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2024,
+      "sha256": "18f59700706bfeb217bc5bd2741372c78488dd5056dfc18c80362c57ba76901c"
+    },
+    {
+      "competition": "La Liga",
+      "path": "historical/parquet/competition=La-Liga/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2025,
+      "sha256": "0945a9b74604ac043190553610d0cfdb2934d1d5b551c81cdfff3cc07ed69c5d"
+    },
+    {
+      "competition": "Ligue 1",
+      "path": "historical/parquet/competition=Ligue-1/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2020,
+      "sha256": "54105d63171a1d6e120423e499058e4183ee3733ce1498495727f7b86fb54794"
+    },
+    {
+      "competition": "Ligue 1",
+      "path": "historical/parquet/competition=Ligue-1/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2021,
+      "sha256": "d7c5211130c1a4227eb13c2893683415c13b220b70d5377ceb8c5cf29b55f6fb"
+    },
+    {
+      "competition": "Ligue 1",
+      "path": "historical/parquet/competition=Ligue-1/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2022,
+      "sha256": "be2b3cad5f626c89ec88de2255a207469a022c92c6c78e8dabf7a0415cdfa9e2"
+    },
+    {
+      "competition": "Ligue 1",
+      "path": "historical/parquet/competition=Ligue-1/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2023,
+      "sha256": "797b4da610f754116b11ca0d57724874cd232d329214753a857de54e17380f64"
+    },
+    {
+      "competition": "Ligue 1",
+      "path": "historical/parquet/competition=Ligue-1/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2024,
+      "sha256": "958553691b90810a89893a88f95c9061507354437e802a2d193a9d183ee16e8f"
+    },
+    {
+      "competition": "Ligue 1",
+      "path": "historical/parquet/competition=Ligue-1/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 306,
+      "season": 2025,
+      "sha256": "2251bd0d3ae8e239deb170fd6df6df74fe9b0a9befd7af0ad846d0e28e135846"
+    },
+    {
+      "competition": "Premier League",
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2020,
+      "sha256": "e4623c478fd4a90b8ba45ce45919649672a3ff74e46c2612a8a5f4a45c082267"
+    },
+    {
+      "competition": "Premier League",
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2021,
+      "sha256": "4629fffe188a784d2f9f26b45c06198f550375554a5d9b833a5f6d47493889c5"
+    },
+    {
+      "competition": "Premier League",
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2022,
+      "sha256": "625c1ba715d0eee415702a59c4e6fa65dea0f202fc36b456326729085ebecd67"
+    },
+    {
+      "competition": "Premier League",
+      "path": "historical/parquet/competition=Premier-League/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2023,
+      "sha256": "61a32953bdc128bee0410a6d850f53d53763ba27d4a01eabbf631ea279e2bce6"
+    },
+    {
+      "competition": "Premier League",
+      "path": "historical/parquet/competition=Premier-League/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2024,
+      "sha256": "2ee7d32b997e624d077d168339dba7d85497b272939c98d982e1b1b20d9333c0"
+    },
+    {
+      "competition": "Premier League",
+      "path": "historical/parquet/competition=Premier-League/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2025,
+      "sha256": "2b260344b89bcd5ac5008ec75f0ef71a87fa7f75ff46a8e45277f05044776e4f"
+    },
+    {
+      "competition": "Serie A",
+      "path": "historical/parquet/competition=Serie-A/season=2020/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 379,
+      "season": 2020,
+      "sha256": "6516b8cd587763933668d12c0ce2d838e5b93838953ac130015d18e7d77d0809"
+    },
+    {
+      "competition": "Serie A",
+      "path": "historical/parquet/competition=Serie-A/season=2021/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2021,
+      "sha256": "480ba3cc913303343a123960dee0d4682ea87bf4f74f71aebd72fd6491747196"
+    },
+    {
+      "competition": "Serie A",
+      "path": "historical/parquet/competition=Serie-A/season=2022/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2022,
+      "sha256": "0a730c2795d77a0fdcc3ddf812125947b9a73815d1a19f562a045564b18a4fd0"
+    },
+    {
+      "competition": "Serie A",
+      "path": "historical/parquet/competition=Serie-A/season=2023/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2023,
+      "sha256": "086e8fa06d3bc23700988c438c55366c2b92d8f165fd02fad9da167cffa189ca"
+    },
+    {
+      "competition": "Serie A",
+      "path": "historical/parquet/competition=Serie-A/season=2024/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2024,
+      "sha256": "e01aaa5b1477ff5992f48751ed862bbb6ab46e5dee0b9d33c8574f1e1fe1d7e5"
+    },
+    {
+      "competition": "Serie A",
+      "path": "historical/parquet/competition=Serie-A/season=2025/entity_type=historical_market/dataset_version=historical_market_v1/part-00000.parquet",
+      "rows": 380,
+      "season": 2025,
+      "sha256": "e6f4790e9c4a1ee36ddff49477027bc76162e8e4f0e224c02de986f18ddbfc96"
+    }
+  ],
+  "price_time_contract": {
+    "exact_intraday_timestamp": false,
+    "observed_time_status": "SOURCE_PRICE_CLASS_ONLY",
+    "point_in_time_claim": false
+  },
+  "schema_version": "j10-hypothesis-evidence-source-v1"
+}

@@ -62,7 +62,7 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
         assert "alembic upgrade head" in workflow
         assert (
-            'alembic current | grep -q "0012_universal_genome_v2"'
+            'alembic current | grep -q "0013_historical_evidence_index"'
             in workflow
         )
 
@@ -126,7 +126,7 @@ def test_prequential_workflows_share_state_lock_and_safety_contract() -> None:
         'SOCIAL_PUBLISHING_ENABLED: "false"',
         'DEMO_MODE_ENABLED: "false"',
         'ODDS_API_CREDITS_ALLOWED: "0"',
-        'alembic current | grep -q "0012_universal_genome_v2"',
+        'alembic current | grep -q "0013_historical_evidence_index"',
         "retention-days: 90",
     )
     for name in PREQUENTIAL_WORKFLOWS:

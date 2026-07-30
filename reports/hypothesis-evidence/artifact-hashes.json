@@ -1,0 +1,29 @@
+{
+  "artifacts": [
+    {
+      "bytes": 1629100,
+      "name": "historical_fixture_evidence.parquet",
+      "rows": 10732,
+      "sha256": "b16150b9620bb1af4d68bfa0f9c30de2786e3107dfb4b1b1f0152bbdf44be3ce",
+      "storage": "ARTIFACT_ONLY_NOT_GIT"
+    },
+    {
+      "bytes": 37506146,
+      "name": "hypothesis_fixture_membership.parquet",
+      "rows": 681466,
+      "sha256": "95f5745803cd76d93bbd949debd5219723506838d15d3d8d034cb82bf710aeea",
+      "storage": "ARTIFACT_ONLY_NOT_GIT"
+    },
+    {
+      "bytes": 583157,
+      "name": "hypothesis_historical_evidence_summary.parquet",
+      "rows": 700,
+      "sha256": "ae3f4b5590c54bb036533871245258f7714d86e4e368c9b6244b524e821e0058",
+      "storage": "ARTIFACT_ONLY_NOT_GIT"
+    }
+  ],
+  "detailed_storage": "ARTIFACT_ONLY;R2_INDEXABLE;NOT_POSTGRES_PAYLOAD",
+  "git_policy": "COMPACT_REPORTS_SCHEMAS_HASHES_TOPS_ONLY",
+  "replay_hash": "6c5311448cc38a01e81a0c8a1f6e03cbeedc3a62f790aa7f929a2439bb5b9826",
+  "schema_version": "j10-hypothesis-evidence-artifact-hashes-v1"
+}
