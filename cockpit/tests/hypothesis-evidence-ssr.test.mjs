@@ -89,7 +89,10 @@ function publishedAssets(requestedPaths) {
   };
 }
 
-async function render(path, { assets = missingAssets } = {}) {
+async function render(
+  path,
+  { assets = missingAssets, includeRuntimeBindings = true } = {},
+) {
   const origin = "http://localhost";
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set(
@@ -97,17 +100,18 @@ async function render(path, { assets = missingAssets } = {}) {
     `${process.pid}-${Date.now()}-${path}`,
   );
   const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(
-    new Request(`${origin}${path}`, {
-      headers: {
-        accept: "text/html",
-        host: new URL(origin).host,
-        "x-forwarded-proto": "http",
-      },
-    }),
-    { ASSETS: assets },
-    { passThroughOnException() {}, waitUntil() {} },
-  );
+  const request = new Request(`${origin}${path}`, {
+    headers: {
+      accept: "text/html",
+      host: new URL(origin).host,
+      "x-forwarded-proto": "http",
+    },
+  });
+  if (!includeRuntimeBindings) return worker.fetch(request);
+  return worker.fetch(request, { ASSETS: assets }, {
+    passThroughOnException() {},
+    waitUntil() {},
+  });
 }
 
 async function renderWithPublishedAssets(path) {
@@ -126,6 +130,83 @@ function visibleText(html) {
     .replace(/\s+/gu, " ")
     .trim();
 }
+
+async function withGlobalFetch(fetcher, callback) {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = fetcher;
+  try {
+    return await callback();
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+test(
+  "le worker Vinext rend une route publique sans bindings Cloudflare",
+  { timeout: 5_000 },
+  async () => {
+    const response = await render("/robin-live", {
+      includeRuntimeBindings: false,
+    });
+    assert.equal(response.status, 200);
+    assert.match(visibleText(await response.text()), /Robin des Stades/u);
+  },
+);
+
+test(
+  "le worker sans env utilise le fallback HTTP pour les ressources statiques",
+  { ...publishedEvidenceTestOptions, timeout: 5_000 },
+  async () => {
+    const requestedPaths = [];
+    const fallback = publishedAssets(requestedPaths);
+    const response = await withGlobalFetch(
+      fallback.fetch,
+      () => render("/hypotheses/J10-M002/matchs", {
+        includeRuntimeBindings: false,
+      }),
+    );
+    assert.equal(response.status, 200);
+    assert.deepEqual(new Set(requestedPaths), new Set([
+      "/data/hypothesis-evidence/hypotheses/J10-M002/memberships/25/page-0001.json",
+      "/data/hypothesis-evidence/hypotheses/J10-M002/summary.json",
+    ]));
+  },
+);
+
+test(
+  "le worker avec env utilise ASSETS sans fallback HTTP",
+  { ...publishedEvidenceTestOptions, timeout: 5_000 },
+  async () => {
+    const requestedPaths = [];
+    let fallbackCalls = 0;
+    const response = await withGlobalFetch(
+      async () => {
+        fallbackCalls += 1;
+        return new Response("Unexpected fallback", { status: 500 });
+      },
+      () => render("/hypotheses/J10-M002/matchs", {
+        assets: publishedAssets(requestedPaths),
+      }),
+    );
+    assert.equal(response.status, 200);
+    assert.equal(fallbackCalls, 0);
+    assert.deepEqual(new Set(requestedPaths), new Set([
+      "/data/hypothesis-evidence/hypotheses/J10-M002/memberships/25/page-0001.json",
+      "/data/hypothesis-evidence/hypotheses/J10-M002/summary.json",
+    ]));
+  },
+);
+
+test(
+  "le worker transforme une ressource statique absente en 404 sans exception",
+  { timeout: 5_000 },
+  async () => {
+    const response = await render("/hypotheses/J10-M002/matchs", {
+      assets: missingAssets,
+    });
+    assert.equal(response.status, 404);
+  },
+);
 
 test("le classement historique est rendu côté serveur et borné", async () => {
   const response = await render(

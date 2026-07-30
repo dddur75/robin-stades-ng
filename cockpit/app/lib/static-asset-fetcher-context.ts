@@ -8,9 +8,10 @@ const staticAssetBindingStorage =
   new AsyncLocalStorage<StaticAssetBinding>();
 
 export function runWithStaticAssetBinding<T>(
-  binding: StaticAssetBinding,
+  binding: StaticAssetBinding | undefined,
   callback: () => T,
 ): T {
+  if (!binding) return callback();
   return staticAssetBindingStorage.run(binding, callback);
 }
 
