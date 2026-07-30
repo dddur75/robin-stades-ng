@@ -169,7 +169,7 @@ export function HypothesisFamiliesPage() {
                       <dd>
                         {ranking
                           ? formatPercent(ranking.historical_roi)
-                          : "Non classé"}
+                          : "Aucun signal historique classé dans cette famille"}
                       </dd>
                     </div>
                     <div>

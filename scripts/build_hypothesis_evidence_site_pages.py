@@ -2,8 +2,8 @@
 
 This adapter deliberately does not reconstruct evidence and does not contact a
 provider, object storage, or a database.  It validates the three normalized
-J10 evidence tables, selects at most the ten hypotheses named by the compact
-top-10 report, and publishes a temporary preview directory atomically.
+J10 evidence tables, selects the bounded union of hypotheses exposed by every
+top-10 ranking scope, and publishes a temporary preview directory atomically.
 """
 
 from __future__ import annotations
@@ -20,10 +20,14 @@ import uuid
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from datetime import date, datetime
 from pathlib import Path, PurePosixPath
 from typing import Any, Final
 
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
+
+from robin.historical.storage import canonical_record_hash
+from robin.hypothesis_evidence.contracts import EXPECTED_MARKET_COLUMNS
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ARTIFACT_ROOT = ROOT / "artifacts" / "hypothesis-evidence"
@@ -31,6 +35,51 @@ DEFAULT_TOP_TEN_REPORT = ROOT / "reports" / "hypothesis-evidence" / "top-10.json
 DEFAULT_OUTPUT = ROOT / "artifacts" / "hypothesis-evidence-site-pages"
 
 PAGE_SIZES: Final = (25, 50)
+ANALYSIS_MAX_BYTES: Final = 768 * 1024
+MATCH_DETAIL_MAX_BYTES: Final = 64 * 1024
+MEMBERSHIP_PAGE_MAX_BYTES: Final = 160 * 1024
+QUERY_INDEX_MAX_BYTES: Final = 2 * 1024 * 1024
+QUERY_INDEX_MAX_ITEMS: Final = 2_000
+SUMMARY_MAX_BYTES: Final = 32 * 1024
+MAX_PUBLISHED_HYPOTHESES: Final = 32
+MAX_CONDITIONS: Final = 16
+MAX_CONDITION_BYTES: Final = 16 * 1024
+MAX_CONDITION_TEXT: Final = 256
+ELIGIBILITY_REASONS: Final = {
+    "ALL_CONDITIONS_MATCH;OBSERVED_ODDS_ELIGIBLE;OUTCOME_SETTLED",
+}
+CONDITION_KEYS: Final = {
+    "available_at",
+    "feature",
+    "operator",
+    "source",
+    "value",
+}
+CONDITION_OPERATORS: Final = {"BETWEEN", "EQ", "LE"}
+CONDITION_AVAILABILITY: Final = {
+    "FIXTURE_PUBLICATION",
+    "HISTORICAL_PRICE_CATEGORY",
+}
+CONDITION_SOURCES: Final = {"API_FOOTBALL_FIXTURE", "FOOTBALL_DATA"}
+SOURCE_INTEGER_FIELDS: Final = {
+    "away_team_id",
+    "fixture_id",
+    "home_team_id",
+}
+RANKING_BUCKETS: Final = (
+    "by_roi",
+    "by_profit",
+    "by_support",
+    "by_hit_rate",
+    "by_lowest_drawdown",
+)
+RANKING_CONTRACTS: Final = {
+    "by_roi": ("roi", True),
+    "by_profit": ("profit_units", True),
+    "by_support": ("occurrences", True),
+    "by_hit_rate": ("hit_rate", True),
+    "by_lowest_drawdown": ("maximum_drawdown_units", False),
+}
 PARQUET_NAMES: Final = (
     "historical_fixture_evidence.parquet",
     "hypothesis_fixture_membership.parquet",
@@ -39,6 +88,7 @@ PARQUET_NAMES: Final = (
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 HEX_40 = re.compile(r"^[0-9a-f]{40}$")
 SAFE_HYPOTHESIS_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+SAFE_CONDITION_FEATURE = re.compile(r"^[a-z][a-z0-9_]{0,127}$")
 
 FIXTURE_FIELDS: Final = {
     "dataset_hash",
@@ -63,7 +113,7 @@ FIXTURE_FIELDS: Final = {
     "away_goals",
     "observed_time_status",
     "source",
-}
+} | (set(EXPECTED_MARKET_COLUMNS) - {"_record_hash"})
 MEMBERSHIP_FIELDS: Final = {
     "schema_version",
     "dataset_hash",
@@ -186,6 +236,59 @@ class _RuleAccumulator:
     profit_units: float = 0.0
 
 
+@dataclass(slots=True)
+class _AnalysisAggregate:
+    reference: Mapping[str, object] | None = None
+    losses: int = 0
+    occurrences: int = 0
+    profit_units: float = 0.0
+    stake_units: float = 0.0
+    voids: int = 0
+    wins: int = 0
+
+    def add(self, membership: Mapping[str, object]) -> None:
+        if self.reference is None:
+            self.reference = membership
+        self.occurrences += 1
+        self.wins += int(membership["won"] is True)
+        self.losses += int(membership["lost"] is True)
+        self.voids += int(membership["void"] is True)
+        self.stake_units += _require_float(
+            membership["stake_units"],
+            "analysis.stake_units",
+        )
+        self.profit_units += _require_float(
+            membership["profit_units"],
+            "analysis.profit_units",
+        )
+
+
+@dataclass(slots=True)
+class _TeamAggregate:
+    reference: Mapping[str, object]
+    team_id: str
+    team_name: str
+    away_occurrences: int = 0
+    home_occurrences: int = 0
+    losses: int = 0
+    profit_units: float = 0.0
+    voids: int = 0
+    wins: int = 0
+
+    @property
+    def occurrences(self) -> int:
+        return self.home_occurrences + self.away_occurrences
+
+    def add_result(self, membership: Mapping[str, object]) -> None:
+        self.wins += int(membership["won"] is True)
+        self.losses += int(membership["lost"] is True)
+        self.voids += int(membership["void"] is True)
+        self.profit_units += _require_float(
+            membership["profit_units"],
+            "analysis.team.profit_units",
+        )
+
+
 def _canonical_json(value: object, *, pretty: bool = False) -> str:
     try:
         if pretty:
@@ -274,6 +377,63 @@ def _require_float(value: object, label: str) -> float:
     return output
 
 
+def _require_bounded_float(
+    value: object,
+    label: str,
+    *,
+    minimum: float | None = None,
+    maximum: float | None = None,
+) -> float:
+    output = _require_float(value, label)
+    if minimum is not None and output < minimum:
+        raise SitePageBuildError(f"NUMBER_BELOW_MINIMUM:{label}")
+    if maximum is not None and output > maximum:
+        raise SitePageBuildError(f"NUMBER_ABOVE_MAXIMUM:{label}")
+    return output
+
+
+def _require_iso_date(value: object, label: str) -> str:
+    text = _require_string(value, label)
+    try:
+        parsed = date.fromisoformat(text)
+    except ValueError as exc:
+        raise SitePageBuildError(f"DATE_INVALID:{label}") from exc
+    if parsed.isoformat() != text:
+        raise SitePageBuildError(f"DATE_NON_CANONICAL:{label}")
+    return text
+
+
+def _require_iso_datetime(value: object, label: str) -> str:
+    text = _require_string(value, label)
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise SitePageBuildError(f"DATETIME_INVALID:{label}") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise SitePageBuildError(f"DATETIME_TIMEZONE_REQUIRED:{label}")
+    return text
+
+
+def _source_record_from_fixture(
+    row: Mapping[str, object],
+    label: str,
+) -> dict[str, object]:
+    source: dict[str, object] = {}
+    for field in EXPECTED_MARKET_COLUMNS:
+        if field == "_record_hash":
+            continue
+        value = row.get(field)
+        if field in SOURCE_INTEGER_FIELDS:
+            text = _require_string(value, f"{label}.{field}")
+            if not text.isascii() or not text.isdecimal():
+                raise SitePageBuildError(
+                    f"FIXTURE_SOURCE_INTEGER_INVALID:{label}.{field}"
+                )
+            value = int(text)
+        source[field] = value
+    return source
+
+
 def _assert_close(actual: float, expected: object, label: str) -> None:
     expected_number = _require_float(expected, label)
     if not math.isclose(
@@ -359,10 +519,24 @@ def _load_fixtures(
         )
         if record_hash != source_row_hash:
             raise SitePageBuildError(f"FIXTURE_ROW_HASH_MISMATCH:{index}")
+        if canonical_record_hash(
+            _source_record_from_fixture(row, label)
+        ) != source_row_hash:
+            raise SitePageBuildError(
+                f"FIXTURE_SOURCE_ROW_HASH_MISMATCH:{index}"
+            )
         canonical_match_id = _require_string(
             row.get("canonical_match_id"),
             f"{label}.canonical_match_id",
         )
+        fixture_id = _require_string(
+            row.get("fixture_id"),
+            f"{label}.fixture_id",
+        )
+        if canonical_match_id != f"api-football:{fixture_id}":
+            raise SitePageBuildError(
+                f"FIXTURE_CANONICAL_ID_INVALID:{index}"
+            )
         key = (source_dataset, canonical_match_id)
         if key in primary_keys:
             raise SitePageBuildError("FIXTURE_PRIMARY_KEY_DUPLICATE")
@@ -370,13 +544,10 @@ def _load_fixtures(
         if canonical_match_id in fixtures:
             raise SitePageBuildError("FIXTURE_CANONICAL_ID_AMBIGUOUS")
         for name in (
-            "fixture_id",
             "competition_key",
             "competition_name",
             "competition",
             "final_status",
-            "match_date",
-            "kickoff_at",
             "home_team_id",
             "away_team_id",
             "home_team_name",
@@ -385,9 +556,19 @@ def _load_fixtures(
             "source",
         ):
             _require_string(row.get(name), f"{label}.{name}")
-        _require_int(row.get("season"), f"{label}.season")
+        _require_iso_date(row.get("match_date"), f"{label}.match_date")
+        _require_iso_datetime(row.get("kickoff_at"), f"{label}.kickoff_at")
+        _require_int(row.get("season"), f"{label}.season", minimum=1900)
         _require_int(row.get("home_goals"), f"{label}.home_goals")
         _require_int(row.get("away_goals"), f"{label}.away_goals")
+        if row.get("competition") != row.get("competition_name"):
+            raise SitePageBuildError(
+                f"FIXTURE_COMPETITION_NAME_MISMATCH:{index}"
+            )
+        if row.get("home_source_name") != row.get("home_team_name"):
+            raise SitePageBuildError(f"FIXTURE_HOME_NAME_MISMATCH:{index}")
+        if row.get("away_source_name") != row.get("away_team_name"):
+            raise SitePageBuildError(f"FIXTURE_AWAY_NAME_MISMATCH:{index}")
         fixtures[canonical_match_id] = row
     if dataset_hash is None:
         raise SitePageBuildError("FIXTURE_TABLE_EMPTY")
@@ -400,12 +581,88 @@ def _summary_core(row: Mapping[str, object]) -> dict[str, object]:
 
 def _parse_conditions(row: Mapping[str, object], label: str) -> list[object]:
     conditions_json = _require_string(row.get("conditions_json"), label)
+    if len(conditions_json.encode("utf-8")) > MAX_CONDITION_BYTES:
+        raise SitePageBuildError(f"SUMMARY_CONDITIONS_TOO_LARGE:{label}")
     try:
         conditions = json.loads(conditions_json)
     except json.JSONDecodeError as exc:
         raise SitePageBuildError(f"SUMMARY_CONDITIONS_INVALID:{label}") from exc
     if not isinstance(conditions, list):
         raise SitePageBuildError(f"SUMMARY_CONDITIONS_NOT_LIST:{label}")
+    if not conditions or len(conditions) > MAX_CONDITIONS:
+        raise SitePageBuildError(f"SUMMARY_CONDITIONS_COUNT_INVALID:{label}")
+    for index, condition in enumerate(conditions):
+        item_label = f"{label}[{index}]"
+        if (
+            not isinstance(condition, dict)
+            or set(condition) != CONDITION_KEYS
+        ):
+            raise SitePageBuildError(
+                f"SUMMARY_CONDITION_SHAPE_INVALID:{item_label}"
+            )
+        feature = _require_string(
+            condition.get("feature"),
+            f"{item_label}.feature",
+        )
+        if SAFE_CONDITION_FEATURE.fullmatch(feature) is None:
+            raise SitePageBuildError(
+                f"SUMMARY_CONDITION_FEATURE_INVALID:{item_label}"
+            )
+        operator = _require_string(
+            condition.get("operator"),
+            f"{item_label}.operator",
+        )
+        if operator not in CONDITION_OPERATORS:
+            raise SitePageBuildError(
+                f"SUMMARY_CONDITION_OPERATOR_INVALID:{item_label}"
+            )
+        for key, allowed in (
+            ("available_at", CONDITION_AVAILABILITY),
+            ("source", CONDITION_SOURCES),
+        ):
+            text = _require_string(
+                condition.get(key),
+                f"{item_label}.{key}",
+            )
+            if len(text) > MAX_CONDITION_TEXT or text not in allowed:
+                raise SitePageBuildError(
+                    f"SUMMARY_CONDITION_TEXT_INVALID:{item_label}.{key}"
+                )
+        value = condition.get("value")
+        values = value if isinstance(value, list) else [value]
+        if not values or len(values) > 8:
+            raise SitePageBuildError(
+                f"SUMMARY_CONDITION_VALUE_INVALID:{item_label}"
+            )
+        for scalar in values:
+            if isinstance(scalar, str):
+                if not scalar or len(scalar) > MAX_CONDITION_TEXT:
+                    raise SitePageBuildError(
+                        f"SUMMARY_CONDITION_VALUE_INVALID:{item_label}"
+                    )
+            elif isinstance(scalar, bool) or scalar is None:
+                continue
+            elif isinstance(scalar, int | float):
+                _require_float(
+                    scalar,
+                    f"{item_label}.value",
+                )
+            else:
+                raise SitePageBuildError(
+                    f"SUMMARY_CONDITION_VALUE_INVALID:{item_label}"
+                )
+        if operator == "BETWEEN" and (
+            not isinstance(value, list) or len(value) != 2
+        ):
+            raise SitePageBuildError(
+                f"SUMMARY_CONDITION_BETWEEN_INVALID:{item_label}"
+            )
+        if operator == "LE" and (
+            isinstance(value, bool) or not isinstance(value, int | float)
+        ):
+            raise SitePageBuildError(
+                f"SUMMARY_CONDITION_LE_INVALID:{item_label}"
+            )
     _canonical_json(conditions)
     return conditions
 
@@ -475,18 +732,41 @@ def _load_summaries(
             "longest_losing_streak",
         ):
             _require_int(row.get(name), f"{label}.{name}")
-        for name in (
-            "total_staked_units",
-            "gross_returns_units",
-            "profit_units",
-            "maximum_drawdown_units",
-            "p_value",
-            "q_value",
-        ):
-            _require_float(row.get(name), f"{label}.{name}")
-        for name in ("hit_rate", "average_odds", "median_odds", "roi"):
+        for name in ("total_staked_units", "gross_returns_units"):
+            _require_bounded_float(
+                row.get(name),
+                f"{label}.{name}",
+                minimum=0,
+            )
+        _require_float(row.get("profit_units"), f"{label}.profit_units")
+        _require_bounded_float(
+            row.get("maximum_drawdown_units"),
+            f"{label}.maximum_drawdown_units",
+            minimum=0,
+        )
+        for name in ("p_value", "q_value"):
+            _require_bounded_float(
+                row.get(name),
+                f"{label}.{name}",
+                minimum=0,
+                maximum=1,
+            )
+        if row.get("hit_rate") is not None:
+            _require_bounded_float(
+                row.get("hit_rate"),
+                f"{label}.hit_rate",
+                minimum=0,
+                maximum=1,
+            )
+        for name in ("average_odds", "median_odds"):
             if row.get(name) is not None:
-                _require_float(row.get(name), f"{label}.{name}")
+                _require_bounded_float(
+                    row.get(name),
+                    f"{label}.{name}",
+                    minimum=1.000000000001,
+                )
+        if row.get("roi") is not None:
+            _require_float(row.get("roi"), f"{label}.roi")
         conditions[rule_hash] = _parse_conditions(row, f"{label}.conditions_json")
         summaries[rule_hash] = row
     if not summaries:
@@ -499,8 +779,40 @@ def _top_ten_items(
     summaries: Mapping[str, Mapping[str, object]],
     dataset_hash: str,
 ) -> tuple[list[dict[str, object]], str]:
+    if report.get("schema_version") != "j10-historical-evidence-top-10-v1":
+        raise SitePageBuildError("TOP_TEN_SCHEMA_INVALID")
     if report.get("dataset_hash") != dataset_hash:
         raise SitePageBuildError("TOP_TEN_DATASET_HASH_MISMATCH")
+    selection_contract = report.get("selection_contract")
+    if not isinstance(selection_contract, Mapping):
+        raise SitePageBuildError("TOP_TEN_SELECTION_CONTRACT_INVALID")
+    if (
+        selection_contract.get("support_sufficient") is not True
+        or selection_contract.get("campaign_status") != "DISCOVERED"
+        or selection_contract.get("walk_forward_survived") is not True
+        or selection_contract.get("deduplication")
+        != "UNIQUE_MEMBERSHIP_SET_HASH"
+        or selection_contract.get("public_status")
+        != "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+        or selection_contract.get("validated_label_forbidden") is not True
+    ):
+        raise SitePageBuildError("TOP_TEN_SELECTION_CONTRACT_INVALID")
+    ranking_contracts = selection_contract.get("rankings")
+    if (
+        not isinstance(ranking_contracts, Mapping)
+        or set(ranking_contracts) != set(RANKING_CONTRACTS)
+    ):
+        raise SitePageBuildError("TOP_TEN_RANKING_CONTRACTS_INVALID")
+    for name, (metric, descending) in RANKING_CONTRACTS.items():
+        contract = ranking_contracts.get(name)
+        if not isinstance(contract, Mapping) or dict(contract) != {
+            "metric": metric,
+            "direction": "DESC" if descending else "ASC",
+            "tie_break": "RULE_HASH_ASC",
+        }:
+            raise SitePageBuildError(
+                f"TOP_TEN_RANKING_CONTRACT_INVALID:{name}"
+            )
     source_result_hash = _require_hash(
         report.get("source_result_hash"),
         "top_ten.source_result_hash",
@@ -508,44 +820,188 @@ def _top_ten_items(
     global_scope = report.get("global")
     if not isinstance(global_scope, Mapping):
         raise SitePageBuildError("TOP_TEN_GLOBAL_INVALID")
-    by_roi = global_scope.get("by_roi")
-    ranking_path: str
-    items_value: object
-    if by_roi is not None:
-        if not isinstance(by_roi, Mapping):
-            raise SitePageBuildError("TOP_TEN_BY_ROI_INVALID")
-        items_value = by_roi.get("items")
-        ranking_path = "global.by_roi.items"
-    else:
-        items_value = global_scope.get("items")
-        ranking_path = "global.items"
-    if not isinstance(items_value, list):
-        raise SitePageBuildError("TOP_TEN_ITEMS_INVALID")
-    if len(items_value) > 10:
-        raise SitePageBuildError("TOP_TEN_ITEMS_OVER_LIMIT")
 
-    output: list[dict[str, object]] = []
-    seen_hypotheses: set[str] = set()
-    seen_rules: set[str] = set()
-    for rank, value in enumerate(items_value, start=1):
-        if not isinstance(value, Mapping):
-            raise SitePageBuildError(f"TOP_TEN_ITEM_INVALID:{rank}")
+    ranking_scopes: list[tuple[str, Mapping[str, object]]] = [
+        ("global", global_scope)
+    ]
+    for scope_name in ("by_competition", "by_family"):
+        scope_value = report.get(scope_name)
+        if scope_value is None:
+            continue
+        if not isinstance(scope_value, Mapping):
+            raise SitePageBuildError(f"TOP_TEN_{scope_name.upper()}_INVALID")
+        for key in sorted(scope_value, key=str):
+            nested_scope = scope_value[key]
+            if not isinstance(nested_scope, Mapping):
+                raise SitePageBuildError(
+                    f"TOP_TEN_{scope_name.upper()}_SCOPE_INVALID:{key}"
+                )
+            ranking_scopes.append((f"{scope_name}.{key}", nested_scope))
+
+    collected: list[tuple[str, int, Mapping[str, object]]] = []
+    ranking_paths: list[str] = []
+    global_roi_rank_by_rule: dict[str, int] = {}
+    for scope_path, scope in ranking_scopes:
+        is_legacy_global = scope_path == "global" and "items" in scope
+        missing_buckets = set(RANKING_BUCKETS) - set(scope)
+        if missing_buckets and not is_legacy_global:
+            raise SitePageBuildError(
+                f"TOP_TEN_RANKING_BUCKETS_MISSING:{scope_path}:"
+                + ",".join(sorted(missing_buckets))
+            )
+        for bucket_name in RANKING_BUCKETS:
+            bucket = scope.get(bucket_name)
+            if bucket is None:
+                continue
+            if not isinstance(bucket, Mapping):
+                raise SitePageBuildError(
+                    f"TOP_TEN_RANKING_BUCKET_INVALID:{scope_path}.{bucket_name}"
+                )
+            items = bucket.get("items")
+            if not isinstance(items, list):
+                raise SitePageBuildError(
+                    f"TOP_TEN_ITEMS_INVALID:{scope_path}.{bucket_name}"
+                )
+            metric, descending = RANKING_CONTRACTS[bucket_name]
+            expected_ordering = [
+                f"{metric.upper()}_{'DESC' if descending else 'ASC'}",
+                "RULE_HASH_ASC",
+            ]
+            available_count = _require_int(
+                bucket.get("available_count"),
+                f"{scope_path}.{bucket_name}.available_count",
+            )
+            if (
+                bucket.get("requested_limit") != 10
+                or bucket.get("ordering") != expected_ordering
+                or bucket.get("complete") is not (available_count >= 10)
+            ):
+                raise SitePageBuildError(
+                    f"TOP_TEN_RANKING_CONTRACT_INVALID:"
+                    f"{scope_path}.{bucket_name}"
+                )
+            _require_int(
+                bucket.get("duplicate_membership_sets_removed"),
+                f"{scope_path}.{bucket_name}."
+                "duplicate_membership_sets_removed",
+            )
+            if len(items) > 10:
+                raise SitePageBuildError(
+                    f"TOP_TEN_ITEMS_OVER_LIMIT:{scope_path}.{bucket_name}"
+                )
+            if len(items) > available_count:
+                raise SitePageBuildError(
+                    f"TOP_TEN_AVAILABLE_COUNT_INVALID:"
+                    f"{scope_path}.{bucket_name}"
+                )
+            ranking_path = f"{scope_path}.{bucket_name}.items"
+            ranking_paths.append(ranking_path)
+            seen_bucket_hypotheses: set[str] = set()
+            seen_bucket_rules: set[str] = set()
+            seen_bucket_memberships: set[str] = set()
+            previous_order: tuple[float, str] | None = None
+            for item_rank, value in enumerate(items, start=1):
+                if not isinstance(value, Mapping):
+                    raise SitePageBuildError(
+                        f"TOP_TEN_ITEM_INVALID:{ranking_path}:{item_rank}"
+                    )
+                hypothesis_value = _require_hypothesis_id(
+                    value.get("hypothesis_id"),
+                    f"{ranking_path}[{item_rank}].hypothesis_id",
+                )
+                rule_value = _require_hash(
+                    value.get("rule_hash"),
+                    f"{ranking_path}[{item_rank}].rule_hash",
+                )
+                membership_value = _require_hash(
+                    value.get("membership_set_hash"),
+                    f"{ranking_path}[{item_rank}].membership_set_hash",
+                )
+                metric_value = _require_float(
+                    value.get(metric),
+                    f"{ranking_path}[{item_rank}].{metric}",
+                )
+                order_key = (
+                    -metric_value if descending else metric_value,
+                    rule_value,
+                )
+                if previous_order is not None and order_key < previous_order:
+                    raise SitePageBuildError(
+                        f"TOP_TEN_ORDER_INVALID:{ranking_path}"
+                    )
+                previous_order = order_key
+                if (
+                    hypothesis_value in seen_bucket_hypotheses
+                    or rule_value in seen_bucket_rules
+                    or membership_value in seen_bucket_memberships
+                ):
+                    raise SitePageBuildError(
+                        f"TOP_TEN_ITEM_DUPLICATE:{ranking_path}"
+                    )
+                seen_bucket_hypotheses.add(hypothesis_value)
+                seen_bucket_rules.add(rule_value)
+                seen_bucket_memberships.add(membership_value)
+                if scope_path.startswith("by_competition.") and value.get(
+                    "competition"
+                ) != scope_path.removeprefix("by_competition."):
+                    raise SitePageBuildError(
+                        f"TOP_TEN_COMPETITION_SCOPE_INVALID:{ranking_path}"
+                    )
+                if scope_path.startswith("by_family.") and value.get(
+                    "family"
+                ) != scope_path.removeprefix("by_family."):
+                    raise SitePageBuildError(
+                        f"TOP_TEN_FAMILY_SCOPE_INVALID:{ranking_path}"
+                    )
+                if ranking_path == "global.by_roi.items":
+                    global_roi_rank_by_rule[rule_value] = item_rank
+                collected.append((ranking_path, item_rank, value))
+
+    if not ranking_paths:
+        legacy_items = global_scope.get("items")
+        if not isinstance(legacy_items, list):
+            raise SitePageBuildError("TOP_TEN_ITEMS_INVALID")
+        if len(legacy_items) > 10:
+            raise SitePageBuildError("TOP_TEN_ITEMS_OVER_LIMIT")
+        ranking_paths.append("global.items")
+        seen_legacy_hypotheses: set[str] = set()
+        seen_legacy_rules: set[str] = set()
+        for item_rank, value in enumerate(legacy_items, start=1):
+            if not isinstance(value, Mapping):
+                raise SitePageBuildError(f"TOP_TEN_ITEM_INVALID:{item_rank}")
+            hypothesis_value = _require_hypothesis_id(
+                value.get("hypothesis_id"),
+                f"global.items[{item_rank}].hypothesis_id",
+            )
+            rule_value = _require_hash(
+                value.get("rule_hash"),
+                f"global.items[{item_rank}].rule_hash",
+            )
+            if (
+                hypothesis_value in seen_legacy_hypotheses
+                or rule_value in seen_legacy_rules
+            ):
+                raise SitePageBuildError("TOP_TEN_ITEM_DUPLICATE:global.items")
+            seen_legacy_hypotheses.add(hypothesis_value)
+            seen_legacy_rules.add(rule_value)
+            global_roi_rank_by_rule[rule_value] = item_rank
+            collected.append(("global.items", item_rank, value))
+
+    selected_by_hypothesis: dict[str, dict[str, object]] = {}
+    selected_by_rule: dict[str, dict[str, object]] = {}
+    for ranking_path, item_rank, value in collected:
         hypothesis_id = _require_hypothesis_id(
             value.get("hypothesis_id"),
-            f"top_ten[{rank}].hypothesis_id",
+            f"{ranking_path}[{item_rank}].hypothesis_id",
         )
         rule_hash = _require_hash(
             value.get("rule_hash"),
-            f"top_ten[{rank}].rule_hash",
+            f"{ranking_path}[{item_rank}].rule_hash",
         )
         membership_set_hash = _require_hash(
             value.get("membership_set_hash"),
-            f"top_ten[{rank}].membership_set_hash",
+            f"{ranking_path}[{item_rank}].membership_set_hash",
         )
-        if hypothesis_id in seen_hypotheses or rule_hash in seen_rules:
-            raise SitePageBuildError("TOP_TEN_ITEM_DUPLICATE")
-        seen_hypotheses.add(hypothesis_id)
-        seen_rules.add(rule_hash)
         summary = summaries.get(rule_hash)
         if summary is None:
             raise SitePageBuildError(f"TOP_TEN_SUMMARY_MISSING:{rule_hash}")
@@ -555,14 +1011,55 @@ def _top_ten_items(
             raise SitePageBuildError(f"TOP_TEN_MEMBERSHIP_SET_INVALID:{rule_hash}")
         if summary.get("campaign_result_hash") != source_result_hash:
             raise SitePageBuildError(f"TOP_TEN_CAMPAIGN_HASH_INVALID:{rule_hash}")
+        bucket_name = ranking_path.rsplit(".", maxsplit=2)[-2]
+        if bucket_name in RANKING_CONTRACTS:
+            metric = RANKING_CONTRACTS[bucket_name][0]
+            _assert_close(
+                _require_float(
+                    value.get(metric),
+                    f"{ranking_path}[{item_rank}].{metric}",
+                ),
+                summary.get(metric),
+                f"{ranking_path}[{item_rank}].{metric}",
+            )
+        selected_item: dict[str, object] = {
+            "hypothesis_id": hypothesis_id,
+            "rule_hash": rule_hash,
+            "membership_set_hash": membership_set_hash,
+        }
+        existing_hypothesis = selected_by_hypothesis.get(hypothesis_id)
+        existing_rule = selected_by_rule.get(rule_hash)
+        if (
+            existing_hypothesis is not None
+            and existing_hypothesis != selected_item
+        ) or (existing_rule is not None and existing_rule != selected_item):
+            raise SitePageBuildError("TOP_TEN_ITEM_AMBIGUOUS")
+        selected_by_hypothesis[hypothesis_id] = selected_item
+        selected_by_rule[rule_hash] = selected_item
+
+    if len(selected_by_rule) > MAX_PUBLISHED_HYPOTHESES:
+        raise SitePageBuildError("TOP_TEN_ITEMS_UNION_OVER_LIMIT")
+
+    output: list[dict[str, object]] = []
+    for rule_hash in sorted(
+        selected_by_rule,
+        key=lambda value: (
+            global_roi_rank_by_rule.get(value) is None,
+            global_roi_rank_by_rule.get(value, 0),
+            value,
+        ),
+    ):
         output.append(
             {
-                "rank": rank,
-                "hypothesis_id": hypothesis_id,
-                "rule_hash": rule_hash,
-                "membership_set_hash": membership_set_hash,
+                "rank": global_roi_rank_by_rule.get(rule_hash),
+                **selected_by_rule[rule_hash],
             }
         )
+    ranking_path = (
+        ranking_paths[0]
+        if len(ranking_paths) == 1
+        else "top-10.all-ranking-scopes.items-union"
+    )
     return output, ranking_path
 
 
@@ -615,6 +1112,7 @@ def _stream_memberships(
 ) -> tuple[
     dict[str, list[dict[str, object]]],
     dict[str, _RuleAccumulator],
+    dict[str, int],
 ]:
     selected: dict[str, list[dict[str, object]]] = {
         rule_hash: [] for rule_hash in selected_rules
@@ -623,6 +1121,7 @@ def _stream_memberships(
         rule_hash: _RuleAccumulator(set()) for rule_hash in summaries
     }
     primary_keys: set[tuple[str, str, str]] = set()
+    historical_rule_counts_by_match: dict[str, int] = defaultdict(int)
     row_index = 0
     for batch in parquet.iter_batches(batch_size=65_536):
         for raw in batch.to_pylist():
@@ -670,6 +1169,7 @@ def _stream_memberships(
             if key in primary_keys:
                 raise SitePageBuildError("MEMBERSHIP_PRIMARY_KEY_DUPLICATE")
             primary_keys.add(key)
+            historical_rule_counts_by_match[canonical_match_id] += 1
             if membership_hash != _membership_hash(row, fixture, summary):
                 raise SitePageBuildError(
                     f"MEMBERSHIP_HASH_MISMATCH:{rule_hash}:{canonical_match_id}"
@@ -677,10 +1177,14 @@ def _stream_memberships(
             _validate_membership_relation(row, summary, fixture, row_index)
             if row.get("eligibility_status") != "ELIGIBLE_SETTLED":
                 raise SitePageBuildError(f"MEMBERSHIP_NOT_ELIGIBLE_SETTLED:{row_index}")
-            _require_string(
+            eligibility_reason = _require_string(
                 row.get("eligibility_reason"),
                 f"{label}.eligibility_reason",
             )
+            if eligibility_reason not in ELIGIBILITY_REASONS:
+                raise SitePageBuildError(
+                    f"MEMBERSHIP_ELIGIBILITY_REASON_INVALID:{row_index}"
+                )
             for name in (
                 "hypothesis_version",
                 "price_class",
@@ -689,14 +1193,27 @@ def _stream_memberships(
             ):
                 _require_string(row.get(name), f"{label}.{name}")
             _require_int(row.get("occurrence_index"), f"{label}.occurrence_index", minimum=1)
-            for name in (
-                "observed_odds",
-                "market_margin",
-                "stake_units",
-                "gross_return_units",
-                "profit_units",
-                "cumulative_profit_units",
-            ):
+            observed_odds = _require_float(
+                row.get("observed_odds"),
+                f"{label}.observed_odds",
+            )
+            if observed_odds <= 1:
+                raise SitePageBuildError(
+                    f"MEMBERSHIP_ODDS_INVALID:{row_index}"
+                )
+            _require_bounded_float(
+                row.get("market_margin"),
+                f"{label}.market_margin",
+                minimum=0,
+                maximum=1,
+            )
+            for name in ("stake_units", "gross_return_units"):
+                _require_bounded_float(
+                    row.get(name),
+                    f"{label}.{name}",
+                    minimum=0,
+                )
+            for name in ("profit_units", "cumulative_profit_units"):
                 _require_float(row.get(name), f"{label}.{name}")
             outcomes = [row.get("won"), row.get("lost"), row.get("void")]
             if any(not isinstance(value, bool) for value in outcomes):
@@ -716,7 +1233,7 @@ def _stream_memberships(
             accumulator.profit_units += float(row["profit_units"])
             if rule_hash in selected:
                 selected[rule_hash].append(row)
-    return selected, accumulators
+    return selected, accumulators, dict(historical_rule_counts_by_match)
 
 
 def _validate_summary_aggregates(
@@ -830,6 +1347,14 @@ def _summary_path(hypothesis_id: str) -> str:
     return f"hypotheses/{hypothesis_id}/summary.json"
 
 
+def _analysis_path(hypothesis_id: str) -> str:
+    return f"hypotheses/{hypothesis_id}/analysis.json"
+
+
+def _query_index_path(hypothesis_id: str) -> str:
+    return f"hypotheses/{hypothesis_id}/query-index.json"
+
+
 def _page_path(hypothesis_id: str, page_size: int, page: int) -> str:
     return (
         f"hypotheses/{hypothesis_id}/memberships/"
@@ -910,6 +1435,548 @@ def _membership_item(
     }
 
 
+def _membership_outcome(membership: Mapping[str, object]) -> str:
+    outcomes = [
+        name
+        for name, flag in (
+            ("won", membership["won"]),
+            ("lost", membership["lost"]),
+            ("void", membership["void"]),
+        )
+        if flag is True
+    ]
+    if len(outcomes) != 1:
+        raise SitePageBuildError("MEMBERSHIP_OUTCOME_INVALID")
+    return outcomes[0]
+
+
+def _query_index_item(
+    membership: Mapping[str, object],
+    fixture: Mapping[str, object],
+) -> dict[str, object]:
+    canonical_match_id = str(membership["canonical_match_id"])
+    return {
+        "canonical_match_id": canonical_match_id,
+        "match_detail_ref": _safe_match_path(canonical_match_id),
+        "occurrence_index": membership["occurrence_index"],
+        "kickoff_at": fixture["kickoff_at"],
+        "match_date": fixture["match_date"],
+        "competition": fixture["competition_name"],
+        "competition_key": fixture["competition_key"],
+        "season": fixture["season"],
+        "round": fixture["round"],
+        "home_team": {
+            "id": fixture["home_team_id"],
+            "name": fixture["home_team_name"],
+        },
+        "away_team": {
+            "id": fixture["away_team_id"],
+            "name": fixture["away_team_name"],
+        },
+        "final_score": {
+            "home": fixture["home_goals"],
+            "away": fixture["away_goals"],
+        },
+        "final_status": fixture["final_status"],
+        "chronological_fold": membership["chronological_fold"],
+        "market": membership["market"],
+        "market_margin": membership["market_margin"],
+        "selection": membership["selection"],
+        "observed_odds": membership["observed_odds"],
+        "outcome": _membership_outcome(membership),
+        "profit_units": membership["profit_units"],
+        "cumulative_profit_units": membership["cumulative_profit_units"],
+    }
+
+
+def _query_index_payload(
+    *,
+    hypothesis_id: str,
+    rule_hash: str,
+    summary_ref: str,
+    rows: Sequence[Mapping[str, object]],
+    fixtures: Mapping[str, Mapping[str, object]],
+    summary: Mapping[str, object],
+) -> dict[str, object]:
+    if len(rows) > QUERY_INDEX_MAX_ITEMS:
+        raise SitePageBuildError(
+            f"QUERY_INDEX_ITEM_LIMIT_EXCEEDED:{rule_hash}:"
+            f"{len(rows)}:{QUERY_INDEX_MAX_ITEMS}"
+        )
+    items = [
+        _query_index_item(
+            row,
+            fixtures[str(row["canonical_match_id"])],
+        )
+        for row in rows
+    ]
+    match_ids = [str(item["canonical_match_id"]) for item in items]
+    if len(set(match_ids)) != len(match_ids):
+        raise SitePageBuildError(f"QUERY_INDEX_DUPLICATE_MATCH:{rule_hash}")
+    occurrence_indices = [
+        _require_int(
+            item["occurrence_index"],
+            "query_index.occurrence_index",
+            minimum=1,
+        )
+        for item in items
+    ]
+    if occurrence_indices != list(range(1, len(items) + 1)):
+        raise SitePageBuildError(f"QUERY_INDEX_ORDER_INVALID:{rule_hash}")
+    return {
+        "schema_version": "hypothesis-evidence-query-index-v1",
+        "evidence_kind": "HISTORICAL",
+        "prospective_evidence_included": False,
+        "intended_consumer": "SERVER_RENDERED_MATCH_LIST",
+        "transport": "PUBLIC_SAME_ORIGIN_STATIC_ASSET",
+        "hypothesis_id": hypothesis_id,
+        "rule_hash": rule_hash,
+        "summary_ref": summary_ref,
+        "ordering": [
+            "OCCURRENCE_INDEX_ASC",
+            "CANONICAL_MATCH_ID_ASC",
+        ],
+        "supported_page_sizes": list(PAGE_SIZES),
+        "supported_filters": [
+            "chronological_fold",
+            "observed_odds",
+            "outcome",
+            "season",
+            "selection",
+            "team",
+        ],
+        "supported_sorts": [
+            "kickoff_at",
+            "observed_odds",
+            "outcome",
+            "profit_units",
+        ],
+        "maximum_items": QUERY_INDEX_MAX_ITEMS,
+        "total_items": len(items),
+        "items": items,
+        "provenance": {
+            "dataset_hash": summary["dataset_hash"],
+            "summary_hash": summary["summary_hash"],
+            "membership_set_hash": summary["membership_set_hash"],
+            "derived_from": [
+                "historical_fixture_evidence",
+                "hypothesis_fixture_membership",
+            ],
+            "provider_payloads_copied": False,
+        },
+    }
+
+
+def _analysis_number(value: float) -> float:
+    rounded = round(value, 12)
+    return 0.0 if rounded == 0 else rounded
+
+
+def _analysis_match_label(fixture: Mapping[str, object]) -> str:
+    home_team = _require_string(
+        fixture.get("home_team_name"),
+        "analysis.fixture.home_team_name",
+    )
+    away_team = _require_string(
+        fixture.get("away_team_name"),
+        "analysis.fixture.away_team_name",
+    )
+    return f"{home_team} – {away_team}"
+
+
+def _analysis_reference(
+    membership: Mapping[str, object],
+    fixtures: Mapping[str, Mapping[str, object]],
+) -> dict[str, object]:
+    canonical_match_id = str(membership["canonical_match_id"])
+    fixture = fixtures[canonical_match_id]
+    return {
+        "canonical_match_id": canonical_match_id,
+        "match_date": fixture["match_date"],
+        "match_detail_ref": _safe_match_path(canonical_match_id),
+        "match_label": _analysis_match_label(fixture),
+    }
+
+
+def _aggregate_payload(
+    aggregate: _AnalysisAggregate,
+    fixtures: Mapping[str, Mapping[str, object]],
+) -> dict[str, object]:
+    return {
+        "occurrences": aggregate.occurrences,
+        "wins": aggregate.wins,
+        "losses": aggregate.losses,
+        "voids": aggregate.voids,
+        "total_staked_units": _analysis_number(aggregate.stake_units),
+        "profit_units": _analysis_number(aggregate.profit_units),
+        "roi": (
+            _analysis_number(
+                aggregate.profit_units / aggregate.stake_units
+            )
+            if aggregate.stake_units > 0
+            else None
+        ),
+        "reference_match": (
+            _analysis_reference(aggregate.reference, fixtures)
+            if aggregate.reference is not None
+            else None
+        ),
+    }
+
+
+ODDS_BANDS: Final = (
+    ("LT_1_50", "Moins de 1,50", 0.0, 1.5),
+    ("FROM_1_50_TO_1_99", "1,50–1,99", 1.5, 2.0),
+    ("FROM_2_00_TO_2_99", "2,00–2,99", 2.0, 3.0),
+    ("FROM_3_00_TO_4_99", "3,00–4,99", 3.0, 5.0),
+    ("GE_5_00", "5,00 ou plus", 5.0, None),
+)
+
+
+def _odds_band_index(odds: float) -> int:
+    for index, (_, _, minimum, maximum) in enumerate(ODDS_BANDS):
+        if odds >= minimum and (maximum is None or odds < maximum):
+            return index
+    raise SitePageBuildError(f"ANALYSIS_ODDS_OUT_OF_BANDS:{odds}")
+
+
+def _streak_payload(
+    rows: Sequence[Mapping[str, object]],
+    fixtures: Mapping[str, Mapping[str, object]],
+) -> dict[str, object]:
+    runs: list[dict[str, object]] = []
+    current_outcome: str | None = None
+    current_rows: list[Mapping[str, object]] = []
+
+    def flush() -> None:
+        nonlocal current_outcome, current_rows
+        if current_outcome is None or not current_rows:
+            current_outcome = None
+            current_rows = []
+            return
+        start = current_rows[0]
+        end = current_rows[-1]
+        runs.append(
+            {
+                "outcome": current_outcome,
+                "length": len(current_rows),
+                "start_occurrence_index": start["occurrence_index"],
+                "end_occurrence_index": end["occurrence_index"],
+                "start_match": _analysis_reference(start, fixtures),
+                "end_match": _analysis_reference(end, fixtures),
+            }
+        )
+        current_outcome = None
+        current_rows = []
+
+    for row in rows:
+        outcome = (
+            "WIN"
+            if row["won"] is True
+            else "LOSS"
+            if row["lost"] is True
+            else None
+        )
+        if outcome is None:
+            flush()
+            continue
+        if outcome != current_outcome:
+            flush()
+            current_outcome = outcome
+        current_rows.append(row)
+    flush()
+
+    def run_reference(
+        run: Mapping[str, object] | None,
+    ) -> dict[str, object] | None:
+        if run is None:
+            return None
+        start_match = run["start_match"]
+        end_match = run["end_match"]
+        if not isinstance(start_match, Mapping) or not isinstance(
+            end_match,
+            Mapping,
+        ):
+            raise SitePageBuildError("ANALYSIS_STREAK_REFERENCE_INVALID")
+        return {
+            "length": run["length"],
+            "start_occurrence_index": run["start_occurrence_index"],
+            "end_occurrence_index": run["end_occurrence_index"],
+            "start_match": dict(start_match),
+            "end_match": dict(end_match),
+        }
+
+    def summary(outcome: str) -> dict[str, object]:
+        matching = [run for run in runs if run["outcome"] == outcome]
+        terminal = runs[-1] if runs and runs[-1]["outcome"] == outcome else None
+        longest = (
+            min(
+                matching,
+                key=lambda run: (
+                    -_require_int(
+                        run["length"],
+                        "analysis.streak.length",
+                        minimum=1,
+                    ),
+                    _require_int(
+                        run["start_occurrence_index"],
+                        "analysis.streak.start_occurrence_index",
+                        minimum=1,
+                    ),
+                ),
+            )
+            if matching
+            else None
+        )
+        return {
+            "run_count": len(matching),
+            "longest_length": max(
+                (
+                    _require_int(
+                        run["length"],
+                        "analysis.streak.length",
+                        minimum=1,
+                    )
+                    for run in matching
+                ),
+                default=0,
+            ),
+            "current_length": (
+                _require_int(
+                    terminal["length"],
+                    "analysis.streak.length",
+                    minimum=1,
+                )
+                if terminal
+                else 0
+            ),
+            "longest_run": run_reference(longest),
+            "current_run": run_reference(terminal),
+        }
+
+    return {
+        "winning": summary("WIN"),
+        "losing": summary("LOSS"),
+        "runs": [
+            {
+                "outcome": run["outcome"],
+                "length": run["length"],
+                "start_occurrence_index": run["start_occurrence_index"],
+                "end_occurrence_index": run["end_occurrence_index"],
+            }
+            for run in runs
+        ],
+    }
+
+
+def _analysis_payload(
+    *,
+    hypothesis_id: str,
+    rule_hash: str,
+    rows: Sequence[Mapping[str, object]],
+    fixtures: Mapping[str, Mapping[str, object]],
+    summary: Mapping[str, object],
+) -> dict[str, object]:
+    if not rows:
+        raise SitePageBuildError(f"ANALYSIS_EVIDENCE_EMPTY:{rule_hash}")
+    bankroll_points: list[dict[str, object]] = []
+    seasons: dict[int, _AnalysisAggregate] = {}
+    folds: dict[str, _AnalysisAggregate] = {}
+    band_aggregates = [_AnalysisAggregate() for _ in ODDS_BANDS]
+    teams: dict[str, _TeamAggregate] = {}
+
+    for row in rows:
+        canonical_match_id = str(row["canonical_match_id"])
+        fixture = fixtures[canonical_match_id]
+        bankroll_points.append(
+            {
+                "canonical_match_id": canonical_match_id,
+                "match_date": fixture["match_date"],
+                "match_detail_ref": _safe_match_path(canonical_match_id),
+                "match_label": _analysis_match_label(fixture),
+                "occurrence_index": row["occurrence_index"],
+                "cumulative_profit_units": _analysis_number(
+                    _require_float(
+                        row["cumulative_profit_units"],
+                        "analysis.cumulative_profit_units",
+                    )
+                ),
+            }
+        )
+
+        season = _require_int(
+            fixture["season"],
+            "analysis.season",
+            minimum=1,
+        )
+        season_aggregate = seasons.setdefault(
+            season,
+            _AnalysisAggregate(reference=row),
+        )
+        season_aggregate.add(row)
+
+        fold = str(row["chronological_fold"])
+        fold_aggregate = folds.setdefault(
+            fold,
+            _AnalysisAggregate(reference=row),
+        )
+        fold_aggregate.add(row)
+
+        observed_odds = _require_float(
+            row["observed_odds"],
+            "analysis.observed_odds",
+        )
+        band_aggregates[_odds_band_index(observed_odds)].add(row)
+
+        for side in ("home", "away"):
+            team_id = str(fixture[f"{side}_team_id"])
+            team = teams.setdefault(
+                team_id,
+                _TeamAggregate(
+                    reference=row,
+                    team_id=team_id,
+                    team_name=str(fixture[f"{side}_team_name"]),
+                ),
+            )
+            if team.team_name != str(fixture[f"{side}_team_name"]):
+                raise SitePageBuildError(
+                    f"ANALYSIS_TEAM_NAME_CONFLICT:{team_id}"
+                )
+            if side == "home":
+                team.home_occurrences += 1
+            else:
+                team.away_occurrences += 1
+            team.add_result(row)
+
+    if len({point["canonical_match_id"] for point in bankroll_points}) != len(
+        bankroll_points
+    ):
+        raise SitePageBuildError(f"ANALYSIS_BANKROLL_DUPLICATE:{rule_hash}")
+    if not math.isclose(
+        _require_float(
+            rows[-1]["cumulative_profit_units"],
+            "analysis.final_cumulative_profit_units",
+        ),
+        _require_float(
+            summary["profit_units"],
+            "analysis.summary_profit_units",
+        ),
+        rel_tol=1e-12,
+        abs_tol=1e-9,
+    ):
+        raise SitePageBuildError(f"ANALYSIS_BANKROLL_SUMMARY_MISMATCH:{rule_hash}")
+
+    season_rows: list[dict[str, object]] = []
+    for season, season_value in sorted(seasons.items()):
+        season_rows.append(
+            {
+                "season": season,
+                **_aggregate_payload(season_value, fixtures),
+            }
+        )
+    ordered_folds = sorted(
+        folds.items(),
+        key=lambda item: (
+            _require_int(
+                item[1].reference["occurrence_index"],
+                "analysis.fold.occurrence_index",
+                minimum=1,
+            )
+            if item[1].reference is not None
+            else 0
+        ),
+    )
+    fold_rows: list[dict[str, object]] = []
+    for index, (fold, fold_value) in enumerate(ordered_folds, start=1):
+        fold_rows.append(
+            {
+                "fold_index": index,
+                "fold": fold,
+                "positive": fold_value.profit_units > 0,
+                **_aggregate_payload(fold_value, fixtures),
+            }
+        )
+    odds_rows = []
+    for (band_id, label, minimum, maximum), band_value in zip(
+        ODDS_BANDS,
+        band_aggregates,
+        strict=True,
+    ):
+        odds_rows.append(
+            {
+                "band_id": band_id,
+                "label": label,
+                "minimum_odds": minimum,
+                "maximum_odds_exclusive": maximum,
+                **_aggregate_payload(band_value, fixtures),
+            }
+        )
+
+    team_appearances = len(rows) * 2
+    team_rows = []
+    for rank, team_value in enumerate(
+        sorted(
+            teams.values(),
+            key=lambda item: (
+                -item.occurrences,
+                item.team_name.casefold(),
+                item.team_id,
+            ),
+        )[:10],
+        start=1,
+    ):
+        team_rows.append(
+            {
+                "rank": rank,
+                "team_id": team_value.team_id,
+                "team_name": team_value.team_name,
+                "occurrences": team_value.occurrences,
+                "home_occurrences": team_value.home_occurrences,
+                "away_occurrences": team_value.away_occurrences,
+                "wins": team_value.wins,
+                "losses": team_value.losses,
+                "voids": team_value.voids,
+                "profit_units": _analysis_number(team_value.profit_units),
+                "share_of_team_appearances": _analysis_number(
+                    team_value.occurrences / team_appearances
+                ),
+                "reference_match": _analysis_reference(
+                    team_value.reference,
+                    fixtures,
+                ),
+            }
+        )
+
+    return {
+        "schema_version": "hypothesis-evidence-analysis-v1",
+        "evidence_kind": "HISTORICAL",
+        "prospective_evidence_included": False,
+        "hypothesis_id": hypothesis_id,
+        "rule_hash": rule_hash,
+        "bankroll_points": bankroll_points,
+        "seasons": season_rows,
+        "odds_bands": odds_rows,
+        "folds": fold_rows,
+        "team_concentration": {
+            "maximum_items": 10,
+            "denominator_team_appearances": team_appearances,
+            "items": team_rows,
+        },
+        "streaks": _streak_payload(rows, fixtures),
+        "provenance": {
+            "dataset_hash": summary["dataset_hash"],
+            "summary_hash": summary["summary_hash"],
+            "membership_set_hash": summary["membership_set_hash"],
+            "derived_from": [
+                "historical_fixture_evidence",
+                "hypothesis_fixture_membership",
+                "hypothesis_historical_evidence_summary",
+            ],
+            "provider_payloads_copied": False,
+        },
+    }
+
+
 class _OutputWriter:
     def __init__(self, root: Path) -> None:
         self.root = root
@@ -920,6 +1987,7 @@ class _OutputWriter:
         relative_path: str,
         payload: object,
         *,
+        maximum_bytes: int | None = None,
         row_count: int,
         record_kind: str,
     ) -> None:
@@ -927,6 +1995,11 @@ class _OutputWriter:
         if pure.is_absolute() or ".." in pure.parts:
             raise SitePageBuildError("OUTPUT_RELATIVE_PATH_INVALID")
         encoded = (_canonical_json(payload, pretty=True) + "\n").encode("utf-8")
+        if maximum_bytes is not None and len(encoded) > maximum_bytes:
+            raise SitePageBuildError(
+                f"OUTPUT_SIZE_LIMIT_EXCEEDED:{relative_path}:"
+                f"{len(encoded)}:{maximum_bytes}"
+            )
         path = self.root.joinpath(*pure.parts)
         path.parent.mkdir(parents=True, exist_ok=True)
         temporary = path.with_name(path.name + ".tmp")
@@ -993,6 +2066,7 @@ def _build_output(
     top_items: Sequence[Mapping[str, object]],
     ranking_path: str,
     selected: Mapping[str, list[dict[str, object]]],
+    historical_rule_counts_by_match: Mapping[str, int],
     fixtures: Mapping[str, Mapping[str, object]],
     summaries: Mapping[str, Mapping[str, object]],
     conditions: Mapping[str, list[object]],
@@ -1006,7 +2080,12 @@ def _build_output(
     selected_memberships = 0
 
     for top_item in top_items:
-        rank = _require_int(top_item["rank"], "top_item.rank", minimum=1)
+        rank_value = top_item["rank"]
+        rank = (
+            None
+            if rank_value is None
+            else _require_int(rank_value, "top_item.rank", minimum=1)
+        )
         hypothesis_id = str(top_item["hypothesis_id"])
         rule_hash = str(top_item["rule_hash"])
         summary = summaries[rule_hash]
@@ -1044,6 +2123,7 @@ def _build_output(
                         "total_items": len(rows),
                         "items": items,
                     },
+                    maximum_bytes=MEMBERSHIP_PAGE_MAX_BYTES,
                     row_count=len(items),
                     record_kind="HISTORICAL_MEMBERSHIP_PAGE",
                 )
@@ -1066,6 +2146,35 @@ def _build_output(
                 "page_refs": page_refs,
             }
         selected_memberships += len(rows)
+        analysis_ref = _analysis_path(hypothesis_id)
+        writer.write(
+            analysis_ref,
+            _analysis_payload(
+                hypothesis_id=hypothesis_id,
+                rule_hash=rule_hash,
+                rows=rows,
+                fixtures=fixtures,
+                summary=summary,
+            ),
+            maximum_bytes=ANALYSIS_MAX_BYTES,
+            row_count=len(rows),
+            record_kind="HYPOTHESIS_HISTORICAL_ANALYSIS",
+        )
+        query_index_ref = _query_index_path(hypothesis_id)
+        writer.write(
+            query_index_ref,
+            _query_index_payload(
+                hypothesis_id=hypothesis_id,
+                rule_hash=rule_hash,
+                summary_ref=summary_ref,
+                rows=rows,
+                fixtures=fixtures,
+                summary=summary,
+            ),
+            maximum_bytes=QUERY_INDEX_MAX_BYTES,
+            row_count=len(rows),
+            record_kind="HYPOTHESIS_MEMBERSHIP_QUERY_INDEX",
+        )
         historical_summary = {
             name: summary[name] for name in SUMMARY_PUBLIC_FIELDS
         }
@@ -1076,6 +2185,8 @@ def _build_output(
                 "rank": rank,
                 "hypothesis_id": hypothesis_id,
                 "rule_hash": rule_hash,
+                "analysis_ref": analysis_ref,
+                "query_index_ref": query_index_ref,
                 "evidence_availability": {
                     "historical": {
                         "available": True,
@@ -1098,6 +2209,7 @@ def _build_output(
                     "membership_set_hash": summary["membership_set_hash"],
                 },
             },
+            maximum_bytes=SUMMARY_MAX_BYTES,
             row_count=1,
             record_kind="HYPOTHESIS_HISTORICAL_SUMMARY",
         )
@@ -1185,6 +2297,14 @@ def _build_output(
             associations.append(association)
         if len(associations) > len(top_items):
             raise SitePageBuildError("MATCH_HYPOTHESIS_LINKS_OVER_BOUND")
+        total_historical_rules = historical_rule_counts_by_match.get(
+            canonical_match_id
+        )
+        if (
+            total_historical_rules is None
+            or total_historical_rules < len(associations)
+        ):
+            raise SitePageBuildError("MATCH_HISTORICAL_RULE_COUNT_INVALID")
         writer.write(
             detail_ref,
             {
@@ -1219,8 +2339,10 @@ def _build_output(
                     "source": fixture["source"],
                     "observed_time_status": fixture["observed_time_status"],
                 },
+                "total_historical_rules": total_historical_rules,
                 "top_ten_hypotheses": associations,
             },
+            maximum_bytes=MATCH_DETAIL_MAX_BYTES,
             row_count=1,
             record_kind="UNIQUE_HISTORICAL_MATCH_DETAIL",
         )
@@ -1228,7 +2350,8 @@ def _build_output(
             {
                 "canonical_match_id": canonical_match_id,
                 "detail_ref": detail_ref,
-                "hypothesis_count": len(associations),
+                "hypothesis_count": total_historical_rules,
+                "published_hypothesis_count": len(associations),
             }
         )
 
@@ -1248,9 +2371,9 @@ def _build_output(
         "index.json",
         {
             "schema_version": "hypothesis-evidence-site-index-v1",
-            "preview_scope": "GLOBAL_TOP_ROI_ONLY",
+            "preview_scope": "RANKING_TOP_TEN_UNION",
             "ranking_source": ranking_path,
-            "maximum_hypotheses": 10,
+            "maximum_hypotheses": len(top_items),
             "evidence_availability": {
                 "historical": True,
                 "prospective": False,
@@ -1269,7 +2392,7 @@ def _build_output(
         "publication_scope": "TEMPORARY_PREVIEW_NOT_FOR_GIT",
         "selection": {
             "ranking_source": ranking_path,
-            "maximum_hypotheses": 10,
+            "maximum_hypotheses": len(top_items),
             "hypothesis_count": len(top_items),
             "hypothesis_ids": [item["hypothesis_id"] for item in top_items],
         },
@@ -1277,9 +2400,24 @@ def _build_output(
             "historical_included": True,
             "prospective_included": False,
             "provider_payloads_copied": False,
+            "analysis_max_bytes": ANALYSIS_MAX_BYTES,
+            "match_detail_max_bytes": MATCH_DETAIL_MAX_BYTES,
+            "membership_page_max_bytes": MEMBERSHIP_PAGE_MAX_BYTES,
+            "query_index_max_bytes": QUERY_INDEX_MAX_BYTES,
+            "query_index_max_items": QUERY_INDEX_MAX_ITEMS,
+            "query_index_intended_consumer": "SERVER_RENDERED_MATCH_LIST",
+            "query_index_transport": "PUBLIC_SAME_ORIGIN_STATIC_ASSET",
+            "summary_max_bytes": SUMMARY_MAX_BYTES,
             "selected_membership_rows": selected_memberships,
             "unique_match_rows": len(match_index),
             "maximum_hypothesis_links_per_match": len(top_items),
+            "maximum_historical_rule_count_for_published_matches": max(
+                (
+                    historical_rule_counts_by_match[match_id]
+                    for match_id in selected_match_ids
+                ),
+                default=0,
+            ),
         },
         "inputs": {
             "parquet": list(inputs),
@@ -1343,7 +2481,11 @@ def build_hypothesis_evidence_site_pages(
     report = _load_json_object(top_ten_report)
     top_items, ranking_path = _top_ten_items(report, summaries, dataset_hash)
     selected_rules = {str(item["rule_hash"]) for item in top_items}
-    selected, accumulators = _stream_memberships(
+    (
+        selected,
+        accumulators,
+        historical_rule_counts_by_match,
+    ) = _stream_memberships(
         membership_parquet,
         fixtures,
         summaries,
@@ -1365,6 +2507,7 @@ def build_hypothesis_evidence_site_pages(
             top_items=top_items,
             ranking_path=ranking_path,
             selected=selected,
+            historical_rule_counts_by_match=historical_rule_counts_by_match,
             fixtures=fixtures,
             summaries=summaries,
             conditions=conditions,

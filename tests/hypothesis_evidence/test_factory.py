@@ -262,6 +262,13 @@ def test_top_three_exact_reconciliation(
     assert item["median_odds"] == pytest.approx(median_odds)
     assert item["longest_losing_streak"] == losing_streak
     assert item["eligible_folds"] == folds
+    assert item["statistical_groups"] == groups
+    assert item["total_staked_units"] == pytest.approx(occurrences)
+    assert item["gross_returns_units"] == pytest.approx(occurrences + profit)
+    assert item["distinct_seasons"] >= folds
+    assert item["distinct_teams"] > 0
+    assert isinstance(item["conditions"], list)
+    assert len(item["conditions"]) == 3
     assert item["q_value"] == 1.0
     assert item["status"] == "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
     summary = pq.read_table(
@@ -310,6 +317,14 @@ def test_top_ten_is_precomputed_for_five_metrics_and_scopes(
             assert all(
                 item["status"]
                 == "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+                for item in ranking["items"]
+            )
+            assert all(
+                isinstance(item["conditions"], list)
+                and item["statistical_groups"] > 0
+                and item["distinct_seasons"] > 0
+                and item["distinct_teams"] > 0
+                and item["total_staked_units"] == item["occurrences"]
                 for item in ranking["items"]
             )
 

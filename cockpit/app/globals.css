@@ -564,6 +564,8 @@ td { padding: 11px 10px; border-top: 1px solid var(--line); font-size: .7rem; }
 .pagination { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .pagination button { min-height: 40px; padding: 8px 13px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
 .pagination button:disabled { opacity: .45; }
+.pagination-sizes { margin: 0; padding: 0; border: 0; }
+.pagination-sizes legend { padding: 0; }
 .research-journey { display: grid; grid-template-columns: repeat(6,1fr); width: 100%; min-width: 0; max-width: 100%; margin: 23px 0; }
 .research-journey > span { position: relative; min-width: 0; text-align: center; }
 .research-journey > span:not(:last-child)::after {

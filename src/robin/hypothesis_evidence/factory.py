@@ -861,6 +861,7 @@ def _top_row(summary: Mapping[str, object]) -> dict[str, object]:
         "family": summary["family"],
         "market": summary["market"],
         "selection": summary["selection"],
+        "conditions": json.loads(str(summary["conditions_json"])),
         "occurrences": summary["occurrences"],
         "settled_occurrences": summary["settled_occurrences"],
         "wins": summary["wins"],
@@ -869,12 +870,17 @@ def _top_row(summary: Mapping[str, object]) -> dict[str, object]:
         "hit_rate": summary["hit_rate"],
         "average_odds": summary["average_odds"],
         "median_odds": summary["median_odds"],
+        "total_staked_units": summary["total_staked_units"],
+        "gross_returns_units": summary["gross_returns_units"],
         "profit_units": summary["profit_units"],
         "roi": summary["roi"],
         "maximum_drawdown_units": summary["maximum_drawdown_units"],
         "longest_losing_streak": summary["longest_losing_streak"],
         "eligible_folds": summary["eligible_folds"],
         "positive_folds": summary["positive_folds"],
+        "distinct_seasons": summary["distinct_seasons"],
+        "distinct_teams": summary["distinct_teams"],
+        "statistical_groups": summary["statistical_groups"],
         "confidence_interval": (
             json.loads(str(summary["confidence_interval"]))
             if summary.get("confidence_interval")

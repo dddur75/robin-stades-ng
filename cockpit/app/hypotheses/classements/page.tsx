@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 
-import { HypothesisRankingsPage } from "../../components/hypotheses/hypothesis-rankings-page";
+import { HistoricalEvidenceRankingsPage } from "../../components/hypotheses/historical-evidence-rankings-page";
 import { ExperienceShell } from "../../components/navigation/experience-shell";
+import {
+  getHistoricalEvidenceRankingPage,
+  getHistoricalEvidenceReportSummary,
+} from "../../lib/hypothesis-evidence.server";
+import {
+  parseRankingListQuery,
+  serializeRankingListQuery,
+  type SearchParamRecord,
+} from "../../lib/query-params";
 
 export const metadata: Metadata = {
   title: "Classements des hypothèses",
@@ -10,12 +19,18 @@ export const metadata: Metadata = {
 export default async function RankingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ competition?: string }>;
+  searchParams: Promise<SearchParamRecord>;
 }) {
-  const { competition = "GLOBAL" } = await searchParams;
+  const query = parseRankingListQuery(await searchParams);
+  const evidencePage = getHistoricalEvidenceRankingPage(query);
+  const summary = getHistoricalEvidenceReportSummary();
   return (
     <ExperienceShell active="hypotheses">
-      <HypothesisRankingsPage initialCompetition={competition} />
+      <HistoricalEvidenceRankingsPage
+        canonicalSearchParams={serializeRankingListQuery(query).toString()}
+        page={evidencePage}
+        summary={summary}
+      />
     </ExperienceShell>
   );
 }

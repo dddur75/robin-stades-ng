@@ -4,13 +4,42 @@
     {
       "average_odds": 2.2504214559386972,
       "competition": "La Liga",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "La Liga"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_away",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            2.0,
+            2.5
+          ]
+        }
+      ],
       "confidence_interval": [
         0.03360868411743898,
         0.30770262226512224
       ],
+      "distinct_seasons": 6,
+      "distinct_teams": 28,
       "eligible_folds": 4,
       "evidence_scope": "DISCOVERY_EXPOSED",
       "family": "MARKET",
+      "gross_returns_units": 304.43,
       "hit_rate": 0.5172413793103449,
       "hypothesis_id": "J10-M001",
       "longest_losing_streak": 6,
@@ -28,20 +57,51 @@
       "rule_hash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
       "selection": "AWAY",
       "settled_occurrences": 261,
+      "statistical_groups": 225,
       "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "total_staked_units": 261.0,
       "voids": 0,
       "wins": 135
     },
     {
       "average_odds": 3.094903581267218,
       "competition": "Serie A",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "Serie A"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_draw",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            2.5,
+            3.25
+          ]
+        }
+      ],
       "confidence_interval": [
         0.0042719415204679045,
         0.31393382749629106
       ],
+      "distinct_seasons": 6,
+      "distinct_teams": 29,
       "eligible_folds": 4,
       "evidence_scope": "DISCOVERY_EXPOSED",
       "family": "MARKET",
+      "gross_returns_units": 420.88,
       "hit_rate": 0.3746556473829201,
       "hypothesis_id": "J10-M002",
       "longest_losing_streak": 15,
@@ -59,20 +119,51 @@
       "rule_hash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
       "selection": "DRAW",
       "settled_occurrences": 363,
+      "statistical_groups": 282,
       "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "total_staked_units": 363.0,
       "voids": 0,
       "wins": 136
     },
     {
       "average_odds": 1.7834854771784232,
       "competition": "Serie A",
+      "conditions": [
+        {
+          "available_at": "FIXTURE_PUBLICATION",
+          "feature": "competition",
+          "operator": "EQ",
+          "source": "API_FOOTBALL_FIXTURE",
+          "value": "Serie A"
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "market_margin_1x2",
+          "operator": "LE",
+          "source": "FOOTBALL_DATA",
+          "value": 0.06
+        },
+        {
+          "available_at": "HISTORICAL_PRICE_CATEGORY",
+          "feature": "odds_away",
+          "operator": "BETWEEN",
+          "source": "FOOTBALL_DATA",
+          "value": [
+            1.6,
+            2.0
+          ]
+        }
+      ],
       "confidence_interval": [
         0.024913994885916647,
         0.24270212811073993
       ],
+      "distinct_seasons": 6,
+      "distinct_teams": 29,
       "eligible_folds": 3,
       "evidence_scope": "DISCOVERY_EXPOSED",
       "family": "MARKET",
+      "gross_returns_units": 274.42,
       "hit_rate": 0.6390041493775933,
       "hypothesis_id": "J10-M003",
       "longest_losing_streak": 4,
@@ -90,7 +181,9 @@
       "rule_hash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
       "selection": "AWAY",
       "settled_occurrences": 241,
+      "statistical_groups": 207,
       "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+      "total_staked_units": 241.0,
       "voids": 0,
       "wins": 154
     }

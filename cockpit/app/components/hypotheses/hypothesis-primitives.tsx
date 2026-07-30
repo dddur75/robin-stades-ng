@@ -9,6 +9,7 @@ import {
   type RankingEntry,
 } from "../../lib/hypothesis-universe";
 import { formatNumber, formatPercent } from "../../i18n";
+import { ExpertOnly } from "../common/view-mode";
 
 export function HypothesisBreadcrumbs({
   items,
@@ -231,7 +232,11 @@ export function MetricExplainer({
         <small>Définition</small>
       </summary>
       <p>{simple}</p>
-      {expert ? <small>{expert}</small> : null}
+      {expert ? (
+        <ExpertOnly>
+          <small>{expert}</small>
+        </ExpertOnly>
+      ) : null}
     </details>
   );
 }

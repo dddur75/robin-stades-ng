@@ -405,7 +405,7 @@ export function HypothesisFamilyPage({
                 <RankingCard entry={entry} key={entry.hypothesis_id} />
               ))
             ) : (
-              <p>Aucun signal classé dans le contrat.</p>
+              <p>Aucun signal historique classé dans cette famille.</p>
             )}
           </article>
           <article>
