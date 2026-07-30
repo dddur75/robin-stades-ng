@@ -4,35 +4,35 @@
   "page_manifest": [
     {
       "artifact_path": "hypothesis-tree-node-pages/page-001.json",
-      "bytes": 100926,
+      "bytes": 108842,
       "page": 1,
       "records": 50,
-      "sha256": "99b22d395e8fef27611b66aaebb1e39379f247e577a5d1e4c0db4b21972602a7"
+      "sha256": "269c5a775b6fa01dac350202733a82715162d3a5a1f1973f4b5daafa707072ec"
     },
     {
       "artifact_path": "hypothesis-tree-node-pages/page-002.json",
-      "bytes": 113967,
+      "bytes": 133613,
       "page": 2,
       "records": 50,
-      "sha256": "663fccb93ffaba8de6495a92da5218f77286bc8ebf6a843b149c55402a4613b8"
+      "sha256": "2402d8b4e5f21d839b3aacca441d8e18560d4900ab11367bb8df73c258f8d7ec"
     },
     {
       "artifact_path": "hypothesis-tree-node-pages/page-003.json",
-      "bytes": 132813,
+      "bytes": 141787,
       "page": 3,
       "records": 50,
-      "sha256": "a5538821cb169844b9865b0670f94443dbc23f4796dae16791da76d9cf0412da"
+      "sha256": "f9825d7b717cd5b1b7394699cb1798b4288e31b7f3828a6931fa8a5effcf4bdc"
     },
     {
       "artifact_path": "hypothesis-tree-node-pages/page-004.json",
-      "bytes": 79805,
+      "bytes": 86839,
       "page": 4,
       "records": 30,
-      "sha256": "8fdd85dbce8b3cc04322d8b0d24f6fb12ab475b0c8aa9cf3da52a649630652d2"
+      "sha256": "d3d47c66e2b8441ed191383beb9515d2c29f3c7739c84bf04f45ab6c9c0e27c7"
     }
   ],
   "page_size": 50,
-  "replay_hash": "1a3fbbd00ff357b76e82705e6748a666f43786609fb34039d34f150a0fecf8c8",
+  "replay_hash": "796968c183451953c73f3b916964a78e5b7a64516bfad868b258ea7ac9f0ea9c",
   "roots": [
     {
       "children_count": 0,
@@ -48,7 +48,11 @@
       "parent_ids": [],
       "payload_hash": "aa53d88b40606ced8b2f114238be6e266c44ce669b61855ba92fc8777fd507b0",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_PREDICTOR"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "FORM",
       "support": 7081,
@@ -97,7 +101,11 @@
       "parent_ids": [],
       "payload_hash": "0117bcf650ee728e0d55e055cd8043b194085c49f2973bf8cfeca13c3bc4efa8",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_PREDICTOR"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "GOALS",
       "support": null,
@@ -146,7 +154,11 @@
       "parent_ids": [],
       "payload_hash": "f8fb9e18f86fd6b9a5fc7af94a1ef6fb5fcc46f9e4167e3a4b87a672065cfce3",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_CONTEXT"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "CONSECUTIVE",
       "support": null,
@@ -186,55 +198,6 @@
       "data_gates": [
         "PARTIAL"
       ],
-      "display_rule_fr": "jours de repos",
-      "family": "CALENDAR_FATIGUE",
-      "historical_metrics": null,
-      "materialization_disposition": "PRUNED",
-      "node_id": "hypothesis-node-f6a57e02fec00b8750003ced60fd6881a994c84758eb175ff05fefd8b3092bd7",
-      "parent_id": null,
-      "parent_ids": [],
-      "payload_hash": "a54343b51eb018f071ba733acef9e6d3b0cba76741cfc65d5045cda5af05c649",
-      "prospective_metrics": null,
-      "rankings": null,
-      "status": "NOT_TESTED",
-      "subfamily": "REST",
-      "support": 0,
-      "tags": [
-        "Calendrier et fatigue",
-        "CALENDAR_FATIGUE"
-      ],
-      "technical_rule": {
-        "context": [
-          "PRE_MATCH"
-        ],
-        "cutoff": "H-2",
-        "entity_scope": "TEAM_FIXTURE",
-        "graph_pattern": null,
-        "logical_operator": "ALL",
-        "market": null,
-        "predicates": [
-          {
-            "binding": "subject",
-            "learned_on": "LOGICAL_NEGATIVE_CONTROL",
-            "operator": "LT",
-            "property_id": "football:calendar_fatigue:rest_days",
-            "relation": "APPLIES_TO",
-            "transform": "RAW",
-            "value": 0.0,
-            "window": "CURRENT"
-          }
-        ],
-        "price_contract": null,
-        "relation": "INTERACTS_WITH",
-        "target": "MATCH_RESULT",
-        "temporal_window": "AS_OF_CUTOFF"
-      }
-    },
-    {
-      "children_count": 0,
-      "data_gates": [
-        "PARTIAL"
-      ],
       "display_rule_fr": "Elo",
       "family": "STRENGTH_FORM",
       "historical_metrics": null,
@@ -244,7 +207,11 @@
       "parent_ids": [],
       "payload_hash": "dd9eae652cc03ea810b22f23e717767c8a721aa41cfa9d267952a30ae54ea460",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_PREDICTOR"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "ELO",
       "support": 7081,
@@ -282,55 +249,6 @@
     {
       "children_count": 0,
       "data_gates": [
-        "READY"
-      ],
-      "display_rule_fr": "valeur manquante",
-      "family": "DATA_QUALITY",
-      "historical_metrics": null,
-      "materialization_disposition": "LONG_TAIL_WATCHLIST",
-      "node_id": "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4",
-      "parent_id": null,
-      "parent_ids": [],
-      "payload_hash": "95c55c8f27565d3d6a5954b24abecd2db377352fc8c782b447c55954f50ee2da",
-      "prospective_metrics": null,
-      "rankings": null,
-      "status": "NOT_TESTED",
-      "subfamily": "MISSINGNESS",
-      "support": null,
-      "tags": [
-        "Qualité et provenance",
-        "DATA_QUALITY"
-      ],
-      "technical_rule": {
-        "context": [
-          "PRE_MATCH"
-        ],
-        "cutoff": "H-2",
-        "entity_scope": "TEAM_FIXTURE",
-        "graph_pattern": null,
-        "logical_operator": "ALL",
-        "market": null,
-        "predicates": [
-          {
-            "binding": "subject",
-            "learned_on": "SYMBOLIC_LONG_TAIL_TEMPLATE",
-            "operator": "GE",
-            "property_id": "football:data_quality:missingness",
-            "relation": "APPLIES_TO",
-            "transform": "RAW",
-            "value": 0.25,
-            "window": "CURRENT"
-          }
-        ],
-        "price_contract": null,
-        "relation": "INTERACTS_WITH",
-        "target": "MATCH_RESULT",
-        "temporal_window": "AS_OF_CUTOFF"
-      }
-    },
-    {
-      "children_count": 0,
-      "data_gates": [
         "PARTIAL"
       ],
       "display_rule_fr": "jours de repos",
@@ -342,7 +260,11 @@
       "parent_ids": [],
       "payload_hash": "8a7fd1acd61d729e283af5b3d9f32162241f5b60a6354b0791ee3bd9c74fb65a",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_CONTEXT"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "REST",
       "support": 7081,
@@ -391,7 +313,11 @@
       "parent_ids": [],
       "payload_hash": "c83fdf639cbc9ac51bc17300da4c0bd2bf717cb56ab2fff0b6f9512f41c0c89a",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_CONTEXT"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "CROSSWIND",
       "support": null,
@@ -440,7 +366,11 @@
       "parent_ids": [],
       "payload_hash": "76aa09c37f4f7c16d2e6b4c12483b6c230dfe239eaa9f8bc191b258f2d50574c",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_PREDICTOR"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "PREFERRED",
       "support": null,
@@ -489,7 +419,11 @@
       "parent_ids": [],
       "payload_hash": "5357f507f3cccc07ad87b4d73bae3576a9458cc5f1e439b7665efcf1643183dd",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "MARKET_PROPERTY"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "MARKET",
       "support": 7081,
@@ -538,7 +472,11 @@
       "parent_ids": [],
       "payload_hash": "1cb00d9b01a045908e7c49767d79e1b71d8ef4961a8323ca71937a62a8e2c594",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_CONTEXT"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "FORMATION",
       "support": null,
@@ -587,7 +525,11 @@
       "parent_ids": [],
       "payload_hash": "94bfc39f2a40e95a1e5edad28c417e749dd624562dd1b86171f6ff6a648221cd",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_CONTEXT"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "SUSPENSION",
       "support": null,
@@ -636,7 +578,11 @@
       "parent_ids": [],
       "payload_hash": "a1f9363078214ca7f668d2911ac0d5b47ebe95da5dec377a531d6e9ddfbee57d",
       "prospective_metrics": null,
+      "public_hypothesis_eligible": true,
       "rankings": null,
+      "semantic_roles": [
+        "FOOTBALL_PREDICTOR"
+      ],
       "status": "NOT_TESTED",
       "subfamily": "GOALS",
       "support": null,

@@ -17,7 +17,6 @@
     "CALENDAR_FATIGUE": {
       "label_fr": "Calendrier et fatigue",
       "root_node_ids": [
-        "hypothesis-node-f6a57e02fec00b8750003ced60fd6881a994c84758eb175ff05fefd8b3092bd7",
         "hypothesis-node-8054a834b89b3e8e98820a3654bac413d6e6d159fc428b3ec6284551d16376ce"
       ]
     },
@@ -28,12 +27,6 @@
     "COACH": {
       "label_fr": "Entraîneur et staff",
       "root_node_ids": []
-    },
-    "DATA_QUALITY": {
-      "label_fr": "Qualité et provenance",
-      "root_node_ids": [
-        "hypothesis-node-f951507fd680ce8cb1787fe3cc90361693ec78abe63cf331cffaa60fd776b7b4"
-      ]
     },
     "DEFENCE": {
       "label_fr": "Défense",

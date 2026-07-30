@@ -83,7 +83,7 @@
     "version": "temporal-motif-v2"
   },
   "typed_enumeration": {
-    "input_predicates": 13,
+    "input_predicates": 11,
     "version": "typed-enumeration-v2"
   }
 }

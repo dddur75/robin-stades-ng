@@ -15,6 +15,7 @@ import { statusPresentation } from "../../i18n/status-translations";
 import { RichTable } from "../common/rich-table";
 import {
   EvidenceNote,
+  InlineLink,
   MetricCard,
   PageHeader,
   ProgressBar,
@@ -188,7 +189,15 @@ export function ExpertPage() {
           </section>
 
           <section className="expert-section" id="donnees">
-            <SectionHeading subtitle={t("expert.data.subtitle")} title={t("expert.data.title")} />
+            <SectionHeading
+              action={
+                <InlineLink href="/expert/qualite-donnees">
+                  Ouvrir les diagnostics de disponibilité
+                </InlineLink>
+              }
+              subtitle={t("expert.data.subtitle")}
+              title={t("expert.data.title")}
+            />
             <div className="metrics-grid">
               <MetricCard detail="catalogués" label="Jeux de données" tone="blue" value={formatNumber(expertData.datasets.length)} />
               <MetricCard detail="contrôles publiés" label="Qualité" tone="green" value={formatNumber(expertData.qualityChecks.length)} />

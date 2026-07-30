@@ -11,6 +11,8 @@ export type HypothesisFamily = {
   entities: string[];
   family: string;
   property_count: number;
+  public_hypothesis_eligible: boolean;
+  workspace_path: string | null;
 };
 
 export type HypothesisSummary = {
@@ -47,6 +49,8 @@ export type HypothesisTreeNode = {
   payload_hash: string;
   prospective_metrics: Record<string, unknown> | null;
   rankings: Record<string, unknown> | null;
+  public_hypothesis_eligible: boolean;
+  semantic_roles: string[];
   status: string;
   subfamily: string;
   support: number | null;
@@ -348,8 +352,11 @@ const data = candidateUniverse;
 export const hypothesisContracts = data.contracts;
 export const hypothesisSummary =
   data.contracts["hypothesis-universe-summary"];
-export const hypothesisFamilies =
+export const allHypothesisFamilies =
   data.contracts["hypothesis-family-catalog"].items;
+export const hypothesisFamilies = allHypothesisFamilies.filter(
+  (family) => family.public_hypothesis_eligible,
+);
 export const hypothesisTags = data.contracts["hypothesis-tags-catalog"];
 export const hypothesisFacets = data.contracts["hypothesis-facets"];
 export const hypothesisGlossary =
@@ -392,8 +399,6 @@ const familyCopy: Partial<Record<string, string>> = {
     "Robin distingue les absences réellement connues avant le match des informations publiées trop tard.",
   CALENDAR_FATIGUE:
     "Robin mesure le repos, l’enchaînement des rencontres et les contraintes de calendrier connues avant le coup d’envoi.",
-  DATA_QUALITY:
-    "Robin contrôle la fraîcheur, la provenance et les valeurs manquantes avant d’autoriser un calcul.",
   FORMATION_STRUCTURE:
     "Robin compare les structures tactiques des deux équipes, leur usage habituel et les joueurs réellement disponibles.",
   GOALKEEPER:
@@ -408,7 +413,6 @@ const familyIcons: Partial<Record<string, string>> = {
   ABSENCE_RETURN: "✚",
   ATTACK: "↗",
   CALENDAR_FATIGUE: "◷",
-  DATA_QUALITY: "✓",
   DEFENCE: "⌂",
   DISCIPLINE_REFEREE: "▯",
   FOOTEDNESS_LATERALITY: "↔",
@@ -447,7 +451,6 @@ const subfamilyCopy: Record<string, string> = {
   FORMATION: "Structures tactiques",
   GOALS: "Buts marqués ou concédés",
   MARKET: "Prix et marge du marché",
-  MISSINGNESS: "Données manquantes",
   PREFERRED: "Préférence latérale",
   REST: "Temps de repos",
   SUSPENSION: "Risque de suspension",
@@ -456,7 +459,6 @@ const subfamilyCopy: Record<string, string> = {
 const propertyCopy: Record<string, string> = {
   "football:attack:goals_scored": "Buts marqués",
   "football:calendar_fatigue:rest_days": "Jours de repos",
-  "football:data_quality:missingness": "Données manquantes",
   "football:defence:goals_conceded": "Buts concédés",
   "football:discipline_referee:suspension_threat":
     "Menace de suspension",

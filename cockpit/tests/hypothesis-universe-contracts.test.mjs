@@ -8,6 +8,12 @@ const universeUrl = new URL(
   import.meta.url,
 );
 const universe = JSON.parse(await readFile(universeUrl, "utf8"));
+const quality = JSON.parse(
+  await readFile(
+    new URL("../app/hypothesis-quality-data.json", import.meta.url),
+    "utf8",
+  ),
+);
 const contracts = universe.contracts;
 const summary = contracts["hypothesis-universe-summary"];
 const families = contracts["hypothesis-family-catalog"].items;
@@ -58,7 +64,7 @@ test("le contrat public dérive les chiffres de l’univers sans liste frontend 
     funnel.counts.PRUNED +
     funnel.counts.LONG_TAIL_WATCHLIST;
 
-  assert.equal(generatedRules, 1_092);
+  assert.equal(generatedRules, 561);
   assert.equal(materializedRules, summary.materialized_candidates);
   assert.equal(materializedRules, tree.node_count);
   assert.equal(funnel.counts.EXECUTED, summary.executed_candidates);
@@ -124,6 +130,18 @@ test("les pages de nœuds, le localisateur et l’index enfants décrivent les m
     assert.equal(descriptor.sourceSha256, manifestDescriptor?.sha256);
     assert.equal(descriptor.records, manifestDescriptor?.records);
     for (const node of payload.items) {
+      assert.equal(node.public_hypothesis_eligible, true);
+      assert.ok(node.semantic_roles.length > 0);
+      assert.ok(
+        node.semantic_roles.every((role) =>
+          [
+            "FOOTBALL_PREDICTOR",
+            "FOOTBALL_CONTEXT",
+            "FOOTBALL_RELATION",
+            "MARKET_PROPERTY",
+          ].includes(role),
+        ),
+      );
       assert.equal(
         universe.derivedTreeIndex.nodeLocator[node.node_id],
         descriptor.page,
@@ -170,6 +188,17 @@ test("les pages de nœuds, le localisateur et l’index enfants décrivent les m
     assert.ok(nodeIds.has(root.node_id), `racine absente : ${root.node_id}`);
     assert.equal(root.parent_id, null);
   }
+
+  const publicText = JSON.stringify({
+    allNodes,
+    globalRankings,
+    familyTrees: contracts["hypothesis-family-tree-index"],
+    tags: contracts["hypothesis-tags-catalog"],
+  }).toLocaleLowerCase("fr-FR");
+  assert.ok(!publicText.includes("valeur manquante"));
+  assert.ok(!publicText.includes("data_quality"));
+  assert.ok(!publicText.includes("logical_negative_control"));
+  assert.deepEqual(globalRankings.longue_traine_a_surveiller, []);
 });
 
 test("les verrous scientifiques et opérationnels sont fermés dans la présentation", () => {
@@ -191,4 +220,29 @@ test("les verrous scientifiques et opérationnels sont fermés dans la présenta
   assert.equal(freeze.contracts.length, summary.prospectively_frozen_candidates);
   assert.ok(freeze.contracts.every((contract) => contract.promotion_locked));
   assert.equal(contracts["hypothesis-live-activity"].real_bets, 0);
+});
+
+test("data quality is exhaustive and separated from public hypotheses", () => {
+  assert.equal(quality.semanticRoles.classification_complete, true);
+  assert.equal(quality.semanticRoles.property_count, 486);
+  assert.equal(quality.semanticRoles.items.length, 486);
+  assert.equal(quality.workspace.public_hypothesis_surface, false);
+  assert.equal(quality.workspace.workspace_path, "/expert/qualite-donnees");
+  assert.equal(
+    quality.workspace.legacy_public_false_hypothesis_branches_removed,
+    8,
+  );
+  assert.equal(quality.workspace.provider_calls, 0);
+  assert.equal(quality.workspace.live_writes, 0);
+
+  const qualityFamily = families.find(
+    (family) => family.family === "DATA_QUALITY",
+  );
+  assert.equal(qualityFamily.public_hypothesis_eligible, false);
+  assert.equal(qualityFamily.workspace_path, "/expert/qualite-donnees");
+  assert.ok(
+    !contracts["hypothesis-tags-catalog"].families.some(
+      (family) => family.id === "DATA_QUALITY",
+    ),
+  );
 });

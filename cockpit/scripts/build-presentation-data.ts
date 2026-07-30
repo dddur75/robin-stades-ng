@@ -18,6 +18,10 @@ const hypothesisGlossaryOutputUrl = new URL(
   "../app/hypothesis-glossary-data.json",
   import.meta.url,
 );
+const hypothesisQualityOutputUrl = new URL(
+  "../app/hypothesis-quality-data.json",
+  import.meta.url,
+);
 const hypothesisContractRoot = new URL(
   "../../reports/hypothesis-genome/",
   import.meta.url,
@@ -227,6 +231,25 @@ await writeFile(
     patternResearch: snapshotRecord.patternResearch,
     prequentialLearning: presentation.prequentialLearning,
   }, null, 2)}\n`,
+  "utf8",
+);
+
+const [semanticRoles, dataQualityWorkspace] = await Promise.all([
+  readJson(new URL("property-semantic-roles.json", hypothesisContractRoot)),
+  readJson(
+    new URL("hypothesis-data-quality-workspace.json", hypothesisContractRoot),
+  ),
+]);
+await writeFile(
+  hypothesisQualityOutputUrl,
+  `${JSON.stringify(
+    {
+      semanticRoles,
+      workspace: dataQualityWorkspace,
+    },
+    null,
+    2,
+  )}\n`,
   "utf8",
 );
 

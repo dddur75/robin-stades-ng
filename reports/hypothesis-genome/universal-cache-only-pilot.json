@@ -22,22 +22,22 @@
     "memory_budget_bytes": 536870912,
     "wall_clock_budget_seconds": 30.0
   },
-  "checkpoint_hash": "adeb1ea196ad864a2c8d7cbb6804d771f90f770e8e8336857131b8dbbb82296b",
+  "checkpoint_hash": "c4d65f590ad514831d6a699058f43d61b1e807820de1ea159233ae52066a3f0f",
   "compute": {
-    "compute_time_seconds": 0.670177,
+    "compute_time_seconds": 0.429128,
     "memory_measurement": "PYTHON_HEAP_TRACEMALLOC_NOT_PROCESS_RSS",
-    "python_heap_peak_bytes": 683190
+    "python_heap_peak_bytes": 550922
   },
   "counts": {
-    "long_tail_candidates": 8,
+    "long_tail_candidates": 0,
     "maximum_depth_reached": 4,
     "parents_expanded": 180,
-    "rules_blocked": 149,
-    "rules_compute_deferred": 912,
-    "rules_executed": 13,
-    "rules_generated": 1092,
+    "rules_blocked": 166,
+    "rules_compute_deferred": 381,
+    "rules_executed": 14,
+    "rules_generated": 561,
     "rules_materialized": 180,
-    "rules_pruned": 10
+    "rules_pruned": 0
   },
   "mode": "CACHE_ONLY",
   "model_diagnostic": {
@@ -49,7 +49,7 @@
   "paid_weather_calls": 0,
   "provider_calls": 0,
   "real_bets": 0,
-  "replay_hash": "1a3fbbd00ff357b76e82705e6748a666f43786609fb34039d34f150a0fecf8c8",
+  "replay_hash": "796968c183451953c73f3b916964a78e5b7a64516bfad868b258ea7ac9f0ea9c",
   "replay_identical": true,
   "schema_version": "universal-cache-only-pilot-v1",
   "social_publications": 0,

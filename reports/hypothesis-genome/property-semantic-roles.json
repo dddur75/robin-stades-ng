@@ -1,0 +1,3426 @@
+{
+  "classification_complete": true,
+  "items": [
+    {
+      "display_name_fr": "centraux absents",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:centre_backs_absent",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "créateur absent",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:creator_absent",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "incertain",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:doubtful",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "gardien absent",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:goalkeeper_absent",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "malade",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:ill",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "blessé",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:injured",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "cumul d’absences par ligne",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:line_absence_count",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "matchs depuis le retour",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:matches_since_return",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "autorisation médicale",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:medical_clearance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "restriction de minutes",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:minutes_restriction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "part des buts absente",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:missing_goals_share",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "part des minutes absente",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:missing_minutes_share",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "part du xG absente",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:missing_xg_share",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "remplaçant naturel disponible",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:natural_replacement_available",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "risque de rechute",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:relapse_risk",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "retour à l’entraînement",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:return_to_training",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "retour",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:returning",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "suspendu",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:suspended",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "meilleur buteur absent",
+      "family": "ABSENCE_RETURN",
+      "property_id": "football:absence_return:top_scorer_absent",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "grosses occasions",
+      "family": "ATTACK",
+      "property_id": "football:attack:big_chances",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs bloqués",
+      "family": "ATTACK",
+      "property_id": "football:attack:blocked_shots",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "production dans l’axe",
+      "family": "ATTACK",
+      "property_id": "football:attack:central_production",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "corners obtenus",
+      "family": "ATTACK",
+      "property_id": "football:attack:corners_for",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "centres",
+      "family": "ATTACK",
+      "property_id": "football:attack:crosses",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "centres en retrait",
+      "family": "ATTACK",
+      "property_id": "football:attack:cutbacks",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "efficacité",
+      "family": "ATTACK",
+      "property_id": "football:attack:finishing_efficiency",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "coups francs obtenus",
+      "family": "ATTACK",
+      "property_id": "football:attack:free_kicks_for",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "buts marqués",
+      "family": "ATTACK",
+      "property_id": "football:attack:goals_scored",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "passes clés",
+      "family": "ATTACK",
+      "property_id": "football:attack:key_passes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "production côté gauche",
+      "family": "ATTACK",
+      "property_id": "football:attack:left_production",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "dépendance à un joueur",
+      "family": "ATTACK",
+      "property_id": "football:attack:player_dependency",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "production côté droit",
+      "family": "ATTACK",
+      "property_id": "football:attack:right_production",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "attaque placée",
+      "family": "ATTACK",
+      "property_id": "football:attack:settled_attack",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs",
+      "family": "ATTACK",
+      "property_id": "football:attack:shots",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs dans la surface",
+      "family": "ATTACK",
+      "property_id": "football:attack:shots_inside_box",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs cadrés",
+      "family": "ATTACK",
+      "property_id": "football:attack:shots_on_target",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs hors surface",
+      "family": "ATTACK",
+      "property_id": "football:attack:shots_outside_box",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "passes en profondeur",
+      "family": "ATTACK",
+      "property_id": "football:attack:through_balls",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "transitions",
+      "family": "ATTACK",
+      "property_id": "football:attack:transitions",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "xG par tir",
+      "family": "ATTACK",
+      "property_id": "football:attack:xg_per_shot",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "solutions offensives",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:attacking_options",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "solutions défensives",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:defensive_options",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "profondeur",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:depth",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "substitutions précoces",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:early_substitutions",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "expérience",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:experience",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "minute du premier changement offensif",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:first_attacking_sub_minute",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "impact historique",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:historical_impact",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "substitutions tardives",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:late_substitutions",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "remplaçants naturels",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:natural_replacements",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "profils disponibles",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:profiles",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "qualité relative",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:relative_quality",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "vitesse",
+      "family": "BENCH_SUBSTITUTIONS",
+      "property_id": "football:bench_substitutions:speed",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "charge collective",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:collective_load",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "congestion",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:congestion",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "charge individuelle",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:individual_load",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "matchs sur 10 jours",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:matches_10d",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "matchs sur 14 jours",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:matches_14d",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "matchs sur 21 jours",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:matches_21d",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "matchs sur 30 jours",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:matches_30d",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "matchs sur 5 jours",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:matches_5d",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "matchs sur 7 jours",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:matches_7d",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "importance du prochain match",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:next_match_importance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "prolongation récente",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:recent_extra_time",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "minutes récentes",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:recent_minutes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "tirs au but récents",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:recent_penalty_shootout",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "jours de repos",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:rest_days",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "différentiel de repos",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:rest_differential",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "reprise",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:restart_phase",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rotation",
+      "family": "CALENDAR_FATIGUE",
+      "property_id": "football:calendar_fatigue:rotation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "duo offensif",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:attacking_pair",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "centralité",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:centrality",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "duo central",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:centre_back_pair",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "co-titularisations",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:co_starts",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "minutes communes",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:common_minutes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "dépendance",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:dependency",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "gardien-charnière",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:goalkeeper_defence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "triangle du milieu",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:midfield_triangle",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "rupture de réseau",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:network_break",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "entropie du réseau",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:network_entropy",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "réseau de passes",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:pass_network",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "coût de remplacement",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:replacement_cost",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "couloir ailier-latéral",
+      "family": "CHEMISTRY_NETWORKS",
+      "property_id": "football:chemistry_networks:wing_fullback_lane",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "réponse après défaite",
+      "family": "COACH",
+      "property_id": "football:coach:after_loss_response",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "réponse en congestion",
+      "family": "COACH",
+      "property_id": "football:coach:congestion_response",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "expérience",
+      "family": "COACH",
+      "property_id": "football:coach:experience",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "première rencontre",
+      "family": "COACH",
+      "property_id": "football:coach:first_match",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "formations utilisées",
+      "family": "COACH",
+      "property_id": "football:coach:formations",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "gestion de l’état du score",
+      "family": "COACH",
+      "property_id": "football:coach:game_state_management",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "ajustement à la mi-temps",
+      "family": "COACH",
+      "property_id": "football:coach:half_time_adjustment",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "identité",
+      "family": "COACH",
+      "property_id": "football:coach:identity",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "IDENTIFIER"
+    },
+    {
+      "display_name_fr": "familiarité avec l’adversaire",
+      "family": "COACH",
+      "property_id": "football:coach:opponent_familiarity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changement récent",
+      "family": "COACH",
+      "property_id": "football:coach:recent_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rotation",
+      "family": "COACH",
+      "property_id": "football:coach:rotation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "continuité du staff",
+      "family": "COACH",
+      "property_id": "football:coach:staff_continuity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "style",
+      "family": "COACH",
+      "property_id": "football:coach:style",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "opposition de styles",
+      "family": "COACH",
+      "property_id": "football:coach:style_opposition",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "substitutions",
+      "family": "COACH",
+      "property_id": "football:coach:substitutions",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "ancienneté",
+      "family": "COACH",
+      "property_id": "football:coach:tenure",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "biais de couverture",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:coverage_bias",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "confiance d’identité",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:identity_confidence",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "instant d’ingestion",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:ingested_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "valeur manquante",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:missingness",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "instant d’observation",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:observed_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "hash de provenance",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:provenance_hash",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "PROVENANCE_METADATA"
+    },
+    {
+      "display_name_fr": "instant de mise à jour fournisseur",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:provider_updated_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "instant de publication",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:published_at",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "changement de schéma",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:schema_change",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "DATA_QUALITY_METADATA"
+    },
+    {
+      "display_name_fr": "source",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:source",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "PROVENANCE_METADATA"
+    },
+    {
+      "display_name_fr": "hash du schéma source",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:source_schema_hash",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "PROVENANCE_METADATA"
+    },
+    {
+      "display_name_fr": "début de validité",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:valid_from",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "fin de validité",
+      "family": "DATA_QUALITY",
+      "property_id": "football:data_quality:valid_to",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "AVAILABILITY_METADATA"
+    },
+    {
+      "display_name_fr": "défense aérienne",
+      "family": "DEFENCE",
+      "property_id": "football:defence:aerial_defence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "grosses occasions concédées",
+      "family": "DEFENCE",
+      "property_id": "football:defence:big_chances_conceded",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "vulnérabilité axiale",
+      "family": "DEFENCE",
+      "property_id": "football:defence:central_vulnerability",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pertes dangereuses",
+      "family": "DEFENCE",
+      "property_id": "football:defence:dangerous_turnovers",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "bloc défensif",
+      "family": "DEFENCE",
+      "property_id": "football:defence:defensive_block",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "duels",
+      "family": "DEFENCE",
+      "property_id": "football:defence:duels",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "erreurs",
+      "family": "DEFENCE",
+      "property_id": "football:defence:errors",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "buts encaissés",
+      "family": "DEFENCE",
+      "property_id": "football:defence:goals_conceded",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "ligne haute",
+      "family": "DEFENCE",
+      "property_id": "football:defence:high_line",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "interceptions",
+      "family": "DEFENCE",
+      "property_id": "football:defence:interceptions",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "vulnérabilité gauche",
+      "family": "DEFENCE",
+      "property_id": "football:defence:left_vulnerability",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "équilibre défensif résiduel",
+      "family": "DEFENCE",
+      "property_id": "football:defence:rest_defence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "vulnérabilité droite",
+      "family": "DEFENCE",
+      "property_id": "football:defence:right_vulnerability",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "défense sur coups de pied arrêtés",
+      "family": "DEFENCE",
+      "property_id": "football:defence:set_piece_defence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs concédés",
+      "family": "DEFENCE",
+      "property_id": "football:defence:shots_conceded",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs cadrés concédés",
+      "family": "DEFENCE",
+      "property_id": "football:defence:shots_on_target_conceded",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tacles",
+      "family": "DEFENCE",
+      "property_id": "football:defence:tackles",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "défense de transition",
+      "family": "DEFENCE",
+      "property_id": "football:defence:transition_defence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "xGA",
+      "family": "DEFENCE",
+      "property_id": "football:defence:xga",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "arbitres assistants",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:assistant_referees",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "cartons par faute",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:cards_per_foul",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "règles disciplinaires de la compétition",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:competition_rules",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "interaction derby-enjeu",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:derby_stake",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "fautes",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:fouls",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "cartons récents",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:recent_cards",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "cartons rouges",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:red_cards",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "arbitre",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:referee",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "IDENTIFIER"
+    },
+    {
+      "display_name_fr": "cartons de l’arbitre",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:referee_cards",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "pénaltys de l’arbitre",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:referee_penalties",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rouges de l’arbitre",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:referee_reds",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "retour de suspension",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:return_from_suspension",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "interaction arbitre-équipe-style",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:style_interaction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "joueur sous menace de suspension",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:suspension_threat",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "centraux menacés",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:threatened_centre_backs",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "nombre de joueurs menacés",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:threatened_players",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "VAR",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:var",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "arbitre VAR",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:var_official",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "cartons jaunes",
+      "family": "DISCIPLINE_REFEREE",
+      "property_id": "football:discipline_referee:yellow_cards",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "séquence d’actions",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:action_sequence",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "carton",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:card_event",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "période de formation",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:formation_spell",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "but",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:goal_event",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "minute",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:minute",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "état numérique",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:numerical_state",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "période de joueur",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:player_spell",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "chaîne de possession",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:possession_chain",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "état du score",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:score_state",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "remplacement",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:substitution_event",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "temps restant",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:time_remaining",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "événement VAR",
+      "family": "EVENT_GAME_STATE",
+      "property_id": "football:event_game_state:var_event",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "TARGET"
+    },
+    {
+      "display_name_fr": "bilatéralité",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:bilaterality",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pieds du duo central",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:centre_back_foot_pair",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "asymétrie défensive",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:defensive_asymmetry",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pied du défenseur direct",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:direct_defender_foot",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pied dominant",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:dominant_foot",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "distribution des pieds du trio offensif",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:front_three_foot_distribution",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pied du latéral",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:fullback_foot_fit",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pied naturel ou faux pied",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:natural_inverted_foot",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "asymétrie offensive",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:offensive_asymmetry",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "couloir ailier-latéral",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:wing_fullback_lane",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "côté de l’ailier",
+      "family": "FOOTEDNESS_LATERALITY",
+      "property_id": "football:footedness_laterality:wing_side",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "structure de relance",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:build_up_shape",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "premier usage",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:first_use",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "formation",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:formation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changement de formation",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:formation_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "continuité de formation",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:formation_continuity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "interaction formation-fatigue",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:formation_fatigue_matchup",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "interaction formation-marché",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:formation_market_matchup",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "interaction formation-météo",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:formation_weather_matchup",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "confrontation formation domicile-extérieur",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:home_away_matchup",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "structure avec ballon",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:in_possession_shape",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "structure sans ballon",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:out_of_possession_shape",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "structure de pressing",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:pressing_shape",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "formation rare",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:rare_formation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "formation habituelle",
+      "family": "FORMATION_STRUCTURE",
+      "property_id": "football:formation_structure:usual_formation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "sorties aériennes",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:aerial_claims",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "continuité avec la défense",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:defence_continuity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "jeu au pied",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:distribution",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "erreurs",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:errors",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "expérience",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:experience",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pénaltys arrêtés",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:penalties",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "PSxG",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:post_shot_xg",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "taux d’arrêts",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:save_rate",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "arrêts",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:saves",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "statut titulaire-remplaçant",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:starter_status",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "actions de gardien-libéro",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:sweeper_actions",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "interaction vent-pluie-centres",
+      "family": "GOALKEEPER",
+      "property_id": "football:goalkeeper:weather_cross_interaction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "blessure annoncée",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:announced_injury",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "composition annoncée",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:announced_lineup",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "correction",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:correction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "déclaration",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:declaration",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "joueur écarté",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:excluded_player",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "âge de l’information au cutoff",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:information_age",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changement d’horaire",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:kickoff_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "conférence de presse",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:press_conference",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "date de publication",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:published_at",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changement d’arbitre",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:referee_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "fiabilité",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:reliability",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rétractation",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:retraction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "source",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:source",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "communiqué",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:statement",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "transfert",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:transfer",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "incident de voyage",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:travel_incident",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changement de stade",
+      "family": "INFORMATION_NEWS",
+      "property_id": "football:information_news:venue_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "âge moyen",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:average_age",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "banc",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:bench",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "profondeur du banc",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:bench_depth",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "duo central",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:centre_back_pair",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "changements",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:changes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changements par ligne",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:changes_by_line",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "minutes communes",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:common_minutes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "continuité",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:continuity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rotation forcée",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:forced_rotation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "ligne offensive",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:forward_line",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "triangle du milieu",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:midfield_triangle",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "remplaçants naturels",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:natural_replacements",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "onze officiel",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:official_xi",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "joueurs hors poste",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:out_of_position_players",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "titulaires habituels",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:usual_starters",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rotation volontaire",
+      "family": "LINEUP_CONTINUITY",
+      "property_id": "football:lineup_continuity:voluntary_rotation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "handicap",
+      "family": "MARKET",
+      "property_id": "football:market:asian_handicap",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "dispersion bookmakers",
+      "family": "MARKET",
+      "property_id": "football:market:bookmaker_dispersion",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "les deux équipes marquent",
+      "family": "MARKET",
+      "property_id": "football:market:btts",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "cartons",
+      "family": "MARKET",
+      "property_id": "football:market:cards",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "corners",
+      "family": "MARKET",
+      "property_id": "football:market:corners",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "scores exacts",
+      "family": "MARKET",
+      "property_id": "football:market:correct_score",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "double chance",
+      "family": "MARKET",
+      "property_id": "football:market:double_chance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "fautes",
+      "family": "MARKET",
+      "property_id": "football:market:fouls",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "arrêts du gardien",
+      "family": "MARKET",
+      "property_id": "football:market:goalkeeper_saves",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "total de buts",
+      "family": "MARKET",
+      "property_id": "football:market:goals_total",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "mi-temps",
+      "family": "MARKET",
+      "property_id": "football:market:half_time",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "limites",
+      "family": "MARKET",
+      "property_id": "football:market:limits",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "mouvement de ligne",
+      "family": "MARKET",
+      "property_id": "football:market:line_movement",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "liquidité",
+      "family": "MARKET",
+      "property_id": "football:market:liquidity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "marché 1X2",
+      "family": "MARKET",
+      "property_id": "football:market:market_1x2",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "marge de marché",
+      "family": "MARKET",
+      "property_id": "football:market:market_margin",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "cote décimale",
+      "family": "MARKET",
+      "property_id": "football:market:odds_decimal",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "marchés joueurs",
+      "family": "MARKET",
+      "property_id": "football:market:player_props",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "règle de règlement",
+      "family": "MARKET",
+      "property_id": "football:market:settlement_rule",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "tirs",
+      "family": "MARKET",
+      "property_id": "football:market:shots",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "tirs cadrés",
+      "family": "MARKET",
+      "property_id": "football:market:shots_on_target",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "buts équipe",
+      "family": "MARKET",
+      "property_id": "football:market:team_goals",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "MARKET_PROPERTY"
+    },
+    {
+      "display_name_fr": "score cumulé",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:aggregate_score",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "huis clos",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:behind_closed_doors",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "compétition",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:competition",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "IDENTIFIER"
+    },
+    {
+      "display_name_fr": "derby",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:derby",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "première journée",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:first_matchday",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changement d’horaire",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:kickoff_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "élimination directe",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:knockout",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "dernière journée",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:last_matchday",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "heure locale",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:local_kickoff_time",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "journée",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:matchday",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "mois",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:month",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "terrain neutre",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:neutral_ground",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "phase",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:phase",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "reprise après trêve",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:post_break_restart",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "enjeu de qualification",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:qualification_stake",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "enjeu de relégation",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:relegation_stake",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rivalité",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:rivalry",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "tour",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:round",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "saison",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:season",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "période de saison",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:season_period",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "dépendance à un autre match",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:simultaneous_match_dependency",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "changement de stade",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:stadium_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "enjeu du classement",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:standings_stake",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "manche aller ou retour",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:tie_leg",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "enjeu du titre",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:title_stake",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "domicile ou extérieur",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:venue_role",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "jour de la semaine",
+      "family": "MATCH_COMPETITION",
+      "property_id": "football:match_competition:weekday",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "zone corporelle",
+      "family": "MEDICAL",
+      "property_id": "football:medical:body_area",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "protocole commotion",
+      "family": "MEDICAL",
+      "property_id": "football:medical:concussion_protocol",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "reprise collective",
+      "family": "MEDICAL",
+      "property_id": "football:medical:full_training",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "épisode de maladie",
+      "family": "MEDICAL",
+      "property_id": "football:medical:illness_episode",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "entraînement individuel",
+      "family": "MEDICAL",
+      "property_id": "football:medical:individual_training",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "épisode de blessure",
+      "family": "MEDICAL",
+      "property_id": "football:medical:injury_episode",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "mécanisme de blessure",
+      "family": "MEDICAL",
+      "property_id": "football:medical:injury_mechanism",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "autorisation médicale",
+      "family": "MEDICAL",
+      "property_id": "football:medical:medical_clearance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "restriction de minutes",
+      "family": "MEDICAL",
+      "property_id": "football:medical:minutes_restriction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "reprise partielle",
+      "family": "MEDICAL",
+      "property_id": "football:medical:partial_training",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "base de gouvernance et consentement",
+      "family": "MEDICAL",
+      "property_id": "football:medical:privacy_basis",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "historique de récidive",
+      "family": "MEDICAL",
+      "property_id": "football:medical:relapse_history",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "gravité",
+      "family": "MEDICAL",
+      "property_id": "football:medical:severity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "joueur du centre de formation",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:academy_player",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "convocation en sélection",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:call_up",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "incitation contractuelle",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:contract_incentive",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "statut contractuel",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:contract_status",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "pression financière",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:financial_pressure",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "prêt",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:loan",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "inscription",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:registration",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "renouvellement d’effectif",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:squad_churn",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "appartenance à l’effectif",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:squad_membership",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "transfert",
+      "family": "ORGANISATION_SQUAD",
+      "property_id": "football:organisation_squad:transfer",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "accélération",
+      "family": "PLAYER",
+      "property_id": "football:player:acceleration",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "âge",
+      "family": "PLAYER",
+      "property_id": "football:player:age",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "passes décisives",
+      "family": "PLAYER",
+      "property_id": "football:player:assists",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "cartons",
+      "family": "PLAYER",
+      "property_id": "football:player:cards",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "duels",
+      "family": "PLAYER",
+      "property_id": "football:player:duels",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "endurance",
+      "family": "PLAYER",
+      "property_id": "football:player:endurance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "erreurs",
+      "family": "PLAYER",
+      "property_id": "football:player:errors",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "expérience",
+      "family": "PLAYER",
+      "property_id": "football:player:experience",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "forme",
+      "family": "PLAYER",
+      "property_id": "football:player:form",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "fautes",
+      "family": "PLAYER",
+      "property_id": "football:player:fouls",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "buts",
+      "family": "PLAYER",
+      "property_id": "football:player:goals",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "taille",
+      "family": "PLAYER",
+      "property_id": "football:player:height",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "identité",
+      "family": "PLAYER",
+      "property_id": "football:player:identity",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "IDENTIFIER"
+    },
+    {
+      "display_name_fr": "interceptions",
+      "family": "PLAYER",
+      "property_id": "football:player:interceptions",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": " détente",
+      "family": "PLAYER",
+      "property_id": "football:player:jump",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "charge",
+      "family": "PLAYER",
+      "property_id": "football:player:load",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "minutes",
+      "family": "PLAYER",
+      "property_id": "football:player:minutes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "joueur hors poste",
+      "family": "PLAYER",
+      "property_id": "football:player:out_of_position",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "performance avec partenaires",
+      "family": "PLAYER",
+      "property_id": "football:player:partner_performance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "poste",
+      "family": "PLAYER",
+      "property_id": "football:player:position",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pied préféré sourcé",
+      "family": "PLAYER",
+      "property_id": "football:player:preferred_foot",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "résistance au pressing",
+      "family": "PLAYER",
+      "property_id": "football:player:press_resistance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "performance contre profils",
+      "family": "PLAYER",
+      "property_id": "football:player:profile_matchup",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_RELATION"
+    },
+    {
+      "display_name_fr": "rôle",
+      "family": "PLAYER",
+      "property_id": "football:player:role",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tirs",
+      "family": "PLAYER",
+      "property_id": "football:player:shots",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "côté",
+      "family": "PLAYER",
+      "property_id": "football:player:side",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "vitesse",
+      "family": "PLAYER",
+      "property_id": "football:player:speed",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "titularisations",
+      "family": "PLAYER",
+      "property_id": "football:player:starts",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "entrées en jeu",
+      "family": "PLAYER",
+      "property_id": "football:player:substitute_appearances",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tacles",
+      "family": "PLAYER",
+      "property_id": "football:player:tackles",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "polyvalence",
+      "family": "PLAYER",
+      "property_id": "football:player:versatility",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "xA",
+      "family": "PLAYER",
+      "property_id": "football:player:xa",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "xG",
+      "family": "PLAYER",
+      "property_id": "football:player:xg",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "vitesse de circulation",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:circulation_speed",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "contre-pressing",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:counter_pressing",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "jeu direct",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:directness",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "inclinaison du terrain",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:field_tilt",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "occupation des demi-espaces",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:half_space_use",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "récupérations hautes",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:high_recoveries",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "relances longues",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:long_build_up",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pertes sous pression",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:losses_under_pressure",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "passes",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:passes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "possession",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:possession",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "PPDA",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:ppda",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pressing",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:pressing",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "piège de pressing",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:pressing_trap",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "déclencheur de pressing",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:pressing_trigger",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "sorties de pression",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:pressure_exits",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "passes progressives",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:progressive_passes",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "relances courtes",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:short_build_up",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "troisième homme",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:third_man",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "largeur",
+      "family": "POSSESSION_PRESSING",
+      "property_id": "football:possession_pressing:width",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "central relanceur",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:ball_playing_defender",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "ombre de couverture",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:cover_shadow",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "jeu direct",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:direct_play",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "double pivot",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:double_pivot",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "faux neuf",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:false_nine",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "ligne haute",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:high_line",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "sentinelle",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:holding_midfielder",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "latéral intérieur",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:inverted_fullback",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "ailier inversé",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:inverted_winger",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "bloc bas",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:low_block",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "schéma de marquage",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:marking_scheme",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "chevauchement",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:overlap",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "meneur",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:playmaker",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "possession",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:possession_style",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pressing",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:pressing",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "permutation",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:rotation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "surcharge d’un côté",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:side_overload",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "stoppeur",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:stopper",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "gardien-libéro",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:sweeper_keeper",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pivot",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:target_player",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "transition",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:transition",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "sous-chevauchement",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:underlap",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "ailier de débordement",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:wide_winger",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "largeur",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:width",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "piston",
+      "family": "ROLE_TACTICS",
+      "property_id": "football:role_tactics:wingback",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "défense aérienne",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:aerial_defence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "tireurs disponibles",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:available_takers",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "xG sur corner",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:corner_xg",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "corners contre",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:corners_against",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "corners pour",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:corners_for",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "trajectoire",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:delivery_trajectory",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "coups francs",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:free_kicks",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "gardien aérien",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:goalkeeper_aerial",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "marquage zonal ou individuel",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:marking_scheme",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pénaltys",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:penalties",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "type de routine",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:routine_type",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "absence d’un tireur",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:taker_absence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "zone visée",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:target_zone",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "taille collective",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:team_height",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "interaction vent-pluie",
+      "family": "SET_PIECES",
+      "property_id": "football:set_pieces:weather_interaction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "pression acoustique",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:acoustic_pressure",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "altitude",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:altitude",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "caractéristiques du ballon",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:ball_specification",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "coordonnées géographiques",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:coordinates",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "affluence",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:crowd_size",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "drainage",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:drainage",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "adéquation chaussures-surface",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:footwear_surface_fit",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "type de pelouse",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:grass_type",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "latitude",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:latitude",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "longitude",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:longitude",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "longueur du terrain",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:pitch_length",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "orientation",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:pitch_orientation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "état du terrain",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:pitch_state",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "largeur du terrain",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:pitch_width",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "état du toit",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:roof_state",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "stade",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:stadium",
+      "public_hypothesis_eligible": false,
+      "semantic_role": "IDENTIFIER"
+    },
+    {
+      "display_name_fr": "familiarité avec le stade",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:stadium_familiarity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "surface",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:surface",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "terrain temporaire",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:temporary_venue",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "exposition au vent",
+      "family": "STADIUM_PITCH",
+      "property_id": "football:stadium_pitch:wind_exposure",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "performance après victoire, nul ou défaite",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:after_result_performance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "Elo",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:elo",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "performance favori-outsider",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:favourite_outsider_performance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "forme",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:form",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "buts",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:goals",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "performance domicile-extérieur",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:home_away_performance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "forme ajustée à l’adversaire",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:opponent_adjusted_form",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "points",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:points",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "classement",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:ranking",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "changement de régime",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:regime_change",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "série",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:streak",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "volatilité",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:volatility",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "forme pondérée",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:weighted_form",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "xG",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:xg",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "différence xG",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:xg_difference",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "xGA",
+      "family": "STRENGTH_FORM",
+      "property_id": "football:strength_form:xga",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_PREDICTOR"
+    },
+    {
+      "display_name_fr": "accélérations",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:accelerations",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "charge aiguë-chronique",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:acute_chronic_load",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "charge externe",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:external_load",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "fréquence cardiaque",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:heart_rate",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "distance à haute intensité",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:high_intensity_distance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "charge interne",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:internal_load",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "jour du microcycle",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:microcycle_day",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "fatigue perçue",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:perceived_fatigue",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "récupération",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:recovery",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "RPE",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:rpe",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "sommeil",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:sleep",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "courbatures",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:soreness",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "sprints",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:sprints",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "stress thermique",
+      "family": "TRAINING_LOAD",
+      "property_id": "football:training_load:thermal_stress",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "écart d’altitude",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:altitude_delta",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "heure d’arrivée",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:arrival_time",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "décalage circadien",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:circadian_offset",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "écart climatique",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:climate_delta",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "déplacements consécutifs",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:consecutive_away_matches",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "kilomètres cumulés",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:cumulative_kilometres",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "retour de sélection",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:international_return",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "nuits sur place",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:nights_on_site",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "récupération après voyage",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:post_travel_recovery",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "retour européen",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:return_from_europe",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "déplacement le jour du match",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:same_day_travel",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "écart de fuseau",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:timezone_delta",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "retard",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:travel_delay",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "distance",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:travel_distance",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "durée",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:travel_duration",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "séquence domicile-extérieur",
+      "family": "TRAVEL_LOGISTICS",
+      "property_id": "football:travel_logistics:venue_sequence",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "météo réelle",
+      "family": "WEATHER",
+      "property_id": "football:weather:actual_weather",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "qualité de l’air",
+      "family": "WEATHER",
+      "property_id": "football:weather:air_quality",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "couverture nuageuse",
+      "family": "WEATHER",
+      "property_id": "football:weather:cloud_cover",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "vent par rapport à l’axe du terrain",
+      "family": "WEATHER",
+      "property_id": "football:weather:crosswind_component",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "différence climatique départ-arrivée",
+      "family": "WEATHER",
+      "property_id": "football:weather:departure_arrival_climate_delta",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "point de rosée",
+      "family": "WEATHER",
+      "property_id": "football:weather:dew_point",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "température ressentie",
+      "family": "WEATHER",
+      "property_id": "football:weather:feels_like",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "brouillard",
+      "family": "WEATHER",
+      "property_id": "football:weather:fog",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "prévision au cutoff",
+      "family": "WEATHER",
+      "property_id": "football:weather:forecast_at_cutoff",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "écart prévision-réalité",
+      "family": "WEATHER",
+      "property_id": "football:weather:forecast_error",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "gel",
+      "family": "WEATHER",
+      "property_id": "football:weather:frost",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "humidité",
+      "family": "WEATHER",
+      "property_id": "football:weather:humidity",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "pression",
+      "family": "WEATHER",
+      "property_id": "football:weather:pressure",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "cumul de pluie",
+      "family": "WEATHER",
+      "property_id": "football:weather:rain_accumulation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "pluie",
+      "family": "WEATHER",
+      "property_id": "football:weather:rain_rate",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "toit ouvert",
+      "family": "WEATHER",
+      "property_id": "football:weather:roof_open",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "neige",
+      "family": "WEATHER",
+      "property_id": "football:weather:snow",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rayonnement solaire",
+      "family": "WEATHER",
+      "property_id": "football:weather:solar_radiation",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "température",
+      "family": "WEATHER",
+      "property_id": "football:weather:temperature",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "orage",
+      "family": "WEATHER",
+      "property_id": "football:weather:thunderstorm",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "visibilité",
+      "family": "WEATHER",
+      "property_id": "football:weather:visibility",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "température humide",
+      "family": "WEATHER",
+      "property_id": "football:weather:wet_bulb",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "direction du vent",
+      "family": "WEATHER",
+      "property_id": "football:weather:wind_direction",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "rafales",
+      "family": "WEATHER",
+      "property_id": "football:weather:wind_gust",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    },
+    {
+      "display_name_fr": "vent",
+      "family": "WEATHER",
+      "property_id": "football:weather:wind_speed",
+      "public_hypothesis_eligible": true,
+      "semantic_role": "FOOTBALL_CONTEXT"
+    }
+  ],
+  "property_count": 486,
+  "public_allowed_roles": [
+    "FOOTBALL_PREDICTOR",
+    "FOOTBALL_CONTEXT",
+    "FOOTBALL_RELATION",
+    "MARKET_PROPERTY"
+  ],
+  "role_counts": {
+    "AVAILABILITY_METADATA": 6,
+    "DATA_QUALITY_METADATA": 4,
+    "FOOTBALL_CONTEXT": 233,
+    "FOOTBALL_PREDICTOR": 180,
+    "FOOTBALL_RELATION": 21,
+    "IDENTIFIER": 5,
+    "MARKET_PROPERTY": 22,
+    "PROVENANCE_METADATA": 3,
+    "TARGET": 12
+  },
+  "schema_version": "property-semantic-roles-v1"
+}

@@ -50,6 +50,31 @@ class PropertyRole(StrEnum):
     PROVENANCE = "PROVENANCE"
 
 
+class SemanticRole(StrEnum):
+    """Public semantic role, kept outside the frozen scientific payload."""
+
+    FOOTBALL_PREDICTOR = "FOOTBALL_PREDICTOR"
+    FOOTBALL_CONTEXT = "FOOTBALL_CONTEXT"
+    FOOTBALL_RELATION = "FOOTBALL_RELATION"
+    TARGET = "TARGET"
+    MARKET_PROPERTY = "MARKET_PROPERTY"
+    IDENTIFIER = "IDENTIFIER"
+    DATA_QUALITY_METADATA = "DATA_QUALITY_METADATA"
+    AVAILABILITY_METADATA = "AVAILABILITY_METADATA"
+    PROVENANCE_METADATA = "PROVENANCE_METADATA"
+    NEGATIVE_CONTROL = "NEGATIVE_CONTROL"
+
+
+PUBLIC_HYPOTHESIS_SEMANTIC_ROLES = frozenset(
+    {
+        SemanticRole.FOOTBALL_PREDICTOR,
+        SemanticRole.FOOTBALL_CONTEXT,
+        SemanticRole.FOOTBALL_RELATION,
+        SemanticRole.MARKET_PROPERTY,
+    }
+)
+
+
 @dataclass(frozen=True, slots=True)
 class PropertyDefinition:
     property_id: str
@@ -97,6 +122,12 @@ class PropertyDefinition:
         payload["role"] = self.role.value
         payload["availability_status"] = self.availability_status.value
         return canonical_sha256(payload)
+
+    @property
+    def semantic_role(self) -> SemanticRole:
+        """Classification used by public surfaces without changing legacy hashes."""
+
+        return semantic_role_for_property(self)
 
 
 @dataclass(frozen=True, slots=True)
@@ -732,6 +763,85 @@ def _role(family: str, identifier: str) -> PropertyRole:
     return PropertyRole.PREDICTOR
 
 
+_DATA_QUALITY_FIELDS = frozenset(
+    {
+        "missing",
+        "missingness",
+        "value_missing",
+        "source_missing",
+        "coverage_missing",
+        "gate_missing",
+        "identity_confidence",
+        "coverage_bias",
+        "schema_change",
+    }
+)
+_AVAILABILITY_FIELDS = frozenset(
+    {
+        "observed_at",
+        "published_at",
+        "provider_updated_at",
+        "ingested_at",
+        "valid_from",
+        "valid_to",
+    }
+)
+_PROVENANCE_FIELDS = frozenset({"source", "source_schema_hash", "provenance_hash"})
+_IDENTIFIER_FIELDS = frozenset({"identity", "competition", "stadium", "referee"})
+_CONTEXT_FAMILIES = frozenset(
+    {
+        "MATCH_COMPETITION",
+        "STADIUM_PITCH",
+        "WEATHER",
+        "TRAVEL_LOGISTICS",
+        "CALENDAR_FATIGUE",
+        "LINEUP_CONTINUITY",
+        "ABSENCE_RETURN",
+        "DISCIPLINE_REFEREE",
+        "FORMATION_STRUCTURE",
+        "COACH",
+        "INFORMATION_NEWS",
+        "TRAINING_LOAD",
+        "MEDICAL",
+        "ORGANISATION_SQUAD",
+    }
+)
+_RELATION_FAMILIES = frozenset({"CHEMISTRY_NETWORKS"})
+
+
+def semantic_role_for_property(definition: PropertyDefinition) -> SemanticRole:
+    """Return a total, fail-closed semantic classification for a property."""
+
+    identifier = definition.source_field.casefold()
+    if definition.family == "DATA_QUALITY":
+        if identifier in _DATA_QUALITY_FIELDS or "missing" in identifier:
+            return SemanticRole.DATA_QUALITY_METADATA
+        if identifier in _AVAILABILITY_FIELDS:
+            return SemanticRole.AVAILABILITY_METADATA
+        if identifier in _PROVENANCE_FIELDS:
+            return SemanticRole.PROVENANCE_METADATA
+        return SemanticRole.DATA_QUALITY_METADATA
+    if definition.family == "MARKET":
+        return SemanticRole.MARKET_PROPERTY
+    if definition.family == "EVENT_GAME_STATE":
+        return SemanticRole.TARGET
+    if identifier in _IDENTIFIER_FIELDS:
+        return SemanticRole.IDENTIFIER
+    if (
+        definition.family in _RELATION_FAMILIES
+        or definition.data_type
+        in {
+            PropertyDataType.GRAPH_NODE_REF,
+            PropertyDataType.GRAPH_EDGE_REF,
+            PropertyDataType.HYPEREDGE_REF,
+        }
+    ):
+        return SemanticRole.FOOTBALL_RELATION
+    if definition.family in _CONTEXT_FAMILIES:
+        return SemanticRole.FOOTBALL_CONTEXT
+    return SemanticRole.FOOTBALL_PREDICTOR
+
+
 def build_property_universe() -> tuple[PropertyDefinition, ...]:
     definitions: list[PropertyDefinition] = []
     for seed in FAMILY_SEEDS:
@@ -1077,13 +1187,16 @@ __all__ = [
     "PROPERTY_UNIVERSE",
     "PROPERTY_UNIVERSE_ID",
     "PROPERTY_UNIVERSE_VERSION",
+    "PUBLIC_HYPOTHESIS_SEMANTIC_ROLES",
     "PropertyDataType",
     "PropertyDefinition",
     "PropertyRole",
     "RELATION_CATALOG",
     "SOURCE_FIELD_INVENTORY",
+    "SemanticRole",
     "TRANSFORMATION_CATALOG",
     "build_property_universe",
     "property_universe_hash",
+    "semantic_role_for_property",
     "source_field_audit",
 ]
