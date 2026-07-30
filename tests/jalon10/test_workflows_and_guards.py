@@ -97,6 +97,56 @@ def test_ci_includes_jalon10_migrations_and_secret_scan() -> None:
     assert "scripts/check_no_secrets.py" in text
 
 
+def test_ci_replays_frozen_jalon10_on_windows_before_linux_checks() -> None:
+    path = ROOT / ".github" / "workflows" / "ci.yml"
+    workflow = yaml.safe_load(path.read_text("utf-8"))
+    jobs = workflow["jobs"]
+    evidence_job = jobs["hypothesis-evidence-inputs"]
+    tests_job = jobs["tests"]
+    visual_job = jobs["visual-regression"]
+
+    assert evidence_job["runs-on"] == "windows-latest"
+    assert tests_job["runs-on"] == "ubuntu-latest"
+    assert tests_job["needs"] == "hypothesis-evidence-inputs"
+    assert visual_job["needs"] == ["hypothesis-evidence-inputs", "tests"]
+
+    evidence_commands = "\n".join(
+        str(step.get("run", "")) for step in evidence_job["steps"]
+    )
+    assert "423fb7e77ba52286b660956161f02f8a2c1be7f8..HEAD" in evidence_commands
+    assert "5c85cf20b932df44dca8665de00e52e3f1e02236" in evidence_commands
+    assert "JALON_10_EXPECTED_30_PARTITIONS" in evidence_commands
+    assert "--replay" in evidence_commands
+    assert "FULL_CAMPAIGN_SHA256" in evidence_commands
+    assert "REGISTRY_SHA256" in evidence_commands
+
+    upload_step = next(
+        step
+        for step in evidence_job["steps"]
+        if step.get("uses") == "actions/upload-artifact@v4"
+    )
+    artifact_name = (
+        "hypothesis-evidence-campaign-inputs-"
+        "${{ github.run_id }}-${{ github.run_attempt }}"
+    )
+    assert upload_step["with"]["name"] == artifact_name
+    assert set(upload_step["with"]["path"].splitlines()) == {
+        ".ci/hypothesis-j10/campaign-summary.json",
+        ".ci/hypothesis-j10/hypothesis-registry.jsonl",
+        ".ci/hypothesis-j10/replay.json",
+    }
+    for consumer_job in (tests_job, visual_job):
+        download_step = next(
+            step
+            for step in consumer_job["steps"]
+            if step.get("uses") == "actions/download-artifact@v4"
+        )
+        assert download_step["with"] == {
+            "name": artifact_name,
+            "path": ".ci/hypothesis-j10",
+        }
+
+
 def test_runner_decisions_parse_json_point_in_time_et_fixture_string(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

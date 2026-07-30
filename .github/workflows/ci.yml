@@ -23,7 +23,77 @@ concurrency:
     contains(github.event.head_commit.message, '[run-j12-pilot]')) }}
 
 jobs:
+  hypothesis-evidence-inputs:
+    name: "Jalon 10 - entrees de preuve gelees"
+    runs-on: windows-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer les dependances
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Reconstruire les entrees Jalon 10 depuis le commit gele
+        shell: pwsh
+        run: |
+          git diff --quiet 423fb7e77ba52286b660956161f02f8a2c1be7f8..HEAD -- src/robin/patterns scripts/run_pattern_campaign.py configs/pattern-research-v1.json
+          if ($LASTEXITCODE -ne 0) {
+            throw "JALON_10_FROZEN_ENGINE_DRIFT"
+          }
+
+          $j10Root = Join-Path $env:RUNNER_TEMP "j10"
+          $j10Archive = Join-Path $env:RUNNER_TEMP "j10-historical.tar"
+          $state = Join-Path $j10Root "historical"
+          New-Item -ItemType Directory -Force -Path $j10Root | Out-Null
+          git archive --format=tar "--output=$j10Archive" 5c85cf20b932df44dca8665de00e52e3f1e02236 -- ':(glob)historical/parquet/competition=*/season=*/entity_type=historical_market/dataset_version=historical_market_v1/*.parquet'
+          if ($LASTEXITCODE -ne 0) {
+            throw "JALON_10_ARCHIVE_FAILED"
+          }
+          tar -xf $j10Archive -C $j10Root
+          if ($LASTEXITCODE -ne 0) {
+            throw "JALON_10_EXTRACTION_FAILED"
+          }
+          $partitions = @(
+            Get-ChildItem -Path $state -Recurse -Filter "*.parquet" -File
+          )
+          if ($partitions.Count -ne 30) {
+            throw "JALON_10_EXPECTED_30_PARTITIONS"
+          }
+
+          python scripts/run_pattern_campaign.py --state $state --output .ci/hypothesis-j10 --code-revision 423fb7e77ba52286b660956161f02f8a2c1be7f8 --config configs/pattern-research-v1.json
+          if ($LASTEXITCODE -ne 0) {
+            throw "JALON_10_PRIMARY_FAILED"
+          }
+          python scripts/run_pattern_campaign.py --state $state --output .ci/hypothesis-j10 --code-revision 423fb7e77ba52286b660956161f02f8a2c1be7f8 --config configs/pattern-research-v1.json --replay
+          if ($LASTEXITCODE -ne 0) {
+            throw "JALON_10_REPLAY_FAILED"
+          }
+          python -c "from pathlib import Path; from robin.hypothesis_evidence.contracts import FULL_CAMPAIGN_SHA256, REGISTRY_SHA256, sha256_file; assert sha256_file(Path('.ci/hypothesis-j10/campaign-summary.json')) == FULL_CAMPAIGN_SHA256; assert sha256_file(Path('.ci/hypothesis-j10/hypothesis-registry.jsonl')) == REGISTRY_SHA256"
+          if ($LASTEXITCODE -ne 0) {
+            throw "JALON_10_FROZEN_HASH_MISMATCH"
+          }
+      - name: Conserver les entrees de preuve verifiees
+        uses: actions/upload-artifact@v4
+        with:
+          name: hypothesis-evidence-campaign-inputs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .ci/hypothesis-j10/campaign-summary.json
+            .ci/hypothesis-j10/hypothesis-registry.jsonl
+            .ci/hypothesis-j10/replay.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 1
+
   tests:
+    needs: hypothesis-evidence-inputs
     runs-on: ubuntu-latest
     timeout-minutes: 25
     services:
@@ -44,6 +114,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Restaurer les entrees de preuve verifiees
+        uses: actions/download-artifact@v4
+        with:
+          name: hypothesis-evidence-campaign-inputs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci/hypothesis-j10
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -52,30 +127,6 @@ jobs:
         run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
-      - name: Reconstruire les entrees Jalon 10 depuis le commit gele
-        shell: bash
-        run: |
-          git diff --quiet \
-            423fb7e77ba52286b660956161f02f8a2c1be7f8..HEAD -- \
-            src/robin/patterns \
-            scripts/run_pattern_campaign.py \
-            configs/pattern-research-v1.json
-          mkdir -p "$RUNNER_TEMP/j10"
-          git archive 5c85cf20b932df44dca8665de00e52e3f1e02236 -- \
-            ':(glob)historical/parquet/competition=*/season=*/entity_type=historical_market/dataset_version=historical_market_v1/*.parquet' \
-            | tar -x -C "$RUNNER_TEMP/j10"
-          python scripts/run_pattern_campaign.py \
-            --state "$RUNNER_TEMP/j10/historical" \
-            --output .ci/hypothesis-j10 \
-            --code-revision 423fb7e77ba52286b660956161f02f8a2c1be7f8 \
-            --config configs/pattern-research-v1.json
-          python scripts/run_pattern_campaign.py \
-            --state "$RUNNER_TEMP/j10/historical" \
-            --output .ci/hypothesis-j10 \
-            --code-revision 423fb7e77ba52286b660956161f02f8a2c1be7f8 \
-            --config configs/pattern-research-v1.json \
-            --replay
-          python -c "from pathlib import Path; from robin.hypothesis_evidence.contracts import FULL_CAMPAIGN_SHA256, REGISTRY_SHA256, sha256_file; assert sha256_file(Path('.ci/hypothesis-j10/campaign-summary.json')) == FULL_CAMPAIGN_SHA256; assert sha256_file(Path('.ci/hypothesis-j10/hypothesis-registry.jsonl')) == REGISTRY_SHA256"
       - name: Linting
         run: >-
           python -m ruff check
@@ -141,20 +192,11 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm test
-      - name: Conserver les entrees de preuve pour la regression visuelle
-        uses: actions/upload-artifact@v4
-        with:
-          name: hypothesis-evidence-campaign-inputs-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            .ci/hypothesis-j10/campaign-summary.json
-            .ci/hypothesis-j10/hypothesis-registry.jsonl
-            .ci/hypothesis-j10/replay.json
-          if-no-files-found: error
-          include-hidden-files: true
-          retention-days: 1
 
   visual-regression:
-    needs: tests
+    needs:
+      - hypothesis-evidence-inputs
+      - tests
     name: "Robin Experience — preuves visuelles"
     runs-on: ubuntu-latest
     timeout-minutes: 25
