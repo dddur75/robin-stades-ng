@@ -32,7 +32,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  replay-current:
+    uses: ./.github/workflows/74-historical-deep-replay.yml
+    with:
+      slice_id: current-r2-gate
+      continuation_id: p0-closure-30622258001-1
+      continuation_of: "30622258001:1"
+      run_purpose: P0_CLOSURE_AND_SHARDED_REPLAY
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
   census:
+    needs: replay-current
+    if: ${{ needs['replay-current'].outputs.status == 'SECOND_PASS_IDEMPOTENT' }}
     uses: ./.github/workflows/70-historical-deep-coverage-census.yml
     with:
       execute: ${{ inputs.execute }}
@@ -46,10 +61,10 @@ jobs:
       R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
 
   fixture-p0-a:
-    needs: census
+    needs: players-p0-b
     if: >-
-      ${{ always() && needs.census.result == 'success' &&
-      needs.census.outputs.provider_stop != 'true' }}
+      ${{ always() && needs['players-p0-b'].result == 'success' &&
+      needs['players-p0-b'].outputs.provider_stop != 'true' }}
     uses: ./.github/workflows/71-historical-deep-fixture-bundle-harvest.yml
     with:
       slice_id: fixture-p0-a
@@ -103,10 +118,10 @@ jobs:
       R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
 
   players-p0-a:
-    needs: fixture-p0-c
+    needs: census
     if: >-
-      ${{ always() && needs['fixture-p0-c'].result == 'success' &&
-      needs['fixture-p0-c'].outputs.provider_stop != 'true' }}
+      ${{ always() && needs.census.result == 'success' &&
+      needs.census.outputs.provider_stop != 'true' }}
     uses: ./.github/workflows/72-historical-deep-player-pages-harvest.yml
     with:
       slice_id: players-p0-a
@@ -141,10 +156,10 @@ jobs:
       R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
 
   injuries-p0:
-    needs: players-p0-b
+    needs: fixture-p0-c
     if: >-
-      ${{ always() && needs['players-p0-b'].result == 'success' &&
-      needs['players-p0-b'].outputs.provider_stop != 'true' }}
+      ${{ always() && needs['fixture-p0-c'].result == 'success' &&
+      needs['fixture-p0-c'].outputs.provider_stop != 'true' }}
     uses: ./.github/workflows/73-historical-deep-injuries-sidelined-harvest.yml
     with:
       slice_id: injuries-p0
@@ -214,7 +229,7 @@ jobs:
       slice_id: players-p1
       execute: ${{ inputs.execute }}
       priority: P1
-      max_calls: 6000
+      max_calls: 5000
       max_duration_minutes: 75
     secrets:
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -233,7 +248,7 @@ jobs:
       slice_id: injuries-p1
       execute: ${{ inputs.execute }}
       priority: P1
-      max_calls: 4000
+      max_calls: 3000
       max_duration_minutes: 75
     secrets:
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -278,7 +293,7 @@ jobs:
       slice_id: fixture-p2
       execute: ${{ inputs.execute }}
       priority: P2
-      max_calls: 7000
+      max_calls: 4000
       max_duration_minutes: 75
     secrets:
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -297,7 +312,7 @@ jobs:
       slice_id: players-p2
       execute: ${{ inputs.execute }}
       priority: P2
-      max_calls: 5000
+      max_calls: 2500
       max_duration_minutes: 75
     secrets:
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -316,7 +331,7 @@ jobs:
       slice_id: injuries-p2
       execute: ${{ inputs.execute }}
       priority: P2
-      max_calls: 3000
+      max_calls: 2000
       max_duration_minutes: 75
     secrets:
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}

@@ -58,6 +58,7 @@ _SAFE_PROVIDER_ERROR_MESSAGES = frozenset(
         "API_FOOTBALL_STATUS_RESPONSE_MISSING",
         "API_FOOTBALL_SUBSCRIPTION_END_INVALID",
         "API_FOOTBALL_TRANSPORT_FAILED",
+        "RUNNER_HEARTBEAT_STALE",
     }
 )
 _SAFE_PROVIDER_HTTP_ERROR_PATTERN = re.compile(r"^API_FOOTBALL_HTTP_[45][0-9]{2}$")
@@ -99,6 +100,7 @@ _TASK_TERMINAL_STATUSES = frozenset(
         TaskStatus.COMPLETE,
         TaskStatus.EMPTY_VALID,
         TaskStatus.RETRYABLE,
+        TaskStatus.STALE_RETRYABLE,
         TaskStatus.BLOCKED_COVERAGE,
         TaskStatus.BLOCKED_PROVIDER,
         TaskStatus.FAILED,
@@ -107,6 +109,7 @@ _TASK_TERMINAL_STATUSES = frozenset(
 _TASK_FAILURE_STATUSES = frozenset(
     {
         TaskStatus.RETRYABLE,
+        TaskStatus.STALE_RETRYABLE,
         TaskStatus.BLOCKED_COVERAGE,
         TaskStatus.BLOCKED_PROVIDER,
         TaskStatus.FAILED,

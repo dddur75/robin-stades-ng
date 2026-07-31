@@ -38,6 +38,7 @@ _SENSITIVE_PARAMETER_NAMES = frozenset(
 class TaskStatus(StrEnum):
     PENDING = "PENDING"
     RUNNING = "RUNNING"
+    STALE_RETRYABLE = "STALE_RETRYABLE"
     COMPLETE = "COMPLETE"
     EMPTY_VALID = "EMPTY_VALID"
     RETRYABLE = "RETRYABLE"
@@ -195,7 +196,7 @@ class QuotaSpec(FrozenContract):
     daily_remaining_source: Literal["provider_status_and_headers"]
     mandatory_reserve_minimum: Literal[20000]
     mandatory_reserve_fraction: float = Field(ge=0.2, le=0.2)
-    mission_call_cap: Literal[100000]
+    mission_call_cap: Literal[90000]
     initial_requests_per_second: Literal[8]
     initial_requests_per_minute: Literal[480]
     max_retries: Literal[3]

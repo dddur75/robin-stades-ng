@@ -13,6 +13,7 @@ PHASE_FILES = {
     number: next(WORKFLOWS.glob(f"{number}-historical-deep-*.yml"))
     for number in range(70, 79)
 }
+SHARD_FILES = tuple(sorted(WORKFLOWS.glob("74[a-d]-historical-deep-*.yml")))
 CONTROLLER = WORKFLOWS / "79-historical-deep-night-controller.yml"
 BOOTSTRAP = WORKFLOWS / "historical-backfill.yml"
 CI = WORKFLOWS / "ci.yml"
@@ -52,6 +53,7 @@ PROVIDER_JOBS = (
     "injuries-p2",
 )
 OFFLINE_JOBS = (
+    "replay-current",
     "replay-p0",
     "quality-p0",
     "replay-p1",
@@ -100,8 +102,8 @@ def _steps(job: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
 
 
 def test_all_historical_deep_yaml_and_json_contracts_parse() -> None:
-    files = [*PHASE_FILES.values(), CONTROLLER, BOOTSTRAP, CI]
-    assert len(set(files)) == 12
+    files = [*PHASE_FILES.values(), *SHARD_FILES, CONTROLLER, BOOTSTRAP, CI]
+    assert len(set(files)) == 16
     for path in files:
         _, workflow = _load(path)
         assert _mapping(workflow["jobs"])
@@ -120,6 +122,22 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
             "group": "historical-deep-r2-state",
             "cancel-in-progress": False,
         }
+        if number == 74:
+            jobs = _mapping(workflow["jobs"])
+            assert tuple(jobs) == (
+                "inventory",
+                "replay-segments",
+                "reducer",
+                "idempotence",
+            )
+            assert all(
+                str(_mapping(job)["uses"]).startswith(
+                    "./.github/workflows/74"
+                )
+                for job in jobs.values()
+            )
+            assert "API_FOOTBALL_KEY" not in text
+            continue
         job = _only_job(workflow)
         assert 90 <= int(str(job["timeout-minutes"])) <= 110
         env = _mapping(job["env"])
@@ -155,6 +173,13 @@ def test_only_collection_workflows_receive_provider_secret() -> None:
         declared = set(_mapping(call["secrets"]))
         expected = PROVIDER_SECRETS if number <= 73 else R2_SECRETS
         assert declared == expected
+        if number == 74:
+            assert "API_FOOTBALL_KEY" not in text
+            assert all(
+                set(_mapping(_mapping(job)["secrets"])) == R2_SECRETS
+                for job in _mapping(workflow["jobs"]).values()
+            )
+            continue
         job = _only_job(workflow)
         assert not set(_mapping(job["env"])) & PROVIDER_SECRETS
         runner_step = next(
@@ -182,12 +207,13 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
     assert "secrets: inherit" not in text
     jobs = _mapping(controller["jobs"])
     expected_chain = (
-        ("fixture-p0-a", "census"),
+        ("census", "replay-current"),
+        ("players-p0-a", "census"),
+        ("players-p0-b", "players-p0-a"),
+        ("fixture-p0-a", "players-p0-b"),
         ("fixture-p0-b", "fixture-p0-a"),
         ("fixture-p0-c", "fixture-p0-b"),
-        ("players-p0-a", "fixture-p0-c"),
-        ("players-p0-b", "players-p0-a"),
-        ("injuries-p0", "players-p0-b"),
+        ("injuries-p0", "fixture-p0-c"),
         ("replay-p0", "injuries-p0"),
         ("quality-p0", "replay-p0"),
         ("fixture-p1", ("injuries-p0", "quality-p0")),
@@ -221,7 +247,7 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
         int(str(_mapping(_mapping(jobs[name])["with"])["max_calls"]))
         for name in PROVIDER_JOBS
     )
-    assert total_calls == 98_500
+    assert total_calls == 90_000
     assert total_calls <= mission_call_cap
     assert all(
         int(str(_mapping(_mapping(jobs[name])["with"])["max_duration_minutes"]))
@@ -272,6 +298,11 @@ def test_repeated_collection_slices_have_unique_artifact_names() -> None:
             "type": "string",
             "default": "standalone",
         }
+        if number == 74:
+            assert _mapping(call_inputs["continuation_of"])["default"] == (
+                "30622258001:1"
+            )
+            continue
         upload = next(
             step
             for step in _steps(_only_job(workflow))
@@ -287,7 +318,11 @@ def test_repeated_collection_slices_have_unique_artifact_names() -> None:
             f"/{number}-historical-deep-" in workflow_path
             for number in reusable_numbers
         ):
-            assert _mapping(job["with"])["slice_id"] == job_name
+            slice_id = _mapping(job["with"])["slice_id"]
+            if job_name == "replay-current":
+                assert slice_id == "current-r2-gate"
+            else:
+                assert slice_id == job_name
 
     _, quality_workflow = _load(PHASE_FILES[75])
     quality_call = _workflow_call(quality_workflow)
@@ -359,9 +394,9 @@ def test_campaign_quota_and_safety_contract_is_fail_closed() -> None:
     contract = json.loads(CONFIG.read_text("utf-8"))
     assert contract["quota"]["mandatory_reserve_minimum"] == 20_000
     assert contract["quota"]["mandatory_reserve_fraction"] == 0.2
-    assert contract["quota"]["mission_call_cap"] == 100_000
-    assert contract["quota"]["checkpoint_max_calls"] == 500
-    assert contract["quota"]["checkpoint_max_minutes"] == 20
+    assert contract["quota"]["mission_call_cap"] == 90_000
+    assert contract["quota"]["checkpoint_max_calls"] == 250
+    assert contract["quota"]["checkpoint_max_minutes"] == 5
     assert contract["safety"] == {
         "STORAGE_PAUSED": True,
         "P3_P4_PAUSED": True,

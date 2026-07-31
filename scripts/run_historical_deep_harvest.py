@@ -79,8 +79,8 @@ ANALYSIS_COMMANDS = frozenset({"replay", "quality", "features", "backtest", "rep
 ALL_COMMANDS = tuple(sorted(COLLECTION_COMMANDS | ANALYSIS_COMMANDS))
 GLOBAL_MISSION_MAX_MINUTES = 720
 JOB_MAX_DURATION_MINUTES = 100
-CHECKPOINT_MAX_CALLS = 500
-CHECKPOINT_MAX_MINUTES = 20
+CHECKPOINT_MAX_CALLS = 250
+CHECKPOINT_MAX_MINUTES = 5
 COLLECTOR_VERSION = "historical-deep-collector-v1"
 SENTINEL_KEY = (
     "historical-deep-data/schema-v1/_control/"
@@ -265,6 +265,7 @@ class ExecutionLimits:
     reservation_chunk_calls: int = CHECKPOINT_MAX_CALLS
     code_revision: str = "UNSPECIFIED"
     run_token: str = "LOCAL:UNSPECIFIED"
+    usage_category: str = "mission/usage"
     _job_started_monotonic: float = field(init=False)
     _last_checkpoint_monotonic: float = field(init=False)
     _last_checkpoint_calls: int = field(init=False)
@@ -313,7 +314,7 @@ class ExecutionLimits:
                 raise RunnerBlocked("GLOBAL_MISSION_CALL_CAP_REACHED")
             # Persist a conservative high-water mark before transport. A crash can
             # therefore over-count at most one bounded chunk, never under-count
-            # provider attempts or permit the global 100k ceiling to be crossed.
+            # provider attempts or permit the global 90k ceiling to be crossed.
             self.mission_calls_used += reservation
             self._mission_reservation_remaining = reservation
             self.persist_mission_usage(recorded_at=self._current_time())
@@ -356,7 +357,7 @@ class ExecutionLimits:
 
     def persist_mission_usage(self, *, recorded_at: datetime) -> None:
         self.ledger.put_json(
-            "mission/usage",
+            self.usage_category,
             {
                 "schema_version": "historical-deep-mission-usage-v1",
                 "mission_started_at": self.mission_started_at,
@@ -413,12 +414,13 @@ def _persisted_mission_calls(
     *,
     mission_started_at: datetime,
     mission_call_cap: int,
+    usage_category: str = "mission/usage",
 ) -> int:
     """Recover the conservative high-water mark for the active mission."""
 
     expected_start = mission_started_at.astimezone(UTC).isoformat()
     high_water_mark = 0
-    for envelope in ledger.values("mission/usage"):
+    for envelope in ledger.values(usage_category):
         value = _mapping(envelope.get("value"))
         if str(value.get("mission_started_at", "")) != expected_start:
             continue
@@ -479,6 +481,15 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("artifacts/historical-deep"),
     )
     parser.add_argument("--code-revision", default="UNSPECIFIED")
+    parser.add_argument(
+        "--continuation-id",
+        default="p0-closure-30622258001-1",
+    )
+    parser.add_argument("--continuation-of", default="30622258001:1")
+    parser.add_argument(
+        "--run-purpose",
+        default="P0_CLOSURE_AND_SHARDED_REPLAY",
+    )
     parser.add_argument(
         "--matches-path",
         type=Path,
@@ -1307,7 +1318,33 @@ def _quality_products(
         isinstance(expected_projection_hash, str)
         and expected_projection_hash == canonical_sha256(normalized_before)
     )
-    normalized_after, errors_after = ledger.normalized_records()
+    replay_value = _latest_mapping_for_lineage(
+        ledger,
+        "replay",
+        code_revision,
+        run_token,
+    )
+    if replay_value.get("inventory_sha256") is not None:
+        idempotence = _latest_mapping_for_lineage(
+            ledger,
+            "replay/idempotence",
+            code_revision,
+            run_token,
+        )
+        idempotence_gates = {
+            str(value) for value in _sequence(idempotence.get("gates"))
+        }
+        if (
+            idempotence.get("status") != "SECOND_PASS_IDEMPOTENT"
+            or "CURRENT_SECOND_PASS_IDEMPOTENT" not in idempotence_gates
+            or idempotence.get("inventory_sha256")
+            != replay_value.get("inventory_sha256")
+        ):
+            raise ValueError("QUALITY_SEGMENTED_IDEMPOTENCE_PROOF_REQUIRED")
+        normalized_after = [dict(value) for value in normalized_before]
+        errors_after: tuple[str, ...] = ()
+    else:
+        normalized_after, errors_after = ledger.normalized_records()
     rows = _deduplicated_rows(normalized_before)
     replayed_rows = _deduplicated_rows(normalized_after)
     comparison = compare_quality_v2(
@@ -1347,12 +1384,6 @@ def _quality_products(
         )
         for name, values in separated.items()
     }
-    replay_value = _latest_mapping_for_lineage(
-        ledger,
-        "replay",
-        code_revision,
-        run_token,
-    )
     manifests = build_dataset_manifests(
         datasets,
         provenance={
@@ -1596,6 +1627,15 @@ def _run_quality(
         )
     )
     recorded_at = _aware_now(services)
+    gate_report = {
+        "schema_version": "historical-deep-gate-report-v1",
+        "status": "COMPLETE",
+        "code_revision": code_revision,
+        "run_token": run_token,
+        "gate_hash": canonical_sha256(gates),
+        "gates": gates,
+        "provider_calls": 0,
+    }
     keys = {
         "quality": ledger.put_json("quality", quality, recorded_at=recorded_at),
         "datasets": ledger.put_json(
@@ -1604,6 +1644,9 @@ def _run_quality(
             recorded_at=recorded_at,
         ),
         "gates": ledger.put_json("gates", gates, recorded_at=recorded_at),
+        "gate_report": ledger.put_json(
+            "gate-report", gate_report, recorded_at=recorded_at
+        ),
         "genome": ledger.put_json("genome", genome, recorded_at=recorded_at),
     }
     for name, rows in sorted(datasets.items()):
@@ -1665,7 +1708,18 @@ def _run_features(
         code_revision=code_revision,
         run_token=run_token,
     )
-    normalized, _errors = ledger.normalized_records()
+    replay_projection = _latest_mapping_for_lineage(
+        ledger,
+        "replay/projection",
+        code_revision,
+        run_token,
+    )
+    projection_rows = _sequence(replay_projection.get("rows"))
+    normalized = [
+        dict(value) for value in projection_rows if isinstance(value, Mapping)
+    ]
+    if replay_projection.get("projection_hash") != canonical_sha256(normalized):
+        raise ValueError("FEATURE_REPLAY_PROJECTION_HASH_MISMATCH")
     _enriched, targets = _enrich_targets(_deduplicated_rows(normalized))
     bundles: list[dict[str, object]] = []
     errors: list[str] = []
@@ -1720,6 +1774,21 @@ def _run_features(
         "promotion": "NO_PROMOTION",
     }
     detailed["feature_hash"] = canonical_sha256(detailed)
+    feature_manifest = {
+        "schema_version": "historical-deep-feature-manifests-v1",
+        "status": detailed["status"],
+        "code_revision": code_revision,
+        "run_token": run_token,
+        "feature_hash": detailed["feature_hash"],
+        "bundle_count": len(bundles),
+        "dataset_manifests": manifests,
+        "provider_calls": 0,
+    }
+    detailed["feature_manifest_key"] = ledger.put_json(
+        "feature-manifests",
+        feature_manifest,
+        recorded_at=_aware_now(services),
+    )
     detailed["durable_key"] = ledger.put_json(
         "features",
         detailed,
@@ -2209,9 +2278,22 @@ def _run_report(
     report["code_revision"] = code_revision
     report["run_token"] = run_token
     report["analysis_statuses"] = analysis_statuses
+    continuation = _latest_mapping_for_lineage(
+        ledger,
+        "continuation/lineage",
+        code_revision,
+        run_token,
+    )
+    continuation_id = continuation.get("continuation_id")
+    report["continuation"] = continuation
+    usage_category = (
+        f"mission/continuations/{continuation_id}/usage"
+        if isinstance(continuation_id, str) and continuation_id
+        else "mission/usage"
+    )
     mission_usage = _latest_mapping_for_lineage(
         ledger,
-        "mission/usage",
+        usage_category,
         code_revision,
         run_token,
     )
@@ -2455,11 +2537,15 @@ def _collection_run(
         )
         return result
     checked_at = _aware_now(services)
-    mission_started_at = ledger.mission_start(
+    mission_started_at = ledger.continuation_start(
+        continuation_id=args.continuation_id,
+        continuation_of=args.continuation_of,
+        run_purpose=args.run_purpose,
         now=checked_at,
         code_revision=args.code_revision,
         maximum_minutes=args.mission_max_minutes,
     )
+    usage_category = f"mission/continuations/{args.continuation_id}/usage"
     if not ledger.mission_has_time(
         now=checked_at,
         started_at=mission_started_at,
@@ -2476,6 +2562,7 @@ def _collection_run(
         ledger,
         mission_started_at=mission_started_at,
         mission_call_cap=contract.quota.mission_call_cap,
+        usage_category=usage_category,
     )
     status_call_reservation = contract.quota.max_retries + 1
     if status_call_reservation > args.max_calls:
@@ -2520,6 +2607,7 @@ def _collection_run(
         mission_call_cap=contract.quota.mission_call_cap,
         code_revision=args.code_revision,
         run_token=run_token,
+        usage_category=usage_category,
     )
     # Crash-safe conservative accounting: reserve every possible /status retry
     # durably before making the first network attempt.

@@ -62,7 +62,8 @@ SOURCE_CATEGORIES = (
     "replay/projection",
     "replay",
     "quality",
-    "gates",
+    "feature-manifests",
+    "gate-report",
     "report",
 )
 
@@ -120,13 +121,15 @@ _SOURCE_HASH_FIELDS = frozenset(
         "replay",
         "quality_before",
         "quality_after",
-        "gates",
+        "feature_manifests",
+        "gate_report",
         "report",
         "census_envelope",
         "normalized_projection_envelope",
         "replay_envelope",
         "quality_envelope",
-        "gates_envelope",
+        "feature_manifests_envelope",
+        "gate_report_envelope",
         "report_envelope",
     }
 )
@@ -928,6 +931,41 @@ def _validate_quality(
     return before_hash, after_hash
 
 
+def _validate_feature_manifests(
+    value: Mapping[str, object],
+    *,
+    source_code_revision: str,
+    source_run_token: str,
+) -> str:
+    _assert_direct_lineage(
+        value,
+        source_code_revision=source_code_revision,
+        source_run_token=source_run_token,
+        label="COVERAGE_PROOF_FEATURE_MANIFESTS",
+    )
+    if value.get("schema_version") != "historical-deep-feature-manifests-v1":
+        raise ValueError("COVERAGE_PROOF_FEATURE_MANIFESTS_SCHEMA_INVALID")
+    if value.get("status") != "COMPLETE" or value.get("provider_calls") != 0:
+        raise ValueError("COVERAGE_PROOF_FEATURE_MANIFESTS_INCOMPLETE")
+    if _integer(
+        value.get("bundle_count"),
+        label="COVERAGE_PROOF_FEATURE_BUNDLE_COUNT",
+        minimum=1,
+    ) < 1:
+        raise ValueError("COVERAGE_PROOF_FEATURE_MANIFESTS_EMPTY")
+    feature_hash = _required_sha256(
+        value.get("feature_hash"),
+        label="COVERAGE_PROOF_FEATURE_HASH",
+    )
+    manifests = _mapping(
+        value.get("dataset_manifests"),
+        label="COVERAGE_PROOF_FEATURE_DATASET_MANIFESTS",
+    )
+    if not manifests:
+        raise ValueError("COVERAGE_PROOF_FEATURE_DATASET_MANIFESTS_EMPTY")
+    return feature_hash
+
+
 def _validate_gates(
     value: Mapping[str, object],
     *,
@@ -953,6 +991,33 @@ def _validate_gates(
             raise ValueError("COVERAGE_PROOF_GATE_STATUS_INVALID")
         output[name] = status
     return output
+
+
+def _validate_gate_report(
+    value: Mapping[str, object],
+    *,
+    source_code_revision: str,
+    source_run_token: str,
+) -> tuple[Mapping[str, object], dict[str, str]]:
+    _assert_direct_lineage(
+        value,
+        source_code_revision=source_code_revision,
+        source_run_token=source_run_token,
+        label="COVERAGE_PROOF_GATE_REPORT",
+    )
+    if value.get("schema_version") != "historical-deep-gate-report-v1":
+        raise ValueError("COVERAGE_PROOF_GATE_REPORT_SCHEMA_INVALID")
+    if value.get("status") != "COMPLETE" or value.get("provider_calls") != 0:
+        raise ValueError("COVERAGE_PROOF_GATE_REPORT_INCOMPLETE")
+    gates = _mapping(value.get("gates"), label="COVERAGE_PROOF_GATE_REPORT_GATES")
+    if value.get("gate_hash") != canonical_sha256(gates):
+        raise ValueError("COVERAGE_PROOF_GATE_REPORT_HASH_MISMATCH")
+    statuses = _validate_gates(
+        gates,
+        source_code_revision=source_code_revision,
+        source_run_token=source_run_token,
+    )
+    return gates, statuses
 
 
 def _validate_report(
@@ -1200,7 +1265,8 @@ def build_coverage_proof(
     projection_value = selected["replay/projection"].value
     replay_value = selected["replay"].value
     quality_value = selected["quality"].value
-    gates_value = selected["gates"].value
+    feature_manifests_value = selected["feature-manifests"].value
+    gate_report_value = selected["gate-report"].value
     report_value = selected["report"].value
 
     observations, census_hash = _validate_census(
@@ -1231,8 +1297,13 @@ def build_coverage_proof(
         source_code_revision=source_code_revision,
         source_run_token=source_run_token,
     )
-    gate_statuses = _validate_gates(
-        gates_value,
+    feature_manifests_hash = _validate_feature_manifests(
+        feature_manifests_value,
+        source_code_revision=source_code_revision,
+        source_run_token=source_run_token,
+    )
+    gates_value, gate_statuses = _validate_gate_report(
+        gate_report_value,
         source_code_revision=source_code_revision,
         source_run_token=source_run_token,
     )
@@ -1281,7 +1352,8 @@ def build_coverage_proof(
             "replay": replay_hash,
             "quality_before": quality_before_hash,
             "quality_after": quality_after_hash,
-            "gates": canonical_sha256(gates_value),
+            "feature_manifests": feature_manifests_hash,
+            "gate_report": canonical_sha256(gate_report_value),
             "report": report_hash,
             "census_envelope": selected["collection/census"].envelope_hash,
             "normalized_projection_envelope": selected[
@@ -1289,7 +1361,10 @@ def build_coverage_proof(
             ].envelope_hash,
             "replay_envelope": selected["replay"].envelope_hash,
             "quality_envelope": selected["quality"].envelope_hash,
-            "gates_envelope": selected["gates"].envelope_hash,
+            "feature_manifests_envelope": selected[
+                "feature-manifests"
+            ].envelope_hash,
+            "gate_report_envelope": selected["gate-report"].envelope_hash,
             "report_envelope": selected["report"].envelope_hash,
         },
         "coverage": coverage,

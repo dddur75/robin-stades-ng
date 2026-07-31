@@ -278,6 +278,15 @@ def test_parser_accepts_workflow_command_shapes(
     assert parsed.command == command
 
 
+def test_continuation_checkpoint_caps_match_the_campaign_contract() -> None:
+    contract = load_campaign_contract(CONFIG)
+
+    assert runner.CHECKPOINT_MAX_CALLS == 250
+    assert runner.CHECKPOINT_MAX_MINUTES == 5
+    assert contract.quota.checkpoint_max_calls == runner.CHECKPOINT_MAX_CALLS
+    assert contract.quota.checkpoint_max_minutes == runner.CHECKPOINT_MAX_MINUTES
+
+
 def test_dry_run_and_safety_fail_before_store_or_provider(tmp_path: Path) -> None:
     clock = FakeClock()
 
@@ -426,9 +435,11 @@ def test_census_discovers_all_seasons_is_idempotent_and_drives_p2(
     )
     usage = [
         envelope["value"]["mission_calls_used"]
-        for envelope in ledger.values("mission/usage")
+        for envelope in ledger.values(
+            "mission/continuations/p0-closure-30622258001-1/usage"
+        )
     ]
-    assert max(usage) == 508
+    assert max(usage) == 262
 
 
 def test_status_reservation_counts_retries_and_blocks_data_at_job_cap(
@@ -454,10 +465,12 @@ def test_status_reservation_counts_retries_and_blocks_data_at_job_cap(
     assert artifact["provider_calls"] == 4
     assert artifact["result"]["reason"] == "JOB_PROVIDER_CALL_LIMIT_REACHED"
     ledger = DurableRuntimeLedger(store)
-    usage = ledger.latest_value("mission/usage")
+    usage = ledger.latest_value(
+        "mission/continuations/p0-closure-30622258001-1/usage"
+    )
     assert isinstance(usage, Mapping)
     assert usage["mission_calls_used"] == 4
-    assert usage["mission_call_cap"] == 100_000
+    assert usage["mission_call_cap"] == 90_000
 
 
 def test_mission_attempts_are_pre_reserved_durably_in_bounded_chunks() -> None:
@@ -474,26 +487,26 @@ def test_mission_attempts_are_pre_reserved_durably_in_bounded_chunks() -> None:
         maximum_calls=1_000,
         maximum_minutes=100,
         mission_maximum_minutes=720,
-        checkpoint_calls=500,
-        checkpoint_minutes=20,
+        checkpoint_calls=250,
+        checkpoint_minutes=5,
         provider_calls=4,
         mission_calls_used=4,
-        mission_call_cap=100_000,
+        mission_call_cap=90_000,
     )
 
     limits.before_provider_attempt()
 
     assert limits.provider_calls == 5
-    assert limits.mission_calls_used == 504
+    assert limits.mission_calls_used == 254
     usage = ledger.latest_value("mission/usage")
     assert isinstance(usage, Mapping)
-    assert usage["mission_calls_used"] == 504
+    assert usage["mission_calls_used"] == 254
     assert usage["accounting"] == "CONSERVATIVE_RESERVED_HIGH_WATER"
     assert runner._persisted_mission_calls(
         ledger,
         mission_started_at=NOW,
-        mission_call_cap=100_000,
-    ) == 504
+        mission_call_cap=90_000,
+    ) == 254
 
 
 def test_preseeded_global_cap_is_partial_without_building_provider(
@@ -502,17 +515,20 @@ def test_preseeded_global_cap_is_partial_without_building_provider(
     clock = FakeClock()
     store = InMemoryObjectStore()
     ledger = DurableRuntimeLedger(store)
-    started_at = ledger.mission_start(
+    started_at = ledger.continuation_start(
+        continuation_id="p0-closure-30622258001-1",
+        continuation_of="30622258001:1",
+        run_purpose="P0_CLOSURE_AND_SHARDED_REPLAY",
         now=NOW,
         code_revision="runner-test-revision",
         maximum_minutes=720,
     )
     ledger.put_json(
-        "mission/usage",
+        "mission/continuations/p0-closure-30622258001-1/usage",
         {
             "mission_started_at": started_at,
-            "mission_call_cap": 100_000,
-            "mission_calls_used": 100_000,
+            "mission_call_cap": 90_000,
+            "mission_calls_used": 90_000,
         },
         recorded_at=clock.now(),
     )

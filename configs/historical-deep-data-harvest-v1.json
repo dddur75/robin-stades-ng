@@ -73,12 +73,12 @@
     "daily_remaining_source": "provider_status_and_headers",
     "mandatory_reserve_minimum": 20000,
     "mandatory_reserve_fraction": 0.2,
-    "mission_call_cap": 100000,
+    "mission_call_cap": 90000,
     "initial_requests_per_second": 8,
     "initial_requests_per_minute": 480,
     "max_retries": 3,
-    "checkpoint_max_calls": 500,
-    "checkpoint_max_minutes": 20
+    "checkpoint_max_calls": 250,
+    "checkpoint_max_minutes": 5
   },
   "bundle_pilot": {
     "preferred_competition": "api-football:39",
@@ -96,6 +96,7 @@
   "task_statuses": [
     "PENDING",
     "RUNNING",
+    "STALE_RETRYABLE",
     "COMPLETE",
     "EMPTY_VALID",
     "RETRYABLE",

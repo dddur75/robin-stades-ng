@@ -51,6 +51,7 @@ jobs:
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
+          scripts/run_historical_deep_segmented_replay.py
       - name: Vérifier le typage strict Historical Deep
         run: >-
           python -m mypy --strict
@@ -58,6 +59,7 @@ jobs:
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
+          scripts/run_historical_deep_segmented_replay.py
       - name: Auditer la sécurité Historical Deep
         run: >-
           python -m bandit -q -r
@@ -65,6 +67,7 @@ jobs:
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
+          scripts/run_historical_deep_segmented_replay.py
       - name: Compiler Historical Deep
         run: >-
           python -m compileall -q
@@ -73,6 +76,7 @@ jobs:
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
+          scripts/run_historical_deep_segmented_replay.py
       - name: Valider JSON et YAML
         run: >-
           python -c "import json,pathlib,yaml;

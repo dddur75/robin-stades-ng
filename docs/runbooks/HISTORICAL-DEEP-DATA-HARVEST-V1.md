@@ -38,7 +38,7 @@ depuis le statut et les headers :
 ```text
 mandatory_reserve = max(20 000, 20 % de daily_limit)
 mission_available = daily_remaining - mandatory_reserve
-mission_call_cap = min(100 000, mission_available)
+continuation_available = min(daily_remaining - mandatory_reserve, 90 000)
 ```
 
 La cadence initiale ne dépasse pas 8 requêtes par seconde ou 480 par minute.
@@ -62,7 +62,8 @@ historical-deep-data/schema-v1/
 ```
 
 Une tâche `COMPLETE` ou `EMPTY_VALID` ne peut pas rappeler le fournisseur. Les
-checkpoints sont écrits au plus tard toutes les 500 requêtes ou vingt minutes.
+réservations de continuation sont bornées à 250 appels et les checkpoints de
+collecte sont écrits au plus tard toutes les 250 requêtes ou cinq minutes.
 Les versions d’un checkpoint sont append-only ; un pointeur mutable n’est pas
 une autorité.
 
@@ -74,19 +75,24 @@ une autorité.
 | 71 | fixtures, bundles et fallbacks ciblés | oui |
 | 72 | pages joueurs paginées | oui |
 | 73 | blessures puis sidelined borné | oui |
-| 74 | replay complet depuis R2 | non |
+| 74A | audit de continuation et inventaire R2 immuable | non |
+| 74B | replay segmenté, quatre lecteurs R2 maximum | non |
+| 74C | reducer séquentiel et staging isolé | non |
+| 74D | second replay complet et preuve d’idempotence | non |
 | 75 | qualité, couverture V2 et gates | non |
 | 76 | six datasets temporels séparés | non |
 | 77 | pilote cache-only sans promotion | non |
 | 78 | rapport de campagne sanitisé | non |
 
-Tous utilisent `historical-deep-r2-state` avec
+Le workflow 74 orchestre 74A–74D. Tous utilisent `historical-deep-r2-state` avec
 `cancel-in-progress: false`. Le contrôleur 79 les enchaîne dans l’ordre. Les
 jobs fournisseur s’arrêtent avant 110 minutes et partagent une limite de
 mission de douze heures ; une phase terminée tôt permet de passer
 immédiatement à la suivante.
 
-Le contrôleur exécute un replay et un contrôle qualité après P0, puis après
+Avant tout nouvel appel fournisseur, le contrôleur exige les trois preuves
+`CURRENT_R2_REPLAY_VERIFIED`, `CURRENT_PROJECTION_RECONSTRUCTED` et
+`CURRENT_SECOND_PASS_IDEMPOTENT`. Il exécute ensuite un replay et un contrôle qualité après P0, puis après
 P1, avant d’autoriser la priorité suivante. Un replay en échec ou une qualité
 autre que `COMPLETE` ferme la suite des appels fournisseur ; un dernier
 replay/contrôle qualité précède les features et le backtest.
@@ -124,3 +130,20 @@ limite de temps, taux d’erreur supérieur à 1 %, 429 répétés, circuit ouve
 R2 indisponible, hash incohérent ou fournisseur bloqué. L’indisponibilité d’un
 staging PostgreSQL ne peut jamais autoriser une écriture sur la production :
 R2 reste le ledger durable jusqu’à la revue de la PR.
+
+## Continuation de la PR 26
+
+La fermeture P0 utilise une nouvelle lignée append-only :
+
+```text
+continuation_of = 30622258001:1
+run_purpose = P0_CLOSURE_AND_SHARDED_REPLAY
+continuation_id = p0-closure-30622258001-1
+```
+
+L’horloge et le verdict du run parent ne sont jamais modifiés. L’inventaire
+partitionne déterministement par compétition, saison, famille et segment. Un
+segment est fermé à 250 objets, 75 Mio logiques ou dix minutes estimées. Il
+écrit des chunks indépendants et un checkpoint R2 toutes les 50 pièces ou cinq
+minutes ; le reducer seul écrit dans le staging isolé. Le passage 2 relit R2
+avec des checkpoints distincts et doit prouver zéro nouvel insert.

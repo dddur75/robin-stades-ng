@@ -268,6 +268,16 @@ def _sample_values(*, complete_census: bool = True) -> dict[str, dict[str, objec
         "code_revision": SOURCE_REVISION,
         "run_token": SOURCE_RUN_TOKEN,
     }
+    feature_manifests = {
+        "schema_version": "historical-deep-feature-manifests-v1",
+        "status": "COMPLETE",
+        "code_revision": SOURCE_REVISION,
+        "run_token": SOURCE_RUN_TOKEN,
+        "feature_hash": "e" * 64,
+        "bundle_count": 2,
+        "dataset_manifests": {"PLAYER_PREMATCH_STRICT": {"row_count": 2}},
+        "provider_calls": 0,
+    }
     gates: dict[str, object] = {
         name: {
             "gate": name,
@@ -284,6 +294,15 @@ def _sample_values(*, complete_census: bool = True) -> dict[str, dict[str, objec
             "run_token": SOURCE_RUN_TOKEN,
         }
         for name in GATE_NAMES
+    }
+    gate_report = {
+        "schema_version": "historical-deep-gate-report-v1",
+        "status": "COMPLETE",
+        "code_revision": SOURCE_REVISION,
+        "run_token": SOURCE_RUN_TOKEN,
+        "gate_hash": canonical_sha256(gates),
+        "gates": gates,
+        "provider_calls": 0,
     }
     report: dict[str, object] = {
         "schema_version": "historical-deep-report-v1",
@@ -316,7 +335,8 @@ def _sample_values(*, complete_census: bool = True) -> dict[str, dict[str, objec
         "replay/projection": projection,
         "replay": replay,
         "quality": quality,
-        "gates": gates,
+        "feature-manifests": feature_manifests,
+        "gate-report": gate_report,
         "report": report,
     }
 
@@ -487,6 +507,22 @@ def test_source_lineage_and_hash_mismatches_fail_closed() -> None:
         match="COVERAGE_PROOF_PROJECTION_ROW_COUNT_MISMATCH",
     ):
         _build(tampered)
+
+    missing_features = _sample_values()
+    missing_features.pop("feature-manifests")
+    with pytest.raises(
+        ValueError,
+        match="COVERAGE_PROOF_SOURCE_LINEAGE_MISSING:feature-manifests",
+    ):
+        _build(_reader_from_values(missing_features))
+
+    missing_gate_report = _sample_values()
+    missing_gate_report.pop("gate-report")
+    with pytest.raises(
+        ValueError,
+        match="COVERAGE_PROOF_SOURCE_LINEAGE_MISSING:gate-report",
+    ):
+        _build(_reader_from_values(missing_gate_report))
 
 
 def test_lineage_selection_streams_history_and_retains_latest_match() -> None:

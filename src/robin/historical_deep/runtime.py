@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
 import json
+import re
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import asdict, is_dataclass
 from datetime import UTC, datetime, timedelta
@@ -20,6 +22,7 @@ from .normalization import (
 RAW_NAMESPACE = "historical-deep-data/schema-v1"
 DERIVED_NAMESPACE = f"{RAW_NAMESPACE}/_derived"
 CONTROL_NAMESPACE = f"{RAW_NAMESPACE}/_control"
+_CONTINUATION_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$")
 
 
 class RuntimeObjectStore(Protocol):
@@ -209,6 +212,73 @@ class DurableRuntimeLedger:
         parsed = datetime.fromisoformat(started_at)
         if parsed.tzinfo is None or parsed.utcoffset() is None:
             raise ValueError("MISSION_CLOCK_START_NAIVE")
+        return parsed.astimezone(UTC)
+
+    def continuation_start(
+        self,
+        *,
+        continuation_id: str,
+        continuation_of: str,
+        run_purpose: str,
+        now: datetime,
+        code_revision: str,
+        maximum_minutes: int,
+    ) -> datetime:
+        """Create or resume a mission clock without mutating the parent clock."""
+
+        if not _CONTINUATION_ID_PATTERN.fullmatch(continuation_id):
+            raise ValueError("CONTINUATION_ID_INVALID")
+        if not continuation_of or not run_purpose:
+            raise ValueError("CONTINUATION_LINEAGE_REQUIRED")
+        if maximum_minutes <= 0:
+            raise ValueError("MISSION_MAXIMUM_MINUTES_MUST_BE_POSITIVE")
+        if now.tzinfo is None or now.utcoffset() is None:
+            raise ValueError("CONTINUATION_START_MUST_BE_TIMEZONE_AWARE")
+        lineage_hash = hashlib.sha256(
+            f"{continuation_of}\n{run_purpose}".encode("utf-8")
+        ).hexdigest()
+        key = (
+            f"{CONTROL_NAMESPACE}/continuations/"
+            f"continuation={continuation_id}/mission-start.json"
+        )
+        candidate = {
+            "schema_version": "historical-deep-continuation-clock-v1",
+            "campaign_id": self.campaign_id,
+            "continuation_id": continuation_id,
+            "continuation_of": continuation_of,
+            "run_purpose": run_purpose,
+            "lineage_hash": lineage_hash,
+            "started_at": _plain(now),
+            "code_revision_at_start": code_revision,
+            "maximum_minutes": maximum_minutes,
+            "parent_clock_mutated": False,
+        }
+        body = canonical_json_bytes(candidate)
+        if self.store.put_if_absent(key, body):
+            return now.astimezone(UTC)
+        existing_body = self.store.get_object(key)
+        if existing_body is None:
+            raise ValueError("CONTINUATION_CLOCK_CONDITIONAL_WRITE_INCONSISTENT")
+        existing = _mapping(
+            _decode_json(existing_body, label="CONTINUATION_CLOCK")
+        )
+        for field, expected in (
+            ("schema_version", "historical-deep-continuation-clock-v1"),
+            ("campaign_id", self.campaign_id),
+            ("continuation_id", continuation_id),
+            ("continuation_of", continuation_of),
+            ("run_purpose", run_purpose),
+            ("lineage_hash", lineage_hash),
+            ("parent_clock_mutated", False),
+        ):
+            if existing.get(field) != expected:
+                raise ValueError("CONTINUATION_CLOCK_CONTRACT_MISMATCH")
+        started_at = existing.get("started_at")
+        if not isinstance(started_at, str):
+            raise ValueError("CONTINUATION_CLOCK_START_MISSING")
+        parsed = datetime.fromisoformat(started_at)
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError("CONTINUATION_CLOCK_START_NAIVE")
         return parsed.astimezone(UTC)
 
     def mission_has_time(
