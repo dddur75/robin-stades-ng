@@ -67,6 +67,7 @@ STAGING_TABLES = (
 )
 
 _SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$")
+_ATTEMPT_TASK_ID = re.compile(r"/task=([0-9a-f]{64})/attempts/")
 
 
 class RunnerShutdownRecovered(RuntimeError):
@@ -170,10 +171,23 @@ def _write_gzip_json(path: Path, value: object) -> None:
     path.write_bytes(gzip.compress(canonical_json_bytes(value), compresslevel=9, mtime=0))
 
 
-def _task_versions(repository: R2FirstRepository) -> dict[str, TaskVersion]:
+def _raw_object_keys(repository: R2FirstRepository) -> tuple[str, ...]:
+    raw_prefix = f"{repository.namespace}/competition="
+    index_prefix = f"{repository.namespace}/task-index/"
+    return tuple(
+        sorted(
+            set(repository.store.iter_keys(raw_prefix))
+            | set(repository.store.iter_keys(index_prefix))
+        )
+    )
+
+
+def _task_versions(
+    repository: R2FirstRepository,
+    keys: Sequence[str],
+) -> dict[str, TaskVersion]:
     output: dict[str, TaskVersion] = {}
-    prefix = f"{repository.namespace}/competition="
-    for key in sorted(set(repository.store.iter_keys(prefix))):
+    for key in keys:
         if not key.endswith("/version.json"):
             continue
         body = repository.store.get_object(key)
@@ -192,64 +206,115 @@ def _task_versions(repository: R2FirstRepository) -> dict[str, TaskVersion]:
     return output
 
 
+def _receipts_from_versions(
+    versions: Mapping[str, TaskVersion],
+    keys: Sequence[str],
+) -> dict[str, HarvestReceipt]:
+    by_key = {item.receipt.receipt_key: item.receipt for item in versions.values()}
+    receipt_keys = {key for key in keys if key.endswith("/receipt.json")}
+    unknown = receipt_keys - set(by_key)
+    if unknown:
+        raise ValueError(
+            f"CONTINUATION_RECEIPT_WITHOUT_VERSION:{min(unknown)}"
+        )
+    return {
+        receipt.task_id: receipt
+        for key in sorted(receipt_keys)
+        for receipt in (by_key[key],)
+    }
+
+
+def _attempt_at(
+    repository: R2FirstRepository,
+    key: str,
+) -> tuple[HarvestTask, TaskAttemptEvent]:
+    body = repository.store.get_object(key)
+    if body is None:
+        raise ValueError(f"CONTINUATION_TASK_ATTEMPT_MISSING:{key}")
+    try:
+        event = TaskAttemptEvent.model_validate_json(body)
+        task = HarvestTask.model_validate(
+            {
+                "task_id": event.task_id,
+                "campaign_id": event.campaign_id,
+                "competition": event.competition,
+                "league_id": event.league_id,
+                "season": event.season,
+                "family": event.family,
+                "endpoint": event.endpoint,
+                "params": event.parameters,
+                "page": event.page,
+                "status": TaskStatus.PENDING,
+                "temporal_class": event.temporal_class,
+            }
+        )
+    except ValueError as error:
+        raise ValueError(f"CONTINUATION_TASK_ATTEMPT_INVALID:{key}") from error
+    if task.task_hash != event.task_hash:
+        raise ValueError("CONTINUATION_TASK_ATTEMPT_HASH_MISMATCH")
+    if task_attempt_key(task, event) != key:
+        raise ValueError("CONTINUATION_TASK_ATTEMPT_KEY_MISMATCH")
+    return task, event
+
+
 def _task_attempt_snapshot(
     repository: R2FirstRepository,
     versions: Mapping[str, TaskVersion],
+    keys: Sequence[str],
 ) -> tuple[
     dict[str, HarvestTask],
     dict[str, tuple[TaskAttemptEvent, ...]],
+    dict[str, tuple[str, ...]],
 ]:
     tasks = {task_id: version.task for task_id, version in versions.items()}
-    grouped: dict[str, list[TaskAttemptEvent]] = defaultdict(list)
-    prefix = f"{repository.namespace}/competition="
-    for key in sorted(set(repository.store.iter_keys(prefix))):
+    grouped_keys: dict[str, list[str]] = defaultdict(list)
+    for key in keys:
         if "/attempts/attempt=" not in key or not key.endswith(".json"):
             continue
-        body = repository.store.get_object(key)
-        if body is None:
-            raise ValueError(f"CONTINUATION_TASK_ATTEMPT_MISSING:{key}")
-        try:
-            event = TaskAttemptEvent.model_validate_json(body)
-            task = HarvestTask.model_validate(
-                {
-                    "task_id": event.task_id,
-                    "campaign_id": event.campaign_id,
-                    "competition": event.competition,
-                    "league_id": event.league_id,
-                    "season": event.season,
-                    "family": event.family,
-                    "endpoint": event.endpoint,
-                    "params": event.parameters,
-                    "page": event.page,
-                    "status": TaskStatus.PENDING,
-                    "temporal_class": event.temporal_class,
-                }
-            )
-        except ValueError as error:
-            raise ValueError(f"CONTINUATION_TASK_ATTEMPT_INVALID:{key}") from error
-        if task.task_hash != event.task_hash:
-            raise ValueError("CONTINUATION_TASK_ATTEMPT_HASH_MISMATCH")
-        if task_attempt_key(task, event) != key:
-            raise ValueError("CONTINUATION_TASK_ATTEMPT_KEY_MISMATCH")
+        match = _ATTEMPT_TASK_ID.search(key)
+        if match is None:
+            raise ValueError(f"CONTINUATION_TASK_ATTEMPT_KEY_INVALID:{key}")
+        grouped_keys[match.group(1)].append(key)
+    latest_events: dict[str, TaskAttemptEvent] = {}
+    for task_id, task_keys in sorted(grouped_keys.items()):
+        task, event = _attempt_at(repository, max(task_keys))
+        if task.task_id != task_id:
+            raise ValueError("CONTINUATION_TASK_ATTEMPT_KEY_TASK_MISMATCH")
         previous = tasks.get(task.task_id)
         if previous is not None and previous != task:
             raise ValueError("CONTINUATION_TASK_IDENTITY_CONFLICT")
         tasks[task.task_id] = task
-        grouped[task.task_id].append(event)
-    attempts = {
-        task_id: tuple(
-            sorted(
-                grouped.get(task_id, ()),
-                key=lambda item: (
-                    item.attempt_number,
-                    item.event_index,
-                    item.recorded_at,
-                ),
-            )
-        )
+        latest_events[task.task_id] = event
+    attempts: dict[str, tuple[TaskAttemptEvent, ...]] = {
+        task_id: ((latest_events[task_id],) if task_id in latest_events else ())
         for task_id in tasks
     }
-    return tasks, attempts
+    attempt_keys = {
+        task_id: tuple(sorted(grouped_keys.get(task_id, ())))
+        for task_id in tasks
+    }
+    return tasks, attempts, attempt_keys
+
+
+def _attempt_events_for_keys(
+    repository: R2FirstRepository,
+    task: HarvestTask,
+    keys: Sequence[str],
+) -> list[TaskAttemptEvent]:
+    events: list[TaskAttemptEvent] = []
+    for key in keys:
+        stored_task, event = _attempt_at(repository, key)
+        if stored_task != task:
+            raise ValueError("CONTINUATION_TASK_IDENTITY_CONFLICT")
+        events.append(event)
+    return sorted(
+        events,
+        key=lambda item: (
+            item.attempt_number,
+            item.event_index,
+            item.recorded_at,
+        ),
+    )
 
 
 def _append_receipt_success(
@@ -380,17 +445,17 @@ def audit_and_reconcile(
     _validate_id(continuation_id, label="CONTINUATION_ID")
     checked_at = _utc(now, label="CONTINUATION_AUDIT_TIME")
     stale_after = timedelta(minutes=stale_heartbeat_minutes)
-    versions_before = _task_versions(repository)
-    tasks_before, attempts_before = _task_attempt_snapshot(
-        repository, versions_before
+    raw_keys_before = _raw_object_keys(repository)
+    versions_before = _task_versions(repository, raw_keys_before)
+    receipts_before = _receipts_from_versions(
+        versions_before, raw_keys_before
     )
-    receipts_before_list = tuple(repository.iter_receipts())
-    receipts_before = {item.task_id: item for item in receipts_before_list}
-    if len(receipts_before) != len(receipts_before_list):
-        raise ValueError("CONTINUATION_DUPLICATE_RECEIPTS")
+    tasks_before, attempts_before, attempt_keys_before = _task_attempt_snapshot(
+        repository, versions_before, raw_keys_before
+    )
     payload_keys_before = {
         key
-        for key in repository.store.iter_keys(f"{repository.namespace}/competition=")
+        for key in raw_keys_before
         if "/payload-" in key and key.endswith(".json.gz")
     }
     state_before = _latest_task_state(
@@ -402,31 +467,62 @@ def audit_and_reconcile(
         stale_after=stale_after,
     )
 
-    recovered_receipts = repository.resume_pending()
-    versions = _task_versions(repository)
-    tasks, attempts = _task_attempt_snapshot(repository, versions)
-    receipts_list = tuple(repository.iter_receipts())
-    receipts = {item.task_id: item for item in receipts_list}
-    if len(receipts) != len(receipts_list):
-        raise ValueError("CONTINUATION_DUPLICATE_RECEIPTS")
+    recovered_receipts = repository.resume_pending(
+        known_versions=versions_before,
+        known_keys=raw_keys_before,
+    )
+    if recovered_receipts:
+        raw_keys = _raw_object_keys(repository)
+        versions = _task_versions(repository, raw_keys)
+        receipts = _receipts_from_versions(versions, raw_keys)
+        tasks, attempts, attempt_keys = _task_attempt_snapshot(
+            repository, versions, raw_keys
+        )
+    else:
+        raw_keys = raw_keys_before
+        versions = versions_before
+        receipts = receipts_before
+        tasks = tasks_before
+        attempts = attempts_before
+        attempt_keys = attempt_keys_before
+    attempts_after = dict(attempts)
     tasks_reconciled = 0
     tasks_reset_pending = 0
     stale_recovered = 0
     for task_id, task in sorted(tasks.items()):
-        events = list(attempts.get(task_id, ()))
+        latest_events = attempts.get(task_id, ())
+        latest = latest_events[-1] if latest_events else None
         receipt = receipts.get(task_id)
         if receipt is not None:
-            tasks_reconciled += _append_receipt_success(
+            if latest is not None and latest.status in {
+                TaskStatus.COMPLETE,
+                TaskStatus.EMPTY_VALID,
+            }:
+                continue
+            events = _attempt_events_for_keys(
+                repository,
+                task,
+                attempt_keys.get(task_id, ()),
+            )
+            reconciled = _append_receipt_success(
                 repository,
                 task=task,
                 receipt=receipt,
                 events=events,
                 now=checked_at,
             )
+            tasks_reconciled += reconciled
+            if reconciled:
+                attempts_after[task_id] = (events[-1],)
             continue
-        latest = events[-1] if events else None
         if latest is not None and latest.status is TaskStatus.RUNNING:
             if _utc(latest.heartbeat_at, label="TASK_HEARTBEAT") <= checked_at - stale_after:
+                events = _attempt_events_for_keys(
+                    repository,
+                    task,
+                    attempt_keys.get(task_id, ()),
+                )
+                latest = events[-1]
                 event = repository.record_task_attempt(
                     task=task,
                     attempt_number=latest.attempt_number,
@@ -439,8 +535,14 @@ def audit_and_reconcile(
                     known_events=events,
                 )
                 events.append(event)
+                attempts_after[task_id] = (event,)
                 stale_recovered += 1
         elif latest is not None and latest.status is TaskStatus.FAILED:
+            events = _attempt_events_for_keys(
+                repository,
+                task,
+                attempt_keys.get(task_id, ()),
+            )
             next_attempt = max(
                 (item.attempt_number for item in events),
                 default=0,
@@ -454,16 +556,16 @@ def audit_and_reconcile(
                 known_events=events,
             )
             events.append(event)
+            attempts_after[task_id] = (event,)
             tasks_reset_pending += 1
 
-    tasks_after, attempts_after = _task_attempt_snapshot(repository, versions)
     payload_keys = {
         key
-        for key in repository.store.iter_keys(f"{repository.namespace}/competition=")
+        for key in raw_keys
         if "/payload-" in key and key.endswith(".json.gz")
     }
     state_after = _latest_task_state(
-        versions=tasks_after,
+        versions=tasks,
         receipts=receipts,
         attempts=attempts_after,
         payload_keys=payload_keys,

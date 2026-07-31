@@ -31,6 +31,11 @@ class CountingObjectStore(InMemoryObjectStore):
     def __init__(self) -> None:
         super().__init__()
         self.iter_keys_calls = 0
+        self.get_object_calls = 0
+
+    def get_object(self, key: str) -> bytes | None:
+        self.get_object_calls += 1
+        return super().get_object(key)
 
     def iter_keys(self, prefix: str) -> Iterable[str]:
         self.iter_keys_calls += 1
@@ -177,6 +182,7 @@ def test_audit_object_store_scans_are_bounded_by_passes_not_tasks() -> None:
         )
 
     store.iter_keys_calls = 0
+    store.get_object_calls = 0
     audit = audit_and_reconcile(
         repository,
         ledger,
@@ -191,6 +197,7 @@ def test_audit_object_store_scans_are_bounded_by_passes_not_tasks() -> None:
     assert audit["tasks_complete"] == 40
     assert audit["write_ahead_receipts_verified"] == 0
     assert store.iter_keys_calls <= 12
+    assert store.get_object_calls <= 85
 
 
 def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> None:

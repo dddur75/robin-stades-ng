@@ -1171,28 +1171,48 @@ class R2FirstRepository:
         )
         return self._recover_intent(receipt.recovery_key)
 
-    def resume_pending(self) -> tuple[HarvestReceipt, ...]:
+    def resume_pending(
+        self,
+        *,
+        known_versions: Mapping[str, TaskVersion] | None = None,
+        known_keys: Iterable[str] | None = None,
+    ) -> tuple[HarvestReceipt, ...]:
         """Complete every write-ahead intent without another provider call."""
 
+        if (known_versions is None) != (known_keys is None):
+            raise ValueError(
+                "HARVEST_RECOVERY_SNAPSHOT_REQUIRES_VERSIONS_AND_KEYS"
+            )
         recovered: dict[str, HarvestReceipt] = {}
         prefix = f"{self.namespace}/competition="
-        keys = tuple(self.store.iter_keys(prefix))
-        known_keys = set(keys)
-        known_keys.update(
-            self.store.iter_keys(f"{self.namespace}/task-index/")
-        )
+        if known_keys is None:
+            keys = tuple(self.store.iter_keys(prefix))
+            known_key_set = set(keys)
+            known_key_set.update(
+                self.store.iter_keys(f"{self.namespace}/task-index/")
+            )
+        else:
+            known_key_set = set(known_keys)
+            keys = tuple(
+                sorted(key for key in known_key_set if key.startswith(prefix))
+            )
+        versions_by_key = {
+            item.version_key: item for item in (known_versions or {}).values()
+        }
         complete_recovery_keys: set[str] = set()
         for key in keys:
             if key.endswith("/version.json"):
-                version_bytes = self.store.get_object(key)
-                if version_bytes is None:
-                    raise PayloadIntegrityError("HARVEST_TASK_VERSION_MISSING")
-                try:
-                    version = TaskVersion.model_validate_json(version_bytes)
-                except ValueError as exc:
-                    raise PayloadIntegrityError(
-                        "HARVEST_TASK_VERSION_INVALID"
-                    ) from exc
+                version = versions_by_key.get(key)
+                if version is None:
+                    version_bytes = self.store.get_object(key)
+                    if version_bytes is None:
+                        raise PayloadIntegrityError("HARVEST_TASK_VERSION_MISSING")
+                    try:
+                        version = TaskVersion.model_validate_json(version_bytes)
+                    except ValueError as exc:
+                        raise PayloadIntegrityError(
+                            "HARVEST_TASK_VERSION_INVALID"
+                        ) from exc
                 receipt = version.receipt
                 materialization_keys = {
                     receipt.version_key,
@@ -1202,13 +1222,13 @@ class R2FirstRepository:
                     receipt.checkpoint_key,
                     task_index_key(version.task.task_id),
                 }
-                if materialization_keys <= known_keys:
+                if materialization_keys <= known_key_set:
                     complete_recovery_keys.add(receipt.recovery_key)
                     continue
                 recovered_receipt = self._recover_version(key)
                 if recovered_receipt is not None:
                     recovered[recovered_receipt.task_id] = recovered_receipt
-                    known_keys.update(materialization_keys)
+                    known_key_set.update(materialization_keys)
                     complete_recovery_keys.add(
                         recovered_receipt.recovery_key
                     )
