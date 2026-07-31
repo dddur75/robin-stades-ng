@@ -24,7 +24,12 @@ from typing import Any, Callable
 from .contracts import HarvestTask, TaskStatus, canonical_json_bytes, canonical_sha256
 from .normalization import NormalizationError, normalize_payload
 from .replay import replay_stream_cache_only
-from .runtime import DERIVED_NAMESPACE, DurableRuntimeLedger, read_objects_bounded
+from .runtime import (
+    DERIVED_NAMESPACE,
+    NON_PROJECTING_ENDPOINTS,
+    DurableRuntimeLedger,
+    read_objects_bounded,
+)
 from .storage import (
     HarvestReceipt,
     R2FirstRepository,
@@ -930,7 +935,7 @@ def _normalize_receipt_payload(
     receipt: HarvestReceipt,
     payload: object,
 ) -> list[dict[str, object]]:
-    if receipt.endpoint == "/status":
+    if receipt.endpoint.rstrip("/") in NON_PROJECTING_ENDPOINTS:
         return []
     try:
         normalized = normalize_payload(

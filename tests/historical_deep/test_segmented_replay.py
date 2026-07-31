@@ -97,6 +97,35 @@ def _payload(fixture_id: int) -> dict[str, object]:
     }
 
 
+def _coverage_task() -> HarvestTask:
+    return HarvestTask.create(
+        campaign_id="historical-deep-data-harvest-v1",
+        competition=COMPETITION,
+        season=2025,
+        family=DataFamily.FIXTURES,
+        endpoint="/leagues",
+        temporal_class=TemporalClass.POST_MATCH_ONLY,
+        params={"id": 61, "season": 2025},
+    )
+
+
+def _coverage_payload() -> dict[str, object]:
+    return {
+        "response": [
+            {
+                "league": {"id": 61, "name": "Ligue 1"},
+                "country": {"name": "France"},
+                "seasons": [
+                    {
+                        "year": 2025,
+                        "coverage": {"fixtures": {"events": True}},
+                    }
+                ],
+            }
+        ]
+    }
+
+
 def _journal_running(
     repository: R2FirstRepository,
     task: HarvestTask,
@@ -252,6 +281,44 @@ def test_segment_batches_preserve_all_segments_below_github_matrix_limit() -> No
     oversized = [f"seg-{index:06d}-fedcba9876543210" for index in range(513)]
     with pytest.raises(ValueError, match="REPLAY_SEGMENT_MATRIX_LIMIT_EXCEEDED"):
         build_segment_batches(oversized)
+
+
+def test_replay_verifies_league_census_without_projecting_fixture_rows(
+    tmp_path,
+) -> None:
+    store = InMemoryObjectStore()
+    repository = R2FirstRepository(store)
+    ledger = DurableRuntimeLedger(store)
+    repository.capture(
+        task=_coverage_task(),
+        payload=_coverage_payload(),
+        requested_at=NOW - timedelta(minutes=2),
+        received_at=NOW - timedelta(minutes=1),
+        source_commit="test",
+    )
+    inventory = build_replay_inventory(
+        ledger,
+        continuation_id="continuation-census-test",
+        continuation_of="30622258001:1",
+        run_purpose="P0_CLOSURE_AND_SHARDED_REPLAY",
+        code_revision="test-revision",
+        run_token="100:1",
+        now=NOW,
+    )
+
+    result = replay_segment(
+        ledger,
+        inventory=inventory,
+        segment_id=inventory["segments"][0]["segment_id"],
+        pass_id=1,
+        output_dir=tmp_path / "census",
+    )
+
+    assert result["manifest"]["objects_verified"] == 1
+    assert result["manifest"]["row_count"] == 0
+    assert len(result["entries"]) == 1
+    assert result["rows"] == []
+    assert ledger.normalized_records() == ([], ())
 
 
 def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> None:

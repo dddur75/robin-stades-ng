@@ -25,6 +25,7 @@ DERIVED_NAMESPACE = f"{RAW_NAMESPACE}/_derived"
 CONTROL_NAMESPACE = f"{RAW_NAMESPACE}/_control"
 _CONTINUATION_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$")
 R2_READ_MAX_WORKERS = 8
+NON_PROJECTING_ENDPOINTS = frozenset({"/leagues", "/status"})
 
 
 class RuntimeObjectStore(Protocol):
@@ -394,7 +395,7 @@ class DurableRuntimeLedger:
                 label="RUNTIME_PAYLOAD",
             )
             endpoint = str(receipt.get("endpoint", receipt.get("source_endpoint", "")))
-            if not endpoint or endpoint == "/status":
+            if not endpoint or endpoint.rstrip("/") in NON_PROJECTING_ENDPOINTS:
                 continue
             competition_value = str(receipt.get("competition", ""))
             tail = competition_value.rsplit(":", 1)[-1]
