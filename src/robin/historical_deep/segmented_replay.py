@@ -46,6 +46,8 @@ DEFAULT_ESTIMATED_SECONDS_PER_OBJECT = 2.4
 CHECKPOINT_MAX_OBJECTS = 50
 CHECKPOINT_MAX_SECONDS = 5 * 60
 STALE_HEARTBEAT_MINUTES = 15
+GITHUB_MATRIX_MAX_JOBS = 256
+SEGMENTS_PER_MATRIX_JOB = 2
 
 STAGING_TABLES = (
     "fixtures",
@@ -72,6 +74,40 @@ _ATTEMPT_TASK_ID = re.compile(r"/task=([0-9a-f]{64})/attempts/")
 
 class RunnerShutdownRecovered(RuntimeError):
     """Raised after the current bounded checkpoint is durably persisted."""
+
+
+def build_segment_batches(
+    segment_ids: Sequence[str],
+    *,
+    segments_per_batch: int = SEGMENTS_PER_MATRIX_JOB,
+    max_batches: int = GITHUB_MATRIX_MAX_JOBS,
+) -> list[dict[str, str]]:
+    """Pack bounded replay segments into a GitHub-compatible matrix."""
+
+    if segments_per_batch < 1 or max_batches < 1:
+        raise ValueError("REPLAY_SEGMENT_BATCH_LIMIT_INVALID")
+    if len(set(segment_ids)) != len(segment_ids) or any(
+        not _SAFE_ID.fullmatch(segment_id) for segment_id in segment_ids
+    ):
+        raise ValueError("REPLAY_SEGMENT_BATCH_IDS_INVALID")
+    batches = [
+        {
+            "batch_id": f"batch-{ordinal:04d}",
+            "segment_ids_json": json.dumps(
+                list(segment_ids[offset : offset + segments_per_batch]),
+                separators=(",", ":"),
+            ),
+        }
+        for ordinal, offset in enumerate(
+            range(0, len(segment_ids), segments_per_batch),
+            start=1,
+        )
+    ]
+    if len(batches) > max_batches:
+        raise ValueError(
+            f"REPLAY_SEGMENT_MATRIX_LIMIT_EXCEEDED:{len(batches)}>{max_batches}"
+        )
+    return batches
 
 
 def _mapping(value: object, *, label: str) -> Mapping[str, object]:

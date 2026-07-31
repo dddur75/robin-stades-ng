@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Iterable
 from datetime import UTC, datetime, timedelta
 from threading import Lock
 from time import sleep
+
+import pytest
 
 from robin.historical_deep.contracts import (
     CompetitionSpec,
@@ -16,6 +19,7 @@ from robin.historical_deep.runtime import DurableRuntimeLedger
 from robin.historical_deep.segmented_replay import (
     audit_and_reconcile,
     build_replay_inventory,
+    build_segment_batches,
     reduce_segments,
     replay_segment,
 )
@@ -229,6 +233,25 @@ def test_audit_object_store_scans_are_bounded_by_passes_not_tasks() -> None:
     )
     assert inventory["objects_expected"] == 40
     assert store.max_active_gets >= 2
+
+
+def test_segment_batches_preserve_all_segments_below_github_matrix_limit() -> None:
+    segment_ids = [f"seg-{index:06d}-abcdef0123456789" for index in range(371)]
+
+    batches = build_segment_batches(segment_ids)
+
+    assert len(batches) == 186
+    assert all(
+        len(json.loads(batch["segment_ids_json"])) <= 2 for batch in batches
+    )
+    assert [
+        segment_id
+        for batch in batches
+        for segment_id in json.loads(batch["segment_ids_json"])
+    ] == segment_ids
+    oversized = [f"seg-{index:06d}-fedcba9876543210" for index in range(513)]
+    with pytest.raises(ValueError, match="REPLAY_SEGMENT_MATRIX_LIMIT_EXCEEDED"):
+        build_segment_batches(oversized)
 
 
 def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> None:

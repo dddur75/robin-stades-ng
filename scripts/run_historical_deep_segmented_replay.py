@@ -21,6 +21,7 @@ from robin.historical_deep.segmented_replay import (
     RunnerShutdownRecovered,
     audit_and_reconcile,
     build_replay_inventory,
+    build_segment_batches,
     reduce_segments,
     replay_segment,
     validate_inventory,
@@ -88,6 +89,11 @@ def build_parser() -> argparse.ArgumentParser:
     segment.add_argument("--segment-id", required=True)
     segment.add_argument("--pass-id", type=int, choices=(1, 2), required=True)
 
+    segment_batch = commands.add_parser("segment-batch")
+    segment_batch.add_argument("--inventory", type=Path, required=True)
+    segment_batch.add_argument("--segment-ids-json", required=True)
+    segment_batch.add_argument("--pass-id", type=int, choices=(1, 2), required=True)
+
     reduce = commands.add_parser("reduce")
     reduce.add_argument("--inventory", type=Path, required=True)
     reduce.add_argument("--segments-root", type=Path, required=True)
@@ -146,34 +152,50 @@ def run(argv: list[str] | None = None) -> int:
             ):
                 raise ValueError("SEGMENTED_REPLAY_SEGMENT_OUTPUT_INVALID")
             segment_ids = [str(item["segment_id"]) for item in segments]
+            segment_batches = build_segment_batches(segment_ids)
             with args.github_output.open("a", encoding="utf-8") as stream:
                 stream.write(f"segment_ids={json.dumps(segment_ids, separators=(',', ':'))}\n")
+                stream.write(
+                    "segment_batches="
+                    + json.dumps(segment_batches, separators=(",", ":"))
+                    + "\n"
+                )
                 stream.write(f"inventory_sha256={result['manifest_sha256']}\n")
                 stream.write(f"segments_expected={len(segment_ids)}\n")
         return 0
-    if args.command == "segment":
+    if args.command in {"segment", "segment-batch"}:
         inventory = _load_json(args.inventory)
         validate_inventory(inventory)
-        try:
-            replay_segment(
-                ledger,
-                inventory=inventory,
-                segment_id=args.segment_id,
-                pass_id=args.pass_id,
-                output_dir=args.output / args.segment_id,
-            )
-        except RunnerShutdownRecovered:
-            _write_json(
-                args.output / args.segment_id / "runner-shutdown.json",
-                {
-                    "status": "STALE_RETRYABLE",
-                    "event": "RUNNER_SHUTDOWN_RECOVERED",
-                    "segment_id": args.segment_id,
-                    "pass_id": args.pass_id,
-                    "provider_calls": 0,
-                },
-            )
-            return 75
+        if args.command == "segment":
+            segment_ids = [args.segment_id]
+        else:
+            raw_segment_ids = json.loads(args.segment_ids_json)
+            if not isinstance(raw_segment_ids, list) or not all(
+                isinstance(item, str) for item in raw_segment_ids
+            ):
+                raise ValueError("SEGMENTED_REPLAY_BATCH_IDS_INVALID")
+            segment_ids = raw_segment_ids
+        for segment_id in segment_ids:
+            try:
+                replay_segment(
+                    ledger,
+                    inventory=inventory,
+                    segment_id=segment_id,
+                    pass_id=args.pass_id,
+                    output_dir=args.output / segment_id,
+                )
+            except RunnerShutdownRecovered:
+                _write_json(
+                    args.output / segment_id / "runner-shutdown.json",
+                    {
+                        "status": "STALE_RETRYABLE",
+                        "event": "RUNNER_SHUTDOWN_RECOVERED",
+                        "segment_id": segment_id,
+                        "pass_id": args.pass_id,
+                        "provider_calls": 0,
+                    },
+                )
+                return 75
         return 0
     if args.command == "reduce":
         inventory = _load_json(args.inventory)

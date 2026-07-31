@@ -25,6 +25,8 @@ on:
         value: ${{ jobs.inventory.outputs.artifact_name }}
       segment_ids:
         value: ${{ jobs.inventory.outputs.segment_ids }}
+      segment_batches:
+        value: ${{ jobs.inventory.outputs.segment_batches }}
       inventory_sha256:
         value: ${{ jobs.inventory.outputs.inventory_sha256 }}
       segments_expected:
@@ -40,6 +42,7 @@ jobs:
     outputs:
       artifact_name: ${{ steps.outputs.outputs.artifact_name }}
       segment_ids: ${{ steps.inventory.outputs.segment_ids }}
+      segment_batches: ${{ steps.inventory.outputs.segment_batches }}
       inventory_sha256: ${{ steps.inventory.outputs.inventory_sha256 }}
       segments_expected: ${{ steps.inventory.outputs.segments_expected }}
     env: &safety
