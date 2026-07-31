@@ -24,7 +24,7 @@ from typing import Any, Callable
 from .contracts import HarvestTask, TaskStatus, canonical_json_bytes, canonical_sha256
 from .normalization import NormalizationError, normalize_payload
 from .replay import replay_stream_cache_only
-from .runtime import DERIVED_NAMESPACE, DurableRuntimeLedger
+from .runtime import DERIVED_NAMESPACE, DurableRuntimeLedger, read_objects_bounded
 from .storage import (
     HarvestReceipt,
     R2FirstRepository,
@@ -187,10 +187,8 @@ def _task_versions(
     keys: Sequence[str],
 ) -> dict[str, TaskVersion]:
     output: dict[str, TaskVersion] = {}
-    for key in keys:
-        if not key.endswith("/version.json"):
-            continue
-        body = repository.store.get_object(key)
+    version_keys = (key for key in keys if key.endswith("/version.json"))
+    for key, body in read_objects_bounded(repository.store, version_keys):
         if body is None:
             raise ValueError(f"CONTINUATION_TASK_VERSION_MISSING:{key}")
         try:
@@ -224,11 +222,10 @@ def _receipts_from_versions(
     }
 
 
-def _attempt_at(
-    repository: R2FirstRepository,
+def _attempt_from_body(
     key: str,
+    body: bytes | None,
 ) -> tuple[HarvestTask, TaskAttemptEvent]:
-    body = repository.store.get_object(key)
     if body is None:
         raise ValueError(f"CONTINUATION_TASK_ATTEMPT_MISSING:{key}")
     try:
@@ -257,6 +254,13 @@ def _attempt_at(
     return task, event
 
 
+def _attempt_at(
+    repository: R2FirstRepository,
+    key: str,
+) -> tuple[HarvestTask, TaskAttemptEvent]:
+    return _attempt_from_body(key, repository.store.get_object(key))
+
+
 def _task_attempt_snapshot(
     repository: R2FirstRepository,
     versions: Mapping[str, TaskVersion],
@@ -276,8 +280,22 @@ def _task_attempt_snapshot(
             raise ValueError(f"CONTINUATION_TASK_ATTEMPT_KEY_INVALID:{key}")
         grouped_keys[match.group(1)].append(key)
     latest_events: dict[str, TaskAttemptEvent] = {}
-    for task_id, task_keys in sorted(grouped_keys.items()):
-        task, event = _attempt_at(repository, max(task_keys))
+    latest_keys = tuple(
+        (task_id, max(task_keys))
+        for task_id, task_keys in sorted(grouped_keys.items())
+    )
+    bodies = read_objects_bounded(
+        repository.store,
+        (key for _task_id, key in latest_keys),
+    )
+    for (task_id, expected_key), (key, body) in zip(
+        latest_keys,
+        bodies,
+        strict=True,
+    ):
+        if key != expected_key:
+            raise ValueError("CONTINUATION_TASK_ATTEMPT_READ_ORDER_MISMATCH")
+        task, event = _attempt_from_body(key, body)
         if task.task_id != task_id:
             raise ValueError("CONTINUATION_TASK_ATTEMPT_KEY_TASK_MISMATCH")
         previous = tasks.get(task.task_id)
@@ -1164,11 +1182,24 @@ def replay_segment(
         last_checkpoint = monotonic()
 
     try:
+        remaining_ids = object_ids[cursor:]
+        remaining_items = [object_index[object_id] for object_id in remaining_ids]
+        required_keys = tuple(
+            dict.fromkeys(
+                str(key)
+                for item in remaining_items
+                for key in (item["receipt_key"], item["payload_key"])
+            )
+        )
+        object_bodies = dict(read_objects_bounded(ledger.store, required_keys))
+        if shutdown_requested:
+            flush("STALE_RETRYABLE", "RUNNER_SHUTDOWN_RECOVERED")
+            raise RunnerShutdownRecovered("RUNNER_SHUTDOWN_RECOVERED")
         for object_id in object_ids[cursor:]:
             item = object_index[object_id]
             receipt_key = str(item["receipt_key"])
             payload_key = str(item["payload_key"])
-            receipt_body = ledger.store.get_object(receipt_key)
+            receipt_body = object_bodies.get(receipt_key)
             if receipt_body is None:
                 raise ValueError(f"REPLAY_SEGMENT_RECEIPT_MISSING:{receipt_key}")
             try:
@@ -1181,7 +1212,7 @@ def replay_segment(
                 or receipt.task_id != item["task_id"]
             ):
                 raise ValueError("REPLAY_SEGMENT_RECEIPT_INVENTORY_MISMATCH")
-            payload_body = ledger.store.get_object(payload_key)
+            payload_body = object_bodies.get(payload_key)
             if payload_body is None:
                 raise ValueError(f"REPLAY_SEGMENT_PAYLOAD_MISSING:{payload_key}")
             if len(payload_body) != _integer(item["stored_bytes"], label="REPLAY_STORED_BYTES"):

@@ -7,6 +7,7 @@ import hashlib
 import json
 import re
 from collections.abc import Iterable, Iterator, Mapping, Sequence
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, is_dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -23,6 +24,7 @@ RAW_NAMESPACE = "historical-deep-data/schema-v1"
 DERIVED_NAMESPACE = f"{RAW_NAMESPACE}/_derived"
 CONTROL_NAMESPACE = f"{RAW_NAMESPACE}/_control"
 _CONTINUATION_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$")
+R2_READ_MAX_WORKERS = 8
 
 
 class RuntimeObjectStore(Protocol):
@@ -31,6 +33,37 @@ class RuntimeObjectStore(Protocol):
     def put_if_absent(self, key: str, data: bytes) -> bool: ...
 
     def iter_keys(self, prefix: str) -> Iterable[str]: ...
+
+
+def read_objects_bounded(
+    store: RuntimeObjectStore,
+    keys: Iterable[str],
+    *,
+    max_workers: int = R2_READ_MAX_WORKERS,
+) -> tuple[tuple[str, bytes | None], ...]:
+    """Read immutable objects concurrently while preserving key order.
+
+    R2/S3 clients are safe for concurrent reads, but their default connection
+    pool is deliberately small.  Eight workers remove the per-object latency
+    multiplier without creating unbounded requests or changing deterministic
+    processing order.
+    """
+
+    ordered = tuple(keys)
+    if max_workers < 1:
+        raise ValueError("RUNTIME_READ_WORKERS_MUST_BE_POSITIVE")
+    if len(ordered) < 2 or max_workers == 1:
+        return tuple((key, store.get_object(key)) for key in ordered)
+
+    def load(key: str) -> tuple[str, bytes | None]:
+        return key, store.get_object(key)
+
+    workers = min(max_workers, len(ordered))
+    with ThreadPoolExecutor(
+        max_workers=workers,
+        thread_name_prefix="historical-r2-read",
+    ) as executor:
+        return tuple(executor.map(load, ordered))
 
 
 def _plain(value: object) -> object:
@@ -152,11 +185,13 @@ class DurableRuntimeLedger:
     def values(self, category: str) -> tuple[Mapping[str, object], ...]:
         prefix = f"{DERIVED_NAMESPACE}/{category.strip('/')}/"
         output: list[Mapping[str, object]] = []
-        for key in sorted(set(self.store.iter_keys(prefix))):
-            relative_key = key[len(prefix) :]
-            if "/" in relative_key or not relative_key.startswith("record-"):
-                continue
-            body = self.store.get_object(key)
+        keys = (
+            key
+            for key in sorted(set(self.store.iter_keys(prefix)))
+            if "/" not in key[len(prefix) :]
+            and key[len(prefix) :].startswith("record-")
+        )
+        for key, body in read_objects_bounded(self.store, keys):
             if body is None:
                 raise ValueError(f"RUNTIME_DERIVED_OBJECT_MISSING:{key}")
             envelope = _mapping(_decode_json(body, label="RUNTIME_DERIVED_OBJECT"))
@@ -493,16 +528,15 @@ class DurableRuntimeLedger:
         """Summarize each task's latest immutable journal event."""
 
         latest: dict[str, tuple[str, Mapping[str, object]]] = {}
-        event_count = 0
         prefix = f"{RAW_NAMESPACE}/competition="
-        for key in sorted(set(self.store.iter_keys(prefix))):
-            if (
-                "/attempts/attempt=" not in key
-                or "/event=" not in key
-                or not key.endswith(".json")
-            ):
-                continue
-            body = self.store.get_object(key)
+        keys = tuple(
+            key
+            for key in sorted(set(self.store.iter_keys(prefix)))
+            if "/attempts/attempt=" in key
+            and "/event=" in key
+            and key.endswith(".json")
+        )
+        for key, body in read_objects_bounded(self.store, keys):
             if body is None:
                 raise ValueError(f"RUNTIME_TASK_ATTEMPT_MISSING:{key}")
             event = _mapping(_decode_json(body, label="RUNTIME_TASK_ATTEMPT"))
@@ -516,7 +550,6 @@ class DurableRuntimeLedger:
             status = event.get("status")
             if not isinstance(task_id, str) or not isinstance(status, str):
                 raise ValueError(f"RUNTIME_TASK_ATTEMPT_FIELDS_MISSING:{key}")
-            event_count += 1
             previous = latest.get(task_id)
             if previous is None or key > previous[0]:
                 latest[task_id] = (key, event)
@@ -547,7 +580,7 @@ class DurableRuntimeLedger:
             + statuses.get("RETRYABLE", 0)
         )
         return {
-            "task_events": event_count,
+            "task_events": len(keys),
             "tasks": len(latest),
             "task_statuses": dict(sorted(statuses.items())),
             "tasks_completed": success,
@@ -574,10 +607,12 @@ class DurableRuntimeLedger:
             if league is not None and season is not None
             else f"{RAW_NAMESPACE}/competition="
         )
-        for key in sorted(set(self.store.iter_keys(prefix))):
-            if not key.endswith("/receipt.json"):
-                continue
-            body = self.store.get_object(key)
+        keys = (
+            key
+            for key in sorted(set(self.store.iter_keys(prefix)))
+            if key.endswith("/receipt.json")
+        )
+        for key, body in read_objects_bounded(self.store, keys):
             if body is None:
                 raise ValueError(f"RUNTIME_RECEIPT_MISSING:{key}")
             yield _mapping(_decode_json(body, label="RUNTIME_RECEIPT"))

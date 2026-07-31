@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import UTC, datetime, timedelta
+from threading import Lock
+from time import sleep
 
 from robin.historical_deep.contracts import (
     CompetitionSpec,
@@ -32,10 +34,24 @@ class CountingObjectStore(InMemoryObjectStore):
         super().__init__()
         self.iter_keys_calls = 0
         self.get_object_calls = 0
+        self.parallel_probe_enabled = False
+        self.active_gets = 0
+        self.max_active_gets = 0
+        self.get_lock = Lock()
 
     def get_object(self, key: str) -> bytes | None:
         self.get_object_calls += 1
-        return super().get_object(key)
+        if not self.parallel_probe_enabled:
+            return super().get_object(key)
+        with self.get_lock:
+            self.active_gets += 1
+            self.max_active_gets = max(self.max_active_gets, self.active_gets)
+        try:
+            sleep(0.002)
+            return super().get_object(key)
+        finally:
+            with self.get_lock:
+                self.active_gets -= 1
 
     def iter_keys(self, prefix: str) -> Iterable[str]:
         self.iter_keys_calls += 1
@@ -183,6 +199,7 @@ def test_audit_object_store_scans_are_bounded_by_passes_not_tasks() -> None:
 
     store.iter_keys_calls = 0
     store.get_object_calls = 0
+    store.parallel_probe_enabled = True
     audit = audit_and_reconcile(
         repository,
         ledger,
@@ -198,10 +215,24 @@ def test_audit_object_store_scans_are_bounded_by_passes_not_tasks() -> None:
     assert audit["write_ahead_receipts_verified"] == 0
     assert store.iter_keys_calls <= 12
     assert store.get_object_calls <= 85
+    assert store.max_active_gets >= 2
+
+    store.max_active_gets = 0
+    inventory = build_replay_inventory(
+        ledger,
+        continuation_id="continuation-scan-test",
+        continuation_of="30622258001:1",
+        run_purpose="P0_CLOSURE_AND_SHARDED_REPLAY",
+        code_revision="test-revision",
+        run_token="100:1",
+        now=NOW,
+    )
+    assert inventory["objects_expected"] == 40
+    assert store.max_active_gets >= 2
 
 
 def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> None:
-    store = InMemoryObjectStore()
+    store = CountingObjectStore()
     repository = R2FirstRepository(store)
     ledger = DurableRuntimeLedger(store)
     for fixture_id in (1, 2):
@@ -236,6 +267,8 @@ def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> No
     )
     assert retried_inventory["manifest_sha256"] == inventory["manifest_sha256"]
 
+    store.parallel_probe_enabled = True
+    store.max_active_gets = 0
     for pass_id in (1, 2):
         pass_root = tmp_path / f"pass-{pass_id}"
         for definition in inventory["segments"]:
@@ -283,3 +316,4 @@ def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> No
             assert report["global_hash"] == first["global_hash"]
             assert "CURRENT_SECOND_PASS_IDEMPOTENT" in report["gates"]
             assert report["provider_calls"] == 0
+    assert store.max_active_gets >= 2
