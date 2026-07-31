@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import UTC, datetime, timedelta
 
 from robin.historical_deep.contracts import (
@@ -24,6 +25,16 @@ COMPETITION = CompetitionSpec(
     name="Ligue 1",
     provider_league_id=61,
 )
+
+
+class CountingObjectStore(InMemoryObjectStore):
+    def __init__(self) -> None:
+        super().__init__()
+        self.iter_keys_calls = 0
+
+    def iter_keys(self, prefix: str) -> Iterable[str]:
+        self.iter_keys_calls += 1
+        return super().iter_keys(prefix)
 
 
 def _task(*, fixture_id: int) -> HarvestTask:
@@ -131,6 +142,55 @@ def test_audit_reconciles_receipts_stale_running_and_failed_without_provider() -
     assert audit["stale_tasks_recovered"] == 1
     assert audit["tasks_reset_pending"] == 1
     assert audit["tasks_recalled"] == 0
+
+
+def test_audit_object_store_scans_are_bounded_by_passes_not_tasks() -> None:
+    store = CountingObjectStore()
+    repository = R2FirstRepository(store)
+    ledger = DurableRuntimeLedger(store)
+    for fixture_id in range(1, 41):
+        task = _task(fixture_id=fixture_id)
+        captured = repository.capture(
+            task=task,
+            payload=_payload(fixture_id),
+            requested_at=NOW - timedelta(minutes=40),
+            received_at=NOW - timedelta(minutes=39),
+            source_commit="test",
+        )
+        _journal_running(
+            repository,
+            task,
+            started_at=NOW - timedelta(minutes=40),
+        )
+        repository.record_task_attempt(
+            task=task,
+            attempt_number=1,
+            status=TaskStatus.COMPLETE,
+            started_at=NOW - timedelta(minutes=40),
+            recorded_at=NOW - timedelta(minutes=39),
+            attempts=1,
+            provider_calls=1,
+            payload_hash=captured.receipt.payload_sha256,
+            r2_key=captured.receipt.payload_key,
+            rows_normalized=captured.receipt.rows_normalized,
+            rows_received=captured.receipt.rows_normalized,
+        )
+
+    store.iter_keys_calls = 0
+    audit = audit_and_reconcile(
+        repository,
+        ledger,
+        continuation_id="continuation-scan-test",
+        continuation_of="30622258001:1",
+        run_purpose="P0_CLOSURE_AND_SHARDED_REPLAY",
+        code_revision="test-revision",
+        run_token="100:1",
+        now=NOW,
+    )
+
+    assert audit["tasks_complete"] == 40
+    assert audit["write_ahead_receipts_verified"] == 0
+    assert store.iter_keys_calls <= 12
 
 
 def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> None:

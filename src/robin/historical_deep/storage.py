@@ -6,7 +6,7 @@ import gzip
 import hashlib
 import json
 import re
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Protocol, runtime_checkable
@@ -613,6 +613,7 @@ class R2FirstRepository:
         r2_key: str | None = None,
         rows_normalized: int | None = None,
         rows_received: int | None = None,
+        known_events: Sequence[TaskAttemptEvent] | None = None,
     ) -> TaskAttemptEvent:
         """Append one secret-safe state transition without changing receipts."""
 
@@ -667,10 +668,26 @@ class R2FirstRepository:
                 )
             return self._read_task_attempt_at(task, key)
 
+        journal = (
+            tuple(self.iter_task_attempts(task))
+            if known_events is None
+            else tuple(
+                sorted(
+                    known_events,
+                    key=lambda item: (
+                        item.attempt_number,
+                        item.event_index,
+                        item.recorded_at,
+                    ),
+                )
+            )
+        )
+        if any(not self._attempt_matches_task(item, task) for item in journal):
+            raise AppendOnlyViolation(
+                f"HISTORICAL_DEEP_TASK_ATTEMPT_TASK_MISMATCH:{task.task_id}"
+            )
         current_attempt = tuple(
-            item
-            for item in self.iter_task_attempts(task)
-            if item.attempt_number == attempt_number
+            item for item in journal if item.attempt_number == attempt_number
         )
         expected_statuses: tuple[TaskStatus, ...]
         if normalized_status is TaskStatus.PENDING:
@@ -681,7 +698,8 @@ class R2FirstRepository:
             expected_statuses = (TaskStatus.PENDING, TaskStatus.RUNNING)
         if (
             normalized_status is TaskStatus.PENDING
-            and attempt_number != self.next_task_attempt_number(task)
+            and attempt_number
+            != max((item.attempt_number for item in journal), default=0) + 1
         ):
             raise AppendOnlyViolation(
                 f"HISTORICAL_DEEP_TASK_ATTEMPT_NUMBER_INVALID:{task.task_id}"
@@ -1159,13 +1177,46 @@ class R2FirstRepository:
         recovered: dict[str, HarvestReceipt] = {}
         prefix = f"{self.namespace}/competition="
         keys = tuple(self.store.iter_keys(prefix))
+        known_keys = set(keys)
+        known_keys.update(
+            self.store.iter_keys(f"{self.namespace}/task-index/")
+        )
+        complete_recovery_keys: set[str] = set()
         for key in keys:
             if key.endswith("/version.json"):
-                receipt = self._recover_version(key)
-                if receipt is not None:
-                    recovered[receipt.task_id] = receipt
+                version_bytes = self.store.get_object(key)
+                if version_bytes is None:
+                    raise PayloadIntegrityError("HARVEST_TASK_VERSION_MISSING")
+                try:
+                    version = TaskVersion.model_validate_json(version_bytes)
+                except ValueError as exc:
+                    raise PayloadIntegrityError(
+                        "HARVEST_TASK_VERSION_INVALID"
+                    ) from exc
+                receipt = version.receipt
+                materialization_keys = {
+                    receipt.version_key,
+                    receipt.payload_key,
+                    receipt.recovery_key,
+                    receipt.receipt_key,
+                    receipt.checkpoint_key,
+                    task_index_key(version.task.task_id),
+                }
+                if materialization_keys <= known_keys:
+                    complete_recovery_keys.add(receipt.recovery_key)
+                    continue
+                recovered_receipt = self._recover_version(key)
+                if recovered_receipt is not None:
+                    recovered[recovered_receipt.task_id] = recovered_receipt
+                    known_keys.update(materialization_keys)
+                    complete_recovery_keys.add(
+                        recovered_receipt.recovery_key
+                    )
         for key in keys:
-            if key.endswith("/recovery-intent.json"):
+            if (
+                key.endswith("/recovery-intent.json")
+                and key not in complete_recovery_keys
+            ):
                 receipt = self._recover_intent(key)
                 recovered[receipt.task_id] = receipt
         return tuple(recovered[key] for key in sorted(recovered))
