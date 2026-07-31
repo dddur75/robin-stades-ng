@@ -3164,7 +3164,9 @@ def run(
         store = services.store_factory(selected_environment, args.cache_root)
         validate_r2_round_trip(store, key=SENTINEL_KEY)
         repository = _new_repository(store, code_revision=args.code_revision)
-        repository.resume_pending()
+        # Recovery is task-local on collection lookup.  Analysis must remain
+        # read-only over raw evidence and fail closed when a payload has no
+        # durable receipt, rather than rewriting every complete capture first.
         ledger = DurableRuntimeLedger(store, campaign_id=contract.campaign_id)
         if args.command in COLLECTION_COMMANDS:
             result = _collection_run(

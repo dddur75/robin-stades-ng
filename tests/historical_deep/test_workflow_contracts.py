@@ -61,6 +61,7 @@ OFFLINE_JOBS = (
     "features",
     "backtest",
     "report",
+    "coverage-proof",
 )
 
 
@@ -202,6 +203,7 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
         ("features", "quality-final"),
         ("backtest", "features"),
         ("report", "backtest"),
+        ("coverage-proof", "report"),
     )
     for job_name, prerequisite in expected_chain:
         actual = _mapping(jobs[job_name])["needs"]
@@ -223,7 +225,7 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
     assert total_calls <= mission_call_cap
     assert all(
         int(str(_mapping(_mapping(jobs[name])["with"])["max_duration_minutes"]))
-        <= 100
+        == 75
         for name in PROVIDER_JOBS
     )
     for name in PROVIDER_JOBS[1:]:
@@ -239,6 +241,15 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
         assert f"needs['{quality_job}'].outputs.status == 'COMPLETE'" in condition
     assert str(_mapping(jobs["replay-final"])["if"]) == "${{ always() }}"
     assert str(_mapping(jobs["report"])["if"]) == "${{ always() }}"
+    coverage_proof = _mapping(jobs["coverage-proof"])
+    coverage_inputs = _mapping(coverage_proof["with"])
+    assert coverage_inputs["source_code_revision"] == "${{ github.sha }}"
+    assert coverage_inputs["source_run_token"] == (
+        "${{ format('{0}:{1}', github.run_id, github.run_attempt) }}"
+    )
+    coverage_condition = str(coverage_proof["if"])
+    assert "inputs.execute" in coverage_condition
+    assert "needs.report.result == 'success'" in coverage_condition
 
 
 def test_controller_passes_least_privilege_secrets() -> None:

@@ -750,10 +750,18 @@ def test_replay_never_builds_provider_or_materializes_all_payloads(
     def forbidden_raw_evidence(_ledger: DurableRuntimeLedger) -> object:
         raise AssertionError("replay must stream raw evidence")
 
+    def forbidden_global_recovery(_repository: R2FirstRepository) -> object:
+        raise AssertionError("replay must not mutate raw evidence during recovery")
+
     monkeypatch.setattr(
         DurableRuntimeLedger,
         "raw_evidence",
         forbidden_raw_evidence,
+    )
+    monkeypatch.setattr(
+        R2FirstRepository,
+        "resume_pending",
+        forbidden_global_recovery,
     )
     assert runner.run(
         _args(tmp_path, "replay"),

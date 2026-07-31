@@ -48,18 +48,21 @@ jobs:
           python -m ruff check
           src/robin/historical_deep
           tests/historical_deep
+          scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
       - name: Vérifier le typage strict Historical Deep
         run: >-
           python -m mypy --strict
           src/robin/historical_deep
+          scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
       - name: Auditer la sécurité Historical Deep
         run: >-
           python -m bandit -q -r
           src/robin/historical_deep
+          scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
       - name: Compiler Historical Deep
@@ -67,6 +70,7 @@ jobs:
           python -m compileall -q
           src/robin/historical_deep
           tests/historical_deep
+          scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_historical_deep_harvest.py
       - name: Valider JSON et YAML

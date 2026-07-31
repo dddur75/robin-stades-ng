@@ -1286,9 +1286,8 @@ class R2FirstRepository:
     checkpoint = write_checkpoint
 
     def iter_receipts(self) -> Iterator[HarvestReceipt]:
-        """Iterate validated receipts after repairing interrupted captures."""
+        """Iterate durable receipts without mutating or repairing raw evidence."""
 
-        self.resume_pending()
         prefix = f"{self.namespace}/competition="
         for key in self.store.iter_keys(prefix):
             if key.endswith("/receipt.json"):

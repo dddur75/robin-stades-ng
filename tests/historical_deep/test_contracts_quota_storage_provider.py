@@ -562,6 +562,26 @@ def test_crash_after_single_raw_write_recovers_without_provider(
     ) == 1
 
 
+def test_task_lookup_recovers_only_the_requested_incomplete_capture() -> None:
+    store = CrashOnceStore("receipt.json")
+    repository = R2FirstRepository(store)
+    task = _task()
+    payload = {"response": [{"fixture": {"id": 1001}}]}
+
+    with pytest.raises(RuntimeError, match="SIMULATED_CRASH"):
+        repository.capture(
+            task=task,
+            payload=payload,
+            requested_at=NOW,
+            received_at=NOW + timedelta(seconds=1),
+        )
+
+    recovered = R2FirstRepository(store).receipt_for(task)
+    assert recovered is not None
+    assert recovered.task_id == task.task_id
+    assert R2FirstRepository(store).payload_for(task) == payload
+
+
 def test_crash_writing_payload_resumes_preexisting_version_on_retry() -> None:
     store = CrashOnceStore(".json.gz")
     repository = R2FirstRepository(store)
