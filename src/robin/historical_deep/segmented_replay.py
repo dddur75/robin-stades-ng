@@ -41,7 +41,7 @@ from .storage import (
 INVENTORY_SCHEMA_VERSION = "historical-deep-replay-inventory-v2"
 SEGMENT_SCHEMA_VERSION = "historical-deep-replay-segment-v2"
 SEGMENT_CHECKPOINT_SCHEMA_VERSION = "historical-deep-replay-checkpoint-v2"
-REDUCER_SCHEMA_VERSION = "historical-deep-replay-reducer-v2"
+REDUCER_SCHEMA_VERSION = "historical-deep-replay-reducer-v3"
 CONTINUATION_SCHEMA_VERSION = "historical-deep-continuation-v1"
 
 DEFAULT_MAX_OBJECTS = 250
@@ -53,6 +53,8 @@ CHECKPOINT_MAX_SECONDS = 5 * 60
 STALE_HEARTBEAT_MINUTES = 15
 GITHUB_MATRIX_MAX_JOBS = 256
 SEGMENTS_PER_MATRIX_JOB = 2
+STAGING_PART_MAX_ROWS = 250
+STAGING_COMPRESSION_LEVEL = 1
 
 STAGING_TABLES = (
     "fixtures",
@@ -1599,15 +1601,54 @@ def load_segment_result(path: Path) -> Mapping[str, object]:
 
 
 def _staging_table_rows(rows: Sequence[Mapping[str, object]]) -> dict[str, list[dict[str, object]]]:
+    """Group rows while preserving their existing canonical-hash order."""
+
     tables: dict[str, list[dict[str, object]]] = {name: [] for name in STAGING_TABLES}
     for row in rows:
         family = str(row.get("normalized_family", row.get("family", "")))
         if family not in tables:
             continue
         tables[family].append(dict(row))
-    for values in tables.values():
-        values.sort(key=canonical_sha256)
     return tables
+
+
+def _update_canonical_sequence_hash(
+    update: Callable[[bytes], object],
+    values: Sequence[object],
+) -> None:
+    """Stream canonical list bytes without materializing one giant JSON blob."""
+
+    update(b"[")
+    for index, value in enumerate(values):
+        if index:
+            update(b",")
+        update(canonical_json_bytes(value))
+    update(b"]")
+
+
+def _canonical_sequence_sha256(values: Sequence[object]) -> str:
+    digest = hashlib.sha256()
+    _update_canonical_sequence_hash(digest.update, values)
+    return digest.hexdigest()
+
+
+def _replay_content_sha256(
+    *,
+    inventory_sha256: str,
+    entries: Sequence[object],
+    rows: Sequence[object],
+) -> str:
+    """Preserve the v2 content hash while hashing large rows incrementally."""
+
+    digest = hashlib.sha256()
+    digest.update(b'{"entries":')
+    _update_canonical_sequence_hash(digest.update, entries)
+    digest.update(b',"inventory_sha256":')
+    digest.update(canonical_json_bytes(inventory_sha256))
+    digest.update(b',"rows":')
+    _update_canonical_sequence_hash(digest.update, rows)
+    digest.update(b"}")
+    return digest.hexdigest()
 
 
 def _metric(
@@ -1677,6 +1718,7 @@ def reduce_segments(
     code_revision: str,
     run_token: str,
     now: datetime,
+    progress: Callable[[str], None] | None = None,
 ) -> dict[str, object]:
     """Verify every segment exactly once and write only isolated staging."""
 
@@ -1699,6 +1741,8 @@ def reduce_segments(
     extra = sorted(set(results) - set(expected_segments))
     if missing or extra:
         raise ValueError(f"REPLAY_REDUCER_SEGMENT_SET_MISMATCH:{len(missing)}:{len(extra)}")
+    if progress is not None:
+        progress("SEGMENTS_VERIFIED")
     seen_objects: set[str] = set()
     entries: list[dict[str, object]] = []
     rows: list[dict[str, object]] = []
@@ -1744,42 +1788,71 @@ def reduce_segments(
     entries.sort(key=lambda item: (str(item.get("payload_key", "")), str(item.get("receipt_id", ""))))
     rows.sort(key=canonical_sha256)
     tables = _staging_table_rows(rows)
+    if progress is not None:
+        progress("ROWS_GROUPED")
     table_manifests: dict[str, object] = {}
     new_inserts = 0
     duplicates_avoided = 0
     for table, table_rows in tables.items():
-        table_hash = canonical_sha256(table_rows)
-        table_value = {
-            "schema_version": "historical-deep-staging-table-v1",
-            "continuation_id": inventory["continuation_id"],
-            "inventory_sha256": inventory_hash,
-            "table": table,
-            "rows": table_rows,
-            "row_count": len(table_rows),
-            "table_sha256": table_hash,
-        }
-        key = (
-            f"{DERIVED_NAMESPACE}/staging/continuation={inventory['continuation_id']}/"
-            f"inventory={inventory_hash}/table={table}/part-{table_hash}.json.gz"
-        )
-        data = gzip.compress(canonical_json_bytes(table_value), compresslevel=9, mtime=0)
-        created = _put_immutable(ledger.store, key, data)
-        if created:
-            new_inserts += len(table_rows)
-        else:
-            duplicates_avoided += len(table_rows)
+        table_hash = _canonical_sequence_sha256(table_rows)
+        part_manifests: list[dict[str, object]] = []
+        created_rows = 0
+        for ordinal, offset in enumerate(
+            range(0, len(table_rows), STAGING_PART_MAX_ROWS),
+            start=1,
+        ):
+            part_rows = table_rows[offset : offset + STAGING_PART_MAX_ROWS]
+            part_hash = _canonical_sequence_sha256(part_rows)
+            part_value = {
+                "schema_version": "historical-deep-staging-table-part-v2",
+                "continuation_id": inventory["continuation_id"],
+                "inventory_sha256": inventory_hash,
+                "table": table,
+                "table_sha256": table_hash,
+                "part_ordinal": ordinal,
+                "rows": part_rows,
+                "row_count": len(part_rows),
+                "part_sha256": part_hash,
+            }
+            key = (
+                f"{DERIVED_NAMESPACE}/staging-v2/"
+                f"continuation={inventory['continuation_id']}/"
+                f"inventory={inventory_hash}/table={table}/"
+                f"part-{ordinal:06d}-{part_hash}.json.gz"
+            )
+            data = gzip.compress(
+                canonical_json_bytes(part_value),
+                compresslevel=STAGING_COMPRESSION_LEVEL,
+                mtime=0,
+            )
+            created = _put_immutable(ledger.store, key, data)
+            if created:
+                new_inserts += len(part_rows)
+                created_rows += len(part_rows)
+            else:
+                duplicates_avoided += len(part_rows)
+            part_manifests.append(
+                {
+                    "part_ordinal": ordinal,
+                    "row_count": len(part_rows),
+                    "part_sha256": part_hash,
+                    "staging_key": key,
+                }
+            )
         table_manifests[table] = {
+            "schema_version": "historical-deep-staging-table-manifest-v2",
             "row_count": len(table_rows),
             "table_sha256": table_hash,
-            "staging_key": key,
-            "created": created,
+            "part_count": len(part_manifests),
+            "parts": part_manifests,
+            "created": created_rows == len(table_rows),
         }
-    replay_content_hash = canonical_sha256(
-        {
-            "inventory_sha256": inventory_hash,
-            "entries": entries,
-            "rows": rows,
-        }
+        if progress is not None:
+            progress(f"STAGING_TABLE_WRITTEN:{table}")
+    replay_content_hash = _replay_content_sha256(
+        inventory_sha256=inventory_hash,
+        entries=entries,
+        rows=rows,
     )
     global_hash = canonical_sha256(
         {
@@ -1810,7 +1883,9 @@ def reduce_segments(
     ]
     source_hash = canonical_sha256(source_entries)
     replay_hash = canonical_sha256(replay_entries)
-    projection_hash = canonical_sha256(rows)
+    projection_hash = _canonical_sequence_sha256(rows)
+    if progress is not None:
+        progress("CONTENT_HASHES_COMPUTED")
     recorded_at = _utc(now, label="REPLAY_REDUCER_TIME")
     gates = [
         "CURRENT_R2_REPLAY_VERIFIED",
@@ -1879,9 +1954,19 @@ def reduce_segments(
     }
     if not idempotent:
         projection["durable_key"] = ledger.put_json(
-            "replay/projection", projection, recorded_at=recorded_at
+            "replay/projection",
+            projection,
+            recorded_at=recorded_at,
+            compression_level=STAGING_COMPRESSION_LEVEL,
         )
-        replay["durable_key"] = ledger.put_json("replay", replay, recorded_at=recorded_at)
+        replay["durable_key"] = ledger.put_json(
+            "replay",
+            replay,
+            recorded_at=recorded_at,
+            compression_level=STAGING_COMPRESSION_LEVEL,
+        )
+        if progress is not None:
+            progress("REPLAY_PROOFS_WRITTEN")
     metrics = _entity_metrics(inventory=inventory, tables=tables)
     report: dict[str, object] = {
         "schema_version": REDUCER_SCHEMA_VERSION,
@@ -1924,7 +2009,14 @@ def reduce_segments(
         "staging_reconstructible_from_r2": True,
     }
     category = "replay/idempotence" if idempotent else "replay/reducer"
-    report["durable_key"] = ledger.put_json(category, report, recorded_at=recorded_at)
+    report["durable_key"] = ledger.put_json(
+        category,
+        report,
+        recorded_at=recorded_at,
+        compression_level=STAGING_COMPRESSION_LEVEL,
+    )
+    if progress is not None:
+        progress("REDUCER_REPORT_WRITTEN")
     return report
 
 
@@ -1935,6 +2027,7 @@ __all__ = [
     "DEFAULT_MAX_LOGICAL_BYTES",
     "DEFAULT_MAX_OBJECTS",
     "RunnerShutdownRecovered",
+    "STAGING_PART_MAX_ROWS",
     "STAGING_TABLES",
     "audit_and_reconcile",
     "build_replay_inventory",

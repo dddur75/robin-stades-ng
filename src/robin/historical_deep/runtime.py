@@ -164,7 +164,10 @@ class DurableRuntimeLedger:
         value: object,
         *,
         recorded_at: datetime,
+        compression_level: int = 9,
     ) -> str:
+        if not 0 <= compression_level <= 9:
+            raise ValueError("RUNTIME_COMPRESSION_LEVEL_INVALID")
         plain = _plain(value)
         envelope = {
             "schema_version": "historical-deep-derived-envelope-v1",
@@ -179,7 +182,7 @@ class DurableRuntimeLedger:
             f"{DERIVED_NAMESPACE}/{category.strip('/')}/"
             f"record-{_timestamp(recorded_at)}-{digest}.json.gz"
         )
-        compressed = gzip.compress(body, compresslevel=9, mtime=0)
+        compressed = gzip.compress(body, compresslevel=compression_level, mtime=0)
         self._put_immutable(key, compressed)
         return key
 

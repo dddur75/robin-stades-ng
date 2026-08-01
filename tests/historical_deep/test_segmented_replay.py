@@ -14,9 +14,13 @@ from robin.historical_deep.contracts import (
     HarvestTask,
     TaskStatus,
     TemporalClass,
+    canonical_sha256,
 )
 from robin.historical_deep.runtime import DurableRuntimeLedger
 from robin.historical_deep.segmented_replay import (
+    STAGING_PART_MAX_ROWS,
+    _canonical_sequence_sha256,
+    _replay_content_sha256,
     audit_and_reconcile,
     build_replay_inventory,
     build_segment_batches,
@@ -515,6 +519,12 @@ def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> No
             first = report
             assert report["status"] == "REPLAY_REDUCED"
             assert report["new_inserts"] == report["rows"]
+            fixtures_manifest = report["table_manifests"]["fixtures"]
+            assert fixtures_manifest["schema_version"] == (
+                "historical-deep-staging-table-manifest-v2"
+            )
+            assert fixtures_manifest["part_count"] == 1
+            assert len(fixtures_manifest["parts"]) == 1
             replay_proof = ledger.latest_value("replay")
             assert isinstance(replay_proof, dict)
             assert all(
@@ -539,3 +549,25 @@ def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> No
             assert "CURRENT_SECOND_PASS_IDEMPOTENT" in report["gates"]
             assert report["provider_calls"] == 0
     assert store.max_active_gets >= 2
+
+
+def test_streaming_reducer_hashes_preserve_canonical_contract() -> None:
+    rows = [
+        {"normalized_family": "fixtures", "provider_fixture_id": index}
+        for index in range(STAGING_PART_MAX_ROWS + 1)
+    ]
+    entries = [{"receipt_id": "receipt-1", "payload_key": "payload-1"}]
+    inventory_hash = "a" * 64
+
+    assert _canonical_sequence_sha256(rows) == canonical_sha256(rows)
+    assert _replay_content_sha256(
+        inventory_sha256=inventory_hash,
+        entries=entries,
+        rows=rows,
+    ) == canonical_sha256(
+        {
+            "inventory_sha256": inventory_hash,
+            "entries": entries,
+            "rows": rows,
+        }
+    )

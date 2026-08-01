@@ -271,6 +271,10 @@ def run(argv: list[str] | None = None) -> int:
                 code_revision=args.code_revision,
                 run_token=run_token,
                 now=now,
+                progress=lambda phase: print(
+                    f"SEGMENTED_REPLAY_REDUCER_PHASE:{phase}",
+                    flush=True,
+                ),
             )
         name = "replay-idempotence.json" if args.idempotent else "replay-reducer.json"
         _write_json(args.output / name, result)
