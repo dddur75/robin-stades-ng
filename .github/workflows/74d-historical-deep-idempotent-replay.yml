@@ -84,7 +84,7 @@ jobs:
   idempotence:
     needs: replay-second-pass
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 100
     outputs:
       status: ${{ steps.reduce.outputs.status }}
       global_hash: ${{ steps.reduce.outputs.global_hash }}

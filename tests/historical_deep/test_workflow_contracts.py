@@ -115,6 +115,17 @@ def test_all_historical_deep_yaml_and_json_contracts_parse() -> None:
     assert contract["storage"]["deletions_allowed"] is False
 
 
+def test_full_corpus_reducers_have_a_usable_timeout_budget() -> None:
+    reducer_jobs = (
+        (WORKFLOWS / "74c-historical-deep-projection-reducer.yml", "reducer"),
+        (WORKFLOWS / "74d-historical-deep-idempotent-replay.yml", "idempotence"),
+    )
+    for path, job_name in reducer_jobs:
+        _, workflow = _load(path)
+        job = _mapping(_mapping(workflow["jobs"])[job_name])
+        assert 90 <= int(str(job["timeout-minutes"])) <= 110
+
+
 def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
     for number, path in PHASE_FILES.items():
         text, workflow = _load(path)
