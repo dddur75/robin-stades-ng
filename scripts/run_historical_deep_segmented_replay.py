@@ -7,8 +7,12 @@ import argparse
 import json
 import os
 import sys
+import threading
+import time
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Iterator, TextIO
 
 from robin.historical_deep.adapters import (
     assert_safety_locks,
@@ -33,6 +37,46 @@ SENTINEL_KEY = "historical-deep-data/schema-v1/_control/segmented-replay-sentine
 DEFAULT_PARENT = "30622258001:1"
 DEFAULT_PURPOSE = "P0_CLOSURE_AND_SHARDED_REPLAY"
 DEFAULT_CONTINUATION = "p0-closure-30622258001-1"
+REDUCER_HEARTBEAT_SECONDS = 30.0
+
+
+@contextmanager
+def _progress_heartbeat(
+    label: str,
+    *,
+    interval_seconds: float = REDUCER_HEARTBEAT_SECONDS,
+    stream: TextIO | None = None,
+) -> Iterator[None]:
+    """Emit data-free progress so long reducers are not reaped as idle."""
+
+    if interval_seconds <= 0:
+        raise ValueError("PROGRESS_HEARTBEAT_INTERVAL_INVALID")
+    output = stream or sys.stdout
+    stopped = threading.Event()
+    started = time.monotonic()
+
+    def emit() -> None:
+        sequence = 0
+        while not stopped.wait(interval_seconds):
+            sequence += 1
+            elapsed_seconds = max(0, int(time.monotonic() - started))
+            print(
+                f"{label}:sequence={sequence}:elapsed_seconds={elapsed_seconds}",
+                file=output,
+                flush=True,
+            )
+
+    thread = threading.Thread(
+        target=emit,
+        name="historical-deep-reducer-heartbeat",
+        daemon=True,
+    )
+    thread.start()
+    try:
+        yield
+    finally:
+        stopped.set()
+        thread.join(timeout=1.0)
 
 
 def _run_token(environment: dict[str, str], explicit: str | None) -> str:
@@ -217,16 +261,17 @@ def run(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "reduce":
         inventory = _load_json(args.inventory)
-        result = reduce_segments(
-            ledger,
-            inventory=inventory,
-            segments_root=args.segments_root,
-            pass_id=args.pass_id,
-            idempotent=args.idempotent,
-            code_revision=args.code_revision,
-            run_token=run_token,
-            now=now,
-        )
+        with _progress_heartbeat("SEGMENTED_REPLAY_REDUCER_HEARTBEAT"):
+            result = reduce_segments(
+                ledger,
+                inventory=inventory,
+                segments_root=args.segments_root,
+                pass_id=args.pass_id,
+                idempotent=args.idempotent,
+                code_revision=args.code_revision,
+                run_token=run_token,
+                now=now,
+            )
         name = "replay-idempotence.json" if args.idempotent else "replay-reducer.json"
         _write_json(args.output / name, result)
         github_output = environment.get("GITHUB_OUTPUT")
