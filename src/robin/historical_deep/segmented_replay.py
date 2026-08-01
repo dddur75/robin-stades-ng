@@ -1016,6 +1016,18 @@ def _diagnostic_records(payload: object) -> tuple[object, list[object]]:
     return None, []
 
 
+def _diagnostic_provider_identity(value: object) -> bool:
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, (int, str))
+        and bool(str(value).strip())
+    )
+
+
+def _diagnostic_derived_identity(mapping: Mapping[str, object]) -> bool:
+    return any(mapping.get(field) not in (None, "") for field in ("name", "city"))
+
+
 def diagnose_inventory_task(
     ledger: DurableRuntimeLedger,
     *,
@@ -1103,6 +1115,39 @@ def diagnose_inventory_task(
         if isinstance(invalid_record, Mapping)
         else None
     )
+    nested_venues = [
+        (index, fixture.get("venue"))
+        for index, record in enumerate(records)
+        if isinstance(record, Mapping)
+        and isinstance((fixture := record.get("fixture")), Mapping)
+        and isinstance(fixture.get("venue"), Mapping)
+    ]
+    provider_identity_venues = [
+        venue
+        for _, venue in nested_venues
+        if isinstance(venue, Mapping)
+        and _diagnostic_provider_identity(venue.get("id"))
+    ]
+    derived_identity_venues = [
+        venue
+        for _, venue in nested_venues
+        if isinstance(venue, Mapping)
+        and not _diagnostic_provider_identity(venue.get("id"))
+        and _diagnostic_derived_identity(venue)
+    ]
+    unidentifiable_venues = [
+        (index, venue)
+        for index, venue in nested_venues
+        if isinstance(venue, Mapping)
+        and not _diagnostic_provider_identity(venue.get("id"))
+        and not _diagnostic_derived_identity(venue)
+    ]
+    first_unidentifiable_venue_index = (
+        unidentifiable_venues[0][0] if unidentifiable_venues else None
+    )
+    first_unidentifiable_venue = (
+        unidentifiable_venues[0][1] if unidentifiable_venues else None
+    )
 
     normalization_status = "NON_PROJECTING_VERIFIED"
     normalization_error: str | None = None
@@ -1130,7 +1175,7 @@ def diagnose_inventory_task(
             }
 
     unsigned: dict[str, object] = {
-        "schema_version": "historical-deep-replay-diagnostic-v1",
+        "schema_version": "historical-deep-replay-diagnostic-v2",
         "inventory_sha256": inventory_hash,
         "object_id": item["object_id"],
         "task_id": task_id,
@@ -1149,6 +1194,18 @@ def diagnose_inventory_task(
             "mapping_records": len(mapping_records),
             "nested_fixture_mappings": len(nested_fixtures),
             "integer_fixture_ids": len(valid_fixture_ids),
+            "nested_venue_mappings": len(nested_venues),
+            "venue_provider_identities": len(provider_identity_venues),
+            "venue_derived_identities": len(derived_identity_venues),
+            "venue_unidentifiable": len(unidentifiable_venues),
+            "venue_unidentifiable_all_null_or_empty": sum(
+                all(value in (None, "") for value in venue.values())
+                for _, venue in unidentifiable_venues
+            ),
+            "first_unidentifiable_venue_index": first_unidentifiable_venue_index,
+            "first_unidentifiable_venue_keys": _safe_key_summary(
+                first_unidentifiable_venue
+            ),
             "first_invalid_fixture_index": invalid_index,
             "first_invalid_record_kind": _json_kind(invalid_record),
             "first_invalid_record_keys": _safe_key_summary(invalid_record),

@@ -397,6 +397,60 @@ def test_replay_diagnostic_emits_structure_and_error_without_raw_values(
         )
 
 
+def test_replay_diagnostic_identifies_only_null_venue_without_raw_values(
+    tmp_path,
+) -> None:
+    store = InMemoryObjectStore()
+    repository = R2FirstRepository(store)
+    ledger = DurableRuntimeLedger(store)
+    task = _task(fixture_id=9)
+    repository.capture(
+        task=task,
+        payload={
+            "response": [
+                {
+                    "fixture": {
+                        "id": 9,
+                        "venue": {"id": None, "name": None, "city": None},
+                    }
+                }
+            ]
+        },
+        requested_at=NOW - timedelta(minutes=2),
+        received_at=NOW - timedelta(minutes=1),
+        source_commit="test",
+    )
+    inventory = build_replay_inventory(
+        ledger,
+        continuation_id="continuation-diagnostic-venue-test",
+        continuation_of="30622258001:1",
+        run_purpose="P0_CLOSURE_AND_SHARDED_REPLAY",
+        code_revision="test-revision",
+        run_token="101:1",
+        now=NOW,
+    )
+
+    diagnostic = diagnose_inventory_task(
+        ledger,
+        inventory=inventory,
+        task_id=task.task_id,
+    )
+
+    assert diagnostic["normalization_error"] == "MISSING_IDENTITY:venue"
+    shape = diagnostic["payload_shape"]
+    assert shape["nested_venue_mappings"] == 1
+    assert shape["venue_provider_identities"] == 0
+    assert shape["venue_derived_identities"] == 0
+    assert shape["venue_unidentifiable"] == 1
+    assert shape["venue_unidentifiable_all_null_or_empty"] == 1
+    assert shape["first_unidentifiable_venue_index"] == 0
+    assert shape["first_unidentifiable_venue_keys"] == {
+        "total": 3,
+        "safe": ["city", "id", "name"],
+        "redacted": 0,
+    }
+
+
 def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> None:
     store = CountingObjectStore()
     repository = R2FirstRepository(store)
