@@ -379,6 +379,7 @@ def test_branch_bootstrap_never_runs_legacy_persistence_or_inherits_secrets() ->
     jobs = _mapping(workflow["jobs"])
     backfill = _mapping(jobs["backfill"])
     assert "inputs.priority != 'HISTORICAL_DEEP_V1'" in str(backfill["if"])
+    assert "inputs.priority != 'HISTORICAL_DEEP_DIAGNOSTIC'" in str(backfill["if"])
     bootstrap = _mapping(jobs["historical-deep-night"])
     assert str(bootstrap["uses"]).endswith(
         "79-historical-deep-night-controller.yml"
@@ -389,6 +390,15 @@ def test_branch_bootstrap_never_runs_legacy_persistence_or_inherits_secrets() ->
     bootstrap_text = text[text.index("  historical-deep-night:") :]
     assert "DATABASE_URL" not in bootstrap_text
     assert "historical-state-persist" not in bootstrap_text
+    diagnostic = _mapping(jobs["historical-deep-diagnostic"])
+    assert diagnostic["uses"] == "./.github/workflows/74-historical-deep-replay.yml"
+    assert set(_mapping(diagnostic["secrets"])) == R2_SECRETS
+    diagnostic_inputs = _mapping(diagnostic["with"])
+    assert diagnostic_inputs["continuation_of"] == "30622258001:1"
+    assert diagnostic_inputs["run_purpose"] == "P0_CLOSURE_AND_SHARDED_REPLAY"
+    assert diagnostic_inputs["diagnostic_task_id"] == "${{ inputs.endpoint }}"
+    diagnostic_text = text[text.index("  historical-deep-diagnostic:") :]
+    assert "API_FOOTBALL_KEY" not in diagnostic_text
 
 
 def test_ci_has_an_isolated_strict_historical_deep_gate() -> None:

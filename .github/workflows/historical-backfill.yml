@@ -61,7 +61,8 @@ jobs:
   backfill:
     if: >-
       github.event_name != 'workflow_dispatch' ||
-      inputs.priority != 'HISTORICAL_DEEP_V1'
+      (inputs.priority != 'HISTORICAL_DEEP_V1' &&
+      inputs.priority != 'HISTORICAL_DEEP_DIAGNOSTIC')
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -152,6 +153,23 @@ jobs:
       execute: true
     secrets:
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  historical-deep-diagnostic:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.priority == 'HISTORICAL_DEEP_DIAGNOSTIC'
+    uses: ./.github/workflows/74-historical-deep-replay.yml
+    with:
+      slice_id: replay-diagnostic
+      continuation_id: p0-closure-30622258001-1
+      continuation_of: "30622258001:1"
+      run_purpose: P0_CLOSURE_AND_SHARDED_REPLAY
+      diagnostic_task_id: ${{ inputs.endpoint }}
+    secrets:
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
       R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
       R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
