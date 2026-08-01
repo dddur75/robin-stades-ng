@@ -16,6 +16,17 @@ on:
       run_purpose:
         type: string
         default: P0_CLOSURE_AND_SHARDED_REPLAY
+  workflow_call:
+    inputs:
+      task_id: {type: string, required: true}
+      continuation_id: {type: string, default: p0-closure-30622258001-1}
+      continuation_of: {type: string, default: "30622258001:1"}
+      run_purpose: {type: string, default: P0_CLOSURE_AND_SHARDED_REPLAY}
+    secrets:
+      R2_ACCOUNT_ID: {required: true}
+      R2_ACCESS_KEY_ID: {required: true}
+      R2_SECRET_ACCESS_KEY: {required: true}
+      R2_BUCKET_NAME: {required: true}
 
 permissions:
   contents: read

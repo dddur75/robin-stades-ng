@@ -130,12 +130,23 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
                 "replay-segments",
                 "reducer",
                 "idempotence",
+                "diagnostic",
             )
             assert all(
-                str(_mapping(job)["uses"]).startswith(
+                str(_mapping(jobs[name])["uses"]).startswith(
                     "./.github/workflows/74"
                 )
-                for job in jobs.values()
+                for name in ("inventory", "replay-segments", "reducer", "idempotence")
+            )
+            assert _mapping(jobs["diagnostic"])["uses"] == (
+                "./.github/workflows/80-historical-deep-replay-diagnostic.yml"
+            )
+            assert all(
+                _mapping(jobs[name])["if"] == "${{ inputs.diagnostic_task_id == '' }}"
+                for name in ("inventory", "replay-segments", "reducer", "idempotence")
+            )
+            assert _mapping(jobs["diagnostic"])["if"] == (
+                "${{ inputs.diagnostic_task_id != '' }}"
             )
             assert "API_FOOTBALL_KEY" not in text
             continue
@@ -212,6 +223,8 @@ def test_replay_diagnostic_is_provider_free_structural_and_serialized() -> None:
     assert env["ODDS_API_CREDITS_ALLOWED"] == "0"
     assert "API_FOOTBALL_KEY" not in text
     assert "DATABASE_URL" not in text
+    call = _workflow_call(workflow)
+    assert set(_mapping(call["secrets"])) == R2_SECRETS
     steps = _steps(job)
     checkout = next(step for step in steps if step.get("uses") == "actions/checkout@v4")
     assert _mapping(checkout["with"])["persist-credentials"] is False
