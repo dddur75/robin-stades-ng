@@ -1,0 +1,96 @@
+name: "80 - Historical Deep Replay Diagnostic"
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: "Exact cached task SHA-256 to diagnose without raw values"
+        type: string
+        required: true
+      continuation_id:
+        type: string
+        default: p0-closure-30622258001-1
+      continuation_of:
+        type: string
+        default: "30622258001:1"
+      run_purpose:
+        type: string
+        default: P0_CLOSURE_AND_SHARDED_REPLAY
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-deep-r2-state
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Build hash-verified R2 inventory
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          CONTINUATION_ID: ${{ inputs.continuation_id }}
+          CONTINUATION_OF: ${{ inputs.continuation_of }}
+          RUN_PURPOSE: ${{ inputs.run_purpose }}
+        run: >-
+          python scripts/run_historical_deep_segmented_replay.py
+          --output artifacts/inventory
+          --code-revision "${GITHUB_SHA}"
+          --continuation-id "${CONTINUATION_ID}"
+          --continuation-of "${CONTINUATION_OF}"
+          --run-purpose "${RUN_PURPOSE}"
+          inventory
+      - name: Emit structural replay diagnostic only
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          CONTINUATION_ID: ${{ inputs.continuation_id }}
+          CONTINUATION_OF: ${{ inputs.continuation_of }}
+          RUN_PURPOSE: ${{ inputs.run_purpose }}
+          TARGET_TASK_ID: ${{ inputs.task_id }}
+        run: >-
+          python scripts/run_historical_deep_segmented_replay.py
+          --output artifacts/diagnostic
+          --code-revision "${GITHUB_SHA}"
+          --continuation-id "${CONTINUATION_ID}"
+          --continuation-of "${CONTINUATION_OF}"
+          --run-purpose "${RUN_PURPOSE}"
+          diagnose
+          --inventory artifacts/inventory/replay-inventory.json
+          --task-id "${TARGET_TASK_ID}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-deep-80-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/diagnostic/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

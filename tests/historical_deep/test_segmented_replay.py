@@ -20,6 +20,7 @@ from robin.historical_deep.segmented_replay import (
     audit_and_reconcile,
     build_replay_inventory,
     build_segment_batches,
+    diagnose_inventory_task,
     reduce_segments,
     replay_segment,
 )
@@ -319,6 +320,81 @@ def test_replay_verifies_league_census_without_projecting_fixture_rows(
     assert len(result["entries"]) == 1
     assert result["rows"] == []
     assert ledger.normalized_records() == ([], ())
+
+
+def test_replay_diagnostic_emits_structure_and_error_without_raw_values(
+    tmp_path,
+) -> None:
+    store = InMemoryObjectStore()
+    repository = R2FirstRepository(store)
+    ledger = DurableRuntimeLedger(store)
+    task = _task(fixture_id=9)
+    secret_value = "DO_NOT_EMIT_RAW_PROVIDER_VALUE"
+    repository.capture(
+        task=task,
+        payload={
+            "api_secret": secret_value,
+            "response": [
+                {
+                    "fixture": {"id": None, "token": secret_value},
+                    "note": secret_value,
+                }
+            ],
+        },
+        requested_at=NOW - timedelta(minutes=2),
+        received_at=NOW - timedelta(minutes=1),
+        source_commit="test",
+    )
+    inventory = build_replay_inventory(
+        ledger,
+        continuation_id="continuation-diagnostic-test",
+        continuation_of="30622258001:1",
+        run_purpose="P0_CLOSURE_AND_SHARDED_REPLAY",
+        code_revision="test-revision",
+        run_token="100:1",
+        now=NOW,
+    )
+
+    diagnostic = diagnose_inventory_task(
+        ledger,
+        inventory=inventory,
+        task_id=task.task_id,
+    )
+
+    assert diagnostic["normalization_status"] == "NORMALIZATION_ERROR_IDENTIFIED"
+    assert diagnostic["normalization_error"] == "FIXTURE_PROVIDER_ID_REQUIRED"
+    assert diagnostic["receipt_time_order_valid"] is True
+    assert diagnostic["provider_calls"] == 0
+    assert diagnostic["raw_values_emitted"] is False
+    shape = diagnostic["payload_shape"]
+    assert shape["records"] == 1
+    assert shape["integer_fixture_ids"] == 0
+    assert shape["first_invalid_fixture_index"] == 0
+    assert shape["top_level_keys"] == {
+        "total": 2,
+        "safe": ["response"],
+        "redacted": 1,
+    }
+    assert shape["first_invalid_fixture_keys"] == {
+        "total": 2,
+        "safe": ["id"],
+        "redacted": 1,
+    }
+    assert secret_value not in json.dumps(diagnostic, sort_keys=True)
+    with pytest.raises(
+        ValueError,
+        match=(
+            rf"REPLAY_NORMALIZATION_FAILED:{task.task_id}:"
+            r"FIXTURE_PROVIDER_ID_REQUIRED"
+        ),
+    ):
+        replay_segment(
+            ledger,
+            inventory=inventory,
+            segment_id=inventory["segments"][0]["segment_id"],
+            pass_id=1,
+            output_dir=tmp_path / "diagnostic-failure",
+        )
 
 
 def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> None:

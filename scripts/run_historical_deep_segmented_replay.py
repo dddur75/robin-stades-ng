@@ -22,6 +22,7 @@ from robin.historical_deep.segmented_replay import (
     audit_and_reconcile,
     build_replay_inventory,
     build_segment_batches,
+    diagnose_inventory_task,
     reduce_segments,
     replay_segment,
     validate_inventory,
@@ -93,6 +94,10 @@ def build_parser() -> argparse.ArgumentParser:
     segment_batch.add_argument("--inventory", type=Path, required=True)
     segment_batch.add_argument("--segment-ids-json", required=True)
     segment_batch.add_argument("--pass-id", type=int, choices=(1, 2), required=True)
+
+    diagnose = commands.add_parser("diagnose")
+    diagnose.add_argument("--inventory", type=Path, required=True)
+    diagnose.add_argument("--task-id", required=True)
 
     reduce = commands.add_parser("reduce")
     reduce.add_argument("--inventory", type=Path, required=True)
@@ -196,6 +201,19 @@ def run(argv: list[str] | None = None) -> int:
                     },
                 )
                 return 75
+        return 0
+    if args.command == "diagnose":
+        inventory = _load_json(args.inventory)
+        result = diagnose_inventory_task(
+            ledger,
+            inventory=inventory,
+            task_id=args.task_id,
+        )
+        _write_json(args.output / "replay-diagnostic.json", result)
+        print(
+            "SEGMENTED_REPLAY_DIAGNOSTIC:"
+            + json.dumps(result, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+        )
         return 0
     if args.command == "reduce":
         inventory = _load_json(args.inventory)

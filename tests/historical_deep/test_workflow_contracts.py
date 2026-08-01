@@ -15,6 +15,7 @@ PHASE_FILES = {
 }
 SHARD_FILES = tuple(sorted(WORKFLOWS.glob("74[a-d]-historical-deep-*.yml")))
 CONTROLLER = WORKFLOWS / "79-historical-deep-night-controller.yml"
+DIAGNOSTIC = WORKFLOWS / "80-historical-deep-replay-diagnostic.yml"
 BOOTSTRAP = WORKFLOWS / "historical-backfill.yml"
 CI = WORKFLOWS / "ci.yml"
 
@@ -102,8 +103,8 @@ def _steps(job: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
 
 
 def test_all_historical_deep_yaml_and_json_contracts_parse() -> None:
-    files = [*PHASE_FILES.values(), *SHARD_FILES, CONTROLLER, BOOTSTRAP, CI]
-    assert len(set(files)) == 16
+    files = [*PHASE_FILES.values(), *SHARD_FILES, CONTROLLER, DIAGNOSTIC, BOOTSTRAP, CI]
+    assert len(set(files)) == 17
     for path in files:
         _, workflow = _load(path)
         assert _mapping(workflow["jobs"])
@@ -195,6 +196,33 @@ def test_only_collection_workflows_receive_provider_secret() -> None:
         else:
             assert "API_FOOTBALL_KEY" not in text
             assert "inputs.execute" not in text
+
+
+def test_replay_diagnostic_is_provider_free_structural_and_serialized() -> None:
+    text, workflow = _load(DIAGNOSTIC)
+    assert workflow["permissions"] == {"contents": "read"}
+    assert workflow["concurrency"] == {
+        "group": "historical-deep-r2-state",
+        "cancel-in-progress": False,
+    }
+    job = _only_job(workflow)
+    env = _mapping(job["env"])
+    assert all(env.get(name) == value for name, value in SAFETY_ENV.items())
+    assert env["API_FOOTBALL_CALLS_ALLOWED"] == "0"
+    assert env["ODDS_API_CREDITS_ALLOWED"] == "0"
+    assert "API_FOOTBALL_KEY" not in text
+    assert "DATABASE_URL" not in text
+    steps = _steps(job)
+    checkout = next(step for step in steps if step.get("uses") == "actions/checkout@v4")
+    assert _mapping(checkout["with"])["persist-credentials"] is False
+    upload = next(
+        step for step in steps if step.get("uses") == "actions/upload-artifact@v4"
+    )
+    assert upload["if"] == "always()"
+    assert _mapping(upload["with"])["retention-days"] == 90
+    runner = "\n".join(str(step.get("run", "")) for step in steps)
+    assert " diagnose " in f" {runner} "
+    assert "--task-id" in runner
 
 
 def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:

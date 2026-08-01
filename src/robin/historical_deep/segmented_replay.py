@@ -75,6 +75,11 @@ STAGING_TABLES = (
 
 _SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$")
 _ATTEMPT_TASK_ID = re.compile(r"/task=([0-9a-f]{64})/attempts/")
+_SAFE_DIAGNOSTIC_KEY = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,63}$")
+_SENSITIVE_DIAGNOSTIC_KEY = re.compile(
+    r"(?:authorization|credential|password|secret|token|api[_-]?key)",
+    re.IGNORECASE,
+)
 
 
 class RunnerShutdownRecovered(RuntimeError):
@@ -950,13 +955,213 @@ def _normalize_receipt_payload(
             ingested_at=receipt.completed_at,
         )
     except NormalizationError as error:
-        raise ValueError(f"REPLAY_NORMALIZATION_FAILED:{receipt.task_id}") from error
+        raise ValueError(
+            f"REPLAY_NORMALIZATION_FAILED:{receipt.task_id}:{error}"
+        ) from error
     rows = [
         {"normalized_family": family, **dict(row)}
         for family, family_rows in normalized.items()
         for row in family_rows
     ]
     return sorted(rows, key=canonical_sha256)
+
+
+def _json_kind(value: object) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "boolean"
+    if isinstance(value, Mapping):
+        return "object"
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        return "array"
+    if isinstance(value, int):
+        return "integer"
+    if isinstance(value, float):
+        return "number"
+    if isinstance(value, str):
+        return "string"
+    return "other"
+
+
+def _safe_key_summary(value: object) -> dict[str, object]:
+    mapping = value if isinstance(value, Mapping) else {}
+    safe_keys: list[str] = []
+    redacted = 0
+    for key in mapping:
+        name = str(key)
+        if _SAFE_DIAGNOSTIC_KEY.fullmatch(name) and not _SENSITIVE_DIAGNOSTIC_KEY.search(
+            name
+        ):
+            safe_keys.append(name)
+        else:
+            redacted += 1
+    return {
+        "total": len(mapping),
+        "safe": sorted(safe_keys),
+        "redacted": redacted,
+    }
+
+
+def _diagnostic_records(payload: object) -> tuple[object, list[object]]:
+    if isinstance(payload, Mapping):
+        response = payload.get("response")
+        if isinstance(response, Sequence) and not isinstance(
+            response, (str, bytes, bytearray)
+        ):
+            return response, list(response)
+        return response, [payload]
+    if isinstance(payload, Sequence) and not isinstance(payload, (str, bytes, bytearray)):
+        return payload, list(payload)
+    return None, []
+
+
+def diagnose_inventory_task(
+    ledger: DurableRuntimeLedger,
+    *,
+    inventory: Mapping[str, object],
+    task_id: str,
+) -> dict[str, object]:
+    """Verify one cached object and report only allowlisted structural evidence."""
+
+    inventory_hash = validate_inventory(inventory)
+    matches = [
+        _mapping(value, label="REPLAY_DIAGNOSTIC_OBJECT")
+        for value in _sequence(inventory.get("objects"), label="REPLAY_OBJECTS")
+        if _mapping(value, label="REPLAY_DIAGNOSTIC_OBJECT").get("task_id")
+        == task_id
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"REPLAY_DIAGNOSTIC_TASK_NOT_UNIQUE:{task_id}")
+    item = matches[0]
+    receipt_key = str(item["receipt_key"])
+    payload_key = str(item["payload_key"])
+    object_bodies = dict(read_objects_bounded(ledger.store, (receipt_key, payload_key)))
+    receipt_body = object_bodies.get(receipt_key)
+    payload_body = object_bodies.get(payload_key)
+    if receipt_body is None:
+        raise ValueError(f"REPLAY_DIAGNOSTIC_RECEIPT_MISSING:{receipt_key}")
+    if payload_body is None:
+        raise ValueError(f"REPLAY_DIAGNOSTIC_PAYLOAD_MISSING:{payload_key}")
+    try:
+        receipt = HarvestReceipt.model_validate_json(receipt_body)
+    except ValueError as error:
+        raise ValueError(f"REPLAY_DIAGNOSTIC_RECEIPT_INVALID:{receipt_key}") from error
+    if (
+        receipt.receipt_hash != item["receipt_hash"]
+        or receipt.payload_key != payload_key
+        or receipt.task_id != task_id
+    ):
+        raise ValueError("REPLAY_DIAGNOSTIC_RECEIPT_INVENTORY_MISMATCH")
+    if len(payload_body) != _integer(item["stored_bytes"], label="REPLAY_STORED_BYTES"):
+        raise ValueError(f"REPLAY_DIAGNOSTIC_SIZE_MISMATCH:{payload_key}")
+    if hashlib.sha256(payload_body).hexdigest() != item["stored_sha256"]:
+        raise ValueError(f"REPLAY_DIAGNOSTIC_STORED_HASH_MISMATCH:{payload_key}")
+    try:
+        logical_body = gzip.decompress(payload_body)
+        payload = json.loads(logical_body)
+    except (gzip.BadGzipFile, EOFError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError(f"REPLAY_DIAGNOSTIC_PAYLOAD_INVALID:{payload_key}") from error
+    if len(logical_body) != _integer(item["logical_bytes"], label="REPLAY_LOGICAL_BYTES"):
+        raise ValueError(f"REPLAY_DIAGNOSTIC_LOGICAL_SIZE_MISMATCH:{payload_key}")
+    verification = replay_stream_cache_only(
+        [(receipt.model_dump(mode="json"), payload_body)],
+        require_all_payloads_referenced=False,
+        retain_projections=False,
+    )
+    if verification.hash_mismatches or verification.missing_payloads:
+        raise ValueError("REPLAY_DIAGNOSTIC_VERIFICATION_FAILED")
+
+    response, records = _diagnostic_records(payload)
+    mapping_records = [record for record in records if isinstance(record, Mapping)]
+    nested_fixtures = [
+        record.get("fixture")
+        for record in mapping_records
+        if isinstance(record.get("fixture"), Mapping)
+    ]
+    valid_fixture_ids = [
+        fixture.get("id")
+        for fixture in nested_fixtures
+        if isinstance(fixture, Mapping)
+        and isinstance(fixture.get("id"), int)
+        and not isinstance(fixture.get("id"), bool)
+    ]
+    invalid_index = next(
+        (
+            index
+            for index, record in enumerate(records)
+            if not isinstance(record, Mapping)
+            or not isinstance(record.get("fixture"), Mapping)
+            or not isinstance(record["fixture"].get("id"), int)
+            or isinstance(record["fixture"].get("id"), bool)
+        ),
+        None,
+    )
+    invalid_record = records[invalid_index] if invalid_index is not None else None
+    invalid_fixture = (
+        invalid_record.get("fixture")
+        if isinstance(invalid_record, Mapping)
+        else None
+    )
+
+    normalization_status = "NON_PROJECTING_VERIFIED"
+    normalization_error: str | None = None
+    normalized_family_counts: dict[str, int] = {}
+    if receipt.endpoint.rstrip("/") not in NON_PROJECTING_ENDPOINTS:
+        try:
+            normalized = normalize_payload(
+                payload,
+                endpoint=receipt.endpoint,
+                competition_id=receipt.league_id,
+                season=receipt.season,
+                task_id=receipt.task_id,
+                source_payload_hash=receipt.payload_sha256,
+                request_params=_receipt_parameters(receipt.model_dump(mode="json")),
+                observed_at=receipt.received_at,
+                ingested_at=receipt.completed_at,
+            )
+        except NormalizationError as error:
+            normalization_status = "NORMALIZATION_ERROR_IDENTIFIED"
+            normalization_error = str(error)
+        else:
+            normalization_status = "NORMALIZATION_SUCCEEDED"
+            normalized_family_counts = {
+                family: len(rows) for family, rows in sorted(normalized.items())
+            }
+
+    unsigned: dict[str, object] = {
+        "schema_version": "historical-deep-replay-diagnostic-v1",
+        "inventory_sha256": inventory_hash,
+        "object_id": item["object_id"],
+        "task_id": task_id,
+        "receipt_hash": receipt.receipt_hash,
+        "payload_sha256": receipt.payload_sha256,
+        "endpoint": receipt.endpoint,
+        "competition": item["competition"],
+        "season": receipt.season,
+        "family": str(getattr(receipt.family, "value", receipt.family)),
+        "receipt_time_order_valid": receipt.received_at <= receipt.completed_at,
+        "payload_shape": {
+            "payload_kind": _json_kind(payload),
+            "top_level_keys": _safe_key_summary(payload),
+            "response_kind": _json_kind(response),
+            "records": len(records),
+            "mapping_records": len(mapping_records),
+            "nested_fixture_mappings": len(nested_fixtures),
+            "integer_fixture_ids": len(valid_fixture_ids),
+            "first_invalid_fixture_index": invalid_index,
+            "first_invalid_record_kind": _json_kind(invalid_record),
+            "first_invalid_record_keys": _safe_key_summary(invalid_record),
+            "first_invalid_fixture_kind": _json_kind(invalid_fixture),
+            "first_invalid_fixture_keys": _safe_key_summary(invalid_fixture),
+        },
+        "normalization_status": normalization_status,
+        "normalization_error": normalization_error,
+        "normalized_family_counts": normalized_family_counts,
+        "raw_values_emitted": False,
+        "provider_calls": 0,
+    }
+    return _signed(unsigned, field="diagnostic_sha256")
 
 
 def _memory_bytes() -> int:
@@ -1676,6 +1881,7 @@ __all__ = [
     "STAGING_TABLES",
     "audit_and_reconcile",
     "build_replay_inventory",
+    "diagnose_inventory_task",
     "load_segment_result",
     "reduce_segments",
     "replay_segment",
