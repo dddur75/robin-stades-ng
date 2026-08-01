@@ -436,7 +436,9 @@ def test_replay_diagnostic_identifies_only_null_venue_without_raw_values(
         task_id=task.task_id,
     )
 
-    assert diagnostic["normalization_error"] == "MISSING_IDENTITY:venue"
+    assert diagnostic["normalization_status"] == "NORMALIZATION_SUCCEEDED"
+    assert diagnostic["normalization_error"] is None
+    assert diagnostic["normalized_family_counts"] == {"fixtures": 1}
     shape = diagnostic["payload_shape"]
     assert shape["nested_venue_mappings"] == 1
     assert shape["venue_provider_identities"] == 0

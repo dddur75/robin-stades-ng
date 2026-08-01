@@ -8,9 +8,11 @@ import pytest
 from robin.historical_deep.collector import HistoricalDeepCollector, make_task_id
 from robin.historical_deep.normalization import (
     SUPPORTED_FAMILIES,
+    NormalizationError,
     canonical_sha256,
     classify_temporal,
     normalize_family,
+    normalize_payload,
 )
 from robin.historical_deep.storage import InMemoryObjectStore, R2FirstRepository
 
@@ -591,7 +593,7 @@ def test_normalization_covers_every_family_preserves_null_and_provenance() -> No
         assert row["canonical_id"].startswith("api-football:")
         assert row["source_payload_hash"]
         assert row["record_hash"]
-        assert row["normalizer_version"] == "historical-deep-normalizer-v1"
+        assert row["normalizer_version"] == "historical-deep-normalizer-v2"
         assert row["temporal_gate"] == "BLOCKED_BY_TEMPORALITY"
 
     fixture_data = normalized["fixtures"][0]["data"]
@@ -611,6 +613,78 @@ def test_normalization_covers_every_family_preserves_null_and_provenance() -> No
             ingested_at=FIXED_NOW,
         )[0]
     )
+
+
+def test_null_only_venue_is_preserved_but_not_materialized_as_entity() -> None:
+    venue = {"id": None, "name": None, "city": None}
+    payload = _payload([{"fixture": {"id": 501, "venue": venue}}])
+
+    normalized = normalize_payload(
+        payload,
+        endpoint="/fixtures",
+        competition_id=39,
+        season=2024,
+        task_id="task-null-venue",
+        observed_at=FIXED_NOW,
+        ingested_at=FIXED_NOW,
+    )
+
+    assert set(normalized) == {"fixtures"}
+    assert normalized["fixtures"][0]["data"]["fixture"]["venue"] == venue
+
+
+def test_venue_without_provider_id_still_derives_identity_from_real_data() -> None:
+    payload = _payload(
+        [
+            {
+                "fixture": {
+                    "id": 501,
+                    "venue": {"id": None, "name": "Test Ground", "city": None},
+                }
+            }
+        ]
+    )
+
+    normalized = normalize_payload(
+        payload,
+        endpoint="/fixtures",
+        competition_id=39,
+        season=2024,
+        task_id="task-derived-venue",
+        observed_at=FIXED_NOW,
+        ingested_at=FIXED_NOW,
+    )
+
+    assert normalized["venues"][0]["identity_status"] == "DERIVED_NO_PROVIDER_ID"
+
+
+def test_venue_with_other_real_data_but_no_identity_still_fails_closed() -> None:
+    payload = _payload(
+        [
+            {
+                "fixture": {
+                    "id": 501,
+                    "venue": {
+                        "id": None,
+                        "name": None,
+                        "city": None,
+                        "surface": "grass",
+                    },
+                }
+            }
+        ]
+    )
+
+    with pytest.raises(NormalizationError, match="MISSING_IDENTITY:venue"):
+        normalize_payload(
+            payload,
+            endpoint="/fixtures",
+            competition_id=39,
+            season=2024,
+            task_id="task-invalid-venue",
+            observed_at=FIXED_NOW,
+            ingested_at=FIXED_NOW,
+        )
 
 
 @pytest.mark.parametrize(

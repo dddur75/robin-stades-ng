@@ -20,7 +20,7 @@ from typing import Any
 from robin.historical_deep.contracts import TemporalClass
 
 PROVIDER = "api-football"
-NORMALIZER_VERSION = "historical-deep-normalizer-v1"
+NORMALIZER_VERSION = "historical-deep-normalizer-v2"
 NORMALIZED_SCHEMA_VERSION = "historical-deep-normalized-v1"
 
 SUPPORTED_FAMILIES = frozenset(
@@ -152,6 +152,10 @@ def _temporal_value(value: TemporalClass) -> str:
 
 def _mapping(value: object) -> Mapping[str, Any]:
     return value if isinstance(value, Mapping) else {}
+
+
+def _only_missing_values(mapping: Mapping[str, Any]) -> bool:
+    return bool(mapping) and all(value in (None, "") for value in mapping.values())
 
 
 def _sequence(value: object) -> Sequence[Any]:
@@ -342,7 +346,8 @@ def detect_integrated_families(record: Mapping[str, Any]) -> tuple[str, ...]:
     fixture = _mapping(record.get("fixture"))
     if fixture:
         found.add("fixtures")
-        if fixture.get("venue") is not None:
+        venue = _mapping(fixture.get("venue"))
+        if venue and not _only_missing_values(venue):
             found.add("venues")
         if fixture.get("referee") not in (None, ""):
             found.add("referees")
@@ -443,8 +448,13 @@ def _venue_rows(
     for record_value in records:
         record = _mapping(record_value)
         fixture = _mapping(record.get("fixture"))
-        venue = _mapping(fixture.get("venue")) or _mapping(record.get("venue"))
-        if not venue:
+        nested_venue = _mapping(fixture.get("venue"))
+        venue = (
+            _mapping(record.get("venue"))
+            if _only_missing_values(nested_venue)
+            else nested_venue or _mapping(record.get("venue"))
+        )
+        if not venue or _only_missing_values(venue):
             continue
         venue_id = _provider_id(venue.get("id"))
         output.append(
