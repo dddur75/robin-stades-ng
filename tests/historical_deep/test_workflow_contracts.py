@@ -276,7 +276,7 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
         ("fixture-p2", ("injuries-p1", "quality-p1")),
         ("players-p2", "fixture-p2"),
         ("injuries-p2", "players-p2"),
-        ("replay-final", "injuries-p2"),
+        ("replay-final", ("replay-current", "injuries-p2")),
         ("quality-final", "replay-final"),
         ("features", "quality-final"),
         ("backtest", "features"),
@@ -317,7 +317,9 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
     ):
         condition = str(_mapping(jobs[name])["if"])
         assert f"needs['{quality_job}'].outputs.status == 'COMPLETE'" in condition
-    assert str(_mapping(jobs["replay-final"])["if"]) == "${{ always() }}"
+    replay_final_condition = str(_mapping(jobs["replay-final"])["if"])
+    assert "always()" in replay_final_condition
+    assert "needs['replay-current'].result == 'success'" in replay_final_condition
     assert str(_mapping(jobs["report"])["if"]) == "${{ always() }}"
     coverage_proof = _mapping(jobs["coverage-proof"])
     coverage_inputs = _mapping(coverage_proof["with"])

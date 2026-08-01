@@ -521,7 +521,7 @@ def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> No
             assert report["new_inserts"] == report["rows"]
             fixtures_manifest = report["table_manifests"]["fixtures"]
             assert fixtures_manifest["schema_version"] == (
-                "historical-deep-staging-table-manifest-v2"
+                "historical-deep-staging-table-manifest-v3"
             )
             assert fixtures_manifest["part_count"] == 1
             assert len(fixtures_manifest["parts"]) == 1
@@ -571,3 +571,7 @@ def test_streaming_reducer_hashes_preserve_canonical_contract() -> None:
             "rows": rows,
         }
     )
+
+
+def test_full_corpus_staging_parts_are_coarse_enough_for_r2() -> None:
+    assert 2_000 <= STAGING_PART_MAX_ROWS <= 10_000

@@ -53,7 +53,11 @@ CHECKPOINT_MAX_SECONDS = 5 * 60
 STALE_HEARTBEAT_MINUTES = 15
 GITHUB_MATRIX_MAX_JOBS = 256
 SEGMENTS_PER_MATRIX_JOB = 2
-STAGING_PART_MAX_ROWS = 250
+# R2 request latency dominates full-corpus reduction. Keep parts coarse enough to
+# finish well inside one runner lifetime while retaining bounded, independently
+# verifiable objects. The v3 namespace below isolates this layout from earlier
+# interrupted v2 attempts without mutating append-only evidence.
+STAGING_PART_MAX_ROWS = 2_500
 STAGING_COMPRESSION_LEVEL = 1
 
 STAGING_TABLES = (
@@ -1804,7 +1808,7 @@ def reduce_segments(
             part_rows = table_rows[offset : offset + STAGING_PART_MAX_ROWS]
             part_hash = _canonical_sequence_sha256(part_rows)
             part_value = {
-                "schema_version": "historical-deep-staging-table-part-v2",
+                "schema_version": "historical-deep-staging-table-part-v3",
                 "continuation_id": inventory["continuation_id"],
                 "inventory_sha256": inventory_hash,
                 "table": table,
@@ -1815,7 +1819,7 @@ def reduce_segments(
                 "part_sha256": part_hash,
             }
             key = (
-                f"{DERIVED_NAMESPACE}/staging-v2/"
+                f"{DERIVED_NAMESPACE}/staging-v3/"
                 f"continuation={inventory['continuation_id']}/"
                 f"inventory={inventory_hash}/table={table}/"
                 f"part-{ordinal:06d}-{part_hash}.json.gz"
@@ -1840,7 +1844,7 @@ def reduce_segments(
                 }
             )
         table_manifests[table] = {
-            "schema_version": "historical-deep-staging-table-manifest-v2",
+            "schema_version": "historical-deep-staging-table-manifest-v3",
             "row_count": len(table_rows),
             "table_sha256": table_hash,
             "part_count": len(part_manifests),
@@ -1959,12 +1963,16 @@ def reduce_segments(
             recorded_at=recorded_at,
             compression_level=STAGING_COMPRESSION_LEVEL,
         )
+        if progress is not None:
+            progress("PROJECTION_PROOF_WRITTEN")
         replay["durable_key"] = ledger.put_json(
             "replay",
             replay,
             recorded_at=recorded_at,
             compression_level=STAGING_COMPRESSION_LEVEL,
         )
+        if progress is not None:
+            progress("REPLAY_PROOF_WRITTEN")
         if progress is not None:
             progress("REPLAY_PROOFS_WRITTEN")
     metrics = _entity_metrics(inventory=inventory, tables=tables)
