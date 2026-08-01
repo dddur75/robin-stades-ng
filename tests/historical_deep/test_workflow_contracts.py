@@ -213,7 +213,7 @@ def test_replay_diagnostic_is_provider_free_structural_and_serialized() -> None:
     text, workflow = _load(DIAGNOSTIC)
     assert workflow["permissions"] == {"contents": "read"}
     assert workflow["concurrency"] == {
-        "group": "historical-deep-r2-state",
+        "group": "historical-deep-r2-diagnostic",
         "cancel-in-progress": False,
     }
     job = _only_job(workflow)

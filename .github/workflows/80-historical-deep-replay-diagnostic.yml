@@ -32,7 +32,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: historical-deep-r2-state
+  group: historical-deep-r2-diagnostic
   cancel-in-progress: false
 
 jobs:
