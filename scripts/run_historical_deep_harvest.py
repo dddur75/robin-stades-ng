@@ -69,6 +69,7 @@ from robin.historical_deep.runtime import (
     compact_artifact,
     write_artifact,
 )
+from robin.historical_deep.segmented_replay import load_staging_projection_rows
 from robin.historical_deep.storage import (
     PayloadIntegrityError,
     R2FirstRepository,
@@ -1298,6 +1299,7 @@ def _quality_products(
     dict[str, list[dict[str, object]]],
     dict[str, object],
     dict[str, object],
+    list[dict[str, object]],
 ]:
     replay_projection = _latest_mapping_for_lineage(
         ledger,
@@ -1305,10 +1307,10 @@ def _quality_products(
         code_revision,
         run_token,
     )
-    baseline_values = _sequence(replay_projection.get("rows"))
-    normalized_before = [
-        dict(value) for value in baseline_values if isinstance(value, Mapping)
-    ]
+    normalized_before = load_staging_projection_rows(
+        ledger.store,
+        replay_projection,
+    )
     errors_before = tuple(
         str(value)
         for value in _sequence(replay_projection.get("normalization_errors"))
@@ -1428,7 +1430,7 @@ def _quality_products(
         "dataset_rows": {name: len(values) for name, values in datasets.items()},
         "provider_calls": 0,
     }
-    return quality, datasets, manifest_values, gates
+    return quality, datasets, manifest_values, gates, normalized_before
 
 
 def _evidence_for_rows(
@@ -1604,7 +1606,7 @@ def _run_quality(
     run_token: str,
     services: RunnerServices,
 ) -> dict[str, object]:
-    quality, datasets, manifests, gates = _quality_products(
+    quality, datasets, manifests, gates, _normalized = _quality_products(
         ledger=ledger,
         contract=contract,
         code_revision=code_revision,
@@ -1702,24 +1704,12 @@ def _run_features(
     run_token: str,
     services: RunnerServices,
 ) -> dict[str, object]:
-    quality, datasets, manifests, gates = _quality_products(
+    quality, datasets, manifests, gates, normalized = _quality_products(
         ledger=ledger,
         contract=contract,
         code_revision=code_revision,
         run_token=run_token,
     )
-    replay_projection = _latest_mapping_for_lineage(
-        ledger,
-        "replay/projection",
-        code_revision,
-        run_token,
-    )
-    projection_rows = _sequence(replay_projection.get("rows"))
-    normalized = [
-        dict(value) for value in projection_rows if isinstance(value, Mapping)
-    ]
-    if replay_projection.get("projection_hash") != canonical_sha256(normalized):
-        raise ValueError("FEATURE_REPLAY_PROJECTION_HASH_MISMATCH")
     _enriched, targets = _enrich_targets(_deduplicated_rows(normalized))
     bundles: list[dict[str, object]] = []
     errors: list[str] = []

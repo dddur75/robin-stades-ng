@@ -19,7 +19,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Protocol
 
 from .contracts import HarvestTask, TaskStatus, canonical_json_bytes, canonical_sha256
 from .normalization import NormalizationError, normalize_payload
@@ -43,6 +43,9 @@ SEGMENT_SCHEMA_VERSION = "historical-deep-replay-segment-v2"
 SEGMENT_CHECKPOINT_SCHEMA_VERSION = "historical-deep-replay-checkpoint-v2"
 REDUCER_SCHEMA_VERSION = "historical-deep-replay-reducer-v3"
 CONTINUATION_SCHEMA_VERSION = "historical-deep-continuation-v1"
+PROJECTION_SCHEMA_VERSION = "historical-deep-normalized-replay-v2"
+STAGING_PART_SCHEMA_VERSION = "historical-deep-staging-table-part-v3"
+STAGING_MANIFEST_SCHEMA_VERSION = "historical-deep-staging-table-manifest-v3"
 
 DEFAULT_MAX_OBJECTS = 250
 DEFAULT_MAX_LOGICAL_BYTES = 75 * 1024 * 1024
@@ -78,6 +81,10 @@ STAGING_TABLES = (
     "standings",
     "rounds",
 )
+
+
+class StagingObjectReader(Protocol):
+    def get_object(self, key: str) -> bytes | None: ...
 
 _SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$")
 _ATTEMPT_TASK_ID = re.compile(r"/task=([0-9a-f]{64})/attempts/")
@@ -1616,6 +1623,147 @@ def _staging_table_rows(rows: Sequence[Mapping[str, object]]) -> dict[str, list[
     return tables
 
 
+def load_staging_projection_rows(
+    store: StagingObjectReader,
+    projection: Mapping[str, object],
+) -> list[dict[str, object]]:
+    """Hydrate and verify a normalized projection without one giant R2 object."""
+
+    schema_version = projection.get("schema_version")
+    if schema_version == "historical-deep-normalized-replay-v1":
+        inline_rows = [
+            dict(_mapping(item, label="STAGING_PROJECTION_ROW"))
+            for item in _sequence(projection.get("rows"), label="STAGING_PROJECTION_ROWS")
+        ]
+        expected_count = projection.get("row_count")
+        if expected_count is not None and _integer(
+            expected_count,
+            label="STAGING_PROJECTION_ROW_COUNT",
+        ) != len(inline_rows):
+            raise ValueError("STAGING_PROJECTION_ROW_COUNT_MISMATCH")
+        if projection.get("projection_hash") != _canonical_sequence_sha256(
+            inline_rows
+        ):
+            raise ValueError("STAGING_PROJECTION_HASH_MISMATCH")
+        return inline_rows
+    if schema_version != PROJECTION_SCHEMA_VERSION:
+        raise ValueError("STAGING_PROJECTION_SCHEMA_INVALID")
+    if "rows" in projection:
+        raise ValueError("STAGING_PROJECTION_INLINE_ROWS_FORBIDDEN")
+
+    continuation_id = _validate_id(
+        str(projection.get("continuation_id", "")),
+        label="STAGING_PROJECTION_CONTINUATION_ID",
+    )
+    inventory_sha256 = str(projection.get("inventory_sha256", ""))
+    if not re.fullmatch(r"[0-9a-f]{64}", inventory_sha256):
+        raise ValueError("STAGING_PROJECTION_INVENTORY_HASH_INVALID")
+    table_manifests = _mapping(
+        projection.get("staging_tables"),
+        label="STAGING_PROJECTION_TABLES",
+    )
+    if set(table_manifests) != set(STAGING_TABLES):
+        raise ValueError("STAGING_PROJECTION_TABLE_SET_MISMATCH")
+
+    rows: list[dict[str, object]] = []
+    for table in STAGING_TABLES:
+        manifest = _mapping(
+            table_manifests[table],
+            label="STAGING_PROJECTION_TABLE_MANIFEST",
+        )
+        if manifest.get("schema_version") != STAGING_MANIFEST_SCHEMA_VERSION:
+            raise ValueError("STAGING_PROJECTION_MANIFEST_SCHEMA_INVALID")
+        table_sha256 = str(manifest.get("table_sha256", ""))
+        if not re.fullmatch(r"[0-9a-f]{64}", table_sha256):
+            raise ValueError("STAGING_PROJECTION_TABLE_HASH_INVALID")
+        expected_table_rows = _integer(
+            manifest.get("row_count"),
+            label="STAGING_PROJECTION_TABLE_ROW_COUNT",
+        )
+        parts = _sequence(
+            manifest.get("parts"),
+            label="STAGING_PROJECTION_PARTS",
+        )
+        if _integer(
+            manifest.get("part_count"),
+            label="STAGING_PROJECTION_PART_COUNT",
+        ) != len(parts):
+            raise ValueError("STAGING_PROJECTION_PART_COUNT_MISMATCH")
+
+        table_rows: list[dict[str, object]] = []
+        key_prefix = (
+            f"{DERIVED_NAMESPACE}/staging-v3/continuation={continuation_id}/"
+            f"inventory={inventory_sha256}/table={table}/"
+        )
+        for ordinal, part_value in enumerate(parts, start=1):
+            part_manifest = _mapping(
+                part_value,
+                label="STAGING_PROJECTION_PART_MANIFEST",
+            )
+            part_sha256 = str(part_manifest.get("part_sha256", ""))
+            staging_key = str(part_manifest.get("staging_key", ""))
+            if (
+                part_manifest.get("part_ordinal") != ordinal
+                or not re.fullmatch(r"[0-9a-f]{64}", part_sha256)
+                or staging_key
+                != f"{key_prefix}part-{ordinal:06d}-{part_sha256}.json.gz"
+            ):
+                raise ValueError("STAGING_PROJECTION_PART_MANIFEST_INVALID")
+            body = store.get_object(staging_key)
+            if body is None:
+                raise ValueError(f"STAGING_PROJECTION_PART_MISSING:{staging_key}")
+            part = _mapping(
+                _decode_json_bytes(body, label="STAGING_PROJECTION_PART"),
+                label="STAGING_PROJECTION_PART",
+            )
+            part_rows = [
+                dict(_mapping(item, label="STAGING_PROJECTION_PART_ROW"))
+                for item in _sequence(
+                    part.get("rows"),
+                    label="STAGING_PROJECTION_PART_ROWS",
+                )
+            ]
+            part_row_count = _integer(
+                part_manifest.get("row_count"),
+                label="STAGING_PROJECTION_PART_ROW_COUNT",
+            )
+            if (
+                part.get("schema_version") != STAGING_PART_SCHEMA_VERSION
+                or part.get("continuation_id") != continuation_id
+                or part.get("inventory_sha256") != inventory_sha256
+                or part.get("table") != table
+                or part.get("table_sha256") != table_sha256
+                or part.get("part_ordinal") != ordinal
+                or part.get("row_count") != part_row_count
+                or part.get("part_sha256") != part_sha256
+                or len(part_rows) != part_row_count
+                or _canonical_sequence_sha256(part_rows) != part_sha256
+                or any(
+                    str(row.get("normalized_family", row.get("family", "")))
+                    != table
+                    for row in part_rows
+                )
+            ):
+                raise ValueError("STAGING_PROJECTION_PART_CONTRACT_MISMATCH")
+            table_rows.extend(part_rows)
+        if (
+            len(table_rows) != expected_table_rows
+            or _canonical_sequence_sha256(table_rows) != table_sha256
+        ):
+            raise ValueError("STAGING_PROJECTION_TABLE_CONTRACT_MISMATCH")
+        rows.extend(table_rows)
+
+    rows.sort(key=canonical_sha256)
+    if len(rows) != _integer(
+        projection.get("row_count"),
+        label="STAGING_PROJECTION_ROW_COUNT",
+    ):
+        raise ValueError("STAGING_PROJECTION_ROW_COUNT_MISMATCH")
+    if projection.get("projection_hash") != _canonical_sequence_sha256(rows):
+        raise ValueError("STAGING_PROJECTION_HASH_MISMATCH")
+    return rows
+
+
 def _update_canonical_sequence_hash(
     update: Callable[[bytes], object],
     values: Sequence[object],
@@ -1808,7 +1956,7 @@ def reduce_segments(
             part_rows = table_rows[offset : offset + STAGING_PART_MAX_ROWS]
             part_hash = _canonical_sequence_sha256(part_rows)
             part_value = {
-                "schema_version": "historical-deep-staging-table-part-v3",
+                "schema_version": STAGING_PART_SCHEMA_VERSION,
                 "continuation_id": inventory["continuation_id"],
                 "inventory_sha256": inventory_hash,
                 "table": table,
@@ -1844,7 +1992,7 @@ def reduce_segments(
                 }
             )
         table_manifests[table] = {
-            "schema_version": "historical-deep-staging-table-manifest-v3",
+            "schema_version": STAGING_MANIFEST_SCHEMA_VERSION,
             "row_count": len(table_rows),
             "table_sha256": table_hash,
             "part_count": len(part_manifests),
@@ -1916,17 +2064,17 @@ def reduce_segments(
         gates.append("CURRENT_SECOND_PASS_IDEMPOTENT")
         status = "SECOND_PASS_IDEMPOTENT"
     projection = {
-        "schema_version": "historical-deep-normalized-replay-v1",
+        "schema_version": PROJECTION_SCHEMA_VERSION,
         "continuation_id": inventory["continuation_id"],
         "continuation_of": inventory["continuation_of"],
         "run_purpose": inventory["run_purpose"],
         "code_revision": code_revision,
         "run_token": run_token,
-        "rows": rows,
         "row_count": len(rows),
         "normalization_errors": [],
         "projection_hash": projection_hash,
         "provider_calls": 0,
+        "inventory_sha256": inventory_hash,
         "staging_tables": table_manifests,
     }
     replay = {
@@ -2034,6 +2182,7 @@ __all__ = [
     "DEFAULT_MAX_ESTIMATED_SECONDS",
     "DEFAULT_MAX_LOGICAL_BYTES",
     "DEFAULT_MAX_OBJECTS",
+    "PROJECTION_SCHEMA_VERSION",
     "RunnerShutdownRecovered",
     "STAGING_PART_MAX_ROWS",
     "STAGING_TABLES",
@@ -2041,6 +2190,7 @@ __all__ = [
     "build_replay_inventory",
     "diagnose_inventory_task",
     "load_segment_result",
+    "load_staging_projection_rows",
     "reduce_segments",
     "replay_segment",
     "validate_inventory",

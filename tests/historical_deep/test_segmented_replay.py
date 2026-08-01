@@ -18,6 +18,7 @@ from robin.historical_deep.contracts import (
 )
 from robin.historical_deep.runtime import DurableRuntimeLedger
 from robin.historical_deep.segmented_replay import (
+    PROJECTION_SCHEMA_VERSION,
     STAGING_PART_MAX_ROWS,
     _canonical_sequence_sha256,
     _replay_content_sha256,
@@ -25,6 +26,7 @@ from robin.historical_deep.segmented_replay import (
     build_replay_inventory,
     build_segment_batches,
     diagnose_inventory_task,
+    load_staging_projection_rows,
     reduce_segments,
     replay_segment,
 )
@@ -537,6 +539,13 @@ def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> No
                 }
                 for entry in replay_proof["entries"]
             )
+            projection = ledger.latest_value("replay/projection")
+            assert isinstance(projection, dict)
+            assert projection["schema_version"] == PROJECTION_SCHEMA_VERSION
+            assert "rows" not in projection
+            hydrated = load_staging_projection_rows(store, projection)
+            assert len(hydrated) == report["rows"]
+            assert canonical_sha256(hydrated) == report["projection_hash"]
             assert report["gates"] == [
                 "CURRENT_R2_REPLAY_VERIFIED",
                 "CURRENT_PROJECTION_RECONSTRUCTED",
@@ -549,6 +558,12 @@ def test_segmented_replay_reducer_and_second_pass_are_idempotent(tmp_path) -> No
             assert "CURRENT_SECOND_PASS_IDEMPOTENT" in report["gates"]
             assert report["provider_calls"] == 0
     assert store.max_active_gets >= 2
+
+    invalid_projection = json.loads(json.dumps(projection))
+    fixtures_part = invalid_projection["staging_tables"]["fixtures"]["parts"][0]
+    fixtures_part["row_count"] += 1
+    with pytest.raises(ValueError, match="STAGING_PROJECTION_PART_CONTRACT_MISMATCH"):
+        load_staging_projection_rows(store, invalid_projection)
 
 
 def test_streaming_reducer_hashes_preserve_canonical_contract() -> None:

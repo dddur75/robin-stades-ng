@@ -26,6 +26,12 @@ from robin.historical_deep.coverage_proof import (
 )
 from robin.historical_deep.gates import GATE_NAMES
 from robin.historical_deep.normalization import canonical_sha256
+from robin.historical_deep.segmented_replay import (
+    PROJECTION_SCHEMA_VERSION,
+    STAGING_MANIFEST_SCHEMA_VERSION,
+    STAGING_PART_SCHEMA_VERSION,
+    STAGING_TABLES,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_PATH = ROOT / "configs" / "historical-deep-data-harvest-v1.json"
@@ -345,6 +351,66 @@ def _sample_reader(*, complete_census: bool = True) -> MemoryDerivedReader:
     return _reader_from_values(_sample_values(complete_census=complete_census))
 
 
+def _manifest_projection_reader() -> MemoryDerivedReader:
+    values = _sample_values()
+    projection = values["replay/projection"]
+    rows = list(projection.pop("rows"))
+    continuation_id = "coverage-proof-test"
+    inventory_sha256 = "9" * 64
+    manifests: dict[str, object] = {}
+    reader = MemoryDerivedReader()
+    for table in STAGING_TABLES:
+        table_rows = [row for row in rows if row["normalized_family"] == table]
+        table_sha256 = canonical_sha256(table_rows)
+        parts: list[dict[str, object]] = []
+        if table_rows:
+            part_sha256 = canonical_sha256(table_rows)
+            key = (
+                f"{DERIVED_PREFIX}staging-v3/continuation={continuation_id}/"
+                f"inventory={inventory_sha256}/table={table}/"
+                f"part-000001-{part_sha256}.json.gz"
+            )
+            part = {
+                "schema_version": STAGING_PART_SCHEMA_VERSION,
+                "continuation_id": continuation_id,
+                "inventory_sha256": inventory_sha256,
+                "table": table,
+                "table_sha256": table_sha256,
+                "part_ordinal": 1,
+                "rows": table_rows,
+                "row_count": len(table_rows),
+                "part_sha256": part_sha256,
+            }
+            reader.objects[key] = gzip.compress(
+                json.dumps(part, sort_keys=True, separators=(",", ":")).encode()
+            )
+            parts.append(
+                {
+                    "part_ordinal": 1,
+                    "row_count": len(table_rows),
+                    "part_sha256": part_sha256,
+                    "staging_key": key,
+                }
+            )
+        manifests[table] = {
+            "schema_version": STAGING_MANIFEST_SCHEMA_VERSION,
+            "row_count": len(table_rows),
+            "table_sha256": table_sha256,
+            "part_count": len(parts),
+            "parts": parts,
+            "created": True,
+        }
+    projection.update(
+        {
+            "schema_version": PROJECTION_SCHEMA_VERSION,
+            "continuation_id": continuation_id,
+            "inventory_sha256": inventory_sha256,
+            "staging_tables": manifests,
+        }
+    )
+    return _reader_from_values(values, reader=reader)
+
+
 def _reader_from_values(
     values: dict[str, dict[str, object]],
     *,
@@ -461,6 +527,29 @@ def test_export_is_lineage_pinned_compact_and_strictly_read_only() -> None:
     assert all(prefix.startswith(DERIVED_PREFIX) for prefix in reader.iterated_prefixes)
     assert all(key.startswith(DERIVED_PREFIX) for key in reader.read_keys)
     assert reader.write_attempts == 0
+
+
+def test_manifest_projection_is_hydrated_and_verified_from_derived_parts() -> None:
+    reader = _manifest_projection_reader()
+    proof = _build(reader)
+
+    assert proof["normalized_row_count"] == 2
+    staging_reads = [key for key in reader.read_keys if "/staging-v3/" in key]
+    assert len(staging_reads) == 1
+    assert reader.write_attempts == 0
+
+    staging_key = staging_reads[0]
+    part = json.loads(gzip.decompress(reader.objects[staging_key]))
+    part["rows"][0]["season"] = 2023
+    reader.objects[staging_key] = gzip.compress(
+        json.dumps(part, sort_keys=True, separators=(",", ":")).encode()
+    )
+    with pytest.raises(
+        ValueError,
+        match="COVERAGE_PROOF_PROJECTION_STAGING_INVALID:"
+        "STAGING_PROJECTION_PART_CONTRACT_MISMATCH",
+    ):
+        _build(reader)
 
 
 def test_partial_census_does_not_borrow_or_invent_sample_evidence() -> None:

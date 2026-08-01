@@ -387,8 +387,8 @@ jobs:
       R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
 
   report:
-    needs: backtest
-    if: ${{ always() }}
+    needs: [replay-current, backtest]
+    if: ${{ always() && needs['replay-current'].result == 'success' }}
     uses: ./.github/workflows/78-historical-deep-dashboard-report.yml
     secrets:
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}

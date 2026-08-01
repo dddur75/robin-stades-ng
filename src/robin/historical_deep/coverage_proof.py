@@ -36,6 +36,10 @@ from robin.historical_deep.normalization import (
     canonical_sha256,
 )
 from robin.historical_deep.runtime import DERIVED_NAMESPACE
+from robin.historical_deep.segmented_replay import (
+    PROJECTION_SCHEMA_VERSION,
+    load_staging_projection_rows,
+)
 
 EXPORT_SCHEMA_VERSION = "historical-deep-coverage-proof-export-v1"
 DERIVED_PREFIX = f"{DERIVED_NAMESPACE}/"
@@ -717,6 +721,7 @@ def _census_cells(
 def _validate_projection(
     value: Mapping[str, object],
     *,
+    reader: DerivedObjectReader,
     contract: CampaignContract,
     source_code_revision: str,
     source_run_token: str,
@@ -727,26 +732,38 @@ def _validate_projection(
         source_run_token=source_run_token,
         label="COVERAGE_PROOF_PROJECTION",
     )
-    if value.get("schema_version") != "historical-deep-normalized-replay-v1":
+    schema_version = value.get("schema_version")
+    if schema_version not in {
+        "historical-deep-normalized-replay-v1",
+        PROJECTION_SCHEMA_VERSION,
+    }:
         raise ValueError("COVERAGE_PROOF_PROJECTION_SCHEMA_INVALID")
     if value.get("provider_calls") != 0:
         raise ValueError("COVERAGE_PROOF_PROJECTION_PROVIDER_CALLS_NONZERO")
-    rows = _sequence(
-        value.get("rows"),
-        label="COVERAGE_PROOF_PROJECTION_ROWS",
-    )
     row_count = _integer(
         value.get("row_count"),
         label="COVERAGE_PROOF_PROJECTION_ROW_COUNT",
     )
-    if row_count != len(rows):
-        raise ValueError("COVERAGE_PROOF_PROJECTION_ROW_COUNT_MISMATCH")
     projection_hash = _required_sha256(
         value.get("projection_hash"),
         label="COVERAGE_PROOF_PROJECTION_HASH",
     )
-    if canonical_sha256(rows) != projection_hash:
-        raise ValueError("COVERAGE_PROOF_PROJECTION_HASH_MISMATCH")
+    if schema_version == "historical-deep-normalized-replay-v1":
+        rows = _sequence(
+            value.get("rows"),
+            label="COVERAGE_PROOF_PROJECTION_ROWS",
+        )
+        if row_count != len(rows):
+            raise ValueError("COVERAGE_PROOF_PROJECTION_ROW_COUNT_MISMATCH")
+        if canonical_sha256(rows) != projection_hash:
+            raise ValueError("COVERAGE_PROOF_PROJECTION_HASH_MISMATCH")
+    else:
+        try:
+            rows = load_staging_projection_rows(reader, value)
+        except ValueError as error:
+            raise ValueError(
+                f"COVERAGE_PROOF_PROJECTION_STAGING_INVALID:{error}"
+            ) from None
     names, _canonical = _competition_maps(contract)
     output: dict[tuple[int, int, str], NormalizedCell] = {}
     temporal_values = {item.value for item in TemporalClass}
@@ -1278,6 +1295,7 @@ def build_coverage_proof(
     census = _census_cells(observations, contract=contract)
     normalized, projection_hash, projection_row_count = _validate_projection(
         projection_value,
+        reader=reader,
         contract=contract,
         source_code_revision=source_code_revision,
         source_run_token=source_run_token,

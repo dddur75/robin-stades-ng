@@ -280,7 +280,7 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
         ("quality-final", "replay-final"),
         ("features", "quality-final"),
         ("backtest", "features"),
-        ("report", "backtest"),
+        ("report", ("replay-current", "backtest")),
         ("coverage-proof", "report"),
     )
     for job_name, prerequisite in expected_chain:
@@ -320,7 +320,9 @@ def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
     replay_final_condition = str(_mapping(jobs["replay-final"])["if"])
     assert "always()" in replay_final_condition
     assert "needs['replay-current'].result == 'success'" in replay_final_condition
-    assert str(_mapping(jobs["report"])["if"]) == "${{ always() }}"
+    report_condition = str(_mapping(jobs["report"])["if"])
+    assert "always()" in report_condition
+    assert "needs['replay-current'].result == 'success'" in report_condition
     coverage_proof = _mapping(jobs["coverage-proof"])
     coverage_inputs = _mapping(coverage_proof["with"])
     assert coverage_inputs["source_code_revision"] == "${{ github.sha }}"
