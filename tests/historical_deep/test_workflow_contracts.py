@@ -126,7 +126,7 @@ def test_full_corpus_reducers_have_a_usable_timeout_budget() -> None:
         assert 90 <= int(str(job["timeout-minutes"])) <= 110
 
 
-def test_full_corpus_reducers_use_cross_attempt_artifact_listing() -> None:
+def test_full_corpus_reducers_paginate_cross_attempt_artifact_listing() -> None:
     reducers = (
         (WORKFLOWS / "74c-historical-deep-projection-reducer.yml", "reducer"),
         (WORKFLOWS / "74d-historical-deep-idempotent-replay.yml", "idempotence"),
@@ -135,13 +135,27 @@ def test_full_corpus_reducers_use_cross_attempt_artifact_listing() -> None:
         _, workflow = _load(path)
         assert workflow["permissions"] == {"actions": "read", "contents": "read"}
         job = _mapping(_mapping(workflow["jobs"])[job_name])
-        pattern_download = next(
+        resolver = next(
+            step
+            for step in _steps(job)
+            if step.get("id") == "segment_artifacts"
+        )
+        resolver_run = str(resolver["run"])
+        assert "gh api --paginate" in resolver_run
+        assert "artifacts?per_page=100" in resolver_run
+        assert "${GITHUB_OUTPUT}" in resolver_run
+        assert _mapping(resolver["env"])["GH_TOKEN"] == "${{ github.token }}"
+        id_download = next(
             step
             for step in _steps(job)
             if step.get("uses") == "actions/download-artifact@v4"
-            and "pattern" in _mapping(step["with"])
+            and "artifact-ids" in _mapping(step["with"])
         )
-        download_with = _mapping(pattern_download["with"])
+        download_with = _mapping(id_download["with"])
+        assert download_with["artifact-ids"] == (
+            "${{ steps.segment_artifacts.outputs.artifact_ids }}"
+        )
+        assert "pattern" not in download_with
         assert download_with["github-token"] == "${{ github.token }}"
         assert download_with["repository"] == "${{ github.repository }}"
         assert download_with["run-id"] == "${{ github.run_id }}"
