@@ -42,7 +42,7 @@
     }
   ],
   "failures": [],
-  "generated_at": "2026-07-30T05:30:23.669635+00:00",
+  "generated_at": "2026-08-02T06:04:48.531430+00:00",
   "normalized_rows": 120699,
   "parquet_partitions": 279,
   "production_status": "PRODUCTION_LOCKED",
