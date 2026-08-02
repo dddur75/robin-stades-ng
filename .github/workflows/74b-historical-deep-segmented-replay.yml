@@ -6,6 +6,7 @@ on:
       inventory_artifact_name: {type: string, required: true}
       segment_batches: {type: string, required: true}
       continuation_id: {type: string, required: true}
+      artifact_scope: {type: string, required: true}
     secrets:
       R2_ACCOUNT_ID: {required: true}
       R2_ACCESS_KEY_ID: {required: true}
@@ -68,7 +69,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: historical-deep-74b-${{ matrix.segment_batch.batch_id }}-${{ github.run_id }}-${{ github.run_attempt }}
+          name: historical-deep-74b-${{ inputs.artifact_scope }}-${{ matrix.segment_batch.batch_id }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/segments/pass-1/**
           if-no-files-found: error
           retention-days: 90

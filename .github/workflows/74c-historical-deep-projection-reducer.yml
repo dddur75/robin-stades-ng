@@ -5,6 +5,7 @@ on:
     inputs:
       inventory_artifact_name: {type: string, required: true}
       continuation_id: {type: string, required: true}
+      artifact_scope: {type: string, required: true}
     secrets:
       R2_ACCOUNT_ID: {required: true}
       R2_ACCESS_KEY_ID: {required: true}
@@ -56,9 +57,9 @@ jobs:
         id: segment_artifacts
         env:
           GH_TOKEN: ${{ github.token }}
-          ARTIFACT_PREFIX: historical-deep-74b-batch-
+          ARTIFACT_PREFIX: historical-deep-74b-${{ inputs.artifact_scope }}-batch-
           ARTIFACT_SUFFIX: -${{ github.run_id }}-${{ github.run_attempt }}
-          ARTIFACT_PATTERN: historical-deep-74b-batch-*-${{ github.run_id }}-${{ github.run_attempt }}
+          ARTIFACT_PATTERN: historical-deep-74b-${{ inputs.artifact_scope }}-batch-*-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           mapfile -t ids < <(
             gh api --paginate \
@@ -102,7 +103,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: historical-deep-74c-${{ github.run_id }}-${{ github.run_attempt }}
+          name: historical-deep-74c-${{ inputs.artifact_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/historical-deep/74c/**
           if-no-files-found: error
           retention-days: 90

@@ -426,6 +426,64 @@ def test_repeated_collection_slices_have_unique_artifact_names() -> None:
     )
 
 
+def test_replay_shard_artifacts_are_scoped_per_invocation() -> None:
+    _, replay = _load(PHASE_FILES[74])
+    replay_jobs = _mapping(replay["jobs"])
+    for job_name in ("replay-segments", "reducer", "idempotence"):
+        with_inputs = _mapping(_mapping(replay_jobs[job_name])["with"])
+        assert with_inputs["artifact_scope"] == "${{ inputs.slice_id }}"
+
+    shard_contracts = (
+        ("74b-historical-deep-segmented-replay.yml", "replay-segments"),
+        ("74c-historical-deep-projection-reducer.yml", "reducer"),
+        ("74d-historical-deep-idempotent-replay.yml", "idempotence"),
+    )
+    for filename, job_name in shard_contracts:
+        _, workflow = _load(WORKFLOWS / filename)
+        call_inputs = _mapping(_workflow_call(workflow)["inputs"])
+        assert _mapping(call_inputs["artifact_scope"]) == {
+            "type": "string",
+            "required": True,
+        }
+        job = _mapping(_mapping(workflow["jobs"])[job_name])
+        upload = next(
+            step
+            for step in _steps(job)
+            if step.get("uses") == "actions/upload-artifact@v4"
+        )
+        assert "${{ inputs.artifact_scope }}" in str(
+            _mapping(upload["with"])["name"]
+        )
+
+    for filename, job_name in (
+        ("74c-historical-deep-projection-reducer.yml", "reducer"),
+        ("74d-historical-deep-idempotent-replay.yml", "idempotence"),
+    ):
+        _, workflow = _load(WORKFLOWS / filename)
+        job = _mapping(_mapping(workflow["jobs"])[job_name])
+        resolver = next(
+            step for step in _steps(job) if step.get("id") == "segment_artifacts"
+        )
+        resolver_env = _mapping(resolver["env"])
+        assert "${{ inputs.artifact_scope }}" in str(
+            resolver_env["ARTIFACT_PREFIX"]
+        )
+        assert "${{ inputs.artifact_scope }}" in str(
+            resolver_env["ARTIFACT_PATTERN"]
+        )
+
+    _, idempotent = _load(WORKFLOWS / "74d-historical-deep-idempotent-replay.yml")
+    second_pass = _mapping(_mapping(idempotent["jobs"])["replay-second-pass"])
+    second_upload = next(
+        step
+        for step in _steps(second_pass)
+        if step.get("uses") == "actions/upload-artifact@v4"
+    )
+    assert "${{ inputs.artifact_scope }}" in str(
+        _mapping(second_upload["with"])["name"]
+    )
+
+
 def test_branch_bootstrap_never_runs_legacy_persistence_or_inherits_secrets() -> None:
     text, workflow = _load(BOOTSTRAP)
     jobs = _mapping(workflow["jobs"])
