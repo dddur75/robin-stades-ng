@@ -1,5 +1,5 @@
 {
-  "completed_at": "2026-07-30T06:21:08.188916+00:00",
+  "completed_at": "2026-08-02T06:40:06.165056+00:00",
   "football_data_files_available": 30,
   "football_data_files_downloaded": 0,
   "lineup_gates": [
@@ -1400,7 +1400,7 @@
     "NO_BET_DEFAULT": true,
     "PRODUCTION_LOCKED": true,
     "REAL_BETS": false,
-    "code_revision": "e411a04be9be3a73b821eb90c3092923db0fdcb7",
+    "code_revision": "2f5f83d1bcdd502589a2a5168582b1cf0f6c52bb",
     "datasets": [
       "fcea7c9fbfa406ad235c9bc850ba596029cdcdfd9c4942cf4db9c8d39034eb7c",
       "fd095ab4332b33eb9f51d6833771698db71fee255ef74c142d11f7a84e77fe81",
@@ -1517,14 +1517,14 @@
   "provider_calls": 0,
   "raw_market_rows": 10734,
   "real_bets": false,
-  "run_id": "30518750652",
-  "source_commit": "e411a04be9be3a73b821eb90c3092923db0fdcb7",
-  "started_at": "2026-07-30T06:20:31.013502+00:00",
+  "run_id": "30735699196",
+  "source_commit": "2f5f83d1bcdd502589a2a5168582b1cf0f6c52bb",
+  "started_at": "2026-08-02T06:39:30.925112+00:00",
   "storage": {
-    "actual_bytes": 1692943449,
-    "critical_gates_only": 1852943449,
-    "current_full_plan": 2112943449,
-    "current_full_plan_plus_market": 2157943449,
+    "actual_bytes": 2085987122,
+    "critical_gates_only": 2245987122,
+    "current_full_plan": 2505987122,
+    "current_full_plan_plus_market": 2550987122,
     "p3_p4_allowed": false,
     "pause_bytes": 900000000,
     "status": "OBJECT_STORAGE_REQUIRED",
