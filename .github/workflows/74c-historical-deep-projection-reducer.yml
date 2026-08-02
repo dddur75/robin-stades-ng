@@ -70,12 +70,28 @@ jobs:
             echo "No first-pass artifacts matched this run attempt" >&2
             exit 1
           fi
-          artifact_ids=$(IFS=,; echo "${ids[*]}")
-          echo "artifact_ids=${artifact_ids}" >> "${GITHUB_OUTPUT}"
+          if ((${#ids[@]} > 200)); then
+            echo "More than 200 first-pass artifacts require another bounded download chunk" >&2
+            exit 1
+          fi
+          artifact_ids_page_1=$(IFS=,; echo "${ids[*]:0:100}")
+          artifact_ids_page_2=$(IFS=,; echo "${ids[*]:100:100}")
+          echo "artifact_ids_page_1=${artifact_ids_page_1}" >> "${GITHUB_OUTPUT}"
+          echo "artifact_ids_page_2=${artifact_ids_page_2}" >> "${GITHUB_OUTPUT}"
           echo "Resolved ${#ids[@]} first-pass artifacts across all API pages"
-      - uses: actions/download-artifact@v4
+      - name: Download first bounded first-pass artifact page
+        uses: actions/download-artifact@v4
         with:
-          artifact-ids: ${{ steps.segment_artifacts.outputs.artifact_ids }}
+          artifact-ids: ${{ steps.segment_artifacts.outputs.artifact_ids_page_1 }}
+          path: artifacts/segments/pass-1
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
+      - name: Download second bounded first-pass artifact page
+        if: steps.segment_artifacts.outputs.artifact_ids_page_2 != ''
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ steps.segment_artifacts.outputs.artifact_ids_page_2 }}
           path: artifacts/segments/pass-1
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

@@ -144,21 +144,32 @@ def test_full_corpus_reducers_paginate_cross_attempt_artifact_listing() -> None:
         assert "gh api --paginate" in resolver_run
         assert "artifacts?per_page=100" in resolver_run
         assert "${GITHUB_OUTPUT}" in resolver_run
+        assert "${ids[*]:0:100}" in resolver_run
+        assert "${ids[*]:100:100}" in resolver_run
+        assert "${#ids[@]} > 200" in resolver_run
         assert _mapping(resolver["env"])["GH_TOKEN"] == "${{ github.token }}"
-        id_download = next(
+        id_downloads = tuple(
             step
             for step in _steps(job)
             if step.get("uses") == "actions/download-artifact@v4"
             and "artifact-ids" in _mapping(step["with"])
         )
-        download_with = _mapping(id_download["with"])
-        assert download_with["artifact-ids"] == (
-            "${{ steps.segment_artifacts.outputs.artifact_ids }}"
+        assert len(id_downloads) == 2
+        assert tuple(
+            _mapping(step["with"])["artifact-ids"] for step in id_downloads
+        ) == (
+            "${{ steps.segment_artifacts.outputs.artifact_ids_page_1 }}",
+            "${{ steps.segment_artifacts.outputs.artifact_ids_page_2 }}",
         )
-        assert "pattern" not in download_with
-        assert download_with["github-token"] == "${{ github.token }}"
-        assert download_with["repository"] == "${{ github.repository }}"
-        assert download_with["run-id"] == "${{ github.run_id }}"
+        assert id_downloads[1]["if"] == (
+            "steps.segment_artifacts.outputs.artifact_ids_page_2 != ''"
+        )
+        for id_download in id_downloads:
+            download_with = _mapping(id_download["with"])
+            assert "pattern" not in download_with
+            assert download_with["github-token"] == "${{ github.token }}"
+            assert download_with["repository"] == "${{ github.repository }}"
+            assert download_with["run-id"] == "${{ github.run_id }}"
 
     for path in (BOOTSTRAP, CONTROLLER, PHASE_FILES[74]):
         _, workflow = _load(path)
