@@ -32,6 +32,7 @@ on:
         value: ${{ jobs.idempotence.outputs.gates }}
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:

@@ -17,6 +17,7 @@ on:
         value: ${{ jobs.reducer.outputs.global_hash }}
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
@@ -55,6 +56,9 @@ jobs:
         with:
           pattern: historical-deep-74b-*-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/segments/pass-1
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
       - name: Reduce projections into isolated staging
         id: reduce
         env:

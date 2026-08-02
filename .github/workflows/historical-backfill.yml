@@ -53,6 +53,7 @@ on:
   schedule:
     - cron: "37 */2 * * *"
 permissions:
+  actions: read
   contents: read
 concurrency:
   group: historical-state

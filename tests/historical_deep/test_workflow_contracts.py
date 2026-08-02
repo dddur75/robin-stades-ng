@@ -126,10 +126,38 @@ def test_full_corpus_reducers_have_a_usable_timeout_budget() -> None:
         assert 90 <= int(str(job["timeout-minutes"])) <= 110
 
 
+def test_full_corpus_reducers_use_cross_attempt_artifact_listing() -> None:
+    reducers = (
+        (WORKFLOWS / "74c-historical-deep-projection-reducer.yml", "reducer"),
+        (WORKFLOWS / "74d-historical-deep-idempotent-replay.yml", "idempotence"),
+    )
+    for path, job_name in reducers:
+        _, workflow = _load(path)
+        assert workflow["permissions"] == {"actions": "read", "contents": "read"}
+        job = _mapping(_mapping(workflow["jobs"])[job_name])
+        pattern_download = next(
+            step
+            for step in _steps(job)
+            if step.get("uses") == "actions/download-artifact@v4"
+            and "pattern" in _mapping(step["with"])
+        )
+        download_with = _mapping(pattern_download["with"])
+        assert download_with["github-token"] == "${{ github.token }}"
+        assert download_with["repository"] == "${{ github.repository }}"
+        assert download_with["run-id"] == "${{ github.run_id }}"
+
+    for path in (BOOTSTRAP, CONTROLLER, PHASE_FILES[74]):
+        _, workflow = _load(path)
+        assert _mapping(workflow["permissions"])["actions"] == "read"
+
+
 def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
     for number, path in PHASE_FILES.items():
         text, workflow = _load(path)
-        assert workflow["permissions"] == {"contents": "read"}
+        expected_permissions = {"contents": "read"}
+        if number == 74:
+            expected_permissions["actions"] = "read"
+        assert workflow["permissions"] == expected_permissions
         assert workflow["concurrency"] == {
             "group": "historical-deep-r2-state",
             "cancel-in-progress": False,
@@ -251,7 +279,7 @@ def test_replay_diagnostic_is_provider_free_structural_and_serialized() -> None:
 
 def test_controller_has_p0_p1_p2_order_and_a_global_call_cap() -> None:
     text, controller = _load(CONTROLLER)
-    assert controller["permissions"] == {"contents": "read"}
+    assert controller["permissions"] == {"actions": "read", "contents": "read"}
     assert controller["concurrency"] == {
         "group": "historical-deep-night-controller",
         "cancel-in-progress": False,

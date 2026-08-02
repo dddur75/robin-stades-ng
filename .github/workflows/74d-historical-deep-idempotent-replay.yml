@@ -20,6 +20,7 @@ on:
         value: ${{ jobs.idempotence.outputs.gates }}
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
@@ -106,6 +107,9 @@ jobs:
         with:
           pattern: historical-deep-74d-*-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/segments/pass-2
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
       - name: Prove zero inserts on the second pass
         id: reduce
         env:
