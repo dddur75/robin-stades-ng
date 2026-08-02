@@ -126,7 +126,7 @@ def test_full_corpus_reducers_have_a_usable_timeout_budget() -> None:
         assert 90 <= int(str(job["timeout-minutes"])) <= 110
 
 
-def test_full_corpus_reducers_paginate_cross_attempt_artifact_listing() -> None:
+def test_full_corpus_reducers_paginate_and_download_every_artifact() -> None:
     reducers = (
         (WORKFLOWS / "74c-historical-deep-projection-reducer.yml", "reducer"),
         (WORKFLOWS / "74d-historical-deep-idempotent-replay.yml", "idempotence"),
@@ -143,33 +143,17 @@ def test_full_corpus_reducers_paginate_cross_attempt_artifact_listing() -> None:
         resolver_run = str(resolver["run"])
         assert "gh api --paginate" in resolver_run
         assert "artifacts?per_page=100" in resolver_run
-        assert "${GITHUB_OUTPUT}" in resolver_run
-        assert "${ids[*]:0:100}" in resolver_run
-        assert "${ids[*]:100:100}" in resolver_run
-        assert "${#ids[@]} > 200" in resolver_run
+        assert 'gh run download "${GITHUB_RUN_ID}"' in resolver_run
+        assert '--pattern "${ARTIFACT_PATTERN}"' in resolver_run
+        assert "expected_count=${#ids[@]}" in resolver_run
+        assert "actual_count=$(find" in resolver_run
+        assert "actual_count != expected_count" in resolver_run
         assert _mapping(resolver["env"])["GH_TOKEN"] == "${{ github.token }}"
-        id_downloads = tuple(
-            step
+        assert not any(
+            "artifact-ids" in _mapping(step.get("with", {}))
             for step in _steps(job)
             if step.get("uses") == "actions/download-artifact@v4"
-            and "artifact-ids" in _mapping(step["with"])
         )
-        assert len(id_downloads) == 2
-        assert tuple(
-            _mapping(step["with"])["artifact-ids"] for step in id_downloads
-        ) == (
-            "${{ steps.segment_artifacts.outputs.artifact_ids_page_1 }}",
-            "${{ steps.segment_artifacts.outputs.artifact_ids_page_2 }}",
-        )
-        assert id_downloads[1]["if"] == (
-            "steps.segment_artifacts.outputs.artifact_ids_page_2 != ''"
-        )
-        for id_download in id_downloads:
-            download_with = _mapping(id_download["with"])
-            assert "pattern" not in download_with
-            assert download_with["github-token"] == "${{ github.token }}"
-            assert download_with["repository"] == "${{ github.repository }}"
-            assert download_with["run-id"] == "${{ github.run_id }}"
 
     for path in (BOOTSTRAP, CONTROLLER, PHASE_FILES[74]):
         _, workflow = _load(path)

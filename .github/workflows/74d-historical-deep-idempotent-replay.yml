@@ -103,12 +103,13 @@ jobs:
         with:
           name: ${{ inputs.inventory_artifact_name }}
           path: artifacts/inventory
-      - name: Resolve every second-pass artifact across API pages
+      - name: Download every second-pass artifact across API pages
         id: segment_artifacts
         env:
           GH_TOKEN: ${{ github.token }}
           ARTIFACT_PREFIX: historical-deep-74d-batch-
           ARTIFACT_SUFFIX: -${{ github.run_id }}-${{ github.run_attempt }}
+          ARTIFACT_PATTERN: historical-deep-74d-batch-*-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           mapfile -t ids < <(
             gh api --paginate \
@@ -121,32 +122,18 @@ jobs:
             echo "No second-pass artifacts matched this run attempt" >&2
             exit 1
           fi
-          if ((${#ids[@]} > 200)); then
-            echo "More than 200 second-pass artifacts require another bounded download chunk" >&2
+          expected_count=${#ids[@]}
+          gh run download "${GITHUB_RUN_ID}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --pattern "${ARTIFACT_PATTERN}" \
+            --dir artifacts/segments/pass-2
+          actual_count=$(find artifacts/segments/pass-2 -mindepth 1 -maxdepth 1 \
+            -type d -name "${ARTIFACT_PATTERN}" -print | wc -l)
+          if ((actual_count != expected_count)); then
+            echo "Second-pass artifact download mismatch: expected=${expected_count} actual=${actual_count}" >&2
             exit 1
           fi
-          artifact_ids_page_1=$(IFS=,; echo "${ids[*]:0:100}")
-          artifact_ids_page_2=$(IFS=,; echo "${ids[*]:100:100}")
-          echo "artifact_ids_page_1=${artifact_ids_page_1}" >> "${GITHUB_OUTPUT}"
-          echo "artifact_ids_page_2=${artifact_ids_page_2}" >> "${GITHUB_OUTPUT}"
-          echo "Resolved ${#ids[@]} second-pass artifacts across all API pages"
-      - name: Download first bounded second-pass artifact page
-        uses: actions/download-artifact@v4
-        with:
-          artifact-ids: ${{ steps.segment_artifacts.outputs.artifact_ids_page_1 }}
-          path: artifacts/segments/pass-2
-          github-token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          run-id: ${{ github.run_id }}
-      - name: Download second bounded second-pass artifact page
-        if: steps.segment_artifacts.outputs.artifact_ids_page_2 != ''
-        uses: actions/download-artifact@v4
-        with:
-          artifact-ids: ${{ steps.segment_artifacts.outputs.artifact_ids_page_2 }}
-          path: artifacts/segments/pass-2
-          github-token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          run-id: ${{ github.run_id }}
+          echo "Downloaded ${actual_count} second-pass artifacts across all API pages"
       - name: Prove zero inserts on the second pass
         id: reduce
         env:
