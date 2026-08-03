@@ -8,6 +8,8 @@ commands never construct a provider client.
 from __future__ import annotations
 
 import argparse
+import gzip
+import hashlib
 import inspect
 import json
 import math
@@ -35,6 +37,7 @@ from robin.historical_deep.contracts import (
     ProviderStatus,
     QuotaBudget,
     TemporalClass,
+    canonical_json_bytes,
     load_campaign_contract,
 )
 from robin.historical_deep.features import build_historical_feature_bundle
@@ -47,8 +50,10 @@ from robin.historical_deep.provider import (
     ProviderStatusError,
 )
 from robin.historical_deep.quality import (
+    DATASET_NAMES,
     build_dataset_manifests,
     compare_quality_v2,
+    coverage_snapshot_v2,
     separate_temporal_datasets,
 )
 from robin.historical_deep.quota import (
@@ -65,8 +70,10 @@ from robin.historical_deep.reporting import (
     render_report_markdown,
 )
 from robin.historical_deep.runtime import (
+    DERIVED_NAMESPACE,
     DurableRuntimeLedger,
     compact_artifact,
+    read_objects_bounded,
     write_artifact,
 )
 from robin.historical_deep.segmented_replay import load_staging_projection_rows
@@ -82,6 +89,8 @@ GLOBAL_MISSION_MAX_MINUTES = 720
 JOB_MAX_DURATION_MINUTES = 100
 CHECKPOINT_MAX_CALLS = 250
 CHECKPOINT_MAX_MINUTES = 5
+QUALITY_DATASET_PART_MAX_ROWS = 2_500
+QUALITY_DATASET_COMPRESSION_LEVEL = 1
 COLLECTOR_VERSION = "historical-deep-collector-v1"
 SENTINEL_KEY = (
     "historical-deep-data/schema-v1/_control/"
@@ -1217,8 +1226,66 @@ def _deduplicated_rows(
         key = (str(row.get("task_id", "")), str(row.get("record_hash", "")))
         if not all(key):
             continue
-        indexed.setdefault(key, dict(row))
+        # Staging hydration already owns mutable dictionaries.  Reuse them so a
+        # multi-million-row projection is not copied merely to deduplicate it.
+        value = row if isinstance(row, dict) else dict(row)
+        indexed.setdefault(key, value)
     return [indexed[key] for key in sorted(indexed)]
+
+
+def _verified_segmented_quality_comparison(
+    rows: Sequence[Mapping[str, object]],
+    *,
+    projection_hash: str,
+) -> dict[str, object]:
+    """Build an exact comparison from the verified second-pass proof.
+
+    The segmented reducer has already compared both passes, verified every
+    staging part, and pinned the projection hash.  Re-indexing and copying the
+    full corpus twice in quality adds no evidence and can exhaust a hosted
+    runner.  We still validate the stable quality identity and coverage here.
+    """
+
+    seen: set[str] = set()
+    for row in rows:
+        identity = {
+            "task_id": row.get("task_id"),
+            "normalized_family": row.get(
+                "normalized_family", row.get("family")
+            ),
+            "canonical_id": row.get("canonical_id"),
+            "provider_fixture_id": row.get("provider_fixture_id"),
+            "source_record_hash": row.get("source_record_hash"),
+        }
+        if not identity["task_id"] or not identity["canonical_id"]:
+            raise ValueError("QUALITY_STABLE_IDENTITY_REQUIRED")
+        quality_row_key = canonical_sha256(identity)
+        if quality_row_key in seen:
+            raise ValueError(
+                f"QUALITY_BEFORE_DUPLICATE_KEY:{quality_row_key}"
+            )
+        seen.add(quality_row_key)
+    del seen
+    snapshot = coverage_snapshot_v2(
+        rows,
+        required_fields=(
+            "record_hash",
+            "source_payload_hash",
+            "temporal_class",
+        ),
+    ).as_dict()
+    return {
+        "schema_version": "historical-deep-quality-v2",
+        "before": snapshot,
+        "after": dict(snapshot),
+        "mismatches": [],
+        "null_to_zero_conversions": 0,
+        "before_hash": projection_hash,
+        "after_hash": projection_hash,
+        "exact_replay": True,
+        "comparison_basis": "SEGMENTED_SECOND_PASS_IDEMPOTENCE",
+        "stable_identity_verified": True,
+    }
 
 
 def _quality_keyed_rows(
@@ -1246,9 +1313,9 @@ def _quality_keyed_rows(
     return keyed
 
 
-def _enrich_targets(
+def _latest_target_rows(
     rows: Sequence[Mapping[str, object]],
-) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+) -> list[dict[str, object]]:
     targets: dict[tuple[str, str], tuple[str, str, Mapping[str, object]]] = {}
     for row in rows:
         if str(row.get("family")) != "fixtures":
@@ -1263,10 +1330,33 @@ def _enrich_targets(
         candidate = (str(fixture_id), str(kickoff), row)
         if key not in targets or candidate[1] > targets[key][1]:
             targets[key] = candidate
+    return [
+        row if isinstance(row, dict) else dict(row)
+        for _fixture_id, _kickoff, row in targets.values()
+    ]
+
+
+def _enrich_targets(
+    rows: Sequence[Mapping[str, object]],
+    *,
+    copy_rows: bool = True,
+) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+    targets = {
+        (
+            str(row.get("provider_competition_id", "")),
+            str(row.get("season", "")),
+        ): (
+            str(row.get("provider_fixture_id", "")),
+            str(row.get("target_kickoff_at", "")),
+            row,
+        )
+        for row in _latest_target_rows(rows)
+    }
     enriched: list[dict[str, object]] = []
-    target_rows: list[dict[str, object]] = []
-    for fixture_id, kickoff, row in targets.values():
-        target_rows.append(dict(row))
+    target_rows = [
+        row if isinstance(row, dict) else dict(row)
+        for _fixture_id, _kickoff, row in targets.values()
+    ]
     for row in rows:
         key = (
             str(row.get("provider_competition_id", "")),
@@ -1276,15 +1366,21 @@ def _enrich_targets(
         if target is None:
             continue
         fixture_id, kickoff, _ = target
-        enriched.append(
+        if copy_rows:
+            value = dict(row)
+        elif isinstance(row, dict):
+            value = row
+        else:
+            raise TypeError("QUALITY_IN_PLACE_RECORD_MUST_BE_MUTABLE")
+        value.update(
             {
-                **dict(row),
                 "source_fixture_id": row.get("provider_fixture_id"),
                 "source_fixture_kickoff": row.get("target_kickoff_at"),
                 "target_fixture_id": fixture_id,
                 "target_fixture_kickoff": kickoff,
             }
         )
+        enriched.append(value)
     return enriched, target_rows
 
 
@@ -1326,7 +1422,8 @@ def _quality_products(
         code_revision,
         run_token,
     )
-    if replay_value.get("inventory_sha256") is not None:
+    segmented_projection = replay_value.get("inventory_sha256") is not None
+    if segmented_projection:
         idempotence = _latest_mapping_for_lineage(
             ledger,
             "replay/idempotence",
@@ -1343,24 +1440,32 @@ def _quality_products(
             != replay_value.get("inventory_sha256")
         ):
             raise ValueError("QUALITY_SEGMENTED_IDEMPOTENCE_PROOF_REQUIRED")
-        normalized_after = [dict(value) for value in normalized_before]
+        normalized_after = normalized_before
         errors_after: tuple[str, ...] = ()
     else:
         normalized_after, errors_after = ledger.normalized_records()
     rows = _deduplicated_rows(normalized_before)
-    replayed_rows = _deduplicated_rows(normalized_after)
-    comparison = compare_quality_v2(
-        _quality_keyed_rows(rows),
-        _quality_keyed_rows(replayed_rows),
-        key_fields=("quality_row_key",),
-        required_fields=(
-            "record_hash",
-            "source_payload_hash",
-            "temporal_class",
-        ),
-        identity_fields=("canonical_id",),
-        fail_on_null_to_zero=False,
-    ).as_dict()
+    if segmented_projection:
+        if not isinstance(expected_projection_hash, str):
+            raise ValueError("QUALITY_SEGMENTED_PROJECTION_HASH_REQUIRED")
+        comparison = _verified_segmented_quality_comparison(
+            rows,
+            projection_hash=expected_projection_hash,
+        )
+    else:
+        replayed_rows = _deduplicated_rows(normalized_after)
+        comparison = compare_quality_v2(
+            _quality_keyed_rows(rows),
+            _quality_keyed_rows(replayed_rows),
+            key_fields=("quality_row_key",),
+            required_fields=(
+                "record_hash",
+                "source_payload_hash",
+                "temporal_class",
+            ),
+            identity_fields=("canonical_id",),
+            fail_on_null_to_zero=False,
+        ).as_dict()
     normalization_errors = tuple(
         sorted(
             {
@@ -1377,13 +1482,16 @@ def _quality_products(
     comparison["exact_replay"] = bool(comparison.get("exact_replay")) and not (
         normalization_errors
     )
-    enriched, _targets = _enrich_targets(rows)
-    separated = separate_temporal_datasets(enriched)
+    enriched, _targets = _enrich_targets(
+        rows,
+        copy_rows=not segmented_projection,
+    )
+    separated = separate_temporal_datasets(
+        enriched,
+        copy_records=not segmented_projection,
+    )
     datasets = {
-        name: sorted(
-            (dict(row) for row in values),
-            key=canonical_sha256,
-        )
+        name: sorted(values, key=canonical_sha256)
         for name, values in separated.items()
     }
     manifests = build_dataset_manifests(
@@ -1598,6 +1706,189 @@ def _gate_evidence(
     }
 
 
+def _canonical_sequence_sha256(values: Sequence[object]) -> str:
+    digest = hashlib.sha256()
+    digest.update(b"[")
+    for index, value in enumerate(values):
+        if index:
+            digest.update(b",")
+        digest.update(canonical_json_bytes(value))
+    digest.update(b"]")
+    return digest.hexdigest()
+
+
+def _put_immutable_bytes(
+    ledger: DurableRuntimeLedger,
+    key: str,
+    data: bytes,
+) -> None:
+    if ledger.store.put_if_absent(key, data):
+        return
+    if ledger.store.get_object(key) != data:
+        raise ValueError(f"QUALITY_APPEND_ONLY_MISMATCH:{key}")
+
+
+def _persist_quality_dataset(
+    *,
+    ledger: DurableRuntimeLedger,
+    dataset_name: str,
+    rows: Sequence[Mapping[str, object]],
+    manifest: Mapping[str, object],
+    code_revision: str,
+    run_token: str,
+    recorded_at: datetime,
+) -> str:
+    """Persist a temporal dataset without one runner-sized JSON allocation."""
+
+    if len(rows) <= QUALITY_DATASET_PART_MAX_ROWS:
+        return ledger.put_json(
+            f"datasets/{dataset_name}",
+            {
+                "schema_version": "historical-deep-temporal-dataset-v1",
+                "dataset": dataset_name,
+                "manifest": manifest,
+                "rows": rows,
+                "row_count": len(rows),
+                "provider_calls": 0,
+                "code_revision": code_revision,
+                "run_token": run_token,
+            },
+            recorded_at=recorded_at,
+        )
+
+    dataset_hash = str(manifest.get("dataset_hash", ""))
+    if len(dataset_hash) != 64:
+        raise ValueError("QUALITY_DATASET_HASH_REQUIRED")
+    parts: list[dict[str, object]] = []
+    for ordinal, offset in enumerate(
+        range(0, len(rows), QUALITY_DATASET_PART_MAX_ROWS),
+        start=1,
+    ):
+        part_rows = rows[offset : offset + QUALITY_DATASET_PART_MAX_ROWS]
+        part_hash = _canonical_sequence_sha256(part_rows)
+        part_value = {
+            "schema_version": "historical-deep-temporal-dataset-part-v2",
+            "dataset": dataset_name,
+            "code_revision": code_revision,
+            "part_ordinal": ordinal,
+            "row_count": len(part_rows),
+            "part_sha256": part_hash,
+            "rows": part_rows,
+        }
+        key = (
+            f"{DERIVED_NAMESPACE}/quality-datasets-v2/"
+            f"revision={code_revision}/dataset={dataset_name}/"
+            f"dataset-hash={dataset_hash}/"
+            f"part-{ordinal:06d}-{part_hash}.json.gz"
+        )
+        data = gzip.compress(
+            canonical_json_bytes(part_value),
+            compresslevel=QUALITY_DATASET_COMPRESSION_LEVEL,
+            mtime=0,
+        )
+        _put_immutable_bytes(ledger, key, data)
+        parts.append(
+            {
+                "part_ordinal": ordinal,
+                "row_count": len(part_rows),
+                "part_sha256": part_hash,
+                "key": key,
+            }
+        )
+    return ledger.put_json(
+        f"datasets/{dataset_name}",
+        {
+            "schema_version": "historical-deep-temporal-dataset-manifest-v2",
+            "dataset": dataset_name,
+            "manifest": manifest,
+            "storage_layout": "SHARDED_R2",
+            "parts": parts,
+            "part_count": len(parts),
+            "row_count": len(rows),
+            "dataset_hash": manifest.get("dataset_hash"),
+            "provider_calls": 0,
+            "code_revision": code_revision,
+            "run_token": run_token,
+        },
+        recorded_at=recorded_at,
+        compression_level=QUALITY_DATASET_COMPRESSION_LEVEL,
+    )
+
+
+def _load_persisted_quality_dataset(
+    *,
+    ledger: DurableRuntimeLedger,
+    dataset_name: str,
+    code_revision: str,
+    run_token: str,
+) -> list[dict[str, object]]:
+    value = _latest_mapping_for_lineage(
+        ledger,
+        f"datasets/{dataset_name}",
+        code_revision,
+        run_token,
+    )
+    inline = value.get("rows")
+    if isinstance(inline, Sequence) and not isinstance(
+        inline, (str, bytes, bytearray)
+    ):
+        return [dict(_mapping(row)) for row in inline]
+    if (
+        value.get("schema_version")
+        != "historical-deep-temporal-dataset-manifest-v2"
+        or value.get("storage_layout") != "SHARDED_R2"
+        or value.get("dataset") != dataset_name
+    ):
+        return []
+    parts = list(_sequence(value.get("parts")))
+    if value.get("part_count") != len(parts):
+        raise ValueError("QUALITY_DATASET_PART_COUNT_MISMATCH")
+    rows: list[dict[str, object]] = []
+    for offset in range(0, len(parts), 8):
+        batch = parts[offset : offset + 8]
+        keys = [str(_mapping(part).get("key", "")) for part in batch]
+        for (key, body), part_value in zip(
+            read_objects_bounded(ledger.store, keys),
+            batch,
+            strict=True,
+        ):
+            part_manifest = _mapping(part_value)
+            if body is None:
+                raise ValueError(f"QUALITY_DATASET_PART_MISSING:{key}")
+            try:
+                decoded = json.loads(gzip.decompress(body))
+            except (gzip.BadGzipFile, EOFError, json.JSONDecodeError) as error:
+                raise ValueError("QUALITY_DATASET_PART_INVALID") from error
+            part = _mapping(decoded)
+            part_rows = [
+                dict(_mapping(row)) for row in _sequence(part.get("rows"))
+            ]
+            expected_hash = str(part_manifest.get("part_sha256", ""))
+            if (
+                part.get("schema_version")
+                != "historical-deep-temporal-dataset-part-v2"
+                or part.get("dataset") != dataset_name
+                or part.get("code_revision") != code_revision
+                or part.get("part_ordinal")
+                != part_manifest.get("part_ordinal")
+                or part.get("row_count") != len(part_rows)
+                or part.get("row_count") != part_manifest.get("row_count")
+                or part.get("part_sha256") != expected_hash
+                or _canonical_sequence_sha256(part_rows) != expected_hash
+            ):
+                raise ValueError("QUALITY_DATASET_PART_CONTRACT_MISMATCH")
+            rows.extend(part_rows)
+    expected_rows = value.get("row_count")
+    dataset_hash = value.get("dataset_hash")
+    if (
+        expected_rows != len(rows)
+        or not isinstance(dataset_hash, str)
+        or _canonical_sequence_sha256(rows) != dataset_hash
+    ):
+        raise ValueError("QUALITY_DATASET_MANIFEST_MISMATCH")
+    return rows
+
+
 def _run_quality(
     *,
     ledger: DurableRuntimeLedger,
@@ -1652,16 +1943,13 @@ def _run_quality(
         "genome": ledger.put_json("genome", genome, recorded_at=recorded_at),
     }
     for name, rows in sorted(datasets.items()):
-        keys[f"dataset:{name}"] = ledger.put_json(
-            f"datasets/{name}",
-            {
-                "schema_version": "historical-deep-temporal-dataset-v1",
-                "dataset": name,
-                "manifest": manifests[name],
-                "rows": rows,
-                "row_count": len(rows),
-                "provider_calls": 0,
-            },
+        keys[f"dataset:{name}"] = _persist_quality_dataset(
+            ledger=ledger,
+            dataset_name=name,
+            rows=rows,
+            manifest=_mapping(manifests[name]),
+            code_revision=code_revision,
+            run_token=run_token,
             recorded_at=recorded_at,
         )
     return {
@@ -1704,13 +1992,70 @@ def _run_features(
     run_token: str,
     services: RunnerServices,
 ) -> dict[str, object]:
-    quality, datasets, manifests, gates, normalized = _quality_products(
-        ledger=ledger,
-        contract=contract,
-        code_revision=code_revision,
-        run_token=run_token,
+    quality = _latest_mapping_for_lineage(
+        ledger,
+        "quality",
+        code_revision,
+        run_token,
     )
-    _enriched, targets = _enrich_targets(_deduplicated_rows(normalized))
+    manifests = _latest_mapping_for_lineage(
+        ledger,
+        "dataset-manifests",
+        code_revision,
+        run_token,
+    )
+    gates = _latest_mapping_for_lineage(
+        ledger,
+        "gates",
+        code_revision,
+        run_token,
+    )
+    dataset_records = {
+        name: _latest_mapping_for_lineage(
+            ledger,
+            f"datasets/{name}",
+            code_revision,
+            run_token,
+        )
+        for name in DATASET_NAMES
+    }
+    if quality and manifests and gates and all(dataset_records.values()):
+        datasets = {
+            name: _load_persisted_quality_dataset(
+                ledger=ledger,
+                dataset_name=name,
+                code_revision=code_revision,
+                run_token=run_token,
+            )
+            for name in DATASET_NAMES
+        }
+    else:
+        quality, datasets, manifests, gates, _normalized = _quality_products(
+            ledger=ledger,
+            contract=contract,
+            code_revision=code_revision,
+            run_token=run_token,
+        )
+    targets = _latest_target_rows(datasets["POST_MATCH_DESCRIPTIVE"])
+    if not targets:
+        targets = _latest_target_rows(
+            [row for values in datasets.values() for row in values]
+        )
+
+    def by_team(
+        rows: Sequence[Mapping[str, object]],
+    ) -> dict[str, list[Mapping[str, object]]]:
+        indexed: dict[str, list[Mapping[str, object]]] = {}
+        for row in rows:
+            team_id = row.get("provider_team_id")
+            if team_id is not None:
+                indexed.setdefault(str(team_id), []).append(row)
+        return indexed
+
+    team_by_team = by_team(datasets["TEAM_PREMATCH_STRICT"])
+    player_by_team = by_team(datasets["PLAYER_PREMATCH_STRICT"])
+    lineup_by_team = by_team(datasets["LINEUP_HISTORY_PREMATCH_STRICT"])
+    injury_by_team = by_team(datasets["INJURY_INTERVAL_RECONSTRUCTED"])
     bundles: list[dict[str, object]] = []
     errors: list[str] = []
     for target in targets:
@@ -1722,10 +2067,8 @@ def _run_features(
             player_ids = sorted(
                 {
                     str(row["provider_player_id"])
-                    for row in datasets["PLAYER_PREMATCH_STRICT"]
-                    if row.get("provider_team_id") is not None
-                    and str(row.get("provider_team_id")) == team_id
-                    and row.get("provider_player_id") is not None
+                    for row in player_by_team.get(team_id, ())
+                    if row.get("provider_player_id") is not None
                 }
             )[:25]
             try:
@@ -1733,12 +2076,12 @@ def _run_features(
                     target_fixture_id=str(fixture_id),
                     target_fixture_kickoff=str(kickoff),
                     team_id=team_id,
-                    team_rows=datasets["TEAM_PREMATCH_STRICT"],
-                    player_rows=datasets["PLAYER_PREMATCH_STRICT"],
-                    lineup_rows=datasets["LINEUP_HISTORY_PREMATCH_STRICT"],
+                    team_rows=team_by_team.get(team_id, ()),
+                    player_rows=player_by_team.get(team_id, ()),
+                    lineup_rows=lineup_by_team.get(team_id, ()),
                     discipline_rows=[
-                        *datasets["TEAM_PREMATCH_STRICT"],
-                        *datasets["INJURY_INTERVAL_RECONSTRUCTED"],
+                        *team_by_team.get(team_id, ()),
+                        *injury_by_team.get(team_id, ()),
                     ],
                     player_ids=player_ids,
                 )

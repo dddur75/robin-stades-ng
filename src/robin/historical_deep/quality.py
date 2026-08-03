@@ -360,8 +360,15 @@ def separate_temporal_datasets(
     target_fixtures: Mapping[str, datetime | str] | None = None,
     target_fixture_id: str | None = None,
     target_fixture_kickoff: datetime | str | None = None,
+    copy_records: bool = True,
 ) -> dict[str, list[dict[str, object]]]:
-    """Return six physically separate logical datasets with explicit lineage."""
+    """Return six physically separate logical datasets with explicit lineage.
+
+    Large replay projections can contain millions of rows.  Reducer-owned rows
+    are already private mutable dictionaries, so callers may opt into in-place
+    classification to avoid retaining a second full copy of the projection.
+    The default remains copy-on-write for the public API and small callers.
+    """
 
     if (target_fixture_id is None) != (target_fixture_kickoff is None):
         raise ValueError("SINGLE_TARGET_ID_AND_KICKOFF_REQUIRED_TOGETHER")
@@ -406,9 +413,14 @@ def separate_temporal_datasets(
             target_fixture_id=row_target_fixture_id,
             target_fixture_kickoff=target_kickoff,
         )
-        datasets[classification.dataset].append(
+        if copy_records:
+            classified = dict(record)
+        elif isinstance(record, dict):
+            classified = record
+        else:
+            raise TypeError("QUALITY_IN_PLACE_RECORD_MUST_BE_MUTABLE")
+        classified.update(
             {
-                **dict(record),
                 "target_fixture_id": row_target_fixture_id,
                 "temporal_class": classification.temporal_class,
                 "strict_prematch_usable": classification.strict_prematch_usable,
@@ -418,6 +430,7 @@ def separate_temporal_datasets(
                 "dataset_name": classification.dataset,
             }
         )
+        datasets[classification.dataset].append(classified)
     return datasets
 
 
@@ -673,10 +686,9 @@ def build_dataset_manifests(
     provenance_value = dict(provenance)
     provenance_hash = canonical_sha256(provenance_value)
     for name in DATASET_NAMES:
-        rows = sorted(
-            (dict(row) for row in datasets.get(name, ())),
-            key=canonical_sha256,
-        )
+        # Sorting a list of references is sufficient: manifest construction is
+        # read-only and must not duplicate every dictionary in a large corpus.
+        rows = sorted(datasets.get(name, ()), key=canonical_sha256)
         dataset_hash = canonical_sha256(rows)
         fixture_count = len(
             {

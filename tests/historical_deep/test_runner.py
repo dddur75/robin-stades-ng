@@ -983,6 +983,73 @@ def test_quality_uses_stable_identity_and_detects_null_to_zero() -> None:
     )
 
 
+def test_segmented_quality_reuses_verified_projection_without_row_copies() -> None:
+    rows = [
+        {
+            "task_id": "task-1",
+            "normalized_family": "teams",
+            "canonical_id": "api-football:team:1",
+            "provider_fixture_id": 10,
+            "source_record_hash": "source-1",
+            "record_hash": "record-1",
+            "source_payload_hash": "a" * 64,
+            "temporal_class": "PRIOR_MATCH_USABLE",
+        }
+    ]
+    projection_hash = runner.canonical_sha256(rows)
+
+    comparison = runner._verified_segmented_quality_comparison(
+        rows,
+        projection_hash=projection_hash,
+    )
+
+    assert comparison["exact_replay"] is True
+    assert comparison["before_hash"] == projection_hash
+    assert comparison["after_hash"] == projection_hash
+    assert comparison["comparison_basis"] == (
+        "SEGMENTED_SECOND_PASS_IDEMPOTENCE"
+    )
+    assert "quality_row_key" not in rows[0]
+
+
+def test_large_quality_dataset_is_sharded_and_round_trips(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(runner, "QUALITY_DATASET_PART_MAX_ROWS", 2)
+    ledger = DurableRuntimeLedger(InMemoryObjectStore())
+    rows = sorted(
+        [
+            {"canonical_id": f"team-{index}", "value": index}
+            for index in range(5)
+        ],
+        key=runner.canonical_sha256,
+    )
+    manifest = {"dataset_hash": runner.canonical_sha256(rows)}
+
+    runner._persist_quality_dataset(
+        ledger=ledger,
+        dataset_name="TEAM_PREMATCH_STRICT",
+        rows=rows,
+        manifest=manifest,
+        code_revision="revision-sharded-quality",
+        run_token="run-sharded-quality:1",
+        recorded_at=NOW,
+    )
+    stored = ledger.latest_value("datasets/TEAM_PREMATCH_STRICT")
+    assert isinstance(stored, Mapping)
+    assert stored["storage_layout"] == "SHARDED_R2"
+    assert stored["part_count"] == 3
+
+    loaded = runner._load_persisted_quality_dataset(
+        ledger=ledger,
+        dataset_name="TEAM_PREMATCH_STRICT",
+        code_revision="revision-sharded-quality",
+        run_token="run-sharded-quality:1",
+    )
+
+    assert loaded == rows
+
+
 def test_gate_coverage_uses_census_denominator_and_never_presence_only() -> None:
     datasets: dict[str, list[dict[str, object]]] = {
         name: []
