@@ -18,6 +18,9 @@ CONTROLLER = WORKFLOWS / "79-historical-deep-night-controller.yml"
 DIAGNOSTIC = WORKFLOWS / "80-historical-deep-replay-diagnostic.yml"
 BOOTSTRAP = WORKFLOWS / "historical-backfill.yml"
 CI = WORKFLOWS / "ci.yml"
+ARTIFACT_RETRY_ACTION = (
+    ROOT / ".github" / "actions" / "retry-download-artifact" / "action.yml"
+)
 
 R2_SECRETS = {
     "R2_ACCOUNT_ID",
@@ -158,6 +161,55 @@ def test_full_corpus_reducers_paginate_and_download_every_artifact() -> None:
     for path in (BOOTSTRAP, CONTROLLER, PHASE_FILES[74]):
         _, workflow = _load(path)
         assert _mapping(workflow["permissions"])["actions"] == "read"
+
+
+def test_replay_artifact_downloads_have_bounded_retries() -> None:
+    _, action = _load(ARTIFACT_RETRY_ACTION)
+    action_steps = tuple(
+        _mapping(step) for step in _sequence(_mapping(action["runs"])["steps"])
+    )
+    downloads = tuple(
+        step
+        for step in action_steps
+        if step.get("uses") == "actions/download-artifact@v4"
+    )
+    assert len(downloads) == 3
+    assert downloads[0]["continue-on-error"] is True
+    assert downloads[1]["continue-on-error"] is True
+    assert "continue-on-error" not in downloads[2]
+    assert any(step.get("run") == "sleep 15" for step in action_steps)
+    assert any(step.get("run") == "sleep 30" for step in action_steps)
+
+    inventory_consumers = (
+        (WORKFLOWS / "74b-historical-deep-segmented-replay.yml", "replay-segments"),
+        (WORKFLOWS / "74c-historical-deep-projection-reducer.yml", "reducer"),
+        (WORKFLOWS / "74d-historical-deep-idempotent-replay.yml", "replay-second-pass"),
+        (WORKFLOWS / "74d-historical-deep-idempotent-replay.yml", "idempotence"),
+    )
+    for path, job_name in inventory_consumers:
+        _, workflow = _load(path)
+        job = _mapping(_mapping(workflow["jobs"])[job_name])
+        retry_steps = tuple(
+            step
+            for step in _steps(job)
+            if step.get("uses") == "./.github/actions/retry-download-artifact"
+        )
+        assert len(retry_steps) == 1
+
+    reducers = (
+        (WORKFLOWS / "74c-historical-deep-projection-reducer.yml", "reducer"),
+        (WORKFLOWS / "74d-historical-deep-idempotent-replay.yml", "idempotence"),
+    )
+    for path, job_name in reducers:
+        _, workflow = _load(path)
+        job = _mapping(_mapping(workflow["jobs"])[job_name])
+        resolver = next(
+            step for step in _steps(job) if step.get("id") == "segment_artifacts"
+        )
+        resolver_run = str(resolver["run"])
+        assert "for attempt in 1 2 3; do" in resolver_run
+        assert "if ((attempt == 3)); then" in resolver_run
+        assert "sleep $((attempt * 15))" in resolver_run
 
 
 def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
