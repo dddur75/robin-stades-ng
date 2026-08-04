@@ -1,0 +1,38 @@
+{
+  "schema_version":"robin-governance-validation-v3",
+  "observed_at":"2026-08-04T14:36:34Z",
+  "worktree":"WORKTREE:robin-council-os-v3",
+  "branch":"codex/robin-council-os-v3",
+  "base_head":"47955483bb1a19abb6c7afef3ab05deec2a7bac1",
+  "scale":"E0",
+  "python_runtime":"${ENTRY_WORKSPACE}/.venv/Scripts/python.exe (Python 3.12.13)",
+  "provider_calls":0,
+  "odds_credits":0,
+  "purchases":0,
+  "external_monetary_cost":"UNKNOWN",
+  "remote_ci_prior_failure":{
+    "runs":[30918174587,30918237120],
+    "head":"0bad13bcfb16c5118b4a1e1dd0e9121f2e281d66",
+    "result":"1 failed, 896 passed, 2 skipped in both runs",
+    "root_cause":"TIME_DEPENDENT_TEST_CLOCK",
+    "fix":"tests/jalon12/test_cli_prospective.py uses the module fixed NOW instead of wall-clock time",
+    "rerun_status":"PENDING_NEW_COMMIT"
+  },
+  "checks":[
+    {"check":"targeted_pytest","command":"python -m pytest -q tests/council/test_robin_council_os_v3.py","status":"PASS","result":"10 passed in 0.04s"},
+    {"check":"jalon12_clock_regression","command":"bounded targeted test with pandas import substituted in memory","status":"PASS","result":"1 passed; native Windows run blocked by Application Control, remote CI remains decisive"},
+    {"check":"ruff","command":"python -m ruff check tests/council/test_robin_council_os_v3.py tests/jalon12/test_cli_prospective.py","status":"PASS","result":"All checks passed"},
+    {"check":"json_parse","command":"parse all governance JSON with Python stdlib","status":"PASS","result":"JSON_OK"},
+    {"check":"json_schema_meta_validation","command":"Draft202012Validator.check_schema(agent-report-schema-v3)","status":"PASS","result":"AGENT_SCHEMA_OK"},
+    {"check":"explicit_credential_shape_scan","command":"rg credential patterns across all 17 new files","status":"PASS","result":"NO_CREDENTIAL_SHAPES"},
+    {"check":"trailing_whitespace","command":"rg trailing whitespace across all 17 new files","status":"PASS","result":"NO_TRAILING_WHITESPACE"},
+    {"check":"staged_diff_and_tracked_secret_scan","command":"git diff --cached --check; scripts/check_no_secrets.py","status":"PASS","result":"Exact 6-file fix index within the 18-file cumulative PR allowlist; no whitespace error and no credential-shaped literal in tracked files"},
+    {"check":"independent_delivery_reviews","command":"independent read-only A2/DP5, C3/UX6 and CI clock C1/A2 reviews","status":"PASS","result":"Platform score 95/100; product/UX READY; clock fix READY_FOR_RERUN; zero critical objection"},
+    {"check":"quality_score","command":"validate governance-quality-score-v3 against delivery keys","status":"PASS","result":"95/100; DP5, A2, C3 and UX6 recorded; scale_authorized=false"}
+  ],
+  "irrelevant_check_not_used_as_gate": {
+    "check":"Bandit on pytest file",
+    "reason":"B101 reports ordinary pytest assertions; repository CI runs Bandit on production sources, not tests"
+  },
+  "status":"PASS_LOCAL_READY_FOR_REMOTE_CI_NOT_SCALE_READY"
+}

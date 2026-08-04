@@ -1,0 +1,26 @@
+{
+  "schema_version": "robin-scale-policy-v3",
+  "default_provider_calls": 0,
+  "levels": [
+    {"id":"E0","scope":"0_TO_100_SYNTHETIC_ROWS","remote_services":false,"max_minutes":2},
+    {"id":"E1","scope":"10_TO_50_REAL_FIXTURES_ONE_FAMILY","remote_services":"CACHE_ONLY_BY_DEFAULT","max_minutes":5},
+    {"id":"E2","scope":"100_TO_500_FIXTURES_ONE_COMPETITION_SEASON","remote_services":"CACHE_ONLY_BY_DEFAULT","max_minutes":10},
+    {"id":"E3","scope":"ONE_COMPLETE_COMPETITION_SEASON_OR_5_PERCENT","remote_services":"DECISION_REQUIRED","max_minutes_per_job":15},
+    {"id":"E4","scope":"P0_FIVE_LEAGUES_2020_2025","remote_services":"SCALE_APPROVED_REQUIRED","target_minutes_per_job":15,"absolute_max_minutes_per_job":20,"max_checkpoint_minutes":5},
+    {"id":"E5","scope":"EXTENDED_ALL_AVAILABLE","remote_services":"P0_USEFUL_AND_VERIFIED_REQUIRED","target_minutes_per_job":15,"absolute_max_minutes_per_job":20,"max_checkpoint_minutes":5}
+  ],
+  "permanent_packs": {
+    "GOLDEN_SYNTHETIC_PACK": {"required_cases":["duplicates","nulls","postponements","voids","inconsistencies","two_teams","odds","results","temporality"],"status":"NOT_MATERIALIZED","manifest_required_before_use":true},
+    "CANARY_REAL_PACK": {"fixture_count":50,"league_count":5,"hashes_must_be_frozen":true,"status":"NOT_MATERIALIZED","manifest_required_before_use":true},
+    "PILOT_SEASON_PACK": {"competition_seasons":1,"selection":"BEST_AVAILABLE_EVIDENCE","status":"NOT_MATERIALIZED","manifest_required_before_use":true}
+  },
+  "scale_gate": {
+    "required_decision":"SCALE_APPROVED",
+    "required_evidence":["previous_level_passed","no_critical_objection","budget_frozen","resume_or_checkpoint_proven"],
+    "forbidden_shortcuts":["full_replay_for_local_parser","full_corpus_for_denominator","millions_of_rules_for_operator","full_build_for_label","full_ci_after_micro_fix"]
+  },
+  "failure_taxonomy": ["LOCAL_CODE_OR_TEST","DATA_QUALITY_OR_COVERAGE","PLATFORM_INFRA_OR_FLAKY","PROVIDER_OR_QUOTA","SCIENTIFIC_INVALIDITY","PRODUCT_OR_UX"],
+  "similar_failure_key": ["failure_taxonomy","root_cause_signature","scope"],
+  "retry_policy": {"maximum_similar_failures":2,"third_identical_attempt_forbidden":true,"required_after_two":"REDESIGN_REQUIRED_AND_RETURN_TO_E0_OR_E1"},
+  "quality_ready_gate": {"minimum_score":92,"critical_objections":0,"missing_required_evidence":0,"security_locks_weakened":0}
+}

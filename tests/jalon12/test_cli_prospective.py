@@ -793,7 +793,7 @@ def test_gate_report_cockpit_preserves_full_replay_and_fixture_previews(
     tmp_path: Path,
     monkeypatch: object,
 ) -> None:
-    report_now = datetime.now(UTC)
+    report_now = NOW
     cache = _cache(tmp_path / "cache.json", now=report_now)
     output = tmp_path / "reports"
     repository = ProspectiveR2Repository(
