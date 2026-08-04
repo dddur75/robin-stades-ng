@@ -1,0 +1,132 @@
+{
+  "schema_version": "pr26-foundation-quality-score-v1",
+  "status": "THRESHOLD_MET_DELIVERY_CI_PENDING",
+  "scope": "TECHNICAL_FOUNDATION_CACHE_ONLY_NOT_SCIENCE_NOT_COVERAGE_NOT_SCALE",
+  "observed_at": "2026-08-04T15:21:00Z",
+  "source_head": "24b66dabc158ef62d888feec86ae602ba0391e47",
+  "main_head": "76e7fd272009f0da30b0a5ce2cf2cd9303f9eb47",
+  "reviewed_merge_commit": "994aa01121d3b28e106077bc021894e768855a3f",
+  "reviewed_tree": "6c2f1d6b5d7a98ca48386f9f78ba7439f22b9620",
+  "minimum_ready_score": 92,
+  "categories": [
+    {
+      "id": "safety_and_scope_locks",
+      "weight": 20,
+      "score": 20
+    },
+    {
+      "id": "contracts_and_correctness",
+      "weight": 20,
+      "score": 19
+    },
+    {
+      "id": "cache_only_reproducibility",
+      "weight": 15,
+      "score": 15
+    },
+    {
+      "id": "ci_and_static_validation",
+      "weight": 15,
+      "score": 12
+    },
+    {
+      "id": "orchestration_resilience",
+      "weight": 15,
+      "score": 13
+    },
+    {
+      "id": "maintainability_and_operability",
+      "weight": 10,
+      "score": 8
+    },
+    {
+      "id": "merge_and_governance_integrity",
+      "weight": 5,
+      "score": 5
+    }
+  ],
+  "total_score": 92,
+  "critical_objections_open": 1,
+  "critical_objections": [
+    {
+      "id": "DELIVERY_HEAD_NOT_VALIDATED",
+      "status": "OPEN",
+      "detail": "The pull-request delivery head containing this review artifact has not yet passed targeted and full remote CI."
+    }
+  ],
+  "required_delivery_gates": [
+    "tests/council/test_robin_council_os_v3.py",
+    "tests/jalon12/test_cli_prospective.py",
+    "tests/historical_deep",
+    "ruff",
+    "tracked_secret_scan",
+    "git_diff_check",
+    "full_push_and_pull_request_ci"
+  ],
+  "post_ci_rule": {
+    "required_pr_head": "THE_DESCENDANT_OF_REVIEWED_MERGE_COMMIT_CONTAINING_THIS_ARTIFACT",
+    "if_all_required_gates_pass": {
+      "category_update": {
+        "id": "ci_and_static_validation",
+        "score": 15
+      },
+      "effective_total_score": 95,
+      "effective_status": "READY_FOUNDATION",
+      "critical_objections_open": 0,
+      "merge_authorized": true
+    },
+    "if_any_required_gate_fails": {
+      "effective_total_score": 92,
+      "effective_status": "BLOCKED",
+      "critical_objections_open": 1,
+      "merge_authorized": false
+    }
+  },
+  "evidence": [
+    "ENV.PR26.HEAD.001",
+    "PR26.MAIN.MERGE.001",
+    "GOV.EVIDENCE.PORTABILITY.001",
+    "github-run:30896340821",
+    "RCV3-20260804-010"
+  ],
+  "reviewed_by": [
+    "DP5",
+    "A2",
+    "DP6",
+    "C2",
+    "RP8",
+    "RP9",
+    "A1"
+  ],
+  "independent_review_reports": [
+    {
+      "task": "pr26_audit",
+      "roles": [
+        "DP5",
+        "A2",
+        "A1"
+      ],
+      "verdict": "THRESHOLD_MET_DELIVERY_CI_PENDING",
+      "score": 92
+    },
+    {
+      "task": "coverage_audit",
+      "roles": [
+        "DP6",
+        "C2",
+        "RP8",
+        "RP9"
+      ],
+      "verdict": "ACCEPT_FOUNDATION_ONLY",
+      "empirical_data_score": "NOT_SCORED"
+    }
+  ],
+  "ready": false,
+  "merge_authorized": false,
+  "science_authorized": false,
+  "coverage_authorized": false,
+  "scale_authorized": false,
+  "provider_calls_during_review": 0,
+  "full_replays_during_review": 0,
+  "purchases_during_review": 0
+}
