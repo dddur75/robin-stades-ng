@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://robin-des-stades.invalid/schemas/agent-report-v3.json",
+  "title": "Robin Council agent report V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent_id","mission_id","facts_verified","unknowns","assumptions",
+    "main_objection","risks","minimum_decisive_test","recommended_action",
+    "scale_condition","estimated_compute","estimated_external_cost",
+    "estimated_human_time","maintenance_impact","confidence"
+  ],
+  "properties": {
+    "agent_id": {"enum":["C0","C1","C2","C3","C4","DP1","DP2","DP3","DP4","DP5","DP6","RP1","RP2","RP3","RP4","RP5","RP6","RP7","RP8","RP9","RP10","UX1","UX2","UX3","UX4","UX5","UX6","A1","A2","A3"]},
+    "mission_id": {"enum":["GOVERNANCE","PR26","COVERAGE_P0","HYPERGRAPH","COCKPIT"]},
+    "facts_verified": {"type":"array","items":{"$ref":"#/$defs/fact"}},
+    "unknowns": {"type":"array","items":{"type":"string"}},
+    "assumptions": {"type":"array","items":{"type":"string"}},
+    "main_objection": {"type":"string","minLength":1},
+    "risks": {"type":"array","items":{"$ref":"#/$defs/risk"}},
+    "minimum_decisive_test": {"type":"string","minLength":1},
+    "recommended_action": {"type":"string","minLength":1},
+    "scale_condition": {"type":"string","minLength":1},
+    "estimated_compute": {"type":"string","minLength":1},
+    "estimated_external_cost": {"type":"string","minLength":1},
+    "estimated_human_time": {"type":"string","minLength":1},
+    "maintenance_impact": {"type":"string","minLength":1},
+    "confidence": {"type":"number","minimum":0,"maximum":1}
+  },
+  "$defs": {
+    "fact": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["claim","evidence_refs","status"],
+      "properties": {
+        "claim":{"type":"string","minLength":1},
+        "evidence_refs":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+        "status":{"enum":["VERIFIED","PARTIAL","BLOCKED"]}
+      }
+    },
+    "risk": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["risk","severity","evidence_refs"],
+      "properties": {
+        "risk":{"type":"string","minLength":1},
+        "severity":{"enum":["CRITICAL","HIGH","MEDIUM","LOW"]},
+        "evidence_refs":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}}
+      }
+    }
+  }
+}

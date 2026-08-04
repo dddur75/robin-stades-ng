@@ -1,0 +1,180 @@
+{
+  "schema_version": "robin-platform-audit-v1",
+  "snapshot_at": "2026-08-04T13:38:36Z",
+  "repository": "dddur75/robin-stades-ng",
+  "remote_main_head": "47955483bb1a19abb6c7afef3ab05deec2a7bac1",
+  "entry_checkout_preserved": true,
+  "provider_calls": 0,
+  "odds_credits": 0,
+  "purchases": 0,
+  "external_monetary_cost": "UNKNOWN",
+  "path_tokens": {
+    "${ENTRY_WORKSPACE}": "protected visible checkout; user-specific absolute prefix redacted",
+    "${TEMP_ROOT}": "user-specific temporary directory prefix redacted",
+    "${WORKTREE_ROOT}": "user-specific dedicated worktree prefix redacted"
+  },
+  "worktrees": [
+    {
+      "worktree_path":"${ENTRY_WORKSPACE}",
+      "branch":"codex/hypothesis-universe-experience-v1",
+      "head":"ddf946642bcfccdc7ed206abd484db0336fdc34a",
+      "clean":false,
+      "status_count":1,
+      "associated_pr":"#25 MERGED",
+      "purpose":"protected visible entry checkout; contains pre-existing untracked .worktrees/",
+      "safe_to_use":false
+    },
+    {
+      "worktree_path":"${TEMP_ROOT}/robin-historical-j10",
+      "branch":"DETACHED",
+      "head":"8f59b5c985b705d1434b4b6a85061b535efcbb0d",
+      "clean":false,
+      "status_count":830,
+      "associated_pr":null,
+      "purpose":"legacy detached Jalon 10 diagnostic with local deletions",
+      "safe_to_use":false
+    },
+    {
+      "worktree_path":"${TEMP_ROOT}/robin-historical-j8",
+      "branch":"DETACHED",
+      "head":"9aa54efee6f4e07add56b763fccff11be9e439ef",
+      "clean":false,
+      "status_count":529,
+      "associated_pr":null,
+      "purpose":"legacy detached Jalon 8 diagnostic with local deletions",
+      "safe_to_use":false
+    },
+    {
+      "worktree_path":"${TEMP_ROOT}/robin-historical-j8-final",
+      "branch":"DETACHED",
+      "head":"15de864f7243c73c0757944cf3fa89211f0f2e89",
+      "clean":false,
+      "status_count":600,
+      "associated_pr":null,
+      "purpose":"legacy detached Jalon 8 final diagnostic with local deletions",
+      "safe_to_use":false
+    },
+    {
+      "worktree_path":"${TEMP_ROOT}/robin-historical-j9-1f3b606",
+      "branch":"DETACHED",
+      "head":"1f3b6065bd1a05d32de6a3290cf38a8eb1c7c5f3",
+      "clean":false,
+      "status_count":603,
+      "associated_pr":null,
+      "purpose":"legacy detached Jalon 9 diagnostic with local deletions",
+      "safe_to_use":false
+    },
+    {
+      "worktree_path":"${TEMP_ROOT}/robin-historical-j9-final",
+      "branch":"DETACHED",
+      "head":"518cb4b708b214f550e38c519d1226a0d34f1e38",
+      "clean":false,
+      "status_count":772,
+      "associated_pr":null,
+      "purpose":"legacy detached Jalon 9 final diagnostic with local deletions",
+      "safe_to_use":false
+    },
+    {
+      "worktree_path":"${TEMP_ROOT}/robin-r2-j91-diagnostic/registry",
+      "branch":"DETACHED",
+      "head":"4ab74b683ffecfac86042b4187bad60518f56134",
+      "clean":false,
+      "status_count":797,
+      "associated_pr":null,
+      "purpose":"legacy detached R2 registry diagnostic with local deletions",
+      "safe_to_use":false
+    },
+    {
+      "worktree_path":"${ENTRY_WORKSPACE}/.worktrees/historical-deep-data-harvest-v1",
+      "branch":"codex/historical-deep-data-harvest-v1",
+      "head":"24b66dabc158ef62d888feec86ae602ba0391e47",
+      "clean":true,
+      "status_count":0,
+      "associated_pr":"#26 OPEN DRAFT",
+      "purpose":"dedicated PR #26 review and non-destructive update",
+      "safe_to_use":true
+    },
+    {
+      "worktree_path":"${WORKTREE_ROOT}/robin-council-os-v3",
+      "branch":"codex/robin-council-os-v3",
+      "head":"47955483bb1a19abb6c7afef3ab05deec2a7bac1",
+      "clean":true,
+      "status_count":0,
+      "associated_pr":null,
+      "purpose":"single-writer governance implementation from exact origin/main",
+      "safe_to_use":true
+    }
+  ],
+  "audit_findings": {
+    "github_actions": {
+      "observed_workflows":50,
+      "observed_jobs":60,
+      "jobs_without_timeout":11,
+      "workflows_with_max_timeout_over_20_minutes":25,
+      "contents_write_jobs":34,
+      "actions_write_jobs":9,
+      "workflows_referencing_secrets":38,
+      "effective_permissions_explicit_for_all_jobs":true,
+      "legacy_debt":"EXPLICIT; governance PR adds no workflow or permission",
+      "artifact_collision_risk":"many names include run_id without run_attempt",
+      "third_party_action_pinning":"version tags are used instead of immutable commit SHAs"
+    },
+    "r2": {
+      "durable_pattern":"append-only receipts, manifests and content hashes documented",
+      "account_plan":"UNKNOWN",
+      "live_consumption":"UNKNOWN",
+      "global_scan_authorized":false,
+      "delete_authorized":false
+    },
+    "neon": {
+      "driver":"psycopg3",
+      "connect_timeout_seconds":10,
+      "pool_pre_ping":true,
+      "pool_recycle_seconds":240,
+      "live_plan":"UNKNOWN",
+      "live_connections":"UNKNOWN",
+      "pool_size":"UNKNOWN",
+      "statement_timeout":"UNKNOWN",
+      "lock_timeout":"UNKNOWN",
+      "staging_branch":"UNKNOWN",
+      "raw_provider_payloads_allowed":false
+    },
+    "sites_vinext": {
+      "hosting_config_present":true,
+      "project_id_present":true,
+      "d1_binding":null,
+      "r2_binding":null,
+      "vinext_version":"0.0.50",
+      "status":"EXPERIMENTAL_IN_LOCAL_README",
+      "node_requirement":">=22",
+      "live_entitlement":"UNKNOWN"
+    },
+    "ux_automation": {
+      "viewports_automated":[360,375,390],
+      "viewports_missing_from_automation":[430],
+      "zoom_200":true,
+      "keyboard":true,
+      "reduced_motion":true,
+      "console":false,
+      "links":false,
+      "screen_reader":"NOT_AUTOMATED"
+    },
+    "local_runtime": {
+      "os":"Microsoft Windows NT 10.0.26200.0",
+      "python":"3.14.0",
+      "git":"2.55.0.windows.3",
+      "github_cli":"2.96.0",
+      "pnpm":"11.9.0",
+      "node_on_path":"UNKNOWN"
+    }
+  },
+  "incidents": [
+    {
+      "operation":"git fetch --prune origin",
+      "impact":"remote refs updated; stale worktree metadata prune failed with permission denied",
+      "data_loss":false,
+      "action":"no cleanup attempted; preserve user worktrees and continue with exact fetched origin/main"
+    }
+  ],
+  "verdict":"PLATFORM_AUDIT_COMPLETE_WITH_LEGACY_DEBT"
+}

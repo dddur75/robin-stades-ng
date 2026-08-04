@@ -1,0 +1,42 @@
+{
+  "schema_version": "robin-agent-registry-v3",
+  "operating_model": "CENTRAL_COUNCIL_PLUS_ON_DEMAND_SPECIALISTS",
+  "single_writer_required": true,
+  "self_validation_allowed": false,
+  "agents": [
+    {"agent_id":"C0","team":"CENTRAL_COUNCIL","role":"directeur_programme","responsibilities":["finalite","priorite_active","activation","designation_redacteur","ledger","arbitrage","scale_gate"]},
+    {"agent_id":"C1","team":"CENTRAL_COUNCIL","role":"qualite_experimentale","responsibilities":["minimum_decisive_test","anti_recalcul","classification_defaut","scale_gate","redesign_apres_deux_echecs"]},
+    {"agent_id":"C2","team":"CENTRAL_COUNCIL","role":"responsable_scientifique","responsibilities":["fuite_temporelle","multiplicite","validation_chronologique","holdouts","stabilite","controles_negatifs"]},
+    {"agent_id":"C3","team":"CENTRAL_COUNCIL","role":"produit_recette","responsibilities":["parcours","definition_done","recette_reelle","francais","mobile","comprehension"]},
+    {"agent_id":"C4","team":"CENTRAL_COUNCIL","role":"risques_securite_couts","responsibilities":["secrets","permissions","quotas","ecritures","production","publication","scope"]},
+
+    {"agent_id":"DP1","team":"DATA_PLATFORM","role":"acquisition_fournisseurs","responsibilities":["sources","licences","pagination","quotas","historique","point_in_time"]},
+    {"agent_id":"DP2","team":"DATA_PLATFORM","role":"data_engineer_python","responsibilities":["polars","pyarrow","duckdb","parquet","vectorisation","bitmaps","streaming","memoire","incremental"]},
+    {"agent_id":"DP3","team":"DATA_PLATFORM","role":"architecte_r2_data_lake","responsibilities":["immutabilite","manifests","content_addressing","partitions","reprise","replication","verification","bronze_silver_gold"]},
+    {"agent_id":"DP4","team":"DATA_PLATFORM","role":"postgresql_neon","responsibilities":["schemas","indexes","plans","pooling","transactions","batches","timeouts","migrations","staging","observabilite"]},
+    {"agent_id":"DP5","team":"DATA_PLATFORM","role":"github_actions_sre","responsibilities":["matrices","concurrence","attempts","artefacts","retries","timeouts","worktrees","ci","couts"]},
+    {"agent_id":"DP6","team":"DATA_PLATFORM","role":"data_quality","responsibilities":["completude","unicite","validite","coherence","temporalite","fraicheur","disponibilite","provenance","identites"]},
+
+    {"agent_id":"RP1","team":"RESEARCH_BETTING","role":"data_analyst","responsibilities":["distributions","saisonnalite","ligues","cohortes","concentrations","anomalies","explication_metier"]},
+    {"agent_id":"RP2","team":"RESEARCH_BETTING","role":"data_scientist","responsibilities":["variables","baselines","calibration","log_loss","brier","validation_temporelle","stabilite","marche"]},
+    {"agent_id":"RP3","team":"RESEARCH_BETTING","role":"ml_engineer","responsibilities":["pipelines","entrainement","versionnement","train_only","monitoring","drift","promotion_verrouillee"]},
+    {"agent_id":"RP4","team":"RESEARCH_BETTING","role":"ontologue_football","responsibilities":["familles","proprietes","entites","relations","fenetres","roles","orientations","compatibilites"]},
+    {"agent_id":"RP5","team":"RESEARCH_BETTING","role":"analyste_tactique","responsibilities":["formations","matchups","pressing","largeur","transitions","duels","sens_football"]},
+    {"agent_id":"RP6","team":"RESEARCH_BETTING","role":"joueurs_scouting","responsibilities":["postes","roles","forme","minutes","titulaires","absences","continuite","importance"]},
+    {"agent_id":"RP7","team":"RESEARCH_BETTING","role":"reglements_competitions","responsibilities":["cartons","suspensions","reports","formats","journees","promotions"]},
+    {"agent_id":"RP8","team":"RESEARCH_BETTING","role":"quant_betting_microstructure","responsibilities":["probabilites_implicites","devigage","marge","timestamps","prix_admissible","capacite","clv","no_bet"]},
+    {"agent_id":"RP9","team":"RESEARCH_BETTING","role":"bankroll_risque_reglement","responsibilities":["mises_fictives","profit","roi","drawdown","variance","exposition","void","settlement","idempotence"]},
+    {"agent_id":"RP10","team":"RESEARCH_BETTING","role":"recherche_combinatoire","responsibilities":["apriori","fp_growth","beam_search","subgroup_discovery","mcts","genetique","bitsets","pruning"]},
+
+    {"agent_id":"UX1","team":"PRODUCT_UX","role":"ux_research","responsibilities":["parieur","investisseur","passionne_ia","curieux","expert","smartphone"]},
+    {"agent_id":"UX2","team":"PRODUCT_UX","role":"information_architecture","responsibilities":["navigation","progressive_disclosure","terminologie","hierarchie","recherche","comparaison"]},
+    {"agent_id":"UX3","team":"PRODUCT_UX","role":"data_visualisation","responsibilities":["courbes","series_temporelles","heatmaps","distributions","graphes","intervalles","annotations"]},
+    {"agent_id":"UX4","team":"PRODUCT_UX","role":"direction_artistique","responsibilities":["identite","typographie","contraste","composition","icones","tokens","coherence","sans_casino"]},
+    {"agent_id":"UX5","team":"PRODUCT_UX","role":"frontend_senior","responsibilities":["react","vinext","ssr","hydratation","responsive","performance","cache","accessibilite"]},
+    {"agent_id":"UX6","team":"PRODUCT_UX","role":"accessibilite_qa_visuelle","responsibilities":["clavier","lecteur_ecran","zoom_200","mobile","mouvement_reduit","console","liens","francais"]},
+
+    {"agent_id":"A1","team":"INDEPENDENT_AUDIT","role":"red_team_scientifique","responsibilities":["fuites","faux_positifs","multiplicite","concentration","grain","prix","temporalite"]},
+    {"agent_id":"A2","team":"INDEPENDENT_AUDIT","role":"red_team_plateforme","responsibilities":["deadlocks","concurrence","checkpoint","artefact_collision","scans_globaux","limites","couts"]},
+    {"agent_id":"A3","team":"INDEPENDENT_AUDIT","role":"red_team_produit","responsibilities":["jargon","navigation","mobile","graphiques","donnees_masquees","hypothese_vs_strategie"]}
+  ]
+}
