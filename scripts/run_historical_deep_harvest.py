@@ -2474,18 +2474,59 @@ def _latest_mapping_for_revision(
     return dict(_mapping(latest.get("value")))
 
 
+def _workflow_attempt_lineage(run_token: str) -> tuple[str, int] | None:
+    run_id, separator, raw_attempt = run_token.rpartition(":")
+    if (
+        separator != ":"
+        or not run_id.isdigit()
+        or not raw_attempt.isdigit()
+        or int(raw_attempt) < 1
+    ):
+        return None
+    return run_id, int(raw_attempt)
+
+
 def _latest_mapping_for_lineage(
     ledger: DurableRuntimeLedger,
     category: str,
     code_revision: str,
     run_token: str,
 ) -> dict[str, object]:
-    candidates = [
+    revision_candidates = [
         envelope
         for envelope in ledger.values(category)
         if _value_code_revision(envelope.get("value")) == code_revision
-        and _value_run_token(envelope.get("value")) == run_token
     ]
+    candidates = [
+        envelope
+        for envelope in revision_candidates
+        if _value_run_token(envelope.get("value")) == run_token
+    ]
+    if not candidates:
+        current_lineage = _workflow_attempt_lineage(run_token)
+        if current_lineage is not None:
+            current_run_id, current_attempt = current_lineage
+            fallback_candidates: list[tuple[int, Mapping[str, object]]] = []
+            for envelope in revision_candidates:
+                candidate_token = _value_run_token(envelope.get("value"))
+                if candidate_token is None:
+                    continue
+                candidate_lineage = _workflow_attempt_lineage(candidate_token)
+                if candidate_lineage is None:
+                    continue
+                candidate_run_id, candidate_attempt = candidate_lineage
+                if (
+                    candidate_run_id == current_run_id
+                    and candidate_attempt < current_attempt
+                ):
+                    fallback_candidates.append((candidate_attempt, envelope))
+            if fallback_candidates:
+                highest_attempt = max(attempt for attempt, _ in fallback_candidates)
+                candidates = [
+                    envelope
+                    for attempt, envelope in fallback_candidates
+                    if attempt == highest_attempt
+                ]
     if not candidates:
         return {}
     latest = max(candidates, key=lambda item: str(item.get("recorded_at", "")))

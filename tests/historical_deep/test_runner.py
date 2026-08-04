@@ -1284,6 +1284,61 @@ def test_analysis_failure_is_run_scoped_and_forces_failed_report(
     assert old_replay["run_token"] == "100:1"
 
 
+def test_lineage_lookup_recovers_only_from_an_earlier_attempt_of_same_run() -> None:
+    ledger = DurableRuntimeLedger(InMemoryObjectStore())
+    revision = "a" * 40
+    ledger.put_json(
+        "replay",
+        {
+            "code_revision": revision,
+            "run_token": "300:1",
+            "marker": "attempt-1",
+        },
+        recorded_at=NOW,
+    )
+    ledger.put_json(
+        "replay",
+        {
+            "code_revision": revision,
+            "run_token": "301:1",
+            "marker": "other-run",
+        },
+        recorded_at=NOW + timedelta(seconds=1),
+    )
+
+    recovered = runner._latest_mapping_for_lineage(
+        ledger,
+        "replay",
+        revision,
+        "300:2",
+    )
+
+    assert recovered["marker"] == "attempt-1"
+    assert runner._latest_mapping_for_lineage(
+        ledger,
+        "replay",
+        revision,
+        "LOCAL:revision",
+    ) == {}
+
+    ledger.put_json(
+        "replay",
+        {
+            "code_revision": revision,
+            "run_token": "300:2",
+            "marker": "attempt-2",
+        },
+        recorded_at=NOW + timedelta(seconds=2),
+    )
+    exact = runner._latest_mapping_for_lineage(
+        ledger,
+        "replay",
+        revision,
+        "300:2",
+    )
+    assert exact["marker"] == "attempt-2"
+
+
 def test_compact_report_projection_keeps_proofs_and_manifest_counts() -> None:
     projection = runner._compact_result_projection(
         {

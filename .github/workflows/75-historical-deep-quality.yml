@@ -6,11 +6,29 @@ on:
       slice_id:
         type: string
         default: standalone
+      source_code_revision:
+        description: "SHA exact à reprendre, vide pour le SHA du workflow"
+        type: string
+        required: false
+        default: ""
+      source_run_token:
+        description: "Lignée R2 exacte à reprendre, vide pour le run courant"
+        type: string
+        required: false
+        default: ""
   workflow_call:
     inputs:
       slice_id:
         type: string
         default: standalone
+      source_code_revision:
+        type: string
+        required: false
+        default: ""
+      source_run_token:
+        type: string
+        required: false
+        default: ""
     outputs:
       status:
         value: ${{ jobs.quality.outputs.status }}
@@ -50,9 +68,30 @@ jobs:
       THE_ODDS_API_HISTORICAL_CREDITS: "false"
       API_FOOTBALL_CALLS_ALLOWED: "0"
       ODDS_API_CREDITS_ALLOWED: "0"
+      ANALYSIS_CODE_REVISION: ${{ inputs.source_code_revision || github.sha }}
+      HISTORICAL_DEEP_RUN_TOKEN: ${{ inputs.source_run_token }}
     steps:
+      - name: Valider la lignée de reprise optionnelle
+        env:
+          SOURCE_CODE_REVISION: ${{ inputs.source_code_revision }}
+          SOURCE_RUN_TOKEN: ${{ inputs.source_run_token }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+
+          revision = os.environ["SOURCE_CODE_REVISION"]
+          run_token = os.environ["SOURCE_RUN_TOKEN"]
+          if bool(revision) != bool(run_token):
+              raise SystemExit("ANALYSIS_RECOVERY_LINEAGE_INCOMPLETE")
+          if revision and re.fullmatch(r"[0-9a-f]{40}", revision) is None:
+              raise SystemExit("ANALYSIS_RECOVERY_CODE_REVISION_INVALID")
+          if run_token and re.fullmatch(r"[0-9]+:[1-9][0-9]*", run_token) is None:
+              raise SystemExit("ANALYSIS_RECOVERY_RUN_TOKEN_INVALID")
+          PY
       - uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.source_code_revision || github.sha }}
           persist-credentials: false
       - uses: actions/setup-python@v5
         with: {python-version: "3.12", cache: pip}
@@ -69,7 +108,7 @@ jobs:
           python scripts/run_historical_deep_harvest.py
           --config configs/historical-deep-data-harvest-v1.json
           --output artifacts/historical-deep
-          --code-revision "${GITHUB_SHA}"
+          --code-revision "${ANALYSIS_CODE_REVISION}"
           quality
       - name: Exposer le gate qualité
         id: outcome

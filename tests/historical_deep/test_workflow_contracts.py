@@ -309,6 +309,54 @@ def test_only_collection_workflows_receive_provider_secret() -> None:
             assert "inputs.execute" not in text
 
 
+def test_analysis_workflows_support_exact_validated_lineage_recovery() -> None:
+    for number in range(75, 79):
+        text, workflow = _load(PHASE_FILES[number])
+        triggers = _mapping(workflow.get("on", workflow.get(True)))
+        for trigger_name in ("workflow_dispatch", "workflow_call"):
+            trigger = _mapping(triggers[trigger_name])
+            inputs = _mapping(trigger["inputs"])
+            for input_name in ("source_code_revision", "source_run_token"):
+                recovery_input = _mapping(inputs[input_name])
+                assert recovery_input["required"] is False
+                assert recovery_input["default"] == ""
+
+        job = _only_job(workflow)
+        env = _mapping(job["env"])
+        assert env["ANALYSIS_CODE_REVISION"] == (
+            "${{ inputs.source_code_revision || github.sha }}"
+        )
+        assert env["HISTORICAL_DEEP_RUN_TOKEN"] == (
+            "${{ inputs.source_run_token }}"
+        )
+        steps = _steps(job)
+        validation = next(
+            step
+            for step in steps
+            if step.get("name") == "Valider la lignée de reprise optionnelle"
+        )
+        validation_run = str(validation["run"])
+        assert "ANALYSIS_RECOVERY_LINEAGE_INCOMPLETE" in validation_run
+        assert "ANALYSIS_RECOVERY_CODE_REVISION_INVALID" in validation_run
+        assert "ANALYSIS_RECOVERY_RUN_TOKEN_INVALID" in validation_run
+        checkout = next(
+            step for step in steps if step.get("uses") == "actions/checkout@v4"
+        )
+        assert _mapping(checkout["with"])["ref"] == (
+            "${{ inputs.source_code_revision || github.sha }}"
+        )
+        runner_step = next(
+            step
+            for step in steps
+            if "scripts/run_historical_deep_harvest.py" in str(step.get("run", ""))
+        )
+        runner_command = str(runner_step["run"])
+        assert '--code-revision "${ANALYSIS_CODE_REVISION}"' in runner_command
+        assert "${{ inputs.source_code_revision }}" not in runner_command
+        assert "${{ inputs.source_run_token }}" not in runner_command
+        assert "API_FOOTBALL_KEY" not in text
+
+
 def test_replay_diagnostic_is_provider_free_structural_and_serialized() -> None:
     text, workflow = _load(DIAGNOSTIC)
     assert workflow["permissions"] == {"contents": "read"}
