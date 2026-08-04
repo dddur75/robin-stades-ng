@@ -1097,7 +1097,7 @@ def test_gate_coverage_uses_census_denominator_and_never_presence_only() -> None
     assert assessments["DISCIPLINE"].status == "BLOCKED_BY_COVERAGE"
 
 
-def test_quality_persists_rows_in_the_exact_manifest_hash_order(
+def test_segmented_quality_reuses_verified_hash_and_persists_manifest_order(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     clock = FakeClock()
@@ -1157,6 +1157,7 @@ def test_quality_persists_rows_in_the_exact_manifest_hash_order(
             kickoff="2024-06-01T12:00:00+00:00",
         ),
     ]
+    normalized.sort(key=runner.canonical_sha256)
     ledger.put_json(
         "replay/projection",
         {
@@ -1176,13 +1177,37 @@ def test_quality_persists_rows_in_the_exact_manifest_hash_order(
             "code_revision": revision,
             "run_token": run_token,
             "replay_hash": "b" * 64,
+            "inventory_sha256": "c" * 64,
+        },
+        recorded_at=clock.now(),
+    )
+    ledger.put_json(
+        "replay/idempotence",
+        {
+            "status": "SECOND_PASS_IDEMPOTENT",
+            "code_revision": revision,
+            "run_token": run_token,
+            "inventory_sha256": "c" * 64,
+            "gates": ["CURRENT_SECOND_PASS_IDEMPOTENT"],
         },
         recorded_at=clock.now(),
     )
     monkeypatch.setattr(
         ledger,
         "normalized_records",
-        lambda: ([dict(value) for value in normalized], ()),
+        lambda: pytest.fail("segmented quality must not replay raw payloads"),
+    )
+    canonical_sha256 = runner.canonical_sha256
+
+    def reject_redundant_projection_hash(value: object) -> str:
+        if isinstance(value, list) and len(value) == len(normalized):
+            raise AssertionError("verified segmented projection was rehashed")
+        return canonical_sha256(value)
+
+    monkeypatch.setattr(
+        runner,
+        "canonical_sha256",
+        reject_redundant_projection_hash,
     )
 
     result = runner._run_quality(
@@ -1199,20 +1224,24 @@ def test_quality_persists_rows_in_the_exact_manifest_hash_order(
     assert isinstance(stored, Mapping)
     stored_rows = stored["rows"]
     assert isinstance(stored_rows, list)
-    assert stored_rows == sorted(stored_rows, key=runner.canonical_sha256)
+    assert [row["task_id"] for row in stored_rows] == [
+        row["task_id"] for row in normalized if row["family"] == "teams"
+    ]
     assert manifest["dataset_hash"] == runner.canonical_sha256(stored_rows)
 
 
 def test_gate_coverage_fails_closed_without_a_real_denominator() -> None:
     evidence = runner._evidence_for_rows(
-        [
-            {
-                "season": season,
-                "canonical_id": f"api-football:team:{season}",
-                "identity_status": "PROVIDER_ID_VERIFIED",
-            }
-            for season in (2022, 2023, 2024)
-        ],
+        iter(
+            [
+                {
+                    "season": season,
+                    "canonical_id": f"api-football:team:{season}",
+                    "identity_status": "PROVIDER_ID_VERIFIED",
+                }
+                for season in (2022, 2023, 2024)
+            ]
+        ),
         reconstructed=False,
     )
 

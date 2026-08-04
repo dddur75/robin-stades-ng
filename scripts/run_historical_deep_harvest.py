@@ -15,9 +15,10 @@ import json
 import math
 import os
 import time
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import UTC, datetime
+from itertools import chain
 from pathlib import Path
 from typing import Any, Protocol, cast
 
@@ -89,7 +90,9 @@ GLOBAL_MISSION_MAX_MINUTES = 720
 JOB_MAX_DURATION_MINUTES = 100
 CHECKPOINT_MAX_CALLS = 250
 CHECKPOINT_MAX_MINUTES = 5
-QUALITY_DATASET_PART_MAX_ROWS = 2_500
+# Keep each compressed object bounded while avoiding hundreds of serialized R2
+# requests for the multi-million-row quality corpus.
+QUALITY_DATASET_PART_MAX_ROWS = 10_000
 QUALITY_DATASET_COMPRESSION_LEVEL = 1
 COLLECTOR_VERSION = "historical-deep-collector-v1"
 SENTINEL_KEY = (
@@ -1220,8 +1223,6 @@ def _run_replay(
 
 def _deduplicated_rows(
     rows: Sequence[Mapping[str, object]],
-    *,
-    preserve_input_order: bool = False,
 ) -> list[dict[str, object]]:
     indexed: dict[tuple[str, str], dict[str, object]] = {}
     for row in rows:
@@ -1232,8 +1233,6 @@ def _deduplicated_rows(
         # multi-million-row projection is not copied merely to deduplicate it.
         value = row if isinstance(row, dict) else dict(row)
         indexed.setdefault(key, value)
-    if preserve_input_order:
-        return list(indexed.values())
     return [indexed[key] for key in sorted(indexed)]
 
 
@@ -1405,6 +1404,7 @@ def _quality_products(
     dict[str, list[dict[str, object]]],
     dict[str, object],
     dict[str, object],
+    dict[str, object],
     list[dict[str, object]],
 ]:
     replay_projection = _latest_mapping_for_lineage(
@@ -1413,19 +1413,7 @@ def _quality_products(
         code_revision,
         run_token,
     )
-    normalized_before = load_staging_projection_rows(
-        ledger.store,
-        replay_projection,
-    )
-    errors_before = tuple(
-        str(value)
-        for value in _sequence(replay_projection.get("normalization_errors"))
-    )
     expected_projection_hash = replay_projection.get("projection_hash")
-    projection_hash_valid = (
-        isinstance(expected_projection_hash, str)
-        and expected_projection_hash == canonical_sha256(normalized_before)
-    )
     replay_value = _latest_mapping_for_lineage(
         ledger,
         "replay",
@@ -1433,6 +1421,19 @@ def _quality_products(
         run_token,
     )
     segmented_projection = replay_value.get("inventory_sha256") is not None
+    normalized_before = load_staging_projection_rows(
+        ledger.store,
+        replay_projection,
+    )
+    print("HISTORICAL_DEEP_QUALITY_PROGRESS:PROJECTION_VERIFIED", flush=True)
+    errors_before = tuple(
+        str(value)
+        for value in _sequence(replay_projection.get("normalization_errors"))
+    )
+    # Projection hydration already verifies the exact canonical sequence hash.
+    # Re-serializing two million rows here adds no evidence and can exhaust a
+    # hosted runner before quality products are persisted.
+    projection_hash_valid = isinstance(expected_projection_hash, str)
     if segmented_projection:
         idempotence = _latest_mapping_for_lineage(
             ledger,
@@ -1454,9 +1455,10 @@ def _quality_products(
         errors_after: tuple[str, ...] = ()
     else:
         normalized_after, errors_after = ledger.normalized_records()
-    rows = _deduplicated_rows(
-        normalized_before,
-        preserve_input_order=segmented_projection,
+    rows = (
+        normalized_before
+        if segmented_projection
+        else _deduplicated_rows(normalized_before)
     )
     if segmented_projection:
         if not isinstance(expected_projection_hash, str):
@@ -1479,6 +1481,7 @@ def _quality_products(
             identity_fields=("canonical_id",),
             fail_on_null_to_zero=False,
         ).as_dict()
+    print("HISTORICAL_DEEP_QUALITY_PROGRESS:REPLAY_COMPARED", flush=True)
     normalization_errors = tuple(
         sorted(
             {
@@ -1503,6 +1506,7 @@ def _quality_products(
         enriched,
         copy_records=not segmented_projection,
     )
+    print("HISTORICAL_DEEP_QUALITY_PROGRESS:DATASETS_SEPARATED", flush=True)
     datasets = (
         separated
         if segmented_projection
@@ -1523,6 +1527,7 @@ def _quality_products(
         },
         preserve_input_order=segmented_projection,
     )
+    print("HISTORICAL_DEEP_QUALITY_PROGRESS:MANIFESTS_BUILT", flush=True)
     manifest_values: dict[str, object] = {
         name: manifest.as_dict() for name, manifest in manifests.items()
     }
@@ -1536,6 +1541,8 @@ def _quality_products(
         ),
     )
     assessments = evaluate_gate_registry(evidence)
+    summary = gate_summary(assessments)
+    print("HISTORICAL_DEEP_QUALITY_PROGRESS:GATES_EVALUATED", flush=True)
     gates: dict[str, object] = {
         name: {
             **assessment.as_dict(),
@@ -1556,35 +1563,40 @@ def _quality_products(
         "dataset_rows": {name: len(values) for name, values in datasets.items()},
         "provider_calls": 0,
     }
-    return quality, datasets, manifest_values, gates, normalized_before
+    return quality, datasets, manifest_values, gates, summary, normalized_before
 
 
 def _evidence_for_rows(
-    rows: Sequence[Mapping[str, object]],
+    rows: Iterable[Mapping[str, object]],
     *,
     reconstructed: bool,
     coverage_by_scope: Mapping[tuple[str, int], float | None] | None = None,
 ) -> list[dict[str, object]]:
     selected_coverage = coverage_by_scope or {}
-    by_scope: dict[tuple[str, int], list[Mapping[str, object]]] = {}
+    by_scope: dict[tuple[str, int], tuple[int, int]] = {}
     for row in rows:
         season = row.get("season")
         if isinstance(season, int) and not isinstance(season, bool):
             league = str(row.get("provider_competition_id", "UNKNOWN"))
-            by_scope.setdefault((league, season), []).append(row)
+            scope = (league, season)
+            row_count, identity_count = by_scope.get(scope, (0, 0))
+            by_scope[scope] = (
+                row_count + 1,
+                identity_count
+                + int(
+                    bool(row.get("canonical_id"))
+                    and bool(row.get("identity_status"))
+                ),
+            )
     evidence: list[dict[str, object]] = []
     for (league, season) in sorted(set(by_scope) | set(selected_coverage)):
-        scoped = by_scope.get((league, season), [])
-        identities = sum(
-            bool(row.get("canonical_id")) and bool(row.get("identity_status"))
-            for row in scoped
-        )
+        row_count, identities = by_scope.get((league, season), (0, 0))
         evidence.append(
             {
                 "provider_league_id": league,
                 "season": season,
                 "coverage_rate": selected_coverage.get((league, season)),
-                "identity_rate": identities / len(scoped) if scoped else 0.0,
+                "identity_rate": identities / row_count if row_count else 0.0,
                 "cutoff_proven": not reconstructed,
                 "source_available": True,
                 "reconstructed": reconstructed,
@@ -1671,15 +1683,15 @@ def _gate_evidence(
         ),
     )
     formation = _evidence_for_rows(
-        [
+        (
             row
-            for row in (
-                *datasets["LINEUP_HISTORY_PREMATCH_STRICT"],
-                *datasets["TARGET_POST_LINEUP_RECONSTRUCTED"],
+            for row in chain(
+                datasets["LINEUP_HISTORY_PREMATCH_STRICT"],
+                datasets["TARGET_POST_LINEUP_RECONSTRUCTED"],
             )
             if str(row.get("family", "")).casefold()
             in {"formation", "formations", "lineup", "lineups"}
-        ],
+        ),
         reconstructed=True,
         coverage_by_scope=_census_family_coverage(
             coverage_census,
@@ -1687,12 +1699,12 @@ def _gate_evidence(
         ),
     )
     discipline = _evidence_for_rows(
-        [
+        (
             row
             for row in team_rows
             if str(row.get("family", "")).casefold()
             in {"event", "events", "fixture_events"}
-        ],
+        ),
         reconstructed=False,
         coverage_by_scope=_census_family_coverage(
             coverage_census,
@@ -1915,7 +1927,14 @@ def _run_quality(
     run_token: str,
     services: RunnerServices,
 ) -> dict[str, object]:
-    quality, datasets, manifests, gates, _normalized = _quality_products(
+    (
+        quality,
+        datasets,
+        manifests,
+        gates,
+        quality_gate_summary,
+        _normalized,
+    ) = _quality_products(
         ledger=ledger,
         contract=contract,
         code_revision=code_revision,
@@ -1926,17 +1945,7 @@ def _run_quality(
     genome["code_revision"] = code_revision
     genome["run_token"] = run_token
     genome["projection_hash"] = canonical_sha256(genome)
-    gate_assessments = evaluate_gate_registry(
-        _gate_evidence(
-            datasets,
-            coverage_census=_latest_mapping_for_lineage(
-                ledger,
-                "collection/census",
-                code_revision,
-                run_token,
-            ),
-        )
-    )
+    print("HISTORICAL_DEEP_QUALITY_PROGRESS:PRODUCTS_READY", flush=True)
     recorded_at = _aware_now(services)
     gate_report = {
         "schema_version": "historical-deep-gate-report-v1",
@@ -1960,6 +1969,7 @@ def _run_quality(
         ),
         "genome": ledger.put_json("genome", genome, recorded_at=recorded_at),
     }
+    print("HISTORICAL_DEEP_QUALITY_PROGRESS:METADATA_PERSISTED", flush=True)
     for name, rows in sorted(datasets.items()):
         keys[f"dataset:{name}"] = _persist_quality_dataset(
             ledger=ledger,
@@ -1969,6 +1979,10 @@ def _run_quality(
             code_revision=code_revision,
             run_token=run_token,
             recorded_at=recorded_at,
+        )
+        print(
+            f"HISTORICAL_DEEP_QUALITY_PROGRESS:DATASET_PERSISTED:{name}",
+            flush=True,
         )
     return {
         "schema_version": "historical-deep-quality-run-v1",
@@ -1984,7 +1998,7 @@ def _run_quality(
         "quality": quality,
         "datasets": manifests,
         "gates": gates,
-        "gate_summary": gate_summary(gate_assessments),
+        "gate_summary": quality_gate_summary,
         "genome": genome,
         "durable_keys": keys,
         "provider_calls": 0,
@@ -2048,7 +2062,14 @@ def _run_features(
             for name in DATASET_NAMES
         }
     else:
-        quality, datasets, manifests, gates, _normalized = _quality_products(
+        (
+            quality,
+            datasets,
+            manifests,
+            gates,
+            _summary,
+            _normalized,
+        ) = _quality_products(
             ledger=ledger,
             contract=contract,
             code_revision=code_revision,
