@@ -1,0 +1,58 @@
+{
+  "schema_version": "robin-mission-activation-matrix-v3",
+  "activation_policy": "ON_DEMAND_ONLY",
+  "writer_policy": "C0_DESIGNATES_EXACTLY_ONE_WRITER_PER_WORKTREE",
+  "authorization": {
+    "default": "DENY",
+    "read_local_repository": "ALLOW",
+    "write_local_repository": "DESIGNATED_WRITER_AND_DESIGNATED_WORKTREE_ONLY",
+    "provider_calls": "DENY_UNLESS_C0_C1_C4_CENSUS_EXCEPTION",
+    "r2_write": "DENY_UNLESS_MISSION_SPECIFIC_APPEND_ONLY_DECISION",
+    "r2_delete": "DENY",
+    "database_write": "DENY_UNLESS_STAGING_AND_MISSION_SPECIFIC_DECISION",
+    "database_destructive_write": "DENY",
+    "deployment": "DENY_UNLESS_C0_C3_C4_EXPLICIT_DECISION",
+    "real_bet": "DENY",
+    "purchase": "DENY",
+    "social_publication": "DENY"
+  },
+  "missions": {
+    "GOVERNANCE": {
+      "agents": ["C0","C1","C3","C4","DP4","DP5","UX6","A2"],
+      "writer": "C0",
+      "allowed_paths": ["AGENTS.md","configs/agents/agent-registry-v3.json","configs/agents/agent-report-schema-v3.json","configs/agents/mission-activation-matrix-v3.json","configs/experiments/scale-policy-v3.json","configs/platform/service-capabilities-v1.json","docs/operations/EVIDENCE-GRAPH-CONTRACT.md","docs/operations/EXPERIMENT-LADDER-V3.md","docs/operations/GITHUB-ACTIONS-OPERATING-CONTRACT.md","docs/operations/ROBIN-COUNCIL-OS-V3.md","docs/operations/SERVICE-CAPABILITIES-AND-LIMITS.md","reports/council/decision-ledger.jsonl","reports/council/governance-quality-score-v3.json","reports/council/governance-validation-v3.json","reports/evidence/evidence-graph.json","reports/platform/platform-audit.json","tests/council/test_robin_council_os_v3.py"],
+      "scale_ceiling":"E0",
+      "delivery_keys": {"platform":["DP5","A2"],"product":["C3","UX6"]}
+    },
+    "PR26": {
+      "agents": ["C0","C1","C2","C4","DP1","DP2","DP3","DP4","DP5","DP6","RP1","RP8","RP9","A1","A2"],
+      "writer": "C0_DESIGNATE",
+      "allowed_paths": ["PR26_EXISTING_DIFF","PR26_FINAL_REVIEW_ARTIFACTS"],
+      "scale_ceiling":"CACHE_ONLY_TARGETED",
+      "delivery_keys": {"data":["DP6","C2"],"platform":["DP5","A2"],"science":["C2","RP8","RP9","A1"]}
+    },
+    "COVERAGE_P0": {
+      "agents": ["C0","C1","C2","DP1","DP2","DP3","DP4","DP6","RP1","RP4","RP7","A1"],
+      "writer": "C0_DESIGNATE",
+      "allowed_paths": ["configs/data/","docs/data/","reports/coverage/","cockpit/private-coverage/","tests/coverage/"],
+      "scale_ceiling":"E3_UNTIL_SCALE_APPROVED",
+      "delivery_keys": {"data":["DP6","C2"],"science":["C2","A1"]}
+    },
+    "HYPERGRAPH": {
+      "agents": ["C0","C1","C2","DP2","DP6","RP1","RP2","RP3","RP4","RP5","RP6","RP7","RP8","RP9","RP10","A1"],
+      "writer": "C0_DESIGNATE",
+      "open_condition": "AT_LEAST_ONE_FAMILY_CALCULABLE",
+      "allowed_paths": ["configs/hypotheses/","docs/research/","reports/hypergraph/","src/robin/hypergraph/","tests/hypergraph/"],
+      "scale_ceiling":"E2_PILOT_ONLY",
+      "delivery_keys": {"data":["DP6","C2"],"science":["C2","RP8","RP9","A1"]}
+    },
+    "COCKPIT": {
+      "agents": ["C0","C1","C3","RP1","RP8","RP9","UX1","UX2","UX3","UX4","UX5","UX6","A3"],
+      "writer": "C0_DESIGNATE",
+      "allowed_paths": ["cockpit/","docs/ux/","reports/ux/","tests/ux/"],
+      "scale_ceiling":"PRIVATE_PROTOTYPE_ONLY",
+      "required_acceptance_checks": ["non_technical_french_journey","keyboard","manual_screen_reader_trace","zoom_200","viewport_360","viewport_375","viewport_390","viewport_430","console_and_pageerror","links","reduced_motion","fr_fr_and_i18n_readiness","ssr_and_hydration","empty_states"],
+      "delivery_keys": {"interface":["C3","UX6","A3"]}
+    }
+  }
+}
