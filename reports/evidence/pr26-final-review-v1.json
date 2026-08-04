@@ -1,0 +1,262 @@
+{
+  "schema_version": "pr26-final-review-v1",
+  "artifact_id": "PR26.FOUNDATION.FINAL.REVIEW.001",
+  "captured_at": "2026-08-04T15:21:00Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 26,
+  "review_scope": "FOUNDATION_ONLY",
+  "evidence_class": "SMOKE_TEST_ONLY",
+  "git": {
+    "reviewed_merge_revision": "994aa01121d3b28e106077bc021894e768855a3f",
+    "reviewed_merge_tree": "6c2f1d6b5d7a98ca48386f9f78ba7439f22b9620",
+    "head_before_merge": "24b66dabc158ef62d888feec86ae602ba0391e47",
+    "main_merged": "76e7fd272009f0da30b0a5ce2cf2cd9303f9eb47",
+    "parents": [
+      "24b66dabc158ef62d888feec86ae602ba0391e47",
+      "76e7fd272009f0da30b0a5ce2cf2cd9303f9eb47"
+    ],
+    "historical_deep_tree_before": "5f0ec86bde75b19f338083b6b834768f5bbc1b0f",
+    "historical_deep_tree_after": "5f0ec86bde75b19f338083b6b834768f5bbc1b0f",
+    "historical_deep_tree_unchanged": true,
+    "conflict_file": "tests/jalon12/test_cli_prospective.py",
+    "conflict_file_canonical_sha256": "3db90cc6d3291cb15e5d82889eb549a7e5f6195dd45ff9655cfc5437553d7fd4",
+    "conflict_resolution": [
+      "report_now = NOW",
+      "cache = _cache(tmp_path / \"cache.json\", now=report_now)"
+    ],
+    "rebase": false,
+    "force_push": false
+  },
+  "public_verdicts": [
+    {
+      "id": "HISTORICAL_DEEP_PIPELINE_READY",
+      "status": "READY",
+      "scope": "FOUNDATION_ENGINEERING",
+      "reason": "The bounded append-only pipeline contract and implementation passed the prior exact-head CI and independent static review; delivery CI remains mandatory.",
+      "evidence_refs": [
+        "github-run:30894323076",
+        "github-run:30894319070",
+        "PR26.MAIN.MERGE.001"
+      ],
+      "authorizes": [
+        "FOUNDATION_MERGE_AFTER_GREEN_DELIVERY_CI"
+      ]
+    },
+    {
+      "id": "HISTORICAL_DEEP_R2_REPLAY_READY",
+      "status": "READY",
+      "scope": "CACHE_ONLY_REPLAY_CAPABILITY",
+      "reason": "The reused recovery proof verifies 2,321 payloads and receipts, 2,023,144 normalized rows, identical hashes and zero missing, extra or mismatched payloads without provider calls.",
+      "evidence_refs": [
+        "github-run:30896340821",
+        "coverage-proof:61afbfef0c8f51bc07e6992591cf2c0125069ef72c3d5ad9bd4a366d48a92be4",
+        "replay:55c41698a80e7f49a02e45ca0cd9aa11b161f8fbb06b720b8b2fca2cb5f55d1e"
+      ],
+      "authorizes": [
+        "CACHE_ONLY_EVIDENCE_REUSE"
+      ]
+    },
+    {
+      "id": "P0_COVERAGE_PROOF_PARTIAL",
+      "status": "PARTIAL",
+      "scope": "P0_COVERAGE_DENOMINATORS",
+      "reason": "All 1,067 exported cells lack census evidence and the observed union is not an authoritative P0 Cartesian grid.",
+      "evidence_refs": [
+        "coverage-proof:61afbfef0c8f51bc07e6992591cf2c0125069ef72c3d5ad9bd4a366d48a92be4"
+      ],
+      "authorizes": [
+        "DENOMINATOR_CLOSURE_E0_ONLY"
+      ]
+    },
+    {
+      "id": "P0_STRICT_FEATURE_READINESS_PARTIAL",
+      "status": "PARTIAL",
+      "scope": "STRICT_PREMATCH_FEATURES",
+      "reason": "Zero of ten functional gates are ready and no season is eligible; eight gates are blocked by coverage and two by source.",
+      "evidence_refs": [
+        "quality-result:9e295cad0fffe204d6a1d61c560169c950af1336acbba1071f2fdb2e6c7425fe",
+        "features-result:ec869570cdde911fabe5e9ba5c0e517626a1beb57e902852529f7d2b54902a87"
+      ],
+      "authorizes": [
+        "FAIL_CLOSED_RESEARCH_ONLY"
+      ]
+    },
+    {
+      "id": "HYPOTHESIS_BACKTEST_READINESS_PARTIAL",
+      "status": "PARTIAL",
+      "scope": "HYPOTHESIS_BACKTEST",
+      "reason": "The 5,000-row, 165-bet result has deep_feature_rows=0, so its ROI is a smoke-test signal and not scientific evidence.",
+      "evidence_refs": [
+        "backtest-result:83d68d2faca1898863c1f3ef4aab04e05e93358de551bfb3c70c90d77fbbad17",
+        "report-result:f12faa777c21f13dc2037a03a5162f0f06633e246c236c03b3c00a723d4f6ae6"
+      ],
+      "authorizes": [
+        "SMOKE_TEST_ONLY"
+      ]
+    }
+  ],
+  "aggregate_ready_verdict": null,
+  "harvest_contract": {
+    "enum": "HarvestVerdict",
+    "paths": [
+      "src/robin/historical_deep/contracts.py",
+      "src/robin/historical_deep/reporting.py"
+    ],
+    "exact_enum_count": 4,
+    "mutated_by_review": false,
+    "public_review_verdicts_are_outside_enum": true
+  },
+  "lineage": {
+    "recovery_run_id": 30896340821,
+    "recovery_run_status": "SUCCESS",
+    "artifact_source_revision": "24b66dabc158ef62d888feec86ae602ba0391e47",
+    "scientific_lineage_revision": "f489971c03b53e9ea1381655f1591328ed055d41",
+    "source_run_token": "30853757779:1"
+  },
+  "artifacts": {
+    "quality": {
+      "artifact_id": 8887857859,
+      "archive_sha256": "4c552d90095c8f7e066af1b350cb524a6102b444f84afe267bb22fb28d8157ae",
+      "file_sha256": "fb7e913c44e7fa2df063ff679977989eda105e525323d9be81d8e8c288c43d12",
+      "result_sha256": "9e295cad0fffe204d6a1d61c560169c950af1336acbba1071f2fdb2e6c7425fe"
+    },
+    "features": {
+      "artifact_id": 8888082059,
+      "archive_sha256": "d943ed6ed18de29bf030ac530d00b8b40d2c13cdd2786f449d4601c49779acdd",
+      "file_sha256": "899aea5bea314f73fd825de18d4a61ea47f97ee8022845691aeea2384b7bfe6f",
+      "result_sha256": "ec869570cdde911fabe5e9ba5c0e517626a1beb57e902852529f7d2b54902a87"
+    },
+    "backtest": {
+      "artifact_id": 8888111311,
+      "archive_sha256": "8c08108f6d59621113fd45d0801ec8a5fea7f9bc9717d7c990402d47eda143c8",
+      "file_sha256": "31ac5100203e7f935aa8049c5602349a04af66aeab0dda4289a46fe22763017c",
+      "result_sha256": "83d68d2faca1898863c1f3ef4aab04e05e93358de551bfb3c70c90d77fbbad17"
+    },
+    "report": {
+      "artifact_id": 8888255552,
+      "archive_sha256": "7ef9b1ba1c6b73e5bcfd9bb709eccfdbd149e5fc0c10f63f7662285ffd65d94a",
+      "file_sha256": "72b922f8adcf5f402e69c446bc10af18d30eeab86cd253e48779c40d4a8cb491",
+      "result_sha256": "f12faa777c21f13dc2037a03a5162f0f06633e246c236c03b3c00a723d4f6ae6"
+    },
+    "coverage_proof": {
+      "artifact_id": 8888550451,
+      "archive_sha256": "8eac61146844a3e17b7fd88c68505740d8483dd5933fe7e4281705b36df40f74",
+      "json_sha256": "0182b531c40fcd1270e6e770141b0bf185681657e5cd37a1fc18d6dbb8031a94",
+      "csv_sha256": "bf372f01027d003efee3dc238fd8927d0b9134c6fe9b68cac0e4ba32e39aa6af",
+      "proof_sha256": "61afbfef0c8f51bc07e6992591cf2c0125069ef72c3d5ad9bd4a366d48a92be4"
+    }
+  },
+  "replay": {
+    "status": "CACHE_ONLY_REPLAY_VERIFIED",
+    "payloads_replayed": 2321,
+    "receipts_verified": 2321,
+    "normalized_rows": 2023144,
+    "missing_payloads": 0,
+    "extra_payloads": 0,
+    "hash_mismatches": 0,
+    "hash_identical": true,
+    "provider_calls": 0,
+    "new_replay_during_review": false
+  },
+  "coverage": {
+    "coverage_count": 1067,
+    "census_evidence_cells": 0,
+    "no_census_evidence_cells": 1067,
+    "advertised_flag_null": 1067,
+    "sample_verified_numerator_null": 1067,
+    "sample_verified_denominator_null": 1067,
+    "sample_verified_rate_null": 1067,
+    "gate_status_counts": {
+      "BLOCKED_BY_COVERAGE": 755,
+      "NOT_ASSESSED": 312
+    },
+    "cell_universe": "OBSERVED_UNION_NOT_AUTHORITATIVE_P0_GRID",
+    "authoritative_p0_denominator_proven": false
+  },
+  "gates": {
+    "total": 10,
+    "ready": 0,
+    "eligible_seasons": 0,
+    "status_counts": {
+      "BLOCKED_BY_COVERAGE": 8,
+      "BLOCKED_BY_SOURCE": 2
+    },
+    "production_status": "PRODUCTION_LOCKED",
+    "promotion": "NO_PROMOTION"
+  },
+  "backtest": {
+    "status": "PARTIAL",
+    "input_rows": 5000,
+    "folds": 3,
+    "bets": 165,
+    "roi": 0.003333333333333335,
+    "deep_feature_rows": 0,
+    "interpretation": "SMOKE_TEST_ONLY",
+    "no_bet_default": true,
+    "real_bets": false,
+    "promotion": "NO_PROMOTION"
+  },
+  "controls": {
+    "provider_calls_during_review": 0,
+    "new_replays_during_review": 0,
+    "r2_writes_during_review": 0,
+    "purchases_during_review": 0,
+    "odds_credits_during_review": 0,
+    "promotion": false,
+    "scale_authorized": false,
+    "production_locked": true,
+    "no_bet_default": true
+  },
+  "review": {
+    "score": 92,
+    "minimum_score": 92,
+    "score_scope": "FOUNDATION_ONLY",
+    "empirical_data_score": "NOT_SCORED",
+    "scientific_readiness_score": "NOT_SCORED",
+    "main_objection": "The 1,067 exported cells are an observed union, not the authoritative P0 Cartesian grid, and none contains census denominator evidence.",
+    "risk_severity": "HIGH",
+    "recommendation": "ACCEPT_FOUNDATION_ONLY",
+    "remote_ci": "PENDING_ON_DELIVERY_HEAD",
+    "merge_rule": "Only merge after the delivery head containing this artifact passes all required CI; this never upgrades the three PARTIAL data/science verdicts."
+  },
+  "reviewers": [
+    {
+      "task": "pr26_audit",
+      "roles": [
+        "DP5",
+        "A2",
+        "A1"
+      ],
+      "write_access": false
+    },
+    {
+      "task": "coverage_audit",
+      "roles": [
+        "DP6",
+        "C2",
+        "RP8",
+        "RP9"
+      ],
+      "write_access": false
+    }
+  ],
+  "source_hashes": {
+    "census": "4fefba4353c5e2a9b428236da4661147d610e3cdd09dfc87c7c1d978d9bd9d10",
+    "census_envelope": "4004a9768413b3f5486285c9a38e4eac52563f4d17bd513e105b5c6dd03afa80",
+    "feature_manifests": "748d94521a2a5d51d89b32bf961bd8ba95d341b393f32a009c0c937f9256d8df",
+    "feature_manifests_envelope": "fc5fe087f69979213bd4b197fa6b3b53bd271a1fc850a72e19ed083dbd1d71e3",
+    "gate_report": "43f9293f1441f2257362ff2dfcc2d65e44b445f7edf91a65d6c01f427501e58a",
+    "gate_report_envelope": "16277f56a6f7c8a1fe427094cb7f36ca4d429fd541615a68c1893f99bece914c",
+    "normalized_projection": "eb300271f75d34f33e00fc8da9a1eebbce4dff451a6703b582710333ebbcc790",
+    "normalized_projection_envelope": "e6cd321ba38cfd7bb7e6f913b26ee3ba3fc5d44decf90398c66b17c63f247a4b",
+    "quality_after": "eb300271f75d34f33e00fc8da9a1eebbce4dff451a6703b582710333ebbcc790",
+    "quality_before": "eb300271f75d34f33e00fc8da9a1eebbce4dff451a6703b582710333ebbcc790",
+    "quality_envelope": "9829d370fc2953d5aeed7801613afa5a13aabcc24ebbbfb3a300cb77fb60995e",
+    "replay": "55c41698a80e7f49a02e45ca0cd9aa11b161f8fbb06b720b8b2fca2cb5f55d1e",
+    "replay_envelope": "6ca11597cc6e5d4cae8c44f48d9eaad5041abd329f23a8b4cc0ee7d321b55c47",
+    "replay_source": "a23782b5b15381bbe82b7fac3a8f62ac8b3d68aed75aa6759f967f32875ac97d",
+    "report": "d2394c4746d82db5994d52d7a5ea7978823d9416226e10cc33eb0b4220fcbd2b",
+    "report_envelope": "ebfa9a5ed66c635ca50e899cee84b16d80f576061d6bb22ce9107a8ef98694c6"
+  },
+  "proof_hash": "6cab506d595ca63b894cca995c9e19d3edefdea6761e3670e3a27170e6fa2103"
+}

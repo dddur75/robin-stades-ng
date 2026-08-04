@@ -1,0 +1,113 @@
+name: "74 - Historical Deep Sharded Replay"
+
+on:
+  workflow_dispatch:
+    inputs:
+      slice_id: {type: string, default: standalone}
+      continuation_id: {type: string, default: p0-closure-30622258001-1}
+      continuation_of: {type: string, default: "30622258001:1"}
+      run_purpose: {type: string, default: P0_CLOSURE_AND_SHARDED_REPLAY}
+      diagnostic_task_id:
+        description: "Optional cached task SHA-256; skips full replay when set"
+        type: string
+        default: ""
+  workflow_call:
+    inputs:
+      slice_id: {type: string, default: standalone}
+      continuation_id: {type: string, default: p0-closure-30622258001-1}
+      continuation_of: {type: string, default: "30622258001:1"}
+      run_purpose: {type: string, default: P0_CLOSURE_AND_SHARDED_REPLAY}
+      diagnostic_task_id: {type: string, default: ""}
+    secrets:
+      R2_ACCOUNT_ID: {required: true}
+      R2_ACCESS_KEY_ID: {required: true}
+      R2_SECRET_ACCESS_KEY: {required: true}
+      R2_BUCKET_NAME: {required: true}
+    outputs:
+      status:
+        value: ${{ jobs.idempotence.outputs.status }}
+      global_hash:
+        value: ${{ jobs.idempotence.outputs.global_hash }}
+      gates:
+        value: ${{ jobs.idempotence.outputs.gates }}
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-r2-state
+  cancel-in-progress: false
+
+jobs:
+  inventory:
+    if: ${{ inputs.diagnostic_task_id == '' }}
+    uses: ./.github/workflows/74a-historical-deep-r2-inventory.yml
+    with:
+      slice_id: ${{ inputs.slice_id }}
+      continuation_id: ${{ inputs.continuation_id }}
+      continuation_of: ${{ inputs.continuation_of }}
+      run_purpose: ${{ inputs.run_purpose }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  replay-segments:
+    if: ${{ inputs.diagnostic_task_id == '' }}
+    needs: inventory
+    uses: ./.github/workflows/74b-historical-deep-segmented-replay.yml
+    with:
+      inventory_artifact_name: ${{ needs.inventory.outputs.artifact_name }}
+      segment_batches: ${{ needs.inventory.outputs.segment_batches }}
+      continuation_id: ${{ inputs.continuation_id }}
+      artifact_scope: ${{ inputs.slice_id }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  reducer:
+    if: ${{ inputs.diagnostic_task_id == '' }}
+    needs: [inventory, replay-segments]
+    uses: ./.github/workflows/74c-historical-deep-projection-reducer.yml
+    with:
+      inventory_artifact_name: ${{ needs.inventory.outputs.artifact_name }}
+      continuation_id: ${{ inputs.continuation_id }}
+      artifact_scope: ${{ inputs.slice_id }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  idempotence:
+    if: ${{ inputs.diagnostic_task_id == '' }}
+    needs: [inventory, reducer]
+    uses: ./.github/workflows/74d-historical-deep-idempotent-replay.yml
+    with:
+      inventory_artifact_name: ${{ needs.inventory.outputs.artifact_name }}
+      segment_batches: ${{ needs.inventory.outputs.segment_batches }}
+      continuation_id: ${{ inputs.continuation_id }}
+      artifact_scope: ${{ inputs.slice_id }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  diagnostic:
+    if: ${{ inputs.diagnostic_task_id != '' }}
+    uses: ./.github/workflows/80-historical-deep-replay-diagnostic.yml
+    with:
+      task_id: ${{ inputs.diagnostic_task_id }}
+      continuation_id: ${{ inputs.continuation_id }}
+      continuation_of: ${{ inputs.continuation_of }}
+      run_purpose: ${{ inputs.run_purpose }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}

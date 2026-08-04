@@ -1,0 +1,412 @@
+name: "79 - Historical Deep Night Controller"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Exécuter les appels fournisseur dans le quota calculé"
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      execute:
+        type: boolean
+        default: false
+    secrets:
+      API_FOOTBALL_KEY:
+        required: true
+      R2_ACCOUNT_ID:
+        required: true
+      R2_ACCESS_KEY_ID:
+        required: true
+      R2_SECRET_ACCESS_KEY:
+        required: true
+      R2_BUCKET_NAME:
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-night-controller
+  cancel-in-progress: false
+
+jobs:
+  replay-current:
+    uses: ./.github/workflows/74-historical-deep-replay.yml
+    with:
+      slice_id: current-r2-gate
+      continuation_id: p0-closure-30622258001-1
+      continuation_of: "30622258001:1"
+      run_purpose: P0_CLOSURE_AND_SHARDED_REPLAY
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  census:
+    needs: replay-current
+    if: ${{ needs['replay-current'].outputs.status == 'SECOND_PASS_IDEMPOTENT' }}
+    uses: ./.github/workflows/70-historical-deep-coverage-census.yml
+    with:
+      execute: ${{ inputs.execute }}
+      max_calls: 1500
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  fixture-p0-a:
+    needs: players-p0-b
+    if: >-
+      ${{ always() && needs['players-p0-b'].result == 'success' &&
+      needs['players-p0-b'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/71-historical-deep-fixture-bundle-harvest.yml
+    with:
+      slice_id: fixture-p0-a
+      execute: ${{ inputs.execute }}
+      priority: P0
+      max_calls: 12000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  fixture-p0-b:
+    needs: fixture-p0-a
+    if: >-
+      ${{ always() && needs['fixture-p0-a'].result == 'success' &&
+      needs['fixture-p0-a'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/71-historical-deep-fixture-bundle-harvest.yml
+    with:
+      slice_id: fixture-p0-b
+      execute: ${{ inputs.execute }}
+      priority: P0
+      max_calls: 12000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  fixture-p0-c:
+    needs: fixture-p0-b
+    if: >-
+      ${{ always() && needs['fixture-p0-b'].result == 'success' &&
+      needs['fixture-p0-b'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/71-historical-deep-fixture-bundle-harvest.yml
+    with:
+      slice_id: fixture-p0-c
+      execute: ${{ inputs.execute }}
+      priority: P0
+      max_calls: 12000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  players-p0-a:
+    needs: census
+    if: >-
+      ${{ always() && needs.census.result == 'success' &&
+      needs.census.outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/72-historical-deep-player-pages-harvest.yml
+    with:
+      slice_id: players-p0-a
+      execute: ${{ inputs.execute }}
+      priority: P0
+      max_calls: 10000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  players-p0-b:
+    needs: players-p0-a
+    if: >-
+      ${{ always() && needs['players-p0-a'].result == 'success' &&
+      needs['players-p0-a'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/72-historical-deep-player-pages-harvest.yml
+    with:
+      slice_id: players-p0-b
+      execute: ${{ inputs.execute }}
+      priority: P0
+      max_calls: 10000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  injuries-p0:
+    needs: fixture-p0-c
+    if: >-
+      ${{ always() && needs['fixture-p0-c'].result == 'success' &&
+      needs['fixture-p0-c'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/73-historical-deep-injuries-sidelined-harvest.yml
+    with:
+      slice_id: injuries-p0
+      execute: ${{ inputs.execute }}
+      priority: P0
+      max_calls: 6000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  replay-p0:
+    needs: injuries-p0
+    if: ${{ always() && needs['injuries-p0'].result == 'success' }}
+    uses: ./.github/workflows/74-historical-deep-replay.yml
+    with:
+      slice_id: replay-p0
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  quality-p0:
+    needs: replay-p0
+    if: ${{ always() && needs['replay-p0'].result == 'success' }}
+    uses: ./.github/workflows/75-historical-deep-quality.yml
+    with:
+      slice_id: quality-p0
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  fixture-p1:
+    needs: [injuries-p0, quality-p0]
+    if: >-
+      ${{ always() && needs['injuries-p0'].result == 'success' &&
+      needs['quality-p0'].result == 'success' &&
+      needs['quality-p0'].outputs.status == 'COMPLETE' &&
+      needs['injuries-p0'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/71-historical-deep-fixture-bundle-harvest.yml
+    with:
+      slice_id: fixture-p1
+      execute: ${{ inputs.execute }}
+      priority: P1
+      max_calls: 10000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  players-p1:
+    needs: fixture-p1
+    if: >-
+      ${{ always() && needs['fixture-p1'].result == 'success' &&
+      needs['fixture-p1'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/72-historical-deep-player-pages-harvest.yml
+    with:
+      slice_id: players-p1
+      execute: ${{ inputs.execute }}
+      priority: P1
+      max_calls: 5000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  injuries-p1:
+    needs: players-p1
+    if: >-
+      ${{ always() && needs['players-p1'].result == 'success' &&
+      needs['players-p1'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/73-historical-deep-injuries-sidelined-harvest.yml
+    with:
+      slice_id: injuries-p1
+      execute: ${{ inputs.execute }}
+      priority: P1
+      max_calls: 3000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  replay-p1:
+    needs: injuries-p1
+    if: ${{ always() && needs['injuries-p1'].result == 'success' }}
+    uses: ./.github/workflows/74-historical-deep-replay.yml
+    with:
+      slice_id: replay-p1
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  quality-p1:
+    needs: replay-p1
+    if: ${{ always() && needs['replay-p1'].result == 'success' }}
+    uses: ./.github/workflows/75-historical-deep-quality.yml
+    with:
+      slice_id: quality-p1
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  fixture-p2:
+    needs: [injuries-p1, quality-p1]
+    if: >-
+      ${{ always() && needs['injuries-p1'].result == 'success' &&
+      needs['quality-p1'].result == 'success' &&
+      needs['quality-p1'].outputs.status == 'COMPLETE' &&
+      needs['injuries-p1'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/71-historical-deep-fixture-bundle-harvest.yml
+    with:
+      slice_id: fixture-p2
+      execute: ${{ inputs.execute }}
+      priority: P2
+      max_calls: 4000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  players-p2:
+    needs: fixture-p2
+    if: >-
+      ${{ always() && needs['fixture-p2'].result == 'success' &&
+      needs['fixture-p2'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/72-historical-deep-player-pages-harvest.yml
+    with:
+      slice_id: players-p2
+      execute: ${{ inputs.execute }}
+      priority: P2
+      max_calls: 2500
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  injuries-p2:
+    needs: players-p2
+    if: >-
+      ${{ always() && needs['players-p2'].result == 'success' &&
+      needs['players-p2'].outputs.provider_stop != 'true' }}
+    uses: ./.github/workflows/73-historical-deep-injuries-sidelined-harvest.yml
+    with:
+      slice_id: injuries-p2
+      execute: ${{ inputs.execute }}
+      priority: P2
+      max_calls: 2000
+      max_duration_minutes: 75
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  replay-final:
+    needs: [replay-current, injuries-p2]
+    if: ${{ always() && needs['replay-current'].result == 'success' }}
+    uses: ./.github/workflows/74-historical-deep-replay.yml
+    with:
+      slice_id: replay-final
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  quality-final:
+    needs: replay-final
+    if: ${{ always() && needs['replay-final'].result == 'success' }}
+    uses: ./.github/workflows/75-historical-deep-quality.yml
+    with:
+      slice_id: quality-final
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  features:
+    needs: quality-final
+    if: >-
+      ${{ always() && needs['quality-final'].result == 'success' &&
+      needs['quality-final'].outputs.status == 'COMPLETE' }}
+    uses: ./.github/workflows/76-historical-deep-asof-feature-build.yml
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  backtest:
+    needs: features
+    if: ${{ always() && needs.features.result == 'success' }}
+    uses: ./.github/workflows/77-historical-deep-backtest-pilot.yml
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  report:
+    needs: [replay-current, backtest]
+    if: ${{ always() && needs['replay-current'].result == 'success' }}
+    uses: ./.github/workflows/78-historical-deep-dashboard-report.yml
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  coverage-proof:
+    needs: report
+    if: ${{ always() && inputs.execute && needs.report.result == 'success' }}
+    uses: ./.github/workflows/81-historical-deep-coverage-proof-export.yml
+    with:
+      source_code_revision: ${{ github.sha }}
+      source_run_token: ${{ format('{0}:{1}', github.run_id, github.run_attempt) }}
+      max_output_bytes: 2000000
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}

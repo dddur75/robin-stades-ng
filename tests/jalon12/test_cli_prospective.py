@@ -79,15 +79,15 @@ def _fixture_record(
     }
 
 
-def _cache(path: Path) -> Path:
+def _cache(path: Path, *, now: datetime = NOW) -> Path:
     fixture_id = "api-football:9001"
     value = {
         "current_season": 2026,
-        "fixtures": [_fixture_record(9001, NOW + timedelta(hours=1))],
+        "fixtures": [_fixture_record(9001, now + timedelta(hours=1))],
         "payloads": {
             fixture_id: {
                 "FIXTURE": [
-                    _fixture_record(9001, NOW + timedelta(hours=1))
+                    _fixture_record(9001, now + timedelta(hours=1))
                 ],
                 "TEAM": [{"home": {"id": 18002}, "away": {"id": 18003}}],
                 "EVENT_STATUS": [
@@ -142,7 +142,7 @@ def _cache(path: Path) -> Path:
                         "home_team": "Home 9001",
                         "away_team": "Away 9001",
                         "commence_time": (
-                            NOW + timedelta(hours=1)
+                            now + timedelta(hours=1)
                         ).isoformat(),
                         "bookmakers": [
                             {
@@ -794,7 +794,7 @@ def test_gate_report_cockpit_preserves_full_replay_and_fixture_previews(
     monkeypatch: object,
 ) -> None:
     report_now = NOW
-    cache = _cache(tmp_path / "cache.json")
+    cache = _cache(tmp_path / "cache.json", now=report_now)
     output = tmp_path / "reports"
     repository = ProspectiveR2Repository(
         DirectoryObjectStore(tmp_path / "objects")

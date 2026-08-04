@@ -6,10 +6,27 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+TEXT_ARTIFACT_SUFFIXES = {
+    ".csv",
+    ".json",
+    ".jsonl",
+    ".md",
+    ".py",
+    ".toml",
+    ".yaml",
+    ".yml",
+}
 
 
 def load_json(relative: str) -> dict[str, Any]:
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+def artifact_sha256(path: Path) -> str:
+    payload = path.read_bytes()
+    if path.suffix.casefold() in TEXT_ARTIFACT_SUFFIXES:
+        payload = payload.replace(b"\r\n", b"\n")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def test_required_governance_artifacts_exist_and_are_valid_json() -> None:
@@ -236,7 +253,7 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
         artifact = ROOT / claim["artifact"]
         assert artifact.is_file()
         if len(claim["hash"]) == 64:
-            assert hashlib.sha256(artifact.read_bytes()).hexdigest() == claim["hash"]
+            assert artifact_sha256(artifact) == claim["hash"]
 
     decision_nodes = {
         node["decision_id"]: node["ledger_record_hash"]

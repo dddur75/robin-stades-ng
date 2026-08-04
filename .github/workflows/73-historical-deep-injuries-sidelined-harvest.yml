@@ -1,0 +1,121 @@
+name: "73 - Injuries and Sidelined Harvest"
+
+on:
+  workflow_dispatch:
+    inputs:
+      slice_id:
+        type: string
+        default: standalone
+      execute:
+        type: boolean
+        default: false
+      priority:
+        type: choice
+        options: [P0, P1, P2, auto]
+        default: P0
+      max_calls:
+        type: number
+        default: 10000
+      max_duration_minutes:
+        type: number
+        default: 100
+  workflow_call:
+    inputs:
+      slice_id:
+        type: string
+        default: standalone
+      execute:
+        type: boolean
+        default: false
+      priority:
+        type: string
+        default: P0
+      max_calls:
+        type: number
+        default: 10000
+      max_duration_minutes:
+        type: number
+        default: 100
+    secrets:
+      API_FOOTBALL_KEY:
+        required: true
+      R2_ACCOUNT_ID:
+        required: true
+      R2_ACCESS_KEY_ID:
+        required: true
+      R2_SECRET_ACCESS_KEY:
+        required: true
+      R2_BUCKET_NAME:
+        required: true
+    outputs:
+      status:
+        value: ${{ jobs.injuries.outputs.status }}
+      provider_stop:
+        value: ${{ jobs.injuries.outputs.provider_stop }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-deep-r2-state
+  cancel-in-progress: false
+
+jobs:
+  injuries:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    outputs:
+      status: ${{ steps.outcome.outputs.status }}
+      provider_stop: ${{ steps.outcome.outputs.provider_stop }}
+    env:
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Collecter blessures puis sidelined borné
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_historical_deep_harvest.py
+          --config configs/historical-deep-data-harvest-v1.json
+          --output artifacts/historical-deep
+          --code-revision "${GITHUB_SHA}"
+          injuries
+          ${{ inputs.execute && '--execute' || '' }}
+          --priority "${{ inputs.priority }}"
+          --max-calls "${{ inputs.max_calls }}"
+          --max-duration-minutes "${{ inputs.max_duration_minutes }}"
+          --mission-max-minutes 720
+      - name: Publier la décision provider sanitisée
+        id: outcome
+        if: always()
+        run: >-
+          python scripts/historical_deep_workflow_outcome.py
+          artifacts/historical-deep/injuries.json >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-deep-73-${{ inputs.slice_id }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/historical-deep/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

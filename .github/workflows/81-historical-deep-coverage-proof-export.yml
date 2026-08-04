@@ -1,0 +1,131 @@
+name: "81 - Historical Deep Coverage Proof Export"
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_code_revision:
+        description: "SHA Git exact de la lignée R2 source"
+        type: string
+        required: true
+      source_run_token:
+        description: "Token exact de la lignée R2 source (run_id:attempt)"
+        type: string
+        required: true
+      max_output_bytes:
+        description: "Taille cumulée maximale JSON + CSV"
+        type: number
+        required: false
+        default: 2000000
+  workflow_call:
+    inputs:
+      source_code_revision:
+        type: string
+        required: true
+      source_run_token:
+        type: string
+        required: true
+      max_output_bytes:
+        type: number
+        required: false
+        default: 2000000
+    secrets:
+      R2_ACCOUNT_ID:
+        required: true
+      R2_ACCESS_KEY_ID:
+        required: true
+      R2_SECRET_ACCESS_KEY:
+        required: true
+      R2_BUCKET_NAME:
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-deep-r2-coverage-proof
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      SOURCE_CODE_REVISION: ${{ inputs.source_code_revision }}
+      SOURCE_RUN_TOKEN: ${{ inputs.source_run_token }}
+      EXPORTER_CODE_REVISION: ${{ github.sha }}
+      MAX_OUTPUT_BYTES: ${{ inputs.max_output_bytes }}
+    steps:
+      - name: Checkout exporter
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Valider les identifiants de lignée avant checkout source
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          import re
+
+          source_revision = os.environ["SOURCE_CODE_REVISION"]
+          source_run_token = os.environ["SOURCE_RUN_TOKEN"]
+          if re.fullmatch(r"[0-9a-f]{40}", source_revision) is None:
+              raise SystemExit("SOURCE_CODE_REVISION_INVALID")
+          if re.fullmatch(r"[0-9]+:[1-9][0-9]*", source_run_token) is None:
+              raise SystemExit("SOURCE_RUN_TOKEN_INVALID")
+          PY
+
+      - name: Checkout du contrat source exact
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_code_revision }}
+          path: source-lineage
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer l'exporteur
+        run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+
+      - name: Exporter la preuve R2 dérivée et sanitizée
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/export_historical_deep_coverage.py
+          --config source-lineage/configs/historical-deep-data-harvest-v1.json
+          --output artifacts/historical-deep-coverage-proof
+          --source-code-revision "${SOURCE_CODE_REVISION}"
+          --source-run-token "${SOURCE_RUN_TOKEN}"
+          --exporter-code-revision "${EXPORTER_CODE_REVISION}"
+          --max-output-bytes "${MAX_OUTPUT_BYTES}"
+
+      - name: Publier uniquement JSON et CSV allow-listés
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-81-coverage-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/historical-deep-coverage-proof/coverage-proof.json
+            artifacts/historical-deep-coverage-proof/coverage-proof.csv
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

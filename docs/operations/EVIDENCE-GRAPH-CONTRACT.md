@@ -22,6 +22,10 @@ preuve de livraison.
 Le hash d'un payload ne prouve pas son grain, son dénominateur ou sa temporalité.
 Ces propriétés restent des champs explicites du claim.
 
+Pour un artefact texte, le SHA-256 porte sur les octets UTF-8 canoniques avec
+fins de ligne LF, indépendamment de la conversion CRLF d'un checkout Windows.
+Un artefact binaire est hashé sur ses octets bruts.
+
 ## Ledger chaîné
 
 Chaque ligne JSON du ledger contient `previous_hash`, `hash_algorithm=SHA-256` et

@@ -1,0 +1,109 @@
+name: "78 - Historical Deep Dashboard Report"
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_code_revision:
+        description: "SHA exact à reprendre, vide pour le SHA du workflow"
+        type: string
+        required: false
+        default: ""
+      source_run_token:
+        description: "Lignée R2 exacte à reprendre, vide pour le run courant"
+        type: string
+        required: false
+        default: ""
+  workflow_call:
+    inputs:
+      source_code_revision:
+        type: string
+        required: false
+        default: ""
+      source_run_token:
+        type: string
+        required: false
+        default: ""
+    secrets:
+      R2_ACCOUNT_ID:
+        required: true
+      R2_ACCESS_KEY_ID:
+        required: true
+      R2_SECRET_ACCESS_KEY:
+        required: true
+      R2_BUCKET_NAME:
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-deep-r2-state
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      ANALYSIS_CODE_REVISION: ${{ inputs.source_code_revision || github.sha }}
+      HISTORICAL_DEEP_RUN_TOKEN: ${{ inputs.source_run_token }}
+    steps:
+      - name: Valider la lignée de reprise optionnelle
+        env:
+          SOURCE_CODE_REVISION: ${{ inputs.source_code_revision }}
+          SOURCE_RUN_TOKEN: ${{ inputs.source_run_token }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+
+          revision = os.environ["SOURCE_CODE_REVISION"]
+          run_token = os.environ["SOURCE_RUN_TOKEN"]
+          if bool(revision) != bool(run_token):
+              raise SystemExit("ANALYSIS_RECOVERY_LINEAGE_INCOMPLETE")
+          if revision and re.fullmatch(r"[0-9a-f]{40}", revision) is None:
+              raise SystemExit("ANALYSIS_RECOVERY_CODE_REVISION_INVALID")
+          if run_token and re.fullmatch(r"[0-9]+:[1-9][0-9]*", run_token) is None:
+              raise SystemExit("ANALYSIS_RECOVERY_RUN_TOKEN_INVALID")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Consolider le rapport sanitisé
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_historical_deep_harvest.py
+          --config configs/historical-deep-data-harvest-v1.json
+          --output artifacts/historical-deep
+          --code-revision "${ANALYSIS_CODE_REVISION}"
+          report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-deep-78-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/historical-deep/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

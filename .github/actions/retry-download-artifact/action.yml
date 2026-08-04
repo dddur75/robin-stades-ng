@@ -1,0 +1,51 @@
+name: Retry artifact download
+description: Download one GitHub Actions artifact with bounded retries.
+
+inputs:
+  name:
+    description: Exact artifact name.
+    required: true
+  path:
+    description: Destination path.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Download artifact (attempt 1/3)
+      id: download_1
+      continue-on-error: true
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+
+    - name: Back off after attempt 1
+      if: steps.download_1.outcome == 'failure'
+      shell: bash
+      run: sleep 15
+
+    - name: Download artifact (attempt 2/3)
+      id: download_2
+      if: steps.download_1.outcome == 'failure'
+      continue-on-error: true
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+
+    - name: Back off after attempt 2
+      if: >-
+        steps.download_1.outcome == 'failure' &&
+        steps.download_2.outcome == 'failure'
+      shell: bash
+      run: sleep 30
+
+    - name: Download artifact (attempt 3/3)
+      if: >-
+        steps.download_1.outcome == 'failure' &&
+        steps.download_2.outcome == 'failure'
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}

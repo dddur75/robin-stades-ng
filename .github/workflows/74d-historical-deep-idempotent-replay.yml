@@ -1,0 +1,172 @@
+name: "74D - Historical Deep Idempotent Replay"
+
+on:
+  workflow_call:
+    inputs:
+      inventory_artifact_name: {type: string, required: true}
+      segment_batches: {type: string, required: true}
+      continuation_id: {type: string, required: true}
+      artifact_scope: {type: string, required: true}
+    secrets:
+      R2_ACCOUNT_ID: {required: true}
+      R2_ACCESS_KEY_ID: {required: true}
+      R2_SECRET_ACCESS_KEY: {required: true}
+      R2_BUCKET_NAME: {required: true}
+    outputs:
+      status:
+        value: ${{ jobs.idempotence.outputs.status }}
+      global_hash:
+        value: ${{ jobs.idempotence.outputs.global_hash }}
+      gates:
+        value: ${{ jobs.idempotence.outputs.gates }}
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  replay-second-pass:
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        segment_batch: ${{ fromJSON(inputs.segment_batches) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env: &safety
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/retry-download-artifact
+        with:
+          name: ${{ inputs.inventory_artifact_name }}
+          path: artifacts/inventory
+      - name: Replay second pass segment from R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          SEGMENT_IDS_JSON: ${{ matrix.segment_batch.segment_ids_json }}
+        run: >-
+          python scripts/run_historical_deep_segmented_replay.py
+          --output artifacts/segments/pass-2
+          --code-revision "${GITHUB_SHA}"
+          --continuation-id "${{ inputs.continuation_id }}"
+          segment-batch
+          --inventory artifacts/inventory/replay-inventory.json
+          --segment-ids-json "${SEGMENT_IDS_JSON}"
+          --pass-id 2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-deep-74d-${{ inputs.artifact_scope }}-${{ matrix.segment_batch.batch_id }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/segments/pass-2/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
+
+  idempotence:
+    needs: replay-second-pass
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    outputs:
+      status: ${{ steps.reduce.outputs.status }}
+      global_hash: ${{ steps.reduce.outputs.global_hash }}
+      gates: ${{ steps.reduce.outputs.gates }}
+    env: *safety
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - uses: ./.github/actions/retry-download-artifact
+        with:
+          name: ${{ inputs.inventory_artifact_name }}
+          path: artifacts/inventory
+      - name: Download every second-pass artifact across API pages
+        id: segment_artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_PREFIX: historical-deep-74d-${{ inputs.artifact_scope }}-batch-
+          ARTIFACT_SUFFIX: -${{ github.run_id }}-${{ github.run_attempt }}
+          ARTIFACT_PATTERN: historical-deep-74d-${{ inputs.artifact_scope }}-batch-*-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          mapfile -t ids < <(
+            gh api --paginate \
+              "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" \
+              --jq '.artifacts[] | [.id, .name] | @tsv' |
+              awk -F '\t' -v prefix="${ARTIFACT_PREFIX}" -v suffix="${ARTIFACT_SUFFIX}" \
+                'index($2, prefix) == 1 && substr($2, length($2) - length(suffix) + 1) == suffix { print $1 }'
+          )
+          if ((${#ids[@]} == 0)); then
+            echo "No second-pass artifacts matched this run attempt" >&2
+            exit 1
+          fi
+          expected_count=${#ids[@]}
+          for attempt in 1 2 3; do
+            rm -rf artifacts/segments/pass-2
+            if gh run download "${GITHUB_RUN_ID}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --pattern "${ARTIFACT_PATTERN}" \
+              --dir artifacts/segments/pass-2; then
+              break
+            fi
+            if ((attempt == 3)); then
+              echo "Second-pass artifact download failed after ${attempt} attempts" >&2
+              exit 1
+            fi
+            sleep $((attempt * 15))
+          done
+          actual_count=$(find artifacts/segments/pass-2 -mindepth 1 -maxdepth 1 \
+            -type d -name "${ARTIFACT_PATTERN}" -print | wc -l)
+          if ((actual_count != expected_count)); then
+            echo "Second-pass artifact download mismatch: expected=${expected_count} actual=${actual_count}" >&2
+            exit 1
+          fi
+          echo "Downloaded ${actual_count} second-pass artifacts across all API pages"
+      - name: Prove zero inserts on the second pass
+        id: reduce
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_historical_deep_segmented_replay.py
+          --output artifacts/historical-deep/74d
+          --code-revision "${GITHUB_SHA}"
+          --continuation-id "${{ inputs.continuation_id }}"
+          reduce
+          --inventory artifacts/inventory/replay-inventory.json
+          --segments-root artifacts/segments/pass-2
+          --pass-id 2
+          --idempotent
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-deep-74d-idempotence-${{ inputs.artifact_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/historical-deep/74d/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

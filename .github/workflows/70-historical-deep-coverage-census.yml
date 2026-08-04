@@ -1,0 +1,110 @@
+name: "70 - Coverage Census historique profond"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Interroger le fournisseur et archiver les preuves dans R2"
+        type: boolean
+        default: false
+      max_calls:
+        description: "Plafond d'appels fournisseur de ce lot"
+        type: number
+        default: 500
+      max_duration_minutes:
+        description: "Durée productive maximale de ce lot"
+        type: number
+        default: 100
+  workflow_call:
+    inputs:
+      execute:
+        type: boolean
+        default: false
+      max_calls:
+        type: number
+        default: 500
+      max_duration_minutes:
+        type: number
+        default: 100
+    secrets:
+      API_FOOTBALL_KEY:
+        required: true
+      R2_ACCOUNT_ID:
+        required: true
+      R2_ACCESS_KEY_ID:
+        required: true
+      R2_SECRET_ACCESS_KEY:
+        required: true
+      R2_BUCKET_NAME:
+        required: true
+    outputs:
+      status:
+        value: ${{ jobs.census.outputs.status }}
+      provider_stop:
+        value: ${{ jobs.census.outputs.provider_stop }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-deep-r2-state
+  cancel-in-progress: false
+
+jobs:
+  census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    outputs:
+      status: ${{ steps.outcome.outputs.status }}
+      provider_stop: ${{ steps.outcome.outputs.provider_stop }}
+    env:
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - name: Installer le collecteur
+        run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Auditer le plan Mega et la couverture réelle
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_historical_deep_harvest.py
+          --config configs/historical-deep-data-harvest-v1.json
+          --output artifacts/historical-deep
+          --code-revision "${GITHUB_SHA}"
+          census
+          ${{ inputs.execute && '--execute' || '' }}
+          --max-calls "${{ inputs.max_calls }}"
+          --max-duration-minutes "${{ inputs.max_duration_minutes }}"
+      - name: Publier la décision provider sanitisée
+        id: outcome
+        if: always()
+        run: >-
+          python scripts/historical_deep_workflow_outcome.py
+          artifacts/historical-deep/census.json >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-deep-70-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/historical-deep/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9

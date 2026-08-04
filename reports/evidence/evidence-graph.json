@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-04T14:36:34Z",
+  "generated_at":"2026-08-04T15:23:55Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -226,6 +226,70 @@
       "dataset_lineage_id":"jalon12-frozen-clock-NOW-20260801T120000Z",
       "status":"VERIFIED",
       "verified_by":["C0","C1","A2"]
+    },
+    {
+      "claim_id":"PR26.MAIN.MERGE.001",
+      "claim":"The non-destructive main merge has exactly one resolved conflict and preserves both the fixed test clock and PR #26's parameterized cache helper.",
+      "scope":"PR26",
+      "source":"git merge-base; git merge-tree; merge conflict inspection; independent A2 review",
+      "grain":"merge_conflict_resolution",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"tests/jalon12/test_cli_prospective.py",
+      "hash":"3db90cc6d3291cb15e5d82889eb549a7e5f6195dd45ff9655cfc5437553d7fd4",
+      "code_revision":"24b66dabc158ef62d888feec86ae602ba0391e47",
+      "execution_id":"pr26-main-merge-20260804T151108Z",
+      "scientific_lineage_id":"NOT_APPLICABLE_MERGE_RESOLUTION",
+      "dataset_lineage_id":"NOT_APPLICABLE_MERGE_RESOLUTION",
+      "status":"VERIFIED",
+      "verified_by":["C0","A2"]
+    },
+    {
+      "claim_id":"GOV.EVIDENCE.PORTABILITY.001",
+      "claim":"Text artifact hashes are validated on UTF-8 LF canonical bytes so evidence verification is stable across Linux and Windows checkouts.",
+      "scope":"GOVERNANCE_PORTABILITY",
+      "source":"bounded Windows failure; canonical-hash test; evidence contract",
+      "grain":"artifact_hash_validation",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"tests/council/test_robin_council_os_v3.py",
+      "hash":"847b68881392f133d73af8165cf151254eaea6d72c44381b67ccfa6b4a06fad5",
+      "code_revision":"24b66dabc158ef62d888feec86ae602ba0391e47",
+      "execution_id":"pr26-evidence-portability-20260804T151434Z",
+      "scientific_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
+      "dataset_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
+      "status":"VERIFIED",
+      "verified_by":["C0","A2"]
+    },
+    {
+      "claim_id":"PR26.FOUNDATION.REVIEW.001",
+      "claim":"PR #26 is acceptable only as a technical foundation: two engineering verdicts are READY while coverage, strict features and hypothesis backtesting remain PARTIAL.",
+      "scope":"PR26_FOUNDATION_ONLY",
+      "source":"GitHub recovery run 30896340821; immutable downloaded artifact hashes; independent pr26_audit and coverage_audit reviews",
+      "grain":"pull_request_foundation_review",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/evidence/pr26-final-review-v1.json",
+      "hash":"b484b2b57f42ae80ea77793bc076d722f01ad2240580ee39d2ae3a971a6ce2ac",
+      "code_revision":"994aa01121d3b28e106077bc021894e768855a3f",
+      "execution_id":"pr26-foundation-final-review-20260804T152355Z",
+      "scientific_lineage_id":"historical-deep-foundation-review-v1",
+      "dataset_lineage_id":"github-run-30896340821-source-token-30853757779-1",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","C2","RP8","RP9","A1","A2"]
+    },
+    {
+      "claim_id":"PR26.FOUNDATION.SCORE.001",
+      "claim":"The reviewed PR #26 foundation meets the 92/100 threshold, but merge remains conditional on green CI for the descendant delivery head containing the review artifact.",
+      "scope":"PR26_FOUNDATION_ONLY",
+      "source":"independent bounded quality review and conditional delivery gate",
+      "grain":"quality_score",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/council/pr26-foundation-quality-score-v1.json",
+      "hash":"d129e9559eeafd3b4321ea5f856304e9c0f5f33b32ed27b3913158ee828b5de3",
+      "code_revision":"994aa01121d3b28e106077bc021894e768855a3f",
+      "execution_id":"pr26-foundation-final-review-20260804T152355Z",
+      "scientific_lineage_id":"historical-deep-foundation-review-v1",
+      "dataset_lineage_id":"github-run-30896340821-source-token-30853757779-1",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","DP6","C2","A1","A2"]
     }
   ],
   "decision_nodes":[
@@ -236,7 +300,10 @@
     {"decision_id":"RCV3-20260804-005","ledger_record_hash":"5b42ce3048f9f62cfcdc71b48943d4b353b0fc5ce7204049aab3974725135a42"},
     {"decision_id":"RCV3-20260804-006","ledger_record_hash":"29aa8ea408d8eeb4647089742fcfbd5190ae7e2ee5cfb702ced0f488c60ce632"},
     {"decision_id":"RCV3-20260804-007","ledger_record_hash":"a29fce71b9ccb6905bc8be83ecdb211ad552b70e224e02b1c41fe73d6f729809"},
-    {"decision_id":"RCV3-20260804-008","ledger_record_hash":"9ac7fc31102b20f52bd5b809c205fb09bddfc327dca8492b2c57044a3470314f"}
+    {"decision_id":"RCV3-20260804-008","ledger_record_hash":"9ac7fc31102b20f52bd5b809c205fb09bddfc327dca8492b2c57044a3470314f"},
+    {"decision_id":"RCV3-20260804-009","ledger_record_hash":"91532e5da1c1b05be2b41d382c7457e13a22cf190f94f26ad1a196ed41174cff"},
+    {"decision_id":"RCV3-20260804-010","ledger_record_hash":"196f7daadf0ca4f363afc3510e0a671064d88e5e1831ab8932ccdcf62074f3dc"},
+    {"decision_id":"RCV3-20260804-011","ledger_record_hash":"cca942e0e4652a629a75861e0d30512d4fd4fb670ca41f05dfd8346abd39fa1f"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -255,6 +322,15 @@
     {"edge_id":"EDGE.014","from_claim_id":"GOV.AUTHORIZATION.001","to_decision_id":"RCV3-20260804-007","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.015","from_claim_id":"GOV.CI.CLOCK.001","to_decision_id":"RCV3-20260804-008","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.016","from_claim_id":"GOV.TEST.E0.001","to_decision_id":"RCV3-20260804-008","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.017","from_claim_id":"GOV.AUTHORIZATION.001","to_decision_id":"RCV3-20260804-008","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.017","from_claim_id":"GOV.AUTHORIZATION.001","to_decision_id":"RCV3-20260804-008","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.018","from_claim_id":"ENV.PR26.HEAD.001","to_decision_id":"RCV3-20260804-009","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.019","from_claim_id":"PR26.MAIN.MERGE.001","to_decision_id":"RCV3-20260804-009","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.020","from_claim_id":"GOV.CI.CLOCK.001","to_decision_id":"RCV3-20260804-009","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.021","from_claim_id":"PR26.MAIN.MERGE.001","to_decision_id":"RCV3-20260804-010","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.022","from_claim_id":"GOV.EVIDENCE.PORTABILITY.001","to_decision_id":"RCV3-20260804-010","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.023","from_claim_id":"GOV.TEST.E0.001","to_decision_id":"RCV3-20260804-010","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.024","from_claim_id":"PR26.FOUNDATION.REVIEW.001","to_decision_id":"RCV3-20260804-011","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.025","from_claim_id":"PR26.FOUNDATION.SCORE.001","to_decision_id":"RCV3-20260804-011","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.026","from_claim_id":"PR26.MAIN.MERGE.001","to_decision_id":"RCV3-20260804-011","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

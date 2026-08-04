@@ -1,0 +1,104 @@
+name: "74A - Historical Deep R2 Inventory"
+
+on:
+  workflow_call:
+    inputs:
+      slice_id:
+        type: string
+        default: standalone
+      continuation_id:
+        type: string
+        default: p0-closure-30622258001-1
+      continuation_of:
+        type: string
+        default: "30622258001:1"
+      run_purpose:
+        type: string
+        default: P0_CLOSURE_AND_SHARDED_REPLAY
+    secrets:
+      R2_ACCOUNT_ID: {required: true}
+      R2_ACCESS_KEY_ID: {required: true}
+      R2_SECRET_ACCESS_KEY: {required: true}
+      R2_BUCKET_NAME: {required: true}
+    outputs:
+      artifact_name:
+        value: ${{ jobs.inventory.outputs.artifact_name }}
+      segment_ids:
+        value: ${{ jobs.inventory.outputs.segment_ids }}
+      segment_batches:
+        value: ${{ jobs.inventory.outputs.segment_batches }}
+      inventory_sha256:
+        value: ${{ jobs.inventory.outputs.inventory_sha256 }}
+      segments_expected:
+        value: ${{ jobs.inventory.outputs.segments_expected }}
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      artifact_name: ${{ steps.outputs.outputs.artifact_name }}
+      segment_ids: ${{ steps.inventory.outputs.segment_ids }}
+      segment_batches: ${{ steps.inventory.outputs.segment_batches }}
+      inventory_sha256: ${{ steps.inventory.outputs.inventory_sha256 }}
+      segments_expected: ${{ steps.inventory.outputs.segments_expected }}
+    env: &safety
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Reconcile continuation state from R2
+        env: &r2
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_historical_deep_segmented_replay.py
+          --output artifacts/historical-deep/74a
+          --code-revision "${GITHUB_SHA}"
+          --continuation-id "${{ inputs.continuation_id }}"
+          --continuation-of "${{ inputs.continuation_of }}"
+          --run-purpose "${{ inputs.run_purpose }}"
+          audit
+      - name: Build immutable inventory
+        id: inventory
+        env: *r2
+        run: >-
+          python scripts/run_historical_deep_segmented_replay.py
+          --output artifacts/historical-deep/74a
+          --code-revision "${GITHUB_SHA}"
+          --continuation-id "${{ inputs.continuation_id }}"
+          --continuation-of "${{ inputs.continuation_of }}"
+          --run-purpose "${{ inputs.run_purpose }}"
+          inventory --github-output "${GITHUB_OUTPUT}"
+      - name: Publish outputs
+        id: outputs
+        shell: bash
+        run: echo "artifact_name=historical-deep-74a-${{ inputs.slice_id }}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "${GITHUB_OUTPUT}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.outputs.outputs.artifact_name }}
+          path: artifacts/historical-deep/74a/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
