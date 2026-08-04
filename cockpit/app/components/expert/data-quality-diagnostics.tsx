@@ -3,7 +3,9 @@ import {
   hypothesisDataQualityWorkspace,
   hypothesisSemanticRoles,
 } from "../../lib/hypothesis-quality";
+import type { CoverageDeskModel } from "../../lib/p0-coverage-desk";
 import { EvidenceNote, MetricCard, PageHeader, SectionHeading, TechnicalList } from "../common/ui";
+import { P0CoverageDesk } from "./p0-coverage-desk";
 
 const metadataRoles = [
   "DATA_QUALITY_METADATA",
@@ -17,7 +19,11 @@ const roleLabels: Record<(typeof metadataRoles)[number], string> = {
   PROVENANCE_METADATA: "Provenance",
 };
 
-export function DataQualityDiagnostics() {
+export function DataQualityDiagnostics({
+  p0Coverage,
+}: {
+  p0Coverage: CoverageDeskModel;
+}) {
   const workspace = hypothesisDataQualityWorkspace;
   const blockedFamilies = allHypothesisFamilies.filter(
     (family) => family.availability_status === "DATA_GATE_BLOCKED",
@@ -40,10 +46,12 @@ export function DataQualityDiagnostics() {
         données au lieu de devenir un signal.
       </EvidenceNote>
 
+      <P0CoverageDesk model={p0Coverage} />
+
       <section className="expert-section">
         <SectionHeading
-          title="Périmètre du diagnostic"
-          subtitle="Classification exhaustive du catalogue, sans appel fournisseur ni écriture live."
+          title="Diagnostics sémantiques du catalogue — hors preuve P0"
+          subtitle="Classification historique du catalogue. Elle ne ferme aucun dénominateur P0 et n’ouvre aucune hypothèse."
         />
         <div className="metrics-grid">
           {metadataRoles.map((role, index) => (

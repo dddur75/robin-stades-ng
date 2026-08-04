@@ -1,0 +1,181 @@
+{
+  "schema_version": "denominator-closure-summary-v1",
+  "captured_at": "2026-08-04T16:18:00Z",
+  "source_revision": "2a59a20a786a13be1eb4a110c11bb585f35565cb",
+  "contract_path": "configs/data/historical-coverage-denominator-contract-v1.json",
+  "provider_calls": 0,
+  "r2_writes": 0,
+  "purchases": 0,
+  "odds_credits": 0,
+  "verdict": "COVERAGE_DENOMINATOR_CLOSURE_PARTIAL",
+  "scopes": {
+    "gating": "P0_2020_2025",
+    "non_gating": "EXTENDED_ALL_AVAILABLE"
+  },
+  "definition_state": "DEFINITION_CLOSED",
+  "empirical_state": "OPEN",
+  "grid_hash": "eec07a69d855607fecf63331b22de0df0baa6abc41561afff7c39026361f8df4",
+  "total_cells": 480,
+  "closed_cells": 0,
+  "open_cells": 480,
+  "closure_rate": 0.0,
+  "weighted_aggregates": {
+    "scope_completion": {
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "status": "UNKNOWN",
+      "grain": "weighted expected denominator"
+    },
+    "normalization_integrity": {
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "status": "UNKNOWN",
+      "grain": "weighted expected denominator"
+    },
+    "content_presence": {
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "status": "UNKNOWN",
+      "grain": "weighted expected denominator"
+    }
+  },
+  "level_states": {
+    "E0": "PASS_DEFINITION_ONLY",
+    "E1": "NOT_RUN",
+    "E2": "NOT_RUN",
+    "E3": "NOT_RUN",
+    "E4": "NOT_RUN"
+  },
+  "level_controls": {
+    "E0": {
+      "pack": "GOLDEN_SYNTHETIC_PACK",
+      "status": "MATERIALIZED",
+      "scope": "UP_TO_100_SYNTHETIC_ENTITIES",
+      "can_close_real_cell": false,
+      "result": "PASS_DEFINITION_ONLY"
+    },
+    "E1": {
+      "pack": "CANARY_REAL_PACK",
+      "status": "NOT_MATERIALIZED",
+      "scope": "EXACTLY_10_P0_REAL_FIXTURES",
+      "can_close_real_cell": false,
+      "result": "NOT_RUN"
+    },
+    "E2": {
+      "pack": "PILOT_REAL_PACK",
+      "status": "NOT_MATERIALIZED",
+      "scope": "EXACTLY_50_P0_REAL_FIXTURES",
+      "can_close_real_cell": false,
+      "result": "NOT_RUN"
+    },
+    "E3": {
+      "pack": "COMPLETE_COMPETITION_SEASON",
+      "status": "DECISION_REQUIRED",
+      "scope": "ONE_COMPLETE_COMPETITION_SEASON",
+      "can_close_real_cell": true,
+      "result": "NOT_RUN"
+    },
+    "E4": {
+      "pack": "P0_FULL",
+      "status": "SCALE_APPROVED_REQUIRED",
+      "scope": "FIVE_LEAGUES_SIX_SEASONS_SIXTEEN_FAMILIES",
+      "can_close_real_cell": true,
+      "result": "NOT_RUN"
+    }
+  },
+  "reused_coverage_reality": {
+    "observed_union_cells": 1067,
+    "census_evidence_cells": 0,
+    "observed_union_projected_into_p0": false,
+    "blocked_by_coverage": 755,
+    "not_assessed": 312
+  },
+  "gate_counts": {
+    "functional_total": 8,
+    "functional_ready": 0,
+    "blocked_by_coverage": 8,
+    "blocked_by_source": 2
+  },
+  "readiness_verdicts": [
+    {
+      "id": "HISTORICAL_DEEP_PIPELINE_READY",
+      "status": "READY",
+      "basis": "PR26 foundation review",
+      "evidence_refs": [
+        "PR26.FOUNDATION.REVIEW.001"
+      ]
+    },
+    {
+      "id": "HISTORICAL_DEEP_R2_REPLAY_READY",
+      "status": "READY",
+      "basis": "cache-only recovery proof",
+      "evidence_refs": [
+        "github-run:30896340821",
+        "replay:55c41698a80e7f49a02e45ca0cd9aa11b161f8fbb06b720b8b2fca2cb5f55d1e"
+      ]
+    },
+    {
+      "id": "P0_API_FOOTBALL_COVERAGE_PARTIAL",
+      "status": "PARTIAL",
+      "basis": "0 of 480 cells empirically closed",
+      "evidence_refs": [
+        "coverage-proof:61afbfef0c8f51bc07e6992591cf2c0125069ef72c3d5ad9bd4a366d48a92be4"
+      ]
+    },
+    {
+      "id": "P0_STRICT_FEATURE_READINESS_PARTIAL",
+      "status": "PARTIAL",
+      "basis": "0 of 8 strict functional gates ready",
+      "evidence_refs": [
+        "quality-result:9e295cad0fffe204d6a1d61c560169c950af1336acbba1071f2fdb2e6c7425fe"
+      ]
+    },
+    {
+      "id": "P0_RECONSTRUCTED_FEATURE_READINESS_PARTIAL",
+      "status": "PARTIAL",
+      "basis": "reconstructed sources lack authoritative P0 denominators",
+      "evidence_refs": [
+        "PR26.FOUNDATION.REVIEW.001"
+      ]
+    },
+    {
+      "id": "HYPOTHESIS_BACKTEST_READINESS_PARTIAL",
+      "status": "PARTIAL",
+      "basis": "prior backtest has zero deep-feature rows",
+      "evidence_refs": [
+        "backtest-result:83d68d2faca1898863c1f3ef4aab04e05e93358de551bfb3c70c90d77fbbad17"
+      ]
+    },
+    {
+      "id": "WEATHER_SOURCE_BLOCKED",
+      "status": "BLOCKED_BY_SOURCE",
+      "basis": "source absent",
+      "evidence_refs": [
+        "PR26.FOUNDATION.REVIEW.001"
+      ]
+    },
+    {
+      "id": "FOOTEDNESS_SOURCE_BLOCKED",
+      "status": "BLOCKED_BY_SOURCE",
+      "basis": "source absent",
+      "evidence_refs": [
+        "PR26.FOUNDATION.REVIEW.001"
+      ]
+    }
+  ],
+  "properties_unlocked": [],
+  "families_exploitable": [],
+  "calendar_fatigue": {
+    "ready_properties": 0,
+    "total_properties": 17,
+    "status": "CLOSED",
+    "opens_hypergraph": false
+  },
+  "hypergraph_verdict": "NOT_OPENED_DATA_GATES_INSUFFICIENT",
+  "scale_authorized": false,
+  "promotion": false,
+  "proof_hash": "7b2c586c13a2b18704d45acc5e30ddda6852f23806b23f21a7657c3a693f6441"
+}

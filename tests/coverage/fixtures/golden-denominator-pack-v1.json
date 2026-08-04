@@ -1,0 +1,104 @@
+{
+  "schema_version": "golden-denominator-pack-v1",
+  "population_kind": "SYNTHETIC",
+  "network_allowed": false,
+  "source_record_count": 8,
+  "expanded_candidate_count": 20,
+  "scenarios": [
+    {
+      "id": "terminal-fixture-applicable",
+      "kind": "fixture_status",
+      "status": "FT",
+      "expected": "APPLICABLE"
+    },
+    {
+      "id": "postponed-fixture-not-applicable",
+      "kind": "fixture_status",
+      "status": "PST",
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "ambiguous-fixture-blocks",
+      "kind": "fixture_status",
+      "status": "ABD",
+      "expected": "BLOCKING"
+    },
+    {
+      "id": "absence-partition-and-exact-duplicate",
+      "kind": "absence_partition",
+      "pages_complete": true,
+      "records": [
+        {"fixture_id": 1, "player_id": 10, "team_id": 2, "type": "Hamstring", "reason": "Muscle injury", "start": "2024-01-01", "end": "2024-01-14", "description": "confirmed"},
+        {"fixture_id": 1, "player_id": 11, "team_id": 2, "type": "Suspendu", "reason": "Red card", "start": "2024-01-01", "end": "2024-01-08", "description": "disciplinary"},
+        {"fixture_id": 1, "player_id": 12, "team_id": 2, "type": "Suspendido", "reason": "Yellow cards", "start": "2024-01-01", "end": "2024-01-08", "description": "disciplinary"},
+        {"fixture_id": 1, "player_id": 13, "team_id": 2, "type": "", "reason": "", "start": null, "end": null, "description": ""},
+        {"fixture_id": 1, "player_id": 10, "team_id": 2, "type": "Hamstring", "reason": "Muscle injury", "start": "2024-01-01", "end": "2024-01-14", "description": "confirmed"}
+      ],
+      "expected": {
+        "source_records_distinct": 4,
+        "injuries": 1,
+        "suspensions": 2,
+        "unclassifiable": 1,
+        "duplicates_ignored": 1
+      }
+    },
+    {
+      "id": "absence-pagination-hole",
+      "kind": "absence_partition",
+      "pages_complete": false,
+      "records": [
+        {"fixture_id": 2, "player_id": 20, "team_id": 3, "type": "Knee", "reason": "Injury", "start": null, "end": null, "description": ""}
+      ],
+      "expected": "OPEN_MISSING_SCOPE"
+    },
+    {
+      "id": "absence-conflicting-duplicate",
+      "kind": "absence_partition",
+      "pages_complete": true,
+      "records": [
+        {"fixture_id": 3, "player_id": 30, "team_id": 4, "type": "Knee", "reason": "Injury", "start": null, "end": null, "description": "first"},
+        {"fixture_id": 3, "player_id": 30, "team_id": 4, "type": "Knee", "reason": "Injury", "start": null, "end": null, "description": "conflicting"}
+      ],
+      "expected": "OPEN_CONFLICTING_DUPLICATE"
+    },
+    {
+      "id": "unknown-rate",
+      "kind": "rate",
+      "numerator": null,
+      "denominator": null,
+      "grain": "fixture registry",
+      "expected": {"status": "UNKNOWN", "value": null}
+    },
+    {
+      "id": "known-rate",
+      "kind": "rate",
+      "numerator": 8,
+      "denominator": 10,
+      "grain": "fixture registry",
+      "expected": {"status": "KNOWN", "value": 0.8}
+    },
+    {
+      "id": "empty-valid-rate",
+      "kind": "rate",
+      "numerator": 0,
+      "denominator": 0,
+      "complete_scope": true,
+      "grain": "distinct suspensions",
+      "expected": {"status": "EMPTY_VALID", "value": null}
+    },
+    {
+      "id": "overflow-rate-blocks",
+      "kind": "rate",
+      "numerator": 11,
+      "denominator": 10,
+      "grain": "fixture registry",
+      "expected": "RATE_NUMERATOR_EXCEEDS_DENOMINATOR"
+    },
+    {
+      "id": "odds-block-ignored",
+      "kind": "ignored_block",
+      "payload": {"odds": [{"market": "1X2", "price": 2.1}]},
+      "expected": "IGNORED_NO_DENOMINATOR_EFFECT"
+    }
+  ]
+}

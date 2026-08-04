@@ -1,0 +1,249 @@
+{
+  "schema_version": "historical-coverage-denominator-contract-v1",
+  "contract_id": "p0-five-leagues-2020-2025-sixteen-families",
+  "definition_level": "E0",
+  "grain_catalog": {
+    "path": "configs/data/football-grain-catalog-v1.json",
+    "schema_version": "football-grain-catalog-v1",
+    "authoritative": true
+  },
+  "scopes": {
+    "P0_2020_2025": {
+      "grid_source": "grid",
+      "gates_enabled": true,
+      "partial_or_outside_observations_penalize_scope": false
+    },
+    "EXTENDED_ALL_AVAILABLE": {
+      "membership": "outside P0_2020_2025 or explicitly incomplete",
+      "gates_enabled": false,
+      "partial_or_outside_observations_penalize_scope": false
+    }
+  },
+  "upstream_contract": {
+    "path": "configs/historical-deep-data-harvest-v1.json",
+    "canonical_sha256": "8054ae15b288cda2b0e612b9492daf843115991a74d37bad1289865c8139bbd1",
+    "file_sha256_lf": "70e311f1513d16d88f6c1f928d8d651c73562be9b5dcf2503b81c248b11ed2b8"
+  },
+  "grid": {
+    "dimension_order": [
+      "competition",
+      "season",
+      "family"
+    ],
+    "competitions": [
+      "api-football:61",
+      "api-football:39",
+      "api-football:140",
+      "api-football:78",
+      "api-football:135"
+    ],
+    "seasons": [
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "families": [
+      "fixtures",
+      "events",
+      "lineups",
+      "lineup_players",
+      "formations",
+      "team_match_statistics",
+      "player_match_statistics",
+      "referees",
+      "venues",
+      "teams",
+      "standings",
+      "rounds",
+      "players",
+      "player_season_statistics",
+      "injuries",
+      "suspensions"
+    ],
+    "expected_cells": 480,
+    "expected_per_competition": 96,
+    "expected_per_season": 80,
+    "expected_per_family": 30
+  },
+  "closure_states": [
+    "OPEN_NOT_EVALUATED",
+    "OPEN_MISSING_SCOPE",
+    "OPEN_CLASSIFICATION_AMBIGUOUS",
+    "OPEN_CONFLICTING_DUPLICATE",
+    "DENOMINATOR_CLOSED_FULL_SCOPE"
+  ],
+  "rates": {
+    "scope_completion": {
+      "formula": "(COMPLETE + EMPTY_VALID) / expected_applicable_scopes",
+      "unknown_denominator": "UNKNOWN",
+      "empty_valid_counts_as_scope": true
+    },
+    "normalization_integrity": {
+      "formula": "normalized_unique_entities / raw_eligible_unique_entities",
+      "unknown_denominator": "UNKNOWN",
+      "zero_denominator_complete_scope": "EMPTY_VALID"
+    },
+    "content_presence": {
+      "formula": "observed_expected_slots / expected_content_slots",
+      "unknown_denominator": "UNKNOWN",
+      "empty_valid_is_not_content": true
+    }
+  },
+  "deprecated_family_grains_reference_only": {
+    "fixtures": {
+      "scope": "competition-season fixture registry",
+      "raw_entity": "fixture_id",
+      "content_slot": null
+    },
+    "events": {
+      "scope": "played fixture endpoint",
+      "raw_entity": "event fingerprint",
+      "content_slot": null,
+      "valid_zero": true
+    },
+    "lineups": {
+      "scope": "fixture endpoint",
+      "raw_entity": "fixture_id,team_id",
+      "content_slot": "two teams"
+    },
+    "lineup_players": {
+      "scope": "fixture-team",
+      "raw_entity": "fixture_id,team_id,player_id,role",
+      "content_slot": "eleven starters per team"
+    },
+    "formations": {
+      "scope": "lineup endpoint",
+      "raw_entity": "fixture_id,team_id,formation",
+      "content_slot": "two teams"
+    },
+    "team_match_statistics": {
+      "scope": "played fixture",
+      "raw_entity": "fixture_id,team_id,statistic_type,index",
+      "content_slot": "two team buckets"
+    },
+    "player_match_statistics": {
+      "scope": "played fixture",
+      "raw_entity": "fixture_id,team_id,player_id,stats_index",
+      "content_slot": null
+    },
+    "referees": {
+      "scope": "applicable terminal fixture",
+      "raw_entity": "normalized referee",
+      "content_slot": "one referee"
+    },
+    "venues": {
+      "scope": "applicable non-cancelled fixture",
+      "raw_entity": "normalized venue",
+      "content_slot": "one venue"
+    },
+    "teams": {
+      "scope": "every fixture",
+      "raw_entity": "fixture_id,side,team_id",
+      "content_slot": "home and away"
+    },
+    "standings": {
+      "scope": "competition-season",
+      "raw_entity": "team_id,group",
+      "content_slot": "fixture-registry teams"
+    },
+    "rounds": {
+      "scope": "competition-season",
+      "raw_entity": "normalized round",
+      "content_slot": "fixture-registry rounds"
+    },
+    "players": {
+      "scope": "complete players pagination",
+      "raw_entity": "distinct player_id",
+      "content_slot": null
+    },
+    "player_season_statistics": {
+      "scope": "complete players pagination",
+      "raw_entity": "player_id,team_id,competition,season,index",
+      "content_slot": "player with at least one target bucket"
+    },
+    "injuries": {
+      "scope": "complete injuries pagination",
+      "raw_entity": "distinct absence classified INJURY",
+      "content_slot": null
+    },
+    "suspensions": {
+      "scope": "complete injuries pagination",
+      "raw_entity": "distinct absence classified SUSPENSION",
+      "content_slot": null,
+      "shares_source_with": "injuries"
+    }
+  },
+  "fixture_applicability": {
+    "applicable_terminal": [
+      "FT",
+      "AET",
+      "PEN"
+    ],
+    "not_applicable": [
+      "PST",
+      "CANC",
+      "NS",
+      "TBD"
+    ],
+    "blocking_unless_versioned_rule": [
+      "ABD",
+      "INT",
+      "SUSP",
+      "UNKNOWN"
+    ]
+  },
+  "absence_partition_rule": {
+    "version": "absence-partition-rule-v1",
+    "categories": [
+      "SUSPENSION",
+      "INJURY",
+      "UNCLASSIFIABLE"
+    ],
+    "suspension_regex": "\\b(suspend(?:ed|u|ue|ido|ido)?|suspension|red card|yellow cards?)\\b",
+    "injury_regex": "\\b(injur(?:y|ed|ies)|bless(?:é|ée|és|ées|ure)|strain|hamstring|knee|ankle|muscle|ill(?:ness)?|surgery|fracture|tendon|ligament|contusion)\\b",
+    "natural_key": [
+      "fixture_id",
+      "player_id",
+      "team_id",
+      "type",
+      "reason",
+      "start",
+      "end"
+    ],
+    "invariant": "injuries + suspensions + unclassifiable = distinct source records",
+    "page_position_excluded_from_key": true
+  },
+  "initial_state": {
+    "E0": "PASS_DEFINITION_ONLY",
+    "E1": "BLOCKED_PACK_NOT_MATERIALIZED",
+    "E2": "BLOCKED_PACK_NOT_MATERIALIZED",
+    "E3": "BLOCKED_DECISION_REQUIRED",
+    "E4": "BLOCKED_SCALE_APPROVAL_REQUIRED",
+    "p0_empirical_closed_cells": 0
+  },
+  "census_evidence": {
+    "manifest_path": "reports/coverage/coverage-census-manifest-v1.json",
+    "source_review_path": "reports/evidence/pr26-final-review-v1.json",
+    "source_review_proof_hash": "6cab506d595ca63b894cca995c9e19d3edefdea6761e3670e3a27170e6fa2103",
+    "observed_union_cells": 1067,
+    "authoritative_p0_denominator_cells": 0,
+    "project_observed_union_into_p0_grid": false,
+    "reason": "observed union has no census evidence and cannot close an authoritative P0 cell"
+  },
+  "forbidden_fields": [
+    "coverage_rate",
+    "overall_rate"
+  ],
+  "safety": {
+    "provider_calls": 0,
+    "r2_writes": 0,
+    "purchases": 0,
+    "odds_credits": 0,
+    "production_locked": true,
+    "promotion": false,
+    "scale_authorized": false
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": "p0-readiness-gates-v1",
+  "scope": "P0_2020_2025",
+  "coverage_gate": {
+    "id": "P0_API_FOOTBALL_COVERAGE",
+    "required_closed_cells": 480,
+    "current_closed_cells": 0,
+    "status": "PARTIAL"
+  },
+  "gates": [
+    {
+      "id": "TEAM_GATE",
+      "families": ["fixtures", "teams", "team_match_statistics", "standings"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "authoritative P0 census denominators are absent"
+    },
+    {
+      "id": "PLAYER_GATE",
+      "families": ["players", "player_season_statistics"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "complete player pagination denominators are absent"
+    },
+    {
+      "id": "PLAYER_FORM_GATE",
+      "families": ["fixtures", "player_match_statistics", "player_season_statistics"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "fixture and player-fixture denominators are not closed"
+    },
+    {
+      "id": "LINEUP_GATE",
+      "families": ["fixtures", "lineups", "lineup_players"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "lineup applicability and two-team denominators are not closed"
+    },
+    {
+      "id": "FORMATION_GATE",
+      "families": ["lineups", "formations"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "admissible lineup denominators are not closed"
+    },
+    {
+      "id": "STARTER_BASELINE_GATE",
+      "families": ["fixtures", "lineups", "lineup_players", "player_match_statistics"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "starter and player-fixture denominators are not closed"
+    },
+    {
+      "id": "DISCIPLINE_GATE",
+      "families": ["fixtures", "events", "player_match_statistics"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "event scope and discipline content denominators are not closed"
+    },
+    {
+      "id": "ABSENCE_GATE",
+      "families": ["injuries", "suspensions"],
+      "status": "BLOCKED_BY_COVERAGE",
+      "reason": "complete absence pagination and partition denominators are not closed"
+    },
+    {
+      "id": "WEATHER_GATE",
+      "families": [],
+      "status": "BLOCKED_BY_SOURCE",
+      "reason": "no versioned weather source is authorized",
+      "blocks_p0_api_football_coverage": false
+    },
+    {
+      "id": "FOOTEDNESS_GATE",
+      "families": [],
+      "status": "BLOCKED_BY_SOURCE",
+      "reason": "no versioned footedness source is authorized",
+      "blocks_p0_api_football_coverage": false
+    }
+  ],
+  "readiness_verdicts": [
+    {"id": "HISTORICAL_DEEP_PIPELINE_READY", "status": "READY", "basis": "PR26 foundation review", "evidence_refs": ["PR26.FOUNDATION.REVIEW.001"]},
+    {"id": "HISTORICAL_DEEP_R2_REPLAY_READY", "status": "READY", "basis": "cache-only recovery proof", "evidence_refs": ["github-run:30896340821", "replay:55c41698a80e7f49a02e45ca0cd9aa11b161f8fbb06b720b8b2fca2cb5f55d1e"]},
+    {"id": "P0_API_FOOTBALL_COVERAGE_PARTIAL", "status": "PARTIAL", "basis": "0 of 480 cells empirically closed", "evidence_refs": ["coverage-proof:61afbfef0c8f51bc07e6992591cf2c0125069ef72c3d5ad9bd4a366d48a92be4"]},
+    {"id": "P0_STRICT_FEATURE_READINESS_PARTIAL", "status": "PARTIAL", "basis": "0 of 8 strict functional gates ready", "evidence_refs": ["quality-result:9e295cad0fffe204d6a1d61c560169c950af1336acbba1071f2fdb2e6c7425fe"]},
+    {"id": "P0_RECONSTRUCTED_FEATURE_READINESS_PARTIAL", "status": "PARTIAL", "basis": "reconstructed sources lack authoritative P0 denominators", "evidence_refs": ["PR26.FOUNDATION.REVIEW.001"]},
+    {"id": "HYPOTHESIS_BACKTEST_READINESS_PARTIAL", "status": "PARTIAL", "basis": "prior backtest has zero deep-feature rows", "evidence_refs": ["backtest-result:83d68d2faca1898863c1f3ef4aab04e05e93358de551bfb3c70c90d77fbbad17"]},
+    {"id": "WEATHER_SOURCE_BLOCKED", "status": "BLOCKED_BY_SOURCE", "basis": "source absent", "evidence_refs": ["PR26.FOUNDATION.REVIEW.001"]},
+    {"id": "FOOTEDNESS_SOURCE_BLOCKED", "status": "BLOCKED_BY_SOURCE", "basis": "source absent", "evidence_refs": ["PR26.FOUNDATION.REVIEW.001"]}
+  ],
+  "safety": {
+    "provider_calls": 0,
+    "r2_writes": 0,
+    "scale_authorized": false,
+    "promotion": false
+  }
+}

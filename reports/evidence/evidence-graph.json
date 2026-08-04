@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-04T15:23:55Z",
+  "generated_at":"2026-08-04T17:20:45Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -290,6 +290,86 @@
       "dataset_lineage_id":"github-run-30896340821-source-token-30853757779-1",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","DP6","C2","A1","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.P0.GRID.001",
+      "claim":"The P0 denominator grid contains exactly 480 definition cells across five competitions, six seasons and sixteen authoritative families, with every unproven empirical count and rate left null.",
+      "scope":"P0_2020_2025",
+      "source":"deterministic Cartesian construction from the P0 denominator contract and football grain catalogue",
+      "grain":"competition_season_family",
+      "temporal_class":"DEFINITION_AS_OF",
+      "artifact":"reports/coverage/p0-denominator-grid-v1.json",
+      "hash":"7f969758a442f0051410fa321b7255914dbc5d41980f17454cba855d1853d12f",
+      "code_revision":"2a59a20a786a13be1eb4a110c11bb585f35565cb",
+      "execution_id":"coverage-denominator-e0-20260804T172045Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"pr26-foundation-review-v1-plus-e0-definition",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","C2"]
+    },
+    {
+      "claim_id":"COVERAGE.E0.PROOF.001",
+      "claim":"The E0 Golden Pack verifies grains, rate formulas, empty-valid handling, duplicate policy, scope boundaries and failure states without claiming any real P0 census cell.",
+      "scope":"E0_DEFINITION_ONLY",
+      "source":"synthetic Golden Pack and deterministic denominator oracle",
+      "grain":"golden_denominator_case",
+      "temporal_class":"SYNTHETIC_DEFINITION",
+      "artifact":"reports/coverage/e0-denominator-proof-v1.json",
+      "hash":"f6a5912f326aae3df41609b97290867ce4e24a31c69fd3a94074bb1836c319ad",
+      "code_revision":"2a59a20a786a13be1eb4a110c11bb585f35565cb",
+      "execution_id":"coverage-denominator-e0-20260804T172045Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"synthetic-e0-golden-pack-v1",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","A1"]
+    },
+    {
+      "claim_id":"COVERAGE.CENSUS.MANIFEST.001",
+      "claim":"PR #26 evidence is reusable as an observed union, but it proves zero authoritative P0 census cells; none of its 1,067 observed cells is projected into the P0 denominator grid.",
+      "scope":"P0_CENSUS_LINEAGE",
+      "source":"PR26 foundation review, immutable artifact hashes and fail-closed census manifest",
+      "grain":"evidence_manifest",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/coverage/coverage-census-manifest-v1.json",
+      "hash":"058b127f8fb20e487c5f9dc23ddf86dad84556b7ed2313761dedb06d0eb51cc7",
+      "code_revision":"2a59a20a786a13be1eb4a110c11bb585f35565cb",
+      "execution_id":"coverage-denominator-e0-20260804T172045Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"github-run-30896340821-source-token-30853757779-1",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","DP6","C2"]
+    },
+    {
+      "claim_id":"COVERAGE.GATES.READINESS.001",
+      "claim":"All eight functional gates remain blocked by coverage, weather and footedness remain blocked by source, and no CALENDAR_FATIGUE property is unlocked; the coverage verdict is PARTIAL.",
+      "scope":"P0_READINESS",
+      "source":"P0 readiness contract, property catalogue and independently reviewed generated gate report",
+      "grain":"readiness_gate",
+      "temporal_class":"DEFINITION_AS_OF",
+      "artifact":"reports/coverage/p0-readiness-gates-v1.json",
+      "hash":"d470ed24ac086bd2ac536179578d1f4a5d59635c797a15c8c448d82aace93afc",
+      "code_revision":"2a59a20a786a13be1eb4a110c11bb585f35565cb",
+      "execution_id":"coverage-denominator-e0-20260804T172045Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"pr26-foundation-review-v1-plus-e0-definition",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","C2","A2"]
+    },
+    {
+      "claim_id":"COCKPIT.P0.PRIVATE.PROTOTYPE.001",
+      "claim":"The private P0 coverage desk is ready for review: it renders 0 of 480 empirical cells, three UNKNOWN rates as Not measured, and closed navigation without exposing the private cell projection in client assets.",
+      "scope":"PRIVATE_COCKPIT_PROTOTYPE",
+      "source":"server-only projection boundary, SSR privacy test, responsive Playwright matrix and independent UX red-team",
+      "grain":"private_coverage_desk",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"docs/ux/HYPOTHESIS-RESEARCH-COCKPIT-V2-QA.md",
+      "hash":"ef46c04b43a25e43cd7f1da3e1355b3ad811ee42f657cdcce0de2916daf3080a",
+      "code_revision":"2a59a20a786a13be1eb4a110c11bb585f35565cb",
+      "execution_id":"cockpit-p0-private-review-20260804T172045Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"private-sanitized-p0-projection-v1",
+      "status":"VERIFIED",
+      "verified_by":["C0","UX4","UX5","A2"]
     }
   ],
   "decision_nodes":[
@@ -303,7 +383,8 @@
     {"decision_id":"RCV3-20260804-008","ledger_record_hash":"9ac7fc31102b20f52bd5b809c205fb09bddfc327dca8492b2c57044a3470314f"},
     {"decision_id":"RCV3-20260804-009","ledger_record_hash":"91532e5da1c1b05be2b41d382c7457e13a22cf190f94f26ad1a196ed41174cff"},
     {"decision_id":"RCV3-20260804-010","ledger_record_hash":"196f7daadf0ca4f363afc3510e0a671064d88e5e1831ab8932ccdcf62074f3dc"},
-    {"decision_id":"RCV3-20260804-011","ledger_record_hash":"cca942e0e4652a629a75861e0d30512d4fd4fb670ca41f05dfd8346abd39fa1f"}
+    {"decision_id":"RCV3-20260804-011","ledger_record_hash":"cca942e0e4652a629a75861e0d30512d4fd4fb670ca41f05dfd8346abd39fa1f"},
+    {"decision_id":"RCV3-20260804-012","ledger_record_hash":"8e55e243b9bc9dc91fdac1b7c756432eaedb1b53e049ae7f08466c0ce4cf6a35"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -331,6 +412,11 @@
     {"edge_id":"EDGE.023","from_claim_id":"GOV.TEST.E0.001","to_decision_id":"RCV3-20260804-010","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.024","from_claim_id":"PR26.FOUNDATION.REVIEW.001","to_decision_id":"RCV3-20260804-011","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.025","from_claim_id":"PR26.FOUNDATION.SCORE.001","to_decision_id":"RCV3-20260804-011","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.026","from_claim_id":"PR26.MAIN.MERGE.001","to_decision_id":"RCV3-20260804-011","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.026","from_claim_id":"PR26.MAIN.MERGE.001","to_decision_id":"RCV3-20260804-011","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.027","from_claim_id":"COVERAGE.P0.GRID.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.028","from_claim_id":"COVERAGE.E0.PROOF.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.029","from_claim_id":"COVERAGE.CENSUS.MANIFEST.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.030","from_claim_id":"COVERAGE.GATES.READINESS.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.031","from_claim_id":"COCKPIT.P0.PRIVATE.PROTOTYPE.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

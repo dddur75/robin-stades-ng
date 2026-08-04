@@ -1,0 +1,43 @@
+{
+  "schema_version": "calendar-fatigue-property-gates-v1",
+  "family": "CALENDAR_FATIGUE",
+  "scientific_family_status": "PARTIAL",
+  "aggregation": {
+    "0_ready": "CLOSED",
+    "1_to_16_ready": "PARTIAL_OPEN_SCOPED",
+    "17_ready": "READY_STRICT"
+  },
+  "common_requirements": {
+    "dependent_cells": "DENOMINATOR_CLOSED_FULL_SCOPE",
+    "scope_completion": 1.0,
+    "normalization_integrity": 1.0,
+    "identity_rate_minimum": 0.99,
+    "strict_cutoff": true,
+    "left_window_days": 30,
+    "eligible_seasons_minimum": 3,
+    "versioned_materializer": true,
+    "versioned_column_mapping": true
+  },
+  "properties": [
+    {"id": "rest_days", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "rest_differential", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "matches_5d", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "matches_7d", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "matches_10d", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "matches_14d", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "matches_21d", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "matches_30d", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "congestion", "families": ["fixtures", "teams"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "restart_phase", "families": ["fixtures", "rounds"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "recent_extra_time", "families": ["fixtures", "events"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "recent_penalty_shootout", "families": ["fixtures", "events"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "recent_minutes", "families": ["fixtures", "lineup_players", "player_match_statistics"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "individual_load", "families": ["fixtures", "lineup_players", "player_match_statistics"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "rotation", "families": ["fixtures", "lineups", "lineup_players"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "collective_load", "families": ["fixtures", "lineups", "team_match_statistics", "player_match_statistics"], "status": "BLOCKED_BY_P0_DENOMINATORS"},
+    {"id": "next_match_importance", "families": ["fixtures", "rounds", "standings"], "status": "BLOCKED_STANDINGS_NOT_POINT_IN_TIME"}
+  ],
+  "current_ready_properties": 0,
+  "current_status": "CLOSED",
+  "opens_hypergraph": false
+}

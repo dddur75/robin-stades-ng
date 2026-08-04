@@ -1,0 +1,183 @@
+{
+  "schema_version": "football-grain-catalog-v1",
+  "catalog_id": "api-football-historical-p0-grains",
+  "scopes": {
+    "P0_2020_2025": {
+      "purpose": "authoritative readiness gate scope",
+      "competitions": [
+        "api-football:61",
+        "api-football:39",
+        "api-football:140",
+        "api-football:78",
+        "api-football:135"
+      ],
+      "seasons": [2020, 2021, 2022, 2023, 2024, 2025],
+      "gates_enabled": true
+    },
+    "EXTENDED_ALL_AVAILABLE": {
+      "purpose": "non-gating inventory of older, future, partial or otherwise available data",
+      "membership": "all observations outside P0_2020_2025 or explicitly marked partial",
+      "gates_enabled": false
+    }
+  },
+  "grains": {
+    "fixture": {
+      "grain": "one canonical fixture",
+      "distinct_key": ["canonical_fixture_id"],
+      "source": "api-football:/fixtures",
+      "temporal_class": "HISTORICAL_FIXTURE_STATE",
+      "null_policy": "identity fields are blocking; optional descriptive fields remain explicit nulls",
+      "duplicate_policy": "one canonical record per fixture; conflicting duplicates block closure",
+      "expected_denominator": "fixture census for the competition-season",
+      "authorized_uses": ["scope census", "fixture eligibility", "team-fixture expansion"]
+    },
+    "team_fixture": {
+      "grain": "one team in one fixture",
+      "distinct_key": ["fixture_id", "team_id"],
+      "source": "derived from api-football:/fixtures",
+      "temporal_class": "HISTORICAL_FIXTURE_STATE",
+      "null_policy": "missing team identity blocks the team-fixture",
+      "duplicate_policy": "home and away are unique by fixture_id plus team_id",
+      "expected_denominator": "two teams for each applicable fixture",
+      "authorized_uses": ["team coverage", "team statistics denominator", "lineup denominator"]
+    },
+    "lineup": {
+      "grain": "one team lineup in one fixture",
+      "distinct_key": ["fixture_id", "team_id"],
+      "source": "api-football:/fixtures/lineups",
+      "temporal_class": "HISTORICAL_POST_MATCH_RECONSTRUCTED",
+      "null_policy": "explicitly acknowledged empty response closes scope but does not prove content",
+      "duplicate_policy": "conflicting team lineups block closure",
+      "expected_denominator": "two lineups for fixtures whose coverage.lineups flag is true",
+      "authorized_uses": ["lineup gate", "formation gate", "starter baseline gate"]
+    },
+    "lineup_player": {
+      "grain": "one named player role in one team lineup",
+      "distinct_key": ["fixture_id", "team_id", "player_id", "role"],
+      "source": "api-football:/fixtures/lineups",
+      "temporal_class": "HISTORICAL_POST_MATCH_RECONSTRUCTED",
+      "null_policy": "missing player identity or role is invalid; missing optional shirt data stays null",
+      "duplicate_policy": "exact role duplicates collapse; conflicting roles block closure",
+      "expected_denominator": "eligible fixture-team lineup slots, with starter content reported separately",
+      "authorized_uses": ["lineup gate", "starter baseline gate", "rotation properties"]
+    },
+    "formation": {
+      "grain": "one team formation in one fixture",
+      "distinct_key": ["fixture_id", "team_id"],
+      "source": "api-football:/fixtures/lineups",
+      "temporal_class": "HISTORICAL_POST_MATCH_RECONSTRUCTED",
+      "null_policy": "blank formation is missing content, never an empty-valid formation",
+      "duplicate_policy": "one normalized formation per fixture-team; conflicts block closure",
+      "expected_denominator": "admissible team lineups",
+      "authorized_uses": ["formation gate", "formation properties"]
+    },
+    "team_match_statistic": {
+      "grain": "one metric for one team in one fixture",
+      "distinct_key": ["fixture_id", "team_id", "metric"],
+      "source": "api-football:/fixtures/statistics",
+      "temporal_class": "HISTORICAL_POST_MATCH",
+      "null_policy": "missing metric stays null; metric count is not the primary denominator",
+      "duplicate_policy": "normalize aliases before uniqueness; conflicting values are invalid",
+      "expected_denominator": "two team buckets for each eligible finished fixture",
+      "authorized_uses": ["team gate", "post-match diagnostics"]
+    },
+    "player_match_statistic": {
+      "grain": "one player in one fixture",
+      "distinct_key": ["fixture_id", "team_id", "player_id"],
+      "source": "api-football:/fixtures/players",
+      "temporal_class": "HISTORICAL_POST_MATCH",
+      "null_policy": "publish fixture coverage separately from materialized player-fixture rows",
+      "duplicate_policy": "merge compatible statistic buckets; conflicting identity blocks closure",
+      "expected_denominator": "eligible fixtures, with player-fixture rows reported separately",
+      "authorized_uses": ["player form gate", "starter baseline gate"]
+    },
+    "player_season_profile": {
+      "grain": "one player in one competition-season",
+      "distinct_key": ["competition", "season", "player_id"],
+      "source": "api-football:/players",
+      "temporal_class": "HISTORICAL_SEASON_AGGREGATE",
+      "null_policy": "pagination must be complete; a valid empty page is recorded separately",
+      "duplicate_policy": "deduplicate player identity across pages; conflicts block closure",
+      "expected_denominator": "pages_expected from paging.total and complete pagination receipts",
+      "authorized_uses": ["player gate", "season profile research"]
+    },
+    "event": {
+      "grain": "one event in one fixture",
+      "distinct_key": ["provider_event_identity"],
+      "source": "api-football:/fixtures/events",
+      "temporal_class": "HISTORICAL_POST_MATCH",
+      "null_policy": "acknowledged empty event response is EMPTY_VALID at scope level",
+      "duplicate_policy": "exact duplicates collapse; conflicting event identities block closure",
+      "expected_denominator": "eligible fixtures, including explicit empty-valid responses",
+      "authorized_uses": ["discipline gate", "event sequence research"]
+    },
+    "absence": {
+      "grain": "one unavailability observation",
+      "distinct_key": ["fixture_id", "player_id", "team_id", "type", "reason", "start", "end"],
+      "source": "api-football:/injuries",
+      "temporal_class": "HISTORICAL_OBSERVATION",
+      "null_policy": "unclassifiable reason remains explicit and cannot be counted as injury or suspension",
+      "duplicate_policy": "page position is excluded; exact duplicates collapse and conflicts block closure",
+      "expected_denominator": "complete injuries pagination with empty-valid pages acknowledged",
+      "authorized_uses": ["absence gate", "suspension derivation"]
+    },
+    "standing": {
+      "grain": "one team in one competition-season standing",
+      "distinct_key": ["competition", "season", "team_id"],
+      "source": "api-football:/standings",
+      "temporal_class": "HISTORICAL_SEASON_AGGREGATE",
+      "null_policy": "final-season aggregate cannot impersonate point-in-time standings",
+      "duplicate_policy": "one row per team; conflicting group assignments block closure",
+      "expected_denominator": "distinct fixture-registry teams in the competition-season",
+      "authorized_uses": ["coverage diagnostics", "non-point-in-time research only"]
+    },
+    "round": {
+      "grain": "one round in one competition-season",
+      "distinct_key": ["competition", "season", "round"],
+      "source": "api-football:/fixtures/rounds",
+      "temporal_class": "HISTORICAL_SCHEDULE",
+      "null_policy": "blank or unknown round stays missing",
+      "duplicate_policy": "normalized round label is unique in competition-season",
+      "expected_denominator": "distinct normalized rounds in the authoritative fixture census",
+      "authorized_uses": ["calendar coverage", "schedule segmentation"]
+    },
+    "referee_fixture": {
+      "grain": "one referee assignment in one fixture",
+      "distinct_key": ["fixture_id", "normalized_referee"],
+      "source": "api-football:/fixtures",
+      "temporal_class": "HISTORICAL_FIXTURE_STATE",
+      "null_policy": "missing referee is missing content on applicable terminal fixtures",
+      "duplicate_policy": "normalize labels before uniqueness",
+      "expected_denominator": "one referee for each applicable terminal fixture",
+      "authorized_uses": ["coverage diagnostics"]
+    },
+    "venue_fixture": {
+      "grain": "one venue assignment in one fixture",
+      "distinct_key": ["fixture_id", "normalized_venue"],
+      "source": "api-football:/fixtures",
+      "temporal_class": "HISTORICAL_FIXTURE_STATE",
+      "null_policy": "missing venue is missing content on applicable non-cancelled fixtures",
+      "duplicate_policy": "normalize identity before uniqueness",
+      "expected_denominator": "one venue for each applicable non-cancelled fixture",
+      "authorized_uses": ["coverage diagnostics"]
+    }
+  },
+  "family_bindings": {
+    "fixtures": {"grain_id": "fixture", "expected_count_formula": "expected_fixture_count"},
+    "events": {"grain_id": "event", "expected_count_formula": "eligible fixtures including EMPTY_VALID"},
+    "lineups": {"grain_id": "lineup", "expected_count_formula": "2 * fixtures with coverage.lineups=true"},
+    "lineup_players": {"grain_id": "lineup_player", "expected_count_formula": "eligible fixture-team lineup slots"},
+    "formations": {"grain_id": "formation", "expected_count_formula": "admissible lineups"},
+    "team_match_statistics": {"grain_id": "team_match_statistic", "expected_count_formula": "eligible team-fixtures"},
+    "player_match_statistics": {"grain_id": "player_match_statistic", "expected_count_formula": "eligible fixtures; player rows separate"},
+    "referees": {"grain_id": "referee_fixture", "expected_count_formula": "applicable terminal fixtures"},
+    "venues": {"grain_id": "venue_fixture", "expected_count_formula": "applicable non-cancelled fixtures"},
+    "teams": {"grain_id": "team_fixture", "expected_count_formula": "2 * fixtures"},
+    "standings": {"grain_id": "standing", "expected_count_formula": "distinct fixture-registry teams"},
+    "rounds": {"grain_id": "round", "expected_count_formula": "distinct fixture-registry rounds"},
+    "players": {"grain_id": "player_season_profile", "expected_count_formula": "pages_expected from paging.total"},
+    "player_season_statistics": {"grain_id": "player_season_profile", "expected_count_formula": "distinct player-season target buckets"},
+    "injuries": {"grain_id": "absence", "expected_count_formula": "complete injuries pagination classified INJURY"},
+    "suspensions": {"grain_id": "absence", "expected_count_formula": "complete injuries pagination classified SUSPENSION"}
+  }
+}
