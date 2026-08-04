@@ -50,6 +50,14 @@ on:
         description: "Reprendre les checkpoints"
         type: boolean
         default: true
+      source_code_revision:
+        description: "SHA exact d'une lignée analytique à reprendre"
+        type: string
+        default: ""
+      source_run_token:
+        description: "Token exact de la lignée analytique à reprendre"
+        type: string
+        default: ""
   schedule:
     - cron: "37 */2 * * *"
 permissions:
@@ -63,7 +71,8 @@ jobs:
     if: >-
       github.event_name != 'workflow_dispatch' ||
       (inputs.priority != 'HISTORICAL_DEEP_V1' &&
-      inputs.priority != 'HISTORICAL_DEEP_DIAGNOSTIC')
+      inputs.priority != 'HISTORICAL_DEEP_DIAGNOSTIC' &&
+      inputs.priority != 'HISTORICAL_DEEP_ANALYSIS_RECOVERY')
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -170,6 +179,84 @@ jobs:
       continuation_of: "30622258001:1"
       run_purpose: P0_CLOSURE_AND_SHARDED_REPLAY
       diagnostic_task_id: ${{ inputs.endpoint }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  historical-deep-recovery-quality:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.priority == 'HISTORICAL_DEEP_ANALYSIS_RECOVERY'
+    uses: ./.github/workflows/75-historical-deep-quality.yml
+    with:
+      slice_id: recovery-final
+      source_code_revision: ${{ inputs.source_code_revision }}
+      source_run_token: ${{ inputs.source_run_token }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  historical-deep-recovery-features:
+    needs: historical-deep-recovery-quality
+    if: >-
+      needs.historical-deep-recovery-quality.result == 'success' &&
+      needs.historical-deep-recovery-quality.outputs.status == 'COMPLETE'
+    uses: ./.github/workflows/76-historical-deep-asof-feature-build.yml
+    with:
+      source_code_revision: ${{ inputs.source_code_revision }}
+      source_run_token: ${{ inputs.source_run_token }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  historical-deep-recovery-backtest:
+    needs: historical-deep-recovery-features
+    if: needs.historical-deep-recovery-features.result == 'success'
+    uses: ./.github/workflows/77-historical-deep-backtest-pilot.yml
+    with:
+      source_code_revision: ${{ inputs.source_code_revision }}
+      source_run_token: ${{ inputs.source_run_token }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  historical-deep-recovery-report:
+    needs:
+      - historical-deep-recovery-quality
+      - historical-deep-recovery-features
+      - historical-deep-recovery-backtest
+    if: >-
+      always() &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.priority == 'HISTORICAL_DEEP_ANALYSIS_RECOVERY'
+    uses: ./.github/workflows/78-historical-deep-dashboard-report.yml
+    with:
+      source_code_revision: ${{ inputs.source_code_revision }}
+      source_run_token: ${{ inputs.source_run_token }}
+    secrets:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+
+  historical-deep-recovery-coverage-proof:
+    needs: historical-deep-recovery-report
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.priority == 'HISTORICAL_DEEP_ANALYSIS_RECOVERY' &&
+      needs.historical-deep-recovery-report.result == 'success'
+    uses: ./.github/workflows/81-historical-deep-coverage-proof-export.yml
+    with:
+      source_code_revision: ${{ inputs.source_code_revision }}
+      source_run_token: ${{ inputs.source_run_token }}
     secrets:
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
       R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}

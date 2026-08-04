@@ -590,6 +590,9 @@ def test_branch_bootstrap_never_runs_legacy_persistence_or_inherits_secrets() ->
     backfill = _mapping(jobs["backfill"])
     assert "inputs.priority != 'HISTORICAL_DEEP_V1'" in str(backfill["if"])
     assert "inputs.priority != 'HISTORICAL_DEEP_DIAGNOSTIC'" in str(backfill["if"])
+    assert "inputs.priority != 'HISTORICAL_DEEP_ANALYSIS_RECOVERY'" in str(
+        backfill["if"]
+    )
     bootstrap = _mapping(jobs["historical-deep-night"])
     assert str(bootstrap["uses"]).endswith(
         "79-historical-deep-night-controller.yml"
@@ -609,6 +612,50 @@ def test_branch_bootstrap_never_runs_legacy_persistence_or_inherits_secrets() ->
     assert diagnostic_inputs["diagnostic_task_id"] == "${{ inputs.endpoint }}"
     diagnostic_text = text[text.index("  historical-deep-diagnostic:") :]
     assert "API_FOOTBALL_KEY" not in diagnostic_text
+
+    triggers = _mapping(workflow.get("on", workflow.get(True)))
+    dispatch_inputs = _mapping(_mapping(triggers["workflow_dispatch"])["inputs"])
+    for input_name in ("source_code_revision", "source_run_token"):
+        recovery_input = _mapping(dispatch_inputs[input_name])
+        assert recovery_input["type"] == "string"
+        assert recovery_input["default"] == ""
+
+    recovery_jobs = (
+        "historical-deep-recovery-quality",
+        "historical-deep-recovery-features",
+        "historical-deep-recovery-backtest",
+        "historical-deep-recovery-report",
+        "historical-deep-recovery-coverage-proof",
+    )
+    expected_workflows = (75, 76, 77, 78, 81)
+    for name, workflow_number in zip(
+        recovery_jobs,
+        expected_workflows,
+        strict=True,
+    ):
+        recovery = _mapping(jobs[name])
+        assert str(recovery["uses"]).startswith(
+            f"./.github/workflows/{workflow_number}-historical-deep-"
+        )
+        assert set(_mapping(recovery["secrets"])) == R2_SECRETS
+        recovery_inputs = _mapping(recovery["with"])
+        assert recovery_inputs["source_code_revision"] == (
+            "${{ inputs.source_code_revision }}"
+        )
+        assert recovery_inputs["source_run_token"] == (
+            "${{ inputs.source_run_token }}"
+        )
+    recovery_text = text[text.index("  historical-deep-recovery-quality:") :]
+    assert "API_FOOTBALL_KEY" not in recovery_text
+    assert "DATABASE_URL" not in recovery_text
+    assert "historical-state-persist" not in recovery_text
+    quality_recovery = _mapping(jobs["historical-deep-recovery-quality"])
+    assert "HISTORICAL_DEEP_ANALYSIS_RECOVERY" in str(quality_recovery["if"])
+    features_recovery = _mapping(jobs["historical-deep-recovery-features"])
+    assert "outputs.status == 'COMPLETE'" in str(features_recovery["if"])
+    report_condition = str(_mapping(jobs["historical-deep-recovery-report"])["if"])
+    assert "always()" in report_condition
+    assert "HISTORICAL_DEEP_ANALYSIS_RECOVERY" in report_condition
 
 
 def test_ci_has_an_isolated_strict_historical_deep_gate() -> None:
