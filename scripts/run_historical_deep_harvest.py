@@ -1220,6 +1220,8 @@ def _run_replay(
 
 def _deduplicated_rows(
     rows: Sequence[Mapping[str, object]],
+    *,
+    preserve_input_order: bool = False,
 ) -> list[dict[str, object]]:
     indexed: dict[tuple[str, str], dict[str, object]] = {}
     for row in rows:
@@ -1230,6 +1232,8 @@ def _deduplicated_rows(
         # multi-million-row projection is not copied merely to deduplicate it.
         value = row if isinstance(row, dict) else dict(row)
         indexed.setdefault(key, value)
+    if preserve_input_order:
+        return list(indexed.values())
     return [indexed[key] for key in sorted(indexed)]
 
 
@@ -1246,7 +1250,7 @@ def _verified_segmented_quality_comparison(
     runner.  We still validate the stable quality identity and coverage here.
     """
 
-    seen: set[str] = set()
+    seen: set[tuple[str, str, str, str, str]] = set()
     for row in rows:
         identity = {
             "task_id": row.get("task_id"),
@@ -1259,10 +1263,16 @@ def _verified_segmented_quality_comparison(
         }
         if not identity["task_id"] or not identity["canonical_id"]:
             raise ValueError("QUALITY_STABLE_IDENTITY_REQUIRED")
-        quality_row_key = canonical_sha256(identity)
+        quality_row_key = (
+            str(identity["task_id"] or ""),
+            str(identity["normalized_family"] or ""),
+            str(identity["canonical_id"] or ""),
+            str(identity["provider_fixture_id"] or ""),
+            str(identity["source_record_hash"] or ""),
+        )
         if quality_row_key in seen:
             raise ValueError(
-                f"QUALITY_BEFORE_DUPLICATE_KEY:{quality_row_key}"
+                f"QUALITY_BEFORE_DUPLICATE_KEY:{canonical_sha256(identity)}"
             )
         seen.add(quality_row_key)
     del seen
@@ -1444,7 +1454,10 @@ def _quality_products(
         errors_after: tuple[str, ...] = ()
     else:
         normalized_after, errors_after = ledger.normalized_records()
-    rows = _deduplicated_rows(normalized_before)
+    rows = _deduplicated_rows(
+        normalized_before,
+        preserve_input_order=segmented_projection,
+    )
     if segmented_projection:
         if not isinstance(expected_projection_hash, str):
             raise ValueError("QUALITY_SEGMENTED_PROJECTION_HASH_REQUIRED")
@@ -1490,10 +1503,14 @@ def _quality_products(
         enriched,
         copy_records=not segmented_projection,
     )
-    datasets = {
-        name: sorted(values, key=canonical_sha256)
-        for name, values in separated.items()
-    }
+    datasets = (
+        separated
+        if segmented_projection
+        else {
+            name: sorted(values, key=canonical_sha256)
+            for name, values in separated.items()
+        }
+    )
     manifests = build_dataset_manifests(
         datasets,
         provenance={
@@ -1504,6 +1521,7 @@ def _quality_products(
             "run_token": run_token,
             "replay_hash": replay_value.get("replay_hash"),
         },
+        preserve_input_order=segmented_projection,
     )
     manifest_values: dict[str, object] = {
         name: manifest.as_dict() for name, manifest in manifests.items()

@@ -254,6 +254,42 @@ def test_six_datasets_have_hashed_provenance_cutoff_and_usage_manifests() -> Non
     )
 
 
+def test_dataset_manifests_can_hash_verified_replay_order_without_resorting() -> None:
+    source_rows = [
+        {
+            "fixture_id": fixture_id,
+            "family": "lineups",
+            "temporal_class": "HISTORICAL_PREMATCH_STRICT",
+            "optional_value": optional_value,
+        }
+        for fixture_id, optional_value in (("a", 1), ("b", None), ("c", 3))
+    ]
+    replay_rows = list(reversed(sorted(source_rows, key=canonical_sha256)))
+    datasets = {LINEUP_HISTORY_PREMATCH_STRICT: replay_rows}
+    provenance = {
+        "provider": "api-football",
+        "r2_namespace": "historical-deep-data/schema-v1",
+        "replay_hash": "a" * 64,
+    }
+
+    preserved = build_dataset_manifests(
+        datasets,
+        provenance=provenance,
+        preserve_input_order=True,
+    )[LINEUP_HISTORY_PREMATCH_STRICT]
+    canonical = build_dataset_manifests(
+        datasets,
+        provenance=provenance,
+    )[LINEUP_HISTORY_PREMATCH_STRICT]
+
+    assert preserved.dataset_hash == canonical_sha256(replay_rows)
+    assert canonical.dataset_hash == canonical_sha256(
+        sorted(replay_rows, key=canonical_sha256)
+    )
+    assert preserved.dataset_hash != canonical.dataset_hash
+    assert preserved.null_counts["optional_value"] == 1
+
+
 def test_features_use_only_strict_prior_matches_and_keep_unknown_values_null() -> None:
     team_rows = [
         {

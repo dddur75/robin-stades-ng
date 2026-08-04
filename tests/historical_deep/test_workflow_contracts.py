@@ -342,9 +342,7 @@ def test_analysis_workflows_support_exact_validated_lineage_recovery() -> None:
         checkout = next(
             step for step in steps if step.get("uses") == "actions/checkout@v4"
         )
-        assert _mapping(checkout["with"])["ref"] == (
-            "${{ inputs.source_code_revision || github.sha }}"
-        )
+        assert _mapping(checkout["with"])["ref"] == "${{ github.sha }}"
         runner_step = next(
             step
             for step in steps

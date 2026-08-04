@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Final
 
-from robin.historical_deep.replay import canonical_sha256
+from robin.historical_deep.replay import canonical_json_bytes, canonical_sha256
 
 TEAM_PREMATCH_STRICT: Final = "TEAM_PREMATCH_STRICT"
 PLAYER_PREMATCH_STRICT: Final = "PLAYER_PREMATCH_STRICT"
@@ -676,6 +677,7 @@ def build_dataset_manifests(
     datasets: Mapping[str, Sequence[Mapping[str, object]]],
     *,
     provenance: Mapping[str, object],
+    preserve_input_order: bool = False,
 ) -> dict[str, DatasetManifest]:
     if not provenance:
         raise ValueError("DATASET_PROVENANCE_REQUIRED")
@@ -686,73 +688,38 @@ def build_dataset_manifests(
     provenance_value = dict(provenance)
     provenance_hash = canonical_sha256(provenance_value)
     for name in DATASET_NAMES:
-        # Sorting a list of references is sufficient: manifest construction is
-        # read-only and must not duplicate every dictionary in a large corpus.
-        rows = sorted(datasets.get(name, ()), key=canonical_sha256)
-        dataset_hash = canonical_sha256(rows)
-        fixture_count = len(
-            {
-                str(
-                    _first(
-                        row,
-                        (
-                            "target_fixture_id",
-                            "fixture_id",
-                            "source_fixture_id",
-                            "canonical_fixture_id",
-                        ),
-                    )
-                )
-                for row in rows
-                if _first(
-                    row,
-                    (
-                        "target_fixture_id",
-                        "fixture_id",
-                        "source_fixture_id",
-                        "canonical_fixture_id",
-                    ),
-                )
-                is not None
-            }
+        source_rows = datasets.get(name, ())
+        rows = (
+            list(source_rows)
+            if preserve_input_order
+            else sorted(source_rows, key=canonical_sha256)
         )
-        observed_cutoffs = {
-            str(row["cutoff_policy"])
-            for row in rows
-            if row.get("cutoff_policy")
-        }
-        if len(observed_cutoffs) > 1:
-            raise ValueError(f"DATASET_CUTOFF_POLICY_MIXED:{name}")
-        cutoff_policy = next(
-            iter(observed_cutoffs),
-            _DEFAULT_CUTOFF_POLICY[name],
-        )
-        if cutoff_policy != _DEFAULT_CUTOFF_POLICY[name]:
-            raise ValueError(f"DATASET_CUTOFF_POLICY_INVALID:{name}")
-        temporal_classes = tuple(
-            sorted(
-                {
-                    str(row["temporal_class"])
-                    for row in rows
-                    if row.get("temporal_class")
-                }
-            )
-        )
-        features = tuple(
-            sorted({str(field) for row in rows for field in row})
-        )
-        null_counts = {
-            field: sum(row.get(field) is None for row in rows)
-            for field in features
-        }
-        null_count = sum(null_counts.values())
-        observed_cells = len(rows) * len(features)
-        null_rate = (
-            null_count / observed_cells if observed_cells > 0 else None
-        )
+        dataset_hash = _canonical_sequence_sha256(rows)
+        fixture_ids: set[str] = set()
+        observed_cutoffs: set[str] = set()
+        temporal_classes_set: set[str] = set()
+        features_set: set[str] = set()
+        non_null_counts: dict[str, int] = {}
         temporal_class_counts: dict[str, int] = {}
         normalized_family_counts: dict[str, int] = {}
         for row in rows:
+            fixture_id = _first(
+                row,
+                (
+                    "target_fixture_id",
+                    "fixture_id",
+                    "source_fixture_id",
+                    "canonical_fixture_id",
+                ),
+            )
+            if fixture_id is not None:
+                fixture_ids.add(str(fixture_id))
+            cutoff = row.get("cutoff_policy")
+            if cutoff:
+                observed_cutoffs.add(str(cutoff))
+            observed_temporal_class = row.get("temporal_class")
+            if observed_temporal_class:
+                temporal_classes_set.add(str(observed_temporal_class))
             temporal_class = str(row.get("temporal_class", "UNKNOWN"))
             temporal_class_counts[temporal_class] = (
                 temporal_class_counts.get(temporal_class, 0) + 1
@@ -763,6 +730,31 @@ def build_dataset_manifests(
             normalized_family_counts[normalized_family] = (
                 normalized_family_counts.get(normalized_family, 0) + 1
             )
+            for raw_field, value in row.items():
+                field = str(raw_field)
+                features_set.add(field)
+                if value is not None:
+                    non_null_counts[field] = non_null_counts.get(field, 0) + 1
+        fixture_count = len(fixture_ids)
+        if len(observed_cutoffs) > 1:
+            raise ValueError(f"DATASET_CUTOFF_POLICY_MIXED:{name}")
+        cutoff_policy = next(
+            iter(observed_cutoffs),
+            _DEFAULT_CUTOFF_POLICY[name],
+        )
+        if cutoff_policy != _DEFAULT_CUTOFF_POLICY[name]:
+            raise ValueError(f"DATASET_CUTOFF_POLICY_INVALID:{name}")
+        temporal_classes = tuple(sorted(temporal_classes_set))
+        features = tuple(sorted(features_set))
+        null_counts = {
+            field: len(rows) - non_null_counts.get(field, 0)
+            for field in features
+        }
+        null_count = sum(null_counts.values())
+        observed_cells = len(rows) * len(features)
+        null_rate = (
+            null_count / observed_cells if observed_cells > 0 else None
+        )
         body = {
             "schema_version": "historical-deep-dataset-manifest-v1",
             "dataset_name": name,
@@ -807,3 +799,14 @@ def build_dataset_manifests(
             manifest_hash=canonical_sha256(body),
         )
     return output
+
+
+def _canonical_sequence_sha256(values: Sequence[object]) -> str:
+    digest = hashlib.sha256()
+    digest.update(b"[")
+    for index, value in enumerate(values):
+        if index:
+            digest.update(b",")
+        digest.update(canonical_json_bytes(value))
+    digest.update(b"]")
+    return digest.hexdigest()
