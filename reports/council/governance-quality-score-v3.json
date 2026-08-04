@@ -1,8 +1,8 @@
 {
   "schema_version":"robin-governance-quality-score-v3",
   "status":"READY",
-  "scope":"PHASE_A_E0_LOCAL_COMMIT_READY_NOT_SCALE_READY",
-  "reviewed_at":"2026-08-04T14:13:50Z",
+  "scope":"PHASE_A_E0_LOCAL_CONTENT_READY_REMOTE_CI_REQUIRED_NOT_SCALE_READY",
+  "reviewed_at":"2026-08-04T14:36:34Z",
   "minimum_ready_score":92,
   "critical_objections_open":0,
   "required_evidence_missing":0,
@@ -33,7 +33,15 @@
       "roles":["C3","UX6"],
       "verdict":"READY",
       "critical_objections_open":0
+    },
+    {
+      "review_id":"GOVERNANCE-CI-CLOCK-C1-A2-20260804",
+      "roles":["C1","A2"],
+      "verdict":"READY_FOR_RERUN",
+      "critical_objections_open":0,
+      "remote_ci_required":true
     }
   ],
+  "remote_ci_gate":"PENDING_RERUN",
   "scale_authorized":false
 }

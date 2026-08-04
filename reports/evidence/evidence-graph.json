@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-04T14:15:37Z",
+  "generated_at":"2026-08-04T14:36:34Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -107,13 +107,13 @@
       "grain":"mission_authorization_contract",
       "temporal_class":"CODE_AS_OF",
       "artifact":"configs/agents/mission-activation-matrix-v3.json",
-      "hash":"da7a87ac2b539fcd0fb0adb4414e6554dc2b4a676bdf305aeee8e93256d55a6c",
+      "hash":"996c34c681e64880b62dfb8030cd0715c4a58c4441c052c8b8e58dde86e593dd",
       "code_revision":"47955483bb1a19abb6c7afef3ab05deec2a7bac1",
       "execution_id":"governance-e0-20260804T134723Z",
       "scientific_lineage_id":"robin-council-os-v3",
       "dataset_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
       "status":"VERIFIED",
-      "verified_by":["C0","A2"]
+      "verified_by":["C0","C1","A2"]
     },
     {
       "claim_id":"GOV.TEST.E0.001",
@@ -123,7 +123,7 @@
       "grain":"validation_run",
       "temporal_class":"OBSERVED_AT",
       "artifact":"reports/council/governance-validation-v3.json",
-      "hash":"23b7f75057c2cbb82d70beb4a27af8f94752ad7c8e295de8f01a4ba086c7ed9d",
+      "hash":"bf61fa4b7146c5ebeaa031a97e88452731f3b2a52b1d580635f114529702b7f4",
       "code_revision":"47955483bb1a19abb6c7afef3ab05deec2a7bac1",
       "execution_id":"governance-e0-20260804T134723Z",
       "scientific_lineage_id":"robin-council-os-v3",
@@ -210,6 +210,22 @@
       "dataset_lineage_id":"cockpit-test-tree-47955483",
       "status":"VERIFIED",
       "verified_by":["C0","C3","UX6"]
+    },
+    {
+      "claim_id":"GOV.CI.CLOCK.001",
+      "claim":"Both remote CI runs exposed a deterministic test-clock defect; the one-line fixed-clock test patch passed the bounded regression and independent review and requires a fresh remote CI run.",
+      "scope":"GOVERNANCE_CI_UNBLOCK",
+      "source":"GitHub Actions runs 30918174587 and 30918237120; bounded local regression; independent C1/A2 review",
+      "grain":"test_clock_regression",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/council/governance-validation-v3.json",
+      "hash":"bf61fa4b7146c5ebeaa031a97e88452731f3b2a52b1d580635f114529702b7f4",
+      "code_revision":"0bad13bcfb16c5118b4a1e1dd0e9121f2e281d66",
+      "execution_id":"governance-ci-clock-20260804T143634Z",
+      "scientific_lineage_id":"NOT_APPLICABLE_TEST_FIX",
+      "dataset_lineage_id":"jalon12-frozen-clock-NOW-20260801T120000Z",
+      "status":"VERIFIED",
+      "verified_by":["C0","C1","A2"]
     }
   ],
   "decision_nodes":[
@@ -218,7 +234,9 @@
     {"decision_id":"RCV3-20260804-003","ledger_record_hash":"ef161af89188d248f99ac995eeaba83f18e7190fbe5c5482815c46977bf61487"},
     {"decision_id":"RCV3-20260804-004","ledger_record_hash":"3cfec18e759e8ab69585a03c0630a492c7df752c94ecf0fb01235196f5f4b6ae"},
     {"decision_id":"RCV3-20260804-005","ledger_record_hash":"5b42ce3048f9f62cfcdc71b48943d4b353b0fc5ce7204049aab3974725135a42"},
-    {"decision_id":"RCV3-20260804-006","ledger_record_hash":"29aa8ea408d8eeb4647089742fcfbd5190ae7e2ee5cfb702ced0f488c60ce632"}
+    {"decision_id":"RCV3-20260804-006","ledger_record_hash":"29aa8ea408d8eeb4647089742fcfbd5190ae7e2ee5cfb702ced0f488c60ce632"},
+    {"decision_id":"RCV3-20260804-007","ledger_record_hash":"a29fce71b9ccb6905bc8be83ecdb211ad552b70e224e02b1c41fe73d6f729809"},
+    {"decision_id":"RCV3-20260804-008","ledger_record_hash":"9ac7fc31102b20f52bd5b809c205fb09bddfc327dca8492b2c57044a3470314f"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -232,6 +250,11 @@
     {"edge_id":"EDGE.009","from_claim_id":"GOV.AUTHORIZATION.001","to_decision_id":"RCV3-20260804-006","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.010","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260804-006","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.011","from_claim_id":"GOV.TEST.E0.001","to_decision_id":"RCV3-20260804-006","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.012","from_claim_id":"PRODUCT.UX.AUTOMATION.001","to_decision_id":"RCV3-20260804-006","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.012","from_claim_id":"PRODUCT.UX.AUTOMATION.001","to_decision_id":"RCV3-20260804-006","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.013","from_claim_id":"GOV.TEST.E0.001","to_decision_id":"RCV3-20260804-007","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.014","from_claim_id":"GOV.AUTHORIZATION.001","to_decision_id":"RCV3-20260804-007","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.015","from_claim_id":"GOV.CI.CLOCK.001","to_decision_id":"RCV3-20260804-008","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.016","from_claim_id":"GOV.TEST.E0.001","to_decision_id":"RCV3-20260804-008","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.017","from_claim_id":"GOV.AUTHORIZATION.001","to_decision_id":"RCV3-20260804-008","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
