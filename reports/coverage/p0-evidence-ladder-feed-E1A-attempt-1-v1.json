@@ -269,31 +269,31 @@
       "unexpected_scope_count": 0
     },
     {
-      "cell_hash": "e13da10a470893bd2708108be47d1205bdd76a2b38753cc37d5d3cc1dea1405e",
+      "cell_hash": "478922d483a37ec2517807904d49b1b8e1ccc05ecb8ef78a8073f2d091199eb3",
       "closure_state": "OPEN_NOT_EVALUATED",
       "competition": "api-football:135",
       "content_presence": {
-        "denominator": 2681,
-        "numerator": 2681,
-        "status": "KNOWN",
-        "value": 1.0
+        "denominator": 0,
+        "numerator": 0,
+        "status": "EMPTY_VALID",
+        "value": null
       },
       "contradictory_duplicates": 0,
       "counts": {
         "contradictory_duplicates": 0,
         "exact_duplicates": 0,
-        "identity_key_set_hash": "55fe083be6c11ed4ff327ddcb8a786b2913b55ee61a7d5676b30fcbdde5f1145",
-        "identity_set_hash": "3d3ba6c48a299311d69b08719a66e24f5ba4b7db33fd7495368321e2621d60ed",
+        "identity_key_set_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "identity_set_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "invalid_identity": 0,
-        "normalized_rows": 2681,
-        "normalized_unique": 2681
+        "normalized_rows": 0,
+        "normalized_unique": 0
       },
-      "coverage_percent": 1.0,
+      "coverage_percent": null,
       "denominator_basis": "SIGNED_ABSENCE_PARTITION_RULE",
       "empty_valid_count": 0,
       "exact_duplicates": 0,
-      "expected_content_slots": 2681,
-      "expected_count": 2681,
+      "expected_content_slots": 0,
+      "expected_count": 0,
       "expected_scope_set_hash": "4c3b3e82581c7dc576814da80cd1cf2c96d2812b16ae915776d2888280b96131",
       "family": "injuries",
       "gate": "PARTIAL",
@@ -302,14 +302,14 @@
       "invalid_count": 0,
       "materialized_source_object_count": 1,
       "normalization_integrity": {
-        "denominator": 2681,
-        "numerator": 2681,
-        "status": "KNOWN",
-        "value": 1.0
+        "denominator": 0,
+        "numerator": 0,
+        "status": "EMPTY_VALID",
+        "value": null
       },
       "null_rate": null,
       "null_rate_status": "UNKNOWN_NOT_PROVEN",
-      "observed_content_slots": 2681,
+      "observed_content_slots": 0,
       "observed_scope_set_hash": "4c3b3e82581c7dc576814da80cd1cf2c96d2812b16ae915776d2888280b96131",
       "probe_gate": "FAIL",
       "processing_expected_set_hash": null,
@@ -322,16 +322,16 @@
       "processing_unexpected_scope_count": 0,
       "rates": {
         "content_presence": {
-          "denominator": 2681,
-          "numerator": 2681,
-          "status": "KNOWN",
-          "value": 1.0
+          "denominator": 0,
+          "numerator": 0,
+          "status": "EMPTY_VALID",
+          "value": null
         },
         "normalization_integrity": {
-          "denominator": 2681,
-          "numerator": 2681,
-          "status": "KNOWN",
-          "value": 1.0
+          "denominator": 0,
+          "numerator": 0,
+          "status": "EMPTY_VALID",
+          "value": null
         },
         "scope_completion": {
           "denominator": 1,
@@ -340,9 +340,9 @@
           "value": 1.0
         }
       },
-      "raw_eligible_unique_entities": 2681,
+      "raw_eligible_unique_entities": 0,
       "reason": "OPEN_NOT_EVALUATED",
-      "received_count": 2681,
+      "received_count": 0,
       "scope": "P0_2020_2025",
       "scope_basis": "PAGINATION:injuries",
       "scope_identity_gate": "PASS",
@@ -354,7 +354,7 @@
       "source_scopes_expected": 1,
       "source_scopes_verified": 1,
       "temporal_class": "HISTORICAL_OBSERVATION",
-      "unclassifiable_count": 149,
+      "unclassifiable_count": 3036,
       "unexpected_scope_count": 0
     },
     {
@@ -1070,31 +1070,31 @@
       "unexpected_scope_count": 0
     },
     {
-      "cell_hash": "afe04ece1fbbd94448f7876260457bd2e812e364b94222fbb2e2d139f3b2f99a",
+      "cell_hash": "752eb6d75ed82c41ca52d6aa177fe7c2ea56b8db1533563f0e698b3511c01b14",
       "closure_state": "OPEN_NOT_EVALUATED",
       "competition": "api-football:135",
       "content_presence": {
-        "denominator": 206,
-        "numerator": 206,
-        "status": "KNOWN",
-        "value": 1.0
+        "denominator": 0,
+        "numerator": 0,
+        "status": "EMPTY_VALID",
+        "value": null
       },
       "contradictory_duplicates": 0,
       "counts": {
         "contradictory_duplicates": 0,
         "exact_duplicates": 0,
-        "identity_key_set_hash": "c188e421c2b17b4b54496aca99368893ce9c19650b5ae73d6c15236f5d33dcfa",
-        "identity_set_hash": "1595b072daef1dd72ef6a766488985c4c71128900fd6028edb47a2edf9f2ec54",
+        "identity_key_set_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "identity_set_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "invalid_identity": 0,
-        "normalized_rows": 206,
-        "normalized_unique": 206
+        "normalized_rows": 0,
+        "normalized_unique": 0
       },
-      "coverage_percent": 1.0,
+      "coverage_percent": null,
       "denominator_basis": "SIGNED_ABSENCE_PARTITION_RULE",
       "empty_valid_count": 0,
       "exact_duplicates": 0,
-      "expected_content_slots": 206,
-      "expected_count": 206,
+      "expected_content_slots": 0,
+      "expected_count": 0,
       "expected_scope_set_hash": "4c3b3e82581c7dc576814da80cd1cf2c96d2812b16ae915776d2888280b96131",
       "family": "suspensions",
       "gate": "PARTIAL",
@@ -1103,14 +1103,14 @@
       "invalid_count": 0,
       "materialized_source_object_count": 1,
       "normalization_integrity": {
-        "denominator": 206,
-        "numerator": 206,
-        "status": "KNOWN",
-        "value": 1.0
+        "denominator": 0,
+        "numerator": 0,
+        "status": "EMPTY_VALID",
+        "value": null
       },
       "null_rate": null,
       "null_rate_status": "UNKNOWN_NOT_PROVEN",
-      "observed_content_slots": 206,
+      "observed_content_slots": 0,
       "observed_scope_set_hash": "4c3b3e82581c7dc576814da80cd1cf2c96d2812b16ae915776d2888280b96131",
       "probe_gate": "FAIL",
       "processing_expected_set_hash": null,
@@ -1123,16 +1123,16 @@
       "processing_unexpected_scope_count": 0,
       "rates": {
         "content_presence": {
-          "denominator": 206,
-          "numerator": 206,
-          "status": "KNOWN",
-          "value": 1.0
+          "denominator": 0,
+          "numerator": 0,
+          "status": "EMPTY_VALID",
+          "value": null
         },
         "normalization_integrity": {
-          "denominator": 206,
-          "numerator": 206,
-          "status": "KNOWN",
-          "value": 1.0
+          "denominator": 0,
+          "numerator": 0,
+          "status": "EMPTY_VALID",
+          "value": null
         },
         "scope_completion": {
           "denominator": 1,
@@ -1141,9 +1141,9 @@
           "value": 1.0
         }
       },
-      "raw_eligible_unique_entities": 206,
+      "raw_eligible_unique_entities": 0,
       "reason": "OPEN_NOT_EVALUATED",
-      "received_count": 206,
+      "received_count": 0,
       "scope": "P0_2020_2025",
       "scope_basis": "PAGINATION:injuries",
       "scope_identity_gate": "PASS",
@@ -1155,7 +1155,7 @@
       "source_scopes_expected": 1,
       "source_scopes_verified": 1,
       "temporal_class": "HISTORICAL_OBSERVATION",
-      "unclassifiable_count": 149,
+      "unclassifiable_count": 3036,
       "unexpected_scope_count": 0
     },
     {
@@ -1427,7 +1427,7 @@
     }
   ],
   "dashboard_sanitized": true,
-  "feed_sha256": "16f53430446515902105aef83580b19ddc056aeb0d8a4207ab60992d7bed7832",
+  "feed_sha256": "8fabcc29d837f7d1914238ec6923577babe7277e080acfd87cc819e287c60539",
   "forbidden_detail_fields_excluded": [
     "fixture_ids",
     "source_endpoints",
@@ -1442,22 +1442,22 @@
   "weighted_rates": {
     "content_presence": {
       "aggregation": "SUM_NUMERATORS_AND_DENOMINATORS_NEVER_MEAN_OF_RATES",
-      "denominator": 2995,
-      "empty_valid_cells": 0,
+      "denominator": 108,
+      "empty_valid_cells": 2,
       "invalid_cells": 0,
-      "known_cells": 8,
-      "numerator": 2995,
+      "known_cells": 6,
+      "numerator": 108,
       "status": "UNKNOWN",
       "unknown_cells": 8,
       "value": null
     },
     "normalization_integrity": {
       "aggregation": "SUM_NUMERATORS_AND_DENOMINATORS_NEVER_MEAN_OF_RATES",
-      "denominator": 2917,
-      "empty_valid_cells": 0,
+      "denominator": 30,
+      "empty_valid_cells": 2,
       "invalid_cells": 0,
-      "known_cells": 4,
-      "numerator": 2917,
+      "known_cells": 2,
+      "numerator": 30,
       "status": "UNKNOWN",
       "unknown_cells": 12,
       "value": null

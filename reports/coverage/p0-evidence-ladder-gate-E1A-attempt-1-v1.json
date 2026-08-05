@@ -1,15 +1,15 @@
 {
   "architecture_fingerprint": "1f311bafdd51a45fa08ac8ac6fb3c125d33d1fe402928e03061f9ddd1352fb21",
   "architecture_ordinal": 1,
-  "attempt_slot": 2,
+  "attempt_slot": 1,
   "checkpoint_gate": "PASS",
   "checkpoint_hashes": {
-    "p0-e1a-135-2024-all16": "4daf14b2db0e239750af7d5e64c653cead9442fb3be1464e7944665fbd8e700c"
+    "p0-e1a-135-2024-all16": "7914d9e7130b9c38f48ec863902147453f882df5fae1306bbd197ebaad3890d8"
   },
   "closed_cells": 0,
   "council_decision": "FAIL_AND_REDESIGN",
-  "cumulative_mission_logical_gets_charged": 329,
-  "cumulative_mission_logical_gets_observed": 329,
+  "cumulative_mission_logical_gets_charged": 176,
+  "cumulative_mission_logical_gets_observed": 176,
   "domain_decision": "FAIL_AND_REDESIGN",
   "effects": {
     "deployments": 0,
@@ -37,7 +37,7 @@
       "suspensions"
     ]
   ],
-  "gate_sha256": "143b6237a93345daff1e23ebe562f8e257da99c7168ed5a1104a262e23f7e909",
+  "gate_sha256": "c0a75e5695d250efd94824f54668f189f859b03e842be6a1db08707429f552a9",
   "measurement_integrity_gate": "PASS",
   "memory_budget_gate": "UNKNOWN_NO_SIGNED_LIMIT",
   "memory_observation_gate": "PASS",
