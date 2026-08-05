@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-05T07:58:00Z",
+  "generated_at":"2026-08-05T13:45:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -799,6 +799,54 @@
       "dataset_lineage_id":"P0_2020_2025",
       "status":"VERIFIED",
       "verified_by":["C0","C1","DP6","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.READER.V1.001",
+      "claim":"The inventory-pinned reader exposes exact-key GET access only, verifies receipt and payload lineage before calculation, and preserves every provider, SQL and storage-mutation effect at zero.",
+      "scope":"P0_COVERAGE_EVIDENCE_READER",
+      "source":"local implementation validation, strict static analysis and workflow contract review",
+      "grain":"exact_inventory_object_read_and_verification",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/coverage/p0-evidence-reader-validation-v1.json",
+      "hash":"d39cc5a03cbad5eeef5d6e007ebad620a14d60dc3207c21e7245a19c666e4c5f",
+      "code_revision":"f560db43e9d74688a7ba10e288a0dbe639e9013d",
+      "execution_id":"p0-reader-validation-20260805T134254Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_2020_2025_PINNED_INVENTORY",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP3","DP5","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.ACCOUNTING.V1.001",
+      "claim":"Attempt, recovery and redesign accounting is cumulative and fail-closed across stages, selections are absorbed only by matching stage and hash, and at most two architectures with two attempts each are admitted.",
+      "scope":"P0_COVERAGE_EVIDENCE_LADDER",
+      "source":"adversarial accounting tests and independent consistency review",
+      "grain":"mission_attempt_and_architecture_accounting",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/coverage/p0-evidence-reader-validation-v1.json",
+      "hash":"d39cc5a03cbad5eeef5d6e007ebad620a14d60dc3207c21e7245a19c666e4c5f",
+      "code_revision":"f560db43e9d74688a7ba10e288a0dbe639e9013d",
+      "execution_id":"p0-reader-validation-20260805T134254Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_MISSION_ACCOUNTING_V1",
+      "status":"VERIFIED",
+      "verified_by":["C0","C1","DP5","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.REVIEW.V1.001",
+      "claim":"Three final read-only reviews found no open P0 or P1 after replaying source-rate binding, UNKNOWN handling, cross-stage selection isolation, recovery and architecture-limit scenarios.",
+      "scope":"P0_COVERAGE_EVIDENCE_READER",
+      "source":"platform, scientific and independent consistency final reviews",
+      "grain":"pre_commit_validation_verdict",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/coverage/p0-evidence-reader-validation-v1.json",
+      "hash":"d39cc5a03cbad5eeef5d6e007ebad620a14d60dc3207c21e7245a19c666e4c5f",
+      "code_revision":"f560db43e9d74688a7ba10e288a0dbe639e9013d",
+      "execution_id":"p0-reader-validation-20260805T134254Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_2020_2025",
+      "status":"VERIFIED",
+      "verified_by":["C0","C2","A1","A2"]
     }
   ],
   "decision_nodes":[
@@ -827,7 +875,8 @@
     {"decision_id":"RCV3-20260805-023","ledger_record_hash":"5a671c9d85422f5c6280f240bc74fc6f736ff7b74d0c86ec2f387581c2b135b0"},
     {"decision_id":"RCV3-20260805-024","ledger_record_hash":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b"},
     {"decision_id":"RCV3-20260805-025","ledger_record_hash":"3ef1c1e03995b4599f791abb1130a20aae354a03477d9ff949a23bc5be6d4a09"},
-    {"decision_id":"RCV3-20260805-026","ledger_record_hash":"64acb7ba88d1f3885518533a63922c6af316c047ebac2dc3396805978f6e04df"}
+    {"decision_id":"RCV3-20260805-026","ledger_record_hash":"64acb7ba88d1f3885518533a63922c6af316c047ebac2dc3396805978f6e04df"},
+    {"decision_id":"RCV3-20260805-027","ledger_record_hash":"aec9327f9324dea378619cc767a9b518f707e3fb350488c4fed8cd60aa834a23"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -903,6 +952,12 @@
     {"edge_id":"EDGE.071","from_claim_id":"COVERAGE.LADDER.SOURCE.V1.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.072","from_claim_id":"COVERAGE.LADDER.MISSION.V1.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.073","from_claim_id":"GOV.AUTHORIZATION.COVERAGE.002","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.074","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.074","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.075","from_claim_id":"COVERAGE.LADDER.READER.V1.001","to_decision_id":"RCV3-20260805-027","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.076","from_claim_id":"COVERAGE.LADDER.ACCOUNTING.V1.001","to_decision_id":"RCV3-20260805-027","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.077","from_claim_id":"COVERAGE.LADDER.REVIEW.V1.001","to_decision_id":"RCV3-20260805-027","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.078","from_claim_id":"COVERAGE.LADDER.SOURCE.V1.001","to_decision_id":"RCV3-20260805-027","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.079","from_claim_id":"COVERAGE.LADDER.MISSION.V1.001","to_decision_id":"RCV3-20260805-027","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.080","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-027","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

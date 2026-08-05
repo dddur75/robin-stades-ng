@@ -1,0 +1,102 @@
+{
+  "schema_version": "p0-evidence-reader-validation-v1",
+  "generated_at": "2026-08-05T13:42:54Z",
+  "branch": "codex/p0-coverage-evidence-ladder-v1",
+  "base_revision": "f560db43e9d74688a7ba10e288a0dbe639e9013d",
+  "pull_request": 30,
+  "pull_request_state": "DRAFT",
+  "source_inventory": {
+    "manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+    "objects": 2321,
+    "segments": 371,
+    "logical_bytes": 565269589,
+    "stored_bytes": 47724849,
+    "authority": "OBJECT_MEMBERSHIP_AND_PROVENANCE_ONLY"
+  },
+  "package": {
+    "workflow": {
+      "path": ".github/workflows/81-historical-deep-coverage-proof-export.yml",
+      "git_blob": "b90299d46e0916e778f8e3a799cc99462419def3",
+      "file_sha256_lf": "1ef0e5e4e7a981fde6b59e4babe2eadc1d53d07a563796a036b86c7b6cdfd6f0"
+    },
+    "ci": {
+      "path": ".github/workflows/ci.yml",
+      "git_blob": "1e6273bc10043f4a6a6b83d7b08106f07516b1e9",
+      "file_sha256_lf": "2a2ae4225ffff1626a41f9d9356baa045af01ff737db7ea1424f25365ad9ab0f"
+    },
+    "runner": {
+      "path": "scripts/run_p0_coverage_evidence.py",
+      "git_blob": "37ac5897b95a302789020f8bd30077cfcb3a07d3",
+      "file_sha256_lf": "1cbec24b5a334c867bf0fb77e61f10d8ca47e985822f328a2a51490652bda7af"
+    },
+    "reader": {
+      "path": "src/robin/historical_deep/coverage_evidence.py",
+      "git_blob": "dad9985d03b955626e59b4d1ef1f79379b8fd850",
+      "file_sha256_lf": "4ccbf58d10abe1adb9d0dded989f049712a82c68c7839ba3e8380053499684e9"
+    },
+    "tests": {
+      "path": "tests/historical_deep/test_coverage_proof_export.py",
+      "git_blob": "559fe349a0d3aa0457257a417ddf1553bfef53eb",
+      "file_sha256_lf": "ab2769c1f8fab82e0ed19f0662a335793e945fb8df82f3b5dead5d9084312bd9"
+    }
+  },
+  "security_boundary": {
+    "inventory_pinned": true,
+    "exact_key_reads_only": true,
+    "storage_methods_allowed": ["get_object"],
+    "prefix_discovery_allowed": false,
+    "provider_access_allowed": false,
+    "remote_sql_allowed": false,
+    "r2_write_allowed": false,
+    "r2_delete_allowed": false,
+    "zero_effect_contract_enforced": true
+  },
+  "scientific_invariants": {
+    "fixture_identity_is_semantic": true,
+    "inventory_is_not_a_denominator": true,
+    "scope_rate_bound_to_source_scope_counts": true,
+    "normalization_rate_bound_to_raw_eligible_counts": true,
+    "content_rate_bound_to_expected_and_observed_slots": true,
+    "unknown_denominators_remain_unknown": true,
+    "e2_memory_and_null_gates_fail_closed": true,
+    "mission_accounting_is_monotone": true,
+    "selection_absorption_is_stage_and_hash_bound": true,
+    "maximum_architectures": 2,
+    "maximum_attempts_per_architecture": 2,
+    "github_artifact_is_unique_scientific_proof": false
+  },
+  "validation": {
+    "targeted_reader_tests": 61,
+    "historical_deep_domain_tests": 184,
+    "ruff": "PASS",
+    "mypy_strict_source_files": 24,
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "compileall": "PASS",
+    "json_yaml_parse": "PASS",
+    "literal_secret_scan": "PASS",
+    "git_diff_check": "PASS",
+    "platform_review": "PASS",
+    "scientific_review": "PASS",
+    "independent_consistency_review": "PASS",
+    "critical_findings_open": 0
+  },
+  "effects_observed": {
+    "workflow_dispatches": 0,
+    "provider_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "odds_credits": 0,
+    "real_bets": 0,
+    "promotion": false,
+    "publication": false
+  },
+  "decision": "PASS_AND_COMMIT",
+  "verdict": "P0_EVIDENCE_READER_READY_FOR_EXACT_HEAD_CI",
+  "next_gate": "COMMIT_PUSH_EXACT_HEAD_CI_THEN_E1A_FREEZE"
+}

@@ -50,6 +50,7 @@ jobs:
           tests/historical_deep
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
+          scripts/run_p0_coverage_evidence.py
           scripts/run_historical_deep_harvest.py
           scripts/run_historical_deep_segmented_replay.py
       - name: Vérifier le typage strict Historical Deep
@@ -58,6 +59,7 @@ jobs:
           src/robin/historical_deep
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
+          scripts/run_p0_coverage_evidence.py
           scripts/run_historical_deep_harvest.py
           scripts/run_historical_deep_segmented_replay.py
       - name: Auditer la sécurité Historical Deep
@@ -66,6 +68,7 @@ jobs:
           src/robin/historical_deep
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
+          scripts/run_p0_coverage_evidence.py
           scripts/run_historical_deep_harvest.py
           scripts/run_historical_deep_segmented_replay.py
       - name: Compiler Historical Deep
@@ -75,6 +78,7 @@ jobs:
           tests/historical_deep
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
+          scripts/run_p0_coverage_evidence.py
           scripts/run_historical_deep_harvest.py
           scripts/run_historical_deep_segmented_replay.py
       - name: Valider JSON et YAML
