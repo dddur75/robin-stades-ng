@@ -1,0 +1,71 @@
+{
+  "accounting_parent_receipt_sha256": "d9431bb2a5e8eadcbc5bf1418460a92e83bd851fd33eb6b6eaecb416dbbb49cc",
+  "architecture_fingerprint": "1a9008f9fbe0ef26a47d4adc60acaf1b75a7241979085ad5249dd9df5c28076a",
+  "architecture_ordinal": 2,
+  "attempt_slot": 1,
+  "cost_sha256": "dc63f6fdc043aa0a9cc99937375d70c5542203e879de9c474bbede81a7c59270",
+  "cumulative_mission_logical_gets_charged": 505,
+  "cumulative_mission_logical_gets_observed": 505,
+  "cumulative_mission_logical_gets_observed_lower_bound": 505,
+  "effects": {
+    "deployments": 0,
+    "odds_credits": 0,
+    "promotion": false,
+    "provider_calls": 0,
+    "provider_credits": 0,
+    "publication": false,
+    "purchases": 0,
+    "r2_deletes": 0,
+    "r2_writes": 0,
+    "real_bets": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0
+  },
+  "failed_freeze_conservative_charge": 0,
+  "freeze_observed_logical_gets": 23,
+  "mission_accounting_baseline": {
+    "cumulative_mission_logical_gets_charged": 329,
+    "cumulative_mission_logical_gets_observed": 329,
+    "cumulative_mission_logical_gets_observed_lower_bound": 329,
+    "mission_budget_accounting_basis": "EXACT_OBSERVED",
+    "schema_version": "p0-coverage-mission-accounting-baseline-v1",
+    "source": "STAGE_RECEIPT",
+    "source_architecture_fingerprint": "1f311bafdd51a45fa08ac8ac6fb3c125d33d1fe402928e03061f9ddd1352fb21",
+    "source_receipt_ancestor_sha256s": [
+      "e4958efcb00a6355f23d6cb2f38879f954bf86b90414ebb2970a98a0d3945861"
+    ],
+    "source_stage": "E1A",
+    "source_stage_receipt_sha256": "d9431bb2a5e8eadcbc5bf1418460a92e83bd851fd33eb6b6eaecb416dbbb49cc"
+  },
+  "mission_budget_accounting_basis": "EXACT_OBSERVED",
+  "mission_budget_gate": "PASS",
+  "mission_logical_gets_limit": 10000,
+  "mission_logical_gets_remaining": 9495,
+  "monetary_cost": "UNKNOWN_NOT_OBSERVED",
+  "quota": "UNKNOWN_NOT_OBSERVED",
+  "read_accounting_gate": "PASS",
+  "reads": {
+    "logical_bytes": 23533728,
+    "logical_bytes_observed_lower_bound": 23533728,
+    "logical_gets": 153,
+    "logical_gets_observed_lower_bound": 153,
+    "physical_http_requests": "UNKNOWN_NOT_OBSERVED",
+    "stored_bytes": 2588085,
+    "stored_bytes_observed_lower_bound": 2588085
+  },
+  "resources": {
+    "measurement_elapsed_seconds_maximum": 80.752975,
+    "measurement_elapsed_seconds_observed_lower_bound": 80.752975,
+    "measurement_elapsed_seconds_total": 80.752975,
+    "memory_budget_gate": "UNKNOWN_NO_SIGNED_LIMIT",
+    "memory_observation_gate": "PASS",
+    "overtime_partition_ids": [],
+    "partition_time_limit_seconds": 300.0,
+    "process_peak_rss_bytes_maximum_observed": 609943552,
+    "signed_memory_limit_bytes": null,
+    "time_budget_gate": "PASS"
+  },
+  "schema_version": "p0-coverage-stage-cost-v1",
+  "selection_sha256": "7bc29b41098767e1a93616eed104a5bd0ff2ae6de4dcafaf514d52f254ccf903",
+  "stage": "E1A"
+}
