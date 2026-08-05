@@ -39,8 +39,9 @@ _SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 class DecisionState(StrEnum):
     """The five and only five Council level decisions."""
 
-    PASS_AND_SCALE = "PASS_AND_SCALE"
-    PASS_AND_HOLD = "PASS_AND_HOLD"
+    # These protocol labels are not credentials; Bandit matches the "PASS" prefix.
+    PASS_AND_SCALE = "PASS_AND_SCALE"  # nosec B105
+    PASS_AND_HOLD = "PASS_AND_HOLD"  # nosec B105
     FAIL_AND_REDESIGN = "FAIL_AND_REDESIGN"
     FAIL_AND_STOP = "FAIL_AND_STOP"
     BLOCKED_EXTERNAL_ACTION = "BLOCKED_EXTERNAL_ACTION"
