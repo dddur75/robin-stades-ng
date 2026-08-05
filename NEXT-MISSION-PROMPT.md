@@ -1,111 +1,134 @@
-# Mission compilée — P0 E1 Real Fixture Proof V1
+# Mission compilée — P0 Coverage Evidence Ladder V1
 
-Tu es Codex dans Robin des Stades. Exécute uniquement la mission E1 décrite ci-dessous. Ne lance pas E2 et ne déploie rien.
+Tu es Codex dans Robin des Stades. Exécute automatiquement E1A, E1B, E2, E3A,
+E3B puis E4 dans la PR draft `P0 Coverage Evidence Ladder V1 — E1 à E4`.
+Ne demande aucune validation utilisateur entre les niveaux.
 
-## 1. Préconditions
+## 1. Préconditions immuables
 
-1. Vérifie que la PR `Historical Coverage Denominator Closure V1 — grains, preuves et readiness P0` a été revue puis fusionnée explicitement.
-2. Vérifie que `main` contient son commit de fusion et que la CI distante correspondante est verte.
-3. Ne modifie jamais le checkout d’accueil protégé. Crée un worktree distinct depuis ce `main` et la branche `codex/p0-e1-real-fixture-proof-v1`.
-4. Lis `AGENTS.md`, le ledger Council, le graphe de preuves, le contrat de dénominateurs P0, le catalogue des grains et les packs E0–E4 avant toute écriture.
-5. Maintiens `STORAGE_PAUSED=true`, `P3_P4_PAUSED=true`, `PRODUCTION_LOCKED=true`, `REAL_BETS=false`, `NO_BET_DEFAULT=true`, `PROMOTION_LOCKED=true`, `SOCIAL_PUBLISHING_ENABLED=false` et `DEMO_MODE_ENABLED=false`.
+1. Rester dans le worktree de `codex/p0-coverage-evidence-ladder-v1`.
+2. Ne jamais modifier le checkout d'accueil protégé.
+3. Lire `AGENTS.md`, la matrice d'activation, le ledger, le graphe de preuves,
+   le mapping v2, la source P0, le manifeste Council et le catalogue des grains.
+4. Vérifier les hashes LF de tous les contrats épinglés.
+5. Refuser tout calcul si le manifeste Council est expiré, si son source hash
+   diverge, si un veto critique est ouvert ou si le budget est dépassé.
 
-Si une précondition manque, arrête avec `P0_E1_REAL_FIXTURE_PROOF_PARTIAL`.
+## 2. Autorisation
 
-## 2. Autorisation bornée
+Le mapping n'autorise ni workload ni scale. Le manifeste Council contient
+exactement huit champs et autorise seulement les étapes Council E1 à E4. E1A et
+E1B ne sont jamais ajoutés à l'enum Council : ils prouvent conjointement E1.
 
-Réutilisation en lecture seule des payloads et reçus déjà prouvés par PR #26 : autorisée.
-
-Tout le reste est interdit par défaut :
-
-- appels fournisseur : 0 ;
-- achats et crédits cotes : 0 ;
-- nouveaux replays : 0 ;
-- écritures/suppressions R2 : 0 ;
-- requêtes SQL distantes : 0 ;
-- déploiements Sites/Pages : 0 ;
-- paris, promotions et publications : 0.
-
-## 3. Boucle E1
-
-### E1.0 — inventaire de preuve
-
-- Réconcilie les manifests, hashes, reçus et identités déjà disponibles.
-- Ne copie aucun payload brut dans Git.
-- Produis un inventaire borné des candidats P0 admissibles.
-
-### E1.1 — manifeste avant calcul
-
-Choisis exactement 10 fixtures réelles dans un même couple compétition-saison :
-
-- fixture complète et P0 ;
-- compétition, saison, kickoff et deux équipes canoniques ;
-- provenance d’identité vérifiable jusqu’au reçu ;
-- tri par `kickoff_utc`, puis `fixture_id`.
-
-Écris et valide le manifeste de sélection avant de calculer les familles. Moins ou plus de 10 fixtures est un échec fermé.
-
-### E1.2 — redesign de provenance
-
-Ne relance pas le workflow Deep Data Cockpit inchangé. Remplace son hypothèse implicite d’identité par un registre explicite : identité canonique, source, reçu, hash, décision de rapprochement et objection éventuelle.
-
-Une identité ambiguë ou non vérifiée reste `OPEN_IDENTITY_PROVENANCE` et exclut la fixture ; elle n’est jamais devinée à partir d’un nom.
-
-### E1.3 — census borné
-
-Pour chaque fixture et chaque famille applicable :
-
-- applique le grain autoritatif ;
-- calcule attendu, reçu, vide valide et invalide ;
-- conserve les doublons exacts comme une seule preuve ;
-- bloque les doublons contradictoires ;
-- classe les absences ambiguës `UNCLASSIFIABLE` ;
-- calcule séparément `scope_completion`, `normalization_integrity` et `content_presence` avec numérateur et dénominateur ;
-- n’emploie jamais `coverage_rate` ou `overall_rate`.
-
-### E1.4 — conclusion
-
-E1 réussi signifie seulement que la chaîne fonctionne sur 10 fixtures réelles. Maintiens `can_close_real_cell=false`, `0/480` cellule fermée et tous les gates P0 bloqués.
-
-N’ouvre pas E2, E3, E4, l’hypergraphe, les backtests ou les écrans de performance.
-
-## 4. Validation
-
-Exige au minimum :
-
-- tests du manifeste exact 10 fixtures ;
-- Golden Pack E1 et mutations d’identité, doublons, absence, vide valide et taux ;
-- reproduction déterministe des artefacts et hashes ;
-- Ruff, schémas JSON, secret scan et diff check ;
-- tests de confidentialité et de frontière serveur des sources compactes ;
-- tests Cockpit ciblés si le Desk est mis à jour ;
-- revue indépendante red-team ;
-- CI distante sur le head exact de la PR.
-
-Deux échecs identiques d’une architecture imposent `REDESIGN_REQUIRED`; ne lance pas une troisième tentative inchangée.
-
-## 5. Gouvernance et GitHub
-
-- Un seul writer par worktree.
-- Ledger append-only et graphe de preuves mis à jour avant chaque commit.
-- Crée une PR brouillon, ne la fusionne pas.
-- Titre recommandé : `P0 E1 Real Fixture Proof V1 — 10 fixtures, identités et census`.
-- Aucune montée en charge sans nouvelle décision Council explicite.
-
-## 6. Rapport final
-
-Rapporte : environnement, sélection des 10 fixtures, provenance, grains, census, trois taux, erreurs, tests, objections, coûts et effets externes.
-
-Termine par un seul verdict :
+Seuls les effets suivants peuvent être demandés avec preuve séparée de matrice :
 
 ```text
-P0_E1_REAL_FIXTURE_PROOF_READY_SAMPLE_ONLY
+github_actions_execute_read_only
+r2_read_existing_immutable_evidence
 ```
 
-ou :
+Tous les appels fournisseur, écritures/suppressions R2, SQL distant,
+déploiements, achats, paris, promotions et publications restent interdits.
+N'utilise ni les workflows 70/71, ni les runners harvest/replay qui écrivent un
+sentinel. Étends seulement le workflow 81 existant avec une surface GET-only.
+
+## 3. Source R2
+
+Charger l'inventaire exact épinglé par la configuration source. Valider sa
+signature, ses compteurs, segments, objets, dimensions, hashes, tailles et clés.
+Après cette validation, autoriser uniquement les clés `receipt_key` et
+`payload_key` présentes dans l'inventaire. Le lecteur ne possède aucune méthode
+LIST, PUT, DELETE, COPY ou multipart et ne monte ni clé API-Football ni secret SQL.
+
+L'inventaire prouve l'appartenance et la provenance des objets, pas les
+dénominateurs. Ses champs `rows_received` ne sont jamais utilisés comme compteurs
+empiriques. Les six familles raw peuvent projeter seize familles normalisées ;
+aucune fermeture n'est inférée du seul label raw.
+
+## 4. Identités et mesures
+
+Utiliser `p0-evidence-identity-registry-v1` : IDs fournisseur positifs explicites,
+identités compétition/saison contrôlées, clés sémantiques non positionnelles,
+partition d'absence `SUSPENSION / INJURY / UNCLASSIFIABLE`. Toute ambiguïté,
+collision ou dépendance à une position de tableau échoue fermée.
+
+Pour chaque unité applicable, conserver :
 
 ```text
-P0_E1_REAL_FIXTURE_PROOF_PARTIAL
+expected
+received
+empty_valid
+invalid
+unclassifiable
+exact_duplicates
+contradictory_duplicates
 ```
 
-Ne présente jamais E1 comme une fermeture P0 complète.
+Calculer séparément `scope_completion`, `normalization_integrity` et
+`content_presence`. Un taux global vaut uniquement somme des numérateurs divisée
+par somme des dénominateurs. `UNKNOWN` n'est jamais zéro et `EMPTY_VALID` n'est
+jamais manquant.
+
+## 5. Boucle de niveau
+
+Pour chaque niveau :
+
+1. `freeze` sélectionne le scope déterministement et publie seulement le manifeste.
+2. Télécharger, vérifier et committer ce manifeste avant tout calcul scientifique.
+3. `measure` refuse tout autre hash et lit seulement les objets listés.
+4. Générer deux fois la section scientifique et exiger le même hash.
+5. Produire reçu, compteurs, taux, gate, coûts, checkpoint et flux client sanitizé.
+6. Exécuter le test du niveau, la suite du domaine et la revue indépendante.
+7. Ajouter la décision Council et le graphe append-only avant le commit durable.
+8. Passer automatiquement au niveau suivant lorsque les gates passent.
+
+Scopes exacts :
+
+```text
+E1A = 10 fixtures, une compétition-saison, tri kickoff_utc puis fixture_id
+E1B = 2 fixtures × 5 compétitions = 10
+E2  = 20 fixtures × 5 compétitions = 100
+E3A = une compétition-saison complète, au plus 16 cellules
+E3B = une saison commune × 5 compétitions, au plus 80 cellules
+E4  = 5 × 6 × 16 = 480 cellules
+```
+
+E1A, E1B et E2 ferment toujours `0/480`. E1A réussie donne Council
+`PASS_AND_HOLD`. E1A + E1B réussies peuvent donner E1 → E2. E4 est terminal :
+son succès donne `PASS_AND_HOLD` au plafond, jamais une transition inventée.
+
+## 6. Gates fail-closed
+
+- E1A : 10/10, identités 100 % prouvées, zéro ambiguïté ou contradiction,
+  déterminisme double.
+- E1B : 2×5, zéro collision, position ou divergence de grain, zéro fuite client.
+- E2 : 100/100, zéro identité devinée/hash divergent/scope incohérent,
+  mémoire et temps sous budget.
+- E3A : census exact, fixtures distinctes, reçus et dénominateurs prouvés,
+  cellules fermées ou explicitement partielles.
+- E3B : cinq ligues, même saison, pondération correcte, checkpoints réutilisables.
+- E4 : 480 résultats exacts ou partiels explicites, jobs ≤15 min et aucune
+  matrice >256.
+
+Si la source manque réellement, arrêter `FAIL_AND_STOP` ou `PARTIAL`. Ne pas
+déclencher de secours fournisseur en E1. Une éventuelle récupération de census
+exige un manifeste C0/C1/C4 séparé et le plafond absolu de 100 appels.
+
+## 7. Après E4
+
+Recalculer les huit gates, les verdicts distincts et les 486 propriétés sans
+modifier les seuils. Ouvrir l'hypergraphe uniquement si des propriétés sont
+réellement exploitables : masques, propriétés, paires exhaustives, triples
+sélectionnés plafonnés à 5 000 000. Ne pas lancer profondeur 4+.
+
+Ne pas refaire le dashboard. Autoriser seulement données, navigation cassée,
+résultats E1–E4, confidentialité et contrat du futur cockpit. Conserver
+`DASHBOARD-UX-OWNER-REVIEW-PENDING.md` et attendre la revue de David pour la
+direction visuelle.
+
+## 8. Rapport final
+
+Rapporter par niveau les fixtures, objets R2 lus, octets, temps, cellules fermées,
+gates, décision Council, commits et CI. Séparer les coûts observés des limites
+inconnues du compte. Rapporter séparément couverture, propriétés, hypergraphe,
+dashboard et sécurité. Ne jamais présenter un artefact GitHub comme source unique.

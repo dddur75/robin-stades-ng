@@ -1,0 +1,10 @@
+{
+  "mission_id": "p0-coverage-evidence-ladder-v1",
+  "authorized_stages": ["E1", "E2", "E3A", "E3B", "E4"],
+  "maximum_stage": "E4",
+  "external_effects": ["github_actions_execute_read_only", "r2_read_existing_immutable_evidence"],
+  "compute_budget": 480,
+  "time_budget": 144000,
+  "source_hash": "52fb07c0549458a04b5253a1171c3e87c6837bef78ad20279257c2a04011d82e",
+  "expires_at": "2026-08-06T23:45:00Z"
+}

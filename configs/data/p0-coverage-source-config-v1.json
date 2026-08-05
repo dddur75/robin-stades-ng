@@ -1,0 +1,136 @@
+{
+  "schema_version": "p0-coverage-source-config-v1",
+  "config_id": "p0-coverage-evidence-ladder-r2-source-v1",
+  "frozen_at": "2026-08-05T07:45:00Z",
+  "role": "IMMUTABLE_SOURCE_PIN_NO_EXECUTION_AUTHORITY",
+  "contracts": {
+    "campaign": {
+      "path": "configs/historical-deep-data-harvest-v1.json",
+      "file_sha256_lf": "70e311f1513d16d88f6c1f928d8d651c73562be9b5dcf2503b81c248b11ed2b8"
+    },
+    "denominator": {
+      "path": "configs/data/historical-coverage-denominator-contract-v1.json",
+      "file_sha256_lf": "ac4c8f6b5eb83d96fe13dfe774364dcea575aac1e7784ce7233ebcda39cb13dc"
+    },
+    "grain_catalog": {
+      "path": "configs/data/football-grain-catalog-v1.json",
+      "file_sha256_lf": "5b2581e7d3a4630fd9d84be6ca954dc63cae83a602fce91d68c4847c5498cd71"
+    },
+    "stage_mapping": {
+      "path": "configs/data/coverage-scale-pack-manifests-v2.json",
+      "file_sha256_lf": "d702b88c964d64d984cc69d2b297f37fbb74f087347934f8d3eee7a22597409f"
+    },
+    "authority_matrix": {
+      "path": "configs/agents/mission-activation-matrix-v3.json",
+      "file_sha256_lf": "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"
+    }
+  },
+  "inventory": {
+    "schema_version": "historical-deep-replay-inventory-v2",
+    "manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+    "durable_key": "historical-deep-data/schema-v1/_derived/replay/inventories/continuation=p0-closure-30622258001-1/inventory=87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d/manifest.json.gz",
+    "continuation_id": "p0-closure-30622258001-1",
+    "continuation_of": "30622258001:1",
+    "run_purpose": "P0_CLOSURE_AND_SHARDED_REPLAY",
+    "code_revision": "f489971c03b53e9ea1381655f1591328ed055d41",
+    "source_run_token": "30853757779:1",
+    "objects_expected": 2321,
+    "segments_expected": 371,
+    "logical_bytes": 565269589,
+    "stored_bytes": 47724849,
+    "inventory_build_provider_calls": 0
+  },
+  "recovery_mirror": {
+    "authoritative": false,
+    "purpose": "READ_ONLY_RECOVERY_AND_CROSS_CHECK_ONLY",
+    "github_run_id": 30853757779,
+    "github_job_id": 91897737910,
+    "github_artifact_id": 8871763918,
+    "github_artifact_name": "historical-deep-74a-current-r2-gate-30853757779-1",
+    "zip_sha256": "9d6562d30502570614f8c68a7d0c72325398a43071026e7f7bcf9c633dad6864",
+    "expires_at": "2026-11-01T21:14:06Z"
+  },
+  "derived_ranking_context": {
+    "authoritative_for_fixture_or_cell_closure": false,
+    "github_run_id": 30896340821,
+    "github_artifact_id": 8888550451,
+    "exporter_revision": "24b66dabc158ef62d888feec86ae602ba0391e47",
+    "proof_sha256": "61afbfef0c8f51bc07e6992591cf2c0125069ef72c3d5ad9bd4a366d48a92be4",
+    "replay_source_sha256": "a23782b5b15381bbe82b7fac3a8f62ac8b3d68aed75aa6759f967f32875ac97d",
+    "replay_envelope_sha256": "6ca11597cc6e5d4cae8c44f48d9eaad5041abd329f23a8b4cc0ee7d321b55c47",
+    "normalized_rows": 2023144,
+    "aggregate_cells": 1067,
+    "verified_sample_denominators": 0,
+    "provider_calls": 0
+  },
+  "scope": {
+    "id": "P0_2020_2025",
+    "competitions": [
+      {"canonical_key": "api-football:61", "name": "Ligue 1", "provider_league_id": 61},
+      {"canonical_key": "api-football:39", "name": "Premier League", "provider_league_id": 39},
+      {"canonical_key": "api-football:140", "name": "Liga", "provider_league_id": 140},
+      {"canonical_key": "api-football:78", "name": "Bundesliga", "provider_league_id": 78},
+      {"canonical_key": "api-football:135", "name": "Serie A", "provider_league_id": 135}
+    ],
+    "seasons": [2020, 2021, 2022, 2023, 2024, 2025],
+    "raw_inventory_families": ["fixtures", "events", "injuries", "players", "rounds", "standings"],
+    "normalized_p0_families": ["fixtures", "events", "lineups", "lineup_players", "formations", "team_match_statistics", "player_match_statistics", "referees", "venues", "teams", "standings", "rounds", "players", "player_season_statistics", "injuries", "suspensions"],
+    "raw_family_labels_are_not_normalized_family_closure_claims": true
+  },
+  "identity_registry": {
+    "version": "p0-evidence-identity-registry-v1",
+    "architecture_hash": "a389c9944edda7f139f9946c63e5f158c683268ad0c35bc8dfd96d1e39ca6f53",
+    "fixture_identity": "api-football:fixture:{positive_provider_fixture_id}",
+    "team_identity": "api-football:team:{positive_provider_team_id}",
+    "competition_identity": "api-football:{explicit_provider_league_id}",
+    "season_identity": "integer_p0_season_2020_2025",
+    "natural_key_policy": "SEMANTIC_NON_POSITIONAL_KEYS_ONLY",
+    "position_fields_forbidden": true,
+    "absence_partition": ["SUSPENSION", "INJURY", "UNCLASSIFIABLE"],
+    "third_unchanged_attempt": "FAIL_AND_STOP"
+  },
+  "access_policy": {
+    "mode": "EXACT_GET_READ_ONLY",
+    "bootstrap_exact_keys": [
+      "historical-deep-data/schema-v1/_derived/replay/inventories/continuation=p0-closure-30622258001-1/inventory=87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d/manifest.json.gz"
+    ],
+    "post_bootstrap_get_policy": "ONLY_RECEIPT_AND_PAYLOAD_KEYS_LISTED_BY_VERIFIED_INVENTORY",
+    "raw_prefix_listing_allowed": false,
+    "derived_prefix_listing_allowed": false,
+    "head_allowed": false,
+    "copy_allowed": false,
+    "multipart_allowed": false,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "provider_calls": 0,
+    "max_bootstrap_gets": 1,
+    "max_bootstrap_compressed_bytes": 4194304,
+    "max_bootstrap_decompressed_bytes": 4194304,
+    "max_gets_per_job": 200,
+    "max_stored_bytes_per_job": 10485760,
+    "max_logical_bytes_per_job": 83886080,
+    "max_mission_gets": 10000
+  },
+  "safety": {
+    "API_FOOTBALL_CALLS_ALLOWED": 0,
+    "R2_WRITES_ALLOWED": 0,
+    "R2_DELETES_ALLOWED": 0,
+    "REMOTE_SQL_READS_ALLOWED": 0,
+    "REMOTE_SQL_WRITES_ALLOWED": 0,
+    "ODDS_API_CREDITS_ALLOWED": 0,
+    "PURCHASES_ALLOWED": 0,
+    "DEPLOYMENTS_ALLOWED": 0,
+    "REAL_BETS": false,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "raw_payloads_in_git": false
+  },
+  "quality_limits": {
+    "inventory_rows_received_is_empirical_denominator": false,
+    "aggregate_projection_is_fixture_authority": false,
+    "aggregate_projection_is_cell_closure_authority": false,
+    "missing_denominator_policy": "UNKNOWN_NOT_ZERO",
+    "missing_receipt_or_hash_policy": "FAIL_CLOSED",
+    "source_hash_mismatch_policy": "FAIL_AND_STOP"
+  }
+}

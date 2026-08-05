@@ -1,86 +1,127 @@
-# Prochaine mission — P0 E1 Real Fixture Proof V1
+# Prochaine mission — P0 Coverage Evidence Ladder V1
 
-## Problème restant
+## État d'entrée prouvé
 
-Le contrat P0 définit exactement 480 cellules (`5 compétitions × 6 saisons × 16 familles`), mais aucune cellule ne possède encore de census empirique autoritatif. La preuve actuelle ferme E0 seulement : grains, dimensions, taux, erreurs et gates sont déterministes ; `0/480` cellule est empiriquement fermée et `CALENDAR_FATIGUE` reste à `0/17`.
+- Council V3.1 minimal fusionné par merge commit ;
+- PR #28 compactée, auditée et fusionnée par merge commit ;
+- CI du nouveau `main@96bcc2d56f1b68a011f1efa11022ebd4b8713208` verte ;
+- branche dédiée `codex/p0-coverage-evidence-ladder-v1` et PR draft #30 ;
+- checkout d'accueil protégé inchangé ;
+- P0 défini par `5 compétitions × 6 saisons × 16 familles = 480 cellules` ;
+- aucune fermeture empirique héritée : `0/480`.
 
-Deux exécutions identiques du workflow Deep Data Cockpit ont en outre échoué sur `provenance des identités non vérifiée`. Une troisième relance sans changement d’architecture est interdite.
+## Contrat d'échelle corrigé
 
-## Preuves acquises
-
-- PR #26 fusionnée et fondation vérifiée, score effectif 95/100 après CI ;
-- 2 321 payloads et 2 321 reçus R2 déjà présents dans la preuve PR #26 ;
-- 2 023 144 lignes normalisées, sans mismatch de replay constaté ;
-- 1 067 cellules d’union observée, dont 0 cellule avec census P0 autoritatif ;
-- catalogue des 16 grains et contrat P0 compact prouvant 480 cellules en mémoire ;
-- contrats séparés pour `scope_completion`, `normalization_integrity` et `content_presence` ;
-- classifieur d’absence fail-closed et états `EMPTY_VALID` distincts de zéro ;
-- niveaux E0–E4, packs bornés et gates fonctionnels ;
-- sources compactes serveur et Desk P0 validés sans fuite client.
-
-## Priorité unique
-
-Produire une **preuve E1 sur exactement 10 fixtures P0 réelles**, à partir des payloads/reçus déjà autorisés, afin de valider la chaîne de census et la provenance des identités sur un échantillon borné.
-
-E1 est une preuve d’échantillon. Elle ne ferme aucune cellule P0 complète, ne débloque aucune hypothèse et n’autorise pas E2.
-
-## Sélection déterministe
-
-Sélectionner exactement les 10 premières fixtures chronologiquement complètes d’un même couple compétition-saison P0 qui satisfont toutes les conditions suivantes :
-
-1. fixture, compétition, saison, équipes domicile/extérieur et kickoff sont reliés à un reçu vérifiable ;
-2. les identités sont canoniques et leur provenance est explicite ;
-3. aucun payload ni reçu nouveau n’est nécessaire ;
-4. l’ordre est `kickoff_utc`, puis `fixture_id` comme départage déterministe.
-
-Publier le manifeste de sélection avant tout calcul E1. Si moins de 10 fixtures satisfont ces critères, arrêter avec `PARTIAL` ; ne pas élargir silencieusement le scope.
-
-## Livrables attendus
-
-- contrat de preuve E1 et manifeste exact des 10 fixtures ;
-- registre de provenance des identités avec hashes et reçus ;
-- census E1 par fixture, famille et grain ;
-- trois taux séparés avec numérateurs et dénominateurs ;
-- classification reçue / vide valide / invalide / ambiguë ;
-- rapport d’écarts et objections ;
-- tests Golden et mutations fail-closed ;
-- synthèse compacte serveur du résultat E1, sans payload brut ni liste de cellules répétitives ;
-- mise à jour du Desk indiquant `E1 sample`, sans changer `0/480` ;
-- PR brouillon non fusionnée et dossier de gouvernance append-only.
-
-## Interdictions
-
-- 0 appel fournisseur, 0 achat, 0 crédit cotes ;
-- 0 replay nouveau, 0 écriture ou suppression R2, 0 requête SQL distante ;
-- aucun scan général, E2, E3, E4, hypergraphe ou backtest ;
-- aucun ROI, classement, stratégie, pari, promotion ou publication ;
-- aucune modification du checkout d’accueil protégé ;
-- aucune troisième relance de l’architecture Deep Data Cockpit inchangée.
-
-## Branche à sélectionner
-
-Ne démarrer qu’après revue et fusion explicite de la PR `Historical Coverage Denominator Closure V1 — grains, preuves et readiness P0`.
-
-Depuis le commit de fusion correspondant sur `main`, créer :
+L'ordre du domaine est :
 
 ```text
-codex/p0-e1-real-fixture-proof-v1
+E0 → E1A → E1B → E2 → E3A → E3B → E4
 ```
 
-## Gate de sortie
-
-Verdicts possibles :
+L'ordre du Council reste :
 
 ```text
-P0_E1_REAL_FIXTURE_PROOF_READY_SAMPLE_ONLY
-P0_E1_REAL_FIXTURE_PROOF_PARTIAL
+E1 → E2 → E3A → E3B → E4
 ```
 
-Même en cas de succès, conserver :
+E1A et E1B sont les deux composantes de Council E1. E1A seule produit
+`PASS_AND_HOLD`; seule la preuve conjointe E1A + E1B peut autoriser E1 → E2.
+Le legacy E2 à 50 fixtures est incompatible avec le nouveau E2 à 100 fixtures.
+Toute écriture legacy ou tout label ambigu `E1`/`E3` est rejeté.
+
+## Autorité et sources gelées
+
+Le mapping v2 n'accorde aucune autorité d'exécution. Avant tout calcul, utiliser :
+
+- le manifeste Council immuable à huit champs ;
+- la configuration source qui épingle l'inventaire R2 signé
+  `87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d` ;
+- le manifeste de sélection du niveau, publié et committé avant `measure`.
+
+L'accès R2 est limité à un `GET` de l'inventaire exact, puis aux seules clés de
+reçu/payload présentes dans cet inventaire vérifié. Aucun LIST raw ou dérivé,
+HEAD, PUT, DELETE, COPY ou multipart n'est autorisé. L'artefact GitHub de
+récupération est un miroir non autoritatif ; R2 et Git conservent la preuve.
+
+Par défaut et pendant toute l'échelle :
 
 ```text
-P0 empirical cells closed = 0/480
-CALENDAR_FATIGUE ready = 0/17
-E2 = NOT_AUTHORIZED
-HYPERGRAPH = NOT_OPENED
+API_FOOTBALL_CALLS_ALLOWED=0
+R2_WRITES_ALLOWED=0
+R2_DELETES_ALLOWED=0
+REMOTE_SQL_READS_ALLOWED=0
+REMOTE_SQL_WRITES_ALLOWED=0
+ODDS_API_CREDITS_ALLOWED=0
+DEPLOYMENTS_ALLOWED=0
+PURCHASES_ALLOWED=0
+REAL_BETS=false
 ```
+
+## Niveaux
+
+### E1A — canari mono compétition-saison
+
+Sélectionner exactement 10 fixtures réelles du meilleur couple P0, triées par
+`kickoff_utc`, puis `fixture_id`. Exiger identités explicites, reçu, hashes,
+provenance, zéro ambiguïté et deux générations scientifiques identiques. Mesurer
+les sept compteurs et les trois taux séparés. Fermer `0/480` cellule.
+
+### E1B — canari cinq ligues
+
+Sélectionner exactement 2 fixtures par compétition, soit 10 fixtures. Interdire
+collision d'identité, mapping positionnel, divergence de grain et fuite client.
+Fermer `0/480`. E1A + E1B réussis prouvent Council E1.
+
+### E2 — 100 fixtures
+
+Sélectionner exactement 20 fixtures par compétition. Préférer une saison commune,
+sinon figer la meilleure saison par compétition. Éprouver les 16 familles, les
+grains, doublons, nulls, vides valides et agrégations pondérées. Fermer `0/480`.
+
+### E3A — une compétition-saison complète
+
+Traiter le meilleur scope complet, avec census exact et dénominateurs prouvés.
+Une cellule n'est fermée que si scope, reçu, hash, grain et compteurs sont
+complets ; sinon elle reste explicitement partielle. Plafond : 16 cellules.
+
+### E3B — une saison sur cinq ligues
+
+Traiter la meilleure saison commune sur Ligue 1, Premier League, Liga,
+Bundesliga et Serie A. Aucune moyenne simple et aucun mélange de saison.
+Plafond de scope : 80 cellules.
+
+### E4 — P0 complet
+
+Traiter uniquement P0 2020–2025. Partitionner par compétition-saison puis par
+groupe de familles, au plus 120 jobs. Cible ≤10 minutes, maximum ≤15 minutes,
+checkpoint ≤5 minutes. Publier le reçu compact de 480 cellules, les taux pondérés,
+les gates et les coûts observés. Les cellules non prouvées restent partielles.
+
+## Protocole par niveau
+
+```text
+freeze source/selection
+→ vérifier et committer le manifeste
+→ measure sur ce hash exact
+→ test du niveau + suite du domaine
+→ revue indépendante
+→ décision Council + checkpoint
+→ commit durable
+→ passage automatique si les gates passent
+```
+
+Aucune validation utilisateur intermédiaire. Après deux interruptions similaires,
+changer d'architecture. Une troisième tentative identité inchangée produit
+`FAIL_AND_STOP`.
+
+## Après E4
+
+Recalculer séparément les huit gates fonctionnels, les verdicts de couverture et
+les 486 propriétés. Météo et pied fort restent `BLOCKED_BY_SOURCE` sans falsifier
+P0. Ouvrir l'hypergraphe seulement si un sous-espace de propriétés possède une
+preuve suffisante : masques atomiques, propriétés seules, paires compatibles,
+puis triples plafonnés à 5 000 000. Aucune profondeur 4+ sans benchmark favorable.
+
+Le Desk peut recevoir un flux compact et sanitizé. Aucune refonte visuelle profonde
+avant la revue de David ; fixture IDs, endpoints, payloads, reçus et secrets ne
+doivent jamais entrer dans le bundle client.

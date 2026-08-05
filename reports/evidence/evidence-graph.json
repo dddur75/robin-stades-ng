@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-05T07:36:00Z",
+  "generated_at":"2026-08-05T07:58:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -735,6 +735,70 @@
       "dataset_lineage_id":"P0_2020_2025_DEFINITION_ONLY",
       "status":"PARTIAL",
       "verified_by":["C0","C1","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.MAPPING.V2.001",
+      "claim":"The domain ladder is mapped deterministically to Council stages, preserves legacy v1 read semantics, rejects ambiguous writes, and grants no execution authority.",
+      "scope":"P0_COVERAGE_EVIDENCE_LADDER",
+      "source":"static v2 mapping contract and deterministic resolver tests",
+      "grain":"domain_stage_mapping",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"configs/data/coverage-scale-pack-manifests-v2.json",
+      "hash":"d702b88c964d64d984cc69d2b297f37fbb74f087347934f8d3eee7a22597409f",
+      "code_revision":"46d8359243aad493ee7b84b50e6cf929b7cc6bf6",
+      "execution_id":"p0-ladder-bootstrap-20260805T075800Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_2020_2025",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","C2","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.FAIL_CLOSED.V2.001",
+      "claim":"Bootstrap validation preserves zero real cells closed, requires a frozen selection before calculation, and rejects legacy or position-based shortcuts.",
+      "scope":"P0_COVERAGE_EVIDENCE_LADDER",
+      "source":"targeted mapping, coverage, Council, lint, typing and canonical evidence validation",
+      "grain":"bootstrap_validation",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/coverage/p0-evidence-ladder-bootstrap-v1.json",
+      "hash":"22eb2960d60ffd029da991d1d636566f6b9bb2fec2c7e15c9d60baf8b2bfb1ca",
+      "code_revision":"46d8359243aad493ee7b84b50e6cf929b7cc6bf6",
+      "execution_id":"p0-ladder-bootstrap-20260805T075800Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_2020_2025",
+      "status":"VERIFIED",
+      "verified_by":["C0","C1","DP6","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.SOURCE.V1.001",
+      "claim":"The exact signed inventory is pinned for object membership and provenance only; it does not establish an authoritative denominator or close a coverage cell.",
+      "scope":"P0_COVERAGE_SOURCE_PIN",
+      "source":"signed replay inventory manifest and bounded GitHub recovery metadata",
+      "grain":"immutable_source_binding",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"configs/data/p0-coverage-source-config-v1.json",
+      "hash":"52fb07c0549458a04b5253a1171c3e87c6837bef78ad20279257c2a04011d82e",
+      "code_revision":"46d8359243aad493ee7b84b50e6cf929b7cc6bf6",
+      "execution_id":"p0-ladder-bootstrap-20260805T075800Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_2020_2025",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","C2","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.MISSION.V1.001",
+      "claim":"The immutable eight-field mission binds the source hash, maximum E4 ceiling, budgets and two read-only effects without authorizing calculation before a frozen level selection.",
+      "scope":"P0_COVERAGE_EVIDENCE_LADDER",
+      "source":"eight-field mission manifest and source-hash validation",
+      "grain":"immutable_mission_authorization",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"configs/data/p0-coverage-evidence-mission-v1.json",
+      "hash":"d3c9df38ca02a4d7d5feaa0d1561541c26ea6313fb8755d04de5690367c6262f",
+      "code_revision":"46d8359243aad493ee7b84b50e6cf929b7cc6bf6",
+      "execution_id":"p0-ladder-bootstrap-20260805T075800Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_2020_2025",
+      "status":"VERIFIED",
+      "verified_by":["C0","C1","DP6","A2"]
     }
   ],
   "decision_nodes":[
@@ -762,7 +826,8 @@
     {"decision_id":"RCV31-20260805-022","ledger_record_hash":"2e571ba581ebd1dce0162e2dbdb47879b82b8c9b8a21b08284236f12667e9112"},
     {"decision_id":"RCV3-20260805-023","ledger_record_hash":"5a671c9d85422f5c6280f240bc74fc6f736ff7b74d0c86ec2f387581c2b135b0"},
     {"decision_id":"RCV3-20260805-024","ledger_record_hash":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b"},
-    {"decision_id":"RCV3-20260805-025","ledger_record_hash":"3ef1c1e03995b4599f791abb1130a20aae354a03477d9ff949a23bc5be6d4a09"}
+    {"decision_id":"RCV3-20260805-025","ledger_record_hash":"3ef1c1e03995b4599f791abb1130a20aae354a03477d9ff949a23bc5be6d4a09"},
+    {"decision_id":"RCV3-20260805-026","ledger_record_hash":"64acb7ba88d1f3885518533a63922c6af316c047ebac2dc3396805978f6e04df"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -832,6 +897,12 @@
     {"edge_id":"EDGE.065","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-024","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.066","from_claim_id":"GOV.AUTHORIZATION.COVERAGE.002","to_decision_id":"RCV3-20260805-025","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.067","from_claim_id":"GOV.V31.MINIMAL.CONTRACT.001","to_decision_id":"RCV3-20260805-025","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.068","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-025","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.068","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-025","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.069","from_claim_id":"COVERAGE.LADDER.MAPPING.V2.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.070","from_claim_id":"COVERAGE.LADDER.FAIL_CLOSED.V2.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.071","from_claim_id":"COVERAGE.LADDER.SOURCE.V1.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.072","from_claim_id":"COVERAGE.LADDER.MISSION.V1.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.073","from_claim_id":"GOV.AUTHORIZATION.COVERAGE.002","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.074","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-026","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
