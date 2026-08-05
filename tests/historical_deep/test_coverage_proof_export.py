@@ -1715,6 +1715,23 @@ def _p0_e1a_selection(authority: CoverageAuthority) -> dict[str, object]:
     return _signed_p0(unsigned, field="selection_sha256")
 
 
+def _p0_authority_with_committed_selection(
+    root: Path,
+    *,
+    authority: CoverageAuthority,
+    selection: Mapping[str, object],
+) -> CoverageAuthority:
+    selection_path = (
+        root / "configs" / "data" / "p0-coverage-evidence-selection-E1A-v1.json"
+    )
+    selection_path.parent.mkdir(parents=True, exist_ok=True)
+    selection_path.write_text(
+        json.dumps(selection, sort_keys=True, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    return replace(authority, root=root)
+
+
 def _p0_e1a_inventory(authority: CoverageAuthority) -> VerifiedInventory:
     objects: list[InventoryObject] = []
     for competition in authority.competitions:
@@ -2572,6 +2589,11 @@ def test_p0_real_measurement_cells_are_accepted_by_stage_aggregation(tmp_path: P
         now=datetime(2026, 8, 5, 8, tzinfo=UTC),
     )
     selection = _p0_e1a_selection(authority)
+    aggregate_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
+    )
     inventory = _p0_e1a_inventory(authority)
     reader = _P0PairReader(_p0_e1a_pair(inventory))
     receipt, counts = measure_partition(
@@ -2617,7 +2639,7 @@ def test_p0_real_measurement_cells_are_accepted_by_stage_aggregation(tmp_path: P
         )
 
     stage, feed, gate, _ = aggregate_stage(
-        authority,
+        aggregate_authority,
         selection=selection,
         shards_directory=shards,
     )
@@ -2772,6 +2794,11 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
         now=datetime(2026, 8, 5, 8, tzinfo=UTC),
     )
     selection = _p0_e1a_selection(authority)
+    aggregate_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
+    )
     valid_cells = [_p0_cell(family=family) for family in authority.normalized_families]
     valid_dir = tmp_path / "valid"
     _write_p0_e1a_shard(
@@ -2782,7 +2809,7 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
     )
 
     stage, feed, gate, cost = aggregate_stage(
-        authority,
+        aggregate_authority,
         selection=selection,
         shards_directory=valid_dir,
     )
@@ -2830,7 +2857,7 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
         cells=unproven_cells,
     )
     unproven_stage, _, _, _ = aggregate_stage(
-        authority,
+        aggregate_authority,
         selection=selection,
         shards_directory=unproven_dir,
     )
@@ -2847,7 +2874,7 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
         cells=valid_cells[:-1],
     )
     missing_stage, _, _, _ = aggregate_stage(
-        authority,
+        aggregate_authority,
         selection=selection,
         shards_directory=missing_dir,
     )
@@ -2877,7 +2904,7 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
         cells=invalid_cells,
     )
     invalid_stage, _, _, _ = aggregate_stage(
-        authority,
+        aggregate_authority,
         selection=selection,
         shards_directory=invalid_dir,
     )
@@ -2897,7 +2924,7 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
         cells=ambiguous_cells,
     )
     ambiguous_stage, _, _, _ = aggregate_stage(
-        authority,
+        aggregate_authority,
         selection=selection,
         shards_directory=ambiguous_dir,
     )
@@ -2923,6 +2950,11 @@ def test_p0_aggregate_rejects_rates_detached_from_source_counts(
         now=datetime(2026, 8, 5, 8, tzinfo=UTC),
     )
     selection = _p0_e1a_selection(authority)
+    aggregate_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
+    )
     cells = [_p0_cell(family=family) for family in authority.normalized_families]
     for cell in cells:
         cell[source_field] = 999
@@ -2942,7 +2974,7 @@ def test_p0_aggregate_rejects_rates_detached_from_source_counts(
     )
 
     stage, feed, _, _ = aggregate_stage(
-        authority,
+        aggregate_authority,
         selection=selection,
         shards_directory=detached_dir,
     )
@@ -2993,12 +3025,10 @@ def test_p0_checkpoints_and_second_attempts_are_fail_closed(tmp_path: Path) -> N
     assert failed["failed_read_accounting"] == "UNKNOWN_NOT_OBSERVED"
     assert coverage_evidence_module._checkpoint_time_limit_seconds(e4_authority) == 300
 
-    temp_authority = replace(authority, root=tmp_path)
-    selection_path = tmp_path / "configs" / "data" / "p0-coverage-evidence-selection-E1A-v1.json"
-    selection_path.parent.mkdir(parents=True)
-    selection_path.write_text(
-        json.dumps(selection, sort_keys=True, separators=(",", ":")),
-        encoding="utf-8",
+    temp_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
     )
     validate_stage_attempt(
         temp_authority,
@@ -3014,7 +3044,7 @@ def test_p0_checkpoints_and_second_attempts_are_fail_closed(tmp_path: Path) -> N
         cells=[_p0_cell(family=family) for family in authority.normalized_families],
     )
     successful_stage, _, _, _ = aggregate_stage(
-        authority,
+        temp_authority,
         selection=selection,
         shards_directory=shard_directory,
     )
@@ -3040,7 +3070,7 @@ def test_p0_checkpoints_and_second_attempts_are_fail_closed(tmp_path: Path) -> N
     operational_directory = tmp_path / "operational-interruption"
     operational_directory.mkdir()
     operational_stage, _, _, _ = aggregate_stage(
-        authority,
+        temp_authority,
         selection=selection,
         shards_directory=operational_directory,
         attempt_slot=1,
