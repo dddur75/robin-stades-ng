@@ -3770,12 +3770,16 @@ def _semantic_key(
         )
         return (family, *player_season_identity) if None not in player_season_identity else ()
     if family in {"injuries", "suspensions"}:
+        player_value = data.get("player")
+        player = player_value if isinstance(player_value, Mapping) else {}
+        absence_type = data.get("type") or player.get("type")
+        absence_reason = data.get("reason") or player.get("reason")
         absence_identity = (
             fixture_id,
             player_id,
             team_id,
-            data.get("type"),
-            data.get("reason"),
+            absence_type,
+            absence_reason,
         )
         return (
             (
@@ -4124,8 +4128,16 @@ def _classify_absence_source(
                 invalid_identity += 1
                 continue
             record_hash = canonical_sha256(record_value)
+            # API-Football /injuries nests availability type/reason under
+            # player; retain flat fields for already-supported legacy payloads.
+            player_value = record_value.get("player")
+            player = player_value if isinstance(player_value, Mapping) else {}
+            absence_type = record_value.get("type") or player.get("type")
+            absence_reason = record_value.get("reason") or player.get("reason")
+            absence_description = record_value.get("description") or player.get("description")
             description = " ".join(
-                str(record_value.get(field) or "") for field in ("type", "reason", "description")
+                str(value or "")
+                for value in (absence_type, absence_reason, absence_description)
             )
             if suspension_pattern.search(description):
                 category = "SUSPENSION"
@@ -4145,12 +4157,15 @@ def _classify_absence_source(
                 fixture_id,
                 player.get("id"),
                 team.get("id"),
-                record_value.get("type"),
-                record_value.get("reason"),
+                absence_type,
+                absence_reason,
                 record_value.get("start"),
                 record_value.get("end"),
             )
-            if any(value is None or isinstance(value, bool) for value in natural_key):
+            if any(
+                value is None or isinstance(value, bool)
+                for value in natural_key[:5]
+            ):
                 invalid_identity += 1
                 continue
             prior = all_identity_contents.get(natural_key)
@@ -5443,6 +5458,14 @@ def aggregate_stage(
             authority,
             selection=selection,
         )
+    if attempt_slot == 2:
+        # Aggregation is also a public CLI/API boundary. Reapply the exact retry
+        # preconditions here so callers cannot bypass the workflow preflight.
+        validate_stage_attempt(
+            authority,
+            operation="measure",
+            attempt_slot=attempt_slot,
+        )
     expected_partitions: dict[str, Mapping[str, object]] = {}
     expected_cell_keys: set[tuple[str, int, str]] = set()
     for partition_value in _sequence(
@@ -5481,6 +5504,7 @@ def aggregate_stage(
     checkpoint_hashes: dict[str, str] = {}
     observed_attempt_slots: list[int] = []
     resource_reports: list[tuple[str, float, int | None]] = []
+    failed_scientific_partition_ids: list[str] = []
     invalid_shards = malformed_shards
     for receipt, counts, cost, checkpoint in shards:
         try:
@@ -5631,34 +5655,54 @@ def aggregate_stage(
                 absence_partition.get("raw_distinct"),
                 label="P0_SHARD_ABSENCE_RAW_DISTINCT",
             )
-            absence_classified = sum(
-                _integer(
-                    absence_partition.get(field),
-                    label=f"P0_SHARD_ABSENCE_{field.upper()}",
-                )
-                for field in (
-                    "injuries_distinct",
-                    "suspensions_distinct",
-                    "unclassifiable_distinct",
-                )
+            absence_injuries = _integer(
+                absence_partition.get("injuries_distinct"),
+                label="P0_SHARD_ABSENCE_INJURIES_DISTINCT",
             )
+            absence_suspensions = _integer(
+                absence_partition.get("suspensions_distinct"),
+                label="P0_SHARD_ABSENCE_SUSPENSIONS_DISTINCT",
+            )
+            absence_unclassifiable = _integer(
+                absence_partition.get("unclassifiable_distinct"),
+                label="P0_SHARD_ABSENCE_UNCLASSIFIABLE_DISTINCT",
+            )
+            absence_classified = (
+                absence_injuries + absence_suspensions + absence_unclassifiable
+            )
+            absence_invariant = absence_partition.get("invariant")
             if (
                 absence_raw != absence_classified
                 or absence_partition.get("classification_rule_version")
                 != "absence-partition-rule-v1"
                 or HEX64.fullmatch(str(absence_partition.get("classification_set_hash"))) is None
-                or absence_partition.get("invariant") != "PASS"
+                or absence_invariant not in {"PASS", "FAIL"}
+                or (absence_invariant == "PASS" and absence_unclassifiable != 0)
             ):
                 raise ValueError("P0_SHARD_ABSENCE_PARTITION_INVALID")
-            expected_fixture_proof_gate = (
-                "PASS" if authority.stage in {"E1A", "E1B", "E2"} else "NOT_APPLICABLE"
+            fixture_proof_gate = receipt.get("frozen_fixture_proof_gate")
+            family_identity_gate = receipt.get("family_identity_gate")
+            sample_identity_gate = receipt.get("sample_identity_gate")
+            scientific_status = receipt.get("scientific_status")
+            if authority.stage in {"E1A", "E1B", "E2"}:
+                fixture_proof_gate_valid = fixture_proof_gate in {"PASS", "FAIL"}
+            else:
+                fixture_proof_gate_valid = fixture_proof_gate == "NOT_APPLICABLE"
+            identity_outcome_valid = (
+                family_identity_gate in {"PASS", "FAIL"}
+                and sample_identity_gate in {"PASS", "FAIL"}
+                and (sample_identity_gate != "PASS" or family_identity_gate == "PASS")
+                and (
+                    scientific_status
+                    == ("MEASURED" if sample_identity_gate == "PASS" else "FAILED_IDENTITY_GATE")
+                )
+                and (sample_identity_gate != "PASS" or fixture_proof_gate != "FAIL")
             )
             if (
                 receipt.get("schema_version") != PARTITION_SCHEMA_VERSION
                 or receipt.get("stage") != authority.stage
                 or receipt.get("selection_sha256") != selection_sha
                 or receipt.get("inventory_sha256") != selection.get("inventory_sha256")
-                or receipt.get("scientific_status") != "MEASURED"
                 or receipt.get("family_counts_sha256") != counts_hash
                 or receipt.get("competition") != competition
                 or receipt.get("season") != season
@@ -5667,9 +5711,8 @@ def aggregate_stage(
                 or receipt.get("evidence_object_set_hash")
                 != canonical_sha256(sorted(expected_object_ids))
                 or receipt.get("pairs_verified") != len(expected_object_ids)
-                or receipt.get("frozen_fixture_proof_gate") != expected_fixture_proof_gate
-                or receipt.get("family_identity_gate") != "PASS"
-                or receipt.get("sample_identity_gate") != "PASS"
+                or not fixture_proof_gate_valid
+                or not identity_outcome_valid
                 or set(receipt_lineages) != set(expected_families)
                 or counts.get("schema_version") != FAMILY_COUNTS_SCHEMA_VERSION
                 or counts.get("stage") != authority.stage
@@ -5812,6 +5855,10 @@ def aggregate_stage(
                     cell.get("contradictory_duplicates"),
                     label="P0_CELL_CONTRADICTORY_DUPLICATES",
                 )
+                exact_duplicates = _integer(
+                    cell.get("exact_duplicates"),
+                    label="P0_CELL_EXACT_DUPLICATES",
+                )
                 received_count = _integer(
                     cell.get("received_count"),
                     label="P0_CELL_RECEIVED_COUNT",
@@ -5870,6 +5917,18 @@ def aggregate_stage(
                 normalized_unique = _integer(
                     identity_counts.get("normalized_unique"),
                     label="P0_CELL_NORMALIZED_UNIQUE",
+                )
+                identity_invalid = _integer(
+                    identity_counts.get("invalid_identity"),
+                    label="P0_CELL_IDENTITY_INVALID",
+                )
+                identity_exact_duplicates = _integer(
+                    identity_counts.get("exact_duplicates"),
+                    label="P0_CELL_IDENTITY_EXACT_DUPLICATES",
+                )
+                identity_contradictions = _integer(
+                    identity_counts.get("contradictory_duplicates"),
+                    label="P0_CELL_IDENTITY_CONTRADICTIONS",
                 )
                 _sha(
                     identity_counts.get("identity_key_set_hash"),
@@ -5996,6 +6055,21 @@ def aggregate_stage(
                     or normalization_rate.get("denominator") != raw_eligible
                     or content_rate.get("numerator") != observed_content_slots
                     or content_rate.get("denominator") != expected_content_slots
+                    or exact_duplicates != identity_exact_duplicates
+                    or (
+                        family in {"fixtures", "teams"}
+                        and (
+                            invalid_count < identity_invalid
+                            or contradictory_duplicates < identity_contradictions
+                        )
+                    )
+                    or (
+                        family not in {"fixtures", "teams"}
+                        and (
+                            invalid_count != identity_invalid
+                            or contradictory_duplicates != identity_contradictions
+                        )
+                    )
                     or canonical_sha256(sorted(lineage_object_ids))
                     != cell.get("source_object_set_hash")
                     or _sha(
@@ -6057,6 +6131,119 @@ def aggregate_stage(
             observed_families = tuple(
                 _text(item.get("family"), label="P0_SHARD_FAMILY") for item in shard_family_records
             )
+            cell_by_family = {
+                _text(item.get("family"), label="P0_SHARD_IDENTITY_FAMILY"): item
+                for item in shard_family_records
+            }
+            for family, category_distinct in (
+                ("injuries", absence_injuries),
+                ("suspensions", absence_suspensions),
+            ):
+                absence_cell = _mapping(
+                    cell_by_family.get(family),
+                    label=f"P0_SHARD_{family.upper()}_CELL",
+                )
+                absence_cell_counts = _mapping(
+                    absence_cell.get("counts"),
+                    label=f"P0_SHARD_{family.upper()}_COUNTS",
+                )
+                absence_cell_normalized = _integer(
+                    absence_cell_counts.get("normalized_unique"),
+                    label=f"P0_SHARD_{family.upper()}_NORMALIZED_UNIQUE",
+                )
+                absence_cell_raw_value = absence_cell.get("raw_eligible_unique_entities")
+                absence_cell_raw = (
+                    None
+                    if absence_cell_raw_value is None
+                    else _integer(
+                        absence_cell_raw_value,
+                        label=f"P0_SHARD_{family.upper()}_RAW_ELIGIBLE",
+                    )
+                )
+                absence_cell_expected_value = absence_cell.get("expected_count")
+                absence_cell_expected = (
+                    None
+                    if absence_cell_expected_value is None
+                    else _integer(
+                        absence_cell_expected_value,
+                        label=f"P0_SHARD_{family.upper()}_EXPECTED_COUNT",
+                    )
+                )
+                if (
+                    _integer(
+                        absence_cell.get("unclassifiable_count"),
+                        label=f"P0_SHARD_{family.upper()}_UNCLASSIFIABLE_COUNT",
+                    )
+                    != absence_unclassifiable
+                    or (
+                        absence_invariant == "PASS"
+                        and (
+                            absence_cell_normalized != category_distinct
+                            or _integer(
+                                absence_cell.get("received_count"),
+                                label=f"P0_SHARD_{family.upper()}_RECEIVED_COUNT",
+                            )
+                            != category_distinct
+                            or absence_cell_raw not in {None, category_distinct}
+                            or absence_cell_expected not in {None, category_distinct}
+                        )
+                    )
+                ):
+                    raise ValueError("P0_SHARD_ABSENCE_CELL_BINDING_INVALID")
+            expected_family_identity_gate = (
+                "PASS"
+                if absence_invariant == "PASS"
+                and all(
+                    _integer(
+                        item.get("invalid_count"),
+                        label="P0_SHARD_IDENTITY_INVALID_COUNT",
+                    )
+                    == 0
+                    and _integer(
+                        item.get("contradictory_duplicates"),
+                        label="P0_SHARD_IDENTITY_CONTRADICTIONS",
+                    )
+                    == 0
+                    for item in shard_family_records
+                )
+                else "FAIL"
+            )
+            sample_proofs = _sample_fixture_proofs(
+                selection,
+                competition=competition,
+                season=season,
+            )
+            if sample_proofs is None:
+                expected_sample_identity_gate = expected_family_identity_gate
+            else:
+                fixture_cell = _mapping(
+                    cell_by_family.get("fixtures"),
+                    label="P0_SHARD_SAMPLE_FIXTURE_CELL",
+                )
+                team_cell = _mapping(
+                    cell_by_family.get("teams"),
+                    label="P0_SHARD_SAMPLE_TEAM_CELL",
+                )
+                fixture_counts = _mapping(
+                    fixture_cell.get("counts"),
+                    label="P0_SHARD_SAMPLE_FIXTURE_COUNTS",
+                )
+                team_counts = _mapping(
+                    team_cell.get("counts"),
+                    label="P0_SHARD_SAMPLE_TEAM_COUNTS",
+                )
+                expected_sample_identity_gate = (
+                    "PASS"
+                    if fixture_proof_gate == "PASS"
+                    and expected_family_identity_gate == "PASS"
+                    and fixture_counts.get("normalized_unique") == len(sample_proofs)
+                    and fixture_counts.get("invalid_identity") == 0
+                    and fixture_counts.get("contradictory_duplicates") == 0
+                    and team_counts.get("normalized_unique") == len(sample_proofs) * 2
+                    and team_counts.get("invalid_identity") == 0
+                    and team_counts.get("contradictory_duplicates") == 0
+                    else "FAIL"
+                )
             expected_sample_processing_gate = (
                 "PASS"
                 if all(
@@ -6069,6 +6256,8 @@ def aggregate_stage(
                 expected_sample_processing_gate = "NOT_APPLICABLE"
             if (
                 observed_families != expected_families
+                or family_identity_gate != expected_family_identity_gate
+                or sample_identity_gate != expected_sample_identity_gate
                 or any(
                     item.get("competition") != competition
                     or item.get("season") != season
@@ -6143,6 +6332,8 @@ def aggregate_stage(
             observed_cell_keys.extend((competition, season, family) for family in observed_families)
             cost_reports.append(cost)
             checkpoint_hashes[partition_id] = checkpoint_hash
+            if scientific_status != "MEASURED":
+                failed_scientific_partition_ids.append(partition_id)
             observed_attempt_slots.append(
                 _integer(
                     cost.get("attempt_slot"),
@@ -6400,6 +6591,7 @@ def aggregate_stage(
     scale_gate_pass = (
         measurement_integrity_pass
         and checkpoint_pass
+        and not failed_scientific_partition_ids
         and not failed_probe_cell_keys
         and resource_budget_pass
     )

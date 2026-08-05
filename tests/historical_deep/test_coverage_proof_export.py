@@ -2211,6 +2211,86 @@ def test_p0_player_season_buckets_and_signed_absence_partition_preserve_identity
     assert conflicting["contradictory_identity"] == 1
 
 
+def test_p0_absence_classifier_reads_nested_player_fields_without_sidelined_dates() -> None:
+    entry = InventoryObject(
+        object_id="8" * 64,
+        receipt_id="9" * 64,
+        receipt_hash="a" * 64,
+        receipt_key="receipt.json",
+        payload_key="payload.json.gz",
+        payload_sha256="b" * 64,
+        stored_sha256="c" * 64,
+        logical_bytes=1,
+        stored_bytes=1,
+        competition="api-football:135",
+        season=2024,
+        family="injuries",
+        task_id="d" * 64,
+        provider_calls=1,
+        rows_received=2,
+    )
+    records = [
+        {
+            "fixture": {"id": 1},
+            "player": {
+                "id": 2,
+                "type": "Missing Fixture",
+                "reason": "Knee Injury",
+            },
+            "team": {"id": 3},
+        },
+        {
+            "fixture": {"id": 4},
+            "player": {
+                "id": 5,
+                "type": "Missing Fixture",
+                "reason": "Red Card",
+            },
+            "team": {"id": 6},
+        },
+    ]
+    pair = VerifiedEvidencePair(
+        entry=entry,
+        receipt=SimpleNamespace(endpoint="injuries"),
+        payload={"response": records},
+        normalized={},
+        replay_source_hash="e" * 64,
+        replay_hash="f" * 64,
+    )
+
+    classified = coverage_evidence_module._classify_absence_source(
+        (pair,),
+        suspension_pattern=re.compile(r"red card|suspend", re.IGNORECASE),
+        injury_pattern=re.compile(r"injur", re.IGNORECASE),
+    )
+
+    categories = classified["categories"]
+    assert isinstance(categories, Mapping)
+    assert {name: len(values) for name, values in categories.items()} == {
+        "SUSPENSION": 1,
+        "INJURY": 1,
+        "UNCLASSIFIABLE": 0,
+    }
+    assert classified["invalid_identity"] == 0
+    assert classified["contradictory_identity"] == 0
+    nested_row = {
+        "provider_fixture_id": 1,
+        "provider_player_id": 2,
+        "provider_team_id": 3,
+        "data": records[0],
+    }
+    assert coverage_evidence_module._semantic_key("injuries", nested_row) == (
+        "injuries",
+        1,
+        2,
+        3,
+        "Missing Fixture",
+        "Knee Injury",
+        None,
+        None,
+    )
+
+
 def _p0_unknown_rate() -> dict[str, object]:
     return {
         "numerator": 0,
@@ -2231,6 +2311,11 @@ def _p0_complete_rate() -> dict[str, object]:
 
 def _p0_cell(*, family: str, probe_pass: bool = True) -> dict[str, object]:
     source_object_ids = ["a" * 64] if probe_pass else []
+    identity_count = (
+        {"fixtures": 10, "teams": 20}.get(family, 1)
+        if probe_pass
+        else 0
+    )
     source_lineage = (
         [
             {
@@ -2244,7 +2329,16 @@ def _p0_cell(*, family: str, probe_pass: bool = True) -> dict[str, object]:
     )
     rates = {
         "scope_completion": _p0_complete_rate() if probe_pass else _p0_unknown_rate(),
-        "normalization_integrity": (_p0_complete_rate() if probe_pass else _p0_unknown_rate()),
+        "normalization_integrity": (
+            {
+                "numerator": identity_count,
+                "denominator": identity_count,
+                "status": "KNOWN",
+                "value": 1.0,
+            }
+            if probe_pass
+            else _p0_unknown_rate()
+        ),
         "content_presence": {
             **_p0_unknown_rate(),
             "numerator": 1 if probe_pass else 0,
@@ -2281,8 +2375,8 @@ def _p0_cell(*, family: str, probe_pass: bool = True) -> dict[str, object]:
         "processing_source_object_ids": [],
         "processing_source_object_set_hash": canonical_sha256([]),
         "counts": {
-            "normalized_rows": 1 if probe_pass else 0,
-            "normalized_unique": 1 if probe_pass else 0,
+            "normalized_rows": identity_count,
+            "normalized_unique": identity_count,
             "invalid_identity": 0,
             "exact_duplicates": 0,
             "contradictory_duplicates": 0,
@@ -2290,7 +2384,7 @@ def _p0_cell(*, family: str, probe_pass: bool = True) -> dict[str, object]:
             "identity_set_hash": canonical_sha256([[family, "identity", "content"]]),
         },
         "denominator_basis": "DENOMINATOR_UNKNOWN",
-        "raw_eligible_unique_entities": 1 if probe_pass else None,
+        "raw_eligible_unique_entities": identity_count if probe_pass else None,
         "expected_content_slots": None,
         "observed_content_slots": 1 if probe_pass else 0,
         "expected_count": None,
@@ -2325,6 +2419,18 @@ def _write_p0_e1a_shard(
     partition = next(iter(selection["partitions"]))
     assert isinstance(partition, Mapping)
     selection_sha = selection["selection_sha256"]
+    cell_by_family = {cell["family"]: cell for cell in cells}
+
+    def absence_distinct(family: str) -> int:
+        cell = cell_by_family.get(family)
+        if cell is None:
+            return 0
+        identity_counts = cell.get("counts")
+        assert isinstance(identity_counts, Mapping)
+        return int(identity_counts["normalized_unique"])
+
+    injury_distinct = absence_distinct("injuries")
+    suspension_distinct = absence_distinct("suspensions")
     counts = _signed_p0(
         {
             "schema_version": FAMILY_COUNTS_SCHEMA_VERSION,
@@ -2337,13 +2443,17 @@ def _write_p0_e1a_shard(
             "fixture_census": {},
             "source_fixture_census": {},
             "absence_partition": {
-                "raw_distinct": 0,
-                "injuries_distinct": 0,
-                "suspensions_distinct": 0,
+                "raw_distinct": injury_distinct + suspension_distinct,
+                "injuries_distinct": injury_distinct,
+                "suspensions_distinct": suspension_distinct,
                 "unclassifiable_distinct": 0,
                 "classification_rule_version": "absence-partition-rule-v1",
                 "classification_set_hash": canonical_sha256(
-                    {"injuries": [], "suspensions": [], "unclassifiable": []}
+                    {
+                        "injuries": ["1" * 64] * injury_distinct,
+                        "suspensions": ["2" * 64] * suspension_distinct,
+                        "unclassifiable": [],
+                    }
                 ),
                 "invariant": "PASS",
             },
@@ -2351,6 +2461,17 @@ def _write_p0_e1a_shard(
             "effects": dict(ZERO_EFFECTS),
         },
         field="counts_sha256",
+    )
+    sample_size = len(selection["fixture_selection"]["samples"][0]["fixtures"])
+    fixture_counts = cell_by_family["fixtures"]["counts"]
+    team_counts = cell_by_family["teams"]["counts"]
+    sample_identity_pass = (
+        fixture_counts["normalized_unique"] == sample_size
+        and fixture_counts["invalid_identity"] == 0
+        and fixture_counts["contradictory_duplicates"] == 0
+        and team_counts["normalized_unique"] == sample_size * 2
+        and team_counts["invalid_identity"] == 0
+        and team_counts["contradictory_duplicates"] == 0
     )
     receipt = _signed_p0(
         {
@@ -2372,9 +2493,11 @@ def _write_p0_e1a_shard(
             },
             "frozen_fixture_proof_gate": "PASS",
             "family_identity_gate": "PASS",
-            "sample_identity_gate": "PASS",
+            "sample_identity_gate": "PASS" if sample_identity_pass else "FAIL",
             "sample_processing_gate": "PASS",
-            "scientific_status": "MEASURED",
+            "scientific_status": (
+                "MEASURED" if sample_identity_pass else "FAILED_IDENTITY_GATE"
+            ),
             "effects": dict(ZERO_EFFECTS),
         },
         field="partition_receipt_sha256",
@@ -2452,6 +2575,96 @@ def _write_p0_e1a_shard(
             json.dumps(value, sort_keys=True, separators=(",", ":")),
             encoding="utf-8",
         )
+
+
+def _resign_p0_e1a_shard(
+    shard: Path,
+    *,
+    authority: CoverageAuthority,
+    selection: Mapping[str, object],
+    counts: dict[str, object],
+    receipt_updates: Mapping[str, object] | None = None,
+) -> None:
+    families = counts.get("families")
+    assert isinstance(families, list)
+    for cell in families:
+        assert isinstance(cell, dict)
+        cell.pop("cell_hash", None)
+        cell.update(_signed_p0(cell, field="cell_hash"))
+    counts.pop("counts_sha256", None)
+    counts.update(_signed_p0(counts, field="counts_sha256"))
+
+    receipt = json.loads((shard / "partition-receipt.json").read_text(encoding="utf-8"))
+    receipt["family_counts_sha256"] = counts["counts_sha256"]
+    receipt.update(receipt_updates or {})
+    receipt.pop("partition_receipt_sha256", None)
+    receipt.update(_signed_p0(receipt, field="partition_receipt_sha256"))
+
+    cost = json.loads((shard / "cost-report.json").read_text(encoding="utf-8"))
+    checkpoint = build_partition_checkpoint(
+        authority,
+        selection=selection,
+        partition_id=str(receipt["partition_id"]),
+        code_revision=str(receipt["measure_code_revision"]),
+        attempt_slot=int(cost["attempt_slot"]),
+        status="COMPLETED",
+        elapsed_seconds=1.0,
+        output_bindings={
+            "partition_receipt_sha256": receipt["partition_receipt_sha256"],
+            "family_counts_sha256": counts["counts_sha256"],
+            "cost_sha256": cost["cost_sha256"],
+        },
+    )
+    for name, value in (
+        ("partition-receipt.json", receipt),
+        ("family-counts.json", counts),
+        ("checkpoint-final.json", checkpoint),
+    ):
+        (shard / name).write_text(
+            json.dumps(value, sort_keys=True, separators=(",", ":")),
+            encoding="utf-8",
+        )
+
+
+def _rewrite_p0_e1a_shard_as_identity_failure(
+    shard: Path,
+    *,
+    authority: CoverageAuthority,
+    selection: Mapping[str, object],
+    coherent_receipt: bool,
+) -> None:
+    counts = json.loads((shard / "family-counts.json").read_text(encoding="utf-8"))
+    counts["absence_partition"] = {
+        "raw_distinct": 1,
+        "injuries_distinct": 0,
+        "suspensions_distinct": 0,
+        "unclassifiable_distinct": 1,
+        "classification_rule_version": "absence-partition-rule-v1",
+        "classification_set_hash": canonical_sha256(
+            {"injuries": [], "suspensions": [], "unclassifiable": ["f" * 64]}
+        ),
+        "invariant": "FAIL",
+    }
+    for cell in counts["families"]:
+        if cell["family"] not in {"injuries", "suspensions"}:
+            continue
+        cell["unclassifiable_count"] = 1
+        cell["probe_gate"] = "FAIL"
+    _resign_p0_e1a_shard(
+        shard,
+        authority=authority,
+        selection=selection,
+        counts=counts,
+        receipt_updates=(
+            {
+                "family_identity_gate": "FAIL",
+                "sample_identity_gate": "FAIL",
+                "scientific_status": "FAILED_IDENTITY_GATE",
+            }
+            if coherent_receipt
+            else None
+        ),
+    )
 
 
 def test_p0_selection_plan_is_committed_scope_only_and_fail_closed() -> None:
@@ -2885,7 +3098,7 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
 
     invalid_cells = json.loads(json.dumps(valid_cells))
     invalid_rate = {
-        "numerator": 1,
+        "numerator": 10,
         "denominator": 0,
         "status": "INVALID",
         "value": None,
@@ -2929,6 +3142,227 @@ def test_p0_aggregate_requires_exact_cells_and_rejects_invalid_rates(tmp_path: P
         shards_directory=ambiguous_dir,
     )
     assert ambiguous_stage["scientific_gate"] == "FAIL"
+
+
+def test_p0_aggregate_preserves_complete_scientific_identity_failure(
+    tmp_path: Path,
+) -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    selection = _p0_e1a_selection(authority)
+    aggregate_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
+    )
+    cells = [_p0_cell(family=family) for family in authority.normalized_families]
+    failed_dir = tmp_path / "scientific-failure"
+    _write_p0_e1a_shard(
+        failed_dir,
+        authority=authority,
+        selection=selection,
+        cells=cells,
+    )
+    _rewrite_p0_e1a_shard_as_identity_failure(
+        failed_dir / "p0-e1a-135-2024-all16",
+        authority=authority,
+        selection=selection,
+        coherent_receipt=True,
+    )
+
+    stage, feed, gate, cost = aggregate_stage(
+        aggregate_authority,
+        selection=selection,
+        shards_directory=failed_dir,
+    )
+
+    assert stage["invalid_shards"] == 0
+    assert stage["partition_count_verified"] == 1
+    assert stage["cell_count_verified"] == 16
+    assert stage["measurement_integrity_gate"] == "PASS"
+    assert stage["read_accounting_gate"] == "PASS"
+    assert stage["checkpoint_gate"] == "PASS"
+    assert stage["mission_budget_exact"] is True
+    assert stage["scientific_gate"] == "FAIL"
+    assert stage["scale_gate"] == "FAIL"
+    assert stage["domain_decision"] == "FAIL_AND_REDESIGN"
+    assert stage["council_decision"] == "FAIL_AND_REDESIGN"
+    assert len(feed["cells"]) == 16
+    assert gate["measurement_integrity_gate"] == "PASS"
+    assert cost["read_accounting_gate"] == "PASS"
+
+    inconsistent_dir = tmp_path / "inconsistent-failure"
+    _write_p0_e1a_shard(
+        inconsistent_dir,
+        authority=authority,
+        selection=selection,
+        cells=cells,
+    )
+    _rewrite_p0_e1a_shard_as_identity_failure(
+        inconsistent_dir / "p0-e1a-135-2024-all16",
+        authority=authority,
+        selection=selection,
+        coherent_receipt=False,
+    )
+    inconsistent_stage, inconsistent_feed, _, _ = aggregate_stage(
+        aggregate_authority,
+        selection=selection,
+        shards_directory=inconsistent_dir,
+    )
+    assert inconsistent_stage["invalid_shards"] == 1
+    assert inconsistent_stage["measurement_integrity_gate"] == "FAIL"
+    assert inconsistent_feed["cells"] == []
+
+
+@pytest.mark.parametrize(
+    "identity_field",
+    ("invalid_identity", "contradictory_duplicates", "exact_duplicates"),
+)
+def test_p0_aggregate_rejects_signed_nested_identity_count_mismatch(
+    tmp_path: Path,
+    identity_field: str,
+) -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    selection = _p0_e1a_selection(authority)
+    aggregate_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
+    )
+    shard_directory = tmp_path / f"nested-{identity_field}"
+    _write_p0_e1a_shard(
+        shard_directory,
+        authority=authority,
+        selection=selection,
+        cells=[_p0_cell(family=family) for family in authority.normalized_families],
+    )
+    shard = shard_directory / "p0-e1a-135-2024-all16"
+    counts = json.loads((shard / "family-counts.json").read_text(encoding="utf-8"))
+    injury_cell = next(
+        cell for cell in counts["families"] if cell["family"] == "injuries"
+    )
+    injury_cell["counts"][identity_field] = 1
+    _resign_p0_e1a_shard(
+        shard,
+        authority=authority,
+        selection=selection,
+        counts=counts,
+    )
+
+    stage, feed, _, _ = aggregate_stage(
+        aggregate_authority,
+        selection=selection,
+        shards_directory=shard_directory,
+    )
+
+    assert stage["invalid_shards"] == 1
+    assert stage["measurement_integrity_gate"] == "FAIL"
+    assert stage["scale_gate"] == "FAIL"
+    assert feed["cells"] == []
+
+
+def test_p0_aggregate_rejects_signed_absence_invariant_and_cell_mismatch(
+    tmp_path: Path,
+) -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    selection = _p0_e1a_selection(authority)
+    aggregate_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
+    )
+    shard_directory = tmp_path / "absence-binding"
+    _write_p0_e1a_shard(
+        shard_directory,
+        authority=authority,
+        selection=selection,
+        cells=[_p0_cell(family=family) for family in authority.normalized_families],
+    )
+    shard = shard_directory / "p0-e1a-135-2024-all16"
+    counts = json.loads((shard / "family-counts.json").read_text(encoding="utf-8"))
+    counts["absence_partition"] = {
+        "raw_distinct": 1,
+        "injuries_distinct": 0,
+        "suspensions_distinct": 0,
+        "unclassifiable_distinct": 1,
+        "classification_rule_version": "absence-partition-rule-v1",
+        "classification_set_hash": canonical_sha256(
+            {"injuries": [], "suspensions": [], "unclassifiable": ["f" * 64]}
+        ),
+        "invariant": "PASS",
+    }
+    _resign_p0_e1a_shard(
+        shard,
+        authority=authority,
+        selection=selection,
+        counts=counts,
+    )
+
+    stage, feed, _, _ = aggregate_stage(
+        aggregate_authority,
+        selection=selection,
+        shards_directory=shard_directory,
+    )
+
+    assert stage["invalid_shards"] == 1
+    assert stage["measurement_integrity_gate"] == "FAIL"
+    assert stage["scale_gate"] == "FAIL"
+    assert feed["cells"] == []
+
+    category_directory = tmp_path / "absence-category-binding"
+    _write_p0_e1a_shard(
+        category_directory,
+        authority=authority,
+        selection=selection,
+        cells=[_p0_cell(family=family) for family in authority.normalized_families],
+    )
+    category_shard = category_directory / "p0-e1a-135-2024-all16"
+    category_counts = json.loads(
+        (category_shard / "family-counts.json").read_text(encoding="utf-8")
+    )
+    category_counts["absence_partition"] = {
+        "raw_distinct": 3,
+        "injuries_distinct": 2,
+        "suspensions_distinct": 1,
+        "unclassifiable_distinct": 0,
+        "classification_rule_version": "absence-partition-rule-v1",
+        "classification_set_hash": canonical_sha256(
+            {
+                "injuries": ["1" * 64, "3" * 64],
+                "suspensions": ["2" * 64],
+                "unclassifiable": [],
+            }
+        ),
+        "invariant": "PASS",
+    }
+    _resign_p0_e1a_shard(
+        category_shard,
+        authority=authority,
+        selection=selection,
+        counts=category_counts,
+    )
+
+    category_stage, category_feed, _, _ = aggregate_stage(
+        aggregate_authority,
+        selection=selection,
+        shards_directory=category_directory,
+    )
+
+    assert category_stage["invalid_shards"] == 1
+    assert category_stage["measurement_integrity_gate"] == "FAIL"
+    assert category_stage["scale_gate"] == "FAIL"
+    assert category_feed["cells"] == []
 
 
 @pytest.mark.parametrize(
@@ -3064,6 +3498,13 @@ def test_p0_checkpoints_and_second_attempts_are_fail_closed(tmp_path: Path) -> N
         validate_stage_attempt(
             temp_authority,
             operation="measure",
+            attempt_slot=2,
+        )
+    with pytest.raises(ValueError, match="P0_SECOND_ATTEMPT_PRIOR_FAILURE_NOT_EXACT"):
+        aggregate_stage(
+            temp_authority,
+            selection=selection,
+            shards_directory=shard_directory,
             attempt_slot=2,
         )
 
