@@ -6,10 +6,12 @@
   "source_head":"bd2661650621912a0d340ffedceb84b78fe4bf28",
   "canonical_main_commit":"ca56ff92e068ed8b88e9d55b0bce4e43b83399d8",
   "merge":{
-    "strategy":"NO_FF_BRANCH_INTEGRATION_THEN_PR_SQUASH",
+    "strategy":"NO_FF_BRANCH_INTEGRATION_THEN_PR_MERGE_COMMIT",
     "conflicts":["reports/council/decision-ledger.jsonl","reports/evidence/evidence-graph.json"],
     "force_push":false,
-    "source_branch_preserved":true
+    "source_branch_preserved":true,
+    "main_history_retains_pre_compaction_commits":true,
+    "final_tree_materialized_projections_present":false
   },
   "archived_source_evidence":{
     "decision_ledger_path":"reports/council/decision-ledger.jsonl",
@@ -30,9 +32,11 @@
     "fork_archive_sha256":"2d4d74926054a260aaf3fdbcd81d3b9d31efd57f72e12ddf8c93195bbbdd27df",
     "reconciliation_decision_id":"RCV3-20260805-023",
     "reconciliation_record_hash":"5a671c9d85422f5c6280f240bc74fc6f736ff7b74d0c86ec2f387581c2b135b0",
-    "canonical_records_after":23,
-    "canonical_head_after":"5a671c9d85422f5c6280f240bc74fc6f736ff7b74d0c86ec2f387581c2b135b0",
-    "canonical_ledger_sha256":"1c2657d914e67465c62d78faa6a6113c3478b2e7e50ffc15be9950d0d8b230d0"
+    "merge_policy_correction_decision_id":"RCV3-20260805-024",
+    "merge_policy_correction_record_hash":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b",
+    "canonical_records_after":24,
+    "canonical_head_after":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b",
+    "canonical_ledger_sha256":"0a1e30c05baf88b5a1e23dc7733bd85f177eb044cb1ae64b39638c2513b5893c"
   },
   "compaction":{
     "materialized_projection_files_removed":2,
