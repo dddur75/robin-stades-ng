@@ -330,6 +330,9 @@
     "bundles/31033343440/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
     "bundles/31033343440/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": "abdb3ca6aca590a56b2c5526d30c58bc4d4c4694d6729a7fef264944b81327ac",
     "bundles/31033343440/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": "ca86855da63d7fd79c96281a16e7b89f7bc1209a047f3cf7e2914c9936f4c5d7",
+    "bundles/31042974867/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+    "bundles/31042974867/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": "5c4fdb2aa398ca2bd70e96e69d3389c0d611bba972721f525325268ef7671b83",
+    "bundles/31042974867/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": "c362029f251d473394612922ca3481c8274ee1f7b7b8e914e1c64b36952d4249",
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
     "checkpoints/bundesliga/2019/injuries.json": "082abd55e3b63243992c47a8fc817b18f4c6f42af4106792bb08d9420f5b1026",
     "checkpoints/bundesliga/2019/players.json": "b7e02a02758dba5a9e63d514ac0081a90a42a53130aed6f52a6c27843e2461e5",
@@ -991,7 +994,7 @@
     "readiness/ligue1-multiseason-v1.json": "45274a0a7269e6e551ef110da9c92c650a97bfd687ef2cd5065abc3fb54c4495",
     "reports/ligue1-multiseason-readiness.md": "f9dde3ab783a01cbb44d22e124ce35344461db87bbf4f5839a3dc9c595f56db9",
     "runs/pilot-ligue-1-2025.json": "23772f2a84563f4b9e81577e634b056c7f6fcc367e8389e08200ca35cedc698d",
-    "storage/latest-compaction.json": "447f293294b26b6b88d78f76babb47610904327cb09c70056e350d98596ed00b",
+    "storage/latest-compaction.json": "bb0bac7949067c03c3c6c1f847d024dfef2985d7e164326d938a9d7fa647d028",
     "storage/r2-audit-checkpoint.json": "db85b196e49c79ff133595676964c79e574aa562b44e89b094664c979b0d5ef0",
     "storage/r2-migration-checkpoint.json": "2d5dc65853ff25b76ce57e50316e27f50b8793d25f5eb93726e239989b5d4b8d",
     "storage/r2-migration-latest.json": "91bc93ffe6cea4ced36f60e52feef7ac1ff5ac76bdb226a24ac3528e8813015d",
@@ -1017,7 +1020,7 @@
     "strategies/market_devigged_baseline_v1_1x2_edge_0_02.json": "6dffa23155f8f60b6bab486ef19a220e2ab6c7fea3fb5f25b5833ca9b61856e6",
     "strategies/market_devigged_baseline_v1_1x2_edge_0_04.json": "f9b4b9a772317c078060f68590e2169de60cfb274667055da737ff7d6f2cee9f",
     "strategies/market_devigged_baseline_v1_1x2_edge_0_06.json": "9f0e99f292d41c6a69f5a463433550fd38a8d357e8da9b0f917b56270461aaad",
-    "tasks/backfill-plan.json": "f4ad1f7c20ab39f263adf4f478633fe47220c4f1d414d8e20a0ead8bf2faed15"
+    "tasks/backfill-plan.json": "b4db58d96ea621508236ccb44d2b0e10f279feb6dbe9e9a669bd3cfea554fc37"
   },
   "schema_version": "jalon5-historical-v1"
 }
