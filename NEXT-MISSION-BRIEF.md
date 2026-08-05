@@ -12,11 +12,11 @@ Deux exécutions identiques du workflow Deep Data Cockpit ont en outre échoué 
 - 2 321 payloads et 2 321 reçus R2 déjà présents dans la preuve PR #26 ;
 - 2 023 144 lignes normalisées, sans mismatch de replay constaté ;
 - 1 067 cellules d’union observée, dont 0 cellule avec census P0 autoritatif ;
-- catalogue des 16 grains et grille P0 de 480 cellules ;
+- catalogue des 16 grains et contrat P0 compact prouvant 480 cellules en mémoire ;
 - contrats séparés pour `scope_completion`, `normalization_integrity` et `content_presence` ;
 - classifieur d’absence fail-closed et états `EMPTY_VALID` distincts de zéro ;
 - niveaux E0–E4, packs bornés et gates fonctionnels ;
-- projection privée et Desk P0 validés sans fuite client.
+- sources compactes serveur et Desk P0 validés sans fuite client.
 
 ## Priorité unique
 
@@ -44,7 +44,7 @@ Publier le manifeste de sélection avant tout calcul E1. Si moins de 10 fixtures
 - classification reçue / vide valide / invalide / ambiguë ;
 - rapport d’écarts et objections ;
 - tests Golden et mutations fail-closed ;
-- projection privée du résultat E1, sans payload brut ;
+- synthèse compacte serveur du résultat E1, sans payload brut ni liste de cellules répétitives ;
 - mise à jour du Desk indiquant `E1 sample`, sans changer `0/480` ;
 - PR brouillon non fusionnée et dossier de gouvernance append-only.
 

@@ -77,7 +77,7 @@ Exige au minimum :
 - Golden Pack E1 et mutations d’identité, doublons, absence, vide valide et taux ;
 - reproduction déterministe des artefacts et hashes ;
 - Ruff, schémas JSON, secret scan et diff check ;
-- tests de confidentialité de la projection privée ;
+- tests de confidentialité et de frontière serveur des sources compactes ;
 - tests Cockpit ciblés si le Desk est mis à jour ;
 - revue indépendante red-team ;
 - CI distante sur le head exact de la PR.

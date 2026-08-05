@@ -47,7 +47,7 @@ test("rend le Desk P0 en SSR avec ses limites et son parcours fermé", async () 
   assert.match(html, /Est-il historique, reconstruit ou prospectif/);
   assert.match(html, /A-t-il survécu aux corrections statistiques/);
   assert.match(html, /Non mesuré/);
-  assert.match(html, /Projection sanitisée/);
+  assert.match(html, /Synthèse E0 sanitisée/);
   assert.match(text, /0 appel fournisseur/);
 
   const start = text.indexOf("Desk de couverture P0");
@@ -64,7 +64,7 @@ test("rend le Desk P0 en SSR avec ses limites et son parcours fermé", async () 
   );
 });
 
-test("la projection P0 n'est présente dans aucun asset client", async () => {
+test("les sources P0 compactes ne sont présentes dans aucun asset client", async () => {
   const assets = new URL("../dist/client/assets/", import.meta.url);
   const files = (await readdir(assets)).filter((file) => file.endsWith(".js"));
   const source = (
@@ -72,6 +72,6 @@ test("la projection P0 n'est présente dans aucun asset client", async () => {
   ).join("\n");
   assert.doesNotMatch(
     source,
-    /p0-denominator-private-projection-v1|SANITIZED_IN_PRIVATE_PROJECTION|cde09572da32a6b696d36c3cd5ac57ce/,
+    /p0-denominator-private-projection-v1|SANITIZED_IN_PRIVATE_PROJECTION|p0-five-leagues-2020-2025-sixteen-families|api-football-historical-p0-grains|cell_id/,
   );
 });

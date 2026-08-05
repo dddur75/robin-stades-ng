@@ -1,4 +1,8 @@
-import rawCoverageProjection from "../../private-coverage/p0-denominator-status-v1.json";
+import denominatorContract from "../../../configs/data/historical-coverage-denominator-contract-v1.json";
+import grainCatalog from "../../../configs/data/football-grain-catalog-v1.json";
+import closureSummary from "../../../reports/coverage/denominator-closure-summary-v1.json";
+import propertyReadiness from "../../../reports/coverage/p0-property-readiness-v1.json";
+import readinessGates from "../../../reports/coverage/p0-readiness-gates-v1.json";
 
 import { hypothesisSemanticRoles } from "./hypothesis-quality";
 import {
@@ -15,7 +19,13 @@ let cachedModel: CoverageDeskModel | undefined;
 
 export function getP0CoverageDeskModel(): CoverageDeskModel {
   cachedModel ??= buildP0CoverageDeskModel(
-    rawCoverageProjection,
+    {
+      contract: denominatorContract,
+      grainCatalog,
+      summary: closureSummary,
+      propertyReadiness,
+      readinessGates,
+    },
     canonicalCalendarPropertyIds,
   );
   return cachedModel;

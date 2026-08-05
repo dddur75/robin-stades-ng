@@ -19,7 +19,7 @@ Verdict de livraison : `HYPOTHESIS_RESEARCH_COCKPIT_V2_READY_FOR_REVIEW`.
 - trois taux séparés : `UNKNOWN`, rendu « Non mesuré », jamais `0 %` ;
 - effets externes : 0 appel fournisseur, 0 écriture R2, 0 achat, 0 crédit cotes.
 
-Le composant échoue fermé si la projection privée change de classification, contient un endpoint ou un hash, expose un compte non prouvé, modifie les dimensions P0, ouvre une navigation interdite ou annonce un effet externe.
+Le composant échoue fermé si les sources compactes divergent sur les dimensions P0, les familles, les grains, les compteurs, les gates ou le calendrier, si une fermeture empirique n'est pas ventilée, ou si un effet externe est annoncé.
 
 ## Architecture de l’information
 
@@ -39,7 +39,7 @@ Espace Expert
     └── diagnostics sémantiques historiques — hors preuve P0
 ```
 
-Le modèle lourd de 480 cellules reste importé exclusivement dans `p0-coverage-desk.server.ts`. Le client reçoit un modèle compact de 16 familles, sans `cell_id`, payload brut, clé R2, endpoint fournisseur, secret ni hash de reçu.
+`p0-coverage-desk.server.ts` compose le contrat, le catalogue de grains et les trois rapports compacts nécessaires. Le client reçoit uniquement un modèle de 16 familles, sans cellule matérialisée, `cell_id`, payload brut, clé R2, endpoint fournisseur, secret ni hash de reçu. Toute fermeture non nulle exige d'abord une ventilation compacte par famille et échoue sinon fermée.
 
 ## Parcours conditionnel
 

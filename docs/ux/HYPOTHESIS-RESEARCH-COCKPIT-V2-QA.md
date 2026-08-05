@@ -13,7 +13,7 @@ La recette porte sur la page privée de compréhension de couverture, pas sur le
 | Contrôle | Résultat | Preuve |
 |---|---|---|
 | modèle compact et fail-closed | PASS, 5/5 | `tests/p0-coverage-desk.test.ts` |
-| SSR et absence de projection dans les assets client | PASS, 2/2 | `tests/p0-coverage-desk-ssr.test.mjs` |
+| SSR et absence de sources compactes dans les assets client | PASS, 2/2 | `tests/p0-coverage-desk-ssr.test.mjs` |
 | catalogues FR/EN | PASS, 8/8 | `tests/i18n.test.mjs` |
 | TypeScript | PASS | `tsc --noEmit -p tsconfig.app.json` |
 | ESLint complet | PASS | application et tests, hors sorties générées |
@@ -51,11 +51,11 @@ Inspection humaine effectuée sur 390 px, 1440 px et zoom 200 %. Deux défauts o
 
 ## Confidentialité et séparation serveur/client
 
-- la projection privée complète est importée uniquement par `p0-coverage-desk.server.ts` ;
+- les contrats et rapports compacts sont composés uniquement par `p0-coverage-desk.server.ts` ;
 - le modèle client est agrégé à 16 familles ;
-- les marqueurs de projection, identifiants de cellule, endpoint sanitisé et hash de preuve sont absents de tous les fichiers JavaScript client ;
+- les identifiants de contrat/catalogue, cellules, endpoints et hashes de preuve sont absents de tous les fichiers JavaScript client ;
 - aucune valeur non prouvée n’est convertie en zéro ;
-- une mutation de confidentialité, dimensions, navigation, compte ou effet externe fait échouer la construction du modèle.
+- une mutation de dimensions, famille, grain, compte, taux ou effet externe fait échouer la construction du modèle.
 
 Les chemins absolus injectés par Vinext dans le CSS de polices du rendu local sont des sorties générées et ignorées. Ils ne figurent ni dans les sources, ni dans les artefacts versionnés, ni dans les bundles client contrôlés ; aucun déploiement n’est réalisé dans ce lot.
 
@@ -74,4 +74,6 @@ Limite déclarée : aucune session manuelle NVDA + Edge n’a été exécutée d
 
 ## Critères de rejet
 
-Le verdict doit redevenir `PARTIAL` si un taux inconnu est affiché comme 0 %, si une cellule est annoncée fermée sans preuve E3/E4, si la projection privée entre dans un asset client, si Stratégie ou Matchs deviennent cliquables, si une requête externe apparaît, ou si un écran de performance est ajouté avant les gates scientifiques.
+Le verdict doit redevenir `PARTIAL` si un taux inconnu est affiché comme 0 %, si une cellule est annoncée fermée sans preuve E3/E4 et ventilation compacte par famille, si une source brute entre dans un asset client, si Stratégie ou Matchs deviennent cliquables, si une requête externe apparaît, ou si un écran de performance est ajouté avant les gates scientifiques.
+
+La refonte visuelle et la publication restent soumises à la revue owner décrite dans [DASHBOARD-UX-OWNER-REVIEW-PENDING.md](../../DASHBOARD-UX-OWNER-REVIEW-PENDING.md).

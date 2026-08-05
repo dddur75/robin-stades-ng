@@ -10,10 +10,8 @@ type RawRate = {
 
 export type CoverageRateView = Readonly<{
   id: "scope_completion" | "normalization_integrity" | "content_presence";
-  label: string;
   displayValue: string;
   status: CoverageRateStatus;
-  explanation: string;
 }>;
 
 export type CoverageFamilyView = Readonly<{
@@ -78,12 +76,6 @@ const RATE_IDS = [
   "normalization_integrity",
   "content_presence",
 ] as const;
-
-const RATE_EXPLANATIONS: Record<(typeof RATE_IDS)[number], string> = {
-  scope_completion: "Scopes complets ou vides valides sur les scopes applicables attendus.",
-  normalization_integrity: "Entités uniques normalisées sur les entités brutes admissibles.",
-  content_presence: "Slots de contenu observés sur les slots attendus.",
-};
 
 function asRecord(value: unknown, code: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -181,163 +173,224 @@ function deepFreeze<T>(value: T): T {
 }
 
 export function buildP0CoverageDeskModel(
-  rawProjection: unknown,
+  rawSources: unknown,
   canonicalCalendarPropertyIds: readonly string[],
 ): CoverageDeskModel {
-  const projection = asRecord(rawProjection, "P0_COVERAGE_PROJECTION_INVALID");
-  const privacy = asRecord(projection.privacy, "P0_COVERAGE_PRIVACY_INVALID");
+  const sources = asRecord(rawSources, "P0_COVERAGE_SOURCES_INVALID");
+  const contract = asRecord(sources.contract, "P0_COVERAGE_CONTRACT_INVALID");
+  const catalog = asRecord(sources.grainCatalog, "P0_COVERAGE_CATALOG_INVALID");
+  const summary = asRecord(sources.summary, "P0_COVERAGE_SUMMARY_INVALID");
+  const propertyReadiness = asRecord(
+    sources.propertyReadiness,
+    "P0_COVERAGE_PROPERTIES_INVALID",
+  );
+  const readinessGates = asRecord(
+    sources.readinessGates,
+    "P0_COVERAGE_GATES_INVALID",
+  );
+
+  for (const artifact of [summary, propertyReadiness, readinessGates]) {
+    if (
+      artifact.provider_calls !== 0 ||
+      artifact.r2_writes !== 0 ||
+      artifact.purchases !== 0 ||
+      artifact.odds_credits !== 0
+    ) {
+      throw new Error("P0_COVERAGE_EXTERNAL_EFFECT_INVALID");
+    }
+  }
+  const safety = asRecord(contract.safety, "P0_COVERAGE_SAFETY_INVALID");
   if (
-    privacy.classification !== "PRIVATE_SANITIZED_PROJECTION" ||
-    privacy.raw_payloads !== false ||
-    privacy.provider_endpoints !== false ||
-    privacy.r2_keys !== false ||
-    privacy.secrets !== false
+    safety.provider_calls !== 0 ||
+    safety.r2_writes !== 0 ||
+    safety.purchases !== 0 ||
+    safety.odds_credits !== 0 ||
+    safety.production_locked !== true ||
+    safety.promotion !== false ||
+    safety.scale_authorized !== false
   ) {
-    throw new Error("P0_COVERAGE_PRIVACY_INVALID");
+    throw new Error("P0_COVERAGE_SAFETY_INVALID");
   }
   if (
-    projection.provider_calls !== 0 ||
-    projection.r2_writes !== 0 ||
-    projection.purchases !== 0 ||
-    projection.odds_credits !== 0
+    summary.scale_authorized !== false ||
+    summary.promotion !== false ||
+    summary.hypergraph_verdict !== "NOT_OPENED_DATA_GATES_INSUFFICIENT" ||
+    asArray(summary.properties_unlocked, "P0_COVERAGE_LOCKS_INVALID").length !== 0 ||
+    asArray(summary.families_exploitable, "P0_COVERAGE_LOCKS_INVALID").length !== 0 ||
+    readinessGates.scale_authorized !== false ||
+    readinessGates.promotion !== false ||
+    asArray(
+      readinessGates.properties_unlocked,
+      "P0_COVERAGE_LOCKS_INVALID",
+    ).length !== 0 ||
+    propertyReadiness.opens_hypergraph !== false ||
+    propertyReadiness.hypergraph_verdict !==
+      "NOT_OPENED_DATA_GATES_INSUFFICIENT" ||
+    asArray(
+      propertyReadiness.properties_unlocked,
+      "P0_COVERAGE_LOCKS_INVALID",
+    ).length !== 0 ||
+    asArray(
+      propertyReadiness.families_exploitable,
+      "P0_COVERAGE_LOCKS_INVALID",
+    ).length !== 0
   ) {
-    throw new Error("P0_COVERAGE_EXTERNAL_EFFECT_INVALID");
+    throw new Error("P0_COVERAGE_LOCKS_INVALID");
   }
-  if (projection.verdict !== "COVERAGE_DENOMINATOR_CLOSURE_PARTIAL") {
+  if (summary.verdict !== "COVERAGE_DENOMINATOR_CLOSURE_PARTIAL") {
     throw new Error("P0_COVERAGE_VERDICT_INVALID");
   }
 
-  const summary = asRecord(projection.summary, "P0_COVERAGE_SUMMARY_INVALID");
   const totalCells = asInteger(summary.total_cells, "P0_COVERAGE_TOTAL_INVALID");
   const closedCells = asInteger(summary.closed_cells, "P0_COVERAGE_CLOSED_INVALID");
   const openCells = asInteger(summary.open_cells, "P0_COVERAGE_OPEN_INVALID");
+  const scopes = asRecord(summary.scopes, "P0_COVERAGE_SCOPES_INVALID");
   if (
     totalCells !== 480 ||
     closedCells + openCells !== totalCells ||
     summary.definition_state !== "DEFINITION_CLOSED" ||
     summary.empirical_state !== "OPEN" ||
-    summary.gating_scope !== "P0_2020_2025"
+    scopes.gating !== "P0_2020_2025" ||
+    scopes.non_gating !== "EXTENDED_ALL_AVAILABLE" ||
+    readinessGates.scope !== "P0_2020_2025" ||
+    propertyReadiness.scope !== "P0_2020_2025"
   ) {
     throw new Error("P0_COVERAGE_SUMMARY_INVALID");
   }
-
-  const cells = asArray(projection.cells, "P0_COVERAGE_CELLS_INVALID");
-  if (cells.length !== totalCells) {
-    throw new Error("P0_COVERAGE_CELL_COUNT_INVALID");
-  }
-  const seenIds = new Set<string>();
-  const competitions = new Set<string>();
-  const seasons = new Set<number>();
-  const familyAccumulator = new Map<
-    string,
-    {
-      expectedCells: number;
-      closedCells: number;
-      openCells: number;
-      gate: string;
-      temporalClasses: Set<string>;
-    }
-  >();
-
-  for (const rawCell of cells) {
-    const cell = asRecord(rawCell, "P0_COVERAGE_CELL_INVALID");
-    const cellId = asString(cell.cell_id, "P0_COVERAGE_CELL_ID_INVALID");
-    if (seenIds.has(cellId)) {
-      throw new Error("P0_COVERAGE_DUPLICATE_CELL");
-    }
-    seenIds.add(cellId);
-    if (
-      cell.scope !== "P0_2020_2025" ||
-      cell.source_endpoint !== "SANITIZED_IN_PRIVATE_PROJECTION" ||
-      cell.payload_hash !== null ||
-      cell.receipt_hash !== null
-    ) {
-      throw new Error("P0_COVERAGE_CELL_PRIVACY_INVALID");
-    }
-    if (
-      cell.advertised_coverage !== null ||
-      cell.expected_count !== null ||
-      cell.received_count !== null ||
-      cell.empty_valid_count !== null ||
-      cell.invalid_count !== null ||
-      cell.coverage_percent !== null ||
-      cell.null_rate !== null
-    ) {
-      throw new Error("P0_COVERAGE_UNPROVEN_COUNT_MUST_STAY_NULL");
-    }
-    const competition = asString(cell.competition, "P0_COVERAGE_COMPETITION_INVALID");
-    const season = asInteger(cell.season, "P0_COVERAGE_SEASON_INVALID");
-    const family = asString(cell.family, "P0_COVERAGE_FAMILY_INVALID");
-    const temporalClass = asString(
-      cell.temporal_class,
-      "P0_COVERAGE_TEMPORAL_CLASS_INVALID",
-    );
-    const gate = asString(cell.gate, "P0_COVERAGE_GATE_INVALID");
-    const closureState = asString(cell.closure_state, "P0_COVERAGE_CLOSURE_INVALID");
-    competitions.add(competition);
-    seasons.add(season);
-
-    const rates = asRecord(cell.rates, "P0_COVERAGE_CELL_RATES_INVALID");
-    if (
-      Object.hasOwn(rates, "coverage_rate") ||
-      Object.hasOwn(rates, "overall_rate") ||
-      Object.keys(rates).sort().join("|") !== [...RATE_IDS].sort().join("|")
-    ) {
-      throw new Error("P0_COVERAGE_RATE_SET_INVALID");
-    }
-    for (const rateId of RATE_IDS) {
-      parseRate(rates[rateId], "P0_COVERAGE_CELL_RATE_INVALID");
-    }
-
-    const accumulator = familyAccumulator.get(family) ?? {
-      expectedCells: 0,
-      closedCells: 0,
-      openCells: 0,
-      gate,
-      temporalClasses: new Set<string>(),
-    };
-    if (accumulator.gate !== gate) {
-      throw new Error("P0_COVERAGE_FAMILY_GATE_INCONSISTENT");
-    }
-    accumulator.expectedCells += 1;
-    if (closureState === "DENOMINATOR_CLOSED_FULL_SCOPE") {
-      accumulator.closedCells += 1;
-    } else {
-      accumulator.openCells += 1;
-    }
-    accumulator.temporalClasses.add(temporalClass);
-    familyAccumulator.set(family, accumulator);
+  if (closedCells !== 0) {
+    throw new Error("P0_COVERAGE_FAMILY_BREAKDOWN_REQUIRED");
   }
 
-  if (competitions.size !== 5 || seasons.size !== 6 || familyAccumulator.size !== 16) {
+  const grid = asRecord(contract.grid, "P0_COVERAGE_GRID_CONTRACT_INVALID");
+  const competitions = asArray(
+    grid.competitions,
+    "P0_COVERAGE_COMPETITIONS_INVALID",
+  ).map((item) => asString(item, "P0_COVERAGE_COMPETITION_INVALID"));
+  const seasons = asArray(grid.seasons, "P0_COVERAGE_SEASONS_INVALID").map(
+    (item) => asInteger(item, "P0_COVERAGE_SEASON_INVALID"),
+  );
+  const familyIds = asArray(grid.families, "P0_COVERAGE_FAMILIES_INVALID").map(
+    (item) => asString(item, "P0_COVERAGE_FAMILY_INVALID"),
+  );
+  const expectedPerFamily = asInteger(
+    grid.expected_per_family,
+    "P0_COVERAGE_FAMILY_COUNTS_INVALID",
+  );
+  if (
+    competitions.length !== 5 ||
+    seasons.length !== 6 ||
+    familyIds.length !== 16 ||
+    new Set(competitions).size !== competitions.length ||
+    new Set(seasons).size !== seasons.length ||
+    new Set(familyIds).size !== familyIds.length ||
+    grid.expected_cells !== totalCells ||
+    competitions.length * seasons.length * familyIds.length !== totalCells ||
+    expectedPerFamily !== competitions.length * seasons.length
+  ) {
     throw new Error("P0_COVERAGE_DIMENSIONS_INVALID");
   }
+
+  const catalogScopes = asRecord(catalog.scopes, "P0_COVERAGE_CATALOG_INVALID");
+  const catalogP0 = asRecord(
+    catalogScopes.P0_2020_2025,
+    "P0_COVERAGE_CATALOG_SCOPE_INVALID",
+  );
+  const catalogCompetitions = asArray(
+    catalogP0.competitions,
+    "P0_COVERAGE_CATALOG_SCOPE_INVALID",
+  );
+  const catalogSeasons = asArray(
+    catalogP0.seasons,
+    "P0_COVERAGE_CATALOG_SCOPE_INVALID",
+  );
   if (
-    [...familyAccumulator.values()].some(
-      (item) => item.expectedCells !== 30 || item.closedCells + item.openCells !== 30,
-    )
+    catalogCompetitions.join("|") !== competitions.join("|") ||
+    catalogSeasons.join("|") !== seasons.join("|")
   ) {
-    throw new Error("P0_COVERAGE_FAMILY_COUNTS_INVALID");
+    throw new Error("P0_COVERAGE_CATALOG_SCOPE_INVALID");
   }
 
+  const familyBindings = asRecord(
+    catalog.family_bindings,
+    "P0_COVERAGE_FAMILY_BINDINGS_INVALID",
+  );
+  const grains = asRecord(catalog.grains, "P0_COVERAGE_GRAINS_INVALID");
+  const readinessRows = asArray(
+    propertyReadiness.family_readiness,
+    "P0_COVERAGE_FAMILY_READINESS_INVALID",
+  );
+  const readinessByFamily = new Map<string, string>();
+  for (const rawRow of readinessRows) {
+    const row = asRecord(rawRow, "P0_COVERAGE_FAMILY_READINESS_INVALID");
+    const family = asString(row.family, "P0_COVERAGE_FAMILY_READINESS_INVALID");
+    const unlocked = asArray(
+      row.properties_unlocked,
+      "P0_COVERAGE_FAMILY_READINESS_INVALID",
+    );
+    if (
+      readinessByFamily.has(family) ||
+      row.status !== "BLOCKED_BY_P0_DENOMINATORS" ||
+      unlocked.length !== 0
+    ) {
+      throw new Error("P0_COVERAGE_FAMILY_READINESS_INVALID");
+    }
+    readinessByFamily.set(family, row.status);
+  }
+  if (
+    readinessByFamily.size !== familyIds.length ||
+    familyIds.some((family) => !readinessByFamily.has(family)) ||
+    Object.keys(familyBindings).some((family) => !familyIds.includes(family)) ||
+    Object.keys(familyBindings).length !== familyIds.length
+  ) {
+    throw new Error("P0_COVERAGE_FAMILY_BINDINGS_INVALID");
+  }
+
+  const families = familyIds
+    .map((family) => {
+      const binding = asRecord(
+        familyBindings[family],
+        "P0_COVERAGE_FAMILY_BINDING_INVALID",
+      );
+      const grain = asRecord(
+        grains[asString(binding.grain_id, "P0_COVERAGE_GRAIN_ID_INVALID")],
+        "P0_COVERAGE_GRAIN_INVALID",
+      );
+      return {
+        family,
+        expectedCells: expectedPerFamily,
+        closedCells: 0,
+        openCells: expectedPerFamily,
+        gate: "BLOCKED_BY_COVERAGE",
+        temporalClasses: [
+          asString(grain.temporal_class, "P0_COVERAGE_TEMPORAL_CLASS_INVALID"),
+        ],
+      };
+    })
+    .sort((left, right) => left.family.localeCompare(right.family, "fr"));
+
   const aggregateRates = asRecord(
-    projection.weighted_aggregates,
+    summary.weighted_aggregates,
     "P0_COVERAGE_AGGREGATES_INVALID",
   );
-  const rateLabels = asRecord(projection.rate_labels, "P0_COVERAGE_RATE_LABELS_INVALID");
+  if (
+    Object.hasOwn(aggregateRates, "coverage_rate") ||
+    Object.hasOwn(aggregateRates, "overall_rate") ||
+    Object.keys(aggregateRates).sort().join("|") !==
+      [...RATE_IDS].sort().join("|")
+  ) {
+    throw new Error("P0_COVERAGE_RATE_SET_INVALID");
+  }
   const rates = RATE_IDS.map((id) => {
     const rate = parseRate(aggregateRates[id], "P0_COVERAGE_AGGREGATE_INVALID");
     return {
       id,
-      label: asString(rateLabels[id], "P0_COVERAGE_RATE_LABEL_INVALID"),
       displayValue: displayRate(rate),
       status: rate.status,
-      explanation: RATE_EXPLANATIONS[id],
     };
   });
 
   const calendar = asRecord(
-    projection.calendar_fatigue,
+    propertyReadiness.calendar_fatigue,
     "P0_COVERAGE_CALENDAR_INVALID",
   );
   const calendarProperties = asArray(
@@ -362,11 +415,30 @@ export function buildP0CoverageDeskModel(
     calendar.total_properties,
     "P0_COVERAGE_CALENDAR_TOTAL_INVALID",
   );
-  if (calendarReady !== 0 || calendarTotal !== 17 || calendar.status !== "CLOSED") {
+  const summaryCalendar = asRecord(
+    summary.calendar_fatigue,
+    "P0_COVERAGE_CALENDAR_INVALID",
+  );
+  if (
+    calendarReady !== 0 ||
+    calendarTotal !== 17 ||
+    calendar.status !== "CLOSED" ||
+    summaryCalendar.ready_properties !== calendarReady ||
+    summaryCalendar.total_properties !== calendarTotal ||
+    summaryCalendar.status !== calendar.status ||
+    summaryCalendar.opens_hypergraph !== false
+  ) {
     throw new Error("P0_COVERAGE_CALENDAR_STATE_INVALID");
   }
 
-  const gateCounts = asRecord(projection.gate_counts, "P0_COVERAGE_GATE_COUNTS_INVALID");
+  const gateCounts = asRecord(
+    readinessGates.counts,
+    "P0_COVERAGE_GATE_COUNTS_INVALID",
+  );
+  const summaryGateCounts = asRecord(
+    summary.gate_counts,
+    "P0_COVERAGE_GATE_COUNTS_INVALID",
+  );
   const functionalGatesReady = asInteger(
     gateCounts.functional_ready,
     "P0_COVERAGE_GATE_READY_INVALID",
@@ -379,26 +451,80 @@ export function buildP0CoverageDeskModel(
     functionalGatesReady !== 0 ||
     functionalGatesTotal !== 8 ||
     gateCounts.blocked_by_coverage !== 8 ||
-    gateCounts.blocked_by_source !== 2
+    gateCounts.blocked_by_source !== 2 ||
+    summaryGateCounts.functional_total !== gateCounts.functional_total ||
+    summaryGateCounts.functional_ready !== gateCounts.functional_ready ||
+    summaryGateCounts.blocked_by_coverage !== gateCounts.blocked_by_coverage ||
+    summaryGateCounts.blocked_by_source !== gateCounts.blocked_by_source
   ) {
     throw new Error("P0_COVERAGE_GATE_COUNTS_INVALID");
   }
 
-  const gates = asArray(projection.gates, "P0_COVERAGE_GATES_INVALID").map((item) => {
+  const coverageGate = asRecord(
+    readinessGates.coverage_gate,
+    "P0_COVERAGE_COVERAGE_GATE_INVALID",
+  );
+  if (
+    coverageGate.id !== "P0_API_FOOTBALL_COVERAGE" ||
+    coverageGate.required_closed_cells !== totalCells ||
+    coverageGate.current_closed_cells !== closedCells ||
+    coverageGate.status !== "PARTIAL"
+  ) {
+    throw new Error("P0_COVERAGE_COVERAGE_GATE_INVALID");
+  }
+
+  const gateIds = new Set<string>();
+  let blockedByCoverage = 0;
+  let blockedBySource = 0;
+  const gates = asArray(readinessGates.gates, "P0_COVERAGE_GATES_INVALID").map((item) => {
     const gate = asRecord(item, "P0_COVERAGE_GATE_INVALID");
+    const id = asString(gate.id, "P0_COVERAGE_GATE_ID_INVALID");
+    const status = asString(gate.status, "P0_COVERAGE_GATE_STATUS_INVALID");
+    const gateFamilies = asArray(
+      gate.families,
+      "P0_COVERAGE_GATE_FAMILIES_INVALID",
+    ).map((family) =>
+      asString(family, "P0_COVERAGE_GATE_FAMILY_INVALID"),
+    );
+    if (
+      gateIds.has(id) ||
+      new Set(gateFamilies).size !== gateFamilies.length ||
+      gateFamilies.some((family) => !familyIds.includes(family))
+    ) {
+      throw new Error("P0_COVERAGE_GATE_FAMILIES_INVALID");
+    }
+    gateIds.add(id);
+    if (gateFamilies.length > 0) {
+      if (status !== "BLOCKED_BY_COVERAGE") {
+        throw new Error("P0_COVERAGE_GATE_STATUS_INVALID");
+      }
+      blockedByCoverage += 1;
+    } else {
+      if (
+        status !== "BLOCKED_BY_SOURCE" ||
+        gate.blocks_p0_api_football_coverage !== false
+      ) {
+        throw new Error("P0_COVERAGE_GATE_STATUS_INVALID");
+      }
+      blockedBySource += 1;
+    }
     return {
-      id: asString(gate.id, "P0_COVERAGE_GATE_ID_INVALID"),
-      status: asString(gate.status, "P0_COVERAGE_GATE_STATUS_INVALID"),
+      id,
+      status,
       reason: asString(gate.reason, "P0_COVERAGE_GATE_REASON_INVALID"),
     };
   });
-  if (gates.length !== 10) {
+  if (
+    gates.length !== 10 ||
+    blockedByCoverage !== gateCounts.blocked_by_coverage ||
+    blockedBySource !== gateCounts.blocked_by_source
+  ) {
     throw new Error("P0_COVERAGE_GATE_COUNT_INVALID");
   }
 
-  const levelStates = asRecord(projection.level_states, "P0_COVERAGE_LEVELS_INVALID");
+  const levelStates = asRecord(summary.level_states, "P0_COVERAGE_LEVELS_INVALID");
   const levelControls = asRecord(
-    projection.level_controls,
+    summary.level_controls,
     "P0_COVERAGE_LEVEL_CONTROLS_INVALID",
   );
   const levels = ["E0", "E1", "E2", "E3", "E4"].map((id) => {
@@ -421,30 +547,6 @@ export function buildP0CoverageDeskModel(
     throw new Error("P0_COVERAGE_LEVEL_STATE_INVALID");
   }
 
-  const navigation = asRecord(
-    projection.navigation_gates,
-    "P0_COVERAGE_NAVIGATION_INVALID",
-  );
-  if (
-    navigation.data !== "AVAILABLE" ||
-    navigation.hypothesis !== "BLOCKED_BY_DATA" ||
-    navigation.strategy !== "BLOCKED_BY_SCIENCE" ||
-    navigation.matches !== "BLOCKED_BY_MEMBERSHIP_SET"
-  ) {
-    throw new Error("P0_COVERAGE_NAVIGATION_INVALID");
-  }
-
-  const families = [...familyAccumulator.entries()]
-    .sort(([left], [right]) => left.localeCompare(right, "fr"))
-    .map(([family, item]) => ({
-      family,
-      expectedCells: item.expectedCells,
-      closedCells: item.closedCells,
-      openCells: item.openCells,
-      gate: item.gate,
-      temporalClasses: [...item.temporalClasses].sort(),
-    }));
-
   return deepFreeze({
     verdict: "COVERAGE_DENOMINATOR_CLOSURE_PARTIAL",
     statusCode: "BLOCKED_BY_COVERAGE",
@@ -453,9 +555,9 @@ export function buildP0CoverageDeskModel(
     totalCells,
     closedCells,
     openCells,
-    competitionCount: competitions.size,
-    seasonCount: seasons.size,
-    familyCount: familyAccumulator.size,
+    competitionCount: competitions.length,
+    seasonCount: seasons.length,
+    familyCount: families.length,
     calendarReady,
     calendarTotal,
     functionalGatesReady,
@@ -523,10 +625,10 @@ export function buildP0CoverageDeskModel(
       source: "Preuve PR26 réutilisée · census P0 par cellule non matérialisé",
       temporalClass: "E0 synthétique de définition",
       statisticalCorrection: "Sans objet",
-      providerCalls: projection.provider_calls as number,
-      r2Writes: projection.r2_writes as number,
-      purchases: projection.purchases as number,
-      oddsCredits: projection.odds_credits as number,
+      providerCalls: summary.provider_calls as number,
+      r2Writes: summary.r2_writes as number,
+      purchases: summary.purchases as number,
+      oddsCredits: summary.odds_credits as number,
     },
   });
 }

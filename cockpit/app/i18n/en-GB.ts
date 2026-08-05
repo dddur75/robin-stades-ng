@@ -296,7 +296,7 @@ export const enGB: Record<TranslationKey, string> = {
   "coverage.table.temporality": "Temporality",
   "coverage.table.gate": "Gate",
   "coverage.table.unmeasured": "Not measured",
-  "coverage.table.sanitized": "Sanitised projection",
+  "coverage.table.sanitized": "Sanitised E0 summary",
   "coverage.table.blocked": "Blocked",
   "coverage.evidence.title": "Provenance and limitations",
   "coverage.evidence.source.label": "Source",

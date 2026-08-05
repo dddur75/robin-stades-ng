@@ -161,21 +161,21 @@ aucune famille ni propriété n'est débloquée. L'hypergraphe reste
 
 ## Artefacts
 
-- `configs/data/football-grain-catalog-v1.json` et son document ;
-- `reports/coverage/p0-denominator-grid-v1.json` : 480 lignes ;
+- `configs/data/historical-coverage-denominator-contract-v1.json` et
+  `configs/data/football-grain-catalog-v1.json` : source autoritative compacte ;
 - `reports/coverage/e0-denominator-proof-v1.json` : Golden Pack ;
 - `reports/coverage/coverage-census-manifest-v1.json` : lignée R2-first ;
 - `reports/coverage/p0-readiness-gates-v1.json` : gates et verdicts ;
 - `reports/coverage/p0-property-readiness-v1.json` : familles/propriétés ;
-- `reports/coverage/denominator-closure-summary-v1.json` : verdict global ;
-- `cockpit/private-coverage/p0-denominator-status-v1.json` : projection
-  privée sanitisée.
+- `reports/coverage/denominator-closure-summary-v1.json` : verdict global.
 
-Les sept artefacts générés possèdent un `proof_hash` canonique et valident
-le JSON Schema 2020-12. La projection privée conserve les colonnes de
-compréhension, mais remplace `source_endpoint` par
-`SANITIZED_IN_PRIVATE_PROJECTION`, garde les hashes absents à `null` et ne
-contient ni payload brut, clé R2, secret, ni endpoint fournisseur.
+Les cinq artefacts générés possèdent un `proof_hash` canonique et valident
+le JSON Schema 2020-12. Les 480 cellules sont reconstruites uniquement en
+mémoire par l'oracle déterministe pour tester le produit `5 × 6 × 16`, les
+grains, les hashes et les états fail-closed. Aucune grille ou projection de
+480 cellules n'est matérialisée dans Git ou importée par le Cockpit.
+Le schéma conserve les deux formats détaillés comme contrats optionnels pour
+une future preuve clairsemée, sans en générer de copie suivie dans ce lot.
 
 GitHub Pages publie automatiquement `/docs` après merge sur `main`. Ce
 document ne contient donc aucune donnée privée. La PR demeure brouillon et

@@ -256,7 +256,8 @@
       "execution_id":"pr26-evidence-portability-20260804T151434Z",
       "scientific_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
       "dataset_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
-      "status":"VERIFIED",
+      "status":"SUPERSEDED",
+      "superseded_by":"GOV.EVIDENCE.REVISION_POLICY.002",
       "verified_by":["C0","A2"]
     },
     {
@@ -304,7 +305,8 @@
       "execution_id":"coverage-denominator-e0-20260804T172045Z",
       "scientific_lineage_id":"p0-denominator-closure-v1",
       "dataset_lineage_id":"pr26-foundation-review-v1-plus-e0-definition",
-      "status":"VERIFIED",
+      "status":"SUPERSEDED",
+      "superseded_by":"COVERAGE.P0.CONTRACT.002",
       "verified_by":["C0","DP6","C2"]
     },
     {
@@ -368,8 +370,73 @@
       "execution_id":"cockpit-p0-private-review-20260804T172045Z",
       "scientific_lineage_id":"p0-denominator-closure-v1",
       "dataset_lineage_id":"private-sanitized-p0-projection-v1",
-      "status":"VERIFIED",
+      "status":"SUPERSEDED",
+      "superseded_by":"COCKPIT.P0.COMPACT.PROTOTYPE.002",
       "verified_by":["C0","UX4","UX5","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.P0.CONTRACT.002",
+      "claim":"The authoritative compact P0 contract defines exactly 480 cells across five competitions, six seasons and sixteen families; the deterministic oracle reconstructs every definition cell in memory and leaves all unproven empirical values unknown.",
+      "scope":"P0_2020_2025",
+      "source":"P0 denominator contract, football grain catalogue, deterministic in-memory oracle and 36 passing coverage tests",
+      "grain":"competition_season_family_definition",
+      "temporal_class":"DEFINITION_AS_OF",
+      "artifact":"configs/data/historical-coverage-denominator-contract-v1.json",
+      "hash":"ac4c8f6b5eb83d96fe13dfe774364dcea575aac1e7784ce7233ebcda39cb13dc",
+      "code_revision":"f3758ab98a8b7f62c54f91fb1c61d0f285f6286a",
+      "execution_id":"pr28-compaction-20260805T053727Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"compact-p0-contract-plus-in-memory-oracle-v2",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","A1"]
+    },
+    {
+      "claim_id":"COCKPIT.P0.COMPACT.PROTOTYPE.002",
+      "claim":"The private P0 coverage desk preserves the 0-of-480 fail-closed display, three UNKNOWN rates and closed navigation from compact server-only sources, with no materialized cell projection in the final tree or client assets.",
+      "scope":"PRIVATE_COCKPIT_PROTOTYPE",
+      "source":"compact-source model tests, TypeScript typecheck, production build, SSR privacy tests and responsive Playwright matrix",
+      "grain":"compact_private_coverage_desk",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"docs/ux/HYPOTHESIS-RESEARCH-COCKPIT-V2-QA.md",
+      "hash":"4b24fbce55006dd684e6e52663ef15cb1ffcccafc3a9a3bd40d24a99d8188755",
+      "code_revision":"f3758ab98a8b7f62c54f91fb1c61d0f285f6286a",
+      "execution_id":"pr28-compaction-20260805T053727Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"compact-p0-contract-and-summary-v2",
+      "status":"VERIFIED",
+      "verified_by":["C0","C3","UX5","A3"]
+    },
+    {
+      "claim_id":"PR28.COMPACTION.AUDIT.001",
+      "claim":"The two deterministic materialized projections accounted for 57,591 lines and 1,842,589 bytes, or 90.6688 percent of the initial PR insertions; removing them preserved the tested 5x6x16 contract and reduced the production server bundle by 690,311 bytes.",
+      "scope":"PR28_FINAL_TREE_COMPACTION",
+      "source":"byte-exact initial-head audit, Git diff metrics, deterministic tests and production bundle inspection",
+      "grain":"pr_diff_compaction_audit",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/coverage/pr28-compaction-audit-v1.json",
+      "hash":"69d56d7685dfa95949e2cee9b68ab2ee526e93812eac2b6305ec955c241442ff",
+      "code_revision":"f3758ab98a8b7f62c54f91fb1c61d0f285f6286a",
+      "execution_id":"pr28-compaction-20260805T053727Z",
+      "scientific_lineage_id":"p0-denominator-closure-v1",
+      "dataset_lineage_id":"pr28-initial-head-plus-final-worktree-audit-v1",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","A2"]
+    },
+    {
+      "claim_id":"GOV.EVIDENCE.REVISION_POLICY.002",
+      "claim":"The Council evidence test preserves immutable historical claim IDs while allowing only explicitly SUPERSEDED or INVALIDATED claims to stop resolving a current artifact; every current claim must still resolve and match canonical LF bytes.",
+      "scope":"GOVERNANCE_EVIDENCE_REVISION",
+      "source":"evidence graph contract and Council mutation test",
+      "grain":"artifact_hash_and_claim_revision_validation",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"tests/council/test_robin_council_os_v3.py",
+      "hash":"f7c97f33f02ade196d29d067ea286d0860a8ea081603232fb9f68645dbd47bbc",
+      "code_revision":"f3758ab98a8b7f62c54f91fb1c61d0f285f6286a",
+      "execution_id":"pr28-compaction-20260805T054745Z",
+      "scientific_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
+      "dataset_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
+      "status":"VERIFIED",
+      "verified_by":["C0","C4","A2"]
     }
   ],
   "decision_nodes":[
@@ -384,7 +451,9 @@
     {"decision_id":"RCV3-20260804-009","ledger_record_hash":"91532e5da1c1b05be2b41d382c7457e13a22cf190f94f26ad1a196ed41174cff"},
     {"decision_id":"RCV3-20260804-010","ledger_record_hash":"196f7daadf0ca4f363afc3510e0a671064d88e5e1831ab8932ccdcf62074f3dc"},
     {"decision_id":"RCV3-20260804-011","ledger_record_hash":"cca942e0e4652a629a75861e0d30512d4fd4fb670ca41f05dfd8346abd39fa1f"},
-    {"decision_id":"RCV3-20260804-012","ledger_record_hash":"8e55e243b9bc9dc91fdac1b7c756432eaedb1b53e049ae7f08466c0ce4cf6a35"}
+    {"decision_id":"RCV3-20260804-012","ledger_record_hash":"8e55e243b9bc9dc91fdac1b7c756432eaedb1b53e049ae7f08466c0ce4cf6a35"},
+    {"decision_id":"RCV3-20260805-013","ledger_record_hash":"ee7d158a5ebed0adfee111a623e058ff462e654695d92533b573b726b4bdcbcc"},
+    {"decision_id":"RCV3-20260805-014","ledger_record_hash":"9b707c3c39fc5093ccbd34aac255b471e2c805d5ef235709c98f1252b5dd4420"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -417,6 +486,16 @@
     {"edge_id":"EDGE.028","from_claim_id":"COVERAGE.E0.PROOF.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.029","from_claim_id":"COVERAGE.CENSUS.MANIFEST.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.030","from_claim_id":"COVERAGE.GATES.READINESS.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.031","from_claim_id":"COCKPIT.P0.PRIVATE.PROTOTYPE.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.031","from_claim_id":"COCKPIT.P0.PRIVATE.PROTOTYPE.001","to_decision_id":"RCV3-20260804-012","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.032","from_claim_id":"COVERAGE.P0.GRID.001","to_decision_id":"RCV3-20260805-013","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.033","from_claim_id":"COVERAGE.E0.PROOF.001","to_decision_id":"RCV3-20260805-013","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.034","from_claim_id":"COVERAGE.GATES.READINESS.001","to_decision_id":"RCV3-20260805-013","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.035","from_claim_id":"COCKPIT.P0.PRIVATE.PROTOTYPE.001","to_decision_id":"RCV3-20260805-013","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.036","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-013","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.037","from_claim_id":"COVERAGE.P0.CONTRACT.002","to_decision_id":"RCV3-20260805-014","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.038","from_claim_id":"COCKPIT.P0.COMPACT.PROTOTYPE.002","to_decision_id":"RCV3-20260805-014","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.039","from_claim_id":"PR28.COMPACTION.AUDIT.001","to_decision_id":"RCV3-20260805-014","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.040","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-014","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.041","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.002","to_decision_id":"RCV3-20260805-014","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

@@ -10,18 +10,6 @@ from tests.coverage.denominator_oracle import (
 )
 
 
-def _all_keys(value: object) -> set[str]:
-    if isinstance(value, dict):
-        return set(value) | {
-            key
-            for child in value.values()
-            for key in _all_keys(child)
-        }
-    if isinstance(value, list):
-        return {key for child in value for key in _all_keys(child)}
-    return set()
-
-
 def test_golden_pack_is_bounded_and_all_expected_results_are_reproduced() -> None:
     artifacts = build_artifacts()
     e0 = next(item for path, item in artifacts.items() if path.name.startswith("e0-"))
@@ -33,7 +21,15 @@ def test_golden_pack_is_bounded_and_all_expected_results_are_reproduced() -> Non
 
 
 def test_generated_artifacts_match_tracked_files_and_hashes() -> None:
-    for path, expected in build_artifacts().items():
+    artifacts = build_artifacts()
+    assert {path.name for path in artifacts} == {
+        "coverage-census-manifest-v1.json",
+        "denominator-closure-summary-v1.json",
+        "e0-denominator-proof-v1.json",
+        "p0-property-readiness-v1.json",
+        "p0-readiness-gates-v1.json",
+    }
+    for path, expected in artifacts.items():
         actual = load_json(path)
         assert actual == expected
         assert artifact_proof_hash(actual) == actual["proof_hash"]
@@ -41,27 +37,15 @@ def test_generated_artifacts_match_tracked_files_and_hashes() -> None:
         assert actual["r2_writes"] == 0
         assert actual["purchases"] == 0
         assert actual["odds_credits"] == 0
+        assert "cells" not in actual
+        assert path.stat().st_size < 100_000
 
 
-def test_private_projection_is_sanitized_and_complete() -> None:
-    projection = load_json(
+def test_massive_materialized_cell_projections_are_not_tracked() -> None:
+    assert not (ROOT / "reports/coverage/p0-denominator-grid-v1.json").exists()
+    assert not (
         ROOT / "cockpit/private-coverage/p0-denominator-status-v1.json"
-    )
-    assert projection["privacy"] == {
-        "classification": "PRIVATE_SANITIZED_PROJECTION",
-        "raw_payloads": False,
-        "provider_endpoints": False,
-        "r2_keys": False,
-        "secrets": False,
-    }
-    assert len(projection["cells"]) == 480
-    assert {
-        cell["source_endpoint"] for cell in projection["cells"]
-    } == {"SANITIZED_IN_PRIVATE_PROJECTION"}
-    assert all(cell["payload_hash"] is None for cell in projection["cells"])
-    assert all(cell["receipt_hash"] is None for cell in projection["cells"])
-    forbidden = {"payload", "endpoint", "r2_key", "secret", "api_key"}
-    assert not forbidden & _all_keys(projection)
+    ).exists()
 
 
 def test_no_fake_level_proof_files_exist() -> None:

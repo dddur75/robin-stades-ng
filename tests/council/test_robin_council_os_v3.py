@@ -241,15 +241,31 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
         "verified_by",
     }
     claim_ids = [claim["claim_id"] for claim in graph["claims"]]
+    registry = load_json("configs/agents/agent-registry-v3.json")
+    registered_agents = {agent["agent_id"] for agent in registry["agents"]}
     assert len(claim_ids) == len(set(claim_ids))
     assert all(claim_fields <= set(claim) for claim in graph["claims"])
     assert all(claim["verified_by"] for claim in graph["claims"])
+    assert all(
+        set(claim["verified_by"]) <= registered_agents for claim in graph["claims"]
+    )
+    assert all(
+        claim["status"]
+        in {"VERIFIED", "PARTIAL", "BLOCKED", "INVALIDATED", "SUPERSEDED"}
+        for claim in graph["claims"]
+    )
     assert all(
         len(claim["verified_by"]) >= 2
         for claim in graph["claims"]
         if claim["status"] == "VERIFIED"
     )
     for claim in graph["claims"]:
+        if claim["status"] == "SUPERSEDED":
+            assert claim.get("superseded_by") in set(claim_ids)
+            continue
+        if claim["status"] == "INVALIDATED":
+            assert claim.get("invalidation_reason")
+            continue
         artifact = ROOT / claim["artifact"]
         assert artifact.is_file()
         if len(claim["hash"]) == 64:

@@ -292,7 +292,7 @@ export const frFR = {
   "coverage.table.temporality": "Temporalité",
   "coverage.table.gate": "Gate",
   "coverage.table.unmeasured": "Non mesuré",
-  "coverage.table.sanitized": "Projection sanitisée",
+  "coverage.table.sanitized": "Synthèse E0 sanitisée",
   "coverage.table.blocked": "Bloqué",
   "coverage.evidence.title": "Provenance et limites",
   "coverage.evidence.source.label": "Source",

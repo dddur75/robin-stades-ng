@@ -4,18 +4,30 @@ import test from "node:test";
 
 import rawQuality from "../app/hypothesis-quality-data.json";
 import { buildP0CoverageDeskModel } from "../app/lib/p0-coverage-desk";
-import rawProjection from "../private-coverage/p0-denominator-status-v1.json";
+import denominatorContract from "../../configs/data/historical-coverage-denominator-contract-v1.json";
+import grainCatalog from "../../configs/data/football-grain-catalog-v1.json";
+import closureSummary from "../../reports/coverage/denominator-closure-summary-v1.json";
+import propertyReadiness from "../../reports/coverage/p0-property-readiness-v1.json";
+import readinessGates from "../../reports/coverage/p0-readiness-gates-v1.json";
 
 const calendarPropertyIds = rawQuality.semanticRoles.items
   .filter((item) => item.family === "CALENDAR_FATIGUE")
   .map((item) => item.property_id.replace("football:calendar_fatigue:", ""));
 
-function cloneProjection(): typeof rawProjection {
-  return structuredClone(rawProjection);
+const rawSources = {
+  contract: denominatorContract,
+  grainCatalog,
+  summary: closureSummary,
+  propertyReadiness,
+  readinessGates,
+};
+
+function cloneSources(): typeof rawSources {
+  return structuredClone(rawSources);
 }
 
 test("le modèle P0 compact valide 5 × 6 × 16 sans sérialiser les cellules", () => {
-  const model = buildP0CoverageDeskModel(rawProjection, calendarPropertyIds);
+  const model = buildP0CoverageDeskModel(rawSources, calendarPropertyIds);
   assert.equal(model.totalCells, 480);
   assert.equal(model.closedCells, 0);
   assert.equal(model.openCells, 480);
@@ -36,48 +48,83 @@ test("le modèle P0 compact valide 5 × 6 × 16 sans sérialiser les cellules", 
 });
 
 test("UNKNOWN reste distinct de zéro et aucun taux ambigu n'est accepté", () => {
-  const projection = cloneProjection();
-  projection.weighted_aggregates.scope_completion.value = 0;
+  const sources = cloneSources();
+  sources.summary.weighted_aggregates.scope_completion.value = 0;
   assert.throws(
-    () => buildP0CoverageDeskModel(projection, calendarPropertyIds),
+    () => buildP0CoverageDeskModel(sources, calendarPropertyIds),
     /P0_COVERAGE_UNKNOWN_RATE_MUST_STAY_NULL/,
   );
 
-  const forbidden = cloneProjection();
-  forbidden.cells[0].rates.coverage_rate = forbidden.cells[0].rates.scope_completion;
+  const forbidden = cloneSources();
+  Object.assign(forbidden.summary.weighted_aggregates, {
+    coverage_rate: forbidden.summary.weighted_aggregates.scope_completion,
+  });
   assert.throws(
     () => buildP0CoverageDeskModel(forbidden, calendarPropertyIds),
     /P0_COVERAGE_RATE_SET_INVALID/,
   );
 });
 
-test("les mutations de grille, confidentialité et navigation échouent fermées", () => {
-  const missing = cloneProjection();
-  missing.cells.pop();
+test("les incohérences de sources compactes échouent fermées", () => {
+  const missing = cloneSources();
+  missing.contract.grid.families.pop();
   assert.throws(
     () => buildP0CoverageDeskModel(missing, calendarPropertyIds),
-    /P0_COVERAGE_CELL_COUNT_INVALID/,
+    /P0_COVERAGE_DIMENSIONS_INVALID/,
   );
 
-  const endpoint = cloneProjection();
-  endpoint.cells[0].source_endpoint = "api-football:/fixtures";
+  const externalEffect = cloneSources();
+  externalEffect.summary.provider_calls = 1;
   assert.throws(
-    () => buildP0CoverageDeskModel(endpoint, calendarPropertyIds),
-    /P0_COVERAGE_CELL_PRIVACY_INVALID/,
+    () => buildP0CoverageDeskModel(externalEffect, calendarPropertyIds),
+    /P0_COVERAGE_EXTERNAL_EFFECT_INVALID/,
   );
 
-  const count = cloneProjection();
-  count.cells[0].expected_count = 0;
+  const familyMismatch = cloneSources();
+  familyMismatch.propertyReadiness.family_readiness[0].family = "invented_family";
   assert.throws(
-    () => buildP0CoverageDeskModel(count, calendarPropertyIds),
-    /P0_COVERAGE_UNPROVEN_COUNT_MUST_STAY_NULL/,
+    () => buildP0CoverageDeskModel(familyMismatch, calendarPropertyIds),
+    /P0_COVERAGE_FAMILY_BINDINGS_INVALID/,
   );
 
-  const navigation = cloneProjection();
-  navigation.navigation_gates.strategy = "AVAILABLE";
+  const unventilatedClosure = cloneSources();
+  unventilatedClosure.summary.closed_cells = 1;
+  unventilatedClosure.summary.open_cells = 479;
   assert.throws(
-    () => buildP0CoverageDeskModel(navigation, calendarPropertyIds),
-    /P0_COVERAGE_NAVIGATION_INVALID/,
+    () => buildP0CoverageDeskModel(unventilatedClosure, calendarPropertyIds),
+    /P0_COVERAGE_FAMILY_BREAKDOWN_REQUIRED/,
+  );
+
+  const coverageGate = cloneSources();
+  coverageGate.readinessGates.coverage_gate.current_closed_cells = 480;
+  coverageGate.readinessGates.coverage_gate.status = "READY";
+  assert.throws(
+    () => buildP0CoverageDeskModel(coverageGate, calendarPropertyIds),
+    /P0_COVERAGE_COVERAGE_GATE_INVALID/,
+  );
+
+  const openedGate = cloneSources();
+  openedGate.readinessGates.gates[0].status = "READY";
+  assert.throws(
+    () => buildP0CoverageDeskModel(openedGate, calendarPropertyIds),
+    /P0_COVERAGE_GATE_STATUS_INVALID/,
+  );
+
+  const unlocked = cloneSources();
+  unlocked.summary.scale_authorized = true;
+  unlocked.summary.promotion = true;
+  unlocked.propertyReadiness.opens_hypergraph = true;
+  assert.throws(
+    () => buildP0CoverageDeskModel(unlocked, calendarPropertyIds),
+    /P0_COVERAGE_LOCKS_INVALID/,
+  );
+
+  const calendarMismatch = cloneSources();
+  calendarMismatch.summary.calendar_fatigue.ready_properties = 17;
+  calendarMismatch.summary.calendar_fatigue.opens_hypergraph = true;
+  assert.throws(
+    () => buildP0CoverageDeskModel(calendarMismatch, calendarPropertyIds),
+    /P0_COVERAGE_CALENDAR_STATE_INVALID/,
   );
 });
 
@@ -87,11 +134,11 @@ test("les 17 propriétés Calendar restent identiques au catalogue autoritatif",
   assert.ok(calendarPropertyIds.includes("matches_10d"));
   assert.ok(!calendarPropertyIds.includes("away_matches_14d"));
   assert.doesNotThrow(() =>
-    buildP0CoverageDeskModel(rawProjection, calendarPropertyIds),
+    buildP0CoverageDeskModel(rawSources, calendarPropertyIds),
   );
   assert.throws(
     () =>
-      buildP0CoverageDeskModel(rawProjection, [
+      buildP0CoverageDeskModel(rawSources, [
         ...calendarPropertyIds.slice(0, -1),
         "invented_property",
       ]),
@@ -99,7 +146,7 @@ test("les 17 propriétés Calendar restent identiques au catalogue autoritatif",
   );
 });
 
-test("la projection lourde reste derrière une frontière serveur", async () => {
+test("les sources compactes restent derrière une frontière serveur", async () => {
   const [serverSource, componentSource, pageSource] = await Promise.all([
     readFile(new URL("../app/lib/p0-coverage-desk.server.ts", import.meta.url), "utf8"),
     readFile(
@@ -111,7 +158,9 @@ test("la projection lourde reste derrière une frontière serveur", async () => 
       "utf8",
     ),
   ]);
-  assert.match(serverSource, /private-coverage\/p0-denominator-status-v1\.json/);
+  assert.match(serverSource, /historical-coverage-denominator-contract-v1\.json/);
+  assert.match(serverSource, /denominator-closure-summary-v1\.json/);
+  assert.doesNotMatch(serverSource, /private-coverage|p0-denominator-status-v1/);
   assert.doesNotMatch(componentSource, /private-coverage|p0-denominator-status-v1/);
   assert.match(pageSource, /p0-coverage-desk\.server/);
   assert.match(componentSource, /aria-disabled="true"/);
