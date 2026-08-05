@@ -1,0 +1,46 @@
+{
+  "schema_version": "robin-governance-final-review-v3.1-minimal",
+  "reviewed_at": "2026-08-05T05:05:40Z",
+  "worktree": "WORKTREE:robin-council-os-v3-1-autoscale",
+  "branch": "codex/robin-council-os-v3-1-autoscale",
+  "base_head": "2a59a20a786a13be1eb4a110c11bb585f35565cb",
+  "reviewed_scope": "PHASE_A_V31_MINIMAL_POLICY_CONTROL_ONLY",
+  "reviewers": ["v31_final_independent"],
+  "review_count": 1,
+  "minimum_score": 95,
+  "minimum_observed_score": 100,
+  "critical_objections_open": 0,
+  "findings": [
+    {"finding_id":"V31-MIN-001","severity":"HIGH","status":"RESOLVED","summary":"Source hash and compute/time budget observations are bound to each transition."},
+    {"finding_id":"V31-MIN-002","severity":"HIGH","status":"RESOLVED","summary":"Mission stages form a strict contiguous prefix from E1 and the ceiling holds instead of stopping."},
+    {"finding_id":"V31-MIN-003","severity":"MEDIUM","status":"RESOLVED","summary":"A manifest cannot self-authorize an external effect; separate authorization proof is required."},
+    {"finding_id":"V31-MIN-004","severity":"MEDIUM","status":"RESOLVED","summary":"Failure similarity uses a three-part immutable key and journal records reject boolean sequence values."}
+  ],
+  "validated_commands": [
+    "python -m pytest -q tests/council/test_autoscale_v31.py (11 passed)",
+    "python -m ruff check src/robin/governance tests/council/test_autoscale_v31.py",
+    "python -m mypy src/robin/governance",
+    "git diff --check"
+  ],
+  "implementation_limits": {
+    "production_lines_max": 1000,
+    "test_lines_max": 2000,
+    "schema_lines_max": 500,
+    "new_dependencies": 0,
+    "external_services": 0
+  },
+  "advanced_capabilities": "FUTURE_DESIGN_NOT_IMPLEMENTED",
+  "external_effects_observed": {
+    "provider_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "deployments": 0,
+    "purchases": 0
+  },
+  "remote_ci_gate": "REQUIRED_ON_DELIVERY_HEAD_BEFORE_MERGE",
+  "verdict": "ROBIN_COUNCIL_OS_V3_1_MINIMAL_READY",
+  "review_ready": true,
+  "merge_ready": false
+}

@@ -172,27 +172,46 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
 def test_scale_policy_has_stop_rules_and_strict_job_ceiling() -> None:
     policy = load_json("configs/experiments/scale-policy-v3.json")
     levels = {level["id"]: level for level in policy["levels"]}
-    assert list(levels) == ["E0", "E1", "E2", "E3", "E4", "E5"]
-    assert levels["E0"]["remote_services"] is False
+    assert policy["policy_role"] == "CONTROL_AND_RECORD_ONLY"
+    assert policy["executes_workloads"] is False
+    assert policy["stage_order"] == ["E1", "E2", "E3A", "E3B", "E4"]
+    assert list(levels) == policy["stage_order"]
     assert levels["E4"]["absolute_max_minutes_per_job"] == 20
     assert levels["E4"]["max_checkpoint_minutes"] == 5
-    assert levels["E5"]["target_minutes_per_job"] == 15
-    assert levels["E5"]["absolute_max_minutes_per_job"] == 20
-    assert levels["E5"]["max_checkpoint_minutes"] == 5
-    assert len(policy["failure_taxonomy"]) == 6
-    assert policy["similar_failure_key"] == [
+    assert policy["decisions"] == [
+        "PASS_AND_SCALE",
+        "PASS_AND_HOLD",
+        "FAIL_AND_REDESIGN",
+        "FAIL_AND_STOP",
+        "BLOCKED_EXTERNAL_ACTION",
+    ]
+    assert policy["transition_policy"]["automatic_transitions"] == {
+        "E1": "E2",
+        "E2": "E3A",
+        "E3A": "E3B",
+        "E3B": "E4",
+    }
+    assert policy["transition_policy"]["external_effect_default"] == "DENY"
+    assert policy["retry_policy"]["similar_failure_key"] == [
         "failure_taxonomy",
         "root_cause_signature",
         "scope",
     ]
-    assert all(
-        pack["status"] == "NOT_MATERIALIZED"
-        and pack["manifest_required_before_use"] is True
-        for pack in policy["permanent_packs"].values()
+    assert policy["retry_policy"]["second_similar_failure"] == (
+        "FAIL_AND_REDESIGN_RETURN_TO_E1"
     )
-    assert policy["retry_policy"]["maximum_similar_failures"] == 2
-    assert policy["retry_policy"]["third_identical_attempt_forbidden"] is True
-    assert policy["quality_ready_gate"]["minimum_score"] == 92
+    assert policy["retry_policy"]["third_unchanged_attempt"] == (
+        "FORBIDDEN_FAIL_AND_STOP"
+    )
+    assert policy["append_only_journal"]["hash_algorithm"] == "SHA-256"
+    assert policy["quality_ready_gate"]["minimum_score"] == 95
+    assert policy["implementation_limits"] == {
+        "production_lines_max": 1000,
+        "test_lines_max": 2000,
+        "schema_lines_max": 500,
+        "new_dependencies": 0,
+        "external_services": 0,
+    }
 
 
 def test_service_capabilities_are_sourced_and_unknowns_are_explicit() -> None:
@@ -428,3 +447,50 @@ def test_platform_inventory_has_required_safety_columns() -> None:
     assert audit["purchases"] == 0
     assert all("C:/Users/" not in item["worktree_path"] for item in audit["worktrees"])
     assert all(item["worktree_path"].startswith("${") for item in audit["worktrees"])
+
+
+def test_pr28_non_canonical_fork_archive_is_complete_and_hash_chained() -> None:
+    archive = load_json("reports/council/pr28-decision-fork-archive-v1.json")
+    assert archive["status"] == "IMMUTABLE_NON_CANONICAL_ARCHIVE"
+    assert archive["source"] == {
+        "pr": 28,
+        "branch": "codex/historical-coverage-denominator-closure-v1",
+        "commit": "bd2661650621912a0d340ffedceb84b78fe4bf28",
+        "ledger_path": "reports/council/decision-ledger.jsonl",
+    }
+    records = archive["fork_records"]
+    assert [record["decision_id"] for record in records] == [
+        "RCV3-20260804-012",
+        "RCV3-20260805-013",
+        "RCV3-20260805-014",
+    ]
+
+    previous_hash = archive["common_prefix"]["head_hash"]
+    for record in records:
+        assert record["previous_hash"] == previous_hash
+        canonical = json.dumps(
+            {key: value for key, value in record.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical).hexdigest() == record["hash"]
+        previous_hash = record["hash"]
+
+    fork_suffix = (
+        "\n".join(
+            json.dumps(record, ensure_ascii=False, separators=(",", ":"))
+            for record in records
+        )
+        + "\n"
+    ).encode()
+    assert hashlib.sha256(fork_suffix).hexdigest() == archive["fork_suffix_sha256"]
+
+    audit = load_json("reports/coverage/pr28-main-integration-audit-v1.json")
+    source = audit["archived_source_evidence"]
+    assert source["decision_ledger_sha256"] == (
+        "64fb8be9891d34a904782ca612db2d17c17fa71031cdd90f7cbabcc7cc7f8c3e"
+    )
+    assert source["evidence_graph_sha256"] == (
+        "cc76da3134a9f67631fc902199edf682e499ec592c29ad3bd543c725f312c36d"
+    )

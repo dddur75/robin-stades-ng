@@ -1,0 +1,98 @@
+{
+  "generated_at_utc": "2026-08-05T04:43:03.4352621Z",
+  "measurement_source": "council-v31-before-simplification-inventory.json",
+  "production_lines": 10008,
+  "test_lines": 7194,
+  "schema_lines": 1297,
+  "files": 20,
+  "elapsed_time": "approximately 10 hours pre-correction (owner brief)",
+  "commits": 0,
+  "PR": null,
+  "pr_status": "NOT_OPEN",
+  "initial_objective": "Provide a minimal policy control for bounded one-level E1-to-E4 evidence progression, with mission ceilings, denied forbidden external effects, a two-failure redesign rule, and deterministic append-only audit records; do not execute workloads.",
+  "implemented_capabilities": [
+    {
+      "capability": "one-level auto progression",
+      "classification": "ESSENTIAL",
+      "disposition": "KEEP_MINIMAL"
+    },
+    {
+      "capability": "mission ceilings",
+      "classification": "ESSENTIAL",
+      "disposition": "KEEP_MINIMAL"
+    },
+    {
+      "capability": "forbidden external effects",
+      "classification": "ESSENTIAL",
+      "disposition": "KEEP_DEFAULT_DENY"
+    },
+    {
+      "capability": "two-failure rule",
+      "classification": "ESSENTIAL",
+      "disposition": "KEEP_MINIMAL"
+    },
+    {
+      "capability": "append-only journal",
+      "classification": "ESSENTIAL",
+      "disposition": "KEEP_DETERMINISTIC_HASH_CHAIN_ONLY"
+    },
+    {
+      "capability": "authority rotation",
+      "classification": "USEFUL_LATER",
+      "disposition": "FUTURE_DESIGN_NOT_IMPLEMENTED"
+    },
+    {
+      "capability": "post-commit quarantine",
+      "classification": "OVERENGINEERED_FOR_CURRENT_MISSION",
+      "disposition": "FUTURE_DESIGN_NOT_IMPLEMENTED"
+    },
+    {
+      "capability": "authority race recovery",
+      "classification": "OVERENGINEERED_FOR_CURRENT_MISSION",
+      "disposition": "FUTURE_DESIGN_NOT_IMPLEMENTED"
+    },
+    {
+      "capability": "execution engine",
+      "classification": "OVERENGINEERED_FOR_CURRENT_MISSION",
+      "disposition": "REMOVE_FROM_V3_1"
+    },
+    {
+      "capability": "full grants reconstruction",
+      "classification": "OVERENGINEERED_FOR_CURRENT_MISSION",
+      "disposition": "FUTURE_DESIGN_NOT_IMPLEMENTED"
+    },
+    {
+      "capability": "crash transactional protocol",
+      "classification": "OVERENGINEERED_FOR_CURRENT_MISSION",
+      "disposition": "FUTURE_DESIGN_NOT_IMPLEMENTED"
+    },
+    {
+      "capability": "multiple evidence bindings",
+      "classification": "OVERENGINEERED_FOR_CURRENT_MISSION",
+      "disposition": "FUTURE_DESIGN_NOT_IMPLEMENTED"
+    }
+  ],
+  "capabilities_not_required_for_E1_E4": [
+    "authority rotation",
+    "post-commit quarantine",
+    "authority race recovery",
+    "execution engine",
+    "full grants reconstruction",
+    "crash transactional protocol",
+    "multiple evidence bindings"
+  ],
+  "post_simplification": {
+    "production_lines": 555,
+    "v31_targeted_test_lines": 269,
+    "all_related_council_test_lines": 702,
+    "schema_lines": 0,
+    "within_limits": true,
+    "measurement": "physical lines in the two governance source files and the targeted V3.1 test; the related total also includes the existing Council regression file"
+  },
+  "measurement_detail": {
+    "production_lines": "src/robin/governance/__init__.py (61) + autoscale.py (9947)",
+    "test_lines": "tests/council/test_robin_council_os_v3.py (585) + test_autoscale_v31.py (6609)",
+    "schema_lines": "scale-run-record-v1.schema.json (1064) + scientific-workload-v1.schema.json (233)",
+    "files": "all modified and untracked files recorded in the preserved inventory"
+  }
+}
