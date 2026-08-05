@@ -1,4 +1,4 @@
-# Robin Council OS V3
+# Robin Council OS V3.1 minimal
 
 Ces instructions s'appliquent à tout le dépôt.
 
@@ -30,11 +30,51 @@ ref distante exacte de la branche de base.
 - Les faits se tranchent par preuve, pas par vote. Les décisions importantes sont
   ajoutées à `reports/council/decision-ledger.jsonl`; ne jamais réécrire une ligne
   historique.
-- Toute métrique présentée comme réelle doit référencer un `claim_id` de
+- Toute métrique présentée comme réelle référence un `claim_id` de
   `reports/evidence/evidence-graph.json`.
 
 Avant chaque commit, ajouter au ledger : worktree, branche, HEAD, PR, rédacteur,
 fichiers, tests ciblés et preuves réutilisées.
+
+## Contrat minimal V3.1
+
+Le Council est une politique de contrôle. Il valide et journalise une décision;
+il ne planifie ni n'exécute le workload.
+
+Une mission est définie par un manifeste immuable qui contient exactement :
+`mission_id`, `authorized_stages`, `maximum_stage`, `external_effects`,
+`compute_budget`, `time_budget`, `source_hash` et `expires_at`.
+
+Les seuls états de décision sont :
+
+```text
+PASS_AND_SCALE
+PASS_AND_HOLD
+FAIL_AND_REDESIGN
+FAIL_AND_STOP
+BLOCKED_EXTERNAL_ACTION
+```
+
+La chaîne autorisée est `E1 → E2 → E3A → E3B → E4`. Une transition n'ouvre que
+l'étape immédiatement suivante et uniquement si l'étape courante est prouvée,
+les critères courants sont satisfaits, le plafond et le budget de mission sont
+respectés, aucun veto critique n'est ouvert et aucun effet externe interdit
+n'est demandé. Une source obligatoire absente produit `FAIL_AND_STOP`.
+
+Après un premier échec similaire, appliquer le plus petit correctif et conserver
+le niveau. Le deuxième impose `FAIL_AND_REDESIGN` et un retour à E1. La
+troisième tentative identique est interdite et produit `FAIL_AND_STOP`.
+
+Le journal append-only accepte seulement : `MISSION_AUTHORIZED`, `STAGE_STARTED`,
+`STAGE_FINISHED`, `DECISION`, `FAILURE`, `VETO` et `REDESIGN`. Chaque record est
+canonique, déterministe et lié au hash du record précédent. Il ne constitue ni
+un ordonnanceur, ni un système de transaction distribuée.
+
+Les capacités suivantes sont `FUTURE_DESIGN_NOT_IMPLEMENTED` : planification ou
+exécution des workloads, transactions distribuées, rotation d'autorité complexe,
+contrôleurs concurrents, réparation d'authority race, quarantaine post-commit,
+reconstruction complexe des grants et remplacement de GitHub Actions, R2, Git ou
+de l'orchestrateur Codex.
 
 ## Boucle obligatoire
 
@@ -43,9 +83,9 @@ mesurer, contredire, corriger, autoriser ou refuser la montée en charge, réali
 recetter, livrer.
 
 Utiliser l'échelle et les délais de `configs/experiments/scale-policy-v3.json`.
-Un correctif local commence à E0, puis au Canary Real Pack seulement si nécessaire.
-Après deux échecs similaires : arrêter, analyser la cause, changer d'architecture
-et revenir à E0 ou E1. Une troisième tentative identique est interdite.
+La progression peut être automatique à l'intérieur du manifeste autorisé, mais
+elle ne crée aucune autorité, n'élève jamais le plafond et ne déclenche aucun
+effet externe.
 
 ## Calcul et données
 
@@ -62,22 +102,13 @@ et revenir à E0 ou E1. Une troisième tentative identique est interdite.
   structurées, index et agrégats. GitHub orchestre mais n'est jamais l'unique
   source durable d'une preuve.
 
-## GitHub Actions et plateforme
-
-- Séparer les groupes `historical-deep-manual`, `historical-deep-scheduled`,
-  `prospective-live`, `cockpit-refresh`, `research-campaign` et `deployment`.
-- Calculer les batches avant la matrice. Un job cible 15 minutes et ne dépasse
-  jamais 20 minutes pour une nouvelle orchestration de cette mission.
-- Deux tentatives automatiques au plus; rapport `always()` court; chaque
-  annulation durable est journalisée.
-- Toute limite non lue ou non mesurée vaut `UNKNOWN`.
-
 ## Tests proportionnés
 
+- Simplification V3.1 : tests ciblés uniquement; une seule suite complète avant
+  fusion.
 - Micro-correctif : test ciblé, Golden Synthetic Pack, puis canari si nécessaire.
 - Lot fonctionnel : suite du domaine.
 - Commit important : tests du domaine, lint, typage et sécurité pertinents.
-- PR prête ou fusion : suite complète, CI, red-team et recette.
 - Ne pas relancer la suite complète après chaque changement mineur.
 
 ## Sécurité immuable
@@ -95,9 +126,10 @@ SOCIAL_PUBLISHING_ENABLED=false
 DEMO_MODE_ENABLED=false
 ```
 
-Interdictions : achat, suppression R2, écriture destructive, payload fournisseur
-brut dans Git, pari réel, promotion automatique, publication sociale, correction
-rétroactive d'un résultat ou source non auditée.
+Tout effet externe ou irréversible est `DEFAULT_DENY`. Sont interdits : achat,
+secret exposé, suppression R2, écriture destructive, payload fournisseur brut
+dans Git, pari réel, promotion, publication sociale et correction rétroactive
+d'un résultat ou d'une source non auditée.
 
 ## Arrêt fail-closed
 

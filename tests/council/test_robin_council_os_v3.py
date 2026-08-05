@@ -172,27 +172,46 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
 def test_scale_policy_has_stop_rules_and_strict_job_ceiling() -> None:
     policy = load_json("configs/experiments/scale-policy-v3.json")
     levels = {level["id"]: level for level in policy["levels"]}
-    assert list(levels) == ["E0", "E1", "E2", "E3", "E4", "E5"]
-    assert levels["E0"]["remote_services"] is False
+    assert policy["policy_role"] == "CONTROL_AND_RECORD_ONLY"
+    assert policy["executes_workloads"] is False
+    assert policy["stage_order"] == ["E1", "E2", "E3A", "E3B", "E4"]
+    assert list(levels) == policy["stage_order"]
     assert levels["E4"]["absolute_max_minutes_per_job"] == 20
     assert levels["E4"]["max_checkpoint_minutes"] == 5
-    assert levels["E5"]["target_minutes_per_job"] == 15
-    assert levels["E5"]["absolute_max_minutes_per_job"] == 20
-    assert levels["E5"]["max_checkpoint_minutes"] == 5
-    assert len(policy["failure_taxonomy"]) == 6
-    assert policy["similar_failure_key"] == [
+    assert policy["decisions"] == [
+        "PASS_AND_SCALE",
+        "PASS_AND_HOLD",
+        "FAIL_AND_REDESIGN",
+        "FAIL_AND_STOP",
+        "BLOCKED_EXTERNAL_ACTION",
+    ]
+    assert policy["transition_policy"]["automatic_transitions"] == {
+        "E1": "E2",
+        "E2": "E3A",
+        "E3A": "E3B",
+        "E3B": "E4",
+    }
+    assert policy["transition_policy"]["external_effect_default"] == "DENY"
+    assert policy["retry_policy"]["similar_failure_key"] == [
         "failure_taxonomy",
         "root_cause_signature",
         "scope",
     ]
-    assert all(
-        pack["status"] == "NOT_MATERIALIZED"
-        and pack["manifest_required_before_use"] is True
-        for pack in policy["permanent_packs"].values()
+    assert policy["retry_policy"]["second_similar_failure"] == (
+        "FAIL_AND_REDESIGN_RETURN_TO_E1"
     )
-    assert policy["retry_policy"]["maximum_similar_failures"] == 2
-    assert policy["retry_policy"]["third_identical_attempt_forbidden"] is True
-    assert policy["quality_ready_gate"]["minimum_score"] == 92
+    assert policy["retry_policy"]["third_unchanged_attempt"] == (
+        "FORBIDDEN_FAIL_AND_STOP"
+    )
+    assert policy["append_only_journal"]["hash_algorithm"] == "SHA-256"
+    assert policy["quality_ready_gate"]["minimum_score"] == 95
+    assert policy["implementation_limits"] == {
+        "production_lines_max": 1000,
+        "test_lines_max": 2000,
+        "schema_lines_max": 500,
+        "new_dependencies": 0,
+        "external_services": 0,
+    }
 
 
 def test_service_capabilities_are_sourced_and_unknowns_are_explicit() -> None:
