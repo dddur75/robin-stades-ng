@@ -273,6 +273,7 @@ def _measure(args: argparse.Namespace) -> int:
         inventory=inventory,
         reader=reader,
         code_revision=args.code_revision,
+        attempt_slot=args.attempt_slot,
     )
     regenerated_receipt, regenerated_counts = measure_partition(
         authority,
@@ -281,6 +282,7 @@ def _measure(args: argparse.Namespace) -> int:
         inventory=inventory,
         reader=reader,
         code_revision=args.code_revision,
+        attempt_slot=args.attempt_slot,
     )
     if receipt != regenerated_receipt or counts != regenerated_counts:
         raise RuntimeError("P0_MEASUREMENT_REGENERATION_DIVERGED")

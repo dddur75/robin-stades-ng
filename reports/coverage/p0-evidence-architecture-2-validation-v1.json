@@ -1,0 +1,133 @@
+{
+  "schema_version": "p0-evidence-architecture-2-validation-v1",
+  "generated_at": "2026-08-05T19:18:00Z",
+  "branch": "codex/p0-coverage-evidence-ladder-v1",
+  "base_revision": "494b2f0dd9a26dbcc7f1ac796567d475a264ba91",
+  "pull_request": 30,
+  "pull_request_state": "DRAFT",
+  "prior_negative_evidence": {
+    "architecture_ordinal": 1,
+    "attempt_slots_exhausted": [1, 2],
+    "stage_receipt_sha256": "d9431bb2a5e8eadcbc5bf1418460a92e83bd851fd33eb6b6eaecb416dbbb49cc",
+    "architecture_fingerprint": "1f311bafdd51a45fa08ac8ac6fb3c125d33d1fe402928e03061f9ddd1352fb21",
+    "absence_raw_distinct": 3036,
+    "absence_injuries_distinct": 2681,
+    "absence_suspensions_distinct": 206,
+    "absence_unclassifiable_distinct": 149,
+    "scientific_gate": "FAIL",
+    "third_unchanged_attempt_authorized": false
+  },
+  "architecture": {
+    "architecture_ordinal": 2,
+    "architecture_fingerprint": "1a9008f9fbe0ef26a47d4adc60acaf1b75a7241979085ad5249dd9df5c28076a",
+    "algorithm_version": "p0-coverage-evidence-algorithm-v2",
+    "classification_rule_version": "absence-partition-rule-v2",
+    "classification_framework_sha256": "295ad9659247d49d0f48dff6f828a9609fe623d81677fcf0268d0643eca5371c",
+    "signed_categories": [
+      "INJURY",
+      "SUSPENSION",
+      "UNCLASSIFIABLE"
+    ],
+    "other_category_authorized": false,
+    "unknown_is_coerced": false,
+    "classification_source": "VERIFIED_RAW_PAYLOAD_RECORD_HASHES",
+    "legacy_normalizer_role": "INTERMEDIATE_ROWS_ONLY_REASSIGNED_BY_RAW_HASH",
+    "legacy_denominator_oracle_role": "DEFINITION_TEST_ONLY_NOT_EXECUTION",
+    "local_supplement_authoritative": false,
+    "local_supplement_allowed_result": "UNCLASSIFIABLE",
+    "local_supplement_promotion_categories": [],
+    "scientific_failure_decision": "FAIL_AND_STOP",
+    "operational_interruption_retry_limit": 2
+  },
+  "package": {
+    "workflow": {
+      "path": ".github/workflows/81-historical-deep-coverage-proof-export.yml",
+      "git_blob": "2a50f313f0ddbe6f2ac186feb2eb40c3e3694869",
+      "file_sha256_lf": "5a80365b4ceec18e00f9b90601d268a00d83fcab89cbf536871e4bca2218a180"
+    },
+    "runner": {
+      "path": "scripts/run_p0_coverage_evidence.py",
+      "git_blob": "86b987da79e10eb482f035bd411746f2ae6f4bcd",
+      "file_sha256_lf": "51dccb0d94e227e1c34233ebb2534833ffa37aeaf7a1e84dfdd3be0f9da3e5ff"
+    },
+    "reader": {
+      "path": "src/robin/historical_deep/coverage_evidence.py",
+      "git_blob": "a20c29e8557a94cc59e27655c3040743442e7f49",
+      "file_sha256_lf": "1aa945cd89edce39ffbfc684c855ac0c714847d707415117d747024f210c47f9"
+    },
+    "tests": {
+      "path": "tests/historical_deep/test_coverage_proof_export.py",
+      "git_blob": "1d7b26c2f5595a8f1633709a1422dac1582fead6",
+      "file_sha256_lf": "675bf2e35d1cef8b36e0d307243bf4062a78c43489e698c4db0886f17413ec22"
+    }
+  },
+  "golden_canary": {
+    "records": 13,
+    "golden_records": 6,
+    "canary_records": 7,
+    "expected_categories": {
+      "INJURY": 1,
+      "SUSPENSION": 1,
+      "UNCLASSIFIABLE": 11
+    },
+    "permutation_invariant": true,
+    "golden_canary_signature_sets_disjoint": true,
+    "protected_profile_cases": 10,
+    "protected_profiles_cannot_be_resealed_as_supplementable": true,
+    "description_values_content_addressed": true
+  },
+  "security_boundary": {
+    "inventory_pinned": true,
+    "exact_branch_and_sha_ci_required": true,
+    "newest_exact_run_must_complete_successfully": true,
+    "remote_tip_rechecked_immediately_before_r2_reader": true,
+    "source_object_set_bound_per_absence_cell": true,
+    "complementary_lineage_forgery_rejected": true,
+    "provider_access_allowed": false,
+    "remote_sql_allowed": false,
+    "r2_write_allowed": false,
+    "r2_delete_allowed": false,
+    "github_artifact_is_unique_scientific_proof": false
+  },
+  "accounting": {
+    "mission_limit_logical_gets": 10000,
+    "baseline_cumulative_logical_gets_exact": 329,
+    "architecture_2_freeze_projected_logical_gets": 23,
+    "architecture_2_measure_projected_logical_gets": 153,
+    "projected_cumulative_after_e1a_slot_1": 505,
+    "projected_remaining_after_e1a_slot_1": 9495,
+    "projection_is_not_an_observed_read": true,
+    "mission_budget_accounting_basis": "EXACT_OBSERVED",
+    "pending_redesigns": 0
+  },
+  "validation": {
+    "targeted_architecture_tests": 86,
+    "historical_deep_tests": 209,
+    "council_tests": 22,
+    "coverage_tests": 48,
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "git_diff_check": "PASS",
+    "yaml_workflow_parse": "PASS",
+    "platform_review": "PASS_NO_P0_P1",
+    "scientific_review": "PASS_NO_P0_P1",
+    "critical_findings_open": 0
+  },
+  "effects_observed_since_rcv3_20260805_029": {
+    "workflow_dispatches": 0,
+    "provider_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "real_bets": 0,
+    "promotion": false,
+    "publication": false
+  },
+  "decision": "PASS_AND_COMMIT",
+  "verdict": "P0_ARCHITECTURE_2_READY_FOR_EXACT_HEAD_CI",
+  "next_gate": "COMMIT_PUSH_EXACT_HEAD_CI_THEN_E1A_ARCHITECTURE_2_SLOT_1_FREEZE"
+}

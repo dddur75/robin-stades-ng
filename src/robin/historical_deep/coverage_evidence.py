@@ -14,6 +14,7 @@ import io
 import json
 import math
 import re
+import unicodedata
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
@@ -38,10 +39,78 @@ INVENTORY_SCHEMA_VERSION = "historical-deep-replay-inventory-v2"
 SELECTION_SCHEMA_VERSION = "p0-coverage-evidence-selection-v1"
 PLAN_SCHEMA_VERSION = "p0-coverage-partition-plan-v1"
 PARTITION_SCHEMA_VERSION = "p0-coverage-partition-receipt-v1"
-FAMILY_COUNTS_SCHEMA_VERSION = "p0-coverage-family-counts-v1"
+FAMILY_COUNTS_SCHEMA_VERSION = "p0-coverage-family-counts-v2"
 CHECKPOINT_SCHEMA_VERSION = "p0-coverage-partition-checkpoint-v1"
 STAGE_SCHEMA_VERSION = "p0-coverage-stage-receipt-v1"
-ALGORITHM_VERSION = "p0-coverage-evidence-algorithm-v1"
+ALGORITHM_VERSION = "p0-coverage-evidence-algorithm-v2"
+ABSENCE_CLASSIFICATION_RULE_VERSION = "absence-partition-rule-v2"
+ABSENCE_PROFILE_SCHEMA_VERSION = "p0-absence-residual-profile-v1"
+ABSENCE_NORMALIZATION_VERSION = "nfkc-casefold-whitespace-v1"
+ABSENCE_SUPPLEMENT_SCHEMA_VERSION = "p0-absence-taxonomy-supplement-v1"
+ABSENCE_SUPPLEMENT_REVIEWER_IDS = ("A1", "C2")
+ABSENCE_UNKNOWN_EXACT_VALUES = (
+    "n/a",
+    "not available",
+    "unknown",
+)
+ABSENCE_NONMEDICAL_KNOWN_VALUES = (
+    "personal reason",
+    "personal reasons",
+)
+ABSENCE_CLASSIFICATION_FRAMEWORK = {
+    "version": ABSENCE_CLASSIFICATION_RULE_VERSION,
+    "base_lexical_contract_version": "absence-partition-rule-v1",
+    "categories": [
+        "INJURY",
+        "SUSPENSION",
+        "UNCLASSIFIABLE",
+    ],
+    "normalization": {
+        "version": ABSENCE_NORMALIZATION_VERSION,
+        "operations": ["NFKC", "CASEFOLD", "TRIM", "CONDENSE_WHITESPACE"],
+        "accent_removal": False,
+        "fuzzy_matching": False,
+        "maximum_codepoints_per_field": 256,
+    },
+    "nonmedical_absence_policy": {
+        "known_values": list(ABSENCE_NONMEDICAL_KNOWN_VALUES),
+        "category": "UNCLASSIFIABLE",
+        "reason": "OUTSIDE_SIGNED_THREE_WAY_PARTITION",
+    },
+    "explicit_unknown_policy": {
+        "known_values": list(ABSENCE_UNKNOWN_EXACT_VALUES),
+        "category": "UNCLASSIFIABLE",
+        "precedence": "BEFORE_LEXICAL_SIGNALS",
+    },
+    "provider_placeholder_policy": {
+        "known_values": ["missing fixture"],
+        "alone": "UNCLASSIFIABLE",
+        "with_one_closed_lexical_signal": "USE_CLOSED_SIGNAL",
+    },
+    "execution_authority": {
+        "classification_source": "VERIFIED_RAW_PAYLOAD_RECORD_HASHES",
+        "legacy_normalizer_role": "INTERMEDIATE_ROWS_ONLY_REASSIGNED_BY_RAW_HASH",
+        "legacy_denominator_oracle_role": "DEFINITION_TEST_ONLY_NOT_EXECUTION",
+    },
+    "conflict_policy": "UNCLASSIFIABLE",
+    "unknown_policy": "UNCLASSIFIABLE",
+    "supplement_policy": {
+        "source": "SIGNED_SLOT_ONE_RESIDUAL_PROFILE",
+        "reviewers_required": 2,
+        "reviewer_ids": list(ABSENCE_SUPPLEMENT_REVIEWER_IDS),
+        "attestation_model": "ROLE_BOUND_CONTENT_ADDRESSING_UNDER_GIT_REVIEW",
+        "local_adjudications_authoritative": False,
+        "allowed_result": "UNCLASSIFIABLE",
+        "promotion_categories": [],
+        "promotion_requires": "NEW_FRAMEWORK_ARCHITECTURE_AND_NEW_MISSION_IF_LIMIT_REACHED",
+        "all_signatures_adjudicated": True,
+        "disagreement_result": "UNCLASSIFIABLE",
+        "third_unchanged_attempt": "FAIL_AND_STOP",
+    },
+}
+ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256 = canonical_sha256(
+    ABSENCE_CLASSIFICATION_FRAMEWORK
+)
 MISSION_ACCOUNTING_EXACT = "EXACT_OBSERVED"
 MISSION_ACCOUNTING_CONSERVATIVE = "CONSERVATIVE_FULL_ATTEMPT_CHARGE"
 MISSION_ACCOUNTING_BASELINE_SCHEMA = "p0-coverage-mission-accounting-baseline-v1"
@@ -368,6 +437,8 @@ class CoverageAuthority:
     normalized_families: tuple[str, ...]
     raw_families: tuple[str, ...]
     identity_architecture_hash: str
+    absence_suspension_regex: str
+    absence_injury_regex: str
     limits: AccessLimits
 
 
@@ -375,6 +446,9 @@ def evidence_architecture_fingerprint(authority: CoverageAuthority) -> str:
     return canonical_sha256(
         {
             "algorithm_version": ALGORITHM_VERSION,
+            "absence_classification_framework_sha256": (
+                ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+            ),
             "identity_architecture_hash": authority.identity_architecture_hash,
         }
     )
@@ -1294,6 +1368,45 @@ def load_authority(
         expected = _sha(contract.get("file_sha256_lf"), label="P0_CONTRACT_HASH")
         if _lf_sha256(root / relative) != expected:
             raise ValueError(f"P0_CONTRACT_HASH_MISMATCH:{relative.as_posix()}")
+    denominator_binding = _mapping(
+        contracts.get("denominator"),
+        label="P0_DENOMINATOR_BINDING",
+    )
+    denominator_contract = _load_json(
+        root
+        / Path(_text(denominator_binding.get("path"), label="P0_DENOMINATOR_PATH")),
+        label="P0_DENOMINATOR_CONTRACT",
+    )
+    absence_rule = _mapping(
+        denominator_contract.get("absence_partition_rule"),
+        label="P0_ABSENCE_PARTITION_RULE",
+    )
+    if (
+        absence_rule.get("version") != "absence-partition-rule-v1"
+        or tuple(
+            _text(item, label="P0_ABSENCE_CATEGORY")
+            for item in _sequence(
+                absence_rule.get("categories"),
+                label="P0_ABSENCE_CATEGORIES",
+            )
+        )
+        != ("SUSPENSION", "INJURY", "UNCLASSIFIABLE")
+        or absence_rule.get("page_position_excluded_from_key") is not True
+    ):
+        raise ValueError("P0_ABSENCE_PARTITION_RULE_INVALID")
+    absence_suspension_regex = _text(
+        absence_rule.get("suspension_regex"),
+        label="P0_SUSPENSION_REGEX",
+    )
+    absence_injury_regex = _text(
+        absence_rule.get("injury_regex"),
+        label="P0_INJURY_REGEX",
+    )
+    try:
+        re.compile(absence_suspension_regex, flags=re.IGNORECASE)
+        re.compile(absence_injury_regex, flags=re.IGNORECASE)
+    except re.error:
+        raise ValueError("P0_ABSENCE_REGEX_INVALID") from None
     mapping_binding = _mapping(contracts.get("stage_mapping"), label="P0_MAPPING_BINDING")
     if mapping_binding.get("file_sha256_lf") != mapping_sha:
         raise ValueError("P0_MAPPING_SOURCE_BINDING_MISMATCH")
@@ -1356,6 +1469,14 @@ def load_authority(
     if (
         identity.get("natural_key_policy") != "SEMANTIC_NON_POSITIONAL_KEYS_ONLY"
         or identity.get("position_fields_forbidden") is not True
+        or tuple(
+            _text(item, label="P0_IDENTITY_ABSENCE_CATEGORY")
+            for item in _sequence(
+                identity.get("absence_partition"),
+                label="P0_IDENTITY_ABSENCE_PARTITION",
+            )
+        )
+        != ("SUSPENSION", "INJURY", "UNCLASSIFIABLE")
         or identity.get("third_unchanged_attempt") != "FAIL_AND_STOP"
     ):
         raise ValueError("P0_IDENTITY_POLICY_INVALID")
@@ -1376,6 +1497,8 @@ def load_authority(
         identity_architecture_hash=_sha(
             identity.get("architecture_hash"), label="P0_IDENTITY_ARCHITECTURE"
         ),
+        absence_suspension_regex=absence_suspension_regex,
+        absence_injury_regex=absence_injury_regex,
         limits=_parse_access_limits(source),
     )
 
@@ -1692,6 +1815,15 @@ def _mission_receipt_candidate(
         and receipt.get("attempt_slot") == 2
         and receipt.get("scientific_gate") == "FAIL"
         and receipt.get("scale_gate") == "FAIL"
+        and receipt.get("measurement_integrity_gate") == "PASS"
+        and receipt.get("read_accounting_gate") == "PASS"
+        and receipt.get("checkpoint_gate") == "PASS"
+        and receipt.get("domain_decision") == "FAIL_AND_REDESIGN"
+        and receipt.get("council_decision") == "FAIL_AND_REDESIGN"
+        and receipt.get("mission_budget_exact") is True
+        and basis == MISSION_ACCOUNTING_EXACT
+        and observed == charged
+        and lower_bound == charged
         and selection.get("mission_accounting_baseline") == expected_redesign_baseline
     )
     if (
@@ -1754,12 +1886,17 @@ def _mission_selection_identity(
         selection.get("identity_architecture_hash"),
         label="P0_MISSION_ACCOUNTING_IDENTITY_ARCHITECTURE",
     )
-    fingerprint = canonical_sha256(
-        {
-            "algorithm_version": algorithm_version,
-            "identity_architecture_hash": identity_hash,
-        }
-    )
+    fingerprint_payload = {
+        "algorithm_version": algorithm_version,
+        "identity_architecture_hash": identity_hash,
+    }
+    framework_value = selection.get("absence_classification_framework_sha256")
+    if framework_value is not None:
+        fingerprint_payload["absence_classification_framework_sha256"] = _sha(
+            framework_value,
+            label="P0_MISSION_ACCOUNTING_ABSENCE_FRAMEWORK",
+        )
+    fingerprint = canonical_sha256(fingerprint_payload)
     ordinal = _integer(
         selection.get("architecture_ordinal"),
         label="P0_MISSION_ACCOUNTING_SELECTION_ORDINAL",
@@ -1937,6 +2074,15 @@ def _mission_accounting_state(
                 or winner_receipt.get("attempt_slot") != 2
                 or winner_receipt.get("scientific_gate") != "FAIL"
                 or winner_receipt.get("scale_gate") != "FAIL"
+                or winner_receipt.get("measurement_integrity_gate") != "PASS"
+                or winner_receipt.get("read_accounting_gate") != "PASS"
+                or winner_receipt.get("checkpoint_gate") != "PASS"
+                or winner_receipt.get("domain_decision") != "FAIL_AND_REDESIGN"
+                or winner_receipt.get("council_decision") != "FAIL_AND_REDESIGN"
+                or winner_receipt.get("mission_budget_exact") is not True
+                or winner.get("basis") != MISSION_ACCOUNTING_EXACT
+                or winner.get("observed") != winner.get("charged")
+                or winner.get("lower_bound") != winner.get("charged")
             ):
                 raise ValueError("P0_MISSION_REDESIGN_NOT_AUTHORIZED")
         register_architecture(
@@ -2196,11 +2342,15 @@ def validate_stage_attempt(
                 existing.get("algorithm_version") == ALGORITHM_VERSION
                 and existing.get("identity_architecture_hash")
                 == authority.identity_architecture_hash
+                and existing.get("absence_classification_framework_sha256")
+                == ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
             ):
                 raise ValueError("P0_STAGE_SELECTION_ALREADY_COMMITTED")
-        baseline, _architecture_ordinal, pending, _registry = _mission_accounting_state(authority)
+        baseline, architecture_ordinal, pending, _registry = _mission_accounting_state(authority)
         if pending:
             raise ValueError("P0_MISSION_PENDING_SELECTION_BLOCKS_FREEZE")
+        if architecture_ordinal == 2 and attempt_slot != 1:
+            raise ValueError("P0_ARCHITECTURE_TWO_FIRST_FREEZE_REQUIRES_SLOT_ONE")
         prior_charge = _integer(
             baseline.get("cumulative_mission_logical_gets_charged"),
             label="P0_FREEZE_MISSION_BASELINE_CHARGED",
@@ -2291,6 +2441,12 @@ def validate_stage_attempt(
     )
     if not common_failure or not (exact_scientific_failure or operational_interruption):
         raise ValueError("P0_SECOND_ATTEMPT_PRIOR_FAILURE_NOT_EXACT")
+    if selection.get("architecture_ordinal") == 2 and exact_scientific_failure:
+        _load_absence_taxonomy_supplement(
+            authority,
+            selection=selection,
+            prior=prior,
+        )
     retry_gets = sum(
         1
         + _integer(
@@ -2730,6 +2886,9 @@ def freeze_selection(
         "inventory_sha256": inventory.manifest_sha256,
         "identity_architecture_hash": authority.identity_architecture_hash,
         "algorithm_version": ALGORITHM_VERSION,
+        "absence_classification_framework_sha256": (
+            ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+        ),
         "architecture_ordinal": architecture_ordinal,
         "mission_architecture_registry": list(mission_architecture_registry),
         "freeze_code_revision": code_revision,
@@ -2799,6 +2958,7 @@ def validate_selection(
         "inventory_sha256",
         "identity_architecture_hash",
         "algorithm_version",
+        "absence_classification_framework_sha256",
         "architecture_ordinal",
         "mission_architecture_registry",
         "freeze_code_revision",
@@ -2829,6 +2989,8 @@ def validate_selection(
         or selection.get("stage_mapping_sha256") != authority.mapping_sha256
         or selection.get("identity_architecture_hash") != authority.identity_architecture_hash
         or selection.get("algorithm_version") != ALGORITHM_VERSION
+        or selection.get("absence_classification_framework_sha256")
+        != ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
         or HEX64.fullmatch(str(selection.get("inventory_sha256"))) is None
         or HEX40.fullmatch(str(selection.get("freeze_code_revision"))) is None
         or _contains_r2_key(selection)
@@ -4100,6 +4262,149 @@ def _raw_fixture_identity_evidence(
     }
 
 
+_ABSENCE_SEMANTIC_FIELDS = ("type", "reason", "description")
+_ABSENCE_UNKNOWN_VALUES = frozenset(ABSENCE_UNKNOWN_EXACT_VALUES)
+_ABSENCE_SUPPLEMENT_CATEGORIES = frozenset(
+    {"UNCLASSIFIABLE"}
+)
+
+
+def _absence_rule_patterns(
+    authority: CoverageAuthority,
+) -> tuple[re.Pattern[str], re.Pattern[str]]:
+    try:
+        return (
+            re.compile(authority.absence_suspension_regex, flags=re.IGNORECASE),
+            re.compile(authority.absence_injury_regex, flags=re.IGNORECASE),
+        )
+    except re.error:
+        raise ValueError("P0_ABSENCE_REGEX_INVALID") from None
+
+
+def _normalize_absence_value(value: object) -> tuple[str | None, str | None]:
+    if value is None:
+        return None, None
+    if not isinstance(value, str):
+        return f"sha256:{canonical_sha256(value)}", "INVALID_SEMANTIC_TYPE"
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    if any(unicodedata.category(character).startswith("C") for character in normalized):
+        return f"sha256:{canonical_sha256(normalized)}", "CONTROL_CHARACTER"
+    normalized = " ".join(normalized.strip().split())
+    if not normalized:
+        return None, None
+    if len(normalized) > 256:
+        return f"sha256:{canonical_sha256(normalized)}", "OVERSIZE_SEMANTIC_VALUE"
+    return normalized, None
+
+
+def _absence_semantic_evidence(record: Mapping[str, object]) -> Mapping[str, object]:
+    player_value = record.get("player")
+    player = player_value if isinstance(player_value, Mapping) else {}
+    normalized_fields: dict[str, list[str]] = {}
+    resolved_fields: dict[str, str | None] = {}
+    issues: set[str] = set()
+    flat_nested_conflict = False
+    for field in _ABSENCE_SEMANTIC_FIELDS:
+        flat, flat_issue = _normalize_absence_value(record.get(field))
+        nested, nested_issue = _normalize_absence_value(player.get(field))
+        issues.update(issue for issue in (flat_issue, nested_issue) if issue is not None)
+        values = sorted({value for value in (flat, nested) if value is not None})
+        normalized_fields[f"normalized_{field}_values"] = values
+        if flat is not None and nested is not None and flat != nested:
+            flat_nested_conflict = True
+        resolved_fields[field] = values[0] if len(values) == 1 else None
+
+    if sum(len(value) for values in normalized_fields.values() for value in values) > 768:
+        issues.add("OVERSIZE_SEMANTIC_TOTAL")
+        normalized_fields = {
+            field: sorted({f"sha256:{canonical_sha256(value)}" for value in values})
+            for field, values in normalized_fields.items()
+        }
+        resolved_fields = {field: None for field in _ABSENCE_SEMANTIC_FIELDS}
+
+    descriptors = tuple(
+        value
+        for field in _ABSENCE_SEMANTIC_FIELDS
+        if (value := resolved_fields[field]) is not None
+    )
+    profile_fields = dict(normalized_fields)
+    description_values = profile_fields["normalized_description_values"]
+    description_redacted = bool(description_values)
+    if description_redacted:
+        profile_fields["normalized_description_values"] = sorted(
+            {f"sha256:{canonical_sha256(value)}" for value in description_values}
+        )
+    signature_unsigned: dict[str, object] = {
+        **profile_fields,
+        "normalization_version": ABSENCE_NORMALIZATION_VERSION,
+    }
+    signature_sha = canonical_sha256(signature_unsigned)
+    return {
+        **signature_unsigned,
+        "signature_sha256": signature_sha,
+        "resolved_fields": resolved_fields,
+        "descriptors": descriptors,
+        "issues": tuple(sorted(issues)),
+        "flat_nested_conflict": flat_nested_conflict,
+        "description_redacted": description_redacted,
+    }
+
+
+def _base_absence_category(
+    semantic: Mapping[str, object],
+    *,
+    suspension_pattern: re.Pattern[str],
+    injury_pattern: re.Pattern[str],
+) -> tuple[str, str]:
+    issues = tuple(
+        _text(item, label="P0_ABSENCE_SEMANTIC_ISSUE")
+        for item in _sequence(semantic.get("issues"), label="P0_ABSENCE_SEMANTIC_ISSUES")
+    )
+    if issues:
+        return "UNCLASSIFIABLE", issues[0]
+    if semantic.get("flat_nested_conflict") is True:
+        return "UNCLASSIFIABLE", "FLAT_NESTED_CONFLICT"
+    descriptors = tuple(
+        _text(item, label="P0_ABSENCE_DESCRIPTOR")
+        for item in _sequence(
+            semantic.get("descriptors"),
+            label="P0_ABSENCE_DESCRIPTORS",
+        )
+    )
+    description = " ".join(descriptors)
+    suspension_signal = bool(suspension_pattern.search(description))
+    injury_signal = bool(injury_pattern.search(description))
+    descriptor_set = set(descriptors)
+    personal_signal = bool(
+        descriptor_set.intersection(ABSENCE_NONMEDICAL_KNOWN_VALUES)
+    )
+    if descriptor_set.intersection(_ABSENCE_UNKNOWN_VALUES):
+        return "UNCLASSIFIABLE", "UNKNOWN_MARKER"
+    if personal_signal and (injury_signal or suspension_signal):
+        return "UNCLASSIFIABLE", "MULTIPLE_SEMANTIC_SIGNALS"
+    signals = [
+        category
+        for category, present in (
+            ("SUSPENSION", suspension_signal),
+            ("INJURY", injury_signal),
+        )
+        if present
+    ]
+    if len(signals) == 1:
+        return signals[0], "BASE_CLOSED_RULE"
+    if len(signals) > 1:
+        return "UNCLASSIFIABLE", "MULTIPLE_SEMANTIC_SIGNALS"
+    if not descriptors:
+        return "UNCLASSIFIABLE", "NO_SEMANTIC_SIGNAL"
+    if "missing fixture" in descriptor_set:
+        return "UNCLASSIFIABLE", "PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL"
+    if personal_signal:
+        return "UNCLASSIFIABLE", "NONMEDICAL_ABSENCE_OUTSIDE_AUTHORIZED_PARTITION"
+    if semantic.get("description_redacted") is True:
+        return "UNCLASSIFIABLE", "FREE_TEXT_DESCRIPTION_REDACTED"
+    return "UNCLASSIFIABLE", "UNRECOGNIZED_SEMANTICS"
+
+
 def _classify_absence_source(
     pairs: Sequence[VerifiedEvidencePair],
     *,
@@ -4114,6 +4419,7 @@ def _classify_absence_source(
     identity_contents: dict[str, dict[tuple[object, ...], str]] = {
         category: {} for category in categories
     }
+    residual_groups: dict[str, dict[str, object]] = {}
     all_identity_contents: dict[tuple[object, ...], str] = {}
     invalid_identity = 0
     contradictions = 0
@@ -4128,24 +4434,54 @@ def _classify_absence_source(
                 invalid_identity += 1
                 continue
             record_hash = canonical_sha256(record_value)
-            # API-Football /injuries nests availability type/reason under
-            # player; retain flat fields for already-supported legacy payloads.
-            player_value = record_value.get("player")
-            player = player_value if isinstance(player_value, Mapping) else {}
-            absence_type = record_value.get("type") or player.get("type")
-            absence_reason = record_value.get("reason") or player.get("reason")
-            absence_description = record_value.get("description") or player.get("description")
-            description = " ".join(
-                str(value or "")
-                for value in (absence_type, absence_reason, absence_description)
+            semantic = _absence_semantic_evidence(record_value)
+            category, reason_code = _base_absence_category(
+                semantic,
+                suspension_pattern=suspension_pattern,
+                injury_pattern=injury_pattern,
             )
-            if suspension_pattern.search(description):
-                category = "SUSPENSION"
-            elif injury_pattern.search(description):
-                category = "INJURY"
-            else:
-                category = "UNCLASSIFIABLE"
+            profile_reason_code = reason_code
+            if category == "UNCLASSIFIABLE":
+                if any(
+                    str(value).startswith("sha256:")
+                    for field in ("type", "reason")
+                    for value in cast(
+                        Sequence[object],
+                        semantic[f"normalized_{field}_values"],
+                    )
+                ):
+                    profile_reason_code = "REDACTED_TYPE_OR_REASON_FAIL_CLOSED"
+                elif semantic.get("description_redacted") is True:
+                    profile_reason_code = "DESCRIPTION_BEARING_RESIDUAL_FAIL_CLOSED"
+            semantic_signature_sha = _sha(
+                semantic.get("signature_sha256"),
+                label="P0_ABSENCE_SIGNATURE",
+            )
+            signature_sha = canonical_sha256(
+                {
+                    "semantic_signature_sha256": semantic_signature_sha,
+                    "reason_code": profile_reason_code,
+                }
+            )
             categories[category].add(record_hash)
+            if category == "UNCLASSIFIABLE":
+                group = residual_groups.setdefault(
+                    signature_sha,
+                    {
+                        "signature_sha256": signature_sha,
+                        "normalized_type_values": semantic["normalized_type_values"],
+                        "normalized_reason_values": semantic["normalized_reason_values"],
+                        "normalized_description_values": semantic[
+                            "normalized_description_values"
+                        ],
+                        "normalization_version": ABSENCE_NORMALIZATION_VERSION,
+                        "reason_code": profile_reason_code,
+                        "record_hashes": set(),
+                    },
+                )
+                if group.get("reason_code") != profile_reason_code:
+                    raise ValueError("P0_ABSENCE_SIGNATURE_REASON_CONFLICT")
+                cast(set[str], group["record_hashes"]).add(record_hash)
             fixture_value = record_value.get("fixture")
             fixture = fixture_value if isinstance(fixture_value, Mapping) else {}
             fixture_id = fixture.get("id") if fixture else fixture_value
@@ -4153,19 +4489,20 @@ def _classify_absence_source(
             player = player_value if isinstance(player_value, Mapping) else {}
             team_value = record_value.get("team")
             team = team_value if isinstance(team_value, Mapping) else {}
+            resolved = _mapping(
+                semantic.get("resolved_fields"),
+                label="P0_ABSENCE_RESOLVED_FIELDS",
+            )
             natural_key = (
                 fixture_id,
                 player.get("id"),
                 team.get("id"),
-                absence_type,
-                absence_reason,
+                resolved.get("type"),
+                resolved.get("reason"),
                 record_value.get("start"),
                 record_value.get("end"),
             )
-            if any(
-                value is None or isinstance(value, bool)
-                for value in natural_key[:5]
-            ):
+            if any(value is None or isinstance(value, bool) for value in natural_key[:5]):
                 invalid_identity += 1
                 continue
             prior = all_identity_contents.get(natural_key)
@@ -4175,6 +4512,14 @@ def _classify_absence_source(
                 contradictions += 1
             identity_contents[category].setdefault(natural_key, record_hash)
     raw_hashes = set().union(*categories.values())
+    semantic_signatures = []
+    for signature_sha, group in sorted(residual_groups.items()):
+        record_hashes = cast(set[str], group.pop("record_hashes"))
+        semantic_signatures.append({**group, "count": len(record_hashes)})
+    if sum(cast(int, item["count"]) for item in semantic_signatures) != len(
+        categories["UNCLASSIFIABLE"]
+    ):
+        raise ValueError("P0_ABSENCE_RESIDUAL_PROFILE_COUNT_MISMATCH")
     return {
         "raw_hashes": frozenset(raw_hashes),
         "categories": {category: frozenset(values) for category, values in categories.items()},
@@ -4187,7 +4532,514 @@ def _classify_absence_source(
         "identity_counts": {
             category: len(values) for category, values in identity_contents.items()
         },
+        "semantic_signatures": semantic_signatures,
     }
+
+
+def _validate_absence_semantic_signature(
+    value: object,
+    *,
+    label: str,
+    suspension_pattern: re.Pattern[str],
+    injury_pattern: re.Pattern[str],
+) -> Mapping[str, object]:
+    signature = _mapping(value, label=label)
+    if set(signature) != {
+        "signature_sha256",
+        "normalized_type_values",
+        "normalized_reason_values",
+        "normalized_description_values",
+        "normalization_version",
+        "reason_code",
+        "count",
+    }:
+        raise ValueError(f"{label}_FIELDS_INVALID")
+    normalized_fields: dict[str, list[str]] = {}
+    normalized_total = 0
+    for field in _ABSENCE_SEMANTIC_FIELDS:
+        values = [
+            _text(item, label=f"{label}_{field.upper()}")
+            for item in _sequence(
+                signature.get(f"normalized_{field}_values"),
+                label=f"{label}_{field.upper()}_VALUES",
+            )
+        ]
+        if (
+            values != sorted(set(values))
+            or any(len(item) > 256 for item in values)
+            or len(values) > 2
+            or (
+                field != "description"
+                and any(
+                    (
+                        re.fullmatch(r"sha256:[0-9a-f]{64}", item) is None
+                        if item.startswith("sha256:")
+                        else _normalize_absence_value(item) != (item, None)
+                    )
+                    for item in values
+                )
+            )
+            or (
+                field == "description"
+                and any(re.fullmatch(r"sha256:[0-9a-f]{64}", item) is None for item in values)
+            )
+        ):
+            raise ValueError(f"{label}_{field.upper()}_VALUES_INVALID")
+        normalized_fields[f"normalized_{field}_values"] = values
+        normalized_total += sum(len(item) for item in values)
+    if normalized_total > 768:
+        raise ValueError(f"{label}_TOTAL_LENGTH_INVALID")
+    if signature.get("normalization_version") != ABSENCE_NORMALIZATION_VERSION:
+        raise ValueError(f"{label}_NORMALIZATION_INVALID")
+    semantic_sha = canonical_sha256(
+        {
+            **normalized_fields,
+            "normalization_version": ABSENCE_NORMALIZATION_VERSION,
+        }
+    )
+    reason_code = _text(signature.get("reason_code"), label=f"{label}_REASON")
+    type_or_reason_redacted = any(
+        value.startswith("sha256:")
+        for field in ("type", "reason")
+        for value in normalized_fields[f"normalized_{field}_values"]
+    )
+    if type_or_reason_redacted:
+        if reason_code != "REDACTED_TYPE_OR_REASON_FAIL_CLOSED":
+            raise ValueError(f"{label}_REDACTED_REASON_MISMATCH")
+    elif normalized_fields["normalized_description_values"]:
+        if reason_code != "DESCRIPTION_BEARING_RESIDUAL_FAIL_CLOSED":
+            raise ValueError(f"{label}_DESCRIPTION_REASON_MISMATCH")
+    else:
+        resolved_fields = {
+            field: (
+                normalized_fields[f"normalized_{field}_values"][0]
+                if len(normalized_fields[f"normalized_{field}_values"]) == 1
+                else None
+            )
+            for field in _ABSENCE_SEMANTIC_FIELDS
+        }
+        derived_category, derived_reason = _base_absence_category(
+            {
+                "issues": (),
+                "flat_nested_conflict": any(
+                    len(normalized_fields[f"normalized_{field}_values"]) > 1
+                    for field in _ABSENCE_SEMANTIC_FIELDS
+                ),
+                "descriptors": tuple(
+                    value
+                    for field, value in resolved_fields.items()
+                    if field != "description" and value is not None
+                ),
+                "description_redacted": False,
+            },
+            suspension_pattern=suspension_pattern,
+            injury_pattern=injury_pattern,
+        )
+        if derived_category != "UNCLASSIFIABLE" or reason_code != derived_reason:
+            raise ValueError(f"{label}_DERIVED_REASON_MISMATCH")
+    expected_sha = canonical_sha256(
+        {
+            "semantic_signature_sha256": semantic_sha,
+            "reason_code": reason_code,
+        }
+    )
+    if _sha(signature.get("signature_sha256"), label=f"{label}_SHA") != expected_sha:
+        raise ValueError(f"{label}_HASH_MISMATCH")
+    _integer(signature.get("count"), label=f"{label}_COUNT", minimum=1)
+    return signature
+
+
+def _build_absence_residual_profile(
+    authority: CoverageAuthority,
+    *,
+    selection: Mapping[str, object],
+    selection_sha256: str,
+    partition_id: str,
+    inventory_sha256: str,
+    attempt_slot: int,
+    absence_source_object_ids: Sequence[str],
+    semantic_signatures: Sequence[Mapping[str, object]],
+    classification_supplement_sha256: str | None,
+) -> Mapping[str, object]:
+    ordered = sorted(
+        (dict(item) for item in semantic_signatures),
+        key=lambda item: str(item.get("signature_sha256")),
+    )
+    unsigned: dict[str, object] = {
+        "schema_version": ABSENCE_PROFILE_SCHEMA_VERSION,
+        "stage": authority.stage,
+        "partition_id": partition_id,
+        "selection_sha256": selection_sha256,
+        "inventory_sha256": inventory_sha256,
+        "architecture_fingerprint": evidence_architecture_fingerprint(authority),
+        "architecture_ordinal": selection.get("architecture_ordinal"),
+        "attempt_slot": attempt_slot,
+        "classification_rule_version": ABSENCE_CLASSIFICATION_RULE_VERSION,
+        "classification_framework_sha256": ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256,
+        "classification_supplement_sha256": classification_supplement_sha256,
+        "normalization_version": ABSENCE_NORMALIZATION_VERSION,
+        "source_absence_object_set_hash": canonical_sha256(
+            sorted(absence_source_object_ids)
+        ),
+        "unclassifiable_record_count": sum(
+            _integer(item.get("count"), label="P0_ABSENCE_PROFILE_BUILD_COUNT", minimum=1)
+            for item in ordered
+        ),
+        "distinct_semantic_signature_count": len(ordered),
+        "semantic_signatures": ordered,
+        "effects": dict(ZERO_EFFECTS),
+    }
+    profile = _signed(unsigned, field="profile_sha256")
+    _validate_absence_residual_profile(
+        profile,
+        authority=authority,
+        selection=selection,
+        expected_selection_sha256=selection_sha256,
+        expected_inventory_sha256=inventory_sha256,
+        expected_attempt_slot=attempt_slot,
+    )
+    return profile
+
+
+def _validate_absence_residual_profile(
+    value: object,
+    *,
+    authority: CoverageAuthority,
+    selection: Mapping[str, object],
+    expected_selection_sha256: str,
+    expected_inventory_sha256: str,
+    expected_attempt_slot: int,
+) -> Mapping[str, object]:
+    suspension_pattern, injury_pattern = _absence_rule_patterns(authority)
+    profile = _mapping(value, label="P0_ABSENCE_RESIDUAL_PROFILE")
+    _verify_signed(
+        profile,
+        field="profile_sha256",
+        label="P0_ABSENCE_RESIDUAL_PROFILE",
+    )
+    if set(profile) != {
+        "schema_version",
+        "stage",
+        "partition_id",
+        "selection_sha256",
+        "inventory_sha256",
+        "architecture_fingerprint",
+        "architecture_ordinal",
+        "attempt_slot",
+        "classification_rule_version",
+        "classification_framework_sha256",
+        "classification_supplement_sha256",
+        "normalization_version",
+        "source_absence_object_set_hash",
+        "unclassifiable_record_count",
+        "distinct_semantic_signature_count",
+        "semantic_signatures",
+        "effects",
+        "profile_sha256",
+    }:
+        raise ValueError("P0_ABSENCE_RESIDUAL_PROFILE_FIELDS_INVALID")
+    signatures = tuple(
+        _validate_absence_semantic_signature(
+            item,
+            label="P0_ABSENCE_RESIDUAL_SIGNATURE",
+            suspension_pattern=suspension_pattern,
+            injury_pattern=injury_pattern,
+        )
+        for item in _sequence(
+            profile.get("semantic_signatures"),
+            label="P0_ABSENCE_RESIDUAL_SIGNATURES",
+        )
+    )
+    signature_hashes = [str(item["signature_sha256"]) for item in signatures]
+    supplement_value = profile.get("classification_supplement_sha256")
+    if supplement_value is not None:
+        _sha(supplement_value, label="P0_ABSENCE_PROFILE_SUPPLEMENT")
+    if (
+        profile.get("schema_version") != ABSENCE_PROFILE_SCHEMA_VERSION
+        or profile.get("stage") != authority.stage
+        or SAFE_ID.fullmatch(str(profile.get("partition_id"))) is None
+        or profile.get("selection_sha256") != expected_selection_sha256
+        or profile.get("inventory_sha256") != expected_inventory_sha256
+        or profile.get("architecture_fingerprint")
+        != evidence_architecture_fingerprint(authority)
+        or profile.get("architecture_ordinal") != selection.get("architecture_ordinal")
+        or profile.get("attempt_slot") != expected_attempt_slot
+        or profile.get("classification_rule_version")
+        != ABSENCE_CLASSIFICATION_RULE_VERSION
+        or profile.get("classification_framework_sha256")
+        != ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+        or profile.get("normalization_version") != ABSENCE_NORMALIZATION_VERSION
+        or HEX64.fullmatch(str(profile.get("source_absence_object_set_hash"))) is None
+        or signature_hashes != sorted(set(signature_hashes))
+        or profile.get("distinct_semantic_signature_count") != len(signatures)
+        or profile.get("unclassifiable_record_count")
+        != sum(cast(int, item["count"]) for item in signatures)
+        or _mapping(profile.get("effects"), label="P0_ABSENCE_PROFILE_EFFECTS")
+        != ZERO_EFFECTS
+        or _contains_r2_key(profile)
+    ):
+        raise ValueError("P0_ABSENCE_RESIDUAL_PROFILE_INVALID")
+    return profile
+
+
+def _absence_profile_catalog(
+    profiles: Sequence[Mapping[str, object]],
+) -> dict[str, Mapping[str, object]]:
+    catalog: dict[str, Mapping[str, object]] = {}
+    for profile in profiles:
+        for item in _sequence(
+            profile.get("semantic_signatures"),
+            label="P0_ABSENCE_PROFILE_CATALOG_SIGNATURES",
+        ):
+            signature = _mapping(item, label="P0_ABSENCE_PROFILE_CATALOG_SIGNATURE")
+            signature_sha = _sha(
+                signature.get("signature_sha256"),
+                label="P0_ABSENCE_PROFILE_CATALOG_SHA",
+            )
+            semantic = {
+                key: value
+                for key, value in signature.items()
+                if key != "count"
+            }
+            prior = catalog.setdefault(signature_sha, semantic)
+            if prior != semantic:
+                raise ValueError("P0_ABSENCE_PROFILE_SIGNATURE_CONFLICT")
+    return catalog
+
+
+def _load_absence_taxonomy_supplement(
+    authority: CoverageAuthority,
+    *,
+    selection: Mapping[str, object],
+    prior: Mapping[str, object],
+) -> tuple[str, Mapping[str, str]]:
+    selection_sha = _verify_signed(
+        selection,
+        field="selection_sha256",
+        label="P0_ABSENCE_SUPPLEMENT_SELECTION",
+    )
+    profiles = tuple(
+        _validate_absence_residual_profile(
+            item,
+            authority=authority,
+            selection=selection,
+            expected_selection_sha256=selection_sha,
+            expected_inventory_sha256=_sha(
+                selection.get("inventory_sha256"),
+                label="P0_ABSENCE_SUPPLEMENT_INVENTORY",
+            ),
+            expected_attempt_slot=1,
+        )
+        for item in _sequence(
+            prior.get("absence_residual_profiles"),
+            label="P0_ABSENCE_SUPPLEMENT_SOURCE_PROFILES",
+        )
+    )
+    profile_hashes = sorted(
+        _sha(item.get("profile_sha256"), label="P0_ABSENCE_SUPPLEMENT_PROFILE_SHA")
+        for item in profiles
+    )
+    profile_set_sha = canonical_sha256(profile_hashes)
+    expected_partition_ids = sorted(
+        _text(
+            _mapping(item, label="P0_ABSENCE_SUPPLEMENT_PARTITION").get(
+                "partition_id"
+            ),
+            label="P0_ABSENCE_SUPPLEMENT_PARTITION_ID",
+        )
+        for item in _sequence(
+            selection.get("partitions"),
+            label="P0_ABSENCE_SUPPLEMENT_PARTITIONS",
+        )
+    )
+    observed_partition_ids = sorted(
+        _text(item.get("partition_id"), label="P0_ABSENCE_SUPPLEMENT_PROFILE_PARTITION")
+        for item in profiles
+    )
+    if (
+        not profiles
+        or observed_partition_ids != expected_partition_ids
+        or any(item.get("classification_supplement_sha256") is not None for item in profiles)
+        or prior.get("attempt_slot") != 1
+        or prior.get("measurement_integrity_gate") != "PASS"
+        or prior.get("read_accounting_gate") != "PASS"
+        or prior.get("checkpoint_gate") != "PASS"
+        or prior.get("scientific_gate") != "FAIL"
+        or prior.get("absence_residual_profile_set_sha256") != profile_set_sha
+    ):
+        raise ValueError("P0_ABSENCE_SUPPLEMENT_SOURCE_ATTEMPT_INVALID")
+    catalog = _absence_profile_catalog(profiles)
+    expected_signatures = set(catalog)
+    if not expected_signatures:
+        raise ValueError("P0_ABSENCE_SUPPLEMENT_SOURCE_PROFILE_EMPTY")
+    path = (
+        authority.root
+        / "configs"
+        / "data"
+        / f"p0-absence-taxonomy-supplement-{authority.stage}-v1.json"
+    )
+    supplement = _load_json(path, label="P0_ABSENCE_TAXONOMY_SUPPLEMENT")
+    supplement_sha = _verify_signed(
+        supplement,
+        field="supplement_sha256",
+        label="P0_ABSENCE_TAXONOMY_SUPPLEMENT",
+    )
+    if set(supplement) != {
+        "schema_version",
+        "mission_id",
+        "mission_sha256",
+        "stage",
+        "architecture_fingerprint",
+        "architecture_ordinal",
+        "classification_framework_sha256",
+        "selection_sha256",
+        "inventory_sha256",
+        "source_attempt_slot",
+        "source_stage_receipt_sha256",
+        "source_profile_set_sha256",
+        "classifications",
+        "reviewer_adjudications",
+        "effects",
+        "supplement_sha256",
+    }:
+        raise ValueError("P0_ABSENCE_TAXONOMY_SUPPLEMENT_FIELDS_INVALID")
+    classifications: dict[str, str] = {}
+    classification_values = tuple(
+        _mapping(item, label="P0_ABSENCE_SUPPLEMENT_CLASSIFICATION")
+        for item in _sequence(
+            supplement.get("classifications"),
+            label="P0_ABSENCE_SUPPLEMENT_CLASSIFICATIONS",
+        )
+    )
+    for item in classification_values:
+        if set(item) != {"signature_sha256", "category"}:
+            raise ValueError("P0_ABSENCE_SUPPLEMENT_CLASSIFICATION_FIELDS_INVALID")
+        signature_sha = _sha(
+            item.get("signature_sha256"),
+            label="P0_ABSENCE_SUPPLEMENT_CLASSIFICATION_SHA",
+        )
+        category = _text(
+            item.get("category"),
+            label="P0_ABSENCE_SUPPLEMENT_CLASSIFICATION_CATEGORY",
+        )
+        if category not in _ABSENCE_SUPPLEMENT_CATEGORIES or signature_sha in classifications:
+            raise ValueError("P0_ABSENCE_SUPPLEMENT_CLASSIFICATION_INVALID")
+        classifications[signature_sha] = category
+    if set(classifications) != expected_signatures or list(classifications) != sorted(
+        classifications
+    ):
+        raise ValueError("P0_ABSENCE_SUPPLEMENT_SIGNATURE_SET_MISMATCH")
+
+    reviewer_values = tuple(
+        _mapping(item, label="P0_ABSENCE_SUPPLEMENT_REVIEWER")
+        for item in _sequence(
+            supplement.get("reviewer_adjudications"),
+            label="P0_ABSENCE_SUPPLEMENT_REVIEWERS",
+        )
+    )
+    if len(reviewer_values) != 2:
+        raise ValueError("P0_ABSENCE_SUPPLEMENT_TWO_REVIEWERS_REQUIRED")
+    reviewer_ids: set[str] = set()
+    reviewer_decisions: list[dict[str, str]] = []
+    for reviewer in reviewer_values:
+        if set(reviewer) != {
+            "reviewer_id",
+            "mission_id",
+            "stage",
+            "architecture_fingerprint",
+            "classification_framework_sha256",
+            "selection_sha256",
+            "source_stage_receipt_sha256",
+            "source_profile_set_sha256",
+            "decisions",
+            "adjudication_sha256",
+        }:
+            raise ValueError("P0_ABSENCE_SUPPLEMENT_REVIEWER_FIELDS_INVALID")
+        _verify_signed(
+            reviewer,
+            field="adjudication_sha256",
+            label="P0_ABSENCE_SUPPLEMENT_REVIEWER",
+        )
+        reviewer_id = _text(
+            reviewer.get("reviewer_id"),
+            label="P0_ABSENCE_SUPPLEMENT_REVIEWER_ID",
+        )
+        if (
+            reviewer_id not in ABSENCE_SUPPLEMENT_REVIEWER_IDS
+            or reviewer_id in reviewer_ids
+            or reviewer.get("mission_id") != authority.mission.get("mission_id")
+            or reviewer.get("stage") != authority.stage
+            or reviewer.get("architecture_fingerprint")
+            != evidence_architecture_fingerprint(authority)
+            or reviewer.get("classification_framework_sha256")
+            != ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+            or reviewer.get("selection_sha256") != selection_sha
+            or reviewer.get("source_stage_receipt_sha256")
+            != prior.get("stage_receipt_sha256")
+            or reviewer.get("source_profile_set_sha256") != profile_set_sha
+        ):
+            raise ValueError("P0_ABSENCE_SUPPLEMENT_REVIEWER_ID_INVALID")
+        reviewer_ids.add(reviewer_id)
+        decisions: dict[str, str] = {}
+        for decision_value in _sequence(
+            reviewer.get("decisions"),
+            label="P0_ABSENCE_SUPPLEMENT_REVIEWER_DECISIONS",
+        ):
+            decision = _mapping(
+                decision_value,
+                label="P0_ABSENCE_SUPPLEMENT_REVIEWER_DECISION",
+            )
+            if set(decision) != {"signature_sha256", "category"}:
+                raise ValueError("P0_ABSENCE_SUPPLEMENT_DECISION_FIELDS_INVALID")
+            signature_sha = _sha(
+                decision.get("signature_sha256"),
+                label="P0_ABSENCE_SUPPLEMENT_DECISION_SHA",
+            )
+            category = _text(
+                decision.get("category"),
+                label="P0_ABSENCE_SUPPLEMENT_DECISION_CATEGORY",
+            )
+            if category not in _ABSENCE_SUPPLEMENT_CATEGORIES or signature_sha in decisions:
+                raise ValueError("P0_ABSENCE_SUPPLEMENT_DECISION_INVALID")
+            decisions[signature_sha] = category
+        if set(decisions) != expected_signatures or list(decisions) != sorted(decisions):
+            raise ValueError("P0_ABSENCE_SUPPLEMENT_REVIEWER_SIGNATURE_SET_MISMATCH")
+        reviewer_decisions.append(decisions)
+    if reviewer_ids != set(ABSENCE_SUPPLEMENT_REVIEWER_IDS) or [
+        reviewer.get("reviewer_id") for reviewer in reviewer_values
+    ] != list(ABSENCE_SUPPLEMENT_REVIEWER_IDS):
+        raise ValueError("P0_ABSENCE_SUPPLEMENT_REVIEWER_ROLES_INVALID")
+    for signature_sha, category in classifications.items():
+        consensus_values = {reviewer[signature_sha] for reviewer in reviewer_decisions}
+        expected_category = (
+            next(iter(consensus_values))
+            if len(consensus_values) == 1
+            else "UNCLASSIFIABLE"
+        )
+        if category != expected_category:
+            raise ValueError("P0_ABSENCE_SUPPLEMENT_CONSENSUS_INVALID")
+    if (
+        supplement.get("schema_version") != ABSENCE_SUPPLEMENT_SCHEMA_VERSION
+        or supplement.get("mission_id") != authority.mission.get("mission_id")
+        or supplement.get("mission_sha256") != authority.mission_sha256
+        or supplement.get("stage") != authority.stage
+        or supplement.get("architecture_fingerprint")
+        != evidence_architecture_fingerprint(authority)
+        or supplement.get("architecture_ordinal") != selection.get("architecture_ordinal")
+        or supplement.get("classification_framework_sha256")
+        != ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+        or supplement.get("selection_sha256") != selection_sha
+        or supplement.get("inventory_sha256") != selection.get("inventory_sha256")
+        or supplement.get("source_attempt_slot") != 1
+        or supplement.get("source_stage_receipt_sha256")
+        != prior.get("stage_receipt_sha256")
+        or supplement.get("source_profile_set_sha256") != profile_set_sha
+        or _mapping(supplement.get("effects"), label="P0_ABSENCE_SUPPLEMENT_EFFECTS")
+        != ZERO_EFFECTS
+        or _contains_r2_key(supplement)
+    ):
+        raise ValueError("P0_ABSENCE_TAXONOMY_SUPPLEMENT_INVALID")
+    return supplement_sha, classifications
 
 
 def _scope_completion_counts(
@@ -4358,11 +5210,14 @@ def measure_partition(
     inventory: VerifiedInventory,
     reader: PinnedInventoryReader,
     code_revision: str,
+    attempt_slot: int = 1,
 ) -> tuple[Mapping[str, object], Mapping[str, object]]:
     """Measure exactly one committed selection partition."""
 
     if HEX40.fullmatch(code_revision) is None:
         raise ValueError("P0_MEASURE_CODE_REVISION_INVALID")
+    if attempt_slot not in {1, 2}:
+        raise ValueError("P0_MEASURE_ATTEMPT_SLOT_INVALID")
     selection_sha = validate_selection(
         selection,
         authority=authority,
@@ -4373,6 +5228,20 @@ def measure_partition(
         selection=selection,
         inventory=inventory,
     )
+    supplement_sha256: str | None = None
+    if selection.get("architecture_ordinal") == 2 and attempt_slot == 2:
+        prior = _current_stage_receipt(authority, selection=selection)
+        if (
+            prior.get("measurement_integrity_gate") == "PASS"
+            and prior.get("scientific_gate") == "FAIL"
+        ):
+            supplement_sha256, _quarantined_classifications = (
+                _load_absence_taxonomy_supplement(
+                    authority,
+                    selection=selection,
+                    prior=prior,
+                )
+            )
     matching = [
         _mapping(item, label="P0_MEASURE_PARTITION")
         for item in _sequence(selection.get("partitions"), label="P0_MEASURE_PARTITIONS")
@@ -4517,45 +5386,7 @@ def measure_partition(
         label="P0_GRAIN_FAMILY_BINDINGS",
     )
     grains = _mapping(grain_catalog.get("grains"), label="P0_GRAINS")
-    denominator_binding = _mapping(
-        contracts.get("denominator"),
-        label="P0_DENOMINATOR_BINDING",
-    )
-    denominator_contract = _load_json(
-        authority.root / Path(_text(denominator_binding.get("path"), label="P0_DENOMINATOR_PATH")),
-        label="P0_DENOMINATOR_CONTRACT",
-    )
-    absence_rule = _mapping(
-        denominator_contract.get("absence_partition_rule"),
-        label="P0_ABSENCE_PARTITION_RULE",
-    )
-    if (
-        absence_rule.get("version") != "absence-partition-rule-v1"
-        or tuple(
-            _text(item, label="P0_ABSENCE_CATEGORY")
-            for item in _sequence(
-                absence_rule.get("categories"),
-                label="P0_ABSENCE_CATEGORIES",
-            )
-        )
-        != ("SUSPENSION", "INJURY", "UNCLASSIFIABLE")
-        or absence_rule.get("page_position_excluded_from_key") is not True
-    ):
-        raise ValueError("P0_ABSENCE_PARTITION_RULE_INVALID")
-    try:
-        suspension_pattern = re.compile(
-            _text(
-                absence_rule.get("suspension_regex"),
-                label="P0_SUSPENSION_REGEX",
-            ),
-            flags=re.IGNORECASE,
-        )
-        injury_pattern = re.compile(
-            _text(absence_rule.get("injury_regex"), label="P0_INJURY_REGEX"),
-            flags=re.IGNORECASE,
-        )
-    except re.error:
-        raise ValueError("P0_ABSENCE_REGEX_INVALID") from None
+    suspension_pattern, injury_pattern = _absence_rule_patterns(authority)
     absence_source_pairs = tuple(
         {
             pair.entry.object_id: pair
@@ -4578,6 +5409,9 @@ def measure_partition(
         cast(frozenset[str], absence_categories.get("UNCLASSIFIABLE"))
     )
     raw_absence_hashes = set(cast(frozenset[str], absence_classification.get("raw_hashes")))
+    # The versioned legacy normalizer remains an intermediate row producer.
+    # P0 classification is authoritative on verified raw records above, then
+    # reassigns only matching raw hashes; the legacy route cannot decide P0.
     normalized_absence_rows = [
         *all_rows_by_family.get("injuries", []),
         *all_rows_by_family.get("suspensions", []),
@@ -4606,7 +5440,13 @@ def measure_partition(
     absence_partition_valid = (
         absence_pagination.get("status") in {"COMPLETE", "UNKNOWN"}
         and raw_absence_hashes
-        == injury_source_hashes | suspension_source_hashes | unclassifiable_source_hashes
+        == injury_source_hashes
+        | suspension_source_hashes
+        | unclassifiable_source_hashes
+        and len(raw_absence_hashes)
+        == len(injury_source_hashes)
+        + len(suspension_source_hashes)
+        + len(unclassifiable_source_hashes)
         and not unclassifiable_source_hashes
         and normalized_absence_hashes.issubset(raw_absence_hashes)
         and (injury_source_hashes | suspension_source_hashes).issubset(normalized_absence_hashes)
@@ -4614,6 +5454,25 @@ def measure_partition(
         and absence_classification.get("contradictory_identity") == 0
     )
     unclassifiable_absence_count = len(unclassifiable_source_hashes)
+    absence_residual_profile = _build_absence_residual_profile(
+        authority,
+        selection=selection,
+        selection_sha256=selection_sha,
+        partition_id=partition_id,
+        inventory_sha256=inventory.manifest_sha256,
+        attempt_slot=attempt_slot,
+        absence_source_object_ids=tuple(
+            sorted(pair.entry.object_id for pair in absence_source_pairs)
+        ),
+        semantic_signatures=tuple(
+            _mapping(item, label="P0_ABSENCE_RESIDUAL_PROFILE_INPUT")
+            for item in _sequence(
+                absence_classification.get("semantic_signatures"),
+                label="P0_ABSENCE_RESIDUAL_PROFILE_INPUTS",
+            )
+        ),
+        classification_supplement_sha256=supplement_sha256,
+    )
     family_records: list[dict[str, object]] = []
     closure_forbidden = authority.stage in {"E1A", "E1B", "E2"}
     for family in target_families:
@@ -4930,7 +5789,11 @@ def measure_partition(
             "injuries_distinct": len(injury_source_hashes),
             "suspensions_distinct": len(suspension_source_hashes),
             "unclassifiable_distinct": unclassifiable_absence_count,
-            "classification_rule_version": absence_rule.get("version"),
+            "classification_rule_version": ABSENCE_CLASSIFICATION_RULE_VERSION,
+            "classification_framework_sha256": (
+                ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+            ),
+            "classification_supplement_sha256": supplement_sha256,
             "classification_set_hash": canonical_sha256(
                 {
                     "injuries": sorted(injury_source_hashes),
@@ -4938,6 +5801,7 @@ def measure_partition(
                     "unclassifiable": sorted(unclassifiable_source_hashes),
                 }
             ),
+            "residual_profile": absence_residual_profile,
             "invariant": "PASS" if absence_partition_valid else "FAIL",
         },
         "families": family_records,
@@ -4965,10 +5829,10 @@ def measure_partition(
                 if fixture_id not in sample_ids:
                     continue
                 proof = _fixture_proof(row, pair=pair)
-                prior = observed_proofs.get(fixture_id)
-                if prior is None:
+                prior_proof = observed_proofs.get(fixture_id)
+                if prior_proof is None:
                     observed_proofs[fixture_id] = proof
-                elif prior != proof:
+                elif prior_proof != proof:
                     proof_contradictions += 1
         sample_fixture_proof_gate = proof_contradictions == 0 and observed_proofs == sample_proofs
         sample_identity_gate = (
@@ -5428,6 +6292,24 @@ def build_partition_checkpoint(
     return _signed(unsigned, field="checkpoint_sha256")
 
 
+def _scale_failure_decision(
+    *,
+    selection: Mapping[str, object],
+    attempt_slot: int,
+    missing_source_cell_keys: Sequence[object],
+    scientific_failure: bool,
+) -> str:
+    return (
+        "FAIL_AND_STOP"
+        if missing_source_cell_keys
+        or (
+            selection.get("architecture_ordinal") == 2
+            and (scientific_failure or attempt_slot == 2)
+        )
+        else "FAIL_AND_REDESIGN"
+    )
+
+
 def aggregate_stage(
     authority: CoverageAuthority,
     *,
@@ -5466,6 +6348,20 @@ def aggregate_stage(
             operation="measure",
             attempt_slot=attempt_slot,
         )
+    expected_supplement_sha256: str | None = None
+    if selection.get("architecture_ordinal") == 2 and attempt_slot == 2:
+        supplement_prior = _current_stage_receipt(authority, selection=selection)
+        if (
+            supplement_prior.get("measurement_integrity_gate") == "PASS"
+            and supplement_prior.get("scientific_gate") == "FAIL"
+        ):
+            expected_supplement_sha256, _classifications = (
+                _load_absence_taxonomy_supplement(
+                    authority,
+                    selection=selection,
+                    prior=supplement_prior,
+                )
+            )
     expected_partitions: dict[str, Mapping[str, object]] = {}
     expected_cell_keys: set[tuple[str, int, str]] = set()
     for partition_value in _sequence(
@@ -5502,6 +6398,7 @@ def aggregate_stage(
     family_records: list[Mapping[str, object]] = []
     cost_reports: list[Mapping[str, object]] = []
     checkpoint_hashes: dict[str, str] = {}
+    absence_residual_profiles: list[Mapping[str, object]] = []
     observed_attempt_slots: list[int] = []
     resource_reports: list[tuple[str, float, int | None]] = []
     failed_scientific_partition_ids: list[str] = []
@@ -5647,7 +6544,10 @@ def aggregate_stage(
                 "suspensions_distinct",
                 "unclassifiable_distinct",
                 "classification_rule_version",
+                "classification_framework_sha256",
+                "classification_supplement_sha256",
                 "classification_set_hash",
+                "residual_profile",
                 "invariant",
             }:
                 raise ValueError("P0_SHARD_ABSENCE_PARTITION_FIELDS_INVALID")
@@ -5668,14 +6568,45 @@ def aggregate_stage(
                 label="P0_SHARD_ABSENCE_UNCLASSIFIABLE_DISTINCT",
             )
             absence_classified = (
-                absence_injuries + absence_suspensions + absence_unclassifiable
+                absence_injuries
+                + absence_suspensions
+                + absence_unclassifiable
+            )
+            shard_attempt_slot = _integer(
+                cost.get("attempt_slot"),
+                label="P0_SHARD_ABSENCE_ATTEMPT_SLOT",
+                minimum=1,
+            )
+            absence_residual_profile = _validate_absence_residual_profile(
+                absence_partition.get("residual_profile"),
+                authority=authority,
+                selection=selection,
+                expected_selection_sha256=selection_sha,
+                expected_inventory_sha256=_sha(
+                    selection.get("inventory_sha256"),
+                    label="P0_SHARD_ABSENCE_INVENTORY",
+                ),
+                expected_attempt_slot=shard_attempt_slot,
             )
             absence_invariant = absence_partition.get("invariant")
             if (
                 absence_raw != absence_classified
                 or absence_partition.get("classification_rule_version")
-                != "absence-partition-rule-v1"
+                != ABSENCE_CLASSIFICATION_RULE_VERSION
+                or absence_partition.get("classification_framework_sha256")
+                != ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
                 or HEX64.fullmatch(str(absence_partition.get("classification_set_hash"))) is None
+                or absence_residual_profile.get("partition_id") != partition_id
+                or absence_residual_profile.get("unclassifiable_record_count")
+                != absence_unclassifiable
+                or (
+                    shard_attempt_slot == 1
+                    and absence_partition.get("classification_supplement_sha256") is not None
+                )
+                or absence_partition.get("classification_supplement_sha256")
+                != absence_residual_profile.get("classification_supplement_sha256")
+                or absence_partition.get("classification_supplement_sha256")
+                != expected_supplement_sha256
                 or absence_invariant not in {"PASS", "FAIL"}
                 or (absence_invariant == "PASS" and absence_unclassifiable != 0)
             ):
@@ -6135,10 +7066,62 @@ def aggregate_stage(
                 _text(item.get("family"), label="P0_SHARD_IDENTITY_FAMILY"): item
                 for item in shard_family_records
             }
+            absence_cell_families = set(cell_by_family).intersection(
+                {"injuries", "suspensions"}
+            )
+            if absence_cell_families not in (
+                set(),
+                {"injuries", "suspensions"},
+            ):
+                raise ValueError("P0_SHARD_ABSENCE_CELL_SET_INCOMPLETE")
+            absence_source_object_ids = sorted(
+                {
+                    _sha(
+                        _mapping(
+                            lineage_item,
+                            label="P0_SHARD_ABSENCE_SOURCE_LINEAGE_ITEM",
+                        ).get("object_id"),
+                        label="P0_SHARD_ABSENCE_SOURCE_OBJECT_ID",
+                    )
+                    for absence_family in ("injuries", "suspensions")
+                    if absence_family in absence_cell_families
+                    for lineage_item in _sequence(
+                        _mapping(
+                            cell_by_family.get(absence_family),
+                            label=f"P0_SHARD_{absence_family.upper()}_SOURCE_CELL",
+                        ).get("source_lineage"),
+                        label=f"P0_SHARD_{absence_family.upper()}_SOURCE_LINEAGE",
+                    )
+                }
+            )
+            if absence_residual_profile.get(
+                "source_absence_object_set_hash"
+            ) != canonical_sha256(absence_source_object_ids):
+                raise ValueError("P0_SHARD_ABSENCE_PROFILE_SOURCE_SET_MISMATCH")
+            if any(
+                _mapping(
+                    cell_by_family.get(family),
+                    label=f"P0_SHARD_{family.upper()}_SOURCE_BINDING_CELL",
+                ).get("source_object_set_hash")
+                != absence_residual_profile.get("source_absence_object_set_hash")
+                for family in absence_cell_families
+            ):
+                raise ValueError("P0_SHARD_ABSENCE_CELL_SOURCE_SET_MISMATCH")
+            if not absence_cell_families and (
+                absence_raw != 0
+                or absence_injuries != 0
+                or absence_suspensions != 0
+                or absence_unclassifiable != 0
+                or absence_residual_profile.get("unclassifiable_record_count") != 0
+                or absence_residual_profile.get("semantic_signatures") != []
+            ):
+                raise ValueError("P0_SHARD_NONABSENCE_PARTITION_NOT_EMPTY")
             for family, category_distinct in (
                 ("injuries", absence_injuries),
                 ("suspensions", absence_suspensions),
             ):
+                if family not in absence_cell_families:
+                    continue
                 absence_cell = _mapping(
                     cell_by_family.get(family),
                     label=f"P0_SHARD_{family.upper()}_CELL",
@@ -6329,6 +7312,7 @@ def aggregate_stage(
                 raise ValueError("P0_SHARD_COST_BUDGET_INVALID")
             observed_ids.append(partition_id)
             family_records.extend(shard_family_records)
+            absence_residual_profiles.append(absence_residual_profile)
             observed_cell_keys.extend((competition, season, family) for family in observed_families)
             cost_reports.append(cost)
             checkpoint_hashes[partition_id] = checkpoint_hash
@@ -6614,9 +7598,19 @@ def aggregate_stage(
     if not read_accounting_complete:
         domain_decision = "FAIL_AND_STOP"
     elif not measurement_integrity_pass:
-        domain_decision = "FAIL_AND_REDESIGN"
+        domain_decision = _scale_failure_decision(
+            selection=selection,
+            attempt_slot=attempt_slot,
+            missing_source_cell_keys=missing_source_cell_keys,
+            scientific_failure=False,
+        )
     elif not scale_gate_pass:
-        domain_decision = "FAIL_AND_STOP" if missing_source_cell_keys else "FAIL_AND_REDESIGN"
+        domain_decision = _scale_failure_decision(
+            selection=selection,
+            attempt_slot=attempt_slot,
+            missing_source_cell_keys=missing_source_cell_keys,
+            scientific_failure=True,
+        )
     elif authority.stage == "E4":
         domain_decision = "PASS_AND_HOLD"
     else:
@@ -6632,9 +7626,19 @@ def aggregate_stage(
     if not read_accounting_complete:
         council_decision = "FAIL_AND_STOP"
     elif not measurement_integrity_pass:
-        council_decision = "FAIL_AND_REDESIGN"
+        council_decision = _scale_failure_decision(
+            selection=selection,
+            attempt_slot=attempt_slot,
+            missing_source_cell_keys=missing_source_cell_keys,
+            scientific_failure=False,
+        )
     elif not scale_gate_pass:
-        council_decision = "FAIL_AND_STOP" if missing_source_cell_keys else "FAIL_AND_REDESIGN"
+        council_decision = _scale_failure_decision(
+            selection=selection,
+            attempt_slot=attempt_slot,
+            missing_source_cell_keys=missing_source_cell_keys,
+            scientific_failure=True,
+        )
     lineage_objects: dict[str, Mapping[str, object]] = {}
     lineage_sets: dict[str, tuple[str, ...]] = {}
     lineage_cells: list[dict[str, object]] = []
@@ -6767,6 +7771,19 @@ def aggregate_stage(
         ),
         "missing_source_cell_keys": [list(item) for item in missing_source_cell_keys],
         "failed_probe_cell_keys": [list(item) for item in failed_probe_cell_keys],
+        "absence_residual_profiles": sorted(
+            absence_residual_profiles,
+            key=lambda item: str(item.get("partition_id")),
+        ),
+        "absence_residual_profile_set_sha256": canonical_sha256(
+            sorted(
+                _sha(
+                    item.get("profile_sha256"),
+                    label="P0_STAGE_ABSENCE_PROFILE_SHA",
+                )
+                for item in absence_residual_profiles
+            )
+        ),
         "planned_mission_logical_gets": planned_mission_logical_gets,
         "cumulative_mission_logical_gets_observed_lower_bound": observed_lower_bound_gets,
         "cumulative_mission_logical_gets_observed": cumulative_mission_logical_gets,
@@ -6848,6 +7865,9 @@ def aggregate_stage(
             "scope_cells": scope_cells,
             "missing_source_cell_keys": stage_receipt["missing_source_cell_keys"],
             "failed_probe_cell_keys": stage_receipt["failed_probe_cell_keys"],
+            "absence_residual_profile_set_sha256": stage_receipt[
+                "absence_residual_profile_set_sha256"
+            ],
             "mission_budget_exact": mission_budget_exact,
             "mission_budget_gate": mission_budget_gate,
             "mission_budget_accounting_basis": mission_budget_accounting_basis,
@@ -6942,6 +7962,11 @@ def aggregate_stage(
 
 __all__ = [
     "ALGORITHM_VERSION",
+    "ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256",
+    "ABSENCE_CLASSIFICATION_RULE_VERSION",
+    "ABSENCE_NORMALIZATION_VERSION",
+    "ABSENCE_PROFILE_SCHEMA_VERSION",
+    "ABSENCE_SUPPLEMENT_SCHEMA_VERSION",
     "CHECKPOINT_SCHEMA_VERSION",
     "CoverageAuthority",
     "FAMILY_COUNTS_SCHEMA_VERSION",

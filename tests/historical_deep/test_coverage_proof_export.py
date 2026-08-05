@@ -1125,6 +1125,34 @@ def test_workflow_81_p0_lane_is_branch_locked_read_only_and_bounded() -> None:
         'os.environ["REQUESTED_REF"] != os.environ["EXACT_LADDER_REF"]',
     ):
         assert token in guard_source
+    assert guard["steps"][1] == {
+        "uses": "actions/checkout@v4",
+        "with": {"persist-credentials": False},
+    }
+    exact_ci_step = guard["steps"][2]
+    assert exact_ci_step["env"] == {
+        "GH_TOKEN": "${{ github.token }}",
+        "EXACT_HEAD_SHA": "${{ github.sha }}",
+        "REPOSITORY": "${{ github.repository }}",
+        "EXACT_LADDER_BRANCH": "codex/p0-coverage-evidence-ladder-v1",
+    }
+    exact_ci_source = exact_ci_step["run"]
+    for token in (
+        "actions/workflows/ci.yml/runs",
+        'test "$(git rev-parse HEAD)" = "${EXACT_HEAD_SHA}"',
+        "git/ref/heads/${EXACT_LADDER_BRANCH}",
+        '-f branch="${EXACT_LADDER_BRANCH}"',
+        '-f head_sha="${EXACT_HEAD_SHA}"',
+        "P0_REMOTE_BRANCH_HEAD_MOVED",
+        "P0_EXACT_HEAD_PUSH_CI_SUCCESS_REQUIRED",
+        'run.get("event") == "push"',
+        'run.get("head_branch") == os.environ["EXACT_LADDER_BRANCH"]',
+        'newest.get("conclusion") != "success"',
+        "newest = max(",
+        "P0_EXACT_HEAD_PUSH_CI_RUN_REQUIRED",
+    ):
+        assert token in exact_ci_source
+    assert "-f status=completed" not in exact_ci_source
 
     freeze = jobs["freeze"]
     plan = jobs["plan"]
@@ -1185,6 +1213,34 @@ def test_workflow_81_p0_lane_is_branch_locked_read_only_and_bounded() -> None:
         ("freeze", "Geler la sélection par lectures R2 exactes"),
         ("measure", "Mesurer une partition par lectures R2 exactes"),
     ]
+    for job in (freeze, measure):
+        secret_step = next(
+            step
+            for step in job["steps"]
+            if any("secrets." in str(value) for value in step.get("env", {}).values())
+        )
+        secret_source = str(secret_step["run"])
+        assert secret_source.index(
+            "git/ref/heads/${EXACT_LADDER_BRANCH}"
+        ) < secret_source.index("run_p0_coverage_evidence.py")
+    reservation_identity_index = next(
+        index
+        for index, step in enumerate(reservation["steps"])
+        if step.get("id") == "reserve"
+    )
+    reservation_revalidation_indices = [
+        index
+        for index, step in enumerate(reservation["steps"])
+        if "git/ref/heads/${GITHUB_REF_NAME}" in str(step.get("run", ""))
+    ]
+    reservation_upload_index = next(
+        index
+        for index, step in enumerate(reservation["steps"])
+        if step.get("uses") == "actions/upload-artifact@v4"
+    )
+    assert reservation_revalidation_indices[0] < reservation_identity_index
+    assert reservation_identity_index < reservation_revalidation_indices[-1]
+    assert reservation_revalidation_indices[-1] < reservation_upload_index
     for forbidden in (
         "API_FOOTBALL_KEY",
         "DATABASE_URL",
@@ -1663,7 +1719,10 @@ def _p0_e1a_selection(authority: CoverageAuthority) -> dict[str, object]:
         "stage_mapping_sha256": authority.mapping_sha256,
         "inventory_sha256": "b" * 64,
         "identity_architecture_hash": authority.identity_architecture_hash,
-        "algorithm_version": "p0-coverage-evidence-algorithm-v1",
+        "algorithm_version": coverage_evidence_module.ALGORITHM_VERSION,
+        "absence_classification_framework_sha256": (
+            coverage_evidence_module.ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+        ),
         "architecture_ordinal": 1,
         "mission_architecture_registry": [
             {
@@ -2291,6 +2350,336 @@ def test_p0_absence_classifier_reads_nested_player_fields_without_sidelined_date
     )
 
 
+def test_p0_absence_architecture_two_golden_and_canary_are_fail_closed() -> None:
+    entry = InventoryObject(
+        object_id="8" * 64,
+        receipt_id="9" * 64,
+        receipt_hash="a" * 64,
+        receipt_key="receipt.json",
+        payload_key="payload.json.gz",
+        payload_sha256="b" * 64,
+        stored_sha256="c" * 64,
+        logical_bytes=1,
+        stored_bytes=1,
+        competition="api-football:135",
+        season=2024,
+        family="injuries",
+        task_id="d" * 64,
+        provider_calls=1,
+        rows_received=13,
+    )
+
+    def record(
+        fixture_id: int,
+        *,
+        absence_type: object = "Missing Fixture",
+        reason: object = "Unknown",
+        nested_type: object | None = None,
+        nested_reason: object | None = None,
+        description: object | None = None,
+    ) -> dict[str, object]:
+        player: dict[str, object] = {"id": fixture_id + 100}
+        if nested_type is not None:
+            player["type"] = nested_type
+        if nested_reason is not None:
+            player["reason"] = nested_reason
+        output: dict[str, object] = {
+            "fixture": {"id": fixture_id},
+            "player": player,
+            "team": {"id": fixture_id + 200},
+            "type": absence_type,
+            "reason": reason,
+            "start": None,
+            "end": None,
+        }
+        if description is not None:
+            output["description"] = description
+        return output
+
+    golden = [
+        record(1, absence_type=None, reason=None, nested_reason="  Knee   Injury  "),
+        record(2, absence_type="Red Card", reason="Suspended"),
+        record(3, reason="PERSONAL REASONS"),
+        record(4, reason="unknown"),
+        record(5, reason="Knee Injury and Red Card"),
+        record(
+            6,
+            absence_type="Knee Injury",
+            reason="Injured",
+            nested_type="Red Card",
+            nested_reason="Injured",
+        ),
+    ]
+    canary = [
+        record(7, absence_type=None, reason=None, nested_reason="Concussion"),
+        record(8, reason="Match ban"),
+        record(9, reason="ＰＥＲＳＯＮＡＬ ＲＥＡＳＯＮ"),
+        record(10, absence_type=None, reason="not available"),
+        record(11, absence_type="Unknown", reason="Knee Injury"),
+        record(12, absence_type="Personal reason", reason="Red Card"),
+        record(13, absence_type="N/A", reason="Red Card"),
+    ]
+
+    def classify(records: list[dict[str, object]]) -> Mapping[str, object]:
+        pair = VerifiedEvidencePair(
+            entry=entry,
+            receipt=SimpleNamespace(endpoint="injuries"),
+            payload={"response": records},
+            normalized={},
+            replay_source_hash="e" * 64,
+            replay_hash="f" * 64,
+        )
+        return coverage_evidence_module._classify_absence_source(
+            (pair,),
+            suspension_pattern=re.compile(r"red card|suspend", re.IGNORECASE),
+            injury_pattern=re.compile(r"injur|fracture", re.IGNORECASE),
+        )
+
+    golden_expected = (
+        "INJURY",
+        "SUSPENSION",
+        "UNCLASSIFIABLE",
+        "UNCLASSIFIABLE",
+        "UNCLASSIFIABLE",
+        "UNCLASSIFIABLE",
+    )
+    canary_expected = ("UNCLASSIFIABLE",) * len(canary)
+
+    def assert_exact_labels(
+        result: Mapping[str, object],
+        records: list[dict[str, object]],
+        expected: tuple[str, ...],
+    ) -> None:
+        categories = result["categories"]
+        assert isinstance(categories, Mapping)
+        for item, expected_category in zip(records, expected, strict=True):
+            record_hash = canonical_sha256(item)
+            assert record_hash in categories[expected_category]
+            assert all(
+                record_hash not in values
+                for category, values in categories.items()
+                if category != expected_category
+            )
+
+    assert_exact_labels(classify(golden), golden, golden_expected)
+    assert_exact_labels(classify(canary), canary, canary_expected)
+    classified = classify([*golden, *canary])
+    assert_exact_labels(
+        classified,
+        [*golden, *canary],
+        (*golden_expected, *canary_expected),
+    )
+    permuted = classify(list(reversed([*golden, *canary])))
+    categories = classified["categories"]
+    assert isinstance(categories, Mapping)
+    assert {name: len(values) for name, values in categories.items()} == {
+        "SUSPENSION": 1,
+        "INJURY": 1,
+        "UNCLASSIFIABLE": 11,
+    }
+    assert classified["categories"] == permuted["categories"]
+    assert classified["semantic_signatures"] == permuted["semantic_signatures"]
+    residual = classified["semantic_signatures"]
+    assert isinstance(residual, list)
+    assert sum(int(item["count"]) for item in residual) == 11
+    assert all(
+        set(item)
+        == {
+            "signature_sha256",
+            "normalized_type_values",
+            "normalized_reason_values",
+            "normalized_description_values",
+            "normalization_version",
+            "reason_code",
+            "count",
+        }
+        for item in residual
+    )
+    golden_signatures = {
+        coverage_evidence_module._absence_semantic_evidence(item)["signature_sha256"]
+        for item in golden
+    }
+    canary_signatures = {
+        coverage_evidence_module._absence_semantic_evidence(item)["signature_sha256"]
+        for item in canary
+    }
+    assert golden_signatures.isdisjoint(canary_signatures)
+
+
+@pytest.mark.parametrize(
+    ("semantic_fields", "expected_reason"),
+    (
+        ({"type": "Unknown", "reason": "Knee Injury"}, "UNKNOWN_MARKER"),
+        ({"type": "N/A", "reason": "Red Card"}, "UNKNOWN_MARKER"),
+        ({"type": "not available", "reason": "Suspended"}, "UNKNOWN_MARKER"),
+        (
+            {"type": "Missing Fixture", "reason": "Opaque absence"},
+            "PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL",
+        ),
+        (
+            {"type": "Personal reason", "reason": "Knee Injury"},
+            "MULTIPLE_SEMANTIC_SIGNALS",
+        ),
+        ({"type": "opaque\x00value"}, "REDACTED_TYPE_OR_REASON_FAIL_CLOSED"),
+        ({"type": "x" * 257}, "REDACTED_TYPE_OR_REASON_FAIL_CLOSED"),
+        ({"type": 123}, "REDACTED_TYPE_OR_REASON_FAIL_CLOSED"),
+        (
+            {"type": "Opaque A", "player": {"type": "Opaque B"}},
+            "FLAT_NESTED_CONFLICT",
+        ),
+        (
+            {"type": "Opaque", "description": "Private clinical note"},
+            "DESCRIPTION_BEARING_RESIDUAL_FAIL_CLOSED",
+        ),
+    ),
+)
+def test_p0_residual_profiles_cannot_reseal_protected_semantics_as_supplementable(
+    semantic_fields: Mapping[str, object],
+    expected_reason: str,
+) -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    selection = _p0_e1a_selection(authority)
+    partition = next(iter(selection["partitions"]))
+    assert isinstance(partition, Mapping)
+    player = {"id": 2}
+    nested_player = semantic_fields.get("player")
+    if isinstance(nested_player, Mapping):
+        player.update(nested_player)
+    record = {
+        "fixture": {"id": 1},
+        "player": player,
+        "team": {"id": 3},
+        **{key: value for key, value in semantic_fields.items() if key != "player"},
+    }
+    entry = InventoryObject(
+        object_id="8" * 64,
+        receipt_id="9" * 64,
+        receipt_hash="a" * 64,
+        receipt_key="receipt.json",
+        payload_key="payload.json.gz",
+        payload_sha256="b" * 64,
+        stored_sha256="c" * 64,
+        logical_bytes=1,
+        stored_bytes=1,
+        competition="api-football:135",
+        season=2024,
+        family="injuries",
+        task_id="d" * 64,
+        provider_calls=1,
+        rows_received=1,
+    )
+    pair = VerifiedEvidencePair(
+        entry=entry,
+        receipt=SimpleNamespace(endpoint="injuries"),
+        payload={"response": [record]},
+        normalized={},
+        replay_source_hash="e" * 64,
+        replay_hash="f" * 64,
+    )
+    suspension_pattern, injury_pattern = coverage_evidence_module._absence_rule_patterns(
+        authority
+    )
+    classified = coverage_evidence_module._classify_absence_source(
+        (pair,),
+        suspension_pattern=suspension_pattern,
+        injury_pattern=injury_pattern,
+    )
+    signature = dict(next(iter(classified["semantic_signatures"])))
+    assert signature["reason_code"] == expected_reason
+    if semantic_fields.get("description") is not None:
+        assert all(
+            re.fullmatch(r"sha256:[0-9a-f]{64}", value)
+            for value in signature["normalized_description_values"]
+        )
+    coverage_evidence_module._build_absence_residual_profile(
+        authority,
+        selection=selection,
+        selection_sha256=str(selection["selection_sha256"]),
+        partition_id=str(partition["partition_id"]),
+        inventory_sha256=str(selection["inventory_sha256"]),
+        attempt_slot=1,
+        absence_source_object_ids=(entry.object_id,),
+        semantic_signatures=(signature,),
+        classification_supplement_sha256=None,
+    )
+
+    forged = dict(signature)
+    forged["reason_code"] = "UNRECOGNIZED_SEMANTICS"
+    semantic_sha = canonical_sha256(
+        {
+            "normalized_type_values": forged["normalized_type_values"],
+            "normalized_reason_values": forged["normalized_reason_values"],
+            "normalized_description_values": forged["normalized_description_values"],
+            "normalization_version": forged["normalization_version"],
+        }
+    )
+    forged["signature_sha256"] = canonical_sha256(
+        {
+            "semantic_signature_sha256": semantic_sha,
+            "reason_code": forged["reason_code"],
+        }
+    )
+    with pytest.raises(ValueError, match="P0_ABSENCE_RESIDUAL_SIGNATURE_"):
+        coverage_evidence_module._build_absence_residual_profile(
+            authority,
+            selection=selection,
+            selection_sha256=str(selection["selection_sha256"]),
+            partition_id=str(partition["partition_id"]),
+            inventory_sha256=str(selection["inventory_sha256"]),
+            attempt_slot=1,
+            absence_source_object_ids=(entry.object_id,),
+            semantic_signatures=(forged,),
+            classification_supplement_sha256=None,
+        )
+
+
+@pytest.mark.parametrize(
+    "forged_value",
+    ("UNKNOWN", " unknown ", "unknown\x00", "sha256:not-a-digest"),
+)
+def test_p0_residual_profile_rejects_noncanonical_semantic_values(
+    forged_value: str,
+) -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    suspension_pattern, injury_pattern = coverage_evidence_module._absence_rule_patterns(
+        authority
+    )
+    unsigned = {
+        "normalized_type_values": [],
+        "normalized_reason_values": [forged_value],
+        "normalized_description_values": [],
+        "normalization_version": coverage_evidence_module.ABSENCE_NORMALIZATION_VERSION,
+    }
+    semantic_sha = canonical_sha256(unsigned)
+    signature = {
+        **unsigned,
+        "reason_code": "UNRECOGNIZED_SEMANTICS",
+        "count": 1,
+        "signature_sha256": canonical_sha256(
+            {
+                "semantic_signature_sha256": semantic_sha,
+                "reason_code": "UNRECOGNIZED_SEMANTICS",
+            }
+        ),
+    }
+
+    with pytest.raises(ValueError, match="P0_TEST_SIGNATURE_REASON_VALUES_INVALID"):
+        coverage_evidence_module._validate_absence_semantic_signature(
+            signature,
+            label="P0_TEST_SIGNATURE",
+            suspension_pattern=suspension_pattern,
+            injury_pattern=injury_pattern,
+        )
+
+
 def _p0_unknown_rate() -> dict[str, object]:
     return {
         "numerator": 0,
@@ -2408,6 +2797,59 @@ def _p0_cell(*, family: str, probe_pass: bool = True) -> dict[str, object]:
     return _signed_p0(unsigned, field="cell_hash")
 
 
+def _p0_absence_profile(
+    *,
+    authority: CoverageAuthority,
+    selection: Mapping[str, object],
+    partition: Mapping[str, object],
+    attempt_slot: int,
+    unclassifiable_count: int = 0,
+    absence_source_object_ids: tuple[str, ...] | None = None,
+) -> Mapping[str, object]:
+    semantic_signatures: list[Mapping[str, object]] = []
+    if unclassifiable_count:
+        semantic = coverage_evidence_module._absence_semantic_evidence(
+            {"type": "Unmapped absence", "reason": "Needs adjudication"}
+        )
+        semantic_signature_sha = str(semantic["signature_sha256"])
+        reason_code = "UNRECOGNIZED_SEMANTICS"
+        semantic_signatures.append(
+            {
+                "signature_sha256": canonical_sha256(
+                    {
+                        "semantic_signature_sha256": semantic_signature_sha,
+                        "reason_code": reason_code,
+                    }
+                ),
+                "normalized_type_values": semantic["normalized_type_values"],
+                "normalized_reason_values": semantic["normalized_reason_values"],
+                "normalized_description_values": semantic[
+                    "normalized_description_values"
+                ],
+                "normalization_version": (
+                    coverage_evidence_module.ABSENCE_NORMALIZATION_VERSION
+                ),
+                "reason_code": reason_code,
+                "count": unclassifiable_count,
+            }
+        )
+    return coverage_evidence_module._build_absence_residual_profile(
+        authority,
+        selection=selection,
+        selection_sha256=str(selection["selection_sha256"]),
+        partition_id=str(partition["partition_id"]),
+        inventory_sha256=str(selection["inventory_sha256"]),
+        attempt_slot=attempt_slot,
+        absence_source_object_ids=(
+            absence_source_object_ids
+            if absence_source_object_ids is not None
+            else tuple(str(item) for item in partition["evidence_object_ids"])
+        ),
+        semantic_signatures=semantic_signatures,
+        classification_supplement_sha256=None,
+    )
+
+
 def _write_p0_e1a_shard(
     directory: Path,
     *,
@@ -2431,6 +2873,16 @@ def _write_p0_e1a_shard(
 
     injury_distinct = absence_distinct("injuries")
     suspension_distinct = absence_distinct("suspensions")
+    absence_source_object_ids = tuple(
+        sorted(
+            {
+                str(lineage_item["object_id"])
+                for family in ("injuries", "suspensions")
+                if (cell := cell_by_family.get(family)) is not None
+                for lineage_item in cell["source_lineage"]
+            }
+        )
+    )
     counts = _signed_p0(
         {
             "schema_version": FAMILY_COUNTS_SCHEMA_VERSION,
@@ -2447,13 +2899,26 @@ def _write_p0_e1a_shard(
                 "injuries_distinct": injury_distinct,
                 "suspensions_distinct": suspension_distinct,
                 "unclassifiable_distinct": 0,
-                "classification_rule_version": "absence-partition-rule-v1",
+                "classification_rule_version": (
+                    coverage_evidence_module.ABSENCE_CLASSIFICATION_RULE_VERSION
+                ),
+                "classification_framework_sha256": (
+                    coverage_evidence_module.ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+                ),
+                "classification_supplement_sha256": None,
                 "classification_set_hash": canonical_sha256(
                     {
                         "injuries": ["1" * 64] * injury_distinct,
                         "suspensions": ["2" * 64] * suspension_distinct,
                         "unclassifiable": [],
                     }
+                ),
+                "residual_profile": _p0_absence_profile(
+                    authority=authority,
+                    selection=selection,
+                    partition=partition,
+                    attempt_slot=attempt_slot,
+                    absence_source_object_ids=absence_source_object_ids,
                 ),
                 "invariant": "PASS",
             },
@@ -2634,14 +3099,33 @@ def _rewrite_p0_e1a_shard_as_identity_failure(
     coherent_receipt: bool,
 ) -> None:
     counts = json.loads((shard / "family-counts.json").read_text(encoding="utf-8"))
+    cost = json.loads((shard / "cost-report.json").read_text(encoding="utf-8"))
+    attempt_slot = int(cost["attempt_slot"])
     counts["absence_partition"] = {
         "raw_distinct": 1,
         "injuries_distinct": 0,
         "suspensions_distinct": 0,
         "unclassifiable_distinct": 1,
-        "classification_rule_version": "absence-partition-rule-v1",
+        "classification_rule_version": (
+            coverage_evidence_module.ABSENCE_CLASSIFICATION_RULE_VERSION
+        ),
+        "classification_framework_sha256": (
+            coverage_evidence_module.ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+        ),
+        "classification_supplement_sha256": None,
         "classification_set_hash": canonical_sha256(
-            {"injuries": [], "suspensions": [], "unclassifiable": ["f" * 64]}
+            {
+                "injuries": [],
+                "suspensions": [],
+                "unclassifiable": ["f" * 64],
+            }
+        ),
+        "residual_profile": _p0_absence_profile(
+            authority=authority,
+            selection=selection,
+            partition=next(iter(selection["partitions"])),
+            attempt_slot=attempt_slot,
+            unclassifiable_count=1,
         ),
         "invariant": "FAIL",
     }
@@ -2665,6 +3149,165 @@ def _rewrite_p0_e1a_shard_as_identity_failure(
             else None
         ),
     )
+
+
+def test_p0_absence_supplement_requires_two_bound_adjudications(
+    tmp_path: Path,
+) -> None:
+    authority = replace(
+        load_authority(
+            ROOT,
+            stage="E1A",
+            now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+        ),
+        root=tmp_path,
+    )
+    selection = _p0_e1a_selection(authority)
+    partition = next(iter(selection["partitions"]))
+    assert isinstance(partition, Mapping)
+    profile = _p0_absence_profile(
+        authority=authority,
+        selection=selection,
+        partition=partition,
+        attempt_slot=1,
+        unclassifiable_count=1,
+    )
+    signature = next(iter(profile["semantic_signatures"]))
+    assert isinstance(signature, Mapping)
+    signature_sha = str(signature["signature_sha256"])
+    profile_set_sha = canonical_sha256([profile["profile_sha256"]])
+    prior = {
+        "attempt_slot": 1,
+        "measurement_integrity_gate": "PASS",
+        "read_accounting_gate": "PASS",
+        "checkpoint_gate": "PASS",
+        "scientific_gate": "FAIL",
+        "absence_residual_profiles": [profile],
+        "absence_residual_profile_set_sha256": profile_set_sha,
+        "stage_receipt_sha256": "f" * 64,
+    }
+
+    def reviewer(reviewer_id: str, category: str) -> Mapping[str, object]:
+        return _signed_p0(
+            {
+                "reviewer_id": reviewer_id,
+                "mission_id": authority.mission["mission_id"],
+                "stage": "E1A",
+                "architecture_fingerprint": evidence_architecture_fingerprint(
+                    authority
+                ),
+                "classification_framework_sha256": (
+                    coverage_evidence_module.ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+                ),
+                "selection_sha256": selection["selection_sha256"],
+                "source_stage_receipt_sha256": prior["stage_receipt_sha256"],
+                "source_profile_set_sha256": profile_set_sha,
+                "decisions": [
+                    {"signature_sha256": signature_sha, "category": category}
+                ],
+            },
+            field="adjudication_sha256",
+        )
+
+    def supplement(
+        *,
+        consensus: str,
+        reviewer_categories: tuple[str, str],
+        reviewer_ids: tuple[str, str] = ("A1", "C2"),
+    ) -> Mapping[str, object]:
+        return _signed_p0(
+            {
+                "schema_version": (
+                    coverage_evidence_module.ABSENCE_SUPPLEMENT_SCHEMA_VERSION
+                ),
+                "mission_id": authority.mission["mission_id"],
+                "mission_sha256": authority.mission_sha256,
+                "stage": "E1A",
+                "architecture_fingerprint": evidence_architecture_fingerprint(
+                    authority
+                ),
+                "architecture_ordinal": selection["architecture_ordinal"],
+                "classification_framework_sha256": (
+                    coverage_evidence_module.ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+                ),
+                "selection_sha256": selection["selection_sha256"],
+                "inventory_sha256": selection["inventory_sha256"],
+                "source_attempt_slot": 1,
+                "source_stage_receipt_sha256": prior["stage_receipt_sha256"],
+                "source_profile_set_sha256": profile_set_sha,
+                "classifications": [
+                    {"signature_sha256": signature_sha, "category": consensus}
+                ],
+                "reviewer_adjudications": [
+                    reviewer(reviewer_ids[0], reviewer_categories[0]),
+                    reviewer(reviewer_ids[1], reviewer_categories[1]),
+                ],
+                "effects": dict(ZERO_EFFECTS),
+            },
+            field="supplement_sha256",
+        )
+
+    path = (
+        tmp_path
+        / "configs"
+        / "data"
+        / "p0-absence-taxonomy-supplement-E1A-v1.json"
+    )
+    path.parent.mkdir(parents=True)
+    agreed = supplement(
+        consensus="INJURY",
+        reviewer_categories=("INJURY", "INJURY"),
+    )
+    path.write_text(json.dumps(agreed), encoding="utf-8")
+    with pytest.raises(
+        ValueError,
+        match="P0_ABSENCE_SUPPLEMENT_CLASSIFICATION_INVALID",
+    ):
+        coverage_evidence_module._load_absence_taxonomy_supplement(
+            authority,
+            selection=selection,
+            prior=prior,
+        )
+
+    rogue_roles = supplement(
+        consensus="UNCLASSIFIABLE",
+        reviewer_categories=("UNCLASSIFIABLE", "UNCLASSIFIABLE"),
+        reviewer_ids=("scientific-a", "scientific-b"),
+    )
+    path.write_text(json.dumps(rogue_roles), encoding="utf-8")
+    with pytest.raises(ValueError, match="P0_ABSENCE_SUPPLEMENT_REVIEWER_ID_INVALID"):
+        coverage_evidence_module._load_absence_taxonomy_supplement(
+            authority,
+            selection=selection,
+            prior=prior,
+        )
+
+    quarantined = supplement(
+        consensus="UNCLASSIFIABLE",
+        reviewer_categories=("UNCLASSIFIABLE", "UNCLASSIFIABLE"),
+    )
+    path.write_text(json.dumps(quarantined), encoding="utf-8")
+    supplement_sha, classifications = (
+        coverage_evidence_module._load_absence_taxonomy_supplement(
+            authority,
+            selection=selection,
+            prior=prior,
+        )
+    )
+    assert supplement_sha == quarantined["supplement_sha256"]
+    assert classifications == {signature_sha: "UNCLASSIFIABLE"}
+
+    invalid_reviewer_promotion = supplement(
+        consensus="UNCLASSIFIABLE",
+        reviewer_categories=("INJURY", "INJURY"),
+    )
+    path.write_text(json.dumps(invalid_reviewer_promotion), encoding="utf-8")
+    with pytest.raises(ValueError, match="P0_ABSENCE_SUPPLEMENT_DECISION_INVALID"):
+        coverage_evidence_module._load_absence_taxonomy_supplement(
+            authority,
+            selection=selection,
+            prior=prior,
+        )
 
 
 def test_p0_selection_plan_is_committed_scope_only_and_fail_closed() -> None:
@@ -3268,6 +3911,54 @@ def test_p0_aggregate_rejects_signed_nested_identity_count_mismatch(
     assert feed["cells"] == []
 
 
+def test_p0_aggregate_rejects_resealed_foreign_absence_profile_source_set(
+    tmp_path: Path,
+) -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    selection = _p0_e1a_selection(authority)
+    aggregate_authority = _p0_authority_with_committed_selection(
+        tmp_path,
+        authority=authority,
+        selection=selection,
+    )
+    shard_directory = tmp_path / "foreign-absence-source"
+    _write_p0_e1a_shard(
+        shard_directory,
+        authority=authority,
+        selection=selection,
+        cells=[_p0_cell(family=family) for family in authority.normalized_families],
+    )
+    shard = shard_directory / "p0-e1a-135-2024-all16"
+    counts = json.loads((shard / "family-counts.json").read_text(encoding="utf-8"))
+    profile = dict(counts["absence_partition"]["residual_profile"])
+    profile["source_absence_object_set_hash"] = canonical_sha256(["b" * 64])
+    profile.pop("profile_sha256")
+    counts["absence_partition"]["residual_profile"] = _signed_p0(
+        profile,
+        field="profile_sha256",
+    )
+    _resign_p0_e1a_shard(
+        shard,
+        authority=authority,
+        selection=selection,
+        counts=counts,
+    )
+
+    stage, feed, _, _ = aggregate_stage(
+        aggregate_authority,
+        selection=selection,
+        shards_directory=shard_directory,
+    )
+
+    assert stage["invalid_shards"] == 1
+    assert stage["measurement_integrity_gate"] == "FAIL"
+    assert feed["cells"] == []
+
+
 def test_p0_aggregate_rejects_signed_absence_invariant_and_cell_mismatch(
     tmp_path: Path,
 ) -> None:
@@ -3296,9 +3987,26 @@ def test_p0_aggregate_rejects_signed_absence_invariant_and_cell_mismatch(
         "injuries_distinct": 0,
         "suspensions_distinct": 0,
         "unclassifiable_distinct": 1,
-        "classification_rule_version": "absence-partition-rule-v1",
+        "classification_rule_version": (
+            coverage_evidence_module.ABSENCE_CLASSIFICATION_RULE_VERSION
+        ),
+        "classification_framework_sha256": (
+            coverage_evidence_module.ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+        ),
+        "classification_supplement_sha256": None,
         "classification_set_hash": canonical_sha256(
-            {"injuries": [], "suspensions": [], "unclassifiable": ["f" * 64]}
+            {
+                "injuries": [],
+                "suspensions": [],
+                "unclassifiable": ["f" * 64],
+            }
+        ),
+        "residual_profile": _p0_absence_profile(
+            authority=authority,
+            selection=selection,
+            partition=next(iter(selection["partitions"])),
+            attempt_slot=1,
+            unclassifiable_count=1,
         ),
         "invariant": "PASS",
     }
@@ -3336,13 +4044,25 @@ def test_p0_aggregate_rejects_signed_absence_invariant_and_cell_mismatch(
         "injuries_distinct": 2,
         "suspensions_distinct": 1,
         "unclassifiable_distinct": 0,
-        "classification_rule_version": "absence-partition-rule-v1",
+        "classification_rule_version": (
+            coverage_evidence_module.ABSENCE_CLASSIFICATION_RULE_VERSION
+        ),
+        "classification_framework_sha256": (
+            coverage_evidence_module.ABSENCE_CLASSIFICATION_FRAMEWORK_SHA256
+        ),
+        "classification_supplement_sha256": None,
         "classification_set_hash": canonical_sha256(
             {
                 "injuries": ["1" * 64, "3" * 64],
                 "suspensions": ["2" * 64],
                 "unclassifiable": [],
             }
+        ),
+        "residual_profile": _p0_absence_profile(
+            authority=authority,
+            selection=selection,
+            partition=next(iter(selection["partitions"])),
+            attempt_slot=1,
         ),
         "invariant": "PASS",
     }
@@ -3686,20 +4406,49 @@ def test_p0_mission_accounting_is_monotone_across_redesigns(
     empty = tmp_path / "empty"
     empty.mkdir()
 
+    slot_one_shards = tmp_path / "slot-one-shards"
+    _write_p0_e1a_shard(
+        slot_one_shards,
+        authority=authority,
+        selection=selection,
+        cells=[_p0_cell(family=family) for family in authority.normalized_families],
+        attempt_slot=1,
+    )
+    _rewrite_p0_e1a_shard_as_identity_failure(
+        slot_one_shards / "p0-e1a-135-2024-all16",
+        authority=authority,
+        selection=selection,
+        coherent_receipt=True,
+    )
+
     slot_one, _, _, _ = aggregate_stage(
         authority,
         selection=selection,
-        shards_directory=empty,
+        shards_directory=slot_one_shards,
         attempt_slot=1,
     )
     stage_path.write_text(
         json.dumps(slot_one, sort_keys=True, separators=(",", ":")),
         encoding="utf-8",
     )
+    slot_two_shards = tmp_path / "slot-two-shards"
+    _write_p0_e1a_shard(
+        slot_two_shards,
+        authority=authority,
+        selection=selection,
+        cells=[_p0_cell(family=family) for family in authority.normalized_families],
+        attempt_slot=2,
+    )
+    _rewrite_p0_e1a_shard_as_identity_failure(
+        slot_two_shards / "p0-e1a-135-2024-all16",
+        authority=authority,
+        selection=selection,
+        coherent_receipt=True,
+    )
     slot_two, _, _, _ = aggregate_stage(
         authority,
         selection=selection,
-        shards_directory=empty,
+        shards_directory=slot_two_shards,
         attempt_slot=2,
     )
     assert slot_two["attempt_slot"] == 2
@@ -3717,7 +4466,7 @@ def test_p0_mission_accounting_is_monotone_across_redesigns(
     monkeypatch.setattr(
         coverage_evidence_module,
         "ALGORITHM_VERSION",
-        "p0-coverage-evidence-algorithm-v2",
+        "p0-coverage-evidence-algorithm-v3",
     )
     insufficient = replace(
         authority,
@@ -3809,7 +4558,7 @@ def test_p0_mission_accounting_is_monotone_across_redesigns(
     monkeypatch.setattr(
         coverage_evidence_module,
         "ALGORITHM_VERSION",
-        "p0-coverage-evidence-algorithm-v3",
+        "p0-coverage-evidence-algorithm-v4",
     )
     with pytest.raises(ValueError, match="P0_MISSION_ARCHITECTURE_LIMIT_EXCEEDED"):
         validate_stage_attempt(
@@ -3817,6 +4566,90 @@ def test_p0_mission_accounting_is_monotone_across_redesigns(
             operation="freeze",
             attempt_slot=1,
         )
+
+
+def test_committed_e1a_second_failure_opens_arch2_with_exact_329_baseline() -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    baseline, ordinal, pending, registry = coverage_evidence_module._mission_accounting_state(
+        authority
+    )
+    assert baseline == {
+        "schema_version": "p0-coverage-mission-accounting-baseline-v1",
+        "source": "STAGE_RECEIPT",
+        "source_stage": "E1A",
+        "source_stage_receipt_sha256": (
+            "d9431bb2a5e8eadcbc5bf1418460a92e83bd851fd33eb6b6eaecb416dbbb49cc"
+        ),
+        "source_architecture_fingerprint": (
+            "1f311bafdd51a45fa08ac8ac6fb3c125d33d1fe402928e03061f9ddd1352fb21"
+        ),
+        "source_receipt_ancestor_sha256s": [
+            "e4958efcb00a6355f23d6cb2f38879f954bf86b90414ebb2970a98a0d3945861"
+        ],
+        "cumulative_mission_logical_gets_charged": 329,
+        "cumulative_mission_logical_gets_observed": 329,
+        "cumulative_mission_logical_gets_observed_lower_bound": 329,
+        "mission_budget_accounting_basis": "EXACT_OBSERVED",
+    }
+    assert ordinal == 2
+    assert pending == ()
+    assert registry[-1] == {
+        "ordinal": 2,
+        "architecture_fingerprint": evidence_architecture_fingerprint(authority),
+    }
+
+    legacy_selection = json.loads(
+        (
+            ROOT
+            / "configs"
+            / "data"
+            / "p0-coverage-evidence-selection-E1A-v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    freeze_gets = int(legacy_selection["freeze_observed_logical_gets"])
+    measurement_gets = sum(
+        1 + int(partition["planned_evidence_gets"])
+        for partition in legacy_selection["partitions"]
+    )
+    assert (freeze_gets, measurement_gets) == (23, 153)
+    assert 329 + freeze_gets + measurement_gets == 505
+    validate_stage_attempt(authority, operation="freeze", attempt_slot=1)
+    with pytest.raises(
+        ValueError,
+        match="P0_ARCHITECTURE_TWO_FIRST_FREEZE_REQUIRES_SLOT_ONE",
+    ):
+        validate_stage_attempt(authority, operation="freeze", attempt_slot=2)
+
+
+def test_p0_architecture_two_scientific_failure_is_terminal() -> None:
+    assert coverage_evidence_module._scale_failure_decision(
+        selection={"architecture_ordinal": 2},
+        attempt_slot=1,
+        missing_source_cell_keys=(),
+        scientific_failure=True,
+    ) == "FAIL_AND_STOP"
+    assert coverage_evidence_module._scale_failure_decision(
+        selection={"architecture_ordinal": 2},
+        attempt_slot=1,
+        missing_source_cell_keys=(),
+        scientific_failure=False,
+    ) == "FAIL_AND_REDESIGN"
+    assert coverage_evidence_module._scale_failure_decision(
+        selection={"architecture_ordinal": 2},
+        attempt_slot=2,
+        missing_source_cell_keys=(),
+        scientific_failure=False,
+    ) == "FAIL_AND_STOP"
+    assert coverage_evidence_module._scale_failure_decision(
+        selection={"architecture_ordinal": 1},
+        attempt_slot=2,
+        missing_source_cell_keys=(("api-football:135", 2024, "injuries"),),
+        scientific_failure=False,
+    ) == "FAIL_AND_STOP"
 
 
 def test_p0_mission_accounting_rejects_ambiguous_maximum(tmp_path: Path) -> None:

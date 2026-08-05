@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-05T17:16:50Z",
+  "generated_at":"2026-08-05T19:18:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -879,6 +879,22 @@
       "dataset_lineage_id":"P0_2020_2025_PINNED_INVENTORY_E1A_ATTEMPT2",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","C2","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.ARCHITECTURE2.VALIDATION.001",
+      "claim":"Architecture ordinal 2 is locally validated as a strict three-way and fail-closed redesign: UNKNOWN and protected semantics remain unclassifiable, local supplements cannot promote, lineage is source-set bound, and a scientific failure terminates the mission without a third architecture.",
+      "scope":"P0_COVERAGE_EVIDENCE_LADDER_ARCHITECTURE2",
+      "source":"offline Golden and Canary packs, adversarial profile and lineage tests, exact mission accounting, strict static analysis and independent platform and scientific reviews",
+      "grain":"local_pre_commit_architecture_validation",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/coverage/p0-evidence-architecture-2-validation-v1.json",
+      "hash":"57b52714a280e57f7c6f2fb4ca074fb0025c1b197c125288e5213df85a8d0921",
+      "code_revision":"494b2f0dd9a26dbcc7f1ac796567d475a264ba91",
+      "execution_id":"local-architecture2-validation-20260805T191800Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-architecture2-v1",
+      "dataset_lineage_id":"P0_LOCAL_GOLDEN_CANARY_NO_R2",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","C2","A2"]
     }
   ],
   "decision_nodes":[
@@ -910,7 +926,8 @@
     {"decision_id":"RCV3-20260805-026","ledger_record_hash":"64acb7ba88d1f3885518533a63922c6af316c047ebac2dc3396805978f6e04df"},
     {"decision_id":"RCV3-20260805-027","ledger_record_hash":"aec9327f9324dea378619cc767a9b518f707e3fb350488c4fed8cd60aa834a23"},
     {"decision_id":"RCV3-20260805-028","ledger_record_hash":"e3ddad1767bbae00fa474cb6b1b280e06cf4e9c6fc1d5b767248b98b2e67b376"},
-    {"decision_id":"RCV3-20260805-029","ledger_record_hash":"ebb7d9c81a9329d51caa71e27dcd1c75ddb271c250be4a552ae546f9af63cab5"}
+    {"decision_id":"RCV3-20260805-029","ledger_record_hash":"ebb7d9c81a9329d51caa71e27dcd1c75ddb271c250be4a552ae546f9af63cab5"},
+    {"decision_id":"RCV3-20260805-030","ledger_record_hash":"00b045908399b688bad38ebae282380169f0a012ace6e080e56eebdac3cda544"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1004,6 +1021,12 @@
     {"edge_id":"EDGE.089","from_claim_id":"COVERAGE.LADDER.ACCOUNTING.V1.001","to_decision_id":"RCV3-20260805-029","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.090","from_claim_id":"COVERAGE.LADDER.SOURCE.V1.001","to_decision_id":"RCV3-20260805-029","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.091","from_claim_id":"COVERAGE.LADDER.MISSION.V1.001","to_decision_id":"RCV3-20260805-029","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.092","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-029","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.092","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-029","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.093","from_claim_id":"COVERAGE.LADDER.ARCHITECTURE2.VALIDATION.001","to_decision_id":"RCV3-20260805-030","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.094","from_claim_id":"COVERAGE.LADDER.E1A.ATTEMPT2.001","to_decision_id":"RCV3-20260805-030","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.095","from_claim_id":"COVERAGE.LADDER.ACCOUNTING.V1.001","to_decision_id":"RCV3-20260805-030","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.096","from_claim_id":"COVERAGE.LADDER.SOURCE.V1.001","to_decision_id":"RCV3-20260805-030","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.097","from_claim_id":"COVERAGE.LADDER.MISSION.V1.001","to_decision_id":"RCV3-20260805-030","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.098","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-030","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

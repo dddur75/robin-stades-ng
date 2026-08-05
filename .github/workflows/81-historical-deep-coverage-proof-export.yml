@@ -214,6 +214,58 @@ jobs:
               raise SystemExit("P0_LADDER_EXACT_BRANCH_REQUIRED")
           PY
 
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Exiger la CI push verte du SHA exact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXACT_HEAD_SHA: ${{ github.sha }}
+          REPOSITORY: ${{ github.repository }}
+          EXACT_LADDER_BRANCH: codex/p0-coverage-evidence-ladder-v1
+        run: |
+          ci_runs_path="${RUNNER_TEMP}/p0-exact-head-ci-runs.json"
+          remote_ref_path="${RUNNER_TEMP}/p0-exact-remote-ref.json"
+          test "$(git rev-parse HEAD)" = "${EXACT_HEAD_SHA}"
+          gh api --method GET \
+            "repos/${REPOSITORY}/git/ref/heads/${EXACT_LADDER_BRANCH}" \
+            > "${remote_ref_path}"
+          gh api --method GET \
+            "repos/${REPOSITORY}/actions/workflows/ci.yml/runs" \
+            -f branch="${EXACT_LADDER_BRANCH}" \
+            -f head_sha="${EXACT_HEAD_SHA}" \
+            -f event=push \
+            -f per_page=20 > "${ci_runs_path}"
+          CI_RUNS_PATH="${ci_runs_path}" REMOTE_REF_PATH="${remote_ref_path}" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = json.loads(Path(os.environ["CI_RUNS_PATH"]).read_text(encoding="utf-8"))
+          remote_ref = json.loads(
+              Path(os.environ["REMOTE_REF_PATH"]).read_text(encoding="utf-8")
+          )
+          if remote_ref.get("object", {}).get("sha") != os.environ["EXACT_HEAD_SHA"]:
+              raise SystemExit("P0_REMOTE_BRANCH_HEAD_MOVED")
+          exact_runs = [
+              run
+              for run in payload.get("workflow_runs", [])
+              if run.get("head_sha") == os.environ["EXACT_HEAD_SHA"]
+              and run.get("head_branch") == os.environ["EXACT_LADDER_BRANCH"]
+              and run.get("event") == "push"
+          ]
+          if not exact_runs:
+              raise SystemExit("P0_EXACT_HEAD_PUSH_CI_RUN_REQUIRED")
+          newest = max(
+              exact_runs,
+              key=lambda run: (str(run.get("created_at", "")), int(run.get("id", 0))),
+          )
+          if newest.get("status") != "completed" or newest.get("conclusion") != "success":
+              raise SystemExit("P0_EXACT_HEAD_PUSH_CI_SUCCESS_REQUIRED")
+          PY
+
   freeze:
     if: >-
       ${{ always() && inputs.operation == 'freeze' &&
@@ -239,6 +291,8 @@ jobs:
       PROMOTION_LOCKED: "true"
       SOCIAL_PUBLISHING_ENABLED: "false"
       DEMO_MODE_ENABLED: "false"
+      GH_TOKEN: ${{ github.token }}
+      EXACT_LADDER_BRANCH: codex/p0-coverage-evidence-ladder-v1
     steps:
       - uses: actions/checkout@v4
         with:
@@ -260,12 +314,18 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
-        run: >-
-          python scripts/run_p0_coverage_evidence.py freeze
-          --stage "${STAGE}"
-          --attempt-slot "${{ inputs.attempt_slot }}"
-          --code-revision "${GITHUB_SHA}"
-          --output-directory artifacts/p0-coverage-evidence/freeze
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "${EXACT_LADDER_BRANCH}"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${EXACT_LADDER_BRANCH}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
+          python scripts/run_p0_coverage_evidence.py freeze \
+            --stage "${STAGE}" \
+            --attempt-slot "${{ inputs.attempt_slot }}" \
+            --code-revision "${GITHUB_SHA}" \
+            --output-directory artifacts/p0-coverage-evidence/freeze
 
       - name: Publier le gel allow-listé
         uses: actions/upload-artifact@v4
@@ -368,6 +428,15 @@ jobs:
           --stage "${STAGE}"
           --operation "${OPERATION}"
           --attempt-slot "${ATTEMPT_SLOT}"
+
+      - name: Revalider la branche exacte avant la reservation durable
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "codex/p0-coverage-evidence-ladder-v1"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${GITHUB_REF_NAME}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
 
       - name: Construire l'identite de tentative durable
         id: reserve
@@ -664,6 +733,15 @@ jobs:
             }
           fi
 
+      - name: Revalider la branche exacte avant publication de la reservation
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "codex/p0-coverage-evidence-ladder-v1"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${GITHUB_REF_NAME}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
+
       - name: Publier la reservation avant d'autoriser les secrets R2
         if: ${{ steps.attempt-audit.outputs.reuse_reservation != 'true' }}
         uses: actions/upload-artifact@v4
@@ -716,6 +794,8 @@ jobs:
       PROMOTION_LOCKED: "true"
       SOCIAL_PUBLISHING_ENABLED: "false"
       DEMO_MODE_ENABLED: "false"
+      GH_TOKEN: ${{ github.token }}
+      EXACT_LADDER_BRANCH: codex/p0-coverage-evidence-ladder-v1
     steps:
       - uses: actions/checkout@v4
         with:
@@ -766,14 +846,20 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
-        run: >-
-          python scripts/run_p0_coverage_evidence.py measure
-          --stage "${STAGE}"
-          --selection "${SELECTION_PATH}"
-          --partition-id "${PARTITION_ID}"
-          --code-revision "${GITHUB_SHA}"
-          --attempt-slot "${ATTEMPT_SLOT}"
-          --output-directory artifacts/p0-coverage-evidence/shard
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "${EXACT_LADDER_BRANCH}"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${EXACT_LADDER_BRANCH}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
+          python scripts/run_p0_coverage_evidence.py measure \
+            --stage "${STAGE}" \
+            --selection "${SELECTION_PATH}" \
+            --partition-id "${PARTITION_ID}" \
+            --code-revision "${GITHUB_SHA}" \
+            --attempt-slot "${ATTEMPT_SLOT}" \
+            --output-directory artifacts/p0-coverage-evidence/shard
 
       - name: Écrire le checkpoint terminal et le coût fail-closed
         if: ${{ always() }}
