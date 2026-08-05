@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-05T06:12:03Z",
+  "generated_at":"2026-08-05T07:36:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -112,6 +112,23 @@
       "execution_id":"governance-e0-20260804T134723Z",
       "scientific_lineage_id":"robin-council-os-v3",
       "dataset_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
+      "status":"SUPERSEDED",
+      "verified_by":["C0","C1","A2"],
+      "superseded_by":"GOV.AUTHORIZATION.COVERAGE.002"
+    },
+    {
+      "claim_id":"GOV.AUTHORIZATION.COVERAGE.002",
+      "claim":"The default-deny matrix grants the COVERAGE_P0 mission only six exact implementation and handoff paths plus named GitHub Actions and immutable R2 read-only effects; every directory grant and destructive-effect denial is preserved.",
+      "scope":"COVERAGE_P0_AUTHORIZATION",
+      "source":"owner Phase C directive, static matrix inspection and independent authority review",
+      "grain":"mission_authorization_contract",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"configs/agents/mission-activation-matrix-v3.json",
+      "hash":"52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266",
+      "code_revision":"96bcc2d56f1b68a011f1efa11022ebd4b8713208",
+      "execution_id":"coverage-p0-authority-20260805T073600Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"r2-inventory-87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
       "status":"VERIFIED",
       "verified_by":["C0","C1","A2"]
     },
@@ -128,8 +145,9 @@
       "execution_id":"governance-e0-20260804T134723Z",
       "scientific_lineage_id":"robin-council-os-v3",
       "dataset_lineage_id":"NOT_APPLICABLE_GOVERNANCE",
-      "status":"VERIFIED",
-      "verified_by":["C0","A2"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0","A2"],
+      "superseded_by":"GOV.V31.MINIMAL.TEST.001"
     },
     {
       "claim_id":"GOV.COST.001",
@@ -224,8 +242,9 @@
       "execution_id":"governance-ci-clock-20260804T143634Z",
       "scientific_lineage_id":"NOT_APPLICABLE_TEST_FIX",
       "dataset_lineage_id":"jalon12-frozen-clock-NOW-20260801T120000Z",
-      "status":"VERIFIED",
-      "verified_by":["C0","C1","A2"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0","C1","A2"],
+      "superseded_by":"GOV.V31.MINIMAL.TEST.001"
     },
     {
       "claim_id":"PR26.MAIN.MERGE.001",
@@ -742,7 +761,8 @@
     {"decision_id":"RCV31-20260805-021","ledger_record_hash":"df386325b3ff085764b091e6bc9de04d61389d0a4ecd38c92c510f13a1026020"},
     {"decision_id":"RCV31-20260805-022","ledger_record_hash":"2e571ba581ebd1dce0162e2dbdb47879b82b8c9b8a21b08284236f12667e9112"},
     {"decision_id":"RCV3-20260805-023","ledger_record_hash":"5a671c9d85422f5c6280f240bc74fc6f736ff7b74d0c86ec2f387581c2b135b0"},
-    {"decision_id":"RCV3-20260805-024","ledger_record_hash":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b"}
+    {"decision_id":"RCV3-20260805-024","ledger_record_hash":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b"},
+    {"decision_id":"RCV3-20260805-025","ledger_record_hash":"3ef1c1e03995b4599f791abb1130a20aae354a03477d9ff949a23bc5be6d4a09"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -809,6 +829,9 @@
     {"edge_id":"EDGE.062","from_claim_id":"GOV.LEDGER.PR28.FORK.001","to_decision_id":"RCV3-20260805-024","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.063","from_claim_id":"PR28.COMPACTION.AUDIT.001","to_decision_id":"RCV3-20260805-024","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.064","from_claim_id":"PR28.MAIN.INTEGRATION.001","to_decision_id":"RCV3-20260805-024","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.065","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-024","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.065","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-024","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.066","from_claim_id":"GOV.AUTHORIZATION.COVERAGE.002","to_decision_id":"RCV3-20260805-025","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.067","from_claim_id":"GOV.V31.MINIMAL.CONTRACT.001","to_decision_id":"RCV3-20260805-025","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.068","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-025","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
