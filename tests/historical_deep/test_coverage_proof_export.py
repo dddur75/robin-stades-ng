@@ -4568,7 +4568,7 @@ def test_p0_mission_accounting_is_monotone_across_redesigns(
         )
 
 
-def test_committed_e1a_second_failure_opens_arch2_with_exact_329_baseline() -> None:
+def test_committed_arch2_freeze_preserves_exact_329_baseline() -> None:
     authority = load_authority(
         ROOT,
         stage="E1A",
@@ -4596,33 +4596,36 @@ def test_committed_e1a_second_failure_opens_arch2_with_exact_329_baseline() -> N
         "mission_budget_accounting_basis": "EXACT_OBSERVED",
     }
     assert ordinal == 2
-    assert pending == ()
+    assert len(pending) == 1
+    frozen = pending[0]
+    assert frozen["selection_sha256"] == (
+        "7bc29b41098767e1a93616eed104a5bd0ff2ae6de4dcafaf514d52f254ccf903"
+    )
+    assert frozen["stage"] == "E1A"
+    assert frozen["ordinal"] == 2
+    assert frozen["fingerprint"] == evidence_architecture_fingerprint(authority)
     assert registry[-1] == {
         "ordinal": 2,
         "architecture_fingerprint": evidence_architecture_fingerprint(authority),
     }
 
-    legacy_selection = json.loads(
-        (
-            ROOT
-            / "configs"
-            / "data"
-            / "p0-coverage-evidence-selection-E1A-v1.json"
-        ).read_text(encoding="utf-8")
-    )
-    freeze_gets = int(legacy_selection["freeze_observed_logical_gets"])
+    selection = frozen["selection"]
+    assert isinstance(selection, Mapping)
+    freeze_gets = int(selection["freeze_observed_logical_gets"])
     measurement_gets = sum(
         1 + int(partition["planned_evidence_gets"])
-        for partition in legacy_selection["partitions"]
+        for partition in selection["partitions"]
     )
     assert (freeze_gets, measurement_gets) == (23, 153)
     assert 329 + freeze_gets + measurement_gets == 505
-    validate_stage_attempt(authority, operation="freeze", attempt_slot=1)
+    validate_stage_attempt(authority, operation="measure", attempt_slot=1)
     with pytest.raises(
         ValueError,
-        match="P0_ARCHITECTURE_TWO_FIRST_FREEZE_REQUIRES_SLOT_ONE",
+        match="P0_STAGE_SELECTION_ALREADY_COMMITTED",
     ):
-        validate_stage_attempt(authority, operation="freeze", attempt_slot=2)
+        validate_stage_attempt(authority, operation="freeze", attempt_slot=1)
+    with pytest.raises(ValueError, match="P0_CURRENT_STAGE_RECEIPT_INVALID"):
+        validate_stage_attempt(authority, operation="measure", attempt_slot=2)
 
 
 def test_p0_architecture_two_scientific_failure_is_terminal() -> None:

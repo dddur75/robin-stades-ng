@@ -1,6 +1,7 @@
 {
-  "algorithm_version": "p0-coverage-evidence-algorithm-v1",
-  "architecture_ordinal": 1,
+  "absence_classification_framework_sha256": "295ad9659247d49d0f48dff6f828a9609fe623d81677fcf0268d0643eca5371c",
+  "algorithm_version": "p0-coverage-evidence-algorithm-v2",
+  "architecture_ordinal": 2,
   "closure_policy": {
     "authoritative_denominator_required": true,
     "inventory_rows_received_is_denominator": false,
@@ -157,26 +158,32 @@
     "target_per_competition": 10
   },
   "freeze_attempt_slot": 1,
-  "freeze_code_revision": "821b01ea44fea912e77a5da11b97cd91dccbfe06",
+  "freeze_code_revision": "6897f93cf1e93c14a7b8c27045b4d98ee8338463",
   "freeze_observed_logical_gets": 23,
   "identity_architecture_hash": "a389c9944edda7f139f9946c63e5f158c683268ad0c35bc8dfd96d1e39ca6f53",
   "inventory_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
   "mission_accounting_baseline": {
-    "cumulative_mission_logical_gets_charged": 0,
-    "cumulative_mission_logical_gets_observed": 0,
-    "cumulative_mission_logical_gets_observed_lower_bound": 0,
+    "cumulative_mission_logical_gets_charged": 329,
+    "cumulative_mission_logical_gets_observed": 329,
+    "cumulative_mission_logical_gets_observed_lower_bound": 329,
     "mission_budget_accounting_basis": "EXACT_OBSERVED",
     "schema_version": "p0-coverage-mission-accounting-baseline-v1",
-    "source": "MISSION_START",
-    "source_architecture_fingerprint": null,
-    "source_receipt_ancestor_sha256s": [],
-    "source_stage": null,
-    "source_stage_receipt_sha256": null
+    "source": "STAGE_RECEIPT",
+    "source_architecture_fingerprint": "1f311bafdd51a45fa08ac8ac6fb3c125d33d1fe402928e03061f9ddd1352fb21",
+    "source_receipt_ancestor_sha256s": [
+      "e4958efcb00a6355f23d6cb2f38879f954bf86b90414ebb2970a98a0d3945861"
+    ],
+    "source_stage": "E1A",
+    "source_stage_receipt_sha256": "d9431bb2a5e8eadcbc5bf1418460a92e83bd851fd33eb6b6eaecb416dbbb49cc"
   },
   "mission_architecture_registry": [
     {
       "architecture_fingerprint": "1f311bafdd51a45fa08ac8ac6fb3c125d33d1fe402928e03061f9ddd1352fb21",
       "ordinal": 1
+    },
+    {
+      "architecture_fingerprint": "1a9008f9fbe0ef26a47d4adc60acaf1b75a7241979085ad5249dd9df5c28076a",
+      "ordinal": 2
     }
   ],
   "mission_id": "p0-coverage-evidence-ladder-v1",
@@ -289,10 +296,10 @@
       "season": 2024
     }
   ],
-  "planned_mission_logical_gets": 176,
+  "planned_mission_logical_gets": 505,
   "schema_version": "p0-coverage-evidence-selection-v1",
   "scope_id": "P0_2020_2025",
-  "selection_sha256": "61f6b4f600b96f971af80bd08de9c4cc8eb64ee8a8a32aa785a0595d3146d577",
+  "selection_sha256": "7bc29b41098767e1a93616eed104a5bd0ff2ae6de4dcafaf514d52f254ccf903",
   "source_config_sha256": "52fb07c0549458a04b5253a1171c3e87c6837bef78ad20279257c2a04011d82e",
   "stage_mapping_sha256": "d702b88c964d64d984cc69d2b297f37fbb74f087347934f8d3eee7a22597409f"
 }
