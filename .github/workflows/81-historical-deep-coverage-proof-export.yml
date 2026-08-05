@@ -215,7 +215,9 @@ jobs:
           PY
 
   freeze:
-    if: ${{ inputs.operation == 'freeze' }}
+    if: >-
+      ${{ always() && inputs.operation == 'freeze' &&
+      needs.attempt-reservation.result == 'success' }}
     needs: attempt-reservation
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -405,6 +407,10 @@ jobs:
           architecture = evidence_architecture_fingerprint(authority)
           marker_base = f"p0-attempt-{mission_id}-{operation}-{stage}-{architecture}"
           marker = f"{marker_base}-{attempt_slot}"
+          resume_marker = (
+              f"p0-attempt-resume-{mission_id}-{operation}-{stage}-"
+              f"{architecture}-{attempt_slot}"
+          )
           prior_marker = f"{marker_base}-1"
           second_marker = f"{marker_base}-2"
           destination = Path("artifacts/p0-coverage-evidence/attempt")
@@ -433,15 +439,18 @@ jobs:
               output.write(f"marker={marker}\n")
               output.write(f"prior_marker={prior_marker}\n")
               output.write(f"second_marker={second_marker}\n")
+              output.write(f"resume_marker={resume_marker}\n")
               output.write(f"architecture={architecture}\n")
           PY
 
       - name: Refuser une tentative deja reservee
+        id: attempt-audit
         shell: bash
         env:
           MARKER: ${{ steps.reserve.outputs.marker }}
           PRIOR_MARKER: ${{ steps.reserve.outputs.prior_marker }}
           SECOND_MARKER: ${{ steps.reserve.outputs.second_marker }}
+          RESUME_MARKER: ${{ steps.reserve.outputs.resume_marker }}
           CURRENT_ARCHITECTURE: ${{ steps.reserve.outputs.architecture }}
         run: |
           mkdir -p artifacts/p0-coverage-evidence/attempt-audit
@@ -504,18 +513,143 @@ jobs:
               --jq '[.artifacts[] | select(.expired == false)] | length'
           }
           current_count="$(artifact_count "${MARKER}")"
-          test "${current_count}" -eq 0 || {
-            echo "P0_DURABLE_ATTEMPT_ALREADY_RESERVED" >&2
-            exit 1
-          }
+          resume_count="$(artifact_count "${RESUME_MARKER}")"
           first_count="$(artifact_count "${PRIOR_MARKER}")"
           second_count="$(artifact_count "${SECOND_MARKER}")"
-          if test "${ATTEMPT_SLOT}" = "1"; then
+          if test "${current_count}" -eq 1 && test "${ATTEMPT_SLOT}" = "1" && \
+            test "${OPERATION}" = "freeze"; then
+            test "${second_count}" -eq 0 || {
+              echo "P0_ATTEMPT_RESUME_BLOCKED_AFTER_SECOND_ATTEMPT" >&2
+              exit 1
+            }
+            test "${resume_count}" -eq 0 || {
+              echo "P0_ATTEMPT_RESUME_ALREADY_USED" >&2
+              exit 1
+            }
+            current_artifact="$(gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=${MARKER}&per_page=100" \
+              --jq '[.artifacts[] | select(.expired == false)][0]')"
+            prior_artifact_id="$(jq -r '.id' <<<"${current_artifact}")"
+            prior_run_id="$(jq -r '.workflow_run.id' <<<"${current_artifact}")"
+            prior_revision="$(jq -r '.workflow_run.head_sha' <<<"${current_artifact}")"
+            test -n "${prior_artifact_id}" && test -n "${prior_run_id}" && \
+              test -n "${prior_revision}" && test "${prior_revision}" != "${GITHUB_SHA}" || {
+              echo "P0_ATTEMPT_RESUME_REQUIRES_MINIMAL_FIX_REVISION" >&2
+              exit 1
+            }
+            gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/runs/${prior_run_id}/attempts/1" \
+              > artifacts/p0-coverage-evidence/attempt-audit/prior-run.json
+            jq -e \
+              --argjson run_id "${prior_run_id}" \
+              --arg branch "${GITHUB_REF_NAME}" \
+              --arg sha "${prior_revision}" \
+              --arg path ".github/workflows/81-historical-deep-coverage-proof-export.yml" \
+              '(.id == $run_id) and (.run_attempt == 1) and
+               (.event == "workflow_dispatch") and (.status == "completed") and
+               (.conclusion == "success") and (.head_branch == $branch) and
+               (.head_sha == $sha) and ((.path | split("@")[0]) == $path)' \
+              artifacts/p0-coverage-evidence/attempt-audit/prior-run.json >/dev/null || {
+              echo "P0_ATTEMPT_RESUME_SOURCE_RUN_INVALID" >&2
+              exit 1
+            }
+            gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/runs/${prior_run_id}/jobs?filter=all&per_page=100" \
+              > artifacts/p0-coverage-evidence/attempt-audit/prior-jobs.json
+            jq -e \
+              '([.jobs[] | select(.name == "freeze")] | length) == 1 and
+               ([.jobs[] | select(.name == "freeze" and .conclusion == "skipped")] | length) == 1' \
+              artifacts/p0-coverage-evidence/attempt-audit/prior-jobs.json >/dev/null || {
+              echo "P0_ATTEMPT_RESUME_REQUIRES_UNCONSUMED_FREEZE" >&2
+              exit 1
+            }
+            mkdir -p artifacts/p0-coverage-evidence/attempt-audit/prior-reservation
+            gh run download "${prior_run_id}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --name "${MARKER}" \
+              --dir artifacts/p0-coverage-evidence/attempt-audit/prior-reservation
+            export PRIOR_ARTIFACT_ID="${prior_artifact_id}"
+            export PRIOR_RUN_ID="${prior_run_id}"
+            export PRIOR_REVISION="${prior_revision}"
+            python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          mission = json.loads(
+              Path("configs/data/p0-coverage-evidence-mission-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          reservation_path = Path(
+              "artifacts/p0-coverage-evidence/attempt-audit/"
+              "prior-reservation/attempt-reservation.json"
+          )
+          reservation = json.loads(reservation_path.read_text(encoding="utf-8"))
+          expected = {
+              "schema_version": "p0-coverage-attempt-reservation-v1",
+              "mission_id": mission["mission_id"],
+              "operation": os.environ["OPERATION"],
+              "stage": os.environ["STAGE"],
+              "architecture_fingerprint": os.environ["CURRENT_ARCHITECTURE"],
+              "attempt_slot": int(os.environ["ATTEMPT_SLOT"]),
+              "code_revision": os.environ["PRIOR_REVISION"],
+              "github_run_id": os.environ["PRIOR_RUN_ID"],
+              "github_run_attempt": "1",
+              "mission_expires_at": mission.get("expires_at"),
+              "marker_retention_days": 90,
+          }
+          if reservation != expected:
+              raise SystemExit("P0_ATTEMPT_RESUME_RESERVATION_INVALID")
+          canonical = json.dumps(
+              reservation,
+              sort_keys=True,
+              separators=(",", ":"),
+          ).encode()
+          resume = {
+              "schema_version": "p0-coverage-attempt-resume-v1",
+              "mission_id": mission["mission_id"],
+              "operation": os.environ["OPERATION"],
+              "stage": os.environ["STAGE"],
+              "architecture_fingerprint": os.environ["CURRENT_ARCHITECTURE"],
+              "attempt_slot": int(os.environ["ATTEMPT_SLOT"]),
+              "prior_reservation_artifact_id": int(os.environ["PRIOR_ARTIFACT_ID"]),
+              "prior_reservation_sha256": hashlib.sha256(canonical).hexdigest(),
+              "prior_github_run_id": os.environ["PRIOR_RUN_ID"],
+              "prior_code_revision": os.environ["PRIOR_REVISION"],
+              "code_revision": os.environ["GITHUB_SHA"],
+              "github_run_id": os.environ["GITHUB_RUN_ID"],
+              "github_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "reason": "PREVIOUS_FREEZE_JOB_SKIPPED_BEFORE_SECRET_MOUNT",
+              "marker_retention_days": 90,
+          }
+          Path("artifacts/p0-coverage-evidence/attempt/attempt-resume.json").write_text(
+              json.dumps(resume, sort_keys=True, separators=(",", ":")),
+              encoding="utf-8",
+          )
+          PY
+            echo "reuse_reservation=true" >> "${GITHUB_OUTPUT}"
+          else
+            test "${current_count}" -eq 0 || {
+              echo "P0_DURABLE_ATTEMPT_ALREADY_RESERVED" >&2
+              exit 1
+            }
+            test "${resume_count}" -eq 0 || {
+              echo "P0_ATTEMPT_RESUME_ORPHANED" >&2
+              exit 1
+            }
+            echo "reuse_reservation=false" >> "${GITHUB_OUTPUT}"
+          fi
+          if test "${current_count}" -eq 0 && test "${ATTEMPT_SLOT}" = "1"; then
             test "${first_count}" -eq 0 && test "${second_count}" -eq 0 || {
               echo "P0_ATTEMPT_SLOT_SEQUENCE_INVALID" >&2
               exit 1
             }
-          else
+          elif test "${current_count}" -eq 0; then
             test "${first_count}" -eq 1 && test "${second_count}" -eq 0 || {
               echo "P0_SECOND_ATTEMPT_REQUIRES_FIRST" >&2
               exit 1
@@ -531,10 +665,21 @@ jobs:
           fi
 
       - name: Publier la reservation avant d'autoriser les secrets R2
+        if: ${{ steps.attempt-audit.outputs.reuse_reservation != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.reserve.outputs.marker }}
           path: artifacts/p0-coverage-evidence/attempt/attempt-reservation.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Publier la reprise unique avant d'autoriser les secrets R2
+        if: ${{ steps.attempt-audit.outputs.reuse_reservation == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.reserve.outputs.resume_marker }}
+          path: artifacts/p0-coverage-evidence/attempt/attempt-resume.json
           if-no-files-found: error
           retention-days: 90
           compression-level: 0

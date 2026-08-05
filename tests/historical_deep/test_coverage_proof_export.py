@@ -1133,6 +1133,10 @@ def test_workflow_81_p0_lane_is_branch_locked_read_only_and_bounded() -> None:
     recovery = jobs["recovery-guard"]
     aggregate = jobs["aggregate"]
     assert freeze["needs"] == "attempt-reservation"
+    assert freeze["if"] == (
+        "${{ always() && inputs.operation == 'freeze' && "
+        "needs.attempt-reservation.result == 'success' }}"
+    )
     assert plan["needs"] == "ladder-guard"
     assert reservation["needs"] == ["ladder-guard", "plan"]
     assert measure["needs"] == ["plan", "attempt-reservation"]
@@ -1249,6 +1253,17 @@ def test_workflow_81_p0_lane_is_branch_locked_read_only_and_bounded() -> None:
     assert "gh run download" in recovery_commands
     assert '"marker_retention_days": 90' in recovery_commands
     assert "P0_DURABLE_ATTEMPT_ALREADY_RESERVED" in reservation_commands
+    assert "P0_ATTEMPT_RESUME_ALREADY_USED" in reservation_commands
+    assert "P0_ATTEMPT_RESUME_BLOCKED_AFTER_SECOND_ATTEMPT" in reservation_commands
+    assert "P0_ATTEMPT_RESUME_REQUIRES_MINIMAL_FIX_REVISION" in reservation_commands
+    assert "P0_ATTEMPT_RESUME_SOURCE_RUN_INVALID" in reservation_commands
+    assert "P0_ATTEMPT_RESUME_REQUIRES_UNCONSUMED_FREEZE" in reservation_commands
+    assert "P0_ATTEMPT_RESUME_RESERVATION_INVALID" in reservation_commands
+    assert "PREVIOUS_FREEZE_JOB_SKIPPED_BEFORE_SECRET_MOUNT" in reservation_commands
+    assert 'test "${OPERATION}" = "freeze"' in reservation_commands
+    assert "/actions/runs/${prior_run_id}/attempts/1" in reservation_commands
+    assert '.name == "freeze" and .conclusion == "skipped"' in reservation_commands
+    assert "attempt-resume.json" in reservation_commands
     assert "/actions/artifacts?name=$1" in reservation_commands
     assert "P0_SECOND_ATTEMPT_REQUIRES_FIRST" in reservation_commands
     assert "P0_SECOND_ATTEMPT_REQUIRES_MINIMAL_FIX_REVISION" in reservation_commands
@@ -1267,6 +1282,18 @@ def test_workflow_81_p0_lane_is_branch_locked_read_only_and_bounded() -> None:
         step for step in reservation["steps"] if step.get("uses") == "actions/upload-artifact@v4"
     )
     assert reservation_upload["with"]["retention-days"] == 90
+    assert reservation_upload["if"] == (
+        "${{ steps.attempt-audit.outputs.reuse_reservation != 'true' }}"
+    )
+    resume_upload = next(
+        step
+        for step in reservation["steps"]
+        if step.get("uses") == "actions/upload-artifact@v4"
+        and step["with"]["path"].endswith("attempt-resume.json")
+    )
+    assert resume_upload["if"] == ("${{ steps.attempt-audit.outputs.reuse_reservation == 'true' }}")
+    assert resume_upload["with"]["name"] == "${{ steps.reserve.outputs.resume_marker }}"
+    assert resume_upload["with"]["retention-days"] == 90
 
     ci_source = CI_WORKFLOW_PATH.read_text(encoding="utf-8")
     assert ci_source.count("scripts/run_p0_coverage_evidence.py") == 4
