@@ -1,0 +1,46 @@
+{
+  "schema_version": "coverage-scale-pack-manifests-v1",
+  "retry_policy": {
+    "maximum_similar_failures": 2,
+    "third_identical_attempt_forbidden": true,
+    "required_after_two": "REDESIGN_REQUIRED"
+  },
+  "general_scan_before_e3_forbidden": true,
+  "levels": {
+    "E0": {
+      "pack": "GOLDEN_SYNTHETIC_PACK",
+      "status": "MATERIALIZED",
+      "scope": "UP_TO_100_SYNTHETIC_ENTITIES",
+      "can_close_real_cell": false,
+      "result": "PASS_DEFINITION_ONLY"
+    },
+    "E1": {
+      "pack": "CANARY_REAL_PACK",
+      "status": "NOT_MATERIALIZED",
+      "scope": "EXACTLY_10_P0_REAL_FIXTURES",
+      "can_close_real_cell": false,
+      "result": "NOT_RUN"
+    },
+    "E2": {
+      "pack": "PILOT_REAL_PACK",
+      "status": "NOT_MATERIALIZED",
+      "scope": "EXACTLY_50_P0_REAL_FIXTURES",
+      "can_close_real_cell": false,
+      "result": "NOT_RUN"
+    },
+    "E3": {
+      "pack": "COMPLETE_COMPETITION_SEASON",
+      "status": "DECISION_REQUIRED",
+      "scope": "ONE_COMPLETE_COMPETITION_SEASON",
+      "can_close_real_cell": true,
+      "result": "NOT_RUN"
+    },
+    "E4": {
+      "pack": "P0_FULL",
+      "status": "SCALE_APPROVED_REQUIRED",
+      "scope": "FIVE_LEAGUES_SIX_SEASONS_SIXTEEN_FAMILIES",
+      "can_close_real_cell": true,
+      "result": "NOT_RUN"
+    }
+  }
+}

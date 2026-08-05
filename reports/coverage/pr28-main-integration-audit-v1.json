@@ -1,0 +1,63 @@
+{
+  "schema_version":"robin-pr28-main-integration-audit-v1",
+  "generated_at":"2026-08-05T06:12:03Z",
+  "pr":28,
+  "branch":"codex/historical-coverage-denominator-closure-v1",
+  "source_head":"bd2661650621912a0d340ffedceb84b78fe4bf28",
+  "canonical_main_commit":"ca56ff92e068ed8b88e9d55b0bce4e43b83399d8",
+  "merge":{
+    "strategy":"NO_FF_BRANCH_INTEGRATION_THEN_PR_MERGE_COMMIT",
+    "conflicts":["reports/council/decision-ledger.jsonl","reports/evidence/evidence-graph.json"],
+    "force_push":false,
+    "source_branch_preserved":true,
+    "main_history_retains_pre_compaction_commits":true,
+    "final_tree_materialized_projections_present":false
+  },
+  "archived_source_evidence":{
+    "decision_ledger_path":"reports/council/decision-ledger.jsonl",
+    "decision_ledger_sha256":"64fb8be9891d34a904782ca612db2d17c17fa71031cdd90f7cbabcc7cc7f8c3e",
+    "evidence_graph_path":"reports/evidence/evidence-graph.json",
+    "evidence_graph_sha256":"cc76da3134a9f67631fc902199edf682e499ec592c29ad3bd543c725f312c36d",
+    "source_commit":"bd2661650621912a0d340ffedceb84b78fe4bf28",
+    "recovery_command":"git show bd2661650621912a0d340ffedceb84b78fe4bf28:<path>"
+  },
+  "ledger_reconciliation":{
+    "common_prefix_records":11,
+    "common_head_hash":"cca942e0e4652a629a75861e0d30512d4fd4fb670ca41f05dfd8346abd39fa1f",
+    "canonical_main_records_before":22,
+    "canonical_main_head_before":"2e571ba581ebd1dce0162e2dbdb47879b82b8c9b8a21b08284236f12667e9112",
+    "archived_fork_records":3,
+    "fork_suffix_sha256":"8f99ec78b09a2c518d8a43d6db722884d2cdbc8f9854c59eae02d478c9231ad5",
+    "fork_archive":"reports/council/pr28-decision-fork-archive-v1.json",
+    "fork_archive_sha256":"2d4d74926054a260aaf3fdbcd81d3b9d31efd57f72e12ddf8c93195bbbdd27df",
+    "reconciliation_decision_id":"RCV3-20260805-023",
+    "reconciliation_record_hash":"5a671c9d85422f5c6280f240bc74fc6f736ff7b74d0c86ec2f387581c2b135b0",
+    "merge_policy_correction_decision_id":"RCV3-20260805-024",
+    "merge_policy_correction_record_hash":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b",
+    "canonical_records_after":24,
+    "canonical_head_after":"44116b21619d8ccd69effae41277ac6e0146fea9a15a816ca9904aa15853527b",
+    "canonical_ledger_sha256":"0a1e30c05baf88b5a1e23dc7733bd85f177eb044cb1ae64b39638c2513b5893c"
+  },
+  "compaction":{
+    "materialized_projection_files_removed":2,
+    "materialized_projection_lines_removed":57591,
+    "materialized_projection_bytes_removed":1842589,
+    "final_tree_authority":"COMPACT_CONTRACT_CATALOG_SUMMARY_GATES_PROPERTY_REPORT"
+  },
+  "validation":{
+    "state":"LOCAL_FULL_VALIDATION_PASSED_REMOTE_CI_PENDING",
+    "completed":["58/58 Council V3, Council V3.1 and coverage targeted tests","1094 passed and 11 skipped in the full repository pytest suite","Ruff, Mypy and Bandit","Cockpit compact model 5/5 and SSR/privacy 2/2","Cockpit typecheck, targeted lint and production build","P0 Desk Playwright 3/3 including 390, 1440 and 200 percent text zoom","client projection and high-confidence secret scans"],
+    "required":["remote CI on exact reconciled head"]
+  },
+  "locks":{
+    "provider_calls":0,
+    "new_replays":0,
+    "r2_writes":0,
+    "remote_sql_writes":0,
+    "deployments":0,
+    "purchases":0,
+    "real_bets":0,
+    "promotion":false,
+    "scale_authorized":false
+  }
+}

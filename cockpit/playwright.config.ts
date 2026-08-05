@@ -21,6 +21,7 @@ export default defineConfig({
     "visual-regression.spec.ts",
     "hypothesis-universe.spec.ts",
     "hypothesis-accessibility.spec.ts",
+    "p0-coverage-desk.spec.ts",
   ],
   timeout: 30_000,
   use: {

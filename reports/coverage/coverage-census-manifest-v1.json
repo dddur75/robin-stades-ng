@@ -1,0 +1,55 @@
+{
+  "schema_version": "coverage-census-manifest-v1",
+  "captured_at": "2026-08-04T16:18:00Z",
+  "source_revision": "2a59a20a786a13be1eb4a110c11bb585f35565cb",
+  "contract_path": "configs/data/historical-coverage-denominator-contract-v1.json",
+  "provider_calls": 0,
+  "r2_writes": 0,
+  "purchases": 0,
+  "odds_credits": 0,
+  "manifest_id": "ebb5bb27b9590671b48dc01b7dbf300777db5b5f90bd4d67056c67ef82478995",
+  "run_independent_identity": true,
+  "scope": "P0_2020_2025",
+  "status": "AUTHORITATIVE_P0_CENSUS_MISSING",
+  "source_search_order": [
+    "R2 league payloads",
+    "R2 fixture payloads",
+    "census manifests",
+    "receipts",
+    "intentions",
+    "coverage flags",
+    "inventories"
+  ],
+  "reused_evidence": {
+    "review_path": "reports/evidence/pr26-final-review-v1.json",
+    "review_proof_hash": "6cab506d595ca63b894cca995c9e19d3edefdea6761e3670e3a27170e6fa2103",
+    "source_run": "github-run:30896340821",
+    "coverage_proof_hash": "61afbfef0c8f51bc07e6992591cf2c0125069ef72c3d5ad9bd4a366d48a92be4",
+    "payloads_replayed": 2321,
+    "receipts_verified": 2321,
+    "normalized_rows": 2023144,
+    "hash_mismatches": 0
+  },
+  "observed_union": {
+    "cells": 1067,
+    "census_evidence_cells": 0,
+    "without_census_evidence": 1067,
+    "projectable_to_authoritative_p0_grid": false,
+    "gate_status_counts": {
+      "BLOCKED_BY_COVERAGE": 755,
+      "NOT_ASSESSED": 312
+    }
+  },
+  "authoritative_p0": {
+    "expected_cells": 480,
+    "empirically_closed_cells": 0,
+    "open_cells": 480
+  },
+  "api_football_calls_allowed": 0,
+  "conditional_census_call_cap": 100,
+  "conditional_census_calls_authorized": false,
+  "r2_reads_during_phase": 0,
+  "new_replay": false,
+  "scale_authorized": false,
+  "proof_hash": "26caba28d7b9f0502fc8d2ddd436e7a03272e53b9c1f9e59125cc30116dbedc0"
+}

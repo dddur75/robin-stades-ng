@@ -20,6 +20,8 @@ app/i18n/
 
 Les composants utilisent `t("domaine.intention")`. Les formats de nombres, pourcentages, dates, durées, octets et unités sont centralisés. `app/lib/presentation.ts` adapte le snapshot technique sans changer sa source.
 
+Le Desk P0 utilise le domaine `coverage.*` dans les deux catalogues. Ses identifiants scientifiques (`E0`, `UNKNOWN`, gates et classes temporelles) restent des codes techniques ; tous ses textes de présentation, limites, parcours et questions de confiance ont une variante `en-GB` non publique.
+
 ## Convention de clés
 
 - clé sémantique, indépendante de la position : `results.empty.title` ;

@@ -260,15 +260,31 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
         "verified_by",
     }
     claim_ids = [claim["claim_id"] for claim in graph["claims"]]
+    registry = load_json("configs/agents/agent-registry-v3.json")
+    registered_agents = {agent["agent_id"] for agent in registry["agents"]}
     assert len(claim_ids) == len(set(claim_ids))
     assert all(claim_fields <= set(claim) for claim in graph["claims"])
     assert all(claim["verified_by"] for claim in graph["claims"])
+    assert all(
+        set(claim["verified_by"]) <= registered_agents for claim in graph["claims"]
+    )
+    assert all(
+        claim["status"]
+        in {"VERIFIED", "PARTIAL", "BLOCKED", "INVALIDATED", "SUPERSEDED"}
+        for claim in graph["claims"]
+    )
     assert all(
         len(claim["verified_by"]) >= 2
         for claim in graph["claims"]
         if claim["status"] == "VERIFIED"
     )
     for claim in graph["claims"]:
+        if claim["status"] == "SUPERSEDED":
+            assert claim.get("superseded_by") in set(claim_ids)
+            continue
+        if claim["status"] == "INVALIDATED":
+            assert claim.get("invalidation_reason")
+            continue
         artifact = ROOT / claim["artifact"]
         assert artifact.is_file()
         if len(claim["hash"]) == 64:
@@ -431,3 +447,50 @@ def test_platform_inventory_has_required_safety_columns() -> None:
     assert audit["purchases"] == 0
     assert all("C:/Users/" not in item["worktree_path"] for item in audit["worktrees"])
     assert all(item["worktree_path"].startswith("${") for item in audit["worktrees"])
+
+
+def test_pr28_non_canonical_fork_archive_is_complete_and_hash_chained() -> None:
+    archive = load_json("reports/council/pr28-decision-fork-archive-v1.json")
+    assert archive["status"] == "IMMUTABLE_NON_CANONICAL_ARCHIVE"
+    assert archive["source"] == {
+        "pr": 28,
+        "branch": "codex/historical-coverage-denominator-closure-v1",
+        "commit": "bd2661650621912a0d340ffedceb84b78fe4bf28",
+        "ledger_path": "reports/council/decision-ledger.jsonl",
+    }
+    records = archive["fork_records"]
+    assert [record["decision_id"] for record in records] == [
+        "RCV3-20260804-012",
+        "RCV3-20260805-013",
+        "RCV3-20260805-014",
+    ]
+
+    previous_hash = archive["common_prefix"]["head_hash"]
+    for record in records:
+        assert record["previous_hash"] == previous_hash
+        canonical = json.dumps(
+            {key: value for key, value in record.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical).hexdigest() == record["hash"]
+        previous_hash = record["hash"]
+
+    fork_suffix = (
+        "\n".join(
+            json.dumps(record, ensure_ascii=False, separators=(",", ":"))
+            for record in records
+        )
+        + "\n"
+    ).encode()
+    assert hashlib.sha256(fork_suffix).hexdigest() == archive["fork_suffix_sha256"]
+
+    audit = load_json("reports/coverage/pr28-main-integration-audit-v1.json")
+    source = audit["archived_source_evidence"]
+    assert source["decision_ledger_sha256"] == (
+        "64fb8be9891d34a904782ca612db2d17c17fa71031cdd90f7cbabcc7cc7f8c3e"
+    )
+    assert source["evidence_graph_sha256"] == (
+        "cc76da3134a9f67631fc902199edf682e499ec592c29ad3bd543c725f312c36d"
+    )

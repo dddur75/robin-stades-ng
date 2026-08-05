@@ -1,0 +1,73 @@
+{
+  "schema_version": "pr28-compaction-audit-v1",
+  "captured_at": "2026-08-05T05:37:27Z",
+  "base_revision": "2a59a20a786a13be1eb4a110c11bb585f35565cb",
+  "initial_head": "f3758ab98a8b7f62c54f91fb1c61d0f285f6286a",
+  "scope": "PR28_FINAL_TREE_COMPACTION",
+  "method": "git diff volume, byte-exact SHA-256 of the initial head, deterministic oracle tests, production build inspection",
+  "initial_pr": {
+    "files_changed": 47,
+    "insertions": 63518,
+    "deletions": 13
+  },
+  "removed_materialized_artifacts": [
+    {
+      "path": "reports/coverage/p0-denominator-grid-v1.json",
+      "physical_lines": 30799,
+      "bytes": 1009494,
+      "file_sha256": "7f969758a442f0051410fa321b7255914dbc5d41980f17454cba855d1853d12f",
+      "disposition": "REMOVED_FROM_FINAL_TREE",
+      "replacement": "configs/data/historical-coverage-denominator-contract-v1.json plus the in-memory denominator oracle"
+    },
+    {
+      "path": "cockpit/private-coverage/p0-denominator-status-v1.json",
+      "physical_lines": 26792,
+      "bytes": 833095,
+      "file_sha256": "c8e5855369ce5a577ac06543be1c6c1f2302c6d83e282991764d7bfd647a476d",
+      "disposition": "REMOVED_FROM_FINAL_TREE",
+      "replacement": "server-only composition of the compact contract, grain catalogue, closure summary, readiness gates and property readiness"
+    }
+  ],
+  "aggregate_reduction": {
+    "physical_lines_removed": 57591,
+    "bytes_removed": 1842589,
+    "share_of_initial_pr_insertions_percent": 90.6688
+  },
+  "server_bundle": {
+    "before_bytes": 3020732,
+    "after_bytes": 2330421,
+    "bytes_removed": 690311,
+    "reduction_percent": 22.8524,
+    "private_projection_sentinel_occurrences_after": 0
+  },
+  "preserved_invariants": {
+    "dimensions": "5x6x16",
+    "expected_cells": 480,
+    "empirically_closed_cells": 0,
+    "calendar_fatigue_ready": "0/17",
+    "functional_gates_ready": "0/8",
+    "unknown_rates_rendered_as_zero": false,
+    "client_contains_compact_sources": false,
+    "unventilated_nonzero_closure_fails_closed": true
+  },
+  "validation": {
+    "coverage_and_council_tests_passed": 46,
+    "compact_model_tests_passed": 5,
+    "ssr_privacy_tests_passed": 2,
+    "playwright_tests_passed": 3,
+    "typescript_typecheck": "PASS",
+    "targeted_eslint": "PASS",
+    "vinext_production_build": "PASS"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "new_replays": 0,
+    "r2_writes": 0,
+    "sql_queries": 0,
+    "purchases": 0,
+    "odds_credits": 0,
+    "deployments": 0
+  },
+  "ux_owner_review": "PENDING_BEFORE_PUBLICATION_OR_VISUAL_REDESIGN",
+  "verdict": "PR28_COMPACT_FUNCTIONAL_EVIDENCE_READY_FOR_REMOTE_CI"
+}

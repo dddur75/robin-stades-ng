@@ -1,0 +1,251 @@
+{
+  "schema_version": "p0-property-readiness-v1",
+  "captured_at": "2026-08-04T16:18:00Z",
+  "source_revision": "2a59a20a786a13be1eb4a110c11bb585f35565cb",
+  "contract_path": "configs/data/historical-coverage-denominator-contract-v1.json",
+  "provider_calls": 0,
+  "r2_writes": 0,
+  "purchases": 0,
+  "odds_credits": 0,
+  "scope": "P0_2020_2025",
+  "canonical_property_source": {
+    "path": "reports/hypothesis-genome/property-semantic-roles.json",
+    "file_sha256_lf": "bfd2835d85315101133f1fb1a7299cbbf68a5da517946afe32123e2bce747a95"
+  },
+  "family_readiness": [
+    {
+      "family": "fixtures",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "events",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "lineups",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "lineup_players",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "formations",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "team_match_statistics",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "player_match_statistics",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "referees",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "venues",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "teams",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "standings",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "rounds",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "players",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "player_season_statistics",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "injuries",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    },
+    {
+      "family": "suspensions",
+      "status": "BLOCKED_BY_P0_DENOMINATORS",
+      "properties_unlocked": []
+    }
+  ],
+  "calendar_fatigue": {
+    "status": "CLOSED",
+    "ready_properties": 0,
+    "total_properties": 17,
+    "properties": [
+      {
+        "id": "rest_days",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "rest_differential",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "matches_5d",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "matches_7d",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "matches_10d",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "matches_14d",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "matches_21d",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "matches_30d",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "congestion",
+        "families": [
+          "fixtures",
+          "teams"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "restart_phase",
+        "families": [
+          "fixtures",
+          "rounds"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "recent_extra_time",
+        "families": [
+          "fixtures",
+          "events"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "recent_penalty_shootout",
+        "families": [
+          "fixtures",
+          "events"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "recent_minutes",
+        "families": [
+          "fixtures",
+          "lineup_players",
+          "player_match_statistics"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "individual_load",
+        "families": [
+          "fixtures",
+          "lineup_players",
+          "player_match_statistics"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "rotation",
+        "families": [
+          "fixtures",
+          "lineups",
+          "lineup_players"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "collective_load",
+        "families": [
+          "fixtures",
+          "lineups",
+          "team_match_statistics",
+          "player_match_statistics"
+        ],
+        "status": "BLOCKED_BY_P0_DENOMINATORS"
+      },
+      {
+        "id": "next_match_importance",
+        "families": [
+          "fixtures",
+          "rounds",
+          "standings"
+        ],
+        "status": "BLOCKED_STANDINGS_NOT_POINT_IN_TIME"
+      }
+    ]
+  },
+  "families_exploitable": [],
+  "properties_unlocked": [],
+  "opens_hypergraph": false,
+  "hypergraph_verdict": "NOT_OPENED_DATA_GATES_INSUFFICIENT",
+  "proof_hash": "fa9e9c29a0d73eeb2b9ff1c873a7b524caa81bc90024eae090b6ac443b04e1b0"
+}

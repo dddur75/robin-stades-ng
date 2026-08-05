@@ -1,0 +1,143 @@
+{
+  "schema_version": "e0-denominator-proof-v1",
+  "captured_at": "2026-08-04T16:18:00Z",
+  "source_revision": "2a59a20a786a13be1eb4a110c11bb585f35565cb",
+  "contract_path": "configs/data/historical-coverage-denominator-contract-v1.json",
+  "provider_calls": 0,
+  "r2_writes": 0,
+  "purchases": 0,
+  "odds_credits": 0,
+  "evaluation_level": "E0",
+  "population_kind": "SYNTHETIC",
+  "status": "PASS_DEFINITION_ONLY",
+  "golden_pack_hash": "412b1027a23278cc42f1d058159a3f4516d47a125ae91ecb99e343a23eaa4c40",
+  "source_record_count": 8,
+  "expanded_candidate_count": 20,
+  "scenario_count": 11,
+  "scenario_results": [
+    {
+      "scenario_id": "terminal-fixture-applicable",
+      "status": "PASS",
+      "observed": "APPLICABLE",
+      "expected": "APPLICABLE"
+    },
+    {
+      "scenario_id": "postponed-fixture-not-applicable",
+      "status": "PASS",
+      "observed": "NOT_APPLICABLE",
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "scenario_id": "ambiguous-fixture-blocks",
+      "status": "PASS",
+      "observed": "BLOCKING",
+      "expected": "BLOCKING"
+    },
+    {
+      "scenario_id": "absence-partition-and-exact-duplicate",
+      "status": "PASS",
+      "observed": {
+        "source_records_distinct": 4,
+        "injuries": 1,
+        "suspensions": 2,
+        "unclassifiable": 1,
+        "duplicates_ignored": 1,
+        "absence_scope_completion_rate": {
+          "numerator": 1,
+          "denominator": 1,
+          "value": 1.0,
+          "status": "KNOWN",
+          "grain": "complete injuries pagination"
+        },
+        "absence_classification_integrity_rate": {
+          "numerator": 3,
+          "denominator": 4,
+          "value": 0.75,
+          "status": "KNOWN",
+          "grain": "classified distinct absence / distinct source absence"
+        },
+        "classification_state": "OPEN_CLASSIFICATION_AMBIGUOUS"
+      },
+      "expected": {
+        "source_records_distinct": 4,
+        "injuries": 1,
+        "suspensions": 2,
+        "unclassifiable": 1,
+        "duplicates_ignored": 1
+      }
+    },
+    {
+      "scenario_id": "absence-pagination-hole",
+      "status": "PASS",
+      "observed": "OPEN_MISSING_SCOPE",
+      "expected": "OPEN_MISSING_SCOPE"
+    },
+    {
+      "scenario_id": "absence-conflicting-duplicate",
+      "status": "PASS",
+      "observed": "OPEN_CONFLICTING_DUPLICATE",
+      "expected": "OPEN_CONFLICTING_DUPLICATE"
+    },
+    {
+      "scenario_id": "unknown-rate",
+      "status": "PASS",
+      "observed": {
+        "numerator": null,
+        "denominator": null,
+        "value": null,
+        "status": "UNKNOWN",
+        "grain": "fixture registry"
+      },
+      "expected": {
+        "status": "UNKNOWN",
+        "value": null
+      }
+    },
+    {
+      "scenario_id": "known-rate",
+      "status": "PASS",
+      "observed": {
+        "numerator": 8,
+        "denominator": 10,
+        "value": 0.8,
+        "status": "KNOWN",
+        "grain": "fixture registry"
+      },
+      "expected": {
+        "status": "KNOWN",
+        "value": 0.8
+      }
+    },
+    {
+      "scenario_id": "empty-valid-rate",
+      "status": "PASS",
+      "observed": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null,
+        "status": "EMPTY_VALID",
+        "grain": "distinct suspensions"
+      },
+      "expected": {
+        "status": "EMPTY_VALID",
+        "value": null
+      }
+    },
+    {
+      "scenario_id": "overflow-rate-blocks",
+      "status": "PASS",
+      "observed": "RATE_NUMERATOR_EXCEEDS_DENOMINATOR",
+      "expected": "RATE_NUMERATOR_EXCEEDS_DENOMINATOR"
+    },
+    {
+      "scenario_id": "odds-block-ignored",
+      "status": "PASS",
+      "observed": "IGNORED_NO_DENOMINATOR_EFFECT",
+      "expected": "IGNORED_NO_DENOMINATOR_EFFECT"
+    }
+  ],
+  "all_expected_results_reproduced": true,
+  "real_cells_closed": 0,
+  "authorizes_scale": false,
+  "proof_hash": "baf3e75e9cc9a42da4d5c0cfd36071dc258c5f83e17761ee17359aea78d7e851"
+}

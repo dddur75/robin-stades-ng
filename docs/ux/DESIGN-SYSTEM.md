@@ -8,13 +8,18 @@ Premium et sportif, mais calme. La surface évoque un observatoire et un carnet 
 
 | Jeton | Usage |
 |---|---|
-| Bleu nuit `#102a36` | structure, rail, texte principal |
+| Nuit 950 `#061722` | fond de structure profond |
+| Nuit 900 `#082231` | rail, parcours et panneaux sombres |
+| Nuit 800 `#123648` | structure intermédiaire |
+| Encre `#102a36` | texte principal |
 | Blanc cassé `#f7f5ef` | fond humain, contraste doux |
-| Vert Robin `#3e9b72` | vérification, progression, identité |
-| Bleu information `#4b8fcb` | collecte, explication |
-| Orange attention `#c47a32` | données partielles ou attendues |
-| Rouge erreur `#b84c4c` | incident ou donnée invalide |
-| Violet recherche `#7462a8` | hypothèses et exploration |
+| Vert Robin `#16976a` | vérification, progression, identité |
+| Bleu information `#2878cb` | collecte, explication |
+| Orange attention `#cc7627` | données partielles ou attendues |
+| Rouge erreur `#bc4d4b` | incident ou donnée invalide |
+| Violet recherche `#7556b5` | hypothèses et exploration |
+
+Les valeurs autoritatives sont les variables `:root` de `cockpit/app/globals.css`. Ce tableau est leur documentation lisible et doit être mis à jour dans le même lot que tout changement de jeton.
 
 La couleur est toujours doublée par un libellé, une icône ou un motif. Le vert ne signifie pas « gain ».
 
@@ -44,6 +49,7 @@ La couleur est toujours doublée par un libellé, une icône ou un motif. Le ver
 - terme de glossaire accessible au survol, au focus et au toucher ;
 - accordéons Expert ;
 - cartes de garanties.
+- Desk de couverture P0 : double état définition/preuve, parcours conditionnel, trois taux indépendants, niveaux E0–E4, gates, table focalisable et couche de confiance.
 
 ## États
 
