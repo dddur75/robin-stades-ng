@@ -1,7 +1,10 @@
 {
   "schema_version": "robin-mission-activation-matrix-v3",
+  "governance_revision": "3.1",
   "activation_policy": "ON_DEMAND_ONLY",
   "writer_policy": "C0_DESIGNATES_EXACTLY_ONE_WRITER_PER_WORKTREE",
+  "scientific_scaling_policy": "AUTO_SCALE_WITHIN_AUTHORIZED_MISSION",
+  "scientific_scaling_role": "POLICY_CONTROL_AND_RECORD_ONLY",
   "authorization": {
     "default": "DENY",
     "read_local_repository": "ALLOW",
@@ -14,13 +17,15 @@
     "deployment": "DENY_UNLESS_C0_C3_C4_EXPLICIT_DECISION",
     "real_bet": "DENY",
     "purchase": "DENY",
-    "social_publication": "DENY"
+    "social_publication": "DENY",
+    "external_or_irreversible_effect": "DEFAULT_DENY_SEPARATE_EXPLICIT_DECISION_REQUIRED",
+    "mission_manifest_external_effects": "MUST_NOT_OVERRIDE_THIS_AUTHORIZATION_MATRIX"
   },
   "missions": {
     "GOVERNANCE": {
       "agents": ["C0","C1","C3","C4","DP4","DP5","UX6","A2"],
       "writer": "C0",
-      "allowed_paths": ["AGENTS.md","configs/agents/agent-registry-v3.json","configs/agents/agent-report-schema-v3.json","configs/agents/mission-activation-matrix-v3.json","configs/experiments/scale-policy-v3.json","configs/platform/service-capabilities-v1.json","docs/operations/EVIDENCE-GRAPH-CONTRACT.md","docs/operations/EXPERIMENT-LADDER-V3.md","docs/operations/GITHUB-ACTIONS-OPERATING-CONTRACT.md","docs/operations/ROBIN-COUNCIL-OS-V3.md","docs/operations/SERVICE-CAPABILITIES-AND-LIMITS.md","reports/council/decision-ledger.jsonl","reports/council/governance-quality-score-v3.json","reports/council/governance-validation-v3.json","reports/evidence/evidence-graph.json","reports/platform/platform-audit.json","tests/council/test_robin_council_os_v3.py","tests/jalon12/test_cli_prospective.py"],
+      "allowed_paths": ["AGENTS.md","configs/agents/mission-activation-matrix-v3.json","configs/experiments/scale-policy-v3.json","docs/operations/EXPERIMENT-LADDER-V3.md","docs/operations/ROBIN-COUNCIL-OS-V3.md","reports/council/decision-ledger.jsonl","reports/council/governance-final-review-v3.json","reports/council/governance-quality-score-v3.json","reports/council/governance-validation-v3.json","reports/council/v31-scope-drift-review.json","reports/evidence/evidence-graph.json","src/robin/governance/__init__.py","src/robin/governance/autoscale.py","tests/council/test_autoscale_v31.py","tests/council/test_robin_council_os_v3.py"],
       "scale_ceiling":"E0",
       "delivery_keys": {"platform":["DP5","A2"],"product":["C3","UX6"]}
     },
@@ -32,11 +37,11 @@
       "delivery_keys": {"data":["DP6","C2"],"platform":["DP5","A2"],"science":["C2","RP8","RP9","A1"]}
     },
     "COVERAGE_P0": {
-      "agents": ["C0","C1","C2","DP1","DP2","DP3","DP4","DP6","RP1","RP4","RP7","A1"],
+      "agents": ["C0","C1","C2","C3","C4","DP1","DP2","DP3","DP4","DP5","DP6","RP1","RP2","RP4","RP7","UX3","UX6","A1","A2"],
       "writer": "C0_DESIGNATE",
       "allowed_paths": ["configs/data/","docs/data/","reports/coverage/","cockpit/private-coverage/","tests/coverage/"],
-      "scale_ceiling":"E3_UNTIL_SCALE_APPROVED",
-      "delivery_keys": {"data":["DP6","C2"],"science":["C2","A1"]}
+      "scale_ceiling":"MISSION_MANIFEST_MAXIMUM_STAGE",
+      "delivery_keys": {"data":["DP6","C2"],"platform":["DP5","A2"],"product":["C3","UX3","UX6"],"science":["C2","RP2","A1"]}
     },
     "HYPERGRAPH": {
       "agents": ["C0","C1","C2","DP2","DP6","RP1","RP2","RP3","RP4","RP5","RP6","RP7","RP8","RP9","RP10","A1"],

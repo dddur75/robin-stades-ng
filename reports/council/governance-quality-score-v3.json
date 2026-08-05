@@ -1,47 +1,45 @@
 {
-  "schema_version":"robin-governance-quality-score-v3",
-  "status":"READY",
-  "scope":"PHASE_A_E0_LOCAL_CONTENT_READY_REMOTE_CI_REQUIRED_NOT_SCALE_READY",
-  "reviewed_at":"2026-08-04T14:36:34Z",
-  "minimum_ready_score":92,
+  "schema_version":"robin-governance-quality-score-v3.1-minimal",
+  "status":"LOCAL_REVIEW_PASSED_REMOTE_CI_REQUIRED",
+  "scope":"PHASE_A_V31_MINIMAL_POLICY_CONTROL_ONLY",
+  "reviewed_at":"2026-08-05T05:05:40Z",
+  "minimum_ready_score":95,
   "critical_objections_open":0,
-  "required_evidence_missing":0,
+  "required_evidence_missing":1,
+  "required_evidence_pending":["REMOTE_CI_ON_DELIVERY_HEAD"],
   "security_locks_weakened":0,
   "categories":[
     {"id":"scientific_integrity","weight":20,"score":20},
-    {"id":"data_accuracy","weight":15,"score":13},
+    {"id":"data_accuracy","weight":15,"score":15},
     {"id":"reproducibility","weight":15,"score":15},
-    {"id":"platform_resilience","weight":15,"score":14},
-    {"id":"product_ux_utility","weight":15,"score":14},
-    {"id":"betting_calculations","weight":10,"score":9},
+    {"id":"platform_resilience","weight":15,"score":15},
+    {"id":"product_ux_utility","weight":15,"score":15},
+    {"id":"betting_calculations","weight":10,"score":10},
     {"id":"performance_costs","weight":5,"score":5},
     {"id":"security","weight":5,"score":5}
   ],
-  "total_score":95,
-  "ready":true,
-  "reviewed_by":["DP5","A2","C3","UX6"],
+  "total_score":100,
+  "ready":false,
+  "reviewed_by":["v31_final_independent"],
   "independent_reviews":[
     {
-      "review_id":"GOVERNANCE-A2-PLATFORM-20260804",
-      "roles":["DP5","A2"],
-      "verdict":"READY_AFTER_FINAL_E0",
-      "score":95,
-      "critical_objections_open":0
+      "review_id":"V31-PRE-CORRECTION-REVIEWS",
+      "verdict":"SUPERSEDED_BY_OWNER_SCOPE_CORRECTION",
+      "initial_review_scores":[54,68,76,95],
+      "preservation":"decision ledger, evidence graph and external backup"
     },
     {
-      "review_id":"GOVERNANCE-C3-UX6-20260804",
-      "roles":["C3","UX6"],
-      "verdict":"READY",
-      "critical_objections_open":0
-    },
-    {
-      "review_id":"GOVERNANCE-CI-CLOCK-C1-A2-20260804",
-      "roles":["C1","A2"],
-      "verdict":"READY_FOR_RERUN",
+      "review_id":"V31-MINIMAL-FINAL-20260805",
+      "reviewer":"v31_final_independent",
+      "verdict":"PASS_AFTER_FOUR_LOCAL_FIXES",
+      "score":100,
       "critical_objections_open":0,
-      "remote_ci_required":true
+      "new_subsystems_requested":0
     }
   ],
-  "remote_ci_gate":"PENDING_RERUN",
-  "scale_authorized":false
+  "remote_ci_gate":"REQUIRED_BEFORE_MERGE",
+  "minimal_policy_ready":true,
+  "advanced_capabilities":"FUTURE_DESIGN_NOT_IMPLEMENTED",
+  "scale_authorized":false,
+  "external_actions_authorized":false
 }

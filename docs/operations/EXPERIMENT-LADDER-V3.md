@@ -1,39 +1,126 @@
-# Échelle expérimentale V3
+# Échelle expérimentale V3.1 minimale
 
-## Niveaux
+## Rôle
 
-| Niveau | Périmètre | Délai |
+Le Council contrôle la progression scientifique; il ne planifie et n'exécute
+aucun workload. GitHub Actions, R2, Git et l'orchestrateur Codex conservent leurs
+rôles. Une décision du Council n'est jamais une autorisation de service externe.
+
+## Étapes de gouvernance
+
+| Étape | Preuve attendue | Délai indicatif |
 |---|---|---|
-| E0 | 0–100 lignes synthétiques, aucun service distant | ≤ 2 min |
-| E1 | 10–50 fixtures réelles, une famille | ≤ 5 min |
-| E2 | 100–500 fixtures, une compétition-saison | ≤ 10 min |
-| E3 | une compétition-saison ou 5 % du corpus | ≤ 15 min/job |
-| E4 | cinq ligues 2020–2025 | cible 15, max 20 min/job |
-| E5 | corpus étendu | seulement après P0 utile et vérifié |
+| E1 | preuve réelle E1 bornée | ≤ 5 min |
+| E2 | 100 fixtures réelles | ≤ 10 min |
+| E3A | une compétition-saison complète | ≤ 15 min/job |
+| E3B | une saison sur cinq ligues | ≤ 15 min/job |
+| E4 | P0 complet | cible 15, max 20 min/job |
 
-La montée en charge dépend d'une preuve, pas de la disponibilité de calcul. E4
-exige un checkpoint au plus toutes les cinq minutes.
+L'ordre de contrôle est strict :
 
-## Corpus permanents
+```text
+E1 → E2 → E3A → E3B → E4
+```
 
-- Golden Synthetic Pack : doublons, nulls, reports, voids, incohérences, deux
-  équipes, cotes, résultats et temporalité.
-- Canary Real Pack : 50 fixtures couvrant cinq ligues avec hashes gelés.
-- Pilot Season Pack : une compétition-saison choisie sur la meilleure preuve.
+Les sous-lots opérationnels E1A et E1B peuvent alimenter la preuve E1, mais ne
+créent pas un moteur d'exécution ni un état supplémentaire dans le Council
+minimal. Le manifeste de mission gèle les étapes réellement autorisées et le
+plafond. Disponibilité de calcul et réussite scientifique restent deux faits
+distincts.
 
-Un correctif local passe le Golden Pack puis le Canary Pack si des données réelles
-sont nécessaires. Les packs doivent être versionnés sans recopier le corpus total.
-À l'installation du système, leurs exigences sont définies mais les trois manifests
-sont `NOT_MATERIALIZED`; aucune montée E1+ ne peut s'appuyer sur eux avant création,
-gel des hashes et revue indépendante. Ce statut évite de présenter un contrat comme
-une preuve de données existantes.
+## Autorisation de mission
 
-## Gate
+Une mission repose sur un manifeste immuable contenant exactement :
 
-Une décision de scale conserve : périmètre gelé, hash des entrées, résultat du
-niveau précédent, objections, budget, stratégie de reprise, responsable et coût.
-Sans ces éléments, le verdict est `SCALE_REFUSED`.
+```text
+mission_id
+authorized_stages
+maximum_stage
+external_effects
+compute_budget
+time_budget
+source_hash
+expires_at
+```
 
-Sont interdits : replay complet pour un parser, corpus complet pour un
-dénominateur, millions de règles pour un opérateur, build complet pour un libellé,
-full CI après chaque micro-correctif et troisième tentative identique.
+Le manifeste ne crée pas d'autorité externe. `external_effects` doit respecter
+la matrice d'activation et les verrous du dépôt; tout effet absent, inconnu ou
+interdit reste `DEFAULT_DENY`.
+
+## Décision d'étape
+
+Les seules décisions sont :
+
+```text
+PASS_AND_SCALE
+PASS_AND_HOLD
+FAIL_AND_REDESIGN
+FAIL_AND_STOP
+BLOCKED_EXTERNAL_ACTION
+```
+
+`PASS_AND_SCALE` ouvre seulement l'étape immédiatement suivante. Il est valide
+si et seulement si :
+
+- l'étape courante est prouvée et ses critères sont satisfaits;
+- l'étape suivante est dans `authorized_stages` et ne dépasse pas
+  `maximum_stage`;
+- budgets de calcul et de temps ainsi qu'expiration sont respectés;
+- aucun veto critique n'est ouvert;
+- aucun effet externe interdit n'est demandé.
+
+Au plafond ou sans preuve suffisante, la décision est `PASS_AND_HOLD`. Un saut de
+niveau est refusé. Une source obligatoire absente produit `FAIL_AND_STOP`. Un
+effet externe interdit produit `BLOCKED_EXTERNAL_ACTION`.
+
+## Règle des deux échecs
+
+La similarité est déterminée par taxonomie, signature de cause et périmètre :
+
+1. premier échec similaire : conserver le niveau et appliquer le plus petit
+   correctif;
+2. deuxième échec similaire : `FAIL_AND_REDESIGN`, puis retour à E1 avec une
+   architecture modifiée;
+3. troisième tentative inchangée : interdite avant exécution et
+   `FAIL_AND_STOP`.
+
+Le Golden Synthetic Pack et le Canary Real Pack restent des preuves de domaine
+réutilisables lorsqu'ils sont nécessaires. Leur préparation et leur exécution ne
+font pas partie du Council.
+
+## Journal minimal
+
+Le journal append-only accepte uniquement :
+
+```text
+MISSION_AUTHORIZED
+STAGE_STARTED
+STAGE_FINISHED
+DECISION
+FAILURE
+VETO
+REDESIGN
+```
+
+Chaque record utilise un JSON canonique, un hash SHA-256 déterministe et le hash
+du record précédent. Cette chaîne rend une réécriture détectable; elle ne promet
+ni transaction distribuée, ni coordination de contrôleurs concurrents, ni
+récupération après crash.
+
+## Hors périmètre V3.1
+
+Les sujets suivants sont archivés `FUTURE_DESIGN_NOT_IMPLEMENTED` :
+
+- planification ou exécution des workloads;
+- transactions distribuées et protocole transactionnel de crash;
+- rotation d'autorité complexe et contrôleurs concurrents;
+- réparation d'authority race et quarantaine post-commit;
+- reconstruction complexe de grants et bindings multiples de preuves;
+- remplacement de GitHub Actions, R2, Git ou Codex.
+
+## Tests proportionnés
+
+La simplification utilise seulement les tests ciblés de transition, plafond,
+effet externe, source absente, veto, retry et déterminisme du journal. Une seule
+suite complète est exécutée avant fusion. Aucun replay complet n'est requis pour
+valider cette politique.
