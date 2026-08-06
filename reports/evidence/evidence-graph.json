@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-06T22:24:00Z",
+  "generated_at":"2026-08-06T22:36:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -980,7 +980,8 @@
     {"decision_id":"RCV3-20260805-032","ledger_record_hash":"aa1aa9dd67dc1b1c36a4c23a0ead49365899c34f78530d69667564cd128e5853"},
     {"decision_id":"RCV3-20260806-033","ledger_record_hash":"68326cc5247dfdb89dba19b56842cf644bf87e88688f85b18cd60e62e5b6e34a"},
     {"decision_id":"RCV3-20260806-034","ledger_record_hash":"f75bad9b3fa93369841f52b05e3dd09d9d05c4d93a3a6093c63afb7fd298ad2e"},
-    {"decision_id":"RCV3-20260806-035","ledger_record_hash":"842a36c84a8954e8ec1f52b135dd59222b7b1e92dd1b6240c4eb9dd7e1d590fa"}
+    {"decision_id":"RCV3-20260806-035","ledger_record_hash":"842a36c84a8954e8ec1f52b135dd59222b7b1e92dd1b6240c4eb9dd7e1d590fa"},
+    {"decision_id":"RCV3-20260806-036","ledger_record_hash":"07d05d720a7e0d7b470fab687e2e4aa5c7acff13a504dfd4c9841e9b0783a9a3"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1100,6 +1101,8 @@
     {"edge_id":"EDGE.115","from_claim_id":"COVERAGE.LADDER.REVIEW.V1.001","to_decision_id":"RCV3-20260806-034","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.116","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-034","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.117","from_claim_id":"COVERAGE.LADDER.REVIEW.V1.001","to_decision_id":"RCV3-20260806-035","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.118","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-035","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.118","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-035","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.119","from_claim_id":"COVERAGE.LADDER.E1A.CAPABILITY_SCOPE.001","to_decision_id":"RCV3-20260806-036","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.120","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-036","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

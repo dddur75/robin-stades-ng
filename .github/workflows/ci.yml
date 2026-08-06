@@ -49,6 +49,7 @@ jobs:
           python -m ruff check
           src/robin/historical_deep
           tests/historical_deep
+          tests/coverage
           scripts/export_historical_deep_coverage.py
           scripts/historical_deep_workflow_outcome.py
           scripts/run_p0_coverage_evidence.py
