@@ -2394,6 +2394,48 @@
       "status": "verified",
       "verified_at": "2026-08-06T04:12:35.494055+00:00"
     },
+    "bundles/31074246325/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-08-06T06:36:21.333097+00:00"
+    },
+    "bundles/31074246325/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "82d607a5147a6acdfa54624bd492eb362da2413a8b43894a0779da1fd21bc21a",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-08-06T06:36:22.113424+00:00"
+    },
+    "bundles/31074246325/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "83feb62bd78455e569f157281f74398ec91e4f099830c5b53f6146a7325bc30a",
+      "size": 20998084,
+      "status": "verified",
+      "verified_at": "2026-08-06T06:36:24.642596+00:00"
+    },
+    "bundles/31076566075/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-08-06T06:36:25.823318+00:00"
+    },
+    "bundles/31076566075/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "c9e8da30ba6b20bbfa16e2d5dfbc96328a44ea5fc34993d4ca01056a147e35e3",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-08-06T06:36:26.577211+00:00"
+    },
+    "bundles/31076566075/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "82eafe8240cea34b6b6811c730eff95e28905f1057b8b6fa0fa561cd55118719",
+      "size": 20999528,
+      "status": "verified",
+      "verified_at": "2026-08-06T06:36:30.795370+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -3873,8 +3915,8 @@
     },
     "forecasts/accelerated-safe.json": {
       "last_action": "failed",
-      "sha256": "b443f6e466b9c9d3f6a25a7a919ab3f9afc35455c07bc74c7ee9b6106fd1ecda",
-      "size": 8399,
+      "sha256": "6a0fdbd0218063a9f9cb245adcf609fa11c0a9f1daff962773bf05a6a82fdf2e",
+      "size": 8400,
       "status": "failed",
       "verified_at": null
     },
@@ -4314,7 +4356,7 @@
     },
     "market/runs/jalon9-latest.json": {
       "last_action": "failed",
-      "sha256": "f268da82f5069fd5c19aac01d4d90546a48159e9aac0d6232a3365f4252a13f5",
+      "sha256": "fdbfe0e31c2a7b92c3d895d2f836756c9d3061fd0ea99a5278745dd7d7136d07",
       "size": 119507,
       "status": "failed",
       "verified_at": null
@@ -4377,7 +4419,7 @@
     },
     "packages/preseason-shadow-package-v2.json": {
       "last_action": "failed",
-      "sha256": "e8480b55dc5d49a8754511da67162c97de548ca66e75906d5eb5e59bacec101f",
+      "sha256": "af03020127f42db3125918a281b6c5021c7a45789799049253bc49a7f828a08b",
       "size": 7123,
       "status": "failed",
       "verified_at": null
@@ -179559,5 +179601,5 @@
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-08-06T04:12:36.115409+00:00"
+  "updated_at": "2026-08-06T06:36:31.169852+00:00"
 }
