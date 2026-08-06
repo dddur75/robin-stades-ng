@@ -978,7 +978,8 @@
     {"decision_id":"RCV3-20260805-030","ledger_record_hash":"00b045908399b688bad38ebae282380169f0a012ace6e080e56eebdac3cda544"},
     {"decision_id":"RCV3-20260805-031","ledger_record_hash":"cffba0e5368e8561289b3572339d5a8a3bd2e5bbdedde923bf5b9ea75c07f689"},
     {"decision_id":"RCV3-20260805-032","ledger_record_hash":"aa1aa9dd67dc1b1c36a4c23a0ead49365899c34f78530d69667564cd128e5853"},
-    {"decision_id":"RCV3-20260806-033","ledger_record_hash":"68326cc5247dfdb89dba19b56842cf644bf87e88688f85b18cd60e62e5b6e34a"}
+    {"decision_id":"RCV3-20260806-033","ledger_record_hash":"68326cc5247dfdb89dba19b56842cf644bf87e88688f85b18cd60e62e5b6e34a"},
+    {"decision_id":"RCV3-20260806-034","ledger_record_hash":"f75bad9b3fa93369841f52b05e3dd09d9d05c4d93a3a6093c63afb7fd298ad2e"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1094,6 +1095,8 @@
     {"edge_id":"EDGE.111","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-032","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.112","from_claim_id":"COVERAGE.LADDER.ARCHITECTURE2.E1A.MEASURE.001","to_decision_id":"RCV3-20260806-033","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.113","from_claim_id":"COVERAGE.LADDER.E1A.CAPABILITY_SCOPE.001","to_decision_id":"RCV3-20260806-033","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.114","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-033","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.114","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-033","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.115","from_claim_id":"COVERAGE.LADDER.REVIEW.V1.001","to_decision_id":"RCV3-20260806-034","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.116","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-034","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
