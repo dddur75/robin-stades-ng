@@ -1,0 +1,68 @@
+{
+  "schema_version": "e1a-capability-scope-status-v1",
+  "campaign": "E1A_ABSENCE_CAUSE_CLASSIFICATION",
+  "historical_verdict": "FAIL_AND_STOP",
+  "historical_verdict_scope": "LOCAL_CAMPAIGN_ONLY",
+  "stage": "E1A",
+  "competition": "Serie A",
+  "competition_key": "api-football:135",
+  "season": 2024,
+  "fixtures": 10,
+  "families": 16,
+  "technical_cells": {"verified": 16, "expected": 16},
+  "absence_identity": {
+    "total": 3036,
+    "injuries_confirmed": 2681,
+    "suspensions_confirmed": 206,
+    "absence_cause_unknown": 149,
+    "identity_exact": true
+  },
+  "statuses": [
+    "E1A_TECHNICAL_INTEGRITY_READY",
+    "E1A_ABSENCE_CAUSE_CLASSIFICATION_PARTIAL",
+    "E1A_INJURY_CONFIRMED_SLICE_MEASURED",
+    "E1A_SUSPENSION_CONFIRMED_SLICE_MEASURED",
+    "E1A_ABSENCE_UNKNOWN_SLICE_MEASURED",
+    "E1A_ARCHITECTURES_EXHAUSTED",
+    "E1A_CAUSE_EXACT_SCALE_STOPPED",
+    "UNRELATED_CAPABILITIES_NOT_EVALUATED",
+    "P0_GLOBAL_READINESS_NOT_DETERMINED_BY_E1A"
+  ],
+  "not_executed_stages": ["E1B", "E2", "E3A", "E3B", "E4"],
+  "architectures": {"executed": [1, 2], "third_architecture_authorized": false},
+  "capability_interpretation": {
+    "ABSENCE_CAUSE_EXACT": "STOPPED_LOCAL_CAMPAIGN",
+    "INJURY_CONFIRMED": "MEASURED_PARTIAL",
+    "SUSPENSION_CONFIRMED": "MEASURED_PARTIAL",
+    "ABSENCE_GENERIC": "MEASURED_PARTIAL",
+    "all_unrelated_capabilities": "NOT_EVALUATED",
+    "global_p0": "NOT_DETERMINED_BY_E1A"
+  },
+  "forbidden_unproven_statuses": [
+    "ABSENCE_GATE_READY",
+    "INJURY_GATE_READY",
+    "SUSPENSION_GATE_READY",
+    "P0_READY",
+    "HYPERGRAPH_READY"
+  ],
+  "accounting": {
+    "logical_r2_gets_historical": 505,
+    "r2_writes": 0,
+    "provider_calls": 0,
+    "remote_sql": 0,
+    "real_cells_closed": 0
+  },
+  "interpretation": {
+    "proves": "Exact cause is not fully classifiable in this corpus with the two exhausted architectures.",
+    "does_not_prove": "Any unrelated football capability is unusable, ready, or globally blocked."
+  },
+  "historical_evidence_immutable": true,
+  "evidence_refs": [
+    "reports/coverage/p0-evidence-ladder-stage-E1A-v1.json",
+    "reports/coverage/p0-evidence-ladder-stage-E1A-architecture-2-v1.json",
+    "reports/coverage/p0-evidence-ladder-gate-E1A-architecture-2-v1.json",
+    "reports/coverage/p0-evidence-ladder-cost-E1A-architecture-2-v1.json",
+    "reports/council/decision-ledger.jsonl#RCV3-20260805-032",
+    "reports/evidence/evidence-graph.json#COVERAGE.LADDER.ARCHITECTURE2.E1A.MEASURE.001"
+  ]
+}

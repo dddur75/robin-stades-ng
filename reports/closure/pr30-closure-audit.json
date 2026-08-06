@@ -1,0 +1,99 @@
+{
+  "schema_version": "pr30-closure-audit-v1",
+  "pr": 30,
+  "head": "18267548655a5f49147cf8452bad8fc2d083afbf",
+  "base": "main@96bcc2d56f1b68a011f1efa11022ebd4b8713208",
+  "changed_files": {
+    "before_closure": 31,
+    "before_closure_additions": 22972,
+    "before_closure_deletions": 200,
+    "after_closure": 35,
+    "after_closure_additions": 23106,
+    "after_closure_deletions": 249
+  },
+  "authoritative_files": [
+    "src/robin/historical_deep/coverage_evidence.py",
+    "scripts/run_p0_coverage_evidence.py",
+    "configs/data/p0-coverage-evidence-mission-v1.json",
+    "configs/data/p0-coverage-evidence-selection-E1A-v1.json",
+    "reports/coverage/e1a-capability-scope-status-v1.json",
+    "reports/coverage/e1a-unknown-profile-v1.json",
+    "reports/council/decision-ledger.jsonl",
+    "reports/evidence/evidence-graph.json"
+  ],
+  "historical_evidence_files": [
+    "reports/coverage/p0-evidence-ladder-stage-E1A-attempt-1-v1.json",
+    "reports/coverage/p0-evidence-ladder-feed-E1A-attempt-1-v1.json",
+    "reports/coverage/p0-evidence-ladder-gate-E1A-attempt-1-v1.json",
+    "reports/coverage/p0-evidence-ladder-cost-E1A-attempt-1-v1.json",
+    "reports/coverage/p0-evidence-ladder-stage-E1A-v1.json",
+    "reports/coverage/p0-evidence-ladder-feed-E1A-v1.json",
+    "reports/coverage/p0-evidence-ladder-gate-E1A-v1.json",
+    "reports/coverage/p0-evidence-ladder-cost-E1A-v1.json",
+    "reports/coverage/p0-evidence-architecture-2-validation-v1.json",
+    "reports/coverage/p0-evidence-ladder-stage-E1A-architecture-2-v1.json",
+    "reports/coverage/p0-evidence-ladder-feed-E1A-architecture-2-v1.json",
+    "reports/coverage/p0-evidence-ladder-gate-E1A-architecture-2-v1.json",
+    "reports/coverage/p0-evidence-ladder-cost-E1A-architecture-2-v1.json"
+  ],
+  "duplicated_files": [],
+  "reconstructible_files": [
+    {
+      "paths": [
+        "reports/coverage/p0-evidence-ladder-feed-E1A-v1.json",
+        "reports/coverage/p0-evidence-ladder-feed-E1A-architecture-2-v1.json"
+      ],
+      "disposition": "PRESERVED_DISTINCT_SIGNED_LINEAGES"
+    }
+  ],
+  "temporary_files": [],
+  "absolute_paths": [],
+  "active_claims": [
+    "COVERAGE.LADDER.E1A.ATTEMPT2.001",
+    "COVERAGE.LADDER.ARCHITECTURE2.VALIDATION.001",
+    "COVERAGE.LADDER.ARCHITECTURE2.E1A.FREEZE.001",
+    "COVERAGE.LADDER.ARCHITECTURE2.E1A.MEASURE.001",
+    "COVERAGE.LADDER.E1A.CAPABILITY_SCOPE.001"
+  ],
+  "obsolete_claims": [
+    {
+      "claim": "PR30 will execute the full E1-to-E4 ladder",
+      "disposition": "SUPERSEDED_BY_TERMINAL_E1A_RESULT"
+    },
+    {
+      "claim": "FAIL_AND_STOP globally stops all football capabilities",
+      "disposition": "REJECTED_UNPROVEN_INTERPRETATION"
+    }
+  ],
+  "tests": {
+    "historical_head_ci": "GREEN",
+    "closure_targeted": "PASS",
+    "closure_targeted_results": {
+      "closure_contract": "4 passed",
+      "coverage_evidence": "86 passed",
+      "ledger_graph_and_readiness": "18 passed",
+      "ruff_pr30_scope": "PASS",
+      "mypy_strict": "160 source files PASS",
+      "json_yaml": "PASS",
+      "secret_scan": "PASS",
+      "git_diff_check": "PASS"
+    },
+    "closure_full_local": "PASS_1161_PASSED_11_SKIPPED"
+  },
+  "ci": {
+    "historical_head": "GREEN",
+    "historical_runs": [31046933285, 31046941072],
+    "final_closure_head": "PENDING",
+    "duplicate_branch_push_trigger_removed": true
+  },
+  "evidence_preservation": {
+    "architecture_1": "PRESERVED",
+    "architecture_2": "PRESERVED",
+    "receipts": "PRESERVED",
+    "costs": "PRESERVED",
+    "decisions": "PRESERVED_APPEND_ONLY",
+    "ledger": "PRESERVED_APPEND_ONLY",
+    "evidence_graph": "PRESERVED_WITH_ADDITIVE_SCOPE_CLAIM"
+  },
+  "merge_recommendation": "MERGE_AFTER_TARGETED_FULL_LOCAL_AND_EXACT_HEAD_CI_GREEN"
+}

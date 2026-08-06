@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-05T20:55:00Z",
+  "generated_at":"2026-08-06T21:26:13Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -927,6 +927,22 @@
       "dataset_lineage_id":"P0_2020_2025_PINNED_INVENTORY_E1A_ARCHITECTURE2_MEASURE",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","C2","A2"]
+    },
+    {
+      "claim_id":"COVERAGE.LADDER.E1A.CAPABILITY_SCOPE.001",
+      "claim":"The historical FAIL_AND_STOP verdict is preserved and scoped exclusively to campaign E1A_ABSENCE_CAUSE_CLASSIFICATION: exact cause remains partial after two exhausted architectures, while unrelated capabilities are NOT_EVALUATED and global P0 readiness is not determined by E1A.",
+      "scope":"E1A_ABSENCE_CAUSE_CLASSIFICATION",
+      "source":"additive closure interpretation of immutable terminal E1A evidence",
+      "grain":"one_competition_season_ten_fixture_canary_capability_interpretation",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/coverage/e1a-capability-scope-status-v1.json",
+      "hash":"c146c5d921bd98f4c7db6f80f3775e9ec9c631ce077dea02e4223c2d2bf88ccb",
+      "code_revision":"18267548655a5f49147cf8452bad8fc2d083afbf",
+      "execution_id":"local-pr30-closure-20260806T212613Z",
+      "scientific_lineage_id":"p0-coverage-evidence-ladder-v1",
+      "dataset_lineage_id":"P0_2020_2025_PINNED_INVENTORY_E1A_SCOPE_CLARIFICATION",
+      "status":"VERIFIED",
+      "verified_by":["C0","C2","DP5","A2"]
     }
   ],
   "decision_nodes":[
@@ -961,7 +977,8 @@
     {"decision_id":"RCV3-20260805-029","ledger_record_hash":"ebb7d9c81a9329d51caa71e27dcd1c75ddb271c250be4a552ae546f9af63cab5"},
     {"decision_id":"RCV3-20260805-030","ledger_record_hash":"00b045908399b688bad38ebae282380169f0a012ace6e080e56eebdac3cda544"},
     {"decision_id":"RCV3-20260805-031","ledger_record_hash":"cffba0e5368e8561289b3572339d5a8a3bd2e5bbdedde923bf5b9ea75c07f689"},
-    {"decision_id":"RCV3-20260805-032","ledger_record_hash":"aa1aa9dd67dc1b1c36a4c23a0ead49365899c34f78530d69667564cd128e5853"}
+    {"decision_id":"RCV3-20260805-032","ledger_record_hash":"aa1aa9dd67dc1b1c36a4c23a0ead49365899c34f78530d69667564cd128e5853"},
+    {"decision_id":"RCV3-20260806-033","ledger_record_hash":"68326cc5247dfdb89dba19b56842cf644bf87e88688f85b18cd60e62e5b6e34a"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1074,6 +1091,9 @@
     {"edge_id":"EDGE.108","from_claim_id":"COVERAGE.LADDER.ACCOUNTING.V1.001","to_decision_id":"RCV3-20260805-032","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.109","from_claim_id":"COVERAGE.LADDER.SOURCE.V1.001","to_decision_id":"RCV3-20260805-032","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.110","from_claim_id":"COVERAGE.LADDER.MISSION.V1.001","to_decision_id":"RCV3-20260805-032","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.111","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-032","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.111","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260805-032","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.112","from_claim_id":"COVERAGE.LADDER.ARCHITECTURE2.E1A.MEASURE.001","to_decision_id":"RCV3-20260806-033","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.113","from_claim_id":"COVERAGE.LADDER.E1A.CAPABILITY_SCOPE.001","to_decision_id":"RCV3-20260806-033","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.114","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-033","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
