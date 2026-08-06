@@ -1,0 +1,262 @@
+{
+  "schema_version": "coverage-scale-pack-manifests-v2",
+  "contract_id": "p0-coverage-evidence-ladder-v1",
+  "contract_role": "DOMAIN_STAGE_MAPPING_ONLY_NO_EXECUTION_AUTHORITY",
+  "immutable": true,
+  "source_bindings": {
+    "legacy_v1": {
+      "path": "configs/data/coverage-scale-pack-manifests-v1.json",
+      "file_sha256_lf": "21ce418bb326e9c9e247ca80e7f9f6936b85ec9fd9d98d0b511dc9ace3c00d64",
+      "mode": "IMMUTABLE_READ_ONLY"
+    },
+    "council_policy": {
+      "path": "configs/experiments/scale-policy-v3.json",
+      "file_sha256_lf": "b16e02cfde3fdfa3aa2e1a206a9bcb46ec3cc9588c9281f6335d7b46bed6218a"
+    },
+    "p0_denominator_contract": {
+      "path": "configs/data/historical-coverage-denominator-contract-v1.json",
+      "file_sha256_lf": "ac4c8f6b5eb83d96fe13dfe774364dcea575aac1e7784ce7233ebcda39cb13dc"
+    },
+    "grain_catalog": {
+      "path": "configs/data/football-grain-catalog-v1.json",
+      "file_sha256_lf": "5b2581e7d3a4630fd9d84be6ca954dc63cae83a602fce91d68c4847c5498cd71"
+    },
+    "authority_matrix": {
+      "path": "configs/agents/mission-activation-matrix-v3.json",
+      "file_sha256_lf": "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"
+    }
+  },
+  "stage_orders": {
+    "domain": ["E0", "E1A", "E1B", "E2", "E3A", "E3B", "E4"],
+    "council": ["E1", "E2", "E3A", "E3B", "E4"]
+  },
+  "council_evidence_requirements": {
+    "E1": ["E1A", "E1B"],
+    "E2": ["E2"],
+    "E3A": ["E3A"],
+    "E3B": ["E3B"],
+    "E4": ["E4"]
+  },
+  "council_e1_composite": {
+    "domain_stages_required": ["E1A", "E1B"],
+    "e1a_alone_proves_council_e1": false,
+    "e1b_alone_proves_council_e1": false,
+    "completed_by": "E1B",
+    "transition_after_completion": {
+      "current_stage": "E1",
+      "next_stage": "E2"
+    }
+  },
+  "legacy_read_mapping": {
+    "E0": {
+      "domain_stage": "E0",
+      "status": "READ_ONLY_EQUIVALENT"
+    },
+    "E1": {
+      "domain_stage": "E1A",
+      "status": "READ_ONLY_SAMPLE_MAPPING_NO_COUNCIL_COMPLETION"
+    },
+    "E2": {
+      "domain_stage": null,
+      "status": "INCOMPATIBLE",
+      "reason": "LEGACY_50_FIXTURES_NOT_V2_100"
+    },
+    "E3": {
+      "domain_stage": "E3A",
+      "status": "READ_ONLY_MAPPING"
+    },
+    "E4": {
+      "domain_stage": "E4",
+      "status": "READ_ONLY_EQUIVALENT"
+    }
+  },
+  "write_policy": {
+    "required_schema_version": "coverage-scale-pack-manifests-v2",
+    "allowed_domain_stages": ["E0", "E1A", "E1B", "E2", "E3A", "E3B", "E4"],
+    "legacy_writes_allowed": false,
+    "ambiguous_domain_labels_forbidden": ["E1", "E3"],
+    "legacy_e2_alias_allowed": false,
+    "unknown_stage_policy": "REJECT",
+    "mapping_grants_execution_authority": false,
+    "immutable_mission_manifest_required": true,
+    "frozen_level_selection_manifest_required": true
+  },
+  "retry_policy": {
+    "maximum_similar_failures": 2,
+    "third_identical_attempt_forbidden": true,
+    "required_after_two": "REDESIGN_REQUIRED",
+    "identity_architecture_third_unchanged_attempt": "FAIL_AND_STOP"
+  },
+  "budget_units": {
+    "compute_budget": "DISTINCT_P0_COMPETITION_SEASON_FAMILY_CLOSURE_TARGETS",
+    "time_budget": "CUMULATIVE_SECONDS"
+  },
+  "family_groups": {
+    "CORE_FIXTURE_IDENTITY": ["fixtures", "teams", "venues", "referees"],
+    "MATCH_EVENTS_TEAM": ["events", "rounds", "team_match_statistics", "standings"],
+    "LINEUP_PLAYER_MATCH": ["lineups", "lineup_players", "formations", "player_match_statistics"],
+    "SEASON_ABSENCE": ["players", "player_season_statistics", "injuries", "suspensions"]
+  },
+  "levels": {
+    "E0": {
+      "pack": "GOLDEN_SYNTHETIC_PACK",
+      "status": "MATERIALIZED",
+      "scope": {
+        "population": "SYNTHETIC",
+        "maximum_entities": 100
+      },
+      "council_stage": null,
+      "council_completion": "NOT_APPLICABLE",
+      "can_close_real_cell": false,
+      "maximum_scope_cells": 0,
+      "maximum_real_cells_closed": 0,
+      "result": "PASS_DEFINITION_ONLY"
+    },
+    "E1A": {
+      "pack": "CANARY_MONO_COMPETITION_SEASON",
+      "status": "NOT_MATERIALIZED",
+      "scope": {
+        "fixture_count": 10,
+        "competition_count": 1,
+        "season_count": 1,
+        "sort": ["kickoff_utc", "fixture_id"]
+      },
+      "council_stage": "E1",
+      "council_completion": "PARTIAL_CONTRIBUTION_ONLY",
+      "can_close_real_cell": false,
+      "maximum_scope_cells": 0,
+      "maximum_real_cells_closed": 0,
+      "max_minutes_per_operation": 5,
+      "max_r2_gets_per_operation": 200,
+      "result": "NOT_RUN"
+    },
+    "E1B": {
+      "pack": "CANARY_FIVE_LEAGUES",
+      "status": "BLOCKED_PREDECESSOR_NOT_PROVEN",
+      "scope": {
+        "fixture_count": 10,
+        "competition_count": 5,
+        "fixtures_per_competition": 2,
+        "season_policy": "BEST_COMMON_SEASON"
+      },
+      "council_stage": "E1",
+      "council_completion": "COMPLETES_E1_IF_E1A_PROVEN",
+      "can_close_real_cell": false,
+      "maximum_scope_cells": 0,
+      "maximum_real_cells_closed": 0,
+      "max_minutes_per_operation": 5,
+      "max_r2_gets_per_operation": 750,
+      "result": "NOT_RUN"
+    },
+    "E2": {
+      "pack": "MULTI_LEAGUE_SAMPLE",
+      "status": "BLOCKED_PREDECESSOR_NOT_PROVEN",
+      "scope": {
+        "fixture_count": 100,
+        "competition_count": 5,
+        "fixtures_per_competition": 20,
+        "season_policy": "PREFER_COMMON_OTHERWISE_BEST_PER_COMPETITION"
+      },
+      "council_stage": "E2",
+      "council_completion": "COMPLETES_E2",
+      "can_close_real_cell": false,
+      "maximum_scope_cells": 0,
+      "maximum_real_cells_closed": 0,
+      "max_minutes_per_operation": 10,
+      "max_r2_gets_per_operation": 750,
+      "result": "NOT_RUN"
+    },
+    "E3A": {
+      "pack": "COMPLETE_COMPETITION_SEASON",
+      "status": "BLOCKED_PREDECESSOR_NOT_PROVEN",
+      "scope": {
+        "competition_count": 1,
+        "season_count": 1,
+        "fixtures": "ALL_CANONICAL_FIXTURES_IN_PROVEN_CENSUS",
+        "family_count": 16
+      },
+      "council_stage": "E3A",
+      "council_completion": "COMPLETES_E3A",
+      "can_close_real_cell": true,
+      "maximum_scope_cells": 16,
+      "maximum_real_cells_closed": 16,
+      "max_minutes_per_job": 15,
+      "result": "NOT_RUN"
+    },
+    "E3B": {
+      "pack": "ONE_SEASON_FIVE_LEAGUES",
+      "status": "BLOCKED_PREDECESSOR_NOT_PROVEN",
+      "scope": {
+        "competition_count": 5,
+        "season_count": 1,
+        "same_season_required": true,
+        "family_count": 16
+      },
+      "council_stage": "E3B",
+      "council_completion": "COMPLETES_E3B",
+      "can_close_real_cell": true,
+      "maximum_scope_cells": 80,
+      "maximum_real_cells_closed": 80,
+      "max_minutes_per_job": 15,
+      "result": "NOT_RUN"
+    },
+    "E4": {
+      "pack": "P0_FULL",
+      "status": "BLOCKED_PREDECESSOR_NOT_PROVEN",
+      "scope": {
+        "competition_count": 5,
+        "season_count": 6,
+        "family_count": 16,
+        "cell_count": 480,
+        "partition_order": ["competition_season", "family_group"],
+        "maximum_matrix_jobs": 120
+      },
+      "council_stage": "E4",
+      "council_completion": "COMPLETES_E4_AND_HOLDS",
+      "can_close_real_cell": true,
+      "maximum_scope_cells": 480,
+      "maximum_real_cells_closed": 480,
+      "target_minutes_per_job": 10,
+      "absolute_max_minutes_per_job": 15,
+      "max_checkpoint_minutes": 5,
+      "result": "NOT_RUN"
+    }
+  },
+  "closure_policy": {
+    "real_cell_closure_forbidden": ["E0", "E1A", "E1B", "E2"],
+    "real_cell_closure_conditional": ["E3A", "E3B", "E4"],
+    "complete_scope_required": true,
+    "authoritative_denominator_required": true,
+    "receipt_and_hash_lineage_required": true,
+    "unproven_cells_remain_open": true,
+    "maximum_scope_cells_is_not_a_closure_claim": true
+  },
+  "measurement_contract": {
+    "counts": ["expected", "received", "empty_valid", "invalid", "unclassifiable", "exact_duplicates", "contradictory_duplicates"],
+    "rates": ["scope_completion", "normalization_integrity", "content_presence"],
+    "global_aggregation": "WEIGHTED_NUMERATOR_DENOMINATOR_ONLY",
+    "unknown_is_not_zero": true,
+    "empty_valid_is_not_missing": true
+  },
+  "mission_authority": {
+    "mapping_grants_workload_authority": false,
+    "mapping_grants_scale_authority": false,
+    "separate_eight_field_council_manifest_required": true,
+    "frozen_level_selection_manifest_before_calculation_required": true,
+    "e1a_alone_cannot_mark_council_e1_proven": true
+  },
+  "effects": {
+    "provider_calls": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "odds_credits": 0,
+    "real_bets": 0,
+    "promotion": false,
+    "publication": false,
+    "raw_payloads_in_git": false
+  }
+}

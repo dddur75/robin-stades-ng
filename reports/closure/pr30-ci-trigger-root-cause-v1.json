@@ -1,0 +1,80 @@
+{
+  "schema_version": "pr30-ci-trigger-root-cause-v1",
+  "pr": 30,
+  "observed_head": "e4b3f78aea7a173773f0d89adb364f02f06e102e",
+  "observed_events": [
+    {
+      "event": "push",
+      "result": "NO_RUN",
+      "explanation": "The branch no longer matched push.branches after codex/** was removed in e4b3f78."
+    },
+    {
+      "event": "pull_request.synchronize",
+      "result": "NO_RUN",
+      "explanation": "The workflow declared pull_request with default activity types, but GitHub created no run."
+    },
+    {
+      "event": "pull_request.reopened",
+      "result": "NO_RUN",
+      "explanation": "The event is a default pull_request activity type, but GitHub created no run."
+    },
+    {
+      "event": "pull_request.ready_for_review",
+      "result": "NO_RUN_EXPECTED",
+      "explanation": "ready_for_review is not included in the default pull_request activity types."
+    }
+  ],
+  "expected_events": {
+    "before_fix": ["pull_request.synchronize", "pull_request.reopened"],
+    "after_fix": ["push on codex/**", "pull_request.synchronize", "pull_request.reopened"]
+  },
+  "actual_runs": [],
+  "first_recovery_result": {
+    "head": "b5cf2e116471ce183925c423cac97f565149e334",
+    "route": "push on codex/**",
+    "result": "NO_RUN",
+    "checked_at": "2026-08-06T22:24:00Z"
+  },
+  "root_cause": "The closure commit removed the repository's deterministic exact-head push trigger for codex/** branches. The remaining pull_request route did not materialize a run for the observed GitHub events.",
+  "secondary_causes": [
+    "pull_request event delivery or workflow scheduling did not materialize despite an active workflow on the base branch",
+    "ready_for_review was not an eligible default trigger",
+    "ci.yml did not expose workflow_dispatch for a manual exact-ref recovery"
+  ],
+  "excluded_causes": {
+    "workflow_disabled": false,
+    "yaml_invalid": false,
+    "paths_filter": false,
+    "paths_ignore_filter": false,
+    "skip_directive_in_commit": false,
+    "actions_disabled": false,
+    "workflow_missing_from_base": false,
+    "concurrency_cancellation": false
+  },
+  "minimal_fix": {
+    "option": "RESTORE_HISTORICAL_CODEX_BRANCH_PUSH_TRIGGER",
+    "change": "Add codex/** back to on.push.branches.",
+    "new_workflow": false,
+    "empty_commit": false
+  },
+  "second_recovery": {
+    "option": "ADD_WORKFLOW_DISPATCH_TO_EXISTING_CI",
+    "change": "Expose workflow_dispatch on the existing quality workflow and dispatch it once on the exact PR head after push.",
+    "new_workflow": false,
+    "empty_commit": false,
+    "maximum_attempts_reached": true
+  },
+  "tradeoff": {
+    "reliability": "A direct push provides a deterministic exact-head validation route independent of pull_request event delivery.",
+    "github_cost": "One additional quality run can occur when pull_request delivery also works.",
+    "push_pr_duplication": "Possible; no manual run should be dispatched when an automatic exact-head run exists.",
+    "manual_rerun": "Enabled only as the second and final recovery route after the restored codex/** push route produced no run."
+  },
+  "proof": [
+    "git diff e4b3f78^ e4b3f78 -- .github/workflows/ci.yml",
+    "origin/main:.github/workflows/ci.yml includes codex/**",
+    "GitHub Actions workflow 319500816 is active",
+    "GitHub check suites for e4b3f78 contain no GitHub Actions suite",
+    "GitHub runs filtered by e4b3f78 are empty"
+  ]
+}

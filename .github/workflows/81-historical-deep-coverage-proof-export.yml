@@ -3,21 +3,65 @@ name: "81 - Historical Deep Coverage Proof Export"
 on:
   workflow_dispatch:
     inputs:
+      operation:
+        description: "Opération autorisée (legacy, gel, mesure, ou reprise sans R2)"
+        type: choice
+        required: true
+        default: legacy_export
+        options:
+          - legacy_export
+          - freeze
+          - measure
+          - recover_measure
+      stage:
+        description: "Niveau de preuve P0 (ignoré pour legacy_export)"
+        type: choice
+        required: true
+        default: E1A
+        options:
+          - E1A
+          - E1B
+          - E2
+          - E3A
+          - E3B
+          - E4
+      attempt_slot:
+        description: "Créneau borné de la même architecture (1 puis 2, jamais 3)"
+        type: choice
+        required: true
+        default: "1"
+        options:
+          - "1"
+          - "2"
       source_code_revision:
-        description: "SHA Git exact de la lignée R2 source"
+        description: "SHA Git exact de la lignée R2 source (legacy_export uniquement)"
         type: string
-        required: true
+        required: false
+        default: ""
       source_run_token:
-        description: "Token exact de la lignée R2 source (run_id:attempt)"
+        description: "Token exact de la lignée R2 source (legacy_export uniquement)"
         type: string
-        required: true
+        required: false
+        default: ""
       max_output_bytes:
-        description: "Taille cumulée maximale JSON + CSV"
+        description: "Taille cumulée maximale JSON + CSV (legacy_export uniquement)"
         type: number
         required: false
         default: 2000000
   workflow_call:
     inputs:
+      operation:
+        type: string
+        required: false
+        default: legacy_export
+      stage:
+        type: string
+        required: false
+        default: E1A
+      attempt_slot:
+        type: string
+        required: false
+        default: "1"
       source_code_revision:
         type: string
         required: true
@@ -40,15 +84,17 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
-  group: historical-deep-r2-coverage-proof
+  group: ${{ inputs.operation == 'legacy_export' && 'historical-deep-r2-coverage-proof' || 'coverage-evidence-manual' }}
   cancel-in-progress: false
 
 jobs:
   export:
+    if: ${{ inputs.operation == 'legacy_export' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
     env:
       STORAGE_PAUSED: "true"
       P3_P4_PAUSED: "true"
@@ -101,7 +147,7 @@ jobs:
 
       - name: Installer l'exporteur
         run: |
-          python -m pip install -r requirements.txt boto3
+          python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
 
       - name: Exporter la preuve R2 dérivée et sanitizée
@@ -126,6 +172,984 @@ jobs:
           path: |
             artifacts/historical-deep-coverage-proof/coverage-proof.json
             artifacts/historical-deep-coverage-proof/coverage-proof.csv
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
+
+  ladder-guard:
+    if: ${{ inputs.operation != 'legacy_export' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      REQUESTED_OPERATION: ${{ inputs.operation }}
+      REQUESTED_STAGE: ${{ inputs.stage }}
+      EVENT_NAME: ${{ github.event_name }}
+      RUN_ATTEMPT: ${{ github.run_attempt }}
+      ATTEMPT_SLOT: ${{ inputs.attempt_slot }}
+      EXACT_LADDER_REF: refs/heads/codex/p0-coverage-evidence-ladder-v1
+    steps:
+      - name: Refuser toute opération hors autorité exacte
+        shell: bash
+        env:
+          REQUESTED_REF: ${{ github.ref }}
+        run: |
+          python - <<'PY'
+          import os
+
+          if os.environ["REQUESTED_OPERATION"] not in {
+              "freeze", "measure", "recover_measure"
+          }:
+              raise SystemExit("P0_OPERATION_INVALID")
+          if os.environ["REQUESTED_STAGE"] not in {
+              "E1A", "E1B", "E2", "E3A", "E3B", "E4"
+          }:
+              raise SystemExit("P0_STAGE_INVALID")
+          if os.environ["EVENT_NAME"] != "workflow_dispatch":
+              raise SystemExit("P0_LADDER_MANUAL_DISPATCH_REQUIRED")
+          if os.environ["RUN_ATTEMPT"] != "1":
+              raise SystemExit("P0_LADDER_RERUN_FORBIDDEN")
+          if os.environ["ATTEMPT_SLOT"] not in {"1", "2"}:
+              raise SystemExit("P0_ATTEMPT_SLOT_INVALID")
+          if os.environ["REQUESTED_REF"] != os.environ["EXACT_LADDER_REF"]:
+              raise SystemExit("P0_LADDER_EXACT_BRANCH_REQUIRED")
+          PY
+
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Exiger la CI push verte du SHA exact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXACT_HEAD_SHA: ${{ github.sha }}
+          REPOSITORY: ${{ github.repository }}
+          EXACT_LADDER_BRANCH: codex/p0-coverage-evidence-ladder-v1
+        run: |
+          ci_runs_path="${RUNNER_TEMP}/p0-exact-head-ci-runs.json"
+          remote_ref_path="${RUNNER_TEMP}/p0-exact-remote-ref.json"
+          test "$(git rev-parse HEAD)" = "${EXACT_HEAD_SHA}"
+          gh api --method GET \
+            "repos/${REPOSITORY}/git/ref/heads/${EXACT_LADDER_BRANCH}" \
+            > "${remote_ref_path}"
+          gh api --method GET \
+            "repos/${REPOSITORY}/actions/workflows/ci.yml/runs" \
+            -f branch="${EXACT_LADDER_BRANCH}" \
+            -f head_sha="${EXACT_HEAD_SHA}" \
+            -f event=push \
+            -f per_page=20 > "${ci_runs_path}"
+          CI_RUNS_PATH="${ci_runs_path}" REMOTE_REF_PATH="${remote_ref_path}" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = json.loads(Path(os.environ["CI_RUNS_PATH"]).read_text(encoding="utf-8"))
+          remote_ref = json.loads(
+              Path(os.environ["REMOTE_REF_PATH"]).read_text(encoding="utf-8")
+          )
+          if remote_ref.get("object", {}).get("sha") != os.environ["EXACT_HEAD_SHA"]:
+              raise SystemExit("P0_REMOTE_BRANCH_HEAD_MOVED")
+          exact_runs = [
+              run
+              for run in payload.get("workflow_runs", [])
+              if run.get("head_sha") == os.environ["EXACT_HEAD_SHA"]
+              and run.get("head_branch") == os.environ["EXACT_LADDER_BRANCH"]
+              and run.get("event") == "push"
+          ]
+          if not exact_runs:
+              raise SystemExit("P0_EXACT_HEAD_PUSH_CI_RUN_REQUIRED")
+          newest = max(
+              exact_runs,
+              key=lambda run: (str(run.get("created_at", "")), int(run.get("id", 0))),
+          )
+          if newest.get("status") != "completed" or newest.get("conclusion") != "success":
+              raise SystemExit("P0_EXACT_HEAD_PUSH_CI_SUCCESS_REQUIRED")
+          PY
+
+  freeze:
+    if: >-
+      ${{ always() && inputs.operation == 'freeze' &&
+      needs.attempt-reservation.result == 'success' }}
+    needs: attempt-reservation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      STAGE: ${{ inputs.stage }}
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      REMOTE_SQL_READS_ALLOWED: "0"
+      REMOTE_SQL_WRITES_ALLOWED: "0"
+      R2_WRITES_ALLOWED: "0"
+      R2_DELETES_ALLOWED: "0"
+      PURCHASES_ALLOWED: "0"
+      DEPLOYMENTS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      GH_TOKEN: ${{ github.token }}
+      EXACT_LADDER_BRANCH: codex/p0-coverage-evidence-ladder-v1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer le lecteur P0
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+
+      - name: Geler la sélection par lectures R2 exactes
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "${EXACT_LADDER_BRANCH}"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${EXACT_LADDER_BRANCH}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
+          python scripts/run_p0_coverage_evidence.py freeze \
+            --stage "${STAGE}" \
+            --attempt-slot "${{ inputs.attempt_slot }}" \
+            --code-revision "${GITHUB_SHA}" \
+            --output-directory artifacts/p0-coverage-evidence/freeze
+
+      - name: Publier le gel allow-listé
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-coverage-evidence-freeze-${{ inputs.stage }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/p0-coverage-evidence/freeze/selection-manifest.json
+            artifacts/p0-coverage-evidence/freeze/freeze-receipt.json
+            artifacts/p0-coverage-evidence/freeze/cost-report.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
+
+  plan:
+    if: ${{ inputs.operation == 'measure' }}
+    needs: ladder-guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.partition-plan.outputs.matrix }}
+    env:
+      STAGE: ${{ inputs.stage }}
+      SELECTION_PATH: configs/data/p0-coverage-evidence-selection-${{ inputs.stage }}-v1.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer le planificateur P0
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+
+      - name: Construire la matrice depuis la sélection Git gelée
+        id: partition-plan
+        shell: bash
+        run: |
+          python scripts/run_p0_coverage_evidence.py plan \
+            --stage "${STAGE}" \
+            --selection "${SELECTION_PATH}" \
+            --output artifacts/p0-coverage-evidence/plan/partition-plan.json
+          test "$(jq -r '.schema_version' artifacts/p0-coverage-evidence/plan/partition-plan.json)" = "p0-coverage-partition-plan-v1"
+          test "$(jq -r '.stage' artifacts/p0-coverage-evidence/plan/partition-plan.json)" = "${STAGE}"
+          partition_count="$(jq -r '.partition_count' artifacts/p0-coverage-evidence/plan/partition-plan.json)"
+          test "${partition_count}" -ge 1
+          test "${partition_count}" -le 120
+          test "$(jq -r '.matrix.include | length' artifacts/p0-coverage-evidence/plan/partition-plan.json)" -eq "${partition_count}"
+          test "$(jq -r '[.matrix.include[].partition_id] | unique | length' artifacts/p0-coverage-evidence/plan/partition-plan.json)" -eq "${partition_count}"
+          test "$(jq -r '.max_parallel' artifacts/p0-coverage-evidence/plan/partition-plan.json)" -eq 5
+          jq -e '.matrix | (keys == ["include"]) and (all(.include[]; (keys == ["partition_id"]) and (.partition_id | test("^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"))))' artifacts/p0-coverage-evidence/plan/partition-plan.json >/dev/null
+          echo "matrix=$(jq -c '.matrix' artifacts/p0-coverage-evidence/plan/partition-plan.json)" >> "${GITHUB_OUTPUT}"
+
+      - name: Publier le plan allow-listé
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-coverage-evidence-plan-${{ inputs.stage }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/p0-coverage-evidence/plan/partition-plan.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
+
+  attempt-reservation:
+    if: >-
+      ${{ always() && needs.ladder-guard.result == 'success' &&
+      (inputs.operation == 'freeze' ||
+      (inputs.operation == 'measure' && needs.plan.result == 'success')) }}
+    needs:
+      - ladder-guard
+      - plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPERATION: ${{ inputs.operation }}
+      STAGE: ${{ inputs.stage }}
+      ATTEMPT_SLOT: ${{ inputs.attempt_slot }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer le preflight sans secret
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+
+      - name: Verifier le predecesseur avant de consommer la tentative
+        run: >-
+          python scripts/run_p0_coverage_evidence.py preflight
+          --stage "${STAGE}"
+          --operation "${OPERATION}"
+          --attempt-slot "${ATTEMPT_SLOT}"
+
+      - name: Revalider la branche exacte avant la reservation durable
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "codex/p0-coverage-evidence-ladder-v1"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${GITHUB_REF_NAME}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
+
+      - name: Construire l'identite de tentative durable
+        id: reserve
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          from robin.historical_deep.coverage_evidence import (
+              evidence_architecture_fingerprint,
+              load_authority,
+          )
+
+          mission = json.loads(
+              Path("configs/data/p0-coverage-evidence-mission-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          mission_id = mission.get("mission_id")
+          operation = os.environ["OPERATION"]
+          stage = os.environ["STAGE"]
+          attempt_slot = os.environ["ATTEMPT_SLOT"]
+          if not isinstance(mission_id, str) or re.fullmatch(
+              r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", mission_id
+          ) is None:
+              raise SystemExit("P0_MISSION_ID_UNSAFE")
+          if operation not in {"freeze", "measure"}:
+              raise SystemExit("P0_OPERATION_INVALID")
+          if stage not in {"E1A", "E1B", "E2", "E3A", "E3B", "E4"}:
+              raise SystemExit("P0_STAGE_INVALID")
+          if attempt_slot not in {"1", "2"}:
+              raise SystemExit("P0_ATTEMPT_SLOT_INVALID")
+          authority = load_authority(Path.cwd(), stage=stage)
+          architecture = evidence_architecture_fingerprint(authority)
+          marker_base = f"p0-attempt-{mission_id}-{operation}-{stage}-{architecture}"
+          marker = f"{marker_base}-{attempt_slot}"
+          resume_marker = (
+              f"p0-attempt-resume-{mission_id}-{operation}-{stage}-"
+              f"{architecture}-{attempt_slot}"
+          )
+          prior_marker = f"{marker_base}-1"
+          second_marker = f"{marker_base}-2"
+          destination = Path("artifacts/p0-coverage-evidence/attempt")
+          destination.mkdir(parents=True, exist_ok=False)
+          (destination / "attempt-reservation.json").write_text(
+              json.dumps(
+                  {
+                      "schema_version": "p0-coverage-attempt-reservation-v1",
+                      "mission_id": mission_id,
+                      "operation": operation,
+                      "stage": stage,
+                      "architecture_fingerprint": architecture,
+                      "attempt_slot": int(attempt_slot),
+                      "code_revision": os.environ["GITHUB_SHA"],
+                      "github_run_id": os.environ["GITHUB_RUN_ID"],
+                      "github_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+                      "mission_expires_at": mission.get("expires_at"),
+                      "marker_retention_days": 90,
+                  },
+                  sort_keys=True,
+                  separators=(",", ":"),
+              ),
+              encoding="utf-8",
+          )
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"marker={marker}\n")
+              output.write(f"prior_marker={prior_marker}\n")
+              output.write(f"second_marker={second_marker}\n")
+              output.write(f"resume_marker={resume_marker}\n")
+              output.write(f"architecture={architecture}\n")
+          PY
+
+      - name: Refuser une tentative deja reservee
+        id: attempt-audit
+        shell: bash
+        env:
+          MARKER: ${{ steps.reserve.outputs.marker }}
+          PRIOR_MARKER: ${{ steps.reserve.outputs.prior_marker }}
+          SECOND_MARKER: ${{ steps.reserve.outputs.second_marker }}
+          RESUME_MARKER: ${{ steps.reserve.outputs.resume_marker }}
+          CURRENT_ARCHITECTURE: ${{ steps.reserve.outputs.architecture }}
+        run: |
+          mkdir -p artifacts/p0-coverage-evidence/attempt-audit
+          gh api --paginate \
+            -H 'Accept: application/vnd.github+json' \
+            "/repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
+            --jq '.artifacts[] | select(.expired == false) | [.created_at, .id, .name] | @tsv' \
+            > artifacts/p0-coverage-evidence/attempt-audit/unexpired-artifacts.tsv
+          python - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          mission = json.loads(
+              Path("configs/data/p0-coverage-evidence-mission-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          mission_id = re.escape(str(mission["mission_id"]))
+          marker = re.compile(
+              rf"^p0-attempt-{mission_id}-(?:freeze|measure)-"
+              rf"(?:E1A|E1B|E2|E3A|E3B|E4)-([0-9a-f]{{64}})-[12]$"
+          )
+          artifacts: list[tuple[str, int, str]] = []
+          for line in Path(
+              "artifacts/p0-coverage-evidence/attempt-audit/unexpired-artifacts.tsv"
+          ).read_text(encoding="utf-8").splitlines():
+              created_at, artifact_id, name = line.split("\t", 2)
+              match = marker.fullmatch(name)
+              if match is not None:
+                  artifacts.append((created_at, int(artifact_id), match.group(1)))
+          ordered_architectures: list[str] = []
+          for _created_at, _artifact_id, architecture in sorted(artifacts):
+              if architecture not in ordered_architectures:
+                  ordered_architectures.append(architecture)
+          current = os.environ["CURRENT_ARCHITECTURE"]
+          if len(ordered_architectures) > 2 or (
+              current not in ordered_architectures and len(ordered_architectures) >= 2
+          ):
+              raise SystemExit("P0_MISSION_ARCHITECTURE_LIMIT_EXCEEDED")
+          if current not in ordered_architectures and ordered_architectures:
+              receipts = tuple(
+                  Path("reports/coverage").glob("p0-evidence-ladder-stage-*-v1.json")
+              )
+              if not receipts:
+                  raise SystemExit("P0_NEW_MISSION_REQUIRED_AFTER_UNRECORDED_FREEZE")
+          if (
+              current in ordered_architectures
+              and len(ordered_architectures) == 2
+              and ordered_architectures[-1] != current
+          ):
+              raise SystemExit("P0_MISSION_ARCHITECTURE_ROLLBACK_FORBIDDEN")
+          PY
+
+          artifact_count() {
+            gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=$1&per_page=100" \
+              --jq '[.artifacts[] | select(.expired == false)] | length'
+          }
+          current_count="$(artifact_count "${MARKER}")"
+          resume_count="$(artifact_count "${RESUME_MARKER}")"
+          first_count="$(artifact_count "${PRIOR_MARKER}")"
+          second_count="$(artifact_count "${SECOND_MARKER}")"
+          if test "${current_count}" -eq 1 && test "${ATTEMPT_SLOT}" = "1" && \
+            test "${OPERATION}" = "freeze"; then
+            test "${second_count}" -eq 0 || {
+              echo "P0_ATTEMPT_RESUME_BLOCKED_AFTER_SECOND_ATTEMPT" >&2
+              exit 1
+            }
+            test "${resume_count}" -eq 0 || {
+              echo "P0_ATTEMPT_RESUME_ALREADY_USED" >&2
+              exit 1
+            }
+            current_artifact="$(gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=${MARKER}&per_page=100" \
+              --jq '[.artifacts[] | select(.expired == false)][0]')"
+            prior_artifact_id="$(jq -r '.id' <<<"${current_artifact}")"
+            prior_run_id="$(jq -r '.workflow_run.id' <<<"${current_artifact}")"
+            prior_revision="$(jq -r '.workflow_run.head_sha' <<<"${current_artifact}")"
+            test -n "${prior_artifact_id}" && test -n "${prior_run_id}" && \
+              test -n "${prior_revision}" && test "${prior_revision}" != "${GITHUB_SHA}" || {
+              echo "P0_ATTEMPT_RESUME_REQUIRES_MINIMAL_FIX_REVISION" >&2
+              exit 1
+            }
+            gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/runs/${prior_run_id}/attempts/1" \
+              > artifacts/p0-coverage-evidence/attempt-audit/prior-run.json
+            jq -e \
+              --argjson run_id "${prior_run_id}" \
+              --arg branch "${GITHUB_REF_NAME}" \
+              --arg sha "${prior_revision}" \
+              --arg path ".github/workflows/81-historical-deep-coverage-proof-export.yml" \
+              '(.id == $run_id) and (.run_attempt == 1) and
+               (.event == "workflow_dispatch") and (.status == "completed") and
+               (.conclusion == "success") and (.head_branch == $branch) and
+               (.head_sha == $sha) and ((.path | split("@")[0]) == $path)' \
+              artifacts/p0-coverage-evidence/attempt-audit/prior-run.json >/dev/null || {
+              echo "P0_ATTEMPT_RESUME_SOURCE_RUN_INVALID" >&2
+              exit 1
+            }
+            gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/runs/${prior_run_id}/jobs?filter=all&per_page=100" \
+              > artifacts/p0-coverage-evidence/attempt-audit/prior-jobs.json
+            jq -e \
+              '([.jobs[] | select(.name == "freeze")] | length) == 1 and
+               ([.jobs[] | select(.name == "freeze" and .conclusion == "skipped")] | length) == 1' \
+              artifacts/p0-coverage-evidence/attempt-audit/prior-jobs.json >/dev/null || {
+              echo "P0_ATTEMPT_RESUME_REQUIRES_UNCONSUMED_FREEZE" >&2
+              exit 1
+            }
+            mkdir -p artifacts/p0-coverage-evidence/attempt-audit/prior-reservation
+            gh run download "${prior_run_id}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --name "${MARKER}" \
+              --dir artifacts/p0-coverage-evidence/attempt-audit/prior-reservation
+            export PRIOR_ARTIFACT_ID="${prior_artifact_id}"
+            export PRIOR_RUN_ID="${prior_run_id}"
+            export PRIOR_REVISION="${prior_revision}"
+            python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          mission = json.loads(
+              Path("configs/data/p0-coverage-evidence-mission-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          reservation_path = Path(
+              "artifacts/p0-coverage-evidence/attempt-audit/"
+              "prior-reservation/attempt-reservation.json"
+          )
+          reservation = json.loads(reservation_path.read_text(encoding="utf-8"))
+          expected = {
+              "schema_version": "p0-coverage-attempt-reservation-v1",
+              "mission_id": mission["mission_id"],
+              "operation": os.environ["OPERATION"],
+              "stage": os.environ["STAGE"],
+              "architecture_fingerprint": os.environ["CURRENT_ARCHITECTURE"],
+              "attempt_slot": int(os.environ["ATTEMPT_SLOT"]),
+              "code_revision": os.environ["PRIOR_REVISION"],
+              "github_run_id": os.environ["PRIOR_RUN_ID"],
+              "github_run_attempt": "1",
+              "mission_expires_at": mission.get("expires_at"),
+              "marker_retention_days": 90,
+          }
+          if reservation != expected:
+              raise SystemExit("P0_ATTEMPT_RESUME_RESERVATION_INVALID")
+          canonical = json.dumps(
+              reservation,
+              sort_keys=True,
+              separators=(",", ":"),
+          ).encode()
+          resume = {
+              "schema_version": "p0-coverage-attempt-resume-v1",
+              "mission_id": mission["mission_id"],
+              "operation": os.environ["OPERATION"],
+              "stage": os.environ["STAGE"],
+              "architecture_fingerprint": os.environ["CURRENT_ARCHITECTURE"],
+              "attempt_slot": int(os.environ["ATTEMPT_SLOT"]),
+              "prior_reservation_artifact_id": int(os.environ["PRIOR_ARTIFACT_ID"]),
+              "prior_reservation_sha256": hashlib.sha256(canonical).hexdigest(),
+              "prior_github_run_id": os.environ["PRIOR_RUN_ID"],
+              "prior_code_revision": os.environ["PRIOR_REVISION"],
+              "code_revision": os.environ["GITHUB_SHA"],
+              "github_run_id": os.environ["GITHUB_RUN_ID"],
+              "github_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "reason": "PREVIOUS_FREEZE_JOB_SKIPPED_BEFORE_SECRET_MOUNT",
+              "marker_retention_days": 90,
+          }
+          Path("artifacts/p0-coverage-evidence/attempt/attempt-resume.json").write_text(
+              json.dumps(resume, sort_keys=True, separators=(",", ":")),
+              encoding="utf-8",
+          )
+          PY
+            echo "reuse_reservation=true" >> "${GITHUB_OUTPUT}"
+          else
+            test "${current_count}" -eq 0 || {
+              echo "P0_DURABLE_ATTEMPT_ALREADY_RESERVED" >&2
+              exit 1
+            }
+            test "${resume_count}" -eq 0 || {
+              echo "P0_ATTEMPT_RESUME_ORPHANED" >&2
+              exit 1
+            }
+            echo "reuse_reservation=false" >> "${GITHUB_OUTPUT}"
+          fi
+          if test "${current_count}" -eq 0 && test "${ATTEMPT_SLOT}" = "1"; then
+            test "${first_count}" -eq 0 && test "${second_count}" -eq 0 || {
+              echo "P0_ATTEMPT_SLOT_SEQUENCE_INVALID" >&2
+              exit 1
+            }
+          elif test "${current_count}" -eq 0; then
+            test "${first_count}" -eq 1 && test "${second_count}" -eq 0 || {
+              echo "P0_SECOND_ATTEMPT_REQUIRES_FIRST" >&2
+              exit 1
+            }
+            first_revision="$(gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=${PRIOR_MARKER}&per_page=100" \
+              --jq '[.artifacts[] | select(.expired == false)][0].workflow_run.head_sha')"
+            test -n "${first_revision}" && test "${first_revision}" != "${GITHUB_SHA}" || {
+              echo "P0_SECOND_ATTEMPT_REQUIRES_MINIMAL_FIX_REVISION" >&2
+              exit 1
+            }
+          fi
+
+      - name: Revalider la branche exacte avant publication de la reservation
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "codex/p0-coverage-evidence-ladder-v1"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${GITHUB_REF_NAME}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
+
+      - name: Publier la reservation avant d'autoriser les secrets R2
+        if: ${{ steps.attempt-audit.outputs.reuse_reservation != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.reserve.outputs.marker }}
+          path: artifacts/p0-coverage-evidence/attempt/attempt-reservation.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Publier la reprise unique avant d'autoriser les secrets R2
+        if: ${{ steps.attempt-audit.outputs.reuse_reservation == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.reserve.outputs.resume_marker }}
+          path: artifacts/p0-coverage-evidence/attempt/attempt-resume.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  measure:
+    if: ${{ inputs.operation == 'measure' }}
+    needs:
+      - plan
+      - attempt-reservation
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      STAGE: ${{ inputs.stage }}
+      SELECTION_PATH: configs/data/p0-coverage-evidence-selection-${{ inputs.stage }}-v1.json
+      PARTITION_ID: ${{ matrix.partition_id }}
+      ATTEMPT_SLOT: ${{ inputs.attempt_slot }}
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      ODDS_API_CREDITS_ALLOWED: "0"
+      REMOTE_SQL_READS_ALLOWED: "0"
+      REMOTE_SQL_WRITES_ALLOWED: "0"
+      R2_WRITES_ALLOWED: "0"
+      R2_DELETES_ALLOWED: "0"
+      PURCHASES_ALLOWED: "0"
+      DEPLOYMENTS_ALLOWED: "0"
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      GH_TOKEN: ${{ github.token }}
+      EXACT_LADDER_BRANCH: codex/p0-coverage-evidence-ladder-v1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer le lecteur P0
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+
+      - name: Écrire le checkpoint initial avant tout secret R2
+        shell: bash
+        run: |
+          mkdir -p artifacts/p0-coverage-evidence/shard
+          date +%s > artifacts/p0-coverage-evidence/shard/measurement-start-epoch.txt
+          python scripts/run_p0_coverage_evidence.py checkpoint \
+            --stage "${STAGE}" \
+            --selection "${SELECTION_PATH}" \
+            --partition-id "${PARTITION_ID}" \
+            --code-revision "${GITHUB_SHA}" \
+            --attempt-slot "${ATTEMPT_SLOT}" \
+            --status STARTED \
+            --elapsed-seconds 0 \
+            --output artifacts/p0-coverage-evidence/shard/checkpoint-start.json
+
+      - name: Publier le checkpoint initial immuable
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-coverage-evidence-progress-${{ inputs.stage }}-${{ matrix.partition_id }}-${{ inputs.attempt_slot }}-${{ github.run_id }}-${{ github.run_attempt }}-start
+          path: artifacts/p0-coverage-evidence/shard/checkpoint-start.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Mesurer une partition par lectures R2 exactes
+        id: partition_measurement
+        continue-on-error: true
+        timeout-minutes: >-
+          ${{ (inputs.stage == 'E1A' || inputs.stage == 'E1B' || inputs.stage == 'E4') && 4 ||
+          (inputs.stage == 'E2' && 9 || 14) }}
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "${GITHUB_REF_NAME}" = "${EXACT_LADDER_BRANCH}"
+          test "$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/${EXACT_LADDER_BRANCH}" \
+            --jq .object.sha)" = "${GITHUB_SHA}"
+          python scripts/run_p0_coverage_evidence.py measure \
+            --stage "${STAGE}" \
+            --selection "${SELECTION_PATH}" \
+            --partition-id "${PARTITION_ID}" \
+            --code-revision "${GITHUB_SHA}" \
+            --attempt-slot "${ATTEMPT_SLOT}" \
+            --output-directory artifacts/p0-coverage-evidence/shard
+
+      - name: Écrire le checkpoint terminal et le coût fail-closed
+        if: ${{ always() }}
+        shell: bash
+        env:
+          MEASUREMENT_OUTCOME: ${{ steps.partition_measurement.outcome }}
+        run: |
+          started="$(cat artifacts/p0-coverage-evidence/shard/measurement-start-epoch.txt)"
+          now="$(date +%s)"
+          elapsed="$((now - started))"
+          test "${elapsed}" -ge 0 || elapsed=0
+          if test "${MEASUREMENT_OUTCOME}" = "success"; then
+            status=COMPLETED
+            failure_args=()
+          else
+            status=FAILED
+            failure_args=(--failure-code "MEASUREMENT_STEP_${MEASUREMENT_OUTCOME^^}")
+          fi
+          python scripts/run_p0_coverage_evidence.py checkpoint \
+            --stage "${STAGE}" \
+            --selection "${SELECTION_PATH}" \
+            --partition-id "${PARTITION_ID}" \
+            --code-revision "${GITHUB_SHA}" \
+            --attempt-slot "${ATTEMPT_SLOT}" \
+            --status "${status}" \
+            --elapsed-seconds "${elapsed}" \
+            --measurement-directory artifacts/p0-coverage-evidence/shard \
+            "${failure_args[@]}" \
+            --output artifacts/p0-coverage-evidence/shard/checkpoint-final.json
+
+      - name: Encapsuler les trois sorties sous l'identité de partition
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          import shutil
+          from pathlib import Path
+
+          partition_id = os.environ["PARTITION_ID"]
+          if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", partition_id) is None:
+              raise SystemExit("P0_PARTITION_ID_UNSAFE")
+          source = Path("artifacts/p0-coverage-evidence/shard")
+          destination = Path("artifacts/p0-coverage-evidence/shards") / partition_id
+          destination.mkdir(parents=True, exist_ok=False)
+          for name in (
+              "partition-receipt.json",
+              "family-counts.json",
+              "cost-report.json",
+              "checkpoint-start.json",
+              "checkpoint-final.json",
+          ):
+              candidate = source / name
+              if candidate.exists():
+                  shutil.copyfile(candidate, destination / name)
+          PY
+
+      - name: Publier uniquement le reçu de partition allow-listé
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-coverage-evidence-shard-${{ inputs.stage }}-${{ matrix.partition_id }}-${{ inputs.attempt_slot }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/p0-coverage-evidence/shards
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
+
+      - name: Conserver l'échec après publication de sa télémétrie
+        if: ${{ steps.partition_measurement.outcome != 'success' }}
+        run: exit 1
+
+  recovery-guard:
+    if: ${{ inputs.operation == 'recover_measure' }}
+    needs: ladder-guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      STAGE: ${{ inputs.stage }}
+      ATTEMPT_SLOT: ${{ inputs.attempt_slot }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer le preflight de reprise sans secret R2
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+
+      - name: Vérifier l'absence de reçu Git avant reprise
+        shell: bash
+        run: |
+          python scripts/run_p0_coverage_evidence.py preflight \
+            --stage "${STAGE}" \
+            --operation measure \
+            --attempt-slot "${ATTEMPT_SLOT}"
+
+      - name: Reconstruire l'identité exacte de la tentative interrompue
+        id: recovery-marker
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          from robin.historical_deep.coverage_evidence import (
+              evidence_architecture_fingerprint,
+              load_authority,
+          )
+
+          mission = json.loads(
+              Path("configs/data/p0-coverage-evidence-mission-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          mission_id = mission.get("mission_id")
+          stage = os.environ["STAGE"]
+          attempt_slot = os.environ["ATTEMPT_SLOT"]
+          if not isinstance(mission_id, str) or re.fullmatch(
+              r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", mission_id
+          ) is None:
+              raise SystemExit("P0_MISSION_ID_UNSAFE")
+          if stage not in {"E1A", "E1B", "E2", "E3A", "E3B", "E4"}:
+              raise SystemExit("P0_STAGE_INVALID")
+          if attempt_slot not in {"1", "2"}:
+              raise SystemExit("P0_ATTEMPT_SLOT_INVALID")
+          authority = load_authority(Path.cwd(), stage=stage)
+          architecture = evidence_architecture_fingerprint(authority)
+          marker_base = f"p0-attempt-{mission_id}-measure-{stage}-{architecture}"
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"first_marker={marker_base}-1\n")
+              output.write(f"second_marker={marker_base}-2\n")
+              output.write(f"target_marker={marker_base}-{attempt_slot}\n")
+              output.write(f"mission_id={mission_id}\n")
+              output.write(f"architecture={architecture}\n")
+              output.write(f"mission_expires_at={mission.get('expires_at')}\n")
+          PY
+
+      - name: Prouver l'interruption terminale exacte et contrôler la réservation
+        shell: bash
+        env:
+          FIRST_MARKER: ${{ steps.recovery-marker.outputs.first_marker }}
+          SECOND_MARKER: ${{ steps.recovery-marker.outputs.second_marker }}
+          TARGET_MARKER: ${{ steps.recovery-marker.outputs.target_marker }}
+          MISSION_ID: ${{ steps.recovery-marker.outputs.mission_id }}
+          ARCHITECTURE: ${{ steps.recovery-marker.outputs.architecture }}
+          MISSION_EXPIRES_AT: ${{ steps.recovery-marker.outputs.mission_expires_at }}
+        run: |
+          artifact_list() {
+            gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=$1&per_page=100"
+          }
+          first_json="$(artifact_list "${FIRST_MARKER}")"
+          second_json="$(artifact_list "${SECOND_MARKER}")"
+          first_count="$(jq '[.artifacts[] | select(.expired == false)] | length' <<<"${first_json}")"
+          second_count="$(jq '[.artifacts[] | select(.expired == false)] | length' <<<"${second_json}")"
+          if test "${ATTEMPT_SLOT}" = "1"; then
+            test "${first_count}" -eq 1 && test "${second_count}" -eq 0 || {
+              echo "P0_RECOVERY_MARKER_SEQUENCE_INVALID" >&2
+              exit 1
+            }
+            target_json="${first_json}"
+          else
+            test "${first_count}" -eq 1 && test "${second_count}" -eq 1 || {
+              echo "P0_RECOVERY_MARKER_SEQUENCE_INVALID" >&2
+              exit 1
+            }
+            target_json="${second_json}"
+          fi
+          run_id="$(jq -r '[.artifacts[] | select(.expired == false)][0].workflow_run.id' <<<"${target_json}")"
+          marker_revision="$(jq -r '[.artifacts[] | select(.expired == false)][0].workflow_run.head_sha' <<<"${target_json}")"
+          test "${marker_revision}" = "${GITHUB_SHA}" || {
+            echo "P0_RECOVERY_EXACT_REVISION_REQUIRED" >&2
+            exit 1
+          }
+          run_json="$(gh api \
+            -H 'Accept: application/vnd.github+json' \
+            "/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/attempts/1")"
+          jq -e \
+            --arg sha "${GITHUB_SHA}" \
+            --arg branch "${GITHUB_REF_NAME}" \
+            '(.run_attempt == 1) and
+             (.conclusion | IN("failure", "cancelled", "timed_out")) and
+             (.head_sha == $sha) and
+             (.head_branch == $branch) and
+             (.event == "workflow_dispatch") and
+             ((.path | split("@")[0]) == ".github/workflows/81-historical-deep-coverage-proof-export.yml")' \
+            <<<"${run_json}" >/dev/null || {
+            echo "P0_RECOVERY_EXACT_FAILED_RUN_REQUIRED" >&2
+            exit 1
+          }
+          export RECOVERY_RUN_ID="${run_id}"
+          mkdir -p artifacts/p0-coverage-evidence/recovery-marker
+          gh run download "${run_id}" \
+            --name "${TARGET_MARKER}" \
+            --dir artifacts/p0-coverage-evidence/recovery-marker
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          reservation = json.loads(
+              Path(
+                  "artifacts/p0-coverage-evidence/recovery-marker/attempt-reservation.json"
+              ).read_text(encoding="utf-8")
+          )
+          expected = {
+              "schema_version": "p0-coverage-attempt-reservation-v1",
+              "mission_id": os.environ["MISSION_ID"],
+              "operation": "measure",
+              "stage": os.environ["STAGE"],
+              "architecture_fingerprint": os.environ["ARCHITECTURE"],
+              "attempt_slot": int(os.environ["ATTEMPT_SLOT"]),
+              "code_revision": os.environ["GITHUB_SHA"],
+              "github_run_id": os.environ["RECOVERY_RUN_ID"],
+              "github_run_attempt": "1",
+              "mission_expires_at": os.environ["MISSION_EXPIRES_AT"],
+              "marker_retention_days": 90,
+          }
+          if reservation != expected:
+              raise SystemExit("P0_RECOVERY_RESERVATION_INVALID")
+          PY
+
+  aggregate:
+    if: >-
+      ${{ always() && !cancelled() &&
+      ((inputs.operation == 'measure' && needs.attempt-reservation.result == 'success') ||
+      (inputs.operation == 'recover_measure' && needs.recovery-guard.result == 'success')) }}
+    needs:
+      - attempt-reservation
+      - measure
+      - recovery-guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      STAGE: ${{ inputs.stage }}
+      ATTEMPT_SLOT: ${{ inputs.attempt_slot }}
+      SELECTION_PATH: configs/data/p0-coverage-evidence-selection-${{ inputs.stage }}-v1.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer l'agrégateur P0
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+
+      - name: Télécharger uniquement les reçus de partitions du niveau
+        if: ${{ inputs.operation == 'measure' }}
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: p0-coverage-evidence-shard-${{ inputs.stage }}-*
+          path: artifacts/p0-coverage-evidence/shards
+          merge-multiple: true
+
+      - name: Agréger les reçus sans accès externe
+        run: >-
+          python scripts/run_p0_coverage_evidence.py aggregate
+          --stage "${STAGE}"
+          --attempt-slot "${ATTEMPT_SLOT}"
+          --selection "${SELECTION_PATH}"
+          --shards-directory artifacts/p0-coverage-evidence/shards
+          --output-directory artifacts/p0-coverage-evidence/stage
+
+      - name: Publier uniquement la preuve de niveau allow-listée
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-coverage-evidence-stage-${{ inputs.stage }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/p0-coverage-evidence/stage/stage-receipt.json
+            artifacts/p0-coverage-evidence/stage/coverage-feed.json
+            artifacts/p0-coverage-evidence/stage/gate-report.json
+            artifacts/p0-coverage-evidence/stage/cost-report.json
           if-no-files-found: error
           retention-days: 90
           compression-level: 9

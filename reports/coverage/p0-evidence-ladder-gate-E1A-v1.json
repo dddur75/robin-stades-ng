@@ -1,0 +1,142 @@
+{
+  "architecture_fingerprint": "1f311bafdd51a45fa08ac8ac6fb3c125d33d1fe402928e03061f9ddd1352fb21",
+  "architecture_ordinal": 1,
+  "attempt_slot": 2,
+  "checkpoint_gate": "PASS",
+  "checkpoint_hashes": {
+    "p0-e1a-135-2024-all16": "4daf14b2db0e239750af7d5e64c653cead9442fb3be1464e7944665fbd8e700c"
+  },
+  "closed_cells": 0,
+  "council_decision": "FAIL_AND_REDESIGN",
+  "cumulative_mission_logical_gets_charged": 329,
+  "cumulative_mission_logical_gets_observed": 329,
+  "domain_decision": "FAIL_AND_REDESIGN",
+  "effects": {
+    "deployments": 0,
+    "odds_credits": 0,
+    "promotion": false,
+    "provider_calls": 0,
+    "provider_credits": 0,
+    "publication": false,
+    "purchases": 0,
+    "r2_deletes": 0,
+    "r2_writes": 0,
+    "real_bets": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0
+  },
+  "failed_probe_cell_keys": [
+    [
+      "api-football:135",
+      2024,
+      "injuries"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "suspensions"
+    ]
+  ],
+  "gate_sha256": "143b6237a93345daff1e23ebe562f8e257da99c7168ed5a1104a262e23f7e909",
+  "measurement_integrity_gate": "PASS",
+  "memory_budget_gate": "UNKNOWN_NO_SIGNED_LIMIT",
+  "memory_observation_gate": "PASS",
+  "missing_source_cell_keys": [],
+  "mission_budget_accounting_basis": "EXACT_OBSERVED",
+  "mission_budget_exact": true,
+  "mission_budget_gate": "PASS",
+  "null_measurement_gate": "UNKNOWN_NOT_PROVEN",
+  "overtime_partition_ids": [],
+  "read_accounting_gate": "PASS",
+  "resource_budget_gate": "PASS",
+  "scale_gate": "FAIL",
+  "schema_version": "p0-coverage-stage-gate-v1",
+  "scientific_gate": "FAIL",
+  "scope_cells": 0,
+  "selection_sha256": "61f6b4f600b96f971af80bd08de9c4cc8eb64ee8a8a32aa785a0595d3146d577",
+  "source_lineage_manifest_sha256": "ea3c127bd7e50110001547cb77ec79d4ea45194f2e9e77e5c6b9d3c6395184fd",
+  "stage": "E1A",
+  "time_budget_gate": "PASS",
+  "unknown_null_cell_keys": [
+    [
+      "api-football:135",
+      2024,
+      "events"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "fixtures"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "formations"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "injuries"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "lineup_players"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "lineups"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "player_match_statistics"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "player_season_statistics"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "players"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "referees"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "rounds"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "standings"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "suspensions"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "team_match_statistics"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "teams"
+    ],
+    [
+      "api-football:135",
+      2024,
+      "venues"
+    ]
+  ]
+}

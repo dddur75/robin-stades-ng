@@ -1,0 +1,67 @@
+{
+  "schema_version": "e1a-unknown-profile-v1",
+  "stage": "E1A",
+  "competition": {"canonical_key": "api-football:135", "name": "Serie A"},
+  "season": 2024,
+  "grain": "one unavailability observation",
+  "fixture_selection_count": 10,
+  "family_count": 16,
+  "canonical_category": "ABSENCE_CAUSE_UNKNOWN",
+  "historical_source_label": "UNCLASSIFIABLE",
+  "unknown_count": 149,
+  "total_absence_records": 3036,
+  "unknown_share": 0.049077733860342556,
+  "unknown_share_percent": 4.907773386034256,
+  "signature_count": 17,
+  "distribution_by_signature": [
+    {"signature_sha256":"095e74586ce588d88baa287e46296b998f5280c875d5455eaa22311094949ea7","reason_code":"UNRECOGNIZED_SEMANTICS","normalized_reason":"hernia","normalized_type":"questionable","count":6},
+    {"signature_sha256":"0d800a6b5451bb21d5d1c5b3c2e147b67206b97684ae78b30ce808b7cae5b2ae","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"broken hand","normalized_type":"missing fixture","count":4},
+    {"signature_sha256":"132f06de1887acecdefd50b3980a400c6f041b155eef23a21b24e4806926242c","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"health problems","normalized_type":"missing fixture","count":2},
+    {"signature_sha256":"15307a6386936cc45e72fd9eb15db61a4cb05aaabee45bb23d02332f80731fb1","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"coach's decision","normalized_type":"missing fixture","count":31},
+    {"signature_sha256":"2a8f05d42abbbd2c8692a9fc86c6f13b934267606b5f72a4ff3f46177738d3f7","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"rest","normalized_type":"missing fixture","count":1},
+    {"signature_sha256":"2e328cb04a6af015f0eba03454abd1e5b27f34f9d57137e8c5afdd74c518bfa9","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"hernia","normalized_type":"missing fixture","count":4},
+    {"signature_sha256":"319f0d56fb17d1d5d138c877e0d65d21870d2a9e60166cd508561cb5df49a5eb","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"doping","normalized_type":"missing fixture","count":12},
+    {"signature_sha256":"33f232860950025cb8c472496450b28ebc13d6c9ca0744889431197a9dfcfa4c","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"broken rib","normalized_type":"missing fixture","count":2},
+    {"signature_sha256":"4176235d38be7b459028db38d61423c35562a8333772a00c049e1c287e56232b","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"personal reasons","normalized_type":"missing fixture","count":2},
+    {"signature_sha256":"636a9127023e66f77b79f1c609fcfb3d3f1f862a698daa65e2ca4a62d8d02936","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"overload","normalized_type":"missing fixture","count":1},
+    {"signature_sha256":"6cc3c77434c1698d09105013b67372226e1c0daedc94fad4daad8242f94d16ba","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"broken nose","normalized_type":"missing fixture","count":1},
+    {"signature_sha256":"99b357a3496f2352cd46a1136a9ec30226555811d866a5b3650ab01d743d721a","reason_code":"UNRECOGNIZED_SEMANTICS","normalized_reason":"heart problems","normalized_type":"questionable","count":1},
+    {"signature_sha256":"9dc0af0d7bd5739746451bb94471758e26ebaecb18b2e5d3204fde40665137c3","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"broken leg","normalized_type":"missing fixture","count":6},
+    {"signature_sha256":"c0ce8f0d7c8583cd42af2ad85e2a081563f67b2962f38450a13a624477f830c1","reason_code":"UNRECOGNIZED_SEMANTICS","normalized_reason":"inactive","normalized_type":"questionable","count":8},
+    {"signature_sha256":"da0d2fc9d1f034f535b07b2d3aa910ba9bc50c92bfc4bb3024d51c59528c1031","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"inactive","normalized_type":"missing fixture","count":34},
+    {"signature_sha256":"e21000c3094cead6e6cc85eafe092798d6b9c831266c20af696dec356693916c","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"knock","normalized_type":"missing fixture","count":2},
+    {"signature_sha256":"ef80447b2856da3226cd73af6a620dd4c2878ac92fc2a8ead8f29bd56ec78acf","reason_code":"PROVIDER_PLACEHOLDER_WITHOUT_CLOSED_SIGNAL","normalized_reason":"heart problems","normalized_type":"missing fixture","count":32}
+  ],
+  "distribution_by_reason_text": {
+    "status": "AVAILABLE_IN_COMMITTED_EVIDENCE",
+    "normalization_version": "nfkc-casefold-whitespace-v1",
+    "values": [
+      {"value":"broken hand","count":4},{"value":"broken leg","count":6},
+      {"value":"broken nose","count":1},{"value":"broken rib","count":2},
+      {"value":"coach's decision","count":31},{"value":"doping","count":12},
+      {"value":"health problems","count":2},{"value":"heart problems","count":33},
+      {"value":"hernia","count":10},{"value":"inactive","count":42},
+      {"value":"knock","count":2},{"value":"overload","count":1},
+      {"value":"personal reasons","count":2},{"value":"rest","count":1}
+    ]
+  },
+  "distribution_by_team": {"status": "NOT_AVAILABLE_IN_COMMITTED_EVIDENCE"},
+  "distribution_by_player": {"status": "NOT_AVAILABLE_IN_COMMITTED_EVIDENCE"},
+  "distribution_by_position": {"status": "NOT_AVAILABLE_IN_COMMITTED_EVIDENCE"},
+  "distribution_by_fixture": {"status": "NOT_AVAILABLE_IN_COMMITTED_EVIDENCE"},
+  "distribution_by_date": {"status": "NOT_AVAILABLE_IN_COMMITTED_EVIDENCE"},
+  "integrity": {
+    "partition_identity_exact": true,
+    "signature_counts_sum": 149,
+    "signature_hashes_unique": true,
+    "placeholder_without_closed_signal": 134,
+    "unrecognized_semantics": 15,
+    "injuries_confirmed": 2681,
+    "suspensions_confirmed": 206
+  },
+  "evidence_refs": [
+    "reports/coverage/p0-evidence-ladder-stage-E1A-architecture-2-v1.json",
+    "reports/coverage/p0-evidence-ladder-feed-E1A-architecture-2-v1.json",
+    "configs/data/p0-coverage-evidence-selection-E1A-v1.json"
+  ]
+}

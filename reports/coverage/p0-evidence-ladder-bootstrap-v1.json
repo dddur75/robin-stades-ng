@@ -1,0 +1,91 @@
+{
+  "schema_version": "p0-evidence-ladder-bootstrap-v1",
+  "generated_at": "2026-08-05T07:52:00Z",
+  "branch": "codex/p0-coverage-evidence-ladder-v1",
+  "base_revision": "96bcc2d56f1b68a011f1efa11022ebd4b8713208",
+  "authority_revision": "46d8359",
+  "pull_request": 30,
+  "pull_request_state": "DRAFT",
+  "contracts": {
+    "stage_mapping": {
+      "path": "configs/data/coverage-scale-pack-manifests-v2.json",
+      "file_sha256_lf": "d702b88c964d64d984cc69d2b297f37fbb74f087347934f8d3eee7a22597409f"
+    },
+    "source_config": {
+      "path": "configs/data/p0-coverage-source-config-v1.json",
+      "file_sha256_lf": "52fb07c0549458a04b5253a1171c3e87c6837bef78ad20279257c2a04011d82e"
+    },
+    "mission_manifest": {
+      "path": "configs/data/p0-coverage-evidence-mission-v1.json",
+      "file_sha256_lf": "d3c9df38ca02a4d7d5feaa0d1561541c26ea6313fb8755d04de5690367c6262f",
+      "top_level_fields": 8,
+      "source_hash_matches_source_config": true
+    }
+  },
+  "source_inventory": {
+    "manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+    "objects": 2321,
+    "segments": 371,
+    "logical_bytes": 565269589,
+    "stored_bytes": 47724849,
+    "source_code_revision": "f489971c03b53e9ea1381655f1591328ed055d41",
+    "source_run_token": "30853757779:1",
+    "inventory_build_provider_calls": 0,
+    "authority": "OBJECT_MEMBERSHIP_AND_PROVENANCE_ONLY"
+  },
+  "stage_orders": {
+    "domain": ["E0", "E1A", "E1B", "E2", "E3A", "E3B", "E4"],
+    "council": ["E1", "E2", "E3A", "E3B", "E4"]
+  },
+  "closure_ceiling": {
+    "E0": 0,
+    "E1A": 0,
+    "E1B": 0,
+    "E2": 0,
+    "E3A": 16,
+    "E3B": 80,
+    "E4": 480,
+    "ceiling_is_not_a_closure_claim": true
+  },
+  "fail_closed_invariants": {
+    "legacy_v1_immutable": true,
+    "legacy_e2_50_rejected": true,
+    "legacy_writes_rejected": true,
+    "ambiguous_e1_e3_writes_rejected": true,
+    "e1a_alone_does_not_prove_council_e1": true,
+    "mapping_grants_execution_authority": false,
+    "selection_manifest_required_before_calculation": true,
+    "inventory_rows_received_used_as_denominator": false,
+    "aggregate_projection_used_as_fixture_authority": false,
+    "position_based_identity_allowed": false,
+    "third_unchanged_identity_attempt_allowed": false
+  },
+  "validation": {
+    "targeted_mapping_tests": 14,
+    "coverage_domain_tests": 48,
+    "council_tests": 22,
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "json_parse": "PASS",
+    "git_diff_check": "PASS",
+    "independent_authority_review": "PASS"
+  },
+  "effects_observed": {
+    "workflow_dispatches": 0,
+    "provider_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "odds_credits": 0,
+    "real_bets": 0,
+    "promotion": false,
+    "publication": false
+  },
+  "decision": "PASS_AND_HOLD",
+  "verdict": "P0_EVIDENCE_LADDER_BOOTSTRAP_READY",
+  "next_gate": "IMPLEMENT_AND_VALIDATE_INVENTORY_PINNED_GET_ONLY_READER_BEFORE_E1A_FREEZE"
+}
