@@ -29,11 +29,17 @@
     "after_fix": ["push on codex/**", "pull_request.synchronize", "pull_request.reopened"]
   },
   "actual_runs": [],
+  "first_recovery_result": {
+    "head": "b5cf2e116471ce183925c423cac97f565149e334",
+    "route": "push on codex/**",
+    "result": "NO_RUN",
+    "checked_at": "2026-08-06T22:24:00Z"
+  },
   "root_cause": "The closure commit removed the repository's deterministic exact-head push trigger for codex/** branches. The remaining pull_request route did not materialize a run for the observed GitHub events.",
   "secondary_causes": [
     "pull_request event delivery or workflow scheduling did not materialize despite an active workflow on the base branch",
     "ready_for_review was not an eligible default trigger",
-    "ci.yml does not expose workflow_dispatch for a manual exact-ref recovery"
+    "ci.yml did not expose workflow_dispatch for a manual exact-ref recovery"
   ],
   "excluded_causes": {
     "workflow_disabled": false,
@@ -51,11 +57,18 @@
     "new_workflow": false,
     "empty_commit": false
   },
+  "second_recovery": {
+    "option": "ADD_WORKFLOW_DISPATCH_TO_EXISTING_CI",
+    "change": "Expose workflow_dispatch on the existing quality workflow and dispatch it once on the exact PR head after push.",
+    "new_workflow": false,
+    "empty_commit": false,
+    "maximum_attempts_reached": true
+  },
   "tradeoff": {
     "reliability": "A direct push provides a deterministic exact-head validation route independent of pull_request event delivery.",
     "github_cost": "One additional quality run can occur when pull_request delivery also works.",
     "push_pr_duplication": "Possible; no manual run should be dispatched when an automatic exact-head run exists.",
-    "manual_rerun": "Not available because ci.yml has no workflow_dispatch trigger."
+    "manual_rerun": "Enabled only as the second and final recovery route after the restored codex/** push route produced no run."
   },
   "proof": [
     "git diff e4b3f78^ e4b3f78 -- .github/workflows/ci.yml",
