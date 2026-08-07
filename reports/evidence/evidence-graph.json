@@ -1075,6 +1075,54 @@
       "status":"INVALIDATED",
       "invalidation_reason":"Superseded during PR #33 closure because the dashboard freshness projection contained ten null receipt_hash values despite complete frozen selection provenance.",
       "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.MEASUREMENT.V1.002",
+      "claim":"The bounded five-league E1B canary measured capability coverage for exactly ten frozen fixtures, with all ten source receipt hashes carried from the frozen selection by exact object_id, without promoting any capability to READY or executing E2.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_MEASUREMENT_RECEIPT_PROVENANCE_CORRECTED",
+      "source":"GitHub Actions run 31177349967 plus reviewed offline-only receipt provenance and historical-UNKNOWN corrections",
+      "grain":"capability_by_league_over_ten_frozen_fixtures",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e1b/e1b-measurement-v1.json",
+      "hash":"0716ad1f4356107d7bc4ab245071a895bb8be63031438a381ccd0d089c5dd1f6",
+      "code_revision":"8f6a2a23084ef3408d03ab73351390368c88d3d9",
+      "execution_id":"github-actions-31177349967-offline-receipt-provenance-correction",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.REPLAY.V1.002",
+      "claim":"The corrected E1B aggregation replay is byte-identical and required zero additional remote GETs after the bounded acquisition.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_REPLAY_RECEIPT_PROVENANCE_CORRECTED",
+      "source":"deterministic offline replay verification after receipt provenance correction",
+      "grain":"seven_committed_e1b_report_artifacts",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e1b/e1b-replay-verification-v1.json",
+      "hash":"f1f9a5c55a9625fafa5ff235fd4322565df7af59612e49dc5482327d91681759",
+      "code_revision":"8f6a2a23084ef3408d03ab73351390368c88d3d9",
+      "execution_id":"local-e1b-offline-receipt-provenance-correction-20260807T141500Z",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.DASHBOARD.V1.002",
+      "claim":"The corrected committed E1B dashboard contract carries the ten frozen receipt hashes into freshness rows and preserves the historical E1A 149 unknowns without duplicating them across leagues.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_DASHBOARD_CONTRACT_RECEIPT_PROVENANCE_CORRECTED",
+      "source":"reviewed offline aggregation, exact selection-to-dashboard receipt comparison and committed-output tests",
+      "grain":"dashboard_contract_data_only",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/evidence/e1b/e1b-dashboard-contract-v1.json",
+      "hash":"d89d6944913f735ab29282f8ed239ab6ca3ac6f7cf47000158ecf1b975b784de",
+      "code_revision":"8f6a2a23084ef3408d03ab73351390368c88d3d9",
+      "execution_id":"local-e1b-offline-receipt-provenance-correction-20260807T141500Z",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
     }
   ],
   "decision_nodes":[
@@ -1127,7 +1175,8 @@
     {"decision_id":"RCV3-20260807-047","ledger_record_hash":"7ebaf9118b918851478f1e81eafbf0665afaf3609639375545e4c94292b05d9d"},
     {"decision_id":"RCV3-20260807-048","ledger_record_hash":"220cc515f92a5dd67816e156a8544c632bc2917a7257da15e501ca37a0d84d9b"},
     {"decision_id":"RCV3-20260807-049","ledger_record_hash":"241a9699ed9c1b8613076b0fe2eb11d7cb3ce4053ebce1acc9e01d291392b533"},
-    {"decision_id":"RCV3-20260807-050","ledger_record_hash":"785cc4d33b2ec18a40c1fd8fc24c1287e9934570d307474b4d3062992cd164ce"}
+    {"decision_id":"RCV3-20260807-050","ledger_record_hash":"785cc4d33b2ec18a40c1fd8fc24c1287e9934570d307474b4d3062992cd164ce"},
+    {"decision_id":"RCV3-20260807-051","ledger_record_hash":"9595d018eebea3345401e6ea5165a00255e81d3956cd6db54a9caa7a690d3f02"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1292,6 +1341,11 @@
     {"edge_id":"EDGE.160","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.161","from_claim_id":"COVERAGE.E1B.SELECTION.V1.002","to_decision_id":"RCV3-20260807-050","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.162","from_claim_id":"COVERAGE.E1B.COST.V1.001","to_decision_id":"RCV3-20260807-050","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.163","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-050","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.163","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-050","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.164","from_claim_id":"COVERAGE.E1B.MEASUREMENT.V1.002","to_decision_id":"RCV3-20260807-051","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.165","from_claim_id":"COVERAGE.E1B.REPLAY.V1.002","to_decision_id":"RCV3-20260807-051","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.166","from_claim_id":"COVERAGE.E1B.COST.V1.001","to_decision_id":"RCV3-20260807-051","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.167","from_claim_id":"COVERAGE.E1B.DASHBOARD.V1.002","to_decision_id":"RCV3-20260807-051","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.168","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-051","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
