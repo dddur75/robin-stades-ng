@@ -1,0 +1,23 @@
+{
+  "bootstrap_gets": 1,
+  "fixtures_measured": 100,
+  "logical_gets": 161,
+  "network_bytes": 6434224,
+  "odds_credits": 0,
+  "payload_gets": 80,
+  "provider_calls": 0,
+  "r2_deletes": 0,
+  "r2_head": 0,
+  "r2_list": 0,
+  "r2_writes": 0,
+  "receipt_gets": 80,
+  "remote_sql_queries": 0,
+  "runtime": {
+    "duration_seconds": 107.347255,
+    "github_minutes": "UNKNOWN_NOT_OBSERVED",
+    "run_id": "31192408221"
+  },
+  "schema_version": "p0-e2-costs-v1",
+  "selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b",
+  "unique_source_objects": 80
+}

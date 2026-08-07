@@ -1,0 +1,1041 @@
+{
+  "capabilities": [
+    {
+      "capability_id": "TEAM",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "PLAYER",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 4209,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 4209,
+      "unknown": 0
+    },
+    {
+      "capability_id": "LINEUP",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "FORMATION",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "EVENTS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": null,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 1639,
+      "unknown": 0
+    },
+    {
+      "capability_id": "TEAM_STATISTICS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "PLAYER_STATISTICS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 0.99976241,
+      "decision": "E3A_TARGETED_FIX_REQUIRED",
+      "empty_valid": 0,
+      "expected": 4209,
+      "global_ready_status_changed": false,
+      "invalid": 1,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED_PARTIAL"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 0.99976241,
+      "reason": "IDENTITY_HASH_OR_DUPLICATE_INTEGRITY",
+      "received": 4208,
+      "unknown": 1
+    },
+    {
+      "capability_id": "DISCIPLINE_GENERIC",
+      "content_presence_rate_weighted": 0.99261084,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 3,
+      "expected": null,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 403,
+      "unknown": 0
+    },
+    {
+      "capability_id": "CALENDAR",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_TARGETED_FIX_REQUIRED",
+      "empty_valid": 0,
+      "expected": 100,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": "FINAL_STATE_NOT_KNOWN_AS_OF",
+      "received": 100,
+      "unknown": 0
+    }
+  ],
+  "freshness": [
+    {
+      "completed_at": "2026-07-31T03:25:29.342339Z",
+      "object_id": "005cf7b640f2d0c55efed91a8f64f5248eded7818ef36702d3f1ed3f67d5b63d",
+      "receipt_hash": "b931cf9168c3ecc6e177da3680da54f575449566a7cab426bed2fb2f591bc0cd",
+      "received_at": "2026-07-31T03:25:29.342339Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:25:54.532681Z",
+      "object_id": "013313085890bba6aa13046618c9db5e401e69428ebd94119339f06afdbcb4f3",
+      "receipt_hash": "eba72b9a20b2a2a3fe146995d512ef939de7bc5442b7a1dfb940f12198eca577",
+      "received_at": "2026-07-31T03:25:54.532681Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:50:54.666940Z",
+      "object_id": "091649219b8c019f992899bd92b5eedde836a097070ad1d687a5771bf72f9e45",
+      "receipt_hash": "fcf732716c36443d0eb698e131caf1ef204f09fe3a468f21110da2e38ccf9397",
+      "received_at": "2026-07-31T02:50:54.666940Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:40:06.371491Z",
+      "object_id": "09550babe05b63be049c36044d69bbed2ad242423ec3d0ecd13534825875d864",
+      "receipt_hash": "1c1d698071de28664b61fd0d32a27e9eb822b3b1d733143059efeda421c11bff",
+      "received_at": "2026-07-31T03:40:06.371491Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:39:50.646382Z",
+      "object_id": "0d95be2d07c3267e32442149f15d7f2dfc1f56fc753b1718822069d10a9eefa4",
+      "receipt_hash": "b030ce9371c3101bdbdad139731be797d423249afd3648c11c5afb0a2e41ed32",
+      "received_at": "2026-07-31T03:39:50.646382Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:07:16.536545Z",
+      "object_id": "0e746905460c3c05bbe125fe19526a7488d40f2b7151334a7adea03c35c4bf9c",
+      "receipt_hash": "429a5852c38de5ebfe2ed0711e0dae3883574cd845fe037f32a2b57c88673695",
+      "received_at": "2026-07-31T03:07:16.536545Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:44:13.952241Z",
+      "object_id": "12fecb40f726daf58b45d70c6dbb35983bf1ba453a2322f5875aee8072d8b035",
+      "receipt_hash": "c956ed4b74e980f22e4b7ade7262e08430fbf80094757b615f0ac6c4ef7acb59",
+      "received_at": "2026-07-31T10:44:13.952241Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:25:12.658357Z",
+      "object_id": "145da22c58259415f97ca14e123c2178889d9ea126786b5bec2e4fbf97cae19c",
+      "receipt_hash": "9e46acc70d225526bb15ef2dddc0c73f014587645a35305e213858fd4b3c1c36",
+      "received_at": "2026-07-31T03:25:12.658357Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:44:36.777855Z",
+      "object_id": "18008bbc00f75b8a4840725c8b924050eaa80f1e99ca6df8b6c02c102d149de5",
+      "receipt_hash": "3cd38a96054b8dd44ed831ba143ed072c04e20ca903a025e158589682fed0607",
+      "received_at": "2026-07-31T10:44:36.777855Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:40:37.983314Z",
+      "object_id": "195e84ca355f6410b22d2b03c8b2e7e4fc714f938343ea3ada77dd3630204d36",
+      "receipt_hash": "044c59fddf95efd5e5e164ee05bc4fae6ea80056f0bfc1270bb25a04fe01d2f5",
+      "received_at": "2026-07-31T03:40:37.983314Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:52:08.748095Z",
+      "object_id": "1ea3d107ba892d52ea34de392e3ffa17e3de4bf8f2f2b77f277748fdd7eede27",
+      "receipt_hash": "51734ebbd0b696408f64b76cdfb9d14e8fa701d5885f92328d206f08437f23c3",
+      "received_at": "2026-07-31T02:52:08.748095Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:52:00.690489Z",
+      "object_id": "21521ae035a7b45f0b3a4fb9d785911771aa8926e9e83f0d6a3661d9b10a4d71",
+      "receipt_hash": "973cd20433894d4b4039fe0e4f745a7860acf334d9b1a0ef8f622e5cb0390265",
+      "received_at": "2026-07-31T02:52:00.690489Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:42:07.925305Z",
+      "object_id": "23c9eb79d520d420d141fc685b0d15637132d074e20f393f35e0e16d0ed456a2",
+      "receipt_hash": "d3503027aac861fd6870fdfd4dd4aeb08a7fa6abb1c41c27a9b76ed02633db4a",
+      "received_at": "2026-07-31T10:42:07.925305Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:50:38.066240Z",
+      "object_id": "250b6e37fcafd8b525fd95c020dc1f223429a3efd77e5ed4a3582b13ca3da358",
+      "receipt_hash": "413dab60441605282e0dbd2b58873cc3c0199e327783072264528c93004d7d5f",
+      "received_at": "2026-07-31T02:50:38.066240Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:51:44.114042Z",
+      "object_id": "2862ee12d8c2e2eeedfc180c95192b90c5703313bd61456c7c142210ce540f31",
+      "receipt_hash": "7c36bbd22b3d6ac9c612cfa460d398628749f8ed328fd46ccda8978eb6f98b0a",
+      "received_at": "2026-07-31T02:51:44.114042Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:24:29.174335Z",
+      "object_id": "2a106520004fcd3945b821db8130f2a671ad8ef7d17b83c8077fc495338c7135",
+      "receipt_hash": "6ad37337ed5c2c75f66d4f9987b39c92ee6be58723823fcc697a4d7e6ed7385b",
+      "received_at": "2026-07-31T03:24:29.174335Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:40:46.155288Z",
+      "object_id": "2a7675761fb09f17d274b200a9e29e346142cd438f6963ec3a4a7238b0d90b87",
+      "receipt_hash": "10ed6e683c5436fb82b1a548ba8c82801648cad760bbadfea0bb0b2f01094981",
+      "received_at": "2026-07-31T03:40:46.155288Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:39:26.955346Z",
+      "object_id": "2ed2103786c4121a4cdc85d1eacb1d6a7f88c5b29979cb0306f1009e9745b1ab",
+      "receipt_hash": "4269d41dfc49eaf4efe20d5e98ed70644709d2eca77bc97492ae0119aa3304dc",
+      "received_at": "2026-07-31T03:39:26.955346Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:41:01.862988Z",
+      "object_id": "3333c51ac20424378b715c06ef4f8f0d64b8b9349c1a6cf46df7c3a3d4d3b1ad",
+      "receipt_hash": "91c50c2f2a05b61f5ca35737020747dceb835ba0ae54d80c8509f9370076094d",
+      "received_at": "2026-07-31T03:41:01.862988Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:07:56.335757Z",
+      "object_id": "3452d852a24fb8f5193e476fe60f0ef570d8d9cc902f913da6ec318c6184b101",
+      "receipt_hash": "33e9854ead04ed7ed84c3539c3805a4a10aeb5f54693e3b25c992b0602d430ee",
+      "received_at": "2026-07-31T03:07:56.335757Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:42:53.821402Z",
+      "object_id": "42b1af91a51c5164eb79c8dd7ed6406feab9bc01ee9f98338fa4c862c767dab6",
+      "receipt_hash": "0a93ceada036d2ee05997ddde08b63604aca294e119372dbe058857d4929e04e",
+      "received_at": "2026-07-31T10:42:53.821402Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:43:51.347606Z",
+      "object_id": "476ec39f9cfe654a3fe9f0ef6b475692320ceeb298403d1dec6b230aaefcdb00",
+      "receipt_hash": "4d206c2084aba00ecf1b293c7bd47172cffac7f36f2be9b71e418f5a60a8dc6b",
+      "received_at": "2026-07-31T10:43:51.347606Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:08:52.140473Z",
+      "object_id": "4fa4cc1bce78ed07a7a609176ba97cd6f6865a4745cd3d5dec1b5ddaef562afd",
+      "receipt_hash": "11b6b7da99ee771349e55d8cf995ec204a926374fa5af309f56f592d36523f57",
+      "received_at": "2026-07-31T03:08:52.140473Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:51:35.704262Z",
+      "object_id": "5afa0bd024002057f5927e721fb0444bdfa1137250d2dc06deb3ddd423d26b37",
+      "receipt_hash": "5a750460dad97d554d7af2c4bf7394226862517b47702675aa9dfe0f1ba43229",
+      "received_at": "2026-07-31T02:51:35.704262Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:41:25.118379Z",
+      "object_id": "5c44ac99e935abf08024885b4c54fc115e7c62faf97ae001cc37fadf2090ea45",
+      "receipt_hash": "be80c2596f68eb121243b8d982f3bbb43350cf2fcea7afd5716f3221a77d3244",
+      "received_at": "2026-07-31T03:41:25.118379Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:51:19.185244Z",
+      "object_id": "5f8b711b71c9d15b273c00171432b48dfe45180e4438c24b5fd3a45686872719",
+      "receipt_hash": "f97952f17733a44390a8cca892b05f8d07f84b1cd0475f437a05c1663e4fe23d",
+      "received_at": "2026-07-31T02:51:19.185244Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:07:24.198577Z",
+      "object_id": "5ff3c251b5428e39961ce25b5ad3ae5c6c35e8a6f61c87292ab0f084b18d4e85",
+      "receipt_hash": "c29bd44d7b3a1b6b40dd0c3f0e21d3a95b3eb92573fc64243ae25ff5b58b020f",
+      "received_at": "2026-07-31T03:07:24.198577Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:44:02.973863Z",
+      "object_id": "615fc82d06c15cb8b812048d6a525066fb4366cdb25ab627cfdf50eadd85a681",
+      "receipt_hash": "08510cac5ea8c40108c14c86fc6fe39383b8d08c8470bef4c6227650e3912c23",
+      "received_at": "2026-07-31T10:44:02.973863Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:51:02.668237Z",
+      "object_id": "6387d61ca0bf76bb99d1623009444598b5208c52db4fcbf72d2b2492267ad0f9",
+      "receipt_hash": "ba2f52c5c7935c994cf96a67190b5311557698221849a9111098f8a5f7fdf3b6",
+      "received_at": "2026-07-31T02:51:02.668237Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:41:56.769246Z",
+      "object_id": "641ff108e5d86ac09a096463e34dc62a19726b39be62f17f084fe9d9d894466b",
+      "receipt_hash": "6454903674a5b6a24b774dac45ed8e6cfb20cfb594005b9db306d46fedb330fa",
+      "received_at": "2026-07-31T10:41:56.769246Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:07:00.837632Z",
+      "object_id": "656ed9432be24738303c9ee33d75056026cfbedea92e87ca46dc0501b6e9b918",
+      "receipt_hash": "393181e4a584c31a70c67b1411136ac8bf6c5bf96c25011b70b73d39996f3a9e",
+      "received_at": "2026-07-31T03:07:00.837632Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:08:12.956350Z",
+      "object_id": "6ba72124c35f01ba2c2e6ab0d6b9b21c62853cc630fd9b7fba1fd2fbedaebd07",
+      "receipt_hash": "f40f171c5d23ea8bda6a0587dd5754a67d728b095a968d5515ef2ff0f2e8a0e0",
+      "received_at": "2026-07-31T03:08:12.956350Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:40:54.016815Z",
+      "object_id": "6cb516f3adb3ceb38d4046e9da240e7b3ed4000379cce0537cd24e93a2a9eea1",
+      "receipt_hash": "aeb5e5849b9203527ffb618ed284bcf9a3f7730ddbbc608efbceedc0a9a8051c",
+      "received_at": "2026-07-31T03:40:54.016815Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:08:20.781290Z",
+      "object_id": "77ae2a49afaa2e3c0ea6ddc51e5a7841296cdab67acbc7cb5e71711f773c057a",
+      "receipt_hash": "1ac342b43504f3feaf64e1582bab8490afccf0beee587b91e6632d1d58a38b08",
+      "received_at": "2026-07-31T03:08:20.781290Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:08:28.561902Z",
+      "object_id": "7ae23cbb14a6482aa70d390de6cec28081c795b782edccf0e65c08f6ccd7a84c",
+      "receipt_hash": "673d5dbd21da490bbf35199fb794a6b49d003737d8abe2824ccdb150a64964f7",
+      "received_at": "2026-07-31T03:08:28.561902Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:44:59.002424Z",
+      "object_id": "80388d6f4d7d81bf1b653749e6a5139d9fa467be67f10525c3039f4dd394c60a",
+      "receipt_hash": "333ff24b151276e82bfc3c958d3c437460912c314c7a8e69ab77959b5a44b565",
+      "received_at": "2026-07-31T10:44:59.002424Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:41:09.692836Z",
+      "object_id": "82e5ee1a770881e274466207cf0723f6dc58e7083eca1f3890ef51654be6a87d",
+      "receipt_hash": "e5a7aea2ce8232b08d7f7fc96e5cf4a9437d7bdaf913768718b978ecf741571d",
+      "received_at": "2026-07-31T03:41:09.692836Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:52:32.921136Z",
+      "object_id": "84e8e3caec0700505041878a648ea3ce378aed30475df57603a8944ba13dfff4",
+      "receipt_hash": "ec0500ada1afe8b3ab5d79c124c40657130fc7deb21bd5a69c1c0b64d0a8e5dc",
+      "received_at": "2026-07-31T02:52:32.921136Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:43:05.468985Z",
+      "object_id": "858e341db84cd0d33f4920405bef746a7ae0377cf5f966b028acd13cc6213875",
+      "receipt_hash": "761a1c59d7a1b5e234f02c8f49e7db7af1772ade562ee920eb89e901ff7ca744",
+      "received_at": "2026-07-31T10:43:05.468985Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:09:08.838711Z",
+      "object_id": "88924b7fbe489600acc8e4484f3c7b5a2f8c29b7a9231c031d60dc49085e164c",
+      "receipt_hash": "d783bcafc5b7d7c3b143b6476f5378334974ea08ae8586b8e80be2e980d2d28b",
+      "received_at": "2026-07-31T03:09:08.838711Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:25:21.071308Z",
+      "object_id": "8a0513d66bb1072c2e594e9cd8a5abc9410dc7594b4e8a4fe6dc260812e9f3fa",
+      "receipt_hash": "23f9f67677881fec82113bf6059759ec6dd9523522fa95ebdb0bd846194aad5a",
+      "received_at": "2026-07-31T03:25:21.071308Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:52:24.580936Z",
+      "object_id": "8bbbdc3b88a8714460b9c246d358507a8016d8304d335caf0179aab964e6b7eb",
+      "receipt_hash": "49988aed3d954f6c005677cd5293621b292b5d5191007d732667225b332e63dd",
+      "received_at": "2026-07-31T02:52:24.580936Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:38:43.278337Z",
+      "object_id": "90ddcef48350d19faf5e2c81cffa5e60668d0bd4d5f62293634db015492be188",
+      "receipt_hash": "1431d7d9ecbecd1bc022c74e852eeb3382576b4b3ae45f80bdfabdc5d112f333",
+      "received_at": "2026-07-31T02:38:43.278337Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:25:04.572698Z",
+      "object_id": "9cca80c7fcab4a613f8d2db190d258067e6b4dc047756746acd1680f49e6471a",
+      "receipt_hash": "fb8f1cb63a4de7b98f898fb649f1262fd0ceddbecf74c05201095cd45a2232b5",
+      "received_at": "2026-07-31T03:25:04.572698Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:07:31.996716Z",
+      "object_id": "9e1c94cd4bd94831db6df0cab6177381ae2613b984d4d7457d38ebdf1a5efb4d",
+      "receipt_hash": "7aab5491694b91604384008568ab97c57235e73fd65471cfc11ab90caacc7625",
+      "received_at": "2026-07-31T03:07:31.996716Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:44:48.037025Z",
+      "object_id": "9e67272312e096c3033359c28df7c69cb19ed57fef55f40cc7045d6ea89132f2",
+      "receipt_hash": "4ea68698500b962fab96625b6ff6649653abecac6196a97bb8c2928046e08e8c",
+      "received_at": "2026-07-31T10:44:48.037025Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:24:37.520615Z",
+      "object_id": "9e68e573f6d0b40f5800997975c6b78543923ea10c290fd324ee27eecdf57086",
+      "receipt_hash": "49848e204a35f9fdeac83e1c331454b29c6fb24e9e1f4bb8367111ec9845d7f6",
+      "received_at": "2026-07-31T03:24:37.520615Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:50:46.627120Z",
+      "object_id": "a23c262a2229d336b24112aff20943c729c28352712e82aed386bc29f2412a17",
+      "receipt_hash": "3a41dc5f5c622c79aeab269ecebea1ddded106053c80b1c41ed5c19990b5eb5b",
+      "received_at": "2026-07-31T02:50:46.627120Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:26:12.037209Z",
+      "object_id": "a2e4bc97b8fa7b96f2518a8bc56b60f343a9506fc4e6881f0d8375487c5a92ff",
+      "receipt_hash": "4b17c5fac47e7d28239edf91ea32fb9304636748344128a56e3bbafcffda8a84",
+      "received_at": "2026-07-31T03:26:12.037209Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:23:54.570949Z",
+      "object_id": "a935f46add07828da2f143153befc8ffbc05c85aa313d7afdc48140ddfeb09a2",
+      "receipt_hash": "674f0f016391139de1f9a5a5654e8055d4320833d36670913fd5ee4f504c72f1",
+      "received_at": "2026-07-31T03:23:54.570949Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:24:20.805100Z",
+      "object_id": "aaea286a73906ba7020da03d54665f6a76a9b256ec1770837acd4d04f668dc7e",
+      "receipt_hash": "0da8eb7906eb63e56a654368a855e5c52ed469861b21e24cf21ced487e7db4b5",
+      "received_at": "2026-07-31T03:24:20.805100Z"
+    },
+    {
+      "completed_at": "2026-07-31T01:06:59.058025Z",
+      "object_id": "ac21935d408a0f31ef5017ed6b16a7b3db17befc564ef9d33fefc8721cc01687",
+      "receipt_hash": "33a4fd48cdfb09109d77005205ea8afe5bc602cd892e19b39008324a3f68ba54",
+      "received_at": "2026-07-31T01:06:59.058025Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:07:47.978588Z",
+      "object_id": "aeb7bb0666161f049b010278e438d02528710436ca0954aa633be94b7201ceff",
+      "receipt_hash": "e40f73bc86bb0b51cbec4d07776d175ff6150db7b3062780bc16b76b3e8406c9",
+      "received_at": "2026-07-31T03:07:47.978588Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:24:03.478975Z",
+      "object_id": "b8fc0b81b49ca461f0a302a01e1d7ea2a3df2cd95217eade89b807f074ca78ed",
+      "receipt_hash": "0f58966a5ce71b61eb53a895bbb1155654dde2502f829d786d47e4acb20a8a6e",
+      "received_at": "2026-07-31T03:24:03.478975Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:40:29.989104Z",
+      "object_id": "bbd414f458a77453e03196420700994f629dc432397aa36eadc26993450113a4",
+      "receipt_hash": "91a1280652cce41179efe67d3201c51829b0e69d56074074efedcb4a53206e53",
+      "received_at": "2026-07-31T03:40:29.989104Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:41:34.132914Z",
+      "object_id": "bc31d92bf0572f0b36dd6e20f4bfb6aed38503a798b5900bfc6b836fce4d84f9",
+      "receipt_hash": "dbc3c30a572625e4b49a1c3719b9df17587f4f9d35ec19041369d8e1b73dd70a",
+      "received_at": "2026-07-31T10:41:34.132914Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:42:30.689259Z",
+      "object_id": "bd8146c8cb8cf5416e57ec2420c6177a8290beac80956ca13c888a971bad22e4",
+      "receipt_hash": "5c1837fc500a242a1a5f3466a6b45b1b3c5d7d5e40184d1374eef44f146901a4",
+      "received_at": "2026-07-31T10:42:30.689259Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:23:46.474948Z",
+      "object_id": "be6fc12ee202a377b417146e615c590a8ec4dfd59643d3472a691ca9be670cc4",
+      "receipt_hash": "8cf40adba1bf463c88aa0c357abf734ce0bdde27b13872e9dc7b10279956576d",
+      "received_at": "2026-07-31T03:23:46.474948Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:26:20.721641Z",
+      "object_id": "c148b520ecddd6a5586a67911020c79234342c5c57242917b4f564207a44fa22",
+      "receipt_hash": "f1f4f54e798f2c691fc64b3db91e5661716e04eedc6695547cb8bbd3c37f9995",
+      "received_at": "2026-07-31T03:26:20.721641Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:41:17.346931Z",
+      "object_id": "c150585d9795dd2244cf917eee2ad158fdc68b984978dab5a23559f528cb4816",
+      "receipt_hash": "8ad3d296c7f3b43caa89b1eabed2951f62b1944d743abe603ec20a602aa9cd5c",
+      "received_at": "2026-07-31T03:41:17.346931Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:25:46.242702Z",
+      "object_id": "c39bcce6bfdcd2e55f98bedc022e4179cff7461a4b3598c71040117b7654be1c",
+      "receipt_hash": "aec461394747af15c48051160835842d6869d37b14f9d9d6744dbc95521ec627",
+      "received_at": "2026-07-31T03:25:46.242702Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:40:14.309170Z",
+      "object_id": "c683e0cd106530608ac4fd10124dd7dd184dafe9471b3877dc6eb4cb8c6990bd",
+      "receipt_hash": "29ca7513bb09df32dd898768020bc9121c77039dbe306198b7078fc5d623467a",
+      "received_at": "2026-07-31T03:40:14.309170Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:52:16.857278Z",
+      "object_id": "cae8a202bb484300e730d2d080d14705a057e801d2f30c7a5ff64ecdffc4d2ac",
+      "receipt_hash": "1f46d691688a3678b0b9d12b42ece95ab4cf8c9e936e4735e065c29ad6426f8a",
+      "received_at": "2026-07-31T02:52:16.857278Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:51:27.599275Z",
+      "object_id": "ccf907dd69d17d034801e1f6fa7e4c265b7cc10c1e94d6b34412b2a8c6c71261",
+      "receipt_hash": "ac2bf00fb615b046c913698750aca42c18beb80f4cbfdb727314f117d75776c5",
+      "received_at": "2026-07-31T02:51:27.599275Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:52:40.923366Z",
+      "object_id": "d2046a7b2b7072cc8d328100757627f559eca6daab7d28e4b70ebe69a7171f8e",
+      "receipt_hash": "3dd532ae1f6d1806a8fd960657b9f6e30af7405fd8bd70fcec66ec806076b7be",
+      "received_at": "2026-07-31T02:52:40.923366Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:51:52.395139Z",
+      "object_id": "d5d6a0f1e32fc58f1b447c6c11a21e714ae72a764d8ddadc1a206a0472a17602",
+      "receipt_hash": "e5155b7c3819dc4485de08bc5a73923b9e7f3fa047e12f19c7420f176d73f765",
+      "received_at": "2026-07-31T02:51:52.395139Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:24:46.951273Z",
+      "object_id": "d61ec4307a11d1e4616d435aeb5965a953e4889f0dda3c2a0c30d86fa69f5ad9",
+      "receipt_hash": "9ee51ac73f6ed6e7af030676293accd3e727e2f7fbbdb00b1b9a9dc5a5cb3b78",
+      "received_at": "2026-07-31T03:24:46.951273Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:43:39.994026Z",
+      "object_id": "d68f13a81d003d9ca5129704f683d80cd8ea09aab505622ffbb3397922d2a8e6",
+      "receipt_hash": "aae5312e5f121eca2d0babaec64b1db34de33757271186ecae531c68ddf37468",
+      "received_at": "2026-07-31T10:43:39.994026Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:41:45.353938Z",
+      "object_id": "d91b533445d2844ce4bc0bb278dc9d144319c09c24539f88a3a759edb0f9f686",
+      "receipt_hash": "4024214d30263ebc70cd873c8a8f593dec062e4cef91659da358a9da55263fb0",
+      "received_at": "2026-07-31T10:41:45.353938Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:43:27.145386Z",
+      "object_id": "db787ad2b7459a34598e79350d89cfe5809211578b7830796c4d3f4e0c410b87",
+      "receipt_hash": "08d681c1fc945fa3fc0ed2924f2ed960edd60a8c497785ae7ab39a5acf793454",
+      "received_at": "2026-07-31T10:43:27.145386Z"
+    },
+    {
+      "completed_at": "2026-07-31T02:51:11.166940Z",
+      "object_id": "dd7a291d0f2b27e79835a8dfebf73703fac7b005100fcabdee2a633e767b1843",
+      "receipt_hash": "a0b198ed7887925abbaebd53d8b55a72b49378a81830c3784f1acbe1da0ef5cb",
+      "received_at": "2026-07-31T02:51:11.166940Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:39:58.589500Z",
+      "object_id": "df2b5a32a50312aa3a8d026628ebc3c762bab40a502b911596f9d5761c9792c0",
+      "receipt_hash": "1c854b91da78ac5779a4c6f15a9171c7ab742476c3cdebae14434ea07462e1e5",
+      "received_at": "2026-07-31T03:39:58.589500Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:25:37.615811Z",
+      "object_id": "eb0b783378dc51d11678000fb105a0f9471d54c58f0bf6b303cbd4b4ea1d65d3",
+      "receipt_hash": "c403edbe758bf1ac648878ee15452bcd86cd1f66486b07deaa3a4834aaf0cc09",
+      "received_at": "2026-07-31T03:25:37.615811Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:07:08.564802Z",
+      "object_id": "ef4b4a9a6e9f680f2fa66f545c21e417f0e9d00ee536911cc487cf218e212edb",
+      "receipt_hash": "807a4303f7b877795c272097f7daa89c121235c7e39879b384b57def91c614c3",
+      "received_at": "2026-07-31T03:07:08.564802Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:09:01.011395Z",
+      "object_id": "f46ad554e1b2206e86d39fe193a713fb3702b126abe84e386d17fbf7b00846ec",
+      "receipt_hash": "6c2fac2ce5186bb0cc25d603a1ab84a59ba65d8f77c1e63ae0f79a10d880e21c",
+      "received_at": "2026-07-31T03:09:01.011395Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:39:34.773770Z",
+      "object_id": "f6e3613c25ffa6889e6f166ef917e28e5cb695ea46b50ae64ac49d00a1e6bf68",
+      "receipt_hash": "216c32c9db68a75e0594b535f813556f8bc826a72bfd8ee58551735b7c4c03d9",
+      "received_at": "2026-07-31T03:39:34.773770Z"
+    },
+    {
+      "completed_at": "2026-07-31T10:44:25.427067Z",
+      "object_id": "fc86a7ab98293f58ef219869ae78dc4ea6e3468dbc16460abd2c6ded93497ff9",
+      "receipt_hash": "589765a434fc12e3ba7c9db30986d5215660dd5ed24d203216590eae67ddea53",
+      "received_at": "2026-07-31T10:44:25.427067Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:08:36.598032Z",
+      "object_id": "fd7b73ee0e9156ab675cd45551d6f3358aa8e81ce71b401e7c921fa64dffeb0b",
+      "receipt_hash": "6246fe06d8ee38e84687edd30b083cedb5180fa998f3d12663e6e274f8745a23",
+      "received_at": "2026-07-31T03:08:36.598032Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:08:44.492287Z",
+      "object_id": "fda8d93d15efd05b9cf53ebd8ec5b9509ab00c9f0f93aa5c53bb83d4388b838b",
+      "receipt_hash": "50ea966d56965d44057a092951d3d935aaaece6c9457d792ed108d177616be3b",
+      "received_at": "2026-07-31T03:08:44.492287Z"
+    },
+    {
+      "completed_at": "2026-07-31T03:09:16.628788Z",
+      "object_id": "feaa5f5e6f18a8eb29d4c1304d7a9b2d01a689aa480e8a38fb4743456994e6f8",
+      "receipt_hash": "66b6b7b61b471e8c8af86bbd5b14a9dd056c3a59b9a63c3ac0a18c5b6be3ac9c",
+      "received_at": "2026-07-31T03:09:16.628788Z"
+    }
+  ],
+  "frontend_modified": false,
+  "progression": [
+    {
+      "anchor_expected": 20,
+      "anchor_invalid": 0,
+      "anchor_received": 20,
+      "anchor_unknown": 0,
+      "capability_id": "TEAM",
+      "e1b_expected": 20,
+      "e1b_invalid": 0,
+      "e1b_received": 20,
+      "e1b_unknown": 0,
+      "e2_expected": 200,
+      "e2_invalid": 0,
+      "e2_received": 200,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": 180,
+      "new_invalid": 0,
+      "new_received": 180,
+      "new_unknown": 0
+    },
+    {
+      "anchor_expected": 420,
+      "anchor_invalid": 0,
+      "anchor_received": 420,
+      "anchor_unknown": 0,
+      "capability_id": "PLAYER",
+      "e1b_expected": 420,
+      "e1b_invalid": 0,
+      "e1b_received": 420,
+      "e1b_unknown": 0,
+      "e2_expected": 4209,
+      "e2_invalid": 0,
+      "e2_received": 4209,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": 3789,
+      "new_invalid": 0,
+      "new_received": 3789,
+      "new_unknown": 0
+    },
+    {
+      "anchor_expected": 20,
+      "anchor_invalid": 0,
+      "anchor_received": 20,
+      "anchor_unknown": 0,
+      "capability_id": "LINEUP",
+      "e1b_expected": 20,
+      "e1b_invalid": 0,
+      "e1b_received": 20,
+      "e1b_unknown": 0,
+      "e2_expected": 200,
+      "e2_invalid": 0,
+      "e2_received": 200,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": 180,
+      "new_invalid": 0,
+      "new_received": 180,
+      "new_unknown": 0
+    },
+    {
+      "anchor_expected": 20,
+      "anchor_invalid": 0,
+      "anchor_received": 20,
+      "anchor_unknown": 0,
+      "capability_id": "FORMATION",
+      "e1b_expected": 20,
+      "e1b_invalid": 0,
+      "e1b_received": 20,
+      "e1b_unknown": 0,
+      "e2_expected": 200,
+      "e2_invalid": 0,
+      "e2_received": 200,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": 180,
+      "new_invalid": 0,
+      "new_received": 180,
+      "new_unknown": 0
+    },
+    {
+      "anchor_expected": null,
+      "anchor_invalid": 0,
+      "anchor_received": 179,
+      "anchor_unknown": 0,
+      "capability_id": "EVENTS",
+      "e1b_expected": null,
+      "e1b_invalid": 0,
+      "e1b_received": 179,
+      "e1b_unknown": null,
+      "e2_expected": null,
+      "e2_invalid": 0,
+      "e2_received": 1639,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": null,
+      "new_invalid": 0,
+      "new_received": 1460,
+      "new_unknown": 0
+    },
+    {
+      "anchor_expected": 20,
+      "anchor_invalid": 0,
+      "anchor_received": 20,
+      "anchor_unknown": 0,
+      "capability_id": "TEAM_STATISTICS",
+      "e1b_expected": 20,
+      "e1b_invalid": 0,
+      "e1b_received": 20,
+      "e1b_unknown": 0,
+      "e2_expected": 200,
+      "e2_invalid": 0,
+      "e2_received": 200,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": 180,
+      "new_invalid": 0,
+      "new_received": 180,
+      "new_unknown": 0
+    },
+    {
+      "anchor_expected": 420,
+      "anchor_invalid": 0,
+      "anchor_received": 420,
+      "anchor_unknown": 0,
+      "capability_id": "PLAYER_STATISTICS",
+      "e1b_expected": 420,
+      "e1b_invalid": 0,
+      "e1b_received": 420,
+      "e1b_unknown": 0,
+      "e2_expected": 4209,
+      "e2_invalid": 1,
+      "e2_received": 4208,
+      "e2_unknown": 1,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": 3789,
+      "new_invalid": 1,
+      "new_received": 3788,
+      "new_unknown": 1
+    },
+    {
+      "anchor_expected": null,
+      "anchor_invalid": 0,
+      "anchor_received": 46,
+      "anchor_unknown": 0,
+      "capability_id": "DISCIPLINE_GENERIC",
+      "e1b_expected": null,
+      "e1b_invalid": 0,
+      "e1b_received": 46,
+      "e1b_unknown": null,
+      "e2_expected": null,
+      "e2_invalid": 0,
+      "e2_received": 403,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": null,
+      "new_invalid": 0,
+      "new_received": 357,
+      "new_unknown": 0
+    },
+    {
+      "anchor_expected": 10,
+      "anchor_invalid": 0,
+      "anchor_received": 10,
+      "anchor_unknown": 0,
+      "capability_id": "CALENDAR",
+      "e1b_expected": 10,
+      "e1b_invalid": 0,
+      "e1b_received": 10,
+      "e1b_unknown": 0,
+      "e2_expected": 100,
+      "e2_invalid": 0,
+      "e2_received": 100,
+      "e2_unknown": 0,
+      "interpretation": "DESCRIPTIVE_NOT_CAUSAL",
+      "new_expected": 90,
+      "new_invalid": 0,
+      "new_received": 90,
+      "new_unknown": 0
+    }
+  ],
+  "provenance": {
+    "inventory_manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+    "source_main_sha": "3e250c2a4a01a141f6403219fd4c45ae75a05522"
+  },
+  "schema_version": "p0-e2-dashboard-contract-v1",
+  "scope": {
+    "anchor_fixture_count": 10,
+    "competition_count": 5,
+    "fixture_count": 100,
+    "fixture_count_per_league": 20,
+    "new_fixture_count": 90,
+    "season": 2024
+  },
+  "selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b",
+  "summary": {
+    "blocked": [],
+    "e3a_candidates": [
+      "DISCIPLINE_GENERIC",
+      "EVENTS",
+      "FORMATION",
+      "LINEUP",
+      "PLAYER",
+      "TEAM",
+      "TEAM_STATISTICS"
+    ],
+    "measured": [
+      "CALENDAR",
+      "DISCIPLINE_GENERIC",
+      "EVENTS",
+      "FORMATION",
+      "LINEUP",
+      "PLAYER",
+      "TEAM",
+      "TEAM_STATISTICS"
+    ],
+    "partial": [
+      "PLAYER_STATISTICS"
+    ]
+  }
+}

@@ -17,6 +17,7 @@ from robin.historical_deep.e2_sample import (
     build_reports,
     finalize_reports,
     mapping,
+    reconcile_report_summaries,
     render_json,
     sequence,
     validate_reports,
@@ -176,6 +177,19 @@ def _validate_output(root: Path, reports_root: Path) -> None:
             raise ValueError(f"E2_REPORT_HASH_MISMATCH:{name}")
 
 
+def _reconcile_output(root: Path, reports_root: Path, output: Path) -> None:
+    _validate(root, True)
+    reports = {
+        name: _read(reports_root / filename)
+        for name, filename in REPORT_FILENAMES.items()
+        if name != "replay_verification"
+    }
+    corrected = reconcile_report_summaries(reports)
+    validate_reports(corrected)
+    for name, payload in finalize_reports(corrected).items():
+        _write(output / REPORT_FILENAMES[name], payload)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=ROOT)
@@ -186,6 +200,9 @@ def main() -> None:
     measure.add_argument("--output", type=Path, required=True)
     check = commands.add_parser("validate-output")
     check.add_argument("--reports-root", type=Path, required=True)
+    reconcile = commands.add_parser("reconcile-output")
+    reconcile.add_argument("--reports-root", type=Path, required=True)
+    reconcile.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     root = args.root.resolve()
     if args.command == "validate":
@@ -194,9 +211,12 @@ def main() -> None:
     elif args.command == "measure":
         _measure(root, args.output.resolve())
         print("E2_MEASUREMENT_COMPLETE")
-    else:
+    elif args.command == "validate-output":
         _validate_output(root, args.reports_root.resolve())
         print("E2_OUTPUT_VALID")
+    else:
+        _reconcile_output(root, args.reports_root.resolve(), args.output.resolve())
+        print("E2_OUTPUT_RECONCILED")
 
 
 if __name__ == "__main__":

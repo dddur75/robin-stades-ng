@@ -1,0 +1,69 @@
+{
+  "criteria_frozen_before_measurement": true,
+  "e3a_candidates": [
+    "DISCIPLINE_GENERIC",
+    "EVENTS",
+    "FORMATION",
+    "LINEUP",
+    "PLAYER",
+    "TEAM",
+    "TEAM_STATISTICS"
+  ],
+  "e3a_executed": false,
+  "e3a_not_eligible": [],
+  "e3a_targeted_fixes": [
+    "CALENDAR",
+    "PLAYER_STATISTICS"
+  ],
+  "masks_built": false,
+  "rows": [
+    {
+      "capability_id": "TEAM",
+      "decision": "E3A_CANDIDATE",
+      "reason": null
+    },
+    {
+      "capability_id": "PLAYER",
+      "decision": "E3A_CANDIDATE",
+      "reason": null
+    },
+    {
+      "capability_id": "LINEUP",
+      "decision": "E3A_CANDIDATE",
+      "reason": null
+    },
+    {
+      "capability_id": "FORMATION",
+      "decision": "E3A_CANDIDATE",
+      "reason": null
+    },
+    {
+      "capability_id": "EVENTS",
+      "decision": "E3A_CANDIDATE",
+      "reason": null
+    },
+    {
+      "capability_id": "TEAM_STATISTICS",
+      "decision": "E3A_CANDIDATE",
+      "reason": null
+    },
+    {
+      "capability_id": "PLAYER_STATISTICS",
+      "decision": "E3A_TARGETED_FIX_REQUIRED",
+      "reason": "IDENTITY_HASH_OR_DUPLICATE_INTEGRITY"
+    },
+    {
+      "capability_id": "DISCIPLINE_GENERIC",
+      "decision": "E3A_CANDIDATE",
+      "reason": null
+    },
+    {
+      "capability_id": "CALENDAR",
+      "decision": "E3A_TARGETED_FIX_REQUIRED",
+      "reason": "FINAL_STATE_NOT_KNOWN_AS_OF"
+    }
+  ],
+  "schema_version": "p0-e2-e3a-candidate-set-v1",
+  "selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b",
+  "verdict": "PASS_AND_HOLD"
+}

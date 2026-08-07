@@ -1,0 +1,339 @@
+{
+  "capabilities": [
+    {
+      "capability_id": "TEAM",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "PLAYER",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 4209,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 4209,
+      "unknown": 0
+    },
+    {
+      "capability_id": "LINEUP",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "FORMATION",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "EVENTS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": null,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 1639,
+      "unknown": 0
+    },
+    {
+      "capability_id": "TEAM_STATISTICS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 0,
+      "expected": 200,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 200,
+      "unknown": 0
+    },
+    {
+      "capability_id": "PLAYER_STATISTICS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 0.99976241,
+      "decision": "E3A_TARGETED_FIX_REQUIRED",
+      "empty_valid": 0,
+      "expected": 4209,
+      "global_ready_status_changed": false,
+      "invalid": 1,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED_PARTIAL"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 0.99976241,
+      "reason": "IDENTITY_HASH_OR_DUPLICATE_INTEGRITY",
+      "received": 4208,
+      "unknown": 1
+    },
+    {
+      "capability_id": "DISCIPLINE_GENERIC",
+      "content_presence_rate_weighted": 0.99261084,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "decision": "E3A_CANDIDATE",
+      "empty_valid": 3,
+      "expected": null,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": null,
+      "received": 403,
+      "unknown": 0
+    },
+    {
+      "capability_id": "CALENDAR",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "decision": "E3A_TARGETED_FIX_REQUIRED",
+      "empty_valid": 0,
+      "expected": 100,
+      "global_ready_status_changed": false,
+      "invalid": 0,
+      "league_statuses": [
+        {
+          "competition": "Bundesliga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Liga",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Ligue 1",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Premier League",
+          "status": "E2_MEASURED"
+        },
+        {
+          "competition": "Serie A",
+          "status": "E2_MEASURED"
+        }
+      ],
+      "normalization_integrity_rate_weighted": 1.0,
+      "reason": "FINAL_STATE_NOT_KNOWN_AS_OF",
+      "received": 100,
+      "unknown": 0
+    }
+  ],
+  "schema_version": "p0-e2-capability-matrix-v1",
+  "selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b"
+}

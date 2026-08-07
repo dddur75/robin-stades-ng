@@ -1,0 +1,444 @@
+{
+  "leagues": [
+    {
+      "competition": "Bundesliga",
+      "distribution": [
+        {
+          "occurrences": 2,
+          "team_id": 157
+        },
+        {
+          "occurrences": 2,
+          "team_id": 160
+        },
+        {
+          "occurrences": 2,
+          "team_id": 161
+        },
+        {
+          "occurrences": 4,
+          "team_id": 162
+        },
+        {
+          "occurrences": 1,
+          "team_id": 163
+        },
+        {
+          "occurrences": 4,
+          "team_id": 164
+        },
+        {
+          "occurrences": 2,
+          "team_id": 165
+        },
+        {
+          "occurrences": 1,
+          "team_id": 167
+        },
+        {
+          "occurrences": 2,
+          "team_id": 168
+        },
+        {
+          "occurrences": 2,
+          "team_id": 169
+        },
+        {
+          "occurrences": 1,
+          "team_id": 170
+        },
+        {
+          "occurrences": 2,
+          "team_id": 172
+        },
+        {
+          "occurrences": 2,
+          "team_id": 173
+        },
+        {
+          "occurrences": 3,
+          "team_id": 176
+        },
+        {
+          "occurrences": 3,
+          "team_id": 180
+        },
+        {
+          "occurrences": 3,
+          "team_id": 182
+        },
+        {
+          "occurrences": 1,
+          "team_id": 186
+        },
+        {
+          "occurrences": 2,
+          "team_id": 191
+        },
+        {
+          "occurrences": 1,
+          "team_id": 1660
+        }
+      ],
+      "fixture_count": 20,
+      "maximum_occurrences": 4,
+      "maximum_share": 0.1,
+      "team_count": 19
+    },
+    {
+      "competition": "Liga",
+      "distribution": [
+        {
+          "occurrences": 1,
+          "team_id": 529
+        },
+        {
+          "occurrences": 3,
+          "team_id": 530
+        },
+        {
+          "occurrences": 5,
+          "team_id": 531
+        },
+        {
+          "occurrences": 2,
+          "team_id": 532
+        },
+        {
+          "occurrences": 2,
+          "team_id": 533
+        },
+        {
+          "occurrences": 1,
+          "team_id": 534
+        },
+        {
+          "occurrences": 2,
+          "team_id": 536
+        },
+        {
+          "occurrences": 2,
+          "team_id": 537
+        },
+        {
+          "occurrences": 1,
+          "team_id": 538
+        },
+        {
+          "occurrences": 2,
+          "team_id": 540
+        },
+        {
+          "occurrences": 1,
+          "team_id": 541
+        },
+        {
+          "occurrences": 2,
+          "team_id": 542
+        },
+        {
+          "occurrences": 3,
+          "team_id": 543
+        },
+        {
+          "occurrences": 1,
+          "team_id": 546
+        },
+        {
+          "occurrences": 2,
+          "team_id": 547
+        },
+        {
+          "occurrences": 1,
+          "team_id": 548
+        },
+        {
+          "occurrences": 1,
+          "team_id": 720
+        },
+        {
+          "occurrences": 3,
+          "team_id": 727
+        },
+        {
+          "occurrences": 2,
+          "team_id": 728
+        },
+        {
+          "occurrences": 3,
+          "team_id": 798
+        }
+      ],
+      "fixture_count": 20,
+      "maximum_occurrences": 5,
+      "maximum_share": 0.125,
+      "team_count": 20
+    },
+    {
+      "competition": "Ligue 1",
+      "distribution": [
+        {
+          "occurrences": 3,
+          "team_id": 77
+        },
+        {
+          "occurrences": 3,
+          "team_id": 79
+        },
+        {
+          "occurrences": 1,
+          "team_id": 80
+        },
+        {
+          "occurrences": 1,
+          "team_id": 81
+        },
+        {
+          "occurrences": 2,
+          "team_id": 82
+        },
+        {
+          "occurrences": 2,
+          "team_id": 83
+        },
+        {
+          "occurrences": 2,
+          "team_id": 84
+        },
+        {
+          "occurrences": 1,
+          "team_id": 85
+        },
+        {
+          "occurrences": 5,
+          "team_id": 91
+        },
+        {
+          "occurrences": 3,
+          "team_id": 93
+        },
+        {
+          "occurrences": 3,
+          "team_id": 94
+        },
+        {
+          "occurrences": 1,
+          "team_id": 95
+        },
+        {
+          "occurrences": 2,
+          "team_id": 96
+        },
+        {
+          "occurrences": 3,
+          "team_id": 106
+        },
+        {
+          "occurrences": 2,
+          "team_id": 108
+        },
+        {
+          "occurrences": 2,
+          "team_id": 111
+        },
+        {
+          "occurrences": 1,
+          "team_id": 112
+        },
+        {
+          "occurrences": 1,
+          "team_id": 116
+        },
+        {
+          "occurrences": 2,
+          "team_id": 1063
+        }
+      ],
+      "fixture_count": 20,
+      "maximum_occurrences": 5,
+      "maximum_share": 0.125,
+      "team_count": 19
+    },
+    {
+      "competition": "Premier League",
+      "distribution": [
+        {
+          "occurrences": 3,
+          "team_id": 33
+        },
+        {
+          "occurrences": 2,
+          "team_id": 34
+        },
+        {
+          "occurrences": 4,
+          "team_id": 35
+        },
+        {
+          "occurrences": 2,
+          "team_id": 36
+        },
+        {
+          "occurrences": 2,
+          "team_id": 39
+        },
+        {
+          "occurrences": 2,
+          "team_id": 40
+        },
+        {
+          "occurrences": 4,
+          "team_id": 41
+        },
+        {
+          "occurrences": 1,
+          "team_id": 42
+        },
+        {
+          "occurrences": 1,
+          "team_id": 45
+        },
+        {
+          "occurrences": 1,
+          "team_id": 46
+        },
+        {
+          "occurrences": 2,
+          "team_id": 47
+        },
+        {
+          "occurrences": 1,
+          "team_id": 48
+        },
+        {
+          "occurrences": 4,
+          "team_id": 49
+        },
+        {
+          "occurrences": 2,
+          "team_id": 50
+        },
+        {
+          "occurrences": 1,
+          "team_id": 51
+        },
+        {
+          "occurrences": 1,
+          "team_id": 52
+        },
+        {
+          "occurrences": 3,
+          "team_id": 55
+        },
+        {
+          "occurrences": 1,
+          "team_id": 57
+        },
+        {
+          "occurrences": 2,
+          "team_id": 65
+        },
+        {
+          "occurrences": 1,
+          "team_id": 66
+        }
+      ],
+      "fixture_count": 20,
+      "maximum_occurrences": 4,
+      "maximum_share": 0.1,
+      "team_count": 20
+    },
+    {
+      "competition": "Serie A",
+      "distribution": [
+        {
+          "occurrences": 3,
+          "team_id": 487
+        },
+        {
+          "occurrences": 3,
+          "team_id": 489
+        },
+        {
+          "occurrences": 1,
+          "team_id": 490
+        },
+        {
+          "occurrences": 2,
+          "team_id": 492
+        },
+        {
+          "occurrences": 1,
+          "team_id": 494
+        },
+        {
+          "occurrences": 2,
+          "team_id": 495
+        },
+        {
+          "occurrences": 2,
+          "team_id": 496
+        },
+        {
+          "occurrences": 2,
+          "team_id": 497
+        },
+        {
+          "occurrences": 1,
+          "team_id": 499
+        },
+        {
+          "occurrences": 3,
+          "team_id": 500
+        },
+        {
+          "occurrences": 3,
+          "team_id": 502
+        },
+        {
+          "occurrences": 3,
+          "team_id": 503
+        },
+        {
+          "occurrences": 2,
+          "team_id": 504
+        },
+        {
+          "occurrences": 1,
+          "team_id": 505
+        },
+        {
+          "occurrences": 1,
+          "team_id": 511
+        },
+        {
+          "occurrences": 2,
+          "team_id": 517
+        },
+        {
+          "occurrences": 1,
+          "team_id": 523
+        },
+        {
+          "occurrences": 2,
+          "team_id": 867
+        },
+        {
+          "occurrences": 3,
+          "team_id": 895
+        },
+        {
+          "occurrences": 2,
+          "team_id": 1579
+        }
+      ],
+      "fixture_count": 20,
+      "maximum_occurrences": 3,
+      "maximum_share": 0.075,
+      "team_count": 20
+    }
+  ],
+  "schema_version": "p0-e2-team-concentration-v1",
+  "selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b",
+  "statistical_validation": false
+}

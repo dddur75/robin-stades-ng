@@ -241,6 +241,13 @@ def _aggregate(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     integrity_denominator = received + empty + invalid + contradictory
     integrity = _rate(received + empty, integrity_denominator)
     reasons = sorted({str(row["block_reason"]) for row in rows if row.get("block_reason")})
+    if status != "E2_MEASURED" and not reasons:
+        if invalid or contradictory:
+            reasons = ["IDENTITY_OR_SCHEMA_INTEGRITY"]
+        elif unknown or (expected is not None and received + empty != expected):
+            reasons = ["COVERAGE_PARTIAL"]
+        else:
+            reasons = ["SOURCE_NOT_MEASURED"]
     return {
         "anchor_fixture_count": len({int(row["fixture_id"]) for row in rows if row["anchor"]}),
         "block_reason": reasons or None,
@@ -306,6 +313,78 @@ def _weighted(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         "received": received,
         "unknown": sum(int(row["unknown"]) for row in rows),
     }
+
+
+def _capability_summary(
+    rows: Sequence[Mapping[str, Any]],
+) -> tuple[list[str], list[str], list[str], list[str]]:
+    statuses: dict[str, list[str]] = defaultdict(list)
+    for row in rows:
+        statuses[str(row["capability_id"])].append(str(row["e2_measurement_status"]))
+    measured: list[str] = []
+    partial: list[str] = []
+    blocked: list[str] = []
+    not_evaluated: list[str] = []
+    for capability in CAPABILITIES:
+        current = statuses.get(capability, [])
+        if current and all(status == "E2_MEASURED" for status in current):
+            measured.append(capability)
+        elif any(status in {"E2_MEASURED", "E2_MEASURED_PARTIAL"} for status in current):
+            partial.append(capability)
+        elif current and all(status.startswith("E2_BLOCKED_BY_") for status in current):
+            blocked.append(capability)
+        else:
+            not_evaluated.append(capability)
+    return sorted(measured), sorted(partial), sorted(blocked), sorted(not_evaluated)
+
+
+def reconcile_report_summaries(
+    reports: Mapping[str, Mapping[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    """Rebuild only derived summaries from already-measured compact reports."""
+    result: dict[str, dict[str, Any]] = {}
+    for name, report in reports.items():
+        decoded = json.loads(render_json(report))
+        if not isinstance(decoded, dict):
+            raise TypeError(f"E2_REPORT_NOT_MAPPING:{name}")
+        result[name] = decoded
+    for report_name in ("measurement", "league_comparison", "temporal_strata"):
+        rows = result[report_name].get(
+            "measurements" if report_name == "measurement" else "rows"
+        )
+        if not isinstance(rows, list):
+            raise TypeError(f"E2_REPORT_ROWS_INVALID:{report_name}")
+        for row in rows:
+            if not isinstance(row, dict):
+                raise TypeError(f"E2_REPORT_ROW_INVALID:{report_name}")
+            status = str(row.get("e2_measurement_status"))
+            if status != "E2_MEASURED" and not row.get("block_reason"):
+                if int(row.get("invalid", 0)) or int(
+                    row.get("contradictory_duplicates", 0)
+                ):
+                    row["block_reason"] = ["IDENTITY_OR_SCHEMA_INTEGRITY"]
+                elif int(row.get("unknown", 0)):
+                    row["block_reason"] = ["COVERAGE_PARTIAL"]
+                else:
+                    row["block_reason"] = ["SOURCE_NOT_MEASURED"]
+    measurement = result["measurement"]
+    raw_rows = measurement.get("measurements")
+    if not isinstance(raw_rows, list):
+        raise TypeError("E2_MEASUREMENT_ROWS_INVALID")
+    rows = [mapping(row, "E2_MEASUREMENT_ROW") for row in raw_rows]
+    measured, partial, blocked, not_evaluated = _capability_summary(rows)
+    measurement["capabilities_measured"] = measured
+    measurement["capabilities_partial"] = partial
+    measurement["capabilities_blocked"] = blocked
+    measurement["capabilities_not_evaluated"] = not_evaluated
+    dashboard = result["dashboard_contract"]
+    summary = dashboard.get("summary")
+    if not isinstance(summary, dict):
+        raise TypeError("E2_DASHBOARD_SUMMARY_INVALID")
+    summary["measured"] = measured
+    summary["partial"] = partial
+    summary["blocked"] = blocked
+    return result
 
 
 def _candidate(weighted: Mapping[str, Any], league_rows: Sequence[Mapping[str, Any]]) -> tuple[str, str | None]:
@@ -387,14 +466,13 @@ def build_reports(
     for fixture_id, receipt in receipts.items():
         fixture = next(item for item in fixtures if int(item["fixture_id"]) == fixture_id)
         unique_receipts.setdefault(str(fixture["object_id"]), {"object_id": fixture["object_id"], "receipt_hash": fixture["receipt_hash"], "completed_at": receipt.get("completed_at"), "received_at": receipt.get("received_at")})
-    measured = sorted({str(row["capability_id"]) for row in league_rows if row["e2_measurement_status"] == "E2_MEASURED"})
-    partial = sorted(set(CAPABILITIES) - set(measured))
+    measured, partial, blocked, not_evaluated = _capability_summary(league_rows)
     measurement = {
         "schema_version": "p0-e2-measurement-v1", "mission_id": "p0-e2-capability-sample-v1", "stage": "E2",
         "scope": {"fixture_count": 100, "fixture_count_per_league": 20, "competition_count": 5, "anchor_fixture_count": 10, "new_fixture_count": 90, "season": 2024},
         "selection_hash": selection["selection_hash"], "measurements": league_rows, "weighted_capability_aggregates": weighted,
         "source_receipts": sorted(unique_receipts.values(), key=lambda row: str(row["object_id"])),
-        "capabilities_measured": measured, "capabilities_partial": partial, "capabilities_blocked": [], "capabilities_not_evaluated": [],
+        "capabilities_measured": measured, "capabilities_partial": partial, "capabilities_blocked": blocked, "capabilities_not_evaluated": not_evaluated,
         "ready_strict_declared": [], "ready_reconstructed_declared": [], "e3a_executed": False,
         "historical_e1a_partition": {"absence_records_total": 3036, "injuries_confirmed": 2681, "suspensions_confirmed": 206, "absence_cause_unknown": 149, "identity": "3036 = 2681 + 206 + 149"},
         "absence_cause_exact_status": "STOPPED_LOCAL_CAMPAIGN", "verdict": "PASS_AND_HOLD",
@@ -406,8 +484,8 @@ def build_reports(
     concentration = {"schema_version": "p0-e2-team-concentration-v1", "selection_hash": selection["selection_hash"], "leagues": concentrations, "statistical_validation": False}
     costs = {"schema_version": "p0-e2-costs-v1", "selection_hash": selection["selection_hash"], "logical_gets": telemetry["logical_gets"], "bootstrap_gets": telemetry["bootstrap_requested"], "receipt_gets": telemetry["receipt_requested"], "payload_gets": telemetry["payload_requested"], "network_bytes": telemetry["network_bytes"], "fixtures_measured": 100, "unique_source_objects": len(unique_receipts), "provider_calls": 0, "r2_list": 0, "r2_head": 0, "r2_writes": 0, "r2_deletes": 0, "remote_sql_queries": 0, "odds_credits": 0, "runtime": runtime}
     candidate_set = {"schema_version": "p0-e2-e3a-candidate-set-v1", "selection_hash": selection["selection_hash"], "criteria_frozen_before_measurement": True, "rows": candidates, "e3a_candidates": sorted(decision_groups["E3A_CANDIDATE"]), "e3a_targeted_fixes": sorted(decision_groups["E3A_TARGETED_FIX_REQUIRED"]), "e3a_not_eligible": sorted(decision_groups["E3A_NOT_ELIGIBLE"]), "e3a_executed": False, "masks_built": False, "verdict": "PASS_AND_HOLD"}
-    dashboard = {"schema_version": "p0-e2-dashboard-contract-v1", "selection_hash": selection["selection_hash"], "frontend_modified": False, "scope": measurement["scope"], "summary": {"measured": measured, "partial": partial, "blocked": [], "e3a_candidates": candidate_set["e3a_candidates"]}, "capabilities": matrix["capabilities"], "progression": comparison, "freshness": sorted(unique_receipts.values(), key=lambda row: str(row["object_id"])), "provenance": {"inventory_manifest_sha256": selection["inventory_manifest_sha256"], "source_main_sha": selection["source_main_sha"]}}
-    return {"measurement": measurement, "capability_matrix": matrix, "league_comparison": league, "e1b_e2_comparison": comparison_report, "temporal_strata": strata, "team_concentration": concentration, "costs": costs, "dashboard_contract": dashboard, "e3a_candidate_set": candidate_set}
+    dashboard = {"schema_version": "p0-e2-dashboard-contract-v1", "selection_hash": selection["selection_hash"], "frontend_modified": False, "scope": measurement["scope"], "summary": {"measured": measured, "partial": partial, "blocked": blocked, "e3a_candidates": candidate_set["e3a_candidates"]}, "capabilities": matrix["capabilities"], "progression": comparison, "freshness": sorted(unique_receipts.values(), key=lambda row: str(row["object_id"])), "provenance": {"inventory_manifest_sha256": selection["inventory_manifest_sha256"], "source_main_sha": selection["source_main_sha"]}}
+    return reconcile_report_summaries({"measurement": measurement, "capability_matrix": matrix, "league_comparison": league, "e1b_e2_comparison": comparison_report, "temporal_strata": strata, "team_concentration": concentration, "costs": costs, "dashboard_contract": dashboard, "e3a_candidate_set": candidate_set})
 
 
 def finalize_reports(values: Mapping[str, Mapping[str, Any]]) -> dict[str, bytes]:
@@ -429,6 +507,21 @@ def validate_reports(reports: Mapping[str, Mapping[str, Any]]) -> None:
     rows = [mapping(item, "E2_MEASUREMENT_ROW") for item in sequence(measurement["measurements"], "E2_MEASUREMENTS")]
     if len(rows) != 45 or {row["capability_id"] for row in rows} != set(CAPABILITIES):
         raise ValueError("E2_CAPABILITY_SCOPE_INVALID")
+    summary = _capability_summary(rows)
+    recorded = (
+        measurement.get("capabilities_measured"),
+        measurement.get("capabilities_partial"),
+        measurement.get("capabilities_blocked"),
+        measurement.get("capabilities_not_evaluated"),
+    )
+    if recorded != summary:
+        raise ValueError("E2_CAPABILITY_SUMMARY_INVALID")
+    if any(
+        row.get("e2_measurement_status") != "E2_MEASURED"
+        and not row.get("block_reason")
+        for row in rows
+    ):
+        raise ValueError("E2_PARTIAL_BLOCK_REASON_MISSING")
     costs = mapping(reports["costs"], "E2_COSTS")
     unique_sources = int(costs["unique_source_objects"])
     if (

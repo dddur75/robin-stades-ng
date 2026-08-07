@@ -182,3 +182,48 @@ def test_global_rates_equal_weighted_counts_not_simple_league_assumptions() -> N
     ).hexdigest() == hashlib.sha256(
         (ROOT / "reports/evidence/e2/e2-selection-manifest-v1.json").read_bytes().replace(b"\r\n", b"\n")
     ).hexdigest()
+
+
+def test_partial_capability_is_not_projected_as_fully_measured() -> None:
+    selection = load("reports/evidence/e2/e2-selection-manifest-v1.json")
+    e1b = load("reports/evidence/e1b/e1b-measurement-v1.json")
+    payloads = {
+        item["fixture_id"]: synthetic_payload(
+            item["fixture_id"], item["home_team_id"], item["away_team_id"]
+        )
+        for item in selection["fixtures"]
+    }
+    first_fixture = selection["fixtures"][0]["fixture_id"]
+    player = payloads[first_fixture]["response"][0]["players"][0]["players"][0]
+    player["player"]["id"] = 999_999_999
+    receipts = {
+        item["fixture_id"]: {"completed_at": None, "received_at": None}
+        for item in selection["fixtures"]
+    }
+    unique_sources = len({item["object_id"] for item in selection["fixtures"]})
+    reports = build_reports(
+        selection,
+        e1b,
+        payloads,
+        receipts,
+        {
+            "bootstrap_requested": 1,
+            "logical_gets": 1 + 2 * unique_sources,
+            "network_bytes": 1,
+            "payload_requested": unique_sources,
+            "receipt_requested": unique_sources,
+        },
+        {"duration_seconds": 1.0, "github_minutes": "UNKNOWN", "run_id": "SYNTHETIC"},
+    )
+    validate_reports(reports)
+    measurement = reports["measurement"]
+    assert "PLAYER_STATISTICS" not in measurement["capabilities_measured"]
+    assert "PLAYER_STATISTICS" in measurement["capabilities_partial"]
+    rows = [
+        row
+        for row in measurement["measurements"]
+        if row["capability_id"] == "PLAYER_STATISTICS"
+        and row["e2_measurement_status"] == "E2_MEASURED_PARTIAL"
+    ]
+    assert len(rows) == 1
+    assert rows[0]["block_reason"] == ["IDENTITY_OR_SCHEMA_INTEGRITY"]
