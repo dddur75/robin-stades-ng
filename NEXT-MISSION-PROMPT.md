@@ -60,7 +60,10 @@ ABSENCE_CAUSE_UNKNOWN = 149
 ABSENCE_CAUSE_EXACT = STOPPED_LOCAL_CAMPAIGN
 ```
 
-Ne pas rouvrir E1A, créer une Architecture 3, projeter les 149 inconnues par
+Contrat autoritatif :
+`configs/data/capability-scoped-evidence-ladder-v2.json`.
+
+Ne lancer ni E1A ni une troisième architecture. Ne pas projeter les 149 inconnues par
 ligue ou convertir `UNKNOWN` en zéro, blessure ou suspension.
 
 ---
@@ -152,6 +155,19 @@ PROMOTION_LOCKED = true
 
 Les GET R2 sont exact-key uniquement et bornés par un nouveau manifeste. Aucun
 scan de préfixe, fallback, clé dynamique ou augmentation automatique de budget.
+
+Plafonds de la mission longue :
+
+```text
+r2_read_budget = 10000 GET
+r2_write_budget = 0
+api_football_budget = 0
+sql_read_budget = 0
+sql_write_budget = 0
+TRIPLE_SEARCH_LOCKED = true
+```
+
+Ne jamais lancer de triple pendant cette mission.
 
 ---
 

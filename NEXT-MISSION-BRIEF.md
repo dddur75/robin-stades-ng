@@ -30,6 +30,9 @@ E3A executed = false
 masks built = false
 ```
 
+Contrat autoritatif :
+`configs/data/capability-scoped-evidence-ladder-v2.json`.
+
 Revoir la PR #34, ses rapports, ses claims, son head exact et sa CI. La fusionner
 par merge commit uniquement si elle reste saine, puis vérifier la CI de `main`.
 
@@ -64,7 +67,8 @@ ne rejoignent E3A qu'après leur correctif ciblé et une nouvelle décision.
 
 ## Bornes
 
-- ne pas rouvrir E1A ni reclasser les 149 `ABSENCE_CAUSE_UNKNOWN` ;
+- ne lancer ni E1A ni une troisième architecture, et ne pas reclasser les 149
+  `ABSENCE_CAUSE_UNKNOWN` ;
 - ne déclarer aucune readiness globale à partir de l'échantillon E2 ;
 - ne pas exécuter E3B/E4 ;
 - ne pas construire de masque, propriété, paire ou triple avant un verdict E3A ;
