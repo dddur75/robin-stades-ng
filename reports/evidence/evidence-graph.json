@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T12:55:00Z",
+  "generated_at":"2026-08-07T13:15:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -992,6 +992,22 @@
       "status":"INVALIDATED",
       "verified_by":["DP6","C2","DP5"],
       "invalidation_reason":"GitHub Actions run 31176390241 failed closed after the inventory bootstrap exposed one incorrectly transcribed Bundesliga CENSUS stored_sha256; no receipt or payload GET occurred."
+    },
+    {
+      "claim_id":"COVERAGE.E1B.SELECTION.V1.002",
+      "claim":"The corrected E1B selection contains the same ten finished 2024 fixtures and twenty exact evidence keys as V1.001, with the sole Bundesliga CENSUS stored hash corrected; all ten objects match the verified inventory on all eight pinned fields and DP6, C2 and DP5 unanimously approved the final retry selection.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_SELECTION_RETRY_TWO",
+      "source":"verified GitHub inventory artifact, exact-key selection generator, 80-field offline comparison and independent retry reviews",
+      "grain":"ten_finished_fixtures_two_per_five_leagues_common_season",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/evidence/e1b/e1b-selection-manifest-v1.json",
+      "hash":"8e3ef9e5e44ef26ef4fd37d884b3290504f2b167b1fceeec669e0ed8684deb22",
+      "code_revision":"7cdf1522dde2325d6983fa6cf1fc47384eb77f25",
+      "execution_id":"local-e1b-retry-selection-review-20260807T131500Z",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_SELECTION",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
     }
   ],
   "decision_nodes":[
@@ -1040,7 +1056,8 @@
     {"decision_id":"RCV3-20260807-043","ledger_record_hash":"2b0f215e6ced03aac9b96222fef7223f34d8ce532780166e0146b6d0bf5a7d67"},
     {"decision_id":"RCV3-20260807-044","ledger_record_hash":"9e14d7efc3c83e59726f6bcacb6da2f61295e8691700494c8627f3c48e80af97"},
     {"decision_id":"RCV3-20260807-045","ledger_record_hash":"3553cca652903c23273495d9cea496cf083145415601e1164969597d6b883356"},
-    {"decision_id":"RCV3-20260807-046","ledger_record_hash":"636da3cc9cd25acff729d91fc9f5a002d50269662e85f805f89371480b9f76e9"}
+    {"decision_id":"RCV3-20260807-046","ledger_record_hash":"636da3cc9cd25acff729d91fc9f5a002d50269662e85f805f89371480b9f76e9"},
+    {"decision_id":"RCV3-20260807-047","ledger_record_hash":"7ebaf9118b918851478f1e81eafbf0665afaf3609639375545e4c94292b05d9d"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1191,6 +1208,9 @@
     {"edge_id":"EDGE.146","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.147","from_claim_id":"COVERAGE.E1B.SELECTION.V1.001","to_decision_id":"RCV3-20260807-046","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.148","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-046","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.149","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-046","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.149","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-046","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.150","from_claim_id":"COVERAGE.E1B.SELECTION.V1.002","to_decision_id":"RCV3-20260807-047","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.151","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-047","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.152","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-047","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
