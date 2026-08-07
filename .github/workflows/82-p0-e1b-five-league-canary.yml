@@ -1,0 +1,110 @@
+name: "82 - P0 E1B Five-League Capability Canary"
+on:
+  push:
+    branches: [codex/p0-e1b-five-league-capability-canary-v1]
+    paths:
+      - .github/workflows/82-p0-e1b-five-league-canary.yml
+      - configs/execution/p0-e1b-five-league-canary-v1.json
+      - reports/evidence/e1b/e1b-selection-manifest-v1.json
+      - scripts/build_p0_e1b_selection_manifest.py
+      - scripts/run_p0_e1b_five_league_canary.py
+      - src/robin/historical_deep/e1b_canary.py
+      - tests/e1b/test_e1b_selection_and_measurement.py
+permissions:
+  contents: read
+concurrency:
+  group: p0-e1b-five-league-canary
+  cancel-in-progress: false
+env:
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  ODDS_CREDITS_ALLOWED: "0"
+  REMOTE_SQL_ALLOWED: "0"
+  R2_LIST_ALLOWED: "0"
+  R2_HEAD_ALLOWED: "0"
+  R2_WRITES_ALLOWED: "0"
+  R2_DELETES_ALLOWED: "0"
+  DEPLOYMENT_ALLOWED: "0"
+  PUBLICATION_ALLOWED: "0"
+  STORAGE_PAUSED: "true"
+  P3_P4_PAUSED: "true"
+  PRODUCTION_LOCKED: "true"
+  REAL_BETS: "false"
+  NO_BET_DEFAULT: "true"
+  PROMOTION_LOCKED: "true"
+  SOCIAL_PUBLISHING_ENABLED: "false"
+  DEMO_MODE_ENABLED: "false"
+jobs:
+  selection:
+    name: Selection provider-free
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Validate selection, allow-list and budgets
+        run: |
+          python scripts/build_p0_e1b_selection_manifest.py
+          git diff --exit-code -- configs/execution/p0-e1b-five-league-canary-v1.json reports/evidence/e1b/e1b-selection-manifest-v1.json
+          python scripts/run_p0_e1b_five_league_canary.py validate --require-decision
+          python -m pytest -q tests/e1b/test_e1b_selection_and_measurement.py
+          python -m ruff check src/robin/historical_deep/e1b_canary.py scripts/build_p0_e1b_selection_manifest.py scripts/run_p0_e1b_five_league_canary.py tests/e1b/test_e1b_selection_and_measurement.py
+          python -m mypy --strict src/robin/historical_deep/e1b_canary.py scripts/run_p0_e1b_five_league_canary.py
+  measure:
+    name: Exact-key R2 measurement
+    needs: selection
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Read frozen exact keys and replay twice in memory
+        run: >-
+          python scripts/run_p0_e1b_five_league_canary.py measure
+          --output artifacts/e1b/reports/evidence/e1b
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e1b-measurement-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e1b/reports/evidence/e1b/*.json
+          if-no-files-found: error
+          retention-days: 30
+  aggregate:
+    name: Offline aggregation verification
+    needs: measure
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: actions/download-artifact@v4
+        with:
+          name: e1b-measurement-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e1b/reports/evidence/e1b
+      - run: >-
+          python scripts/run_p0_e1b_five_league_canary.py validate-output
+          --reports-root artifacts/e1b/reports/evidence/e1b
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p0-e1b-five-league-canary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e1b/reports/evidence/e1b/*.json
+          if-no-files-found: error
+          retention-days: 90

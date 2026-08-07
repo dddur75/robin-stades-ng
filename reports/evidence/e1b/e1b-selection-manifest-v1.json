@@ -1,0 +1,698 @@
+{
+  "budgets": {
+    "odds_credits": 0,
+    "planned_bootstrap_bytes_upper_bound": 4194304,
+    "planned_bootstrap_gets": 1,
+    "planned_evidence_gets": 20,
+    "planned_logical_gets_total": 21,
+    "planned_network_bytes_upper_bound": 7244155,
+    "planned_payload_stored_bytes": 428411,
+    "planned_receipt_bytes_upper_bound": 2621440,
+    "provider_calls": 0,
+    "r2_byte_budget": 100000000,
+    "r2_deletes": 0,
+    "r2_get_budget": 2000,
+    "r2_writes": 0,
+    "remote_sql_queries": 0
+  },
+  "cross_league_season_uniform": true,
+  "fixtures": [
+    {
+      "allowed_object_ids": [
+        "07e62bfd559843bc0e500c29369489fff2ca094cc579c8b92a1ddfc3ed92c48f",
+        "90ddcef48350d19faf5e2c81cffa5e60668d0bd4d5f62293634db015492be188"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=ac46347808f65881521afde0ccb208c7251e31c6d48877ed746b17de1891fce1/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=ac46347808f65881521afde0ccb208c7251e31c6d48877ed746b17de1891fce1/payload-b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=e0ad96873a86ad878c222dc592e05320a33de3bf4a065f497179361ec52cddf8/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=e0ad96873a86ad878c222dc592e05320a33de3bf4a065f497179361ec52cddf8/payload-ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab.json.gz"
+      ],
+      "away_team_display_name": "Manchester United",
+      "away_team_id": 33,
+      "competition": "Premier League",
+      "competition_id": 39,
+      "fixture_id": 1208033,
+      "fixture_record_hashes": {
+        "ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab": "d0d2f38378a2b1dd7bf98bc430426932cbc530051153bf5db981405805583919",
+        "b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e": "816ddd68c2652f007843f3232fa4b2cbe8284ae9a37daf74b80d4a32668da2b8"
+      },
+      "home_team_display_name": "Brighton",
+      "home_team_id": 51,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-24T11:30:00+00:00",
+      "payload_hashes": [
+        "b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e",
+        "ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab"
+      ],
+      "receipt_hashes": [
+        "9f2ec568770e343f10b490460e2c14a7f063457538e56c07cec763ca8b31b108",
+        "1431d7d9ecbecd1bc022c74e852eeb3382576b4b3ae45f80bdfabdc5d112f333"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab": "3e43f2d1db2ea8d66c711858fb15bbb5a7dec19ef2806ce5f3fcf3359dc791ee",
+        "b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e": "4558ec16622f17c5004e2fa7c6d5f4d291160871cfe8c89fc36ca55f6f1ddab2"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "07e62bfd559843bc0e500c29369489fff2ca094cc579c8b92a1ddfc3ed92c48f",
+        "90ddcef48350d19faf5e2c81cffa5e60668d0bd4d5f62293634db015492be188"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=ac46347808f65881521afde0ccb208c7251e31c6d48877ed746b17de1891fce1/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=ac46347808f65881521afde0ccb208c7251e31c6d48877ed746b17de1891fce1/payload-b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=e0ad96873a86ad878c222dc592e05320a33de3bf4a065f497179361ec52cddf8/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=e0ad96873a86ad878c222dc592e05320a33de3bf4a065f497179361ec52cddf8/payload-ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab.json.gz"
+      ],
+      "away_team_display_name": "West Ham",
+      "away_team_id": 48,
+      "competition": "Premier League",
+      "competition_id": 39,
+      "fixture_id": 1208034,
+      "fixture_record_hashes": {
+        "ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab": "27ce599a0295ae69898629f40d221c20e52532d740953864fe23290bbd3fe95b",
+        "b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e": "dae0a4f8b1b1bec9be5255897901c662fd0ba9ac857a5b6ed69d261352c8ca54"
+      },
+      "home_team_display_name": "Crystal Palace",
+      "home_team_id": 52,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-24T14:00:00+00:00",
+      "payload_hashes": [
+        "b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e",
+        "ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab"
+      ],
+      "receipt_hashes": [
+        "9f2ec568770e343f10b490460e2c14a7f063457538e56c07cec763ca8b31b108",
+        "1431d7d9ecbecd1bc022c74e852eeb3382576b4b3ae45f80bdfabdc5d112f333"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab": "b0b468b640dad9ab557a3cb5f0e38c7c1feb594e6448b9a187eb39b6de8f61db",
+        "b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e": "a9485867b1abe4acc46a9cd8acac0830835e0b79ac1d9c505c6fdef136295afa"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "d7ac674b7b17398d0c3d36e2f603aabd76ac33bc154aa1e57fbbebcd18def6de",
+        "250b6e37fcafd8b525fd95c020dc1f223429a3efd77e5ed4a3582b13ca3da358"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/payload-9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/payload-fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a.json.gz"
+      ],
+      "away_team_display_name": "Montpellier",
+      "away_team_id": 82,
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "fixture_id": 1213756,
+      "fixture_record_hashes": {
+        "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007": "4d9cfe5996842c745bfd63959f5ff12473c79b92ebe32e408b05cd1bba241bcc",
+        "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a": "c4b3cf60191ac2f392be0ace216b99b6c35147b904847284fa79cd84610e9f22"
+      },
+      "home_team_display_name": "Paris Saint Germain",
+      "home_team_id": 85,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-23T18:45:00+00:00",
+      "payload_hashes": [
+        "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007",
+        "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a"
+      ],
+      "receipt_hashes": [
+        "41d1db0ec475fe28bb4c5a24ad4e5418264b84401dd1d2daaa45d8315eb95104",
+        "413dab60441605282e0dbd2b58873cc3c0199e327783072264528c93004d7d5f"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007": "1f7fbf4d142b19bc93740aea837472619c0387b07079361b225ab02cb8db6c32",
+        "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a": "569ad886b761ea4393aa0e7203bdfca50844e3f8efb5770c08cd17bbedae7ed1"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "d7ac674b7b17398d0c3d36e2f603aabd76ac33bc154aa1e57fbbebcd18def6de",
+        "250b6e37fcafd8b525fd95c020dc1f223429a3efd77e5ed4a3582b13ca3da358"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/payload-9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/payload-fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a.json.gz"
+      ],
+      "away_team_display_name": "Monaco",
+      "away_team_id": 91,
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "fixture_id": 1213763,
+      "fixture_record_hashes": {
+        "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007": "3e6e267ed5305d65b47142fcd557cd866bbe83337cea08646cf2e68e9b5aebbc",
+        "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a": "b375a8ffce1ecca45b9fc129eaf508041947677aa15c0b20ab8e888e873c96a9"
+      },
+      "home_team_display_name": "Lyon",
+      "home_team_id": 80,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-24T15:00:00+00:00",
+      "payload_hashes": [
+        "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007",
+        "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a"
+      ],
+      "receipt_hashes": [
+        "41d1db0ec475fe28bb4c5a24ad4e5418264b84401dd1d2daaa45d8315eb95104",
+        "413dab60441605282e0dbd2b58873cc3c0199e327783072264528c93004d7d5f"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007": "f19cec96098183110c8b711e5680d25f95a36ad1337feba309fba55d6da69ac8",
+        "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a": "b70f2517b8aeb4c1bca237e333bdfaf06d855bb224a7af394ed34f282236a084"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "38b53b003e96340304c41358190f86d130b1448f7a8a7e8c0283c88fbc24e167",
+        "2ed2103786c4121a4cdc85d1eacb1d6a7f88c5b29979cb0306f1009e9745b1ab"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=fb12083a2732bd270c5b4b6281ef4c34297840ee535aee1a53f9559bb237252b/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=fb12083a2732bd270c5b4b6281ef4c34297840ee535aee1a53f9559bb237252b/payload-7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=2238913576dbbd1a19d9eb7b7d90b83347f953ffbaf708c4252ecded89444ea1/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=2238913576dbbd1a19d9eb7b7d90b83347f953ffbaf708c4252ecded89444ea1/payload-4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e.json.gz"
+      ],
+      "away_team_display_name": "FC St. Pauli",
+      "away_team_id": 186,
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "fixture_id": 1223990,
+      "fixture_record_hashes": {
+        "4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e": "c3943c953d58d642c1b3b30514c680df66b858984ed1f47059e12f3dd14ce6f6",
+        "7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab": "a510b23dda184ef9601e47834412d85e09801469884cbff2750fe230f00e152c"
+      },
+      "home_team_display_name": "Union Berlin",
+      "home_team_id": 182,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-30T18:30:00+00:00",
+      "payload_hashes": [
+        "7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab",
+        "4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e"
+      ],
+      "receipt_hashes": [
+        "dd558b83bcc987d6881b3745759054814b100c705f2b93dba9c07df4e5696962",
+        "4269d41dfc49eaf4efe20d5e98ed70644709d2eca77bc97492ae0119aa3304dc"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e": "fbc548e3db4f7972405e04e019e5729c3d1b20983e623395b887f3db8cbf597e",
+        "7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab": "537ec47193585e86937b08dba94e2099ccfb91eb091aaad5f45bb4af7f710d13"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "38b53b003e96340304c41358190f86d130b1448f7a8a7e8c0283c88fbc24e167",
+        "2ed2103786c4121a4cdc85d1eacb1d6a7f88c5b29979cb0306f1009e9745b1ab"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=fb12083a2732bd270c5b4b6281ef4c34297840ee535aee1a53f9559bb237252b/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=fb12083a2732bd270c5b4b6281ef4c34297840ee535aee1a53f9559bb237252b/payload-7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=2238913576dbbd1a19d9eb7b7d90b83347f953ffbaf708c4252ecded89444ea1/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=2238913576dbbd1a19d9eb7b7d90b83347f953ffbaf708c4252ecded89444ea1/payload-4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e.json.gz"
+      ],
+      "away_team_display_name": "FSV Mainz 05",
+      "away_team_id": 164,
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "fixture_id": 1223985,
+      "fixture_record_hashes": {
+        "4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e": "703ac0aafd2082ea197562c9e56b9a24f3a7e91b9d729f1e78b1be4a14487f25",
+        "7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab": "be70b493b1750fc21eaedfd98dc7bb8b9bee505daf1e38c8559b44d91916fe49"
+      },
+      "home_team_display_name": "VfB Stuttgart",
+      "home_team_id": 172,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-31T13:30:00+00:00",
+      "payload_hashes": [
+        "7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab",
+        "4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e"
+      ],
+      "receipt_hashes": [
+        "dd558b83bcc987d6881b3745759054814b100c705f2b93dba9c07df4e5696962",
+        "4269d41dfc49eaf4efe20d5e98ed70644709d2eca77bc97492ae0119aa3304dc"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e": "5877ce8c04e64852e18f7368d0fcbb173da9a40f64577fb8040470471848801a",
+        "7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab": "37562faedf332db0fd56ac01a21aa3fb697b2daadf33be7b706a43ee3f28f831"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "c9eab4bf8ca73dba0352a3ab144e25869d0b5e712c8376142f487b30dbaab6e9",
+        "bc31d92bf0572f0b36dd6e20f4bfb6aed38503a798b5900bfc6b836fce4d84f9"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=adf19bdcf1e78c68fda9577c1c2b4860bbf6a94aa72f0d5ee8778475358531f9/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=adf19bdcf1e78c68fda9577c1c2b4860bbf6a94aa72f0d5ee8778475358531f9/payload-81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=89ce270039a8367960e251caf376f4e42e2dfccde464dae70d5f637bd61043e5/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=89ce270039a8367960e251caf376f4e42e2dfccde464dae70d5f637bd61043e5/payload-8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277.json.gz"
+      ],
+      "away_team_display_name": "AC Milan",
+      "away_team_id": 489,
+      "competition": "Serie A",
+      "competition_id": 135,
+      "fixture_id": 1223611,
+      "fixture_record_hashes": {
+        "81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141": "76fca8246834d07bd53ace7a016a2e724d05ac40762784a4a3a337e02ece9584",
+        "8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277": "cb6258728a86352b2be4799a5f2c277858aa472f6a7a9a3ce9b82021e282acf9"
+      },
+      "home_team_display_name": "Parma",
+      "home_team_id": 523,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-24T16:30:00+00:00",
+      "payload_hashes": [
+        "81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141",
+        "8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277"
+      ],
+      "receipt_hashes": [
+        "c76c74b72100b3d66f4a7d35fb4d85f36d6e6b5d02b82f4e353c94272e7a6c29",
+        "dbc3c30a572625e4b49a1c3719b9df17587f4f9d35ec19041369d8e1b73dd70a"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141": "6220cea440645b451886728d2eb9f0648ca18aaeac8a52b60abaa75fb1127f06",
+        "8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277": "bae4bafdf422ce4c9b860200f6ae405f8b855ea52731ae146bffbc8ad23eee3b"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "c9eab4bf8ca73dba0352a3ab144e25869d0b5e712c8376142f487b30dbaab6e9",
+        "bc31d92bf0572f0b36dd6e20f4bfb6aed38503a798b5900bfc6b836fce4d84f9"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=adf19bdcf1e78c68fda9577c1c2b4860bbf6a94aa72f0d5ee8778475358531f9/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=adf19bdcf1e78c68fda9577c1c2b4860bbf6a94aa72f0d5ee8778475358531f9/payload-81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=89ce270039a8367960e251caf376f4e42e2dfccde464dae70d5f637bd61043e5/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=89ce270039a8367960e251caf376f4e42e2dfccde464dae70d5f637bd61043e5/payload-8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277.json.gz"
+      ],
+      "away_team_display_name": "Lazio",
+      "away_team_id": 487,
+      "competition": "Serie A",
+      "competition_id": 135,
+      "fixture_id": 1223614,
+      "fixture_record_hashes": {
+        "81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141": "6c87c887fc5b92000cd307ae6ad2303f7f277cb523f6c9591e14c495631c826b",
+        "8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277": "e451e06f19afa7732a448af509867ef1c18620a9d7654cf4f66f56e258876621"
+      },
+      "home_team_display_name": "Udinese",
+      "home_team_id": 494,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-24T16:30:00+00:00",
+      "payload_hashes": [
+        "81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141",
+        "8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277"
+      ],
+      "receipt_hashes": [
+        "c76c74b72100b3d66f4a7d35fb4d85f36d6e6b5d02b82f4e353c94272e7a6c29",
+        "dbc3c30a572625e4b49a1c3719b9df17587f4f9d35ec19041369d8e1b73dd70a"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141": "e2fefa65b60556a8e8dac429bb7eeedef7bbd4c86761f400d97525299f8eb71c",
+        "8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277": "02a9065a2ac8b84d7db5d0dd45877fa52794a3531311cd80ca159c08c5262dbb"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "f110d9fa89f8f8cf9f81cb27c64fad9b92b3019b3526641a4a82e19d70060772",
+        "be6fc12ee202a377b417146e615c590a8ec4dfd59643d3472a691ca9be670cc4"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=aac6f539267ea1f86ca846c40394a8dbca9b92ffe9c5925c1f4015b7203de42c/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=aac6f539267ea1f86ca846c40394a8dbca9b92ffe9c5925c1f4015b7203de42c/payload-821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=4a97eed00a58befc01f934b25c8ac97ff55a5dcebed4e196d634d921eed715f7/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=4a97eed00a58befc01f934b25c8ac97ff55a5dcebed4e196d634d921eed715f7/payload-0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750.json.gz"
+      ],
+      "away_team_display_name": "Valencia",
+      "away_team_id": 532,
+      "competition": "Liga",
+      "competition_id": 140,
+      "fixture_id": 1208504,
+      "fixture_record_hashes": {
+        "0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750": "cb2cde67dc9717a10b631d3f64bb2977bf7b5ae6bd62a28e7233d83c8affb694",
+        "821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec": "45a9ed2aa0707b13c660db7db335a3538bcce9afed5a232bd81f7df5df0057c4"
+      },
+      "home_team_display_name": "Celta Vigo",
+      "home_team_id": 538,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-23T17:00:00+00:00",
+      "payload_hashes": [
+        "821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec",
+        "0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750"
+      ],
+      "receipt_hashes": [
+        "26d7ff978d0930a51e6a27198164550e9078488b9e8cf40e7aab67be8cecffe5",
+        "8cf40adba1bf463c88aa0c357abf734ce0bdde27b13872e9dc7b10279956576d"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750": "e9ecf8d397547a4e98122293a72ade0a24a590f5ff0f9da5e01aae3c3c901905",
+        "821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec": "dea86f0a5572f884742aff1af7125121771b7546b4166630e95967fd42ea1e05"
+      },
+      "status": "FT"
+    },
+    {
+      "allowed_object_ids": [
+        "f110d9fa89f8f8cf9f81cb27c64fad9b92b3019b3526641a4a82e19d70060772",
+        "be6fc12ee202a377b417146e615c590a8ec4dfd59643d3472a691ca9be670cc4"
+      ],
+      "allowed_r2_keys": [
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=aac6f539267ea1f86ca846c40394a8dbca9b92ffe9c5925c1f4015b7203de42c/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=aac6f539267ea1f86ca846c40394a8dbca9b92ffe9c5925c1f4015b7203de42c/payload-821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec.json.gz",
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=4a97eed00a58befc01f934b25c8ac97ff55a5dcebed4e196d634d921eed715f7/receipt.json",
+        "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=4a97eed00a58befc01f934b25c8ac97ff55a5dcebed4e196d634d921eed715f7/payload-0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750.json.gz"
+      ],
+      "away_team_display_name": "Villarreal",
+      "away_team_id": 533,
+      "competition": "Liga",
+      "competition_id": 140,
+      "fixture_id": 1208507,
+      "fixture_record_hashes": {
+        "0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750": "cd2e0a0cdd2fd3b9be58741321b78e40d8863b55cbfb4eaaeb71c604f72667b6",
+        "821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec": "0fe018aa3948945c305181f00910d1bf96c0ee4b1b8250bfef4ccca554b35f1b"
+      },
+      "home_team_display_name": "Sevilla",
+      "home_team_id": 536,
+      "identity_policy": "PROVIDER_ID_VERIFIED_NON_POSITIONAL",
+      "kickoff_utc": "2024-08-23T19:30:00+00:00",
+      "payload_hashes": [
+        "821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec",
+        "0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750"
+      ],
+      "receipt_hashes": [
+        "26d7ff978d0930a51e6a27198164550e9078488b9e8cf40e7aab67be8cecffe5",
+        "8cf40adba1bf463c88aa0c357abf734ce0bdde27b13872e9dc7b10279956576d"
+      ],
+      "round": "Regular Season - 2",
+      "season": 2024,
+      "selection_reason": "Earliest finished round-two fixture where both teams have a prior finished league fixture in the common 2024 season.",
+      "source_record_hashes": {
+        "0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750": "5fbe83c46153604dcc83956b13727d44621b7953f244fc3724b0f9b488001a05",
+        "821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec": "76a90a90b61e8a230f0fb70abec11b93a94e0516cbcd56d92a9a1e14dd6753a5"
+      },
+      "status": "FT"
+    }
+  ],
+  "frozen_at": "2026-08-07T11:10:00Z",
+  "gate": {
+    "allowed_decisions": [
+      "E1B_SELECTION_READY",
+      "E1B_SELECTION_BLOCKED"
+    ],
+    "mechanical_checks": {
+      "ambiguous_identities": 0,
+      "budget_within_limits": true,
+      "competition_count": 5,
+      "fixture_count": 10,
+      "fixture_count_per_league": 2,
+      "missing_keys": 0,
+      "missing_payload_hashes": 0,
+      "missing_receipt_hashes": 0,
+      "provider_fallbacks": 0,
+      "unlisted_keys": 0,
+      "write_or_delete_methods_imported": 0
+    },
+    "review_status": "PENDING_DP6_C2_DP5"
+  },
+  "mission_id": "p0-e1b-five-league-capability-canary-v1",
+  "ordering": [
+    "competition_id",
+    "season",
+    "kickoff_utc",
+    "fixture_id"
+  ],
+  "schema_version": "p0-e1b-selection-manifest-v1",
+  "season": 2024,
+  "selection_policy": {
+    "canonical_identity_required": true,
+    "common_season_required": true,
+    "earliest_fixture_with_prior_finished_match_for_both_teams": true,
+    "finished_statuses": [
+      "FT",
+      "AET",
+      "PEN"
+    ],
+    "order": [
+      "competition_id",
+      "season",
+      "kickoff_utc",
+      "fixture_id"
+    ],
+    "rationale": "Maximize bounded calendar, form and fatigue observability without sacrificing deterministic selection."
+  },
+  "selection_source": {
+    "idempotent_projection_artifacts": [
+      {
+        "artifact_id": 8875626108,
+        "competition_id": 39,
+        "digest": "sha256:b17053675296d10014386636921e57a4e3fc9b79d639dbb2d90a5920f6f4d0a9",
+        "name": "historical-deep-74d-current-r2-gate-batch-0105-30853757779-1"
+      },
+      {
+        "artifact_id": 8875918562,
+        "competition_id": 61,
+        "digest": "sha256:df2759c22473640146c51034603be8c549c72ff56773d73f8573603d9f58bfed",
+        "name": "historical-deep-74d-current-r2-gate-batch-0142-30853757779-1"
+      },
+      {
+        "artifact_id": 8876203323,
+        "competition_id": 78,
+        "digest": "sha256:2be7c17d8bc245cd60e4f2c6dfd4074e0c36189a1c7a28e12c3e458248d26625",
+        "name": "historical-deep-74d-current-r2-gate-batch-0179-30853757779-1"
+      },
+      {
+        "artifact_id": 8875016575,
+        "competition_id": 135,
+        "digest": "sha256:f585a2de9b783b14f78214e3904e4bc9f20ec4bd8d1db19e32b6484e60906d9f",
+        "name": "historical-deep-74d-current-r2-gate-batch-0031-30853757779-1"
+      },
+      {
+        "artifact_id": 8875329908,
+        "competition_id": 140,
+        "digest": "sha256:67a0f609253a84cce832b8a553104e8626a925f6ca18b6303fb9cfbce729fe4c",
+        "name": "historical-deep-74d-current-r2-gate-batch-0068-30853757779-1"
+      }
+    ],
+    "inventory_durable_key": "historical-deep-data/schema-v1/_derived/replay/inventories/continuation=p0-closure-30622258001-1/inventory=87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d/manifest.json.gz",
+    "inventory_manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+    "recovery_artifact": {
+      "artifact_id": 8871763918,
+      "authoritative": false,
+      "digest": "sha256:9d6562d30502570614f8c68a7d0c72325398a43071026e7f7bcf9c633dad6864",
+      "github_run_id": 30853757779,
+      "name": "historical-deep-74a-current-r2-gate-30853757779-1",
+      "purpose": "READ_ONLY_SELECTION_CROSS_CHECK"
+    },
+    "replay_head_sha": "f489971c03b53e9ea1381655f1591328ed055d41",
+    "replay_pass": 2
+  },
+  "source_main_sha": "b76ac9213853a52f058b33ef3cf4964798f40256",
+  "source_objects": [
+    {
+      "competition": "Premier League",
+      "competition_id": 39,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 364519,
+      "object_id": "07e62bfd559843bc0e500c29369489fff2ca094cc579c8b92a1ddfc3ed92c48f",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=ac46347808f65881521afde0ccb208c7251e31c6d48877ed746b17de1891fce1/payload-b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e.json.gz",
+      "payload_sha256": "b8cd15e5d83522aca0f0a8bae5109787690a93400c901ea53acee01d3eab0c8e",
+      "receipt_hash": "9f2ec568770e343f10b490460e2c14a7f063457538e56c07cec763ca8b31b108",
+      "receipt_id": "ac46347808f65881521afde0ccb208c7251e31c6d48877ed746b17de1891fce1",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=ac46347808f65881521afde0ccb208c7251e31c6d48877ed746b17de1891fce1/receipt.json",
+      "season": 2024,
+      "source_role": "CENSUS",
+      "stored_bytes": 15139,
+      "stored_sha256": "e6eba644bdca4264fe8eeb366498f8586a58c8db26eae5262b397f72505bbe04"
+    },
+    {
+      "competition": "Premier League",
+      "competition_id": 39,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 754942,
+      "object_id": "90ddcef48350d19faf5e2c81cffa5e60668d0bd4d5f62293634db015492be188",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=e0ad96873a86ad878c222dc592e05320a33de3bf4a065f497179361ec52cddf8/payload-ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab.json.gz",
+      "payload_sha256": "ad5b9d6d7a270488a2d65ed86150d32f7b13ac88aabb88e7157e720815815eab",
+      "receipt_hash": "1431d7d9ecbecd1bc022c74e852eeb3382576b4b3ae45f80bdfabdc5d112f333",
+      "receipt_id": "e0ad96873a86ad878c222dc592e05320a33de3bf4a065f497179361ec52cddf8",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:39/season=2024/family=fixtures/endpoint=fixtures/task=e0ad96873a86ad878c222dc592e05320a33de3bf4a065f497179361ec52cddf8/receipt.json",
+      "season": 2024,
+      "source_role": "DETAIL",
+      "stored_bytes": 68690,
+      "stored_sha256": "e06b5e274465ca2cd7ea052356026935737ca9771c4a7b6d2275602df9f17847"
+    },
+    {
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 291497,
+      "object_id": "d7ac674b7b17398d0c3d36e2f603aabd76ac33bc154aa1e57fbbebcd18def6de",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/payload-9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007.json.gz",
+      "payload_sha256": "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007",
+      "receipt_hash": "41d1db0ec475fe28bb4c5a24ad4e5418264b84401dd1d2daaa45d8315eb95104",
+      "receipt_id": "a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/receipt.json",
+      "season": 2024,
+      "source_role": "CENSUS",
+      "stored_bytes": 13121,
+      "stored_sha256": "99ec540b33d5c4729517bbea00144d24ab3ce88a53e82cc9987f90d72779a7b2"
+    },
+    {
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 758509,
+      "object_id": "250b6e37fcafd8b525fd95c020dc1f223429a3efd77e5ed4a3582b13ca3da358",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/payload-fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a.json.gz",
+      "payload_sha256": "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a",
+      "receipt_hash": "413dab60441605282e0dbd2b58873cc3c0199e327783072264528c93004d7d5f",
+      "receipt_id": "610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/receipt.json",
+      "season": 2024,
+      "source_role": "DETAIL",
+      "stored_bytes": 69909,
+      "stored_sha256": "6a1681fd081e87e054b9ac5e602b1c1e61b29b1844f011d97f6770733c628802"
+    },
+    {
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 295714,
+      "object_id": "38b53b003e96340304c41358190f86d130b1448f7a8a7e8c0283c88fbc24e167",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=fb12083a2732bd270c5b4b6281ef4c34297840ee535aee1a53f9559bb237252b/payload-7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab.json.gz",
+      "payload_sha256": "7d69bf46be46d40754682fe3ace5cbcc5406a01becbde4ed386c4a19c6262bab",
+      "receipt_hash": "dd558b83bcc987d6881b3745759054814b100c705f2b93dba9c07df4e5696962",
+      "receipt_id": "fb12083a2732bd270c5b4b6281ef4c34297840ee535aee1a53f9559bb237252b",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=fb12083a2732bd270c5b4b6281ef4c34297840ee535aee1a53f9559bb237252b/receipt.json",
+      "season": 2024,
+      "source_role": "CENSUS",
+      "stored_bytes": 12769,
+      "stored_sha256": "328475700d0f70323d9bc4b50c73c3fff9eca71e9b2b1ba8141de0db2247649a"
+    },
+    {
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 764807,
+      "object_id": "2ed2103786c4121a4cdc85d1eacb1d6a7f88c5b29979cb0306f1009e9745b1ab",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=2238913576dbbd1a19d9eb7b7d90b83347f953ffbaf708c4252ecded89444ea1/payload-4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e.json.gz",
+      "payload_sha256": "4e9574abf14cc61096a2211d22fe6c9f4be28a69371d44fc1364d06e0831160e",
+      "receipt_hash": "4269d41dfc49eaf4efe20d5e98ed70644709d2eca77bc97492ae0119aa3304dc",
+      "receipt_id": "2238913576dbbd1a19d9eb7b7d90b83347f953ffbaf708c4252ecded89444ea1",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:78/season=2024/family=fixtures/endpoint=fixtures/task=2238913576dbbd1a19d9eb7b7d90b83347f953ffbaf708c4252ecded89444ea1/receipt.json",
+      "season": 2024,
+      "source_role": "DETAIL",
+      "stored_bytes": 69616,
+      "stored_sha256": "818e88c4158c010935070f7de73bbb27ff3d56adf3af6ce19a34c8dc4ff79ee1"
+    },
+    {
+      "competition": "Serie A",
+      "competition_id": 135,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 359806,
+      "object_id": "c9eab4bf8ca73dba0352a3ab144e25869d0b5e712c8376142f487b30dbaab6e9",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=adf19bdcf1e78c68fda9577c1c2b4860bbf6a94aa72f0d5ee8778475358531f9/payload-81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141.json.gz",
+      "payload_sha256": "81e4cf5f807cfc1cd51daaf7aa111f35f7e509002a1e2654dddb4d0121e05141",
+      "receipt_hash": "c76c74b72100b3d66f4a7d35fb4d85f36d6e6b5d02b82f4e353c94272e7a6c29",
+      "receipt_id": "adf19bdcf1e78c68fda9577c1c2b4860bbf6a94aa72f0d5ee8778475358531f9",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=adf19bdcf1e78c68fda9577c1c2b4860bbf6a94aa72f0d5ee8778475358531f9/receipt.json",
+      "season": 2024,
+      "source_role": "CENSUS",
+      "stored_bytes": 16395,
+      "stored_sha256": "7e0d2118de9830e2c4460c8568ce8fcf6a88fb3956b753f4d633a8880a0b1abf"
+    },
+    {
+      "competition": "Serie A",
+      "competition_id": 135,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 855947,
+      "object_id": "bc31d92bf0572f0b36dd6e20f4bfb6aed38503a798b5900bfc6b836fce4d84f9",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=89ce270039a8367960e251caf376f4e42e2dfccde464dae70d5f637bd61043e5/payload-8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277.json.gz",
+      "payload_sha256": "8291f5d8075eed364a1be1b16e74c8ca46383d3096ebd77af79df84fa5ffc277",
+      "receipt_hash": "dbc3c30a572625e4b49a1c3719b9df17587f4f9d35ec19041369d8e1b73dd70a",
+      "receipt_id": "89ce270039a8367960e251caf376f4e42e2dfccde464dae70d5f637bd61043e5",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:135/season=2024/family=fixtures/endpoint=fixtures/task=89ce270039a8367960e251caf376f4e42e2dfccde464dae70d5f637bd61043e5/receipt.json",
+      "season": 2024,
+      "source_role": "DETAIL",
+      "stored_bytes": 74752,
+      "stored_sha256": "cce40ca5f89c211cee33527fb930c9d208c335a8304dad82ef9fdc3a7fbc5aed"
+    },
+    {
+      "competition": "Liga",
+      "competition_id": 140,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 365417,
+      "object_id": "f110d9fa89f8f8cf9f81cb27c64fad9b92b3019b3526641a4a82e19d70060772",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=aac6f539267ea1f86ca846c40394a8dbca9b92ffe9c5925c1f4015b7203de42c/payload-821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec.json.gz",
+      "payload_sha256": "821d17f7fbc0684598caff75087ac1603f36e90150d1485f641e48e3ed262cec",
+      "receipt_hash": "26d7ff978d0930a51e6a27198164550e9078488b9e8cf40e7aab67be8cecffe5",
+      "receipt_id": "aac6f539267ea1f86ca846c40394a8dbca9b92ffe9c5925c1f4015b7203de42c",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=aac6f539267ea1f86ca846c40394a8dbca9b92ffe9c5925c1f4015b7203de42c/receipt.json",
+      "season": 2024,
+      "source_role": "CENSUS",
+      "stored_bytes": 16852,
+      "stored_sha256": "f148e718d7095df35806ac9d319574e3aea91c8753cece4ad5f987545043afbe"
+    },
+    {
+      "competition": "Liga",
+      "competition_id": 140,
+      "family": "fixtures",
+      "historical_collection_provider_calls": 1,
+      "logical_bytes": 835204,
+      "object_id": "be6fc12ee202a377b417146e615c590a8ec4dfd59643d3472a691ca9be670cc4",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=4a97eed00a58befc01f934b25c8ac97ff55a5dcebed4e196d634d921eed715f7/payload-0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750.json.gz",
+      "payload_sha256": "0a45bba4741e873a3e0774ee7e25a2e4808128eacc70d732fa7847bf6e7b8750",
+      "receipt_hash": "8cf40adba1bf463c88aa0c357abf734ce0bdde27b13872e9dc7b10279956576d",
+      "receipt_id": "4a97eed00a58befc01f934b25c8ac97ff55a5dcebed4e196d634d921eed715f7",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=4a97eed00a58befc01f934b25c8ac97ff55a5dcebed4e196d634d921eed715f7/receipt.json",
+      "season": 2024,
+      "source_role": "DETAIL",
+      "stored_bytes": 71168,
+      "stored_sha256": "e298c147ec9da03e69ef1c40243e41e052468fa4d2f043c218c247738d552ce0"
+    }
+  ],
+  "stage": "E1B"
+}

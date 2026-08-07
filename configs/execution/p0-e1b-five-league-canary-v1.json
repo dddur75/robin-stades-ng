@@ -1,0 +1,104 @@
+{
+  "allowed_capabilities": [
+    "TEAM",
+    "TEAM_FORM",
+    "PLAYER",
+    "PLAYER_FORM",
+    "LINEUP",
+    "FORMATION",
+    "STARTER_BASELINE",
+    "EVENTS",
+    "TEAM_STATISTICS",
+    "PLAYER_STATISTICS",
+    "DISCIPLINE_GENERIC",
+    "INJURY_CONFIRMED",
+    "SUSPENSION_CONFIRMED",
+    "ABSENCE_GENERIC",
+    "CALENDAR",
+    "FATIGUE",
+    "STANDINGS"
+  ],
+  "capability_contract_hash": "aa6f60694b7bfe1684c6fcf0faf1bbbc6fa1bb9f1001f06fee999451d1d011e8",
+  "competition_count": 5,
+  "external_effects": {
+    "api_football_calls": 0,
+    "deployments": 0,
+    "odds_credits": 0,
+    "promotion": false,
+    "publications": 0,
+    "r2_deletes": 0,
+    "r2_head": 0,
+    "r2_list": 0,
+    "r2_writes": 0,
+    "real_bets": false,
+    "remote_sql_queries": 0
+  },
+  "final_decision_ceiling": "PASS_AND_HOLD",
+  "fixture_count": 10,
+  "fixture_count_per_league": 2,
+  "grain_catalog_hash": "5b2581e7d3a4630fd9d84be6ca954dc63cae83a602fce91d68c4847c5498cd71",
+  "launch_readiness_hash": "76638a197e8bb0d0a6a9c20c6c51011c3bc39f5e0ab2e744f6964286bc78a316",
+  "manifest_role": "IMMUTABLE_E1B_EXACT_KEY_EXECUTION_AUTHORITY",
+  "mission_id": "p0-e1b-five-league-capability-canary-v1",
+  "odds_credit_budget": 0,
+  "provider_budget": 0,
+  "r2_byte_budget": 100000000,
+  "r2_get_budget": 2000,
+  "r2_write_budget": 0,
+  "retry_policy": {
+    "first_failure": "DIAGNOSE_AND_APPLY_MINIMAL_FIX_AT_SAME_SCOPE",
+    "maximum_technical_attempts": 2,
+    "scope_expansion_allowed": false,
+    "second_similar_failure": "E1B_TECHNICAL_PARTIAL"
+  },
+  "schema_version": "p0-e1b-five-league-canary-v1",
+  "season_policy": {
+    "basis": "COMMON_P0_SEASON_WITH_VERIFIED_INVENTORY_AND_IDEMPOTENT_PASS_2_PROJECTION",
+    "cross_league_season_uniform": true,
+    "selected_season": 2024
+  },
+  "selection_policy": {
+    "canonical_identity_required": true,
+    "common_season_required": true,
+    "earliest_fixture_with_prior_finished_match_for_both_teams": true,
+    "finished_statuses": [
+      "FT",
+      "AET",
+      "PEN"
+    ],
+    "order": [
+      "competition_id",
+      "season",
+      "kickoff_utc",
+      "fixture_id"
+    ],
+    "rationale": "Maximize bounded calendar, form and fatigue observability without sacrificing deterministic selection."
+  },
+  "source_main_sha": "b76ac9213853a52f058b33ef3cf4964798f40256",
+  "sql_budget": 0,
+  "stage": "E1B",
+  "stop_conditions": [
+    "E2_FORBIDDEN",
+    "R2_GET_BUDGET_EXCEEDED",
+    "R2_BYTE_BUDGET_EXCEEDED",
+    "ANY_R2_WRITE_OR_DELETE",
+    "ANY_PROVIDER_CALL",
+    "ANY_REMOTE_SQL_QUERY",
+    "ANY_ODDS_CREDIT",
+    "UNLISTED_R2_KEY",
+    "MISSING_RECEIPT_OR_HASH",
+    "IDENTITY_AMBIGUITY",
+    "SECOND_SIMILAR_TECHNICAL_FAILURE"
+  ],
+  "stopped_capabilities": [
+    "ABSENCE_CAUSE_EXACT"
+  ],
+  "time_budget": {
+    "maximum_hours": 8,
+    "maximum_job_minutes": 15,
+    "target_hours": [
+      2,
+      6
+    ]
+  }
+}
