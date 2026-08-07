@@ -1,0 +1,19 @@
+{
+  "mission_id": "p0-capability-execution-long-mission-v1",
+  "authorized_stages": [
+    "E1",
+    "E2",
+    "E3A",
+    "E3B"
+  ],
+  "maximum_stage": "E3B",
+  "external_effects": [
+    "github_actions_execute_bounded",
+    "r2_read_existing_immutable_evidence",
+    "r2_write_compact_append_only_checkpoints"
+  ],
+  "compute_budget": 3000,
+  "time_budget": 180000,
+  "source_hash": "bd88b2924cbcf7f2dbfb97c14c2ba2e42551c62ae2342330f6ecb50a78f58bc8",
+  "expires_at": "2026-08-10T23:59:59Z"
+}

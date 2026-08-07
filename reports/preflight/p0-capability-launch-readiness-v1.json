@@ -1,0 +1,197 @@
+{
+  "schema_version": "p0-capability-launch-readiness-v1",
+  "verdict": "P0_CAPABILITY_EXECUTION_LAUNCH_READINESS_READY",
+  "source": {
+    "repository": "dddur75/robin-stades-ng",
+    "source_main_sha": "4d12da146602585a9df58b9db725a1c483d230d0",
+    "pr31": {
+      "number": 31,
+      "state": "MERGED",
+      "head": "a72a3ef0a87f0dae4b6aaa2a7be858b9ba492ce8",
+      "merge_commit": "4d12da146602585a9df58b9db725a1c483d230d0",
+      "contract_verified": true,
+      "github_body_encoding": "ASCII_SAFE_ZERO_REPLACEMENT_CHARACTERS"
+    },
+    "main_ci": {
+      "run_id": 31162074889,
+      "event": "push",
+      "head": "4d12da146602585a9df58b9db725a1c483d230d0",
+      "attempt": 1,
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "jobs_success": 4,
+      "jobs_skipped_expected": 1
+    }
+  },
+  "frozen_hashes": {
+    "hash_convention": "SHA256_OF_GIT_LF_BYTES",
+    "capability_contract_hash": "aa6f60694b7bfe1684c6fcf0faf1bbbc6fa1bb9f1001f06fee999451d1d011e8",
+    "capability_contract_canonical_hash": "2333bf06c788cd5c3de88633711c3f25a5eb4a9d0af2467bd52d4842de8f559a",
+    "grain_catalog_hash": "5b2581e7d3a4630fd9d84be6ca954dc63cae83a602fce91d68c4847c5498cd71",
+    "provider_inventory_hash": "f0b0f36d68c24692964868de3618c5a5c42b47d839f36bd6cb22a7c2ef65f18b"
+  },
+  "scientific_state_unchanged": {
+    "stage": "E1A",
+    "technical_cells": "16/16",
+    "absence_records_total": 3036,
+    "injuries_confirmed": 2681,
+    "suspensions_confirmed": 206,
+    "absence_cause_unknown": 149,
+    "identity": "3036 = 2681 + 206 + 149",
+    "capabilities_total": 18,
+    "not_evaluated": 14,
+    "measured_partial": 3,
+    "stopped_local_campaign": 1,
+    "ready": 0,
+    "scale_authorized": 0,
+    "architecture_3": "FORBIDDEN_NOT_CREATED"
+  },
+  "manifest": {
+    "path": "configs/execution/p0-capability-execution-manifest-v1.json",
+    "council_activation_path": "configs/execution/p0-capability-council-activation-v1.json",
+    "council_activation_fields": 8,
+    "role": "FUTURE_MISSION_CONTRACT_NOT_ACTIVE",
+    "maximum_stage": "PAIR_SEARCH",
+    "allowed_stages": [
+      "E1B",
+      "E2",
+      "E3A",
+      "E3B",
+      "MASK_BENCHMARK",
+      "ATOMIC_PROPERTIES",
+      "PAIR_SEARCH"
+    ],
+    "conditional_e4": {
+      "authorized": false,
+      "requires_new_manifest": true
+    },
+    "triple_search": "TRIPLE_SEARCH_LOCKED",
+    "future_budgets": {
+      "r2_reads": 10000,
+      "r2_compact_checkpoint_writes": 256,
+      "api_football_calls": 0,
+      "odds_credits": 0,
+      "sql_reads": 0,
+      "sql_writes": 0
+    }
+  },
+  "dry_run": {
+    "label": "MECHANICAL_PREFLIGHT_ONLY",
+    "scientific_evidence": false,
+    "service_access": false,
+    "leagues": 5,
+    "fixtures_e1b": 10,
+    "fixtures_e2": 100,
+    "fixtures_e3a": 20,
+    "fixtures_e3b": 100,
+    "scenarios": [
+      "CAPABILITY_READY",
+      "CAPABILITY_PARTIAL",
+      "BLOCKED_BY_SOURCE",
+      "BLOCKED_BY_TEMPORALITY",
+      "LOCAL_CAMPAIGN_STOP",
+      "UNKNOWN_FIRST_CLASS",
+      "VALID_EMPTY_RESPONSE",
+      "DUPLICATE_IDENTITY",
+      "AMBIGUOUS_IDENTITY"
+    ],
+    "transitions": [
+      "E1B_PASS_AND_SCALE_TO_E2",
+      "E2_PASS_AND_SCALE_TO_E3A",
+      "E3A_PASS_AND_SCALE_TO_E3B"
+    ],
+    "global_block": false,
+    "checkpoint_count": 4,
+    "checkpoint_hashes": [
+      "ce8874d7f3dee46c98beb36fae901e8e0cae58db7d2c97313c7e5f74b390337f",
+      "50933d1e1c9cba23d67f0b1d3bf3dfb81ab14e08762385b04624b79b65f43695",
+      "67b5ef03c440b12f818f9af087ee308d786bcb995a9ff96dae9818934cfcd715",
+      "03e5bdb7dd4a86b4d308899bebe17eb443ff4e310eea0d8f01620961a5a2a5ce"
+    ],
+    "gate_result_hashes": [
+      "c8f7553e14452604649d36277defd7f34a0a1d791f4a4596514b13554385bc0a",
+      "8b78c40efdb0556558987a34f92092dc78577fd71db258a94a52597d80c0edcc",
+      "9bb2e02ddbac9417fcce2180e009485b5c3eb383cf2c7488b12cce9c399c1cbd",
+      "13cec4a5fbe6c4b0a92d097ea0336277e14ab246a79aaee5d857f6ebfa78474d"
+    ],
+    "golden_pack_hash": "065cde964613b7b62de19cdf0f9fd2f47e2b2d95affa1491348e0e3a1fe00572",
+    "final_checkpoint_hash": "03e5bdb7dd4a86b4d308899bebe17eb443ff4e310eea0d8f01620961a5a2a5ce",
+    "resume_from_e2_matches_uninterrupted": true,
+    "checkpointed_mid_shard_probe_hash": "9f0ad9120bcc0b12782bc2642211f1bbadb927e4ce80535d5cf8c72e71112491",
+    "checkpointed_mid_shard_resume_final_hash": "8390bd155204eacf29218137cfeb5792d31f3e1524801e633c60f027b901d0f1",
+    "checkpointed_mid_shard_resume_matches_dataset": true,
+    "checkpointed_mid_shard_resume_matches_gates": true,
+    "idempotent_repeat": true,
+    "tampered_checkpoint_rejected": true,
+    "gate_records": 28,
+    "elapsed_ms_observed": 2.47,
+    "peak_memory_bytes_observed": 79385,
+    "verdict": "MECHANICAL_PREFLIGHT_PASSED"
+  },
+  "mask_benchmark_contract": {
+    "executed": false,
+    "future_inputs": [
+      "E2_REAL",
+      "E3A_REAL"
+    ],
+    "representations": [
+      "NUMPY_BOOLEAN_ARRAY",
+      "POLARS",
+      "DUCKDB",
+      "PYARROW",
+      "PYTHON_BITSETS",
+      "ROARING_BITMAP"
+    ],
+    "measures": [
+      "construction_time",
+      "intersection_time",
+      "union_time",
+      "memory",
+      "serialized_size",
+      "reload_time",
+      "determinism",
+      "unknown_support"
+    ]
+  },
+  "search_contract": {
+    "atomic_properties_theoretical_maximum": 486,
+    "pairs_theoretical_maximum_before_filters": 117855,
+    "triples_executed": 0,
+    "triple_gate_conditions": 8,
+    "triple_status": "TRIPLE_SEARCH_LOCKED"
+  },
+  "platform_audit": "reports/preflight/p0-capability-platform-audit-v1.json",
+  "runtime_unknowns": {
+    "status": "UNKNOWN_TO_BE_VERIFIED_AT_RUNTIME",
+    "areas": [
+      "R2 credentials, object existence, limits and latency",
+      "Neon endpoint, revision, tables, role, pooler and timeouts",
+      "future GitHub workflow queue and runner availability"
+    ]
+  },
+  "validation": {
+    "preflight_tests": "23_PASSED_FINAL",
+    "capability_v2_tests": "INCLUDED_IN_113_PASSED_DOMAIN_SUITE",
+    "ruff": "PASSED",
+    "mypy_strict": "PASSED",
+    "json_yaml": "PASSED_4_CHANGED_JSON_0_CHANGED_YAML",
+    "utf8_mojibake": "PASSED_11_CHANGED_FILES",
+    "secrets": "PASSED_CHANGED_FILES_SCAN",
+    "diff_check": "PASSED",
+    "domain_suite": "113_PASSED_PREFLIGHT_COVERAGE_COUNCIL",
+    "draft_pr_ci": "PENDING_AT_SINGLE_PUSH_PUBLICATION"
+  },
+  "external_consumption": {
+    "api_football_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "odds_credits": 0,
+    "deployments": 0,
+    "publications": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "external_cost": 0
+  }
+}

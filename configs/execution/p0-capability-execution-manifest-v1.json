@@ -1,0 +1,138 @@
+{
+  "schema_version": "p0-capability-execution-manifest-v1",
+  "manifest_role": "FUTURE_MISSION_CONTRACT_NOT_ACTIVE",
+  "mission_id": "p0-capability-execution-long-mission-v1",
+  "source_main_sha": "4d12da146602585a9df58b9db725a1c483d230d0",
+  "capability_contract_hash": "aa6f60694b7bfe1684c6fcf0faf1bbbc6fa1bb9f1001f06fee999451d1d011e8",
+  "capability_contract_canonical_hash": "2333bf06c788cd5c3de88633711c3f25a5eb4a9d0af2467bd52d4842de8f559a",
+  "grain_catalog_hash": "5b2581e7d3a4630fd9d84be6ca954dc63cae83a602fce91d68c4847c5498cd71",
+  "provider_inventory_hash": "f0b0f36d68c24692964868de3618c5a5c42b47d839f36bd6cb22a7c2ef65f18b",
+  "allowed_stages": [
+    "E1B",
+    "E2",
+    "E3A",
+    "E3B",
+    "MASK_BENCHMARK",
+    "ATOMIC_PROPERTIES",
+    "PAIR_SEARCH"
+  ],
+  "maximum_stage": "PAIR_SEARCH",
+  "conditional_stage": {
+    "stage": "E4",
+    "authorized": false,
+    "activation_rule": "ONLY_IF_A_USEFUL_CAPABILITY_REMAINS_UNDECIDABLE_AND_P0_CLOSURE_IS_NECESSARY"
+  },
+  "forbidden_stages": [
+    "TRIPLE_SEARCH",
+    "DEPTH_4_PLUS",
+    "MODEL_PROMOTION",
+    "REAL_BETS",
+    "SOCIAL_PUBLICATION"
+  ],
+  "time_budget_hours": 50,
+  "compute_budget": {
+    "target_minutes_per_job": 10,
+    "maximum_minutes_per_job": 15,
+    "maximum_checkpoint_minutes": 5,
+    "maximum_parallel_read_only_jobs": 5,
+    "maximum_stateful_writers": 1,
+    "maximum_total_job_minutes": 3000
+  },
+  "r2_read_budget": 10000,
+  "r2_write_budget": 256,
+  "r2_checkpoint_policy": {
+    "prefix": "historical-deep-data/schema-v1/_derived/capability-execution/checkpoints/mission=p0-capability-execution-long-mission-v1/",
+    "object_types": [
+      "compact_checkpoint_json",
+      "compact_stage_manifest_json"
+    ],
+    "append_only": true,
+    "raw_payloads": false,
+    "overwrites": false,
+    "deletes": false,
+    "activation_gate": "APPEND_ONLY_R2_CHECKPOINT_DECISION_REQUIRED_BEFORE_FIRST_WRITE"
+  },
+  "api_football_budget": 0,
+  "odds_credit_budget": 0,
+  "sql_read_budget": 0,
+  "sql_write_budget": 0,
+  "checkpoint_interval": {
+    "maximum_minutes": 5,
+    "required_after_each_stage": true,
+    "required_after_each_shard": true
+  },
+  "retry_policy": {
+    "similar_failure_key": [
+      "failure_taxonomy",
+      "root_cause_signature",
+      "capability_scope"
+    ],
+    "first_similar_failure": "MINIMAL_FIX_AND_HOLD",
+    "second_similar_failure": "REDESIGN_REQUIRED",
+    "third_unchanged_attempt": "FORBIDDEN_FAIL_AND_STOP"
+  },
+  "concurrency_policy": {
+    "manual_group": "p0-capability-manual",
+    "scheduled_group": "p0-capability-scheduled",
+    "mask_group": "hypothesis-mask-build",
+    "pair_group": "hypothesis-pair-search",
+    "stateful_writer_group": "p0-capability-stateful-writer",
+    "isolated_groups": [
+      "cockpit-refresh",
+      "deployment"
+    ],
+    "cancel_in_progress": false,
+    "pending_intent_must_be_committed_before_dispatch": true,
+    "overlapping_identical_attempts": false
+  },
+  "stop_conditions": [
+    "SOURCE_HASH_MISMATCH",
+    "CAPABILITY_CONTRACT_HASH_MISMATCH",
+    "GRAIN_CATALOG_HASH_MISMATCH",
+    "PROVIDER_INVENTORY_HASH_MISMATCH",
+    "MISSING_REQUIRED_RECEIPT_OR_MANIFEST",
+    "TEMPORAL_LEAKAGE",
+    "UNKNOWN_COERCED",
+    "DUPLICATE_OR_AMBIGUOUS_IDENTITY",
+    "BUDGET_EXCEEDED",
+    "JOB_TIMEOUT",
+    "CRITICAL_VETO",
+    "FORBIDDEN_EXTERNAL_EFFECT",
+    "THIRD_UNCHANGED_ATTEMPT"
+  ],
+  "current_preflight_consumption": {
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "api_football_calls": 0,
+    "odds_credits": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "council_activation": {
+    "status": "NOT_ACTIVE_MUST_BE_MATERIALIZED_AT_EXECUTION_START",
+    "path": "configs/execution/p0-capability-council-activation-v1.json",
+    "required_exact_fields": [
+      "mission_id",
+      "authorized_stages",
+      "maximum_stage",
+      "external_effects",
+      "compute_budget",
+      "time_budget",
+      "source_hash",
+      "expires_at"
+    ]
+  },
+  "triple_search_gate": {
+    "status": "TRIPLE_SEARCH_LOCKED",
+    "required_conditions": [
+      "ATOMIC_MASKS_VALIDATED",
+      "HISTORICAL_PRICES_ADMISSIBLE",
+      "MINIMUM_SUPPORT_FROZEN",
+      "TEMPORAL_FOLDS_AVAILABLE",
+      "STATISTICAL_CONTRACT_FROZEN",
+      "PAIRS_EXECUTED_AND_AUDITED",
+      "COMPUTE_BUDGET_APPROVED",
+      "CHECKPOINTING_PROVEN"
+    ]
+  }
+}
