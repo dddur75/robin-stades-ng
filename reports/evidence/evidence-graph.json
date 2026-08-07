@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T12:05:00Z",
+  "generated_at":"2026-08-07T12:30:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -975,6 +975,22 @@
       "dataset_lineage_id":"SYNTHETIC_GOLDEN_PACK_065CDE964613B7B6",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","A2","UX1"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.SELECTION.V1.001",
+      "claim":"The E1B canary selection contains exactly ten finished 2024 fixtures, two in each of five leagues, bound to ten inventory objects, twenty exact evidence keys and a 7,244,155-byte operational ceiling; DP6, C2 and DP5 unanimously approved the fail-closed grains and UNKNOWN policy before any real read.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_SELECTION",
+      "source":"committed pinned inventory evidence, exact-key selection generator, synthetic adversarial tests and independent reviews",
+      "grain":"ten_finished_fixtures_two_per_five_leagues_common_season",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/evidence/e1b/e1b-selection-manifest-v1.json",
+      "hash":"d54b3f0597a3690adc31fff2459cc5fedddb51b3d0e0b5982b03bd07779170c0",
+      "code_revision":"fa4b5d2bc07fece752e662a265c357d5ba0cab21",
+      "execution_id":"local-e1b-selection-review-20260807T123000Z",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_SELECTION",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
     }
   ],
   "decision_nodes":[
@@ -1021,7 +1037,8 @@
     {"decision_id":"RCV3-20260807-041","ledger_record_hash":"9aa50f53a93b4a7875e0cb8f5bcaa65b1ab531f717ae6f2132e382b31ec6bf1f"},
     {"decision_id":"RCV3-20260807-042","ledger_record_hash":"ef7faa0d41503d32164ef9f00e9ad2ffa538997887e7b878b6f894122942cd95"},
     {"decision_id":"RCV3-20260807-043","ledger_record_hash":"2b0f215e6ced03aac9b96222fef7223f34d8ce532780166e0146b6d0bf5a7d67"},
-    {"decision_id":"RCV3-20260807-044","ledger_record_hash":"9e14d7efc3c83e59726f6bcacb6da2f61295e8691700494c8627f3c48e80af97"}
+    {"decision_id":"RCV3-20260807-044","ledger_record_hash":"9e14d7efc3c83e59726f6bcacb6da2f61295e8691700494c8627f3c48e80af97"},
+    {"decision_id":"RCV3-20260807-045","ledger_record_hash":"3553cca652903c23273495d9cea496cf083145415601e1164969597d6b883356"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1166,6 +1183,9 @@
     {"edge_id":"EDGE.140","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-043","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.141","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260807-044","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.142","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-044","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.143","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-044","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.143","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-044","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.144","from_claim_id":"COVERAGE.E1B.SELECTION.V1.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.145","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.146","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
