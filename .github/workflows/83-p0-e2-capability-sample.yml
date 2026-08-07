@@ -1,0 +1,108 @@
+name: "83 - P0 E2 Capability Sample"
+on:
+  workflow_dispatch:
+  # A workflow absent from the default branch cannot be manually dispatched on
+  # its introducing branch. This one-time bootstrap remains fail-closed unless
+  # an append-only decision authorizes the explicit commit marker.
+  push:
+    branches: [codex/p0-e2-capability-sample-v1]
+permissions:
+  contents: read
+concurrency:
+  group: p0-e2-capability-sample
+  cancel-in-progress: false
+env:
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  ODDS_CREDITS_ALLOWED: "0"
+  REMOTE_SQL_ALLOWED: "0"
+  R2_LIST_ALLOWED: "0"
+  R2_HEAD_ALLOWED: "0"
+  R2_WRITES_ALLOWED: "0"
+  R2_DELETES_ALLOWED: "0"
+  DEPLOYMENT_ALLOWED: "0"
+  PUBLICATION_ALLOWED: "0"
+  STORAGE_PAUSED: "true"
+  P3_P4_PAUSED: "true"
+  PRODUCTION_LOCKED: "true"
+  REAL_BETS: "false"
+  NO_BET_DEFAULT: "true"
+  PROMOTION_LOCKED: "true"
+  SOCIAL_PUBLISHING_ENABLED: "false"
+  DEMO_MODE_ENABLED: "false"
+jobs:
+  selection:
+    name: Selection and provider-free freeze gate
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, '[e2-authorized]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Validate frozen selection and exact-key authority
+        run: |
+          python scripts/build_p0_e2_selection_manifest.py --verify
+          python scripts/run_p0_e2_capability_sample.py validate --require-decision
+          python -m pytest -q tests/e2
+          python -m ruff check src/robin/historical_deep/e2_sample.py scripts/build_p0_e2_selection_manifest.py scripts/run_p0_e2_capability_sample.py tests/e2
+          python -m mypy --strict src/robin/historical_deep/e2_sample.py scripts/build_p0_e2_selection_manifest.py scripts/run_p0_e2_capability_sample.py
+  measure:
+    name: Exact-key R2 measurement
+    needs: selection
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Read only frozen exact keys and replay twice in memory
+        run: >-
+          python scripts/run_p0_e2_capability_sample.py measure
+          --output artifacts/e2/reports/evidence/e2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2-measurement-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e2/reports/evidence/e2/*.json
+          if-no-files-found: error
+          retention-days: 30
+  aggregate:
+    name: Offline aggregation and replay verification
+    needs: measure
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: actions/download-artifact@v4
+        with:
+          name: e2-measurement-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e2/reports/evidence/e2
+      - run: >-
+          python scripts/run_p0_e2_capability_sample.py validate-output
+          --reports-root artifacts/e2/reports/evidence/e2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p0-e2-capability-sample-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e2/reports/evidence/e2/*.json
+          if-no-files-found: error
+          retention-days: 90

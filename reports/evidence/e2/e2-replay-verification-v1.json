@@ -1,0 +1,23 @@
+{
+  "all_report_hashes": {
+    "capability_matrix": "02edef2ede34d5ac6bdbdb2ab7918b41701f599d92c6c2792e19e6a9142baef4",
+    "costs": "9332f0a84463482e8b700cb53793be0ad1be6e360b612d3c8ac88ef295bc0145",
+    "dashboard_contract": "5668bf79291a37d5eecdd47ceb804c87b218cb930ce63647d8ef398ece0933e0",
+    "e1b_e2_comparison": "fc10bc7f951ebff748b5961897bd85b2be9135c0f37cc60c910921cd50ca66e5",
+    "e3a_candidate_set": "b0410ff0d7dbb0fb85fc292d2fe8f31f34f8c8af81f02960e37e8a5bfed0d508",
+    "league_comparison": "cd280032d0fe95013d12fe0421495b82213a27b1b3f18b6fcc78bebf7ccf6f52",
+    "measurement": "b18c42f62453c72514ad3a9ad388a55eb1f504d9d2b11a0371fd94b417d9be15",
+    "team_concentration": "2e538349caf8b050afdacaa8997236817b13c2a566da60c4d9477eee8a80dfd7",
+    "temporal_strata": "77046c82cdf47b676758e1f7fea15577ab2eb2799b66928ac657264d3eda24e0"
+  },
+  "capability_matrix_hash": "02edef2ede34d5ac6bdbdb2ab7918b41701f599d92c6c2792e19e6a9142baef4",
+  "dashboard_contract_hash": "5668bf79291a37d5eecdd47ceb804c87b218cb930ce63647d8ef398ece0933e0",
+  "e1b_e2_comparison_hash": "fc10bc7f951ebff748b5961897bd85b2be9135c0f37cc60c910921cd50ca66e5",
+  "league_comparison_hash": "cd280032d0fe95013d12fe0421495b82213a27b1b3f18b6fcc78bebf7ccf6f52",
+  "measurement_hash": "b18c42f62453c72514ad3a9ad388a55eb1f504d9d2b11a0371fd94b417d9be15",
+  "replay_additional_gets": 0,
+  "replay_identical": true,
+  "schema_version": "p0-e2-replay-verification-v1",
+  "selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b",
+  "selection_manifest_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b"
+}

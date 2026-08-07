@@ -1,0 +1,92 @@
+{
+  "allowed_capabilities": [
+    "TEAM",
+    "PLAYER",
+    "LINEUP",
+    "FORMATION",
+    "EVENTS",
+    "TEAM_STATISTICS",
+    "PLAYER_STATISTICS",
+    "DISCIPLINE_GENERIC",
+    "CALENDAR"
+  ],
+  "anchor_fixture_count": 10,
+  "capability_contract_hash": "aa6f60694b7bfe1684c6fcf0faf1bbbc6fa1bb9f1001f06fee999451d1d011e8",
+  "competition_count": 5,
+  "e1b_measurement_hash": "0716ad1f4356107d7bc4ab245071a895bb8be63031438a381ccd0d089c5dd1f6",
+  "e1b_selection_hash": "8e3ef9e5e44ef26ef4fd37d884b3290504f2b167b1fceeec669e0ed8684deb22",
+  "fixture_count": 100,
+  "fixture_count_per_league": 20,
+  "grain_catalog_hash": "5b2581e7d3a4630fd9d84be6ca954dc63cae83a602fce91d68c4847c5498cd71",
+  "mission_id": "p0-e2-capability-sample-v1",
+  "new_fixture_count": 90,
+  "provider_budget": 0,
+  "r2_byte_budget": 50000000,
+  "r2_get_budget": 300,
+  "r2_write_budget": 0,
+  "retry_policy": {
+    "maximum_technical_attempts": 2,
+    "same_selection_required": true,
+    "scope_expansion_allowed": false
+  },
+  "season_policy": {
+    "canonical_season": 2024,
+    "cross_league_uniform": true
+  },
+  "selection_policy": {
+    "anchor_policy": "PRESERVE_TEN_E1B_FIXTURES_AND_EXACT_DETAIL_SOURCES",
+    "candidate_order": [
+      "kickoff",
+      "fixture_id"
+    ],
+    "detail_source_tie_break": "LOWEST_SIGNED_TASK_ID_EXCEPT_PINNED_E1B_ANCHORS",
+    "finished_statuses": [
+      "FT",
+      "AET",
+      "PEN"
+    ],
+    "new_fixtures_per_league": 18,
+    "strata_per_league": 18,
+    "stratum_tie_break": [
+      "HOME_TEAM_NOT_REPRESENTED",
+      "AWAY_TEAM_NOT_REPRESENTED",
+      "DISTANCE_TO_STRATUM_CENTER",
+      "KICKOFF",
+      "FIXTURE_ID"
+    ]
+  },
+  "source_main_sha": "3e250c2a4a01a141f6403219fd4c45ae75a05522",
+  "sql_budget": 0,
+  "stage": "E2",
+  "stop_conditions": [
+    "UNLISTED_R2_KEY",
+    "MISSING_RECEIPT_OR_HASH",
+    "IDENTITY_AMBIGUITY",
+    "R2_GET_BUDGET_EXCEEDED",
+    "R2_BYTE_BUDGET_EXCEEDED",
+    "ANY_R2_LIST_OR_HEAD",
+    "ANY_R2_WRITE_OR_DELETE",
+    "ANY_PROVIDER_CALL",
+    "ANY_REMOTE_SQL_QUERY",
+    "SECOND_SIMILAR_TECHNICAL_FAILURE"
+  ],
+  "stopped_capabilities": [
+    "ABSENCE_CAUSE_EXACT",
+    "INJURY_CONFIRMED",
+    "SUSPENSION_CONFIRMED",
+    "ABSENCE_GENERIC",
+    "TEAM_FORM",
+    "PLAYER_FORM",
+    "STARTER_BASELINE",
+    "FATIGUE",
+    "STANDINGS"
+  ],
+  "time_budget": {
+    "maximum_hours": 8,
+    "maximum_job_minutes": 15,
+    "target_hours": [
+      2,
+      6
+    ]
+  }
+}
