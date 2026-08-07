@@ -93,6 +93,30 @@ def test_manifest_rejects_budget_checkpoint_stop_and_source_drift(
         validate_manifest(changed, root=ROOT)
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        (),
+        ("compute_budget",),
+        ("checkpoint_interval",),
+        ("retry_policy",),
+        ("conditional_stage",),
+        ("council_activation",),
+        ("triple_search_gate",),
+    ],
+)
+def test_manifest_rejects_unknown_authority_fields(
+    manifest: dict[str, object], path: tuple[str, ...]
+) -> None:
+    changed = deepcopy(manifest)
+    target = changed
+    for key in path:
+        target = target[key]
+    target["unlimited_external_budget"] = 1
+    with pytest.raises(ValueError):
+        validate_manifest(changed, root=ROOT)
+
+
 def test_council_activation_rejects_effect_drift_and_expiration(
     manifest: dict[str, object],
 ) -> None:

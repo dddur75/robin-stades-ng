@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T09:17:30Z",
+  "generated_at":"2026-08-07T10:03:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1017,7 +1017,8 @@
     {"decision_id":"RCV3-20260806-037","ledger_record_hash":"d4881dbd5f15115ee6144b31d3cf4f3a334ee72b3cbf8c869764b66fc9e5be11"},
     {"decision_id":"RCV3-20260806-038","ledger_record_hash":"a15625282cd1cd9a16bc8edf006962f7e4a962048c7682e35c20f3fcc61c0a48"},
     {"decision_id":"RCV3-20260807-039","ledger_record_hash":"760f2fdf08d9c2d9d186300a2d7c2c7f2fb41be8c65d40f434705af897d633b5"},
-    {"decision_id":"RCV3-20260807-040","ledger_record_hash":"7ab230c1395dc14f9a55a271ed13630e4cce7d15c8cfc85227390b28327016b9"}
+    {"decision_id":"RCV3-20260807-040","ledger_record_hash":"7ab230c1395dc14f9a55a271ed13630e4cce7d15c8cfc85227390b28327016b9"},
+    {"decision_id":"RCV3-20260807-041","ledger_record_hash":"9aa50f53a93b4a7875e0cb8f5bcaa65b1ab531f717ae6f2132e382b31ec6bf1f"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1150,6 +1151,9 @@
     {"edge_id":"EDGE.128","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-039","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.129","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-040","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.130","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260807-040","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.131","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-040","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.131","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-040","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.132","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-041","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.133","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260807-041","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.134","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-041","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

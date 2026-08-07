@@ -69,6 +69,8 @@ HASHED_INPUTS = {
     "provider_inventory_hash": Path("docs/data-sources/PROVIDER-INVENTORY.md"),
 }
 REQUIRED_MANIFEST_FIELDS = {
+    "schema_version",
+    "manifest_role",
     "mission_id",
     "source_main_sha",
     "capability_contract_hash",
@@ -77,10 +79,13 @@ REQUIRED_MANIFEST_FIELDS = {
     "provider_inventory_hash",
     "allowed_stages",
     "maximum_stage",
+    "conditional_stage",
+    "forbidden_stages",
     "time_budget_hours",
     "compute_budget",
     "r2_read_budget",
     "r2_write_budget",
+    "r2_checkpoint_policy",
     "api_football_budget",
     "odds_credit_budget",
     "sql_read_budget",
@@ -89,6 +94,9 @@ REQUIRED_MANIFEST_FIELDS = {
     "retry_policy",
     "concurrency_policy",
     "stop_conditions",
+    "current_preflight_consumption",
+    "council_activation",
+    "triple_search_gate",
 }
 
 
@@ -138,9 +146,12 @@ def validate_manifest(manifest: Mapping[str, Any], *, root: Path) -> None:
 
 
 def _validate_manifest_values(manifest: Mapping[str, Any]) -> None:
-    missing = REQUIRED_MANIFEST_FIELDS - manifest.keys()
-    if missing:
-        raise ValueError(f"missing manifest fields: {sorted(missing)}")
+    if set(manifest) != REQUIRED_MANIFEST_FIELDS:
+        raise ValueError("manifest must contain the exact frozen field set")
+    if manifest["schema_version"] != "p0-capability-execution-manifest-v1":
+        raise ValueError("schema_version drift")
+    if manifest["manifest_role"] != "FUTURE_MISSION_CONTRACT_NOT_ACTIVE":
+        raise ValueError("manifest_role drift")
     if manifest["mission_id"] != "p0-capability-execution-long-mission-v1":
         raise ValueError("mission_id drift")
     if manifest["source_main_sha"] != SOURCE_MAIN_SHA:
@@ -160,6 +171,21 @@ def _validate_manifest_values(manifest: Mapping[str, Any]) -> None:
 
     compute = _mapping(manifest["compute_budget"], "compute_budget")
     checkpoint = _mapping(manifest["checkpoint_interval"], "checkpoint_interval")
+    if set(compute) != {
+        "target_minutes_per_job",
+        "maximum_minutes_per_job",
+        "maximum_checkpoint_minutes",
+        "maximum_parallel_read_only_jobs",
+        "maximum_stateful_writers",
+        "maximum_total_job_minutes",
+    }:
+        raise ValueError("compute budget field set drift")
+    if set(checkpoint) != {
+        "maximum_minutes",
+        "required_after_each_stage",
+        "required_after_each_shard",
+    }:
+        raise ValueError("checkpoint interval field set drift")
     if compute.get("target_minutes_per_job") != 10:
         raise ValueError("target job duration must be ten minutes")
     if compute.get("maximum_minutes_per_job") != 15:
@@ -227,6 +253,21 @@ def _validate_manifest_values(manifest: Mapping[str, Any]) -> None:
         raise ValueError("current preflight consumption must remain exactly zero")
 
     retry = _mapping(manifest["retry_policy"], "retry_policy")
+    if set(retry) != {
+        "similar_failure_key",
+        "first_similar_failure",
+        "second_similar_failure",
+        "third_unchanged_attempt",
+    }:
+        raise ValueError("retry policy field set drift")
+    if tuple(retry.get("similar_failure_key", ())) != (
+        "failure_taxonomy",
+        "root_cause_signature",
+        "capability_scope",
+    ):
+        raise ValueError("similar failure key drift")
+    if retry.get("first_similar_failure") != "MINIMAL_FIX_AND_HOLD":
+        raise ValueError("first similar failure action drift")
     if retry.get("second_similar_failure") != "REDESIGN_REQUIRED":
         raise ValueError("second similar failure must require redesign")
     if retry.get("third_unchanged_attempt") != "FORBIDDEN_FAIL_AND_STOP":
@@ -247,9 +288,17 @@ def _validate_manifest_values(manifest: Mapping[str, Any]) -> None:
     }:
         raise ValueError("concurrency policy drift")
     conditional = _mapping(manifest.get("conditional_stage"), "conditional_stage")
-    if conditional.get("stage") != "E4" or conditional.get("authorized") is not False:
+    if conditional != {
+        "stage": "E4",
+        "authorized": False,
+        "activation_rule": (
+            "ONLY_IF_A_USEFUL_CAPABILITY_REMAINS_UNDECIDABLE_AND_P0_CLOSURE_IS_NECESSARY"
+        ),
+    }:
         raise ValueError("E4 must remain conditional and unauthorized")
     council = _mapping(manifest.get("council_activation"), "council_activation")
+    if set(council) != {"status", "path", "required_exact_fields"}:
+        raise ValueError("Council activation pointer field set drift")
     if council.get("status") != "NOT_ACTIVE_MUST_BE_MATERIALIZED_AT_EXECUTION_START":
         raise ValueError("Council activation must remain inactive during preflight")
     if council.get("path") != (
@@ -268,6 +317,8 @@ def _validate_manifest_values(manifest: Mapping[str, Any]) -> None:
     ):
         raise ValueError("Council activation field contract drift")
     triple_gate = _mapping(manifest.get("triple_search_gate"), "triple_search_gate")
+    if set(triple_gate) != {"status", "required_conditions"}:
+        raise ValueError("triple gate field set drift")
     if triple_gate.get("status") != "TRIPLE_SEARCH_LOCKED":
         raise ValueError("triple search must remain locked")
     if tuple(triple_gate.get("required_conditions", ())) != TRIPLE_GATE_CONDITIONS:
