@@ -461,7 +461,7 @@ def test_next_mission_prompt_freezes_budgets_and_triples() -> None:
     assert "RAISONNEMENT = Très élevé" in prompt
     assert "DURÉE = 20 à 50 heures utiles" in prompt
     assert "r2_read_budget = 10000 GET" in prompt
-    assert "r2_write_budget = 256" in prompt
+    assert "r2_write_budget = 0" in prompt
     assert "api_football_budget = 0" in prompt
     assert "sql_read_budget = 0" in prompt
     assert "TRIPLE_SEARCH_LOCKED" in prompt

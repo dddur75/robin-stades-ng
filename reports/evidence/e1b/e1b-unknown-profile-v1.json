@@ -1,0 +1,57 @@
+{
+  "canonical_value": "UNKNOWN",
+  "distribution_by_league_and_capability": [
+    {
+      "capability_id": "STANDINGS",
+      "competition": "Premier League",
+      "unknown": 4
+    },
+    {
+      "capability_id": "PLAYER_FORM",
+      "competition": "Ligue 1",
+      "unknown": 3
+    },
+    {
+      "capability_id": "STANDINGS",
+      "competition": "Ligue 1",
+      "unknown": 4
+    },
+    {
+      "capability_id": "PLAYER_FORM",
+      "competition": "Bundesliga",
+      "unknown": 1
+    },
+    {
+      "capability_id": "STANDINGS",
+      "competition": "Bundesliga",
+      "unknown": 4
+    },
+    {
+      "capability_id": "STANDINGS",
+      "competition": "Serie A",
+      "unknown": 4
+    },
+    {
+      "capability_id": "PLAYER_FORM",
+      "competition": "Liga",
+      "unknown": 1
+    },
+    {
+      "capability_id": "STANDINGS",
+      "competition": "Liga",
+      "unknown": 4
+    }
+  ],
+  "e1a_absence_cause_unknown_preserved": 149,
+  "e1a_total_absence_records_preserved": 3036,
+  "implicit_coercions": {
+    "to_false": 0,
+    "to_injury": 0,
+    "to_suspension": 0,
+    "to_zero": 0
+  },
+  "new_absence_records_read": 0,
+  "schema_version": "p0-e1b-unknown-profile-v1",
+  "unknown_bucket_total": 25,
+  "unknown_denominator_unavailable_policy": "NULL_NOT_ZERO"
+}

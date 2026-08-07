@@ -489,7 +489,7 @@ def _measure_league(
     add("DISCIPLINE_GENERIC", expected=None, received=cards, unknown=None, status=event_status, observed=cards, reason=event_reason)
     for name in ("INJURY_CONFIRMED", "SUSPENSION_CONFIRMED", "ABSENCE_GENERIC"):
         add(name, expected=None, received=0, unknown=None, status="E1B_NOT_EVALUATED", reason="NO_INJURIES_OBJECT_AUTHORIZED")
-    add("ABSENCE_CAUSE_EXACT", expected=None, received=0, unknown=None, status="E1B_NOT_APPLICABLE", reason="STOPPED_LOCAL_CAMPAIGN", unclassifiable=149)
+    add("ABSENCE_CAUSE_EXACT", expected=None, received=0, unknown=None, status="E1B_NOT_APPLICABLE", reason="STOPPED_LOCAL_CAMPAIGN", unclassifiable=0)
     add("CALENDAR", expected=2, received=2, status="E1B_MEASURED_PARTIAL", observed=2, duplicates=2, contradictions=conflicts, reason="FINAL_STATE_NOT_KNOWN_AS_OF")
     add("FATIGUE", expected=4, received=prior_team, unknown=4-prior_team, status="E1B_BLOCKED_BY_TEMPORALITY", observed=prior_team, reason="POST_HOC_REST_INTERVAL")
     add("STANDINGS", expected=4, received=0, unknown=4, status="E1B_BLOCKED_BY_SOURCE", reason="NO_STANDINGS_OBJECT_AUTHORIZED")
