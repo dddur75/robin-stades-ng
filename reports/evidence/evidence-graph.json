@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T15:20:00Z",
+  "generated_at":"2026-08-07T15:25:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1010,6 +1010,22 @@
       "verified_by":["DP6","C2","DP5"]
     },
     {
+      "claim_id":"COVERAGE.E2.SELECTION.V1.001",
+      "claim":"The deterministic E2 selection contains exactly 100 unique finished season-2024 fixtures, 20 per league, including the ten exact E1B anchors and 90 temporally stratified new fixtures; every source object and exact receipt/payload key is pinned to the signed inventory and DP6, C2 and DP5 approved the corrected pre-read gate.",
+      "scope":"P0_E2_CAPABILITY_SAMPLE_V1_SELECTION",
+      "source":"signed inventory artifact, five signed normalized replay segments, deterministic two-pass generator, exact-key validation, adversarial grain tests and independent reviews",
+      "grain":"one_hundred_finished_fixtures_twenty_per_five_leagues_common_season",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/evidence/e2/e2-selection-manifest-v1.json",
+      "hash":"d6dc4a971bcd24cff953dde906220b6ce660b70837d1c803b0782bee11474243",
+      "code_revision":"782b2ecfbfd6c819f4c3288569b6fdd1ba13d374",
+      "execution_id":"local-e2-selection-review-20260807T152200Z",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E2_SELECTION",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
       "claim_id":"COVERAGE.E1B.MEASUREMENT.V1.001",
       "claim":"The bounded five-league E1B canary measured capability coverage for exactly ten frozen fixtures without promoting any capability to READY or executing E2.",
       "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_MEASUREMENT",
@@ -1178,7 +1194,8 @@
     {"decision_id":"RCV3-20260807-050","ledger_record_hash":"785cc4d33b2ec18a40c1fd8fc24c1287e9934570d307474b4d3062992cd164ce"},
     {"decision_id":"RCV3-20260807-051","ledger_record_hash":"9595d018eebea3345401e6ea5165a00255e81d3956cd6db54a9caa7a690d3f02"},
     {"decision_id":"RCV3-20260807-052","ledger_record_hash":"07865a984781e3d90f8ed58d340de601867030dd86d25b58884e4e3e490aa69d"},
-    {"decision_id":"RCV3-20260807-053","ledger_record_hash":"9625fbcbddac8bc61284ed14f75e285540274be00f2a8a8c755941f5ca59333e"}
+    {"decision_id":"RCV3-20260807-053","ledger_record_hash":"9625fbcbddac8bc61284ed14f75e285540274be00f2a8a8c755941f5ca59333e"},
+    {"decision_id":"RCV3-20260807-054","ledger_record_hash":"6119e83024be48a6a3ad258fd98e1a9f8effb9788717e72165478bd7fd91029c"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1354,6 +1371,9 @@
     {"edge_id":"EDGE.171","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-052","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.172","from_claim_id":"COVERAGE.E1B.SELECTION.V1.002","to_decision_id":"RCV3-20260807-053","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.173","from_claim_id":"COVERAGE.E1B.MEASUREMENT.V1.002","to_decision_id":"RCV3-20260807-053","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.174","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-053","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.174","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-053","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.175","from_claim_id":"COVERAGE.E2.SELECTION.V1.001","to_decision_id":"RCV3-20260807-054","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.176","from_claim_id":"COVERAGE.E1B.MEASUREMENT.V1.002","to_decision_id":"RCV3-20260807-054","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.177","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-054","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
