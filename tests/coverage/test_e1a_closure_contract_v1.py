@@ -21,7 +21,9 @@ def test_terminal_architecture_two_evidence_is_byte_immutable() -> None:
             "df09d124b409a46c5dc98c3886ded50722562f8738fef6ee95aac452109fb366",
     }
     for relative, digest in expected.items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == digest
+        # Git may materialize CRLF on Windows even though the immutable blob is LF.
+        payload = (ROOT / relative).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(payload).hexdigest() == digest
 
 
 def test_e1a_status_is_local_and_does_not_claim_global_readiness() -> None:

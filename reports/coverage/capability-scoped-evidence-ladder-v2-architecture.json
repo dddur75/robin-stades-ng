@@ -1,0 +1,62 @@
+{
+  "schema_version": "capability-scoped-evidence-ladder-v2-architecture",
+  "status": "READY_FOR_REVIEW",
+  "purpose": "Decide progression independently per declared capability and dependency.",
+  "inputs": [
+    "configs/data/capability-scoped-evidence-ladder-v2.json",
+    "reports/coverage/e1a-capability-scope-status-v1.json",
+    "reports/coverage/e1a-unknown-profile-v1.json"
+  ],
+  "components": {
+    "contract": "one versioned JSON catalog",
+    "validator": "one compact Python module",
+    "tests": "one synthetic capability test module",
+    "documentation": "one operating contract"
+  },
+  "capability_count": 18,
+  "decision_rules": [
+    "A local campaign stop remains local to its capability.",
+    "Only explicit dependency edges propagate blocking.",
+    "NOT_EVALUATED never becomes READY implicitly.",
+    "UNKNOWN remains a first-class source value.",
+    "Scale requires a qualified ready status.",
+    "Qualified readiness requires tested scope, evidence and ready dependencies.",
+    "External effects use a closed schema and remain disabled."
+  ],
+  "e1a_mapping": {
+    "campaign": "E1A_ABSENCE_CAUSE_CLASSIFICATION",
+    "status": "STOPPED_LOCAL_CAMPAIGN",
+    "blocked_capability": "ABSENCE_CAUSE_EXACT",
+    "measured_partial": [
+      "INJURY_CONFIRMED",
+      "SUSPENSION_CONFIRMED",
+      "ABSENCE_GENERIC"
+    ],
+    "unrelated_capabilities": "NOT_EVALUATED"
+  },
+  "unknown": {
+    "canonical_value": "ABSENCE_CAUSE_UNKNOWN",
+    "implicit_false_forbidden": true,
+    "implicit_zero_forbidden": true,
+    "injury_coercion_forbidden": true,
+    "suspension_coercion_forbidden": true
+  },
+  "external_effects": {
+    "api_football_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "remote_sql": 0,
+    "deployments": 0,
+    "publication": false,
+    "real_bets": false,
+    "promotion": false
+  },
+  "explicit_non_goals": [
+    "workload execution",
+    "E1B or E2 execution",
+    "mask or hypergraph construction",
+    "GitHub Actions orchestration",
+    "new Council",
+    "transactional journal"
+  ]
+}
