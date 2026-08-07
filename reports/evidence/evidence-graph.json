@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T13:45:00Z",
+  "generated_at":"2026-08-07T14:00:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1008,6 +1008,70 @@
       "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_SELECTION",
       "status":"VERIFIED",
       "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.MEASUREMENT.V1.001",
+      "claim":"The bounded five-league E1B canary measured capability coverage for exactly ten frozen fixtures without promoting any capability to READY or executing E2.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_MEASUREMENT",
+      "source":"GitHub Actions run 31177349967 plus the reviewed offline-only historical-UNKNOWN correction",
+      "grain":"capability_by_league_over_ten_frozen_fixtures",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e1b/e1b-measurement-v1.json",
+      "hash":"1bdadf68c3ea9d7071f5a3f306eca65dfdfea164c66ba19b5680a705da702b30",
+      "code_revision":"e7aaa7667ccd534badaae185c62496b350c968c1",
+      "execution_id":"github-actions-31177349967-offline-finalization",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.REPLAY.V1.001",
+      "claim":"The E1B aggregation replay is byte-identical and required zero additional remote GETs after the bounded acquisition.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_REPLAY",
+      "source":"deterministic offline replay verification",
+      "grain":"seven_committed_e1b_report_artifacts",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e1b/e1b-replay-verification-v1.json",
+      "hash":"410b89a4df56f7426d00538d4ba678d2e102c2853cdedf7198d9f86fee9b3d05",
+      "code_revision":"e7aaa7667ccd534badaae185c62496b350c968c1",
+      "execution_id":"github-actions-31177349967-offline-finalization",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.COST.V1.001",
+      "claim":"The successful bounded E1B run consumed 21 logical GETs and 1,107,479 bytes; the failed fail-closed attempt consumed one bootstrap GET, for 22 mission GETs total, with every prohibited external effect at zero.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_COST",
+      "source":"workflow run accounting for runs 31176390241 and 31177349967",
+      "grain":"mission_and_attempt_cost_accounting",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e1b/e1b-costs-v1.json",
+      "hash":"200c4a18b83dd044b5c05478485cd20c2850e06320f6994654a5fc49fa5777d3",
+      "code_revision":"e7aaa7667ccd534badaae185c62496b350c968c1",
+      "execution_id":"github-actions-31176390241-and-31177349967",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E1B.DASHBOARD.V1.001",
+      "claim":"The committed E1B dashboard contract is a data-only projection of the measured capability states and preserves the historical E1A 149 unknowns without duplicating them across leagues.",
+      "scope":"P0_E1B_FIVE_LEAGUE_CAPABILITY_CANARY_V1_DASHBOARD_CONTRACT",
+      "source":"reviewed offline aggregation and committed-output tests",
+      "grain":"dashboard_contract_data_only",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/evidence/e1b/e1b-dashboard-contract-v1.json",
+      "hash":"df23f56a7b3c37b2aee0cf67e8b839a9bbe24e3c640556986790fd8d85c5380b",
+      "code_revision":"e7aaa7667ccd534badaae185c62496b350c968c1",
+      "execution_id":"local-e1b-offline-finalization-20260807T140000Z",
+      "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
     }
   ],
   "decision_nodes":[
@@ -1058,7 +1122,8 @@
     {"decision_id":"RCV3-20260807-045","ledger_record_hash":"3553cca652903c23273495d9cea496cf083145415601e1164969597d6b883356"},
     {"decision_id":"RCV3-20260807-046","ledger_record_hash":"636da3cc9cd25acff729d91fc9f5a002d50269662e85f805f89371480b9f76e9"},
     {"decision_id":"RCV3-20260807-047","ledger_record_hash":"7ebaf9118b918851478f1e81eafbf0665afaf3609639375545e4c94292b05d9d"},
-    {"decision_id":"RCV3-20260807-048","ledger_record_hash":"220cc515f92a5dd67816e156a8544c632bc2917a7257da15e501ca37a0d84d9b"}
+    {"decision_id":"RCV3-20260807-048","ledger_record_hash":"220cc515f92a5dd67816e156a8544c632bc2917a7257da15e501ca37a0d84d9b"},
+    {"decision_id":"RCV3-20260807-049","ledger_record_hash":"241a9699ed9c1b8613076b0fe2eb11d7cb3ce4053ebce1acc9e01d291392b533"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1215,6 +1280,11 @@
     {"edge_id":"EDGE.152","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-047","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.153","from_claim_id":"COVERAGE.E1B.SELECTION.V1.002","to_decision_id":"RCV3-20260807-048","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.154","from_claim_id":"COVERAGE.LADDER.E1A.CAPABILITY_SCOPE.001","to_decision_id":"RCV3-20260807-048","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.155","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-048","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.155","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-048","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.156","from_claim_id":"COVERAGE.E1B.MEASUREMENT.V1.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.157","from_claim_id":"COVERAGE.E1B.REPLAY.V1.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.158","from_claim_id":"COVERAGE.E1B.COST.V1.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.159","from_claim_id":"COVERAGE.E1B.DASHBOARD.V1.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.160","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
