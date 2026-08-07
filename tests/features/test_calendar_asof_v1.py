@@ -33,7 +33,7 @@ def test_golden_pack_is_bounded_and_byte_identical() -> None:
     fixtures = pack["fixtures"]
     cases = pack["cases"]
     assert isinstance(fixtures, list) and 8 <= len(fixtures) <= 15
-    assert isinstance(cases, list) and len(cases) == 3
+    assert isinstance(cases, list) and len(cases) == 4
     for raw in cases:
         assert isinstance(raw, dict)
         first = render_calendar_result(run_case(raw))
@@ -106,4 +106,11 @@ def test_target_unknown_at_cutoff_fails_closed() -> None:
         catalog_complete_at_cutoff=True,
     )
     assert result["status"] == "TARGET_NOT_KNOWN_AS_OF"
+    assert set(result["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
+
+
+def test_post_kickoff_cutoff_fails_closed() -> None:
+    pack = load_pack()
+    result = run_case(pack["cases"][3])  # type: ignore[index]
+    assert result["status"] == "CUTOFF_NOT_PREMATCH"
     assert set(result["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]

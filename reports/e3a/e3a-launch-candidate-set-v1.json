@@ -1,0 +1,21 @@
+{
+  "schema_version": "e3a-launch-candidate-set-v1",
+  "source_e2_selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b",
+  "rows": [
+    {"capability_id": "TEAM", "e2_status": "E2_MEASURED", "targeted_fix_status": "NOT_REQUIRED", "temporal_contract_status": "ENTITY_AS_OF_REQUIRES_E3A_RUNTIME_CHECK", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "verify entity availability and identity at each E3A cutoff"},
+    {"capability_id": "PLAYER", "e2_status": "E2_MEASURED", "targeted_fix_status": "NOT_REQUIRED", "temporal_contract_status": "ENTITY_AS_OF_REQUIRES_E3A_RUNTIME_CHECK", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "verify player identity and source completeness at each E3A cutoff"},
+    {"capability_id": "LINEUP", "e2_status": "E2_MEASURED", "targeted_fix_status": "NOT_REQUIRED", "temporal_contract_status": "POST_MATCH_RECONSTRUCTION", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "retain post-match classification unless a distinct lineup as-of source is proven"},
+    {"capability_id": "FORMATION", "e2_status": "E2_MEASURED", "targeted_fix_status": "NOT_REQUIRED", "temporal_contract_status": "POST_MATCH_RECONSTRUCTION", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "retain post-match classification unless a distinct formation as-of source is proven"},
+    {"capability_id": "EVENTS", "e2_status": "E2_MEASURED", "targeted_fix_status": "NOT_REQUIRED", "temporal_contract_status": "EVENT_TIME", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "preserve event time and avoid invented occurrence denominators"},
+    {"capability_id": "TEAM_STATISTICS", "e2_status": "E2_MEASURED", "targeted_fix_status": "NOT_REQUIRED", "temporal_contract_status": "OBSERVED_AT", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "verify two team rows per fixture and post-match availability"},
+    {"capability_id": "DISCIPLINE_GENERIC", "e2_status": "E2_MEASURED", "targeted_fix_status": "NOT_REQUIRED", "temporal_contract_status": "EVENT_TIME", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "preserve generic discipline and do not infer exact absence cause"},
+    {"capability_id": "PLAYER_STATISTICS", "e2_status": "E2_MEASURED_PARTIAL", "targeted_fix_status": "PLAYER_STATISTICS_SOURCE_PARTIAL_CONFIRMED", "temporal_contract_status": "OBSERVED_AT", "e3a_candidate": false, "block_reason": "PROVIDER_INCONSISTENCY_ON_FIXTURE_1208603_UNKNOWN_POLICY_REQUIRES_SCIENTIFIC_ACCEPTANCE", "required_runtime_check": "validate missing_player_stat_row=UNKNOWN on a frozen E3A scope before candidate promotion"},
+    {"capability_id": "CALENDAR", "e2_status": "E2_MEASURED", "targeted_fix_status": "CALENDAR_STRICT_ASOF_MECHANICALLY_VALIDATED", "temporal_contract_status": "KNOWN_AS_OF_SYNTHETIC_ONLY", "e3a_candidate": true, "block_reason": null, "required_runtime_check": "execute strict as-of reconstruction on real E3A data before any READY_STRICT promotion"}
+  ],
+  "e3a_candidates": ["CALENDAR", "DISCIPLINE_GENERIC", "EVENTS", "FORMATION", "LINEUP", "PLAYER", "TEAM", "TEAM_STATISTICS"],
+  "e3a_blocked": ["PLAYER_STATISTICS"],
+  "e3a_executed": false,
+  "e3b_executed": false,
+  "masks_built": false,
+  "verdict": "PASS_AND_HOLD"
+}

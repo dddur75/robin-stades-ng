@@ -20,6 +20,7 @@
   "cases": [
     {"case_id": "BEFORE_LATE_CHANGES", "cutoff": "2025-01-20T12:00:00Z", "catalog_complete_at_cutoff": true, "expected_sha256": "03be07bd32d30d78cecff15469f80447058234b1ca5c24988fd4dc7a8a3bc9a4"},
     {"case_id": "AFTER_LATE_CHANGES", "cutoff": "2025-01-22T12:00:00Z", "catalog_complete_at_cutoff": true, "expected_sha256": "02efe573d95e9e0c829f9586d48a1cde81c9b68e32d2dcc1077d840805a7670d"},
-    {"case_id": "INCOMPLETE_CATALOG", "cutoff": "2025-01-20T12:00:00Z", "catalog_complete_at_cutoff": false, "expected_sha256": "c2c7660f248c754a18057498eac8f9c9a7d78e0975a83b7419eb71dc34a9b8df"}
+    {"case_id": "INCOMPLETE_CATALOG", "cutoff": "2025-01-20T12:00:00Z", "catalog_complete_at_cutoff": false, "expected_sha256": "c2c7660f248c754a18057498eac8f9c9a7d78e0975a83b7419eb71dc34a9b8df"},
+    {"case_id": "POST_KICKOFF_REJECTED", "cutoff": "2025-01-29T12:00:00Z", "catalog_complete_at_cutoff": true, "expected_sha256": "bee810203e93765ae291d26cf93ac4010b8b6d989529d296c52847c530dc93fc"}
   ]
 }

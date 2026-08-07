@@ -217,6 +217,17 @@ def build_calendar_features(
     kickoff = target["kickoff"]
     if not isinstance(kickoff, datetime):
         raise TypeError("CALENDAR_TARGET_KICKOFF")
+    if normalized_cutoff > kickoff:
+        return {
+            "schema_version": "calendar-strict-asof-result-v1",
+            "target_fixture_id": target_fixture_id,
+            "cutoff": normalized_cutoff.isoformat(),
+            "target_kickoff": kickoff.isoformat(),
+            "catalog_complete_at_cutoff": catalog_complete_at_cutoff,
+            "status": "CUTOFF_NOT_PREMATCH",
+            "features": _unknown_features(),
+            "load_counts": {"SCHEDULED_LOAD": "UNKNOWN", "PLAYED_LOAD": "UNKNOWN"},
+        }
     if not catalog_complete_at_cutoff:
         return {
             "schema_version": "calendar-strict-asof-result-v1",

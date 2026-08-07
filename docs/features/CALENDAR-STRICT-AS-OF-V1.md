@@ -24,6 +24,8 @@ dans `SCHEDULED_LOAD`, jamais dans `PLAYED_LOAD`.
 Si la fixture cible n'était pas connue au cutoff, ou si la complétude du
 catalogue à cette date n'est pas prouvée, toutes les variables sont `UNKNOWN`.
 L'implémentation ne convertit jamais `UNKNOWN` en `0` ou `FALSE`.
+Un cutoff postérieur au kickoff cible est également rejeté avec
+`CUTOFF_NOT_PREMATCH` et toutes les variables à `UNKNOWN`.
 
 ## Variables
 
