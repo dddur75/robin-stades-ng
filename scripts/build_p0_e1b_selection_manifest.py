@@ -135,7 +135,7 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
         "mission_id": MISSION_ID,
         "odds_credit_budget": 0,
         "provider_budget": 0,
-        "r2_byte_budget": 100000000,
+        "r2_byte_budget": 7244155,
         "r2_get_budget": 2000,
         "r2_write_budget": 0,
         "retry_policy": {
@@ -225,7 +225,7 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
             "planned_payload_stored_bytes": 428411,
             "planned_receipt_bytes_upper_bound": 2621440,
             "provider_calls": 0,
-            "r2_byte_budget": 100000000,
+            "r2_byte_budget": 7244155,
             "r2_deletes": 0,
             "r2_get_budget": 2000,
             "r2_writes": 0,

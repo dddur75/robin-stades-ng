@@ -9,7 +9,7 @@
     "planned_payload_stored_bytes": 428411,
     "planned_receipt_bytes_upper_bound": 2621440,
     "provider_calls": 0,
-    "r2_byte_budget": 100000000,
+    "r2_byte_budget": 7244155,
     "r2_deletes": 0,
     "r2_get_budget": 2000,
     "r2_writes": 0,

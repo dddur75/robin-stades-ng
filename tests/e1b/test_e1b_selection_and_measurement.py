@@ -221,6 +221,51 @@ def test_synthetic_five_league_measurement_is_deterministic_and_scoped() -> None
     )
 
 
+def test_missing_source_containers_are_unknown_and_block_e2_progression() -> None:
+    mission = read_json(ROOT / "configs/execution/p0-e1b-five-league-canary-v1.json")
+    selection = read_json(
+        ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+    )
+    contract = read_json(ROOT / "configs/data/capability-scoped-evidence-ladder-v2.json")
+    payloads, receipts, telemetry = _synthetic_inputs()
+    detail = next(
+        item for item in selection["source_objects"] if item["source_role"] == "DETAIL"
+    )
+    payload = payloads[str(detail["object_id"])]
+    assert isinstance(payload, dict)
+    selected_record = payload["response"][1]
+    for field in ("events", "statistics", "players"):
+        selected_record.pop(field)
+
+    reports = build_reports(
+        mission=mission,
+        selection=selection,
+        contract=contract,
+        payloads=payloads,
+        receipts=receipts,
+        telemetry=telemetry,
+        runtime={"duration_seconds": 1.0, "github_minutes": "UNKNOWN"},
+        selection_hash="b" * 64,
+    )
+    rows = reports["measurement"]["measurements"]
+    affected = {
+        item["capability_id"]: item
+        for item in rows
+        if item["competition"] == detail["competition"]
+    }
+    for capability_id in (
+        "EVENTS",
+        "DISCIPLINE_GENERIC",
+        "TEAM_STATISTICS",
+        "PLAYER_STATISTICS",
+    ):
+        assert affected[capability_id]["e1b_measurement_status"] == "E1B_BLOCKED_BY_SOURCE"
+        assert capability_id not in reports["measurement"]["e2_candidates"]
+    assert affected["EVENTS"]["unknown"] is None
+    assert affected["TEAM_STATISTICS"]["unknown"] == 2
+    assert affected["PLAYER_STATISTICS"]["unknown"] == 22
+
+
 def test_runner_never_uses_bucket_listing_head_or_mutation() -> None:
     source = (
         ROOT / "scripts/run_p0_e1b_five_league_canary.py"

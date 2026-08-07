@@ -92,7 +92,7 @@ def validate_contracts(root: Path) -> tuple[Mapping[str, Any], Mapping[str, Any]
         "fixture_count_per_league": 2,
         "competition_count": 5,
         "r2_get_budget": 2000,
-        "r2_byte_budget": 100000000,
+        "r2_byte_budget": 7244155,
         "r2_write_budget": 0,
         "provider_budget": 0,
         "sql_budget": 0,
@@ -284,11 +284,18 @@ def _measure_league(
     )
     players = valid_players = starters = lineups = formations = 0
     events = cards = team_stats = player_stats = 0
-    event_fixtures = card_fixtures = player_stat_fixtures = 0
+    event_containers = lineup_containers = 0
+    team_stat_buckets = empty_team_stat_buckets = 0
+    player_stat_containers = 0
     starter_keys: list[tuple[int, int, str]] = []
     for record in records:
         kickoff = str(mapping(record["fixture"], "E1B_FIXTURE")["date"])
-        for lineup in sequence(record.get("lineups", []), "E1B_LINEUPS"):
+        raw_lineups = record.get("lineups")
+        lineup_rows = (
+            sequence(raw_lineups, "E1B_LINEUPS") if raw_lineups is not None else []
+        )
+        lineup_containers += int(raw_lineups is not None)
+        for lineup in lineup_rows:
             value = mapping(lineup, "E1B_LINEUP")
             team_id = int(mapping(value["team"], "E1B_TEAM")["id"])
             lineups += 1
@@ -302,18 +309,43 @@ def _measure_league(
                         if role == "STARTER":
                             starters += 1
                             starter_keys.append((team_id, int(player["id"]), kickoff))
-        event_rows = sequence(record.get("events", []), "E1B_EVENTS")
+        raw_events = record.get("events")
+        event_rows = (
+            sequence(raw_events, "E1B_EVENTS") if raw_events is not None else []
+        )
+        event_containers += int(raw_events is not None)
         events += len(event_rows)
-        event_fixtures += int(bool(event_rows))
         card_rows = [item for item in event_rows if isinstance(item, Mapping) and str(item.get("type", "")).casefold() == "card"]
         cards += len(card_rows)
-        card_fixtures += int(bool(card_rows))
-        stats = sequence(record.get("statistics", []), "E1B_STATS")
-        team_stats += sum(len(sequence(mapping(item, "E1B_STAT")["statistics"], "E1B_STAT_ROWS")) for item in stats)
-        player_buckets = sequence(record.get("players", []), "E1B_PLAYER_BUCKETS")
-        current_player_rows = sum(len(sequence(mapping(item, "E1B_PLAYER_BUCKET")["players"], "E1B_PLAYER_ROWS")) for item in player_buckets)
+        raw_stats = record.get("statistics")
+        stats = sequence(raw_stats, "E1B_STATS") if raw_stats is not None else []
+        selected_team_ids = set(_teams(record))
+        for raw_stat in stats:
+            stat = mapping(raw_stat, "E1B_STAT")
+            team_id = int(mapping(stat["team"], "E1B_STAT_TEAM")["id"])
+            if team_id not in selected_team_ids:
+                raise ValueError("E1B_TEAM_STATISTICS_TEAM_INVALID")
+            stat_rows = sequence(stat["statistics"], "E1B_STAT_ROWS")
+            team_stat_buckets += int(bool(stat_rows))
+            empty_team_stat_buckets += int(not stat_rows)
+            team_stats += len(stat_rows)
+        raw_players = record.get("players")
+        player_buckets = (
+            sequence(raw_players, "E1B_PLAYER_BUCKETS")
+            if raw_players is not None
+            else []
+        )
+        player_stat_containers += int(raw_players is not None)
+        current_player_rows = sum(
+            len(
+                sequence(
+                    mapping(item, "E1B_PLAYER_BUCKET")["players"],
+                    "E1B_PLAYER_ROWS",
+                )
+            )
+            for item in player_buckets
+        )
         player_stats += current_player_rows
-        player_stat_fixtures += int(current_player_rows > 0)
     prior_team = 0
     for record in records:
         kickoff = str(mapping(record["fixture"], "E1B_FIXTURE")["date"])
@@ -348,12 +380,14 @@ def _measure_league(
     add("PLAYER", expected=players, received=valid_players, unknown=players-valid_players, status="E1B_MEASURED_PARTIAL", observed=valid_players, reason="LINEUP_SOURCE_ONLY")
     add("PLAYER_FORM", expected=starters, received=prior_player, unknown=starters-prior_player, status="E1B_BLOCKED_BY_TEMPORALITY", observed=prior_player, reason="POST_MATCH_STATISTICS_NOT_STRICT_AS_OF")
     add("LINEUP", expected=4, received=lineups, unknown=4-lineups, status="E1B_MEASURED_PARTIAL", observed=players, reason="POST_MATCH_RECONSTRUCTION")
-    add("FORMATION", expected=lineups, received=formations, unknown=lineups-formations, status="E1B_MEASURED_PARTIAL", observed=formations, reason="POST_MATCH_RECONSTRUCTION")
+    add("FORMATION", expected=4, received=formations, unknown=4-formations, status="E1B_MEASURED_PARTIAL", observed=formations, reason="POST_MATCH_RECONSTRUCTION")
     add("STARTER_BASELINE", expected=44, received=starters, unknown=44-starters, status="E1B_BLOCKED_BY_TEMPORALITY", observed=starters, reason="NOT_PROVEN_BEFORE_KICKOFF")
-    add("EVENTS", expected=2, received=event_fixtures, empty=2-event_fixtures, status="E1B_MEASURED", observed=events)
-    add("TEAM_STATISTICS", expected=4, received=4, status="E1B_MEASURED", observed=team_stats)
-    add("PLAYER_STATISTICS", expected=2, received=player_stat_fixtures, unknown=2-player_stat_fixtures, status="E1B_MEASURED", observed=player_stats)
-    add("DISCIPLINE_GENERIC", expected=2, received=card_fixtures, empty=2-card_fixtures, status="E1B_MEASURED", observed=cards)
+    event_status = "E1B_MEASURED" if event_containers == 2 else "E1B_BLOCKED_BY_SOURCE"
+    event_reason = None if event_containers == 2 else "EVENT_CONTAINER_MISSING"
+    add("EVENTS", expected=None, received=events, unknown=None, status=event_status, observed=events, reason=event_reason)
+    add("TEAM_STATISTICS", expected=4, received=team_stat_buckets, empty=empty_team_stat_buckets, unknown=4-team_stat_buckets-empty_team_stat_buckets, status="E1B_MEASURED" if team_stat_buckets+empty_team_stat_buckets == 4 else "E1B_BLOCKED_BY_SOURCE", observed=team_stats, reason=None if team_stat_buckets+empty_team_stat_buckets == 4 else "TEAM_STATISTICS_BUCKET_MISSING")
+    add("PLAYER_STATISTICS", expected=valid_players if lineup_containers == 2 else None, received=player_stats, unknown=max(valid_players-player_stats, 0) if lineup_containers == 2 else None, status="E1B_MEASURED" if lineup_containers == 2 and player_stat_containers == 2 and player_stats == valid_players else ("E1B_MEASURED_PARTIAL" if player_stat_containers == 2 else "E1B_BLOCKED_BY_SOURCE"), observed=player_stats, reason=None if lineup_containers == 2 and player_stat_containers == 2 and player_stats == valid_players else ("PLAYER_STATISTICS_PARTIAL" if player_stat_containers == 2 else "PLAYER_STATISTICS_CONTAINER_MISSING"))
+    add("DISCIPLINE_GENERIC", expected=None, received=cards, unknown=None, status=event_status, observed=cards, reason=event_reason)
     for name in ("INJURY_CONFIRMED", "SUSPENSION_CONFIRMED", "ABSENCE_GENERIC"):
         add(name, expected=None, received=0, unknown=None, status="E1B_NOT_EVALUATED", reason="NO_INJURIES_OBJECT_AUTHORIZED")
     add("ABSENCE_CAUSE_EXACT", expected=None, received=0, unknown=None, status="E1B_NOT_APPLICABLE", reason="STOPPED_LOCAL_CAMPAIGN", unclassifiable=149)
@@ -433,7 +467,16 @@ def build_reports(
     for item in measurements:
         grouped[str(item["capability_id"])].append(item)
     aggregates = [_aggregate(grouped[str(item["capability_id"])]) for item in capabilities]
-    e2_candidates = ["TEAM", "PLAYER", "LINEUP", "FORMATION", "EVENTS", "TEAM_STATISTICS", "PLAYER_STATISTICS", "DISCIPLINE_GENERIC", "CALENDAR"]
+    candidate_order = ["TEAM", "PLAYER", "LINEUP", "FORMATION", "EVENTS", "TEAM_STATISTICS", "PLAYER_STATISTICS", "DISCIPLINE_GENERIC", "CALENDAR"]
+    e2_candidates = [
+        capability_id
+        for capability_id in candidate_order
+        if all(
+            item["e1b_measurement_status"]
+            in {"E1B_MEASURED", "E1B_MEASURED_PARTIAL"}
+            for item in grouped[capability_id]
+        )
+    ]
     measured = sorted({str(item["capability_id"]) for item in measurements if item["e1b_measurement_status"] == "E1B_MEASURED"})
     partial = sorted({str(item["capability_id"]) for item in measurements if item["e1b_measurement_status"] == "E1B_MEASURED_PARTIAL"})
     blocked = sorted({str(item["capability_id"]) for item in measurements if str(item["e1b_measurement_status"]).startswith("E1B_BLOCKED")})
@@ -585,7 +628,7 @@ def validate_reports(reports: Mapping[str, Mapping[str, Any]]) -> None:
         if isinstance(expected, int) and int(item["received"]) + int(item["empty_valid"]) > expected:
             raise ValueError("E1B_DENOMINATOR_INVALID")
     costs = mapping(reports["costs"], "E1B_COSTS")
-    if int(costs["logical_gets"]) > 2000 or int(costs["bytes_read"]) > 100000000:
+    if int(costs["logical_gets"]) > 2000 or int(costs["bytes_read"]) > 7244155:
         raise ValueError("E1B_BUDGET_EXCEEDED")
     for field in ("provider_calls", "r2_writes", "r2_deletes", "sql_queries", "odds_credits", "deployments", "publications", "real_bets", "promotions"):
         if costs[field] != 0:

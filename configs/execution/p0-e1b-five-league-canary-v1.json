@@ -42,7 +42,7 @@
   "mission_id": "p0-e1b-five-league-capability-canary-v1",
   "odds_credit_budget": 0,
   "provider_budget": 0,
-  "r2_byte_budget": 100000000,
+  "r2_byte_budget": 7244155,
   "r2_get_budget": 2000,
   "r2_write_budget": 0,
   "retry_policy": {
