@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T15:35:00Z",
+  "generated_at":"2026-08-07T15:50:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1139,6 +1139,86 @@
       "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
       "status":"VERIFIED",
       "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E2.MEASUREMENT.V1.001",
+      "claim":"The bounded E2 sample measured nine authorized capabilities over exactly 100 frozen fixtures; eight are fully measured and PLAYER_STATISTICS is partial at 4208/4209 with one UNKNOWN and one invalid out-of-grain identity, without any READY promotion or E3A execution.",
+      "scope":"P0_E2_CAPABILITY_SAMPLE_V1_MEASUREMENT",
+      "source":"GitHub Actions run 31192408221 plus reviewed offline-only summary reconciliation",
+      "grain":"capability_by_league_over_one_hundred_frozen_fixtures",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e2/e2-measurement-v1.json",
+      "hash":"b18c42f62453c72514ad3a9ad388a55eb1f504d9d2b11a0371fd94b417d9be15",
+      "code_revision":"00ec90f020b36984544ff291756dc37b29108301",
+      "execution_id":"github-actions-31192408221-offline-summary-reconciliation",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E2_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E2.REPLAY.V1.001",
+      "claim":"All nine derived E2 reports and their reconciled summaries were regenerated twice byte-identically after acquisition with zero additional R2 GETs.",
+      "scope":"P0_E2_CAPABILITY_SAMPLE_V1_REPLAY",
+      "source":"GitHub Actions replay plus two reviewed offline reconciliation passes",
+      "grain":"ten_committed_e2_report_artifacts_excluding_selection",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e2/e2-replay-verification-v1.json",
+      "hash":"b2f6c22327bd74cb5bab61c373bb82e313ba249df9868c8e30e47b387aca946d",
+      "code_revision":"00ec90f020b36984544ff291756dc37b29108301",
+      "execution_id":"github-actions-31192408221-offline-summary-reconciliation",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E2_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E2.COST.V1.001",
+      "claim":"The single E2 run consumed 161 logical GETs and 6434224 bytes for one inventory, 80 receipts and 80 payloads; every prohibited external effect remained zero.",
+      "scope":"P0_E2_CAPABILITY_SAMPLE_V1_COST",
+      "source":"bounded reader telemetry from GitHub Actions run 31192408221",
+      "grain":"single_authorized_e2_attempt_cost_accounting",
+      "temporal_class":"EXECUTION_AT",
+      "artifact":"reports/evidence/e2/e2-costs-v1.json",
+      "hash":"9332f0a84463482e8b700cb53793be0ad1be6e360b612d3c8ac88ef295bc0145",
+      "code_revision":"00ec90f020b36984544ff291756dc37b29108301",
+      "execution_id":"github-actions-31192408221",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E2_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E2.DASHBOARD.V1.001",
+      "claim":"The E2 dashboard contract is a data-only projection of the reviewed measurement, provenance, costs and local progression states; no frontend or deployment was changed.",
+      "scope":"P0_E2_CAPABILITY_SAMPLE_V1_DASHBOARD_CONTRACT",
+      "source":"reviewed offline report projection and exact receipt-lineage checks",
+      "grain":"dashboard_contract_data_only",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/evidence/e2/e2-dashboard-contract-v1.json",
+      "hash":"5668bf79291a37d5eecdd47ceb804c87b218cb930ce63647d8ef398ece0933e0",
+      "code_revision":"00ec90f020b36984544ff291756dc37b29108301",
+      "execution_id":"local-e2-offline-summary-reconciliation-20260807T153500Z",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E2_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E2.E3A_CANDIDATES.V1.001",
+      "claim":"E2 identifies seven local E3A candidates and two targeted fixes: PLAYER_STATISTICS for identity/grain integrity and CALENDAR for known-as-of temporality; E3A and masks remain unexecuted.",
+      "scope":"P0_E2_CAPABILITY_SAMPLE_V1_E3A_CANDIDATE_SET",
+      "source":"frozen pre-measurement criteria applied to reviewed weighted E2 results",
+      "grain":"one_local_progression_decision_per_authorized_capability",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/evidence/e2/e2-e3a-candidate-set-v1.json",
+      "hash":"b0410ff0d7dbb0fb85fc292d2fe8f31f34f8c8af81f02960e37e8a5bfed0d508",
+      "code_revision":"00ec90f020b36984544ff291756dc37b29108301",
+      "execution_id":"github-actions-31192408221-offline-summary-reconciliation",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1",
+      "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E2_OUTPUTS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
     }
   ],
   "decision_nodes":[
@@ -1196,7 +1276,8 @@
     {"decision_id":"RCV3-20260807-052","ledger_record_hash":"07865a984781e3d90f8ed58d340de601867030dd86d25b58884e4e3e490aa69d"},
     {"decision_id":"RCV3-20260807-053","ledger_record_hash":"9625fbcbddac8bc61284ed14f75e285540274be00f2a8a8c755941f5ca59333e"},
     {"decision_id":"RCV3-20260807-054","ledger_record_hash":"6119e83024be48a6a3ad258fd98e1a9f8effb9788717e72165478bd7fd91029c"},
-    {"decision_id":"RCV3-20260807-055","ledger_record_hash":"ed3693aed046e8faf3871d2403f8da5e35def01fef947b29b86a86f0f6820c15"}
+    {"decision_id":"RCV3-20260807-055","ledger_record_hash":"ed3693aed046e8faf3871d2403f8da5e35def01fef947b29b86a86f0f6820c15"},
+    {"decision_id":"RCV3-20260807-056","ledger_record_hash":"38286d88d068a496583c502ac434c3207263c677ae2a74bc15af8bddc40db846"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1378,6 +1459,13 @@
     {"edge_id":"EDGE.177","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-054","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.178","from_claim_id":"COVERAGE.E2.SELECTION.V1.001","to_decision_id":"RCV3-20260807-055","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.179","from_claim_id":"COVERAGE.E1B.MEASUREMENT.V1.002","to_decision_id":"RCV3-20260807-055","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.180","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-055","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.180","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-055","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.181","from_claim_id":"COVERAGE.E2.SELECTION.V1.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.182","from_claim_id":"COVERAGE.E2.MEASUREMENT.V1.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.183","from_claim_id":"COVERAGE.E2.REPLAY.V1.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.184","from_claim_id":"COVERAGE.E2.COST.V1.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.185","from_claim_id":"COVERAGE.E2.DASHBOARD.V1.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.186","from_claim_id":"COVERAGE.E2.E3A_CANDIDATES.V1.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.187","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
