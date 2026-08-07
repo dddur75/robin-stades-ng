@@ -1,0 +1,548 @@
+{
+  "capability_aggregates": [
+    {
+      "capability_id": "TEAM",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 20,
+      "expected": 20,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED"
+      ],
+      "observed_records": 20,
+      "readiness_claimed": false,
+      "received": 20,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "TEAM_FORM",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 20,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_BLOCKED_BY_TEMPORALITY"
+      ],
+      "observed_records": 20,
+      "readiness_claimed": false,
+      "received": 20,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "PLAYER",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 420,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED_PARTIAL"
+      ],
+      "observed_records": 420,
+      "readiness_claimed": false,
+      "received": 420,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "PLAYER_FORM",
+      "content_presence_rate_weighted": 0.977273,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 0.977273,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 220,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_BLOCKED_BY_TEMPORALITY"
+      ],
+      "observed_records": 215,
+      "readiness_claimed": false,
+      "received": 215,
+      "unclassifiable": 0,
+      "unknown": 5
+    },
+    {
+      "capability_id": "LINEUP",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 20,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED_PARTIAL"
+      ],
+      "observed_records": 420,
+      "readiness_claimed": false,
+      "received": 20,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "FORMATION",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 20,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED_PARTIAL"
+      ],
+      "observed_records": 20,
+      "readiness_claimed": false,
+      "received": 20,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "STARTER_BASELINE",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 220,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_BLOCKED_BY_TEMPORALITY"
+      ],
+      "observed_records": 220,
+      "readiness_claimed": false,
+      "received": 220,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "EVENTS",
+      "content_presence_rate_weighted": null,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": null,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED"
+      ],
+      "observed_records": 179,
+      "readiness_claimed": false,
+      "received": 179,
+      "unclassifiable": 0,
+      "unknown": null
+    },
+    {
+      "capability_id": "TEAM_STATISTICS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 20,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED"
+      ],
+      "observed_records": 360,
+      "readiness_claimed": false,
+      "received": 20,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "PLAYER_STATISTICS",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 420,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED"
+      ],
+      "observed_records": 420,
+      "readiness_claimed": false,
+      "received": 420,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "DISCIPLINE_GENERIC",
+      "content_presence_rate_weighted": null,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": null,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED"
+      ],
+      "observed_records": 46,
+      "readiness_claimed": false,
+      "received": 46,
+      "unclassifiable": 0,
+      "unknown": null
+    },
+    {
+      "capability_id": "INJURY_CONFIRMED",
+      "content_presence_rate_weighted": null,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": null,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_NOT_EVALUATED"
+      ],
+      "observed_records": 0,
+      "readiness_claimed": false,
+      "received": 0,
+      "unclassifiable": 0,
+      "unknown": null
+    },
+    {
+      "capability_id": "SUSPENSION_CONFIRMED",
+      "content_presence_rate_weighted": null,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": null,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_NOT_EVALUATED"
+      ],
+      "observed_records": 0,
+      "readiness_claimed": false,
+      "received": 0,
+      "unclassifiable": 0,
+      "unknown": null
+    },
+    {
+      "capability_id": "ABSENCE_GENERIC",
+      "content_presence_rate_weighted": null,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": null,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_NOT_EVALUATED"
+      ],
+      "observed_records": 0,
+      "readiness_claimed": false,
+      "received": 0,
+      "unclassifiable": 0,
+      "unknown": null
+    },
+    {
+      "capability_id": "ABSENCE_CAUSE_EXACT",
+      "content_presence_rate_weighted": null,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": null,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": null,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_NOT_APPLICABLE"
+      ],
+      "observed_records": 0,
+      "readiness_claimed": false,
+      "received": 0,
+      "unclassifiable": 0,
+      "unknown": null
+    },
+    {
+      "capability_id": "CALENDAR",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 10,
+      "expected": 10,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_MEASURED_PARTIAL"
+      ],
+      "observed_records": 10,
+      "readiness_claimed": false,
+      "received": 10,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "FATIGUE",
+      "content_presence_rate_weighted": 1.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 1.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 20,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_BLOCKED_BY_TEMPORALITY"
+      ],
+      "observed_records": 20,
+      "readiness_claimed": false,
+      "received": 20,
+      "unclassifiable": 0,
+      "unknown": 0
+    },
+    {
+      "capability_id": "STANDINGS",
+      "content_presence_rate_weighted": 0.0,
+      "contradictory_duplicates": 0,
+      "coverage_rate_weighted": 0.0,
+      "empty_valid": 0,
+      "exact_duplicates": 0,
+      "expected": 20,
+      "fixture_count": 10,
+      "global_capability_status_unchanged": true,
+      "invalid": 0,
+      "league_count": 5,
+      "league_statuses": [
+        "E1B_BLOCKED_BY_SOURCE"
+      ],
+      "observed_records": 0,
+      "readiness_claimed": false,
+      "received": 0,
+      "unclassifiable": 0,
+      "unknown": 20
+    }
+  ],
+  "comparison_limit": "TECHNICAL_CANARY_NOT_SCIENTIFIC_COMPARISON",
+  "leagues": [
+    {
+      "blocked": [
+        "FATIGUE",
+        "PLAYER_FORM",
+        "STANDINGS",
+        "STARTER_BASELINE",
+        "TEAM_FORM"
+      ],
+      "competition": "Premier League",
+      "competition_id": 39,
+      "fixture_count": 2,
+      "measured": [
+        "DISCIPLINE_GENERIC",
+        "EVENTS",
+        "PLAYER_STATISTICS",
+        "TEAM",
+        "TEAM_STATISTICS"
+      ],
+      "not_evaluated": [
+        "ABSENCE_CAUSE_EXACT",
+        "ABSENCE_GENERIC",
+        "INJURY_CONFIRMED",
+        "SUSPENSION_CONFIRMED"
+      ],
+      "partial": [
+        "CALENDAR",
+        "FORMATION",
+        "LINEUP",
+        "PLAYER"
+      ],
+      "season": 2024
+    },
+    {
+      "blocked": [
+        "FATIGUE",
+        "PLAYER_FORM",
+        "STANDINGS",
+        "STARTER_BASELINE",
+        "TEAM_FORM"
+      ],
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "fixture_count": 2,
+      "measured": [
+        "DISCIPLINE_GENERIC",
+        "EVENTS",
+        "PLAYER_STATISTICS",
+        "TEAM",
+        "TEAM_STATISTICS"
+      ],
+      "not_evaluated": [
+        "ABSENCE_CAUSE_EXACT",
+        "ABSENCE_GENERIC",
+        "INJURY_CONFIRMED",
+        "SUSPENSION_CONFIRMED"
+      ],
+      "partial": [
+        "CALENDAR",
+        "FORMATION",
+        "LINEUP",
+        "PLAYER"
+      ],
+      "season": 2024
+    },
+    {
+      "blocked": [
+        "FATIGUE",
+        "PLAYER_FORM",
+        "STANDINGS",
+        "STARTER_BASELINE",
+        "TEAM_FORM"
+      ],
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "fixture_count": 2,
+      "measured": [
+        "DISCIPLINE_GENERIC",
+        "EVENTS",
+        "PLAYER_STATISTICS",
+        "TEAM",
+        "TEAM_STATISTICS"
+      ],
+      "not_evaluated": [
+        "ABSENCE_CAUSE_EXACT",
+        "ABSENCE_GENERIC",
+        "INJURY_CONFIRMED",
+        "SUSPENSION_CONFIRMED"
+      ],
+      "partial": [
+        "CALENDAR",
+        "FORMATION",
+        "LINEUP",
+        "PLAYER"
+      ],
+      "season": 2024
+    },
+    {
+      "blocked": [
+        "FATIGUE",
+        "PLAYER_FORM",
+        "STANDINGS",
+        "STARTER_BASELINE",
+        "TEAM_FORM"
+      ],
+      "competition": "Serie A",
+      "competition_id": 135,
+      "fixture_count": 2,
+      "measured": [
+        "DISCIPLINE_GENERIC",
+        "EVENTS",
+        "PLAYER_STATISTICS",
+        "TEAM",
+        "TEAM_STATISTICS"
+      ],
+      "not_evaluated": [
+        "ABSENCE_CAUSE_EXACT",
+        "ABSENCE_GENERIC",
+        "INJURY_CONFIRMED",
+        "SUSPENSION_CONFIRMED"
+      ],
+      "partial": [
+        "CALENDAR",
+        "FORMATION",
+        "LINEUP",
+        "PLAYER"
+      ],
+      "season": 2024
+    },
+    {
+      "blocked": [
+        "FATIGUE",
+        "PLAYER_FORM",
+        "STANDINGS",
+        "STARTER_BASELINE",
+        "TEAM_FORM"
+      ],
+      "competition": "Liga",
+      "competition_id": 140,
+      "fixture_count": 2,
+      "measured": [
+        "DISCIPLINE_GENERIC",
+        "EVENTS",
+        "PLAYER_STATISTICS",
+        "TEAM",
+        "TEAM_STATISTICS"
+      ],
+      "not_evaluated": [
+        "ABSENCE_CAUSE_EXACT",
+        "ABSENCE_GENERIC",
+        "INJURY_CONFIRMED",
+        "SUSPENSION_CONFIRMED"
+      ],
+      "partial": [
+        "CALENDAR",
+        "FORMATION",
+        "LINEUP",
+        "PLAYER"
+      ],
+      "season": 2024
+    }
+  ],
+  "mission_id": "p0-e1b-five-league-capability-canary-v1",
+  "schema_version": "p0-e1b-league-comparison-v1",
+  "weighting_policy": "SUM_NUMERATORS_AND_DENOMINATORS_NEVER_SIMPLE_MEAN"
+}
