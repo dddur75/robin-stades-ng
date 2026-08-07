@@ -1,0 +1,45 @@
+{
+  "schema_version": "calendar-strict-asof-contract-v1",
+  "capability_id": "CALENDAR",
+  "contract_status": "CALENDAR_STRICT_ASOF_CONTRACT_READY",
+  "scientific_promotion": "REQUIRES_REAL_E3A",
+  "cutoff_rule": "known_at < cutoff",
+  "catalog_incomplete_policy": "UNKNOWN",
+  "load_modes": {
+    "SCHEDULED_LOAD": ["SCHEDULED", "LIVE", "FINISHED", "ABANDONED"],
+    "PLAYED_LOAD": ["FINISHED"]
+  },
+  "excluded_when_known": ["CANCELLED", "POSTPONED"],
+  "congestion_thresholds": {
+    "7": 3,
+    "14": 5,
+    "28": 8
+  },
+  "feature_ids": [
+    "REST_DAYS_HOME",
+    "REST_DAYS_AWAY",
+    "MATCHES_LAST_7D_HOME",
+    "MATCHES_LAST_7D_AWAY",
+    "MATCHES_LAST_14D_HOME",
+    "MATCHES_LAST_14D_AWAY",
+    "MATCHES_LAST_28D_HOME",
+    "MATCHES_LAST_28D_AWAY",
+    "CONSECUTIVE_AWAY_MATCHES_HOME",
+    "CONSECUTIVE_AWAY_MATCHES_AWAY",
+    "THIRD_CONSECUTIVE_AWAY_HOME",
+    "THIRD_CONSECUTIVE_AWAY_AWAY",
+    "DAYS_SINCE_LAST_HOME_MATCH",
+    "DAYS_SINCE_LAST_AWAY_MATCH",
+    "FIXTURE_CONGESTION_7D",
+    "FIXTURE_CONGESTION_14D",
+    "FIXTURE_CONGESTION_28D"
+  ],
+  "external_effects": {
+    "api_football_calls": 0,
+    "r2_gets": 0,
+    "r2_writes": 0,
+    "remote_sql": 0,
+    "deployments": 0,
+    "publication": 0
+  }
+}

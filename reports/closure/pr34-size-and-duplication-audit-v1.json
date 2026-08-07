@@ -1,0 +1,62 @@
+{
+  "schema_version": "pr34-size-and-duplication-audit-v1",
+  "pull_request": 34,
+  "base": "main@3e250c2a4a01a141f6403219fd4c45ae75a05522",
+  "head": "841ae4d850ceba4f6a7dc230ad3c4ce40de80364",
+  "merge_commit": "ba928d096e12dbffaea96bbd67770a313257433a",
+  "changed_files": 22,
+  "added_lines": 33467,
+  "deleted_lines": 158,
+  "top_files_by_lines": [
+    {"file": "reports/evidence/e2/e2-temporal-strata-v1.json", "lines": 23853},
+    {"file": "reports/evidence/e2/e2-selection-manifest-v1.json", "lines": 2319},
+    {"file": "reports/evidence/e2/e2-measurement-v1.json", "lines": 1847},
+    {"file": "reports/evidence/evidence-graph.json", "lines": 1475},
+    {"file": "reports/evidence/e2/e2-league-comparison-v1.json", "lines": 1219},
+    {"file": "reports/evidence/e2/e2-dashboard-contract-v1.json", "lines": 1041}
+  ],
+  "top_files_by_bytes": [
+    {"file": "reports/evidence/e2/e2-temporal-strata-v1.json", "bytes": 693701},
+    {"file": "reports/evidence/e2/e2-selection-manifest-v1.json", "bytes": 153358},
+    {"file": "reports/council/decision-ledger.jsonl", "bytes": 146956},
+    {"file": "reports/evidence/evidence-graph.json", "bytes": 111906},
+    {"file": "reports/evidence/e2/e2-measurement-v1.json", "bytes": 63107},
+    {"file": "reports/evidence/e2/e2-dashboard-contract-v1.json", "bytes": 37672}
+  ],
+  "detailed_fixture_arrays": [
+    {"file": "reports/evidence/e2/e2-selection-manifest-v1.json", "json_path": "$.fixtures", "rows": 100, "authoritative": true}
+  ],
+  "duplicated_fixture_arrays": [],
+  "duplicated_capability_rows": [
+    {"projection": "e2-league-comparison-v1.json:$.rows", "authority": "e2-measurement-v1.json:$.measurements", "rows": 45},
+    {"projection": "e2-dashboard-contract-v1.json:$.capabilities", "authority": "e2-capability-matrix-v1.json:$.capabilities", "rows": 9},
+    {"projection": "e2-dashboard-contract-v1.json:$.progression", "authority": "e1b-e2-comparison-v1.json:$.rows", "rows": 9},
+    {"projection": "e2-dashboard-contract-v1.json:$.freshness", "authority": "e2-measurement-v1.json:$.source_receipts", "rows": 80}
+  ],
+  "reconstructible_projections": [
+    "reports/evidence/e2/e2-league-comparison-v1.json",
+    "reports/evidence/e2/e2-dashboard-contract-v1.json"
+  ],
+  "authoritative_files": [
+    "reports/evidence/e2/e2-selection-manifest-v1.json",
+    "reports/evidence/e2/e2-measurement-v1.json",
+    "reports/evidence/e2/e2-capability-matrix-v1.json",
+    "reports/evidence/e2/e2-temporal-strata-v1.json",
+    "reports/evidence/e2/e2-costs-v1.json",
+    "reports/evidence/e2/e2-replay-verification-v1.json"
+  ],
+  "historical_evidence_files": [
+    "reports/evidence/e2/e1b-e2-comparison-v1.json",
+    "reports/evidence/e2/e2-league-comparison-v1.json",
+    "reports/evidence/e2/e2-team-concentration-v1.json",
+    "reports/evidence/e2/e2-e3a-candidate-set-v1.json",
+    "reports/evidence/e2/e2-dashboard-contract-v1.json",
+    "reports/council/decision-ledger.jsonl",
+    "reports/evidence/evidence-graph.json"
+  ],
+  "raw_payload_files": [],
+  "temporary_files": [],
+  "absolute_paths": [],
+  "recommendation": "NO_COMPACTION_REQUIRED",
+  "recommendation_reason": "The only detailed 100-fixture array is authoritative. The 855 temporal rows are unique granular evidence. Small repeated capability projections are deterministic, hash-covered, and mandatory dashboard/comparison contracts; rewriting them would change the audited head without removing structural fixture duplication."
+}

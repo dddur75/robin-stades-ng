@@ -1,0 +1,74 @@
+name: "84 - E2 1208603 Targeted Diagnostic"
+on:
+  push:
+    branches: [codex/e2-targeted-fixes-e3a-launch-v1]
+permissions:
+  contents: read
+concurrency:
+  group: e2-1208603-targeted-diagnostic
+  cancel-in-progress: false
+env:
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  ODDS_CREDITS_ALLOWED: "0"
+  REMOTE_SQL_ALLOWED: "0"
+  R2_LIST_ALLOWED: "0"
+  R2_HEAD_ALLOWED: "0"
+  R2_WRITES_ALLOWED: "0"
+  R2_DELETES_ALLOWED: "0"
+  DEPLOYMENT_ALLOWED: "0"
+  PUBLICATION_ALLOWED: "0"
+  STORAGE_PAUSED: "true"
+  P3_P4_PAUSED: "true"
+  PRODUCTION_LOCKED: "true"
+  REAL_BETS: "false"
+  NO_BET_DEFAULT: "true"
+  PROMOTION_LOCKED: "true"
+  SOCIAL_PUBLISHING_ENABLED: "false"
+  DEMO_MODE_ENABLED: "false"
+jobs:
+  validate:
+    name: Synthetic safety gate
+    if: contains(github.event.head_commit.message, '[e2-1208603-read-authorized]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Validate exact-key code and synthetic contracts
+        run: |
+          python -m pytest -q tests/e2/test_e2_1208603_diagnostic.py tests/features/test_calendar_asof_v1.py
+          python -m ruff check src/robin/features src/robin/historical_deep/e2_targeted_diagnostic.py scripts/run_e2_1208603_diagnostic.py tests/e2/test_e2_1208603_diagnostic.py tests/features/test_calendar_asof_v1.py
+          python -m mypy --strict src/robin/features/calendar_asof.py src/robin/historical_deep/e2_targeted_diagnostic.py scripts/run_e2_1208603_diagnostic.py
+  diagnose:
+    name: Two exact R2 GETs and sanitized reports
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Diagnose only the reviewed exact-key pair
+        run: python scripts/run_e2_1208603_diagnostic.py --output artifacts/e2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2-1208603-sanitized-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/e2/e2-player-statistics-1208603-diagnostic-v1.json
+            artifacts/e2/e2-1208603-field-path-census-v1.json
+          if-no-files-found: error
+          retention-days: 30

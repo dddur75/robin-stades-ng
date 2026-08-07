@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T16:15:00Z",
+  "generated_at":"2026-08-07T19:46:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1219,6 +1219,38 @@
       "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E2_OUTPUTS",
       "status":"VERIFIED",
       "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"CLOSURE.PR34.SIZE_AUDIT.V1.001",
+      "claim":"PR #34 contains one authoritative detailed 100-fixture array, no duplicated fixture array, no raw payload or temporary file, and requires no compaction before merge.",
+      "scope":"PR34_E2_CLOSURE",
+      "source":"Git diff, structural JSON comparison and exact-head CI review",
+      "grain":"one_pull_request_size_and_duplication_audit",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/closure/pr34-size-and-duplication-audit-v1.json",
+      "hash":"112d9c4b46b1a88c4246d466a3e58d4d0a31f596b34ff342c4a41f79c5a2bc73",
+      "code_revision":"ba928d096e12dbffaea96bbd67770a313257433a",
+      "execution_id":"local-pr34-closure-audit-20260807T194600Z",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1",
+      "dataset_lineage_id":"git-diff-3e250c2-to-841ae4d",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6","DP5"]
+    },
+    {
+      "claim_id":"FEATURE.CALENDAR.STRICT_ASOF.V1.001",
+      "claim":"The versioned Calendar contract mechanically enforces known_at before cutoff, separates scheduled and played load, preserves UNKNOWN and is byte-identical on a 14-fixture synthetic Golden Pack; no real E3A evidence is claimed.",
+      "scope":"CALENDAR_STRICT_ASOF_SYNTHETIC_ONLY",
+      "source":"synthetic Golden Pack and targeted deterministic tests",
+      "grain":"one_target_fixture_cutoff_view",
+      "temporal_class":"KNOWN_AS_OF",
+      "artifact":"configs/features/calendar-strict-asof-v1.json",
+      "hash":"f126c8fbde8c517881f789db5fe9d57aff642d3cc3d84d023db241e2b13f5b5d",
+      "code_revision":"ba928d096e12dbffaea96bbd67770a313257433a",
+      "execution_id":"local-calendar-strict-asof-golden-v1",
+      "scientific_lineage_id":"e2-targeted-fixes-e3a-launch-v1",
+      "dataset_lineage_id":"synthetic-calendar-golden-pack-v1",
+      "status":"VERIFIED",
+      "verified_by":["C0","C2"]
     }
   ],
   "decision_nodes":[
@@ -1278,7 +1310,8 @@
     {"decision_id":"RCV3-20260807-054","ledger_record_hash":"6119e83024be48a6a3ad258fd98e1a9f8effb9788717e72165478bd7fd91029c"},
     {"decision_id":"RCV3-20260807-055","ledger_record_hash":"ed3693aed046e8faf3871d2403f8da5e35def01fef947b29b86a86f0f6820c15"},
     {"decision_id":"RCV3-20260807-056","ledger_record_hash":"38286d88d068a496583c502ac434c3207263c677ae2a74bc15af8bddc40db846"},
-    {"decision_id":"RCV3-20260807-057","ledger_record_hash":"7673bcdad638d83a5e36487c8e53e1988a8168620070d0779ea51a17634bdb65"}
+    {"decision_id":"RCV3-20260807-057","ledger_record_hash":"7673bcdad638d83a5e36487c8e53e1988a8168620070d0779ea51a17634bdb65"},
+    {"decision_id":"RCV3-20260807-058","ledger_record_hash":"722847eabe2d75a54b1067bc7d63a4bc579e78c0a85a1ad3ce5fcae50941e6a9"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1470,6 +1503,10 @@
     {"edge_id":"EDGE.187","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-056","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.188","from_claim_id":"COVERAGE.E2.MEASUREMENT.V1.001","to_decision_id":"RCV3-20260807-057","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.189","from_claim_id":"COVERAGE.E2.REPLAY.V1.001","to_decision_id":"RCV3-20260807-057","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.190","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-057","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.190","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-057","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.191","from_claim_id":"COVERAGE.E2.SELECTION.V1.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.192","from_claim_id":"COVERAGE.E2.MEASUREMENT.V1.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.193","from_claim_id":"COVERAGE.E2.REPLAY.V1.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.194","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
