@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-06T23:12:00Z",
+  "generated_at":"2026-08-07T10:03:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -959,6 +959,22 @@
       "dataset_lineage_id":"E1A_COMMITTED_EVIDENCE_SCOPE_ONLY",
       "status":"VERIFIED",
       "verified_by":["C0","DP5"]
+    },
+    {
+      "claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001",
+      "claim":"The bounded launch-readiness package validates exact Council activation, local capability progression, UNKNOWN preservation, deterministic stage checkpoints and durable completed or mid-shard resume using synthetic fixtures only, with every current external-consumption counter at zero.",
+      "scope":"P0_CAPABILITY_EXECUTION_LAUNCH_READINESS_V1",
+      "source":"versioned manifest, exact Council envelope, fail-closed validator, synthetic Golden Pack, checkpoint-resume tests and code/documentation-only platform audit",
+      "grain":"mechanical_synthetic_preflight_only",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/preflight/p0-capability-launch-readiness-v1.json",
+      "hash":"76638a197e8bb0d0a6a9c20c6c51011c3bc39f5e0ab2e744f6964286bc78a316",
+      "code_revision":"9c27e4b394c91d5251f8ef069793e8bbce6c5d9d",
+      "execution_id":"local-p0-capability-preflight-20260807T091500Z",
+      "scientific_lineage_id":"NOT_APPLICABLE_MECHANICAL_PREFLIGHT",
+      "dataset_lineage_id":"SYNTHETIC_GOLDEN_PACK_065CDE964613B7B6",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","A2","UX1"]
     }
   ],
   "decision_nodes":[
@@ -999,7 +1015,10 @@
     {"decision_id":"RCV3-20260806-035","ledger_record_hash":"842a36c84a8954e8ec1f52b135dd59222b7b1e92dd1b6240c4eb9dd7e1d590fa"},
     {"decision_id":"RCV3-20260806-036","ledger_record_hash":"07d05d720a7e0d7b470fab687e2e4aa5c7acff13a504dfd4c9841e9b0783a9a3"},
     {"decision_id":"RCV3-20260806-037","ledger_record_hash":"d4881dbd5f15115ee6144b31d3cf4f3a334ee72b3cbf8c869764b66fc9e5be11"},
-    {"decision_id":"RCV3-20260806-038","ledger_record_hash":"a15625282cd1cd9a16bc8edf006962f7e4a962048c7682e35c20f3fcc61c0a48"}
+    {"decision_id":"RCV3-20260806-038","ledger_record_hash":"a15625282cd1cd9a16bc8edf006962f7e4a962048c7682e35c20f3fcc61c0a48"},
+    {"decision_id":"RCV3-20260807-039","ledger_record_hash":"760f2fdf08d9c2d9d186300a2d7c2c7f2fb41be8c65d40f434705af897d633b5"},
+    {"decision_id":"RCV3-20260807-040","ledger_record_hash":"7ab230c1395dc14f9a55a271ed13630e4cce7d15c8cfc85227390b28327016b9"},
+    {"decision_id":"RCV3-20260807-041","ledger_record_hash":"9aa50f53a93b4a7875e0cb8f5bcaa65b1ab531f717ae6f2132e382b31ec6bf1f"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1126,6 +1145,15 @@
     {"edge_id":"EDGE.122","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260806-037","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.123","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-037","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.124","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260806-038","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.125","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-038","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.125","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260806-038","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.126","from_claim_id":"COVERAGE.LADDER.E1A.CAPABILITY_SCOPE.001","to_decision_id":"RCV3-20260807-039","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.127","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260807-039","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.128","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-039","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.129","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-040","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.130","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260807-040","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.131","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-040","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.132","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-041","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.133","from_claim_id":"COVERAGE.CAPABILITY_SCOPED.V2.CONTRACT.001","to_decision_id":"RCV3-20260807-041","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.134","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-041","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

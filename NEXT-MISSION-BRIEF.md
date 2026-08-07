@@ -1,69 +1,72 @@
-# Prochaine mission longue — Capability Evidence Scale-Up
-
-Ce brief est compilé pour une mission future. Il ne donne aucune autorisation d'exécution
-dans la PR Capability V2.
+# Next Mission Brief — P0 Capability Execution
 
 ## Configuration
 
 ```text
 OUTIL = Codex
 DÉPÔT = dddur75/robin-stades-ng
-BRANCHE D'ACCUEIL VISIBLE = codex/hypothesis-universe-experience-v1
-BRANCHE RÉELLE = codex/capability-scoped-evidence-ladder-v2
+BRANCHE VISIBLE = codex/hypothesis-universe-experience-v1
+BRANCHE RÉELLE = codex/p0-capability-execution-launch-readiness-v1
 MODÈLE = GPT-5.6 Sol
 RAISONNEMENT = Très élevé
 ACCÈS = Complet
 DURÉE = 20 à 50 heures utiles
 ```
 
-## Point de départ obligatoire
+La mission commencera par revoir et fusionner la PR brouillon de prévol, puis
+créera un worktree d'exécution depuis le nouveau `origin/main`. Le head de PR
+doit être résolu sur GitHub au démarrage ; ne jamais le supposer depuis ce brief.
 
-- Revoir et fusionner la PR Capability-Scoped Evidence Ladder V2.
-- Conserver `ABSENCE_CAUSE_UNKNOWN` comme valeur de première classe.
-- Conserver `E1A_ABSENCE_CAUSE_CLASSIFICATION = STOPPED_LOCAL_CAMPAIGN`.
-- Ne pas promouvoir une capacité non évaluée.
-- Utiliser les gates, grains, sources, temporalités et dépendances propres à chaque capacité.
+## Autorité
 
-## Séquence scientifique
+- source scientifique : `main@4d12da146602585a9df58b9db725a1c483d230d0` ;
+- contrat Capability V2 :
+  `aa6f60694b7bfe1684c6fcf0faf1bbbc6fa1bb9f1001f06fee999451d1d011e8` ;
+- catalogue des grains :
+  `5b2581e7d3a4630fd9d84be6ca954dc63cae83a602fce91d68c4847c5498cd71` ;
+- inventaire fournisseurs :
+  `f0b0f36d68c24692964868de3618c5a5c42b47d839f36bd6cb22a7c2ef65f18b` ;
+- manifeste : `configs/execution/p0-capability-execution-manifest-v1.json` ;
+- enveloppe Council à huit champs :
+  `configs/execution/p0-capability-council-activation-v1.json` ;
+- contrat de capacités :
+  `configs/data/capability-scoped-evidence-ladder-v2.json`.
 
-1. Exécuter E1B uniquement pour les capacités admissibles.
-2. Exécuter E2 sur 100 fixtures.
-3. Exécuter E3A sur une compétition-saison complète.
-4. Exécuter E3B sur plusieurs ligues selon un périmètre temporel commun.
-5. Recalculer les gates par capacité après chaque niveau.
-6. Construire les premiers masques atomiques validés.
-7. Tester les propriétés seules.
-8. Tester les paires compatibles et leurs dépendances.
-9. Préparer, sans la lancer prématurément, la campagne des millions de triples.
+État immuable : `3036 = 2681 + 206 + 149`, cause exacte localement stoppée,
+14 capacités non évaluées, aucune troisième architecture, aucun statut READY
+implicite.
 
-## Conditions préalables aux millions de triples
+## Objectif
 
-La campagne combinatoire reste interdite tant que les cinq conditions suivantes ne sont pas
-simultanément prouvées :
+Exécuter progressivement E1B, E2, E3A et E3B sur les capacités admissibles,
+recalculer les gates locales, puis, uniquement si un sous-espace fiable existe,
+benchmarker les représentations de masques, construire les propriétés atomiques
+et tester les paires compatibles.
 
-```text
-masques validés
-prix historiques admissibles
-support minimal défini
-folds temporels disponibles
-contrat statistique gelé
-```
+L'enveloppe Council borne l'échelle de preuve à E3B (`E1B` est la campagne
+capability-scoped du niveau Council `E1`). Les masques, propriétés et paires
+restent contrôlés par le contrat détaillé et ne sont pas des `EvidenceStage`.
 
-## Garde-fous
+## Plafonds
 
-- Ne jamais relancer E1A ni créer une troisième architecture de classification des causes.
-- Aucun `UNKNOWN → 0`, `false`, blessure ou suspension.
-- Aucun saut d'échelle entre E1B, E2, E3A et E3B.
-- Aucun effet externe sans manifeste et budget explicites.
-- Aucun pari réel, achat, promotion, publication ou déploiement.
-- Réutiliser les preuves et caches compatibles avant tout calcul.
-- Arrêter seulement la capacité concernée lorsqu'un gate local échoue.
+- 50 heures ; jobs cible 10 min, maximum 15 min, checkpoint 5 min ;
+- 10 000 GET R2 maximum et, après décision C0/DP5/A2 au ledger seulement,
+  256 checkpoints/manifests compacts append-only ;
+- 0 appel API-Football, 0 crédit de cotes ;
+- 0 lecture/écriture SQL dans le manifeste courant ;
+- un seul writer stateful, cinq lecteurs parallèles maximum ;
+- deuxième échec similaire : redesign ; troisième tentative identique interdite.
 
-## Livrables attendus
+E4 est conditionnel, jamais automatique. Triples, profondeur 4+, promotion,
+pari réel, publication sociale et déploiement restent interdits.
 
-- matrice des capacités mise à jour ;
-- reçus et coûts par niveau ;
-- rapports de qualité, temporalité et dénominateurs ;
-- masques atomiques versionnés ;
-- résultats des propriétés seules puis des paires ;
-- plan de campagne des triples avec estimation de coût et condition d'arrêt.
+## Terminé
+
+Chaque niveau possède preuves, dénominateurs, UNKNOWN, grains, audit temporel,
+checkpoint durable, reprise vérifiée, coût et décision par capacité. Les masques
+et paires ne démarrent qu'après leurs gates. La recherche de triples reste
+`TRIPLE_SEARCH_LOCKED` tant que les huit conditions gelées ne sont pas toutes
+prouvées.
+
+Le prompt complet directement copiable est `NEXT-MISSION-PROMPT.md`. Il est
+préparé mais n'a pas été exécuté dans la mission de prévol.

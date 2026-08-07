@@ -1,0 +1,220 @@
+{
+  "schema_version": "p0-capability-platform-audit-v1",
+  "audit_mode": "CODE_AND_DOCUMENTATION_ONLY_NO_REMOTE_ACCESS",
+  "source_main_sha": "4d12da146602585a9df58b9db725a1c483d230d0",
+  "github": {
+    "workflow_inventory": {
+      "total_yml": 66,
+      "with_workflow_dispatch": 60,
+      "with_pull_request": 1,
+      "with_push": 4,
+      "with_schedule": 25,
+      "with_workflow_call": 22,
+      "with_paths": 1,
+      "with_paths_ignore": 0,
+      "with_concurrency": 58,
+      "with_cancel_in_progress": 58,
+      "with_matrix": 3,
+      "with_artifact_actions": 47,
+      "with_github_run_attempt": 3,
+      "with_timeout": 58
+    },
+    "observed_shared_state_groups": [
+      "historical-state",
+      "historical-deep-r2-state",
+      "shadow-state",
+      "prospective-deep-state"
+    ],
+    "continuous_integration": {
+      "path": ".github/workflows/ci.yml",
+      "triggers": [
+        "pull_request",
+        "push:main",
+        "workflow_dispatch"
+      ],
+      "paths": null,
+      "paths_ignore": null,
+      "cron": null,
+      "workflow_call": false,
+      "concurrency_group": "quality-{workflow}-{ref}, except marked J12 pilot",
+      "cancel_in_progress": "true except marked J12 pilot",
+      "timeouts_minutes": [
+        20,
+        25,
+        25,
+        25,
+        35
+      ],
+      "matrix": false,
+      "artifacts": "J10 frozen inputs and visual evidence; never sole durable scientific authority",
+      "github_run_attempt_guard": "J12 provider pilot only",
+      "observed_pr31_exact_head_run": 31131990245,
+      "observed_pr31_exact_head_conclusion": "SUCCESS"
+    },
+    "existing_coverage_workflow": {
+      "path": ".github/workflows/81-historical-deep-coverage-proof-export.yml",
+      "triggers": [
+        "workflow_dispatch",
+        "workflow_call"
+      ],
+      "stages": [
+        "E1A",
+        "E1B",
+        "E2",
+        "E3A",
+        "E3B",
+        "E4"
+      ],
+      "attempt_slots": [
+        1,
+        2
+      ],
+      "third_attempt": "NOT_AVAILABLE",
+      "concurrency_groups": [
+        "historical-deep-r2-coverage-proof",
+        "coverage-evidence-manual"
+      ],
+      "cancel_in_progress": false,
+      "matrix": "dynamic bounded measurement shards",
+      "artifacts": "plans, receipts, shard outputs and reducer outputs",
+      "scientific_execution_during_this_audit": false
+    },
+    "future_workflow_contracts": [
+      {
+        "id": "E1B",
+        "implementation": "NOT_IMPLEMENTED_CONTRACT_ONLY",
+        "trigger": "workflow_dispatch",
+        "group": "p0-capability-manual",
+        "timeout_minutes": 15
+      },
+      {
+        "id": "E2",
+        "implementation": "NOT_IMPLEMENTED_CONTRACT_ONLY",
+        "trigger": "workflow_dispatch_after_E1B_gate",
+        "group": "p0-capability-manual",
+        "timeout_minutes": 15
+      },
+      {
+        "id": "E3",
+        "implementation": "NOT_IMPLEMENTED_CONTRACT_ONLY",
+        "trigger": "workflow_dispatch_after_previous_gate",
+        "group": "p0-capability-manual",
+        "timeout_minutes": 15
+      },
+      {
+        "id": "MASKS",
+        "implementation": "NOT_IMPLEMENTED_CONTRACT_ONLY",
+        "trigger": "workflow_dispatch_after_E3B",
+        "group": "hypothesis-mask-build",
+        "timeout_minutes": 15
+      },
+      {
+        "id": "PROPERTIES",
+        "implementation": "NOT_IMPLEMENTED_CONTRACT_ONLY",
+        "trigger": "workflow_dispatch_after_mask_validation",
+        "group": "hypothesis-mask-build",
+        "timeout_minutes": 15
+      },
+      {
+        "id": "PAIRS",
+        "implementation": "NOT_IMPLEMENTED_CONTRACT_ONLY",
+        "trigger": "workflow_dispatch_after_atomic_audit",
+        "group": "hypothesis-pair-search",
+        "timeout_minutes": 15
+      }
+    ],
+    "scheduled_group": "p0-capability-scheduled",
+    "shared_stateful_writer_group": "p0-capability-stateful-writer",
+    "isolated_groups": [
+      "cockpit-refresh",
+      "deployment"
+    ],
+    "pending_replacement_policy": "COMMIT_INTENT_AND_LAST_CHECKPOINT_BEFORE_DISPATCH_THEN_RECONCILE_AT_RUN_START",
+    "current_cockpit_group": "historical-state",
+    "future_cockpit_group_recommendation": "cockpit-refresh",
+    "retries": "SECOND_SIMILAR_FAILURE_REDESIGN_REQUIRED_THIRD_FORBIDDEN"
+  },
+  "r2": {
+    "verification_status": "CODE_CONTRACT_VERIFIED_RUNTIME_UNKNOWN",
+    "namespace": "historical-deep-data/schema-v1/",
+    "required_prefixes": [
+      "historical-deep-data/schema-v1/_derived/replay/inventories/",
+      "manifest-listed receipt keys",
+      "manifest-listed payload keys",
+      "historical-deep-data/schema-v1/_derived/capability-execution/checkpoints/mission=p0-capability-execution-long-mission-v1/"
+    ],
+    "expected_object_types": [
+      "inventory manifest json.gz",
+      "receipt json",
+      "payload json.gz",
+      "checkpoint json",
+      "derived proof manifest"
+    ],
+    "required_manifests": [
+      "configs/data/p0-coverage-source-config-v1.json",
+      "configs/historical-deep-data-harvest-v1.json",
+      "configs/data/historical-coverage-denominator-contract-v1.json",
+      "configs/data/football-grain-catalog-v1.json",
+      "configs/data/coverage-scale-pack-manifests-v2.json"
+    ],
+    "list_budget": 0,
+    "get_budget": 10000,
+    "get_budget_per_job": 200,
+    "source_evidence_write_budget": 0,
+    "future_checkpoint_write_budget": 256,
+    "future_checkpoint_write_policy": "COMPACT_JSON_APPEND_ONLY_NO_RAW_PAYLOAD_NO_OVERWRITE",
+    "future_checkpoint_activation_gate": "C0_DP5_A2_APPEND_ONLY_LEDGER_DECISION_REQUIRED_BEFORE_FIRST_WRITE_OTHERWISE_EFFECTIVE_BUDGET_ZERO",
+    "delete_budget": 0,
+    "cache_policy": "EXACT_GET_ONLY_AFTER_PINNED_INVENTORY_NO_RAW_OR_DERIVED_PREFIX_LISTING",
+    "resume_policy": "CONTENT_HASHED_APPEND_ONLY_CHECKPOINT_AND_RECEIPT_CHAIN",
+    "runtime_unknowns": [
+      "bucket availability",
+      "credential validity",
+      "object existence at frozen keys",
+      "account limits",
+      "latency and throttling"
+    ],
+    "runtime_unknown_status": "UNKNOWN_TO_BE_VERIFIED_AT_RUNTIME"
+  },
+  "neon": {
+    "verification_status": "CODE_CONTRACT_VERIFIED_RUNTIME_UNKNOWN",
+    "candidate_tables": [
+      "hypothesis_historical_evidence_summaries",
+      "hypothesis_evidence_artifact_indexes",
+      "historical_fixture_evidence_indexes",
+      "hypothesis_fixture_membership_indexes",
+      "coverage_gates",
+      "evidence_ledger"
+    ],
+    "authorized_in_future_manifest": false,
+    "sql_read_budget": 0,
+    "sql_write_budget": 0,
+    "mode": "READ_ONLY_IF_SEPARATELY_AUTHORIZED",
+    "connection": {
+      "application_workers": "POOLER_EXPECTED",
+      "migrations": "DIRECT_ONLY_IF_EXPLICITLY_AUTHORIZED",
+      "actual_endpoint": "UNKNOWN_TO_BE_VERIFIED_AT_RUNTIME"
+    },
+    "statement_timeout": "REQUIRED_VALUE_UNKNOWN_TO_BE_VERIFIED_AT_RUNTIME",
+    "lock_timeout": "REQUIRED_VALUE_UNKNOWN_TO_BE_VERIFIED_AT_RUNTIME",
+    "runtime_unknowns": [
+      "DATABASE_URL presence and validity",
+      "current migration revision",
+      "table availability",
+      "read-only role enforcement",
+      "pooler/direct endpoint type",
+      "account limits and connection ceiling"
+    ],
+    "runtime_unknown_status": "UNKNOWN_TO_BE_VERIFIED_AT_RUNTIME"
+  },
+  "security": {
+    "secrets_read": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "remote_sql": 0,
+    "provider_calls": 0,
+    "workflows_dispatched": 0,
+    "deployments": 0,
+    "publications": 0
+  }
+}
