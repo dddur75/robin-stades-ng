@@ -181,6 +181,29 @@ def _synthetic_inputs() -> tuple[
     return payloads, receipts, telemetry
 
 
+def _synthetic_reports(
+    payloads: dict[str, object],
+    receipts: dict[str, dict[str, Any]],
+    telemetry: dict[str, Any],
+) -> dict[str, Any]:
+    return build_reports(
+        mission=read_json(
+            ROOT / "configs/execution/p0-e1b-five-league-canary-v1.json"
+        ),
+        selection=read_json(
+            ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+        ),
+        contract=read_json(
+            ROOT / "configs/data/capability-scoped-evidence-ladder-v2.json"
+        ),
+        payloads=payloads,
+        receipts=receipts,
+        telemetry=telemetry,
+        runtime={"duration_seconds": 1.0, "github_minutes": "UNKNOWN"},
+        selection_hash="c" * 64,
+    )
+
+
 def test_synthetic_five_league_measurement_is_deterministic_and_scoped() -> None:
     mission = read_json(ROOT / "configs/execution/p0-e1b-five-league-canary-v1.json")
     selection = read_json(
@@ -264,6 +287,119 @@ def test_missing_source_containers_are_unknown_and_block_e2_progression() -> Non
     assert affected["EVENTS"]["unknown"] is None
     assert affected["TEAM_STATISTICS"]["unknown"] == 2
     assert affected["PLAYER_STATISTICS"]["unknown"] == 22
+
+
+@pytest.mark.parametrize("missing", ["fixture_players", "bucket_players"])
+def test_missing_player_history_container_blocks_player_form(missing: str) -> None:
+    selection = read_json(
+        ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+    )
+    payloads, receipts, telemetry = _synthetic_inputs()
+    detail = next(
+        item for item in selection["source_objects"] if item["source_role"] == "DETAIL"
+    )
+    payload = payloads[str(detail["object_id"])]
+    assert isinstance(payload, dict)
+    prior = payload["response"][0]
+    if missing == "fixture_players":
+        prior.pop("players")
+    else:
+        prior["players"][0].pop("players")
+
+    reports = _synthetic_reports(payloads, receipts, telemetry)
+    player_form = next(
+        item
+        for item in reports["measurement"]["measurements"]
+        if item["competition"] == detail["competition"]
+        and item["capability_id"] == "PLAYER_FORM"
+    )
+    assert player_form["e1b_measurement_status"] == "E1B_BLOCKED_BY_SOURCE"
+    assert player_form["block_reason"] == "PLAYER_HISTORY_CONTAINER_MISSING"
+    assert player_form["unknown"] > 0
+
+
+def test_duplicate_team_statistics_bucket_cannot_close_team_grain() -> None:
+    selection = read_json(
+        ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+    )
+    payloads, receipts, telemetry = _synthetic_inputs()
+    detail = next(
+        item for item in selection["source_objects"] if item["source_role"] == "DETAIL"
+    )
+    payload = payloads[str(detail["object_id"])]
+    assert isinstance(payload, dict)
+    for record in payload["response"][1:]:
+        record["statistics"][1]["team"]["id"] = record["statistics"][0]["team"]["id"]
+
+    reports = _synthetic_reports(payloads, receipts, telemetry)
+    team_stats = next(
+        item
+        for item in reports["measurement"]["measurements"]
+        if item["competition"] == detail["competition"]
+        and item["capability_id"] == "TEAM_STATISTICS"
+    )
+    assert team_stats["e1b_measurement_status"] == "E1B_BLOCKED_BY_COVERAGE"
+    assert team_stats["received"] == 2
+    assert team_stats["unknown"] == 2
+    assert team_stats["exact_duplicates"] == 2
+    assert "TEAM_STATISTICS" not in reports["measurement"]["e2_candidates"]
+
+
+def test_player_statistics_require_all_team_lineups_and_buckets() -> None:
+    selection = read_json(
+        ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+    )
+    payloads, receipts, telemetry = _synthetic_inputs()
+    detail = next(
+        item for item in selection["source_objects"] if item["source_role"] == "DETAIL"
+    )
+    payload = payloads[str(detail["object_id"])]
+    assert isinstance(payload, dict)
+    for record in payload["response"][1:]:
+        record["lineups"].pop()
+        record["players"].pop()
+
+    reports = _synthetic_reports(payloads, receipts, telemetry)
+    rows = {
+        item["capability_id"]: item
+        for item in reports["measurement"]["measurements"]
+        if item["competition"] == detail["competition"]
+    }
+    assert rows["LINEUP"]["received"] == 2
+    assert rows["LINEUP"]["e1b_measurement_status"] == "E1B_BLOCKED_BY_COVERAGE"
+    assert rows["PLAYER_STATISTICS"]["expected"] is None
+    assert rows["PLAYER_STATISTICS"]["e1b_measurement_status"] == "E1B_BLOCKED_BY_COVERAGE"
+    assert "PLAYER_STATISTICS" not in reports["measurement"]["e2_candidates"]
+
+
+def test_missing_nested_lineup_player_slots_never_close_player_denominator() -> None:
+    selection = read_json(
+        ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+    )
+    payloads, receipts, telemetry = _synthetic_inputs()
+    detail = next(
+        item for item in selection["source_objects"] if item["source_role"] == "DETAIL"
+    )
+    payload = payloads[str(detail["object_id"])]
+    assert isinstance(payload, dict)
+    payload["response"][1]["lineups"][0].pop("startXI")
+
+    reports = _synthetic_reports(payloads, receipts, telemetry)
+    rows = {
+        item["capability_id"]: item
+        for item in reports["measurement"]["measurements"]
+        if item["competition"] == detail["competition"]
+    }
+    assert rows["PLAYER"]["expected"] is None
+    assert rows["PLAYER"]["unknown"] is None
+    assert rows["PLAYER"]["e1b_measurement_status"] == "E1B_BLOCKED_BY_SOURCE"
+    assert rows["PLAYER_FORM"]["expected"] is None
+    assert rows["PLAYER_FORM"]["unknown"] is None
+    assert rows["PLAYER_FORM"]["e1b_measurement_status"] == "E1B_BLOCKED_BY_SOURCE"
+    assert rows["PLAYER_STATISTICS"]["expected"] is None
+    assert rows["PLAYER_STATISTICS"]["e1b_measurement_status"] == "E1B_BLOCKED_BY_SOURCE"
+    assert "PLAYER" not in reports["measurement"]["e2_candidates"]
+    assert "PLAYER_STATISTICS" not in reports["measurement"]["e2_candidates"]
 
 
 def test_runner_never_uses_bucket_listing_head_or_mutation() -> None:

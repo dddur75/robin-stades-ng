@@ -282,13 +282,27 @@ def _measure_league(
         != mapping(detail_by[value]["fixture"], "E1B_FIXTURE")["date"]
         for value in selected_ids
     )
-    players = valid_players = starters = lineups = formations = 0
+    players = valid_players = starters = formations = 0
     events = cards = team_stats = player_stats = 0
-    event_containers = lineup_containers = 0
-    team_stat_buckets = empty_team_stat_buckets = 0
+    event_containers = lineup_containers = team_stat_containers = 0
     player_stat_containers = 0
+    lineup_team_keys: set[tuple[int, int]] = set()
+    lineup_team_duplicates = 0
+    formation_keys: set[tuple[int, int]] = set()
+    lineup_player_keys: set[tuple[int, int, int]] = set()
+    team_stat_keys: set[tuple[int, int]] = set()
+    team_stat_nonempty_keys: set[tuple[int, int]] = set()
+    team_stat_empty_keys: set[tuple[int, int]] = set()
+    team_stat_duplicates = 0
+    player_stat_bucket_keys: set[tuple[int, int]] = set()
+    player_stat_bucket_duplicates = 0
+    player_stat_keys: set[tuple[int, int, int]] = set()
+    player_stat_duplicates = 0
+    invalid_player_stat_rows = 0
+    lineup_player_source_complete = True
     starter_keys: list[tuple[int, int, str]] = []
     for record in records:
+        fixture_id = _fixture_id(record)
         kickoff = str(mapping(record["fixture"], "E1B_FIXTURE")["date"])
         raw_lineups = record.get("lineups")
         lineup_rows = (
@@ -298,14 +312,23 @@ def _measure_league(
         for lineup in lineup_rows:
             value = mapping(lineup, "E1B_LINEUP")
             team_id = int(mapping(value["team"], "E1B_TEAM")["id"])
-            lineups += 1
-            formations += int(bool(str(value.get("formation", "")).strip()))
+            lineup_key = (fixture_id, team_id)
+            lineup_team_duplicates += int(lineup_key in lineup_team_keys)
+            lineup_team_keys.add(lineup_key)
+            if str(value.get("formation", "")).strip():
+                formations += 1
+                formation_keys.add(lineup_key)
             for role, key in (("STARTER", "startXI"), ("SUB", "substitutes")):
-                for slot in sequence(value.get(key, []), "E1B_SLOTS"):
+                raw_slots = value.get(key)
+                if raw_slots is None:
+                    lineup_player_source_complete = False
+                    continue
+                for slot in sequence(raw_slots, "E1B_SLOTS"):
                     player = mapping(mapping(slot, "E1B_SLOT")["player"], "E1B_PLAYER")
                     players += 1
                     if isinstance(player.get("id"), int) and isinstance(player.get("name"), str):
                         valid_players += 1
+                        lineup_player_keys.add((fixture_id, team_id, int(player["id"])))
                         if role == "STARTER":
                             starters += 1
                             starter_keys.append((team_id, int(player["id"]), kickoff))
@@ -319,15 +342,21 @@ def _measure_league(
         cards += len(card_rows)
         raw_stats = record.get("statistics")
         stats = sequence(raw_stats, "E1B_STATS") if raw_stats is not None else []
+        team_stat_containers += int(raw_stats is not None)
         selected_team_ids = set(_teams(record))
         for raw_stat in stats:
             stat = mapping(raw_stat, "E1B_STAT")
             team_id = int(mapping(stat["team"], "E1B_STAT_TEAM")["id"])
             if team_id not in selected_team_ids:
                 raise ValueError("E1B_TEAM_STATISTICS_TEAM_INVALID")
+            stat_key = (fixture_id, team_id)
+            team_stat_duplicates += int(stat_key in team_stat_keys)
+            team_stat_keys.add(stat_key)
             stat_rows = sequence(stat["statistics"], "E1B_STAT_ROWS")
-            team_stat_buckets += int(bool(stat_rows))
-            empty_team_stat_buckets += int(not stat_rows)
+            if stat_rows:
+                team_stat_nonempty_keys.add(stat_key)
+            else:
+                team_stat_empty_keys.add(stat_key)
             team_stats += len(stat_rows)
         raw_players = record.get("players")
         player_buckets = (
@@ -336,16 +365,31 @@ def _measure_league(
             else []
         )
         player_stat_containers += int(raw_players is not None)
-        current_player_rows = sum(
-            len(
-                sequence(
-                    mapping(item, "E1B_PLAYER_BUCKET")["players"],
-                    "E1B_PLAYER_ROWS",
-                )
+        for raw_bucket in player_buckets:
+            bucket = mapping(raw_bucket, "E1B_PLAYER_BUCKET")
+            team_id = int(mapping(bucket["team"], "E1B_PLAYER_TEAM")["id"])
+            if team_id not in selected_team_ids:
+                raise ValueError("E1B_PLAYER_STATISTICS_TEAM_INVALID")
+            bucket_key = (fixture_id, team_id)
+            player_stat_bucket_duplicates += int(
+                bucket_key in player_stat_bucket_keys
             )
-            for item in player_buckets
-        )
-        player_stats += current_player_rows
+            player_stat_bucket_keys.add(bucket_key)
+            raw_rows = bucket.get("players")
+            if raw_rows is None:
+                continue
+            for raw_player_row in sequence(raw_rows, "E1B_PLAYER_ROWS"):
+                player_row = mapping(raw_player_row, "E1B_PLAYER_ROW")
+                player_id = mapping(
+                    player_row["player"], "E1B_PLAYER_STAT_IDENTITY"
+                ).get("id")
+                player_stats += 1
+                if not isinstance(player_id, int):
+                    invalid_player_stat_rows += 1
+                    continue
+                player_key = (fixture_id, team_id, player_id)
+                player_stat_duplicates += int(player_key in player_stat_keys)
+                player_stat_keys.add(player_key)
     prior_team = 0
     for record in records:
         kickoff = str(mapping(record["fixture"], "E1B_FIXTURE")["date"])
@@ -357,36 +401,91 @@ def _measure_league(
                     for candidate in census
                 )
             )
-    prior_players: set[tuple[int, int, str]] = set()
-    for record in detail:
-        kickoff = str(mapping(record["fixture"], "E1B_FIXTURE")["date"])
-        for bucket in sequence(record.get("players", []), "E1B_PLAYER_BUCKETS"):
-            value = mapping(bucket, "E1B_PLAYER_BUCKET")
-            team_id = int(mapping(value["team"], "E1B_TEAM")["id"])
-            for player_row in sequence(value.get("players", []), "E1B_PLAYER_ROWS"):
-                player_id = mapping(mapping(player_row, "E1B_PLAYER_ROW")["player"], "E1B_PLAYER")["id"]
-                if isinstance(player_id, int):
-                    prior_players.add((team_id, player_id, kickoff))
-    prior_player = sum(
-        any(team == prior_team_id and player == prior_player_id and prior_kickoff < kickoff for prior_team_id, prior_player_id, prior_kickoff in prior_players)
-        for team, player, kickoff in starter_keys
-    )
+    prior_player = 0
+    player_history_source_complete = True
+    for team_id, player_id, kickoff in starter_keys:
+        census_prior = [
+            candidate
+            for candidate in census
+            if team_id in _teams(candidate)
+            and str(mapping(candidate["fixture"], "E1B_FIXTURE")["date"])
+            < kickoff
+        ]
+        detail_prior = [
+            candidate
+            for candidate in detail
+            if team_id in _teams(candidate)
+            and str(mapping(candidate["fixture"], "E1B_FIXTURE")["date"])
+            < kickoff
+        ]
+        if census_prior and not detail_prior:
+            player_history_source_complete = False
+        found = False
+        for candidate in detail_prior:
+            raw_buckets = candidate.get("players")
+            if raw_buckets is None:
+                player_history_source_complete = False
+                continue
+            relevant = [
+                mapping(raw_bucket, "E1B_PRIOR_PLAYER_BUCKET")
+                for raw_bucket in sequence(raw_buckets, "E1B_PRIOR_PLAYER_BUCKETS")
+                if int(
+                    mapping(
+                        mapping(raw_bucket, "E1B_PRIOR_PLAYER_BUCKET")["team"],
+                        "E1B_PRIOR_PLAYER_TEAM",
+                    )["id"]
+                )
+                == team_id
+            ]
+            if len(relevant) != 1 or relevant[0].get("players") is None:
+                player_history_source_complete = False
+                continue
+            prior_ids = {
+                mapping(
+                    mapping(raw_row, "E1B_PRIOR_PLAYER_ROW")["player"],
+                    "E1B_PRIOR_PLAYER_IDENTITY",
+                ).get("id")
+                for raw_row in sequence(
+                    relevant[0]["players"], "E1B_PRIOR_PLAYER_ROWS"
+                )
+            }
+            found = found or player_id in prior_ids
+        prior_player += int(found)
     caps = {str(item["capability_id"]): item for item in capabilities}
     rows: dict[str, dict[str, Any]] = {}
     def add(name: str, **values: Any) -> None:
         rows[name] = _row(caps[name], competition, **values)
     add("TEAM", expected=4, received=4, status="E1B_MEASURED", observed=4, duplicates=4, contradictions=conflicts)
     add("TEAM_FORM", expected=4, received=prior_team, unknown=4-prior_team, status="E1B_BLOCKED_BY_TEMPORALITY", observed=prior_team, reason="POST_HOC_FIXTURE_HISTORY_CANNOT_PROVE_STRICT_AS_OF")
-    add("PLAYER", expected=players, received=valid_players, unknown=players-valid_players, status="E1B_MEASURED_PARTIAL", observed=valid_players, reason="LINEUP_SOURCE_ONLY")
-    add("PLAYER_FORM", expected=starters, received=prior_player, unknown=starters-prior_player, status="E1B_BLOCKED_BY_TEMPORALITY", observed=prior_player, reason="POST_MATCH_STATISTICS_NOT_STRICT_AS_OF")
-    add("LINEUP", expected=4, received=lineups, unknown=4-lineups, status="E1B_MEASURED_PARTIAL", observed=players, reason="POST_MATCH_RECONSTRUCTION")
-    add("FORMATION", expected=4, received=formations, unknown=4-formations, status="E1B_MEASURED_PARTIAL", observed=formations, reason="POST_MATCH_RECONSTRUCTION")
-    add("STARTER_BASELINE", expected=44, received=starters, unknown=44-starters, status="E1B_BLOCKED_BY_TEMPORALITY", observed=starters, reason="NOT_PROVEN_BEFORE_KICKOFF")
+    lineup_complete = len(lineup_team_keys) == 4 and not lineup_team_duplicates
+    lineup_player_complete = lineup_complete and lineup_player_source_complete
+    lineup_gap_status = "E1B_BLOCKED_BY_SOURCE" if lineup_containers < 2 else "E1B_BLOCKED_BY_COVERAGE"
+    player_gap_status = "E1B_BLOCKED_BY_SOURCE" if not lineup_player_source_complete else lineup_gap_status
+    add("PLAYER", expected=len(lineup_player_keys) if lineup_player_complete else None, received=len(lineup_player_keys), unknown=0 if lineup_player_complete else None, status="E1B_MEASURED_PARTIAL" if lineup_player_complete else player_gap_status, observed=valid_players, duplicates=max(valid_players-len(lineup_player_keys), 0), reason="LINEUP_SOURCE_ONLY" if lineup_player_complete else "LINEUP_PLAYER_CONTAINER_INCOMPLETE")
+    player_form_source_complete = lineup_player_complete and player_history_source_complete
+    player_form_reason = (
+        "POST_MATCH_STATISTICS_NOT_STRICT_AS_OF"
+        if player_form_source_complete
+        else (
+            "PLAYER_HISTORY_CONTAINER_MISSING"
+            if lineup_player_complete
+            else "PLAYER_LINEUP_CONTAINER_MISSING"
+        )
+    )
+    add("PLAYER_FORM", expected=starters if lineup_player_complete else None, received=prior_player, unknown=starters-prior_player if lineup_player_complete else None, status="E1B_BLOCKED_BY_TEMPORALITY" if player_form_source_complete else "E1B_BLOCKED_BY_SOURCE", observed=prior_player, reason=player_form_reason)
+    add("LINEUP", expected=4, received=len(lineup_team_keys), unknown=4-len(lineup_team_keys), status="E1B_MEASURED_PARTIAL" if lineup_complete else lineup_gap_status, observed=players, duplicates=lineup_team_duplicates, reason="POST_MATCH_RECONSTRUCTION" if lineup_complete else "LINEUP_TEAM_GRAIN_INCOMPLETE")
+    add("FORMATION", expected=4, received=len(formation_keys), unknown=4-len(formation_keys), status="E1B_MEASURED_PARTIAL" if lineup_complete and len(formation_keys) == 4 else "E1B_BLOCKED_BY_COVERAGE", observed=formations, duplicates=max(formations-len(formation_keys), 0), reason="POST_MATCH_RECONSTRUCTION" if lineup_complete and len(formation_keys) == 4 else "FORMATION_OR_LINEUP_INCOMPLETE")
+    add("STARTER_BASELINE", expected=44, received=starters, unknown=44-starters, status="E1B_BLOCKED_BY_TEMPORALITY" if lineup_player_complete and starters == 44 else player_gap_status, observed=starters, reason="NOT_PROVEN_BEFORE_KICKOFF" if lineup_player_complete and starters == 44 else "STARTER_LINEUP_INCOMPLETE")
     event_status = "E1B_MEASURED" if event_containers == 2 else "E1B_BLOCKED_BY_SOURCE"
     event_reason = None if event_containers == 2 else "EVENT_CONTAINER_MISSING"
     add("EVENTS", expected=None, received=events, unknown=None, status=event_status, observed=events, reason=event_reason)
-    add("TEAM_STATISTICS", expected=4, received=team_stat_buckets, empty=empty_team_stat_buckets, unknown=4-team_stat_buckets-empty_team_stat_buckets, status="E1B_MEASURED" if team_stat_buckets+empty_team_stat_buckets == 4 else "E1B_BLOCKED_BY_SOURCE", observed=team_stats, reason=None if team_stat_buckets+empty_team_stat_buckets == 4 else "TEAM_STATISTICS_BUCKET_MISSING")
-    add("PLAYER_STATISTICS", expected=valid_players if lineup_containers == 2 else None, received=player_stats, unknown=max(valid_players-player_stats, 0) if lineup_containers == 2 else None, status="E1B_MEASURED" if lineup_containers == 2 and player_stat_containers == 2 and player_stats == valid_players else ("E1B_MEASURED_PARTIAL" if player_stat_containers == 2 else "E1B_BLOCKED_BY_SOURCE"), observed=player_stats, reason=None if lineup_containers == 2 and player_stat_containers == 2 and player_stats == valid_players else ("PLAYER_STATISTICS_PARTIAL" if player_stat_containers == 2 else "PLAYER_STATISTICS_CONTAINER_MISSING"))
+    team_stats_complete = len(team_stat_keys) == 4 and not team_stat_duplicates
+    team_stats_status = "E1B_MEASURED" if team_stats_complete else ("E1B_BLOCKED_BY_SOURCE" if team_stat_containers < 2 else "E1B_BLOCKED_BY_COVERAGE")
+    add("TEAM_STATISTICS", expected=4, received=len(team_stat_nonempty_keys), empty=len(team_stat_empty_keys-team_stat_nonempty_keys), unknown=4-len(team_stat_keys), status=team_stats_status, observed=team_stats, duplicates=team_stat_duplicates, contradictions=len(team_stat_empty_keys & team_stat_nonempty_keys), reason=None if team_stats_complete else ("TEAM_STATISTICS_CONTAINER_MISSING" if team_stat_containers < 2 else "TEAM_STATISTICS_TEAM_GRAIN_INCOMPLETE_OR_DUPLICATE"))
+    player_stats_complete = lineup_player_complete and len(player_stat_bucket_keys) == 4 and not player_stat_bucket_duplicates
+    matched_player_stats = len(player_stat_keys & lineup_player_keys)
+    unmatched_player_stats = len(player_stat_keys - lineup_player_keys)
+    add("PLAYER_STATISTICS", expected=len(lineup_player_keys) if lineup_player_complete else None, received=matched_player_stats, unknown=len(lineup_player_keys)-matched_player_stats if lineup_player_complete else None, status="E1B_MEASURED" if player_stats_complete and not unmatched_player_stats and not invalid_player_stat_rows and not player_stat_duplicates and matched_player_stats == len(lineup_player_keys) else ("E1B_BLOCKED_BY_SOURCE" if player_stat_containers < 2 or not lineup_player_source_complete else "E1B_BLOCKED_BY_COVERAGE"), observed=player_stats, duplicates=player_stat_duplicates+player_stat_bucket_duplicates, contradictions=unmatched_player_stats+invalid_player_stat_rows, reason=None if player_stats_complete and not unmatched_player_stats and not invalid_player_stat_rows and not player_stat_duplicates and matched_player_stats == len(lineup_player_keys) else "PLAYER_STATISTICS_PLAYER_TEAM_GRAIN_INCOMPLETE")
     add("DISCIPLINE_GENERIC", expected=None, received=cards, unknown=None, status=event_status, observed=cards, reason=event_reason)
     for name in ("INJURY_CONFIRMED", "SUSPENSION_CONFIRMED", "ABSENCE_GENERIC"):
         add(name, expected=None, received=0, unknown=None, status="E1B_NOT_EVALUATED", reason="NO_INJURIES_OBJECT_AUTHORIZED")
