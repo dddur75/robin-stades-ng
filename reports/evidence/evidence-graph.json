@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T12:30:00Z",
+  "generated_at":"2026-08-07T12:55:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -989,8 +989,9 @@
       "execution_id":"local-e1b-selection-review-20260807T123000Z",
       "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
       "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_SELECTION",
-      "status":"VERIFIED",
-      "verified_by":["DP6","C2","DP5"]
+      "status":"INVALIDATED",
+      "verified_by":["DP6","C2","DP5"],
+      "invalidation_reason":"GitHub Actions run 31176390241 failed closed after the inventory bootstrap exposed one incorrectly transcribed Bundesliga CENSUS stored_sha256; no receipt or payload GET occurred."
     }
   ],
   "decision_nodes":[
@@ -1038,7 +1039,8 @@
     {"decision_id":"RCV3-20260807-042","ledger_record_hash":"ef7faa0d41503d32164ef9f00e9ad2ffa538997887e7b878b6f894122942cd95"},
     {"decision_id":"RCV3-20260807-043","ledger_record_hash":"2b0f215e6ced03aac9b96222fef7223f34d8ce532780166e0146b6d0bf5a7d67"},
     {"decision_id":"RCV3-20260807-044","ledger_record_hash":"9e14d7efc3c83e59726f6bcacb6da2f61295e8691700494c8627f3c48e80af97"},
-    {"decision_id":"RCV3-20260807-045","ledger_record_hash":"3553cca652903c23273495d9cea496cf083145415601e1164969597d6b883356"}
+    {"decision_id":"RCV3-20260807-045","ledger_record_hash":"3553cca652903c23273495d9cea496cf083145415601e1164969597d6b883356"},
+    {"decision_id":"RCV3-20260807-046","ledger_record_hash":"636da3cc9cd25acff729d91fc9f5a002d50269662e85f805f89371480b9f76e9"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1186,6 +1188,9 @@
     {"edge_id":"EDGE.143","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-044","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.144","from_claim_id":"COVERAGE.E1B.SELECTION.V1.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.145","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.146","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.146","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-045","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.147","from_claim_id":"COVERAGE.E1B.SELECTION.V1.001","to_decision_id":"RCV3-20260807-046","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.148","from_claim_id":"PREFLIGHT.CAPABILITY_EXECUTION.V1.MECHANICAL.001","to_decision_id":"RCV3-20260807-046","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.149","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-046","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
