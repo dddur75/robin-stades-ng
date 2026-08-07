@@ -1,6 +1,11 @@
 name: "83 - P0 E2 Capability Sample"
 on:
   workflow_dispatch:
+  # A workflow absent from the default branch cannot be manually dispatched on
+  # its introducing branch. This one-time bootstrap remains fail-closed unless
+  # an append-only decision authorizes the explicit commit marker.
+  push:
+    branches: [codex/p0-e2-capability-sample-v1]
 permissions:
   contents: read
 concurrency:
@@ -27,6 +32,9 @@ env:
 jobs:
   selection:
     name: Selection and provider-free freeze gate
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, '[e2-authorized]'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

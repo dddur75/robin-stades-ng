@@ -150,11 +150,24 @@ def _fixture_measures(
         for player in sequence(lineup.get(bucket, []), "E2_LINEUP_PLAYERS")
     ]
     player_ids, player_duplicates, player_invalid = _ids(player_rows, "player", "id")
-    formations = {
-        str(lineup["formation"])
-        for lineup in lineups
-        if isinstance(lineup.get("formation"), str) and lineup["formation"]
-    }
+    formation_team_ids: set[int] = set()
+    formation_duplicates = 0
+    formation_invalid = 0
+    for lineup in lineups:
+        formation = lineup.get("formation")
+        team = mapping(lineup.get("team", {}), "E2_FORMATION_TEAM")
+        team_id = team.get("id")
+        if (
+            not isinstance(team_id, int)
+            or team_id not in team_ids
+            or not isinstance(formation, str)
+            or not formation
+        ):
+            formation_invalid += 1
+        elif team_id in formation_team_ids:
+            formation_duplicates += 1
+        else:
+            formation_team_ids.add(team_id)
     statistics = [mapping(item, "E2_TEAM_STATS") for item in sequence(record.get("statistics", []), "E2_TEAM_STATS")]
     stat_team_ids, stat_duplicates, stat_invalid = _ids(statistics, "team", "id")
     players = [mapping(item, "E2_PLAYER_BUCKET") for item in sequence(record.get("players", []), "E2_PLAYERS")]
@@ -170,7 +183,7 @@ def _fixture_measures(
         _measure_row(fixture, "TEAM", 2, len(team_ids), 0, 2 - len(team_ids), 0, 0, None),
         _measure_row(fixture, "PLAYER", len(player_ids), len(player_ids), 0, 0, player_invalid, player_duplicates, "LINEUP_SOURCE_ONLY"),
         _measure_row(fixture, "LINEUP", 2, len(lineup_team_ids), 0, 2 - len(lineup_team_ids), lineup_invalid, lineup_duplicates, "POST_MATCH_RECONSTRUCTION"),
-        _measure_row(fixture, "FORMATION", 2, len(formations), 0, 2 - len(formations), 0, max(len(lineups) - len(lineup_team_ids), 0), "POST_MATCH_RECONSTRUCTION"),
+        _measure_row(fixture, "FORMATION", 2, len(formation_team_ids), 0, 2 - len(formation_team_ids), formation_invalid, formation_duplicates, "POST_MATCH_RECONSTRUCTION"),
         _measure_row(fixture, "EVENTS", None, len(events), int(not events), 0, 0, 0, None),
         _measure_row(fixture, "TEAM_STATISTICS", 2, len(stat_team_ids), 0, 2 - len(stat_team_ids), stat_invalid, stat_duplicates, None),
         _measure_row(fixture, "PLAYER_STATISTICS", len(player_ids), len(player_stat_ids & player_ids), 0, len(player_ids - player_stat_ids), player_stat_invalid + len(player_stat_ids - player_ids), player_stat_duplicates, None),

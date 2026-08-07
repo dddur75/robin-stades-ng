@@ -160,6 +160,15 @@ def test_synthetic_e2_reports_are_weighted_bounded_and_byte_identical() -> None:
     assert measurement["ready_strict_declared"] == measurement["ready_reconstructed_declared"] == []
     assert measurement["absence_cause_exact_status"] == "STOPPED_LOCAL_CAMPAIGN"
     assert measurement["historical_e1a_partition"]["identity"] == "3036 = 2681 + 206 + 149"
+    formation_rows = [
+        item
+        for item in measurement["measurements"]
+        if item["capability_id"] == "FORMATION"
+    ]
+    assert len(formation_rows) == 5
+    assert all(item["expected"] == 40 for item in formation_rows)
+    assert all(item["received"] == 40 for item in formation_rows)
+    assert all(item["unknown"] == 0 for item in formation_rows)
     assert first["e3a_candidate_set"]["e3a_executed"] is False
     assert first["e3a_candidate_set"]["masks_built"] is False
 
