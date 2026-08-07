@@ -580,8 +580,20 @@ def build_reports(
     partial = sorted({str(item["capability_id"]) for item in measurements if item["e1b_measurement_status"] == "E1B_MEASURED_PARTIAL"})
     blocked = sorted({str(item["capability_id"]) for item in measurements if str(item["e1b_measurement_status"]).startswith("E1B_BLOCKED")})
     not_evaluated = sorted({str(item["capability_id"]) for item in measurements if item["e1b_measurement_status"] in {"E1B_NOT_EVALUATED", "E1B_NOT_APPLICABLE"}})
+    selection_receipt_hashes = {
+        str(item["object_id"]): str(item["receipt_hash"])
+        for raw in sequence(selection["source_objects"], "E1B_OBJECTS")
+        for item in [mapping(raw, "E1B_OBJECT")]
+    }
+    if set(receipts) != set(selection_receipt_hashes):
+        raise ValueError("E1B_RECEIPT_SELECTION_MISMATCH")
     source_receipts = [
-        {"object_id": key, "receipt_hash": value.get("receipt_hash"), "received_at": value.get("received_at"), "completed_at": value.get("completed_at")}
+        {
+            "object_id": key,
+            "receipt_hash": selection_receipt_hashes[key],
+            "received_at": value.get("received_at"),
+            "completed_at": value.get("completed_at"),
+        }
         for key, value in sorted(receipts.items())
     ]
     measurement = {
@@ -719,6 +731,20 @@ def validate_reports(reports: Mapping[str, Mapping[str, Any]]) -> None:
         raise ValueError("E1B_READY_CLAIM_FORBIDDEN")
     if measurement.get("absence_cause_exact_status") != "STOPPED_LOCAL_CAMPAIGN":
         raise ValueError("E1B_LOCAL_STOP_LOST")
+    source_receipts = sequence(measurement["source_receipts"], "E1B_SOURCE_RECEIPTS")
+    if len(source_receipts) != 10:
+        raise ValueError("E1B_SOURCE_RECEIPT_COUNT_INVALID")
+    for raw in source_receipts:
+        receipt_hash = mapping(raw, "E1B_SOURCE_RECEIPT").get("receipt_hash")
+        if (
+            not isinstance(receipt_hash, str)
+            or len(receipt_hash) != 64
+            or any(character not in "0123456789abcdef" for character in receipt_hash)
+        ):
+            raise ValueError("E1B_SOURCE_RECEIPT_HASH_INVALID")
+    dashboard = mapping(reports["dashboard_contract"], "E1B_DASHBOARD")
+    if dashboard.get("freshness") != source_receipts:
+        raise ValueError("E1B_DASHBOARD_RECEIPT_PROVENANCE_DRIFT")
     for raw in rows:
         item = mapping(raw, "E1B_ROW")
         if item["e1b_measurement_status"] not in ALLOWED_STATUSES:

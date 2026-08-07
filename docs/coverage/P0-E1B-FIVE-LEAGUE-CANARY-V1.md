@@ -126,4 +126,3 @@ GETs. The corrected committed report hashes are recorded in
 
 No raw payload is tracked. The dashboard contract is data-only; no frontend or
 deployment was produced.
-

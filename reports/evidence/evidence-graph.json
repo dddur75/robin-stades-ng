@@ -1022,7 +1022,8 @@
       "execution_id":"github-actions-31177349967-offline-finalization",
       "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
       "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
-      "status":"VERIFIED",
+      "status":"INVALIDATED",
+      "invalidation_reason":"Superseded during PR #33 closure because the artifact projected ten null receipt_hash values instead of carrying the already-frozen selection receipt hashes by exact object_id.",
       "verified_by":["DP6","C2","DP5"]
     },
     {
@@ -1038,7 +1039,8 @@
       "execution_id":"github-actions-31177349967-offline-finalization",
       "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
       "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
-      "status":"VERIFIED",
+      "status":"INVALIDATED",
+      "invalidation_reason":"Superseded during PR #33 closure because its report-hash set referred to the measurement and dashboard artifacts before receipt provenance was restored.",
       "verified_by":["DP6","C2","DP5"]
     },
     {
@@ -1070,7 +1072,8 @@
       "execution_id":"local-e1b-offline-finalization-20260807T140000Z",
       "scientific_lineage_id":"p0-e1b-five-league-capability-canary-v1",
       "dataset_lineage_id":"PINNED_INVENTORY_87326EBA_EXACT_KEY_E1B_OUTPUTS",
-      "status":"VERIFIED",
+      "status":"INVALIDATED",
+      "invalidation_reason":"Superseded during PR #33 closure because the dashboard freshness projection contained ten null receipt_hash values despite complete frozen selection provenance.",
       "verified_by":["DP6","C2","DP5"]
     }
   ],
@@ -1123,7 +1126,8 @@
     {"decision_id":"RCV3-20260807-046","ledger_record_hash":"636da3cc9cd25acff729d91fc9f5a002d50269662e85f805f89371480b9f76e9"},
     {"decision_id":"RCV3-20260807-047","ledger_record_hash":"7ebaf9118b918851478f1e81eafbf0665afaf3609639375545e4c94292b05d9d"},
     {"decision_id":"RCV3-20260807-048","ledger_record_hash":"220cc515f92a5dd67816e156a8544c632bc2917a7257da15e501ca37a0d84d9b"},
-    {"decision_id":"RCV3-20260807-049","ledger_record_hash":"241a9699ed9c1b8613076b0fe2eb11d7cb3ce4053ebce1acc9e01d291392b533"}
+    {"decision_id":"RCV3-20260807-049","ledger_record_hash":"241a9699ed9c1b8613076b0fe2eb11d7cb3ce4053ebce1acc9e01d291392b533"},
+    {"decision_id":"RCV3-20260807-050","ledger_record_hash":"785cc4d33b2ec18a40c1fd8fc24c1287e9934570d307474b4d3062992cd164ce"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1285,6 +1289,9 @@
     {"edge_id":"EDGE.157","from_claim_id":"COVERAGE.E1B.REPLAY.V1.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.158","from_claim_id":"COVERAGE.E1B.COST.V1.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.159","from_claim_id":"COVERAGE.E1B.DASHBOARD.V1.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.160","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.160","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-049","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.161","from_claim_id":"COVERAGE.E1B.SELECTION.V1.002","to_decision_id":"RCV3-20260807-050","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.162","from_claim_id":"COVERAGE.E1B.COST.V1.001","to_decision_id":"RCV3-20260807-050","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.163","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-050","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

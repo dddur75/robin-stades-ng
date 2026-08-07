@@ -32,6 +32,28 @@ def test_committed_e1b_reports_are_valid_and_replay_bound() -> None:
         assert hashlib.sha256(payload).hexdigest() == hashes[name]
 
 
+def test_receipt_hashes_flow_from_selection_to_measurement_and_dashboard() -> None:
+    selection = read_json(REPORTS / "e1b-selection-manifest-v1.json")
+    measurement = read_json(REPORTS / "e1b-measurement-v1.json")
+    dashboard = read_json(REPORTS / "e1b-dashboard-contract-v1.json")
+    expected = {
+        str(item["object_id"]): str(item["receipt_hash"])
+        for item in selection["source_objects"]
+    }
+    measured = {
+        str(item["object_id"]): str(item["receipt_hash"])
+        for item in measurement["source_receipts"]
+    }
+    displayed = {
+        str(item["object_id"]): str(item["receipt_hash"])
+        for item in dashboard["freshness"]
+    }
+
+    assert len(expected) == 10
+    assert measured == expected
+    assert displayed == expected
+
+
 def test_e1a_unknowns_are_not_projected_into_e1b_league_rows() -> None:
     measurement = read_json(REPORTS / "e1b-measurement-v1.json")
     exact_rows = [
