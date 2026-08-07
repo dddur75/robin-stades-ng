@@ -2667,6 +2667,27 @@
       "status": "verified",
       "verified_at": "2026-08-07T14:21:10.396394+00:00"
     },
+    "bundles/31193003618/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json": {
+      "last_action": "uploaded",
+      "sha256": "bed080f777b32bfd9f03a315c56a0cbd401770a2f4fdf86bf89ca852f55c809e",
+      "size": 5202050,
+      "status": "verified",
+      "verified_at": "2026-08-07T15:54:27.569977+00:00"
+    },
+    "bundles/31193003618/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.manifest.json": {
+      "last_action": "uploaded",
+      "sha256": "1a9ff36f2cedc70a2adc29403ab6c4d7c57b1dd3429bb20fc03cd10a387e4ec7",
+      "size": 639,
+      "status": "verified",
+      "verified_at": "2026-08-07T15:54:28.901100+00:00"
+    },
+    "bundles/31193003618/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz": {
+      "last_action": "uploaded",
+      "sha256": "99d964cb2c06948ac05b78f23f192690b3ee0292b783890a6ba301806fbc106f",
+      "size": 21000835,
+      "status": "verified",
+      "verified_at": "2026-08-07T15:54:31.847880+00:00"
+    },
     "canonical/competition=Ligue-1/season=2025/entity_type=fixtures/dataset_version=ligue1_2025_regular_season/part-00000.parquet": {
       "last_action": "replayed",
       "sha256": "f66769639a834945033c9b880439d433a295f2fac40780cdd184831fd5d13c79",
@@ -179832,5 +179853,5 @@
     }
   },
   "schema_version": "r2-object-index-v1",
-  "updated_at": "2026-08-07T14:21:11.152685+00:00"
+  "updated_at": "2026-08-07T15:54:32.467117+00:00"
 }
