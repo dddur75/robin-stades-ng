@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-07T19:46:00Z",
+  "generated_at":"2026-08-07T20:11:01Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1249,8 +1249,73 @@
       "execution_id":"local-calendar-strict-asof-golden-v1",
       "scientific_lineage_id":"e2-targeted-fixes-e3a-launch-v1",
       "dataset_lineage_id":"synthetic-calendar-golden-pack-v1",
+      "status":"INVALIDATED",
+      "verified_by":["C0","C2"],
+      "invalidation_reason":"Final adversarial review found that the first implementation did not reject a cutoff later than the target kickoff; the corrected successor V1.002 adds fail-closed CUTOFF_NOT_PREMATCH behavior and a dedicated Golden case."
+    },
+    {
+      "claim_id":"COVERAGE.E2.PLAYER_STATISTICS.DIAGNOSTIC.V1.001",
+      "claim":"The exact signed fixture 1208603 payload has 40 unique lineup player identities and 40 unique player-statistics identities with an intersection of 39, one missing identity and one unexpected identity; the local cause is PROVIDER_INCONSISTENCY and no code correction or invented row is justified.",
+      "scope":"E2_FIXTURE_1208603_ONLY",
+      "source":"two exact R2 GETs with verified receipt, stored and logical hashes in GitHub Actions run 31213159153",
+      "grain":"one_provider_player_identity_in_one_fixture",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/evidence/e2/e2-player-statistics-1208603-diagnostic-v1.json",
+      "hash":"50df02b2c7de0ed1b11880fcf11c35ac621d1dc3d846cb61f8f6b7818aae30d8",
+      "code_revision":"7a0d21100f50039c51a22eeaa7c857f8064b699e",
+      "execution_id":"github-actions-31213159153",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1-targeted-diagnostic",
+      "dataset_lineage_id":"E2_OBJECT_2A106520_EXACT_PAIR",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"COVERAGE.E2.FIELD_PATH_CENSUS.1208603.V1.001",
+      "claim":"The sanitized one-fixture census records 120 unique JSON paths with types, counts, null counts, mapping state and temporal class, without raw values or provider-wide generalization.",
+      "scope":"E2_FIXTURE_1208603_FIELD_PATHS_ONLY",
+      "source":"same verified in-memory payload as the exact diagnostic; sanitized path-only projection",
+      "grain":"one_json_path_in_one_fixture_payload",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/evidence/e2/e2-1208603-field-path-census-v1.json",
+      "hash":"47da971060156bf189c24f2957f29621d215e7ba79c80710e819cc105b6aecb8",
+      "code_revision":"7a0d21100f50039c51a22eeaa7c857f8064b699e",
+      "execution_id":"github-actions-31213159153",
+      "scientific_lineage_id":"p0-e2-capability-sample-v1-targeted-diagnostic",
+      "dataset_lineage_id":"E2_OBJECT_2A106520_SANITIZED_PATH_CENSUS",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
+    },
+    {
+      "claim_id":"FEATURE.CALENDAR.STRICT_ASOF.V1.002",
+      "claim":"The corrected Calendar contract enforces known_at before cutoff, rejects a post-kickoff cutoff to UNKNOWN, separates scheduled and played load, and is byte-identical on four synthetic cutoff cases over fourteen fixtures; real E3A validation remains required.",
+      "scope":"CALENDAR_STRICT_ASOF_SYNTHETIC_ONLY_CORRECTED",
+      "source":"corrected implementation, adversarial post-kickoff review and four-case Golden Pack",
+      "grain":"one_target_fixture_cutoff_view",
+      "temporal_class":"KNOWN_AS_OF",
+      "artifact":"tests/fixtures/calendar/calendar-strict-asof-golden-pack-v1.json",
+      "hash":"1762aa6f1326836bb024ce56b0f6eb530d475103636e1ae681b59a223edc4778",
+      "code_revision":"bba7a9c1c9f5dcf188882561eb2317c39f486cf1",
+      "execution_id":"local-calendar-strict-asof-golden-v1-correction",
+      "scientific_lineage_id":"e2-targeted-fixes-e3a-launch-v1",
+      "dataset_lineage_id":"synthetic-calendar-golden-pack-v1",
       "status":"VERIFIED",
       "verified_by":["C0","C2"]
+    },
+    {
+      "claim_id":"COVERAGE.E3A.LAUNCH_CANDIDATES.V1.001",
+      "claim":"The additive launch set keeps seven original E2 candidates, adds Calendar only for real strict-as-of E3A verification, blocks PLAYER_STATISTICS pending scientific acceptance of the UNKNOWN policy, and executes no E3A, E3B or masks.",
+      "scope":"E3A_LAUNCH_CANDIDATE_SET_PREEXECUTION",
+      "source":"reviewed E2 measurement, exact fixture diagnostic and corrected Calendar synthetic contract",
+      "grain":"one_candidate_decision_per_e2_capability",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/e3a/e3a-launch-candidate-set-v1.json",
+      "hash":"164f3987cfec7a33dd4425788c13efc729e43a937e5cae03489ea49ecea88887",
+      "code_revision":"bba7a9c1c9f5dcf188882561eb2317c39f486cf1",
+      "execution_id":"local-e3a-launch-candidate-review-20260807T200400Z",
+      "scientific_lineage_id":"e2-targeted-fixes-e3a-launch-v1",
+      "dataset_lineage_id":"E2_MEASUREMENT_PLUS_TARGETED_FIXES",
+      "status":"VERIFIED",
+      "verified_by":["DP6","C2","DP5"]
     }
   ],
   "decision_nodes":[
@@ -1311,7 +1376,9 @@
     {"decision_id":"RCV3-20260807-055","ledger_record_hash":"ed3693aed046e8faf3871d2403f8da5e35def01fef947b29b86a86f0f6820c15"},
     {"decision_id":"RCV3-20260807-056","ledger_record_hash":"38286d88d068a496583c502ac434c3207263c677ae2a74bc15af8bddc40db846"},
     {"decision_id":"RCV3-20260807-057","ledger_record_hash":"7673bcdad638d83a5e36487c8e53e1988a8168620070d0779ea51a17634bdb65"},
-    {"decision_id":"RCV3-20260807-058","ledger_record_hash":"722847eabe2d75a54b1067bc7d63a4bc579e78c0a85a1ad3ce5fcae50941e6a9"}
+    {"decision_id":"RCV3-20260807-058","ledger_record_hash":"722847eabe2d75a54b1067bc7d63a4bc579e78c0a85a1ad3ce5fcae50941e6a9"},
+    {"decision_id":"RCV3-20260807-059","ledger_record_hash":"930b6a046113f1f2d2c0ebd5710d08d910b54b37e997791772f6d2893e23e1e7"},
+    {"decision_id":"RCV3-20260807-060","ledger_record_hash":"77b53d29e670a68c43681c48a10c5d59ef11ee40d1893ebdeb6515e85854b2fd"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1507,6 +1574,17 @@
     {"edge_id":"EDGE.191","from_claim_id":"COVERAGE.E2.SELECTION.V1.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.192","from_claim_id":"COVERAGE.E2.MEASUREMENT.V1.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.193","from_claim_id":"COVERAGE.E2.REPLAY.V1.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.194","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.194","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-058","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.195","from_claim_id":"COVERAGE.E2.MEASUREMENT.V1.001","to_decision_id":"RCV3-20260807-059","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.196","from_claim_id":"COVERAGE.E2.PLAYER_STATISTICS.DIAGNOSTIC.V1.001","to_decision_id":"RCV3-20260807-059","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.197","from_claim_id":"COVERAGE.E2.FIELD_PATH_CENSUS.1208603.V1.001","to_decision_id":"RCV3-20260807-059","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.198","from_claim_id":"FEATURE.CALENDAR.STRICT_ASOF.V1.002","to_decision_id":"RCV3-20260807-059","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.199","from_claim_id":"COVERAGE.E3A.LAUNCH_CANDIDATES.V1.001","to_decision_id":"RCV3-20260807-059","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.200","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-059","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.201","from_claim_id":"COVERAGE.E2.PLAYER_STATISTICS.DIAGNOSTIC.V1.001","to_decision_id":"RCV3-20260807-060","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.202","from_claim_id":"COVERAGE.E2.FIELD_PATH_CENSUS.1208603.V1.001","to_decision_id":"RCV3-20260807-060","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.203","from_claim_id":"FEATURE.CALENDAR.STRICT_ASOF.V1.002","to_decision_id":"RCV3-20260807-060","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.204","from_claim_id":"COVERAGE.E3A.LAUNCH_CANDIDATES.V1.001","to_decision_id":"RCV3-20260807-060","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.205","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-060","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
