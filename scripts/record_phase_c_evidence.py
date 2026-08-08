@@ -14,7 +14,8 @@ IMPLEMENTATION_REVISION = "b2395964faf08a61ac45df36d547025a4b132e13"
 ORIGINAL_DECISION_ID = "RCV3-20260808-074"
 CORRECTION_DECISION_ID = "RCV3-20260808-075"
 RECOVERY_DECISION_ID = "RCV3-20260808-076"
-GENERATED_AT = "2026-08-08T14:35:00Z"
+GRAPH_RECOVERY_DECISION_ID = "RCV3-20260808-077"
+GENERATED_AT = "2026-08-08T14:55:00Z"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
@@ -335,6 +336,7 @@ def main() -> None:
         ORIGINAL_DECISION_ID,
         CORRECTION_DECISION_ID,
         RECOVERY_DECISION_ID,
+        GRAPH_RECOVERY_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
@@ -358,22 +360,18 @@ def main() -> None:
         "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002",
         "REPLAY.PHASE_C.DETERMINISM.V1.002",
     ]
-    correction_proof_claim_ids = [
+    missing_correction_proof_claim_ids = [
         "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
-        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002",
         "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
-        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002",
         "REPLAY.PHASE_C.DETERMINISM.V1.001",
-        "REPLAY.PHASE_C.DETERMINISM.V1.002",
         "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
         "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
     ]
     relationships = [
         *((claim_id, ORIGINAL_DECISION_ID) for claim_id in original_claim_ids),
-        *((claim_id, CORRECTION_DECISION_ID) for claim_id in correction_proof_claim_ids),
+        *((claim_id, CORRECTION_DECISION_ID) for claim_id in successor_claim_ids),
+        *((claim_id, CORRECTION_DECISION_ID) for claim_id in missing_correction_proof_claim_ids),
     ]
-    if set(successor_claim_ids) - set(correction_proof_claim_ids):
-        raise RuntimeError("PHASE_C_SUCCESSOR_PROOF_EDGE_MISSING")
     edge_ids = {f"EDGE.{index:03d}" for index in range(241, 260)}
     graph["claims"] = [
         claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids
@@ -388,6 +386,7 @@ def main() -> None:
         ORIGINAL_DECISION_ID,
         CORRECTION_DECISION_ID,
         RECOVERY_DECISION_ID,
+        GRAPH_RECOVERY_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}

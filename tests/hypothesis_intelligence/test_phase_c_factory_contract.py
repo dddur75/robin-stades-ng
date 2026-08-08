@@ -577,6 +577,23 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> Non
         if edge["to_decision_id"] == "RCV3-20260808-075"
     }
     assert edges_to_075 == set(record_075["proof"])
+    edge_by_id = {edge["edge_id"]: edge for edge in graph["edges"]}
+    assert edge_by_id["EDGE.252"]["from_claim_id"] == (
+        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002"
+    )
+    assert edge_by_id["EDGE.253"]["from_claim_id"] == (
+        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002"
+    )
+    assert edge_by_id["EDGE.254"]["from_claim_id"] == (
+        "REPLAY.PHASE_C.DETERMINISM.V1.002"
+    )
+    assert [edge_by_id[f"EDGE.{index:03d}"]["from_claim_id"] for index in range(255, 260)] == [
+        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
+        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
+        "REPLAY.PHASE_C.DETERMINISM.V1.001",
+        "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
+        "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
+    ]
     assert not any(
         forbidden in row["claim"].lower()
         for row in claims.values()
