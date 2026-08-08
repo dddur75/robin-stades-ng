@@ -45,11 +45,11 @@
       "segment_id": "seg-000135-7561044ce00d9626"
     }
   ],
-  "e3a_gate_hash": "554be807be5d002c01db537abcab42ec2ee59c0fd025f214932fd3b673e2a92d",
+  "e3a_gate_hash": "ecec72d37f270f6d14f9693d9057e0a2798ac773ffb1851a881c63905c594460",
   "e3a_selection_hash": "6c9446ec3c1979ac272679c2bb9cd23bd08cf41b6611eae03dcf956c64ca0e3c",
   "mission_id": "p0-e3-capability-scale-v1",
   "schema_version": "p0-e3b-selection-manifest-v1",
   "season": 2024,
-  "selection_hash": "65ed2aecca33a9b8a2905a49342d0bbcac81e751243bfc8363936dd0435d3dce",
+  "selection_hash": "71203961e53d9d03149660d672f3f48d6bd39f344aa4222b80e0f762e6bf46f8",
   "stage": "E3B"
 }

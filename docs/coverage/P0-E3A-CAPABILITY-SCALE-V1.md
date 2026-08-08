@@ -15,10 +15,20 @@ reconstruits. EVENTS, TEAM_STATISTICS et DISCIPLINE_GENERIC ne sont utilisables
 que comme cibles du match ou comme sources laggées issues de matchs strictement
 antérieurs. Aucune de ces capacités n'est un prédicteur direct du match cible.
 
+Six capacités passent le gate E3A : TEAM, PLAYER, LINEUP, FORMATION, EVENTS et
+DISCIPLINE_GENERIC. TEAM_STATISTICS reste `MEASURED_PARTIAL` : 10 510 valeurs
+sont connues et 578 valeurs nulles restent explicitement `UNKNOWN` sur un
+dénominateur de 11 088. Cette capacité n'est donc pas ouverte en E3B.
+
+PLAYER est mesuré contre les 12 297 slots canoniques de lineup. EVENTS et
+DISCIPLINE_GENERIC utilisent un dénominateur fixture, avec les fixtures sans
+carton conservées comme vides valides. Pour les événements, les numéros d'ordre
+du fournisseur (`Substitution N`) sont retirés de l'identité scientifique, sans
+fusionner des détails sémantiques distincts.
+
 Calendar conserve le Golden Pack synthétique, mais les objets réels n'exposent ni
 catalogue de révision ni `known_at`. Les 17 variables réelles restent donc
-`UNKNOWN` et Calendar est `BLOCKED_BY_SOURCE`, jamais `READY_STRICT`.
+`UNKNOWN` et Calendar est `BLOCKED_BY_TEMPORALITY`, jamais `READY_STRICT`.
 
 Le transport d'exécution est exclusivement GitHub Artifact par identifiants et
 digests immuables. L'exécution ne monte aucun secret R2, fournisseur, SQL ou Odds.
-

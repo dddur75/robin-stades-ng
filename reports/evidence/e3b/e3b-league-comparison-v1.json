@@ -30,8 +30,7 @@
       "competition_id": 135,
       "fixture_count": 380,
       "local_partial_capabilities": [
-        "LINEUP",
-        "TEAM_STATISTICS"
+        "LINEUP"
       ],
       "normalized_rows": 64456,
       "source_reused_without_redownload": false

@@ -5,15 +5,14 @@
     "FORMATION",
     "LINEUP",
     "PLAYER",
-    "TEAM",
-    "TEAM_STATISTICS"
+    "TEAM"
   ],
   "rows": [
     {
       "block_reason": "NO_REAL_KNOWN_AT_OR_REVISION_CATALOG",
       "capability_id": "CALENDAR",
       "scientific_role": "STRICT_PREDICTOR_SOURCE",
-      "status": "BLOCKED_BY_SOURCE",
+      "status": "BLOCKED_BY_TEMPORALITY",
       "temporal_class": "STRICT_AS_OF"
     },
     {
@@ -69,7 +68,7 @@
       "block_reason": null,
       "capability_id": "TEAM_STATISTICS",
       "scientific_role": "LAGGABLE_POST_MATCH_SOURCE",
-      "status": "READY_RECONSTRUCTED",
+      "status": "MEASURED_PARTIAL",
       "temporal_class": "POST_MATCH_LAGGABLE_ONLY"
     }
   ],

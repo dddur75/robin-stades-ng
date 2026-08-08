@@ -11,6 +11,7 @@ import gzip
 import hashlib
 import json
 import os
+import re
 from collections import defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
@@ -328,6 +329,60 @@ def _normalize_stat_type(value: object) -> str:
     return STAT_ALIASES.get(raw, raw.replace(" ", "_"))
 
 
+def _normalized_event(row: Mapping[str, Any]) -> dict[str, Any]:
+    data = _row_data(row)
+    detail = data.get("detail")
+    if isinstance(detail, str):
+        detail = re.sub(r"^Substitution\s+\d+$", "Substitution", detail, flags=re.IGNORECASE)
+    time = _mapping(data.get("time", {}), "E3_EVENT_TIME")
+    team = _mapping(data.get("team", {}), "E3_EVENT_TEAM")
+    player = _mapping(data.get("player", {}), "E3_EVENT_PLAYER")
+    assist = _mapping(data.get("assist", {}), "E3_EVENT_ASSIST")
+    return {
+        "assist_id": assist.get("id"),
+        "comments": data.get("comments"),
+        "detail": detail,
+        "elapsed": time.get("elapsed"),
+        "extra": time.get("extra"),
+        "fixture_id": row.get("provider_fixture_id"),
+        "player_id": player.get("id"),
+        "team_id": team.get("id", row.get("provider_team_id")),
+        "type": data.get("type"),
+    }
+
+
+def _event_base(row: Mapping[str, Any]) -> tuple[object, ...]:
+    event = _normalized_event(row)
+    return (
+        event["fixture_id"],
+        event["team_id"],
+        str(event["type"]).casefold(),
+        event["elapsed"],
+        event["extra"],
+        event["player_id"],
+        event["assist_id"],
+    )
+
+
+def _event_classification(rows: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+    original: dict[bytes, list[bytes]] = defaultdict(list)
+    normalized: dict[bytes, list[bytes]] = defaultdict(list)
+    for row in rows:
+        base = _canonical(_event_base(row))
+        original[base].append(_canonical(_row_data(row)))
+        normalized[base].append(_canonical(_normalized_event(row)))
+    original_ambiguous = sum(len(set(values)) > 1 for values in original.values())
+    semantic_multi = sum(len(set(values)) > 1 for values in normalized.values())
+    return {
+        "exact_repetitions": sum(len(values) - len(set(values)) for values in normalized.values()),
+        "factual_signature_groups": len(normalized),
+        "provider_order_only_groups_collapsed": original_ambiguous - semantic_multi,
+        "scientific_fact_count": sum(len(set(values)) for values in normalized.values()),
+        "semantic_multi_event_groups": semantic_multi,
+        "unclassifiable_groups": 0,
+    }
+
+
 def _measurement_row(
     *,
     capability: str,
@@ -345,10 +400,11 @@ def _measurement_row(
     block_reason: str | None,
 ) -> dict[str, Any]:
     grain, role, temporal = ROLES[capability]
-    integrity_denominator = received + invalid + contradictory
+    integrity_denominator = received + empty_valid + unknown + invalid + contradictory
+    accounted = received + empty_valid + unknown
     if capability == "CALENDAR":
-        status = "BLOCKED_BY_SOURCE" if stage == "E3A" else "E3B_BLOCKED"
-    elif invalid or contradictory or (expected is not None and received != expected):
+        status = "BLOCKED_BY_TEMPORALITY" if stage == "E3A" else "E3B_BLOCKED"
+    elif invalid or contradictory or unknown or (expected is not None and accounted != expected):
         status = "MEASURED_PARTIAL" if stage == "E3A" else "E3B_MEASURED_PARTIAL"
     elif block_reason is not None:
         status = "BLOCKED_BY_SOURCE" if stage == "E3A" else "E3B_BLOCKED"
@@ -360,7 +416,7 @@ def _measurement_row(
         "competition": competition,
         "content_presence_rate": _rate(fixture_presence, fixture_count),
         "contradictory_duplicates": contradictory,
-        "coverage_rate": _rate(received, expected),
+        "coverage_rate": _rate(received + empty_valid, expected),
         "e3a_status" if stage == "E3A" else "e3b_status": status,
         "empty_valid": empty_valid,
         "evidence_claims": [
@@ -373,18 +429,24 @@ def _measurement_row(
         "fixture_count": fixture_count,
         "grain": grain,
         "invalid": invalid,
-        "normalization_integrity_rate": _rate(received, integrity_denominator),
+        "normalization_integrity_rate": _rate(received + empty_valid, integrity_denominator),
         "received": received,
         "scientific_role": role,
         "season": 2024,
         "status_before": "E3A_CANDIDATE" if stage == "E3A" else "E3A_PASSED",
+        "structural_coverage_rate": _rate(accounted, expected),
         "temporal_class": temporal,
         "unclassifiable": 0,
         "unknown": unknown,
     }
 
 
-def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) -> dict[str, Any]:
+def _measure_segment(
+    result: Mapping[str, Any],
+    competition: str,
+    stage: str,
+    capabilities: Sequence[str] | None = None,
+) -> dict[str, Any]:
     raw_rows = [_mapping(row, "E3_NORMALIZED_ROW") for row in _sequence(result["rows"], "E3_ROWS")]
     by_type: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
     for row in raw_rows:
@@ -423,6 +485,7 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
             row.get("provider_fixture_id"),
             row.get("provider_team_id"),
             row.get("provider_player_id"),
+            _row_data(row).get("role"),
         ),
         lambda row: {
             "id": _mapping(_row_data(row).get("player"), "E3_PLAYER").get("id"),
@@ -433,6 +496,11 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
     for row in player_rows:
         key = (row.get("provider_fixture_id"), row.get("provider_team_id"), row.get("provider_player_id"))
         role_sets[key].add(str(_row_data(row).get("role")))
+    conflicted_lineups = {
+        (fixture_id, team_id)
+        for (fixture_id, team_id, _), values in role_sets.items()
+        if len(values) > 1
+    }
     lineup_role_conflicts = sum(len(values) > 1 for values in role_sets.values())
 
     lineup_rows = by_type["lineup"]
@@ -441,6 +509,14 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
         lambda row: (row.get("provider_fixture_id"), row.get("provider_team_id")),
         lambda row: _lineup_content(_row_data(row)),
     )
+    canonical_lineups: dict[bytes, dict[str, Any]] = {}
+    for row in lineup_rows:
+        canonical_lineups[_canonical((row.get("provider_fixture_id"), row.get("provider_team_id")))] = (
+            _lineup_content(_row_data(row))
+        )
+    lineup_slot_expected = sum(
+        len(value["start_xi"]) + len(value["substitutes"]) for value in canonical_lineups.values()
+    )
     formation_rows = by_type["formation"]
     formation_unique, formation_exact, formation_contradictory = _group_counts(
         formation_rows,
@@ -448,11 +524,10 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
         lambda row: {"formation": _row_data(row).get("formation")},
     )
     event_rows = by_type["fixture_event"]
-    event_unique, event_exact, event_contradictory = _group_counts(
-        event_rows,
-        lambda row: (row.get("provider_fixture_id"), _row_data(row)),
-        lambda row: _row_data(row),
-    )
+    event_classification = _event_classification(event_rows)
+    event_unique = event_classification["scientific_fact_count"]
+    event_exact = event_classification["exact_repetitions"]
+    event_contradictory = 0
     stat_rows = by_type["team_match_statistic"]
     stat_unique, stat_exact, stat_contradictory = _group_counts(
         stat_rows,
@@ -463,12 +538,23 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
         ),
         lambda row: {"value": _row_data(row).get("value")},
     )
+    stat_groups: dict[bytes, set[bytes]] = defaultdict(set)
+    for row in stat_rows:
+        key = _canonical(
+            (
+                row.get("provider_fixture_id"),
+                row.get("provider_team_id"),
+                _normalize_stat_type(_row_data(row).get("type")),
+            )
+        )
+        stat_groups[key].add(_canonical(_row_data(row).get("value")))
+    null_value = _canonical(None)
+    stat_null = sum(values == {null_value} for values in stat_groups.values())
     card_rows = [row for row in event_rows if str(_row_data(row).get("type", "")).casefold() == "card"]
-    card_unique, card_exact, card_contradictory = _group_counts(
-        card_rows,
-        lambda row: (row.get("provider_fixture_id"), _row_data(row)),
-        lambda row: _row_data(row),
-    )
+    card_classification = _event_classification(card_rows)
+    card_unique = card_classification["scientific_fact_count"]
+    card_exact = card_classification["exact_repetitions"]
+    card_contradictory = 0
 
     fixture_presence = {
         "TEAM": len({int(row["provider_fixture_id"]) for row in team_rows}),
@@ -484,15 +570,24 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
     strict_rows = sum(row.get("strict_prematch_eligible") is True for row in raw_rows)
     values = {
         "TEAM": (fixture_count * 2, team_unique, 0, 0, 0, team_exact, team_contradictory, None),
-        "PLAYER": (None, player_unique, 0, 0, 0, player_exact, player_contradictory, None),
+        "PLAYER": (
+            lineup_slot_expected,
+            player_unique,
+            0,
+            0,
+            0,
+            player_exact,
+            player_contradictory,
+            None,
+        ),
         "LINEUP": (
             fixture_count * 2,
-            lineup_unique,
+            lineup_unique - len(conflicted_lineups),
             0,
             0,
-            lineup_role_conflicts,
+            len(conflicted_lineups),
             lineup_exact,
-            lineup_contradictory + lineup_role_conflicts,
+            lineup_contradictory,
             "LINEUP_ROLE_CONTRADICTION" if lineup_role_conflicts else None,
         ),
         "FORMATION": (
@@ -506,8 +601,8 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
             None,
         ),
         "EVENTS": (
-            None,
-            event_unique,
+            fixture_count,
+            fixture_presence["EVENTS"],
             fixture_count - fixture_presence["EVENTS"],
             0,
             0,
@@ -517,17 +612,17 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
         ),
         "TEAM_STATISTICS": (
             fixture_count * 2 * 18,
-            stat_unique,
+            stat_unique - stat_null,
             0,
-            0,
+            stat_null + (fixture_count * 2 * 18 - stat_unique),
             0,
             stat_exact,
             stat_contradictory,
             None,
         ),
         "DISCIPLINE_GENERIC": (
-            None,
-            card_unique,
+            fixture_count,
+            fixture_presence["DISCIPLINE_GENERIC"],
             fixture_count - fixture_presence["DISCIPLINE_GENERIC"],
             0,
             0,
@@ -546,12 +641,13 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
             "NO_REAL_KNOWN_AT_OR_REVISION_CATALOG",
         ),
     }
-    measured_capabilities = CAPABILITIES if stage == "E3A" else E3B_CAPABILITIES
+    measured_capabilities = tuple(capabilities) if capabilities is not None else (
+        CAPABILITIES if stage == "E3A" else E3B_CAPABILITIES
+    )
     measurements = []
     for capability in measured_capabilities:
         expected, received, empty, unknown, invalid, exact, contradictory, reason = values[capability]
-        measurements.append(
-            _measurement_row(
+        measurement = _measurement_row(
                 capability=capability,
                 competition=competition,
                 fixture_count=fixture_count,
@@ -566,7 +662,20 @@ def _measure_segment(result: Mapping[str, Any], competition: str, stage: str) ->
                 stage=stage,
                 block_reason=reason,
             )
-        )
+        if capability == "PLAYER":
+            measurement["lineup_slot_denominator"] = lineup_slot_expected
+        elif capability == "LINEUP":
+            measurement["affected_lineups"] = len(conflicted_lineups)
+            measurement["lineup_player_role_conflicts"] = lineup_role_conflicts
+        elif capability == "EVENTS":
+            measurement["fact_count"] = event_unique
+            measurement["event_classification"] = event_classification
+        elif capability == "TEAM_STATISTICS":
+            measurement["null_value_count"] = stat_null
+        elif capability == "DISCIPLINE_GENERIC":
+            measurement["fact_count"] = card_unique
+            measurement["event_classification"] = card_classification
+        measurements.append(measurement)
     return {
         "schema_version": "p0-e3-league-result-v1",
         "stage": stage,
@@ -738,7 +847,7 @@ def _gate_payload(result: Mapping[str, Any]) -> dict[str, Any]:
         "gate_hash": "",
     }
     payload["gate_hash"] = _sha({key: value for key, value in payload.items() if key != "gate_hash"})
-    if passed != sorted(E3B_CAPABILITIES):
+    if not passed or not set(passed).issubset(E3B_CAPABILITIES):
         raise ValueError(f"E3A_GATE_UNEXPECTED:{passed}")
     return payload
 
@@ -756,7 +865,7 @@ def _measure_selected(competition: str, source_root: Path, e3a_output: Path, e3b
     gate = _gate_payload(first)
     _write(e3a_output / "league-result-v1.json", first)
     _write(e3a_output / "e3a-gate-v1.json", gate)
-    reused = _measure_segment(source, competition, "E3B")
+    reused = _measure_segment(source, competition, "E3B", gate["passed_capabilities"])
     reused["e3a_gate_hash"] = gate["gate_hash"]
     reused["source_reused_without_redownload"] = True
     _write(e3b_output / "league-result-v1.json", reused)
@@ -770,13 +879,13 @@ def _measure_league(
         raise ValueError("E3_ONLY_E3B_LEAGUE_SCALE_ALLOWED")
     gate = _read(gate_file)
     passed = sorted(str(value) for value in _sequence(gate["passed_capabilities"], "E3_GATE_CAPS"))
-    if passed != sorted(E3B_CAPABILITIES):
+    if not passed or not set(passed).issubset(E3B_CAPABILITIES):
         raise ValueError("E3B_GATE_CAPABILITY_DRIFT")
     if competition == _read(LOCK_PATH)["selected_e3a_competition"]:
         raise ValueError("E3B_SELECTED_LEAGUE_MUST_BE_REUSED")
     source = _load_segment(source_root, competition)
-    first = _measure_segment(source, competition, "E3B")
-    second = _measure_segment(source, competition, "E3B")
+    first = _measure_segment(source, competition, "E3B", passed)
+    second = _measure_segment(source, competition, "E3B", passed)
     if _render(first) != _render(second):
         raise RuntimeError("E3B_REPLAY_NOT_BYTE_IDENTICAL")
     first["e3a_gate_hash"] = gate["gate_hash"]
@@ -800,15 +909,34 @@ def _matrix_rows(measurements: Sequence[Mapping[str, Any]], stage: str) -> list[
     for capability, reason in (
         ("PLAYER_STATISTICS", "E2_PROVIDER_INCONSISTENCY_UNKNOWN_POLICY_NOT_OPENED"),
         ("CALENDAR", "NO_REAL_KNOWN_AT_OR_REVISION_CATALOG"),
+        ("TEAM_STATISTICS", "E3A_MEASURED_PARTIAL_NOT_OPENED_IN_E3B"),
     ):
         if capability not in present:
             rows.append(
                 {
                     "block_reason": reason,
                     "capability_id": capability,
-                    "scientific_role": "BLOCKED" if capability == "PLAYER_STATISTICS" else "STRICT_PREDICTOR_SOURCE",
-                    "status": "BLOCKED_BY_SOURCE" if stage == "E3A" else "E3B_BLOCKED",
-                    "temporal_class": "BLOCKED" if capability == "PLAYER_STATISTICS" else "STRICT_AS_OF",
+                    "scientific_role": (
+                        "BLOCKED"
+                        if capability == "PLAYER_STATISTICS"
+                        else "STRICT_PREDICTOR_SOURCE"
+                        if capability == "CALENDAR"
+                        else "LAGGABLE_POST_MATCH_SOURCE"
+                    ),
+                    "status": (
+                        "BLOCKED_BY_TEMPORALITY"
+                        if stage == "E3A" and capability == "CALENDAR"
+                        else "BLOCKED_BY_SOURCE"
+                        if stage == "E3A"
+                        else "E3B_BLOCKED"
+                    ),
+                    "temporal_class": (
+                        "BLOCKED"
+                        if capability == "PLAYER_STATISTICS"
+                        else "STRICT_AS_OF"
+                        if capability == "CALENDAR"
+                        else "POST_MATCH_LAGGABLE_ONLY"
+                    ),
                 }
             )
     return sorted(rows, key=lambda row: str(row["capability_id"]))
@@ -912,7 +1040,7 @@ def _report_payloads(e3a: Mapping[str, Any], e3b: Sequence[Mapping[str, Any]]) -
         "cutoff_rule": "known_at < cutoff",
         "golden_pack_sha256": "1762aa6f1326836bb024ce56b0f6eb530d475103636e1ae681b59a223edc4778",
         "golden_pack_status": "PASSED_SYNTHETIC",
-        "real_source_status": "BLOCKED_BY_SOURCE",
+        "real_source_status": "BLOCKED_BY_TEMPORALITY",
         "real_temporal_evidence_rows": _mapping(e3a["temporal_proof"], "E3A_TEMPORAL")["temporal_evidence_rows"],
         "scheduled_load_and_played_load_separated": True,
         "features": [
@@ -964,8 +1092,6 @@ def _report_payloads(e3a: Mapping[str, Any], e3b: Sequence[Mapping[str, Any]]) -
                 "block_reason": (
                     "LOCAL_LINEUP_ROLE_CONTRADICTION"
                     if row["capability_id"] == "LINEUP" and row["e3b_status"] == "E3B_MEASURED_PARTIAL"
-                    else "LOCAL_TEAM_STATISTICS_COVERAGE_GAP"
-                    if row["capability_id"] == "TEAM_STATISTICS" and row["e3b_status"] == "E3B_MEASURED_PARTIAL"
                     else None
                 ),
                 "capability_id": row["capability_id"],
@@ -984,6 +1110,12 @@ def _report_payloads(e3a: Mapping[str, Any], e3b: Sequence[Mapping[str, Any]]) -
             {
                 "block_reason": "E2_PROVIDER_INCONSISTENCY_UNKNOWN_POLICY_NOT_OPENED",
                 "capability_id": "PLAYER_STATISTICS",
+                "competition_count": 0,
+                "status": "E3B_BLOCKED",
+            },
+            {
+                "block_reason": "E3A_MEASURED_PARTIAL_NOT_OPENED_IN_E3B",
+                "capability_id": "TEAM_STATISTICS",
                 "competition_count": 0,
                 "status": "E3B_BLOCKED",
             },

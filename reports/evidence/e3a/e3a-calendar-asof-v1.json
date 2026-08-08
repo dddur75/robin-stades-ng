@@ -118,7 +118,7 @@
     "POSTPONED",
     "RESCHEDULED_WITH_KNOWN_AT"
   ],
-  "real_source_status": "BLOCKED_BY_SOURCE",
+  "real_source_status": "BLOCKED_BY_TEMPORALITY",
   "real_temporal_evidence_rows": 0,
   "scheduled_load_and_played_load_separated": true,
   "schema_version": "p0-e3a-calendar-asof-v1",
