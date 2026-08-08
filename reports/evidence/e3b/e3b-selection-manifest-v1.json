@@ -5,8 +5,7 @@
     "FORMATION",
     "LINEUP",
     "PLAYER",
-    "TEAM",
-    "TEAM_STATISTICS"
+    "TEAM"
   ],
   "competitions": [
     {
@@ -50,6 +49,6 @@
   "mission_id": "p0-e3-capability-scale-v1",
   "schema_version": "p0-e3b-selection-manifest-v1",
   "season": 2024,
-  "selection_hash": "71203961e53d9d03149660d672f3f48d6bd39f344aa4222b80e0f762e6bf46f8",
+  "selection_hash": "83d0ecd9d2c8415792f04a8c27217a29da4cb49ea5743ba821813b4205325d2e",
   "stage": "E3B"
 }

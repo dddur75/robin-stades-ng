@@ -55,6 +55,52 @@ def test_event_identity_collapses_provider_order_but_preserves_semantics() -> No
     }
 
 
+def test_weighted_aggregation_counts_empty_valid_before_rates() -> None:
+    aggregate = runpy.run_path(str(SCRIPT))["_aggregate_rows"]
+    result = aggregate(
+        [
+            {
+                "capability_id": "DISCIPLINE_GENERIC",
+                "contradictory_duplicates": 0,
+                "e3b_status": "E3B_READY_RECONSTRUCTED",
+                "empty_valid": 0,
+                "expected": 2,
+                "invalid": 0,
+                "received": 2,
+                "unknown": 0,
+            },
+            {
+                "capability_id": "DISCIPLINE_GENERIC",
+                "contradictory_duplicates": 0,
+                "e3b_status": "E3B_READY_RECONSTRUCTED",
+                "empty_valid": 1,
+                "expected": 1,
+                "invalid": 0,
+                "received": 0,
+                "unknown": 0,
+            },
+        ]
+    )
+    assert result == [
+        {
+            "capability_id": "DISCIPLINE_GENERIC",
+            "competition_count": 2,
+            "contradictory_duplicates": 0,
+            "content_presence_rate": 0.66666667,
+            "coverage_rate": 1.0,
+            "e3b_status": "E3B_READY_RECONSTRUCTED",
+            "empty_valid": 1,
+            "expected": 3,
+            "invalid": 0,
+            "local_statuses": ["E3B_READY_RECONSTRUCTED"],
+            "normalization_integrity_rate": 1.0,
+            "received": 2,
+            "structural_coverage_rate": 1.0,
+            "unknown": 0,
+        }
+    ]
+
+
 def test_e3a_preserves_unknown_and_opens_only_reconstructed_capabilities() -> None:
     measurement = _read(E3A / "e3a-measurement-v1.json")
     matrix = _read(E3A / "e3a-capability-matrix-v1.json")
@@ -97,9 +143,13 @@ def test_e3a_preserves_unknown_and_opens_only_reconstructed_capabilities() -> No
 def test_e3b_uses_weighted_denominators_and_localizes_one_gap() -> None:
     measurement = _read(E3B / "e3b-measurement-v1.json")
     comparison = _read(E3B / "e3b-league-comparison-v1.json")
+    selection = _read(E3B / "e3b-selection-manifest-v1.json")
+    e3a_matrix = _read(E3A / "e3a-capability-matrix-v1.json")
     aggregates = {row["capability_id"]: row for row in measurement["weighted_aggregates"]}
     assert measurement["fixture_count"] == 1756
     assert len(measurement["league_rows"]) == 30
+    assert selection["capabilities"] == e3a_matrix["passed_capabilities"]
+    assert selection["capabilities"] == sorted(aggregates)
     assert aggregates["TEAM"]["expected"] == aggregates["TEAM"]["received"] == 3512
     assert "TEAM_STATISTICS" not in aggregates
     assert aggregates["PLAYER"]["expected"] == aggregates["PLAYER"]["received"] == 74_407
@@ -107,6 +157,12 @@ def test_e3b_uses_weighted_denominators_and_localizes_one_gap() -> None:
     assert aggregates["LINEUP"]["received"] == 3510
     assert aggregates["LINEUP"]["invalid"] == 2
     assert aggregates["LINEUP"]["contradictory_duplicates"] == 0
+    assert aggregates["DISCIPLINE_GENERIC"]["received"] == 1704
+    assert aggregates["DISCIPLINE_GENERIC"]["empty_valid"] == 52
+    assert aggregates["DISCIPLINE_GENERIC"]["expected"] == 1756
+    assert aggregates["DISCIPLINE_GENERIC"]["content_presence_rate"] == 0.97038724
+    assert aggregates["DISCIPLINE_GENERIC"]["coverage_rate"] == 1.0
+    assert aggregates["DISCIPLINE_GENERIC"]["structural_coverage_rate"] == 1.0
     serie_a = next(row for row in comparison["rows"] if row["competition"] == "Serie A")
     assert serie_a["local_partial_capabilities"] == ["LINEUP"]
     serie_a_lineup = next(

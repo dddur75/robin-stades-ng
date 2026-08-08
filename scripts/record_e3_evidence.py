@@ -152,6 +152,7 @@ def main() -> None:
         "RCV3-20260808-065",
         "RCV3-20260808-066",
         "RCV3-20260808-067",
+        "RCV3-20260808-068",
     }
     graph["claims"] = [claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids]
     graph["decision_nodes"] = [
@@ -164,6 +165,7 @@ def main() -> None:
         "RCV3-20260808-065",
         "RCV3-20260808-066",
         "RCV3-20260808-067",
+        "RCV3-20260808-068",
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
@@ -182,6 +184,8 @@ def main() -> None:
         ("COVERAGE.E3A.CAPABILITY_SCALE.V1.001", "RCV3-20260808-067"),
         ("FEATURE.CALENDAR.REAL_ASOF.E3A.V1.001", "RCV3-20260808-067"),
         ("COVERAGE.E3B.CAPABILITY_SCALE.V1.001", "RCV3-20260808-067"),
+        ("COVERAGE.E3A.CAPABILITY_SCALE.V1.001", "RCV3-20260808-068"),
+        ("COVERAGE.E3B.CAPABILITY_SCALE.V1.001", "RCV3-20260808-068"),
     )
     first_edge = len(graph["edges"]) + 1
     graph["edges"].extend(

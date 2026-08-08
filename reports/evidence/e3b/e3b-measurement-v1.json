@@ -979,92 +979,116 @@
   ],
   "mission_id": "p0-e3-capability-scale-v1",
   "schema_version": "p0-e3b-measurement-v1",
-  "selection_hash": "71203961e53d9d03149660d672f3f48d6bd39f344aa4222b80e0f762e6bf46f8",
+  "selection_hash": "83d0ecd9d2c8415792f04a8c27217a29da4cb49ea5743ba821813b4205325d2e",
   "verdict": "E3B_CAPABILITY_SCALE_PARTIAL",
   "weighted_aggregates": [
     {
       "capability_id": "DISCIPLINE_GENERIC",
       "competition_count": 5,
+      "content_presence_rate": 0.97038724,
       "contradictory_duplicates": 0,
-      "coverage_rate": 0.97038724,
+      "coverage_rate": 1.0,
       "e3b_status": "E3B_READY_RECONSTRUCTED",
+      "empty_valid": 52,
       "expected": 1756,
       "invalid": 0,
       "local_statuses": [
         "E3B_READY_RECONSTRUCTED"
       ],
+      "normalization_integrity_rate": 1.0,
       "received": 1704,
+      "structural_coverage_rate": 1.0,
       "unknown": 0
     },
     {
       "capability_id": "EVENTS",
       "competition_count": 5,
+      "content_presence_rate": 1.0,
       "contradictory_duplicates": 0,
       "coverage_rate": 1.0,
       "e3b_status": "E3B_READY_RECONSTRUCTED",
+      "empty_valid": 0,
       "expected": 1756,
       "invalid": 0,
       "local_statuses": [
         "E3B_READY_RECONSTRUCTED"
       ],
+      "normalization_integrity_rate": 1.0,
       "received": 1756,
+      "structural_coverage_rate": 1.0,
       "unknown": 0
     },
     {
       "capability_id": "FORMATION",
       "competition_count": 5,
+      "content_presence_rate": 1.0,
       "contradictory_duplicates": 0,
       "coverage_rate": 1.0,
       "e3b_status": "E3B_READY_RECONSTRUCTED",
+      "empty_valid": 0,
       "expected": 3512,
       "invalid": 0,
       "local_statuses": [
         "E3B_READY_RECONSTRUCTED"
       ],
+      "normalization_integrity_rate": 1.0,
       "received": 3512,
+      "structural_coverage_rate": 1.0,
       "unknown": 0
     },
     {
       "capability_id": "LINEUP",
       "competition_count": 5,
+      "content_presence_rate": 0.99943052,
       "contradictory_duplicates": 0,
       "coverage_rate": 0.99943052,
       "e3b_status": "E3B_MEASURED_PARTIAL",
+      "empty_valid": 0,
       "expected": 3512,
       "invalid": 2,
       "local_statuses": [
         "E3B_MEASURED_PARTIAL",
         "E3B_READY_RECONSTRUCTED"
       ],
+      "normalization_integrity_rate": 0.99943052,
       "received": 3510,
+      "structural_coverage_rate": 0.99943052,
       "unknown": 0
     },
     {
       "capability_id": "PLAYER",
       "competition_count": 5,
+      "content_presence_rate": 1.0,
       "contradictory_duplicates": 0,
       "coverage_rate": 1.0,
       "e3b_status": "E3B_READY_RECONSTRUCTED",
+      "empty_valid": 0,
       "expected": 74407,
       "invalid": 0,
       "local_statuses": [
         "E3B_READY_RECONSTRUCTED"
       ],
+      "normalization_integrity_rate": 1.0,
       "received": 74407,
+      "structural_coverage_rate": 1.0,
       "unknown": 0
     },
     {
       "capability_id": "TEAM",
       "competition_count": 5,
+      "content_presence_rate": 1.0,
       "contradictory_duplicates": 0,
       "coverage_rate": 1.0,
       "e3b_status": "E3B_READY_RECONSTRUCTED",
+      "empty_valid": 0,
       "expected": 3512,
       "invalid": 0,
       "local_statuses": [
         "E3B_READY_RECONSTRUCTED"
       ],
+      "normalization_integrity_rate": 1.0,
       "received": 3512,
+      "structural_coverage_rate": 1.0,
       "unknown": 0
     }
   ]

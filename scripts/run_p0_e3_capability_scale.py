@@ -954,8 +954,12 @@ def _aggregate_rows(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
             value is not None for value in expected_values
         ) else None
         received = sum(int(row["received"]) for row in values)
+        empty_valid = sum(int(row["empty_valid"]) for row in values)
+        unknown = sum(int(row["unknown"]) for row in values)
         invalid = sum(int(row["invalid"]) for row in values)
         contradictory = sum(int(row["contradictory_duplicates"]) for row in values)
+        integrity_denominator = received + empty_valid + unknown + invalid + contradictory
+        accounted = received + empty_valid + unknown
         statuses = sorted({_status(row) for row in values})
         global_status = (
             "E3B_READY_RECONSTRUCTED"
@@ -967,13 +971,19 @@ def _aggregate_rows(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
                 "capability_id": capability,
                 "competition_count": len(values),
                 "contradictory_duplicates": contradictory,
-                "coverage_rate": _rate(received, expected),
+                "content_presence_rate": _rate(received, expected),
+                "coverage_rate": _rate(received + empty_valid, expected),
                 "e3b_status": global_status,
+                "empty_valid": empty_valid,
                 "expected": expected,
                 "invalid": invalid,
                 "local_statuses": statuses,
+                "normalization_integrity_rate": _rate(
+                    received + empty_valid, integrity_denominator
+                ),
                 "received": received,
-                "unknown": sum(int(row["unknown"]) for row in values),
+                "structural_coverage_rate": _rate(accounted, expected),
+                "unknown": unknown,
             }
         )
     return output
@@ -997,7 +1007,7 @@ def _report_payloads(e3a: Mapping[str, Any], e3b: Sequence[Mapping[str, Any]]) -
         "season": 2024,
         "e3a_selection_hash": selection["selection_hash"],
         "e3a_gate_hash": gate["gate_hash"],
-        "capabilities": sorted(E3B_CAPABILITIES),
+        "capabilities": gate["passed_capabilities"],
         "competitions": [
             {
                 "artifact_id": _mapping(league["source_proof"], "E3_SOURCE")["artifact_id"],
