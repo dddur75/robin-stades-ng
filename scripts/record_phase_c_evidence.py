@@ -26,7 +26,8 @@ MAIN_INTEGRATION_DECISION_ID = "RCV3-20260808-085"
 MAIN_MERGE_RECEIPT_DECISION_ID = "RCV3-20260808-086"
 TEST_PORTABILITY_DECISION_ID = "RCV3-20260808-087"
 DELIVERY_DECISION_ID = "RCV3-20260808-088"
-GENERATED_AT = "2026-08-08T19:40:00Z"
+PAGES_RECLASSIFICATION_DECISION_ID = "RCV3-20260808-089"
+GENERATED_AT = "2026-08-08T20:00:00Z"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
@@ -364,6 +365,25 @@ def _claims() -> list[dict[str, Any]]:
             code_revision="008396bad19885386bd7d17ab07c75ee79bb0a9e",
             execution_id="local-phase-c-pr37-closure-20260808",
         ),
+        _claim(
+            claim_id="GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
+            claim=(
+                "The authorized PR37 merge triggered one repository-configured GitHub "
+                "Pages deployment. The staging artifact contains no forbidden heavy Phase C "
+                "evidence path, provider payload or demonstrated secret. It does publish the "
+                "pre-existing bounded V1 scientific summary, recorded separately from "
+                "mission-initiated publication and Phase C workflow deployments."
+            ),
+            scope="PR37_AUTOMATIC_REPOSITORY_PAGES_SIDE_EFFECT_RECLASSIFICATION",
+            source="GitHub Pages run, deployment, artifact inventory and terminal main CI",
+            grain="one_automatic_repository_pages_deployment",
+            temporal_class="REMOTE_DELIVERY_STATE_AS_OF",
+            artifact="reports/closure/automatic-pages-side-effect-reclassification-v1.json",
+            status="VERIFIED",
+            verified_by=["DP2", "DP5"],
+            code_revision="d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
+            execution_id="github-pages-run-31274388390",
+        ),
     ]
 
 
@@ -412,6 +432,7 @@ def main() -> None:
             MAIN_MERGE_RECEIPT_DECISION_ID,
             TEST_PORTABILITY_DECISION_ID,
             DELIVERY_DECISION_ID,
+            PAGES_RECLASSIFICATION_DECISION_ID,
         }
     ]
     if recovery_ids != [
@@ -428,6 +449,7 @@ def main() -> None:
         MAIN_MERGE_RECEIPT_DECISION_ID,
         TEST_PORTABILITY_DECISION_ID,
         DELIVERY_DECISION_ID,
+        PAGES_RECLASSIFICATION_DECISION_ID,
     ]:
         raise RuntimeError("PHASE_C_RECOVERY_DECISION_SEQUENCE_MISMATCH")
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
@@ -447,6 +469,7 @@ def main() -> None:
         MAIN_MERGE_RECEIPT_DECISION_ID,
         TEST_PORTABILITY_DECISION_ID,
         DELIVERY_DECISION_ID,
+        PAGES_RECLASSIFICATION_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
@@ -521,6 +544,13 @@ def main() -> None:
             "relation": "SUPPORTS",
             "status": "RECORDED",
         },
+        {
+            "edge_id": "EDGE.267",
+            "from_claim_id": "GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
+            "to_decision_id": PAGES_RECLASSIFICATION_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
     ]
     expected_tail_edges = expected_correction_tail_edges + expected_closure_edges
     existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
@@ -533,6 +563,7 @@ def main() -> None:
         expected_correction_tail_edges + expected_closure_edges[:4],
         expected_correction_tail_edges + expected_closure_edges[:5],
         expected_correction_tail_edges + expected_closure_edges[:6],
+        expected_correction_tail_edges + expected_closure_edges[:7],
         expected_tail_edges,
     ):
         raise RuntimeError("PHASE_C_RECOVERY_EDGE_TAIL_MISMATCH")
@@ -561,6 +592,7 @@ def main() -> None:
         MAIN_MERGE_RECEIPT_DECISION_ID,
         TEST_PORTABILITY_DECISION_ID,
         DELIVERY_DECISION_ID,
+        PAGES_RECLASSIFICATION_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}

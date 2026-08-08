@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-08T19:40:00Z",
+  "generated_at":"2026-08-08T20:00:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1746,6 +1746,22 @@
       "dataset_lineage_id":"PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA",
       "status":"VERIFIED",
       "verified_by":["DP2","DP5"]
+    },
+    {
+      "claim_id":"GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
+      "claim":"The authorized PR37 merge triggered one repository-configured GitHub Pages deployment. The staging artifact contains no forbidden heavy Phase C evidence path, provider payload or demonstrated secret. It does publish the pre-existing bounded V1 scientific summary, recorded separately from mission-initiated publication and Phase C workflow deployments.",
+      "scope":"PR37_AUTOMATIC_REPOSITORY_PAGES_SIDE_EFFECT_RECLASSIFICATION",
+      "source":"GitHub Pages run, deployment, artifact inventory and terminal main CI",
+      "grain":"one_automatic_repository_pages_deployment",
+      "temporal_class":"REMOTE_DELIVERY_STATE_AS_OF",
+      "artifact":"reports/closure/automatic-pages-side-effect-reclassification-v1.json",
+      "hash":"8260a2c447691af94376947039df6ccea8c13380b2b25b6e8281c86acb1a453a",
+      "code_revision":"d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
+      "execution_id":"github-pages-run-31274388390",
+      "scientific_lineage_id":"hypothesis-tag-mask-pair-factory-v1-bounded",
+      "dataset_lineage_id":"PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA",
+      "status":"VERIFIED",
+      "verified_by":["DP2","DP5"]
     }
   ],
   "decision_nodes":[
@@ -1836,7 +1852,8 @@
     {"decision_id":"RCV3-20260808-085","ledger_record_hash":"60f47b753e1ecadfbfdc637ed1fc94a5fdf326ad9d2625283ab7eadcfb710959"},
     {"decision_id":"RCV3-20260808-086","ledger_record_hash":"53ee557d4f4c6818dcaa7b93e75e10ad1ea768dde071beb0f9eb05ffa0e0fcb8"},
     {"decision_id":"RCV3-20260808-087","ledger_record_hash":"0119252525feafd8e96ef73b5b5cd661260e77eaf00c80fa895db2a2253062a9"},
-    {"decision_id":"RCV3-20260808-088","ledger_record_hash":"c102d7ad4759b83f120becda532e176e16a6c517b5b6e71d368d75feb6b4ab2e"}
+    {"decision_id":"RCV3-20260808-088","ledger_record_hash":"c102d7ad4759b83f120becda532e176e16a6c517b5b6e71d368d75feb6b4ab2e"},
+    {"decision_id":"RCV3-20260808-089","ledger_record_hash":"5f0c79755d89035cfd3e8bc69c5ad09717f47c815af6b8dae77f6155a6bec1e9"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2104,6 +2121,7 @@
     {"edge_id":"EDGE.263","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-085","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.264","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-086","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.265","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-087","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.266","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-088","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.266","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-088","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.267","from_claim_id":"GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001","to_decision_id":"RCV3-20260808-089","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

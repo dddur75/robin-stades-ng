@@ -571,17 +571,24 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             )
         )
     }
-    assert len(claims) == 15
+    assert len(claims) == 16
     implementation_claims = {
         claim_id: row
         for claim_id, row in claims.items()
-        if claim_id != "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001"
+        if claim_id
+        not in {
+            "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+            "GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
+        }
     }
     assert {row["code_revision"] for row in implementation_claims.values()} == {
         "b2395964faf08a61ac45df36d547025a4b132e13"
     }
     assert claims["GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001"]["code_revision"] == (
         "008396bad19885386bd7d17ab07c75ee79bb0a9e"
+    )
+    assert claims["GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001"]["code_revision"] == (
+        "d4ce1836ef8f42f37e284126a7190ebf051f6dbf"
     )
     assert claims["FEATURE.PHASE_C.RECONCILIATION.V1.001"]["status"] == "PARTIAL"
     assert claims["EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001"]["status"] == "INVALIDATED"
@@ -641,6 +648,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             "RCV3-20260808-086",
             "RCV3-20260808-087",
             "RCV3-20260808-088",
+            "RCV3-20260808-089",
         }
     ]
     assert recovery_ids == [
@@ -657,6 +665,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "RCV3-20260808-086",
         "RCV3-20260808-087",
         "RCV3-20260808-088",
+        "RCV3-20260808-089",
     ]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
@@ -745,6 +754,13 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "relation": "SUPPORTS",
         "status": "RECORDED",
     }
+    assert edge_by_id["EDGE.267"] == {
+        "edge_id": "EDGE.267",
+        "from_claim_id": "GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
+        "to_decision_id": "RCV3-20260808-089",
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
     record_088 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-088"
     )
@@ -755,6 +771,46 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
     assert ruleset_requirements["target_ref_include"] == ["refs/heads/main"]
     assert ruleset_requirements["target_ref_exclude"] == []
     assert ruleset_requirements["ruleset_creation_count"] == 1
+    pages_reclassification = load(
+        "reports/closure/automatic-pages-side-effect-reclassification-v1.json"
+    )
+    assert pages_reclassification["publication_exposure_audit"] == "PASSED"
+    assert pages_reclassification["phase_c_v2_resume"] == "AUTHORIZED"
+    assert pages_reclassification["effect_accounting"] == {
+        "automatic_repository_pages_deployments_observed": 1,
+        "documentation_site_publication_observed": True,
+        "bounded_v1_scientific_summary_publication_observed": True,
+        "mission_initiated_scientific_publications": 0,
+        "new_v2_results_publications": 0,
+        "forbidden_heavy_scientific_evidence_publications": 0,
+        "mission_initiated_deployments": 0,
+        "phase_c_workflow_deployments": 0,
+        "manual_pages_dispatches": 0,
+        "pages_configuration_changes": 0,
+        "forbidden_data_publications": 0,
+        "heavy_phase_c_evidence_publications": 0,
+        "provider_payload_publications": 0,
+        "secret_publications": 0,
+        "provider_calls": 0,
+        "odds_credits": 0,
+        "remote_sql": 0,
+        "r2_list": 0,
+        "r2_head": 0,
+        "r2_get": 0,
+        "r2_write": 0,
+        "r2_delete": 0,
+        "real_bets": 0,
+        "promotions": 0,
+        "triples": 0,
+    }
+    assert pages_reclassification["pages"]["forbidden_heavy_paths_present"] == []
+    assert pages_reclassification["pages"][
+        "bounded_v1_scientific_summary_publication_detected"
+    ] is True
+    assert pages_reclassification["pages"]["published_scientific_summary_paths"] == [
+        "hypothesis-intelligence/ATOMIC-AND-PAIR-CAMPAIGN-V1.md",
+        "hypothesis-intelligence/ATOMIC-AND-PAIR-CAMPAIGN-V1.html",
+    ]
     audit = load("reports/closure/pr37-size-evidence-and-reconstructibility-audit-v1.json")
     assert audit["compaction_decision"]["verdict"] == "KEEP_DETAILED_EVIDENCE_IN_GIT"
     assert audit["pull_request_size"]["changed_git_blob_bytes"] == 2_230_743
