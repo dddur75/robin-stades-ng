@@ -19,7 +19,10 @@ PREFIX_ENFORCEMENT_DECISION_ID = "RCV3-20260808-078"
 DUPLICATE_GUARD_DECISION_ID = "RCV3-20260808-079"
 DRAFT_PUBLICATION_DECISION_ID = "RCV3-20260808-080"
 AUTHORITY_SCOPE_DECISION_ID = "RCV3-20260808-081"
-GENERATED_AT = "2026-08-08T16:20:00Z"
+CLOSURE_AUDIT_DECISION_ID = "RCV3-20260808-082"
+CLOSURE_RUNTIME_CORRECTION_DECISION_ID = "RCV3-20260808-083"
+CLOSURE_SANITIZATION_DECISION_ID = "RCV3-20260808-084"
+GENERATED_AT = "2026-08-08T18:10:00Z"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
@@ -338,6 +341,25 @@ def _claims() -> list[dict[str, Any]]:
             status="BLOCKED",
             verified_by=["DP2", "DP5"],
         ),
+        _claim(
+            claim_id="GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+            claim=(
+                "At reviewed head 008396bad19885386bd7d17ab07c75ee79bb0a9e, "
+                "PR37 contained 39 changed files and 2,230,743 changed Git blob bytes, "
+                "with no blob larger than 298,597 bytes. The closure successor keeps "
+                "all detailed V1 audit evidence and adds sanitized durable Git evidence "
+                "instead of relying on temporary artifacts or further compaction."
+            ),
+            scope="PHASE_C_PR37_SIZE_RECONSTRUCTIBILITY_AND_ENGINE_CLOSURE_AUDIT",
+            source="Git blobs, exact-head GitHub metadata and two fresh sealed-source replays",
+            grain="one_pull_request_closure_audit",
+            temporal_class="CODE_AND_REMOTE_STATE_AS_OF",
+            artifact="reports/closure/pr37-size-evidence-and-reconstructibility-audit-v1.json",
+            status="VERIFIED",
+            verified_by=["DP2", "DP5"],
+            code_revision="008396bad19885386bd7d17ab07c75ee79bb0a9e",
+            execution_id="local-phase-c-pr37-closure-20260808",
+        ),
     ]
 
 
@@ -379,6 +401,9 @@ def main() -> None:
             DUPLICATE_GUARD_DECISION_ID,
             DRAFT_PUBLICATION_DECISION_ID,
             AUTHORITY_SCOPE_DECISION_ID,
+            CLOSURE_AUDIT_DECISION_ID,
+            CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
+            CLOSURE_SANITIZATION_DECISION_ID,
         }
     ]
     if recovery_ids != [
@@ -388,6 +413,9 @@ def main() -> None:
         DUPLICATE_GUARD_DECISION_ID,
         DRAFT_PUBLICATION_DECISION_ID,
         AUTHORITY_SCOPE_DECISION_ID,
+        CLOSURE_AUDIT_DECISION_ID,
+        CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
+        CLOSURE_SANITIZATION_DECISION_ID,
     ]:
         raise RuntimeError("PHASE_C_RECOVERY_DECISION_SEQUENCE_MISMATCH")
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
@@ -400,6 +428,9 @@ def main() -> None:
         DUPLICATE_GUARD_DECISION_ID,
         DRAFT_PUBLICATION_DECISION_ID,
         AUTHORITY_SCOPE_DECISION_ID,
+        CLOSURE_AUDIT_DECISION_ID,
+        CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
+        CLOSURE_SANITIZATION_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
@@ -412,7 +443,7 @@ def main() -> None:
         "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
         "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
     ]
-    expected_tail_edges = [
+    expected_correction_tail_edges = [
         {
             "edge_id": f"EDGE.{index:03d}",
             "from_claim_id": claim_id,
@@ -424,8 +455,38 @@ def main() -> None:
             missing_correction_proof_claim_ids, start=HISTORICAL_EDGE_COUNT + 1
         )
     ]
+    expected_closure_edges = [
+        {
+            "edge_id": "EDGE.260",
+            "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+            "to_decision_id": CLOSURE_AUDIT_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.261",
+            "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+            "to_decision_id": CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.262",
+            "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+            "to_decision_id": CLOSURE_SANITIZATION_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+    ]
+    expected_tail_edges = expected_correction_tail_edges + expected_closure_edges
     existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
-    if existing_tail_edges not in ([], expected_tail_edges):
+    if existing_tail_edges not in (
+        [],
+        expected_correction_tail_edges,
+        expected_correction_tail_edges + expected_closure_edges[:1],
+        expected_correction_tail_edges + expected_closure_edges[:2],
+        expected_tail_edges,
+    ):
         raise RuntimeError("PHASE_C_RECOVERY_EDGE_TAIL_MISMATCH")
     graph["claims"] = [
         claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids
@@ -445,6 +506,9 @@ def main() -> None:
         DUPLICATE_GUARD_DECISION_ID,
         DRAFT_PUBLICATION_DECISION_ID,
         AUTHORITY_SCOPE_DECISION_ID,
+        CLOSURE_AUDIT_DECISION_ID,
+        CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
+        CLOSURE_SANITIZATION_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}

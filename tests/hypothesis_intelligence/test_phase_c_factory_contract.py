@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 import pytest
 import yaml
 
-from scripts import record_phase_c_evidence
+from scripts import export_phase_c_v1_durable_evidence, record_phase_c_evidence
 from scripts import run_hypothesis_tag_mask_pair_factory as factory
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -22,6 +23,56 @@ def load(relative: str) -> dict[str, object]:
 def canonical_hash(value: object) -> str:
     payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(payload).hexdigest()
+
+
+def test_phase_c_v1_detailed_evidence_is_durable_and_sanitized(
+    tmp_path: Path,
+) -> None:
+    evidence_root = ROOT / "reports/closure/phase-c-v1-durable-evidence"
+    export_phase_c_v1_durable_evidence.verify(evidence_root)
+    manifest = load(
+        "reports/closure/phase-c-v1-durable-evidence/"
+        "durable-evidence-manifest-v1.json"
+    )
+    assert manifest["raw_provider_rows_included"] is False
+    assert manifest["raw_fixture_ids_included"] is False
+    assert manifest["raw_provider_identifiers_included"] is False
+    assert manifest["regenerated_gzip_python_runtime"]
+    assert manifest["regenerated_gzip_zlib_compile_version"]
+    assert manifest["regenerated_gzip_zlib_runtime_version"]
+    assert manifest["regenerated_gzip_identity"] == (
+        "canonical_uncompressed_content_sha256"
+    )
+    assert manifest["mask_count"] == 80
+    assert manifest["structurally_eligible_tag_pairs"] == 1_398
+    assert manifest["selected_tag_pairs"] == 120
+    assert manifest["eligible_not_selected_tag_pairs"] == 1_278
+    assert manifest["provider_calls"] == 0
+    assert manifest["r2_operations"] == 0
+    assert manifest["remote_sql_queries"] == 0
+    assert manifest["odds_credits"] == 0
+    assert manifest["triples_executed"] == 0
+    regenerated = {
+        "analysis-core-sanitized-v1.json.gz",
+        "mask-payload-bundle-v1.json.gz",
+        "eligible-tag-pair-census-v1.json.gz",
+    }
+    assert all(
+        row["reconstruction_identity"] == "content_sha256"
+        and row["transport_sha256_runtime_bound"] is True
+        for row in manifest["files"]
+        if row["path"] in regenerated
+    )
+    tampered_root = tmp_path / "durable-evidence"
+    shutil.copytree(evidence_root, tampered_root)
+    tampered_manifest_path = tampered_root / "durable-evidence-manifest-v1.json"
+    tampered_manifest = json.loads(tampered_manifest_path.read_text(encoding="utf-8"))
+    tampered_manifest["files"][0]["content_sha256"] = "0" * 64
+    tampered_manifest_path.write_text(
+        json.dumps(tampered_manifest, ensure_ascii=False), encoding="utf-8"
+    )
+    with pytest.raises(RuntimeError, match="DURABLE_EVIDENCE_CONTENT_HASH_MISMATCH"):
+        export_phase_c_v1_durable_evidence.verify(tampered_root)
 
 
 def test_raw_census_is_complete_and_contains_no_raw_values() -> None:
@@ -520,10 +571,18 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             )
         )
     }
-    assert len(claims) == 14
-    assert {row["code_revision"] for row in claims.values()} == {
+    assert len(claims) == 15
+    implementation_claims = {
+        claim_id: row
+        for claim_id, row in claims.items()
+        if claim_id != "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001"
+    }
+    assert {row["code_revision"] for row in implementation_claims.values()} == {
         "b2395964faf08a61ac45df36d547025a4b132e13"
     }
+    assert claims["GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001"]["code_revision"] == (
+        "008396bad19885386bd7d17ab07c75ee79bb0a9e"
+    )
     assert claims["FEATURE.PHASE_C.RECONCILIATION.V1.001"]["status"] == "PARTIAL"
     assert claims["EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001"]["status"] == "INVALIDATED"
     assert claims["EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002"]["status"] == "PARTIAL"
@@ -575,6 +634,9 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             "RCV3-20260808-079",
             "RCV3-20260808-080",
             "RCV3-20260808-081",
+            "RCV3-20260808-082",
+            "RCV3-20260808-083",
+            "RCV3-20260808-084",
         }
     ]
     assert recovery_ids == [
@@ -584,6 +646,9 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "RCV3-20260808-079",
         "RCV3-20260808-080",
         "RCV3-20260808-081",
+        "RCV3-20260808-082",
+        "RCV3-20260808-083",
+        "RCV3-20260808-084",
     ]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
@@ -623,6 +688,38 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
         "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
     ]
+    assert edge_by_id["EDGE.260"] == {
+        "edge_id": "EDGE.260",
+        "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+        "to_decision_id": "RCV3-20260808-082",
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    assert edge_by_id["EDGE.261"] == {
+        "edge_id": "EDGE.261",
+        "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+        "to_decision_id": "RCV3-20260808-083",
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    assert edge_by_id["EDGE.262"] == {
+        "edge_id": "EDGE.262",
+        "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+        "to_decision_id": "RCV3-20260808-084",
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    audit = load("reports/closure/pr37-size-evidence-and-reconstructibility-audit-v1.json")
+    assert audit["compaction_decision"]["verdict"] == "KEEP_DETAILED_EVIDENCE_IN_GIT"
+    assert audit["pull_request_size"]["changed_git_blob_bytes"] == 2_230_743
+    assert audit["fresh_reconstruction"]["replay_identical"] is True
+    assert all(
+        row["recommended_action"] != "REMOVE_FROM_GIT"
+        for row in audit["audited_files"]
+    )
+    assert "SUPERSEDED_BEFORE_EXECUTION" in (
+        ROOT / "NEXT-MISSION-PROMPT.md"
+    ).read_text(encoding="utf-8")
     valid_graph_bytes = graph_path.read_bytes()
     tampered_graph_path = tmp_path / "evidence-graph.json"
     tampered_graph_path.write_bytes(valid_graph_bytes)

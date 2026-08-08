@@ -1,3 +1,13 @@
+# Historical handoff status: SUPERSEDED_BEFORE_EXECUTION
+
+Ce brief historique est conservé sans suppression, mais il n'est plus une
+autorité d'exécution. La mission Phase C Full Bounded Expansion V2 le remplace.
+Un nouveau brief Ultra ne pourra être créé qu'après l'exécution et la revue de
+toutes les propriétés prédictives et paires structurellement admissibles V2.
+Les triples restent verrouillés.
+
+---
+
 # Next Mission Brief — revue Ultra avant triples
 
 ## Objet
@@ -33,7 +43,10 @@ que l’audit ne l’autorise pas explicitement.
 7. décision append-only autorisant un SHA exact ;
 8. critères d’arrêt fail-closed.
 
-Statut actuel : `NEXT_ULTRA_REVIEW_READY`, `TRIPLE_SEARCH_LOCKED`.
+Statut historique : `NEXT_ULTRA_REVIEW_READY`, `TRIPLE_SEARCH_LOCKED`.
+
+Statut autoritatif courant : `SUPERSEDED_BEFORE_EXECUTION`,
+`TRIPLE_SEARCH_LOCKED`.
 
 ## Continuité historique obligatoire
 

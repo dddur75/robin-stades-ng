@@ -1,3 +1,13 @@
+# Historical handoff status: SUPERSEDED_BEFORE_EXECUTION
+
+This handoff is preserved below as historical evidence. It was superseded
+before execution by the Phase C full bounded expansion V2 mission. It must not
+be executed or treated as current authority. A new Ultra handoff may be created
+only after all V2 predictor-eligible properties and all structurally admissible
+V2 pairs have been executed and reviewed. Triple search remains locked.
+
+---
+
 # Prompt — Ultra Scientific Review Before Triples
 
 Travaille en raisonnement **Ultra**. Lis `NEXT-MISSION-BRIEF.md` et tous les
