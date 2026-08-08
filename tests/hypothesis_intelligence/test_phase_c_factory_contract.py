@@ -568,9 +568,19 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         row["decision_id"]
         for row in ledger
         if row["decision_id"]
-        in {"RCV3-20260808-077", "RCV3-20260808-078"}
+        in {
+            "RCV3-20260808-076",
+            "RCV3-20260808-077",
+            "RCV3-20260808-078",
+            "RCV3-20260808-079",
+        }
     ]
-    assert recovery_ids == ["RCV3-20260808-077", "RCV3-20260808-078"]
+    assert recovery_ids == [
+        "RCV3-20260808-076",
+        "RCV3-20260808-077",
+        "RCV3-20260808-078",
+        "RCV3-20260808-079",
+    ]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
     )
@@ -609,19 +619,29 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
         "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
     ]
+    valid_graph_bytes = graph_path.read_bytes()
+    tampered_graph_path = tmp_path / "evidence-graph.json"
+    tampered_graph_path.write_bytes(valid_graph_bytes)
+    tampered_ledger_path = tmp_path / "decision-ledger.jsonl"
+    duplicate_076 = json.dumps(record_076, ensure_ascii=False, separators=(",", ":"))
+    tampered_ledger_path.write_bytes(
+        ledger_bytes + duplicate_076.encode("utf-8") + b"\n"
+    )
+    monkeypatch.setattr(record_phase_c_evidence, "GRAPH", tampered_graph_path)
+    monkeypatch.setattr(record_phase_c_evidence, "LEDGER", tampered_ledger_path)
+    with pytest.raises(RuntimeError, match="PHASE_C_DUPLICATE_DECISION_ID"):
+        record_phase_c_evidence.main()
+    assert tampered_graph_path.read_bytes() == valid_graph_bytes
+
     tampered_graph = json.loads(graph_path.read_text(encoding="utf-8"))
     tampered_graph["edges"][0], tampered_graph["edges"][1] = (
         tampered_graph["edges"][1],
         tampered_graph["edges"][0],
     )
-    tampered_graph_path = tmp_path / "evidence-graph.json"
     tampered_graph_path.write_text(
         json.dumps(tampered_graph, ensure_ascii=False), encoding="utf-8"
     )
-    tampered_ledger_path = tmp_path / "decision-ledger.jsonl"
     tampered_ledger_path.write_bytes(ledger_bytes)
-    monkeypatch.setattr(record_phase_c_evidence, "GRAPH", tampered_graph_path)
-    monkeypatch.setattr(record_phase_c_evidence, "LEDGER", tampered_ledger_path)
     with pytest.raises(RuntimeError, match="PHASE_C_HISTORICAL_EDGE_PREFIX_MISMATCH"):
         record_phase_c_evidence.main()
     assert not any(
