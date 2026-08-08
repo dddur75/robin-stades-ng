@@ -1,0 +1,136 @@
+name: "86 - Phase C Raw Field Census"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execution_sha:
+        description: "Exact SHA authorized by the trusted-main activation"
+        required: true
+        type: string
+      resume_run_id:
+        description: "Optional completed prior run containing an incomplete checkpoint"
+        required: false
+        type: string
+      resume_attempt:
+        description: "Exact attempt for resume_run_id"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: p0-phase-c-raw-field-census
+  cancel-in-progress: false
+
+env:
+  PHASE_C_BRANCH: codex/hypothesis-tag-mask-pair-factory-v1
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  ODDS_CREDITS_ALLOWED: "0"
+  REMOTE_SQL_ALLOWED: "0"
+  R2_GET_ALLOWED: "0"
+  R2_LIST_ALLOWED: "0"
+  R2_HEAD_ALLOWED: "0"
+  R2_WRITES_ALLOWED: "0"
+  R2_DELETES_ALLOWED: "0"
+  TRIPLE_SEARCH_LOCKED: "true"
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      generator_sha: ${{ steps.contract.outputs.generator_sha }}
+      source_run_id: ${{ steps.contract.outputs.source_run_id }}
+      artifact_ids: ${{ steps.contract.outputs.artifact_ids }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {ref: main, path: trusted-main, fetch-depth: 1, persist-credentials: false}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: "3.12"}
+      - name: Validate trusted-main activation, workflow hashes and five source artifacts
+        id: contract
+        env:
+          EXECUTION_SHA: ${{ inputs.execution_sha }}
+          RESUME_RUN_ID: ${{ inputs.resume_run_id }}
+          RESUME_ATTEMPT: ${{ inputs.resume_attempt }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${EXECUTION_SHA}" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git -C trusted-main ls-remote origin "refs/heads/${PHASE_C_BRANCH}" | cut -f1)" = "${EXECUTION_SHA}"
+          python trusted-main/scripts/validate_phase_c_workflow_contract.py source --resume-workflow-path .github/workflows/86-p0-phase-c-raw-field-census.yml
+          unshare --user --map-root-user --net true
+
+  census:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {ref: "${{ inputs.execution_sha }}", path: candidate, fetch-depth: 1, persist-credentials: false}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: "3.12"}
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ needs.preflight.outputs.source_run_id }}
+          artifact-ids: ${{ needs.preflight.outputs.artifact_ids }}
+          path: candidate/_phase_c/source
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: ${{ inputs.resume_run_id != '' }}
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.resume_run_id }}
+          pattern: phase-c-raw-field-census-${{ inputs.resume_run_id }}-${{ inputs.resume_attempt }}
+          path: candidate/_phase_c/resume
+      - name: Execute two fresh bounded runs or resume one incomplete unit
+        working-directory: candidate
+        env:
+          EXECUTION_SHA: ${{ inputs.execution_sha }}
+          GENERATOR_SHA: ${{ needs.preflight.outputs.generator_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXECUTION_SHA}"
+          test "$(sha256sum scripts/run_hypothesis_tag_mask_pair_factory.py | cut -d' ' -f1)" = "${GENERATOR_SHA}"
+          artifact="_phase_c/raw-field-census-artifact"
+          mkdir -p "${artifact}"
+          resume=()
+          checkpoint="$(find _phase_c/resume -name checkpoint-v1.json -print -quit 2>/dev/null || true)"
+          if [[ -n "${checkpoint}" ]]; then
+            if [[ "$(python -c 'import json,sys; print(str(json.load(open(sys.argv[1]))["completed"]).lower())' "${checkpoint}")" == "true" ]]; then
+              cp -a "$(dirname "${checkpoint}")/." "${artifact}/"
+              expected="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["manifest_hash"])' "$(find "${artifact}" -name stage-manifest-v1.json -print -quit)")"
+              unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py verify-stage --artifact-root "${artifact}" --expected-manifest-hash "${expected}" --expected-stage RAW_FIELD_CENSUS --execution-sha "${EXECUTION_SHA}" --max-bytes 5000000
+              exit 0
+            fi
+            resume=(--resume-checkpoint "${checkpoint}")
+          fi
+          trap 'cp "$RUNNER_TEMP/phase-c-census-a/checkpoint-v1.json" "_phase_c/raw-field-census-artifact/checkpoint-v1.json" 2>/dev/null || true' EXIT
+          timeout --signal=TERM 270s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py census --source-root _phase_c/source --output-root "$RUNNER_TEMP/phase-c-census-output-a" --store-root "$RUNNER_TEMP/phase-c-census-a" --execution-sha "${EXECUTION_SHA}" --shard-id LOCAL-ALL --shard-count 1 --soft-deadline-seconds 240 "${resume[@]}"
+          timeout --signal=TERM 270s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py census --source-root _phase_c/source --output-root "$RUNNER_TEMP/phase-c-census-output-b" --store-root "$RUNNER_TEMP/phase-c-census-b" --execution-sha "${EXECUTION_SHA}" --shard-id LOCAL-ALL --shard-count 1 --soft-deadline-seconds 240
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py replay-stage --first-root "$RUNNER_TEMP/phase-c-census-output-a" --second-root "$RUNNER_TEMP/phase-c-census-output-b"
+          mkdir -p "${artifact}/reports/data-quality"
+          cp "$RUNNER_TEMP/phase-c-census-output-a/reports/data-quality/"*.json "${artifact}/reports/data-quality/"
+          cp "$RUNNER_TEMP/phase-c-census-output-a/campaign-replay-v1.json" "${artifact}/campaign-replay-v1.json"
+          cp "$RUNNER_TEMP/phase-c-census-a/checkpoint-v1.json" "${artifact}/checkpoint-v1.json"
+          trap - EXIT
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py seal-stage --artifact-root "${artifact}" --stage RAW_FIELD_CENSUS --execution-sha "${EXECUTION_SHA}" --shard-id LOCAL-ALL
+          python - <<'PY'
+          from pathlib import Path
+          root=Path("_phase_c/raw-field-census-artifact")
+          if sum(p.stat().st_size for p in root.rglob("*") if p.is_file()) > 5_000_000: raise SystemExit("RAW_CENSUS_UPLOAD_CAP_EXCEEDED")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: phase-c-raw-field-census-${{ github.run_id }}-${{ github.run_attempt }}
+          path: candidate/_phase_c/raw-field-census-artifact
+          if-no-files-found: error
+          retention-days: 90

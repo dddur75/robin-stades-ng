@@ -1,0 +1,558 @@
+{
+  "generated_at": "2026-08-08T09:10:42Z",
+  "ranking_role": "BOUNDED_REVIEW_QUEUE_NOT_PROMOTION",
+  "records": [
+    {
+      "best_worst_case_delta_log_loss": 0.00310107,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:d01f81056cc8ee6c2cc3ebe25842dd81af1ff9d1872d07b98c9767af4aadf09e",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+        "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 1,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00263693,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:bda1b898faab6bd676744d088692f8fea730c483ba0c21a67eed397680468144",
+      "parents": [
+        "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1"
+      ],
+      "rank": 2,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00245941,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:b3c06e321a5a759d82ebb0e0bffeebf3085c0273e70c807b313cd32638d8275f",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1"
+      ],
+      "rank": 3,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.0022531,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:b592b88b32a7f48fcac9c8a966ac5e3286dd84dedc2b00b6df750daa52bc4861",
+      "parents": [
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1"
+      ],
+      "rank": 4,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00206665,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:68f9d6b25abf2f686e3f97afea96fae4feb397a5bc987ff1cf45739405453119",
+      "parents": [
+        "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1"
+      ],
+      "rank": 5,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00188579,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:13336c5261aa6fae212268c57b139d8e664917a9f4ed16e665f9961aa98cdec5",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1"
+      ],
+      "rank": 6,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00168289,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:2ab540c51e3ee66cc5a13e92652211ae3afb9815916aba6a5ee9a258a1a1fe21",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1"
+      ],
+      "rank": 7,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00159496,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:dd17553331ae73223a0bb483b5f1e0921b5cac2d208c0c5f26961b4e7b2ef3d6",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 8,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.0015203,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:91598cf572862c9343c9c04e29c8c8707395f546300fcdbb3ff7d404c4768eca",
+      "parents": [
+        "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1"
+      ],
+      "rank": 9,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00146975,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:d3bb09e0a23bb736fd183462ed6daf79ed348c3dc1cc2dbb85081dde7fef03bf",
+      "parents": [
+        "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 10,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00145849,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:0da738a506f0cb09221a2769eb810bab7a9ef6300ba741dd2d2895d7e356a734",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1"
+      ],
+      "rank": 11,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00136763,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:05453a65fe0be319ccc37bfed7218eac6e39fd34bb80c05319018f40b99f62e2",
+      "parents": [
+        "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 12,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00111971,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:95fd68a86566e281f80cc6bd8b3cdee165f9824111a68eaaf75b620e2ed84542",
+      "parents": [
+        "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+        "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 13,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00108117,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:968179c656c4ad569baa2adc44f6b2f93804031fbacabc5a039dd248f095f918",
+      "parents": [
+        "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1"
+      ],
+      "rank": 14,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00099512,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:5c76b1c7acb877ca5ee25594a33b12317d0152b4a2b40b9248c4f3e18af6709f",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 15,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00093219,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:b8f90ba43e12e98cd171685bf32103d059c593b29c43079f89b163a5385d383e",
+      "parents": [
+        "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 16,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00085781,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:01e49fae141ee15707ddad38f79cdf946e8a95bd3e2798aa7d1caf334ac8d1b3",
+      "parents": [
+        "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1"
+      ],
+      "rank": 17,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00083232,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:71561a1ab0d65a90ffe96aeb896cd3a214b5a56496b2ef46365ae6238cd12ee8",
+      "parents": [
+        "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 18,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.000832,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:b6706e6393cc735fbc746a7613d4bff60c4c0baa294075ec9d9315f5fed0ece9",
+      "parents": [
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1"
+      ],
+      "rank": 19,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00078076,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:b5ae10d76627c81d1a4a7997fe55e6a0811653e0ab84369557cd038124f5afbc",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+        "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 20,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00077444,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:110627d8050ca284daf5bd2ba5120bf49b4a602764fa0d4f0497e2780ef5bb1d",
+      "parents": [
+        "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 21,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00075532,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:91f2d8b6a7a4e11b025300743a7de3de878ab24c3fc355b78e5f894c6f99ece2",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 22,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00067218,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:17f7894e49c7645a29ac54307c8db5a8eea6c67a6c9c5683636f71824f5b64ef",
+      "parents": [
+        "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+        "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1"
+      ],
+      "rank": 23,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00063721,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:ef8d12feac73536012f5d2e99eb6e91199fdfb3cdd28efbef3f6e7c53e1f37e7",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 24,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.0006362,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:2c306abab0b3527dd2e2bd585addc4aaf75d6cbba7466da6e3d5066194baccb3",
+      "parents": [
+        "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1"
+      ],
+      "rank": 25,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00061811,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:7b611f3fe230fcd71a405011af4b01defe2a119cdd9b05a42597f541f69faa61",
+      "parents": [
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 26,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00060902,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:024ab91807af378f665eae88eff6c91bc659b0a376ffc662551f6e0aa1e7214f",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1"
+      ],
+      "rank": 27,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00060645,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:fa65b6af31d73dd5eec22eac4d0f7c4eece2e8c147f63141079de23c437f65bc",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1"
+      ],
+      "rank": 28,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00058057,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:b219096e38d18ca646706b05e937794dd426a6e896fca1a24aba9ade10fd07f1",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1"
+      ],
+      "rank": 29,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.0005661,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:1863a764ed9c57c2b74140c2633adc17279bf8b3b5f2289454bfa87cdf177853",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 30,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00056476,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:f2ceb6574fdd93569cbc4c18ec2c3ac84d8b9642f2914bbe6e1f2948f8eec67e",
+      "parents": [
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 31,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00055315,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:91688df6adb5327a694eb6bba3c2ec8ad89ccc57419eda110505ff1185e40ab7",
+      "parents": [
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 32,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.0005407,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:f58963be7e70dc5eb6a9c88ba328671bb89f17557530f59817bcfd4588b4f409",
+      "parents": [
+        "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1"
+      ],
+      "rank": 33,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00050197,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:a51ddcb5309c5cd5d811e5e8dc72b5e15862b9584aeaae08c824a6873b7883c0",
+      "parents": [
+        "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 34,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00043411,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:0dfb7064696ca949d554b2baf395265d0db966dc90b46ef8a30d48b1eb3f9cad",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+        "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1"
+      ],
+      "rank": 35,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00043094,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:36817f396a480502f24f288eb97aef21bdbe9838d0e88911395bcfffeee70d4e",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 36,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.0003937,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:20b61850881fc34b444957ad6b538a2798d403c3b88cd26450eb62df58998b72",
+      "parents": [
+        "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 37,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00038641,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:3033314ba4e43128c5e2932f8b5d712d9fd5e2b57635f2420db92c9a2fcedcb8",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1"
+      ],
+      "rank": 38,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00033207,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:9784dd7c9406d228eab1803f90921e174dd6b12c3ba24bd218cc127a81bd2ae1",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1"
+      ],
+      "rank": 39,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00030169,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:ff3295e84d99755f524857917532999a75c49c70eaef5da29d168f8c5fe963fe",
+      "parents": [
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 40,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00029136,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:016aa7e9fb74e1c0152a1f0ad090c5d258d96d66aa6bc9213ccd9417a0e79a5a",
+      "parents": [
+        "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1"
+      ],
+      "rank": 41,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00026956,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:df9addb5f835439a27b6c01282dac18e4a5d8ec42bbeade15d0ebec1d5a15af8",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1"
+      ],
+      "rank": 42,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00025863,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:d8ac34a640ed266748b312e1acb2dc3a4f36a9e4e71ee728b62f6a524252b913",
+      "parents": [
+        "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 43,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00025761,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:832dadc7d55313a04472f371dcd2acef39d87a47c375af2c6d174fa54a783fbc",
+      "parents": [
+        "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1"
+      ],
+      "rank": 44,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00023721,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:45c463616e34b7920b764ff47a6ad08ea6a41569e8b59e43da5f6c7e4014a7eb",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 45,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00022941,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:c721e55cc22e0c875e9a8e089b4f7d95dd16b57bcc5f2ee6130a86161bbca1d2",
+      "parents": [
+        "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+        "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1"
+      ],
+      "rank": 46,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00022878,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:491a3194fd4dbeb9238da1239673de06ff190e4679bf020208e4f61ac7aa108a",
+      "parents": [
+        "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 47,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00016627,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:d8ff55e01bea7b81bac9443a8fe42d431bc257a328297b2ac2033a19d913e6e2",
+      "parents": [
+        "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+        "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.SEASON_TO_DATE.HIGH_Q67.V1"
+      ],
+      "rank": 48,
+      "status": "LONG_TAIL_DEFERRED"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00016089,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:06937dc6e0ba207b2b9cadebd23736cc15c9974430a12e1334f9c4e5e957d0c6",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+        "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1"
+      ],
+      "rank": 49,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    },
+    {
+      "best_worst_case_delta_log_loss": 0.00014739,
+      "minimum_q_value": 1.0,
+      "pair_id": "pair:c0b51f90c5f68654d43546e39a2b5f1ffc1129d8401fe0506a2b43a9678bc732",
+      "parents": [
+        "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+        "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1"
+      ],
+      "rank": 50,
+      "status": "RAW_HISTORICAL_SIGNAL"
+    }
+  ],
+  "schema_version": "pair-rankings-v1",
+  "top_count": 50
+}

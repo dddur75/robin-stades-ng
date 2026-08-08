@@ -15,6 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 REPORTS = ROOT / "reports/evidence/e1b"
 
 
+def _canonical_lf_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def test_committed_e1b_reports_are_valid_and_replay_bound() -> None:
     reports = {
         name: read_json(REPORTS / filename)
@@ -28,8 +32,7 @@ def test_committed_e1b_reports_are_valid_and_replay_bound() -> None:
     assert replay["replay_identical"] is True
     assert replay["r2_gets_during_replay"] == 0
     for name in reports:
-        payload = (REPORTS / REPORT_FILENAMES[name]).read_bytes()
-        assert hashlib.sha256(payload).hexdigest() == hashes[name]
+        assert _canonical_lf_sha256(REPORTS / REPORT_FILENAMES[name]) == hashes[name]
 
 
 def test_receipt_hashes_flow_from_selection_to_measurement_and_dashboard() -> None:

@@ -220,7 +220,8 @@ def test_replay_hashes_match_and_costs_remain_zero_external_effect() -> None:
         assert replay["additional_network_reads"] == 0
         for stem, expected in replay["all_report_hashes"].items():
             path = root / f"{stem}.json"
-            assert hashlib.sha256(path.read_bytes()).hexdigest() == expected
+            payload = path.read_bytes().replace(b"\r\n", b"\n")
+            assert hashlib.sha256(payload).hexdigest() == expected
         costs = _read(root / f"{prefix}-costs-v1.json")
         for field in ("r2_logical_gets", "r2_bytes", "provider_calls", "odds_credits", "sql_queries"):
             assert costs[field] == 0

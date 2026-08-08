@@ -1,48 +1,56 @@
-# Next Mission Brief — E3A puis préparation E3B
+# Historical handoff status: SUPERSEDED_BEFORE_EXECUTION
 
-## Configuration
+Ce brief historique est conservé sans suppression, mais il n'est plus une
+autorité d'exécution. La mission Phase C Full Bounded Expansion V2 le remplace.
+Un nouveau brief Ultra ne pourra être créé qu'après l'exécution et la revue de
+toutes les propriétés prédictives et paires structurellement admissibles V2.
+Les triples restent verrouillés.
 
-```text
-OUTIL = Codex
-DÉPÔT = dddur75/robin-stades-ng
-BRANCHE D’ACCUEIL VISIBLE = codex/hypothesis-universe-experience-v1
-PR À REVOIR = E2 Targeted Fixes and E3A Launch V1
-BRANCHE À REVOIR = codex/e2-targeted-fixes-e3a-launch-v1
-MODÈLE = GPT-5.6 Sol
-RAISONNEMENT = Très élevé
-ACCÈS = Complet
-DURÉE = 20 à 50 heures utiles
-```
+---
 
-La mission est compilée mais n'a pas été exécutée.
+# Next Mission Brief — revue Ultra avant triples
 
-## Entrée autoritative
+## Objet
 
-- PR #34 fusionnée au merge commit `ba928d096e12dbffaea96bbd67770a313257433a` ;
-- E2 : 100 fixtures, 161 GET, 6 434 224 octets, replay byte-identique ;
-- fixture `1208603` : `PROVIDER_INCONSISTENCY`, 40/40 identités de part et
-  d'autre mais intersection 39, `missing_player_stat_row = UNKNOWN` ;
-- Calendar : `CALENDAR_STRICT_ASOF_MECHANICALLY_VALIDATED`, preuve synthétique
-  seulement ;
-- huit candidates E3A, `PLAYER_STATISTICS` encore bloquée ;
-- E3A, E3B et masques non exécutés.
+Auditer scientifiquement les 80 tags issus de sept propriétés prédictives et les 120 paires,
+choisir éventuellement un sous-espace de triples, puis geler multiplicité,
+budget et critères d’arrêt. Cette mission ne doit exécuter aucun triple tant
+que l’audit ne l’autorise pas explicitement.
 
-Le contrat par capacité reste
-`configs/data/capability-scoped-evidence-ladder-v2.json`. Ne lancer ni E1A ni
-une troisième architecture et ne jamais reclasser les 149
-`ABSENCE_CAUSE_UNKNOWN`.
+## Entrées obligatoires
 
-## Mission suivante
+- rapports atomiques, paires, clusters et contrôles négatifs V1 ;
+- manifeste de masques et benchmark V1 ;
+- réconciliation Genome 486/28 et census 223 chemins d’entité ;
+- folds rolling-origin et contrat d’embargo PT6H ;
+- preuve que les workflows Phase C sont toujours dormants dans une PR draft ;
+- preuve `point_in_time_source_provenance=false` et absence de prix.
+- preuve des trois comparaisons enfant–parents séparées et de
+  `p_intersection_union=max(p_A,p_B,p_additif)` ;
+- preuve que les 117 855 couples Genome, les 21 couples de propriétés
+  matérialisées et les 3 160 couples de tags ne sont jamais agrégés au même
+  grain.
 
-1. revoir et fusionner la PR de correctifs ;
-2. exécuter E3A sur une compétition-saison gelée pour les seules candidates ;
-3. exécuter E3B sur cinq ligues seulement si chaque gate E3A requis passe ;
-4. lancer ensuite le recensement général des champs non mappés ;
-5. construire le registre canonique des tags ;
-6. benchmarker puis construire les masques atomiques ;
-7. tester les propriétés seules puis les paires compatibles ;
-8. s'arrêter avant les millions de triples.
+## Gates avant toute autorisation
 
-Ne jamais lancer de triple avant des masques validés, des prix historiques
-admissibles, un support minimal défini, des folds temporels disponibles et un
-contrat statistique gelé.
+1. revue indépendante des effets atomiques et enfant-parents ;
+2. audit des résultats extrêmes, concentration et stabilité ;
+3. prix historiques réellement timestampés, marge et règlement si une piste
+   pari est envisagée ;
+4. choix préenregistré du sous-espace de triples ;
+5. dénominateur de multiplicité et budget exacts ;
+6. preuve de checkpoint/reprise sur workflow activé depuis `main` ;
+7. décision append-only autorisant un SHA exact ;
+8. critères d’arrêt fail-closed.
+
+Statut historique : `NEXT_ULTRA_REVIEW_READY`, `TRIPLE_SEARCH_LOCKED`.
+
+Statut autoritatif courant : `SUPERSEDED_BEFORE_EXECUTION`,
+`TRIPLE_SEARCH_LOCKED`.
+
+## Continuité historique obligatoire
+
+Le précédent handoff reste conservé comme preuve de fermeture : ne relancer ni
+E1A ni une **troisième architecture** de collecte. Son contrat autoritatif était
+`configs/data/capability-scoped-evidence-ladder-v2.json`. Cette référence ne
+réouvre aucun budget R2 et ne remplace pas le verrou Phase C à zéro effet.

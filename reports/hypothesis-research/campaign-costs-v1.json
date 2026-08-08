@@ -1,0 +1,16 @@
+{
+  "artifacts_bytes": "MEASURE_AFTER_GITHUB_DISPATCH",
+  "codex_elapsed_time": "UNKNOWN",
+  "cpu_time_seconds": 121.0625,
+  "external_monetary_cost": 0,
+  "generated_at": "2026-08-08T09:10:42Z",
+  "github_minutes": "UNKNOWN_DRAFT_WORKFLOWS_NOT_DISPATCHABLE",
+  "memory_peak_bytes": "UNKNOWN_LOCAL_PROCESS_METRIC",
+  "odds_credits": 0,
+  "physical_requests": 0,
+  "provider_calls": 0,
+  "r2_bytes": 0,
+  "r2_logical_gets": 0,
+  "schema_version": "campaign-costs-v1",
+  "sql_queries": 0
+}

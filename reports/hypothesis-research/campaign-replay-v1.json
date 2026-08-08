@@ -1,0 +1,133 @@
+{
+  "additional_network_reads": 0,
+  "excluded_nondeterministic_reports": [
+    "reports/hypothesis-masks/mask-benchmark-v1.json",
+    "reports/hypothesis-research/campaign-costs-v1.json"
+  ],
+  "generated_at": "2026-08-08T09:10:42Z",
+  "records": [
+    {
+      "identical": true,
+      "path": "configs/execution/phase-c-execution-activation-v1.json",
+      "replay_sha256": "80d9594e87c8419c6c5ec486ea08ca3f84c12be2a8f34079fd0e3b721d047ec4",
+      "sha256": "80d9594e87c8419c6c5ec486ea08ca3f84c12be2a8f34079fd0e3b721d047ec4"
+    },
+    {
+      "identical": true,
+      "path": "configs/execution/phase-c-artifact-lock-v1.json",
+      "replay_sha256": "359976624fdb3513daf074a3850b61cdb7e68a563749ecd36f52ced99fa75c99",
+      "sha256": "359976624fdb3513daf074a3850b61cdb7e68a563749ecd36f52ced99fa75c99"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-campaigns/atomic-property-campaign-v1.json",
+      "replay_sha256": "b01751a99464fc7763cd7c3220a76b63d8364c726452e25ad5241de78e3f65bd",
+      "sha256": "b01751a99464fc7763cd7c3220a76b63d8364c726452e25ad5241de78e3f65bd"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-campaigns/triple-campaign-lock-v1.json",
+      "replay_sha256": "74ab6329d890d6e7c4cb959af3bf4736cda01ab6d37fd504f7809eff7500abe8",
+      "sha256": "74ab6329d890d6e7c4cb959af3bf4736cda01ab6d37fd504f7809eff7500abe8"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-tags/canonical-tag-registry-v1.json",
+      "replay_sha256": "a6b6385a7838fe2c79532b62501a5437a00e53be48cb684a1b14da9b0604e628",
+      "sha256": "a6b6385a7838fe2c79532b62501a5437a00e53be48cb684a1b14da9b0604e628"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-tags/tag-lineage-contract-v1.json",
+      "replay_sha256": "d66f51ffea8ea00b5f6dabc6238d4597e9ab8fb48db031a9fa16aec6a2465a61",
+      "sha256": "d66f51ffea8ea00b5f6dabc6238d4597e9ab8fb48db031a9fa16aec6a2465a61"
+    },
+    {
+      "identical": true,
+      "path": "reports/dashboard/hypothesis-research-contract-v1.json",
+      "replay_sha256": "cdb872f5b63e200716bb842a82585ebf8af22b21c8d9defc3b9345f9048cdf60",
+      "sha256": "cdb872f5b63e200716bb842a82585ebf8af22b21c8d9defc3b9345f9048cdf60"
+    },
+    {
+      "identical": true,
+      "path": "reports/data-quality/external-data-gap-registry-v1.json",
+      "replay_sha256": "294231fc814384dc28d7a2d1b8164d09b1c2df748c1a2a21c224698920c203fb",
+      "sha256": "294231fc814384dc28d7a2d1b8164d09b1c2df748c1a2a21c224698920c203fb"
+    },
+    {
+      "identical": true,
+      "path": "reports/data-quality/raw-field-census-v1.json",
+      "replay_sha256": "1b67412e2bcf6da9c4e0d203f324d54089a2950b1374cf878a1b66153849e4dc",
+      "sha256": "1b67412e2bcf6da9c4e0d203f324d54089a2950b1374cf878a1b66153849e4dc"
+    },
+    {
+      "identical": true,
+      "path": "reports/data-quality/unmapped-field-registry-v1.json",
+      "replay_sha256": "37902f5282667bc017b6b3c56d8b2be8c0a13d3ced40f24d519360dbafd5a1d2",
+      "sha256": "37902f5282667bc017b6b3c56d8b2be8c0a13d3ced40f24d519360dbafd5a1d2"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-genome/e3-property-reconciliation-v1.json",
+      "replay_sha256": "a53a05800b6b06885f707160c2ff6634be70efa90a38a4b4a9a8a4d135ab6c02",
+      "sha256": "a53a05800b6b06885f707160c2ff6634be70efa90a38a4b4a9a8a4d135ab6c02"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-masks/atomic-mask-manifest-v1.json",
+      "replay_sha256": "15aa791c8d116846eff57a04586495ca6b93d9454473d2b59c91ac3d2bbd657a",
+      "sha256": "15aa791c8d116846eff57a04586495ca6b93d9454473d2b59c91ac3d2bbd657a"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/atomic-campaign-summary-v1.json",
+      "replay_sha256": "b9eebbc5d55fe10649dc701f5457eb2c90a7acff6178177f3fd0872a350d917e",
+      "sha256": "b9eebbc5d55fe10649dc701f5457eb2c90a7acff6178177f3fd0872a350d917e"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/atomic-negative-controls-v1.json",
+      "replay_sha256": "3afcf165d050f26f8a768ce7374ebb981d364a03cfbb2016ccb155a98bc8fc85",
+      "sha256": "3afcf165d050f26f8a768ce7374ebb981d364a03cfbb2016ccb155a98bc8fc85"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/atomic-results-v1.json",
+      "replay_sha256": "12a6664ef301dedbeb1b0830d0a972fc5f3d5159955e8646f816f23297ea0716",
+      "sha256": "12a6664ef301dedbeb1b0830d0a972fc5f3d5159955e8646f816f23297ea0716"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-clusters-v1.json",
+      "replay_sha256": "ee9cdbdf571253e968fec8abd60f7d95a47ca6832c85414c7eb034450b69175a",
+      "sha256": "ee9cdbdf571253e968fec8abd60f7d95a47ca6832c85414c7eb034450b69175a"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-negative-controls-v1.json",
+      "replay_sha256": "891206bfce3930e76b40a58ad1f855da46d3bcfc9875b537c176612cd889ed85",
+      "sha256": "891206bfce3930e76b40a58ad1f855da46d3bcfc9875b537c176612cd889ed85"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-rankings-v1.json",
+      "replay_sha256": "81f0e17ac73fe893815a90235420621b78bbf4b35d6feffd50852a7f33cc5c36",
+      "sha256": "81f0e17ac73fe893815a90235420621b78bbf4b35d6feffd50852a7f33cc5c36"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-results-v1.json",
+      "replay_sha256": "f1559b4508852bc35018ccf33bf9002211175001ddc9c2d167b84fce29d79ca1",
+      "sha256": "f1559b4508852bc35018ccf33bf9002211175001ddc9c2d167b84fce29d79ca1"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-search-space-v1.json",
+      "replay_sha256": "2f1a59be875fde04485df9c1f16323c05df9532657018eb8daefd2e92a8ddfd5",
+      "sha256": "2f1a59be875fde04485df9c1f16323c05df9532657018eb8daefd2e92a8ddfd5"
+    }
+  ],
+  "replay_identical": true,
+  "replay_runs": 2,
+  "schema_version": "campaign-replay-v1"
+}

@@ -1,0 +1,3083 @@
+{
+  "canonical_targets": [
+    "MATCH_RESULT_90M",
+    "TOTAL_GOALS_2_5_90M"
+  ],
+  "generated_at": "2026-08-08T09:10:42Z",
+  "registry_hash": "37235452db488c8984878538cc1c55ecb26bcdc529b773222948e66f4526a47c",
+  "registry_scope": "RECONSTRUCTED_PREDICTIVE_TRACK_ONLY",
+  "schema_version": "canonical-tag-registry-v1",
+  "source_field_registry": {
+    "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d": {
+      "entity_type": "fixture_event",
+      "json_path": "data.team.id",
+      "temporal_use": "TARGET_OR_PRIOR_FIXTURES_ONLY",
+      "transform_version": "phase-c-source-field-v1"
+    },
+    "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58": {
+      "entity_type": "fixture",
+      "json_path": "data.score.fulltime.away",
+      "temporal_use": "PRIOR_FIXTURES_ONLY",
+      "transform_version": "phase-c-source-field-v1"
+    },
+    "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895": {
+      "entity_type": "fixture",
+      "json_path": "data.score.fulltime.home",
+      "temporal_use": "PRIOR_FIXTURES_ONLY",
+      "transform_version": "phase-c-source-field-v1"
+    },
+    "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953": {
+      "entity_type": "fixture_event",
+      "json_path": "data.type",
+      "temporal_use": "TARGET_OR_PRIOR_FIXTURES_ONLY",
+      "transform_version": "phase-c-source-field-v1"
+    },
+    "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2": {
+      "entity_type": "fixture",
+      "json_path": "data.teams.home.id",
+      "temporal_use": "PRIOR_FIXTURES_ONLY",
+      "transform_version": "phase-c-source-field-v1"
+    },
+    "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c": {
+      "entity_type": "fixture",
+      "json_path": "data.teams.away.id",
+      "temporal_use": "PRIOR_FIXTURES_ONLY",
+      "transform_version": "phase-c-source-field-v1"
+    }
+  },
+  "strict_tag_count": 0,
+  "tag_count": 80,
+  "tags": [
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "c83f5aae26787775eccfa2327b016e1207d71e31b3e145036c1f66e8222a4e5c",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:63f161c409357eacbfe06e7ea31a1435c0b997fa92203c60f31d0d75fc4dfaee",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "288c15c113333936d17f497c3c12f97229a3c3d6b36d0057d7f7269ec2978953",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:cb81de6a29c739b4c2da72b7375b259959664d41539f6a5a94484e80acedf278",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "c3b97dab0a6eb9752b430d92cbf7937546d2215294b3e9bba02401e4ae7a0ebd",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:d5234e6c1824fbeebf25a2794191e4019f020ad77d82b75e2c77a8d788003f44",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "4fe1b056e944fcb46af3b0b3b2d60bf0d5545be690f0e515edb4612357b16592",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:0eed20a1acb884cba5239fcbdcec133988a720911f60db908628a30565bcfe04",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "f54597a64eb71a9c0814d7928247afe76c2353dafa4b6556054b175a9d9b3d23",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:02cc15f84dfe15f908ad739406d3c31b1b615f7947ba4baaf97cee7541212203",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "ec473882a0e2baa5940556fbc421e1fc2916d4b299b5294f6b8a81f056441256",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:a7fb3da759e9cb0057167f72aff992c94c03f64f97642f22bb2a97d8a14d946d",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "37eed4b042055ce67fd9e64755030c8ad44cebc6541270768104730d367acb86",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:3ac5fd94b04c7520936a71690a442320433006075c3ec363fb9198f01c28a79f",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "525b8f83e8b2d703e8c4e74a0b7d44b611217467f39e3fe0df95e4d63eb02d91",
+      "entity_scope": "TEAM_AWAY",
+      "family": "ATTACK",
+      "feature_id": "feature:97797fb75bf62f2efae837e16c9027df87b1c6eeec82da22554cadd0d77aa450",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "b67c2539174c8c1ebd6daa1b0ddac16fd3695a6ec297d151d572b25609ede7e1",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:94d9d412324e1a15db77643ba8fe1c210db6f0edfe52480a520029debd51249c",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "5f03a3d9aad37367c8bc1aeea41ff2a8e2bb07c57ce2610be3711c0713716a23",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:eb3c574f19713a353c79b2501a77ee80dcb9f75f0ecb6fe220ee5b40c1cdfb4f",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "bdb29e113f328fb834c83468e99b79cc35df1586892f6c46e10432a9d15323a6",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:7b8047d7e33556ed06fd3892feb83f18371fbd9c58e10aa54593ac049d81b962",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "87ee18f763d054a32646946aa5a6289da89530d7e2f3902345ae03874e9cc2bb",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:6f82bba8fdc32e92af018bb01668db31c5694acfadc92ab9cc43f65d16a0cfda",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "b41f30f1f8d6799430449ac15b6a2b2ce3e315f7faaec4ea99428d07dd53d18d",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:d3859f291ed10fc237418ff28d2c86f57d3e4071f2844c3f6b8d39992bf2227c",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "918f7bdc6c9562540935ccce7fe82405023f6ac146aca9c6441131cc8932df89",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:fbaddd7326268559b30187a592a756a500724710fa77704822f321918c4df4d7",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "e6b4f1135047064208d974a33350b836ee7a8826dde29873166fce9fd9390242",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:fbbfc7bff0447e1c3f96205b79c3206f93e38d605620f126d5d11362b56bdbde",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "95900eee8b5294fb27b231fd370843b2851db4310c23dc81d6583fa72c3ddbee",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DEFENCE",
+      "feature_id": "feature:085f09f230697ee82441bd7eb8de9cd2ecc8c089a6e67ad91ac6cad46f88b4a4",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "21963030a9d0da8f7893d8aeb433c3405b20015fad779007955d67a2c7af7120",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:f7a2628d893fdb18877938f38b38f860bb3caae8c92c0e3273247b1e2888894b",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "cb9cb716016474994488b4638806dc067b7397e6aa5bfecec50094e5cae96a51",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:11a470c2a639251f29fe9921464bfa2a3b9665c4e8c844bc48ee6a580d63bfc8",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "c2125fea5f5ac725ccbd5bd19578045383e87076cb7543e317cdb19ef882e1e5",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:cb3a86b534b3b5df75920e9e153a667274a53849a50f22d94b72900c9e39139b",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "5a7b2b2e5a2eecd897aff9fa4b4231a75584986a7068a2e97510d71232196331",
+      "entity_scope": "TEAM_AWAY",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:89186b616ca810542a66c4b9ce8bf8f137bdf019b1f25a3381d825081ae51f5c",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "b765422a1df6085c2302f383d7ff8ab6d62a377fd61334e884337e213083fe52",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:4849c8c10575487e7aff91fb875fb70fe713cba227f86363083fcc33a560c426",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "75d479869c3d0fca6116abd420ff609e31b86ea66c1e93430860047909af3f29",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:0d966b52a833d9db7e35a883d34c2696eee6f40914e85ed72ad087a4c7e142a4",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "44d067e15fe08fd3bd8581105f243e97ee4bc0c1031cb6b09a114452bd5c55db",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:1fa25314030127a80411606cfdc72a612492592aa783649c896675880fd13097",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "90534230951f24347dda9283f3428533b9f8b8aa0a5d4b80addd557c94b956a6",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:f279b406ec460be365d9a62d6b38297fcf8bd339223b352abe641bd3b21ffd15",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "3b76db9a47f47105a8656c8ff6c5a577c7f3d376d311563ceeb9e49010def51d",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:2e3230a78ca9f6b8fb26dd14bea8818f65df0430a3a3ebd792516cb023bbc18d",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "ab669e75f334ad2e957b1ba570ede845252716f165f1af2969d0f4e896e4f55d",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:e3e921c1a64eefb6e32d9a2d18c8a7597a877403fc865298520055ebac0ace5c",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "16a70989dbd1ccb46dfc25990d2f7dfc324ea39b4243c828a3a46d657ddc3484",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:0a2416bcdd7744c147000cafe655bf4a934983b9c297a630b3bb6428346194be",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "b3ec70a963b537e5743bcab207bd5e7a53a1ed1acf77deb8d952bc06b79015fb",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:4f19d670992e2ed499d900e0cca6bb681b5573eb3c4d7e06a652f131485fbbbe",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "26656ad51cc53af19b1ef59df42ddf3d3ead67c4094cae128e3f59e04e2aabd2",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:03fd0d3db50cd92c2f38d242be06a7116a250a10047b72c8d72d88435eee6fa7",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "57767a897ba36c2ce3f63884122d193bcf96ab57b5a1f4e64f6873d0bffab56c",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:633992d2c38c27406f589ea22177efafbe7efe4c86ffdaac9264aa144ecc0250",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "997b2925cf16955048bcfb99b4b937fddaee49ae67e253e1ef8c97a4a4ceb938",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:b6ffddf1698980af99d9f5743e83a7072678466ee5b21c928ec66b0ad4da8033",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "fd066ef1be06eed18ffd48abe96cd2ee81a409ccfe4c5ad082bab082e6031e8e",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:6a3effffd989403fb7d3c7dd5efe668f0d07aded48c8e17a0a4fff4f10c0e7ff",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "64890a38b603a0e6fac94d7b7c32e18a27c16e68f6f2ad76de3c2962abf133fa",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:9aa585cfd583b55c39a2ec18f8197a86cfd45c3bd0a38b21f05206a9ce243865",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "c1133313f5c44daad2303738a77bf1177fcac7d62635c635f9256210d5b401ec",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:d45cb7fe43964ab67974fb64df8955480af18c6cd5d71a908dd17ce8f3eb1cf1",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "c2d8abb04de9694504b078aaa989c62b31bcd0580d6af8f85d5c5d5313ac2cac",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:d7973dff86f00b54ef56b02c89015b9ea09779351bcf21137af865917a8425d9",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "ccbee04e153263926a952bc831a4d86185ae43623925777b05e16de688eb1369",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:26f7f3b48da40eb093bb3d4357d09c573466b0941e334d2d99bdf23d09a4e6a4",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "80aaccf3a1cedf91e1cdb08261e7fa817abe0d53508a93b880219e9263672022",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:eb698a5ed39d6d23bebcba10898ae11bcdad9e4767882f4e01b1a5807c8f28dd",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe away — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "ab737d4710991b6cd61ef331fe87dbb07f61b0303029c2f638b4364c6da20247",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:1b77bb578b0faa42b87abfbf0ff7dacff00d23c538f199136340a17f2be83063",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe away — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "f33cf4c2b4a2ecfea0034b0edd5feb6b4dcd062e5c62b40822e503ac8dbca7dd",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:36d8aaf5214e9bcb55f8abe8e2fe0e600e6bab49c2f1bd29343d9e9bfded69d6",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe away — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "0688015cdfd52b7b5c3493a91a48f056b43072b66bb68a9a60315264122912d3",
+      "entity_scope": "TEAM_AWAY",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:64d0badad84913e87ef993ddf957f9ed9210f8321a5422b636f803514ba7be93",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe away — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "AWAY",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "081f4ab3c24f3db7536453d915867c0bf272e802a512da87a528b131beb0ecb2",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:74dc139f6c51ec2d58473217d2872626acacea01ca5a63b7e4697e879a3970dc",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "c4f034410bfe5f2696fe600004007f46b7b157fcd34c89af0e2201aefbc41388",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:25c2c57dac85beed0445a7cd21d4bf08dcad0a7957c21b9624baf392bfa20939",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "e99bc2cfa2693f61533653c830005d5fd468411bff681e88f0d6e9b49121891e",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:8a0dc872ea6fa202e4bbc1c9749e015cdcdf3d2c6fd0771f6df1c4d9e05de96b",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "baa351ceaba023340bd35d8147bcb3025b339db3f37c38e73ce007b96800b571",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:b971af8c46c9b70aea42285779caf1c789073d6eb096764315ccb4442bc69afc",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "FAILED_TO_SCORE_RATE élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "failed_to_score_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "FAILED_TO_SCORE_RATE",
+      "tag_id": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "cfabdbb6fe4ed096b92b20cc153ffb8341cd4199fc820240f4f0288f07aa2fb4",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:cbd80d02bb264efc987a7ff1dad15c3e20e7b018d0f3cab6085c16ff2f2c912b",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "1971862b3ddda81e20bb60ac928fb8adbc5261f16f3204eccaf51c96cdeb0be8",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:a0b1e551194cb63857c4ad390ee2072b34a1c825ae2ee2ebdc533a236fb94e8e",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "f22ce35a7ae92ac69866f85ca117954f36167de5054f5646ad0a07cf19a4184a",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:deeadde4b3e76753e104da6c20abbd64a12c67507b2232d3b75d36a23934a879",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "f7ffabedc9a59ed60ea1de3154232701d2040471ce9a971b1cb173a2daf285eb",
+      "entity_scope": "TEAM_HOME",
+      "family": "ATTACK",
+      "feature_id": "feature:fa08af6fc434e467b0f8e186ee8dc2c53160e514f6e3906d737ef951bba39d08",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_FOR_MEAN élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_for",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:attack:goals_scored",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_FOR_MEAN",
+      "tag_id": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "d4616d99fa422bd8cd56f7d6f6b29c96412e8de4c9c9bec4ab0abc58fa7f6c5c",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:9bcffcd018d621d3ff86c7925adc684fab9d143753bafbd36607eb5328024e15",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "b2fad7234d406e21e78d280984a652a308c4f6db835e80ae324f1a4061395229",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:6ccbb871c4b2a73e25e4244ba3c2061b3b0588e3919d476a183d7050e0c80f2b",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "110e5c3d500e69afa7d26a4222dc8a4f8922c3b63c796c25b027993be3ecf500",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:2350901d723465012203abe5b108726bdc1797d2c002630390f87b38706bb6a1",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "c71bc02710aac4c37f3dc48d3e77ac8d5758475f14fea6d85f70a2f5fd25f78c",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:6ac74906c383297d098b0fd22db999f956f38bd87808f970d4a5a169ec2a2066",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "CLEAN_SHEET_RATE élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "clean_sheet_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "CLEAN_SHEET_RATE",
+      "tag_id": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "4182a30dd51d7cb84371b6c984191b0266b6ea171ccbff77dbe84b528c22935b",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:a74f52a81be1896a29e08c9269dd4b4af252a3e30cc16a764b781391e175c261",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "5bb5fc0232eaf2a0e150442d67d9b0933fd099da1d69bba6207df79fbff7d701",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:27d4982fc4f9ffa7e83c6856127e1a0cf6603c577954a6fbf1fb869eaff6222e",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "ab6277468240a1d8fbfecb79179b23f8fe49d8eb41c768578317898381293867",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:27f66b380d5d6dd1dc94f2541f506b0ff387ba178091e5747d9016e6911d2e9c",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "e276bf2a9986e060e85f2471897e3bcdd10a99733e1fc24f3f0d72cc2a43ee04",
+      "entity_scope": "TEAM_HOME",
+      "family": "DEFENCE",
+      "feature_id": "feature:2045e832a140c8f112c3cdef3ac40f2a02a37f75f066eb9e3edbac158f8a833e",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GOALS_AGAINST_MEAN élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "goals_against",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:defence:goals_conceded",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GOALS_AGAINST_MEAN",
+      "tag_id": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "GOALS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "35d7d032121e253c9e3062f0251d93679982271880526972ae6423af0ec1b782",
+      "entity_scope": "TEAM_HOME",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:cd865be6eecea8164c33ca46f123beb17fb31cc4ddd8779df83f5fc0878a52c3",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "33151c72ba48a4ce663f6c6e1dddda2adf8dcf9da383b2a1b0636b3779f512f1",
+      "entity_scope": "TEAM_HOME",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:c6042feacac097a943871bd98269c019843c479b7aa2356e7bff2d22677a86a6",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "f1266cb0ce795243024ee4d41e60a8513e79b7c50330df197fcc20fa3435ba10",
+      "entity_scope": "TEAM_HOME",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:3b318531f69d0c5312aacf5cc0d1d45481943e76291afe7a4b09240b4fb023ae",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "91e138a4cde4ba17ae61601fa6e20f04580f2b00a873bb659b714333f464bca8",
+      "entity_scope": "TEAM_HOME",
+      "family": "DISCIPLINE_REFEREE",
+      "feature_id": "feature:022d1a70470c285330b5638b4f4607601825c719dd2a6a413eb1950afc1d63d1",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "generic_cards",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:discipline_referee:recent_cards",
+      "required_capabilities": [
+        "EVENTS"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "GENERIC_CARDS_MEAN",
+      "tag_id": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "CARDS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "430fd3c2ece8699309c52282dffac5b5277aa36f4603418502a50c02786d96d5",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:8eb10e008e08c3e89170c31a7b74e18de03949999dccf3c2383a02a261defc31",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "159219b9041c1ac8a7c099ac0756cad82a0102d90de5d0c32e28c9bc4ba17cb4",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:eb98a1733bf5e71a9a300543186d0ae0ba0df29c8a748efb9230cd373a6cc981",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "51686cbf6a02a07c3d3a3ac1147293005e6abcbe98187048d2e85b5e574c692f",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:1cca1a69845cb0b25bb6c846a628755bdb01206a0a4eef0f2ff18713771d844f",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "2281577b4f48b87b0d271118effda2217f6ba9aed17affb25ed9f4f7200f4cb5",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:a9b35dfcec67d0cefcba56249c9f7eccc19daaeb1f6150fbc8df4418b18926e3",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "DRAW_RATE élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "draw_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "DRAW_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "e7d9fe8576a8d4ce67654b1f416c2be9a09125e40aa3a1c79de6a6b676e88c53",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:b93826efeff9e73378ec32839f2ef44eaae5da4260f234c5139120df445b80f5",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "2253eceb34b97bedea1448c2b59cc3e6e0b821b9ef0b1edae4cd6ab151aad572",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:351071b5370cee1c149debe3393de6b11994e6b8b917924ebb370536236f35ce",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "68f82d4719440465848997b4ad71acf2bbfa64a704e42990dbd6cbb22d27c6cc",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:56506cee9fd2ce6cd7b1704d5e97ef76ce46e832f2c8c442be7f777b7dc15abb",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "e409689120991e13f90be248909e360c6ed79de3234f5932ab2d63e928931cc2",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:ae00cde02a95ed636831f31a7a31176d94c12a99dbdf8ca4d591a87a8e39b243",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "OVER_2_5_RATE élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "over_2_5_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:goals",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "OVER_2_5_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "a6ebf4d22171c386bd339b712d65f9936aebcb424fe339b1bb83613ede11bfa1",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:267cde63e95f1490564b5a97185f56ae8c26a34033c0006f4b3710a5c1cb4aa4",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "4d6e03b49ec07fb2c4675f8986380b57d074a71e1576c7c7698009c5fe2beef3",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:09e23a7b69d204a16ba8896a01c27ff2ff99224370bdb5729f698e1cfd8d141f",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "7e311f3684b2119d1bd156494d97b5f2a11955a7d577f4e8a1af836ba3649ebf",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:bce8e62197d62ec0186e6864892f1b27a3cfad6532f4fbcb8090350695d27e54",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "cb1cd0a1ea1ea9fa9e3c4b3a35be5e43c0e39b1ef53c50aab41f37c03a062385",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:3b6ef06c0e7476747a66effa74ec3c71afd059b0f4191ab09efa13dd6bde76f3",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_PER_MATCH élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_per_match",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:points",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_PER_MATCH",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS_PER_MATCH",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "94445ceda922a4ac83ca30a5229e483cac759aee50ce8abcfbe6679c5038362a",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:dacc77ea252678026462abf68af8d9f2b558b6fea196584639901a08f8c7280d",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "667094397e2d1318328d7d97ac1031f77260054a2f3b3c8905cad10e8b2237f0",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:e55c26c96bbe2af06302bf88bec6e46fe8049ba2549332ac6f4b75d658ee0c36",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "afe70a4f75e7edf465ffcad6c87c4d98440181797c7a87609611526895a366f0",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:5009ade9b99952104ae7285376fde786691bf4e92ffb65b1a249f1476bb37691",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "43755e1efbff709a74cc88ef648e8ab8bf7104817a3f10bfc41860810e5d6434",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:2c47990c4a7863252e5b5d5eacd8e6b624f27beccd06b4e6b9d17025bb7f3932",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "POINTS_VOLATILITY élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "points_volatility",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:volatility",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "POINTS_VOLATILITY",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "POINTS",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "5d194054c6cec0af8d0d003820a5d734ea11220d623744b072c6581e24cb7e97",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:d2fa366dad5a56b2ea466697c426b62219901b9b0d144c5858bd7b0c045bb06f",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe home — L10",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L10.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L10",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "186aef75a822dfbab01d1f42b015359ae72a8c069475a2e091f5608f62401f68",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:5edc07c6c4de452052514f8175f35bdf43c1b3bbfb0ef424b12dbfacb954a8e7",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe home — L3",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L3",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "5b62da28fe2f3a8312802e13ed85e284efff964470eb1fd6428ecb6c9466e3f7",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:5cb94ed7256f5a822ac1c298827373f1253b050bc026e85f970ace25cfded25d",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe home — L5",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "L5",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    },
+    {
+      "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
+      "definition_hash": "ffad0de7eda03dc1adba1032026243cde4457e4717f032f9f738dfbc30a5fb89",
+      "entity_scope": "TEAM_HOME",
+      "family": "STRENGTH_FORM",
+      "feature_id": "feature:b47542bfb60850c23463fb0ab6f2c80d2ea01b7bef47fb737da182df9ad72ace",
+      "grain": "one team orientation in one target fixture",
+      "label_fr": "WIN_RATE élevé — équipe home — SEASON_TO_DATE",
+      "mapping_basis": "DETERMINISTIC_PRIOR_RESULT_TRANSFORM",
+      "market_compatibility": [
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M"
+      ],
+      "metric": "win_rate",
+      "operator": "GTE",
+      "orientation": "HOME",
+      "property_id": "football:strength_form:form",
+      "required_capabilities": [
+        "TEAM"
+      ],
+      "scientific_role": "FOOTBALL_PREDICTOR",
+      "source_fields": [
+        "field:9c472a3b33da810deb13e52e43ae6f6c86b0c7192f3ddffcf24d87617cd4c895",
+        "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58",
+        "field:b3427386b9b08569e02f8885d9407588a027e2926ccd2403dbf55a417ddb23b2",
+        "field:d48ae54a6ba2e1f1d04c1398e35d6263b8a1dadbbcc3f01c54ffdcca56bb6f1c"
+      ],
+      "status": "MATERIALIZABLE_RECONSTRUCTED",
+      "subfamily": "WIN_RATE",
+      "tag_id": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "tag_version": 1,
+      "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
+      "temporal_window": "SEASON_TO_DATE",
+      "threshold": null,
+      "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
+      "unit": "RATE",
+      "unknown_policy": "UNKNOWN_IF_HISTORY_OR_SOURCE_INCOMPLETE"
+    }
+  ],
+  "target_views": [
+    "HOME_WIN",
+    "DRAW",
+    "AWAY_WIN",
+    "OVER_2_5",
+    "UNDER_2_5"
+  ]
+}

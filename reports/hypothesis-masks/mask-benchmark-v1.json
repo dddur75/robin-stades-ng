@@ -1,0 +1,527 @@
+{
+  "candidates": [
+    {
+      "backend": "python_integer_bitset",
+      "calibrated_loops": {
+        "construction_time": 65536,
+        "incremental_update_cost": 1048576,
+        "intersection_time": 1048576,
+        "load_time": 8192,
+        "save_time": 8192,
+        "union_time": 1048576
+      },
+      "correctness": true,
+      "dependency": null,
+      "determinism": true,
+      "memory_bytes": 41600,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 134,
+          "max_ns": 7392,
+          "median_ns": 7139,
+          "min_ns": 6706,
+          "p95_ns": 7280,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 1,
+          "max_ns": 109,
+          "median_ns": 106,
+          "min_ns": 103,
+          "p95_ns": 108,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 3,
+          "max_ns": 152,
+          "median_ns": 146,
+          "min_ns": 140,
+          "p95_ns": 151,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 490,
+          "max_ns": 49782,
+          "median_ns": 47344,
+          "min_ns": 46367,
+          "p95_ns": 49173,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 298,
+          "max_ns": 49320,
+          "median_ns": 47120,
+          "min_ns": 45938,
+          "p95_ns": 48147,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 1,
+          "max_ns": 146,
+          "median_ns": 143,
+          "min_ns": 139,
+          "p95_ns": 146,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "peak_rss_subprocess_bytes": "UNKNOWN_NOT_MEASURED_IN_PROVISIONAL_RUN",
+      "retained_rss_bytes": "UNKNOWN_SHARED_SINGLE_PROCESS_RUNNER",
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "numpy_boolean_arrays",
+      "calibrated_loops": {
+        "construction_time": 4096,
+        "incremental_update_cost": 131072,
+        "intersection_time": 262144,
+        "load_time": 4096,
+        "save_time": 4096,
+        "union_time": 262144
+      },
+      "correctness": true,
+      "dependency": "numpy==2.5.1",
+      "determinism": true,
+      "memory_bytes": 280960,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 657,
+          "max_ns": 67599,
+          "median_ns": 62225,
+          "min_ns": 59584,
+          "p95_ns": 64272,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 41,
+          "max_ns": 2722,
+          "median_ns": 2605,
+          "min_ns": 2544,
+          "p95_ns": 2698,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 10,
+          "max_ns": 1122,
+          "median_ns": 1102,
+          "min_ns": 1077,
+          "p95_ns": 1118,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 1304,
+          "max_ns": 121896,
+          "median_ns": 117529,
+          "min_ns": 115284,
+          "p95_ns": 121188,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 968,
+          "max_ns": 119739,
+          "median_ns": 117950,
+          "min_ns": 111758,
+          "p95_ns": 119251,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 9,
+          "max_ns": 1209,
+          "median_ns": 1178,
+          "min_ns": 1148,
+          "p95_ns": 1205,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 280960,
+      "peak_rss_subprocess_bytes": "UNKNOWN_NOT_MEASURED_IN_PROVISIONAL_RUN",
+      "retained_rss_bytes": "UNKNOWN_SHARED_SINGLE_PROCESS_RUNNER",
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "numpy_packbits",
+      "calibrated_loops": {
+        "construction_time": 8192,
+        "incremental_update_cost": 65536,
+        "intersection_time": 524288,
+        "load_time": 16384,
+        "save_time": 16384,
+        "union_time": 262144
+      },
+      "correctness": true,
+      "dependency": "numpy==2.5.1",
+      "determinism": true,
+      "memory_bytes": 35200,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 536,
+          "max_ns": 43930,
+          "median_ns": 42550,
+          "min_ns": 41193,
+          "p95_ns": 43900,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 54,
+          "max_ns": 6612,
+          "median_ns": 6465,
+          "min_ns": 6291,
+          "p95_ns": 6610,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 4,
+          "max_ns": 930,
+          "median_ns": 917,
+          "min_ns": 896,
+          "p95_ns": 927,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 143,
+          "max_ns": 15967,
+          "median_ns": 15566,
+          "min_ns": 15203,
+          "p95_ns": 15855,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 170,
+          "max_ns": 15830,
+          "median_ns": 15377,
+          "min_ns": 14446,
+          "p95_ns": 15614,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 10,
+          "max_ns": 979,
+          "median_ns": 956,
+          "min_ns": 935,
+          "p95_ns": 977,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "peak_rss_subprocess_bytes": "UNKNOWN_NOT_MEASURED_IN_PROVISIONAL_RUN",
+      "retained_rss_bytes": "UNKNOWN_SHARED_SINGLE_PROCESS_RUNNER",
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "polars_boolean_series",
+      "calibrated_loops": {
+        "construction_time": 32768,
+        "incremental_update_cost": 32768,
+        "intersection_time": 32768,
+        "load_time": 8192,
+        "save_time": 8192,
+        "union_time": 32768
+      },
+      "correctness": true,
+      "dependency": "polars==1.43.0",
+      "determinism": true,
+      "memory_bytes": "UNKNOWN_BACKEND_ENGINE_OVERHEAD",
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 94,
+          "max_ns": 13864,
+          "median_ns": 13596,
+          "min_ns": 13379,
+          "p95_ns": 13851,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 321,
+          "max_ns": 11564,
+          "median_ns": 9691,
+          "min_ns": 8844,
+          "p95_ns": 11307,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 96,
+          "max_ns": 10467,
+          "median_ns": 9936,
+          "min_ns": 9582,
+          "p95_ns": 10141,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 732,
+          "max_ns": 48571,
+          "median_ns": 45736,
+          "min_ns": 43610,
+          "p95_ns": 48108,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 432,
+          "max_ns": 47785,
+          "median_ns": 45419,
+          "min_ns": 43083,
+          "p95_ns": 46615,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 171,
+          "max_ns": 10035,
+          "median_ns": 9586,
+          "min_ns": 9161,
+          "p95_ns": 10015,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "peak_rss_subprocess_bytes": "UNKNOWN_NOT_MEASURED_IN_PROVISIONAL_RUN",
+      "retained_rss_bytes": "UNKNOWN_SHARED_SINGLE_PROCESS_RUNNER",
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "pyarrow_boolean_array",
+      "calibrated_loops": {
+        "construction_time": 65536,
+        "incremental_update_cost": 32768,
+        "intersection_time": 32768,
+        "load_time": 8192,
+        "save_time": 8192,
+        "union_time": 32768
+      },
+      "correctness": true,
+      "dependency": "pyarrow==25.0.0",
+      "determinism": true,
+      "memory_bytes": "UNKNOWN_BACKEND_ENGINE_OVERHEAD",
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 49,
+          "max_ns": 3927,
+          "median_ns": 3790,
+          "min_ns": 3605,
+          "p95_ns": 3927,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 219,
+          "max_ns": 11658,
+          "median_ns": 10725,
+          "min_ns": 10083,
+          "p95_ns": 11477,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 229,
+          "max_ns": 11696,
+          "median_ns": 11118,
+          "min_ns": 10600,
+          "p95_ns": 11585,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 811,
+          "max_ns": 48225,
+          "median_ns": 45995,
+          "min_ns": 43269,
+          "p95_ns": 48070,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 452,
+          "max_ns": 47317,
+          "median_ns": 45465,
+          "min_ns": 42942,
+          "p95_ns": 46617,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 140,
+          "max_ns": 11706,
+          "median_ns": 11307,
+          "min_ns": 10901,
+          "p95_ns": 11691,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "peak_rss_subprocess_bytes": "UNKNOWN_NOT_MEASURED_IN_PROVISIONAL_RUN",
+      "retained_rss_bytes": "UNKNOWN_SHARED_SINGLE_PROCESS_RUNNER",
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "duckdb_boolean_table",
+      "calibrated_loops": {
+        "construction_time": 2048,
+        "incremental_update_cost": 1024,
+        "intersection_time": 1024,
+        "load_time": 8192,
+        "save_time": 8192,
+        "union_time": 1024
+      },
+      "correctness": true,
+      "dependency": "duckdb==1.5.4",
+      "determinism": true,
+      "memory_bytes": "UNKNOWN_BACKEND_ENGINE_OVERHEAD",
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 2580,
+          "max_ns": 253160,
+          "median_ns": 244492,
+          "min_ns": 228941,
+          "p95_ns": 250093,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 6819,
+          "max_ns": 428114,
+          "median_ns": 401052,
+          "min_ns": 384368,
+          "p95_ns": 425556,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 6759,
+          "max_ns": 436755,
+          "median_ns": 404079,
+          "min_ns": 386097,
+          "p95_ns": 424531,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 867,
+          "max_ns": 47154,
+          "median_ns": 44422,
+          "min_ns": 41415,
+          "p95_ns": 46443,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 725,
+          "max_ns": 45398,
+          "median_ns": 43997,
+          "min_ns": 41737,
+          "p95_ns": 45320,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 6880,
+          "max_ns": 418273,
+          "median_ns": 394997,
+          "min_ns": 382588,
+          "p95_ns": 415078,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "peak_rss_subprocess_bytes": "UNKNOWN_NOT_MEASURED_IN_PROVISIONAL_RUN",
+      "retained_rss_bytes": "UNKNOWN_SHARED_SINGLE_PROCESS_RUNNER",
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "pyroaring_bitmap",
+      "correctness": null,
+      "dependency": "pyroaring",
+      "status": "SKIPPED_DEPENDENCY_ABSENT"
+    }
+  ],
+  "corpora": {
+    "golden": {
+      "case_count": 4,
+      "fixture_count": 14,
+      "sha256": "1762aa6f1326836bb024ce56b0f6eb530d475103636e1ae681b59a223edc4778",
+      "use": "EXECUTED_CORRECTNESS_SERIALIZATION_AND_BOUNDARY_GATE"
+    },
+    "real": {
+      "fixture_count": 1756,
+      "genome_property_count": 486,
+      "materialized_mask_count": 80,
+      "universe_sha256": "63eb478c5d2f2d6a500461d256eaa3e781f22e54208f6ea621bacf972a47b6d5"
+    }
+  },
+  "environment": {
+    "architecture": "AMD64",
+    "duckdb": "1.5.4",
+    "implementation": "CPython",
+    "numpy": "2.5.1",
+    "os": "Windows-11-10.0.26200-SP0",
+    "polars": "1.43.0",
+    "pyarrow": "25.0.0",
+    "pyroaring": null,
+    "python": "3.12.13"
+  },
+  "environment_verdict": "PROVISIONAL_ENVIRONMENT",
+  "generated_at": "2026-08-08T09:10:42Z",
+  "golden_gate": {
+    "boundary_bits_exercised": [
+      0,
+      7,
+      8,
+      13
+    ],
+    "case_count": 4,
+    "exact_unknown": true,
+    "executed": true,
+    "fixture_count": 14,
+    "payload_sha256": "8f2a30d253fb99cbcc2a314244beb6a9fcf0a660a4b31328888a49c5748bd3b5",
+    "serialization_byte_identical": true,
+    "true_subset_known": true,
+    "vectors": [
+      {
+        "false": 4,
+        "known": 10,
+        "true": 6,
+        "unknown": 4,
+        "vector_sha256": "4b0e2aa647be61507190d3fc2c1cfb3efbdb8c29e81b3e9d3d910d7aa4e0c500"
+      },
+      {
+        "false": 4,
+        "known": 10,
+        "true": 6,
+        "unknown": 4,
+        "vector_sha256": "ddc3a9ef9d0bd9ea9468449f14a7af0312dd20ccbc4d6ee89ae63ef1721f3f65"
+      },
+      {
+        "false": 5,
+        "known": 10,
+        "true": 5,
+        "unknown": 4,
+        "vector_sha256": "40a2daa01839b5f8d9cc12e852726c5878bec5a330eccb82b119ad0f423899f2"
+      },
+      {
+        "false": 5,
+        "known": 10,
+        "true": 5,
+        "unknown": 4,
+        "vector_sha256": "d8e7b615ce818f49f611a3022462bdd5f9d0d3c01b54f6cffe06226b4c386727"
+      }
+    ]
+  },
+  "invariants": {
+    "cross_backend_canonical_payload": true,
+    "tail_bits_zero": true,
+    "true_subset_known": true,
+    "universe_mask_bits": 1756,
+    "unknown_exact": true
+  },
+  "measurement_contract": {
+    "calibration_target_ms": 250,
+    "required_for_final_environment_verdict": "3_FRESH_RUNNERS_AND_WHEEL_HASHES",
+    "runners": 1,
+    "samples": 30,
+    "timer": "perf_counter_ns"
+  },
+  "schema_version": "mask-benchmark-v1",
+  "selected_durable_format": "mask-v1-packed-known-then-true",
+  "selected_runtime": "python_integer_bitset",
+  "selection_reason": "N1756_PAIR_LATENCY_MEMORY_AND_NO_ADDITIONAL_DEPENDENCY",
+  "verdict": "MASK_ENGINE_SELECTED_PROVISIONAL_ENVIRONMENT"
+}
