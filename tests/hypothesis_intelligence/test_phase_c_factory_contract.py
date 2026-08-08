@@ -640,6 +640,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             "RCV3-20260808-085",
             "RCV3-20260808-086",
             "RCV3-20260808-087",
+            "RCV3-20260808-088",
         }
     ]
     assert recovery_ids == [
@@ -655,6 +656,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "RCV3-20260808-085",
         "RCV3-20260808-086",
         "RCV3-20260808-087",
+        "RCV3-20260808-088",
     ]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
@@ -736,6 +738,23 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "relation": "SUPPORTS",
         "status": "RECORDED",
     }
+    assert edge_by_id["EDGE.266"] == {
+        "edge_id": "EDGE.266",
+        "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+        "to_decision_id": "RCV3-20260808-088",
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    record_088 = next(
+        row for row in ledger if row["decision_id"] == "RCV3-20260808-088"
+    )
+    ruleset_requirements = record_088["context"]["main_ruleset_requirements"]
+    assert ruleset_requirements["required_status_check_contexts"] == record_088[
+        "context"
+    ]["required_success_checks"]
+    assert ruleset_requirements["target_ref_include"] == ["refs/heads/main"]
+    assert ruleset_requirements["target_ref_exclude"] == []
+    assert ruleset_requirements["ruleset_creation_count"] == 1
     audit = load("reports/closure/pr37-size-evidence-and-reconstructibility-audit-v1.json")
     assert audit["compaction_decision"]["verdict"] == "KEEP_DETAILED_EVIDENCE_IN_GIT"
     assert audit["pull_request_size"]["changed_git_blob_bytes"] == 2_230_743
