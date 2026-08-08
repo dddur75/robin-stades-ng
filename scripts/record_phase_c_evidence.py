@@ -23,7 +23,8 @@ CLOSURE_AUDIT_DECISION_ID = "RCV3-20260808-082"
 CLOSURE_RUNTIME_CORRECTION_DECISION_ID = "RCV3-20260808-083"
 CLOSURE_SANITIZATION_DECISION_ID = "RCV3-20260808-084"
 MAIN_INTEGRATION_DECISION_ID = "RCV3-20260808-085"
-GENERATED_AT = "2026-08-08T18:40:00Z"
+MAIN_MERGE_RECEIPT_DECISION_ID = "RCV3-20260808-086"
+GENERATED_AT = "2026-08-08T19:00:00Z"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
@@ -406,6 +407,7 @@ def main() -> None:
             CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
             CLOSURE_SANITIZATION_DECISION_ID,
             MAIN_INTEGRATION_DECISION_ID,
+            MAIN_MERGE_RECEIPT_DECISION_ID,
         }
     ]
     if recovery_ids != [
@@ -419,6 +421,7 @@ def main() -> None:
         CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
         CLOSURE_SANITIZATION_DECISION_ID,
         MAIN_INTEGRATION_DECISION_ID,
+        MAIN_MERGE_RECEIPT_DECISION_ID,
     ]:
         raise RuntimeError("PHASE_C_RECOVERY_DECISION_SEQUENCE_MISMATCH")
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
@@ -435,6 +438,7 @@ def main() -> None:
         CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
         CLOSURE_SANITIZATION_DECISION_ID,
         MAIN_INTEGRATION_DECISION_ID,
+        MAIN_MERGE_RECEIPT_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
@@ -488,6 +492,13 @@ def main() -> None:
             "relation": "SUPPORTS",
             "status": "RECORDED",
         },
+        {
+            "edge_id": "EDGE.264",
+            "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+            "to_decision_id": MAIN_MERGE_RECEIPT_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
     ]
     expected_tail_edges = expected_correction_tail_edges + expected_closure_edges
     existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
@@ -497,6 +508,7 @@ def main() -> None:
         expected_correction_tail_edges + expected_closure_edges[:1],
         expected_correction_tail_edges + expected_closure_edges[:2],
         expected_correction_tail_edges + expected_closure_edges[:3],
+        expected_correction_tail_edges + expected_closure_edges[:4],
         expected_tail_edges,
     ):
         raise RuntimeError("PHASE_C_RECOVERY_EDGE_TAIL_MISMATCH")
@@ -522,6 +534,7 @@ def main() -> None:
         CLOSURE_RUNTIME_CORRECTION_DECISION_ID,
         CLOSURE_SANITIZATION_DECISION_ID,
         MAIN_INTEGRATION_DECISION_ID,
+        MAIN_MERGE_RECEIPT_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
