@@ -639,6 +639,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             "RCV3-20260808-084",
             "RCV3-20260808-085",
             "RCV3-20260808-086",
+            "RCV3-20260808-087",
         }
     ]
     assert recovery_ids == [
@@ -653,6 +654,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "RCV3-20260808-084",
         "RCV3-20260808-085",
         "RCV3-20260808-086",
+        "RCV3-20260808-087",
     ]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
@@ -724,6 +726,13 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "edge_id": "EDGE.264",
         "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
         "to_decision_id": "RCV3-20260808-086",
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    assert edge_by_id["EDGE.265"] == {
+        "edge_id": "EDGE.265",
+        "from_claim_id": "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
+        "to_decision_id": "RCV3-20260808-087",
         "relation": "SUPPORTS",
         "status": "RECORDED",
     }

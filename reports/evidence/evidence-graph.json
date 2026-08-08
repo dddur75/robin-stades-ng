@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-08T19:00:00Z",
+  "generated_at":"2026-08-08T19:20:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1834,7 +1834,8 @@
     {"decision_id":"RCV3-20260808-083","ledger_record_hash":"c8a99591947025f35adcfef05e53bc0214fc2925613cd153fc9654371aedcc9b"},
     {"decision_id":"RCV3-20260808-084","ledger_record_hash":"620fd98dee60d16f89e4f8d2ed5abb91663cc2da5794f083771ebb1ebb23418b"},
     {"decision_id":"RCV3-20260808-085","ledger_record_hash":"60f47b753e1ecadfbfdc637ed1fc94a5fdf326ad9d2625283ab7eadcfb710959"},
-    {"decision_id":"RCV3-20260808-086","ledger_record_hash":"53ee557d4f4c6818dcaa7b93e75e10ad1ea768dde071beb0f9eb05ffa0e0fcb8"}
+    {"decision_id":"RCV3-20260808-086","ledger_record_hash":"53ee557d4f4c6818dcaa7b93e75e10ad1ea768dde071beb0f9eb05ffa0e0fcb8"},
+    {"decision_id":"RCV3-20260808-087","ledger_record_hash":"0119252525feafd8e96ef73b5b5cd661260e77eaf00c80fa895db2a2253062a9"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2100,6 +2101,7 @@
     {"edge_id":"EDGE.261","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-083","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.262","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-084","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.263","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-085","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.264","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-086","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.264","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-086","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.265","from_claim_id":"GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001","to_decision_id":"RCV3-20260808-087","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
