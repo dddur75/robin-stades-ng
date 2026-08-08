@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from scripts import record_phase_c_evidence
 from scripts import run_hypothesis_tag_mask_pair_factory as factory
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -491,6 +492,46 @@ def test_checkpoint_cursor_17_receipt_is_sanitized_and_code_bound() -> None:
     ]
     assert all(value == 0 for value in receipt["external_effect_counters"].values())
     assert not any(receipt["sanitization"].values())
+
+
+def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> None:
+    graph_path = ROOT / "reports/evidence/evidence-graph.json"
+    before = graph_path.read_bytes()
+    record_phase_c_evidence.main()
+    first = graph_path.read_bytes()
+    record_phase_c_evidence.main()
+    assert before == first == graph_path.read_bytes()
+    graph = load("reports/evidence/evidence-graph.json")
+    claims = {
+        row["claim_id"]: row
+        for row in graph["claims"]
+        if str(row["claim_id"]).startswith(
+            (
+                "DATA.PHASE_C.",
+                "FEATURE.PHASE_C.",
+                "EVAL.PHASE_C.",
+                "CONTROL.PHASE_C.",
+                "REPLAY.PHASE_C.",
+                "EXECUTION.PHASE_C.",
+                "SECURITY.PHASE_C.",
+                "GOV.PHASE_C.",
+            )
+        )
+    }
+    assert len(claims) == 11
+    assert {row["code_revision"] for row in claims.values()} == {
+        "b2395964faf08a61ac45df36d547025a4b132e13"
+    }
+    assert claims["FEATURE.PHASE_C.RECONCILIATION.V1.001"]["status"] == "PARTIAL"
+    assert claims["EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001"]["status"] == "PARTIAL"
+    assert claims["EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001"]["status"] == "PARTIAL"
+    assert claims["GOV.PHASE_C.ACTIVATION.HOLD.V1.001"]["status"] == "BLOCKED"
+    assert all("DP6" in row["verified_by"] for row in claims.values())
+    assert not any(
+        forbidden in row["claim"].lower()
+        for row in claims.values()
+        for forbidden in ("production ready", "all 1,398", "all 486 ready")
+    )
 
 
 def load_from_path(path: Path) -> dict[str, object]:
