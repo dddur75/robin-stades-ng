@@ -66,7 +66,7 @@ ROLES = {
         "POST_MATCH_RECONSTRUCTED",
     ),
     "EVENTS": (
-        "one event in one fixture",
+        "one fixture event collection",
         "LAGGABLE_POST_MATCH_SOURCE",
         "POST_MATCH_LAGGABLE_ONLY",
     ),
@@ -76,12 +76,12 @@ ROLES = {
         "POST_MATCH_LAGGABLE_ONLY",
     ),
     "DISCIPLINE_GENERIC": (
-        "one generic card event in one fixture",
+        "one fixture generic-card collection",
         "LAGGABLE_POST_MATCH_SOURCE",
         "POST_MATCH_LAGGABLE_ONLY",
     ),
     "CALENDAR": (
-        "one scheduled fixture at one pre-kickoff cutoff",
+        "one calendar feature in one fixture cutoff",
         "STRICT_PREDICTOR_SOURCE",
         "STRICT_AS_OF",
     ),
@@ -632,7 +632,7 @@ def _measure_segment(
             0,
             fixture_count * len(CALENDAR_FEATURES),
             0,
-            fixture_exact,
+            0,
             0,
             "NO_REAL_KNOWN_AT_OR_REVISION_CATALOG",
         ),
@@ -664,13 +664,21 @@ def _measure_segment(
             measurement["affected_lineups"] = len(conflicted_lineups)
             measurement["lineup_player_role_conflicts"] = lineup_role_conflicts
         elif capability == "EVENTS":
+            measurement["exact_duplicate_grain"] = "one canonical event in one fixture"
             measurement["fact_count"] = event_unique
+            measurement["fact_grain"] = "one canonical event in one fixture"
             measurement["event_classification"] = event_classification
         elif capability == "TEAM_STATISTICS":
             measurement["null_value_count"] = stat_null
         elif capability == "DISCIPLINE_GENERIC":
+            measurement["exact_duplicate_grain"] = (
+                "one canonical generic card event in one fixture"
+            )
             measurement["fact_count"] = card_unique
+            measurement["fact_grain"] = "one canonical generic card event in one fixture"
             measurement["event_classification"] = card_classification
+        elif capability == "CALENDAR":
+            measurement["source_fixture_exact_repetitions"] = fixture_exact
         measurements.append(measurement)
     return {
         "schema_version": "p0-e3-league-result-v1",

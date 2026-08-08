@@ -26,6 +26,12 @@ carton conservées comme vides valides. Pour les événements, les numéros d'or
 du fournisseur (`Substitution N`) sont retirés de l'identité scientifique, sans
 fusionner des détails sémantiques distincts.
 
+Le grain principal d'EVENTS et DISCIPLINE_GENERIC est la collection par fixture ;
+`fact_count`, `fact_grain` et `exact_duplicate_grain` décrivent séparément les
+faits canoniques imbriqués. Pour Calendar, le grain est une feature par
+fixture-cutoff ; les 328 répétitions de lignes source sont conservées dans
+`source_fixture_exact_repetitions`, pas dans les doublons du grain Calendar.
+
 Calendar conserve le Golden Pack synthétique, mais les objets réels n'exposent ni
 catalogue de révision ni `known_at`. Les 17 variables réelles restent donc
 `UNKNOWN` et Calendar est `BLOCKED_BY_TEMPORALITY`, jamais `READY_STRICT`.

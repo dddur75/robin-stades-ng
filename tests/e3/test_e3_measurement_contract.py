@@ -129,6 +129,9 @@ def test_e3a_preserves_unknown_and_opens_only_reconstructed_capabilities() -> No
     assert rows["CALENDAR"]["expected"] == 308 * 17
     assert rows["CALENDAR"]["received"] == 0
     assert rows["CALENDAR"]["unknown"] == 308 * 17
+    assert rows["CALENDAR"]["grain"] == "one calendar feature in one fixture cutoff"
+    assert rows["CALENDAR"]["exact_duplicates"] == 0
+    assert rows["CALENDAR"]["source_fixture_exact_repetitions"] == 328
     assert rows["CALENDAR"]["e3a_status"] == "BLOCKED_BY_TEMPORALITY"
     assert matrix["strict_capabilities_ready"] == []
     assert matrix["passed_capabilities"] == sorted(
@@ -142,6 +145,9 @@ def test_e3a_preserves_unknown_and_opens_only_reconstructed_capabilities() -> No
     assert rows["PLAYER"]["expected"] == rows["PLAYER"]["identity_denominator"]
     assert rows["PLAYER"]["expected"] == rows["PLAYER"]["received"] == 12_297
     assert rows["EVENTS"]["expected"] == rows["EVENTS"]["received"] == 308
+    assert rows["EVENTS"]["grain"] == "one fixture event collection"
+    assert rows["EVENTS"]["fact_grain"] == "one canonical event in one fixture"
+    assert rows["EVENTS"]["exact_duplicate_grain"] == rows["EVENTS"]["fact_grain"]
     assert rows["EVENTS"]["event_classification"] == {
         "exact_repetitions": 332,
         "factual_signature_groups": 5008,
@@ -151,6 +157,13 @@ def test_e3a_preserves_unknown_and_opens_only_reconstructed_capabilities() -> No
         "unclassifiable_groups": 0,
     }
     assert rows["DISCIPLINE_GENERIC"]["expected"] == 308
+    assert rows["DISCIPLINE_GENERIC"]["grain"] == "one fixture generic-card collection"
+    assert rows["DISCIPLINE_GENERIC"]["fact_grain"] == (
+        "one canonical generic card event in one fixture"
+    )
+    assert rows["DISCIPLINE_GENERIC"]["exact_duplicate_grain"] == rows[
+        "DISCIPLINE_GENERIC"
+    ]["fact_grain"]
     assert rows["DISCIPLINE_GENERIC"]["received"] == 298
     assert rows["DISCIPLINE_GENERIC"]["empty_valid"] == 10
     assert calendar["promotion"] == "DENIED_NO_REAL_KNOWN_AT"
