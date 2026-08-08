@@ -15,14 +15,30 @@ ORIGINAL_DECISION_ID = "RCV3-20260808-074"
 CORRECTION_DECISION_ID = "RCV3-20260808-075"
 RECOVERY_DECISION_ID = "RCV3-20260808-076"
 GRAPH_RECOVERY_DECISION_ID = "RCV3-20260808-077"
-GENERATED_AT = "2026-08-08T14:55:00Z"
+PREFIX_ENFORCEMENT_DECISION_ID = "RCV3-20260808-078"
+GENERATED_AT = "2026-08-08T15:20:00Z"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
+HISTORICAL_EDGE_COUNT = 254
+HISTORICAL_EDGES_CANONICAL_SHA256 = (
+    "ade7fac218879648d46d8c9bedec93ee7937326220ef4017ef65eb7d1de67fbb"
+)
+HISTORICAL_LEDGER_PREFIX_BYTES = 203_268
+HISTORICAL_LEDGER_D034_SHA256 = (
+    "8b7201434786aff66a0328c3f2a76ab18a1b525315d5bf61a65d21edb0d0470d"
+)
 
 
 def _file_hash(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _canonical_hash(value: object) -> str:
+    payload = json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _compact_json(value: object, level: int = 0) -> str:
@@ -326,40 +342,49 @@ def main() -> None:
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
     if not isinstance(graph, dict):
         raise TypeError("EVIDENCE_GRAPH_OBJECT_REQUIRED")
+    historical_edges = graph["edges"][:HISTORICAL_EDGE_COUNT]
+    if (
+        len(historical_edges) != HISTORICAL_EDGE_COUNT
+        or _canonical_hash(historical_edges) != HISTORICAL_EDGES_CANONICAL_SHA256
+    ):
+        raise RuntimeError("PHASE_C_HISTORICAL_EDGE_PREFIX_MISMATCH")
+    ledger_bytes = LEDGER.read_bytes()
+    if (
+        len(ledger_bytes) < HISTORICAL_LEDGER_PREFIX_BYTES
+        or hashlib.sha256(
+            ledger_bytes[:HISTORICAL_LEDGER_PREFIX_BYTES]
+        ).hexdigest()
+        != HISTORICAL_LEDGER_D034_SHA256
+    ):
+        raise RuntimeError("PHASE_C_HISTORICAL_LEDGER_PREFIX_MISMATCH")
     records = [
         json.loads(line)
-        for line in LEDGER.read_text(encoding="utf-8").splitlines()
+        for line in ledger_bytes.decode("utf-8").splitlines()
         if line
     ]
+    recovery_ids = [
+        record["decision_id"]
+        for record in records
+        if record["decision_id"]
+        in {GRAPH_RECOVERY_DECISION_ID, PREFIX_ENFORCEMENT_DECISION_ID}
+    ]
+    if recovery_ids != [
+        GRAPH_RECOVERY_DECISION_ID,
+        PREFIX_ENFORCEMENT_DECISION_ID,
+    ]:
+        raise RuntimeError("PHASE_C_RECOVERY_DECISION_SEQUENCE_MISMATCH")
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
     decision_ids = {
         ORIGINAL_DECISION_ID,
         CORRECTION_DECISION_ID,
         RECOVERY_DECISION_ID,
         GRAPH_RECOVERY_DECISION_ID,
+        PREFIX_ENFORCEMENT_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
     claims = _claims()
     claim_ids = {claim["claim_id"] for claim in claims}
-    original_claim_ids = [
-        "DATA.PHASE_C.RAW_FIELD_CENSUS.V1.001",
-        "FEATURE.PHASE_C.RECONCILIATION.V1.001",
-        "FEATURE.PHASE_C.TAG_MASK_STORE.V1.001",
-        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
-        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
-        "CONTROL.PHASE_C.ATOMIC_NEGATIVE.V1.001",
-        "CONTROL.PHASE_C.PAIR_NEGATIVE.V1.001",
-        "REPLAY.PHASE_C.DETERMINISM.V1.001",
-        "EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001",
-        "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
-        "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
-    ]
-    successor_claim_ids = [
-        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002",
-        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002",
-        "REPLAY.PHASE_C.DETERMINISM.V1.002",
-    ]
     missing_correction_proof_claim_ids = [
         "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
         "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
@@ -367,12 +392,21 @@ def main() -> None:
         "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
         "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
     ]
-    relationships = [
-        *((claim_id, ORIGINAL_DECISION_ID) for claim_id in original_claim_ids),
-        *((claim_id, CORRECTION_DECISION_ID) for claim_id in successor_claim_ids),
-        *((claim_id, CORRECTION_DECISION_ID) for claim_id in missing_correction_proof_claim_ids),
+    expected_tail_edges = [
+        {
+            "edge_id": f"EDGE.{index:03d}",
+            "from_claim_id": claim_id,
+            "to_decision_id": CORRECTION_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+        for index, claim_id in enumerate(
+            missing_correction_proof_claim_ids, start=HISTORICAL_EDGE_COUNT + 1
+        )
     ]
-    edge_ids = {f"EDGE.{index:03d}" for index in range(241, 260)}
+    existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
+    if existing_tail_edges not in ([], expected_tail_edges):
+        raise RuntimeError("PHASE_C_RECOVERY_EDGE_TAIL_MISMATCH")
     graph["claims"] = [
         claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids
     ]
@@ -387,25 +421,12 @@ def main() -> None:
         CORRECTION_DECISION_ID,
         RECOVERY_DECISION_ID,
         GRAPH_RECOVERY_DECISION_ID,
+        PREFIX_ENFORCEMENT_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
         )
-    graph["edges"] = [
-        edge
-        for edge in graph["edges"]
-        if edge["edge_id"] not in edge_ids and edge["from_claim_id"] not in claim_ids
-    ]
-    for index, (claim_id, decision_id) in enumerate(relationships, start=241):
-        graph["edges"].append(
-            {
-                "edge_id": f"EDGE.{index:03d}",
-                "from_claim_id": claim_id,
-                "to_decision_id": decision_id,
-                "relation": "SUPPORTS",
-                "status": "RECORDED",
-            }
-        )
+    graph["edges"] = historical_edges + expected_tail_edges
     graph["generated_at"] = GENERATED_AT
     GRAPH.write_text(_compact_json(graph) + "\n", encoding="utf-8", newline="\n")
 

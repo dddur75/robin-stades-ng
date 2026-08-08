@@ -494,7 +494,9 @@ def test_checkpoint_cursor_17_receipt_is_sanitized_and_code_bound() -> None:
     assert not any(receipt["sanitization"].values())
 
 
-def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> None:
+def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     graph_path = ROOT / "reports/evidence/evidence-graph.json"
     before = graph_path.read_bytes()
     record_phase_c_evidence.main()
@@ -553,12 +555,22 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> Non
         "REPLAY.PHASE_C.DETERMINISM.V1.002",
         "EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001",
     }
+    ledger_path = ROOT / "reports/council/decision-ledger.jsonl"
+    ledger_bytes = ledger_path.read_bytes()
+    assert hashlib.sha256(ledger_bytes[:203_268]).hexdigest() == (
+        "8b7201434786aff66a0328c3f2a76ab18a1b525315d5bf61a65d21edb0d0470d"
+    )
     ledger = [
         json.loads(line)
-        for line in (ROOT / "reports/council/decision-ledger.jsonl")
-        .read_text(encoding="utf-8")
-        .splitlines()
+        for line in ledger_bytes.decode("utf-8").splitlines()
     ]
+    recovery_ids = [
+        row["decision_id"]
+        for row in ledger
+        if row["decision_id"]
+        in {"RCV3-20260808-077", "RCV3-20260808-078"}
+    ]
+    assert recovery_ids == ["RCV3-20260808-077", "RCV3-20260808-078"]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
     )
@@ -578,6 +590,9 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> Non
     }
     assert edges_to_075 == set(record_075["proof"])
     edge_by_id = {edge["edge_id"]: edge for edge in graph["edges"]}
+    assert canonical_hash(graph["edges"][:254]) == (
+        "ade7fac218879648d46d8c9bedec93ee7937326220ef4017ef65eb7d1de67fbb"
+    )
     assert edge_by_id["EDGE.252"]["from_claim_id"] == (
         "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002"
     )
@@ -594,6 +609,21 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> Non
         "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
         "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
     ]
+    tampered_graph = json.loads(graph_path.read_text(encoding="utf-8"))
+    tampered_graph["edges"][0], tampered_graph["edges"][1] = (
+        tampered_graph["edges"][1],
+        tampered_graph["edges"][0],
+    )
+    tampered_graph_path = tmp_path / "evidence-graph.json"
+    tampered_graph_path.write_text(
+        json.dumps(tampered_graph, ensure_ascii=False), encoding="utf-8"
+    )
+    tampered_ledger_path = tmp_path / "decision-ledger.jsonl"
+    tampered_ledger_path.write_bytes(ledger_bytes)
+    monkeypatch.setattr(record_phase_c_evidence, "GRAPH", tampered_graph_path)
+    monkeypatch.setattr(record_phase_c_evidence, "LEDGER", tampered_ledger_path)
+    with pytest.raises(RuntimeError, match="PHASE_C_HISTORICAL_EDGE_PREFIX_MISMATCH"):
+        record_phase_c_evidence.main()
     assert not any(
         forbidden in row["claim"].lower()
         for row in claims.values()
