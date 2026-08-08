@@ -20,7 +20,7 @@ DISCIPLINE_GENERIC. TEAM_STATISTICS reste `MEASURED_PARTIAL` : 10 510 valeurs
 sont connues et 578 valeurs nulles restent explicitement `UNKNOWN` sur un
 dénominateur de 11 088. Cette capacité n'est donc pas ouverte en E3B.
 
-PLAYER est mesuré contre les 12 297 slots canoniques de lineup. EVENTS et
+PLAYER est mesuré contre les 12 297 identités canoniques de lineup. EVENTS et
 DISCIPLINE_GENERIC utilisent un dénominateur fixture, avec les fixtures sans
 carton conservées comme vides valides. Pour les événements, les numéros d'ordre
 du fournisseur (`Substitution N`) sont retirés de l'identité scientifique, sans

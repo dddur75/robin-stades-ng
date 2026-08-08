@@ -9,7 +9,7 @@ Le gate transmet six capacités. TEAM, PLAYER, FORMATION, EVENTS et
 DISCIPLINE_GENERIC sont `E3B_READY_RECONSTRUCTED` sur les 1 756 fixtures.
 LINEUP reste `E3B_MEASURED_PARTIAL` : 3 510 lineups sur 3 512 sont valides et
 deux lineups Serie A sont affectées par quatre conflits de rôle joueur, sans
-double comptage comme contradictions. TEAM_STATISTICS reste fermée par le gate
+double comptage comme identités PLAYER ni comme contradictions. TEAM_STATISTICS reste fermée par le gate
 E3A, et Calendar reste bloquée par temporalité.
 
 Un défaut local ne contamine pas une capacité indépendante. Les statuts globaux

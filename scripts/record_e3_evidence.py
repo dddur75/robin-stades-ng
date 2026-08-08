@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 GRAPH = ROOT / "reports/evidence/evidence-graph.json"
 LEDGER = ROOT / "reports/council/decision-ledger.jsonl"
 REVISION = "b7c20ed1da599109da9a94619fe95b9c5b2d2324"
+INVALIDATED_E3A_SHA256 = "8236edf659f1e14f5dc9ff14cb0ac4dd3c36e9e76b7d1bff928a6a17b2c01794"
+INVALIDATED_CALENDAR_SHA256 = "3ef06d07ffc630daf3a02f4d74e5ffce8525d15a518e53114d7b1253bad8648b"
+INVALIDATED_E3B_SHA256 = "edc18398f275853bfd223b86cd30ec0b53a9aa803b133ec8ff01e2637304efb8"
 
 
 def _file_hash(relative: str) -> str:
@@ -77,7 +80,7 @@ def main() -> None:
             "grain": "one_capability_over_one_complete_competition_season",
             "temporal_class": "MIXED_ROLE_CLASSIFIED",
             "artifact": "reports/evidence/e3a/e3a-measurement-v1.json",
-            "hash": _file_hash("reports/evidence/e3a/e3a-measurement-v1.json"),
+            "hash": INVALIDATED_E3A_SHA256,
             "code_revision": REVISION,
             "execution_id": "local-e3a-byte-identical-20260808",
             "scientific_lineage_id": "p0-e3-capability-scale-v1",
@@ -97,7 +100,7 @@ def main() -> None:
             "grain": "one_calendar_feature_per_fixture_cutoff",
             "temporal_class": "STRICT_AS_OF_BLOCKED_BY_SOURCE",
             "artifact": "reports/evidence/e3a/e3a-calendar-asof-v1.json",
-            "hash": _file_hash("reports/evidence/e3a/e3a-calendar-asof-v1.json"),
+            "hash": INVALIDATED_CALENDAR_SHA256,
             "code_revision": REVISION,
             "execution_id": "local-e3a-calendar-real-20260808",
             "scientific_lineage_id": "p0-e3-capability-scale-v1",
@@ -117,7 +120,7 @@ def main() -> None:
             "grain": "one_capability_per_league_season_then_weighted_global_aggregate",
             "temporal_class": "POST_MATCH_RECONSTRUCTED_OR_LAGGABLE",
             "artifact": "reports/evidence/e3b/e3b-measurement-v1.json",
-            "hash": _file_hash("reports/evidence/e3b/e3b-measurement-v1.json"),
+            "hash": INVALIDATED_E3B_SHA256,
             "code_revision": REVISION,
             "execution_id": "local-e3b-byte-identical-20260808",
             "scientific_lineage_id": "p0-e3-capability-scale-v1",
@@ -153,6 +156,7 @@ def main() -> None:
         "RCV3-20260808-066",
         "RCV3-20260808-067",
         "RCV3-20260808-068",
+        "RCV3-20260808-069",
     }
     graph["claims"] = [claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids]
     graph["decision_nodes"] = [
@@ -166,6 +170,7 @@ def main() -> None:
         "RCV3-20260808-066",
         "RCV3-20260808-067",
         "RCV3-20260808-068",
+        "RCV3-20260808-069",
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
@@ -186,6 +191,8 @@ def main() -> None:
         ("COVERAGE.E3B.CAPABILITY_SCALE.V1.001", "RCV3-20260808-067"),
         ("COVERAGE.E3A.CAPABILITY_SCALE.V1.001", "RCV3-20260808-068"),
         ("COVERAGE.E3B.CAPABILITY_SCALE.V1.001", "RCV3-20260808-068"),
+        ("COVERAGE.E3A.CAPABILITY_SCALE.V1.001", "RCV3-20260808-069"),
+        ("COVERAGE.E3B.CAPABILITY_SCALE.V1.001", "RCV3-20260808-069"),
     )
     first_edge = len(graph["edges"]) + 1
     graph["edges"].extend(

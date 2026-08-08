@@ -61,20 +61,24 @@ def test_weighted_aggregation_counts_empty_valid_before_rates() -> None:
         [
             {
                 "capability_id": "DISCIPLINE_GENERIC",
+                "content_present_fixtures": 2,
                 "contradictory_duplicates": 0,
                 "e3b_status": "E3B_READY_RECONSTRUCTED",
                 "empty_valid": 0,
                 "expected": 2,
+                "fixture_count": 2,
                 "invalid": 0,
                 "received": 2,
                 "unknown": 0,
             },
             {
                 "capability_id": "DISCIPLINE_GENERIC",
+                "content_present_fixtures": 0,
                 "contradictory_duplicates": 0,
                 "e3b_status": "E3B_READY_RECONSTRUCTED",
                 "empty_valid": 1,
                 "expected": 1,
+                "fixture_count": 1,
                 "invalid": 0,
                 "received": 0,
                 "unknown": 0,
@@ -85,12 +89,14 @@ def test_weighted_aggregation_counts_empty_valid_before_rates() -> None:
         {
             "capability_id": "DISCIPLINE_GENERIC",
             "competition_count": 2,
+            "content_present_fixtures": 2,
             "contradictory_duplicates": 0,
             "content_presence_rate": 0.66666667,
             "coverage_rate": 1.0,
             "e3b_status": "E3B_READY_RECONSTRUCTED",
             "empty_valid": 1,
             "expected": 3,
+            "fixture_count": 3,
             "invalid": 0,
             "local_statuses": ["E3B_READY_RECONSTRUCTED"],
             "normalization_integrity_rate": 1.0,
@@ -99,6 +105,18 @@ def test_weighted_aggregation_counts_empty_valid_before_rates() -> None:
             "unknown": 0,
         }
     ]
+
+
+def test_player_identity_key_does_not_include_lineup_role() -> None:
+    identity_key = runpy.run_path(str(SCRIPT))["_player_identity_key"]
+    starter = {
+        "provider_fixture_id": 1,
+        "provider_team_id": 10,
+        "provider_player_id": 20,
+        "data": {"role": "startXI"},
+    }
+    substitute = {**starter, "data": {"role": "substitutes"}}
+    assert identity_key(starter) == identity_key(substitute) == (1, 10, 20)
 
 
 def test_e3a_preserves_unknown_and_opens_only_reconstructed_capabilities() -> None:
@@ -121,7 +139,7 @@ def test_e3a_preserves_unknown_and_opens_only_reconstructed_capabilities() -> No
     assert rows["TEAM_STATISTICS"]["unknown"] == 578
     assert rows["TEAM_STATISTICS"]["null_value_count"] == 578
     assert rows["TEAM_STATISTICS"]["e3a_status"] == "MEASURED_PARTIAL"
-    assert rows["PLAYER"]["expected"] == rows["PLAYER"]["lineup_slot_denominator"]
+    assert rows["PLAYER"]["expected"] == rows["PLAYER"]["identity_denominator"]
     assert rows["PLAYER"]["expected"] == rows["PLAYER"]["received"] == 12_297
     assert rows["EVENTS"]["expected"] == rows["EVENTS"]["received"] == 308
     assert rows["EVENTS"]["event_classification"] == {
@@ -152,11 +170,14 @@ def test_e3b_uses_weighted_denominators_and_localizes_one_gap() -> None:
     assert selection["capabilities"] == sorted(aggregates)
     assert aggregates["TEAM"]["expected"] == aggregates["TEAM"]["received"] == 3512
     assert "TEAM_STATISTICS" not in aggregates
-    assert aggregates["PLAYER"]["expected"] == aggregates["PLAYER"]["received"] == 74_407
+    assert aggregates["PLAYER"]["expected"] == aggregates["PLAYER"]["received"] == 74_403
     assert aggregates["LINEUP"]["expected"] == 3512
     assert aggregates["LINEUP"]["received"] == 3510
     assert aggregates["LINEUP"]["invalid"] == 2
     assert aggregates["LINEUP"]["contradictory_duplicates"] == 0
+    assert aggregates["LINEUP"]["content_present_fixtures"] == 1756
+    assert aggregates["LINEUP"]["fixture_count"] == 1756
+    assert aggregates["LINEUP"]["content_presence_rate"] == 1.0
     assert aggregates["DISCIPLINE_GENERIC"]["received"] == 1704
     assert aggregates["DISCIPLINE_GENERIC"]["empty_valid"] == 52
     assert aggregates["DISCIPLINE_GENERIC"]["expected"] == 1756

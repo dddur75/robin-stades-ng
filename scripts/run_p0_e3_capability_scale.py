@@ -324,6 +324,14 @@ def _row_data(row: Mapping[str, Any]) -> Mapping[str, Any]:
     return _mapping(row.get("data"), "E3_NORMALIZED_DATA")
 
 
+def _player_identity_key(row: Mapping[str, Any]) -> tuple[object, object, object]:
+    return (
+        row.get("provider_fixture_id"),
+        row.get("provider_team_id"),
+        row.get("provider_player_id"),
+    )
+
+
 def _normalize_stat_type(value: object) -> str:
     raw = str(value).strip().casefold()
     return STAT_ALIASES.get(raw, raw.replace(" ", "_"))
@@ -414,6 +422,7 @@ def _measurement_row(
         "block_reason": block_reason,
         "capability_id": capability,
         "competition": competition,
+        "content_present_fixtures": fixture_presence,
         "content_presence_rate": _rate(fixture_presence, fixture_count),
         "contradictory_duplicates": contradictory,
         "coverage_rate": _rate(received + empty_valid, expected),
@@ -481,12 +490,7 @@ def _measure_segment(
     player_rows = by_type["lineup_player"]
     player_unique, player_exact, player_contradictory = _group_counts(
         player_rows,
-        lambda row: (
-            row.get("provider_fixture_id"),
-            row.get("provider_team_id"),
-            row.get("provider_player_id"),
-            _row_data(row).get("role"),
-        ),
+        _player_identity_key,
         lambda row: {
             "id": _mapping(_row_data(row).get("player"), "E3_PLAYER").get("id"),
             "name": _mapping(_row_data(row).get("player"), "E3_PLAYER").get("name"),
@@ -508,14 +512,6 @@ def _measure_segment(
         lineup_rows,
         lambda row: (row.get("provider_fixture_id"), row.get("provider_team_id")),
         lambda row: _lineup_content(_row_data(row)),
-    )
-    canonical_lineups: dict[bytes, dict[str, Any]] = {}
-    for row in lineup_rows:
-        canonical_lineups[_canonical((row.get("provider_fixture_id"), row.get("provider_team_id")))] = (
-            _lineup_content(_row_data(row))
-        )
-    lineup_slot_expected = sum(
-        len(value["start_xi"]) + len(value["substitutes"]) for value in canonical_lineups.values()
     )
     formation_rows = by_type["formation"]
     formation_unique, formation_exact, formation_contradictory = _group_counts(
@@ -571,7 +567,7 @@ def _measure_segment(
     values = {
         "TEAM": (fixture_count * 2, team_unique, 0, 0, 0, team_exact, team_contradictory, None),
         "PLAYER": (
-            lineup_slot_expected,
+            player_unique,
             player_unique,
             0,
             0,
@@ -663,7 +659,7 @@ def _measure_segment(
                 block_reason=reason,
             )
         if capability == "PLAYER":
-            measurement["lineup_slot_denominator"] = lineup_slot_expected
+            measurement["identity_denominator"] = player_unique
         elif capability == "LINEUP":
             measurement["affected_lineups"] = len(conflicted_lineups)
             measurement["lineup_player_role_conflicts"] = lineup_role_conflicts
@@ -954,6 +950,8 @@ def _aggregate_rows(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
             value is not None for value in expected_values
         ) else None
         received = sum(int(row["received"]) for row in values)
+        fixture_count = sum(int(row["fixture_count"]) for row in values)
+        content_present_fixtures = sum(int(row["content_present_fixtures"]) for row in values)
         empty_valid = sum(int(row["empty_valid"]) for row in values)
         unknown = sum(int(row["unknown"]) for row in values)
         invalid = sum(int(row["invalid"]) for row in values)
@@ -970,12 +968,14 @@ def _aggregate_rows(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
             {
                 "capability_id": capability,
                 "competition_count": len(values),
+                "content_present_fixtures": content_present_fixtures,
                 "contradictory_duplicates": contradictory,
-                "content_presence_rate": _rate(received, expected),
+                "content_presence_rate": _rate(content_present_fixtures, fixture_count),
                 "coverage_rate": _rate(received + empty_valid, expected),
                 "e3b_status": global_status,
                 "empty_valid": empty_valid,
                 "expected": expected,
+                "fixture_count": fixture_count,
                 "invalid": invalid,
                 "local_statuses": statuses,
                 "normalization_integrity_rate": _rate(
