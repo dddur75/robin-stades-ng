@@ -540,14 +540,14 @@ def _measure_segment(
     )
     stat_groups: dict[bytes, set[bytes]] = defaultdict(set)
     for row in stat_rows:
-        key = _canonical(
+        stat_key = _canonical(
             (
                 row.get("provider_fixture_id"),
                 row.get("provider_team_id"),
                 _normalize_stat_type(_row_data(row).get("type")),
             )
         )
-        stat_groups[key].add(_canonical(_row_data(row).get("value")))
+        stat_groups[stat_key].add(_canonical(_row_data(row).get("value")))
     null_value = _canonical(None)
     stat_null = sum(values == {null_value} for values in stat_groups.values())
     card_rows = [row for row in event_rows if str(_row_data(row).get("type", "")).casefold() == "card"]
