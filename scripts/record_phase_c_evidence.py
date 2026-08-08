@@ -18,7 +18,8 @@ GRAPH_RECOVERY_DECISION_ID = "RCV3-20260808-077"
 PREFIX_ENFORCEMENT_DECISION_ID = "RCV3-20260808-078"
 DUPLICATE_GUARD_DECISION_ID = "RCV3-20260808-079"
 DRAFT_PUBLICATION_DECISION_ID = "RCV3-20260808-080"
-GENERATED_AT = "2026-08-08T16:00:00Z"
+AUTHORITY_SCOPE_DECISION_ID = "RCV3-20260808-081"
+GENERATED_AT = "2026-08-08T16:20:00Z"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
@@ -377,6 +378,7 @@ def main() -> None:
             PREFIX_ENFORCEMENT_DECISION_ID,
             DUPLICATE_GUARD_DECISION_ID,
             DRAFT_PUBLICATION_DECISION_ID,
+            AUTHORITY_SCOPE_DECISION_ID,
         }
     ]
     if recovery_ids != [
@@ -385,6 +387,7 @@ def main() -> None:
         PREFIX_ENFORCEMENT_DECISION_ID,
         DUPLICATE_GUARD_DECISION_ID,
         DRAFT_PUBLICATION_DECISION_ID,
+        AUTHORITY_SCOPE_DECISION_ID,
     ]:
         raise RuntimeError("PHASE_C_RECOVERY_DECISION_SEQUENCE_MISMATCH")
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
@@ -396,6 +399,7 @@ def main() -> None:
         PREFIX_ENFORCEMENT_DECISION_ID,
         DUPLICATE_GUARD_DECISION_ID,
         DRAFT_PUBLICATION_DECISION_ID,
+        AUTHORITY_SCOPE_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
@@ -440,6 +444,7 @@ def main() -> None:
         PREFIX_ENFORCEMENT_DECISION_ID,
         DUPLICATE_GUARD_DECISION_ID,
         DRAFT_PUBLICATION_DECISION_ID,
+        AUTHORITY_SCOPE_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}

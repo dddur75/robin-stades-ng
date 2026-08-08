@@ -574,6 +574,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             "RCV3-20260808-078",
             "RCV3-20260808-079",
             "RCV3-20260808-080",
+            "RCV3-20260808-081",
         }
     ]
     assert recovery_ids == [
@@ -582,6 +583,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "RCV3-20260808-078",
         "RCV3-20260808-079",
         "RCV3-20260808-080",
+        "RCV3-20260808-081",
     ]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
