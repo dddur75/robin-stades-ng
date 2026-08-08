@@ -4,37 +4,19 @@
     "TOTAL_GOALS_2_5_90M"
   ],
   "generated_at": "2026-08-08T09:10:42Z",
-  "registry_hash": "6bda729778def2e117f0797add246641d1905e5a97319cdaafe4d33af880e80c",
+  "registry_hash": "37235452db488c8984878538cc1c55ecb26bcdc529b773222948e66f4526a47c",
   "registry_scope": "RECONSTRUCTED_PREDICTIVE_TRACK_ONLY",
   "schema_version": "canonical-tag-registry-v1",
   "source_field_registry": {
-    "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65": {
-      "entity_type": "fixture_event",
-      "json_path": "data.time.elapsed",
-      "temporal_use": "TARGET_OR_PRIOR_FIXTURES_ONLY",
-      "transform_version": "phase-c-source-field-v1"
-    },
     "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d": {
       "entity_type": "fixture_event",
       "json_path": "data.team.id",
       "temporal_use": "TARGET_OR_PRIOR_FIXTURES_ONLY",
       "transform_version": "phase-c-source-field-v1"
     },
-    "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a": {
-      "entity_type": "fixture_event",
-      "json_path": "data.detail",
-      "temporal_use": "TARGET_OR_PRIOR_FIXTURES_ONLY",
-      "transform_version": "phase-c-source-field-v1"
-    },
     "field:61b8ef885ca560b367ce240177ed6dd9aaccd888d3d5ce7cf435d327c3016b58": {
       "entity_type": "fixture",
       "json_path": "data.score.fulltime.away",
-      "temporal_use": "PRIOR_FIXTURES_ONLY",
-      "transform_version": "phase-c-source-field-v1"
-    },
-    "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc": {
-      "entity_type": "team_match_statistic",
-      "json_path": "data.value",
       "temporal_use": "PRIOR_FIXTURES_ONLY",
       "transform_version": "phase-c-source-field-v1"
     },
@@ -60,18 +42,6 @@
       "entity_type": "fixture",
       "json_path": "data.teams.away.id",
       "temporal_use": "PRIOR_FIXTURES_ONLY",
-      "transform_version": "phase-c-source-field-v1"
-    },
-    "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f": {
-      "entity_type": "team_match_statistic",
-      "json_path": "data.type",
-      "temporal_use": "PRIOR_FIXTURES_ONLY",
-      "transform_version": "phase-c-source-field-v1"
-    },
-    "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f": {
-      "entity_type": "fixture_event",
-      "json_path": "data.player.id",
-      "temporal_use": "TARGET_OR_PRIOR_FIXTURES_ONLY",
       "transform_version": "phase-c-source-field-v1"
     }
   },
@@ -688,13 +658,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "f450ec819d5a80737ffa8f258fcb415dfdbcdc0ba57bd44ac7e9ec5ca8f19a7c",
+      "definition_hash": "21963030a9d0da8f7893d8aeb433c3405b20015fad779007955d67a2c7af7120",
       "entity_scope": "TEAM_AWAY",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:f7a2628d893fdb18877938f38b38f860bb3caae8c92c0e3273247b1e2888894b",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — L10",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -704,18 +674,12 @@
       "orientation": "AWAY",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",
@@ -730,13 +694,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "6171e1c800522cd42ecbaaf0394e8cf9e6c3901c77b55e6de5afd2ba4b7d82b3",
+      "definition_hash": "cb9cb716016474994488b4638806dc067b7397e6aa5bfecec50094e5cae96a51",
       "entity_scope": "TEAM_AWAY",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:11a470c2a639251f29fe9921464bfa2a3b9665c4e8c844bc48ee6a580d63bfc8",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — L3",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -746,18 +710,12 @@
       "orientation": "AWAY",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",
@@ -772,13 +730,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "9d09af4e9e012d94a2f8fb9176d46aa1186360c192080e70bbc512a0af8167b8",
+      "definition_hash": "c2125fea5f5ac725ccbd5bd19578045383e87076cb7543e317cdb19ef882e1e5",
       "entity_scope": "TEAM_AWAY",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:cb3a86b534b3b5df75920e9e153a667274a53849a50f22d94b72900c9e39139b",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — L5",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -788,18 +746,12 @@
       "orientation": "AWAY",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",
@@ -814,13 +766,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "d69e3aba4bc5cdfe1c026fb84a460efa35c1ca3c92bfec06a4b21a6a142cdec4",
+      "definition_hash": "5a7b2b2e5a2eecd897aff9fa4b4231a75584986a7068a2e97510d71232196331",
       "entity_scope": "TEAM_AWAY",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:89186b616ca810542a66c4b9ce8bf8f137bdf019b1f25a3381d825081ae51f5c",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe away — SEASON_TO_DATE",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -830,18 +782,12 @@
       "orientation": "AWAY",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",
@@ -2224,13 +2170,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "6f7976fccae0cf754f93802697d307367065e68468f7a755b23b16bb82ba1881",
+      "definition_hash": "35d7d032121e253c9e3062f0251d93679982271880526972ae6423af0ec1b782",
       "entity_scope": "TEAM_HOME",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:cd865be6eecea8164c33ca46f123beb17fb31cc4ddd8779df83f5fc0878a52c3",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — L10",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -2240,18 +2186,12 @@
       "orientation": "HOME",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",
@@ -2266,13 +2206,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "ecbce9d0d987b43ba2c2e3fc4794bfa5c4ce20f1c88878c800f339e460967bbd",
+      "definition_hash": "33151c72ba48a4ce663f6c6e1dddda2adf8dcf9da383b2a1b0636b3779f512f1",
       "entity_scope": "TEAM_HOME",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:c6042feacac097a943871bd98269c019843c479b7aa2356e7bff2d22677a86a6",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — L3",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -2282,18 +2222,12 @@
       "orientation": "HOME",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",
@@ -2308,13 +2242,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "77b725f82f0843309196d1c367c8ac4c09b95db777b5c37dd6d8671afae8b73d",
+      "definition_hash": "f1266cb0ce795243024ee4d41e60a8513e79b7c50330df197fcc20fa3435ba10",
       "entity_scope": "TEAM_HOME",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:3b318531f69d0c5312aacf5cc0d1d45481943e76291afe7a4b09240b4fb023ae",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — L5",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -2324,18 +2258,12 @@
       "orientation": "HOME",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",
@@ -2350,13 +2278,13 @@
     },
     {
       "cutoff": "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO",
-      "definition_hash": "e749c9ef38fe055356415bea99b9f066be6667506641bb46a8fba88719452120",
+      "definition_hash": "91e138a4cde4ba17ae61601fa6e20f04580f2b00a873bb659b714333f464bca8",
       "entity_scope": "TEAM_HOME",
       "family": "DISCIPLINE_REFEREE",
       "feature_id": "feature:022d1a70470c285330b5638b4f4607601825c719dd2a6a413eb1950afc1d63d1",
       "grain": "one team orientation in one target fixture",
       "label_fr": "GENERIC_CARDS_MEAN élevé — équipe home — SEASON_TO_DATE",
-      "mapping_basis": "CARD_EVENT_OR_TEAM_STAT_HISTORY",
+      "mapping_basis": "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
       "market_compatibility": [
         "MATCH_RESULT_90M",
         "TOTAL_GOALS_2_5_90M"
@@ -2366,18 +2294,12 @@
       "orientation": "HOME",
       "property_id": "football:discipline_referee:recent_cards",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "scientific_role": "FOOTBALL_PREDICTOR",
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "status": "MATERIALIZABLE_RECONSTRUCTED",
       "subfamily": "GENERIC_CARDS_MEAN",

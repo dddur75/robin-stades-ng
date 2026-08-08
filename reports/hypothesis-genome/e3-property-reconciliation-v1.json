@@ -5,10 +5,28 @@
     "READY": 46,
     "UNKNOWN": 50
   },
+  "campaign_scope_status": "BOUNDED_7_PROPERTY_SUBCAMPAIGN_REQUIRES_COUNCIL_RESCOPING",
+  "campaign_v1_disposition_counts": {
+    "BLOCKED_SOURCE_OR_DATA": 344,
+    "DEFERRED_PARTIAL_SOURCE": 46,
+    "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1": 18,
+    "DEFERRED_SEMANTIC_REVIEW": 50,
+    "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT": 21,
+    "SELECTED_PREDICTOR": 7
+  },
   "classification_rule": "EXPLICIT_READY_PARTIAL_WHITELISTS_THEN_FAIL_CLOSED_FAMILY_BASELINE",
   "family_count": 28,
   "generated_at": "2026-08-08T09:10:42Z",
   "genome_property_count": 486,
+  "lagged_predictor_transform_property_ids": [
+    "football:attack:goals_scored",
+    "football:defence:goals_conceded",
+    "football:discipline_referee:recent_cards",
+    "football:strength_form:form",
+    "football:strength_form:goals",
+    "football:strength_form:points",
+    "football:strength_form:volatility"
+  ],
   "mapping_basis_by_bucket": {
     "BLOCKED": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
     "READY_PARTIAL": "EXACT_ENTITY_PATH_REGISTRY_AND_DETERMINISTIC_TRANSFORM",
@@ -22,6 +40,26 @@
     "MATERIALIZABLE_TARGET_ONLY": 18,
     "PARTIAL": 46
   },
+  "omitted_public_hypothesis_eligible_property_ids": [
+    "football:coach:substitutions",
+    "football:discipline_referee:red_cards",
+    "football:discipline_referee:yellow_cards",
+    "football:formation_structure:formation",
+    "football:match_competition:matchday",
+    "football:match_competition:month",
+    "football:match_competition:round",
+    "football:match_competition:season",
+    "football:match_competition:venue_role",
+    "football:match_competition:weekday",
+    "football:player:assists",
+    "football:player:cards",
+    "football:player:goals",
+    "football:strength_form:after_result_performance",
+    "football:strength_form:home_away_performance",
+    "football:strength_form:ranking",
+    "football:strength_form:streak",
+    "football:strength_form:weighted_form"
+  ],
   "point_in_time_source_provenance": false,
   "predictor_tag_property_ids": [
     "football:attack:goals_scored",
@@ -39,11 +77,13 @@
     "materialization_status",
     "temporal_role",
     "unknown_policy",
-    "block_reason"
+    "block_reason",
+    "campaign_v1_disposition"
   ],
   "records": [
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:centre_backs_absent",
       "reconciliation_bucket": "BLOCKED",
@@ -56,6 +96,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:creator_absent",
       "reconciliation_bucket": "BLOCKED",
@@ -68,6 +109,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:doubtful",
       "reconciliation_bucket": "BLOCKED",
@@ -80,6 +122,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:goalkeeper_absent",
       "reconciliation_bucket": "BLOCKED",
@@ -92,6 +135,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:ill",
       "reconciliation_bucket": "BLOCKED",
@@ -104,6 +148,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:injured",
       "reconciliation_bucket": "BLOCKED",
@@ -116,6 +161,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:line_absence_count",
       "reconciliation_bucket": "BLOCKED",
@@ -128,6 +174,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:matches_since_return",
       "reconciliation_bucket": "BLOCKED",
@@ -140,6 +187,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:medical_clearance",
       "reconciliation_bucket": "BLOCKED",
@@ -152,6 +200,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:minutes_restriction",
       "reconciliation_bucket": "BLOCKED",
@@ -164,6 +213,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:missing_goals_share",
       "reconciliation_bucket": "BLOCKED",
@@ -176,6 +226,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:missing_minutes_share",
       "reconciliation_bucket": "BLOCKED",
@@ -188,6 +239,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:missing_xg_share",
       "reconciliation_bucket": "BLOCKED",
@@ -200,6 +252,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:natural_replacement_available",
       "reconciliation_bucket": "BLOCKED",
@@ -212,6 +265,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:relapse_risk",
       "reconciliation_bucket": "BLOCKED",
@@ -224,6 +278,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:return_to_training",
       "reconciliation_bucket": "BLOCKED",
@@ -236,6 +291,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:returning",
       "reconciliation_bucket": "BLOCKED",
@@ -248,6 +304,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:suspended",
       "reconciliation_bucket": "BLOCKED",
@@ -260,6 +317,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:absence_return:top_scorer_absent",
       "reconciliation_bucket": "BLOCKED",
@@ -272,6 +330,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:big_chances",
       "reconciliation_bucket": "BLOCKED",
@@ -284,6 +343,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:blocked_shots",
       "reconciliation_bucket": "PARTIAL",
@@ -299,6 +359,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:central_production",
       "reconciliation_bucket": "BLOCKED",
@@ -311,6 +372,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:corners_for",
       "reconciliation_bucket": "PARTIAL",
@@ -326,6 +388,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:crosses",
       "reconciliation_bucket": "BLOCKED",
@@ -338,6 +401,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:cutbacks",
       "reconciliation_bucket": "BLOCKED",
@@ -350,6 +414,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:finishing_efficiency",
       "reconciliation_bucket": "PARTIAL",
@@ -365,6 +430,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:free_kicks_for",
       "reconciliation_bucket": "BLOCKED",
@@ -377,6 +443,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "SELECTED_PREDICTOR",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:attack:goals_scored",
       "reconciliation_bucket": "READY",
@@ -394,6 +461,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:key_passes",
       "reconciliation_bucket": "BLOCKED",
@@ -406,6 +474,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:left_production",
       "reconciliation_bucket": "BLOCKED",
@@ -418,6 +487,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:player_dependency",
       "reconciliation_bucket": "BLOCKED",
@@ -430,6 +500,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:right_production",
       "reconciliation_bucket": "BLOCKED",
@@ -442,6 +513,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:settled_attack",
       "reconciliation_bucket": "BLOCKED",
@@ -454,6 +526,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:shots",
       "reconciliation_bucket": "PARTIAL",
@@ -469,6 +542,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:shots_inside_box",
       "reconciliation_bucket": "PARTIAL",
@@ -484,6 +558,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:shots_on_target",
       "reconciliation_bucket": "PARTIAL",
@@ -499,6 +574,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:shots_outside_box",
       "reconciliation_bucket": "PARTIAL",
@@ -514,6 +590,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:through_balls",
       "reconciliation_bucket": "BLOCKED",
@@ -526,6 +603,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:attack:transitions",
       "reconciliation_bucket": "BLOCKED",
@@ -538,6 +616,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:attack:xg_per_shot",
       "reconciliation_bucket": "PARTIAL",
@@ -553,6 +632,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:attacking_options",
       "reconciliation_bucket": "UNKNOWN",
@@ -565,6 +645,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:defensive_options",
       "reconciliation_bucket": "UNKNOWN",
@@ -577,6 +658,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:bench_substitutions:depth",
       "reconciliation_bucket": "PARTIAL",
@@ -593,6 +675,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:early_substitutions",
       "reconciliation_bucket": "BLOCKED",
@@ -605,6 +688,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:experience",
       "reconciliation_bucket": "UNKNOWN",
@@ -617,6 +701,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:first_attacking_sub_minute",
       "reconciliation_bucket": "BLOCKED",
@@ -629,6 +714,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:historical_impact",
       "reconciliation_bucket": "UNKNOWN",
@@ -641,6 +727,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:late_substitutions",
       "reconciliation_bucket": "BLOCKED",
@@ -653,6 +740,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:natural_replacements",
       "reconciliation_bucket": "UNKNOWN",
@@ -665,6 +753,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:profiles",
       "reconciliation_bucket": "UNKNOWN",
@@ -677,6 +766,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:relative_quality",
       "reconciliation_bucket": "UNKNOWN",
@@ -689,6 +779,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:bench_substitutions:speed",
       "reconciliation_bucket": "UNKNOWN",
@@ -701,6 +792,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:collective_load",
       "reconciliation_bucket": "BLOCKED",
@@ -715,6 +807,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:congestion",
       "reconciliation_bucket": "BLOCKED",
@@ -729,6 +822,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:individual_load",
       "reconciliation_bucket": "BLOCKED",
@@ -743,6 +837,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:matches_10d",
       "reconciliation_bucket": "BLOCKED",
@@ -757,6 +852,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:matches_14d",
       "reconciliation_bucket": "BLOCKED",
@@ -771,6 +867,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:matches_21d",
       "reconciliation_bucket": "BLOCKED",
@@ -785,6 +882,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:matches_30d",
       "reconciliation_bucket": "BLOCKED",
@@ -799,6 +897,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:matches_5d",
       "reconciliation_bucket": "BLOCKED",
@@ -813,6 +912,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:matches_7d",
       "reconciliation_bucket": "BLOCKED",
@@ -827,6 +927,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:next_match_importance",
       "reconciliation_bucket": "BLOCKED",
@@ -841,6 +942,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:recent_extra_time",
       "reconciliation_bucket": "BLOCKED",
@@ -855,6 +957,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:recent_minutes",
       "reconciliation_bucket": "BLOCKED",
@@ -869,6 +972,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:recent_penalty_shootout",
       "reconciliation_bucket": "BLOCKED",
@@ -883,6 +987,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:rest_days",
       "reconciliation_bucket": "BLOCKED",
@@ -897,6 +1002,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:rest_differential",
       "reconciliation_bucket": "BLOCKED",
@@ -911,6 +1017,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:restart_phase",
       "reconciliation_bucket": "BLOCKED",
@@ -925,6 +1032,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_TEMPORALITY",
       "property_id": "football:calendar_fatigue:rotation",
       "reconciliation_bucket": "BLOCKED",
@@ -939,6 +1047,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:attacking_pair",
       "reconciliation_bucket": "UNKNOWN",
@@ -951,6 +1060,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:centrality",
       "reconciliation_bucket": "UNKNOWN",
@@ -963,6 +1073,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:centre_back_pair",
       "reconciliation_bucket": "BLOCKED",
@@ -975,6 +1086,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:chemistry_networks:co_starts",
       "reconciliation_bucket": "PARTIAL",
@@ -991,6 +1103,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:chemistry_networks:common_minutes",
       "reconciliation_bucket": "PARTIAL",
@@ -1007,6 +1120,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:dependency",
       "reconciliation_bucket": "UNKNOWN",
@@ -1019,6 +1133,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:goalkeeper_defence",
       "reconciliation_bucket": "UNKNOWN",
@@ -1031,6 +1146,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:midfield_triangle",
       "reconciliation_bucket": "BLOCKED",
@@ -1043,6 +1159,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:network_break",
       "reconciliation_bucket": "UNKNOWN",
@@ -1055,6 +1172,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:network_entropy",
       "reconciliation_bucket": "UNKNOWN",
@@ -1067,6 +1185,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:pass_network",
       "reconciliation_bucket": "UNKNOWN",
@@ -1079,6 +1198,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:replacement_cost",
       "reconciliation_bucket": "UNKNOWN",
@@ -1091,6 +1211,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:chemistry_networks:wing_fullback_lane",
       "reconciliation_bucket": "BLOCKED",
@@ -1103,6 +1224,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:after_loss_response",
       "reconciliation_bucket": "UNKNOWN",
@@ -1115,6 +1237,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:congestion_response",
       "reconciliation_bucket": "UNKNOWN",
@@ -1127,6 +1250,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:coach:experience",
       "reconciliation_bucket": "PARTIAL",
@@ -1141,6 +1265,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:coach:first_match",
       "reconciliation_bucket": "PARTIAL",
@@ -1155,6 +1280,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:formations",
       "reconciliation_bucket": "BLOCKED",
@@ -1167,6 +1293,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:game_state_management",
       "reconciliation_bucket": "UNKNOWN",
@@ -1179,6 +1306,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:half_time_adjustment",
       "reconciliation_bucket": "UNKNOWN",
@@ -1191,6 +1319,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:coach:identity",
       "reconciliation_bucket": "READY",
@@ -1205,6 +1334,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:opponent_familiarity",
       "reconciliation_bucket": "UNKNOWN",
@@ -1217,6 +1347,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:coach:recent_change",
       "reconciliation_bucket": "PARTIAL",
@@ -1231,6 +1362,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:rotation",
       "reconciliation_bucket": "UNKNOWN",
@@ -1243,6 +1375,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:staff_continuity",
       "reconciliation_bucket": "BLOCKED",
@@ -1255,6 +1388,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:style",
       "reconciliation_bucket": "UNKNOWN",
@@ -1267,6 +1401,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:coach:style_opposition",
       "reconciliation_bucket": "UNKNOWN",
@@ -1279,6 +1414,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:coach:substitutions",
       "reconciliation_bucket": "READY",
@@ -1297,6 +1433,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:coach:tenure",
       "reconciliation_bucket": "PARTIAL",
@@ -1311,6 +1448,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:data_quality:coverage_bias",
       "reconciliation_bucket": "READY",
@@ -1325,6 +1463,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:data_quality:identity_confidence",
       "reconciliation_bucket": "UNKNOWN",
@@ -1337,6 +1476,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:data_quality:ingested_at",
       "reconciliation_bucket": "READY",
@@ -1351,6 +1491,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:data_quality:missingness",
       "reconciliation_bucket": "READY",
@@ -1365,6 +1506,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:data_quality:observed_at",
       "reconciliation_bucket": "READY",
@@ -1379,6 +1521,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:data_quality:provenance_hash",
       "reconciliation_bucket": "READY",
@@ -1393,6 +1536,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:data_quality:provider_updated_at",
       "reconciliation_bucket": "BLOCKED",
@@ -1405,6 +1549,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:data_quality:published_at",
       "reconciliation_bucket": "BLOCKED",
@@ -1417,6 +1562,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:data_quality:schema_change",
       "reconciliation_bucket": "BLOCKED",
@@ -1429,6 +1575,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:data_quality:source",
       "reconciliation_bucket": "READY",
@@ -1443,6 +1590,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:data_quality:source_schema_hash",
       "reconciliation_bucket": "BLOCKED",
@@ -1455,6 +1603,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:data_quality:valid_from",
       "reconciliation_bucket": "BLOCKED",
@@ -1467,6 +1616,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:data_quality:valid_to",
       "reconciliation_bucket": "BLOCKED",
@@ -1479,6 +1629,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:aerial_defence",
       "reconciliation_bucket": "BLOCKED",
@@ -1491,6 +1642,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:big_chances_conceded",
       "reconciliation_bucket": "BLOCKED",
@@ -1503,6 +1655,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:central_vulnerability",
       "reconciliation_bucket": "BLOCKED",
@@ -1515,6 +1668,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:dangerous_turnovers",
       "reconciliation_bucket": "BLOCKED",
@@ -1527,6 +1681,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:defensive_block",
       "reconciliation_bucket": "BLOCKED",
@@ -1539,6 +1694,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:duels",
       "reconciliation_bucket": "BLOCKED",
@@ -1551,6 +1707,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:errors",
       "reconciliation_bucket": "BLOCKED",
@@ -1563,6 +1720,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "SELECTED_PREDICTOR",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:defence:goals_conceded",
       "reconciliation_bucket": "READY",
@@ -1580,6 +1738,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:high_line",
       "reconciliation_bucket": "BLOCKED",
@@ -1592,6 +1751,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:interceptions",
       "reconciliation_bucket": "BLOCKED",
@@ -1604,6 +1764,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:left_vulnerability",
       "reconciliation_bucket": "BLOCKED",
@@ -1616,6 +1777,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:rest_defence",
       "reconciliation_bucket": "BLOCKED",
@@ -1628,6 +1790,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:right_vulnerability",
       "reconciliation_bucket": "BLOCKED",
@@ -1640,6 +1803,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:set_piece_defence",
       "reconciliation_bucket": "BLOCKED",
@@ -1652,6 +1816,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:defence:shots_conceded",
       "reconciliation_bucket": "PARTIAL",
@@ -1667,6 +1832,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:defence:shots_on_target_conceded",
       "reconciliation_bucket": "PARTIAL",
@@ -1682,6 +1848,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:tackles",
       "reconciliation_bucket": "BLOCKED",
@@ -1694,6 +1861,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:defence:transition_defence",
       "reconciliation_bucket": "BLOCKED",
@@ -1706,6 +1874,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:defence:xga",
       "reconciliation_bucket": "PARTIAL",
@@ -1721,6 +1890,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:assistant_referees",
       "reconciliation_bucket": "BLOCKED",
@@ -1734,6 +1904,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:discipline_referee:cards_per_foul",
       "reconciliation_bucket": "PARTIAL",
@@ -1755,6 +1926,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:competition_rules",
       "reconciliation_bucket": "BLOCKED",
@@ -1768,6 +1940,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:derby_stake",
       "reconciliation_bucket": "UNKNOWN",
@@ -1780,6 +1953,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:discipline_referee:fouls",
       "reconciliation_bucket": "PARTIAL",
@@ -1801,27 +1975,23 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "SELECTED_PREDICTOR",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:discipline_referee:recent_cards",
       "reconciliation_bucket": "READY",
       "required_capabilities": [
-        "DISCIPLINE_GENERIC",
-        "TEAM_STATISTICS"
+        "EVENTS"
       ],
       "source_fields": [
         "field:a7bd98f8da38eeb618fd5def3961736a9c2e76b1854094e9a8b0262b4261a953",
-        "field:3bd50c1a852afda133b7ab8457e9ce77b0d45ba346b35d1e0e395c2a21c9375a",
-        "field:205a3f1da13ed5ca0ef358b5b1166069d969990aff23515deb4b1345e82e2c65",
-        "field:dfdbbbe58c37e0e34461caa042992f7929bcf32df9f593f58094a6e79615bd9f",
-        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d",
-        "field:d86a93f818fb8245d61847f06072ab88b5ae1819252c0d7d9bf0c345cf40390f",
-        "field:7c704e41319866619aec778e52f74ee2b1fb84fa1008437bacf69c1222dcd7dc"
+        "field:3a31af5f2c079797000ff3e46c55315d3fd6a65265baadb7ef971e43a166dc5d"
       ],
       "temporal_role": "LAGGED_RECONSTRUCTED_ONLY",
       "unknown_policy": "PRESERVE_UNKNOWN_NEVER_FALSE"
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:discipline_referee:red_cards",
       "reconciliation_bucket": "READY",
@@ -1843,6 +2013,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:discipline_referee:referee",
       "reconciliation_bucket": "READY",
@@ -1857,6 +2028,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:discipline_referee:referee_cards",
       "reconciliation_bucket": "PARTIAL",
@@ -1878,6 +2050,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:discipline_referee:referee_penalties",
       "reconciliation_bucket": "PARTIAL",
@@ -1899,6 +2072,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:discipline_referee:referee_reds",
       "reconciliation_bucket": "PARTIAL",
@@ -1920,6 +2094,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:return_from_suspension",
       "reconciliation_bucket": "BLOCKED",
@@ -1933,6 +2108,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:style_interaction",
       "reconciliation_bucket": "UNKNOWN",
@@ -1945,6 +2121,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:suspension_threat",
       "reconciliation_bucket": "UNKNOWN",
@@ -1957,6 +2134,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:threatened_centre_backs",
       "reconciliation_bucket": "BLOCKED",
@@ -1970,6 +2148,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:threatened_players",
       "reconciliation_bucket": "BLOCKED",
@@ -1983,6 +2162,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:var",
       "reconciliation_bucket": "BLOCKED",
@@ -1996,6 +2176,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:discipline_referee:var_official",
       "reconciliation_bucket": "BLOCKED",
@@ -2009,6 +2190,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:discipline_referee:yellow_cards",
       "reconciliation_bucket": "READY",
@@ -2030,6 +2212,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:action_sequence",
       "reconciliation_bucket": "READY",
@@ -2048,6 +2231,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:card_event",
       "reconciliation_bucket": "READY",
@@ -2066,6 +2250,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:event_game_state:formation_spell",
       "reconciliation_bucket": "BLOCKED",
@@ -2078,6 +2263,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:goal_event",
       "reconciliation_bucket": "READY",
@@ -2096,6 +2282,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:minute",
       "reconciliation_bucket": "READY",
@@ -2114,6 +2301,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:numerical_state",
       "reconciliation_bucket": "READY",
@@ -2132,6 +2320,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:player_spell",
       "reconciliation_bucket": "READY",
@@ -2150,6 +2339,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:event_game_state:possession_chain",
       "reconciliation_bucket": "BLOCKED",
@@ -2162,6 +2352,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:score_state",
       "reconciliation_bucket": "READY",
@@ -2180,6 +2371,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:substitution_event",
       "reconciliation_bucket": "READY",
@@ -2198,6 +2390,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:time_remaining",
       "reconciliation_bucket": "READY",
@@ -2216,6 +2409,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:event_game_state:var_event",
       "reconciliation_bucket": "READY",
@@ -2234,6 +2428,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:bilaterality",
       "reconciliation_bucket": "BLOCKED",
@@ -2246,6 +2441,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:centre_back_foot_pair",
       "reconciliation_bucket": "BLOCKED",
@@ -2258,6 +2454,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:defensive_asymmetry",
       "reconciliation_bucket": "BLOCKED",
@@ -2270,6 +2467,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:direct_defender_foot",
       "reconciliation_bucket": "BLOCKED",
@@ -2282,6 +2480,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:dominant_foot",
       "reconciliation_bucket": "BLOCKED",
@@ -2294,6 +2493,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:front_three_foot_distribution",
       "reconciliation_bucket": "BLOCKED",
@@ -2306,6 +2506,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:fullback_foot_fit",
       "reconciliation_bucket": "BLOCKED",
@@ -2318,6 +2519,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:natural_inverted_foot",
       "reconciliation_bucket": "BLOCKED",
@@ -2330,6 +2532,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:offensive_asymmetry",
       "reconciliation_bucket": "BLOCKED",
@@ -2342,6 +2545,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:wing_fullback_lane",
       "reconciliation_bucket": "BLOCKED",
@@ -2354,6 +2558,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:footedness_laterality:wing_side",
       "reconciliation_bucket": "BLOCKED",
@@ -2366,6 +2571,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:build_up_shape",
       "reconciliation_bucket": "UNKNOWN",
@@ -2378,6 +2584,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:first_use",
       "reconciliation_bucket": "BLOCKED",
@@ -2391,6 +2598,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:formation_structure:formation",
       "reconciliation_bucket": "READY",
@@ -2405,6 +2613,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:formation_change",
       "reconciliation_bucket": "BLOCKED",
@@ -2418,6 +2627,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:formation_continuity",
       "reconciliation_bucket": "BLOCKED",
@@ -2431,6 +2641,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:formation_fatigue_matchup",
       "reconciliation_bucket": "UNKNOWN",
@@ -2443,6 +2654,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:formation_market_matchup",
       "reconciliation_bucket": "UNKNOWN",
@@ -2455,6 +2667,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:formation_weather_matchup",
       "reconciliation_bucket": "UNKNOWN",
@@ -2467,6 +2680,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:home_away_matchup",
       "reconciliation_bucket": "BLOCKED",
@@ -2480,6 +2694,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:in_possession_shape",
       "reconciliation_bucket": "UNKNOWN",
@@ -2492,6 +2707,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:out_of_possession_shape",
       "reconciliation_bucket": "UNKNOWN",
@@ -2504,6 +2720,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:pressing_shape",
       "reconciliation_bucket": "BLOCKED",
@@ -2517,6 +2734,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:rare_formation",
       "reconciliation_bucket": "BLOCKED",
@@ -2530,6 +2748,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:formation_structure:usual_formation",
       "reconciliation_bucket": "BLOCKED",
@@ -2543,6 +2762,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:aerial_claims",
       "reconciliation_bucket": "BLOCKED",
@@ -2556,6 +2776,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:defence_continuity",
       "reconciliation_bucket": "BLOCKED",
@@ -2569,6 +2790,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:distribution",
       "reconciliation_bucket": "BLOCKED",
@@ -2582,6 +2804,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:errors",
       "reconciliation_bucket": "BLOCKED",
@@ -2595,6 +2818,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:experience",
       "reconciliation_bucket": "BLOCKED",
@@ -2608,6 +2832,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:penalties",
       "reconciliation_bucket": "BLOCKED",
@@ -2621,6 +2846,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:post_shot_xg",
       "reconciliation_bucket": "BLOCKED",
@@ -2634,6 +2860,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:save_rate",
       "reconciliation_bucket": "BLOCKED",
@@ -2647,6 +2874,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:saves",
       "reconciliation_bucket": "BLOCKED",
@@ -2660,6 +2888,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:goalkeeper:starter_status",
       "reconciliation_bucket": "PARTIAL",
@@ -2674,6 +2903,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:sweeper_actions",
       "reconciliation_bucket": "BLOCKED",
@@ -2687,6 +2917,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:goalkeeper:weather_cross_interaction",
       "reconciliation_bucket": "UNKNOWN",
@@ -2699,6 +2930,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:announced_injury",
       "reconciliation_bucket": "BLOCKED",
@@ -2711,6 +2943,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:announced_lineup",
       "reconciliation_bucket": "BLOCKED",
@@ -2723,6 +2956,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:correction",
       "reconciliation_bucket": "BLOCKED",
@@ -2735,6 +2969,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:declaration",
       "reconciliation_bucket": "BLOCKED",
@@ -2747,6 +2982,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:excluded_player",
       "reconciliation_bucket": "BLOCKED",
@@ -2759,6 +2995,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:information_age",
       "reconciliation_bucket": "BLOCKED",
@@ -2771,6 +3008,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:kickoff_change",
       "reconciliation_bucket": "BLOCKED",
@@ -2783,6 +3021,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:press_conference",
       "reconciliation_bucket": "BLOCKED",
@@ -2795,6 +3034,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:published_at",
       "reconciliation_bucket": "BLOCKED",
@@ -2807,6 +3047,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:referee_change",
       "reconciliation_bucket": "BLOCKED",
@@ -2819,6 +3060,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:reliability",
       "reconciliation_bucket": "BLOCKED",
@@ -2831,6 +3073,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:retraction",
       "reconciliation_bucket": "BLOCKED",
@@ -2843,6 +3086,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:source",
       "reconciliation_bucket": "BLOCKED",
@@ -2855,6 +3099,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:statement",
       "reconciliation_bucket": "BLOCKED",
@@ -2867,6 +3112,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:transfer",
       "reconciliation_bucket": "BLOCKED",
@@ -2879,6 +3125,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:travel_incident",
       "reconciliation_bucket": "BLOCKED",
@@ -2891,6 +3138,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:information_news:venue_change",
       "reconciliation_bucket": "BLOCKED",
@@ -2903,6 +3151,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:lineup_continuity:average_age",
       "reconciliation_bucket": "BLOCKED",
@@ -2915,6 +3164,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:bench",
       "reconciliation_bucket": "PARTIAL",
@@ -2931,6 +3181,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:bench_depth",
       "reconciliation_bucket": "PARTIAL",
@@ -2947,6 +3198,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:centre_back_pair",
       "reconciliation_bucket": "PARTIAL",
@@ -2963,6 +3215,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:changes",
       "reconciliation_bucket": "PARTIAL",
@@ -2979,6 +3232,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:changes_by_line",
       "reconciliation_bucket": "PARTIAL",
@@ -2995,6 +3249,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:common_minutes",
       "reconciliation_bucket": "PARTIAL",
@@ -3011,6 +3266,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:continuity",
       "reconciliation_bucket": "PARTIAL",
@@ -3027,6 +3283,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:lineup_continuity:forced_rotation",
       "reconciliation_bucket": "BLOCKED",
@@ -3039,6 +3296,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:forward_line",
       "reconciliation_bucket": "PARTIAL",
@@ -3055,6 +3313,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:midfield_triangle",
       "reconciliation_bucket": "PARTIAL",
@@ -3071,6 +3330,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:lineup_continuity:natural_replacements",
       "reconciliation_bucket": "BLOCKED",
@@ -3083,6 +3343,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:official_xi",
       "reconciliation_bucket": "PARTIAL",
@@ -3099,6 +3360,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:lineup_continuity:out_of_position_players",
       "reconciliation_bucket": "BLOCKED",
@@ -3111,6 +3373,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:lineup_continuity:usual_starters",
       "reconciliation_bucket": "PARTIAL",
@@ -3127,6 +3390,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:lineup_continuity:voluntary_rotation",
       "reconciliation_bucket": "BLOCKED",
@@ -3139,6 +3403,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:asian_handicap",
       "reconciliation_bucket": "BLOCKED",
@@ -3151,6 +3416,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:bookmaker_dispersion",
       "reconciliation_bucket": "BLOCKED",
@@ -3163,6 +3429,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:btts",
       "reconciliation_bucket": "BLOCKED",
@@ -3175,6 +3442,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:cards",
       "reconciliation_bucket": "BLOCKED",
@@ -3187,6 +3455,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:corners",
       "reconciliation_bucket": "BLOCKED",
@@ -3199,6 +3468,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:correct_score",
       "reconciliation_bucket": "BLOCKED",
@@ -3211,6 +3481,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:double_chance",
       "reconciliation_bucket": "BLOCKED",
@@ -3223,6 +3494,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:fouls",
       "reconciliation_bucket": "BLOCKED",
@@ -3235,6 +3507,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:goalkeeper_saves",
       "reconciliation_bucket": "BLOCKED",
@@ -3247,6 +3520,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:goals_total",
       "reconciliation_bucket": "BLOCKED",
@@ -3259,6 +3533,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:half_time",
       "reconciliation_bucket": "BLOCKED",
@@ -3271,6 +3546,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:limits",
       "reconciliation_bucket": "BLOCKED",
@@ -3283,6 +3559,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:line_movement",
       "reconciliation_bucket": "BLOCKED",
@@ -3295,6 +3572,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:liquidity",
       "reconciliation_bucket": "BLOCKED",
@@ -3307,6 +3585,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:market_1x2",
       "reconciliation_bucket": "BLOCKED",
@@ -3319,6 +3598,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:market_margin",
       "reconciliation_bucket": "BLOCKED",
@@ -3331,6 +3611,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:odds_decimal",
       "reconciliation_bucket": "BLOCKED",
@@ -3343,6 +3624,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:player_props",
       "reconciliation_bucket": "BLOCKED",
@@ -3355,6 +3637,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:settlement_rule",
       "reconciliation_bucket": "BLOCKED",
@@ -3367,6 +3650,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:shots",
       "reconciliation_bucket": "BLOCKED",
@@ -3379,6 +3663,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:shots_on_target",
       "reconciliation_bucket": "BLOCKED",
@@ -3391,6 +3676,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:market:team_goals",
       "reconciliation_bucket": "BLOCKED",
@@ -3403,6 +3689,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:aggregate_score",
       "reconciliation_bucket": "BLOCKED",
@@ -3416,6 +3703,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:behind_closed_doors",
       "reconciliation_bucket": "BLOCKED",
@@ -3429,6 +3717,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:match_competition:competition",
       "reconciliation_bucket": "READY",
@@ -3443,6 +3732,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:derby",
       "reconciliation_bucket": "UNKNOWN",
@@ -3455,6 +3745,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:first_matchday",
       "reconciliation_bucket": "BLOCKED",
@@ -3468,6 +3759,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:kickoff_change",
       "reconciliation_bucket": "BLOCKED",
@@ -3481,6 +3773,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:knockout",
       "reconciliation_bucket": "BLOCKED",
@@ -3494,6 +3787,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:last_matchday",
       "reconciliation_bucket": "BLOCKED",
@@ -3507,6 +3801,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:local_kickoff_time",
       "reconciliation_bucket": "BLOCKED",
@@ -3520,6 +3815,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:match_competition:matchday",
       "reconciliation_bucket": "READY",
@@ -3534,6 +3830,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:match_competition:month",
       "reconciliation_bucket": "READY",
@@ -3548,6 +3845,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:neutral_ground",
       "reconciliation_bucket": "BLOCKED",
@@ -3561,6 +3859,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:phase",
       "reconciliation_bucket": "UNKNOWN",
@@ -3573,6 +3872,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:post_break_restart",
       "reconciliation_bucket": "BLOCKED",
@@ -3586,6 +3886,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:qualification_stake",
       "reconciliation_bucket": "BLOCKED",
@@ -3599,6 +3900,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:relegation_stake",
       "reconciliation_bucket": "BLOCKED",
@@ -3612,6 +3914,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:rivalry",
       "reconciliation_bucket": "UNKNOWN",
@@ -3624,6 +3927,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:match_competition:round",
       "reconciliation_bucket": "READY",
@@ -3638,6 +3942,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:match_competition:season",
       "reconciliation_bucket": "READY",
@@ -3652,6 +3957,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:season_period",
       "reconciliation_bucket": "UNKNOWN",
@@ -3664,6 +3970,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:simultaneous_match_dependency",
       "reconciliation_bucket": "BLOCKED",
@@ -3677,6 +3984,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:stadium_change",
       "reconciliation_bucket": "BLOCKED",
@@ -3690,6 +3998,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:standings_stake",
       "reconciliation_bucket": "BLOCKED",
@@ -3703,6 +4012,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:tie_leg",
       "reconciliation_bucket": "BLOCKED",
@@ -3716,6 +4026,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:match_competition:title_stake",
       "reconciliation_bucket": "BLOCKED",
@@ -3729,6 +4040,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:match_competition:venue_role",
       "reconciliation_bucket": "READY",
@@ -3743,6 +4055,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:match_competition:weekday",
       "reconciliation_bucket": "READY",
@@ -3757,6 +4070,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:body_area",
       "reconciliation_bucket": "BLOCKED",
@@ -3769,6 +4083,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:concussion_protocol",
       "reconciliation_bucket": "BLOCKED",
@@ -3781,6 +4096,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:full_training",
       "reconciliation_bucket": "BLOCKED",
@@ -3793,6 +4109,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:illness_episode",
       "reconciliation_bucket": "BLOCKED",
@@ -3805,6 +4122,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:individual_training",
       "reconciliation_bucket": "BLOCKED",
@@ -3817,6 +4135,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:injury_episode",
       "reconciliation_bucket": "BLOCKED",
@@ -3829,6 +4148,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:injury_mechanism",
       "reconciliation_bucket": "BLOCKED",
@@ -3841,6 +4161,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:medical_clearance",
       "reconciliation_bucket": "BLOCKED",
@@ -3853,6 +4174,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:minutes_restriction",
       "reconciliation_bucket": "BLOCKED",
@@ -3865,6 +4187,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:partial_training",
       "reconciliation_bucket": "BLOCKED",
@@ -3877,6 +4200,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:privacy_basis",
       "reconciliation_bucket": "BLOCKED",
@@ -3889,6 +4213,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:relapse_history",
       "reconciliation_bucket": "BLOCKED",
@@ -3901,6 +4226,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:medical:severity",
       "reconciliation_bucket": "BLOCKED",
@@ -3913,6 +4239,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:academy_player",
       "reconciliation_bucket": "BLOCKED",
@@ -3925,6 +4252,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:call_up",
       "reconciliation_bucket": "BLOCKED",
@@ -3937,6 +4265,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:contract_incentive",
       "reconciliation_bucket": "BLOCKED",
@@ -3949,6 +4278,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:contract_status",
       "reconciliation_bucket": "BLOCKED",
@@ -3961,6 +4291,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:financial_pressure",
       "reconciliation_bucket": "BLOCKED",
@@ -3973,6 +4304,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:loan",
       "reconciliation_bucket": "BLOCKED",
@@ -3985,6 +4317,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:registration",
       "reconciliation_bucket": "BLOCKED",
@@ -3997,6 +4330,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:squad_churn",
       "reconciliation_bucket": "BLOCKED",
@@ -4009,6 +4343,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:squad_membership",
       "reconciliation_bucket": "BLOCKED",
@@ -4021,6 +4356,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:organisation_squad:transfer",
       "reconciliation_bucket": "BLOCKED",
@@ -4033,6 +4369,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:acceleration",
       "reconciliation_bucket": "BLOCKED",
@@ -4047,6 +4384,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:age",
       "reconciliation_bucket": "BLOCKED",
@@ -4061,6 +4399,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:player:assists",
       "reconciliation_bucket": "READY",
@@ -4080,6 +4419,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:player:cards",
       "reconciliation_bucket": "READY",
@@ -4099,6 +4439,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:duels",
       "reconciliation_bucket": "BLOCKED",
@@ -4113,6 +4454,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:endurance",
       "reconciliation_bucket": "BLOCKED",
@@ -4127,6 +4469,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:errors",
       "reconciliation_bucket": "BLOCKED",
@@ -4141,6 +4484,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:experience",
       "reconciliation_bucket": "UNKNOWN",
@@ -4153,6 +4497,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:form",
       "reconciliation_bucket": "UNKNOWN",
@@ -4165,6 +4510,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:fouls",
       "reconciliation_bucket": "BLOCKED",
@@ -4179,6 +4525,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_TARGET_ONLY",
       "property_id": "football:player:goals",
       "reconciliation_bucket": "READY",
@@ -4198,6 +4545,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:height",
       "reconciliation_bucket": "BLOCKED",
@@ -4212,6 +4560,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:player:identity",
       "reconciliation_bucket": "READY",
@@ -4226,6 +4575,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:interceptions",
       "reconciliation_bucket": "BLOCKED",
@@ -4240,6 +4590,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:jump",
       "reconciliation_bucket": "BLOCKED",
@@ -4254,6 +4605,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:load",
       "reconciliation_bucket": "BLOCKED",
@@ -4268,6 +4620,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:minutes",
       "reconciliation_bucket": "BLOCKED",
@@ -4282,6 +4635,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:out_of_position",
       "reconciliation_bucket": "UNKNOWN",
@@ -4294,6 +4648,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:partner_performance",
       "reconciliation_bucket": "UNKNOWN",
@@ -4306,6 +4661,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:player:position",
       "reconciliation_bucket": "PARTIAL",
@@ -4320,6 +4676,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:preferred_foot",
       "reconciliation_bucket": "BLOCKED",
@@ -4334,6 +4691,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:press_resistance",
       "reconciliation_bucket": "UNKNOWN",
@@ -4346,6 +4704,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:profile_matchup",
       "reconciliation_bucket": "UNKNOWN",
@@ -4358,6 +4717,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:player:role",
       "reconciliation_bucket": "PARTIAL",
@@ -4372,6 +4732,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:shots",
       "reconciliation_bucket": "BLOCKED",
@@ -4386,6 +4747,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:side",
       "reconciliation_bucket": "BLOCKED",
@@ -4400,6 +4762,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:speed",
       "reconciliation_bucket": "BLOCKED",
@@ -4414,6 +4777,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:player:starts",
       "reconciliation_bucket": "PARTIAL",
@@ -4428,6 +4792,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:player:substitute_appearances",
       "reconciliation_bucket": "PARTIAL",
@@ -4442,6 +4807,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:tackles",
       "reconciliation_bucket": "BLOCKED",
@@ -4456,6 +4822,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:versatility",
       "reconciliation_bucket": "UNKNOWN",
@@ -4468,6 +4835,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:xa",
       "reconciliation_bucket": "BLOCKED",
@@ -4482,6 +4850,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:player:xg",
       "reconciliation_bucket": "BLOCKED",
@@ -4496,6 +4865,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:circulation_speed",
       "reconciliation_bucket": "BLOCKED",
@@ -4508,6 +4878,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:counter_pressing",
       "reconciliation_bucket": "BLOCKED",
@@ -4520,6 +4891,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:directness",
       "reconciliation_bucket": "BLOCKED",
@@ -4532,6 +4904,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:field_tilt",
       "reconciliation_bucket": "BLOCKED",
@@ -4544,6 +4917,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:half_space_use",
       "reconciliation_bucket": "BLOCKED",
@@ -4556,6 +4930,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:high_recoveries",
       "reconciliation_bucket": "BLOCKED",
@@ -4568,6 +4943,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:long_build_up",
       "reconciliation_bucket": "BLOCKED",
@@ -4580,6 +4956,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:losses_under_pressure",
       "reconciliation_bucket": "BLOCKED",
@@ -4592,6 +4969,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:possession_pressing:passes",
       "reconciliation_bucket": "PARTIAL",
@@ -4607,6 +4985,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:possession_pressing:possession",
       "reconciliation_bucket": "PARTIAL",
@@ -4622,6 +5001,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:ppda",
       "reconciliation_bucket": "BLOCKED",
@@ -4634,6 +5014,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:pressing",
       "reconciliation_bucket": "BLOCKED",
@@ -4646,6 +5027,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:pressing_trap",
       "reconciliation_bucket": "BLOCKED",
@@ -4658,6 +5040,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:pressing_trigger",
       "reconciliation_bucket": "BLOCKED",
@@ -4670,6 +5053,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:pressure_exits",
       "reconciliation_bucket": "BLOCKED",
@@ -4682,6 +5066,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:progressive_passes",
       "reconciliation_bucket": "BLOCKED",
@@ -4694,6 +5079,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:short_build_up",
       "reconciliation_bucket": "BLOCKED",
@@ -4706,6 +5092,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:third_man",
       "reconciliation_bucket": "BLOCKED",
@@ -4718,6 +5105,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:possession_pressing:width",
       "reconciliation_bucket": "BLOCKED",
@@ -4730,6 +5118,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:ball_playing_defender",
       "reconciliation_bucket": "BLOCKED",
@@ -4742,6 +5131,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:cover_shadow",
       "reconciliation_bucket": "BLOCKED",
@@ -4754,6 +5144,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:direct_play",
       "reconciliation_bucket": "BLOCKED",
@@ -4766,6 +5157,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:double_pivot",
       "reconciliation_bucket": "BLOCKED",
@@ -4778,6 +5170,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:false_nine",
       "reconciliation_bucket": "BLOCKED",
@@ -4790,6 +5183,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:high_line",
       "reconciliation_bucket": "BLOCKED",
@@ -4802,6 +5196,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:holding_midfielder",
       "reconciliation_bucket": "BLOCKED",
@@ -4814,6 +5209,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:inverted_fullback",
       "reconciliation_bucket": "BLOCKED",
@@ -4826,6 +5222,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:inverted_winger",
       "reconciliation_bucket": "BLOCKED",
@@ -4838,6 +5235,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:low_block",
       "reconciliation_bucket": "BLOCKED",
@@ -4850,6 +5248,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:marking_scheme",
       "reconciliation_bucket": "BLOCKED",
@@ -4862,6 +5261,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:overlap",
       "reconciliation_bucket": "BLOCKED",
@@ -4874,6 +5274,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:playmaker",
       "reconciliation_bucket": "BLOCKED",
@@ -4886,6 +5287,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:possession_style",
       "reconciliation_bucket": "BLOCKED",
@@ -4898,6 +5300,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:pressing",
       "reconciliation_bucket": "BLOCKED",
@@ -4910,6 +5313,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:rotation",
       "reconciliation_bucket": "BLOCKED",
@@ -4922,6 +5326,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:side_overload",
       "reconciliation_bucket": "BLOCKED",
@@ -4934,6 +5339,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:stopper",
       "reconciliation_bucket": "BLOCKED",
@@ -4946,6 +5352,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:sweeper_keeper",
       "reconciliation_bucket": "BLOCKED",
@@ -4958,6 +5365,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:target_player",
       "reconciliation_bucket": "BLOCKED",
@@ -4970,6 +5378,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:transition",
       "reconciliation_bucket": "BLOCKED",
@@ -4982,6 +5391,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:underlap",
       "reconciliation_bucket": "BLOCKED",
@@ -4994,6 +5404,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:wide_winger",
       "reconciliation_bucket": "BLOCKED",
@@ -5006,6 +5417,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:width",
       "reconciliation_bucket": "BLOCKED",
@@ -5018,6 +5430,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:role_tactics:wingback",
       "reconciliation_bucket": "BLOCKED",
@@ -5030,6 +5443,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:aerial_defence",
       "reconciliation_bucket": "BLOCKED",
@@ -5043,6 +5457,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:available_takers",
       "reconciliation_bucket": "BLOCKED",
@@ -5056,6 +5471,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:corner_xg",
       "reconciliation_bucket": "BLOCKED",
@@ -5069,6 +5485,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:set_pieces:corners_against",
       "reconciliation_bucket": "PARTIAL",
@@ -5084,6 +5501,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:set_pieces:corners_for",
       "reconciliation_bucket": "PARTIAL",
@@ -5099,6 +5517,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:delivery_trajectory",
       "reconciliation_bucket": "BLOCKED",
@@ -5112,6 +5531,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:free_kicks",
       "reconciliation_bucket": "BLOCKED",
@@ -5125,6 +5545,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:goalkeeper_aerial",
       "reconciliation_bucket": "BLOCKED",
@@ -5138,6 +5559,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:marking_scheme",
       "reconciliation_bucket": "BLOCKED",
@@ -5151,6 +5573,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:penalties",
       "reconciliation_bucket": "BLOCKED",
@@ -5164,6 +5587,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:routine_type",
       "reconciliation_bucket": "BLOCKED",
@@ -5177,6 +5601,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:taker_absence",
       "reconciliation_bucket": "BLOCKED",
@@ -5190,6 +5615,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:target_zone",
       "reconciliation_bucket": "BLOCKED",
@@ -5203,6 +5629,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:team_height",
       "reconciliation_bucket": "BLOCKED",
@@ -5216,6 +5643,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:set_pieces:weather_interaction",
       "reconciliation_bucket": "UNKNOWN",
@@ -5228,6 +5656,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:acoustic_pressure",
       "reconciliation_bucket": "BLOCKED",
@@ -5240,6 +5669,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:altitude",
       "reconciliation_bucket": "BLOCKED",
@@ -5252,6 +5682,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:ball_specification",
       "reconciliation_bucket": "BLOCKED",
@@ -5264,6 +5695,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:coordinates",
       "reconciliation_bucket": "BLOCKED",
@@ -5276,6 +5708,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:crowd_size",
       "reconciliation_bucket": "BLOCKED",
@@ -5288,6 +5721,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:drainage",
       "reconciliation_bucket": "BLOCKED",
@@ -5300,6 +5734,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:footwear_surface_fit",
       "reconciliation_bucket": "BLOCKED",
@@ -5312,6 +5747,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:grass_type",
       "reconciliation_bucket": "BLOCKED",
@@ -5324,6 +5760,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:latitude",
       "reconciliation_bucket": "BLOCKED",
@@ -5336,6 +5773,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:longitude",
       "reconciliation_bucket": "BLOCKED",
@@ -5348,6 +5786,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:pitch_length",
       "reconciliation_bucket": "BLOCKED",
@@ -5360,6 +5799,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:pitch_orientation",
       "reconciliation_bucket": "BLOCKED",
@@ -5372,6 +5812,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:pitch_state",
       "reconciliation_bucket": "BLOCKED",
@@ -5384,6 +5825,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:pitch_width",
       "reconciliation_bucket": "BLOCKED",
@@ -5396,6 +5838,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:roof_state",
       "reconciliation_bucket": "BLOCKED",
@@ -5408,6 +5851,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:stadium_pitch:stadium",
       "reconciliation_bucket": "READY",
@@ -5422,6 +5866,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:stadium_familiarity",
       "reconciliation_bucket": "BLOCKED",
@@ -5434,6 +5879,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:surface",
       "reconciliation_bucket": "BLOCKED",
@@ -5446,6 +5892,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:temporary_venue",
       "reconciliation_bucket": "BLOCKED",
@@ -5458,6 +5905,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:stadium_pitch:wind_exposure",
       "reconciliation_bucket": "BLOCKED",
@@ -5470,6 +5918,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:after_result_performance",
       "reconciliation_bucket": "READY",
@@ -5487,6 +5936,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:strength_form:elo",
       "reconciliation_bucket": "UNKNOWN",
@@ -5499,6 +5949,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:strength_form:favourite_outsider_performance",
       "reconciliation_bucket": "BLOCKED",
@@ -5512,6 +5963,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "SELECTED_PREDICTOR",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:form",
       "reconciliation_bucket": "READY",
@@ -5529,6 +5981,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "SELECTED_PREDICTOR",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:goals",
       "reconciliation_bucket": "READY",
@@ -5546,6 +5999,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:home_away_performance",
       "reconciliation_bucket": "READY",
@@ -5563,6 +6017,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:strength_form:opponent_adjusted_form",
       "reconciliation_bucket": "UNKNOWN",
@@ -5575,6 +6030,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "SELECTED_PREDICTOR",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:points",
       "reconciliation_bucket": "READY",
@@ -5592,6 +6048,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:ranking",
       "reconciliation_bucket": "READY",
@@ -5609,6 +6066,7 @@
     },
     {
       "block_reason": "SEMANTIC_MAPPING_REVIEW_REQUIRED",
+      "campaign_v1_disposition": "DEFERRED_SEMANTIC_REVIEW",
       "materialization_status": "BLOCKED_BY_DATA",
       "property_id": "football:strength_form:regime_change",
       "reconciliation_bucket": "UNKNOWN",
@@ -5621,6 +6079,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:streak",
       "reconciliation_bucket": "READY",
@@ -5638,6 +6097,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "SELECTED_PREDICTOR",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:volatility",
       "reconciliation_bucket": "READY",
@@ -5655,6 +6115,7 @@
     },
     {
       "block_reason": null,
+      "campaign_v1_disposition": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
       "materialization_status": "MATERIALIZABLE_RECONSTRUCTED",
       "property_id": "football:strength_form:weighted_form",
       "reconciliation_bucket": "READY",
@@ -5672,6 +6133,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:strength_form:xg",
       "reconciliation_bucket": "PARTIAL",
@@ -5692,6 +6154,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:strength_form:xg_difference",
       "reconciliation_bucket": "PARTIAL",
@@ -5712,6 +6175,7 @@
     },
     {
       "block_reason": "CAPABILITY_OR_COVERAGE_PARTIAL",
+      "campaign_v1_disposition": "DEFERRED_PARTIAL_SOURCE",
       "materialization_status": "PARTIAL",
       "property_id": "football:strength_form:xga",
       "reconciliation_bucket": "PARTIAL",
@@ -5732,6 +6196,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:accelerations",
       "reconciliation_bucket": "BLOCKED",
@@ -5744,6 +6209,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:acute_chronic_load",
       "reconciliation_bucket": "BLOCKED",
@@ -5756,6 +6222,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:external_load",
       "reconciliation_bucket": "BLOCKED",
@@ -5768,6 +6235,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:heart_rate",
       "reconciliation_bucket": "BLOCKED",
@@ -5780,6 +6248,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:high_intensity_distance",
       "reconciliation_bucket": "BLOCKED",
@@ -5792,6 +6261,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:internal_load",
       "reconciliation_bucket": "BLOCKED",
@@ -5804,6 +6274,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:microcycle_day",
       "reconciliation_bucket": "BLOCKED",
@@ -5816,6 +6287,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:perceived_fatigue",
       "reconciliation_bucket": "BLOCKED",
@@ -5828,6 +6300,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:recovery",
       "reconciliation_bucket": "BLOCKED",
@@ -5840,6 +6313,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:rpe",
       "reconciliation_bucket": "BLOCKED",
@@ -5852,6 +6326,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:sleep",
       "reconciliation_bucket": "BLOCKED",
@@ -5864,6 +6339,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:soreness",
       "reconciliation_bucket": "BLOCKED",
@@ -5876,6 +6352,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:sprints",
       "reconciliation_bucket": "BLOCKED",
@@ -5888,6 +6365,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:training_load:thermal_stress",
       "reconciliation_bucket": "BLOCKED",
@@ -5900,6 +6378,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:altitude_delta",
       "reconciliation_bucket": "BLOCKED",
@@ -5912,6 +6391,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:arrival_time",
       "reconciliation_bucket": "BLOCKED",
@@ -5924,6 +6404,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:circadian_offset",
       "reconciliation_bucket": "BLOCKED",
@@ -5936,6 +6417,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:climate_delta",
       "reconciliation_bucket": "BLOCKED",
@@ -5948,6 +6430,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:consecutive_away_matches",
       "reconciliation_bucket": "BLOCKED",
@@ -5960,6 +6443,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:cumulative_kilometres",
       "reconciliation_bucket": "BLOCKED",
@@ -5972,6 +6456,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:international_return",
       "reconciliation_bucket": "BLOCKED",
@@ -5984,6 +6469,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:nights_on_site",
       "reconciliation_bucket": "BLOCKED",
@@ -5996,6 +6482,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:post_travel_recovery",
       "reconciliation_bucket": "BLOCKED",
@@ -6008,6 +6495,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:return_from_europe",
       "reconciliation_bucket": "BLOCKED",
@@ -6020,6 +6508,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:same_day_travel",
       "reconciliation_bucket": "BLOCKED",
@@ -6032,6 +6521,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:timezone_delta",
       "reconciliation_bucket": "BLOCKED",
@@ -6044,6 +6534,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:travel_delay",
       "reconciliation_bucket": "BLOCKED",
@@ -6056,6 +6547,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:travel_distance",
       "reconciliation_bucket": "BLOCKED",
@@ -6068,6 +6560,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:travel_duration",
       "reconciliation_bucket": "BLOCKED",
@@ -6080,6 +6573,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:travel_logistics:venue_sequence",
       "reconciliation_bucket": "BLOCKED",
@@ -6092,6 +6586,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:actual_weather",
       "reconciliation_bucket": "BLOCKED",
@@ -6104,6 +6599,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:air_quality",
       "reconciliation_bucket": "BLOCKED",
@@ -6116,6 +6612,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:cloud_cover",
       "reconciliation_bucket": "BLOCKED",
@@ -6128,6 +6625,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:crosswind_component",
       "reconciliation_bucket": "BLOCKED",
@@ -6140,6 +6638,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:departure_arrival_climate_delta",
       "reconciliation_bucket": "BLOCKED",
@@ -6152,6 +6651,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:dew_point",
       "reconciliation_bucket": "BLOCKED",
@@ -6164,6 +6664,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:feels_like",
       "reconciliation_bucket": "BLOCKED",
@@ -6176,6 +6677,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:fog",
       "reconciliation_bucket": "BLOCKED",
@@ -6188,6 +6690,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:forecast_at_cutoff",
       "reconciliation_bucket": "BLOCKED",
@@ -6200,6 +6703,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:forecast_error",
       "reconciliation_bucket": "BLOCKED",
@@ -6212,6 +6716,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:frost",
       "reconciliation_bucket": "BLOCKED",
@@ -6224,6 +6729,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:humidity",
       "reconciliation_bucket": "BLOCKED",
@@ -6236,6 +6742,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:pressure",
       "reconciliation_bucket": "BLOCKED",
@@ -6248,6 +6755,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:rain_accumulation",
       "reconciliation_bucket": "BLOCKED",
@@ -6260,6 +6768,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:rain_rate",
       "reconciliation_bucket": "BLOCKED",
@@ -6272,6 +6781,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:roof_open",
       "reconciliation_bucket": "BLOCKED",
@@ -6284,6 +6794,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:snow",
       "reconciliation_bucket": "BLOCKED",
@@ -6296,6 +6807,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:solar_radiation",
       "reconciliation_bucket": "BLOCKED",
@@ -6308,6 +6820,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:temperature",
       "reconciliation_bucket": "BLOCKED",
@@ -6320,6 +6833,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:thunderstorm",
       "reconciliation_bucket": "BLOCKED",
@@ -6332,6 +6846,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:visibility",
       "reconciliation_bucket": "BLOCKED",
@@ -6344,6 +6859,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:wet_bulb",
       "reconciliation_bucket": "BLOCKED",
@@ -6356,6 +6872,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:wind_direction",
       "reconciliation_bucket": "BLOCKED",
@@ -6368,6 +6885,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:wind_gust",
       "reconciliation_bucket": "BLOCKED",
@@ -6380,6 +6898,7 @@
     },
     {
       "block_reason": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+      "campaign_v1_disposition": "BLOCKED_SOURCE_OR_DATA",
       "materialization_status": "BLOCKED_BY_SOURCE",
       "property_id": "football:weather:wind_speed",
       "reconciliation_bucket": "BLOCKED",

@@ -36,6 +36,8 @@ GENERATED_AT = "2026-08-08T09:10:42Z"
 SEED = 11011
 UNIVERSE_COUNT = 1756
 NBYTES = (UNIVERSE_COUNT + 7) // 8
+ACTIVE_RESUME_ROOT: Path | None = None
+ACTIVE_RESUME_CHECKPOINT: dict[str, Any] | None = None
 
 TARGET_SEGMENTS = {
     "Premier League": "seg-000209-75959aee62633e1d",
@@ -303,6 +305,114 @@ def write_json(path: Path, value: object) -> None:
     path.write_bytes(render_bytes(value))
 
 
+def write_json_atomic(path: Path, value: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + ".next")
+    temporary.write_bytes(render_bytes(value))
+    os.replace(temporary, path)
+
+
+def write_heavy_json_artifact(
+    store_root: Path, filename: str, value: Mapping[str, Any]
+) -> dict[str, Any]:
+    payload = canonical_bytes(value)
+    compressed = gzip.compress(payload, compresslevel=9, mtime=0)
+    relative = Path("results") / filename
+    path = store_root / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(compressed)
+    return {
+        "artifact_relative_path": relative.as_posix(),
+        "compressed_bytes": len(compressed),
+        "sha256": sha256_bytes(compressed),
+        "content_sha256": sha256_bytes(payload),
+        "git_committed": False,
+    }
+
+
+def read_heavy_json_artifact(path: Path) -> dict[str, Any]:
+    value = json.loads(gzip.decompress(path.read_bytes()))
+    if not isinstance(value, dict):
+        raise TypeError("HEAVY_JSON_ARTIFACT_OBJECT_REQUIRED")
+    return value
+
+
+def load_resume_progress(stage: str) -> list[dict[str, Any]]:
+    if ACTIVE_RESUME_ROOT is None or ACTIVE_RESUME_CHECKPOINT is None:
+        return []
+    if ACTIVE_RESUME_CHECKPOINT.get("phase") != stage:
+        return []
+    progress_name = ACTIVE_RESUME_CHECKPOINT.get("resume_progress_path")
+    progress_sha = ACTIVE_RESUME_CHECKPOINT.get("resume_progress_sha256")
+    if not isinstance(progress_name, str) or not isinstance(progress_sha, str):
+        return []
+    progress_path = ACTIVE_RESUME_ROOT / progress_name
+    payload = progress_path.read_bytes()
+    if sha256_bytes(payload) != progress_sha:
+        raise RuntimeError("RESUME_PROGRESS_HASH_MISMATCH")
+    value = json.loads(gzip.decompress(payload))
+    if (
+        not isinstance(value, dict)
+        or value.get("schema_version") != "phase-c-resume-progress-v1"
+        or value.get("stage") != stage
+        or value.get("cursor") != ACTIVE_RESUME_CHECKPOINT.get("cursor")
+        or not isinstance(value.get("records"), list)
+    ):
+        raise RuntimeError("RESUME_PROGRESS_CONTRACT_MISMATCH")
+    return [dict(row) for row in value["records"] if isinstance(row, Mapping)]
+
+
+def persist_resume_progress(
+    store_root: Path, stage: str, records: Sequence[Mapping[str, Any]]
+) -> None:
+    cursor = len(records)
+    slot = cursor % 2
+    progress_name = f"resume-progress-{slot}-v1.json.gz"
+    progress_path = store_root / progress_name
+    payload = gzip.compress(
+        canonical_bytes(
+            {
+                "schema_version": "phase-c-resume-progress-v1",
+                "stage": stage,
+                "cursor": cursor,
+                "records": list(records),
+            }
+        ),
+        compresslevel=9,
+        mtime=0,
+    )
+    temporary = progress_path.with_name(progress_path.name + ".next")
+    temporary.write_bytes(payload)
+    os.replace(temporary, progress_path)
+    checkpoint_path = store_root / "checkpoint-v1.json"
+    checkpoint = read_json(checkpoint_path)
+    checkpoint.pop("checkpoint_hash", None)
+    checkpoint.update(
+        {
+            "cursor": cursor,
+            "evaluated": cursor,
+            "resume_progress_path": progress_name,
+            "resume_progress_sha256": sha256_bytes(payload),
+            "next_action": f"RESUME_{stage}_AT_CURSOR_{cursor}",
+        }
+    )
+    checkpoint["checkpoint_hash"] = object_hash(checkpoint)
+    write_json_atomic(checkpoint_path, checkpoint)
+
+
+def canonical_phase(stage: str) -> str:
+    return {
+        "census": "RAW_FIELD_CENSUS",
+        "RAW_FIELD_CENSUS": "RAW_FIELD_CENSUS",
+        "tag-mask-build": "TAG_MASK_BUILD",
+        "TAG_MASK_BUILD": "TAG_MASK_BUILD",
+        "atomic": "ATOMIC_PROPERTY_SEARCH",
+        "ATOMIC_PROPERTY_SEARCH": "ATOMIC_PROPERTY_SEARCH",
+        "pairs": "COMPATIBLE_PAIR_SEARCH",
+        "COMPATIBLE_PAIR_SEARCH": "COMPATIBLE_PAIR_SEARCH",
+    }.get(stage, stage.upper().replace("-", "_"))
+
+
 def rate(numerator: int, denominator: int) -> float | None:
     return round(numerator / denominator, 8) if denominator else None
 
@@ -535,7 +645,9 @@ def build_census(rows: Sequence[Mapping[str, Any]], output_root: Path) -> dict[s
 
     entity_counts: Counter[str] = Counter()
     fixtures: set[str] = set()
-    for row in rows:
+    for row_index, row in enumerate(rows):
+        if row_index % 4096 == 0:
+            enforce_soft_deadline()
         entity = str(row.get("entity_type"))
         entity_counts[entity] += 1
         fixture = row.get("canonical_fixture_id")
@@ -678,6 +790,16 @@ def property_name(property_id: str) -> str:
 
 
 SOURCE_FIELD_REGISTRY: dict[str, dict[str, str]] = {}
+ACTIVE_SOFT_DEADLINE: float | None = None
+
+
+class SoftDeadlineReached(RuntimeError):
+    """Stop a workflow unit while its initial checkpoint is still uploadable."""
+
+
+def enforce_soft_deadline() -> None:
+    if ACTIVE_SOFT_DEADLINE is not None and time.monotonic() >= ACTIVE_SOFT_DEADLINE:
+        raise SoftDeadlineReached("SOFT_DEADLINE_REACHED_CHECKPOINT_REQUIRED")
 
 
 def source_field(
@@ -796,6 +918,19 @@ def property_requirements(
         return team_statistics + fixture_score, ["TEAM_STATISTICS", "TEAM"], "PARTIAL_XG_HISTORY"
     if family == "EVENT_GAME_STATE" and bucket == "READY":
         return events, ["EVENTS"], "TARGET_EVENT_COLLECTION"
+    if family == "DISCIPLINE_REFEREE" and name == "recent_cards" and bucket == "READY":
+        return (
+            [
+                source_field(
+                    "fixture_event", "data.type", "TARGET_OR_PRIOR_FIXTURES_ONLY"
+                ),
+                source_field(
+                    "fixture_event", "data.team.id", "TARGET_OR_PRIOR_FIXTURES_ONLY"
+                ),
+            ],
+            ["EVENTS"],
+            "DETERMINISTIC_PRIOR_CARD_EVENT_TRANSFORM",
+        )
     if family == "DISCIPLINE_REFEREE" and bucket in {"READY", "PARTIAL"}:
         return events + team_statistics, ["DISCIPLINE_GENERIC", "TEAM_STATISTICS"], "CARD_EVENT_OR_TEAM_STAT_HISTORY"
     if family == "PLAYER" and bucket == "READY":
@@ -846,10 +981,12 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
     if not isinstance(items, list) or len(items) != 486:
         raise RuntimeError("GENOME_486_REQUIRED")
     by_family: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    roles_by_property: dict[str, dict[str, Any]] = {}
     for raw in items:
         if not isinstance(raw, dict):
             raise TypeError("PROPERTY_OBJECT_REQUIRED")
         by_family[str(raw["family"])].append(raw)
+        roles_by_property[str(raw["property_id"])] = raw
     if set(by_family) != set(FAMILY_BUCKETS):
         raise RuntimeError("GENOME_28_FAMILY_SET_MISMATCH")
 
@@ -857,6 +994,7 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
     bucket_counts: Counter[str] = Counter()
     materialization_counts: Counter[str] = Counter()
     for family in sorted(by_family):
+        enforce_soft_deadline()
         family_items = sorted(by_family[family], key=lambda row: str(row["property_id"]))
         r_count, p_count, b_count, u_count = FAMILY_BUCKETS[family]
         if len(family_items) != r_count + p_count + b_count + u_count:
@@ -927,6 +1065,21 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
                 raise RuntimeError(f"REVIEWED_PROPERTY_SOURCE_CONTRACT_EMPTY:{pid}")
             bucket_counts[bucket] += 1
             materialization_counts[status] += 1
+            selected_predictor = pid in {value[0] for value in BASES.values()}
+            if selected_predictor:
+                campaign_v1_disposition = "SELECTED_PREDICTOR"
+            elif bucket == "PARTIAL":
+                campaign_v1_disposition = "DEFERRED_PARTIAL_SOURCE"
+            elif bucket == "UNKNOWN":
+                campaign_v1_disposition = "DEFERRED_SEMANTIC_REVIEW"
+            elif bucket == "BLOCKED":
+                campaign_v1_disposition = "BLOCKED_SOURCE_OR_DATA"
+            elif bucket == "READY" and bool(
+                roles_by_property[pid].get("public_hypothesis_eligible")
+            ):
+                campaign_v1_disposition = "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1"
+            else:
+                campaign_v1_disposition = "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT"
             records.append(
                 {
                     "property_id": pid,
@@ -937,6 +1090,7 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
                     "temporal_role": temporal_role,
                     "unknown_policy": "PRESERVE_UNKNOWN_NEVER_FALSE",
                     "block_reason": block_reason,
+                    "campaign_v1_disposition": campaign_v1_disposition,
                 }
             )
     if bucket_counts != Counter({"READY": 46, "PARTIAL": 46, "BLOCKED": 344, "UNKNOWN": 50}):
@@ -958,7 +1112,21 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
             "temporal_role",
             "unknown_policy",
             "block_reason",
+            "campaign_v1_disposition",
         ],
+        "lagged_predictor_transform_property_ids": sorted(
+            {value[0] for value in BASES.values()}
+        ),
+        "campaign_v1_disposition_counts": dict(
+            sorted(Counter(row["campaign_v1_disposition"] for row in records).items())
+        ),
+        "omitted_public_hypothesis_eligible_property_ids": sorted(
+            row["property_id"]
+            for row in records
+            if row["campaign_v1_disposition"]
+            == "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1"
+        ),
+        "campaign_scope_status": "BOUNDED_7_PROPERTY_SUBCAMPAIGN_REQUIRES_COUNCIL_RESCOPING",
         "mapping_basis_by_bucket": {
             "READY_PARTIAL": "EXACT_ENTITY_PATH_REGISTRY_AND_DETERMINISTIC_TRANSFORM",
             "BLOCKED": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
@@ -1190,6 +1358,28 @@ def feature_value(base: str, matches: Sequence[TeamMatch]) -> float | None:
     raise KeyError(base)
 
 
+def predictor_admissibility_reasons(
+    *,
+    known_at: datetime | None,
+    cutoff: datetime,
+    scientific_role: str,
+    derived_from_target: bool,
+    price_required: bool,
+    point_in_time_price_available: bool,
+) -> list[str]:
+    """One fail-closed gate shared by real lagged features and negative controls."""
+    reasons: list[str] = []
+    if known_at is None or known_at >= cutoff:
+        reasons.append("KNOWN_AT_NOT_BEFORE_TARGET_CUTOFF")
+    if scientific_role in {"TARGET_ONLY", "POST_RESULT", "TARGET_DERIVED_IDENTITY"}:
+        reasons.append("SCIENTIFIC_ROLE_NOT_PREDICTOR_ADMISSIBLE")
+    if derived_from_target:
+        reasons.append("DERIVED_FROM_TARGET_LABEL")
+    if price_required and not point_in_time_price_available:
+        reasons.append("POINT_IN_TIME_PRICE_UNAVAILABLE")
+    return reasons
+
+
 def build_features(
     fixtures: Sequence[Fixture], history: Mapping[int, Sequence[TeamMatch]]
 ) -> tuple[list[dict[str, float | None]], list[dict[str, Any]]]:
@@ -1201,7 +1391,15 @@ def build_features(
             eligible = [
                 match
                 for match in history[team_id]
-                if match.available_at < fixture.kickoff and match.fixture_id != fixture.fixture_id
+                if not predictor_admissibility_reasons(
+                    known_at=match.available_at,
+                    cutoff=fixture.kickoff,
+                    scientific_role="LAGGED_RECONSTRUCTED_ONLY",
+                    derived_from_target=False,
+                    price_required=False,
+                    point_in_time_price_available=False,
+                )
+                and match.fixture_id != fixture.fixture_id
             ]
             for window in WINDOWS:
                 if window == "SEASON_TO_DATE":
@@ -1408,6 +1606,7 @@ def build_masks(
     masks: dict[str, tuple[int, int]] = {}
     manifest_rows: list[dict[str, Any]] = []
     for tag in registry["tags"]:
+        enforce_soft_deadline()
         tid = str(tag["tag_id"])
         side, _, base, window, _, _ = tid.split(".")
         side = side.removeprefix("TEAM_")
@@ -2231,13 +2430,32 @@ def evaluate_atomic(
     targets: Sequence[Mapping[str, Any]],
     registry: Mapping[str, Any],
     output_root: Path,
+    store_root: Path,
 ) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
     target_names = ("MATCH_RESULT_90M", "TOTAL_GOALS_2_5_90M")
-    results: dict[str, dict[str, Any]] = {}
+    resumed_rows = load_resume_progress("ATOMIC_PROPERTY_SEARCH")
+    results: dict[str, dict[str, Any]] = {
+        str(row["tag_id"]): row for row in resumed_rows
+    }
+    expected_prefix = [str(row["tag_id"]) for row in registry["tags"]][
+        : len(resumed_rows)
+    ]
+    if list(results) != expected_prefix:
+        raise RuntimeError("ATOMIC_RESUME_CURSOR_OR_ORDER_MISMATCH")
     p_rows: list[tuple[str, float]] = []
     family_p_rows: dict[str, list[tuple[str, float]]] = defaultdict(list)
+    for row in resumed_rows:
+        for metric in row["target_metrics"].values():
+            key = str(metric["canonical_test_id"])
+            p_value = float(metric["p_value"])
+            family_id = str(metric["family_id"])
+            p_rows.append((key, p_value))
+            family_p_rows[family_id].append((key, p_value))
     for tag in registry["tags"]:
         tid = str(tag["tag_id"])
+        if tid in results:
+            continue
+        enforce_soft_deadline()
         per_target: dict[str, Any] = {}
         all_states: dict[int, bool | None] = {}
         fold_threshold_hashes: list[str] = []
@@ -2448,6 +2666,11 @@ def evaluate_atomic(
             "price_metrics_if_admissible": None,
             "status": "TESTED",
         }
+        persist_resume_progress(
+            store_root,
+            "ATOMIC_PROPERTY_SEARCH",
+            [results[key] for key in sorted(results)],
+        )
     q_values = bh_adjust(p_rows)
     family_q_values = {
         key: value
@@ -2524,11 +2747,74 @@ def evaluate_atomic(
         "status_counts": dict(sorted(status_counts.items())),
         "results": ordered_results,
     }
-    write_json(output_root / "reports/hypothesis-research/atomic-results-v1.json", atomic_report)
+    heavy_artifact = write_heavy_json_artifact(
+        store_root, "atomic-results-full-v1.json.gz", atomic_report
+    )
+    compact_results: list[dict[str, Any]] = []
+    for row in ordered_results:
+        compact_metrics = {
+            target_name: {
+                key: metric[key]
+                for key in (
+                    "canonical_test_id",
+                    "known_oof",
+                    "true_oof",
+                    "false_oof",
+                    "unknown_oof",
+                    "coverage_oof",
+                    "dominant_league_share",
+                    "simple_log_loss",
+                    "frequency_baseline_log_loss",
+                    "league_baseline_log_loss",
+                    "model_log_loss",
+                    "delta_log_loss",
+                    "delta_brier",
+                    "p_value_raw",
+                    "p_value",
+                    "q_value_global",
+                    "q_value_family",
+                    "q_value",
+                    "family_id",
+                    "tag_snapshot_hash",
+                    "hypothesis_id",
+                    "status",
+                    "review_gate",
+                    "suspicious_reasons",
+                )
+            }
+            for target_name, metric in row["target_metrics"].items()
+        }
+        compact_results.append(
+            {
+                key: row[key]
+                for key in (
+                    "property_id",
+                    "tag_id",
+                    "support",
+                    "true_count",
+                    "false_count",
+                    "unknown_count",
+                    "coverage",
+                    "evaluation_universe",
+                    "fold_threshold_hashes",
+                    "status",
+                )
+            }
+            | {"target_metrics": compact_metrics}
+        )
+    compact_report = {
+        key: value for key, value in atomic_report.items() if key != "results"
+    }
+    compact_report["result_detail"] = "COMPACT_GIT_SUMMARY_FULL_ROWS_IN_GITHUB_ARTIFACT"
+    compact_report["full_results_artifact"] = heavy_artifact
+    compact_report["results"] = compact_results
+    write_json(output_root / "reports/hypothesis-research/atomic-results-v1.json", compact_report)
     summary = {
         "schema_version": "atomic-campaign-summary-v1",
         "generated_at": GENERATED_AT,
-        "verdict": "ATOMIC_PROPERTY_CAMPAIGN_READY",
+        "verdict": "ATOMIC_SUBCAMPAIGN_READY_GLOBAL_SCOPE_PARTIAL",
+        "scope_verdict": "BOUNDED_7_PROPERTY_SUBCAMPAIGN_COMPLETE_GLOBAL_SCOPE_PARTIAL",
+        "deferred_public_hypothesis_eligible_properties": 18,
         "properties_reconciled": 486,
         "materialized_predictor_properties": len(
             {row["property_id"] for row in ordered_results}
@@ -2704,20 +2990,42 @@ def evaluate_pairs(
     features: Sequence[Mapping[str, float | None]],
     targets: Sequence[Mapping[str, Any]],
     masks: Mapping[str, tuple[int, int]],
+    registry: Mapping[str, Any],
+    mask_manifest: Mapping[str, Any],
     output_root: Path,
+    store_root: Path,
 ) -> dict[str, Any]:
     p_rows: list[tuple[str, float]] = []
     family_p_rows: dict[str, list[tuple[str, float]]] = defaultdict(list)
-    results: list[dict[str, Any]] = []
+    results = load_resume_progress("COMPATIBLE_PAIR_SEARCH")
     target_names = ("MATCH_RESULT_90M", "TOTAL_GOALS_2_5_90M")
     comparators = ("PARENT_A", "PARENT_B", "ADDITIVE")
+    tag_definitions = {str(row["tag_id"]): row for row in registry["tags"]}
+    mask_records = {str(row["tag_id"]): row for row in mask_manifest["records"]}
+    expected_prefix = [str(row["pair_id"]) for row in selected][: len(results)]
+    if [str(row.get("pair_id")) for row in results] != expected_prefix:
+        raise RuntimeError("PAIR_RESUME_CURSOR_OR_ORDER_MISMATCH")
+    for row in results:
+        for metric in row["target_metrics"].values():
+            test_id = str(metric["canonical_test_id"])
+            p_value = float(metric["p_value"])
+            family_id = str(metric["family_id"])
+            p_rows.append((test_id, p_value))
+            family_p_rows[family_id].append((test_id, p_value))
     for pair in selected:
+        if any(row["pair_id"] == pair["pair_id"] for row in results):
+            continue
+        enforce_soft_deadline()
         tag_a, tag_b = str(pair["parent_a"]), str(pair["parent_b"])
         if pair["parent_property_a"] == pair["parent_property_b"]:
             raise RuntimeError(f"PAIR_SAME_PROPERTY_FORBIDDEN:{pair['pair_id']}")
         per_target: dict[str, Any] = {}
         pair_oof_states: dict[int, bool | None] = {}
         for target_name in target_names:
+            parent_fold_threshold_hashes: dict[str, list[str]] = {
+                "PARENT_A": [],
+                "PARENT_B": [],
+            }
             categories, target_keys = target_contract(target_name)
             labels = [str(row[target_keys[0]]) for row in targets]
             pair_rows: list[tuple[Mapping[str, float], str]] = []
@@ -2734,8 +3042,22 @@ def evaluate_pairs(
             for fold_id, train_end, validation_end, expected_start in FOLDS:
                 train_indices = list(range(train_end))
                 validation_indices = list(range(train_end, validation_end))
-                states_a, _ = fold_tag_states(tag_a, fixtures, features, train_end, validation_end)
-                states_b, _ = fold_tag_states(tag_b, fixtures, features, train_end, validation_end)
+                states_a, thresholds_a = fold_tag_states(
+                    tag_a, fixtures, features, train_end, validation_end
+                )
+                states_b, thresholds_b = fold_tag_states(
+                    tag_b, fixtures, features, train_end, validation_end
+                )
+                parent_fold_threshold_hashes["PARENT_A"].append(
+                    object_hash(
+                        {str(key): value for key, value in sorted(thresholds_a.items())}
+                    )
+                )
+                parent_fold_threshold_hashes["PARENT_B"].append(
+                    object_hash(
+                        {str(key): value for key, value in sorted(thresholds_b.items())}
+                    )
+                )
                 states_pair = [
                     None if a is None or b is None else a and b
                     for a, b in zip(states_a, states_b, strict=True)
@@ -2926,10 +3248,50 @@ def evaluate_pairs(
                     >= 0.2,
                 },
             }
+            parent_snapshots = {
+                name: object_hash(
+                    {
+                        "definition_hash": tag_definitions[tag_id_value]["definition_hash"],
+                        "fold_threshold_hashes": parent_fold_threshold_hashes[name],
+                        "target_id": target_name,
+                    }
+                )
+                for name, tag_id_value in (("PARENT_A", tag_a), ("PARENT_B", tag_b))
+            }
+            pair_snapshot_hash = object_hash(
+                {
+                    "pair_id": pair["pair_id"],
+                    "parent_definition_hashes": {
+                        "PARENT_A": tag_definitions[tag_a]["definition_hash"],
+                        "PARENT_B": tag_definitions[tag_b]["definition_hash"],
+                    },
+                    "parent_fold_threshold_hashes": parent_fold_threshold_hashes,
+                    "parent_mask_ids": {
+                        "PARENT_A": mask_records[tag_a]["mask_id"],
+                        "PARENT_B": mask_records[tag_b]["mask_id"],
+                    },
+                    "parent_tag_snapshot_hashes": parent_snapshots,
+                    "target_id": target_name,
+                }
+            )
+            per_target[target_name]["parent_definition_hashes"] = {
+                "PARENT_A": tag_definitions[tag_a]["definition_hash"],
+                "PARENT_B": tag_definitions[tag_b]["definition_hash"],
+            }
+            per_target[target_name]["parent_fold_threshold_hashes"] = (
+                parent_fold_threshold_hashes
+            )
+            per_target[target_name]["parent_mask_ids"] = {
+                "PARENT_A": mask_records[tag_a]["mask_id"],
+                "PARENT_B": mask_records[tag_b]["mask_id"],
+            }
+            per_target[target_name]["parent_tag_snapshot_hashes"] = parent_snapshots
+            per_target[target_name]["pair_snapshot_hash"] = pair_snapshot_hash
             per_target[target_name]["hypothesis_id"] = "hypothesis:" + object_hash(
                 {
                     "pair_id": pair["pair_id"],
                     "parents": [tag_a, tag_b],
+                    "pair_snapshot_hash": pair_snapshot_hash,
                     "target_id": target_name,
                     "campaign": "PHASE-C-PAIR-120-X-2-2024-V1",
                 }
@@ -2953,6 +3315,7 @@ def evaluate_pairs(
                 "status": "TESTED",
             }
         )
+        persist_resume_progress(store_root, "COMPATIBLE_PAIR_SEARCH", results)
     q_values = bh_adjust(p_rows)
     family_q_values = {
         key: value
@@ -3042,7 +3405,64 @@ def evaluate_pairs(
         "status_counts": dict(sorted(status_counts.items())),
         "results": results,
     }
-    write_json(output_root / "reports/hypothesis-research/pair-results-v1.json", report)
+    heavy_artifact = write_heavy_json_artifact(
+        store_root, "pair-results-full-v1.json.gz", report
+    )
+    compact_results: list[dict[str, Any]] = []
+    for row in results:
+        compact_metrics = {
+            target_name: {
+                key: metric[key]
+                for key in (
+                    "delta_log_loss_by_comparator",
+                    "delta_brier_by_comparator",
+                    "p_values_raw_by_comparator",
+                    "p_value_raw_intersection_union",
+                    "q_value_global",
+                    "q_value_family",
+                    "q_value",
+                    "pair_snapshot_hash",
+                    "hypothesis_id",
+                    "status",
+                    "review_gate",
+                    "suspicious_reasons",
+                )
+            }
+            for target_name, metric in row["target_metrics"].items()
+        }
+        compact_results.append(
+            {
+                key: row[key]
+                for key in (
+                    "pair_id",
+                    "parent_a",
+                    "parent_b",
+                    "parent_property_a",
+                    "parent_property_b",
+                    "status",
+                )
+            }
+            | {"target_metrics": compact_metrics}
+        )
+    compact_report = {key: value for key, value in report.items() if key != "results"}
+    compact_report["result_detail"] = "COMPACT_GIT_SUMMARY_FULL_ROWS_IN_GITHUB_ARTIFACT"
+    compact_report["full_results_artifact"] = heavy_artifact
+    compact_report["pair_snapshot_contract"] = {
+        "inputs": [
+            "pair_id",
+            "parent_definition_hashes",
+            "parent_fold_threshold_hashes",
+            "parent_mask_ids",
+            "parent_tag_snapshot_hashes",
+            "target_id",
+        ],
+        "parent_definition_source": "configs/hypothesis-tags/canonical-tag-registry-v1.json",
+        "parent_fold_snapshot_source": "reports/hypothesis-research/atomic-results-v1.json",
+        "parent_mask_source": "reports/hypothesis-masks/atomic-mask-manifest-v1.json",
+        "full_row_source": "full_results_artifact",
+    }
+    compact_report["results"] = compact_results
+    write_json(output_root / "reports/hypothesis-research/pair-results-v1.json", compact_report)
 
     rankings = sorted(
         results,
@@ -3173,7 +3593,10 @@ NEGATIVE_CONTROL_IDS = (
 
 
 def build_negative_controls(
-    fixtures: Sequence[Fixture], targets: Sequence[Mapping[str, Any]], output_root: Path
+    fixtures: Sequence[Fixture],
+    features: Sequence[Mapping[str, float | None]],
+    targets: Sequence[Mapping[str, Any]],
+    output_root: Path,
 ) -> None:
     rng = random.Random(SEED)
     original = [int(row["HOME_WIN"]) for row in targets]
@@ -3186,18 +3609,27 @@ def build_negative_controls(
         rng.shuffle(values)
         for index, value in zip(indices, values, strict=True):
             shuffled[index] = value
-    random_feature_a = [
-        int(sha256_bytes((fixture.fixture_id + "\0A").encode())[:8], 16) % 3 == 0
-        for fixture in fixtures
-    ]
-    random_feature_b = [
-        int(sha256_bytes((fixture.fixture_id + "\0B").encode())[:8], 16) % 4 == 0
-        for fixture in fixtures
-    ]
+    random_feature_a: list[bool | None] = []
+    random_feature_b: list[bool | None] = []
+    for index, fixture in enumerate(fixtures):
+        reference_a = features[index]["HOME:POINTS_PER_MATCH:L5"]
+        reference_b = features[index]["AWAY:POINTS_PER_MATCH:L5"]
+        random_feature_a.append(
+            None
+            if reference_a is None
+            else int(sha256_bytes((fixture.fixture_id + "\0A").encode())[:8], 16) % 3
+            == 0
+        )
+        random_feature_b.append(
+            None
+            if reference_b is None
+            else int(sha256_bytes((fixture.fixture_id + "\0B").encode())[:8], 16) % 4
+            == 0
+        )
 
     def execute_model_control(
         control_id: str,
-        states: Sequence[bool],
+        states: Sequence[bool | None],
         labels_binary: Sequence[int],
         track: str,
     ) -> dict[str, Any]:
@@ -3210,11 +3642,14 @@ def build_negative_controls(
             train = list(range(train_end))
             validation = list(range(train_end, validation_end))
             baseline = smoothed_probs(category_count((labels[i] for i in train), categories), categories)
-            state_values: list[bool | None] = [bool(value) for value in states[:validation_end]]
+            state_values = list(states[:validation_end])
             conditional = conditional_probs(train, labels, state_values, categories, baseline)
             fold_differences: list[float] = []
             for index in validation:
-                model = conditional[bool(states[index])]
+                state = states[index]
+                if state is None:
+                    continue
+                model = conditional[state]
                 delta = log_loss(baseline, labels[index]) - log_loss(model, labels[index])
                 differences.append(delta)
                 fold_differences.append(delta)
@@ -3223,7 +3658,8 @@ def build_negative_controls(
                 {
                     "fold_id": fold_id,
                     "validation_count": len(validation),
-                    "true_count": sum(int(states[index]) for index in validation),
+                    "true_count": sum(int(states[index] is True) for index in validation),
+                    "unknown_count": sum(int(states[index] is None) for index in validation),
                     "delta_log_loss": round(mean(fold_differences), 8),
                 }
             )
@@ -3243,17 +3679,33 @@ def build_negative_controls(
         }
 
     def guard_control(
-        control_id: str, detector: str, reason: str, track: str
+        control_id: str,
+        track: str,
+        candidate_factory: Any,
+        expected_reason: str,
     ) -> dict[str, Any]:
+        observations = [
+            index for _, start, end, _ in FOLDS for index in range(start, end)
+        ]
+        blocked_reasons: list[list[str]] = []
+        for index in observations:
+            candidate = candidate_factory(fixtures[index])
+            blocked_reasons.append(predictor_admissibility_reasons(**candidate))
+        if not all(expected_reason in reasons for reasons in blocked_reasons):
+            raise RuntimeError(f"NEGATIVE_ADMISSIBILITY_CONTROL_NOT_BLOCKED:{control_id}")
         return {
             "control_id": control_id,
             "track": track,
             "execution_stage": "PRE_MODEL_ADMISSIBILITY_GATE",
-            "detector": detector,
-            "detector_observation_count": sum(end - start for _, start, end, _ in FOLDS),
-            "detector_blocked_count": sum(end - start for _, start, end, _ in FOLDS),
+            "detector": "predictor_admissibility_reasons",
+            "expected_reason": expected_reason,
+            "detector_observation_count": len(observations),
+            "detector_blocked_count": sum(bool(reasons) for reasons in blocked_reasons),
+            "reason_counts": dict(
+                sorted(Counter(reason for reasons in blocked_reasons for reason in reasons).items())
+            ),
             "detector_result": "BLOCKED_AS_EXPECTED",
-            "reason": reason,
+            "reason": expected_reason,
             "folds": [],
             "observed_delta_log_loss": None,
             "p_value": 1.0,
@@ -3263,10 +3715,14 @@ def build_negative_controls(
         }
 
     def build_track(track: str) -> dict[str, Any]:
-        primary_random: list[bool] = (
+        enforce_soft_deadline()
+        primary_random: list[bool | None] = (
             random_feature_a
             if track == "ATOMIC"
-            else [bool(a and b) for a, b in zip(random_feature_a, random_feature_b, strict=True)]
+            else [
+                None if a is None or b is None else bool(a and b)
+                for a, b in zip(random_feature_a, random_feature_b, strict=True)
+            ]
         )
         model_records = [
             execute_model_control(
@@ -3299,27 +3755,55 @@ def build_negative_controls(
         records = model_records + [
             guard_control(
                 "FORBIDDEN_FUTURE_FEATURE",
-                "KNOWN_AT_MUST_BE_BEFORE_TARGET_CUTOFF",
-                "KNOWN_AT_GE_TARGET_KICKOFF",
                 track,
+                lambda fixture: {
+                    "known_at": fixture.kickoff + timedelta(seconds=1),
+                    "cutoff": fixture.kickoff,
+                    "scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+                    "derived_from_target": False,
+                    "price_required": False,
+                    "point_in_time_price_available": False,
+                },
+                "KNOWN_AT_NOT_BEFORE_TARGET_CUTOFF",
             ),
             guard_control(
                 "SHIFTED_PRICE",
-                "POINT_IN_TIME_PRICE_AVAILABILITY",
-                "ZERO_ADMISSIBLE_PRICE_ROWS",
                 track,
+                lambda fixture: {
+                    "known_at": fixture.kickoff - timedelta(seconds=1),
+                    "cutoff": fixture.kickoff,
+                    "scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+                    "derived_from_target": False,
+                    "price_required": True,
+                    "point_in_time_price_available": False,
+                },
+                "POINT_IN_TIME_PRICE_UNAVAILABLE",
             ),
             guard_control(
                 "POST_RESULT_FIELD",
-                "SCIENTIFIC_ROLE_TARGET_ONLY",
-                "TARGET_MATCH_POST_RESULT_FIELD_FORBIDDEN_AS_PREDICTOR",
                 track,
+                lambda fixture: {
+                    "known_at": fixture.kickoff + timedelta(hours=6),
+                    "cutoff": fixture.kickoff,
+                    "scientific_role": "POST_RESULT",
+                    "derived_from_target": False,
+                    "price_required": False,
+                    "point_in_time_price_available": False,
+                },
+                "SCIENTIFIC_ROLE_NOT_PREDICTOR_ADMISSIBLE",
             ),
             guard_control(
                 "WINNER_LOSER_IDENTITY",
-                "TARGET_DERIVATION_LINEAGE",
-                "WINNER_LOSER_IS_DERIVED_FROM_TARGET_SCORE",
                 track,
+                lambda fixture: {
+                    "known_at": fixture.kickoff + timedelta(hours=6),
+                    "cutoff": fixture.kickoff,
+                    "scientific_role": "TARGET_DERIVED_IDENTITY",
+                    "derived_from_target": True,
+                    "price_required": False,
+                    "point_in_time_price_available": False,
+                },
+                "DERIVED_FROM_TARGET_LABEL",
             ),
         ]
         records.sort(key=lambda row: str(row["control_id"]))
@@ -3371,6 +3855,13 @@ def build_campaign_configs(
     config = {
         "schema_version": "atomic-property-campaign-v1",
         "campaign_id": "PHASE-C-ATOMIC-80-X-2-2024-V1",
+        "scope_contract": {
+            "genome_properties_reconciled": 486,
+            "ready_properties": 46,
+            "selected_predictor_properties": 7,
+            "deferred_public_hypothesis_eligible_properties": 18,
+            "scope_status": "BOUNDED_SUBCAMPAIGN_PENDING_COUNCIL_RESCOPING",
+        },
         "frozen_at": GENERATED_AT,
         "frozen_before_target_analysis": True,
         "targets_loaded_for_label_construction_before_freeze": True,
@@ -3510,9 +4001,22 @@ def build_campaign_configs(
             "real_bets": 0,
             "deployments": 0,
         },
+        "artifact_budgets_bytes": {
+            "source_workflow_download_max": 120_000_000,
+            "raw_field_census_upload_max": 5_000_000,
+            "tag_mask_build_upload_max": 5_000_000,
+            "atomic_property_search_upload_max": 5_000_000,
+            "pair_shard_upload_max": 2_000_000,
+            "pair_shards_total_max": 16_000_000,
+            "compatible_pair_search_upload_max": 25_000_000,
+            "derived_stage_download_max": 120_000_000,
+        },
         "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
         "phase_c_artifact_lock_hash": artifact_lock["lock_hash"],
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
+        "preflight_sha256": sha256_bytes(
+            (ROOT / "scripts/validate_phase_c_workflow_contract.py").read_bytes()
+        ),
         "workflow_sha256": workflow_hashes,
         "triple_search_locked": True,
         "activation_authority": "TRUSTED_DEFAULT_BRANCH_ONLY_NEVER_CANDIDATE_CHECKOUT",
@@ -3607,24 +4111,22 @@ def build_costs(started_process: float, output_root: Path) -> None:
 
 def build_stage_manifest(
     output_root: Path,
-    store_root: Path,
+    _store_root: Path,
     stage: str,
     execution_sha: str,
     shard_id: str,
 ) -> dict[str, Any]:
     records: list[dict[str, Any]] = []
-    for root_name, root in (("output", output_root), ("store", store_root)):
-        for path in sorted(item for item in root.rglob("*") if item.is_file()):
-            if path.name in {"stage-manifest-v1.json", "checkpoint-v1.json"}:
-                continue
-            relative = f"{root_name}/{path.relative_to(root).as_posix()}"
-            records.append(
-                {
-                    "path": relative,
-                    "bytes": path.stat().st_size,
-                    "sha256": sha256_bytes(path.read_bytes()),
-                }
-            )
+    for path in sorted(item for item in output_root.rglob("*") if item.is_file()):
+        if path.name in {"stage-manifest-v1.json", "checkpoint-v1.json"}:
+            continue
+        records.append(
+            {
+                "path": path.relative_to(output_root).as_posix(),
+                "bytes": path.stat().st_size,
+                "sha256": sha256_bytes(path.read_bytes()),
+            }
+        )
     manifest = {
         "schema_version": "phase-c-stage-manifest-v1",
         "mission_id": "HYPOTHESIS-TAG-MASK-PAIR-FACTORY-V1",
@@ -3635,10 +4137,90 @@ def build_stage_manifest(
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
         "artifact_file_count": len(records),
         "artifact_bytes": sum(int(row["bytes"]) for row in records),
+        "excluded_control_files": ["checkpoint-v1.json", "stage-manifest-v1.json"],
         "files": records,
     }
     manifest["manifest_hash"] = object_hash(manifest)
     write_json(output_root / "stage-manifest-v1.json", manifest)
+    return manifest
+
+
+def seal_stage_artifact(
+    artifact_root: Path,
+    stage: str,
+    execution_sha: str,
+    shard_id: str,
+) -> dict[str, Any]:
+    checkpoint_path = unique_rglob(artifact_root, "checkpoint-v1.json")
+    checkpoint = read_json(checkpoint_path)
+    manifest = build_stage_manifest(
+        artifact_root,
+        artifact_root,
+        stage,
+        execution_sha,
+        shard_id,
+    )
+    checkpoint["phase"] = stage.upper().replace("-", "_")
+    checkpoint["execution_sha"] = execution_sha
+    checkpoint["stage_manifest_hash"] = manifest["manifest_hash"]
+    checkpoint["checkpoint_hash"] = object_hash(
+        {key: value for key, value in checkpoint.items() if key != "checkpoint_hash"}
+    )
+    write_json(checkpoint_path, checkpoint)
+    return manifest
+
+
+def verify_stage_artifact(
+    artifact_root: Path,
+    expected_manifest_hash: str,
+    expected_stage: str,
+    execution_sha: str,
+    max_bytes: int,
+) -> dict[str, Any]:
+    manifest_path = unique_rglob(artifact_root, "stage-manifest-v1.json")
+    manifest = read_json(manifest_path)
+    if object_hash({key: value for key, value in manifest.items() if key != "manifest_hash"}) != manifest.get(
+        "manifest_hash"
+    ):
+        raise RuntimeError("STAGE_MANIFEST_CANONICAL_HASH_MISMATCH")
+    if (
+        manifest.get("manifest_hash") != expected_manifest_hash
+        or manifest.get("stage") != expected_stage
+        or manifest.get("execution_sha") != execution_sha
+    ):
+        raise RuntimeError("STAGE_MANIFEST_AUTHORITY_MISMATCH")
+    manifest_root = manifest_path.parent
+    actual = {
+        path.relative_to(manifest_root).as_posix(): path
+        for path in manifest_root.rglob("*")
+        if path.is_file() and path.name not in {"stage-manifest-v1.json", "checkpoint-v1.json"}
+    }
+    rows = manifest.get("files")
+    if not isinstance(rows, list):
+        raise TypeError("STAGE_MANIFEST_FILES_REQUIRED")
+    declared = {str(row["path"]): row for row in rows if isinstance(row, Mapping)}
+    if set(actual) != set(declared):
+        raise RuntimeError("STAGE_MANIFEST_FILE_SET_MISMATCH")
+    for relative, path in actual.items():
+        row = declared[relative]
+        if int(row["bytes"]) != path.stat().st_size or row["sha256"] != sha256_bytes(
+            path.read_bytes()
+        ):
+            raise RuntimeError(f"STAGE_MANIFEST_FILE_HASH_MISMATCH:{relative}")
+    total = sum(path.stat().st_size for path in actual.values())
+    if total != manifest.get("artifact_bytes") or total > max_bytes:
+        raise RuntimeError("STAGE_ARTIFACT_BYTE_BUDGET_MISMATCH")
+    checkpoint_path = unique_rglob(manifest_root, "checkpoint-v1.json")
+    checkpoint = read_json(checkpoint_path)
+    if (
+        object_hash(
+            {key: value for key, value in checkpoint.items() if key != "checkpoint_hash"}
+        )
+        != checkpoint.get("checkpoint_hash")
+        or checkpoint.get("stage_manifest_hash") != manifest["manifest_hash"]
+        or checkpoint.get("execution_sha") != execution_sha
+    ):
+        raise RuntimeError("STAGE_CHECKPOINT_LINEAGE_MISMATCH")
     return manifest
 
 
@@ -3915,8 +4497,10 @@ def execute_factory(
             "pair_space": pair_space,
             "config": config,
         }
-    atomic, atomic_index = evaluate_atomic(fixtures, features, targets, registry, output_root)
-    build_negative_controls(fixtures, targets, output_root)
+    atomic, atomic_index = evaluate_atomic(
+        fixtures, features, targets, registry, output_root, store_root
+    )
+    build_negative_controls(fixtures, features, targets, output_root)
     if stage == "atomic":
         if include_costs:
             build_costs(started_process, output_root)
@@ -3927,7 +4511,17 @@ def execute_factory(
             "atomic": atomic,
             "atomic_index": atomic_index,
         }
-    pairs = evaluate_pairs(selected, fixtures, features, targets, masks, output_root)
+    pairs = evaluate_pairs(
+        selected,
+        fixtures,
+        features,
+        targets,
+        masks,
+        registry,
+        manifest,
+        output_root,
+        store_root,
+    )
     build_dashboard_contract(census, reconciliation, registry, atomic, pairs, output_root)
     if include_costs:
         build_costs(started_process, output_root)
@@ -3948,6 +4542,7 @@ def execute_upstream(
     tag_mask_root: Path,
     atomic_root: Path | None,
     output_root: Path,
+    store_root: Path,
     *,
     include_costs: bool = True,
 ) -> dict[str, Any]:
@@ -3959,8 +4554,10 @@ def execute_upstream(
     if config.get("pair_space_hash") != pair_space.get("pair_space_hash"):
         raise RuntimeError("UPSTREAM_PAIR_SPACE_HASH_MISMATCH")
     if stage == "atomic":
-        atomic, atomic_index = evaluate_atomic(fixtures, features, targets, registry, output_root)
-        build_negative_controls(fixtures, targets, output_root)
+        atomic, atomic_index = evaluate_atomic(
+            fixtures, features, targets, registry, output_root, store_root
+        )
+        build_negative_controls(fixtures, features, targets, output_root)
         if include_costs:
             build_costs(started_process, output_root)
         return {
@@ -3972,14 +4569,25 @@ def execute_upstream(
         }
     if stage != "pairs" or atomic_root is None:
         raise RuntimeError("UPSTREAM_STAGE_CONTRACT_MISMATCH")
-    atomic = read_json(unique_rglob(atomic_root, "atomic-results-v1.json"))
+    atomic_full_path = unique_rglob(atomic_root, "atomic-results-full-v1.json.gz")
+    atomic = read_heavy_json_artifact(atomic_full_path)
     if atomic.get("canonical_test_count") != 160:
         raise RuntimeError("UPSTREAM_ATOMIC_TEST_COUNT_MISMATCH")
     selected = pair_space.get("pairs")
     if not isinstance(selected, list) or len(selected) != 120:
         raise RuntimeError("UPSTREAM_PAIR_SELECTION_COUNT_MISMATCH")
-    pairs = evaluate_pairs(selected, fixtures, features, targets, masks, output_root)
-    build_negative_controls(fixtures, targets, output_root)
+    pairs = evaluate_pairs(
+        selected,
+        fixtures,
+        features,
+        targets,
+        masks,
+        registry,
+        manifest,
+        output_root,
+        store_root,
+    )
+    build_negative_controls(fixtures, features, targets, output_root)
     census = read_json(unique_rglob(tag_mask_root, "raw-field-census-v1.json"))
     reconciliation = read_json(unique_rglob(tag_mask_root, "e3-property-reconciliation-v1.json"))
     build_dashboard_contract(census, reconciliation, registry, atomic, pairs, output_root)
@@ -3995,11 +4603,16 @@ def execute_upstream(
 
 
 def export_pair_shard(
-    input_root: Path, shard_id: int, shard_count: int, execution_sha: str
+    input_root: Path,
+    full_results_root: Path,
+    shard_id: int,
+    shard_count: int,
+    execution_sha: str,
 ) -> dict[str, Any]:
     if shard_count != 8 or not 0 <= shard_id < shard_count:
         raise RuntimeError("PAIR_SHARD_CONTRACT_REQUIRES_8_SHARDS")
-    report = read_json(unique_rglob(input_root, "pair-results-v1.json"))
+    full_path = unique_rglob(full_results_root, "pair-results-full-v1.json.gz")
+    report = read_heavy_json_artifact(full_path)
     results = report.get("results")
     if not isinstance(results, list):
         raise TypeError("PAIR_RESULTS_ARRAY_REQUIRED")
@@ -4015,7 +4628,7 @@ def export_pair_shard(
         "partition_rule": "first64_sha256_pair_id_mod_8",
         "execution_sha": execution_sha,
         "global_source_report_sha256": sha256_bytes(
-            unique_rglob(input_root, "pair-results-v1.json").read_bytes()
+            full_path.read_bytes()
         ),
         "pair_count": len(selected),
         "pair_ids_sha256": object_hash(sorted(str(row["pair_id"]) for row in selected)),
@@ -4030,11 +4643,54 @@ def reduce_pair_shards(
     input_root: Path,
     tag_mask_root: Path,
     output_root: Path,
+    execution_sha: str,
 ) -> dict[str, Any]:
     shard_paths = sorted(input_root.rglob("pair-results-shard-*-v1.json"))
     shards = [read_json(path) for path in shard_paths]
     if len(shards) != 8 or {int(row["shard_id"]) for row in shards} != set(range(8)):
         raise RuntimeError("PAIR_REDUCER_REQUIRES_EXACTLY_8_UNIQUE_SHARDS")
+    shard_manifests = sorted(input_root.rglob("stage-manifest-v1.json"))
+    checkpoints = sorted(input_root.rglob("checkpoint-v1.json"))
+    replays = sorted(input_root.rglob("campaign-replay-v1.json"))
+    if not (len(shard_manifests) == len(checkpoints) == len(replays) == 8):
+        raise RuntimeError("PAIR_REDUCER_SHARD_CONTROL_FILE_CARDINALITY")
+    for shard in shards:
+        if (
+            object_hash({key: value for key, value in shard.items() if key != "shard_hash"})
+            != shard.get("shard_hash")
+            or shard.get("execution_sha") != execution_sha
+            or shard.get("shard_count") != 8
+        ):
+            raise RuntimeError("PAIR_SHARD_HASH_OR_LINEAGE_MISMATCH")
+        shard_id = int(shard["shard_id"])
+        results_value = shard.get("results")
+        if not isinstance(results_value, list) or any(
+            not isinstance(row, Mapping) or int(row.get("shard_id", -1)) != shard_id
+            for row in results_value
+        ):
+            raise RuntimeError("PAIR_SHARD_PARTITION_MISMATCH")
+        pair_ids = sorted(str(row["pair_id"]) for row in results_value if isinstance(row, Mapping))
+        if len(pair_ids) != shard.get("pair_count") or object_hash(pair_ids) != shard.get(
+            "pair_ids_sha256"
+        ):
+            raise RuntimeError("PAIR_SHARD_ID_HASH_MISMATCH")
+    for manifest_path in shard_manifests:
+        manifest = read_json(manifest_path)
+        verify_stage_artifact(
+            manifest_path.parent,
+            str(manifest.get("manifest_hash")),
+            "COMPATIBLE_PAIR_SEARCH_SHARD",
+            execution_sha,
+            2_000_000,
+        )
+    for checkpoint_path in checkpoints:
+        checkpoint = read_json(checkpoint_path)
+        if checkpoint.get("completed") is not True or checkpoint.get("shard_count") != 8:
+            raise RuntimeError("PAIR_REDUCER_INCOMPLETE_CHECKPOINT")
+    for replay_path in replays:
+        replay = read_json(replay_path)
+        if replay.get("replay_runs") != 2 or replay.get("replay_identical") is not True:
+            raise RuntimeError("PAIR_REDUCER_SHARD_REPLAY_MISMATCH")
     source_hashes = {str(row["global_source_report_sha256"]) for row in shards}
     if len(source_hashes) != 1:
         raise RuntimeError("PAIR_SHARD_GLOBAL_REPORT_HASH_DRIFT")
@@ -4153,6 +4809,7 @@ def parse_args() -> argparse.Namespace:
     stage_replay.add_argument("--second-root", type=Path, required=True)
     shard_export = subparsers.add_parser("export-pair-shard")
     shard_export.add_argument("--input-root", type=Path, required=True)
+    shard_export.add_argument("--full-results-root", type=Path, required=True)
     shard_export.add_argument("--shard-id", type=int, required=True)
     shard_export.add_argument("--shard-count", type=int, default=8)
     shard_export.add_argument("--execution-sha", required=True)
@@ -4162,6 +4819,18 @@ def parse_args() -> argparse.Namespace:
     reducer.add_argument("--output-root", type=Path, required=True)
     reducer.add_argument("--store-root", type=Path, required=True)
     reducer.add_argument("--execution-sha", required=True)
+    reducer.add_argument("--soft-deadline-seconds", type=int, default=240)
+    seal = subparsers.add_parser("seal-stage")
+    seal.add_argument("--artifact-root", type=Path, required=True)
+    seal.add_argument("--stage", required=True)
+    seal.add_argument("--execution-sha", required=True)
+    seal.add_argument("--shard-id", required=True)
+    verify = subparsers.add_parser("verify-stage")
+    verify.add_argument("--artifact-root", type=Path, required=True)
+    verify.add_argument("--expected-manifest-hash", required=True)
+    verify.add_argument("--expected-stage", required=True)
+    verify.add_argument("--execution-sha", required=True)
+    verify.add_argument("--max-bytes", type=int, required=True)
     return parser.parse_args()
 
 
@@ -4195,7 +4864,7 @@ def write_checkpoint(
     checkpoint = {
         "schema_version": "phase-c-checkpoint-v1",
         "mission_id": "HYPOTHESIS-TAG-MASK-PAIR-FACTORY-V1",
-        "phase": stage.upper().replace("-", "_"),
+        "phase": canonical_phase(stage),
         "campaign_hash": result.get("config", {}).get("campaign_hash")
         if isinstance(result.get("config"), Mapping)
         else None,
@@ -4240,7 +4909,7 @@ def write_initial_checkpoint(
     checkpoint = {
         "schema_version": "phase-c-checkpoint-v1",
         "mission_id": "HYPOTHESIS-TAG-MASK-PAIR-FACTORY-V1",
-        "phase": stage.upper().replace("-", "_"),
+        "phase": canonical_phase(stage),
         "execution_sha": execution_sha,
         "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
@@ -4267,6 +4936,7 @@ def write_initial_checkpoint(
 
 
 def main() -> int:
+    global ACTIVE_RESUME_CHECKPOINT, ACTIVE_RESUME_ROOT, ACTIVE_SOFT_DEADLINE
     args = parse_args()
     if args.command == "replay":
         result = build_replay_manifest(args.first_root.resolve(), args.second_root.resolve())
@@ -4282,15 +4952,52 @@ def main() -> int:
         result = build_tree_replay(args.first_root.resolve(), args.second_root.resolve())
         print(json.dumps({"replay_identical": result["replay_identical"]}, sort_keys=True))
         return 0
+    if args.command == "seal-stage":
+        result = seal_stage_artifact(
+            args.artifact_root.resolve(),
+            args.stage,
+            args.execution_sha,
+            args.shard_id,
+        )
+        print(json.dumps({"manifest_hash": result["manifest_hash"]}, sort_keys=True))
+        return 0
+    if args.command == "verify-stage":
+        result = verify_stage_artifact(
+            args.artifact_root.resolve(),
+            args.expected_manifest_hash,
+            args.expected_stage,
+            args.execution_sha,
+            args.max_bytes,
+        )
+        print(json.dumps({"manifest_hash": result["manifest_hash"]}, sort_keys=True))
+        return 0
     if args.command == "export-pair-shard":
         result = export_pair_shard(
-            args.input_root.resolve(), args.shard_id, args.shard_count, args.execution_sha
+            args.input_root.resolve(),
+            args.full_results_root.resolve(),
+            args.shard_id,
+            args.shard_count,
+            args.execution_sha,
         )
         print(json.dumps({"pair_count": result["pair_count"]}, sort_keys=True))
         return 0
     if args.command == "reduce-pair-shards":
+        if args.soft_deadline_seconds < 60:
+            raise RuntimeError("REDUCER_DEADLINE_CONTRACT_INVALID")
+        ACTIVE_SOFT_DEADLINE = time.monotonic() + args.soft_deadline_seconds
+        write_initial_checkpoint(
+            args.store_root.resolve(),
+            "COMPATIBLE_PAIR_SEARCH",
+            args.execution_sha,
+            "REDUCE-8",
+            8,
+            None,
+        )
         result = reduce_pair_shards(
-            args.input_root.resolve(), args.tag_mask_root.resolve(), args.output_root.resolve()
+            args.input_root.resolve(),
+            args.tag_mask_root.resolve(),
+            args.output_root.resolve(),
+            args.execution_sha,
         )
         manifest = build_stage_manifest(
             args.output_root.resolve(),
@@ -4319,6 +5026,10 @@ def main() -> int:
     )
     if args.resume_checkpoint is not None:
         previous = read_json(args.resume_checkpoint.resolve())
+        previous_without_hash = dict(previous)
+        previous_hash = previous_without_hash.pop("checkpoint_hash", None)
+        if not isinstance(previous_hash, str) or object_hash(previous_without_hash) != previous_hash:
+            raise RuntimeError("RESUME_CHECKPOINT_HASH_MISMATCH")
         if (
             previous.get("execution_sha") != args.execution_sha
             or previous.get("shard_id") != args.shard_id
@@ -4326,12 +5037,12 @@ def main() -> int:
             or previous.get("generator_sha256") != sha256_bytes(GENERATOR_PATH.read_bytes())
         ):
             raise RuntimeError("RESUME_CHECKPOINT_LINEAGE_MISMATCH")
-        previous_checkpoint_hash = str(previous["checkpoint_hash"])
+        previous_checkpoint_hash = previous_hash
         if previous.get("completed") is True:
             manifest = read_json(unique_rglob(args.output_root.resolve(), "stage-manifest-v1.json"))
             if (
                 manifest.get("manifest_hash") != previous.get("stage_manifest_hash")
-                or manifest.get("stage") != requested_stage.upper().replace("-", "_")
+                or manifest.get("stage") != canonical_phase(requested_stage)
             ):
                 raise RuntimeError("COMPLETED_CHECKPOINT_RESULT_MANIFEST_MISMATCH")
             print(
@@ -4345,8 +5056,11 @@ def main() -> int:
                 )
             )
             return 0
+        ACTIVE_RESUME_ROOT = args.resume_checkpoint.resolve().parent
+        ACTIVE_RESUME_CHECKPOINT = previous
     if args.shard_count < 1 or args.soft_deadline_seconds < 60:
         raise RuntimeError("SHARD_OR_DEADLINE_CONTRACT_INVALID")
+    ACTIVE_SOFT_DEADLINE = time.monotonic() + args.soft_deadline_seconds
     write_initial_checkpoint(
         args.store_root.resolve(),
         requested_stage,
@@ -4362,6 +5076,7 @@ def main() -> int:
             args.tag_mask_root.resolve(),
             args.atomic_root.resolve() if args.atomic_root is not None else None,
             args.output_root.resolve(),
+            args.store_root.resolve(),
             include_costs=True,
         )
     else:

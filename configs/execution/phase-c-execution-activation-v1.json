@@ -3,8 +3,18 @@
   "activation_requirement": "SUCCESSOR_REVIEW_ON_DEFAULT_BRANCH_MUST_SET_EXACT_ALLOWED_EXECUTION_SHA_AND_STAGE_ARTIFACT_LOCKS",
   "activation_status": "HOLD_DRAFT_NOT_ON_DEFAULT_BRANCH",
   "allowed_execution_sha": null,
+  "artifact_budgets_bytes": {
+    "atomic_property_search_upload_max": 5000000,
+    "compatible_pair_search_upload_max": 25000000,
+    "derived_stage_download_max": 120000000,
+    "pair_shard_upload_max": 2000000,
+    "pair_shards_total_max": 16000000,
+    "raw_field_census_upload_max": 5000000,
+    "source_workflow_download_max": 120000000,
+    "tag_mask_build_upload_max": 5000000
+  },
   "branch": "codex/hypothesis-tag-mask-pair-factory-v1",
-  "contract_hash": "26ef7ed039c5df95df2e9fdbd2dc8b9b9242fb4eacf2cca29b0c19abb9a4a025",
+  "contract_hash": "f7f42df9d233c8563c177d9cce20dccf8ea76d74cd82261bd6db3308661dd3a9",
   "external_effect_budgets": {
     "deployments": 0,
     "odds_credits": 0,
@@ -17,10 +27,11 @@
     "real_bets": 0,
     "sql_queries": 0
   },
-  "generator_sha256": "c2f7a678e3d718f55cc27127060f1cede67a7c59041c0797088bb14ba1e8c195",
+  "generator_sha256": "37eddc4ea7eab7bc530776acd03b141da845d93ad33aea20a8682a6466a06667",
   "github_artifact_state_only": true,
   "maximum_stage": "COMPATIBLE_PAIR_SEARCH",
   "phase_c_artifact_lock_hash": "9dbf52b4c221dbd2f4f54ec4d93f2c76964c613df5160a2e297e79e48d772a27",
+  "preflight_sha256": "7a08e11e63cfb7c411f012b74536b8ba776bc4d91f586b0d24bba65c86d06f70",
   "schema_version": "phase-c-execution-activation-v1",
   "source_lock_sha256": "ac429dfdca027d974801048c857219555963719ce2d8b28b4ac2edbbaefc8dec",
   "stages": [
@@ -31,9 +42,9 @@
   ],
   "triple_search_locked": true,
   "workflow_sha256": {
-    "86-p0-phase-c-raw-field-census.yml": "ea7b5150b8a80ef4044c8969520bbee5e9714b308b953b579436e6cc12fabe55",
-    "87-p0-phase-c-tag-mask-build.yml": "3bb4eefe5b899930c8f943846bb3947001633572fe8c20ab5a7898e4cf52342a",
-    "88-p0-phase-c-atomic-property-search.yml": "ae579f7257fc2a4f28955751f897da9abc204baec7337d7b32d6eae9941b0f71",
-    "89-p0-phase-c-compatible-pair-search.yml": "633d1f18ed8ee08553c847fcff455e07fa06615f98ba3a1f24d8f154e5c36b8b"
+    "86-p0-phase-c-raw-field-census.yml": "785d0ab316686d679a26af2be268dc5bfe25ebdb7b1491499c2ba9416ad39317",
+    "87-p0-phase-c-tag-mask-build.yml": "2a00253a9f46c8c48ff08fc1a931d973b852e3c3f0eaf4987a91f143aaa4ec65",
+    "88-p0-phase-c-atomic-property-search.yml": "74ae0435aa50f10291c0d814b8ab04fe917bdf881ec5b34013884b747e021681",
+    "89-p0-phase-c-compatible-pair-search.yml": "73e0f86e0900c157dc70ebc363476a5762462228e511bf86da9990b33180c76a"
   }
 }

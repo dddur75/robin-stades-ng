@@ -7,17 +7,21 @@
   "records": [
     {
       "control_id": "FORBIDDEN_FUTURE_FEATURE",
-      "detector": "KNOWN_AT_MUST_BE_BEFORE_TARGET_CUTOFF",
+      "detector": "predictor_admissibility_reasons",
       "detector_blocked_count": 1053,
       "detector_observation_count": 1053,
       "detector_result": "BLOCKED_AS_EXPECTED",
       "execution_stage": "PRE_MODEL_ADMISSIBILITY_GATE",
+      "expected_reason": "KNOWN_AT_NOT_BEFORE_TARGET_CUTOFF",
       "folds": [],
       "observed_delta_log_loss": null,
       "p_value": 1.0,
       "promoted": false,
       "q_value": 1.0,
-      "reason": "KNOWN_AT_GE_TARGET_KICKOFF",
+      "reason": "KNOWN_AT_NOT_BEFORE_TARGET_CUTOFF",
+      "reason_counts": {
+        "KNOWN_AT_NOT_BEFORE_TARGET_CUTOFF": 1053
+      },
       "status": "REJECTED_BY_ADMISSIBILITY_GATE",
       "track": "PAIR"
     },
@@ -31,30 +35,35 @@
           "delta_log_loss": 2.247e-05,
           "fold_id": "F1",
           "true_count": 0,
+          "unknown_count": 0,
           "validation_count": 226
         },
         {
           "delta_log_loss": 8.44e-06,
           "fold_id": "F2",
           "true_count": 0,
+          "unknown_count": 0,
           "validation_count": 204
         },
         {
           "delta_log_loss": 3.83e-06,
           "fold_id": "F3",
           "true_count": 0,
+          "unknown_count": 0,
           "validation_count": 212
         },
         {
           "delta_log_loss": -4.29e-06,
           "fold_id": "F4",
           "true_count": 0,
+          "unknown_count": 0,
           "validation_count": 202
         },
         {
           "delta_log_loss": 9.24e-06,
           "fold_id": "F5",
           "true_count": 0,
+          "unknown_count": 0,
           "validation_count": 209
         }
       ],
@@ -62,129 +71,148 @@
       "observed_delta_log_loss": 8.24e-06,
       "p_value": 0.6705957909,
       "promoted": false,
-      "q_value": 0.8157414334,
+      "q_value": 0.9770263992,
       "status": "REJECTED_AFTER_MODEL_AND_MULTIPLICITY",
       "track": "PAIR"
     },
     {
       "control_id": "POST_RESULT_FIELD",
-      "detector": "SCIENTIFIC_ROLE_TARGET_ONLY",
+      "detector": "predictor_admissibility_reasons",
       "detector_blocked_count": 1053,
       "detector_observation_count": 1053,
       "detector_result": "BLOCKED_AS_EXPECTED",
       "execution_stage": "PRE_MODEL_ADMISSIBILITY_GATE",
+      "expected_reason": "SCIENTIFIC_ROLE_NOT_PREDICTOR_ADMISSIBLE",
       "folds": [],
       "observed_delta_log_loss": null,
       "p_value": 1.0,
       "promoted": false,
       "q_value": 1.0,
-      "reason": "TARGET_MATCH_POST_RESULT_FIELD_FORBIDDEN_AS_PREDICTOR",
+      "reason": "SCIENTIFIC_ROLE_NOT_PREDICTOR_ADMISSIBLE",
+      "reason_counts": {
+        "KNOWN_AT_NOT_BEFORE_TARGET_CUTOFF": 1053,
+        "SCIENTIFIC_ROLE_NOT_PREDICTOR_ADMISSIBLE": 1053
+      },
       "status": "REJECTED_BY_ADMISSIBILITY_GATE",
       "track": "PAIR"
     },
     {
-      "cluster_count": 118,
+      "cluster_count": 114,
       "control_id": "RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN",
       "detector_result": "MODEL_EXECUTED",
       "execution_stage": "FULL_ROLLING_ORIGIN_MODEL_AND_TEST",
       "folds": [
         {
-          "delta_log_loss": 0.00147982,
+          "delta_log_loss": -0.00658159,
           "fold_id": "F1",
           "true_count": 19,
+          "unknown_count": 0,
           "validation_count": 226
         },
         {
-          "delta_log_loss": 0.00219968,
+          "delta_log_loss": 0.00151536,
           "fold_id": "F2",
           "true_count": 13,
+          "unknown_count": 0,
           "validation_count": 204
         },
         {
-          "delta_log_loss": -0.00437978,
+          "delta_log_loss": -0.00563632,
           "fold_id": "F3",
           "true_count": 15,
+          "unknown_count": 0,
           "validation_count": 212
         },
         {
-          "delta_log_loss": -0.00110652,
+          "delta_log_loss": -0.00105572,
           "fold_id": "F4",
           "true_count": 15,
+          "unknown_count": 0,
           "validation_count": 202
         },
         {
-          "delta_log_loss": 4.037e-05,
+          "delta_log_loss": -0.00070672,
           "fold_id": "F5",
           "true_count": 13,
+          "unknown_count": 4,
           "validation_count": 209
         }
       ],
-      "observation_count": 1053,
-      "observed_delta_log_loss": -0.00034228,
-      "p_value": 0.8157414334,
+      "observation_count": 1049,
+      "observed_delta_log_loss": -0.00260376,
+      "p_value": 0.9313363593,
       "promoted": false,
-      "q_value": 0.8157414334,
+      "q_value": 0.9770263992,
       "status": "REJECTED_AFTER_MODEL_AND_MULTIPLICITY",
       "track": "PAIR"
     },
     {
       "control_id": "SHIFTED_PRICE",
-      "detector": "POINT_IN_TIME_PRICE_AVAILABILITY",
+      "detector": "predictor_admissibility_reasons",
       "detector_blocked_count": 1053,
       "detector_observation_count": 1053,
       "detector_result": "BLOCKED_AS_EXPECTED",
       "execution_stage": "PRE_MODEL_ADMISSIBILITY_GATE",
+      "expected_reason": "POINT_IN_TIME_PRICE_UNAVAILABLE",
       "folds": [],
       "observed_delta_log_loss": null,
       "p_value": 1.0,
       "promoted": false,
       "q_value": 1.0,
-      "reason": "ZERO_ADMISSIBLE_PRICE_ROWS",
+      "reason": "POINT_IN_TIME_PRICE_UNAVAILABLE",
+      "reason_counts": {
+        "POINT_IN_TIME_PRICE_UNAVAILABLE": 1053
+      },
       "status": "REJECTED_BY_ADMISSIBILITY_GATE",
       "track": "PAIR"
     },
     {
-      "cluster_count": 118,
+      "cluster_count": 114,
       "control_id": "SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH",
       "detector_result": "MODEL_EXECUTED",
       "execution_stage": "FULL_ROLLING_ORIGIN_MODEL_AND_TEST",
       "folds": [
         {
-          "delta_log_loss": 0.00149388,
+          "delta_log_loss": -0.00216477,
           "fold_id": "F1",
           "true_count": 19,
+          "unknown_count": 0,
           "validation_count": 226
         },
         {
-          "delta_log_loss": -0.00100659,
+          "delta_log_loss": -0.00119296,
           "fold_id": "F2",
           "true_count": 13,
+          "unknown_count": 0,
           "validation_count": 204
         },
         {
-          "delta_log_loss": -0.00202244,
+          "delta_log_loss": -0.00247131,
           "fold_id": "F3",
           "true_count": 15,
+          "unknown_count": 0,
           "validation_count": 212
         },
         {
-          "delta_log_loss": 0.00116103,
+          "delta_log_loss": 0.00087319,
           "fold_id": "F4",
           "true_count": 15,
+          "unknown_count": 0,
           "validation_count": 202
         },
         {
-          "delta_log_loss": -0.00086843,
+          "delta_log_loss": -0.00125665,
           "fold_id": "F5",
           "true_count": 13,
+          "unknown_count": 4,
           "validation_count": 209
         }
       ],
-      "observation_count": 1053,
-      "observed_delta_log_loss": -0.00023121,
-      "p_value": 0.7671451377,
+      "observation_count": 1049,
+      "observed_delta_log_loss": -0.00127526,
+      "p_value": 0.9770263992,
       "promoted": false,
-      "q_value": 0.8157414334,
+      "q_value": 0.9770263992,
       "status": "REJECTED_AFTER_MODEL_AND_MULTIPLICITY",
       "track": "PAIR"
     },
@@ -198,30 +226,35 @@
           "delta_log_loss": 2.247e-05,
           "fold_id": "F1",
           "true_count": 226,
+          "unknown_count": 0,
           "validation_count": 226
         },
         {
           "delta_log_loss": 8.44e-06,
           "fold_id": "F2",
           "true_count": 204,
+          "unknown_count": 0,
           "validation_count": 204
         },
         {
           "delta_log_loss": 3.83e-06,
           "fold_id": "F3",
           "true_count": 212,
+          "unknown_count": 0,
           "validation_count": 212
         },
         {
           "delta_log_loss": -4.29e-06,
           "fold_id": "F4",
           "true_count": 202,
+          "unknown_count": 0,
           "validation_count": 202
         },
         {
           "delta_log_loss": 9.24e-06,
           "fold_id": "F5",
           "true_count": 209,
+          "unknown_count": 0,
           "validation_count": 209
         }
       ],
@@ -229,23 +262,29 @@
       "observed_delta_log_loss": 8.24e-06,
       "p_value": 0.6705957909,
       "promoted": false,
-      "q_value": 0.8157414334,
+      "q_value": 0.9770263992,
       "status": "REJECTED_AFTER_MODEL_AND_MULTIPLICITY",
       "track": "PAIR"
     },
     {
       "control_id": "WINNER_LOSER_IDENTITY",
-      "detector": "TARGET_DERIVATION_LINEAGE",
+      "detector": "predictor_admissibility_reasons",
       "detector_blocked_count": 1053,
       "detector_observation_count": 1053,
       "detector_result": "BLOCKED_AS_EXPECTED",
       "execution_stage": "PRE_MODEL_ADMISSIBILITY_GATE",
+      "expected_reason": "DERIVED_FROM_TARGET_LABEL",
       "folds": [],
       "observed_delta_log_loss": null,
       "p_value": 1.0,
       "promoted": false,
       "q_value": 1.0,
-      "reason": "WINNER_LOSER_IS_DERIVED_FROM_TARGET_SCORE",
+      "reason": "DERIVED_FROM_TARGET_LABEL",
+      "reason_counts": {
+        "DERIVED_FROM_TARGET_LABEL": 1053,
+        "KNOWN_AT_NOT_BEFORE_TARGET_CUTOFF": 1053,
+        "SCIENTIFIC_ROLE_NOT_PREDICTOR_ADMISSIBLE": 1053
+      },
       "status": "REJECTED_BY_ADMISSIBILITY_GATE",
       "track": "PAIR"
     }

@@ -4,7 +4,10 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
 import yaml
+
+from scripts import run_hypothesis_tag_mask_pair_factory as factory
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -72,6 +75,24 @@ def test_genome_486_by_28_reconciliation_is_fail_closed() -> None:
     assert len(unknown) == 50
     assert "football:data_quality:identity_confidence" in unknown
     assert "football:strength_form:elo" in unknown
+    assert report["campaign_scope_status"] == (
+        "BOUNDED_7_PROPERTY_SUBCAMPAIGN_REQUIRES_COUNCIL_RESCOPING"
+    )
+    assert report["campaign_v1_disposition_counts"] == {
+        "BLOCKED_SOURCE_OR_DATA": 344,
+        "DEFERRED_PARTIAL_SOURCE": 46,
+        "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1": 18,
+        "DEFERRED_SEMANTIC_REVIEW": 50,
+        "NON_PREDICTIVE_IDENTITY_QUALITY_OR_CONTEXT": 21,
+        "SELECTED_PREDICTOR": 7,
+    }
+    assert len(report["omitted_public_hypothesis_eligible_property_ids"]) == 18
+    dispositions = {row["property_id"]: row["campaign_v1_disposition"] for row in records}
+    assert set(report["lagged_predictor_transform_property_ids"]) == {
+        property_id
+        for property_id, disposition in dispositions.items()
+        if disposition == "SELECTED_PREDICTOR"
+    }
 
 
 def test_tag_registry_and_two_mask_manifest_are_canonical() -> None:
@@ -86,6 +107,31 @@ def test_tag_registry_and_two_mask_manifest_are_canonical() -> None:
     assert all(row["source_fields"] and row["required_capabilities"] for row in tags)
     assert not any("FORMATION_CHANGE_RATE" in row["tag_id"] for row in tags)
     assert len({canonical_hash(row["source_fields"]) for row in tags}) >= 2
+    discipline = [
+        row
+        for row in tags
+        if row["property_id"] == "football:discipline_referee:recent_cards"
+    ]
+    assert discipline
+    assert all(row["required_capabilities"] == ["EVENTS"] for row in discipline)
+    source_registry = load(
+        "reports/hypothesis-genome/e3-property-reconciliation-v1.json"
+    )["source_field_registry"]
+    assert all(
+        {
+            (
+                source_registry[field_id]["entity_type"],
+                source_registry[field_id]["json_path"],
+                source_registry[field_id]["temporal_use"],
+            )
+            for field_id in row["source_fields"]
+        }
+        == {
+            ("fixture_event", "data.team.id", "TARGET_OR_PRIOR_FIXTURES_ONLY"),
+            ("fixture_event", "data.type", "TARGET_OR_PRIOR_FIXTURES_ONLY"),
+        }
+        for row in discipline
+    )
 
     manifest = load("reports/hypothesis-masks/atomic-mask-manifest-v1.json")
     assert manifest["mask_count"] == 80
@@ -108,12 +154,27 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
     assert config["multiple_testing_policy"]["atomic_denominator"] == 160
     assert config["multiple_testing_policy"]["pair_denominator"] == 240
     assert config["triple_search_locked"] is True
+    assert config["scope_contract"] == {
+        "genome_properties_reconciled": 486,
+        "ready_properties": 46,
+        "selected_predictor_properties": 7,
+        "deferred_public_hypothesis_eligible_properties": 18,
+        "scope_status": "BOUNDED_SUBCAMPAIGN_PENDING_COUNCIL_RESCOPING",
+    }
 
     atomic = load("reports/hypothesis-research/atomic-results-v1.json")
+    atomic_summary = load("reports/hypothesis-research/atomic-campaign-summary-v1.json")
+    assert atomic_summary["verdict"] == "ATOMIC_SUBCAMPAIGN_READY_GLOBAL_SCOPE_PARTIAL"
+    assert atomic_summary["scope_verdict"] == (
+        "BOUNDED_7_PROPERTY_SUBCAMPAIGN_COMPLETE_GLOBAL_SCOPE_PARTIAL"
+    )
     assert atomic["atomic_tag_count"] == 80
     assert atomic["materialized_property_count"] == 7
     assert atomic["canonical_test_count"] == 160
     assert atomic["point_in_time_source_provenance"] is False
+    assert atomic["result_detail"] == "COMPACT_GIT_SUMMARY_FULL_ROWS_IN_GITHUB_ARTIFACT"
+    assert atomic["full_results_artifact"]["git_committed"] is False
+    assert atomic["full_results_artifact"]["artifact_relative_path"].endswith(".json.gz")
     assert not {row["status"] for row in atomic["results"]} & {
         "VALIDATED",
         "PRODUCTION_READY",
@@ -139,6 +200,7 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
     assert space["compatible_pairs"] == 21
     assert space["pruned_pairs"] == 117_834
     assert space["candidate_tag_pairs"] == 3_160
+    assert space["structurally_eligible_tag_pairs"] == 1_398
     assert space["selected_tag_pairs"] == 120
     assert space["quotas"] == {"AWAY_AWAY": 30, "CROSS_SIDE": 60, "HOME_HOME": 30}
     assert space["selection_is_target_blind"] is True
@@ -146,6 +208,10 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
     assert pairs["pair_count"] == 120
     assert pairs["unique_property_pair_count"] == 21
     assert pairs["canonical_test_count"] == 240
+    assert pairs["verdict"] == "PAIR_CAMPAIGN_PARTIAL"
+    assert pairs["result_detail"] == "COMPACT_GIT_SUMMARY_FULL_ROWS_IN_GITHUB_ARTIFACT"
+    assert pairs["full_results_artifact"]["git_committed"] is False
+    assert pairs["full_results_artifact"]["artifact_relative_path"].endswith(".json.gz")
     assert not {row["status"] for row in pairs["results"]} & {
         "VALIDATED",
         "PRODUCTION_READY",
@@ -157,7 +223,7 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
         for metric in row["target_metrics"].values()
     )
     assert all(row["parent_property_a"] != row["parent_property_b"] for row in pairs["results"])
-    assert {row["shard_id"] for row in pairs["results"]} == set(range(8))
+    assert {row["shard_id"] for row in space["pairs"]} == set(range(8))
     for row in pairs["results"]:
         for metric in row["target_metrics"].values():
             assert "best_comparator_log_loss" not in metric
@@ -169,6 +235,24 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
             assert metric["p_value_raw_intersection_union"] == max(
                 metric["p_values_raw_by_comparator"].values()
             )
+            assert metric["pair_snapshot_hash"]
+            assert metric["hypothesis_id"] == "hypothesis:" + canonical_hash(
+                {
+                    "pair_id": row["pair_id"],
+                    "parents": [row["parent_a"], row["parent_b"]],
+                    "pair_snapshot_hash": metric["pair_snapshot_hash"],
+                    "target_id": next(
+                        target_id
+                        for target_id, candidate in row["target_metrics"].items()
+                        if candidate is metric
+                    ),
+                    "campaign": "PHASE-C-PAIR-120-X-2-2024-V1",
+                }
+            )
+
+    assert (ROOT / "reports/hypothesis-genome/e3-property-reconciliation-v1.json").stat().st_size <= 300_000
+    assert (ROOT / "reports/hypothesis-research/atomic-results-v1.json").stat().st_size <= 300_000
+    assert (ROOT / "reports/hypothesis-research/pair-results-v1.json").stat().st_size <= 300_000
 
 
 def test_negative_controls_and_triple_lock() -> None:
@@ -184,6 +268,16 @@ def test_negative_controls_and_triple_lock() -> None:
             row["folds"] or row["detector_result"] == "BLOCKED_AS_EXPECTED"
             for row in report["records"]
         )
+        guards = [row for row in report["records"] if not row["folds"]]
+        assert all(row["detector"] == "predictor_admissibility_reasons" for row in guards)
+        assert all(row["detector_observation_count"] == 1_053 for row in guards)
+        assert all(row["detector_blocked_count"] == 1_053 for row in guards)
+        random_control = next(
+            row
+            for row in report["records"]
+            if row["control_id"] == "RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN"
+        )
+        assert sum(fold["unknown_count"] for fold in random_control["folds"]) > 0
     triple = load("configs/hypothesis-campaigns/triple-campaign-lock-v1.json")
     assert triple["compiled"] is True
     assert triple["executed"] is False
@@ -223,7 +317,11 @@ def test_phase_c_workflows_are_manual_distinct_dormant_and_read_only() -> None:
         assert any(item.startswith("actions/download-artifact@") for item in uses)
         assert any(item.startswith("actions/upload-artifact@") for item in uses)
         assert "ref: main" in raw
-        assert "PHASE_C_TRUSTED_MAIN_ACTIVATION_HOLD" in raw
+        assert "trusted-main/scripts/validate_phase_c_workflow_contract.py" in raw
+        assert "resume_run_id:" in raw and "resume_attempt:" in raw
+        assert "timeout --signal=TERM" in raw
+        assert "--soft-deadline-seconds" in raw
+        assert "seal-stage" in raw
         assert "replay-stage" in raw
     assert len(groups) == 4
     pair_workflow = (ROOT / ".github/workflows/89-p0-phase-c-compatible-pair-search.yml").read_text()
@@ -237,7 +335,107 @@ def test_phase_c_workflows_are_manual_distinct_dormant_and_read_only() -> None:
     assert activation["allowed_execution_sha"] is None
     assert activation["triple_search_locked"] is True
     assert all(value == 0 for value in activation["external_effect_budgets"].values())
+    assert activation["preflight_sha256"]
+    assert activation["artifact_budgets_bytes"] == {
+        "atomic_property_search_upload_max": 5_000_000,
+        "compatible_pair_search_upload_max": 25_000_000,
+        "derived_stage_download_max": 120_000_000,
+        "pair_shard_upload_max": 2_000_000,
+        "pair_shards_total_max": 16_000_000,
+        "raw_field_census_upload_max": 5_000_000,
+        "source_workflow_download_max": 120_000_000,
+        "tag_mask_build_upload_max": 5_000_000,
+    }
     assert activation["activation_authority"] == "TRUSTED_DEFAULT_BRANCH_ONLY_NEVER_CANDIDATE_CHECKOUT"
+    assert activation["generator_sha256"] == hashlib.sha256(
+        (ROOT / "scripts/run_hypothesis_tag_mask_pair_factory.py").read_bytes()
+    ).hexdigest()
+    assert activation["preflight_sha256"] == hashlib.sha256(
+        (ROOT / "scripts/validate_phase_c_workflow_contract.py").read_bytes()
+    ).hexdigest()
+    assert activation["source_lock_sha256"] == hashlib.sha256(
+        (ROOT / "configs/execution/p0-e3-artifact-lock-v1.json").read_bytes()
+    ).hexdigest()
+    assert activation["workflow_sha256"] == {
+        path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in workflow_paths
+    }
+    activation_without_hash = dict(activation)
+    assert activation_without_hash.pop("contract_hash") == canonical_hash(
+        activation_without_hash
+    )
     artifact_lock = load("configs/execution/phase-c-artifact-lock-v1.json")
     assert artifact_lock["status"] == "EMPTY_DRAFT_REQUIRES_SUCCESSOR_ON_DEFAULT_BRANCH"
     assert artifact_lock["stage_locks"] == {}
+    artifact_lock_without_hash = dict(artifact_lock)
+    assert artifact_lock_without_hash.pop("lock_hash") == canonical_hash(
+        artifact_lock_without_hash
+    )
+
+
+def test_checkpoint_resume_and_stage_manifest_fail_closed(tmp_path: Path) -> None:
+    store = tmp_path / "store"
+    factory.write_initial_checkpoint(
+        store,
+        "ATOMIC_PROPERTY_SEARCH",
+        "a" * 40,
+        "LOCAL-ALL",
+        1,
+        None,
+    )
+    records = [{"tag_id": "tag:a"}, {"tag_id": "tag:b"}]
+    factory.persist_resume_progress(store, "ATOMIC_PROPERTY_SEARCH", records)
+    checkpoint = load_from_path(store / "checkpoint-v1.json")
+    assert checkpoint["cursor"] == 2
+    assert checkpoint["completed"] is False
+    without_hash = dict(checkpoint)
+    assert without_hash.pop("checkpoint_hash") == canonical_hash(without_hash)
+
+    factory.ACTIVE_RESUME_ROOT = store
+    factory.ACTIVE_RESUME_CHECKPOINT = checkpoint
+    try:
+        assert factory.load_resume_progress("ATOMIC_PROPERTY_SEARCH") == records
+        progress_path = store / str(checkpoint["resume_progress_path"])
+        progress_path.write_bytes(progress_path.read_bytes() + b"tamper")
+        with pytest.raises(RuntimeError, match="RESUME_PROGRESS_HASH_MISMATCH"):
+            factory.load_resume_progress("ATOMIC_PROPERTY_SEARCH")
+    finally:
+        factory.ACTIVE_RESUME_ROOT = None
+        factory.ACTIVE_RESUME_CHECKPOINT = None
+
+    artifact = tmp_path / "artifact"
+    artifact.mkdir()
+    (artifact / "result.json").write_text('{"ok":true}\n', encoding="utf-8")
+    factory.write_initial_checkpoint(
+        artifact,
+        "RAW_FIELD_CENSUS",
+        "b" * 40,
+        "LOCAL-ALL",
+        1,
+        None,
+    )
+    manifest = factory.seal_stage_artifact(
+        artifact, "RAW_FIELD_CENSUS", "b" * 40, "LOCAL-ALL"
+    )
+    factory.verify_stage_artifact(
+        artifact,
+        str(manifest["manifest_hash"]),
+        "RAW_FIELD_CENSUS",
+        "b" * 40,
+        5_000_000,
+    )
+    (artifact / "result.json").write_text('{"ok":false}\n', encoding="utf-8")
+    with pytest.raises(RuntimeError, match="STAGE_MANIFEST_FILE_HASH_MISMATCH"):
+        factory.verify_stage_artifact(
+            artifact,
+            str(manifest["manifest_hash"]),
+            "RAW_FIELD_CENSUS",
+            "b" * 40,
+            5_000_000,
+        )
+
+
+def load_from_path(path: Path) -> dict[str, object]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    assert isinstance(value, dict)
+    return value

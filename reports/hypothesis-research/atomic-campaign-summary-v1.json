@@ -1,4 +1,5 @@
 {
+  "deferred_public_hypothesis_eligible_properties": 18,
   "folds": [
     {
       "fold_id": "F1",
@@ -46,11 +47,12 @@
   "properties_reconciled": 486,
   "roi": null,
   "schema_version": "atomic-campaign-summary-v1",
+  "scope_verdict": "BOUNDED_7_PROPERTY_SUBCAMPAIGN_COMPLETE_GLOBAL_SCOPE_PARTIAL",
   "status_counts": {
     "RAW_HISTORICAL_SIGNAL": 78,
     "SURVIVED_MULTIPLE_TESTING": 1,
     "SURVIVED_TEMPORAL_VALIDATION": 1
   },
   "tests_executed": 160,
-  "verdict": "ATOMIC_PROPERTY_CAMPAIGN_READY"
+  "verdict": "ATOMIC_SUBCAMPAIGN_READY_GLOBAL_SCOPE_PARTIAL"
 }

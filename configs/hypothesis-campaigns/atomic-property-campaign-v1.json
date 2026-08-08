@@ -1,5 +1,5 @@
 {
-  "campaign_hash": "5d87302cf051cbdd91c3b0ee54030b1ec9698cc1ff33fd9cfca4dfcd333119c6",
+  "campaign_hash": "700ccdeb0e4d8a7b702cb641d186af00187f51260e652de627993ccdfa5dc1b6",
   "campaign_id": "PHASE-C-ATOMIC-80-X-2-2024-V1",
   "compute_budget": {
     "atomic_tags": 80,
@@ -43,9 +43,9 @@
   ],
   "frozen_at": "2026-08-08T09:10:42Z",
   "frozen_before_target_analysis": true,
-  "generator_sha256": "c2f7a678e3d718f55cc27127060f1cede67a7c59041c0797088bb14ba1e8c195",
+  "generator_sha256": "37eddc4ea7eab7bc530776acd03b141da845d93ad33aea20a8682a6466a06667",
   "markets": [],
-  "mask_manifest_hash": "a94f06df02b272dc5de76bff81dadeb43ac0484b1fe9033648c4f616b5c66fa6",
+  "mask_manifest_hash": "02c682459ee0b9e6bbfcd14dfd505a31d529ec41261b9e24ba68b309bc8e6e67",
   "mode": "PREDICTIVE_ONLY",
   "multiple_testing_policy": {
     "alpha": 0.05,
@@ -74,6 +74,13 @@
     "REAL_BET"
   ],
   "schema_version": "atomic-property-campaign-v1",
+  "scope_contract": {
+    "deferred_public_hypothesis_eligible_properties": 18,
+    "genome_properties_reconciled": 486,
+    "ready_properties": 46,
+    "scope_status": "BOUNDED_SUBCAMPAIGN_PENDING_COUNCIL_RESCOPING",
+    "selected_predictor_properties": 7
+  },
   "seed": 11011,
   "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
   "support_policy": {
@@ -85,7 +92,7 @@
     "principal_true_oof": 80,
     "required_positive_folds": 4
   },
-  "tag_registry_hash": "6bda729778def2e117f0797add246641d1905e5a97319cdaafe4d33af880e80c",
+  "tag_registry_hash": "37235452db488c8984878538cc1c55ecb26bcdc529b773222948e66f4526a47c",
   "target_values_used_for_registry_masks_or_pair_selection": false,
   "targets": [
     {

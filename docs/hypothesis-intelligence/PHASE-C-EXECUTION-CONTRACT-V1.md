@@ -10,10 +10,12 @@ d’artefacts Phase C est vide. Aucun workflow Phase C n’a été déclenché d
 cette PR draft.
 
 Une activation future doit être committée et revue sur la branche par défaut.
-Le preflight lit l’autorité depuis un checkout `main` séparé, puis exige la
-triple égalité : SHA de l’input, head distant de la branche et
-`allowed_execution_sha`. Il valide ensuite les hashes du générateur, des
-workflows et du verrou source. Le candidat ne peut jamais s’auto-autoriser.
+Le preflight partagé `validate_phase_c_workflow_contract.py` est lu depuis un
+checkout `main` séparé, puis exige la triple égalité : SHA de l’input, head
+distant de la branche et `allowed_execution_sha`. Il recalcule le hash canonique
+de l’activation et du verrou d’artefacts, ainsi que les hashes du preflight, du
+générateur, des quatre workflows et du verrou source. Le candidat ne peut
+jamais s’auto-autoriser.
 
 ## Chaîne d’artefacts
 
@@ -31,6 +33,13 @@ Chaque stage dérivé doit être inscrit sur `main` dans
 nom, taille, digest et hash de `stage-manifest-v1.json`. Un ID fourni par un
 utilisateur n’est jamais une autorité suffisante.
 
+Le manifeste d’un stage inventorie exactement les fichiers téléversés. La
+vérification refuse tout fichier manquant, supplémentaire ou altéré, ainsi
+qu’une dérive de stage, SHA, shard, checkpoint ou hash. Les plafonds durs sont
+120 MB pour les sources, 5 MB pour census, tag/mask et atomic, 2 MB par shard
+de paires, 16 MB pour les huit shards et 25 MB pour la réduction finale ; le
+budget cumulé des téléchargements dérivés est 120 MB.
+
 ## Replay, reprise et sécurité
 
 Chaque calcul est exécuté dans une namespace réseau `unshare --net`; si elle
@@ -39,11 +48,15 @@ token et les compteurs provider, R2, SQL et Odds restent à zéro. Les actions
 checkout/setup/download/upload sont épinglées par SHA.
 
 Chaque stage est construit deux fois dans des répertoires frais et comparé par
-hash avant upload. Un checkpoint initial incomplet existe avant le calcul et
-un checkpoint final référence le manifeste de stage. Une reprise refuse toute
-dérive de SHA, source, générateur ou shard ; un shard marqué complet n’est pas
-recalculé si son manifeste exact est présent. Les paires exigent huit shards
-uniques ; manque, duplication ou dérive du rapport global échoue fail-closed.
+hash avant upload. Une deadline logicielle de 240 secondes précède le timeout
+dur de 270 secondes. Atomic et pair écrivent après chaque tag ou paire un
+snapshot canonique gzip, alterné sur deux slots, puis publient atomiquement le
+checkpoint qui référence exactement son hash et son curseur. Une reprise
+refuse toute dérive de SHA, source, générateur, shard, checkpoint ou snapshot,
+et reprend après le dernier bloc durable ; un shard complet n’est jamais
+recalculé. Les paires exigent huit shards uniques et deux réductions fraîches
+byte-identiques ; manque, duplication ou dérive du rapport global échoue
+fail-closed.
 
 Les triples, tout write distant, tout déploiement, toute publication et tout
 pari réel restent hors contrat.

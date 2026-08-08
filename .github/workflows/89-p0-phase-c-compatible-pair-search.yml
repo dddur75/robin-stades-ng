@@ -7,6 +7,14 @@ on:
         description: "Exact SHA authorized by the trusted-main activation"
         required: true
         type: string
+      resume_run_id:
+        description: "Optional completed prior run containing shard checkpoints"
+        required: false
+        type: string
+      resume_attempt:
+        description: "Exact attempt for resume_run_id"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -34,21 +42,23 @@ jobs:
     timeout-minutes: 5
     outputs:
       generator_sha: ${{ steps.contract.outputs.generator_sha }}
-      mask_run_id: ${{ steps.contract.outputs.mask_run_id }}
-      mask_artifact_id: ${{ steps.contract.outputs.mask_artifact_id }}
-      mask_manifest_hash: ${{ steps.contract.outputs.mask_manifest_hash }}
-      atomic_run_id: ${{ steps.contract.outputs.atomic_run_id }}
-      atomic_artifact_id: ${{ steps.contract.outputs.atomic_artifact_id }}
-      atomic_manifest_hash: ${{ steps.contract.outputs.atomic_manifest_hash }}
+      mask_run_id: ${{ steps.contract.outputs.tag_mask_build_run_id }}
+      mask_artifact_id: ${{ steps.contract.outputs.tag_mask_build_artifact_id }}
+      mask_manifest_hash: ${{ steps.contract.outputs.tag_mask_build_manifest_hash }}
+      atomic_run_id: ${{ steps.contract.outputs.atomic_property_search_run_id }}
+      atomic_artifact_id: ${{ steps.contract.outputs.atomic_property_search_artifact_id }}
+      atomic_manifest_hash: ${{ steps.contract.outputs.atomic_property_search_manifest_hash }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with: {ref: main, path: trusted-main, fetch-depth: 1, persist-credentials: false}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with: {python-version: "3.12"}
-      - name: Validate trusted-main activation and both exact upstream artifact locks
+      - name: Validate trusted-main activation and both exact upstream stage locks
         id: contract
         env:
           EXECUTION_SHA: ${{ inputs.execution_sha }}
+          RESUME_RUN_ID: ${{ inputs.resume_run_id }}
+          RESUME_ATTEMPT: ${{ inputs.resume_attempt }}
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
         shell: bash
@@ -56,22 +66,7 @@ jobs:
           set -euo pipefail
           [[ "${EXECUTION_SHA}" =~ ^[0-9a-f]{40}$ ]]
           test "$(git -C trusted-main ls-remote origin "refs/heads/${PHASE_C_BRANCH}" | cut -f1)" = "${EXECUTION_SHA}"
-          python - <<'PY'
-          import json,os,urllib.request
-          from pathlib import Path
-          root=Path("trusted-main"); activation=json.loads((root/"configs/execution/phase-c-execution-activation-v1.json").read_text()); lock=json.loads((root/"configs/execution/phase-c-artifact-lock-v1.json").read_text())
-          if activation["activation_status"]!="ACTIVE" or activation["allowed_execution_sha"]!=os.environ["EXECUTION_SHA"]: raise SystemExit("PHASE_C_TRUSTED_MAIN_ACTIVATION_HOLD")
-          if activation["phase_c_artifact_lock_hash"]!=lock["lock_hash"]: raise SystemExit("PHASE_C_ARTIFACT_LOCK_HASH_MISMATCH")
-          stages={name:lock["stage_locks"].get(name) for name in ("TAG_MASK_BUILD","ATOMIC_PROPERTY_SEARCH")}
-          for name,stage in stages.items():
-              if not stage or stage["head_sha"]!=os.environ["EXECUTION_SHA"] or stage["run_attempt"]<1: raise SystemExit(f"UPSTREAM_STAGE_LOCK_MISSING:{name}")
-              req=urllib.request.Request(f"https://api.github.com/repos/{os.environ['GH_REPOSITORY']}/actions/artifacts/{stage['artifact_id']}",headers={"Authorization":f"Bearer {os.environ['GH_TOKEN']}","Accept":"application/vnd.github+json"})
-              with urllib.request.urlopen(req,timeout=20) as response: actual=json.load(response)
-              if actual["expired"] or actual["name"]!=stage["artifact_name"] or actual["size_in_bytes"]!=stage["size_in_bytes"] or actual.get("digest")!=stage["digest"] or actual["workflow_run"]["head_sha"]!=stage["head_sha"]: raise SystemExit(f"UPSTREAM_ARTIFACT_METADATA_MISMATCH:{name}")
-          mask=stages["TAG_MASK_BUILD"]; atomic=stages["ATOMIC_PROPERTY_SEARCH"]
-          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as stream:
-              stream.write(f"generator_sha={activation['generator_sha256']}\nmask_run_id={mask['run_id']}\nmask_artifact_id={mask['artifact_id']}\nmask_manifest_hash={mask['stage_manifest_hash']}\natomic_run_id={atomic['run_id']}\natomic_artifact_id={atomic['artifact_id']}\natomic_manifest_hash={atomic['stage_manifest_hash']}\n")
-          PY
+          python trusted-main/scripts/validate_phase_c_workflow_contract.py stage --stage TAG_MASK_BUILD --stage ATOMIC_PROPERTY_SEARCH --resume-workflow-path .github/workflows/89-p0-phase-c-compatible-pair-search.yml
           unshare --user --map-root-user --net true
 
   search:
@@ -92,7 +87,15 @@ jobs:
         with: {github-token: "${{ github.token }}", repository: "${{ github.repository }}", run-id: "${{ needs.preflight.outputs.mask_run_id }}", artifact-ids: "${{ needs.preflight.outputs.mask_artifact_id }}", path: candidate/_phase_c/tag-mask-upstream}
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with: {github-token: "${{ github.token }}", repository: "${{ github.repository }}", run-id: "${{ needs.preflight.outputs.atomic_run_id }}", artifact-ids: "${{ needs.preflight.outputs.atomic_artifact_id }}", path: candidate/_phase_c/atomic-upstream}
-      - name: Validate upstream lineage, execute twice and export one canonical pair shard
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: ${{ inputs.resume_run_id != '' }}
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.resume_run_id }}
+          pattern: phase-c-pair-shard-${{ matrix.shard }}-${{ inputs.resume_run_id }}-${{ inputs.resume_attempt }}
+          path: candidate/_phase_c/resume
+      - name: Validate lineage, execute twice and export one canonical pair shard
         working-directory: candidate
         env:
           EXECUTION_SHA: ${{ inputs.execution_sha }}
@@ -105,32 +108,46 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${EXECUTION_SHA}"
           test "$(sha256sum scripts/run_hypothesis_tag_mask_pair_factory.py | cut -d' ' -f1)" = "${GENERATOR_SHA}"
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py verify-stage --artifact-root _phase_c/tag-mask-upstream --expected-manifest-hash "${MASK_MANIFEST_HASH}" --expected-stage TAG_MASK_BUILD --execution-sha "${EXECUTION_SHA}" --max-bytes 5000000
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py verify-stage --artifact-root _phase_c/atomic-upstream --expected-manifest-hash "${ATOMIC_MANIFEST_HASH}" --expected-stage ATOMIC_PROPERTY_SEARCH --execution-sha "${EXECUTION_SHA}" --max-bytes 5000000
+          artifact="_phase_c/pair-shard-${SHARD_ID}-artifact"
+          mkdir -p "${artifact}"
+          resume=()
+          checkpoint="$(find _phase_c/resume -name checkpoint-v1.json -print -quit 2>/dev/null || true)"
+          if [[ -n "${checkpoint}" ]]; then
+            if [[ "$(python -c 'import json,sys; print(str(json.load(open(sys.argv[1]))["completed"]).lower())' "${checkpoint}")" == "true" ]]; then
+              cp -a "$(dirname "${checkpoint}")/." "${artifact}/"
+              expected="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["manifest_hash"])' "$(find "${artifact}" -name stage-manifest-v1.json -print -quit)")"
+              unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py verify-stage --artifact-root "${artifact}" --expected-manifest-hash "${expected}" --expected-stage COMPATIBLE_PAIR_SEARCH_SHARD --execution-sha "${EXECUTION_SHA}" --max-bytes 2000000
+              exit 0
+            fi
+            resume=(--resume-checkpoint "${checkpoint}")
+          fi
+          trap 'cp "$RUNNER_TEMP/phase-c-pair-a/checkpoint-v1.json" "_phase_c/pair-shard-${SHARD_ID}-artifact/checkpoint-v1.json" 2>/dev/null || true; cp "$RUNNER_TEMP/phase-c-pair-a/"resume-progress-*-v1.json.gz "_phase_c/pair-shard-${SHARD_ID}-artifact/" 2>/dev/null || true' EXIT
+          timeout --signal=TERM 270s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py pairs-upstream --tag-mask-root _phase_c/tag-mask-upstream --atomic-root _phase_c/atomic-upstream --output-root "$RUNNER_TEMP/phase-c-pair-output-a" --store-root "$RUNNER_TEMP/phase-c-pair-a" --execution-sha "${EXECUTION_SHA}" --shard-id "${SHARD_ID}" --shard-count 8 --soft-deadline-seconds 240 "${resume[@]}"
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py export-pair-shard --input-root "$RUNNER_TEMP/phase-c-pair-output-a" --full-results-root "$RUNNER_TEMP/phase-c-pair-a" --shard-id "${SHARD_ID}" --shard-count 8 --execution-sha "${EXECUTION_SHA}"
+          timeout --signal=TERM 270s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py pairs-upstream --tag-mask-root _phase_c/tag-mask-upstream --atomic-root _phase_c/atomic-upstream --output-root "$RUNNER_TEMP/phase-c-pair-output-b" --store-root "$RUNNER_TEMP/phase-c-pair-b" --execution-sha "${EXECUTION_SHA}" --shard-id "${SHARD_ID}" --shard-count 8 --soft-deadline-seconds 240
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py export-pair-shard --input-root "$RUNNER_TEMP/phase-c-pair-output-b" --full-results-root "$RUNNER_TEMP/phase-c-pair-b" --shard-id "${SHARD_ID}" --shard-count 8 --execution-sha "${EXECUTION_SHA}"
+          cmp "$RUNNER_TEMP/phase-c-pair-a/results/pair-results-full-v1.json.gz" "$RUNNER_TEMP/phase-c-pair-b/results/pair-results-full-v1.json.gz"
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py replay-stage --first-root "$RUNNER_TEMP/phase-c-pair-output-a" --second-root "$RUNNER_TEMP/phase-c-pair-output-b"
+          mkdir -p "${artifact}/reports/hypothesis-research"
+          cp "$RUNNER_TEMP/phase-c-pair-output-a/pair-results-shard-"*"-v1.json" "${artifact}/"
+          cp "$RUNNER_TEMP/phase-c-pair-output-a/reports/hypothesis-research/pair-negative-controls-v1.json" "${artifact}/reports/hypothesis-research/"
+          cp "$RUNNER_TEMP/phase-c-pair-output-a/campaign-replay-v1.json" "${artifact}/campaign-replay-v1.json"
+          cp "$RUNNER_TEMP/phase-c-pair-a/checkpoint-v1.json" "${artifact}/checkpoint-v1.json"
+          trap - EXIT
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py seal-stage --artifact-root "${artifact}" --stage COMPATIBLE_PAIR_SEARCH_SHARD --execution-sha "${EXECUTION_SHA}" --shard-id "${SHARD_ID}"
           python - <<'PY'
-          import json,os
+          import os
           from pathlib import Path
-          for root,wanted in (("_phase_c/tag-mask-upstream",os.environ["MASK_MANIFEST_HASH"]),("_phase_c/atomic-upstream",os.environ["ATOMIC_MANIFEST_HASH"])):
-              matches=list(Path(root).rglob("stage-manifest-v1.json"))
-              if len(matches)!=1 or json.loads(matches[0].read_text())["manifest_hash"]!=wanted: raise SystemExit(f"UPSTREAM_STAGE_MANIFEST_MISMATCH:{root}")
+          root=Path(f"_phase_c/pair-shard-{os.environ['SHARD_ID']}-artifact")
+          if sum(p.stat().st_size for p in root.rglob("*") if p.is_file()) > 2_000_000: raise SystemExit("PAIR_SHARD_UPLOAD_CAP_EXCEEDED")
           PY
-          out="_phase_c/pair-shard-${SHARD_ID}"
-          mkdir -p "${out}"
-          trap 'cp "$RUNNER_TEMP/phase-c-pair-a/checkpoint-v1.json" "${out}/checkpoint-v1.json" 2>/dev/null || true' EXIT
-          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py pairs-upstream --tag-mask-root _phase_c/tag-mask-upstream --atomic-root _phase_c/atomic-upstream --output-root "${out}" --store-root "$RUNNER_TEMP/phase-c-pair-a" --execution-sha "${EXECUTION_SHA}" --shard-id "${SHARD_ID}" --shard-count 8 --soft-deadline-seconds 600
-          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py export-pair-shard --input-root "${out}" --shard-id "${SHARD_ID}" --shard-count 8 --execution-sha "${EXECUTION_SHA}"
-          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py pairs-upstream --tag-mask-root _phase_c/tag-mask-upstream --atomic-root _phase_c/atomic-upstream --output-root "$RUNNER_TEMP/phase-c-pair-replay" --store-root "$RUNNER_TEMP/phase-c-pair-b" --execution-sha "${EXECUTION_SHA}" --shard-id "${SHARD_ID}" --shard-count 8 --soft-deadline-seconds 600
-          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py export-pair-shard --input-root "$RUNNER_TEMP/phase-c-pair-replay" --shard-id "${SHARD_ID}" --shard-count 8 --execution-sha "${EXECUTION_SHA}"
-          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py replay-stage --first-root "${out}" --second-root "$RUNNER_TEMP/phase-c-pair-replay"
-          cp "$RUNNER_TEMP/phase-c-pair-a/checkpoint-v1.json" "${out}/checkpoint-v1.json"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: phase-c-pair-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            candidate/_phase_c/pair-shard-${{ matrix.shard }}/pair-results-shard-${{ matrix.shard }}-v1.json
-            candidate/_phase_c/pair-shard-${{ matrix.shard }}/reports/hypothesis-research/pair-negative-controls-v1.json
-            candidate/_phase_c/pair-shard-${{ matrix.shard }}/stage-manifest-v1.json
-            candidate/_phase_c/pair-shard-${{ matrix.shard }}/campaign-replay-v1.json
-            candidate/_phase_c/pair-shard-${{ matrix.shard }}/checkpoint-v1.json
+          path: candidate/_phase_c/pair-shard-${{ matrix.shard }}-artifact
           if-no-files-found: error
           retention-days: 90
 
@@ -147,26 +164,41 @@ jobs:
         with: {pattern: "phase-c-pair-shard-*-${{ github.run_id }}-${{ github.run_attempt }}", path: candidate/_phase_c/pair-shards}
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with: {github-token: "${{ github.token }}", repository: "${{ github.repository }}", run-id: "${{ needs.preflight.outputs.mask_run_id }}", artifact-ids: "${{ needs.preflight.outputs.mask_artifact_id }}", path: candidate/_phase_c/tag-mask-upstream}
-      - name: Reduce exactly eight shards without egress
+      - name: Reduce and replay exactly eight fail-closed shards without egress
         working-directory: candidate
         env:
           EXECUTION_SHA: ${{ inputs.execution_sha }}
+          MASK_MANIFEST_HASH: ${{ needs.preflight.outputs.mask_manifest_hash }}
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p _phase_c/compatible-pair-search
-          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py reduce-pair-shards --input-root _phase_c/pair-shards --tag-mask-root _phase_c/tag-mask-upstream --output-root _phase_c/compatible-pair-search --store-root "$RUNNER_TEMP/phase-c-pair-reduce" --execution-sha "${EXECUTION_SHA}"
-          cp "$RUNNER_TEMP/phase-c-pair-reduce/checkpoint-v1.json" _phase_c/compatible-pair-search/checkpoint-v1.json
+          artifact="_phase_c/compatible-pair-search-artifact"
+          mkdir -p "${artifact}"
+          trap 'cp "$RUNNER_TEMP/phase-c-pair-reduce-store-a/checkpoint-v1.json" "_phase_c/compatible-pair-search-artifact/checkpoint-v1.json" 2>/dev/null || true' EXIT
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py verify-stage --artifact-root _phase_c/tag-mask-upstream --expected-manifest-hash "${MASK_MANIFEST_HASH}" --expected-stage TAG_MASK_BUILD --execution-sha "${EXECUTION_SHA}" --max-bytes 5000000
+          python - <<'PY'
+          from pathlib import Path
+          root=Path("_phase_c/pair-shards")
+          if sum(p.stat().st_size for p in root.rglob("*") if p.is_file()) > 16_000_000: raise SystemExit("PAIR_SHARDS_DOWNLOAD_CAP_EXCEEDED")
+          PY
+          timeout --signal=TERM 240s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py reduce-pair-shards --input-root _phase_c/pair-shards --tag-mask-root _phase_c/tag-mask-upstream --output-root "$RUNNER_TEMP/phase-c-pair-reduce-a" --store-root "$RUNNER_TEMP/phase-c-pair-reduce-store-a" --execution-sha "${EXECUTION_SHA}"
+          timeout --signal=TERM 240s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py reduce-pair-shards --input-root _phase_c/pair-shards --tag-mask-root _phase_c/tag-mask-upstream --output-root "$RUNNER_TEMP/phase-c-pair-reduce-b" --store-root "$RUNNER_TEMP/phase-c-pair-reduce-store-b" --execution-sha "${EXECUTION_SHA}"
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py replay-stage --first-root "$RUNNER_TEMP/phase-c-pair-reduce-a" --second-root "$RUNNER_TEMP/phase-c-pair-reduce-b"
+          mkdir -p "${artifact}/reports/hypothesis-research"
+          cp "$RUNNER_TEMP/phase-c-pair-reduce-a/reports/hypothesis-research/"*.json "${artifact}/reports/hypothesis-research/"
+          cp "$RUNNER_TEMP/phase-c-pair-reduce-a/campaign-replay-v1.json" "${artifact}/campaign-replay-v1.json"
+          cp "$RUNNER_TEMP/phase-c-pair-reduce-store-a/checkpoint-v1.json" "${artifact}/checkpoint-v1.json"
+          trap - EXIT
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py seal-stage --artifact-root "${artifact}" --stage COMPATIBLE_PAIR_SEARCH --execution-sha "${EXECUTION_SHA}" --shard-id REDUCE-8
+          python - <<'PY'
+          from pathlib import Path
+          root=Path("_phase_c/compatible-pair-search-artifact")
+          if sum(p.stat().st_size for p in root.rglob("*") if p.is_file()) > 25_000_000: raise SystemExit("PAIR_FINAL_UPLOAD_CAP_EXCEEDED")
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
         with:
           name: phase-c-compatible-pair-search-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            candidate/_phase_c/compatible-pair-search/reports/hypothesis-research/pair-search-space-v1.json
-            candidate/_phase_c/compatible-pair-search/reports/hypothesis-research/pair-results-v1.json
-            candidate/_phase_c/compatible-pair-search/reports/hypothesis-research/pair-rankings-v1.json
-            candidate/_phase_c/compatible-pair-search/reports/hypothesis-research/pair-clusters-v1.json
-            candidate/_phase_c/compatible-pair-search/reports/hypothesis-research/pair-negative-controls-v1.json
-            candidate/_phase_c/compatible-pair-search/stage-manifest-v1.json
-            candidate/_phase_c/compatible-pair-search/checkpoint-v1.json
+          path: candidate/_phase_c/compatible-pair-search-artifact
           if-no-files-found: error
           retention-days: 90
