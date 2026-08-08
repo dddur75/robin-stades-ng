@@ -1,0 +1,14 @@
+{
+  "cpu_time_seconds": "EXCLUDED_FROM_DETERMINISTIC_REPORT",
+  "external_monetary_cost": 0,
+  "github_artifact_bytes": 16054335,
+  "github_minutes": "OBSERVE_FROM_WORKFLOW_RUN",
+  "logical_source_bytes": 12702015,
+  "memory_peak_bytes": "UNKNOWN_NOT_OBSERVED",
+  "odds_credits": 0,
+  "provider_calls": 0,
+  "r2_bytes": 0,
+  "r2_logical_gets": 0,
+  "schema_version": "p0-e3a-costs-v1",
+  "sql_queries": 0
+}

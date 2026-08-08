@@ -1,0 +1,660 @@
+{
+  "allowed_r2_keys": [
+    {
+      "object_id": "d2046a7b2b7072cc8d328100757627f559eca6daab7d28e4b70ebe69a7171f8e",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=074cce36ba5107266133a6660e90701a799c273c9d4e66a81f517b3a33afadbc/payload-4c0c90d3bdd2cd2f7e5956766b216af01eb799593ea84c99558484ed5309ff7b.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=074cce36ba5107266133a6660e90701a799c273c9d4e66a81f517b3a33afadbc/receipt.json"
+    },
+    {
+      "object_id": "d5d6a0f1e32fc58f1b447c6c11a21e714ae72a764d8ddadc1a206a0472a17602",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=11d765c60f5293e05a36b077f314f9d790cd768efa13df00a6e94d2c5a458808/payload-dd58c6c38b884ea9603db2c7d9ec04254fd81dd4d212e4ab9052654d4f90fdd2.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=11d765c60f5293e05a36b077f314f9d790cd768efa13df00a6e94d2c5a458808/receipt.json"
+    },
+    {
+      "object_id": "6387d61ca0bf76bb99d1623009444598b5208c52db4fcbf72d2b2492267ad0f9",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=42e63c4ba6d5e57ef4e8cbed577bf53ce97439b5d8dad2c5b1fbf48f700d6072/payload-1d8b74cb7ea4ca7dcb9b6a815a50d269bb8239e452d3b7924cb31fa30fa4457a.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=42e63c4ba6d5e57ef4e8cbed577bf53ce97439b5d8dad2c5b1fbf48f700d6072/receipt.json"
+    },
+    {
+      "object_id": "250b6e37fcafd8b525fd95c020dc1f223429a3efd77e5ed4a3582b13ca3da358",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/payload-fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=610e6896bc607b5a44f01c80d0eb2676eb57dfbe8a0c6082042d0b737b103a92/receipt.json"
+    },
+    {
+      "object_id": "21521ae035a7b45f0b3a4fb9d785911771aa8926e9e83f0d6a3661d9b10a4d71",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=7107588bc2d8ffdf4cd465df10397563e6a5fd875f541df4e5f9d1e82ae16d28/payload-8658c347a9688fc2a525633edf5b05fed515d66ebebed18c308aaba54212ceb8.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=7107588bc2d8ffdf4cd465df10397563e6a5fd875f541df4e5f9d1e82ae16d28/receipt.json"
+    },
+    {
+      "object_id": "5afa0bd024002057f5927e721fb0444bdfa1137250d2dc06deb3ddd423d26b37",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=7252d74cb15a1c50f3a1494b9acd6ee891eb692eee754afe9320829a60c9bae0/payload-e9c0e9959123fbd2372c7446521c2b4211ce5875d649e07374b5f55fbd9c6e43.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=7252d74cb15a1c50f3a1494b9acd6ee891eb692eee754afe9320829a60c9bae0/receipt.json"
+    },
+    {
+      "object_id": "846f05457a06c527253a3931ad43f789946099f4351e97a1b4d263a469c8edaa",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=836bf03c9b2c0fd0e3f958e43aa644e4f33c2fdd6cc4f6743d13466d4d011fdb/payload-ccc4e2d78867f30f306c14c66204228818b8a642753390acb45ab017a0f02c0b.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=836bf03c9b2c0fd0e3f958e43aa644e4f33c2fdd6cc4f6743d13466d4d011fdb/receipt.json"
+    },
+    {
+      "object_id": "a23c262a2229d336b24112aff20943c729c28352712e82aed386bc29f2412a17",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=8b32ba239dc8707bad8e162265369e8f3d13edb4104fd5c06199c5454fc07ead/payload-572dc1c2d533c3b5ac443b7fb8db3b6673e7efe237aa4d6ed06e87a1b41ba786.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=8b32ba239dc8707bad8e162265369e8f3d13edb4104fd5c06199c5454fc07ead/receipt.json"
+    },
+    {
+      "object_id": "d7ac674b7b17398d0c3d36e2f603aabd76ac33bc154aa1e57fbbebcd18def6de",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/payload-9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a4fc034de39e05985bbbbaf7f1b5844a6a90ac37b3adc2420c0c61749b8db98b/receipt.json"
+    },
+    {
+      "object_id": "8bbbdc3b88a8714460b9c246d358507a8016d8304d335caf0179aab964e6b7eb",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a60f34408bd1f840f993f60720598dd47a1a36abdd98fbae948d78660448cf38/payload-2e15f6bc9a2d860b0e5903cc398c93857b7ae237b239f180f7875c7f37f4c6a1.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a60f34408bd1f840f993f60720598dd47a1a36abdd98fbae948d78660448cf38/receipt.json"
+    },
+    {
+      "object_id": "091649219b8c019f992899bd92b5eedde836a097070ad1d687a5771bf72f9e45",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a9afc7735f4a68fa8b403c382fff4027b7f090ceaa85d1c02ec1ceaaa8e5641d/payload-dde3f82c4419372b4b02ad87bdff7d0e2c8b371bd980010c7e0ce8d6a14fdfd8.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=a9afc7735f4a68fa8b403c382fff4027b7f090ceaa85d1c02ec1ceaaa8e5641d/receipt.json"
+    },
+    {
+      "object_id": "dd7a291d0f2b27e79835a8dfebf73703fac7b005100fcabdee2a633e767b1843",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=b6f5b02be6b2dc80f6a4b2fdde0dbcb3d8ea7596f286de216f158c6f93981ef3/payload-ce823d4d218612e658a4e024104c184db5feafda40ebf5145dcb2164f08875ac.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=b6f5b02be6b2dc80f6a4b2fdde0dbcb3d8ea7596f286de216f158c6f93981ef3/receipt.json"
+    },
+    {
+      "object_id": "5f8b711b71c9d15b273c00171432b48dfe45180e4438c24b5fd3a45686872719",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=baa84d75060f874f3c4380051fba64c7ee26ba6c1dde0cad22450c7f4533cdf4/payload-d47c316066a859b8081c25091377506e8d83f8f0cfccb9b2cc07ec03810d806a.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=baa84d75060f874f3c4380051fba64c7ee26ba6c1dde0cad22450c7f4533cdf4/receipt.json"
+    },
+    {
+      "object_id": "84e8e3caec0700505041878a648ea3ce378aed30475df57603a8944ba13dfff4",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=c9f2539afbf550464e37cd71b8c9f7e12f62fc60c47e230fbaf61ab57fafd719/payload-e4995dcb02dbeffb7c954e7d99902aebd731fa098926edddd3f879a126780e25.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=c9f2539afbf550464e37cd71b8c9f7e12f62fc60c47e230fbaf61ab57fafd719/receipt.json"
+    },
+    {
+      "object_id": "2862ee12d8c2e2eeedfc180c95192b90c5703313bd61456c7c142210ce540f31",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=e6230fdae81dc4d776a0f35532b79869bf9abb02c0c103ab0f428e0f5c48cda1/payload-04e09f5b6590cb16982870ece79782d84abfadfa6b2f58e47625b3aada9a723f.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=e6230fdae81dc4d776a0f35532b79869bf9abb02c0c103ab0f428e0f5c48cda1/receipt.json"
+    },
+    {
+      "object_id": "1ea3d107ba892d52ea34de392e3ffa17e3de4bf8f2f2b77f277748fdd7eede27",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=f55efde24e7e4e419dfe0f3e9741f802b96ba14dac9c0d851eefd88ccda1805b/payload-924e14d3f85b9594ebc591ccdf7854c1bf0a0f3d9f4dcb6a2cdd3863e02a5877.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=f55efde24e7e4e419dfe0f3e9741f802b96ba14dac9c0d851eefd88ccda1805b/receipt.json"
+    },
+    {
+      "object_id": "ccf907dd69d17d034801e1f6fa7e4c265b7cc10c1e94d6b34412b2a8c6c71261",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=fa8e29b60d7d9288db22cdb8494af5de3bef40e400affd2d7d2fb349ba82b60a/payload-49070ec570697dfebb2a216b0b67e58d936c96833ef2f038384108da7b3ff237.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=fa8e29b60d7d9288db22cdb8494af5de3bef40e400affd2d7d2fb349ba82b60a/receipt.json"
+    },
+    {
+      "object_id": "cae8a202bb484300e730d2d080d14705a057e801d2f30c7a5ff64ecdffc4d2ac",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=fb2d40901193f01f85e59b9e0287569af91ed98137203f34833e26a627e0df8e/payload-e713a94fd919a3bbb89da6fde1d186c5b4c1309384bac872314937db410ae73f.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=fixtures/task=fb2d40901193f01f85e59b9e0287569af91ed98137203f34833e26a627e0df8e/receipt.json"
+    },
+    {
+      "object_id": "589af7b87504f1ba5398a7705ef92f8789e90352324bb6788b4493d5d74b0601",
+      "payload_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=leagues/task=f6b8d03c6b8a2b9d673c9123dd93b209db624d21c21882a2ed677e1d05778fad/payload-2a468fb5a6b0eca5a3f5580384cc14a6c3b9f5175a01cf4eb987783504f2de5a.json.gz",
+      "receipt_key": "historical-deep-data/schema-v1/competition=api-football:61/season=2024/family=fixtures/endpoint=leagues/task=f6b8d03c6b8a2b9d673c9123dd93b209db624d21c21882a2ed677e1d05778fad/receipt.json"
+    }
+  ],
+  "competition": {
+    "canonical_id": "api-football:61",
+    "name": "Ligue 1",
+    "provider_id": 61
+  },
+  "eligible_fixture_count": 308,
+  "excluded_fixture_count": 0,
+  "exclusion_reasons": {},
+  "expected_fixture_count": 308,
+  "external_reads": {
+    "github_artifact_downloads": 5,
+    "r2_gets": 0
+  },
+  "fixture_ids": [
+    1213747,
+    1213748,
+    1213749,
+    1213750,
+    1213751,
+    1213752,
+    1213753,
+    1213754,
+    1213755,
+    1213756,
+    1213757,
+    1213758,
+    1213759,
+    1213760,
+    1213761,
+    1213762,
+    1213763,
+    1213764,
+    1213765,
+    1213766,
+    1213767,
+    1213768,
+    1213769,
+    1213770,
+    1213771,
+    1213772,
+    1213773,
+    1213774,
+    1213775,
+    1213776,
+    1213777,
+    1213778,
+    1213779,
+    1213780,
+    1213781,
+    1213782,
+    1213783,
+    1213784,
+    1213785,
+    1213786,
+    1213787,
+    1213788,
+    1213789,
+    1213790,
+    1213791,
+    1213792,
+    1213793,
+    1213794,
+    1213795,
+    1213796,
+    1213797,
+    1213798,
+    1213799,
+    1213800,
+    1213801,
+    1213802,
+    1213803,
+    1213804,
+    1213805,
+    1213806,
+    1213807,
+    1213808,
+    1213809,
+    1213810,
+    1213811,
+    1213812,
+    1213813,
+    1213814,
+    1213815,
+    1213816,
+    1213817,
+    1213818,
+    1213819,
+    1213820,
+    1213821,
+    1213822,
+    1213823,
+    1213824,
+    1213825,
+    1213826,
+    1213827,
+    1213828,
+    1213829,
+    1213830,
+    1213831,
+    1213832,
+    1213833,
+    1213834,
+    1213835,
+    1213836,
+    1213837,
+    1213838,
+    1213839,
+    1213840,
+    1213841,
+    1213842,
+    1213843,
+    1213844,
+    1213845,
+    1213846,
+    1213847,
+    1213848,
+    1213849,
+    1213850,
+    1213851,
+    1213852,
+    1213853,
+    1213854,
+    1213855,
+    1213856,
+    1213857,
+    1213858,
+    1213859,
+    1213860,
+    1213861,
+    1213862,
+    1213863,
+    1213864,
+    1213865,
+    1213866,
+    1213867,
+    1213868,
+    1213869,
+    1213870,
+    1213871,
+    1213872,
+    1213873,
+    1213874,
+    1213875,
+    1213876,
+    1213877,
+    1213878,
+    1213879,
+    1213880,
+    1213881,
+    1213882,
+    1213883,
+    1213884,
+    1213885,
+    1213886,
+    1213887,
+    1213888,
+    1213889,
+    1213890,
+    1213891,
+    1213892,
+    1213893,
+    1213894,
+    1213895,
+    1213896,
+    1213897,
+    1213898,
+    1213899,
+    1213900,
+    1213901,
+    1213902,
+    1213903,
+    1213904,
+    1213905,
+    1213906,
+    1213907,
+    1213908,
+    1213909,
+    1213910,
+    1213911,
+    1213912,
+    1213913,
+    1213914,
+    1213915,
+    1213916,
+    1213917,
+    1213918,
+    1213919,
+    1213920,
+    1213921,
+    1213922,
+    1213923,
+    1213924,
+    1213925,
+    1213926,
+    1213927,
+    1213928,
+    1213929,
+    1213930,
+    1213931,
+    1213932,
+    1213933,
+    1213934,
+    1213935,
+    1213936,
+    1213937,
+    1213938,
+    1213939,
+    1213940,
+    1213941,
+    1213942,
+    1213943,
+    1213944,
+    1213945,
+    1213946,
+    1213947,
+    1213948,
+    1213949,
+    1213950,
+    1213951,
+    1213952,
+    1213953,
+    1213954,
+    1213955,
+    1213956,
+    1213957,
+    1213958,
+    1213959,
+    1213960,
+    1213961,
+    1213962,
+    1213963,
+    1213964,
+    1213965,
+    1213966,
+    1213967,
+    1213968,
+    1213969,
+    1213970,
+    1213971,
+    1213972,
+    1213973,
+    1213974,
+    1213975,
+    1213976,
+    1213977,
+    1213978,
+    1213979,
+    1213980,
+    1213981,
+    1213982,
+    1213983,
+    1213984,
+    1213985,
+    1213986,
+    1213987,
+    1213988,
+    1213989,
+    1213990,
+    1213991,
+    1213992,
+    1213993,
+    1213994,
+    1213995,
+    1213996,
+    1213997,
+    1213998,
+    1213999,
+    1214000,
+    1214001,
+    1214002,
+    1214003,
+    1214004,
+    1214005,
+    1214006,
+    1214007,
+    1214008,
+    1214009,
+    1214010,
+    1214011,
+    1214012,
+    1214013,
+    1214014,
+    1214015,
+    1214016,
+    1214017,
+    1214018,
+    1214019,
+    1214020,
+    1214021,
+    1214022,
+    1214023,
+    1214024,
+    1214025,
+    1214026,
+    1214027,
+    1214028,
+    1214029,
+    1214030,
+    1214031,
+    1214032,
+    1214033,
+    1214034,
+    1214035,
+    1214036,
+    1214037,
+    1214038,
+    1214039,
+    1214040,
+    1214041,
+    1214042,
+    1214043,
+    1214044,
+    1214045,
+    1214046,
+    1214047,
+    1214048,
+    1214049,
+    1214050,
+    1214051,
+    1214052,
+    1375858,
+    1375859
+  ],
+  "mission_id": "p0-e3-capability-scale-v1",
+  "payload_hashes": [
+    {
+      "object_id": "d2046a7b2b7072cc8d328100757627f559eca6daab7d28e4b70ebe69a7171f8e",
+      "sha256": "4c0c90d3bdd2cd2f7e5956766b216af01eb799593ea84c99558484ed5309ff7b"
+    },
+    {
+      "object_id": "d5d6a0f1e32fc58f1b447c6c11a21e714ae72a764d8ddadc1a206a0472a17602",
+      "sha256": "dd58c6c38b884ea9603db2c7d9ec04254fd81dd4d212e4ab9052654d4f90fdd2"
+    },
+    {
+      "object_id": "6387d61ca0bf76bb99d1623009444598b5208c52db4fcbf72d2b2492267ad0f9",
+      "sha256": "1d8b74cb7ea4ca7dcb9b6a815a50d269bb8239e452d3b7924cb31fa30fa4457a"
+    },
+    {
+      "object_id": "250b6e37fcafd8b525fd95c020dc1f223429a3efd77e5ed4a3582b13ca3da358",
+      "sha256": "fd8d90a354b08106b7d3d4c4ae485e23c13722db08f68899396aed8729e75c4a"
+    },
+    {
+      "object_id": "21521ae035a7b45f0b3a4fb9d785911771aa8926e9e83f0d6a3661d9b10a4d71",
+      "sha256": "8658c347a9688fc2a525633edf5b05fed515d66ebebed18c308aaba54212ceb8"
+    },
+    {
+      "object_id": "5afa0bd024002057f5927e721fb0444bdfa1137250d2dc06deb3ddd423d26b37",
+      "sha256": "e9c0e9959123fbd2372c7446521c2b4211ce5875d649e07374b5f55fbd9c6e43"
+    },
+    {
+      "object_id": "846f05457a06c527253a3931ad43f789946099f4351e97a1b4d263a469c8edaa",
+      "sha256": "ccc4e2d78867f30f306c14c66204228818b8a642753390acb45ab017a0f02c0b"
+    },
+    {
+      "object_id": "a23c262a2229d336b24112aff20943c729c28352712e82aed386bc29f2412a17",
+      "sha256": "572dc1c2d533c3b5ac443b7fb8db3b6673e7efe237aa4d6ed06e87a1b41ba786"
+    },
+    {
+      "object_id": "d7ac674b7b17398d0c3d36e2f603aabd76ac33bc154aa1e57fbbebcd18def6de",
+      "sha256": "9a61aab43ca928a9003000df6486a84344f7c84bd6f6ae5ea4c0414fac7b2007"
+    },
+    {
+      "object_id": "8bbbdc3b88a8714460b9c246d358507a8016d8304d335caf0179aab964e6b7eb",
+      "sha256": "2e15f6bc9a2d860b0e5903cc398c93857b7ae237b239f180f7875c7f37f4c6a1"
+    },
+    {
+      "object_id": "091649219b8c019f992899bd92b5eedde836a097070ad1d687a5771bf72f9e45",
+      "sha256": "dde3f82c4419372b4b02ad87bdff7d0e2c8b371bd980010c7e0ce8d6a14fdfd8"
+    },
+    {
+      "object_id": "dd7a291d0f2b27e79835a8dfebf73703fac7b005100fcabdee2a633e767b1843",
+      "sha256": "ce823d4d218612e658a4e024104c184db5feafda40ebf5145dcb2164f08875ac"
+    },
+    {
+      "object_id": "5f8b711b71c9d15b273c00171432b48dfe45180e4438c24b5fd3a45686872719",
+      "sha256": "d47c316066a859b8081c25091377506e8d83f8f0cfccb9b2cc07ec03810d806a"
+    },
+    {
+      "object_id": "84e8e3caec0700505041878a648ea3ce378aed30475df57603a8944ba13dfff4",
+      "sha256": "e4995dcb02dbeffb7c954e7d99902aebd731fa098926edddd3f879a126780e25"
+    },
+    {
+      "object_id": "2862ee12d8c2e2eeedfc180c95192b90c5703313bd61456c7c142210ce540f31",
+      "sha256": "04e09f5b6590cb16982870ece79782d84abfadfa6b2f58e47625b3aada9a723f"
+    },
+    {
+      "object_id": "1ea3d107ba892d52ea34de392e3ffa17e3de4bf8f2f2b77f277748fdd7eede27",
+      "sha256": "924e14d3f85b9594ebc591ccdf7854c1bf0a0f3d9f4dcb6a2cdd3863e02a5877"
+    },
+    {
+      "object_id": "ccf907dd69d17d034801e1f6fa7e4c265b7cc10c1e94d6b34412b2a8c6c71261",
+      "sha256": "49070ec570697dfebb2a216b0b67e58d936c96833ef2f038384108da7b3ff237"
+    },
+    {
+      "object_id": "cae8a202bb484300e730d2d080d14705a057e801d2f30c7a5ff64ecdffc4d2ac",
+      "sha256": "e713a94fd919a3bbb89da6fde1d186c5b4c1309384bac872314937db410ae73f"
+    },
+    {
+      "object_id": "589af7b87504f1ba5398a7705ef92f8789e90352324bb6788b4493d5d74b0601",
+      "sha256": "2a468fb5a6b0eca5a3f5580384cc14a6c3b9f5175a01cf4eb987783504f2de5a"
+    }
+  ],
+  "ranked_candidates": [
+    {
+      "canonical_competition_id": "api-football:61",
+      "competition": "Ligue 1",
+      "fixture_count": 308,
+      "identity_ambiguities": 0,
+      "logical_bytes": 12702015,
+      "object_count": 19,
+      "payload_and_receipt_hashes_complete": true,
+      "terminal_census_verified": true
+    },
+    {
+      "canonical_competition_id": "api-football:78",
+      "competition": "Bundesliga",
+      "fixture_count": 308,
+      "identity_ambiguities": 0,
+      "logical_bytes": 12787341,
+      "object_count": 19,
+      "payload_and_receipt_hashes_complete": true,
+      "terminal_census_verified": true
+    },
+    {
+      "canonical_competition_id": "api-football:140",
+      "competition": "Liga",
+      "fixture_count": 380,
+      "identity_ambiguities": 0,
+      "logical_bytes": 17056905,
+      "object_count": 22,
+      "payload_and_receipt_hashes_complete": true,
+      "terminal_census_verified": true
+    },
+    {
+      "canonical_competition_id": "api-football:135",
+      "competition": "Serie A",
+      "fixture_count": 380,
+      "identity_ambiguities": 0,
+      "logical_bytes": 17549141,
+      "object_count": 22,
+      "payload_and_receipt_hashes_complete": true,
+      "terminal_census_verified": true
+    },
+    {
+      "canonical_competition_id": "api-football:39",
+      "competition": "Premier League",
+      "fixture_count": 380,
+      "identity_ambiguities": 0,
+      "logical_bytes": 16076209,
+      "object_count": 25,
+      "payload_and_receipt_hashes_complete": true,
+      "terminal_census_verified": true
+    }
+  ],
+  "receipt_hashes": [
+    {
+      "object_id": "d2046a7b2b7072cc8d328100757627f559eca6daab7d28e4b70ebe69a7171f8e",
+      "sha256": "3dd532ae1f6d1806a8fd960657b9f6e30af7405fd8bd70fcec66ec806076b7be"
+    },
+    {
+      "object_id": "d5d6a0f1e32fc58f1b447c6c11a21e714ae72a764d8ddadc1a206a0472a17602",
+      "sha256": "e5155b7c3819dc4485de08bc5a73923b9e7f3fa047e12f19c7420f176d73f765"
+    },
+    {
+      "object_id": "6387d61ca0bf76bb99d1623009444598b5208c52db4fcbf72d2b2492267ad0f9",
+      "sha256": "ba2f52c5c7935c994cf96a67190b5311557698221849a9111098f8a5f7fdf3b6"
+    },
+    {
+      "object_id": "250b6e37fcafd8b525fd95c020dc1f223429a3efd77e5ed4a3582b13ca3da358",
+      "sha256": "413dab60441605282e0dbd2b58873cc3c0199e327783072264528c93004d7d5f"
+    },
+    {
+      "object_id": "21521ae035a7b45f0b3a4fb9d785911771aa8926e9e83f0d6a3661d9b10a4d71",
+      "sha256": "973cd20433894d4b4039fe0e4f745a7860acf334d9b1a0ef8f622e5cb0390265"
+    },
+    {
+      "object_id": "5afa0bd024002057f5927e721fb0444bdfa1137250d2dc06deb3ddd423d26b37",
+      "sha256": "5a750460dad97d554d7af2c4bf7394226862517b47702675aa9dfe0f1ba43229"
+    },
+    {
+      "object_id": "846f05457a06c527253a3931ad43f789946099f4351e97a1b4d263a469c8edaa",
+      "sha256": "cc20d40f6ddb4a56b6c34e677ff3147342b10273689d3bf0b5dedd1ffb50a1fb"
+    },
+    {
+      "object_id": "a23c262a2229d336b24112aff20943c729c28352712e82aed386bc29f2412a17",
+      "sha256": "3a41dc5f5c622c79aeab269ecebea1ddded106053c80b1c41ed5c19990b5eb5b"
+    },
+    {
+      "object_id": "d7ac674b7b17398d0c3d36e2f603aabd76ac33bc154aa1e57fbbebcd18def6de",
+      "sha256": "41d1db0ec475fe28bb4c5a24ad4e5418264b84401dd1d2daaa45d8315eb95104"
+    },
+    {
+      "object_id": "8bbbdc3b88a8714460b9c246d358507a8016d8304d335caf0179aab964e6b7eb",
+      "sha256": "49988aed3d954f6c005677cd5293621b292b5d5191007d732667225b332e63dd"
+    },
+    {
+      "object_id": "091649219b8c019f992899bd92b5eedde836a097070ad1d687a5771bf72f9e45",
+      "sha256": "fcf732716c36443d0eb698e131caf1ef204f09fe3a468f21110da2e38ccf9397"
+    },
+    {
+      "object_id": "dd7a291d0f2b27e79835a8dfebf73703fac7b005100fcabdee2a633e767b1843",
+      "sha256": "a0b198ed7887925abbaebd53d8b55a72b49378a81830c3784f1acbe1da0ef5cb"
+    },
+    {
+      "object_id": "5f8b711b71c9d15b273c00171432b48dfe45180e4438c24b5fd3a45686872719",
+      "sha256": "f97952f17733a44390a8cca892b05f8d07f84b1cd0475f437a05c1663e4fe23d"
+    },
+    {
+      "object_id": "84e8e3caec0700505041878a648ea3ce378aed30475df57603a8944ba13dfff4",
+      "sha256": "ec0500ada1afe8b3ab5d79c124c40657130fc7deb21bd5a69c1c0b64d0a8e5dc"
+    },
+    {
+      "object_id": "2862ee12d8c2e2eeedfc180c95192b90c5703313bd61456c7c142210ce540f31",
+      "sha256": "7c36bbd22b3d6ac9c612cfa460d398628749f8ed328fd46ccda8978eb6f98b0a"
+    },
+    {
+      "object_id": "1ea3d107ba892d52ea34de392e3ffa17e3de4bf8f2f2b77f277748fdd7eede27",
+      "sha256": "51734ebbd0b696408f64b76cdfb9d14e8fa701d5885f92328d206f08437f23c3"
+    },
+    {
+      "object_id": "ccf907dd69d17d034801e1f6fa7e4c265b7cc10c1e94d6b34412b2a8c6c71261",
+      "sha256": "ac2bf00fb615b046c913698750aca42c18beb80f4cbfdb727314f117d75776c5"
+    },
+    {
+      "object_id": "cae8a202bb484300e730d2d080d14705a057e801d2f30c7a5ff64ecdffc4d2ac",
+      "sha256": "1f46d691688a3678b0b9d12b42ece95ab4cf8c9e936e4735e065c29ad6426f8a"
+    },
+    {
+      "object_id": "589af7b87504f1ba5398a7705ef92f8789e90352324bb6788b4493d5d74b0601",
+      "sha256": "e1f869f0a4ffe9dbc3bb2e30e8c60b3e9c13bf716cdd535b28102a608e48b3fd"
+    }
+  ],
+  "schema_version": "p0-e3a-selection-manifest-v1",
+  "season": 2024,
+  "selection_hash": "6c9446ec3c1979ac272679c2bb9cd23bd08cf41b6611eae03dcf956c64ca0e3c",
+  "selection_policy": [
+    "TERMINAL_CENSUS_VERIFIED",
+    "IDENTITIES_COMPLETE",
+    "RECEIPT_AND_PAYLOAD_HASHES_COMPLETE",
+    "EIGHT_CAPABILITIES_COVERED_AT_E2",
+    "NO_IDENTITY_AMBIGUITY",
+    "MIN_OBJECT_COUNT_THEN_LOGICAL_BYTES",
+    "MAX_TERMINAL_FIXTURES",
+    "CANONICAL_COMPETITION_ID"
+  ],
+  "selection_reason": "LOWEST_OBJECT_COUNT_THEN_LOWEST_LOGICAL_BYTES",
+  "source_artifact": {
+    "artifact_digest": "sha256:df2759c22473640146c51034603be8c549c72ff56773d73f8573603d9f58bfed",
+    "artifact_id": 8875918562,
+    "artifact_size_bytes": 16054335,
+    "entries_sha256": "ad4003cb8aa718cd9e29b0c400f66c9363adda8bced646e50d1d0dd94ec177e8",
+    "inventory_manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+    "logical_bytes": 12702015,
+    "manifest_sha256": "f4fa059bb726e51ddc94216705febc623253cf6af2ca7b2bb85b6f4310ec68b6",
+    "object_count": 19,
+    "row_count": 48491,
+    "rows_sha256": "f619c06d0d0a6c70760a4e32a7412d5b704082c867559f78960bda5e8994646d",
+    "segment_id": "seg-000283-c1badd6c93caeaa1",
+    "transport": "GITHUB_ARTIFACT_EXACT_ID"
+  },
+  "stage": "E3A"
+}

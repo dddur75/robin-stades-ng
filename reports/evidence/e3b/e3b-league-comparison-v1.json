@@ -1,0 +1,48 @@
+{
+  "aggregation_policy": "SUM_NUMERATORS_AND_DENOMINATORS_NEVER_MEAN_OF_RATES",
+  "rows": [
+    {
+      "competition": "Premier League",
+      "competition_id": 39,
+      "fixture_count": 380,
+      "local_partial_capabilities": [],
+      "normalized_rows": 61328,
+      "source_reused_without_redownload": false
+    },
+    {
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "fixture_count": 308,
+      "local_partial_capabilities": [],
+      "normalized_rows": 48491,
+      "source_reused_without_redownload": true
+    },
+    {
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "fixture_count": 308,
+      "local_partial_capabilities": [],
+      "normalized_rows": 48614,
+      "source_reused_without_redownload": false
+    },
+    {
+      "competition": "Serie A",
+      "competition_id": 135,
+      "fixture_count": 380,
+      "local_partial_capabilities": [
+        "LINEUP"
+      ],
+      "normalized_rows": 64456,
+      "source_reused_without_redownload": false
+    },
+    {
+      "competition": "Liga",
+      "competition_id": 140,
+      "fixture_count": 380,
+      "local_partial_capabilities": [],
+      "normalized_rows": 63186,
+      "source_reused_without_redownload": false
+    }
+  ],
+  "schema_version": "p0-e3b-league-comparison-v1"
+}

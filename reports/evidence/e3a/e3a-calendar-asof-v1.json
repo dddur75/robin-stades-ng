@@ -1,0 +1,127 @@
+{
+  "capability_id": "CALENDAR",
+  "competition": "Ligue 1",
+  "cutoff_rule": "known_at < cutoff",
+  "features": [
+    {
+      "false_count": 0,
+      "feature_id": "REST_DAYS_HOME",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "REST_DAYS_AWAY",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "MATCHES_LAST_7D_HOME",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "MATCHES_LAST_7D_AWAY",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "MATCHES_LAST_14D_HOME",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "MATCHES_LAST_14D_AWAY",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "MATCHES_LAST_28D_HOME",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "MATCHES_LAST_28D_AWAY",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "CONSECUTIVE_AWAY_MATCHES_HOME",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "CONSECUTIVE_AWAY_MATCHES_AWAY",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "THIRD_CONSECUTIVE_AWAY_HOME",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "THIRD_CONSECUTIVE_AWAY_AWAY",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "DAYS_SINCE_LAST_HOME_MATCH",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "DAYS_SINCE_LAST_AWAY_MATCH",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "FIXTURE_CONGESTION_7D",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "FIXTURE_CONGESTION_14D",
+      "true_count": 0,
+      "unknown_count": 308
+    },
+    {
+      "false_count": 0,
+      "feature_id": "FIXTURE_CONGESTION_28D",
+      "true_count": 0,
+      "unknown_count": 308
+    }
+  ],
+  "golden_pack_sha256": "1762aa6f1326836bb024ce56b0f6eb530d475103636e1ae681b59a223edc4778",
+  "golden_pack_status": "PASSED_SYNTHETIC",
+  "promotion": "DENIED_NO_REAL_KNOWN_AT",
+  "real_scenarios_not_observed": [
+    "ABANDONED",
+    "CANCELLED",
+    "CATALOG_INCOMPLETE",
+    "DOUBLE_FIXTURE_REVISION",
+    "LATE_ARRIVAL",
+    "POSTPONED",
+    "RESCHEDULED_WITH_KNOWN_AT"
+  ],
+  "real_source_status": "BLOCKED_BY_TEMPORALITY",
+  "real_temporal_evidence_rows": 0,
+  "scheduled_load_and_played_load_separated": true,
+  "schema_version": "p0-e3a-calendar-asof-v1",
+  "season": 2024,
+  "unknown_coerced_to_false": 0
+}

@@ -1,0 +1,13 @@
+{
+  "additional_network_reads": 0,
+  "all_report_hashes": {
+    "e3b-capability-matrix-v1": "166ce7ca7f7b666aebff3524ed8db44d51b590940a6328397e6257dc2e469b55",
+    "e3b-costs-v1": "e3bd7b8607bac186044b9059c701702fc9bfc128a3a028c7aeb43c261b72d842",
+    "e3b-league-comparison-v1": "7d2513fa0c0d8dbc0b00cd33f36eabeb7fccdf16751762648cb4fd3ed2f03e74",
+    "e3b-measurement-v1": "495a5b5c64e263f5cf3df303e33555269281725865bd358ee29385e5df972810",
+    "e3b-selection-manifest-v1": "8df8fd432a1949b5ec01aa6ec14cebb490f55f590c5ff283f21eefe6b3e69b8b"
+  },
+  "replay_identical": true,
+  "schema_version": "p0-e3b-replay-v1",
+  "selection_hash": "83d0ecd9d2c8415792f04a8c27217a29da4cb49ea5743ba821813b4205325d2e"
+}

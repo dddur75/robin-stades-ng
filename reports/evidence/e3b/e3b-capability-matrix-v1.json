@@ -1,0 +1,61 @@
+{
+  "rows": [
+    {
+      "block_reason": null,
+      "capability_id": "DISCIPLINE_GENERIC",
+      "competition_count": 5,
+      "status": "E3B_READY_RECONSTRUCTED"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "EVENTS",
+      "competition_count": 5,
+      "status": "E3B_READY_RECONSTRUCTED"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "FORMATION",
+      "competition_count": 5,
+      "status": "E3B_READY_RECONSTRUCTED"
+    },
+    {
+      "block_reason": "LOCAL_LINEUP_ROLE_CONTRADICTION",
+      "capability_id": "LINEUP",
+      "competition_count": 5,
+      "status": "E3B_MEASURED_PARTIAL"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "PLAYER",
+      "competition_count": 5,
+      "status": "E3B_READY_RECONSTRUCTED"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "TEAM",
+      "competition_count": 5,
+      "status": "E3B_READY_RECONSTRUCTED"
+    },
+    {
+      "block_reason": "NO_REAL_KNOWN_AT_OR_REVISION_CATALOG",
+      "capability_id": "CALENDAR",
+      "competition_count": 0,
+      "status": "E3B_BLOCKED"
+    },
+    {
+      "block_reason": "E2_PROVIDER_INCONSISTENCY_UNKNOWN_POLICY_NOT_OPENED",
+      "capability_id": "PLAYER_STATISTICS",
+      "competition_count": 0,
+      "status": "E3B_BLOCKED"
+    },
+    {
+      "block_reason": "E3A_MEASURED_PARTIAL_NOT_OPENED_IN_E3B",
+      "capability_id": "TEAM_STATISTICS",
+      "competition_count": 0,
+      "status": "E3B_BLOCKED"
+    }
+  ],
+  "schema_version": "p0-e3b-capability-matrix-v1",
+  "strict_capabilities_ready": [],
+  "verdict": "PASS_AND_HOLD"
+}

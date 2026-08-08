@@ -1,0 +1,89 @@
+{
+  "mission_id": "p0-e3-capability-scale-v1",
+  "source_main_sha": "818f8631adf2f0bdc2eca1faaabd7576ecb3a086",
+  "source_hash": "0adc1295d1c8a4ba9827c8a6ca1a2b245c0201539d9480d059bbee88a84aa54d",
+  "e2_selection_hash": "5f0ad80ce5ae43b4b4010c0e06dff8828330bcd60282bf940c9f1e87e601286b",
+  "e2_measurement_hash": "1b847508773f16a33ddef5f9630e7d08fb1f0cf077b4346b2cd8aeaca94a2050",
+  "capability_contract_hash": "f25a7ca88be279bc58ae666f505cca25319bb227d7624edb33cf1a107807e736",
+  "calendar_contract_hash": "c041371dd05de5394bcf77863ee114f020dd864a216f96caad4822577d2e3fda",
+  "grain_catalog_hash": "5824fc27e02f9336e6596179fe6e75506895ee621e6420b63b0a29adc5d08ed7",
+  "stage": "E3A_TO_E3B",
+  "authorized_stages": ["E3A", "E3B"],
+  "maximum_stage": "E3B",
+  "authorized_capabilities": [
+    "TEAM",
+    "PLAYER",
+    "LINEUP",
+    "FORMATION",
+    "EVENTS",
+    "TEAM_STATISTICS",
+    "DISCIPLINE_GENERIC",
+    "CALENDAR"
+  ],
+  "blocked_capabilities": [
+    "PLAYER_STATISTICS",
+    "TEAM_FORM",
+    "PLAYER_FORM",
+    "STARTER_BASELINE",
+    "FATIGUE",
+    "STANDINGS",
+    "INJURY_CONFIRMED",
+    "SUSPENSION_CONFIRMED",
+    "ABSENCE_GENERIC",
+    "ABSENCE_CAUSE_EXACT"
+  ],
+  "selection_policy": [
+    "TERMINAL_CENSUS_VERIFIED",
+    "IDENTITIES_COMPLETE",
+    "RECEIPT_AND_PAYLOAD_HASHES_COMPLETE",
+    "EIGHT_CAPABILITIES_COVERED_AT_E2",
+    "NO_IDENTITY_AMBIGUITY",
+    "MIN_OBJECT_COUNT_THEN_LOGICAL_BYTES",
+    "MAX_TERMINAL_FIXTURES",
+    "CANONICAL_COMPETITION_ID"
+  ],
+  "cutoff_policy": "known_at < target_fixture_kickoff",
+  "r2_get_budget": 2500,
+  "r2_byte_budget": 250000000,
+  "retry_policy": {
+    "maximum_attempts": 2,
+    "second_similar_failure": "FAIL_AND_REDESIGN",
+    "third_identical_attempt": "FORBIDDEN"
+  },
+  "external_effects": {
+    "api_football_calls": 0,
+    "odds_credits": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "deployment": 0,
+    "publication": 0,
+    "real_bets": false,
+    "promotion_locked": true,
+    "triple_search_locked": true
+  },
+  "compute_budget": {
+    "source_artifact_bytes": 95006161,
+    "source_artifact_byte_limit": 100000000,
+    "maximum_parallel_leagues": 4
+  },
+  "time_budget": {
+    "preflight_minutes": 5,
+    "e3a_job_minutes": 15,
+    "e3b_job_minutes": 15,
+    "aggregate_job_minutes": 10
+  },
+  "stop_conditions": [
+    "SOURCE_ABSENT",
+    "HASH_DIVERGENCE",
+    "IDENTITY_AMBIGUITY",
+    "BUDGET_EXCEEDED",
+    "SCIENTIFIC_ROLE_VIOLATION",
+    "UNKNOWN_COERCION",
+    "REPLAY_DIVERGENCE"
+  ],
+  "expires_at": "2026-11-01T00:00:00Z"
+}

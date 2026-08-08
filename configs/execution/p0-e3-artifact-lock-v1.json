@@ -1,0 +1,93 @@
+{
+  "source_run_id": 30853757779,
+  "source_run_attempt": 1,
+  "source_head_sha": "f489971c03b53e9ea1381655f1591328ed055d41",
+  "inventory_manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+  "artifacts": [
+    {
+      "competition": "Premier League",
+      "competition_id": 39,
+      "artifact_id": 8875626108,
+      "size_in_bytes": 20706884,
+      "artifact_digest": "sha256:b17053675296d10014386636921e57a4e3fc9b79d639dbb2d90a5920f6f4d0a9"
+    },
+    {
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "artifact_id": 8875918562,
+      "size_in_bytes": 16054335,
+      "artifact_digest": "sha256:df2759c22473640146c51034603be8c549c72ff56773d73f8573603d9f58bfed"
+    },
+    {
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "artifact_id": 8876203323,
+      "size_in_bytes": 15462672,
+      "artifact_digest": "sha256:2be7c17d8bc245cd60e4f2c6dfd4074e0c36189a1c7a28e12c3e458248d26625"
+    },
+    {
+      "competition": "Serie A",
+      "competition_id": 135,
+      "artifact_id": 8875016575,
+      "size_in_bytes": 21598553,
+      "artifact_digest": "sha256:f585a2de9b783b14f78214e3904e4bc9f20ec4bd8d1db19e32b6484e60906d9f"
+    },
+    {
+      "competition": "Liga",
+      "competition_id": 140,
+      "artifact_id": 8875329908,
+      "size_in_bytes": 21183717,
+      "artifact_digest": "sha256:67a0f609253a84cce832b8a553104e8626a925f6ca18b6303fb9cfbce729fe4c"
+    }
+  ],
+  "selected_e3a_competition": "Ligue 1",
+  "mission_source_bytes": 95006161,
+  "mission_source_byte_limit": 100000000,
+  "segments": {
+    "Bundesliga": {
+      "segment_id": "seg-000358-e8aa4904c2844e97",
+      "manifest_sha256": "2d0e873bf86799353d33b34d85ffc37da8f2119c83f42ad6311016a9c346b8a3",
+      "rows_sha256": "48aff73f5976b270775d36c48f2db23ebd6a5f9076412ea8b67186e840e32353",
+      "entries_sha256": "eab57dc5416f80f05fa129c8821f877e86a699c98b79b9f9c81ab5cc483a609b",
+      "logical_bytes": 12787341,
+      "object_count": 19,
+      "row_count": 48614
+    },
+    "Liga": {
+      "segment_id": "seg-000135-7561044ce00d9626",
+      "manifest_sha256": "fa0b9736d94a48d6fcc412a29a13f99a07b5011b9f4f40557a910f4159c0b6a5",
+      "rows_sha256": "f6183917c0b59043c59a2eab47a9371e140e32447091e3e6111631e4b6557527",
+      "entries_sha256": "4de44a5198214cd16891c2b7d654df9d37a1ee9ece1bfd1d341d315570a7b43f",
+      "logical_bytes": 17056905,
+      "object_count": 22,
+      "row_count": 63186
+    },
+    "Ligue 1": {
+      "segment_id": "seg-000283-c1badd6c93caeaa1",
+      "manifest_sha256": "f4fa059bb726e51ddc94216705febc623253cf6af2ca7b2bb85b6f4310ec68b6",
+      "rows_sha256": "f619c06d0d0a6c70760a4e32a7412d5b704082c867559f78960bda5e8994646d",
+      "entries_sha256": "ad4003cb8aa718cd9e29b0c400f66c9363adda8bced646e50d1d0dd94ec177e8",
+      "logical_bytes": 12702015,
+      "object_count": 19,
+      "row_count": 48491
+    },
+    "Premier League": {
+      "segment_id": "seg-000209-75959aee62633e1d",
+      "manifest_sha256": "b09199b3a6349b2d83cb5ad871bec6039165211131d3d195f049e3de3ff289b0",
+      "rows_sha256": "d33529af36d2a24c4130fffd77c5733bf960248bacaed514bb370d89f32c6eb6",
+      "entries_sha256": "49ef6118226650fb3462eb124e815a85fad6b24e79f11665b21317d011e655cd",
+      "logical_bytes": 16076209,
+      "object_count": 25,
+      "row_count": 61328
+    },
+    "Serie A": {
+      "segment_id": "seg-000061-2c731db89c0e7973",
+      "manifest_sha256": "61139caaf28dad7d97fb15ae128c34ee4ebe3b02f59d782bc241082d70503233",
+      "rows_sha256": "26a3dd084fe8b2b80c457edda61b73b5cd2f5c57219f097e82ac7c08ac6f9118",
+      "entries_sha256": "a4ecc4df38f7086a7bb898893890b08735eaebbce88f66ed1a5e05d5d5574352",
+      "logical_bytes": 17549141,
+      "object_count": 22,
+      "row_count": 64456
+    }
+  }
+}
