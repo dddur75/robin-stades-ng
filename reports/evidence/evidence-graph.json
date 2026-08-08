@@ -1430,7 +1430,8 @@
     {"decision_id":"RCV3-20260807-059","ledger_record_hash":"930b6a046113f1f2d2c0ebd5710d08d910b54b37e997791772f6d2893e23e1e7"},
     {"decision_id":"RCV3-20260807-060","ledger_record_hash":"77b53d29e670a68c43681c48a10c5d59ef11ee40d1893ebdeb6515e85854b2fd"},
     {"decision_id":"RCV3-20260808-061","ledger_record_hash":"f3a03d9fc83ed18cf28a9f3ce1d67bd82aeaa23a2446809a4ed6fbcea11feb43"},
-    {"decision_id":"RCV3-20260808-062","ledger_record_hash":"06da9a76269d1722230d85bf9531cd596925f6459e306620c202d99bda17a3ff"}
+    {"decision_id":"RCV3-20260808-062","ledger_record_hash":"06da9a76269d1722230d85bf9531cd596925f6459e306620c202d99bda17a3ff"},
+    {"decision_id":"RCV3-20260808-063","ledger_record_hash":"722e858850b57e1f555c1c95c29bc050999280430ae63108b310b3fc6d78d685"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1644,6 +1645,9 @@
     {"edge_id":"EDGE.209","from_claim_id":"FEATURE.CALENDAR.STRICT_ASOF.V1.003","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.210","from_claim_id":"COVERAGE.E3A.LAUNCH_CANDIDATES.V1.002","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.211","from_claim_id":"SECURITY.E2.DIAGNOSTIC.SEALED.V1.001","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.212","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.212","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.213","from_claim_id":"COVERAGE.E3A.LAUNCH_CANDIDATES.V1.002","to_decision_id":"RCV3-20260808-063","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.214","from_claim_id":"SECURITY.E2.DIAGNOSTIC.SEALED.V1.001","to_decision_id":"RCV3-20260808-063","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.215","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260808-063","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

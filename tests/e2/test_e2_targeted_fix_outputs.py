@@ -96,3 +96,25 @@ def test_pr34_audit_keeps_required_granular_evidence() -> None:
     assert audit["duplicated_fixture_arrays"] == []
     assert audit["raw_payload_files"] == []
     assert audit["temporary_files"] == []
+
+
+def test_e3_bootstrap_is_manual_dormant_and_secret_free() -> None:
+    workflow = (
+        ROOT / ".github/workflows/85-p0-e3-capability-scale.yml"
+    ).read_text(encoding="utf-8")
+    trigger = workflow.split("permissions:", maxsplit=1)[0]
+    assert "workflow_dispatch:" in trigger
+    assert "push:" not in trigger
+    assert "pull_request:" not in trigger
+    assert "schedule:" not in trigger
+    assert "secrets." not in workflow
+    assert "R2_GET_ALLOWED: \"0\"" in workflow
+    assert "TRIPLE_SEARCH_LOCKED: \"true\"" in workflow
+    assert "cancel-in-progress: false" in workflow
+    for action in (
+        "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+        "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+    ):
+        assert action in workflow
