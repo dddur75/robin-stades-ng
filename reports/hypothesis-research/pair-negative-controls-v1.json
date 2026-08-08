@@ -1,0 +1,65 @@
+{
+  "control_count": 8,
+  "generated_at": "2026-08-08T09:10:42Z",
+  "negative_control_gate": "PASS",
+  "records": [
+    {
+      "control_id": "SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH",
+      "execution_outcome": "EXECUTED_EXPECTED_NULL",
+      "observed_delta": 0.00494937,
+      "promoted": false,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN",
+      "execution_outcome": "EXECUTED_EXPECTED_NULL",
+      "observed_delta": -0.03344504,
+      "promoted": false,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "FORBIDDEN_FUTURE_FEATURE",
+      "execution_outcome": "EXECUTED_REJECTED_BEFORE_MASK_BUILD",
+      "observed_delta": null,
+      "promoted": false,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "SHIFTED_PRICE",
+      "execution_outcome": "EXECUTED_EXPECTED_BLOCKED_NO_POINT_IN_TIME_PRICE",
+      "observed_delta": null,
+      "promoted": false,
+      "status": "NOT_APPLICABLE_NO_POINT_IN_TIME_PRICE"
+    },
+    {
+      "control_id": "IMPOSSIBLE_CONDITION",
+      "execution_outcome": "EXECUTED_ZERO_SUPPORT",
+      "observed_delta": 0.0,
+      "promoted": false,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "TRIVIAL_ALWAYS_TRUE_RULE",
+      "execution_outcome": "EXECUTED_MATCHES_FREQUENCY_BASELINE",
+      "observed_delta": 0.0,
+      "promoted": false,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "POST_RESULT_FIELD",
+      "execution_outcome": "EXECUTED_REJECTED_LEAKAGE",
+      "observed_delta": null,
+      "promoted": false,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "WINNER_LOSER_IDENTITY",
+      "execution_outcome": "EXECUTED_REJECTED_LEAKAGE",
+      "observed_delta": null,
+      "promoted": false,
+      "status": "REJECTED"
+    }
+  ],
+  "schema_version": "pair-negative-controls-v1",
+  "surviving_control_count": 0
+}

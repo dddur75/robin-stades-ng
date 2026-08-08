@@ -1,0 +1,1231 @@
+{
+  "compatible_pairs": 120,
+  "diagnostic_rejection_counts": {
+    "INITIAL_KNOWN_COVERAGE_LT_80_PERCENT": 1260,
+    "INITIAL_TRUE_SUPPORT_LT_20": 29,
+    "PARENT_DEGREE_CAP_6": 29,
+    "SAME_BASE_REDUNDANCY": 280
+  },
+  "generated_at": "2026-08-08T09:10:42Z",
+  "materialized_subspace_pairs": 3160,
+  "pair_space_hash": "a7c75e9b448c517077f89ab6e1c4c0985e1bda8866cb77f4d49025ee0acc7c67",
+  "pairs": [
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.25614035,
+      "initial_known_count": 400,
+      "initial_true_count": 73,
+      "pair_id": "pair:01043b9a97cb01141e70db6bb3e80845ec783a9b1fe74498847b65ccdc180ab1",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0440f4f5da2a4c6e19ee500755344d4523da98c0ad2aa59d468a0655e35d3a86"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.44413408,
+      "initial_known_count": 400,
+      "initial_true_count": 159,
+      "pair_id": "pair:016aa7e9fb74e1c0152a1f0ad090c5d258d96d66aa6bc9213ccd9417a0e79a5a",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0c404e84d55b779ffdd7ccc4f652616376acff7c0fb41472f84774ec238a731c"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.49019608,
+      "initial_known_count": 400,
+      "initial_true_count": 175,
+      "pair_id": "pair:01e49fae141ee15707ddad38f79cdf946e8a95bd3e2798aa7d1caf334ac8d1b3",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0b849f5768aec87035ea22873df9ebcd2db33949792e1e1a6f9b9a32e223fd68"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.22362869,
+      "initial_known_count": 400,
+      "initial_true_count": 53,
+      "pair_id": "pair:024ab91807af378f665eae88eff6c91bc659b0a376ffc662551f6e0aa1e7214f",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "selection_hash": "07e4c4dea908ae4f4ac7c94093a4d3dd39d2c2b4b6c7bbe13322365c7a0ff4ff"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.32919255,
+      "initial_known_count": 400,
+      "initial_true_count": 106,
+      "pair_id": "pair:050be868f63a8cb92fcc8ad2d5c409c70cb57550523d02c005a6f78f63d80b50",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "09f51682616efa5f9bea8da8441628bea16fef6a3af587a10825304d88687030"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.27358491,
+      "initial_known_count": 400,
+      "initial_true_count": 58,
+      "pair_id": "pair:05453a65fe0be319ccc37bfed7218eac6e39fd34bb80c05319018f40b99f62e2",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "012b8dc3e285c3541df5c1b4f7a38b01a7263706f9a9d3b6f0966fd3f580026a"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.15450644,
+      "initial_known_count": 400,
+      "initial_true_count": 36,
+      "pair_id": "pair:05cc7abe1fc805ba956f0d3d6fe615ea9a8c1134995a631c5896aa5cc0dbe41f",
+      "parent_a": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "1d7805c0941d2fa4094f44c143c1b44454f11de67ce45ff76cc79bd2e3846dfd"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.3447099,
+      "initial_known_count": 400,
+      "initial_true_count": 101,
+      "pair_id": "pair:06937dc6e0ba207b2b9cadebd23736cc15c9974430a12e1334f9c4e5e957d0c6",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0e5b83d450d443ada2909efb19befe50af3bb6512c9058dc149a9e02898fb406"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.18996416,
+      "initial_known_count": 400,
+      "initial_true_count": 53,
+      "pair_id": "pair:06aa93c330c04cf2ef06a80046fd0d7b0d12ff5292e4983118c65348246495b8",
+      "parent_a": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "selection_hash": "0986b893f40af26d94e176d8cce647f902e07f5aa71813f080e1b338f9c8f5ff"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.53515625,
+      "initial_known_count": 400,
+      "initial_true_count": 137,
+      "pair_id": "pair:06d05c5bdc90fdf9da9aa0ad607cd523132b687a3106ab25953470f46fab623e",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "09b06b8ae02625bf63cf1836e41b3739062c3954c9814c75485ba6efac29ceca"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.26666667,
+      "initial_known_count": 400,
+      "initial_true_count": 76,
+      "pair_id": "pair:0c9c2edc4495c73d7d82a8999ff4a2164b7be4aa2dfb52b0aaa9c1f88eaf9286",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "03cc38aa6736b18636a4c7e618f61d95e3edea98fb4d756ac32d7ff114f977de"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.26206897,
+      "initial_known_count": 400,
+      "initial_true_count": 76,
+      "pair_id": "pair:0e7b7fe9d568c4b8ecb4b5652c3539656244d73267f2fde07c19f4b215a46e4a",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0a11bde9df35139391efe71ca08007d206d27eba9a43c79d6e8a1a8bc257b5e5"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.21757322,
+      "initial_known_count": 400,
+      "initial_true_count": 52,
+      "pair_id": "pair:0e7e613e1ca31af13bafeb4d5c37cee1200973b5557bd3d1cb5cac7ed6a24a8d",
+      "parent_a": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "056a7164c6554ffdb58c2ead6bb0984757af2fdd8bf51289e1f87bce531c89ed"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.35649547,
+      "initial_known_count": 400,
+      "initial_true_count": 118,
+      "pair_id": "pair:0fab68fcfe00b3ba630d4b95241b687395e221b681c55c850134e8fab3107333",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0fd60d2dca1f572ba35dcce0eec6b1f4ea096bd14d12396275369ba0de3f61f9"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.25581395,
+      "initial_known_count": 400,
+      "initial_true_count": 77,
+      "pair_id": "pair:110627d8050ca284daf5bd2ba5120bf49b4a602764fa0d4f0497e2780ef5bb1d",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "012e76664b17a7bbb7d6f52134c722d8f92b20a3a2ebc5a591345bb870537b38"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.18141593,
+      "initial_known_count": 400,
+      "initial_true_count": 41,
+      "pair_id": "pair:1258cc8c2c190b029fc6de3939db3eb7fb2faaf086632b62ef57199981db31b3",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "10c993eb973637acb0288e13c7b958f92cd877c91eaad07541a2bc6408c307ae"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.28723404,
+      "initial_known_count": 400,
+      "initial_true_count": 81,
+      "pair_id": "pair:13336c5261aa6fae212268c57b139d8e664917a9f4ed16e665f9961aa98cdec5",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "selection_hash": "0bb75fdf1e6e0e15ffed7532912afaf0535c48fc145b27d4394632303e985d67"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.2875,
+      "initial_known_count": 400,
+      "initial_true_count": 69,
+      "pair_id": "pair:14f3de06ee1fc83a9dfae10bcf71c9f237b5d3970ec1ecfbcac619f3d7fa2b74",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "02400dab9d034c27a4562e1e532daec14f54e56990109e97f96e2a8d33ef8979"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.31141869,
+      "initial_known_count": 400,
+      "initial_true_count": 90,
+      "pair_id": "pair:1573c477880e90120e092bc5aeaf1e5eb43fa8abe08a1b711b5ae5f93828f0e0",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "070a0f6fa7bf587acc4b394c7a91a04ef5b4285198e9f25aa478ccf6523567ac"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.2972973,
+      "initial_known_count": 400,
+      "initial_true_count": 77,
+      "pair_id": "pair:15a4e8b8b279c4f306d71c87d861f21f650ee0692563628e95d85349b3963604",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "00f007083fd3fc4f3e80bc35da96ce3a1ec2ce6263f736f5968ed466b23bf972"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.20149254,
+      "initial_known_count": 400,
+      "initial_true_count": 54,
+      "pair_id": "pair:168d3aadf35d4590d644738b308e10bce5c3148d3468ef7cd7f3d20c72bb43ed",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0e5ed267c941db309fa3a28f74e3814a00e10351c26b284c713a7473ca416544"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.29209622,
+      "initial_known_count": 400,
+      "initial_true_count": 85,
+      "pair_id": "pair:174a6f36850bdf9c03468291ab5f510e7abc4aea0fd15f73f7450ba86c3796e6",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "1277e26822f9abe923ec763d0d8374bdc7d5a442d1721ec81d6ce28481e4966a"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.20769231,
+      "initial_known_count": 400,
+      "initial_true_count": 54,
+      "pair_id": "pair:17f7894e49c7645a29ac54307c8db5a8eea6c67a6c9c5683636f71824f5b64ef",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "03f278c24f479980ae40430c3e3d41925f1c3290f49a0a9bcc2a228825db37c0"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.32587859,
+      "initial_known_count": 400,
+      "initial_true_count": 102,
+      "pair_id": "pair:1863a764ed9c57c2b74140c2633adc17279bf8b3b5f2289454bfa87cdf177853",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0852c413238cdd1c6c744baaff669747ee957978d79c30604cbf17016902e770"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.33905579,
+      "initial_known_count": 400,
+      "initial_true_count": 79,
+      "pair_id": "pair:1e5f4a2612dff53240598434fc7ab2a5022a0a460ba5fd6f25431e3bf85c2a62",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "08ad3465614baaa487f957095d8c77924ceb4d33bcc852370dc48e3dfaba7f47"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.224,
+      "initial_known_count": 400,
+      "initial_true_count": 56,
+      "pair_id": "pair:206cce2394bafb3e34b36d579fccad8f378a102d206d2ac909688ab8405c7549",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "04404dbd529ddba6513e5f5f8c1dcdb483a97f399c33cd9bf1e71223244eb0e9"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.23849372,
+      "initial_known_count": 400,
+      "initial_true_count": 57,
+      "pair_id": "pair:20b61850881fc34b444957ad6b538a2798d403c3b88cd26450eb62df58998b72",
+      "parent_a": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "1fa076a503ad16a24ad89c73b9992ed6e93951f38292ec0e31005e580ba7ff54"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.34121622,
+      "initial_known_count": 400,
+      "initial_true_count": 101,
+      "pair_id": "pair:26995c2fb7b21fb308039668f104d6efffd36ab43ad6106536cff960d7fd0540",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0af1b539b9d823f6306b42a991d82a29f1f70dfd1f51a3bd34617d5ce691a13f"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.36567164,
+      "initial_known_count": 400,
+      "initial_true_count": 98,
+      "pair_id": "pair:2869b4914508683baed8f857315e704c0387dff1324eee310da4388619ea60ed",
+      "parent_a": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "01ea806acecbcdafa2fbaefcbbb1e2c0c742530db6287ba84496f51aa7c68665"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.34743202,
+      "initial_known_count": 400,
+      "initial_true_count": 115,
+      "pair_id": "pair:2ab540c51e3ee66cc5a13e92652211ae3afb9815916aba6a5ee9a258a1a1fe21",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0efa72a445215956b07ed08dab8d12c975ce88006f8d9809748fee90256df41d"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.27208481,
+      "initial_known_count": 400,
+      "initial_true_count": 77,
+      "pair_id": "pair:2b9dbd8349fdfd54ffa555dec1e24b3282645ad9aebc0b2fde41d8a124c0d0f6",
+      "parent_a": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "07bd472543f12e1ad56c5988b2dac93ec2f7cf39ea881595f916ec88144b060a"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.19298246,
+      "initial_known_count": 400,
+      "initial_true_count": 55,
+      "pair_id": "pair:2c306abab0b3527dd2e2bd585addc4aaf75d6cbba7466da6e3d5066194baccb3",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "04434e1d91c8785a610ce83b6c6a0c2e761eab79d900a6041082a21e54099433"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.44318182,
+      "initial_known_count": 400,
+      "initial_true_count": 156,
+      "pair_id": "pair:30231b73d3f87c8c7fb2781f1704ce82b1c12433d7bbd5f4de916a0004c00861",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "1003331ace7e9d6314aa5b44ae97627622930b0b024220e2b85a799dc2ddd46c"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.21072797,
+      "initial_known_count": 400,
+      "initial_true_count": 55,
+      "pair_id": "pair:3344b5af1e72eee51b44c8ff5bd25afd4013b5a6c54e7f84f20b9ec935b63a8e",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "02dc1ffb4b95be9297c874d8e15493b8d6c1e826536bc6cdd7d02523143b824a"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.2414966,
+      "initial_known_count": 400,
+      "initial_true_count": 71,
+      "pair_id": "pair:34b937b5cc27943b85e05e500451f4f5b91af4b612818cf29c3bb373d714b22c",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "08670cfc972f265341cef5b7f6fa286885f945736adf4480f3202c9e5016a56b"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.17621145,
+      "initial_known_count": 400,
+      "initial_true_count": 40,
+      "pair_id": "pair:36817f396a480502f24f288eb97aef21bdbe9838d0e88911395bcfffeee70d4e",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "120e3e30ad3b054a0d2f2fbc20f8eec3e8b0ec88b80d119a3b86bd829c3aba35"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.1838565,
+      "initial_known_count": 400,
+      "initial_true_count": 41,
+      "pair_id": "pair:4277d61b57b0ed71cfab6bfa10d4a4c1f1380f28c949638292d4a9856354c5f6",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0eddf6946533c2fd9ab6aab111d2927be5d11db6a333b11927b434a4bb2661d3"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.3,
+      "initial_known_count": 400,
+      "initial_true_count": 84,
+      "pair_id": "pair:45c463616e34b7920b764ff47a6ad08ea6a41569e8b59e43da5f6c7e4014a7eb",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0fc1825995c651bb257a9845a92439ec1b79dac507c48c2619be1c7c383a58d0"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.14592275,
+      "initial_known_count": 400,
+      "initial_true_count": 34,
+      "pair_id": "pair:47aaa5b3e50556d11c93b096fa64257519571e0b00969e74b10d611629e89053",
+      "parent_a": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "14585ca473b9934078f1dbc9073003345d60d635af1d8fc7471d52e820bf5510"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.16666667,
+      "initial_known_count": 400,
+      "initial_true_count": 43,
+      "pair_id": "pair:4ab684cd92de149e96487e2a6ea30a25dbdd747611ff8d338baaa727528122ba",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "01e4edbd67fab240ec1914d92b8bed72f5019a49ced5b410609cead9d7eeab27"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.25776398,
+      "initial_known_count": 400,
+      "initial_true_count": 83,
+      "pair_id": "pair:50b14a916ab40e97a4000f5fda78a40bc2a90e706cc15ec4772d1d1fd34f3117",
+      "parent_a": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0aa880553b9a5242c08bbe926ee05c290c6aff095259316acf6e7d169b03aae5"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.13304721,
+      "initial_known_count": 400,
+      "initial_true_count": 31,
+      "pair_id": "pair:5c3be0bd3a1e0c023856fcf0b73cd3e391593e95c69e941458c829237547fce9",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "11054e01ebf045a6f2a53936d4d657c39c22ed0b7b2c30c1f5e0736d8acdb811"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.2,
+      "initial_known_count": 400,
+      "initial_true_count": 45,
+      "pair_id": "pair:61b2dba6f936b761c34004f4e804dc84ad6c3aef972a2c4d66ca4cf0f2242cbd",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "06a78d7eb39cfd3a1f52154984fee2b4919ece99285568ec10830158cb1dffe1"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.19521912,
+      "initial_known_count": 400,
+      "initial_true_count": 49,
+      "pair_id": "pair:646f25752d2df8bf52fffff892c0b400f45e33edcc180cf9a51b5aec3baf08ea",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "03875ebe272565cb410b92b3df79850060b3a4df26ac5ad4ad58ea7f4268af8e"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.4040404,
+      "initial_known_count": 400,
+      "initial_true_count": 120,
+      "pair_id": "pair:69182eae457f434d540c8aa604fa64d92712ba7df0f7167b4e0f546530e66888",
+      "parent_a": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "16c1959a6cb1c356d27ef6cc829bf744e1c047c34de5b988164680a1a7fdfecd"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.27852349,
+      "initial_known_count": 400,
+      "initial_true_count": 83,
+      "pair_id": "pair:69ac5a84b2306973b5223102e7c7f2973976f0f465fbf48015a5855479dfdc09",
+      "parent_a": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "2056323e1d6cfad9430105d646766019cd07b6df3a71ab6fdbe7b178b85dec66"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.24537037,
+      "initial_known_count": 400,
+      "initial_true_count": 53,
+      "pair_id": "pair:6bc99bd8c57485b472cf0086c238079948defea2cbf3b732571202b96ff3dfa4",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "083d3cb898b7aa68c4478a55683a919f8ee5cb99e650f871d4dd5e69d5f1e1dd"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.07885305,
+      "initial_known_count": 400,
+      "initial_true_count": 22,
+      "pair_id": "pair:6cc45cb54ed2b09463e85c4d29bcd89f1d42c0749e7f1590b07f479345747d85",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "021e61d97c1c5be9876a076d2aa33ff524b5c834b4a976cddd8ce044e1fcc4a6"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.54022989,
+      "initial_known_count": 400,
+      "initial_true_count": 141,
+      "pair_id": "pair:705e67da746c5d762a478ff99b7f8cca399a16719bc6a085997084d6eef2581c",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "003c117994ded33fd7612a54e731c0518b4f602295a961ef21222f9072c892a0"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.4534413,
+      "initial_known_count": 400,
+      "initial_true_count": 112,
+      "pair_id": "pair:71561a1ab0d65a90ffe96aeb896cd3a214b5a56496b2ef46365ae6238cd12ee8",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "19c7501b108a2daef94e69ea8c58bd727196b8cbaf571dee79bf0ba9de814601"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.15261044,
+      "initial_known_count": 400,
+      "initial_true_count": 38,
+      "pair_id": "pair:71c5cbd9c1a88eff691f6457bcd6035297420840aa256d9b73ca2364fd0828e7",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "08d07131de10f7ca22d2cccdca32ff559e1b5e8f8754b697692c89d053030445"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.25704225,
+      "initial_known_count": 400,
+      "initial_true_count": 73,
+      "pair_id": "pair:722c133003a3c953e5a4687ff919fd25e197b429997de8af536feeb1cd1e2888",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0f9c478a46944ada6ca2889223c5dcd8f15c9bc8d8b313710016176c3b7b8ffc"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.21509434,
+      "initial_known_count": 400,
+      "initial_true_count": 57,
+      "pair_id": "pair:73b0a2c99a0b6b5b40fb0eee88336b0ffc520c45b18ad87ce2d751f0d2586e8b",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "19ff69716875e5060e535b10bbe9ebc8902c1b8771bfe3d082c924eb529e9a0b"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.36480687,
+      "initial_known_count": 400,
+      "initial_true_count": 85,
+      "pair_id": "pair:7802dede52d26677f21ea01ea7ab361ca2997bbfc0eaa1899160d93a3aa545de",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0b01ffc9209ff612e7884cd7cf1c0d95897401716de374ef5dbba34f663290dd"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.14529915,
+      "initial_known_count": 400,
+      "initial_true_count": 34,
+      "pair_id": "pair:79bcade56179268615e9d41c1886e391a609b6f20b576829b052b5f414cf2227",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "037d1654993e05fcd10c78a80d6fdcbe00de7e8396f05f62d836041ddb7eae4d"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.28421053,
+      "initial_known_count": 400,
+      "initial_true_count": 81,
+      "pair_id": "pair:7b611f3fe230fcd71a405011af4b01defe2a119cdd9b05a42597f541f69faa61",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "10d0e0233f61b16ddeda0b75d6a0a2301d482533441f55c01b49a6e21b149f6c"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.32659933,
+      "initial_known_count": 400,
+      "initial_true_count": 97,
+      "pair_id": "pair:7cae36ff604d1306ef456c142f1baa76e6ef9b6de496c873414cdb26e2fdc35f",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "20543bace6e075f0cd6a19ebc79b9549876c9cf69cdf8fb0eada27b71954c9c0"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.23041475,
+      "initial_known_count": 400,
+      "initial_true_count": 50,
+      "pair_id": "pair:7ee204721711c5154b9ad94dd7d3281882f369c3399ecad0ce20711a4a9e05a8",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "118e9c8d0696f428ffe36b7add21c46c08bdcc51998f15f096b3500665aff68c"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.13807531,
+      "initial_known_count": 400,
+      "initial_true_count": 33,
+      "pair_id": "pair:7fb49cf0226b640ecb97775a295a283197af284754fc09786e802c3361250629",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "033cd7db28b56713e76632bfdf583899d892f7ca01b1df91d3cec11a2127bb3f"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.26408451,
+      "initial_known_count": 400,
+      "initial_true_count": 75,
+      "pair_id": "pair:8211d81faf0d02906bd057e234cdd55889b918cc36d246060fb42cbdae98f41c",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "085494d2904cc5fa1346883ef0d2c81e3068f61638b34587aab04e66dcaee2a1"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.440625,
+      "initial_known_count": 400,
+      "initial_true_count": 141,
+      "pair_id": "pair:822ad558a451f97623b8fb257d08c9874b2b636711fcc5a5ff0fd44ca135a1ef",
+      "parent_a": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "06869e719dde5c01cf883aac78fce853ae6d084faa0f7a80cc96f1848d3c9410"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.2398374,
+      "initial_known_count": 400,
+      "initial_true_count": 59,
+      "pair_id": "pair:82f4c208dfe8ef9039435d8212297da5696e3b2aa9209a9804280f0bccad26b2",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "009ac0185becb3c1e29a3dc6ebc48a1455d75e411cda16a54ca740636c770b76"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.19665272,
+      "initial_known_count": 400,
+      "initial_true_count": 47,
+      "pair_id": "pair:832dadc7d55313a04472f371dcd2acef39d87a47c375af2c6d174fa54a783fbc",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "091f12754e81661d280606fa91fb90fc73201bddb01cd314eca990af19778197"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.16544118,
+      "initial_known_count": 400,
+      "initial_true_count": 45,
+      "pair_id": "pair:8332cbbccbbbd67824142f0a57dc71f3a166e3e3c0e93fa454c17f8a686c6d20",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "196e32b01f86b917e337f3d8b625d0d8d5c6230e9733c046bae5d173f9d3a659"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.44396552,
+      "initial_known_count": 400,
+      "initial_true_count": 103,
+      "pair_id": "pair:836c741818c12571681ac91bd867cb1af0af313c231fd55f5fafd25e8417625f",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0dfc04686e7d5c82b10640983d4a93e48602bf4113e37c4042f0de507e002a07"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.19354839,
+      "initial_known_count": 400,
+      "initial_true_count": 48,
+      "pair_id": "pair:85725d5cec120905d34aff08ea599304009a237725f364da58f56eed79c35444",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "0112050528634b59e465b14012ee99e30c6494a00d526cdecbcd9e5352829069"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.32450331,
+      "initial_known_count": 400,
+      "initial_true_count": 98,
+      "pair_id": "pair:891ceef0d2c019d7e23d4790cf181ca12c1dd66c0c9ad341a37e025b6b976c39",
+      "parent_a": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0f9bb617678ab82f9fcd157b7da65cca515c62cc8c590aef21b41e9efb681d8f"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.16546763,
+      "initial_known_count": 400,
+      "initial_true_count": 46,
+      "pair_id": "pair:8c80782f8d56d91776c0b4c11537f8efeba9ef00d121cb46c7f9df3d31577bfa",
+      "parent_a": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "selection_hash": "1b66557c970a6f7b1b1a2c2d110973d0b18b7fd4d2594a24f3f1670319302867"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.24186047,
+      "initial_known_count": 400,
+      "initial_true_count": 52,
+      "pair_id": "pair:8d6091d88871a355a9128b71942b53fbbbe25e04fae255b2eb828d9a978fac93",
+      "parent_a": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "04708b8a16e420c88bfddc25f24bcd4d419e6eee8a497828043634c1e970a664"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.29118774,
+      "initial_known_count": 400,
+      "initial_true_count": 76,
+      "pair_id": "pair:91598cf572862c9343c9c04e29c8c8707395f546300fcdbb3ff7d404c4768eca",
+      "parent_a": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "selection_hash": "0d7823197f06b1a8db3f2a0d7c12fdb6aa7b3bc03763f20f19499835066b8cd7"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.30627306,
+      "initial_known_count": 400,
+      "initial_true_count": 83,
+      "pair_id": "pair:91688df6adb5327a694eb6bba3c2ec8ad89ccc57419eda110505ff1185e40ab7",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "09a38417a3df77bb7e7c648a8b1e247c26f2338844bbc5a2afeac12173032a40"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.25362319,
+      "initial_known_count": 400,
+      "initial_true_count": 70,
+      "pair_id": "pair:929e3ffdb0da881db0e442ee61762032749af948e01dbadf094ff269e9428888",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "04616ad983107701ae0c78679423cdf012783547ae3091bebbf044e60f5be2f1"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.29527559,
+      "initial_known_count": 400,
+      "initial_true_count": 75,
+      "pair_id": "pair:95fd68a86566e281f80cc6bd8b3cdee165f9824111a68eaaf75b620e2ed84542",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0147147f2486096e407ac921df888725a0c5da067208f83f5fd793150c115a9b"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.52061856,
+      "initial_known_count": 400,
+      "initial_true_count": 101,
+      "pair_id": "pair:968179c656c4ad569baa2adc44f6b2f93804031fbacabc5a039dd248f095f918",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "selection_hash": "13fb2b049383e0da5c2a9c4d8adf460132dee5a12e7fa953c6b60b2f3859d76c"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.20675105,
+      "initial_known_count": 400,
+      "initial_true_count": 49,
+      "pair_id": "pair:9784dd7c9406d228eab1803f90921e174dd6b12c3ba24bd218cc127a81bd2ae1",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "selection_hash": "0fb5d2c3e8eca83bc5d30ba37807bb9a812d95feea4c2c034b03620e01b6c8b0"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.12380952,
+      "initial_known_count": 400,
+      "initial_true_count": 39,
+      "pair_id": "pair:9c26e9d67543d297863ce45c91e091134d67e2d4ee59fd5a17a107ea38bb568f",
+      "parent_a": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "090b1dd40f1f7b83339610abfdcd026ffbf280ec9e6590259654f09c283b563f"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.3115942,
+      "initial_known_count": 400,
+      "initial_true_count": 86,
+      "pair_id": "pair:9ce2e8592144f66bbb77848e644a2fb87ed395042a5d1c6d1e7b7f03d0eb4e34",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0bc04ce4531a84ef7f16f47536bb01c191feb2d8b6b05263a8334b90d5304d7a"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.1260274,
+      "initial_known_count": 400,
+      "initial_true_count": 46,
+      "pair_id": "pair:9ef9500800c3d224d2e1d51a688bfc681b37dce8ad88e96375bcd918439b6e20",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "04c777c5618569bd29cf15ddedce7ed4a6c8b6f8f13718c06df6a1fe85889e69"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.21004566,
+      "initial_known_count": 400,
+      "initial_true_count": 46,
+      "pair_id": "pair:a117c027994ad2b17d6d467180b3f5e041f04abde05ff4f23f3a9c308c87d0ba",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0ec3755e11bff98cc0ff88c4c060fee28a20939be79a0f80e36db3011a160390"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.27306273,
+      "initial_known_count": 400,
+      "initial_true_count": 74,
+      "pair_id": "pair:a1b5cad68e0a679f19d672592ca49767b6ec62da52f0fd5e1d46abcc73323c14",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0b0fe1e33635052e3febf9def1b0a4a6c8ef6d495087f2445afbff9ecc879ff4"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.3,
+      "initial_known_count": 400,
+      "initial_true_count": 93,
+      "pair_id": "pair:a51ddcb5309c5cd5d811e5e8dc72b5e15862b9584aeaae08c824a6873b7883c0",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0576ceec6821936a85f849f1a25a58b3e10f38c45c2d2cc1e8788c2a8956d9ec"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.07936508,
+      "initial_known_count": 400,
+      "initial_true_count": 25,
+      "pair_id": "pair:a5ee297e48b736007ff8899ff0d8f690bf56219d87e0c51eba16f7a2bf17909d",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "06b1deef1dd7dbd2a34345e7da486770084a733095879b462ba9b011c403368b"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.24657534,
+      "initial_known_count": 400,
+      "initial_true_count": 72,
+      "pair_id": "pair:a70bbf454bdf1d7e1e6358ccdeeb9234da5f6e3ce73db597031a4563aa78a77d",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0dc49bb6b977d71e4aa13871cd5ef58d0716db412bc0998076a63ec2aac9ac55"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.09965636,
+      "initial_known_count": 400,
+      "initial_true_count": 29,
+      "pair_id": "pair:a7d422606173cee3f638839c1a0e3c2a63d20580ac198b45ef8e1c5e2b998c0c",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "selection_hash": "0c468ebed0a5d852b72e971fce9323b17f0428218303fad3b950b968c2fdb526"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.16115702,
+      "initial_known_count": 400,
+      "initial_true_count": 39,
+      "pair_id": "pair:ad082b20deddc39e46472dab2c33fffa3b6eb66b52294253d8dd52475b8f9081",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "0c39c362339b2e5bda50a99129b45a9549c86d0543ec9613700d30f417021392"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.26666667,
+      "initial_known_count": 400,
+      "initial_true_count": 76,
+      "pair_id": "pair:af54e2588d2be91211987ccf5822b2ce0ae4a26f4b55ad99216cd1c7a4f316de",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0fa7dd690c3555fad9bc2027d53cad3d2750ee33989feb177a30de16d9bae11d"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.25,
+      "initial_known_count": 400,
+      "initial_true_count": 76,
+      "pair_id": "pair:b219096e38d18ca646706b05e937794dd426a6e896fca1a24aba9ade10fd07f1",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "selection_hash": "11d88428179734d80c0e522c5cbfd2eba07560074236c9fef4d3b9c80c98b29f"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.31343284,
+      "initial_known_count": 400,
+      "initial_true_count": 84,
+      "pair_id": "pair:b2fab9c380281b23bb27cff99fd5f139968d999ac8ad1bcf5baa30219aa02e15",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0b01c90f97ce16b81c9cd11b600700080db52396961b8279bbdd4d779b8a4008"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.25889968,
+      "initial_known_count": 400,
+      "initial_true_count": 80,
+      "pair_id": "pair:b3c06e321a5a759d82ebb0e0bffeebf3085c0273e70c807b313cd32638d8275f",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "0f6b7a74262247d85646351f5ff36d17a4ff752069b01dfcc65d5491b537dd61"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.2,
+      "initial_known_count": 400,
+      "initial_true_count": 44,
+      "pair_id": "pair:b411d18596c907f5c15eadb39e13edbaf422db3637a1cb82b112ee486d2c0944",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0d64087ea969b8642e6d2f9b39dca4b590c10038c02cd9c61835c94fc086fb05"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.15441176,
+      "initial_known_count": 400,
+      "initial_true_count": 42,
+      "pair_id": "pair:b4ca01bbe18fe52d05f27359faa1838c9552386287d6c229d65d052ad6a7f4f5",
+      "parent_a": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "01e72ec0696d837a233a15289bbbd56a84ca07898f4058dc94a64de3aa9490d4"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.38931298,
+      "initial_known_count": 400,
+      "initial_true_count": 102,
+      "pair_id": "pair:b4f578ceff9f3afacf9b33300de8c67f92fe510d279f875825386346c68025a6",
+      "parent_a": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "086a440c808b35e3f393a8ad12ed653c7b76a75faf38ae9c5104f1a17d443f39"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.24124514,
+      "initial_known_count": 400,
+      "initial_true_count": 62,
+      "pair_id": "pair:b592b88b32a7f48fcac9c8a966ac5e3286dd84dedc2b00b6df750daa52bc4861",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "selection_hash": "0e1b6e00dd8119040a43c34f1f416a61ff490e9d83745c6893b5a77b2080d461"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.28308824,
+      "initial_known_count": 400,
+      "initial_true_count": 77,
+      "pair_id": "pair:b5ae10d76627c81d1a4a7997fe55e6a0811653e0ab84369557cd038124f5afbc",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0a3df72b8365826bf58dc0d6d52647b0ca06f23206efba13b29c24fce138f536"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.30072464,
+      "initial_known_count": 400,
+      "initial_true_count": 83,
+      "pair_id": "pair:b647c5356efaaa9f883dacd135f8c1c66ccc5af67d18d6765d44f7345dca8af4",
+      "parent_a": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "1f3b131be181f937c657f7e2f9483c916e3a70b89947b791335de7b0f9d62080"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.17142857,
+      "initial_known_count": 400,
+      "initial_true_count": 42,
+      "pair_id": "pair:b8f90ba43e12e98cd171685bf32103d059c593b29c43079f89b163a5385d383e",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "163cad7b8937bec60e134328d4baea0ffc15c8a37f033ee431e8ded7a42628e7"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.30959752,
+      "initial_known_count": 400,
+      "initial_true_count": 100,
+      "pair_id": "pair:bda1b898faab6bd676744d088692f8fea730c483ba0c21a67eed397680468144",
+      "parent_a": "TEAM_HOME.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "08cd918438bfbeb8f0cd1db361afa582a4089a7cafb6d7e9c089fdba9c0ea4e4"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.25423729,
+      "initial_known_count": 400,
+      "initial_true_count": 75,
+      "pair_id": "pair:c0b51f90c5f68654d43546e39a2b5f1ffc1129d8401fe0506a2b43a9678bc732",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "10ed1b6909d204a11adc3028a57c422e3423c963fc968b3923632a735793e5eb"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.27333333,
+      "initial_known_count": 400,
+      "initial_true_count": 82,
+      "pair_id": "pair:c833b00cb2fb63cc4902831589a5650c5c12d211f7231390e847e57cc364795a",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "11883249f29eeed221cf9e93a4120e5407dd308b8202e3026aed575b57f97013"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.33333333,
+      "initial_known_count": 400,
+      "initial_true_count": 83,
+      "pair_id": "pair:d01f81056cc8ee6c2cc3ebe25842dd81af1ff9d1872d07b98c9767af4aadf09e",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "0fde4fd6b754189d18aa40c3b0551a185f5b2034c8d55d46020a7fc2095e8a81"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.20469799,
+      "initial_known_count": 400,
+      "initial_true_count": 61,
+      "pair_id": "pair:d0b9b0214774706755fd193f43de270011404c7295f93ea5f41efe034eaf740d",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "053cf3f3bb7a00dfd4367c6dd94803cc22d261454e8cd4e41dd816dd9723f5fa"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.23255814,
+      "initial_known_count": 400,
+      "initial_true_count": 50,
+      "pair_id": "pair:d8ac34a640ed266748b312e1acb2dc3a4f36a9e4e71ee728b62f6a524252b913",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "11583376a275663ffd690d813b0ad7181e29aea4698cbd216957a9de6a24855f"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.20338983,
+      "initial_known_count": 400,
+      "initial_true_count": 48,
+      "pair_id": "pair:da15450479b07998b53e47a4914bb72ce219d48eb648c4c4609187d924d3857d",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "1237a8959ba4330ce975fab5b9e6dcdf3d5d9b0001c6c639c7fd13febc49e3d3"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.14655172,
+      "initial_known_count": 400,
+      "initial_true_count": 34,
+      "pair_id": "pair:e60bf2f89881887d861ec2d52cf7666607b8608cfc846b0787a5d0cb8daaf650",
+      "parent_a": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L3.HIGH_Q67.V1",
+      "selection_hash": "1a0a2fcd8db2feebbf9ff390e522428dff168bf6f7acc34bf91a09f43c1abccf"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.36333333,
+      "initial_known_count": 400,
+      "initial_true_count": 109,
+      "pair_id": "pair:e8bf90b346bc651bf10f4bc54026bffe6af6a8909a7255ca3417d6b11b6d344b",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "01cd9d4bfcc571fe28c18666ee1d0f09da5c5b55747445c9dba25590a279be7b"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.23214286,
+      "initial_known_count": 400,
+      "initial_true_count": 65,
+      "pair_id": "pair:e8f0570066b835c39840620b4055f58db8357741fabed7b2dcca2f10e11b0cf1",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "selection_hash": "054f598f99af35706aadf69776f1aee5e7240417925db6d2a1e7ae7b47a7a1d4"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.36633663,
+      "initial_known_count": 400,
+      "initial_true_count": 74,
+      "pair_id": "pair:e8f1478ba422864abccb6fa9a3053a0da15003f5b3aedf2eb122f0f8c7b2e3a4",
+      "parent_a": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0a608c976cc65c064ed5bb4140ca6473e0b0a2590227b9331d8adeda74f46a05"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.24719101,
+      "initial_known_count": 400,
+      "initial_true_count": 66,
+      "pair_id": "pair:ebcdc5670ac1349f116482e9254f02f8f5462a77f09973405aa498071ba344f0",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "0c5d3654f0968a43389202481fe4c8cc5abce5f647ca1441a0e2ca513e6c08ee"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.30291971,
+      "initial_known_count": 400,
+      "initial_true_count": 83,
+      "pair_id": "pair:ed9d976d55199933eb07b6b6757b6687295bd768a116cb0b008b219ecc7c490d",
+      "parent_a": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "07eb42fbe44eefc2620a2411ec555d2107e0bc62d5ed72416ffeef99b58dbb14"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.22945205,
+      "initial_known_count": 400,
+      "initial_true_count": 67,
+      "pair_id": "pair:ee505546276c715b5a7eeec68341d052c815463f7d768f2136b0f126a8c3af99",
+      "parent_a": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "06fdf585fbfc6cd9b52a173b45a9a4d94c57d44855bf270a706cd7764d8fb1ad"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.33088235,
+      "initial_known_count": 400,
+      "initial_true_count": 90,
+      "pair_id": "pair:f1e6805d657d0b1d80c151e45b2d763ed87b1a11afbe0066a7fa3d565e73b966",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "0e59ea7967e2a636022cc8aa60d225edccf8fd21d1f61819c7a130c2b9f690b6"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.28571429,
+      "initial_known_count": 400,
+      "initial_true_count": 86,
+      "pair_id": "pair:f1fec4aaaf43341a22f9c86de1219f7d1b066452efc19794fc17f5df4e6e3523",
+      "parent_a": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "selection_hash": "00a49c1e2e0bdd941788f9239b126654ed07bbb0d111db5b25444e7d61a96904"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.09122807,
+      "initial_known_count": 400,
+      "initial_true_count": 26,
+      "pair_id": "pair:f28f0bf29ed27380b24b72681036be845a1d1fc2b023047e58902d11acc06d65",
+      "parent_a": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "070607f77ad5f07a9f1104a6637502d94a0d045121590fc25504f062bd4d93f5"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.24081633,
+      "initial_known_count": 400,
+      "initial_true_count": 59,
+      "pair_id": "pair:f2ceb6574fdd93569cbc4c18ec2c3ac84d8b9642f2914bbe6e1f2948f8eec67e",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0a2e5fccf793733199dce27f76b9051454f8102239dd86ca7d69ea826c919a28"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.21673004,
+      "initial_known_count": 400,
+      "initial_true_count": 57,
+      "pair_id": "pair:f539022e5f34e54bf32eba2341a426b922b6fd45d956cfdaa8995578053fe027",
+      "parent_a": "TEAM_AWAY.LINEUP_CONTINUITY.FORMATION_CHANGE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "0456acc5fb4d942e24af07df65e96f1c0481b2a8b8961f9c1b46ee1a7c7cc72c"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.0942623,
+      "initial_known_count": 400,
+      "initial_true_count": 23,
+      "pair_id": "pair:f7383511878bf07730d492cd810db29e376cc1bd81c3cad4c8c6bf38b8ae3388",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "21dbbc12cf2aa8c24490f948e77a2fb7d96844d1a342d8c006830c9ba5d47ab7"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.20384615,
+      "initial_known_count": 400,
+      "initial_true_count": 53,
+      "pair_id": "pair:f7647a2b57687bbf9ef142334d0110de08bd337bbce6f253ada1acd754fbb0ad",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "selection_hash": "00df5f67ff1b3a9ec757e7e760e5c868bddecbe3b924dd02f79fa23d5820fec8"
+    },
+    {
+      "category": "HOME_HOME",
+      "initial_jaccard": 0.15079365,
+      "initial_known_count": 400,
+      "initial_true_count": 38,
+      "pair_id": "pair:fb5eb1b409751af70b292714426e2bc94590c29249db8e87360c2bcc8a871ff1",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "selection_hash": "0b68a209a008aee7d30fb0a0cda5766a5c560c822c8ede14cffac3492e922b32"
+    },
+    {
+      "category": "CROSS_SIDE",
+      "initial_jaccard": 0.26056338,
+      "initial_known_count": 400,
+      "initial_true_count": 74,
+      "pair_id": "pair:fe483e517c2a03274118999b9f5a317bb22bc779dcdfaf71effb853be2c5b1b4",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "022915a391d096af5805274613ada6bd996cfef88847e4993c5bed11690f4e02"
+    },
+    {
+      "category": "AWAY_AWAY",
+      "initial_jaccard": 0.26886792,
+      "initial_known_count": 400,
+      "initial_true_count": 57,
+      "pair_id": "pair:ff3295e84d99755f524857917532999a75c49c70eaef5da29d168f8c5fe963fe",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "selection_hash": "1961db2cb47b81b15bbb3ff4f0adbf1f3cd4ff3f5a530e8183077bc9e4370165"
+    }
+  ],
+  "parent_degree_cap": 6,
+  "pruned_pairs": 117735,
+  "pruning_reasons": {
+    "ACTIVE_STRUCTURAL_OR_SUPPORT_INCOMPATIBILITY": 1569,
+    "DETERMINISTIC_BUDGET_QUOTA_AND_DEGREE": 1471,
+    "OUTSIDE_MATERIALIZED_RECONSTRUCTED_SUBSPACE": 114695
+  },
+  "quotas": {
+    "AWAY_AWAY": 30,
+    "CROSS_SIDE": 60,
+    "HOME_HOME": 30
+  },
+  "schema_version": "pair-search-space-v1",
+  "seed": 11011,
+  "selection_is_target_blind": true,
+  "structurally_eligible_pairs": 1591,
+  "theoretical_pairs": 117855
+}

@@ -1,0 +1,53 @@
+{
+  "folds": [
+    {
+      "fold_id": "F1",
+      "train": 703,
+      "validation": 226,
+      "validation_start": "2024-12-14"
+    },
+    {
+      "fold_id": "F2",
+      "train": 929,
+      "validation": 204,
+      "validation_start": "2025-01-19"
+    },
+    {
+      "fold_id": "F3",
+      "train": 1133,
+      "validation": 212,
+      "validation_start": "2025-02-17"
+    },
+    {
+      "fold_id": "F4",
+      "train": 1345,
+      "validation": 202,
+      "validation_start": "2025-03-30"
+    },
+    {
+      "fold_id": "F5",
+      "train": 1547,
+      "validation": 209,
+      "validation_start": "2025-04-27"
+    }
+  ],
+  "generated_at": "2026-08-08T09:10:42Z",
+  "materialized_tags": 80,
+  "multiple_testing": {
+    "alpha": 0.05,
+    "denominator": 160,
+    "method": "BH_FDR"
+  },
+  "oof_fixture_count": 1053,
+  "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
+  "properties_reconciled": 486,
+  "roi": null,
+  "schema_version": "atomic-campaign-summary-v1",
+  "status_counts": {
+    "RAW_HISTORICAL_SIGNAL": 77,
+    "SURVIVED_MULTIPLE_TESTING": 2,
+    "SURVIVED_TEMPORAL_VALIDATION": 1
+  },
+  "tests_executed": 160,
+  "verdict": "ATOMIC_PROPERTY_CAMPAIGN_READY"
+}

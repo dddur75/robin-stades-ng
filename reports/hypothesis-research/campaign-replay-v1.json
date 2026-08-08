@@ -1,0 +1,127 @@
+{
+  "additional_network_reads": 0,
+  "excluded_nondeterministic_reports": [
+    "reports/hypothesis-masks/mask-benchmark-v1.json",
+    "reports/hypothesis-research/campaign-costs-v1.json"
+  ],
+  "generated_at": "2026-08-08T09:10:42Z",
+  "records": [
+    {
+      "identical": true,
+      "path": "configs/execution/phase-c-execution-activation-v1.json",
+      "replay_sha256": "b86fd0a383d00dfee35939c66612fca651d30c07ef7b70e8605632de2474b005",
+      "sha256": "b86fd0a383d00dfee35939c66612fca651d30c07ef7b70e8605632de2474b005"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-campaigns/atomic-property-campaign-v1.json",
+      "replay_sha256": "961a613cb771bfc9fab726e01233eb2170d6568907c207572d6f0f45134c41b0",
+      "sha256": "961a613cb771bfc9fab726e01233eb2170d6568907c207572d6f0f45134c41b0"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-campaigns/triple-campaign-lock-v1.json",
+      "replay_sha256": "b129bb3da70514a07423dd8f8f938cd0f6daafe0533af1922472a433a4836b87",
+      "sha256": "b129bb3da70514a07423dd8f8f938cd0f6daafe0533af1922472a433a4836b87"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-tags/canonical-tag-registry-v1.json",
+      "replay_sha256": "ca763b8150e0eb4af526ade2297034f875c0571aa54ff780ed526f919d55376e",
+      "sha256": "ca763b8150e0eb4af526ade2297034f875c0571aa54ff780ed526f919d55376e"
+    },
+    {
+      "identical": true,
+      "path": "configs/hypothesis-tags/tag-lineage-contract-v1.json",
+      "replay_sha256": "8e738ba45212a524853892e65d6bc4c38e6362d332a3465d4f7548970113ba19",
+      "sha256": "8e738ba45212a524853892e65d6bc4c38e6362d332a3465d4f7548970113ba19"
+    },
+    {
+      "identical": true,
+      "path": "reports/dashboard/hypothesis-research-contract-v1.json",
+      "replay_sha256": "cdb872f5b63e200716bb842a82585ebf8af22b21c8d9defc3b9345f9048cdf60",
+      "sha256": "cdb872f5b63e200716bb842a82585ebf8af22b21c8d9defc3b9345f9048cdf60"
+    },
+    {
+      "identical": true,
+      "path": "reports/data-quality/external-data-gap-registry-v1.json",
+      "replay_sha256": "294231fc814384dc28d7a2d1b8164d09b1c2df748c1a2a21c224698920c203fb",
+      "sha256": "294231fc814384dc28d7a2d1b8164d09b1c2df748c1a2a21c224698920c203fb"
+    },
+    {
+      "identical": true,
+      "path": "reports/data-quality/raw-field-census-v1.json",
+      "replay_sha256": "5deef80e291102ab868bdb1f96ceec4a43fa65ec173f70aa4d0f0f06d196977c",
+      "sha256": "5deef80e291102ab868bdb1f96ceec4a43fa65ec173f70aa4d0f0f06d196977c"
+    },
+    {
+      "identical": true,
+      "path": "reports/data-quality/unmapped-field-registry-v1.json",
+      "replay_sha256": "37902f5282667bc017b6b3c56d8b2be8c0a13d3ced40f24d519360dbafd5a1d2",
+      "sha256": "37902f5282667bc017b6b3c56d8b2be8c0a13d3ced40f24d519360dbafd5a1d2"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-genome/e3-property-reconciliation-v1.json",
+      "replay_sha256": "ae200801db30f8c556194b15a332aebfc6b1d3eda3439b00a0ed6ab7ed2f759e",
+      "sha256": "ae200801db30f8c556194b15a332aebfc6b1d3eda3439b00a0ed6ab7ed2f759e"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-masks/atomic-mask-manifest-v1.json",
+      "replay_sha256": "164aeaef1d2ae13bf4eeddfd2f36132267caaf4c086189a1191905654bcb5684",
+      "sha256": "164aeaef1d2ae13bf4eeddfd2f36132267caaf4c086189a1191905654bcb5684"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/atomic-campaign-summary-v1.json",
+      "replay_sha256": "70e805e41ff20af0dca18608a0e5aa152f3efbe79779d958f2c5a4b81b9d7911",
+      "sha256": "70e805e41ff20af0dca18608a0e5aa152f3efbe79779d958f2c5a4b81b9d7911"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/atomic-negative-controls-v1.json",
+      "replay_sha256": "78dfbac569618f45b689eb5b1113ff9c2d23a4fb0a93909e30cc86121aff57c7",
+      "sha256": "78dfbac569618f45b689eb5b1113ff9c2d23a4fb0a93909e30cc86121aff57c7"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/atomic-results-v1.json",
+      "replay_sha256": "2261ee87dcdf7d442d7bb8e673eab8f6e9d1df7159bcf5b8657af348a92b4817",
+      "sha256": "2261ee87dcdf7d442d7bb8e673eab8f6e9d1df7159bcf5b8657af348a92b4817"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-clusters-v1.json",
+      "replay_sha256": "79ba8223c278fdaa91d132da93ea9039f838e1d5c301aeb92930e07e4020d1c0",
+      "sha256": "79ba8223c278fdaa91d132da93ea9039f838e1d5c301aeb92930e07e4020d1c0"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-negative-controls-v1.json",
+      "replay_sha256": "f8bcb418ab4e21988970d427b910b69bc86ad7366e627549d4f1927ed5936405",
+      "sha256": "f8bcb418ab4e21988970d427b910b69bc86ad7366e627549d4f1927ed5936405"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-rankings-v1.json",
+      "replay_sha256": "1e9ca5c85b711b17a8ea33352d69a2abeddf45c42bf5846c28d14dd4b183fc7c",
+      "sha256": "1e9ca5c85b711b17a8ea33352d69a2abeddf45c42bf5846c28d14dd4b183fc7c"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-results-v1.json",
+      "replay_sha256": "ea3905dc6b71cb0eeec854461baf1252051918096f1d86899d10ed615aab6c73",
+      "sha256": "ea3905dc6b71cb0eeec854461baf1252051918096f1d86899d10ed615aab6c73"
+    },
+    {
+      "identical": true,
+      "path": "reports/hypothesis-research/pair-search-space-v1.json",
+      "replay_sha256": "ab273e2d04ed3c0e33eee68a5cc882649d22c33de9791afd6c2087d892bbae1e",
+      "sha256": "ab273e2d04ed3c0e33eee68a5cc882649d22c33de9791afd6c2087d892bbae1e"
+    }
+  ],
+  "replay_identical": true,
+  "replay_runs": 2,
+  "schema_version": "campaign-replay-v1"
+}

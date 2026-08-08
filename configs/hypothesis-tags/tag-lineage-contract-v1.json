@@ -1,0 +1,25 @@
+{
+  "contract_hash": "b66f1ae8ca416f5f6bba75f1e56144a10ca1fffd95aa0eae326dff0fffe8082c",
+  "current_terminal_object": "hypothesis_id",
+  "future_objects_not_created": [
+    "strategy_id",
+    "decision_id",
+    "settlement_id"
+  ],
+  "generated_at": "2026-08-08T09:10:42Z",
+  "raw_provider_payload_in_git": false,
+  "required_chain": [
+    "source_object_hash",
+    "normalized_fact_id",
+    "feature_id",
+    "tag_id+tag_version",
+    "tag_snapshot_hash",
+    "mask_id",
+    "hypothesis_id",
+    "strategy_id",
+    "decision_id",
+    "settlement_id"
+  ],
+  "schema_version": "tag-lineage-contract-v1",
+  "unknown_policy": "PRESERVE_UNKNOWN_NEVER_FALSE"
+}

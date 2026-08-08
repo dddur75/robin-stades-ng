@@ -1,0 +1,55 @@
+{
+  "contract_hash": "11aa1f073b1ea24d84441c92a1a9a607482cadb2618779da1cc709baf0c58ada",
+  "contract_only": true,
+  "deployment": false,
+  "forbidden_statuses": [
+    "VALIDATED",
+    "PRODUCTION_READY",
+    "REAL_BET"
+  ],
+  "frontend_changes": 0,
+  "generated_at": "2026-08-08T09:10:42Z",
+  "required_views": [
+    "mapped_data",
+    "unmapped_data",
+    "tags",
+    "families",
+    "properties",
+    "pairs",
+    "parents",
+    "children",
+    "supports",
+    "unknown",
+    "statuses",
+    "leagues",
+    "seasons",
+    "targets",
+    "price_availability",
+    "negative_controls",
+    "hashed_match_examples",
+    "rejection_reasons"
+  ],
+  "schema_version": "hypothesis-research-contract-v1",
+  "sources": {
+    "atomics": "reports/hypothesis-research/atomic-results-v1.json",
+    "data_quality": "reports/data-quality/raw-field-census-v1.json",
+    "negative_controls": [
+      "reports/hypothesis-research/atomic-negative-controls-v1.json",
+      "reports/hypothesis-research/pair-negative-controls-v1.json"
+    ],
+    "pair_clusters": "reports/hypothesis-research/pair-clusters-v1.json",
+    "pairs": "reports/hypothesis-research/pair-results-v1.json",
+    "property_reconciliation": "reports/hypothesis-genome/e3-property-reconciliation-v1.json",
+    "tags": "configs/hypothesis-tags/canonical-tag-registry-v1.json"
+  },
+  "summary": {
+    "atomic_tests": 160,
+    "families": 28,
+    "genome_properties": 486,
+    "mapped_and_classified_paths": 223,
+    "pair_tests": 240,
+    "prices_available": false,
+    "roi_available": false,
+    "tags": 80
+  }
+}

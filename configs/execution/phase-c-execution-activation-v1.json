@@ -1,0 +1,31 @@
+{
+  "activation_requirement": "SUCCESSOR_REVIEW_ON_DEFAULT_BRANCH_MUST_SET_EXACT_ALLOWED_EXECUTION_SHA",
+  "activation_status": "HOLD_DRAFT_NOT_ON_DEFAULT_BRANCH",
+  "allowed_execution_sha": null,
+  "branch": "codex/hypothesis-tag-mask-pair-factory-v1",
+  "contract_hash": "a1f9c58a8a35cd92a1370e02a10618ac22da4df15f82c0f7e98fb1943e1c12e7",
+  "external_effect_budgets": {
+    "deployments": 0,
+    "odds_credits": 0,
+    "provider_calls": 0,
+    "r2_deletes": 0,
+    "r2_gets": 0,
+    "r2_heads": 0,
+    "r2_lists": 0,
+    "r2_writes": 0,
+    "real_bets": 0,
+    "sql_queries": 0
+  },
+  "generator_sha256": "08e97d74472c7706b7328e19835f2a4787192356e4c6eee8ddeba95b65bf26c4",
+  "github_artifact_state_only": true,
+  "maximum_stage": "COMPATIBLE_PAIR_SEARCH",
+  "schema_version": "phase-c-execution-activation-v1",
+  "source_lock_sha256": "ac429dfdca027d974801048c857219555963719ce2d8b28b4ac2edbbaefc8dec",
+  "stages": [
+    "RAW_FIELD_CENSUS",
+    "TAG_MASK_BUILD",
+    "ATOMIC_PROPERTY_SEARCH",
+    "COMPATIBLE_PAIR_SEARCH"
+  ],
+  "triple_search_locked": true
+}

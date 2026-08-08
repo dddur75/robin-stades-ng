@@ -1,0 +1,207 @@
+{
+  "automatic_activation": false,
+  "count": 5,
+  "generated_at": "2026-08-08T09:10:42Z",
+  "records": [
+    {
+      "competitions": [
+        39,
+        61,
+        78,
+        135,
+        140
+      ],
+      "coverage": 1,
+      "data_type": [
+        "string"
+      ],
+      "distinct_shape_count": 1,
+      "endpoint_family": "__row__",
+      "expected_scientific_value": "UNASSESSED",
+      "first_fixture": "sha256:9c1fa3da7860cba7c95a5d24e76e00c9761cb356bc419427592ba43ee3c029b8",
+      "hypothesis_families_unlocked": [],
+      "identity_risk": "REVIEW_REQUIRED",
+      "json_path": "canonical_competition_id",
+      "last_fixture": "sha256:363c4484dcd66e56599e73128928c50ea5c3fc1ed23d3ce88c0fa8a9ef121c55",
+      "mapped_field_id": null,
+      "mapped_property_ids": [],
+      "mapping_complexity": "MEDIUM",
+      "mapping_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "observed_count": 286075,
+      "priority": "P2",
+      "provider": "api-football",
+      "queue_status": "REVIEW_REQUIRED",
+      "reason": "NO_EXACT_PROPERTY_MAPPING_REGISTERED",
+      "sample_hashes": [
+        "0cb78ab579b513ed3655fb7c9b982e9bcec5e93f52b776f330cd2e9bac53580b",
+        "613ab0f9dc163be8f754aa49fd57428da678fb259ee40ea6accec96e5099d1c0",
+        "7ef95ad7a06fa7448155a84b6e948517593c25e8f2bdd67e7ec48a36f3457d51"
+      ],
+      "source_stability": "ONE_FROZEN_SEASON_ONLY",
+      "temporal_class": "SOURCE_METADATA_OR_IDENTITY",
+      "temporal_value": "REVIEW_REQUIRED"
+    },
+    {
+      "competitions": [
+        39,
+        61,
+        78,
+        135,
+        140
+      ],
+      "coverage": 1,
+      "data_type": [
+        "string"
+      ],
+      "distinct_shape_count": 1,
+      "endpoint_family": "__row__",
+      "expected_scientific_value": "UNASSESSED",
+      "first_fixture": "sha256:9c1fa3da7860cba7c95a5d24e76e00c9761cb356bc419427592ba43ee3c029b8",
+      "hypothesis_families_unlocked": [],
+      "identity_risk": "REVIEW_REQUIRED",
+      "json_path": "source_request_params.ids",
+      "last_fixture": "sha256:363c4484dcd66e56599e73128928c50ea5c3fc1ed23d3ce88c0fa8a9ef121c55",
+      "mapped_field_id": null,
+      "mapped_property_ids": [],
+      "mapping_complexity": "MEDIUM",
+      "mapping_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "observed_count": 275539,
+      "priority": "P2",
+      "provider": "api-football",
+      "queue_status": "REVIEW_REQUIRED",
+      "reason": "NO_EXACT_PROPERTY_MAPPING_REGISTERED",
+      "sample_hashes": [
+        "9e03e3354ff356cc0bee106675c6796f37f71e6865d4622357dabb40f137d87c",
+        "c373674157e215cc37f91abaf239e8503498e93a9d63096d752e793d8b75fc78",
+        "d365e4fba0066fd069b626a2c5bbdfd19a0f0e72261a9965844ed2de878562fe"
+      ],
+      "source_stability": "ONE_FROZEN_SEASON_ONLY",
+      "temporal_class": "SOURCE_METADATA_OR_IDENTITY",
+      "temporal_value": "REVIEW_REQUIRED"
+    },
+    {
+      "competitions": [
+        39,
+        61,
+        78,
+        135,
+        140
+      ],
+      "coverage": 1,
+      "data_type": [
+        "integer"
+      ],
+      "distinct_shape_count": 1,
+      "endpoint_family": "__row__",
+      "expected_scientific_value": "UNASSESSED",
+      "first_fixture": "sha256:9c1fa3da7860cba7c95a5d24e76e00c9761cb356bc419427592ba43ee3c029b8",
+      "hypothesis_families_unlocked": [],
+      "identity_risk": "REVIEW_REQUIRED",
+      "json_path": "source_request_params.league",
+      "last_fixture": "sha256:363c4484dcd66e56599e73128928c50ea5c3fc1ed23d3ce88c0fa8a9ef121c55",
+      "mapped_field_id": null,
+      "mapped_property_ids": [],
+      "mapping_complexity": "MEDIUM",
+      "mapping_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "observed_count": 10536,
+      "priority": "P2",
+      "provider": "api-football",
+      "queue_status": "REVIEW_REQUIRED",
+      "reason": "NO_EXACT_PROPERTY_MAPPING_REGISTERED",
+      "sample_hashes": [
+        "349c41201b62db851192665c504b350ff98c6b45fb62a8a2161f78b6534d8de9",
+        "d029fa3a95e174a19934857f535eb9427d967218a36ea014b70ad704bc6c8d1c",
+        "dbae772db29058a88f9bd830e957c695347c41b6162a7eb9a9ea13def34be56b"
+      ],
+      "source_stability": "ONE_FROZEN_SEASON_ONLY",
+      "temporal_class": "SOURCE_METADATA_OR_IDENTITY",
+      "temporal_value": "REVIEW_REQUIRED"
+    },
+    {
+      "competitions": [
+        39,
+        61,
+        78,
+        135,
+        140
+      ],
+      "coverage": 1,
+      "data_type": [
+        "integer"
+      ],
+      "distinct_shape_count": 1,
+      "endpoint_family": "__row__",
+      "expected_scientific_value": "UNASSESSED",
+      "first_fixture": "sha256:9c1fa3da7860cba7c95a5d24e76e00c9761cb356bc419427592ba43ee3c029b8",
+      "hypothesis_families_unlocked": [],
+      "identity_risk": "REVIEW_REQUIRED",
+      "json_path": "source_request_params.season",
+      "last_fixture": "sha256:363c4484dcd66e56599e73128928c50ea5c3fc1ed23d3ce88c0fa8a9ef121c55",
+      "mapped_field_id": null,
+      "mapped_property_ids": [],
+      "mapping_complexity": "MEDIUM",
+      "mapping_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "observed_count": 10536,
+      "priority": "P2",
+      "provider": "api-football",
+      "queue_status": "REVIEW_REQUIRED",
+      "reason": "NO_EXACT_PROPERTY_MAPPING_REGISTERED",
+      "sample_hashes": [
+        "6557739a67283a8de383fc5c0997fbec7c5721a46f28f3235fc9607598d9016b"
+      ],
+      "source_stability": "ONE_FROZEN_SEASON_ONLY",
+      "temporal_class": "SOURCE_METADATA_OR_IDENTITY",
+      "temporal_value": "REVIEW_REQUIRED"
+    },
+    {
+      "competitions": [
+        39,
+        61,
+        78,
+        135,
+        140
+      ],
+      "coverage": 0.98731801,
+      "data_type": [
+        "null",
+        "string"
+      ],
+      "distinct_shape_count": 2,
+      "endpoint_family": "__row__",
+      "expected_scientific_value": "UNASSESSED",
+      "first_fixture": "sha256:9c1fa3da7860cba7c95a5d24e76e00c9761cb356bc419427592ba43ee3c029b8",
+      "hypothesis_families_unlocked": [],
+      "identity_risk": "REVIEW_REQUIRED",
+      "json_path": "target_kickoff_at",
+      "last_fixture": "sha256:363c4484dcd66e56599e73128928c50ea5c3fc1ed23d3ce88c0fa8a9ef121c55",
+      "mapped_field_id": null,
+      "mapped_property_ids": [],
+      "mapping_complexity": "MEDIUM",
+      "mapping_status": "UNMAPPED_FIELD",
+      "null_count": 3628,
+      "null_rate": 0.01268199,
+      "observed_count": 286075,
+      "priority": "P2",
+      "provider": "api-football",
+      "queue_status": "REVIEW_REQUIRED",
+      "reason": "NO_EXACT_PROPERTY_MAPPING_REGISTERED",
+      "sample_hashes": [
+        "13ba17bc578ae6af563028c9bc67d0fbc54582a8018643aba33f8060c985443f",
+        "ce22b0239b4f05a36a1b18eb5bff66d040f910063b6cd00f1ad17ad335d713af",
+        "dcdd01203e0ff3890f9f425124dc6775e293abc5c84828cbe63bfa51e511de47"
+      ],
+      "source_stability": "ONE_FROZEN_SEASON_ONLY",
+      "temporal_class": "SOURCE_METADATA_OR_IDENTITY",
+      "temporal_value": "REVIEW_REQUIRED"
+    }
+  ],
+  "schema_version": "unmapped-field-registry-v1"
+}

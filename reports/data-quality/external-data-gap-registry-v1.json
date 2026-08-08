@@ -1,0 +1,107 @@
+{
+  "directly_blocked_property_count_lower_bound": 191,
+  "gap_count": 11,
+  "generated_at": "2026-08-08T09:10:42Z",
+  "records": [
+    {
+      "blocked_property_count": 25,
+      "family": "WEATHER",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_VERSIONED_POINT_IN_TIME_WEATHER_ARCHIVE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 16,
+      "family": "TRAVEL_LOGISTICS",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "REAL_TRAVEL_ITINERARY_AND_ARRIVAL_TIMES_UNAVAILABLE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 14,
+      "family": "TRAINING_LOAD",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_GOVERNED_TRAINING_LOAD_SOURCE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 13,
+      "family": "MEDICAL",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_GOVERNED_POINT_IN_TIME_MEDICAL_SOURCE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 19,
+      "family": "ABSENCE_RETURN",
+      "priority": "P0",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_PUBLICATION_AND_REVISION_TIMESTAMPS",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 11,
+      "family": "FOOTEDNESS_LATERALITY",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_VERSIONED_PLAYER_PROFILE_SOURCE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 17,
+      "family": "INFORMATION_NEWS",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_VERSIONED_NEWS_SOURCE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 22,
+      "family": "MARKET",
+      "priority": "P0",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_ADMISSIBLE_POINT_IN_TIME_PRICE_SOURCE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 10,
+      "family": "ORGANISATION_SQUAD",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_POINT_IN_TIME_REGISTRATION_HISTORY",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 25,
+      "family": "ROLE_TACTICS",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_TRACKING_OR_VERSIONED_TACTICAL_SOURCE",
+      "source_status": "SOURCE_MISSING"
+    },
+    {
+      "blocked_property_count": 19,
+      "family": "STADIUM_PITCH",
+      "priority": "P1",
+      "purchase_authorized": false,
+      "queue_status": "PROPOSED",
+      "reason": "NO_VERSIONED_GEOMETRY_COORDINATE_AND_SURFACE_SOURCE",
+      "source_status": "SOURCE_MISSING"
+    }
+  ],
+  "schema_version": "external-data-gap-registry-v1"
+}

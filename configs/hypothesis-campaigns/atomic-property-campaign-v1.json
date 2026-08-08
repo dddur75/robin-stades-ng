@@ -1,0 +1,110 @@
+{
+  "campaign_hash": "818a80110b22d96a75277a9a87cdc641ad66a7e742f058c5d3932505892a5d4f",
+  "campaign_id": "PHASE-C-ATOMIC-80-X-2-2024-V1",
+  "compute_budget": {
+    "atomic_tags": 80,
+    "job_timeout_minutes": 15,
+    "max_depth": 2,
+    "pair_rules": 120
+  },
+  "cutoff": "TARGET_KICKOFF_EXCLUSIVE",
+  "dataset_hash": "5643b6eea360129012d3dd52bba10e24fc0570f3b22d0e0b0c069133c62a8096",
+  "fold_policy": [
+    {
+      "fold_id": "F1",
+      "train_end": 703,
+      "validation_end": 929,
+      "validation_start": "2024-12-14"
+    },
+    {
+      "fold_id": "F2",
+      "train_end": 929,
+      "validation_end": 1133,
+      "validation_start": "2025-01-19"
+    },
+    {
+      "fold_id": "F3",
+      "train_end": 1133,
+      "validation_end": 1345,
+      "validation_start": "2025-02-17"
+    },
+    {
+      "fold_id": "F4",
+      "train_end": 1345,
+      "validation_end": 1547,
+      "validation_start": "2025-03-30"
+    },
+    {
+      "fold_id": "F5",
+      "train_end": 1547,
+      "validation_end": 1756,
+      "validation_start": "2025-04-27"
+    }
+  ],
+  "frozen_at": "2026-08-08T09:10:42Z",
+  "frozen_before_target_read": true,
+  "generator_sha256": "08e97d74472c7706b7328e19835f2a4787192356e4c6eee8ddeba95b65bf26c4",
+  "markets": [],
+  "mask_manifest_hash": "08c9c26cb8cf08c89ee947bb36eabb69c70912bb59c92f7f3075652a4e813e1f",
+  "mode": "PREDICTIVE_ONLY",
+  "multiple_testing_policy": {
+    "alpha": 0.05,
+    "atomic_denominator": 160,
+    "blocked_tests_p_value": 1.0,
+    "method": "BH_FDR",
+    "pair_denominator": 240
+  },
+  "negative_controls": [
+    "SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH",
+    "RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN",
+    "FORBIDDEN_FUTURE_FEATURE",
+    "SHIFTED_PRICE",
+    "IMPOSSIBLE_CONDITION",
+    "TRIVIAL_ALWAYS_TRUE_RULE",
+    "POST_RESULT_FIELD",
+    "WINNER_LOSER_IDENTITY"
+  ],
+  "price_contracts": [],
+  "promotion_forbidden": [
+    "VALIDATED",
+    "PRODUCTION_READY",
+    "REAL_BET"
+  ],
+  "schema_version": "atomic-property-campaign-v1",
+  "seed": 11011,
+  "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+  "support_policy": {
+    "dominant_league_max": 0.5,
+    "known_coverage": 0.8,
+    "minimum_leagues": 3,
+    "per_fold_true": 15,
+    "principal_true_oof": 80,
+    "required_positive_folds": 4
+  },
+  "tag_registry_hash": "a4755a3ff95c6a773e86a8afa02c83c47646baade504df10e3e765a486c66298",
+  "targets": [
+    {
+      "id": "MATCH_RESULT_90M",
+      "point_in_time_status": "TARGET_ONLY",
+      "price_availability": false,
+      "settlement_rule": "score.fulltime",
+      "views": [
+        "HOME_WIN",
+        "DRAW",
+        "AWAY_WIN"
+      ]
+    },
+    {
+      "id": "TOTAL_GOALS_2_5_90M",
+      "point_in_time_status": "TARGET_ONLY",
+      "price_availability": false,
+      "settlement_rule": "score.fulltime.home+away > 2",
+      "views": [
+        "OVER_2_5",
+        "UNDER_2_5"
+      ]
+    }
+  ],
+  "triple_search_locked": true,
+  "universe_hash": "63eb478c5d2f2d6a500461d256eaa3e781f22e54208f6ea621bacf972a47b6d5"
+}

@@ -1,0 +1,463 @@
+{
+  "candidates": [
+    {
+      "backend": "python_integer_bitset",
+      "calibrated_loops": {
+        "construction_time": 16384,
+        "incremental_update_cost": 1048576,
+        "intersection_time": 524288,
+        "load_time": 2048,
+        "save_time": 2048,
+        "union_time": 524288
+      },
+      "correctness": true,
+      "dependency": null,
+      "determinism": true,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 173,
+          "max_ns": 6473,
+          "median_ns": 6092,
+          "min_ns": 5408,
+          "p95_ns": 6322,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 0,
+          "max_ns": 88,
+          "median_ns": 86,
+          "min_ns": 84,
+          "p95_ns": 87,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 5,
+          "max_ns": 131,
+          "median_ns": 122,
+          "min_ns": 108,
+          "p95_ns": 129,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 2500,
+          "max_ns": 40757,
+          "median_ns": 36645,
+          "min_ns": 30096,
+          "p95_ns": 40648,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 2358,
+          "max_ns": 39503,
+          "median_ns": 36387,
+          "min_ns": 26381,
+          "p95_ns": 39275,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 5,
+          "max_ns": 130,
+          "median_ns": 121,
+          "min_ns": 113,
+          "p95_ns": 130,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "numpy_boolean_arrays",
+      "calibrated_loops": {
+        "construction_time": 2048,
+        "incremental_update_cost": 32768,
+        "intersection_time": 65536,
+        "load_time": 512,
+        "save_time": 512,
+        "union_time": 65536
+      },
+      "correctness": true,
+      "dependency": "numpy==2.5.1",
+      "determinism": true,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 2705,
+          "max_ns": 58823,
+          "median_ns": 49444,
+          "min_ns": 44585,
+          "p95_ns": 56471,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 80,
+          "max_ns": 2268,
+          "median_ns": 2089,
+          "min_ns": 1772,
+          "p95_ns": 2200,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 41,
+          "max_ns": 1034,
+          "median_ns": 941,
+          "min_ns": 828,
+          "p95_ns": 1023,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 3223,
+          "max_ns": 103480,
+          "median_ns": 96147,
+          "min_ns": 81277,
+          "p95_ns": 101158,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 3192,
+          "max_ns": 105214,
+          "median_ns": 97445,
+          "min_ns": 74105,
+          "p95_ns": 102645,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 40,
+          "max_ns": 1050,
+          "median_ns": 985,
+          "min_ns": 847,
+          "p95_ns": 1047,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 280960,
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "numpy_packbits",
+      "calibrated_loops": {
+        "construction_time": 2048,
+        "incremental_update_cost": 16384,
+        "intersection_time": 131072,
+        "load_time": 4096,
+        "save_time": 4096,
+        "union_time": 131072
+      },
+      "correctness": true,
+      "dependency": "numpy==2.5.1",
+      "determinism": true,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 881,
+          "max_ns": 36500,
+          "median_ns": 35012,
+          "min_ns": 29889,
+          "p95_ns": 36301,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 148,
+          "max_ns": 5309,
+          "median_ns": 5111,
+          "min_ns": 4460,
+          "p95_ns": 5309,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 12,
+          "max_ns": 771,
+          "median_ns": 743,
+          "min_ns": 712,
+          "p95_ns": 765,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 850,
+          "max_ns": 13765,
+          "median_ns": 12169,
+          "min_ns": 9914,
+          "p95_ns": 13319,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 829,
+          "max_ns": 13710,
+          "median_ns": 11810,
+          "min_ns": 9279,
+          "p95_ns": 13571,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 11,
+          "max_ns": 786,
+          "median_ns": 744,
+          "min_ns": 712,
+          "p95_ns": 773,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "polars_boolean_series",
+      "calibrated_loops": {
+        "construction_time": 8192,
+        "incremental_update_cost": 131072,
+        "intersection_time": 131072,
+        "load_time": 2048,
+        "save_time": 2048,
+        "union_time": 131072
+      },
+      "correctness": true,
+      "dependency": "polars==1.43.0",
+      "determinism": true,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 136,
+          "max_ns": 7108,
+          "median_ns": 6730,
+          "min_ns": 5699,
+          "p95_ns": 7051,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 5,
+          "max_ns": 643,
+          "median_ns": 619,
+          "min_ns": 578,
+          "p95_ns": 641,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 11,
+          "max_ns": 646,
+          "median_ns": 622,
+          "min_ns": 592,
+          "p95_ns": 642,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 1413,
+          "max_ns": 41273,
+          "median_ns": 39257,
+          "min_ns": 32213,
+          "p95_ns": 41208,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 1731,
+          "max_ns": 40761,
+          "median_ns": 38482,
+          "min_ns": 28777,
+          "p95_ns": 40653,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 9,
+          "max_ns": 636,
+          "median_ns": 614,
+          "min_ns": 583,
+          "p95_ns": 634,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "pyarrow_boolean_array",
+      "calibrated_loops": {
+        "construction_time": 32768,
+        "incremental_update_cost": 32768,
+        "intersection_time": 32768,
+        "load_time": 2048,
+        "save_time": 2048,
+        "union_time": 32768
+      },
+      "correctness": true,
+      "dependency": "pyarrow==25.0.0",
+      "determinism": true,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 46,
+          "max_ns": 2119,
+          "median_ns": 1998,
+          "min_ns": 1772,
+          "p95_ns": 2100,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 83,
+          "max_ns": 3108,
+          "median_ns": 2985,
+          "min_ns": 2467,
+          "p95_ns": 3087,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 106,
+          "max_ns": 3078,
+          "median_ns": 2886,
+          "min_ns": 2334,
+          "p95_ns": 3072,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 1866,
+          "max_ns": 40930,
+          "median_ns": 38315,
+          "min_ns": 32190,
+          "p95_ns": 40926,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 1002,
+          "max_ns": 40707,
+          "median_ns": 39019,
+          "min_ns": 26112,
+          "p95_ns": 40032,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 229,
+          "max_ns": 3121,
+          "median_ns": 2815,
+          "min_ns": 2089,
+          "p95_ns": 3104,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "duckdb_boolean_table",
+      "calibrated_loops": {
+        "construction_time": 512,
+        "incremental_update_cost": 256,
+        "intersection_time": 256,
+        "load_time": 2048,
+        "save_time": 2048,
+        "union_time": 256
+      },
+      "correctness": true,
+      "dependency": "duckdb==1.5.4",
+      "determinism": true,
+      "metrics": {
+        "construction_time": {
+          "mad_ns": 2167,
+          "max_ns": 192419,
+          "median_ns": 176302,
+          "min_ns": 165955,
+          "p95_ns": 188016,
+          "sample_count": 30
+        },
+        "incremental_update_cost": {
+          "mad_ns": 2896,
+          "max_ns": 235312,
+          "median_ns": 220005,
+          "min_ns": 203175,
+          "p95_ns": 229286,
+          "sample_count": 30
+        },
+        "intersection_time": {
+          "mad_ns": 4385,
+          "max_ns": 234768,
+          "median_ns": 217923,
+          "min_ns": 202176,
+          "p95_ns": 225547,
+          "sample_count": 30
+        },
+        "load_time": {
+          "mad_ns": 1061,
+          "max_ns": 40981,
+          "median_ns": 38880,
+          "min_ns": 34067,
+          "p95_ns": 40601,
+          "sample_count": 30
+        },
+        "save_time": {
+          "mad_ns": 1612,
+          "max_ns": 43110,
+          "median_ns": 38940,
+          "min_ns": 28801,
+          "p95_ns": 40884,
+          "sample_count": 30
+        },
+        "union_time": {
+          "mad_ns": 5238,
+          "max_ns": 264520,
+          "median_ns": 244984,
+          "min_ns": 230237,
+          "p95_ns": 258989,
+          "sample_count": 30
+        }
+      },
+      "payload_bytes": 35200,
+      "serialized_bytes": 35200,
+      "status": "ELIGIBLE",
+      "unknown_support": true
+    },
+    {
+      "backend": "pyroaring_bitmap",
+      "correctness": null,
+      "dependency": "pyroaring",
+      "status": "SKIPPED_DEPENDENCY_ABSENT"
+    }
+  ],
+  "corpora": {
+    "golden": {
+      "case_count": 4,
+      "fixture_count": 14,
+      "sha256": "1762aa6f1326836bb024ce56b0f6eb530d475103636e1ae681b59a223edc4778"
+    },
+    "real": {
+      "fixture_count": 1756,
+      "genome_property_count": 486,
+      "materialized_mask_count": 80,
+      "universe_sha256": "63eb478c5d2f2d6a500461d256eaa3e781f22e54208f6ea621bacf972a47b6d5"
+    }
+  },
+  "environment": {
+    "architecture": "AMD64",
+    "duckdb": "1.5.4",
+    "implementation": "CPython",
+    "numpy": "2.5.1",
+    "os": "Windows-11-10.0.26200-SP0",
+    "polars": "1.43.0",
+    "pyarrow": "25.0.0",
+    "pyroaring": null,
+    "python": "3.12.10"
+  },
+  "environment_verdict": "PROVISIONAL_ENVIRONMENT",
+  "generated_at": "2026-08-08T09:10:42Z",
+  "invariants": {
+    "cross_backend_canonical_payload": true,
+    "tail_bits_zero": true,
+    "true_subset_known": true,
+    "universe_mask_bits": 1756,
+    "unknown_exact": true
+  },
+  "measurement_contract": {
+    "calibration_target_ms": 50,
+    "required_for_final_environment_verdict": "3_FRESH_RUNNERS_AND_WHEEL_HASHES",
+    "runners": 1,
+    "samples": 30,
+    "timer": "perf_counter_ns"
+  },
+  "schema_version": "mask-benchmark-v1",
+  "selected_durable_format": "mask-v1-packed-known-then-true",
+  "selected_runtime": "python_integer_bitset",
+  "selection_reason": "N1756_PAIR_LATENCY_MEMORY_AND_NO_ADDITIONAL_DEPENDENCY",
+  "verdict": "MASK_ENGINE_SELECTED_PROVISIONAL_ENVIRONMENT"
+}
