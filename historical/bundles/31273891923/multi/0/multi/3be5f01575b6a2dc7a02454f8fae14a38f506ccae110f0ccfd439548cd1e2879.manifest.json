@@ -1,0 +1,14 @@
+{
+  "archive": "bundles/31273891923/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.tar.gz",
+  "archive_bytes": 20998593,
+  "archive_sha256": "62c874f019f77f116ceaf362574c992227ce5f532287d3ffb1228530eaf2e672",
+  "competition": "multi",
+  "endpoint": "multi",
+  "global_hash": "3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879",
+  "index": "bundles/31273891923/multi/0/multi/3be5f01575b6a2dc7a02454f8fae14a38f506ccae110f0ccfd439548cd1e2879.index.json",
+  "payload_count": 24627,
+  "run_id": "31273891923",
+  "schema_version": "historical-bundle-v1",
+  "season": 0,
+  "sources_removed": true
+}
