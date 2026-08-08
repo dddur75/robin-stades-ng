@@ -17,6 +17,11 @@ de l’activation et du verrou d’artefacts, ainsi que les hashes du preflight,
 générateur, des quatre workflows et du verrou source. Le candidat ne peut
 jamais s’auto-autoriser.
 
+Les runs source, les stages amont et les reprises sont relus par l’endpoint
+GitHub exact `runs/{run_id}/attempts/{attempt}`. Un rerun ultérieur ne peut donc
+ni invalider un verrou d’attempt antérieur ni substituer silencieusement le
+dernier attempt.
+
 ## Chaîne d’artefacts
 
 1. Raw census lit les cinq artefacts E3 immuables, après validation exacte de
@@ -57,6 +62,14 @@ et reprend après le dernier bloc durable ; un shard complet n’est jamais
 recalculé. Les paires exigent huit shards uniques et deux réductions fraîches
 byte-identiques ; manque, duplication ou dérive du rapport global échoue
 fail-closed.
+
+La preuve locale sanitised `checkpoint-resume-proof-v1.json` lie une
+interruption forcée après 17 paires au hash du checkpoint et du snapshot, puis
+montre que la reprise ne recalcule aucun des 17 blocs déjà durables et produit
+les mêmes hashes compact et gzip qu’un run propre. Le reducer possède sa
+deadline coopérative propre, reconstruit le gzip détaillé exact à partir des
+huit shards, vérifie son hash contre leur source commune et publie ensemble la
+synthèse compacte et le full artifact.
 
 Les triples, tout write distant, tout déploiement, toute publication et tout
 pari réel restent hors contrat.

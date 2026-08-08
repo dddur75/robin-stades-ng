@@ -14,7 +14,7 @@
     "tag_mask_build_upload_max": 5000000
   },
   "branch": "codex/hypothesis-tag-mask-pair-factory-v1",
-  "contract_hash": "f7f42df9d233c8563c177d9cce20dccf8ea76d74cd82261bd6db3308661dd3a9",
+  "contract_hash": "a8e2471175a9398f18a307d8e8770ab19aa931ba493598c1b8b577da7f3e09fe",
   "external_effect_budgets": {
     "deployments": 0,
     "odds_credits": 0,
@@ -27,13 +27,13 @@
     "real_bets": 0,
     "sql_queries": 0
   },
-  "generator_sha256": "37eddc4ea7eab7bc530776acd03b141da845d93ad33aea20a8682a6466a06667",
+  "generator_sha256": "670b05af1578bf2bcf0b348c26caa5924964e9d81dcdacee715dfc8565abb871",
   "github_artifact_state_only": true,
   "maximum_stage": "COMPATIBLE_PAIR_SEARCH",
-  "phase_c_artifact_lock_hash": "9dbf52b4c221dbd2f4f54ec4d93f2c76964c613df5160a2e297e79e48d772a27",
-  "preflight_sha256": "7a08e11e63cfb7c411f012b74536b8ba776bc4d91f586b0d24bba65c86d06f70",
+  "phase_c_artifact_lock_hash": "49471d9015bcc8bf8cebfbef0d8b1191e6f5ebbdadee7993c91d3cec6f9c18a1",
+  "preflight_sha256": "dbfe1970a708156dfe7d6ab9bf6f94998d4d148b79ec4b4591137220492f50bb",
   "schema_version": "phase-c-execution-activation-v1",
-  "source_lock_sha256": "ac429dfdca027d974801048c857219555963719ce2d8b28b4ac2edbbaefc8dec",
+  "source_lock_sha256": "7fe2d576b7706b73d1eed181e6dd16c04a86b42c982575fc77721da3b35ceb7b",
   "stages": [
     "RAW_FIELD_CENSUS",
     "TAG_MASK_BUILD",
@@ -45,6 +45,6 @@
     "86-p0-phase-c-raw-field-census.yml": "785d0ab316686d679a26af2be268dc5bfe25ebdb7b1491499c2ba9416ad39317",
     "87-p0-phase-c-tag-mask-build.yml": "2a00253a9f46c8c48ff08fc1a931d973b852e3c3f0eaf4987a91f143aaa4ec65",
     "88-p0-phase-c-atomic-property-search.yml": "74ae0435aa50f10291c0d814b8ab04fe917bdf881ec5b34013884b747e021681",
-    "89-p0-phase-c-compatible-pair-search.yml": "73e0f86e0900c157dc70ebc363476a5762462228e511bf86da9990b33180c76a"
+    "89-p0-phase-c-compatible-pair-search.yml": "76020416de7e47d09b117b281453a88bd294d89d700337e911b862e6cac78540"
   }
 }

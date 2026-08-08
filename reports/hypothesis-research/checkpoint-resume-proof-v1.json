@@ -1,0 +1,57 @@
+{
+  "byte_identity": {
+    "clean_pair_results_compact_sha256": "f1559b4508852bc35018ccf33bf9002211175001ddc9c2d167b84fce29d79ca1",
+    "clean_pair_results_full_gzip_sha256": "05476edd8e88330b4867e3273a5e093d433a696b3827fdc2bc8ca1fb25266781",
+    "compact_results_identical": true,
+    "full_results_identical": true,
+    "resumed_pair_results_compact_sha256": "f1559b4508852bc35018ccf33bf9002211175001ddc9c2d167b84fce29d79ca1",
+    "resumed_pair_results_full_gzip_sha256": "05476edd8e88330b4867e3273a5e093d433a696b3827fdc2bc8ca1fb25266781"
+  },
+  "candidate_generator_sha256": "670b05af1578bf2bcf0b348c26caa5924964e9d81dcdacee715dfc8565abb871",
+  "external_effect_counters": {
+    "deployments": 0,
+    "odds_credits": 0,
+    "provider_calls": 0,
+    "publication": 0,
+    "r2_gets": 0,
+    "r2_writes": 0,
+    "real_bets": 0,
+    "sql_queries": 0,
+    "triples_executed": 0
+  },
+  "forced_interruption": {
+    "checkpoint_file_sha256": "584a2d06b40f5ec974576c190dc0b43609c3695b92f669b4fdce5426e601cd6a",
+    "checkpoint_object_hash": "d8f3390e271fab6b1a3540049e07db6443f575bf845b473e2c5ed9c113143244",
+    "checkpoint_referenced_progress_sha256": "184218899c365c89aa08489b9d28ea5f4ab94208c7f5cc0ef72d24ac967782d1",
+    "completed": false,
+    "cursor": 17,
+    "expected_nonzero_exit": true,
+    "mechanism": "PHASE_C_CHECKPOINT_TEST_STOP_AFTER_RECORDS_FAIL_CLOSED_AFTER_ATOMIC_PERSIST",
+    "progress_file_sha256": "184218899c365c89aa08489b9d28ea5f4ab94208c7f5cc0ef72d24ac967782d1",
+    "progress_relative_path": "resume-progress-1-v1.json.gz"
+  },
+  "generated_at": "2026-08-08T12:52:00Z",
+  "proof_hash": "01ef0e3321b389af67e5689e7b90978bbcb82c4b836d4d3707700c43f94348d9",
+  "proof_scope": "LOCAL_ZERO_EGRESS_PAIR_UPSTREAM_SHARD_0_FAIL_CLOSED_TEST",
+  "resume": {
+    "completed": true,
+    "completed_prefix_records_recomputed": 0,
+    "final_checkpoint_hash": "c80b6e660c3199e4657c76eaa29ea7cd21f51113a127cb03591e5aa16fd65285",
+    "full_pair_count": 120,
+    "previous_checkpoint_hash": "d8f3390e271fab6b1a3540049e07db6443f575bf845b473e2c5ed9c113143244",
+    "resumed_from_cursor": 17,
+    "shard_0_pair_count": 16
+  },
+  "sanitization": {
+    "absolute_paths": false,
+    "checkpoint_or_progress_payload_committed": false,
+    "raw_fixture_ids": false,
+    "raw_payloads": false
+  },
+  "schema_version": "checkpoint-resume-proof-v1",
+  "source_lock_sha256": "7fe2d576b7706b73d1eed181e6dd16c04a86b42c982575fc77721da3b35ceb7b",
+  "upstream": {
+    "atomic_mask_manifest_sha256": "15aa791c8d116846eff57a04586495ca6b93d9454473d2b59c91ac3d2bbd657a",
+    "atomic_results_full_gzip_sha256": "85e6636aa7583f72be229919d35dcf3d5d82aec6eb22644a579af1213662ed3f"
+  }
+}

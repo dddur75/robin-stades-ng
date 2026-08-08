@@ -38,6 +38,10 @@ UNIVERSE_COUNT = 1756
 NBYTES = (UNIVERSE_COUNT + 7) // 8
 ACTIVE_RESUME_ROOT: Path | None = None
 ACTIVE_RESUME_CHECKPOINT: dict[str, Any] | None = None
+ACTIVE_RESUME_LOADED_COUNT = 0
+ACTIVE_TEST_STOP_AFTER_RECORDS = int(
+    os.environ.get("PHASE_C_CHECKPOINT_TEST_STOP_AFTER_RECORDS", "0")
+)
 
 TARGET_SEGMENTS = {
     "Premier League": "seg-000209-75959aee62633e1d",
@@ -289,6 +293,10 @@ def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def repository_text_sha256(path: Path) -> str:
+    return sha256_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
+
+
 def object_hash(value: object) -> str:
     return sha256_bytes(canonical_bytes(value))
 
@@ -338,6 +346,7 @@ def read_heavy_json_artifact(path: Path) -> dict[str, Any]:
 
 
 def load_resume_progress(stage: str) -> list[dict[str, Any]]:
+    global ACTIVE_RESUME_LOADED_COUNT
     if ACTIVE_RESUME_ROOT is None or ACTIVE_RESUME_CHECKPOINT is None:
         return []
     if ACTIVE_RESUME_CHECKPOINT.get("phase") != stage:
@@ -359,7 +368,9 @@ def load_resume_progress(stage: str) -> list[dict[str, Any]]:
         or not isinstance(value.get("records"), list)
     ):
         raise RuntimeError("RESUME_PROGRESS_CONTRACT_MISMATCH")
-    return [dict(row) for row in value["records"] if isinstance(row, Mapping)]
+    records = [dict(row) for row in value["records"] if isinstance(row, Mapping)]
+    ACTIVE_RESUME_LOADED_COUNT = len(records)
+    return records
 
 
 def persist_resume_progress(
@@ -398,6 +409,8 @@ def persist_resume_progress(
     )
     checkpoint["checkpoint_hash"] = object_hash(checkpoint)
     write_json_atomic(checkpoint_path, checkpoint)
+    if ACTIVE_TEST_STOP_AFTER_RECORDS and cursor >= ACTIVE_TEST_STOP_AFTER_RECORDS:
+        raise SoftDeadlineReached(f"CHECKPOINT_TEST_STOP_AT_CURSOR:{cursor}")
 
 
 def canonical_phase(stage: str) -> str:
@@ -703,7 +716,7 @@ def build_census(rows: Sequence[Mapping[str, Any]], output_root: Path) -> dict[s
     census = {
         "schema_version": "raw-field-census-v1",
         "generated_at": GENERATED_AT,
-        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "source_lock_sha256": repository_text_sha256(SOURCE_LOCK),
         "raw_values_in_git": False,
         "fixture_identifiers": "SHA256_ONLY",
         "normalized_row_count": len(rows),
@@ -2984,6 +2997,73 @@ def combine_adjustments(
     return {category: raw[category] / denominator for category in categories}
 
 
+def compact_pair_report(
+    report: Mapping[str, Any], heavy_artifact: Mapping[str, Any]
+) -> dict[str, Any]:
+    results = report.get("results")
+    if not isinstance(results, list):
+        raise TypeError("PAIR_RESULTS_ARRAY_REQUIRED")
+    compact_results: list[dict[str, Any]] = []
+    for row in results:
+        if not isinstance(row, Mapping):
+            raise TypeError("PAIR_RESULT_OBJECT_REQUIRED")
+        compact_metrics = {
+            target_name: {
+                key: metric[key]
+                for key in (
+                    "delta_log_loss_by_comparator",
+                    "delta_brier_by_comparator",
+                    "p_values_raw_by_comparator",
+                    "p_value_raw_intersection_union",
+                    "q_value_global",
+                    "q_value_family",
+                    "q_value",
+                    "pair_snapshot_hash",
+                    "hypothesis_id",
+                    "status",
+                    "review_gate",
+                    "suspicious_reasons",
+                )
+            }
+            for target_name, metric in row["target_metrics"].items()
+        }
+        compact_results.append(
+            {
+                key: row[key]
+                for key in (
+                    "pair_id",
+                    "parent_a",
+                    "parent_b",
+                    "parent_property_a",
+                    "parent_property_b",
+                    "status",
+                )
+            }
+            | {"target_metrics": compact_metrics}
+        )
+    compact_report = {key: value for key, value in report.items() if key != "results"}
+    compact_report["result_detail"] = (
+        "COMPACT_GIT_SUMMARY_FULL_ROWS_IN_GITHUB_ARTIFACT"
+    )
+    compact_report["full_results_artifact"] = dict(heavy_artifact)
+    compact_report["pair_snapshot_contract"] = {
+        "inputs": [
+            "pair_id",
+            "parent_definition_hashes",
+            "parent_fold_threshold_hashes",
+            "parent_mask_ids",
+            "parent_tag_snapshot_hashes",
+            "target_id",
+        ],
+        "parent_definition_source": "configs/hypothesis-tags/canonical-tag-registry-v1.json",
+        "parent_fold_snapshot_source": "reports/hypothesis-research/atomic-results-v1.json",
+        "parent_mask_source": "reports/hypothesis-masks/atomic-mask-manifest-v1.json",
+        "full_row_source": "full_results_artifact",
+    }
+    compact_report["results"] = compact_results
+    return compact_report
+
+
 def evaluate_pairs(
     selected: Sequence[Mapping[str, Any]],
     fixtures: Sequence[Fixture],
@@ -3408,60 +3488,7 @@ def evaluate_pairs(
     heavy_artifact = write_heavy_json_artifact(
         store_root, "pair-results-full-v1.json.gz", report
     )
-    compact_results: list[dict[str, Any]] = []
-    for row in results:
-        compact_metrics = {
-            target_name: {
-                key: metric[key]
-                for key in (
-                    "delta_log_loss_by_comparator",
-                    "delta_brier_by_comparator",
-                    "p_values_raw_by_comparator",
-                    "p_value_raw_intersection_union",
-                    "q_value_global",
-                    "q_value_family",
-                    "q_value",
-                    "pair_snapshot_hash",
-                    "hypothesis_id",
-                    "status",
-                    "review_gate",
-                    "suspicious_reasons",
-                )
-            }
-            for target_name, metric in row["target_metrics"].items()
-        }
-        compact_results.append(
-            {
-                key: row[key]
-                for key in (
-                    "pair_id",
-                    "parent_a",
-                    "parent_b",
-                    "parent_property_a",
-                    "parent_property_b",
-                    "status",
-                )
-            }
-            | {"target_metrics": compact_metrics}
-        )
-    compact_report = {key: value for key, value in report.items() if key != "results"}
-    compact_report["result_detail"] = "COMPACT_GIT_SUMMARY_FULL_ROWS_IN_GITHUB_ARTIFACT"
-    compact_report["full_results_artifact"] = heavy_artifact
-    compact_report["pair_snapshot_contract"] = {
-        "inputs": [
-            "pair_id",
-            "parent_definition_hashes",
-            "parent_fold_threshold_hashes",
-            "parent_mask_ids",
-            "parent_tag_snapshot_hashes",
-            "target_id",
-        ],
-        "parent_definition_source": "configs/hypothesis-tags/canonical-tag-registry-v1.json",
-        "parent_fold_snapshot_source": "reports/hypothesis-research/atomic-results-v1.json",
-        "parent_mask_source": "reports/hypothesis-masks/atomic-mask-manifest-v1.json",
-        "full_row_source": "full_results_artifact",
-    }
-    compact_report["results"] = compact_results
+    compact_report = compact_pair_report(report, heavy_artifact)
     write_json(output_root / "reports/hypothesis-research/pair-results-v1.json", compact_report)
 
     rankings = sorted(
@@ -3527,7 +3554,9 @@ def build_pair_clusters(
         str(row["pair_id"]): masks[str(row["parent_a"])][1] & masks[str(row["parent_b"])][1]
         for row in results
     }
-    for left, right in combinations(sorted(pair_masks), 2):
+    for index, (left, right) in enumerate(combinations(sorted(pair_masks), 2)):
+        if index % 256 == 0:
+            enforce_soft_deadline()
         intersection = (pair_masks[left] & pair_masks[right]).bit_count()
         union_count = (pair_masks[left] | pair_masks[right]).bit_count()
         if union_count and intersection / union_count >= 0.9:
@@ -3965,7 +3994,7 @@ def build_campaign_configs(
     artifact_lock = {
         "schema_version": "phase-c-artifact-lock-v1",
         "status": "EMPTY_DRAFT_REQUIRES_SUCCESSOR_ON_DEFAULT_BRANCH",
-        "lineage_source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "lineage_source_lock_sha256": repository_text_sha256(SOURCE_LOCK),
         "stage_locks": {},
         "selection_rule": "TRUSTED_MAIN_EXACT_RUN_ATTEMPT_HEAD_ARTIFACT_ID_NAME_SIZE_DIGEST_AND_MANIFEST_HASH",
         "triple_search_locked": True,
@@ -4011,7 +4040,7 @@ def build_campaign_configs(
             "compatible_pair_search_upload_max": 25_000_000,
             "derived_stage_download_max": 120_000_000,
         },
-        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "source_lock_sha256": repository_text_sha256(SOURCE_LOCK),
         "phase_c_artifact_lock_hash": artifact_lock["lock_hash"],
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
         "preflight_sha256": sha256_bytes(
@@ -4133,7 +4162,7 @@ def build_stage_manifest(
         "stage": stage.upper().replace("-", "_"),
         "execution_sha": execution_sha,
         "shard_id": shard_id,
-        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "source_lock_sha256": repository_text_sha256(SOURCE_LOCK),
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
         "artifact_file_count": len(records),
         "artifact_bytes": sum(int(row["bytes"]) for row in records),
@@ -4643,8 +4672,10 @@ def reduce_pair_shards(
     input_root: Path,
     tag_mask_root: Path,
     output_root: Path,
+    store_root: Path,
     execution_sha: str,
 ) -> dict[str, Any]:
+    enforce_soft_deadline()
     shard_paths = sorted(input_root.rglob("pair-results-shard-*-v1.json"))
     shards = [read_json(path) for path in shard_paths]
     if len(shards) != 8 or {int(row["shard_id"]) for row in shards} != set(range(8)):
@@ -4655,6 +4686,7 @@ def reduce_pair_shards(
     if not (len(shard_manifests) == len(checkpoints) == len(replays) == 8):
         raise RuntimeError("PAIR_REDUCER_SHARD_CONTROL_FILE_CARDINALITY")
     for shard in shards:
+        enforce_soft_deadline()
         if (
             object_hash({key: value for key, value in shard.items() if key != "shard_hash"})
             != shard.get("shard_hash")
@@ -4675,6 +4707,7 @@ def reduce_pair_shards(
         ):
             raise RuntimeError("PAIR_SHARD_ID_HASH_MISMATCH")
     for manifest_path in shard_manifests:
+        enforce_soft_deadline()
         manifest = read_json(manifest_path)
         verify_stage_artifact(
             manifest_path.parent,
@@ -4684,10 +4717,12 @@ def reduce_pair_shards(
             2_000_000,
         )
     for checkpoint_path in checkpoints:
+        enforce_soft_deadline()
         checkpoint = read_json(checkpoint_path)
         if checkpoint.get("completed") is not True or checkpoint.get("shard_count") != 8:
             raise RuntimeError("PAIR_REDUCER_INCOMPLETE_CHECKPOINT")
     for replay_path in replays:
+        enforce_soft_deadline()
         replay = read_json(replay_path)
         if replay.get("replay_runs") != 2 or replay.get("replay_identical") is not True:
             raise RuntimeError("PAIR_REDUCER_SHARD_REPLAY_MISMATCH")
@@ -4718,10 +4753,18 @@ def reduce_pair_shards(
         ),
         "canonical_test_count": sum(len(row["target_metrics"]) for row in results),
         "status_counts": dict(sorted(status_counts.items())),
-        "reduced_from_shards": 8,
         "results": results,
     }
-    write_json(output_root / "reports/hypothesis-research/pair-results-v1.json", report)
+    heavy_artifact = write_heavy_json_artifact(
+        store_root, "pair-results-full-v1.json.gz", report
+    )
+    if heavy_artifact["sha256"] not in source_hashes:
+        raise RuntimeError("PAIR_REDUCER_FULL_REPORT_HASH_DRIFT")
+    write_json(
+        output_root / "reports/hypothesis-research/pair-results-v1.json",
+        compact_pair_report(report, heavy_artifact),
+    )
+    enforce_soft_deadline()
     rankings = sorted(
         results,
         key=lambda row: max(
@@ -4761,8 +4804,10 @@ def reduce_pair_shards(
             ],
         },
     )
+    enforce_soft_deadline()
     _, _, masks, _, _, _ = load_upstream_masks(tag_mask_root)
     build_pair_clusters(results, masks, output_root)
+    enforce_soft_deadline()
     controls = sorted(input_root.rglob("pair-negative-controls-v1.json"))
     if len(controls) != 8 or len({sha256_bytes(path.read_bytes()) for path in controls}) != 1:
         raise RuntimeError("PAIR_NEGATIVE_CONTROL_SHARD_DRIFT")
@@ -4770,6 +4815,7 @@ def reduce_pair_shards(
         output_root / "reports/hypothesis-research/pair-negative-controls-v1.json",
         read_json(controls[0]),
     )
+    enforce_soft_deadline()
     pair_space = read_json(unique_rglob(tag_mask_root, "pair-search-space-v1.json"))
     config = read_json(unique_rglob(tag_mask_root, "atomic-property-campaign-v1.json"))
     write_json(output_root / "reports/hypothesis-research/pair-search-space-v1.json", pair_space)
@@ -4869,7 +4915,7 @@ def write_checkpoint(
         if isinstance(result.get("config"), Mapping)
         else None,
         "execution_sha": execution_sha,
-        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "source_lock_sha256": repository_text_sha256(SOURCE_LOCK),
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
         "stage_manifest_hash": stage_manifest["manifest_hash"],
         "shard_id": shard_id,
@@ -4883,6 +4929,10 @@ def write_checkpoint(
         "rejected": 0,
         "deferred": 0,
         "completed": True,
+        "resumed_from_cursor": ACTIVE_RESUME_LOADED_COUNT or None,
+        "completed_prefix_records_recomputed": 0
+        if ACTIVE_RESUME_LOADED_COUNT
+        else None,
         "previous_checkpoint_hash": previous_checkpoint_hash,
         "next_action": "STOP_BEFORE_TRIPLES" if pair_count else "NEXT_DECLARED_PHASE",
         "triple_search_locked": True,
@@ -4911,7 +4961,7 @@ def write_initial_checkpoint(
         "mission_id": "HYPOTHESIS-TAG-MASK-PAIR-FACTORY-V1",
         "phase": canonical_phase(stage),
         "execution_sha": execution_sha,
-        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "source_lock_sha256": repository_text_sha256(SOURCE_LOCK),
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
         "shard_id": shard_id,
         "shard_count": shard_count,
@@ -4997,6 +5047,7 @@ def main() -> int:
             args.input_root.resolve(),
             args.tag_mask_root.resolve(),
             args.output_root.resolve(),
+            args.store_root.resolve(),
             args.execution_sha,
         )
         manifest = build_stage_manifest(
@@ -5033,7 +5084,7 @@ def main() -> int:
         if (
             previous.get("execution_sha") != args.execution_sha
             or previous.get("shard_id") != args.shard_id
-            or previous.get("source_lock_sha256") != sha256_bytes(SOURCE_LOCK.read_bytes())
+            or previous.get("source_lock_sha256") != repository_text_sha256(SOURCE_LOCK)
             or previous.get("generator_sha256") != sha256_bytes(GENERATOR_PATH.read_bytes())
         ):
             raise RuntimeError("RESUME_CHECKPOINT_LINEAGE_MISMATCH")

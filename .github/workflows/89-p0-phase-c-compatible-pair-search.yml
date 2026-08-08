@@ -181,11 +181,13 @@ jobs:
           root=Path("_phase_c/pair-shards")
           if sum(p.stat().st_size for p in root.rglob("*") if p.is_file()) > 16_000_000: raise SystemExit("PAIR_SHARDS_DOWNLOAD_CAP_EXCEEDED")
           PY
-          timeout --signal=TERM 240s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py reduce-pair-shards --input-root _phase_c/pair-shards --tag-mask-root _phase_c/tag-mask-upstream --output-root "$RUNNER_TEMP/phase-c-pair-reduce-a" --store-root "$RUNNER_TEMP/phase-c-pair-reduce-store-a" --execution-sha "${EXECUTION_SHA}"
-          timeout --signal=TERM 240s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py reduce-pair-shards --input-root _phase_c/pair-shards --tag-mask-root _phase_c/tag-mask-upstream --output-root "$RUNNER_TEMP/phase-c-pair-reduce-b" --store-root "$RUNNER_TEMP/phase-c-pair-reduce-store-b" --execution-sha "${EXECUTION_SHA}"
+          timeout --signal=TERM 240s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py reduce-pair-shards --input-root _phase_c/pair-shards --tag-mask-root _phase_c/tag-mask-upstream --output-root "$RUNNER_TEMP/phase-c-pair-reduce-a" --store-root "$RUNNER_TEMP/phase-c-pair-reduce-store-a" --execution-sha "${EXECUTION_SHA}" --soft-deadline-seconds 210
+          timeout --signal=TERM 240s unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py reduce-pair-shards --input-root _phase_c/pair-shards --tag-mask-root _phase_c/tag-mask-upstream --output-root "$RUNNER_TEMP/phase-c-pair-reduce-b" --store-root "$RUNNER_TEMP/phase-c-pair-reduce-store-b" --execution-sha "${EXECUTION_SHA}" --soft-deadline-seconds 210
+          cmp "$RUNNER_TEMP/phase-c-pair-reduce-store-a/results/pair-results-full-v1.json.gz" "$RUNNER_TEMP/phase-c-pair-reduce-store-b/results/pair-results-full-v1.json.gz"
           unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py replay-stage --first-root "$RUNNER_TEMP/phase-c-pair-reduce-a" --second-root "$RUNNER_TEMP/phase-c-pair-reduce-b"
-          mkdir -p "${artifact}/reports/hypothesis-research"
+          mkdir -p "${artifact}/reports/hypothesis-research" "${artifact}/results"
           cp "$RUNNER_TEMP/phase-c-pair-reduce-a/reports/hypothesis-research/"*.json "${artifact}/reports/hypothesis-research/"
+          cp "$RUNNER_TEMP/phase-c-pair-reduce-store-a/results/pair-results-full-v1.json.gz" "${artifact}/results/"
           cp "$RUNNER_TEMP/phase-c-pair-reduce-a/campaign-replay-v1.json" "${artifact}/campaign-replay-v1.json"
           cp "$RUNNER_TEMP/phase-c-pair-reduce-store-a/checkpoint-v1.json" "${artifact}/checkpoint-v1.json"
           trap - EXIT

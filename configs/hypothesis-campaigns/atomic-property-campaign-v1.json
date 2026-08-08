@@ -1,5 +1,5 @@
 {
-  "campaign_hash": "700ccdeb0e4d8a7b702cb641d186af00187f51260e652de627993ccdfa5dc1b6",
+  "campaign_hash": "1dda36513f4d8048958814148ac39284eeeb4f40e95f746082dcd9957c339e26",
   "campaign_id": "PHASE-C-ATOMIC-80-X-2-2024-V1",
   "compute_budget": {
     "atomic_tags": 80,
@@ -43,7 +43,7 @@
   ],
   "frozen_at": "2026-08-08T09:10:42Z",
   "frozen_before_target_analysis": true,
-  "generator_sha256": "37eddc4ea7eab7bc530776acd03b141da845d93ad33aea20a8682a6466a06667",
+  "generator_sha256": "670b05af1578bf2bcf0b348c26caa5924964e9d81dcdacee715dfc8565abb871",
   "markets": [],
   "mask_manifest_hash": "02c682459ee0b9e6bbfcd14dfd505a31d529ec41261b9e24ba68b309bc8e6e67",
   "mode": "PREDICTIVE_ONLY",

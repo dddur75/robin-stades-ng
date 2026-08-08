@@ -34,6 +34,10 @@ def file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def repository_text_hash(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def read_object(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -91,7 +95,7 @@ def validate_authority() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]
         raise RuntimeError("PHASE_C_ARTIFACT_LOCK_CANONICAL_HASH_MISMATCH")
     if activation.get("phase_c_artifact_lock_hash") != lock.get("lock_hash"):
         raise RuntimeError("PHASE_C_ARTIFACT_LOCK_AUTHORITY_MISMATCH")
-    if file_hash(SOURCE_LOCK) != activation.get("source_lock_sha256"):
+    if repository_text_hash(SOURCE_LOCK) != activation.get("source_lock_sha256"):
         raise RuntimeError("PHASE_C_SOURCE_LOCK_HASH_MISMATCH")
     if file_hash(Path(__file__)) != activation.get("preflight_sha256"):
         raise RuntimeError("PHASE_C_PREFLIGHT_HASH_MISMATCH")
@@ -114,7 +118,9 @@ def validate_authority() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]
 
 
 def validate_source(activation: dict[str, Any], source: dict[str, Any]) -> None:
-    run = api(f"actions/runs/{source['source_run_id']}")
+    run = api(
+        f"actions/runs/{source['source_run_id']}/attempts/{source['source_run_attempt']}"
+    )
     if (
         run.get("run_attempt") != source["source_run_attempt"]
         or run.get("head_sha") != source["source_head_sha"]
@@ -165,7 +171,7 @@ def validate_stage(
         stage = stage_locks.get(stage_name)
         if not isinstance(stage, dict):
             raise RuntimeError(f"UPSTREAM_STAGE_LOCK_MISSING:{stage_name}")
-        run = api(f"actions/runs/{stage['run_id']}")
+        run = api(f"actions/runs/{stage['run_id']}/attempts/{stage['run_attempt']}")
         if (
             run.get("id") != stage["run_id"]
             or run.get("run_attempt") != stage["run_attempt"]
@@ -205,7 +211,7 @@ def validate_resume(workflow_path: str | None) -> None:
         return
     if not raw_run_id.isdigit() or not raw_attempt.isdigit() or not workflow_path:
         raise RuntimeError("RESUME_INPUT_CONTRACT_MISMATCH")
-    run = api(f"actions/runs/{int(raw_run_id)}")
+    run = api(f"actions/runs/{int(raw_run_id)}/attempts/{int(raw_attempt)}")
     if (
         run.get("id") != int(raw_run_id)
         or run.get("run_attempt") != int(raw_attempt)

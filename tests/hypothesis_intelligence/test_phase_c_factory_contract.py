@@ -354,7 +354,9 @@ def test_phase_c_workflows_are_manual_distinct_dormant_and_read_only() -> None:
         (ROOT / "scripts/validate_phase_c_workflow_contract.py").read_bytes()
     ).hexdigest()
     assert activation["source_lock_sha256"] == hashlib.sha256(
-        (ROOT / "configs/execution/p0-e3-artifact-lock-v1.json").read_bytes()
+        (ROOT / "configs/execution/p0-e3-artifact-lock-v1.json")
+        .read_bytes()
+        .replace(b"\r\n", b"\n")
     ).hexdigest()
     assert activation["workflow_sha256"] == {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
@@ -371,6 +373,25 @@ def test_phase_c_workflows_are_manual_distinct_dormant_and_read_only() -> None:
     assert artifact_lock_without_hash.pop("lock_hash") == canonical_hash(
         artifact_lock_without_hash
     )
+    preflight_source = (
+        ROOT / "scripts/validate_phase_c_workflow_contract.py"
+    ).read_text(encoding="utf-8")
+    assert "actions/runs/{source['source_run_id']}/attempts/" in preflight_source
+    assert "actions/runs/{stage['run_id']}/attempts/" in preflight_source
+    assert "actions/runs/{int(raw_run_id)}/attempts/" in preflight_source
+    assert "repository_text_hash(SOURCE_LOCK)" in preflight_source
+
+    assert "pair-results-full-v1.json.gz" in pair_workflow
+    assert "--soft-deadline-seconds 210" in pair_workflow
+    runner_source = (
+        ROOT / "scripts/run_hypothesis_tag_mask_pair_factory.py"
+    ).read_text(encoding="utf-8")
+    reducer_source = runner_source.split("def reduce_pair_shards(", 1)[1].split(
+        "def parse_args(", 1
+    )[0]
+    assert "write_heavy_json_artifact(" in reducer_source
+    assert "compact_pair_report(report, heavy_artifact)" in reducer_source
+    assert reducer_source.count("enforce_soft_deadline()") >= 8
 
 
 def test_checkpoint_resume_and_stage_manifest_fail_closed(tmp_path: Path) -> None:
@@ -433,6 +454,43 @@ def test_checkpoint_resume_and_stage_manifest_fail_closed(tmp_path: Path) -> Non
             "b" * 40,
             5_000_000,
         )
+
+
+def test_checkpoint_cursor_17_receipt_is_sanitized_and_code_bound() -> None:
+    receipt = load("reports/hypothesis-research/checkpoint-resume-proof-v1.json")
+    without_hash = dict(receipt)
+    assert without_hash.pop("proof_hash") == canonical_hash(without_hash)
+    assert receipt["candidate_generator_sha256"] == hashlib.sha256(
+        (ROOT / "scripts/run_hypothesis_tag_mask_pair_factory.py").read_bytes()
+    ).hexdigest()
+    assert receipt["source_lock_sha256"] == factory.repository_text_sha256(
+        ROOT / "configs/execution/p0-e3-artifact-lock-v1.json"
+    )
+    interruption = receipt["forced_interruption"]
+    assert interruption["cursor"] == 17
+    assert interruption["completed"] is False
+    assert interruption["expected_nonzero_exit"] is True
+    assert interruption["progress_file_sha256"] == interruption[
+        "checkpoint_referenced_progress_sha256"
+    ]
+    resume = receipt["resume"]
+    assert resume["resumed_from_cursor"] == 17
+    assert resume["completed_prefix_records_recomputed"] == 0
+    assert resume["previous_checkpoint_hash"] == interruption[
+        "checkpoint_object_hash"
+    ]
+    assert resume["completed"] is True
+    byte_identity = receipt["byte_identity"]
+    assert byte_identity["full_results_identical"] is True
+    assert byte_identity["compact_results_identical"] is True
+    assert byte_identity["clean_pair_results_full_gzip_sha256"] == byte_identity[
+        "resumed_pair_results_full_gzip_sha256"
+    ]
+    assert byte_identity["clean_pair_results_compact_sha256"] == byte_identity[
+        "resumed_pair_results_compact_sha256"
+    ]
+    assert all(value == 0 for value in receipt["external_effect_counters"].values())
+    assert not any(receipt["sanitization"].values())
 
 
 def load_from_path(path: Path) -> dict[str, object]:
