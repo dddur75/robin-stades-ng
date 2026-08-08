@@ -346,14 +346,14 @@ def _measurement_row(
 ) -> dict[str, Any]:
     grain, role, temporal = ROLES[capability]
     integrity_denominator = received + invalid + contradictory
-    if block_reason is not None:
+    if capability == "CALENDAR":
         status = "BLOCKED_BY_SOURCE" if stage == "E3A" else "E3B_BLOCKED"
     elif invalid or contradictory or (expected is not None and received != expected):
         status = "MEASURED_PARTIAL" if stage == "E3A" else "E3B_MEASURED_PARTIAL"
+    elif block_reason is not None:
+        status = "BLOCKED_BY_SOURCE" if stage == "E3A" else "E3B_BLOCKED"
     else:
         status = "READY_RECONSTRUCTED" if stage == "E3A" else "E3B_READY_RECONSTRUCTED"
-    if capability == "CALENDAR":
-        status = "BLOCKED_BY_SOURCE" if stage == "E3A" else "E3B_BLOCKED"
     return {
         "block_reason": block_reason,
         "capability_id": capability,
@@ -1067,7 +1067,7 @@ def _report_payloads(e3a: Mapping[str, Any], e3b: Sequence[Mapping[str, Any]]) -
     return values
 
 
-def _aggregate(results_root: Path, output: Path) -> None:
+def _aggregate(results_root: Path, output: Path, *, compare_committed: bool = True) -> None:
     _safety()
     results = [_read(path) for path in results_root.rglob("league-result-v1.json")]
     e3a = [value for value in results if value.get("stage") == "E3A"]
@@ -1092,7 +1092,7 @@ def _aggregate(results_root: Path, output: Path) -> None:
     for name, value in first.items():
         committed = ROOT / REPORT_DESTINATIONS[name]
         payload = _render(value)
-        if committed.exists() and committed.read_bytes() != payload:
+        if compare_committed and committed.exists() and committed.read_bytes() != payload:
             raise ValueError(f"E3_COMMITTED_REPORT_DIVERGENCE:{name}")
         (output / name).write_bytes(payload)
 
@@ -1128,6 +1128,7 @@ def main() -> None:
     aggregate = commands.add_parser("aggregate")
     aggregate.add_argument("--results-root", type=Path, required=True)
     aggregate.add_argument("--output", type=Path, required=True)
+    aggregate.add_argument("--allow-report-refresh", action="store_true")
     install = commands.add_parser("install-reports")
     install.add_argument("--input", type=Path, required=True)
     args = parser.parse_args()
@@ -1152,7 +1153,11 @@ def main() -> None:
         )
         print("E3B_LEAGUE_MEASUREMENT_COMPLETE")
     elif args.command == "aggregate":
-        _aggregate(args.results_root.resolve(), args.output.resolve())
+        _aggregate(
+            args.results_root.resolve(),
+            args.output.resolve(),
+            compare_committed=not args.allow_report_refresh,
+        )
         print("E3_AGGREGATE_COMPLETE")
     else:
         _install_reports(args.input.resolve())

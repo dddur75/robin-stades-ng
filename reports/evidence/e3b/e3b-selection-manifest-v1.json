@@ -1,0 +1,55 @@
+{
+  "capabilities": [
+    "DISCIPLINE_GENERIC",
+    "EVENTS",
+    "FORMATION",
+    "LINEUP",
+    "PLAYER",
+    "TEAM",
+    "TEAM_STATISTICS"
+  ],
+  "competitions": [
+    {
+      "artifact_id": 8875626108,
+      "competition": "Premier League",
+      "competition_id": 39,
+      "fixture_count": 380,
+      "segment_id": "seg-000209-75959aee62633e1d"
+    },
+    {
+      "artifact_id": 8875918562,
+      "competition": "Ligue 1",
+      "competition_id": 61,
+      "fixture_count": 308,
+      "segment_id": "seg-000283-c1badd6c93caeaa1"
+    },
+    {
+      "artifact_id": 8876203323,
+      "competition": "Bundesliga",
+      "competition_id": 78,
+      "fixture_count": 308,
+      "segment_id": "seg-000358-e8aa4904c2844e97"
+    },
+    {
+      "artifact_id": 8875016575,
+      "competition": "Serie A",
+      "competition_id": 135,
+      "fixture_count": 380,
+      "segment_id": "seg-000061-2c731db89c0e7973"
+    },
+    {
+      "artifact_id": 8875329908,
+      "competition": "Liga",
+      "competition_id": 140,
+      "fixture_count": 380,
+      "segment_id": "seg-000135-7561044ce00d9626"
+    }
+  ],
+  "e3a_gate_hash": "554be807be5d002c01db537abcab42ec2ee59c0fd025f214932fd3b673e2a92d",
+  "e3a_selection_hash": "6c9446ec3c1979ac272679c2bb9cd23bd08cf41b6611eae03dcf956c64ca0e3c",
+  "mission_id": "p0-e3-capability-scale-v1",
+  "schema_version": "p0-e3b-selection-manifest-v1",
+  "season": 2024,
+  "selection_hash": "65ed2aecca33a9b8a2905a49342d0bbcac81e751243bfc8363936dd0435d3dce",
+  "stage": "E3B"
+}

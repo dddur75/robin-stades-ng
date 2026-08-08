@@ -1,0 +1,16 @@
+{
+  "artifact_download_count": 5,
+  "cpu_time_seconds": "EXCLUDED_FROM_DETERMINISTIC_REPORT",
+  "e3a_selected_source_reused": true,
+  "external_monetary_cost": 0,
+  "github_artifact_bytes": 95006161,
+  "github_minutes": "OBSERVE_FROM_WORKFLOW_RUN",
+  "logical_source_bytes": 76171611,
+  "memory_peak_bytes": "UNKNOWN_NOT_OBSERVED",
+  "odds_credits": 0,
+  "provider_calls": 0,
+  "r2_bytes": 0,
+  "r2_logical_gets": 0,
+  "schema_version": "p0-e3b-costs-v1",
+  "sql_queries": 0
+}

@@ -1,0 +1,79 @@
+{
+  "passed_capabilities": [
+    "DISCIPLINE_GENERIC",
+    "EVENTS",
+    "FORMATION",
+    "LINEUP",
+    "PLAYER",
+    "TEAM",
+    "TEAM_STATISTICS"
+  ],
+  "rows": [
+    {
+      "block_reason": "NO_REAL_KNOWN_AT_OR_REVISION_CATALOG",
+      "capability_id": "CALENDAR",
+      "scientific_role": "STRICT_PREDICTOR_SOURCE",
+      "status": "BLOCKED_BY_SOURCE",
+      "temporal_class": "STRICT_AS_OF"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "DISCIPLINE_GENERIC",
+      "scientific_role": "LAGGABLE_POST_MATCH_SOURCE",
+      "status": "READY_RECONSTRUCTED",
+      "temporal_class": "POST_MATCH_LAGGABLE_ONLY"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "EVENTS",
+      "scientific_role": "LAGGABLE_POST_MATCH_SOURCE",
+      "status": "READY_RECONSTRUCTED",
+      "temporal_class": "POST_MATCH_LAGGABLE_ONLY"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "FORMATION",
+      "scientific_role": "RECONSTRUCTED_DESCRIPTIVE_ONLY",
+      "status": "READY_RECONSTRUCTED",
+      "temporal_class": "POST_MATCH_RECONSTRUCTED"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "LINEUP",
+      "scientific_role": "RECONSTRUCTED_DESCRIPTIVE_ONLY",
+      "status": "READY_RECONSTRUCTED",
+      "temporal_class": "POST_MATCH_RECONSTRUCTED"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "PLAYER",
+      "scientific_role": "IDENTITY_ONLY",
+      "status": "READY_RECONSTRUCTED",
+      "temporal_class": "POST_MATCH_IDENTITY"
+    },
+    {
+      "block_reason": "E2_PROVIDER_INCONSISTENCY_UNKNOWN_POLICY_NOT_OPENED",
+      "capability_id": "PLAYER_STATISTICS",
+      "scientific_role": "BLOCKED",
+      "status": "BLOCKED_BY_SOURCE",
+      "temporal_class": "BLOCKED"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "TEAM",
+      "scientific_role": "IDENTITY_ONLY",
+      "status": "READY_RECONSTRUCTED",
+      "temporal_class": "POST_MATCH_IDENTITY"
+    },
+    {
+      "block_reason": null,
+      "capability_id": "TEAM_STATISTICS",
+      "scientific_role": "LAGGABLE_POST_MATCH_SOURCE",
+      "status": "READY_RECONSTRUCTED",
+      "temporal_class": "POST_MATCH_LAGGABLE_ONLY"
+    }
+  ],
+  "schema_version": "p0-e3a-capability-matrix-v1",
+  "strict_capabilities_ready": [],
+  "verdict": "PASS_AND_SCALE_RECONSTRUCTED_ONLY"
+}

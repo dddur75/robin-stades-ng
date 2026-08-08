@@ -1,0 +1,13 @@
+{
+  "additional_network_reads": 0,
+  "all_report_hashes": {
+    "e3a-calendar-asof-v1": "3ef06d07ffc630daf3a02f4d74e5ffce8525d15a518e53114d7b1253bad8648b",
+    "e3a-capability-matrix-v1": "9cc6456cb8b9d6a3616149137e02976163a618a9d71f53665bec015d28154740",
+    "e3a-costs-v1": "294745e126de8f203a56b389183d1b532bb92fdef160a917925b39b79a739f3a",
+    "e3a-measurement-v1": "8236edf659f1e14f5dc9ff14cb0ac4dd3c36e9e76b7d1bff928a6a17b2c01794",
+    "e3a-selection-manifest-v1": "cfda2f18864ab48d4dc771ab5d84d7a0cf22aaef9e7539b86cc3e7f6ffe0e32c"
+  },
+  "replay_identical": true,
+  "schema_version": "p0-e3a-replay-v1",
+  "selection_hash": "6c9446ec3c1979ac272679c2bb9cd23bd08cf41b6611eae03dcf956c64ca0e3c"
+}
