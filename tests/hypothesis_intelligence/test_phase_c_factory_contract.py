@@ -518,15 +518,41 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> Non
             )
         )
     }
-    assert len(claims) == 11
+    assert len(claims) == 14
     assert {row["code_revision"] for row in claims.values()} == {
         "b2395964faf08a61ac45df36d547025a4b132e13"
     }
     assert claims["FEATURE.PHASE_C.RECONCILIATION.V1.001"]["status"] == "PARTIAL"
-    assert claims["EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001"]["status"] == "PARTIAL"
-    assert claims["EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001"]["status"] == "PARTIAL"
+    assert claims["EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001"]["status"] == "INVALIDATED"
+    assert claims["EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002"]["status"] == "PARTIAL"
+    assert "158 raw historical signals" in claims[
+        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002"
+    ]["claim"]
+    assert claims["EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001"]["status"] == "INVALIDATED"
+    assert claims["EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002"]["status"] == "PARTIAL"
+    assert "142 rejected tests" in claims["EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002"][
+        "claim"
+    ]
+    assert claims["REPLAY.PHASE_C.DETERMINISM.V1.001"]["status"] == "INVALIDATED"
+    assert claims["REPLAY.PHASE_C.DETERMINISM.V1.002"]["status"] == "VERIFIED"
+    assert "twenty Git-tracked" in claims[
+        "REPLAY.PHASE_C.DETERMINISM.V1.002"
+    ]["claim"]
     assert claims["GOV.PHASE_C.ACTIVATION.HOLD.V1.001"]["status"] == "BLOCKED"
-    assert all("DP6" in row["verified_by"] for row in claims.values())
+    dp6_claim_ids = {
+        claim_id for claim_id, row in claims.items() if "DP6" in row["verified_by"]
+    }
+    assert dp6_claim_ids == {
+        "DATA.PHASE_C.RAW_FIELD_CENSUS.V1.001",
+        "FEATURE.PHASE_C.RECONCILIATION.V1.001",
+        "FEATURE.PHASE_C.TAG_MASK_STORE.V1.001",
+        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002",
+        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002",
+        "CONTROL.PHASE_C.ATOMIC_NEGATIVE.V1.001",
+        "CONTROL.PHASE_C.PAIR_NEGATIVE.V1.001",
+        "REPLAY.PHASE_C.DETERMINISM.V1.002",
+        "EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001",
+    }
     assert not any(
         forbidden in row["claim"].lower()
         for row in claims.values()

@@ -11,8 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 GRAPH = ROOT / "reports/evidence/evidence-graph.json"
 LEDGER = ROOT / "reports/council/decision-ledger.jsonl"
 IMPLEMENTATION_REVISION = "b2395964faf08a61ac45df36d547025a4b132e13"
-DECISION_ID = "RCV3-20260808-074"
-GENERATED_AT = "2026-08-08T13:25:00Z"
+ORIGINAL_DECISION_ID = "RCV3-20260808-074"
+CORRECTION_DECISION_ID = "RCV3-20260808-075"
+GENERATED_AT = "2026-08-08T13:55:00Z"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
@@ -62,8 +63,9 @@ def _claim(
     artifact: str,
     status: str,
     verified_by: list[str],
+    **extra: Any,
 ) -> dict[str, Any]:
-    return {
+    row = {
         "claim_id": claim_id,
         "claim": claim,
         "scope": scope,
@@ -79,6 +81,8 @@ def _claim(
         "status": status,
         "verified_by": verified_by,
     }
+    row.update(extra)
+    return row
 
 
 def _claims() -> list[dict[str, Any]]:
@@ -142,8 +146,29 @@ def _claims() -> list[dict[str, Any]]:
             grain="one_tag_target_test",
             temporal_class="FIVE_FOLD_PRIOR_ONLY_EVALUATION",
             artifact="reports/hypothesis-research/atomic-results-v1.json",
+            status="INVALIDATED",
+            verified_by=["C0"],
+            invalidation_reason=(
+                "The claim mixed tag-level 78/1/1 counts with a tag-target-test grain and "
+                "incorrectly described all tests as suspicious."
+            ),
+        ),
+        _claim(
+            claim_id="EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002",
+            claim=(
+                "The bounded atomic campaign executes 160 corrected tag-target tests: "
+                "158 raw historical signals, one multiplicity survivor and one temporal "
+                "survivor. Only the two post-raw survivors require suspicious-edge review, "
+                "and no hypothesis is promoted."
+            ),
+            scope="PHASE_C_80_TAG_160_TEST_ATOMIC_CAMPAIGN",
+            source="out-of-fold atomic evaluation with global and family corrections",
+            grain="one_tag_target_test",
+            temporal_class="FIVE_FOLD_PRIOR_ONLY_EVALUATION",
+            artifact="reports/hypothesis-research/atomic-results-v1.json",
             status="PARTIAL",
             verified_by=["DP6", "DP2"],
+            successor_of="EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
         ),
         _claim(
             claim_id="EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
@@ -158,8 +183,29 @@ def _claims() -> list[dict[str, Any]]:
             grain="one_canonical_tag_pair_target_test",
             temporal_class="FIVE_FOLD_PRIOR_ONLY_EVALUATION",
             artifact="reports/hypothesis-research/pair-results-v1.json",
+            status="INVALIDATED",
+            verified_by=["C0"],
+            invalidation_reason=(
+                "The claim mixed pair-level 45/51/24 counts with a pair-target-test grain."
+            ),
+        ),
+        _claim(
+            claim_id="EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002",
+            claim=(
+                "The bounded pair campaign represents all 21 selected-property pairs but "
+                "executes only 120 of 1,398 structurally eligible tag pairs. Its 240 "
+                "pair-target tests contain 50 raw historical signals, 142 rejected tests "
+                "and 48 long-tail deferrals with zero final survivors; compatible-pair "
+                "completeness is not claimed."
+            ),
+            scope="PHASE_C_120_OF_1398_TAG_PAIR_CAMPAIGN",
+            source="eight deterministic pair shards and comparator-safe OOF evaluation",
+            grain="one_canonical_tag_pair_target_test",
+            temporal_class="FIVE_FOLD_PRIOR_ONLY_EVALUATION",
+            artifact="reports/hypothesis-research/pair-results-v1.json",
             status="PARTIAL",
             verified_by=["DP6", "DP2"],
+            successor_of="EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
         ),
         _claim(
             claim_id="CONTROL.PHASE_C.ATOMIC_NEGATIVE.V1.001",
@@ -201,8 +247,29 @@ def _claims() -> list[dict[str, Any]]:
             grain="one_tracked_phase_c_artifact",
             temporal_class="CODE_AS_OF",
             artifact="reports/hypothesis-research/campaign-replay-v1.json",
+            status="INVALIDATED",
+            verified_by=["C0"],
+            invalidation_reason=(
+                "The replay manifest tracks twenty Git artifacts but no gzip path; full "
+                "gzip equality is separate evidence and was incorrectly included."
+            ),
+        ),
+        _claim(
+            claim_id="REPLAY.PHASE_C.DETERMINISM.V1.002",
+            claim=(
+                "Two fresh zero-effect Phase C builds reproduce all twenty Git-tracked "
+                "artifacts byte-for-byte. Full gzip outputs are intentionally outside this "
+                "claim and are bound separately by compact descriptors and the local "
+                "checkpoint-resume proof."
+            ),
+            scope="PHASE_C_LOCAL_TWO_FRESH_BUILD_REPLAY",
+            source="two fresh isolated local output roots",
+            grain="one_git_tracked_phase_c_artifact",
+            temporal_class="CODE_AS_OF",
+            artifact="reports/hypothesis-research/campaign-replay-v1.json",
             status="VERIFIED",
             verified_by=["DP6", "DP2", "DP5"],
+            successor_of="REPLAY.PHASE_C.DETERMINISM.V1.001",
         ),
         _claim(
             claim_id="EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001",
@@ -233,7 +300,7 @@ def _claims() -> list[dict[str, Any]]:
             temporal_class="CODE_AND_LOCAL_EXECUTION_AS_OF",
             artifact="reports/hypothesis-research/campaign-costs-v1.json",
             status="VERIFIED",
-            verified_by=["DP6", "DP2", "DP5"],
+            verified_by=["DP2", "DP5"],
         ),
         _claim(
             claim_id="GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
@@ -248,7 +315,7 @@ def _claims() -> list[dict[str, Any]]:
             temporal_class="CODE_AS_OF",
             artifact="configs/execution/phase-c-execution-activation-v1.json",
             status="BLOCKED",
-            verified_by=["DP6", "DP2", "DP5"],
+            verified_by=["DP2", "DP5"],
         ),
     ]
 
@@ -263,22 +330,46 @@ def main() -> None:
         if line
     ]
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
-    if DECISION_ID not in ledger_hashes:
+    if not {ORIGINAL_DECISION_ID, CORRECTION_DECISION_ID} <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
     claims = _claims()
     claim_ids = {claim["claim_id"] for claim in claims}
-    relationships = [(claim["claim_id"], DECISION_ID) for claim in claims]
-    edge_ids = {f"EDGE.{index:03d}" for index in range(241, 252)}
+    original_claim_ids = [
+        "DATA.PHASE_C.RAW_FIELD_CENSUS.V1.001",
+        "FEATURE.PHASE_C.RECONCILIATION.V1.001",
+        "FEATURE.PHASE_C.TAG_MASK_STORE.V1.001",
+        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
+        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
+        "CONTROL.PHASE_C.ATOMIC_NEGATIVE.V1.001",
+        "CONTROL.PHASE_C.PAIR_NEGATIVE.V1.001",
+        "REPLAY.PHASE_C.DETERMINISM.V1.001",
+        "EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001",
+        "SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
+        "GOV.PHASE_C.ACTIVATION.HOLD.V1.001",
+    ]
+    successor_claim_ids = [
+        "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002",
+        "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002",
+        "REPLAY.PHASE_C.DETERMINISM.V1.002",
+    ]
+    relationships = [
+        *((claim_id, ORIGINAL_DECISION_ID) for claim_id in original_claim_ids),
+        *((claim_id, CORRECTION_DECISION_ID) for claim_id in successor_claim_ids),
+    ]
+    edge_ids = {f"EDGE.{index:03d}" for index in range(241, 255)}
     graph["claims"] = [
         claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids
     ]
     graph["claims"].extend(claims)
     graph["decision_nodes"] = [
-        node for node in graph["decision_nodes"] if node["decision_id"] != DECISION_ID
+        node
+        for node in graph["decision_nodes"]
+        if node["decision_id"] not in {ORIGINAL_DECISION_ID, CORRECTION_DECISION_ID}
     ]
-    graph["decision_nodes"].append(
-        {"decision_id": DECISION_ID, "ledger_record_hash": ledger_hashes[DECISION_ID]}
-    )
+    for decision_id in (ORIGINAL_DECISION_ID, CORRECTION_DECISION_ID):
+        graph["decision_nodes"].append(
+            {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
+        )
     graph["edges"] = [
         edge
         for edge in graph["edges"]
