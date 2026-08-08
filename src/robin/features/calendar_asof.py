@@ -25,8 +25,13 @@ class CalendarSnapshot(TypedDict):
 
 _PLAYED = {"FINISHED"}
 _SCHEDULED_LOAD = {"SCHEDULED", "LIVE", "FINISHED", "ABANDONED"}
+_KNOWN_STATUSES = _SCHEDULED_LOAD | {"CANCELLED", "POSTPONED"}
 _WINDOWS = (7, 14, 28)
 _CONGESTION_THRESHOLDS = {7: 3, 14: 5, 28: 8}
+
+
+class CalendarSourceError(ValueError):
+    """A source ambiguity that must make the complete view UNKNOWN."""
 
 
 def render_calendar_result(value: Mapping[str, object]) -> bytes:
@@ -63,7 +68,7 @@ def _instant(value: object, label: str) -> datetime:
 
 
 def _latest_snapshot(fixture: JsonMapping, cutoff: datetime) -> CalendarSnapshot | None:
-    revisions = []
+    revisions: list[tuple[datetime, JsonMapping]] = []
     for raw in _sequence(fixture.get("revisions", []), "CALENDAR_REVISIONS"):
         revision = _mapping(raw, "CALENDAR_REVISION")
         known_at = _instant(revision.get("known_at"), "CALENDAR_KNOWN_AT")
@@ -71,10 +76,29 @@ def _latest_snapshot(fixture: JsonMapping, cutoff: datetime) -> CalendarSnapshot
             revisions.append((known_at, revision))
     if not revisions:
         return None
-    _, latest = max(revisions, key=lambda item: item[0])
+    latest_known_at = max(known_at for known_at, _ in revisions)
+    latest_revisions = [
+        revision for known_at, revision in revisions if known_at == latest_known_at
+    ]
+    canonical_latest: set[tuple[str, datetime]] = set()
+    for revision in latest_revisions:
+        candidate_status = revision.get("status")
+        if not isinstance(candidate_status, str):
+            raise TypeError("CALENDAR_STATUS")
+        canonical_latest.add(
+            (
+                candidate_status,
+                _instant(revision.get("kickoff"), "CALENDAR_KICKOFF"),
+            )
+        )
+    if len(canonical_latest) != 1:
+        raise CalendarSourceError("CONTRADICTORY_REVISION")
+    latest = latest_revisions[0]
     status = latest.get("status")
     if not isinstance(status, str):
         raise TypeError("CALENDAR_STATUS")
+    if status not in _KNOWN_STATUSES:
+        raise CalendarSourceError("SOURCE_STATUS_UNKNOWN")
     return {
         "fixture_id": _integer(fixture.get("fixture_id"), "CALENDAR_FIXTURE_ID"),
         "home_team_id": _integer(fixture.get("home_team_id"), "CALENDAR_HOME_TEAM_ID"),
@@ -83,6 +107,32 @@ def _latest_snapshot(fixture: JsonMapping, cutoff: datetime) -> CalendarSnapshot
         "known_at": _instant(latest.get("known_at"), "CALENDAR_KNOWN_AT"),
         "status": status,
     }
+
+
+def _visible_snapshots(
+    fixtures: Sequence[JsonMapping], cutoff: datetime
+) -> list[CalendarSnapshot]:
+    by_fixture_id: dict[int, CalendarSnapshot] = {}
+    source_errors: set[str] = set()
+    for fixture in fixtures:
+        try:
+            snapshot = _latest_snapshot(fixture, cutoff)
+        except CalendarSourceError as exc:
+            source_errors.add(str(exc))
+            continue
+        if snapshot is None:
+            continue
+        fixture_id = snapshot["fixture_id"]
+        previous = by_fixture_id.get(fixture_id)
+        if previous is not None and previous != snapshot:
+            source_errors.add("CONTRADICTORY_DUPLICATE")
+            continue
+        by_fixture_id[fixture_id] = snapshot
+    if len(source_errors) == 1:
+        raise CalendarSourceError(next(iter(source_errors)))
+    if source_errors:
+        raise CalendarSourceError("MULTIPLE_SOURCE_AMBIGUITIES")
+    return [by_fixture_id[fixture_id] for fixture_id in sorted(by_fixture_id)]
 
 
 def _team_in(snapshot: CalendarSnapshot, team_id: int) -> bool:
@@ -179,6 +229,28 @@ def _unknown_features() -> dict[str, Literal["UNKNOWN"]]:
     return {identifier: "UNKNOWN" for identifier in identifiers}
 
 
+def _unknown_result(
+    *,
+    target_fixture_id: int,
+    cutoff: datetime,
+    catalog_complete_at_cutoff: bool,
+    status: str,
+    target_kickoff: datetime | None = None,
+) -> dict[str, object]:
+    result: dict[str, object] = {
+        "schema_version": "calendar-strict-asof-result-v1",
+        "target_fixture_id": target_fixture_id,
+        "cutoff": cutoff.isoformat(),
+        "catalog_complete_at_cutoff": catalog_complete_at_cutoff,
+        "status": status,
+        "features": _unknown_features(),
+        "load_counts": {"SCHEDULED_LOAD": "UNKNOWN", "PLAYED_LOAD": "UNKNOWN"},
+    }
+    if target_kickoff is not None:
+        result["target_kickoff"] = target_kickoff.isoformat()
+    return result
+
+
 def build_calendar_features(
     fixtures: Sequence[JsonMapping],
     *,
@@ -193,23 +265,26 @@ def build_calendar_features(
     for congestion flags.  An incomplete catalog fails closed to ``UNKNOWN``.
     """
 
+    if cutoff.tzinfo is None:
+        raise ValueError("CALENDAR_CUTOFF_REQUIRES_TIMEZONE")
     normalized_cutoff = cutoff.astimezone(UTC)
-    visible = [
-        snapshot
-        for fixture in fixtures
-        if (snapshot := _latest_snapshot(fixture, normalized_cutoff)) is not None
-    ]
+    try:
+        visible = _visible_snapshots(fixtures, normalized_cutoff)
+    except CalendarSourceError as exc:
+        return _unknown_result(
+            target_fixture_id=target_fixture_id,
+            cutoff=normalized_cutoff,
+            catalog_complete_at_cutoff=catalog_complete_at_cutoff,
+            status=str(exc),
+        )
     targets = [item for item in visible if item["fixture_id"] == target_fixture_id]
     if len(targets) != 1:
-        return {
-            "schema_version": "calendar-strict-asof-result-v1",
-            "target_fixture_id": target_fixture_id,
-            "cutoff": normalized_cutoff.isoformat(),
-            "catalog_complete_at_cutoff": catalog_complete_at_cutoff,
-            "status": "TARGET_NOT_KNOWN_AS_OF",
-            "features": _unknown_features(),
-            "load_counts": {"SCHEDULED_LOAD": "UNKNOWN", "PLAYED_LOAD": "UNKNOWN"},
-        }
+        return _unknown_result(
+            target_fixture_id=target_fixture_id,
+            cutoff=normalized_cutoff,
+            catalog_complete_at_cutoff=catalog_complete_at_cutoff,
+            status="TARGET_NOT_KNOWN_AS_OF",
+        )
     target = targets[0]
     others = [item for item in visible if item["fixture_id"] != target_fixture_id]
     home_id = _integer(target["home_team_id"], "CALENDAR_TARGET_HOME")
@@ -217,28 +292,22 @@ def build_calendar_features(
     kickoff = target["kickoff"]
     if not isinstance(kickoff, datetime):
         raise TypeError("CALENDAR_TARGET_KICKOFF")
-    if normalized_cutoff > kickoff:
-        return {
-            "schema_version": "calendar-strict-asof-result-v1",
-            "target_fixture_id": target_fixture_id,
-            "cutoff": normalized_cutoff.isoformat(),
-            "target_kickoff": kickoff.isoformat(),
-            "catalog_complete_at_cutoff": catalog_complete_at_cutoff,
-            "status": "CUTOFF_NOT_PREMATCH",
-            "features": _unknown_features(),
-            "load_counts": {"SCHEDULED_LOAD": "UNKNOWN", "PLAYED_LOAD": "UNKNOWN"},
-        }
+    if normalized_cutoff >= kickoff:
+        return _unknown_result(
+            target_fixture_id=target_fixture_id,
+            cutoff=normalized_cutoff,
+            target_kickoff=kickoff,
+            catalog_complete_at_cutoff=catalog_complete_at_cutoff,
+            status="CUTOFF_NOT_PREMATCH",
+        )
     if not catalog_complete_at_cutoff:
-        return {
-            "schema_version": "calendar-strict-asof-result-v1",
-            "target_fixture_id": target_fixture_id,
-            "cutoff": normalized_cutoff.isoformat(),
-            "target_kickoff": kickoff.isoformat(),
-            "catalog_complete_at_cutoff": False,
-            "status": "SOURCE_COMPLETENESS_UNKNOWN",
-            "features": _unknown_features(),
-            "load_counts": {"SCHEDULED_LOAD": "UNKNOWN", "PLAYED_LOAD": "UNKNOWN"},
-        }
+        return _unknown_result(
+            target_fixture_id=target_fixture_id,
+            cutoff=normalized_cutoff,
+            target_kickoff=kickoff,
+            catalog_complete_at_cutoff=False,
+            status="SOURCE_COMPLETENESS_UNKNOWN",
+        )
 
     scheduled: dict[str, dict[str, int]] = {"HOME": {}, "AWAY": {}}
     played: dict[str, dict[str, int]] = {"HOME": {}, "AWAY": {}}

@@ -70,6 +70,16 @@ def test_launch_set_is_additive_and_stops_before_e3a() -> None:
         "DISCIPLINE_GENERIC",
         "CALENDAR",
     }
+    rows = {row["capability_id"]: row for row in launch["rows"]}
+    assert rows["TEAM"]["scientific_role"] == "IDENTITY_ONLY"
+    assert rows["PLAYER"]["scientific_role"] == "IDENTITY_ONLY"
+    assert rows["LINEUP"]["scientific_role"] == "RECONSTRUCTED_DESCRIPTIVE_ONLY"
+    assert rows["FORMATION"]["scientific_role"] == "RECONSTRUCTED_DESCRIPTIVE_ONLY"
+    for capability in ("EVENTS", "TEAM_STATISTICS", "DISCIPLINE_GENERIC"):
+        assert rows[capability]["scientific_role"] == "LAGGABLE_POST_MATCH_SOURCE"
+        assert rows[capability]["same_match_predictor_allowed"] is False
+    assert rows["CALENDAR"]["scientific_role"] == "STRICT_PREDICTOR_SOURCE"
+    assert rows["PLAYER_STATISTICS"]["scientific_role"] == "BLOCKED"
 
 
 def test_pr34_audit_keeps_required_granular_evidence() -> None:

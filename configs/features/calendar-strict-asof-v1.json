@@ -4,12 +4,18 @@
   "contract_status": "CALENDAR_STRICT_ASOF_CONTRACT_READY",
   "scientific_promotion": "REQUIRES_REAL_E3A",
   "cutoff_rule": "known_at < cutoff",
+  "cutoff_timezone_policy": "TIMEZONE_REQUIRED",
   "catalog_incomplete_policy": "UNKNOWN",
+  "unknown_status_policy": "ALL_FEATURES_UNKNOWN",
+  "duplicate_fixture_policy": "EXACT_COLLAPSE_CONTRADICTORY_FAILS_CLOSED",
+  "same_known_at_revision_policy": "EXACT_COLLAPSE_CONTRADICTORY_FAILS_CLOSED",
+  "multiple_error_policy": "MULTIPLE_SOURCE_AMBIGUITIES_ORDER_INDEPENDENT",
   "load_modes": {
     "SCHEDULED_LOAD": ["SCHEDULED", "LIVE", "FINISHED", "ABANDONED"],
     "PLAYED_LOAD": ["FINISHED"]
   },
   "excluded_when_known": ["CANCELLED", "POSTPONED"],
+  "known_statuses": ["ABANDONED", "CANCELLED", "FINISHED", "LIVE", "POSTPONED", "SCHEDULED"],
   "congestion_thresholds": {
     "7": 3,
     "14": 5,

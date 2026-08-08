@@ -24,8 +24,16 @@ dans `SCHEDULED_LOAD`, jamais dans `PLAYED_LOAD`.
 Si la fixture cible n'était pas connue au cutoff, ou si la complétude du
 catalogue à cette date n'est pas prouvée, toutes les variables sont `UNKNOWN`.
 L'implémentation ne convertit jamais `UNKNOWN` en `0` ou `FALSE`.
-Un cutoff postérieur au kickoff cible est également rejeté avec
+Un cutoff sans fuseau est refusé. Un cutoff égal ou postérieur au kickoff cible est rejeté avec
 `CUTOFF_NOT_PREMATCH` et toutes les variables à `UNKNOWN`.
+
+Un statut hors registre rend également toute la vue `UNKNOWN`. Les doublons
+strictement identiques de fixture ou de révision sont réduits à une seule
+observation ; toute contradiction sur un même `fixture_id` ou un même
+`known_at` échoue fermée avec `CONTRADICTORY_DUPLICATE` ou
+`CONTRADICTORY_REVISION`. Plusieurs anomalies distinctes produisent le statut
+canonique `MULTIPLE_SOURCE_AMBIGUITIES`. Le résultat ne dépend donc jamais de
+l'ordre source.
 
 ## Variables
 

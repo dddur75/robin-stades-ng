@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
+
+import pytest
 
 from robin.features.calendar_asof import build_calendar_features, render_calendar_result
 
@@ -114,3 +117,148 @@ def test_post_kickoff_cutoff_fails_closed() -> None:
     result = run_case(pack["cases"][3])  # type: ignore[index]
     assert result["status"] == "CUTOFF_NOT_PREMATCH"
     assert set(result["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
+
+
+def test_naive_and_at_kickoff_cutoffs_are_rejected() -> None:
+    pack = load_pack()
+    fixtures = pack["fixtures"]
+    assert isinstance(fixtures, list)
+    with pytest.raises(ValueError, match="CALENDAR_CUTOFF_REQUIRES_TIMEZONE"):
+        build_calendar_features(
+            fixtures,
+            target_fixture_id=1200,
+            cutoff=datetime.fromisoformat("2025-01-20T12:00:00"),
+            catalog_complete_at_cutoff=True,
+        )
+    at_kickoff = build_calendar_features(
+        fixtures,
+        target_fixture_id=1200,
+        cutoff=datetime.fromisoformat("2025-01-28T18:00:00+00:00"),
+        catalog_complete_at_cutoff=True,
+    )
+    assert at_kickoff["status"] == "CUTOFF_NOT_PREMATCH"
+    assert set(at_kickoff["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
+
+
+def test_unknown_status_fails_closed_instead_of_becoming_zero() -> None:
+    pack = load_pack()
+    fixtures = deepcopy(pack["fixtures"])
+    assert isinstance(fixtures, list)
+    first = fixtures[0]
+    assert isinstance(first, dict)
+    revisions = first["revisions"]
+    assert isinstance(revisions, list)
+    latest = revisions[-1]
+    assert isinstance(latest, dict)
+    latest["status"] = "PROVIDER_STATUS_NOT_MAPPED"
+    result = build_calendar_features(
+        fixtures,
+        target_fixture_id=1200,
+        cutoff=datetime.fromisoformat("2025-01-20T12:00:00+00:00"),
+        catalog_complete_at_cutoff=True,
+    )
+    assert result["status"] == "SOURCE_STATUS_UNKNOWN"
+    assert set(result["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
+    assert set(result["load_counts"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
+
+
+def test_exact_fixture_duplicates_collapse_without_changing_output() -> None:
+    pack = load_pack()
+    fixtures = pack["fixtures"]
+    assert isinstance(fixtures, list)
+    cutoff = datetime.fromisoformat("2025-01-20T12:00:00+00:00")
+    baseline = build_calendar_features(
+        fixtures,
+        target_fixture_id=1200,
+        cutoff=cutoff,
+        catalog_complete_at_cutoff=True,
+    )
+    duplicated = [*fixtures, deepcopy(fixtures[0])]
+    replay = build_calendar_features(
+        duplicated,
+        target_fixture_id=1200,
+        cutoff=cutoff,
+        catalog_complete_at_cutoff=True,
+    )
+    assert render_calendar_result(baseline) == render_calendar_result(replay)
+
+
+def test_contradictory_fixture_duplicates_fail_closed() -> None:
+    pack = load_pack()
+    fixtures = pack["fixtures"]
+    assert isinstance(fixtures, list)
+    contradictory = deepcopy(fixtures[0])
+    assert isinstance(contradictory, dict)
+    contradictory["home_team_id"] = 999
+    result = build_calendar_features(
+        [*fixtures, contradictory],
+        target_fixture_id=1200,
+        cutoff=datetime.fromisoformat("2025-01-20T12:00:00+00:00"),
+        catalog_complete_at_cutoff=True,
+    )
+    assert result["status"] == "CONTRADICTORY_DUPLICATE"
+    assert set(result["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
+
+
+def test_same_instant_revision_conflict_is_order_independent_and_unknown() -> None:
+    pack = load_pack()
+    fixtures = deepcopy(pack["fixtures"])
+    assert isinstance(fixtures, list)
+    first = fixtures[0]
+    assert isinstance(first, dict)
+    revisions = first["revisions"]
+    assert isinstance(revisions, list)
+    latest = revisions[-1]
+    assert isinstance(latest, dict)
+    conflict = {**latest, "status": "ABANDONED"}
+    revisions.append(conflict)
+    cutoff = datetime.fromisoformat("2025-01-20T12:00:00+00:00")
+    forward = build_calendar_features(
+        fixtures,
+        target_fixture_id=1200,
+        cutoff=cutoff,
+        catalog_complete_at_cutoff=True,
+    )
+    revisions.reverse()
+    reverse = build_calendar_features(
+        fixtures,
+        target_fixture_id=1200,
+        cutoff=cutoff,
+        catalog_complete_at_cutoff=True,
+    )
+    assert forward["status"] == "CONTRADICTORY_REVISION"
+    assert render_calendar_result(forward) == render_calendar_result(reverse)
+    assert set(forward["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
+
+
+def test_multiple_source_errors_have_an_order_independent_status() -> None:
+    pack = load_pack()
+    fixtures = deepcopy(pack["fixtures"])
+    assert isinstance(fixtures, list)
+    unknown = fixtures[0]
+    contradictory = fixtures[1]
+    assert isinstance(unknown, dict) and isinstance(contradictory, dict)
+    unknown_revisions = unknown["revisions"]
+    contradictory_revisions = contradictory["revisions"]
+    assert isinstance(unknown_revisions, list) and isinstance(contradictory_revisions, list)
+    unknown_latest = unknown_revisions[-1]
+    contradictory_latest = contradictory_revisions[-1]
+    assert isinstance(unknown_latest, dict) and isinstance(contradictory_latest, dict)
+    unknown_latest["status"] = "PROVIDER_STATUS_NOT_MAPPED"
+    contradictory_revisions.append({**contradictory_latest, "status": "ABANDONED"})
+    cutoff = datetime.fromisoformat("2025-01-20T12:00:00+00:00")
+    forward = build_calendar_features(
+        fixtures,
+        target_fixture_id=1200,
+        cutoff=cutoff,
+        catalog_complete_at_cutoff=True,
+    )
+    reverse = build_calendar_features(
+        list(reversed(fixtures)),
+        target_fixture_id=1200,
+        cutoff=cutoff,
+        catalog_complete_at_cutoff=True,
+    )
+    assert forward["status"] == "MULTIPLE_SOURCE_AMBIGUITIES"
+    assert render_calendar_result(forward) == render_calendar_result(reverse)
+    assert set(forward["features"].values()) == {"UNKNOWN"}  # type: ignore[union-attr]
