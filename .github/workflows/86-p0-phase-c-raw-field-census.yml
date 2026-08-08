@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       execution_sha:
-        description: "Exact activated Phase C branch SHA"
+        description: "Exact SHA authorized by the trusted-main activation"
         required: true
         type: string
 
@@ -33,33 +33,46 @@ jobs:
   preflight:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    outputs:
+      generator_sha: ${{ steps.contract.outputs.generator_sha }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ inputs.execution_sha }}
+          ref: main
+          path: trusted-main
           fetch-depth: 1
           persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
-      - name: Require trusted-main activation and exact branch head
+      - name: Validate trusted-main activation, source artifacts and exact branch head
+        id: contract
         env:
           EXECUTION_SHA: ${{ inputs.execution_sha }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
         shell: bash
         run: |
           set -euo pipefail
           [[ "${EXECUTION_SHA}" =~ ^[0-9a-f]{40}$ ]]
-          test "$(git rev-parse HEAD)" = "${EXECUTION_SHA}"
-          test "$(git ls-remote origin "refs/heads/${PHASE_C_BRANCH}" | cut -f1)" = "${EXECUTION_SHA}"
+          test "$(git -C trusted-main ls-remote origin "refs/heads/${PHASE_C_BRANCH}" | cut -f1)" = "${EXECUTION_SHA}"
           python - <<'PY'
-          import json, os
+          import hashlib, json, os, urllib.request
           from pathlib import Path
-          activation = json.loads(Path("configs/execution/phase-c-execution-activation-v1.json").read_text())
-          if activation["activation_status"] != "ACTIVE": raise SystemExit("PHASE_C_ACTIVATION_HOLD")
-          if activation["allowed_execution_sha"] != os.environ["EXECUTION_SHA"]: raise SystemExit("ACTIVATED_SHA_MISMATCH")
-          lock = json.loads(Path("configs/execution/p0-e3-artifact-lock-v1.json").read_text())
-          if lock["source_run_id"] != 30853757779 or lock["source_run_attempt"] != 1: raise SystemExit("SOURCE_RUN_LOCK_MISMATCH")
-          if lock["mission_source_bytes"] != 95006161 or len(lock["artifacts"]) != 5: raise SystemExit("SOURCE_BUDGET_OR_CARDINALITY_MISMATCH")
+          root=Path("trusted-main")
+          activation=json.loads((root/"configs/execution/phase-c-execution-activation-v1.json").read_text())
+          if activation["activation_status"]!="ACTIVE" or activation["allowed_execution_sha"]!=os.environ["EXECUTION_SHA"]: raise SystemExit("PHASE_C_TRUSTED_MAIN_ACTIVATION_HOLD")
+          lock_path=root/"configs/execution/p0-e3-artifact-lock-v1.json"
+          lock=json.loads(lock_path.read_text())
+          if hashlib.sha256(lock_path.read_bytes()).hexdigest()!=activation["source_lock_sha256"]: raise SystemExit("SOURCE_LOCK_HASH_MISMATCH")
+          if lock["source_run_id"]!=30853757779 or lock["source_run_attempt"]!=1 or lock["mission_source_bytes"]!=95006161 or len(lock["artifacts"])!=5: raise SystemExit("SOURCE_LOCK_CONTRACT_MISMATCH")
+          names={8875626108:"historical-deep-74d-current-r2-gate-batch-0105-30853757779-1",8875918562:"historical-deep-74d-current-r2-gate-batch-0142-30853757779-1",8876203323:"historical-deep-74d-current-r2-gate-batch-0179-30853757779-1",8875016575:"historical-deep-74d-current-r2-gate-batch-0031-30853757779-1",8875329908:"historical-deep-74d-current-r2-gate-batch-0068-30853757779-1"}
+          expected={int(row["artifact_id"]):row for row in lock["artifacts"]}
+          for artifact_id,row in expected.items():
+              req=urllib.request.Request(f"https://api.github.com/repos/{os.environ['GH_REPOSITORY']}/actions/artifacts/{artifact_id}",headers={"Authorization":f"Bearer {os.environ['GH_TOKEN']}","Accept":"application/vnd.github+json"})
+              with urllib.request.urlopen(req,timeout=20) as response: actual=json.load(response)
+              if actual["expired"] or actual["name"]!=names[artifact_id] or actual["size_in_bytes"]!=row["size_in_bytes"] or actual.get("digest")!=row["artifact_digest"] or actual["workflow_run"]["head_sha"]!=lock["source_head_sha"]: raise SystemExit(f"SOURCE_ARTIFACT_MISMATCH:{artifact_id}")
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as stream: stream.write(f"generator_sha={activation['generator_sha256']}\n")
           PY
           unshare --user --map-root-user --net true
 
@@ -71,6 +84,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ inputs.execution_sha }}
+          path: candidate
+          fetch-depth: 1
           persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
@@ -79,23 +94,35 @@ jobs:
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
-          run-id: ${{ env.SOURCE_RUN_ID }}
-          artifact-ids: 8875626108,8875918562,8876203323,8875016575,8875329908
-          path: _phase_c/source
-      - name: Census in a network-isolated namespace
+          run-id: "30853757779"
+          artifact-ids: "8875626108,8875918562,8876203323,8875016575,8875329908"
+          path: candidate/_phase_c/source
+      - name: Run two fresh network-isolated censuses and compare them
+        working-directory: candidate
+        env:
+          EXECUTION_SHA: ${{ inputs.execution_sha }}
+          GENERATOR_SHA: ${{ needs.preflight.outputs.generator_sha }}
         shell: bash
         run: |
           set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXECUTION_SHA}"
+          test "$(sha256sum scripts/run_hypothesis_tag_mask_pair_factory.py | cut -d' ' -f1)" = "${GENERATOR_SHA}"
           mkdir -p _phase_c/raw-field-census
-          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py census --source-root _phase_c/source --output-root _phase_c/raw-field-census --store-root "$RUNNER_TEMP/robin-phase-c-census" --skip-benchmark
-          cp "$RUNNER_TEMP/robin-phase-c-census/checkpoint-v1.json" _phase_c/raw-field-census/checkpoint-v1.json
+          trap 'cp "$RUNNER_TEMP/phase-c-census-a/checkpoint-v1.json" _phase_c/raw-field-census/checkpoint-v1.json 2>/dev/null || true' EXIT
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py census --source-root _phase_c/source --output-root _phase_c/raw-field-census --store-root "$RUNNER_TEMP/phase-c-census-a" --skip-benchmark --execution-sha "${EXECUTION_SHA}" --soft-deadline-seconds 600
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py census --source-root _phase_c/source --output-root "$RUNNER_TEMP/phase-c-census-replay" --store-root "$RUNNER_TEMP/phase-c-census-b" --skip-benchmark --execution-sha "${EXECUTION_SHA}" --soft-deadline-seconds 600
+          unshare --user --map-root-user --net -- python scripts/run_hypothesis_tag_mask_pair_factory.py replay-stage --first-root _phase_c/raw-field-census --second-root "$RUNNER_TEMP/phase-c-census-replay"
+          cp "$RUNNER_TEMP/phase-c-census-a/checkpoint-v1.json" _phase_c/raw-field-census/checkpoint-v1.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
         with:
           name: phase-c-raw-field-census-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            _phase_c/raw-field-census/reports/data-quality/raw-field-census-v1.json
-            _phase_c/raw-field-census/reports/data-quality/unmapped-field-registry-v1.json
-            _phase_c/raw-field-census/reports/data-quality/external-data-gap-registry-v1.json
-            _phase_c/raw-field-census/checkpoint-v1.json
+            candidate/_phase_c/raw-field-census/reports/data-quality/raw-field-census-v1.json
+            candidate/_phase_c/raw-field-census/reports/data-quality/unmapped-field-registry-v1.json
+            candidate/_phase_c/raw-field-census/reports/data-quality/external-data-gap-registry-v1.json
+            candidate/_phase_c/raw-field-census/stage-manifest-v1.json
+            candidate/_phase_c/raw-field-census/campaign-replay-v1.json
+            candidate/_phase_c/raw-field-census/checkpoint-v1.json
           if-no-files-found: error
           retention-days: 90

@@ -53,6 +53,25 @@ def test_genome_486_by_28_reconciliation_is_fail_closed() -> None:
     assert counts["MATERIALIZABLE_RECONSTRUCTED"] == 28
     assert counts["MATERIALIZABLE_TARGET_ONLY"] == 18
     assert report["point_in_time_source_provenance"] is False
+    records = report["records"]
+    reviewed = [
+        row for row in records if row["reconciliation_bucket"] in {"READY", "PARTIAL"}
+    ]
+    assert len(reviewed) == 92
+    assert all(row["source_fields"] and row["required_capabilities"] for row in reviewed)
+    assert all(
+        field in report["source_field_registry"]
+        for row in reviewed
+        for field in row["source_fields"]
+    )
+    assert all(
+        {"entity_type", "json_path", "temporal_use", "transform_version"} <= set(definition)
+        for definition in report["source_field_registry"].values()
+    )
+    unknown = {row["property_id"] for row in records if row["reconciliation_bucket"] == "UNKNOWN"}
+    assert len(unknown) == 50
+    assert "football:data_quality:identity_confidence" in unknown
+    assert "football:strength_form:elo" in unknown
 
 
 def test_tag_registry_and_two_mask_manifest_are_canonical() -> None:
@@ -63,6 +82,10 @@ def test_tag_registry_and_two_mask_manifest_are_canonical() -> None:
     assert ids == sorted(ids) and len(set(ids)) == 80
     assert registry["registry_hash"] == canonical_hash(tags)
     assert registry["strict_tag_count"] == 0
+    assert all(row["feature_id"].startswith("feature:") for row in tags)
+    assert all(row["source_fields"] and row["required_capabilities"] for row in tags)
+    assert not any("FORMATION_CHANGE_RATE" in row["tag_id"] for row in tags)
+    assert len({canonical_hash(row["source_fields"]) for row in tags}) >= 2
 
     manifest = load("reports/hypothesis-masks/atomic-mask-manifest-v1.json")
     assert manifest["mask_count"] == 80
@@ -73,6 +96,9 @@ def test_tag_registry_and_two_mask_manifest_are_canonical() -> None:
     for row in manifest["records"]:
         assert row["true_count"] <= row["known_count"] <= 1_756
         assert row["true_count"] + row["false_count"] + row["unknown_count"] == 1_756
+        assert row["definition_hash"]
+        assert row["tag_snapshot_hash"]
+        assert row["thresholds_by_competition"]
 
 
 def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
@@ -84,7 +110,8 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
     assert config["triple_search_locked"] is True
 
     atomic = load("reports/hypothesis-research/atomic-results-v1.json")
-    assert atomic["atomic_property_count"] == 80
+    assert atomic["atomic_tag_count"] == 80
+    assert atomic["materialized_property_count"] == 7
     assert atomic["canonical_test_count"] == 160
     assert atomic["point_in_time_source_provenance"] is False
     assert not {row["status"] for row in atomic["results"]} & {
@@ -98,15 +125,26 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
             assert metric["league_baseline_log_loss"] is not None
             assert metric["simple_log_loss"] is not None
             assert metric["review_gate"] in {"STANDARD_REVIEW", "SUSPICIOUS_EDGE_REVIEW"}
+            assert metric["q_value"] == max(
+                metric["q_value_global"], metric["q_value_family"]
+            )
+            assert metric["hypothesis_id"].startswith("hypothesis:")
+            if metric["status"].startswith("SURVIVED"):
+                assert metric["delta_log_loss"] > 0
+                assert metric["delta_brier"] > 0
 
     space = load("reports/hypothesis-research/pair-search-space-v1.json")
     assert space["theoretical_pairs"] == 117_855
-    assert space["compatible_pairs"] == 120
-    assert space["pruned_pairs"] == 117_735
+    assert space["materialized_property_pairs"] == 21
+    assert space["compatible_pairs"] == 21
+    assert space["pruned_pairs"] == 117_834
+    assert space["candidate_tag_pairs"] == 3_160
+    assert space["selected_tag_pairs"] == 120
     assert space["quotas"] == {"AWAY_AWAY": 30, "CROSS_SIDE": 60, "HOME_HOME": 30}
     assert space["selection_is_target_blind"] is True
     pairs = load("reports/hypothesis-research/pair-results-v1.json")
     assert pairs["pair_count"] == 120
+    assert pairs["unique_property_pair_count"] == 21
     assert pairs["canonical_test_count"] == 240
     assert not {row["status"] for row in pairs["results"]} & {
         "VALIDATED",
@@ -118,6 +156,19 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
         for row in pairs["results"]
         for metric in row["target_metrics"].values()
     )
+    assert all(row["parent_property_a"] != row["parent_property_b"] for row in pairs["results"])
+    assert {row["shard_id"] for row in pairs["results"]} == set(range(8))
+    for row in pairs["results"]:
+        for metric in row["target_metrics"].values():
+            assert "best_comparator_log_loss" not in metric
+            assert set(metric["p_values_raw_by_comparator"]) == {
+                "PARENT_A",
+                "PARENT_B",
+                "ADDITIVE",
+            }
+            assert metric["p_value_raw_intersection_union"] == max(
+                metric["p_values_raw_by_comparator"].values()
+            )
 
 
 def test_negative_controls_and_triple_lock() -> None:
@@ -127,6 +178,12 @@ def test_negative_controls_and_triple_lock() -> None:
         assert report["negative_control_gate"] == "PASS"
         assert report["surviving_control_count"] == 0
         assert all(row["promoted"] is False for row in report["records"])
+        assert report["modeled_control_count"] == 4
+        assert report["admissibility_guard_control_count"] == 4
+        assert all(
+            row["folds"] or row["detector_result"] == "BLOCKED_AS_EXPECTED"
+            for row in report["records"]
+        )
     triple = load("configs/hypothesis-campaigns/triple-campaign-lock-v1.json")
     assert triple["compiled"] is True
     assert triple["executed"] is False
@@ -165,9 +222,22 @@ def test_phase_c_workflows_are_manual_distinct_dormant_and_read_only() -> None:
         assert uses <= expected_pins
         assert any(item.startswith("actions/download-artifact@") for item in uses)
         assert any(item.startswith("actions/upload-artifact@") for item in uses)
+        assert "ref: main" in raw
+        assert "PHASE_C_TRUSTED_MAIN_ACTIVATION_HOLD" in raw
+        assert "replay-stage" in raw
     assert len(groups) == 4
+    pair_workflow = (ROOT / ".github/workflows/89-p0-phase-c-compatible-pair-search.yml").read_text()
+    assert "shard: [0, 1, 2, 3, 4, 5, 6, 7]" in pair_workflow
+    assert "max-parallel: 4" in pair_workflow
+    assert "reduce-pair-shards" in pair_workflow
+    assert "30853757779" not in (ROOT / ".github/workflows/88-p0-phase-c-atomic-property-search.yml").read_text()
+    assert "30853757779" not in pair_workflow
     activation = load("configs/execution/phase-c-execution-activation-v1.json")
     assert activation["activation_status"] == "HOLD_DRAFT_NOT_ON_DEFAULT_BRANCH"
     assert activation["allowed_execution_sha"] is None
     assert activation["triple_search_locked"] is True
     assert all(value == 0 for value in activation["external_effect_budgets"].values())
+    assert activation["activation_authority"] == "TRUSTED_DEFAULT_BRANCH_ONLY_NEVER_CANDIDATE_CHECKOUT"
+    artifact_lock = load("configs/execution/phase-c-artifact-lock-v1.json")
+    assert artifact_lock["status"] == "EMPTY_DRAFT_REQUIRES_SUCCESSOR_ON_DEFAULT_BRANCH"
+    assert artifact_lock["stage_locks"] == {}

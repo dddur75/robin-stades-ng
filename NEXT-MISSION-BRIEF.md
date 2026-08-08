@@ -2,7 +2,7 @@
 
 ## Objet
 
-Auditer scientifiquement les 80 propriétés matérialisées et les 120 paires,
+Auditer scientifiquement les 80 tags issus de sept propriétés prédictives et les 120 paires,
 choisir éventuellement un sous-espace de triples, puis geler multiplicité,
 budget et critères d’arrêt. Cette mission ne doit exécuter aucun triple tant
 que l’audit ne l’autorise pas explicitement.
@@ -15,6 +15,11 @@ que l’audit ne l’autorise pas explicitement.
 - folds rolling-origin et contrat d’embargo PT6H ;
 - preuve que les workflows Phase C sont toujours dormants dans une PR draft ;
 - preuve `point_in_time_source_provenance=false` et absence de prix.
+- preuve des trois comparaisons enfant–parents séparées et de
+  `p_intersection_union=max(p_A,p_B,p_additif)` ;
+- preuve que les 117 855 couples Genome, les 21 couples de propriétés
+  matérialisées et les 3 160 couples de tags ne sont jamais agrégés au même
+  grain.
 
 ## Gates avant toute autorisation
 

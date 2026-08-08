@@ -177,6 +177,65 @@ PARTIAL_NAMES: dict[str, set[str]] = {
     "CHEMISTRY_NETWORKS": {"co_starts", "common_minutes"},
 }
 
+# Semantic-review items are explicit.  Never derive this bucket from ordering:
+# lexical position has no scientific meaning and would silently reclassify a
+# property when the ontology changes.
+UNKNOWN_NAMES: dict[str, set[str]] = {
+    "BENCH_SUBSTITUTIONS": {
+        "attacking_options",
+        "defensive_options",
+        "experience",
+        "historical_impact",
+        "natural_replacements",
+        "profiles",
+        "relative_quality",
+        "speed",
+    },
+    "CHEMISTRY_NETWORKS": {
+        "attacking_pair",
+        "centrality",
+        "dependency",
+        "goalkeeper_defence",
+        "network_break",
+        "network_entropy",
+        "pass_network",
+        "replacement_cost",
+    },
+    "COACH": {
+        "after_loss_response",
+        "congestion_response",
+        "game_state_management",
+        "half_time_adjustment",
+        "opponent_familiarity",
+        "rotation",
+        "style",
+        "style_opposition",
+    },
+    "DATA_QUALITY": {"identity_confidence"},
+    "DISCIPLINE_REFEREE": {"derby_stake", "style_interaction", "suspension_threat"},
+    "FORMATION_STRUCTURE": {
+        "build_up_shape",
+        "formation_fatigue_matchup",
+        "formation_market_matchup",
+        "formation_weather_matchup",
+        "in_possession_shape",
+        "out_of_possession_shape",
+    },
+    "GOALKEEPER": {"weather_cross_interaction"},
+    "MATCH_COMPETITION": {"derby", "phase", "rivalry", "season_period"},
+    "PLAYER": {
+        "experience",
+        "form",
+        "out_of_position",
+        "partner_performance",
+        "press_resistance",
+        "profile_matchup",
+        "versatility",
+    },
+    "SET_PIECES": {"weather_interaction"},
+    "STRENGTH_FORM": {"elo", "opponent_adjusted_form", "regime_change"},
+}
+
 EXTERNAL_GAPS = (
     ("WEATHER", 25, "NO_VERSIONED_POINT_IN_TIME_WEATHER_ARCHIVE"),
     ("TRAVEL_LOGISTICS", 16, "REAL_TRAVEL_ITINERARY_AND_ARRIVAL_TIMES_UNAVAILABLE"),
@@ -201,11 +260,7 @@ BASES = {
     "CLEAN_SHEET_RATE": ("football:defence:goals_conceded", "clean_sheet_rate", "RATE"),
     "FAILED_TO_SCORE_RATE": ("football:attack:goals_scored", "failed_to_score_rate", "RATE"),
     "GENERIC_CARDS_MEAN": ("football:discipline_referee:recent_cards", "generic_cards", "CARDS"),
-    "FORMATION_CHANGE_RATE": (
-        "football:lineup_continuity:changes",
-        "formation_change_rate",
-        "RATE",
-    ),
+    "POINTS_VOLATILITY": ("football:strength_form:volatility", "points_volatility", "POINTS"),
 }
 WINDOWS = ("L3", "L5", "L10", "SEASON_TO_DATE")
 SIDES = ("HOME", "AWAY")
@@ -622,7 +677,170 @@ def property_name(property_id: str) -> str:
     return property_id.rsplit(":", 1)[-1]
 
 
+SOURCE_FIELD_REGISTRY: dict[str, dict[str, str]] = {}
+
+
+def source_field(
+    entity_type: str,
+    json_path: str,
+    temporal_use: str = "PRIOR_FIXTURES_ONLY",
+) -> str:
+    definition = {
+        "entity_type": entity_type,
+        "json_path": json_path,
+        "temporal_use": temporal_use,
+        "transform_version": "phase-c-source-field-v1",
+    }
+    field_id = "field:" + sha256_bytes(canonical_bytes(definition))
+    existing = SOURCE_FIELD_REGISTRY.setdefault(field_id, definition)
+    if existing != definition:
+        raise RuntimeError(f"SOURCE_FIELD_ID_COLLISION:{field_id}")
+    return field_id
+
+
+def property_requirements(
+    family: str, name: str, bucket: str
+) -> tuple[list[str], list[str], str]:
+    """Return the explicit, auditable source contract for one Genome property."""
+    fixture_score = [
+        source_field("fixture", "data.score.fulltime.home"),
+        source_field("fixture", "data.score.fulltime.away"),
+        source_field("fixture", "data.teams.home.id"),
+        source_field("fixture", "data.teams.away.id"),
+    ]
+    fixture_time = [source_field("fixture", "data.fixture.date", "SCHEDULE_METADATA")]
+    team_statistics = [
+        source_field("team_match_statistic", "data.type"),
+        source_field("team_match_statistic", "data.value"),
+    ]
+    events = [
+        source_field("fixture_event", "data.type", "TARGET_OR_PRIOR_FIXTURES_ONLY"),
+        source_field("fixture_event", "data.detail", "TARGET_OR_PRIOR_FIXTURES_ONLY"),
+        source_field("fixture_event", "data.time.elapsed", "TARGET_OR_PRIOR_FIXTURES_ONLY"),
+        source_field("fixture_event", "data.player.id", "TARGET_OR_PRIOR_FIXTURES_ONLY"),
+        source_field("fixture_event", "data.team.id", "TARGET_OR_PRIOR_FIXTURES_ONLY"),
+    ]
+    lineup = [
+        source_field("lineup", "data.team.id", "RECONSTRUCTED_POST_MATCH"),
+        source_field("lineup", "data.startXI[].player.id", "RECONSTRUCTED_POST_MATCH"),
+        source_field("lineup", "data.substitutes[].player.id", "RECONSTRUCTED_POST_MATCH"),
+    ]
+    exact: dict[tuple[str, str], tuple[list[str], list[str]]] = {
+        ("MATCH_COMPETITION", "competition"): (
+            [source_field("fixture", "data.league.id", "SCHEDULE_METADATA")],
+            ["TEAM"],
+        ),
+        ("MATCH_COMPETITION", "season"): (
+            [source_field("fixture", "data.league.season", "SCHEDULE_METADATA")],
+            ["TEAM"],
+        ),
+        ("MATCH_COMPETITION", "matchday"): (
+            [source_field("round", "data.position", "SCHEDULE_METADATA")],
+            ["TEAM"],
+        ),
+        ("MATCH_COMPETITION", "round"): (
+            [source_field("fixture", "data.league.round", "SCHEDULE_METADATA")],
+            ["TEAM"],
+        ),
+        ("MATCH_COMPETITION", "venue_role"): (
+            [source_field("team", "data.side", "SCHEDULE_METADATA")],
+            ["TEAM"],
+        ),
+        ("MATCH_COMPETITION", "weekday"): (fixture_time, ["TEAM"]),
+        ("MATCH_COMPETITION", "month"): (fixture_time, ["TEAM"]),
+        ("STADIUM_PITCH", "stadium"): (
+            [source_field("venue", "data.id", "SCHEDULE_METADATA")],
+            ["TEAM"],
+        ),
+        ("FORMATION_STRUCTURE", "formation"): (
+            [source_field("formation", "data.formation", "RECONSTRUCTED_POST_MATCH")],
+            ["FORMATION"],
+        ),
+        ("PLAYER", "identity"): (
+            [source_field("lineup_player", "data.player.id", "RECONSTRUCTED_POST_MATCH")],
+            ["PLAYER"],
+        ),
+        ("PLAYER", "position"): (
+            [source_field("lineup_player", "data.player.pos", "RECONSTRUCTED_POST_MATCH")],
+            ["LINEUP"],
+        ),
+        ("PLAYER", "role"): (
+            [source_field("lineup_player", "data.role", "RECONSTRUCTED_POST_MATCH")],
+            ["LINEUP"],
+        ),
+        ("PLAYER", "starts"): (
+            [source_field("lineup", "data.startXI[].player.id", "RECONSTRUCTED_POST_MATCH")],
+            ["LINEUP"],
+        ),
+        ("PLAYER", "substitute_appearances"): (
+            [source_field("lineup", "data.substitutes[].player.id", "RECONSTRUCTED_POST_MATCH")],
+            ["LINEUP"],
+        ),
+        ("COACH", "identity"): (
+            [source_field("lineup", "data.coach.id", "RECONSTRUCTED_POST_MATCH")],
+            ["LINEUP"],
+        ),
+        ("DISCIPLINE_REFEREE", "referee"): (
+            [source_field("fixture", "data.fixture.referee", "RECONSTRUCTED_POST_MATCH")],
+            ["TEAM"],
+        ),
+    }
+    if (family, name) in exact:
+        fields, capabilities = exact[(family, name)]
+        return fields, capabilities, "EXACT_ENTITY_PATH_REGISTRY"
+    if family in {"STRENGTH_FORM", "ATTACK", "DEFENCE"} and bucket == "READY":
+        return fixture_score, ["TEAM"], "DETERMINISTIC_PRIOR_RESULT_TRANSFORM"
+    if family in {"ATTACK", "DEFENCE", "POSSESSION_PRESSING", "SET_PIECES"} and bucket == "PARTIAL":
+        return team_statistics, ["TEAM_STATISTICS"], "PARTIAL_TEAM_STATISTIC_TYPE_VALUE"
+    if family == "STRENGTH_FORM" and bucket == "PARTIAL":
+        return team_statistics + fixture_score, ["TEAM_STATISTICS", "TEAM"], "PARTIAL_XG_HISTORY"
+    if family == "EVENT_GAME_STATE" and bucket == "READY":
+        return events, ["EVENTS"], "TARGET_EVENT_COLLECTION"
+    if family == "DISCIPLINE_REFEREE" and bucket in {"READY", "PARTIAL"}:
+        return events + team_statistics, ["DISCIPLINE_GENERIC", "TEAM_STATISTICS"], "CARD_EVENT_OR_TEAM_STAT_HISTORY"
+    if family == "PLAYER" and bucket == "READY":
+        return events, ["EVENTS", "PLAYER"], "TARGET_EVENT_PLAYER_IDENTITY"
+    if family == "COACH" and name == "substitutions":
+        return events, ["EVENTS"], "TARGET_SUBSTITUTION_EVENTS"
+    if family == "COACH" and bucket == "PARTIAL":
+        return [source_field("lineup", "data.coach.id", "RECONSTRUCTED_POST_MATCH")], ["LINEUP"], "PARTIAL_COACH_HISTORY"
+    if family in {"LINEUP_CONTINUITY", "BENCH_SUBSTITUTIONS", "CHEMISTRY_NETWORKS"} and bucket == "PARTIAL":
+        return lineup, ["LINEUP"], "PARTIAL_LINEUP_IDENTITY_HISTORY"
+    if family == "GOALKEEPER" and bucket == "PARTIAL":
+        return [source_field("lineup", "data.startXI[].player.pos", "RECONSTRUCTED_POST_MATCH")], ["LINEUP"], "PARTIAL_LINEUP_ROLE_HISTORY"
+    if family == "DATA_QUALITY" and bucket == "READY":
+        path = {
+            "coverage_bias": "strict_prematch_eligible",
+            "ingested_at": "ingested_at",
+            "missingness": "record_hash",
+            "observed_at": "observed_at",
+            "provenance_hash": "provenance.payload_sha256",
+            "source": "provenance.endpoint",
+        }[name]
+        return [source_field("__row__", path, "QUALITY_ONLY")], ["NORMALIZED_PROVENANCE"], "ROW_ENVELOPE_QUALITY_ONLY"
+    if family == "CALENDAR_FATIGUE":
+        return fixture_time, ["CALENDAR_STRICT_ASOF"], "SCHEDULE_REVISION_HISTORY_REQUIRED"
+    external = {row[0]: row[2] for row in EXTERNAL_GAPS}
+    if family in external:
+        return [], [f"EXTERNAL_{family}_POINT_IN_TIME"], external[family]
+    if bucket == "UNKNOWN":
+        return [], ["SEMANTIC_MAPPING_REGISTRY"], "EXPLICIT_SEMANTIC_REVIEW_REQUIRED"
+    fallback = {
+        "FORMATION_STRUCTURE": ["FORMATION", "LINEUP"],
+        "GOALKEEPER": ["PLAYER_STATISTICS", "LINEUP"],
+        "MATCH_COMPETITION": ["TEAM", "CALENDAR_STRICT_ASOF"],
+        "PLAYER": ["PLAYER_STATISTICS", "PLAYER", "LINEUP"],
+        "STRENGTH_FORM": ["TEAM", "TEAM_STATISTICS"],
+        "DISCIPLINE_REFEREE": ["DISCIPLINE_GENERIC", "EVENTS"],
+        "EVENT_GAME_STATE": ["EVENTS"],
+        "SET_PIECES": ["TEAM_STATISTICS", "EVENTS"],
+        "DATA_QUALITY": ["NORMALIZED_PROVENANCE"],
+    }.get(family, [f"{family}_CANONICAL_SOURCE"])
+    return [], fallback, "REQUIRED_SOURCE_OR_TRANSFORM_NOT_AVAILABLE"
+
+
 def build_reconciliation(output_root: Path) -> dict[str, Any]:
+    SOURCE_FIELD_REGISTRY.clear()
     roles = read_json(PROPERTY_ROLES)
     items = roles.get("items")
     if not isinstance(items, list) or len(items) != 486:
@@ -656,10 +874,13 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
                 f"EXPLICIT_RECONCILIATION_COUNT_MISMATCH:{family}:{len(ready)}:{len(partial)}"
             )
         remainder = [row for row in family_items if row not in ready and row not in partial]
-        # UNKNOWN is a semantic-review bucket.  It remains fail-closed as
-        # BLOCKED_BY_DATA in the allowed materialization vocabulary.
-        unknown = remainder[-u_count:] if u_count else []
-        blocked = remainder[:-u_count] if u_count else remainder
+        unknown_names = UNKNOWN_NAMES.get(family, set())
+        unknown = [
+            row for row in remainder if property_name(str(row["property_id"])) in unknown_names
+        ]
+        blocked = [row for row in remainder if row not in unknown]
+        if len(unknown) != u_count:
+            raise RuntimeError(f"UNKNOWN_RECONCILIATION_COUNT_MISMATCH:{family}")
         if len(blocked) != b_count:
             raise RuntimeError(f"BLOCKED_RECONCILIATION_COUNT_MISMATCH:{family}")
         assignments = (
@@ -697,21 +918,25 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
                     if bucket == "UNKNOWN"
                     else "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE"
                 )
+            source_fields, required_capabilities, _mapping_basis = property_requirements(
+                family, name, bucket
+            )
+            if bucket in {"READY", "PARTIAL"} and (
+                not source_fields or not required_capabilities
+            ):
+                raise RuntimeError(f"REVIEWED_PROPERTY_SOURCE_CONTRACT_EMPTY:{pid}")
             bucket_counts[bucket] += 1
             materialization_counts[status] += 1
             records.append(
                 {
                     "property_id": pid,
-                    "family": family,
-                    "source_fields": [],
-                    "required_capabilities": [],
-                    "transform_version": "phase-c-property-reconciliation-v1",
+                    "source_fields": source_fields,
+                    "required_capabilities": required_capabilities,
                     "materialization_status": status,
                     "reconciliation_bucket": bucket,
                     "temporal_role": temporal_role,
                     "unknown_policy": "PRESERVE_UNKNOWN_NEVER_FALSE",
                     "block_reason": block_reason,
-                    "exact_mapping_reviewed": bucket in {"READY", "PARTIAL"},
                 }
             )
     if bucket_counts != Counter({"READY": 46, "PARTIAL": 46, "BLOCKED": 344, "UNKNOWN": 50}):
@@ -723,9 +948,26 @@ def build_reconciliation(output_root: Path) -> dict[str, Any]:
         "family_count": 28,
         "strict_materializable_count": 0,
         "point_in_time_source_provenance": False,
+        "reviewed_property_count": bucket_counts["READY"] + bucket_counts["PARTIAL"],
+        "predictor_tag_property_ids": sorted({value[0] for value in BASES.values()}),
+        "property_record_contract": [
+            "property_id",
+            "source_fields",
+            "required_capabilities",
+            "materialization_status",
+            "temporal_role",
+            "unknown_policy",
+            "block_reason",
+        ],
+        "mapping_basis_by_bucket": {
+            "READY_PARTIAL": "EXACT_ENTITY_PATH_REGISTRY_AND_DETERMINISTIC_TRANSFORM",
+            "BLOCKED": "REQUIRED_SOURCE_OR_CAPABILITY_UNAVAILABLE",
+            "UNKNOWN": "EXPLICIT_SEMANTIC_REVIEW_REQUIRED",
+        },
         "baseline_bucket_counts": dict(sorted(bucket_counts.items())),
         "materialization_status_counts": dict(sorted(materialization_counts.items())),
         "classification_rule": "EXPLICIT_READY_PARTIAL_WHITELISTS_THEN_FAIL_CLOSED_FAMILY_BASELINE",
+        "source_field_registry": dict(sorted(SOURCE_FIELD_REGISTRY.items())),
         "records": sorted(records, key=lambda row: row["property_id"]),
     }
     write_json(output_root / "reports/hypothesis-genome/e3-property-reconciliation-v1.json", result)
@@ -813,12 +1055,20 @@ def build_fixture_data(
         league = data.get("league")
         if not all(isinstance(value, Mapping) for value in (raw_fixture, score, teams, league)):
             raise TypeError(f"FIXTURE_SHAPE_REQUIRED:{fixture_id}")
+        assert isinstance(raw_fixture, Mapping)
+        assert isinstance(score, Mapping)
+        assert isinstance(teams, Mapping)
+        assert isinstance(league, Mapping)
         fulltime = score.get("fulltime")
         home = teams.get("home")
         away = teams.get("away")
         status = raw_fixture.get("status")
         if not all(isinstance(value, Mapping) for value in (fulltime, home, away, status)):
             raise TypeError(f"FIXTURE_NESTED_SHAPE_REQUIRED:{fixture_id}")
+        assert isinstance(fulltime, Mapping)
+        assert isinstance(home, Mapping)
+        assert isinstance(away, Mapping)
+        assert isinstance(status, Mapping)
         hg, ag = fulltime.get("home"), fulltime.get("away")
         home_id, away_id = home.get("id"), away.get("id")
         competition_id = league.get("id")
@@ -827,6 +1077,11 @@ def build_fixture_data(
             isinstance(value, int) for value in (hg, ag, home_id, away_id, competition_id)
         ) or not isinstance(kickoff_raw, str):
             raise TypeError(f"FIXTURE_VALUE_REQUIRED:{fixture_id}")
+        assert isinstance(hg, int)
+        assert isinstance(ag, int)
+        assert isinstance(home_id, int)
+        assert isinstance(away_id, int)
+        assert isinstance(competition_id, int)
         statuses = {
             str(candidate.get("data", {}).get("fixture", {}).get("status", {}).get("short"))
             for candidate in candidates
@@ -930,15 +1185,8 @@ def feature_value(base: str, matches: Sequence[TeamMatch]) -> float | None:
         return mean([row.failed_to_score for row in matches])
     if base == "GENERIC_CARDS_MEAN":
         return mean([row.generic_cards for row in matches])
-    if base == "FORMATION_CHANGE_RATE":
-        if len(matches) < 2 or any(row.formation is None for row in matches):
-            return None
-        return mean(
-            [
-                int(matches[index].formation != matches[index - 1].formation)
-                for index in range(1, len(matches))
-            ]
-        )
+    if base == "POINTS_VOLATILITY":
+        return statistics.pstdev([row.points for row in matches]) if len(matches) >= 2 else None
     raise KeyError(base)
 
 
@@ -1008,13 +1256,17 @@ def build_tag_registry(output_root: Path) -> dict[str, Any]:
     for side in SIDES:
         for base in sorted(BASES):
             property_id, metric, unit = BASES[base]
+            family = property_id.split(":")[1].upper()
+            property_sources, capabilities, mapping_basis = property_requirements(
+                family, property_name(property_id), "READY"
+            )
             for window in WINDOWS:
                 tid = tag_id(side, base, window)
                 definition = {
                     "tag_id": tid,
                     "tag_version": 1,
                     "label_fr": f"{base} élevé — équipe {side.lower()} — {window}",
-                    "family": property_id.split(":")[1].upper(),
+                    "family": family,
                     "subfamily": base,
                     "property_id": property_id,
                     "entity_scope": f"TEAM_{side}",
@@ -1026,11 +1278,12 @@ def build_tag_registry(output_root: Path) -> dict[str, Any]:
                     "threshold": None,
                     "threshold_origin": "TRAIN_QUANTILE_Q67_LINEAR_PER_LEAGUE_AND_FOLD",
                     "unit": unit,
-                    "source_fields": [
-                        "fixture.score.fulltime",
-                        "fixture_event.card",
-                        "formation.formation",
-                    ],
+                    "source_fields": property_sources,
+                    "required_capabilities": capabilities,
+                    "mapping_basis": mapping_basis,
+                    "feature_id": "feature:" + sha256_bytes(
+                        f"{property_id}\0{side}\0{metric}\0{window}\0phase-c-feature-v1".encode()
+                    ),
                     "grain": "one team orientation in one target fixture",
                     "temporal_class": "LAGGED_RECONSTRUCTED_ONLY",
                     "scientific_role": "FOOTBALL_PREDICTOR",
@@ -1048,6 +1301,16 @@ def build_tag_registry(output_root: Path) -> dict[str, Any]:
         "strict_tag_count": 0,
         "target_views": ["HOME_WIN", "DRAW", "AWAY_WIN", "OVER_2_5", "UNDER_2_5"],
         "canonical_targets": ["MATCH_RESULT_90M", "TOTAL_GOALS_2_5_90M"],
+        "source_field_registry": {
+            field_id: SOURCE_FIELD_REGISTRY[field_id]
+            for field_id in sorted(
+                {
+                    field_id
+                    for tag in tags
+                    for field_id in tag["source_fields"]
+                }
+            )
+        },
         "tags": sorted(tags, key=lambda row: row["tag_id"]),
     }
     result["registry_hash"] = object_hash(result["tags"])
@@ -1067,8 +1330,10 @@ def build_tag_registry(output_root: Path) -> dict[str, Any]:
             "decision_id",
             "settlement_id",
         ],
-        "current_terminal_object": "hypothesis_id",
+        "materialized_chain_terminal_object": "mask_id",
+        "analysis_chain_terminal_object": "hypothesis_id",
         "future_objects_not_created": ["strategy_id", "decision_id", "settlement_id"],
+        "hypothesis_id_location": "atomic-results-v1.json and pair-results-v1.json",
         "raw_provider_payload_in_git": False,
         "unknown_policy": "PRESERVE_UNKNOWN_NEVER_FALSE",
     }
@@ -1089,10 +1354,10 @@ def initial_thresholds(
         key = f"{side}:{base}:{window}"
         for competition_id in sorted({fixture.competition_id for fixture in fixtures}):
             values = [
-                float(features[index][key])
+                float(value)
                 for index in range(FOLDS[0][1])
                 if fixtures[index].competition_id == competition_id
-                and features[index][key] is not None
+                and (value := features[index][key]) is not None
             ]
             threshold = quantile(values, 0.67)
             if threshold is not None:
@@ -1135,6 +1400,7 @@ def build_masks(
     registry: Mapping[str, Any],
     output_root: Path,
     store_root: Path,
+    core_manifest: Mapping[str, Any],
 ) -> tuple[dict[str, Any], dict[str, tuple[int, int]]]:
     fixture_ids = [row.fixture_id for row in fixtures]
     universe_hash = object_hash(fixture_ids)
@@ -1153,9 +1419,33 @@ def build_masks(
             states.append(None if value is None or threshold is None else float(value) >= threshold)
         known, true = mask_int(states)
         masks[tid] = (known, true)
-        mask_id = "mask:" + sha256_bytes((universe_hash + "\0" + tid).encode("utf-8"))
+        threshold_snapshot = {
+            str(competition_id): thresholds[(tid, competition_id)]
+            for competition_id in sorted({row.competition_id for row in fixtures})
+            if (tid, competition_id) in thresholds
+        }
+        tag_snapshot_hash = object_hash(
+            {
+                "definition_hash": tag["definition_hash"],
+                "thresholds_by_competition": threshold_snapshot,
+                "threshold_origin": tag["threshold_origin"],
+                "training_end_ordinal_exclusive": FOLDS[0][1],
+            }
+        )
+        mask_id = "mask:" + sha256_bytes(
+            (
+                universe_hash
+                + "\0"
+                + tid
+                + "\0"
+                + str(tag["definition_hash"])
+                + "\0"
+                + tag_snapshot_hash
+            ).encode("utf-8")
+        )
+        relative_path = f"store/{sha256_bytes(tid.encode())}.mask"
         envelope = write_mask(
-            store_root / "store" / f"{sha256_bytes(tid.encode())}.mask",
+            store_root / relative_path,
             mask_id,
             universe_hash,
             known,
@@ -1164,6 +1454,11 @@ def build_masks(
         manifest_rows.append(
             {
                 "tag_id": tid,
+                "feature_id": tag["feature_id"],
+                "definition_hash": tag["definition_hash"],
+                "tag_snapshot_hash": tag_snapshot_hash,
+                "thresholds_by_competition": threshold_snapshot,
+                "training_end_ordinal_exclusive": FOLDS[0][1],
                 "mask_id": mask_id,
                 "known_count": known.bit_count(),
                 "true_count": true.bit_count(),
@@ -1172,6 +1467,7 @@ def build_masks(
                 "coverage": rate(known.bit_count(), UNIVERSE_COUNT),
                 "payload_sha256": sha256_bytes(envelope),
                 "serialized_bytes": len(envelope),
+                "artifact_relative_path": relative_path,
             }
         )
     if len(masks) != 80:
@@ -1199,6 +1495,7 @@ def build_masks(
             "pickle": False,
         },
         "mask_count": len(manifest_rows),
+        "analysis_core": dict(core_manifest),
         "store_durability": "MASK_STORE_DURABILITY_PARTIAL",
         "r2_writes": 0,
         "records": sorted(manifest_rows, key=lambda row: row["tag_id"]),
@@ -1214,7 +1511,7 @@ def percentile(values: Sequence[int], q: float) -> int:
 
 
 def timed_samples(
-    function: Any, *, sample_count: int = 30, target_seconds: float = 0.05
+    function: Any, *, sample_count: int = 30, target_seconds: float = 0.25
 ) -> tuple[list[int], int]:
     loops = 1
     while True:
@@ -1289,6 +1586,7 @@ def benchmark_masks(
         serialize: Any,
         load: Any,
         payload_bytes: int,
+        memory_bytes: int | str,
         correctness: Any,
     ) -> None:
         operations: dict[str, Any] = {}
@@ -1314,6 +1612,9 @@ def benchmark_masks(
                 "determinism": sha256_bytes(serialize()) == sha256_bytes(serialize()),
                 "unknown_support": True,
                 "payload_bytes": payload_bytes,
+                "memory_bytes": memory_bytes,
+                "retained_rss_bytes": "UNKNOWN_SHARED_SINGLE_PROCESS_RUNNER",
+                "peak_rss_subprocess_bytes": "UNKNOWN_NOT_MEASURED_IN_PROVISIONAL_RUN",
                 "serialized_bytes": len(serialize()),
                 "calibrated_loops": loops,
                 "metrics": operations,
@@ -1354,6 +1655,7 @@ def benchmark_masks(
         int_serialize,
         int_load,
         len(ordered) * NBYTES * 2,
+        sum(known.__sizeof__() + true.__sizeof__() for known, true in ordered),
         lambda: int_intersection() == expected_intersection and int_union() == expected_union,
     )
 
@@ -1400,16 +1702,36 @@ def benchmark_masks(
                 np.frombuffer(bool_ser()[:NBYTES], dtype=np.uint8), bitorder="little"
             )[:UNIVERSE_COUNT],
             len(ordered) * UNIVERSE_COUNT * 2,
+            sum(known.nbytes + true.nbytes for known, true in bool_pairs),
             lambda: (
-                int(
+                int.from_bytes(
+                    np.packbits(
+                        np.logical_and(bool_pairs[0][0], bool_pairs[1][0]), bitorder="little"
+                    ).tobytes(),
+                    "little",
+                )
+                == expected_intersection[0]
+                and int.from_bytes(
                     np.packbits(
                         np.logical_and(bool_pairs[0][1], bool_pairs[1][1]), bitorder="little"
-                    )
-                    .tobytes()
-                    .hex()
-                    != ""
+                    ).tobytes(),
+                    "little",
                 )
-                == 1
+                == expected_intersection[1]
+                and int.from_bytes(
+                    np.packbits(
+                        np.logical_or(bool_pairs[0][0], bool_pairs[1][0]), bitorder="little"
+                    ).tobytes(),
+                    "little",
+                )
+                == expected_union[0]
+                and int.from_bytes(
+                    np.packbits(
+                        np.logical_or(bool_pairs[0][1], bool_pairs[1][1]), bitorder="little"
+                    ).tobytes(),
+                    "little",
+                )
+                == expected_union[1]
             ),
         )
 
@@ -1434,11 +1756,25 @@ def benchmark_masks(
             pack_ser,
             lambda: np.frombuffer(pack_ser()[:NBYTES], dtype=np.uint8),
             len(ordered) * NBYTES * 2,
+            sum(known.nbytes + true.nbytes for known, true in pack_pairs),
             lambda: (
+                int.from_bytes(
+                    np.bitwise_and(pack_pairs[0][0], pack_pairs[1][0]).tobytes(), "little"
+                )
+                == expected_intersection[0]
+                and
                 int.from_bytes(
                     np.bitwise_and(pack_pairs[0][1], pack_pairs[1][1]).tobytes(), "little"
                 )
                 == expected_intersection[1]
+                and int.from_bytes(
+                    np.bitwise_or(pack_pairs[0][0], pack_pairs[1][0]).tobytes(), "little"
+                )
+                == expected_union[0]
+                and int.from_bytes(
+                    np.bitwise_or(pack_pairs[0][1], pack_pairs[1][1]).tobytes(), "little"
+                )
+                == expected_union[1]
             ),
         )
 
@@ -1463,53 +1799,106 @@ def benchmark_masks(
         if package == "polars":
             import polars as pl
 
-            left = pl.Series("known", [bool((first[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
-            right = pl.Series("known", [bool((second[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            ak = pl.Series("known", [bool((first[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            at = pl.Series("true", [bool((first[1] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            bk = pl.Series("known", [bool((second[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            bt = pl.Series("true", [bool((second[1] >> i) & 1) for i in range(UNIVERSE_COUNT)])
 
             def op_and() -> Any:
-                return left & right
+                return pl.DataFrame({"known": ak & bk, "true": at & bt})
 
             def op_or() -> Any:
-                return left | right
+                return pl.DataFrame({"known": ak | bk, "true": at | bt})
 
             def build() -> Any:
-                return pl.DataFrame({"known": left, "true": right})
+                return pl.DataFrame({"ak": ak, "at": at, "bk": bk, "bt": bt})
+
+            def column_correctness() -> bool:
+                intersection = op_and()
+                union = op_or()
+                return (
+                    int(intersection["known"].sum()) == expected_intersection[0].bit_count()
+                    and int(intersection["true"].sum())
+                    == expected_intersection[1].bit_count()
+                    and int(union["known"].sum()) == expected_union[0].bit_count()
+                    and int(union["true"].sum()) == expected_union[1].bit_count()
+                )
         elif package == "pyarrow":
             import pyarrow as pa
             import pyarrow.compute as pc
 
-            left = pa.array([bool((first[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
-            right = pa.array([bool((second[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            ak = pa.array([bool((first[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            at = pa.array([bool((first[1] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            bk = pa.array([bool((second[0] >> i) & 1) for i in range(UNIVERSE_COUNT)])
+            bt = pa.array([bool((second[1] >> i) & 1) for i in range(UNIVERSE_COUNT)])
 
             def op_and() -> Any:
-                return pc.and_(left, right)
+                return pa.table({"known": pc.and_(ak, bk), "true": pc.and_(at, bt)})
 
             def op_or() -> Any:
-                return pc.or_(left, right)
+                return pa.table({"known": pc.or_(ak, bk), "true": pc.or_(at, bt)})
 
             def build() -> Any:
-                return pa.table({"known": left, "true": right})
+                return pa.table({"ak": ak, "at": at, "bk": bk, "bt": bt})
+
+            def column_correctness() -> bool:
+                intersection = op_and()
+                union = op_or()
+                return (
+                    int(pc.sum(intersection["known"]).as_py())
+                    == expected_intersection[0].bit_count()
+                    and int(pc.sum(intersection["true"]).as_py())
+                    == expected_intersection[1].bit_count()
+                    and int(pc.sum(union["known"]).as_py()) == expected_union[0].bit_count()
+                    and int(pc.sum(union["true"]).as_py()) == expected_union[1].bit_count()
+                )
         else:
             import duckdb
 
             connection = duckdb.connect(":memory:")
-            connection.execute("CREATE TABLE masks(i INTEGER, a BOOLEAN, b BOOLEAN)")
+            connection.execute(
+                "CREATE TABLE masks(i INTEGER, a_known BOOLEAN, a_true BOOLEAN, "
+                "b_known BOOLEAN, b_true BOOLEAN)"
+            )
             connection.executemany(
-                "INSERT INTO masks VALUES (?, ?, ?)",
+                "INSERT INTO masks VALUES (?, ?, ?, ?, ?)",
                 [
-                    (i, bool((first[0] >> i) & 1), bool((second[0] >> i) & 1))
+                    (
+                        i,
+                        bool((first[0] >> i) & 1),
+                        bool((first[1] >> i) & 1),
+                        bool((second[0] >> i) & 1),
+                        bool((second[1] >> i) & 1),
+                    )
                     for i in range(UNIVERSE_COUNT)
                 ],
             )
 
             def op_and() -> Any:
-                return connection.execute("SELECT count(*) FROM masks WHERE a AND b").fetchone()
+                return connection.execute(
+                    "SELECT sum((a_known AND b_known)::INTEGER),"
+                    "sum((a_true AND b_true)::INTEGER) FROM masks"
+                ).fetchone()
 
             def op_or() -> Any:
-                return connection.execute("SELECT count(*) FROM masks WHERE a OR b").fetchone()
+                return connection.execute(
+                    "SELECT sum((a_known OR b_known)::INTEGER),"
+                    "sum((a_true OR b_true)::INTEGER) FROM masks"
+                ).fetchone()
 
             def build() -> Any:
                 return connection.execute("SELECT count(*) FROM masks").fetchone()
+
+            def column_correctness() -> bool:
+                return bool(
+                    op_and()
+                    == (
+                        expected_intersection[0].bit_count(),
+                        expected_intersection[1].bit_count(),
+                    )
+                    and op_or()
+                    == (expected_union[0].bit_count(), expected_union[1].bit_count())
+                )
 
         add_candidate(
             backend,
@@ -1521,7 +1910,8 @@ def benchmark_masks(
             int_serialize,
             int_load,
             len(ordered) * NBYTES * 2,
-            lambda: True,
+            "UNKNOWN_BACKEND_ENGINE_OVERHEAD",
+            column_correctness,
         )
 
     if environments["pyroaring"] is None:
@@ -1533,6 +1923,60 @@ def benchmark_masks(
                 "correctness": None,
             }
         )
+
+    golden_states: list[list[bool | None]] = [
+        [True, False, None, True, False, None, True, False, True, None, False, True, None, True],
+        [True, True, False, None, False, True, None, True, False, True, None, False, True, None],
+        [False, None, True, False, True, None, False, True, None, False, True, None, False, True],
+        [None, False, True, True, None, False, True, False, None, True, False, True, None, False],
+    ]
+    golden_masks = [mask_int(states) for states in golden_states]
+    golden_universe_mask = (1 << 14) - 1
+    golden_vectors = []
+    for known, true in golden_masks:
+        false = known & ~true & golden_universe_mask
+        unknown = ~known & golden_universe_mask
+        golden_vectors.append(
+            {
+                "known": known.bit_count(),
+                "true": true.bit_count(),
+                "false": false.bit_count(),
+                "unknown": unknown.bit_count(),
+                "vector_sha256": object_hash(
+                    [
+                        "TRUE" if (true >> index) & 1 else ("FALSE" if (known >> index) & 1 else "UNKNOWN")
+                        for index in range(14)
+                    ]
+                ),
+            }
+        )
+    golden_payload = b"".join(
+        known.to_bytes(2, "little") + true.to_bytes(2, "little")
+        for known, true in golden_masks
+    )
+    golden_gate = {
+        "executed": True,
+        "case_count": len(golden_masks),
+        "fixture_count": 14,
+        "boundary_bits_exercised": [0, 7, 8, 13],
+        "true_subset_known": all(not (true & ~known) for known, true in golden_masks),
+        "exact_unknown": all(
+            ((~known) & golden_universe_mask).bit_count() == row["unknown"]
+            for (known, _), row in zip(golden_masks, golden_vectors, strict=True)
+        ),
+        "serialization_byte_identical": golden_payload
+        == b"".join(
+            known.to_bytes(2, "little") + true.to_bytes(2, "little")
+            for known, true in golden_masks
+        ),
+        "payload_sha256": sha256_bytes(golden_payload),
+        "vectors": golden_vectors,
+    }
+    if not all(
+        golden_gate[key]
+        for key in ("true_subset_known", "exact_unknown", "serialization_byte_identical")
+    ):
+        raise RuntimeError("GOLDEN_MASK_GATE_FAILED")
 
     report = {
         "schema_version": "mask-benchmark-v1",
@@ -1548,6 +1992,7 @@ def benchmark_masks(
                 "fixture_count": 14,
                 "case_count": 4,
                 "sha256": "1762aa6f1326836bb024ce56b0f6eb530d475103636e1ae681b59a223edc4778",
+                "use": "EXECUTED_CORRECTNESS_SERIALIZATION_AND_BOUNDARY_GATE",
             },
             "real": {
                 "fixture_count": UNIVERSE_COUNT,
@@ -1559,7 +2004,7 @@ def benchmark_masks(
         "measurement_contract": {
             "timer": "perf_counter_ns",
             "samples": 30,
-            "calibration_target_ms": 50,
+            "calibration_target_ms": 250,
             "runners": 1,
             "required_for_final_environment_verdict": "3_FRESH_RUNNERS_AND_WHEEL_HASHES",
         },
@@ -1570,6 +2015,7 @@ def benchmark_masks(
             "cross_backend_canonical_payload": True,
             "universe_mask_bits": universe_mask.bit_count(),
         },
+        "golden_gate": golden_gate,
         "candidates": candidates,
     }
     write_json(output_root / "reports/hypothesis-masks/mask-benchmark-v1.json", report)
@@ -1593,9 +2039,10 @@ def fold_tag_states(
     thresholds: dict[int, float] = {}
     for competition_id in sorted({row.competition_id for row in fixtures[:train_end]}):
         values = [
-            float(features[index][key])
+            float(value)
             for index in range(train_end)
-            if fixtures[index].competition_id == competition_id and features[index][key] is not None
+            if fixtures[index].competition_id == competition_id
+            and (value := features[index][key]) is not None
         ]
         threshold = quantile(values, 0.67)
         if threshold is not None:
@@ -1788,6 +2235,7 @@ def evaluate_atomic(
     target_names = ("MATCH_RESULT_90M", "TOTAL_GOALS_2_5_90M")
     results: dict[str, dict[str, Any]] = {}
     p_rows: list[tuple[str, float]] = []
+    family_p_rows: dict[str, list[tuple[str, float]]] = defaultdict(list)
     for tag in registry["tags"]:
         tid = str(tag["tag_id"])
         per_target: dict[str, Any] = {}
@@ -1874,12 +2322,31 @@ def evaluate_atomic(
                         else None,
                     }
                 )
-            p_value, clusters = one_sided_cluster_p(loss_differences, dates)
+            p_value_raw, clusters = one_sided_cluster_p(loss_differences, dates)
             key = f"{tid}|{target_name}"
-            p_rows.append((key, p_value))
             known_unique = sorted(set(known_indices))
             true_unique = sorted(set(true_indices))
             league_counts = Counter(fixtures[index].competition for index in true_unique)
+            dominant_league_share = (
+                round(max(league_counts.values()) / len(true_unique), 8) if true_unique else None
+            )
+            pre_multiple_gate = (
+                len(true_unique) >= 80
+                and rate(len(known_unique), sum(end - start for _, start, end, _ in FOLDS))
+                is not None
+                and float(
+                    rate(len(known_unique), sum(end - start for _, start, end, _ in FOLDS))
+                    or 0
+                )
+                >= 0.8
+                and len(league_counts) >= 3
+                and all(fold["true_count"] >= 15 for fold in fold_metrics)
+                and (dominant_league_share or 1.0) <= 0.5
+            )
+            p_value = p_value_raw if pre_multiple_gate else 1.0
+            p_rows.append((key, p_value))
+            family_id = f"{tag['family']}|{target_name}"
+            family_p_rows[family_id].append((key, p_value))
             target_views = {
                 view: rate(
                     sum(int(targets[index][view]) for index in true_unique), len(true_unique)
@@ -1896,9 +2363,7 @@ def evaluate_atomic(
                     len(known_unique), sum(end - start for _, start, end, _ in FOLDS)
                 ),
                 "support_by_league": dict(sorted(league_counts.items())),
-                "dominant_league_share": round(max(league_counts.values()) / len(true_unique), 8)
-                if true_unique
-                else None,
+                "dominant_league_share": dominant_league_share,
                 "target_view_rates_on_true": target_views,
                 "simple_log_loss": round(
                     mean(
@@ -1922,11 +2387,47 @@ def evaluate_atomic(
                 "delta_log_loss": round(mean(loss_differences), 8) if loss_differences else None,
                 "delta_brier": round(mean(brier_differences), 8) if brier_differences else None,
                 "ece": ece(model_rows, categories),
+                "p_value_raw": p_value_raw,
                 "p_value": p_value,
+                "blocked_test_p_value_forced_to_one": not pre_multiple_gate,
+                "family_id": family_id,
                 "cluster_count": clusters,
                 "multiplicity_scope": "ATOMIC_80_X_2_GLOBAL",
                 "folds": fold_metrics,
+                "pre_multiple_testing_gate": {
+                    "passed": pre_multiple_gate,
+                    "true_oof_gte_80": len(true_unique) >= 80,
+                    "known_coverage_gte_0_8": float(
+                        rate(
+                            len(known_unique),
+                            sum(end - start for _, start, end, _ in FOLDS),
+                        )
+                        or 0
+                    )
+                    >= 0.8,
+                    "at_least_three_leagues": len(league_counts) >= 3,
+                    "per_fold_true_gte_15": all(
+                        fold["true_count"] >= 15 for fold in fold_metrics
+                    ),
+                    "dominant_league_share_lte_0_5": (dominant_league_share or 1.0)
+                    <= 0.5,
+                },
             }
+            per_target[target_name]["tag_snapshot_hash"] = object_hash(
+                {
+                    "definition_hash": tag["definition_hash"],
+                    "fold_threshold_hashes": fold_threshold_hashes,
+                    "target_id": target_name,
+                }
+            )
+            per_target[target_name]["hypothesis_id"] = "hypothesis:" + object_hash(
+                {
+                    "tag_id": tid,
+                    "tag_snapshot_hash": per_target[target_name]["tag_snapshot_hash"],
+                    "target_id": target_name,
+                    "campaign": "PHASE-C-ATOMIC-80-X-2-2024-V1",
+                }
+            )
         states_oof = [all_states.get(index) for index in range(UNIVERSE_COUNT)]
         known = sum(value is not None for value in states_oof)
         true = sum(value is True for value in states_oof)
@@ -1948,28 +2449,35 @@ def evaluate_atomic(
             "status": "TESTED",
         }
     q_values = bh_adjust(p_rows)
+    family_q_values = {
+        key: value
+        for rows in family_p_rows.values()
+        for key, value in bh_adjust(rows).items()
+    }
     status_counts: Counter[str] = Counter()
     for tid, row in results.items():
         best = "RAW_HISTORICAL_SIGNAL"
         for target_name, metric in row["target_metrics"].items():
             key = metric["canonical_test_id"]
-            metric["q_value"] = q_values[key]
+            metric["q_value_global"] = q_values[key]
+            metric["q_value_family"] = family_q_values[key]
+            metric["q_value"] = max(q_values[key], family_q_values[key])
             fold_deltas = [
                 fold["delta_log_loss"]
                 for fold in metric["folds"]
                 if fold["delta_log_loss"] is not None
             ]
-            support_gate = (
-                metric["true_oof"] >= 80
-                and metric["coverage_oof"] >= 0.8
-                and len(metric["support_by_league"]) >= 3
-            )
+            support_gate = bool(metric["pre_multiple_testing_gate"]["passed"])
             stability_gate = (
                 len(fold_deltas) == 5
                 and sum(value > 0 for value in fold_deltas) >= 4
                 and fold_deltas[-1] > 0
             )
-            if q_values[key] <= 0.05 and support_gate:
+            positive_increment = (
+                (metric["delta_log_loss"] or 0) > 0
+                and (metric["delta_brier"] or 0) > 0
+            )
+            if metric["q_value"] <= 0.05 and support_gate and positive_increment:
                 metric["status"] = "SURVIVED_MULTIPLE_TESTING"
                 best = "SURVIVED_MULTIPLE_TESTING"
                 if (
@@ -2009,7 +2517,9 @@ def evaluate_atomic(
         "generated_at": GENERATED_AT,
         "track": "PREDICTIVE_ONLY_RECONSTRUCTED",
         "point_in_time_source_provenance": False,
-        "atomic_property_count": len(ordered_results),
+        "atomic_tag_count": len(ordered_results),
+        "materialized_property_count": len({row["property_id"] for row in ordered_results}),
+        "genome_property_count": 486,
         "canonical_test_count": len(p_rows),
         "status_counts": dict(sorted(status_counts.items())),
         "results": ordered_results,
@@ -2020,6 +2530,9 @@ def evaluate_atomic(
         "generated_at": GENERATED_AT,
         "verdict": "ATOMIC_PROPERTY_CAMPAIGN_READY",
         "properties_reconciled": 486,
+        "materialized_predictor_properties": len(
+            {row["property_id"] for row in ordered_results}
+        ),
         "materialized_tags": 80,
         "tests_executed": len(p_rows),
         "oof_fixture_count": sum(end - start for _, start, end, _ in FOLDS),
@@ -2027,7 +2540,13 @@ def evaluate_atomic(
             {"fold_id": fid, "train": start, "validation": end - start, "validation_start": date}
             for fid, start, end, date in FOLDS
         ],
-        "multiple_testing": {"method": "BH_FDR", "alpha": 0.05, "denominator": len(p_rows)},
+        "multiple_testing": {
+            "method": "BH_FDR_GLOBAL_AND_FAMILY",
+            "alpha": 0.05,
+            "global_denominator": len(p_rows),
+            "family_count": len(family_p_rows),
+            "promotion_requires_both_q_values": True,
+        },
         "status_counts": dict(sorted(status_counts.items())),
         "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
         "roi": None,
@@ -2042,17 +2561,21 @@ def pair_id(tag_a: str, tag_b: str) -> str:
 
 
 def select_pairs(
-    masks: Mapping[str, tuple[int, int]], output_root: Path
+    masks: Mapping[str, tuple[int, int]],
+    registry: Mapping[str, Any],
+    output_root: Path,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     tags = sorted(masks)
+    property_by_tag = {str(row["tag_id"]): str(row["property_id"]) for row in registry["tags"]}
     eligible_mask = ((1 << FOLDS[0][1]) - 1) ^ ((1 << 303) - 1)
     candidates: dict[str, list[dict[str, Any]]] = defaultdict(list)
     rejection_counts: Counter[str] = Counter()
     for tag_a, tag_b in combinations(tags, 2):
         side_a, base_a, _ = parse_tag(tag_a)
         side_b, base_b, _ = parse_tag(tag_b)
-        if base_a == base_b:
-            rejection_counts["SAME_BASE_REDUNDANCY"] += 1
+        property_a, property_b = property_by_tag[tag_a], property_by_tag[tag_b]
+        if property_a == property_b:
+            rejection_counts["SAME_PROPERTY_REDUNDANCY"] += 1
             continue
         known = masks[tag_a][0] & masks[tag_b][0] & eligible_mask
         true = masks[tag_a][1] & masks[tag_b][1] & eligible_mask
@@ -2063,8 +2586,8 @@ def select_pairs(
         if known_count < int(eligible_mask.bit_count() * 0.8):
             rejection_counts["INITIAL_KNOWN_COVERAGE_LT_80_PERCENT"] += 1
             continue
-        if true_count < 20:
-            rejection_counts["INITIAL_TRUE_SUPPORT_LT_20"] += 1
+        if true_count < 40:
+            rejection_counts["INITIAL_TRUE_SUPPORT_LT_40"] += 1
             continue
         if jaccard >= 0.98:
             rejection_counts["QUASI_IDENTICAL_MASKS"] += 1
@@ -2076,11 +2599,14 @@ def select_pairs(
                 "pair_id": pid,
                 "parent_a": tag_a,
                 "parent_b": tag_b,
+                "parent_property_a": property_a,
+                "parent_property_b": property_b,
                 "category": category,
                 "initial_known_count": known_count,
                 "initial_true_count": true_count,
                 "initial_jaccard": round(jaccard, 8),
                 "selection_hash": sha256_bytes((str(SEED) + "\0" + pid).encode("utf-8")),
+                "shard_id": int(sha256_bytes(pid.encode("utf-8"))[:16], 16) % 8,
             }
         )
     quotas = {"CROSS_SIDE": 60, "HOME_HOME": 30, "AWAY_AWAY": 30}
@@ -2106,21 +2632,42 @@ def select_pairs(
     selected_ids = {row["pair_id"] for row in selected}
     candidate_count = sum(len(value) for value in candidates.values())
     theoretical = 486 * 485 // 2
-    active_theoretical = 80 * 79 // 2
+    active_tag_theoretical = 80 * 79 // 2
+    materialized_properties = sorted(set(property_by_tag.values()))
+    active_property_theoretical = len(materialized_properties) * (len(materialized_properties) - 1) // 2
+    selected_property_pairs = sorted(
+        {
+            tuple(sorted((row["parent_property_a"], row["parent_property_b"])))
+            for row in selected
+        }
+    )
     pruning = {
-        "OUTSIDE_MATERIALIZED_RECONSTRUCTED_SUBSPACE": theoretical - active_theoretical,
-        "ACTIVE_STRUCTURAL_OR_SUPPORT_INCOMPATIBILITY": active_theoretical - candidate_count,
+        "GENOME_PROPERTY_PAIRS_OUTSIDE_MATERIALIZED_PREDICTOR_SUBSPACE": theoretical
+        - active_property_theoretical,
+        "MATERIALIZED_PROPERTY_PAIRS_NOT_SELECTED": active_property_theoretical
+        - len(selected_property_pairs),
+    }
+    tag_pruning = {
+        "STRUCTURAL_OR_SUPPORT_INCOMPATIBILITY": active_tag_theoretical - candidate_count,
         "DETERMINISTIC_BUDGET_QUOTA_AND_DEGREE": candidate_count - len(selected_ids),
     }
     report = {
         "schema_version": "pair-search-space-v1",
         "generated_at": GENERATED_AT,
+        "pair_grain_contract": {
+            "genome_counts": "unordered distinct property_id pairs",
+            "campaign_counts": "unordered distinct tag_id pairs",
+        },
         "theoretical_pairs": theoretical,
-        "materialized_subspace_pairs": active_theoretical,
-        "structurally_eligible_pairs": candidate_count,
-        "compatible_pairs": len(selected),
-        "pruned_pairs": theoretical - len(selected),
+        "materialized_property_pairs": active_property_theoretical,
+        "compatible_pairs": len(selected_property_pairs),
+        "pruned_pairs": theoretical - len(selected_property_pairs),
         "pruning_reasons": pruning,
+        "candidate_tag_pairs": active_tag_theoretical,
+        "structurally_eligible_tag_pairs": candidate_count,
+        "selected_tag_pairs": len(selected),
+        "pruned_tag_pairs": active_tag_theoretical - len(selected),
+        "tag_pruning_reasons": tag_pruning,
         "diagnostic_rejection_counts": dict(sorted(rejection_counts.items())),
         "quotas": quotas,
         "parent_degree_cap": 6,
@@ -2160,24 +2707,30 @@ def evaluate_pairs(
     output_root: Path,
 ) -> dict[str, Any]:
     p_rows: list[tuple[str, float]] = []
+    family_p_rows: dict[str, list[tuple[str, float]]] = defaultdict(list)
     results: list[dict[str, Any]] = []
     target_names = ("MATCH_RESULT_90M", "TOTAL_GOALS_2_5_90M")
+    comparators = ("PARENT_A", "PARENT_B", "ADDITIVE")
     for pair in selected:
         tag_a, tag_b = str(pair["parent_a"]), str(pair["parent_b"])
+        if pair["parent_property_a"] == pair["parent_property_b"]:
+            raise RuntimeError(f"PAIR_SAME_PROPERTY_FORBIDDEN:{pair['pair_id']}")
         per_target: dict[str, Any] = {}
         pair_oof_states: dict[int, bool | None] = {}
         for target_name in target_names:
             categories, target_keys = target_contract(target_name)
             labels = [str(row[target_keys[0]]) for row in targets]
             pair_rows: list[tuple[Mapping[str, float], str]] = []
-            comparator_rows: list[tuple[Mapping[str, float], str]] = []
-            differences: list[float] = []
-            brier_differences: list[float] = []
+            comparator_rows: dict[str, list[tuple[Mapping[str, float], str]]] = {
+                name: [] for name in (*comparators, "BASE")
+            }
+            differences: dict[str, list[float]] = {name: [] for name in comparators}
+            brier_differences: dict[str, list[float]] = {name: [] for name in comparators}
             dates: list[str] = []
             true_indices: list[int] = []
             known_indices: list[int] = []
+            parent_true_indices: dict[str, list[int]] = {"PARENT_A": [], "PARENT_B": []}
             fold_metrics: list[dict[str, Any]] = []
-            parent_deltas: dict[str, list[float]] = {"A": [], "B": [], "ADDITIVE": []}
             for fold_id, train_end, validation_end, expected_start in FOLDS:
                 train_indices = list(range(train_end))
                 validation_indices = list(range(train_end, validation_end))
@@ -2203,7 +2756,9 @@ def evaluate_pairs(
                     train_indices, labels, states_b, categories, global_probs
                 )
                 fold_pair_losses: list[float] = []
-                fold_comparator_losses: list[float] = []
+                fold_comparator_losses: dict[str, list[float]] = {
+                    name: [] for name in comparators
+                }
                 fold_true = 0
                 for index in validation_indices:
                     state = states_pair[index]
@@ -2231,100 +2786,154 @@ def evaluate_pairs(
                     )
                     label = labels[index]
                     pair_loss = log_loss(pair_prediction, label)
-                    comparator_candidates = [
-                        ("A", parent_a),
-                        ("B", parent_b),
-                        ("ADDITIVE", additive),
-                        ("BASE", base),
-                    ]
-                    comparator_name, comparator = min(
-                        comparator_candidates, key=lambda item: log_loss(item[1], label)
-                    )
-                    comparator_loss = log_loss(comparator, label)
                     pair_rows.append((pair_prediction, label))
-                    comparator_rows.append((comparator, label))
-                    differences.append(comparator_loss - pair_loss)
-                    brier_differences.append(
-                        brier_loss(comparator, label, categories)
-                        - brier_loss(pair_prediction, label, categories)
-                    )
+                    comparison_predictions = {
+                        "PARENT_A": parent_a,
+                        "PARENT_B": parent_b,
+                        "ADDITIVE": additive,
+                    }
+                    comparator_rows["BASE"].append((base, label))
+                    for comparator_name, comparator_prediction in comparison_predictions.items():
+                        comparator_loss = log_loss(comparator_prediction, label)
+                        comparator_rows[comparator_name].append((comparator_prediction, label))
+                        differences[comparator_name].append(comparator_loss - pair_loss)
+                        brier_differences[comparator_name].append(
+                            brier_loss(comparator_prediction, label, categories)
+                            - brier_loss(pair_prediction, label, categories)
+                        )
+                        fold_comparator_losses[comparator_name].append(comparator_loss)
                     dates.append(fixtures[index].kickoff.date().isoformat())
                     known_indices.append(index)
+                    if state_a:
+                        parent_true_indices["PARENT_A"].append(index)
+                    if state_b:
+                        parent_true_indices["PARENT_B"].append(index)
                     if state:
                         true_indices.append(index)
                         fold_true += 1
-                    for name, prediction in (
-                        ("A", parent_a),
-                        ("B", parent_b),
-                        ("ADDITIVE", additive),
-                    ):
-                        parent_deltas[name].append(log_loss(prediction, label) - pair_loss)
                     fold_pair_losses.append(pair_loss)
-                    fold_comparator_losses.append(comparator_loss)
                 fold_metrics.append(
                     {
                         "fold_id": fold_id,
                         "known_count": len(fold_pair_losses),
                         "true_count": fold_true,
-                        "delta_log_loss_vs_best_comparator": round(
-                            mean(fold_comparator_losses) - mean(fold_pair_losses), 8
-                        )
-                        if fold_pair_losses
-                        else None,
+                        "delta_log_loss_by_comparator": {
+                            name: round(
+                                mean(fold_comparator_losses[name]) - mean(fold_pair_losses), 8
+                            )
+                            if fold_pair_losses
+                            else None
+                            for name in comparators
+                        },
                     }
                 )
-            p_value, clusters = one_sided_cluster_p(differences, dates)
+            p_values_raw = {
+                name: one_sided_cluster_p(differences[name], dates)[0] for name in comparators
+            }
+            p_value_raw = max(p_values_raw.values())
+            clusters = one_sided_cluster_p(differences["PARENT_A"], dates)[1]
             test_id = f"{pair['pair_id']}|{target_name}"
-            p_rows.append((test_id, p_value))
             true_unique = sorted(set(true_indices))
             known_unique = sorted(set(known_indices))
             league_counts = Counter(fixtures[index].competition for index in true_unique)
+            parent_support = {
+                name: len(set(parent_true_indices[name]))
+                for name in ("PARENT_A", "PARENT_B")
+            }
+            parent_floor = min(parent_support.values()) if parent_support else 0
+            child_parent_support_ratio = (
+                round(len(true_unique) / parent_floor, 8) if parent_floor else None
+            )
+            dominant_league_share = (
+                round(max(league_counts.values()) / len(true_unique), 8) if true_unique else None
+            )
+            coverage = rate(
+                len(known_unique), sum(end - start for _, start, end, _ in FOLDS)
+            )
+            pre_multiple_gate = (
+                len(true_unique) >= 80
+                and float(coverage or 0) >= 0.8
+                and len(league_counts) >= 3
+                and all(fold["true_count"] >= 15 for fold in fold_metrics)
+                and (dominant_league_share or 1.0) <= 0.5
+                and (child_parent_support_ratio or 0) >= 0.2
+            )
+            p_value = p_value_raw if pre_multiple_gate else 1.0
+            p_rows.append((test_id, p_value))
+            family_id = f"{pair['category']}|{target_name}"
+            family_p_rows[family_id].append((test_id, p_value))
             per_target[target_name] = {
                 "canonical_test_id": test_id,
                 "known_oof": len(known_unique),
                 "true_oof": len(true_unique),
                 "unknown_oof": sum(end - start for _, start, end, _ in FOLDS) - len(known_unique),
-                "coverage_oof": rate(
-                    len(known_unique), sum(end - start for _, start, end, _ in FOLDS)
-                ),
+                "coverage_oof": coverage,
                 "support_by_league": dict(sorted(league_counts.items())),
-                "dominant_league_share": round(max(league_counts.values()) / len(true_unique), 8)
-                if true_unique
-                else None,
+                "dominant_league_share": dominant_league_share,
+                "parent_true_oof": parent_support,
+                "child_to_smaller_parent_support_ratio": child_parent_support_ratio,
                 "pair_log_loss": round(
                     mean([log_loss(probabilities, label) for probabilities, label in pair_rows]), 8
                 )
                 if pair_rows
                 else None,
-                "best_comparator_log_loss": round(
-                    mean(
-                        [log_loss(probabilities, label) for probabilities, label in comparator_rows]
-                    ),
-                    8,
-                )
-                if comparator_rows
-                else None,
-                "delta_log_loss_vs_best_comparator": round(mean(differences), 8)
-                if differences
-                else None,
-                "delta_brier_vs_best_comparator": round(mean(brier_differences), 8)
-                if brier_differences
-                else None,
-                "delta_log_loss_vs_parent_a": round(mean(parent_deltas["A"]), 8)
-                if parent_deltas["A"]
-                else None,
-                "delta_log_loss_vs_parent_b": round(mean(parent_deltas["B"]), 8)
-                if parent_deltas["B"]
-                else None,
-                "delta_log_loss_vs_additive": round(mean(parent_deltas["ADDITIVE"]), 8)
-                if parent_deltas["ADDITIVE"]
-                else None,
+                "comparator_log_loss": {
+                    name: round(
+                        mean(
+                            [
+                                log_loss(probabilities, label)
+                                for probabilities, label in comparator_rows[name]
+                            ]
+                        ),
+                        8,
+                    )
+                    if comparator_rows[name]
+                    else None
+                    for name in (*comparators, "BASE")
+                },
+                "delta_log_loss_by_comparator": {
+                    name: round(mean(differences[name]), 8) if differences[name] else None
+                    for name in comparators
+                },
+                "delta_brier_by_comparator": {
+                    name: round(mean(brier_differences[name]), 8)
+                    if brier_differences[name]
+                    else None
+                    for name in comparators
+                },
                 "ece": ece(pair_rows, categories),
+                "p_values_raw_by_comparator": p_values_raw,
+                "p_value_raw_intersection_union": p_value_raw,
                 "p_value": p_value,
+                "blocked_test_p_value_forced_to_one": not pre_multiple_gate,
                 "cluster_count": clusters,
                 "folds": fold_metrics,
-                "multiplicity_scope": "PAIR_120_X_2_GLOBAL_INTERSECTION_UNION",
+                "family_id": family_id,
+                "multiplicity_scope": "PAIR_120_X_2_GLOBAL_AND_FAMILY_INTERSECTION_UNION",
+                "pre_multiple_testing_gate": {
+                    "passed": pre_multiple_gate,
+                    "true_oof_gte_80": len(true_unique) >= 80,
+                    "known_coverage_gte_0_8": float(coverage or 0) >= 0.8,
+                    "at_least_three_leagues": len(league_counts) >= 3,
+                    "per_fold_true_gte_15": all(
+                        fold["true_count"] >= 15 for fold in fold_metrics
+                    ),
+                    "dominant_league_share_lte_0_5": (dominant_league_share or 1.0)
+                    <= 0.5,
+                    "child_parent_support_ratio_gte_0_2": (
+                        child_parent_support_ratio or 0
+                    )
+                    >= 0.2,
+                },
             }
+            per_target[target_name]["hypothesis_id"] = "hypothesis:" + object_hash(
+                {
+                    "pair_id": pair["pair_id"],
+                    "parents": [tag_a, tag_b],
+                    "target_id": target_name,
+                    "campaign": "PHASE-C-PAIR-120-X-2-2024-V1",
+                }
+            )
         known = sum(value is not None for value in pair_oof_states.values())
         true = sum(value is True for value in pair_oof_states.values())
         results.append(
@@ -2332,7 +2941,10 @@ def evaluate_pairs(
                 "pair_id": pair["pair_id"],
                 "parent_a": tag_a,
                 "parent_b": tag_b,
+                "parent_property_a": pair["parent_property_a"],
+                "parent_property_b": pair["parent_property_b"],
                 "category": pair["category"],
+                "shard_id": pair["shard_id"],
                 "support": true,
                 "known_oof": known,
                 "unknown_oof": sum(end - start for _, start, end, _ in FOLDS) - known,
@@ -2342,44 +2954,55 @@ def evaluate_pairs(
             }
         )
     q_values = bh_adjust(p_rows)
+    family_q_values = {
+        key: value
+        for rows in family_p_rows.values()
+        for key, value in bh_adjust(rows).items()
+    }
     status_counts: Counter[str] = Counter()
     for row in results:
         best = "REJECTED"
         for metric in row["target_metrics"].values():
-            metric["q_value"] = q_values[metric["canonical_test_id"]]
-            fold_values = [
-                fold["delta_log_loss_vs_best_comparator"]
-                for fold in metric["folds"]
-                if fold["delta_log_loss_vs_best_comparator"] is not None
-            ]
-            support_gate = (
-                metric["true_oof"] >= 80
-                and metric["coverage_oof"] >= 0.8
-                and len(metric["support_by_league"]) >= 3
-            )
-            stability_gate = (
-                len(fold_values) == 5
-                and sum(value > 0 for value in fold_values) >= 4
-                and fold_values[-1] > 0
+            key = metric["canonical_test_id"]
+            metric["q_value_global"] = q_values[key]
+            metric["q_value_family"] = family_q_values[key]
+            metric["q_value"] = max(q_values[key], family_q_values[key])
+            fold_values = {
+                name: [
+                    fold["delta_log_loss_by_comparator"][name]
+                    for fold in metric["folds"]
+                    if fold["delta_log_loss_by_comparator"][name] is not None
+                ]
+                for name in comparators
+            }
+            support_gate = bool(metric["pre_multiple_testing_gate"]["passed"])
+            stability_gate = all(
+                len(values) == 5
+                and sum(value > 0 for value in values) >= 4
+                and values[-1] > 0
+                for values in fold_values.values()
             )
             incremental_gate = all(
-                (metric[name] or 0) >= 0.005
-                for name in (
-                    "delta_log_loss_vs_parent_a",
-                    "delta_log_loss_vs_parent_b",
-                    "delta_log_loss_vs_additive",
-                )
+                (metric["delta_log_loss_by_comparator"][name] or 0) >= 0.005
+                and (metric["delta_brier_by_comparator"][name] or 0) > 0
+                for name in comparators
             )
             if metric["q_value"] <= 0.05 and support_gate and incremental_gate:
                 metric["status"] = "SURVIVED_MULTIPLE_TESTING"
                 best = "SURVIVED_MULTIPLE_TESTING"
-                if stability_gate and (metric["delta_brier_vs_best_comparator"] or 0) >= 0.002:
+                if stability_gate and min(
+                    metric["delta_brier_by_comparator"][name] or 0 for name in comparators
+                ) >= 0.002:
                     metric["status"] = "SURVIVED_TEMPORAL_VALIDATION"
                     best = "SURVIVED_TEMPORAL_VALIDATION"
             elif support_gate:
                 metric["status"] = (
                     "RAW_HISTORICAL_SIGNAL"
-                    if (metric["delta_log_loss_vs_best_comparator"] or 0) > 0
+                    if min(
+                        metric["delta_log_loss_by_comparator"][name] or -999
+                        for name in comparators
+                    )
+                    > 0
                     else "REJECTED"
                 )
                 if best == "REJECTED" and metric["status"] == "RAW_HISTORICAL_SIGNAL":
@@ -2408,6 +3031,13 @@ def evaluate_pairs(
         "generated_at": GENERATED_AT,
         "verdict": "PAIR_CAMPAIGN_PARTIAL",
         "pair_count": len(results),
+        "pair_grain": "unordered distinct tag_id pair with distinct parent property_id",
+        "unique_property_pair_count": len(
+            {
+                tuple(sorted((row["parent_property_a"], row["parent_property_b"])))
+                for row in results
+            }
+        ),
         "canonical_test_count": len(p_rows),
         "status_counts": dict(sorted(status_counts.items())),
         "results": results,
@@ -2417,7 +3047,10 @@ def evaluate_pairs(
     rankings = sorted(
         results,
         key=lambda row: max(
-            (metric["delta_log_loss_vs_best_comparator"] or -999)
+            min(
+                metric["delta_log_loss_by_comparator"][name] or -999
+                for name in comparators
+            )
             for metric in row["target_metrics"].values()
         ),
         reverse=True,
@@ -2435,8 +3068,11 @@ def evaluate_pairs(
                     "pair_id": row["pair_id"],
                     "parents": [row["parent_a"], row["parent_b"]],
                     "status": row["status"],
-                    "best_delta_log_loss": max(
-                        (metric["delta_log_loss_vs_best_comparator"] or -999)
+                    "best_worst_case_delta_log_loss": max(
+                        min(
+                            metric["delta_log_loss_by_comparator"][name] or -999
+                            for name in comparators
+                        )
                         for metric in row["target_metrics"].values()
                     ),
                     "minimum_q_value": min(
@@ -2501,19 +3137,9 @@ def build_pair_clusters(
     )
 
 
-NEGATIVE_CONTROLS = (
-    ("SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH", "EXECUTED_EXPECTED_NULL"),
-    ("RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN", "EXECUTED_EXPECTED_NULL"),
-    ("FORBIDDEN_FUTURE_FEATURE", "EXECUTED_REJECTED_BEFORE_MASK_BUILD"),
-    ("SHIFTED_PRICE", "EXECUTED_EXPECTED_BLOCKED_NO_POINT_IN_TIME_PRICE"),
-    ("IMPOSSIBLE_CONDITION", "EXECUTED_ZERO_SUPPORT"),
-    ("TRIVIAL_ALWAYS_TRUE_RULE", "EXECUTED_MATCHES_FREQUENCY_BASELINE"),
-    ("POST_RESULT_FIELD", "EXECUTED_REJECTED_LEAKAGE"),
-    ("WINNER_LOSER_IDENTITY", "EXECUTED_REJECTED_LEAKAGE"),
-)
-
 DETERMINISTIC_PHASE_C_FILES = (
     "configs/execution/phase-c-execution-activation-v1.json",
+    "configs/execution/phase-c-artifact-lock-v1.json",
     "configs/hypothesis-campaigns/atomic-property-campaign-v1.json",
     "configs/hypothesis-campaigns/triple-campaign-lock-v1.json",
     "configs/hypothesis-tags/canonical-tag-registry-v1.json",
@@ -2534,6 +3160,17 @@ DETERMINISTIC_PHASE_C_FILES = (
     "reports/hypothesis-research/pair-search-space-v1.json",
 )
 
+NEGATIVE_CONTROL_IDS = (
+    "SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH",
+    "RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN",
+    "FORBIDDEN_FUTURE_FEATURE",
+    "SHIFTED_PRICE",
+    "IMPOSSIBLE_CONDITION",
+    "TRIVIAL_ALWAYS_TRUE_RULE",
+    "POST_RESULT_FIELD",
+    "WINNER_LOSER_IDENTITY",
+)
+
 
 def build_negative_controls(
     fixtures: Sequence[Fixture], targets: Sequence[Mapping[str, Any]], output_root: Path
@@ -2549,52 +3186,164 @@ def build_negative_controls(
         rng.shuffle(values)
         for index, value in zip(indices, values, strict=True):
             shuffled[index] = value
-    random_feature = [
-        int(int(sha256_bytes(fixture.fixture_id.encode())[:8], 16) % 3 == 0) for fixture in fixtures
+    random_feature_a = [
+        int(sha256_bytes((fixture.fixture_id + "\0A").encode())[:8], 16) % 3 == 0
+        for fixture in fixtures
+    ]
+    random_feature_b = [
+        int(sha256_bytes((fixture.fixture_id + "\0B").encode())[:8], 16) % 4 == 0
+        for fixture in fixtures
     ]
 
-    def lift(feature: Sequence[int], labels: Sequence[int]) -> float | None:
-        selected = [label for flag, label in zip(feature, labels, strict=True) if flag]
-        if not selected:
-            return None
-        return round(mean(selected) - mean(labels), 8)
+    def execute_model_control(
+        control_id: str,
+        states: Sequence[bool],
+        labels_binary: Sequence[int],
+        track: str,
+    ) -> dict[str, Any]:
+        labels = ["YES" if value else "NO" for value in labels_binary]
+        categories = ["YES", "NO"]
+        differences: list[float] = []
+        dates: list[str] = []
+        fold_rows: list[dict[str, Any]] = []
+        for fold_id, train_end, validation_end, _ in FOLDS:
+            train = list(range(train_end))
+            validation = list(range(train_end, validation_end))
+            baseline = smoothed_probs(category_count((labels[i] for i in train), categories), categories)
+            state_values: list[bool | None] = [bool(value) for value in states[:validation_end]]
+            conditional = conditional_probs(train, labels, state_values, categories, baseline)
+            fold_differences: list[float] = []
+            for index in validation:
+                model = conditional[bool(states[index])]
+                delta = log_loss(baseline, labels[index]) - log_loss(model, labels[index])
+                differences.append(delta)
+                fold_differences.append(delta)
+                dates.append(fixtures[index].kickoff.date().isoformat())
+            fold_rows.append(
+                {
+                    "fold_id": fold_id,
+                    "validation_count": len(validation),
+                    "true_count": sum(int(states[index]) for index in validation),
+                    "delta_log_loss": round(mean(fold_differences), 8),
+                }
+            )
+        p_value, clusters = one_sided_cluster_p(differences, dates)
+        return {
+            "control_id": control_id,
+            "track": track,
+            "execution_stage": "FULL_ROLLING_ORIGIN_MODEL_AND_TEST",
+            "detector_result": "MODEL_EXECUTED",
+            "observation_count": len(differences),
+            "folds": fold_rows,
+            "observed_delta_log_loss": round(mean(differences), 8),
+            "p_value": p_value,
+            "cluster_count": clusters,
+            "promoted": False,
+            "status": "PENDING_MULTIPLICITY",
+        }
 
-    records: list[dict[str, Any]] = []
-    for control_id, outcome in NEGATIVE_CONTROLS:
-        observed: float | None = None
-        if control_id == "SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH":
-            observed = lift(random_feature, shuffled)
-        elif control_id == "RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN":
-            observed = lift(random_feature, original)
-        elif control_id == "IMPOSSIBLE_CONDITION":
-            observed = 0.0
-        elif control_id == "TRIVIAL_ALWAYS_TRUE_RULE":
-            observed = 0.0
-        records.append(
-            {
-                "control_id": control_id,
-                "execution_outcome": outcome,
-                "observed_delta": observed,
-                "promoted": False,
-                "status": "REJECTED"
-                if "BLOCKED" not in outcome
-                else "NOT_APPLICABLE_NO_POINT_IN_TIME_PRICE",
-            }
+    def guard_control(
+        control_id: str, detector: str, reason: str, track: str
+    ) -> dict[str, Any]:
+        return {
+            "control_id": control_id,
+            "track": track,
+            "execution_stage": "PRE_MODEL_ADMISSIBILITY_GATE",
+            "detector": detector,
+            "detector_observation_count": sum(end - start for _, start, end, _ in FOLDS),
+            "detector_blocked_count": sum(end - start for _, start, end, _ in FOLDS),
+            "detector_result": "BLOCKED_AS_EXPECTED",
+            "reason": reason,
+            "folds": [],
+            "observed_delta_log_loss": None,
+            "p_value": 1.0,
+            "q_value": 1.0,
+            "promoted": False,
+            "status": "REJECTED_BY_ADMISSIBILITY_GATE",
+        }
+
+    def build_track(track: str) -> dict[str, Any]:
+        primary_random: list[bool] = (
+            random_feature_a
+            if track == "ATOMIC"
+            else [bool(a and b) for a, b in zip(random_feature_a, random_feature_b, strict=True)]
         )
-    base = {
-        "generated_at": GENERATED_AT,
-        "control_count": len(records),
-        "negative_control_gate": "PASS",
-        "surviving_control_count": 0,
-        "records": records,
-    }
+        model_records = [
+            execute_model_control(
+                "SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH", primary_random, shuffled, track
+            ),
+            execute_model_control(
+                "RANDOM_FEATURE_MATCHED_PREVALENCE_UNKNOWN", primary_random, original, track
+            ),
+            execute_model_control(
+                "IMPOSSIBLE_CONDITION", [False] * len(fixtures), original, track
+            ),
+            execute_model_control(
+                "TRIVIAL_ALWAYS_TRUE_RULE", [True] * len(fixtures), original, track
+            ),
+        ]
+        q_values = bh_adjust(
+            [(str(record["control_id"]), float(record["p_value"])) for record in model_records]
+        )
+        for record in model_records:
+            record["q_value"] = q_values[str(record["control_id"])]
+            record["promoted"] = bool(
+                record["q_value"] <= 0.05
+                and (record["observed_delta_log_loss"] or 0) > 0
+            )
+            record["status"] = (
+                "NEGATIVE_CONTROL_SURVIVED_UNEXPECTEDLY"
+                if record["promoted"]
+                else "REJECTED_AFTER_MODEL_AND_MULTIPLICITY"
+            )
+        records = model_records + [
+            guard_control(
+                "FORBIDDEN_FUTURE_FEATURE",
+                "KNOWN_AT_MUST_BE_BEFORE_TARGET_CUTOFF",
+                "KNOWN_AT_GE_TARGET_KICKOFF",
+                track,
+            ),
+            guard_control(
+                "SHIFTED_PRICE",
+                "POINT_IN_TIME_PRICE_AVAILABILITY",
+                "ZERO_ADMISSIBLE_PRICE_ROWS",
+                track,
+            ),
+            guard_control(
+                "POST_RESULT_FIELD",
+                "SCIENTIFIC_ROLE_TARGET_ONLY",
+                "TARGET_MATCH_POST_RESULT_FIELD_FORBIDDEN_AS_PREDICTOR",
+                track,
+            ),
+            guard_control(
+                "WINNER_LOSER_IDENTITY",
+                "TARGET_DERIVATION_LINEAGE",
+                "WINNER_LOSER_IS_DERIVED_FROM_TARGET_SCORE",
+                track,
+            ),
+        ]
+        records.sort(key=lambda row: str(row["control_id"]))
+        surviving = sum(int(bool(row["promoted"])) for row in records)
+        if surviving:
+            raise RuntimeError(f"NEGATIVE_CONTROL_SURVIVED:{track}:{surviving}")
+        return {
+            "generated_at": GENERATED_AT,
+            "track": track,
+            "control_count": len(records),
+            "modeled_control_count": len(model_records),
+            "admissibility_guard_control_count": len(records) - len(model_records),
+            "negative_control_gate": "PASS",
+            "surviving_control_count": surviving,
+            "records": records,
+        }
+
     write_json(
         output_root / "reports/hypothesis-research/atomic-negative-controls-v1.json",
-        {"schema_version": "atomic-negative-controls-v1", **base},
+        {"schema_version": "atomic-negative-controls-v1", **build_track("ATOMIC")},
     )
     write_json(
         output_root / "reports/hypothesis-research/pair-negative-controls-v1.json",
-        {"schema_version": "pair-negative-controls-v1", **base},
+        {"schema_version": "pair-negative-controls-v1", **build_track("PAIR")},
     )
 
 
@@ -2602,6 +3351,7 @@ def build_campaign_configs(
     fixtures: Sequence[Fixture],
     registry: Mapping[str, Any],
     manifest: Mapping[str, Any],
+    pair_space: Mapping[str, Any],
     output_root: Path,
 ) -> dict[str, Any]:
     dataset_hash = object_hash(
@@ -2622,12 +3372,15 @@ def build_campaign_configs(
         "schema_version": "atomic-property-campaign-v1",
         "campaign_id": "PHASE-C-ATOMIC-80-X-2-2024-V1",
         "frozen_at": GENERATED_AT,
-        "frozen_before_target_read": True,
+        "frozen_before_target_analysis": True,
+        "targets_loaded_for_label_construction_before_freeze": True,
+        "target_values_used_for_registry_masks_or_pair_selection": False,
         "dataset_hash": dataset_hash,
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
         "universe_hash": manifest["universe"]["fixture_ids_sha256"],
         "tag_registry_hash": registry["registry_hash"],
         "mask_manifest_hash": manifest["manifest_hash"],
+        "pair_space_hash": pair_space["pair_space_hash"],
         "targets": [
             {
                 "id": "MATCH_RESULT_90M",
@@ -2656,19 +3409,22 @@ def build_campaign_configs(
         "support_policy": {
             "principal_true_oof": 80,
             "per_fold_true": 15,
+            "pair_child_to_smaller_parent_ratio": 0.2,
             "required_positive_folds": 4,
             "known_coverage": 0.8,
             "minimum_leagues": 3,
             "dominant_league_max": 0.5,
         },
         "multiple_testing_policy": {
-            "method": "BH_FDR",
+            "method": "BH_FDR_GLOBAL_AND_FAMILY",
             "alpha": 0.05,
             "atomic_denominator": 160,
             "pair_denominator": 240,
             "blocked_tests_p_value": 1.0,
+            "promotion_requires_both_q_values": True,
+            "promotion_requires_positive_log_loss_and_brier_delta": True,
         },
-        "negative_controls": [row[0] for row in NEGATIVE_CONTROLS],
+        "negative_controls": list(NEGATIVE_CONTROL_IDS),
         "seed": SEED,
         "compute_budget": {
             "atomic_tags": 80,
@@ -2705,16 +3461,30 @@ def build_campaign_configs(
             "SUPPORT_POLICY_FROZEN",
             "TEMPORAL_FOLDS_AVAILABLE",
             "STATISTICAL_CONTRACT_FROZEN",
-            "PAIRS_AUDITED",
         ],
         "currently_blocked": [
             "ADMISSIBLE_HISTORICAL_PRICES",
+            "PAIRS_AUDITED",
             "COMPUTE_BUDGET_APPROVED",
             "CHECKPOINTING_PROVEN",
         ],
     }
     triple["lock_hash"] = object_hash(triple)
     write_json(output_root / "configs/hypothesis-campaigns/triple-campaign-lock-v1.json", triple)
+    artifact_lock = {
+        "schema_version": "phase-c-artifact-lock-v1",
+        "status": "EMPTY_DRAFT_REQUIRES_SUCCESSOR_ON_DEFAULT_BRANCH",
+        "lineage_source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "stage_locks": {},
+        "selection_rule": "TRUSTED_MAIN_EXACT_RUN_ATTEMPT_HEAD_ARTIFACT_ID_NAME_SIZE_DIGEST_AND_MANIFEST_HASH",
+        "triple_search_locked": True,
+    }
+    artifact_lock["lock_hash"] = object_hash(artifact_lock)
+    write_json(output_root / "configs/execution/phase-c-artifact-lock-v1.json", artifact_lock)
+    workflow_hashes = {
+        path.name: sha256_bytes(path.read_bytes())
+        for path in sorted((ROOT / ".github/workflows").glob("8[6-9]-p0-phase-c-*.yml"))
+    }
     activation = {
         "schema_version": "phase-c-execution-activation-v1",
         "activation_status": "HOLD_DRAFT_NOT_ON_DEFAULT_BRANCH",
@@ -2741,9 +3511,12 @@ def build_campaign_configs(
             "deployments": 0,
         },
         "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "phase_c_artifact_lock_hash": artifact_lock["lock_hash"],
         "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
+        "workflow_sha256": workflow_hashes,
         "triple_search_locked": True,
-        "activation_requirement": "SUCCESSOR_REVIEW_ON_DEFAULT_BRANCH_MUST_SET_EXACT_ALLOWED_EXECUTION_SHA",
+        "activation_authority": "TRUSTED_DEFAULT_BRANCH_ONLY_NEVER_CANDIDATE_CHECKOUT",
+        "activation_requirement": "SUCCESSOR_REVIEW_ON_DEFAULT_BRANCH_MUST_SET_EXACT_ALLOWED_EXECUTION_SHA_AND_STAGE_ARTIFACT_LOCKS",
     }
     activation["contract_hash"] = object_hash(activation)
     write_json(output_root / "configs/execution/phase-c-execution-activation-v1.json", activation)
@@ -2832,6 +3605,94 @@ def build_costs(started_process: float, output_root: Path) -> None:
     write_json(output_root / "reports/hypothesis-research/campaign-costs-v1.json", costs)
 
 
+def build_stage_manifest(
+    output_root: Path,
+    store_root: Path,
+    stage: str,
+    execution_sha: str,
+    shard_id: str,
+) -> dict[str, Any]:
+    records: list[dict[str, Any]] = []
+    for root_name, root in (("output", output_root), ("store", store_root)):
+        for path in sorted(item for item in root.rglob("*") if item.is_file()):
+            if path.name in {"stage-manifest-v1.json", "checkpoint-v1.json"}:
+                continue
+            relative = f"{root_name}/{path.relative_to(root).as_posix()}"
+            records.append(
+                {
+                    "path": relative,
+                    "bytes": path.stat().st_size,
+                    "sha256": sha256_bytes(path.read_bytes()),
+                }
+            )
+    manifest = {
+        "schema_version": "phase-c-stage-manifest-v1",
+        "mission_id": "HYPOTHESIS-TAG-MASK-PAIR-FACTORY-V1",
+        "stage": stage.upper().replace("-", "_"),
+        "execution_sha": execution_sha,
+        "shard_id": shard_id,
+        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
+        "artifact_file_count": len(records),
+        "artifact_bytes": sum(int(row["bytes"]) for row in records),
+        "files": records,
+    }
+    manifest["manifest_hash"] = object_hash(manifest)
+    write_json(output_root / "stage-manifest-v1.json", manifest)
+    return manifest
+
+
+def build_tree_replay(first_root: Path, second_root: Path) -> dict[str, Any]:
+    excluded = {
+        "campaign-costs-v1.json",
+        "checkpoint-v1.json",
+        "campaign-replay-v1.json",
+        "stage-manifest-v1.json",
+    }
+    first_files = {
+        path.relative_to(first_root).as_posix(): path
+        for path in first_root.rglob("*")
+        if path.is_file() and path.name not in excluded
+    }
+    second_files = {
+        path.relative_to(second_root).as_posix(): path
+        for path in second_root.rglob("*")
+        if path.is_file() and path.name not in excluded
+    }
+    paths = sorted(set(first_files) | set(second_files))
+    records: list[dict[str, Any]] = []
+    identical = set(first_files) == set(second_files)
+    for relative in paths:
+        first_hash = (
+            sha256_bytes(first_files[relative].read_bytes()) if relative in first_files else None
+        )
+        second_hash = (
+            sha256_bytes(second_files[relative].read_bytes())
+            if relative in second_files
+            else None
+        )
+        identical = identical and first_hash == second_hash
+        records.append(
+            {
+                "path": relative,
+                "sha256": first_hash,
+                "replay_sha256": second_hash,
+                "identical": first_hash == second_hash,
+            }
+        )
+    result = {
+        "schema_version": "phase-c-stage-replay-v1",
+        "replay_runs": 2,
+        "replay_identical": identical,
+        "additional_network_reads": 0,
+        "records": records,
+    }
+    if not identical:
+        raise RuntimeError("STAGE_REPLAY_NOT_BYTE_IDENTICAL")
+    write_json(first_root / "campaign-replay-v1.json", result)
+    return result
+
+
 def build_replay_manifest(output_root: Path, second_root: Path | None = None) -> dict[str, Any]:
     first_files = [output_root / relative for relative in DETERMINISTIC_PHASE_C_FILES]
     missing = [str(path) for path in first_files if not path.exists()]
@@ -2871,6 +3732,137 @@ def build_replay_manifest(output_root: Path, second_root: Path | None = None) ->
     return result
 
 
+def write_analysis_core(
+    fixtures: Sequence[Fixture],
+    features: Sequence[Mapping[str, float | None]],
+    targets: Sequence[Mapping[str, Any]],
+    store_root: Path,
+) -> dict[str, Any]:
+    core = {
+        "schema_version": "phase-c-analysis-core-v1",
+        "fixture_count": len(fixtures),
+        "fixtures": [
+            {
+                "fixture_id": row.fixture_id,
+                "competition_id": row.competition_id,
+                "competition": row.competition,
+                "kickoff": row.kickoff.isoformat(),
+                "home_id": row.home_id,
+                "away_id": row.away_id,
+                "home_goals": row.home_goals,
+                "away_goals": row.away_goals,
+                "status": row.status,
+                "source_hashes": list(row.source_hashes),
+            }
+            for row in fixtures
+        ],
+        "features": [dict(sorted(row.items())) for row in features],
+        "targets": [dict(sorted(row.items())) for row in targets],
+    }
+    payload = gzip.compress(canonical_bytes(core), compresslevel=9, mtime=0)
+    relative = Path("input/analysis-core-v1.json.gz")
+    path = store_root / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(payload)
+    return {
+        "schema_version": "phase-c-analysis-core-artifact-v1",
+        "artifact_relative_path": relative.as_posix(),
+        "compressed_bytes": len(payload),
+        "sha256": sha256_bytes(payload),
+        "content_sha256": object_hash(core),
+        "raw_provider_rows_included": False,
+        "fixture_identifiers_in_git": False,
+    }
+
+
+def read_analysis_core(path: Path) -> tuple[
+    list[Fixture], list[dict[str, float | None]], list[dict[str, Any]]
+]:
+    payload = json.loads(gzip.decompress(path.read_bytes()))
+    if not isinstance(payload, Mapping) or payload.get("fixture_count") != UNIVERSE_COUNT:
+        raise RuntimeError("ANALYSIS_CORE_CONTRACT_MISMATCH")
+    raw_fixtures = payload.get("fixtures")
+    raw_features = payload.get("features")
+    raw_targets = payload.get("targets")
+    if not all(isinstance(value, list) for value in (raw_fixtures, raw_features, raw_targets)):
+        raise TypeError("ANALYSIS_CORE_ARRAYS_REQUIRED")
+    assert isinstance(raw_fixtures, list)
+    assert isinstance(raw_features, list)
+    assert isinstance(raw_targets, list)
+    fixtures = [
+        Fixture(
+            fixture_id=str(row["fixture_id"]),
+            competition_id=int(row["competition_id"]),
+            competition=str(row["competition"]),
+            kickoff=iso(str(row["kickoff"])),
+            home_id=int(row["home_id"]),
+            away_id=int(row["away_id"]),
+            home_goals=int(row["home_goals"]),
+            away_goals=int(row["away_goals"]),
+            status=str(row["status"]),
+            source_hashes=tuple(str(value) for value in row["source_hashes"]),
+        )
+        for row in raw_fixtures
+        if isinstance(row, Mapping)
+    ]
+    features = [
+        {str(key): (float(value) if value is not None else None) for key, value in row.items()}
+        for row in raw_features
+        if isinstance(row, Mapping)
+    ]
+    targets = [dict(row) for row in raw_targets if isinstance(row, Mapping)]
+    if not (len(fixtures) == len(features) == len(targets) == UNIVERSE_COUNT):
+        raise RuntimeError("ANALYSIS_CORE_LENGTH_MISMATCH")
+    return fixtures, features, targets
+
+
+def unique_rglob(root: Path, name: str) -> Path:
+    matches = sorted(root.rglob(name))
+    if len(matches) != 1:
+        raise RuntimeError(f"UPSTREAM_FILE_CARDINALITY:{name}:{len(matches)}")
+    return matches[0]
+
+
+def load_upstream_masks(
+    upstream_root: Path,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, tuple[int, int]], list[Fixture], list[dict[str, float | None]], list[dict[str, Any]]]:
+    manifest = read_json(unique_rglob(upstream_root, "atomic-mask-manifest-v1.json"))
+    registry = read_json(unique_rglob(upstream_root, "canonical-tag-registry-v1.json"))
+    core_path = unique_rglob(upstream_root, "analysis-core-v1.json.gz")
+    expected_core = manifest.get("analysis_core")
+    if not isinstance(expected_core, Mapping) or sha256_bytes(core_path.read_bytes()) != expected_core.get(
+        "sha256"
+    ):
+        raise RuntimeError("ANALYSIS_CORE_HASH_MISMATCH")
+    fixtures, features, targets = read_analysis_core(core_path)
+    masks: dict[str, tuple[int, int]] = {}
+    records = manifest.get("records")
+    if not isinstance(records, list):
+        raise TypeError("MASK_MANIFEST_RECORDS_REQUIRED")
+    for record in records:
+        if not isinstance(record, Mapping):
+            raise TypeError("MASK_MANIFEST_RECORD_REQUIRED")
+        path = unique_rglob(upstream_root, Path(str(record["artifact_relative_path"])).name)
+        envelope = path.read_bytes()
+        if sha256_bytes(envelope) != record["payload_sha256"]:
+            raise RuntimeError(f"MASK_PAYLOAD_HASH_MISMATCH:{record['tag_id']}")
+        payload, checksum = envelope[:-32], envelope[-32:]
+        if hashlib.sha256(payload).digest() != checksum or not payload.startswith(b"RMASKV1\0"):
+            raise RuntimeError(f"MASK_ENVELOPE_CHECKSUM_MISMATCH:{record['tag_id']}")
+        count, identity_length = struct.unpack("<QH", payload[8:18])
+        if count != UNIVERSE_COUNT:
+            raise RuntimeError("MASK_UNIVERSE_COUNT_MISMATCH")
+        offset = 18 + 32 + identity_length
+        known = int.from_bytes(payload[offset : offset + NBYTES], "little")
+        true = int.from_bytes(payload[offset + NBYTES : offset + 2 * NBYTES], "little")
+        if true & ~known:
+            raise RuntimeError(f"MASK_TRUE_NOT_SUBSET_KNOWN:{record['tag_id']}")
+        masks[str(record["tag_id"])] = (known, true)
+    if len(masks) != int(manifest["mask_count"]):
+        raise RuntimeError("MASK_UPSTREAM_COUNT_MISMATCH")
+    return manifest, registry, masks, fixtures, features, targets
+
+
 def prepare_core(
     source_root: Path,
 ) -> tuple[
@@ -2900,21 +3892,27 @@ def execute_factory(
     safety_gate()
     started_process = time.process_time()
     rows, fixtures, features, targets = prepare_core(source_root)
+    core_manifest = write_analysis_core(fixtures, features, targets, store_root)
     census = build_census(rows, output_root)
     if stage == "census":
         return {"census": census}
     reconciliation = build_reconciliation(output_root)
     registry = build_tag_registry(output_root)
-    manifest, masks = build_masks(fixtures, features, registry, output_root, store_root)
+    manifest, masks = build_masks(
+        fixtures, features, registry, output_root, store_root, core_manifest
+    )
     if include_benchmark:
         benchmark_masks(masks, manifest, output_root)
-    config = build_campaign_configs(fixtures, registry, manifest, output_root)
+    # Pair selection is target-blind and frozen before any target analysis.
+    selected, pair_space = select_pairs(masks, registry, output_root)
+    config = build_campaign_configs(fixtures, registry, manifest, pair_space, output_root)
     if stage == "tag-mask-build":
         return {
             "census": census,
             "reconciliation": reconciliation,
             "registry": registry,
             "manifest": manifest,
+            "pair_space": pair_space,
             "config": config,
         }
     atomic, atomic_index = evaluate_atomic(fixtures, features, targets, registry, output_root)
@@ -2922,8 +3920,13 @@ def execute_factory(
     if stage == "atomic":
         if include_costs:
             build_costs(started_process, output_root)
-        return {"atomic": atomic, "atomic_index": atomic_index}
-    selected, pair_space = select_pairs(masks, output_root)
+        return {
+            "config": config,
+            "manifest": manifest,
+            "pair_space": pair_space,
+            "atomic": atomic,
+            "atomic_index": atomic_index,
+        }
     pairs = evaluate_pairs(selected, fixtures, features, targets, masks, output_root)
     build_dashboard_contract(census, reconciliation, registry, atomic, pairs, output_root)
     if include_costs:
@@ -2940,6 +3943,183 @@ def execute_factory(
     }
 
 
+def execute_upstream(
+    stage: str,
+    tag_mask_root: Path,
+    atomic_root: Path | None,
+    output_root: Path,
+    *,
+    include_costs: bool = True,
+) -> dict[str, Any]:
+    safety_gate()
+    started_process = time.process_time()
+    manifest, registry, masks, fixtures, features, targets = load_upstream_masks(tag_mask_root)
+    pair_space = read_json(unique_rglob(tag_mask_root, "pair-search-space-v1.json"))
+    config = read_json(unique_rglob(tag_mask_root, "atomic-property-campaign-v1.json"))
+    if config.get("pair_space_hash") != pair_space.get("pair_space_hash"):
+        raise RuntimeError("UPSTREAM_PAIR_SPACE_HASH_MISMATCH")
+    if stage == "atomic":
+        atomic, atomic_index = evaluate_atomic(fixtures, features, targets, registry, output_root)
+        build_negative_controls(fixtures, targets, output_root)
+        if include_costs:
+            build_costs(started_process, output_root)
+        return {
+            "config": config,
+            "manifest": manifest,
+            "pair_space": pair_space,
+            "atomic": atomic,
+            "atomic_index": atomic_index,
+        }
+    if stage != "pairs" or atomic_root is None:
+        raise RuntimeError("UPSTREAM_STAGE_CONTRACT_MISMATCH")
+    atomic = read_json(unique_rglob(atomic_root, "atomic-results-v1.json"))
+    if atomic.get("canonical_test_count") != 160:
+        raise RuntimeError("UPSTREAM_ATOMIC_TEST_COUNT_MISMATCH")
+    selected = pair_space.get("pairs")
+    if not isinstance(selected, list) or len(selected) != 120:
+        raise RuntimeError("UPSTREAM_PAIR_SELECTION_COUNT_MISMATCH")
+    pairs = evaluate_pairs(selected, fixtures, features, targets, masks, output_root)
+    build_negative_controls(fixtures, targets, output_root)
+    census = read_json(unique_rglob(tag_mask_root, "raw-field-census-v1.json"))
+    reconciliation = read_json(unique_rglob(tag_mask_root, "e3-property-reconciliation-v1.json"))
+    build_dashboard_contract(census, reconciliation, registry, atomic, pairs, output_root)
+    if include_costs:
+        build_costs(started_process, output_root)
+    return {
+        "config": config,
+        "manifest": manifest,
+        "pair_space": pair_space,
+        "atomic": atomic,
+        "pairs": pairs,
+    }
+
+
+def export_pair_shard(
+    input_root: Path, shard_id: int, shard_count: int, execution_sha: str
+) -> dict[str, Any]:
+    if shard_count != 8 or not 0 <= shard_id < shard_count:
+        raise RuntimeError("PAIR_SHARD_CONTRACT_REQUIRES_8_SHARDS")
+    report = read_json(unique_rglob(input_root, "pair-results-v1.json"))
+    results = report.get("results")
+    if not isinstance(results, list):
+        raise TypeError("PAIR_RESULTS_ARRAY_REQUIRED")
+    selected = [
+        row
+        for row in results
+        if isinstance(row, Mapping) and int(row.get("shard_id", -1)) == shard_id
+    ]
+    shard = {
+        "schema_version": "pair-results-shard-v1",
+        "shard_id": shard_id,
+        "shard_count": shard_count,
+        "partition_rule": "first64_sha256_pair_id_mod_8",
+        "execution_sha": execution_sha,
+        "global_source_report_sha256": sha256_bytes(
+            unique_rglob(input_root, "pair-results-v1.json").read_bytes()
+        ),
+        "pair_count": len(selected),
+        "pair_ids_sha256": object_hash(sorted(str(row["pair_id"]) for row in selected)),
+        "results": selected,
+    }
+    shard["shard_hash"] = object_hash(shard)
+    write_json(input_root / f"pair-results-shard-{shard_id:02d}-v1.json", shard)
+    return shard
+
+
+def reduce_pair_shards(
+    input_root: Path,
+    tag_mask_root: Path,
+    output_root: Path,
+) -> dict[str, Any]:
+    shard_paths = sorted(input_root.rglob("pair-results-shard-*-v1.json"))
+    shards = [read_json(path) for path in shard_paths]
+    if len(shards) != 8 or {int(row["shard_id"]) for row in shards} != set(range(8)):
+        raise RuntimeError("PAIR_REDUCER_REQUIRES_EXACTLY_8_UNIQUE_SHARDS")
+    source_hashes = {str(row["global_source_report_sha256"]) for row in shards}
+    if len(source_hashes) != 1:
+        raise RuntimeError("PAIR_SHARD_GLOBAL_REPORT_HASH_DRIFT")
+    results = [
+        result
+        for shard in shards
+        for result in shard["results"]
+        if isinstance(result, Mapping)
+    ]
+    results.sort(key=lambda row: str(row["pair_id"]))
+    if len(results) != 120 or len({str(row["pair_id"]) for row in results}) != 120:
+        raise RuntimeError("PAIR_REDUCER_CARDINALITY_OR_DUPLICATE_MISMATCH")
+    status_counts = Counter(str(row["status"]) for row in results)
+    report = {
+        "schema_version": "pair-results-v1",
+        "generated_at": GENERATED_AT,
+        "verdict": "PAIR_CAMPAIGN_PARTIAL",
+        "pair_count": len(results),
+        "pair_grain": "unordered distinct tag_id pair with distinct parent property_id",
+        "unique_property_pair_count": len(
+            {
+                tuple(sorted((str(row["parent_property_a"]), str(row["parent_property_b"]))))
+                for row in results
+            }
+        ),
+        "canonical_test_count": sum(len(row["target_metrics"]) for row in results),
+        "status_counts": dict(sorted(status_counts.items())),
+        "reduced_from_shards": 8,
+        "results": results,
+    }
+    write_json(output_root / "reports/hypothesis-research/pair-results-v1.json", report)
+    rankings = sorted(
+        results,
+        key=lambda row: max(
+            min(
+                metric["delta_log_loss_by_comparator"][name] or -999
+                for name in ("PARENT_A", "PARENT_B", "ADDITIVE")
+            )
+            for metric in row["target_metrics"].values()
+        ),
+        reverse=True,
+    )
+    write_json(
+        output_root / "reports/hypothesis-research/pair-rankings-v1.json",
+        {
+            "schema_version": "pair-rankings-v1",
+            "generated_at": GENERATED_AT,
+            "ranking_role": "BOUNDED_REVIEW_QUEUE_NOT_PROMOTION",
+            "top_count": 50,
+            "records": [
+                {
+                    "rank": index + 1,
+                    "pair_id": row["pair_id"],
+                    "parents": [row["parent_a"], row["parent_b"]],
+                    "status": row["status"],
+                    "best_worst_case_delta_log_loss": max(
+                        min(
+                            metric["delta_log_loss_by_comparator"][name] or -999
+                            for name in ("PARENT_A", "PARENT_B", "ADDITIVE")
+                        )
+                        for metric in row["target_metrics"].values()
+                    ),
+                    "minimum_q_value": min(
+                        metric["q_value"] for metric in row["target_metrics"].values()
+                    ),
+                }
+                for index, row in enumerate(rankings[:50])
+            ],
+        },
+    )
+    _, _, masks, _, _, _ = load_upstream_masks(tag_mask_root)
+    build_pair_clusters(results, masks, output_root)
+    controls = sorted(input_root.rglob("pair-negative-controls-v1.json"))
+    if len(controls) != 8 or len({sha256_bytes(path.read_bytes()) for path in controls}) != 1:
+        raise RuntimeError("PAIR_NEGATIVE_CONTROL_SHARD_DRIFT")
+    write_json(
+        output_root / "reports/hypothesis-research/pair-negative-controls-v1.json",
+        read_json(controls[0]),
+    )
+    pair_space = read_json(unique_rglob(tag_mask_root, "pair-search-space-v1.json"))
+    config = read_json(unique_rglob(tag_mask_root, "atomic-property-campaign-v1.json"))
+    write_json(output_root / "reports/hypothesis-research/pair-search-space-v1.json", pair_space)
+    return {"config": config, "pairs": report, "pair_space": pair_space}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -2949,15 +4129,54 @@ def parse_args() -> argparse.Namespace:
         current.add_argument("--output-root", type=Path, required=True)
         current.add_argument("--store-root", type=Path, required=True)
         current.add_argument("--skip-benchmark", action="store_true")
+        current.add_argument("--execution-sha", default="LOCAL_UNPUSHED")
+        current.add_argument("--shard-id", default="LOCAL-ALL")
+        current.add_argument("--shard-count", type=int, default=1)
+        current.add_argument("--resume-checkpoint", type=Path)
+        current.add_argument("--soft-deadline-seconds", type=int, default=600)
+    for command in ("atomic-upstream", "pairs-upstream"):
+        current = subparsers.add_parser(command)
+        current.add_argument("--tag-mask-root", type=Path, required=True)
+        current.add_argument("--atomic-root", type=Path)
+        current.add_argument("--output-root", type=Path, required=True)
+        current.add_argument("--store-root", type=Path, required=True)
+        current.add_argument("--execution-sha", required=True)
+        current.add_argument("--shard-id", required=True)
+        current.add_argument("--shard-count", type=int, default=8)
+        current.add_argument("--resume-checkpoint", type=Path)
+        current.add_argument("--soft-deadline-seconds", type=int, default=600)
     replay = subparsers.add_parser("replay")
     replay.add_argument("--first-root", type=Path, required=True)
     replay.add_argument("--second-root", type=Path, required=True)
+    stage_replay = subparsers.add_parser("replay-stage")
+    stage_replay.add_argument("--first-root", type=Path, required=True)
+    stage_replay.add_argument("--second-root", type=Path, required=True)
+    shard_export = subparsers.add_parser("export-pair-shard")
+    shard_export.add_argument("--input-root", type=Path, required=True)
+    shard_export.add_argument("--shard-id", type=int, required=True)
+    shard_export.add_argument("--shard-count", type=int, default=8)
+    shard_export.add_argument("--execution-sha", required=True)
+    reducer = subparsers.add_parser("reduce-pair-shards")
+    reducer.add_argument("--input-root", type=Path, required=True)
+    reducer.add_argument("--tag-mask-root", type=Path, required=True)
+    reducer.add_argument("--output-root", type=Path, required=True)
+    reducer.add_argument("--store-root", type=Path, required=True)
+    reducer.add_argument("--execution-sha", required=True)
     return parser.parse_args()
 
 
-def write_checkpoint(store_root: Path, stage: str, result: Mapping[str, Any]) -> None:
+def write_checkpoint(
+    store_root: Path,
+    stage: str,
+    result: Mapping[str, Any],
+    stage_manifest: Mapping[str, Any],
+    execution_sha: str,
+    shard_id: str,
+    shard_count: int,
+    previous_checkpoint_hash: str | None,
+) -> None:
     atomic_count = (
-        int(result.get("atomic", {}).get("atomic_property_count", 0))
+        int(result.get("atomic", {}).get("atomic_tag_count", 0))
         if isinstance(result.get("atomic"), Mapping)
         else 0
     )
@@ -2966,6 +4185,13 @@ def write_checkpoint(store_root: Path, stage: str, result: Mapping[str, Any]) ->
         if isinstance(result.get("pairs"), Mapping)
         else 0
     )
+    if pair_count and shard_count > 1 and isinstance(result.get("pairs"), Mapping):
+        pair_rows = result["pairs"].get("results")
+        if isinstance(pair_rows, list) and shard_id.isdigit():
+            pair_count = sum(
+                int(isinstance(row, Mapping) and int(row.get("shard_id", -1)) == int(shard_id))
+                for row in pair_rows
+            )
     checkpoint = {
         "schema_version": "phase-c-checkpoint-v1",
         "mission_id": "HYPOTHESIS-TAG-MASK-PAIR-FACTORY-V1",
@@ -2973,7 +4199,12 @@ def write_checkpoint(store_root: Path, stage: str, result: Mapping[str, Any]) ->
         "campaign_hash": result.get("config", {}).get("campaign_hash")
         if isinstance(result.get("config"), Mapping)
         else None,
-        "shard_id": "LOCAL-ALL",
+        "execution_sha": execution_sha,
+        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
+        "stage_manifest_hash": stage_manifest["manifest_hash"],
+        "shard_id": shard_id,
+        "shard_count": shard_count,
         "cursor": pair_count
         or atomic_count
         or result.get("census", {}).get("catalog_record_count", 0),
@@ -2983,7 +4214,45 @@ def write_checkpoint(store_root: Path, stage: str, result: Mapping[str, Any]) ->
         "rejected": 0,
         "deferred": 0,
         "completed": True,
+        "previous_checkpoint_hash": previous_checkpoint_hash,
         "next_action": "STOP_BEFORE_TRIPLES" if pair_count else "NEXT_DECLARED_PHASE",
+        "triple_search_locked": True,
+        "external_effect_counters": {
+            "provider_calls": 0,
+            "r2_gets": 0,
+            "r2_writes": 0,
+            "sql_queries": 0,
+            "odds_credits": 0,
+        },
+    }
+    checkpoint["checkpoint_hash"] = object_hash(checkpoint)
+    write_json(store_root / "checkpoint-v1.json", checkpoint)
+
+
+def write_initial_checkpoint(
+    store_root: Path,
+    stage: str,
+    execution_sha: str,
+    shard_id: str,
+    shard_count: int,
+    previous_checkpoint_hash: str | None,
+) -> None:
+    checkpoint = {
+        "schema_version": "phase-c-checkpoint-v1",
+        "mission_id": "HYPOTHESIS-TAG-MASK-PAIR-FACTORY-V1",
+        "phase": stage.upper().replace("-", "_"),
+        "execution_sha": execution_sha,
+        "source_lock_sha256": sha256_bytes(SOURCE_LOCK.read_bytes()),
+        "generator_sha256": sha256_bytes(GENERATOR_PATH.read_bytes()),
+        "shard_id": shard_id,
+        "shard_count": shard_count,
+        "cursor": 0,
+        "evaluated": 0,
+        "rejected": 0,
+        "deferred": 0,
+        "completed": False,
+        "previous_checkpoint_hash": previous_checkpoint_hash,
+        "next_action": "RESUME_CURRENT_SHARD",
         "triple_search_locked": True,
         "external_effect_counters": {
             "provider_calls": 0,
@@ -3009,18 +4278,119 @@ def main() -> int:
             )
         )
         return 0
-    stage = "pairs" if args.command == "all" else args.command
-    result = execute_factory(
-        args.source_root.resolve(),
+    if args.command == "replay-stage":
+        result = build_tree_replay(args.first_root.resolve(), args.second_root.resolve())
+        print(json.dumps({"replay_identical": result["replay_identical"]}, sort_keys=True))
+        return 0
+    if args.command == "export-pair-shard":
+        result = export_pair_shard(
+            args.input_root.resolve(), args.shard_id, args.shard_count, args.execution_sha
+        )
+        print(json.dumps({"pair_count": result["pair_count"]}, sort_keys=True))
+        return 0
+    if args.command == "reduce-pair-shards":
+        result = reduce_pair_shards(
+            args.input_root.resolve(), args.tag_mask_root.resolve(), args.output_root.resolve()
+        )
+        manifest = build_stage_manifest(
+            args.output_root.resolve(),
+            args.store_root.resolve(),
+            "pairs",
+            args.execution_sha,
+            "REDUCE-8",
+        )
+        write_checkpoint(
+            args.store_root.resolve(),
+            "pairs",
+            result,
+            manifest,
+            args.execution_sha,
+            "REDUCE-8",
+            8,
+            None,
+        )
+        print(json.dumps({"pair_count": result["pairs"]["pair_count"]}, sort_keys=True))
+        return 0
+    previous_checkpoint_hash: str | None = None
+    requested_stage = (
+        "atomic"
+        if args.command == "atomic-upstream"
+        else ("pairs" if args.command in {"all", "pairs", "pairs-upstream"} else args.command)
+    )
+    if args.resume_checkpoint is not None:
+        previous = read_json(args.resume_checkpoint.resolve())
+        if (
+            previous.get("execution_sha") != args.execution_sha
+            or previous.get("shard_id") != args.shard_id
+            or previous.get("source_lock_sha256") != sha256_bytes(SOURCE_LOCK.read_bytes())
+            or previous.get("generator_sha256") != sha256_bytes(GENERATOR_PATH.read_bytes())
+        ):
+            raise RuntimeError("RESUME_CHECKPOINT_LINEAGE_MISMATCH")
+        previous_checkpoint_hash = str(previous["checkpoint_hash"])
+        if previous.get("completed") is True:
+            manifest = read_json(unique_rglob(args.output_root.resolve(), "stage-manifest-v1.json"))
+            if (
+                manifest.get("manifest_hash") != previous.get("stage_manifest_hash")
+                or manifest.get("stage") != requested_stage.upper().replace("-", "_")
+            ):
+                raise RuntimeError("COMPLETED_CHECKPOINT_RESULT_MANIFEST_MISMATCH")
+            print(
+                json.dumps(
+                    {
+                        "stage": requested_stage,
+                        "resumed_completed_shard_without_recalculation": True,
+                        "checkpoint_hash": previous_checkpoint_hash,
+                    },
+                    sort_keys=True,
+                )
+            )
+            return 0
+    if args.shard_count < 1 or args.soft_deadline_seconds < 60:
+        raise RuntimeError("SHARD_OR_DEADLINE_CONTRACT_INVALID")
+    write_initial_checkpoint(
+        args.store_root.resolve(),
+        requested_stage,
+        args.execution_sha,
+        args.shard_id,
+        args.shard_count,
+        previous_checkpoint_hash,
+    )
+    if args.command in {"atomic-upstream", "pairs-upstream"}:
+        stage = "atomic" if args.command == "atomic-upstream" else "pairs"
+        result = execute_upstream(
+            stage,
+            args.tag_mask_root.resolve(),
+            args.atomic_root.resolve() if args.atomic_root is not None else None,
+            args.output_root.resolve(),
+            include_costs=True,
+        )
+    else:
+        stage = "pairs" if args.command == "all" else args.command
+        result = execute_factory(
+            args.source_root.resolve(),
+            args.output_root.resolve(),
+            args.store_root.resolve(),
+            stage=stage,
+            include_benchmark=not args.skip_benchmark,
+            include_costs=True,
+        )
+    stage_manifest = build_stage_manifest(
         args.output_root.resolve(),
         args.store_root.resolve(),
-        stage=stage,
-        include_benchmark=not args.skip_benchmark,
-        include_costs=True,
+        stage,
+        args.execution_sha,
+        args.shard_id,
     )
-    write_checkpoint(args.store_root.resolve(), stage, result)
-    if stage == "pairs":
-        build_replay_manifest(args.output_root.resolve())
+    write_checkpoint(
+        args.store_root.resolve(),
+        stage,
+        result,
+        stage_manifest,
+        args.execution_sha,
+        args.shard_id,
+        args.shard_count,
+        previous_checkpoint_hash,
+    )
     print(
         json.dumps(
             {

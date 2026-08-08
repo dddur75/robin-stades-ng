@@ -32,11 +32,14 @@
     }
   ],
   "generated_at": "2026-08-08T09:10:42Z",
+  "materialized_predictor_properties": 7,
   "materialized_tags": 80,
   "multiple_testing": {
     "alpha": 0.05,
-    "denominator": 160,
-    "method": "BH_FDR"
+    "family_count": 8,
+    "global_denominator": 160,
+    "method": "BH_FDR_GLOBAL_AND_FAMILY",
+    "promotion_requires_both_q_values": true
   },
   "oof_fixture_count": 1053,
   "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
@@ -44,8 +47,8 @@
   "roi": null,
   "schema_version": "atomic-campaign-summary-v1",
   "status_counts": {
-    "RAW_HISTORICAL_SIGNAL": 77,
-    "SURVIVED_MULTIPLE_TESTING": 2,
+    "RAW_HISTORICAL_SIGNAL": 78,
+    "SURVIVED_MULTIPLE_TESTING": 1,
     "SURVIVED_TEMPORAL_VALIDATION": 1
   },
   "tests_executed": 160,

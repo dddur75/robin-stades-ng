@@ -2,36 +2,45 @@
 
 ## Décision
 
-Le runtime retenu pour l’univers E3B de 1 756 fixtures est le bitset entier
+Pour l’univers E3B de 1 756 fixtures, le runtime retenu est le bitset entier
 Python à deux masques (`known`, `true`). Le format durable est indépendant du
 runtime : `mask-v1`, little-endian, bitorder little, exactement 220 octets par
 composante avant enveloppe et checksum.
 
 Le verdict est `MASK_ENGINE_SELECTED_PROVISIONAL_ENVIRONMENT`. La sélection
-est exploitable dans cette campagne, mais ne devient pas un choix universel
-avant trois runners frais avec versions et hashes de wheels gelés. Le rapport
-[`mask-benchmark-v1.json`](../../reports/hypothesis-masks/mask-benchmark-v1.json)
-conserve les mesures NumPy bool, NumPy packbits, Polars, DuckDB, PyArrow et
-Python int. PyRoaring reste `SKIPPED_DEPENDENCY_ABSENT` et n’a pas été installé.
+est admissible pour cette campagne, mais ne devient pas universelle avant
+trois runners frais et le gel des versions et hashes de wheels. Le benchmark
+local utilise 30 échantillons calibrés à 250 ms par opération. Python-int
+mesure 146 ns en intersection (p95 151 ns), contre 917 ns pour NumPy packbits,
+1 102 ns pour NumPy bool, 9 936 ns pour Polars, 11 118 ns pour PyArrow et
+404 079 ns pour DuckDB. PyRoaring est `SKIPPED_DEPENDENCY_ABSENT` et n’a pas
+été installé.
 
-## Contrat logique
+La mémoire native mesurée est de 41 600 octets pour les 80 bitsets Python,
+35 200 pour NumPy packbits et 280 960 pour NumPy bool. L’overhead moteur
+retenu/peak RSS de Polars, PyArrow et DuckDB reste `UNKNOWN` dans ce run
+partagé ; cette limite justifie aussi le verdict provisoire. Tous convergent
+vers 35 200 octets sérialisés pour les 80 masques atomiques.
+
+## Contrat logique et Golden
 
 - `TRUE = known & true` ;
 - `FALSE = known & ~true & universe` ;
 - `UNKNOWN = ~known & universe` ;
-- `true` doit toujours être un sous-ensemble de `known` ;
+- `true` est toujours un sous-ensemble de `known` ;
 - une conjonction intersecte séparément tous les `known` et tous les `true` ;
-- les bits de queue hors univers valent zéro.
+- les bits hors univers valent zéro.
 
-Le stockage temporaire est reproductible mais non durable au sens archive :
-`MASK_STORE_DURABILITY_PARTIAL`. Aucun masque lourd n’entre dans Git, aucune
-écriture R2 n’est autorisée, et Git conserve seulement générateur, manifeste,
-hashes et compteurs.
+Le Golden Pack de 14 fixtures et quatre cas a été réellement exécuté. Il
+force TRUE/FALSE/UNKNOWN et les frontières 0/7/8/13 ; exact UNKNOWN,
+sous-ensemble et sérialisation byte-identique sont verts. Les six backends
+installés passent aussi les AND/OR réels du corpus 1 756, pas un simple drapeau
+déclaratif.
 
-## Gates
+## Durabilité
 
-La construction vérifie l’ordre canonique des fixture IDs, la cardinalité
-1 756, la byte-identité des enveloppes, le checksum, TRUE/FALSE/UNKNOWN et la
-convergence de tous les backends vers le payload packé canonique. Une
-intersection entre deux univers différents est interdite sans projection
-explicite.
+Le stockage GitHub Artifact prévu est reproductible mais non archivistique :
+`MASK_STORE_DURABILITY_PARTIAL`. Aucun payload `.mask` n’entre dans Git et
+aucune écriture R2 n’est autorisée. Git conserve le générateur, les seuils
+gelés par ligue, `definition_hash`, `tag_snapshot_hash`, `mask_id`, checksums,
+manifeste et rapport compact.

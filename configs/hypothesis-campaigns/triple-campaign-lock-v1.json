@@ -3,6 +3,7 @@
   "compiled": true,
   "currently_blocked": [
     "ADMISSIBLE_HISTORICAL_PRICES",
+    "PAIRS_AUDITED",
     "COMPUTE_BUDGET_APPROVED",
     "CHECKPOINTING_PROVEN"
   ],
@@ -10,11 +11,10 @@
     "MASKS_VALIDATED",
     "SUPPORT_POLICY_FROZEN",
     "TEMPORAL_FOLDS_AVAILABLE",
-    "STATISTICAL_CONTRACT_FROZEN",
-    "PAIRS_AUDITED"
+    "STATISTICAL_CONTRACT_FROZEN"
   ],
   "executed": false,
-  "lock_hash": "189f2d6a7487449c65cfd7b6880cee150346d71191e697e294194951ccfb008b",
+  "lock_hash": "a889d9a78a7b1dc251179316051b65412f7fb26d6c792a16ad6c99805ab3568d",
   "maximum_depth_executed": 2,
   "schema_version": "triple-campaign-lock-v1",
   "status": "TRIPLE_SEARCH_LOCKED",

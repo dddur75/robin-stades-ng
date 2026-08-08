@@ -1,0 +1,9 @@
+{
+  "lineage_source_lock_sha256": "ac429dfdca027d974801048c857219555963719ce2d8b28b4ac2edbbaefc8dec",
+  "lock_hash": "9dbf52b4c221dbd2f4f54ec4d93f2c76964c613df5160a2e297e79e48d772a27",
+  "schema_version": "phase-c-artifact-lock-v1",
+  "selection_rule": "TRUSTED_MAIN_EXACT_RUN_ATTEMPT_HEAD_ARTIFACT_ID_NAME_SIZE_DIGEST_AND_MANIFEST_HASH",
+  "stage_locks": {},
+  "status": "EMPTY_DRAFT_REQUIRES_SUCCESSOR_ON_DEFAULT_BRANCH",
+  "triple_search_locked": true
+}

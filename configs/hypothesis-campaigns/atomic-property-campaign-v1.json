@@ -1,5 +1,5 @@
 {
-  "campaign_hash": "818a80110b22d96a75277a9a87cdc641ad66a7e742f058c5d3932505892a5d4f",
+  "campaign_hash": "5d87302cf051cbdd91c3b0ee54030b1ec9698cc1ff33fd9cfca4dfcd333119c6",
   "campaign_id": "PHASE-C-ATOMIC-80-X-2-2024-V1",
   "compute_budget": {
     "atomic_tags": 80,
@@ -42,17 +42,19 @@
     }
   ],
   "frozen_at": "2026-08-08T09:10:42Z",
-  "frozen_before_target_read": true,
-  "generator_sha256": "08e97d74472c7706b7328e19835f2a4787192356e4c6eee8ddeba95b65bf26c4",
+  "frozen_before_target_analysis": true,
+  "generator_sha256": "c2f7a678e3d718f55cc27127060f1cede67a7c59041c0797088bb14ba1e8c195",
   "markets": [],
-  "mask_manifest_hash": "08c9c26cb8cf08c89ee947bb36eabb69c70912bb59c92f7f3075652a4e813e1f",
+  "mask_manifest_hash": "a94f06df02b272dc5de76bff81dadeb43ac0484b1fe9033648c4f616b5c66fa6",
   "mode": "PREDICTIVE_ONLY",
   "multiple_testing_policy": {
     "alpha": 0.05,
     "atomic_denominator": 160,
     "blocked_tests_p_value": 1.0,
-    "method": "BH_FDR",
-    "pair_denominator": 240
+    "method": "BH_FDR_GLOBAL_AND_FAMILY",
+    "pair_denominator": 240,
+    "promotion_requires_both_q_values": true,
+    "promotion_requires_positive_log_loss_and_brier_delta": true
   },
   "negative_controls": [
     "SHUFFLED_LABEL_WITHIN_LEAGUE_MONTH",
@@ -64,6 +66,7 @@
     "POST_RESULT_FIELD",
     "WINNER_LOSER_IDENTITY"
   ],
+  "pair_space_hash": "b1352a37af191f6ef7f2483cc5f1726e77491f49f949c2efe73ad6879ce3d7d8",
   "price_contracts": [],
   "promotion_forbidden": [
     "VALIDATED",
@@ -77,11 +80,13 @@
     "dominant_league_max": 0.5,
     "known_coverage": 0.8,
     "minimum_leagues": 3,
+    "pair_child_to_smaller_parent_ratio": 0.2,
     "per_fold_true": 15,
     "principal_true_oof": 80,
     "required_positive_folds": 4
   },
-  "tag_registry_hash": "a4755a3ff95c6a773e86a8afa02c83c47646baade504df10e3e765a486c66298",
+  "tag_registry_hash": "6bda729778def2e117f0797add246641d1905e5a97319cdaafe4d33af880e80c",
+  "target_values_used_for_registry_masks_or_pair_selection": false,
   "targets": [
     {
       "id": "MATCH_RESULT_90M",
@@ -105,6 +110,7 @@
       ]
     }
   ],
+  "targets_loaded_for_label_construction_before_freeze": true,
   "triple_search_locked": true,
   "universe_hash": "63eb478c5d2f2d6a500461d256eaa3e781f22e54208f6ea621bacf972a47b6d5"
 }

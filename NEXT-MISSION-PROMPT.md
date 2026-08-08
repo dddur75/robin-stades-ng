@@ -2,7 +2,7 @@
 
 Travaille en raisonnement **Ultra**. Lis `NEXT-MISSION-BRIEF.md` et tous les
 rapports Phase C liés par hash. Réalise une revue scientifique indépendante
-des 80 propriétés et 120 paires : temporalité, UNKNOWN, folds, baselines,
+des 80 tags issus de sept propriétés prédictives et des 120 paires : temporalité, UNKNOWN, folds, baselines,
 enfant-parents, multiplicité, contrôles négatifs, concentrations et résultats
 extrêmes.
 
