@@ -1328,7 +1328,7 @@
       "temporal_class":"KNOWN_AS_OF",
       "artifact":"configs/features/calendar-strict-asof-v1.json",
       "hash":"c041371dd05de5394bcf77863ee114f020dd864a216f96caad4822577d2e3fda",
-      "code_revision":"PENDING_REDESIGN_IMPLEMENTATION_COMMIT",
+      "code_revision":"d15e9c48ecb3290727ad5ca1326af3a038469380",
       "execution_id":"local-calendar-strict-asof-redesign-v1",
       "scientific_lineage_id":"e2-targeted-fixes-e3a-launch-v1",
       "dataset_lineage_id":"synthetic-calendar-golden-pack-v1",
@@ -1344,7 +1344,7 @@
       "temporal_class":"CODE_AS_OF",
       "artifact":"reports/e3a/e3a-launch-candidate-set-v1.json",
       "hash":"0adc1295d1c8a4ba9827c8a6ca1a2b245c0201539d9480d059bbee88a84aa54d",
-      "code_revision":"PENDING_REDESIGN_IMPLEMENTATION_COMMIT",
+      "code_revision":"d15e9c48ecb3290727ad5ca1326af3a038469380",
       "execution_id":"local-e3a-launch-role-review-20260808T060500Z",
       "scientific_lineage_id":"e2-targeted-fixes-e3a-launch-v1",
       "dataset_lineage_id":"E2_MEASUREMENT_PLUS_TARGETED_FIXES",
@@ -1360,7 +1360,7 @@
       "temporal_class":"CODE_AS_OF",
       "artifact":".github/workflows/84-e2-1208603-targeted-diagnostic.yml",
       "hash":"5f3a2fc0c34d6c141cf53cbdddaa90aa6e5a83c11257f702bc9c7817f9c26f35",
-      "code_revision":"PENDING_REDESIGN_IMPLEMENTATION_COMMIT",
+      "code_revision":"d15e9c48ecb3290727ad5ca1326af3a038469380",
       "execution_id":"local-workflow-seal-review-20260808T060500Z",
       "scientific_lineage_id":"e2-targeted-fixes-e3a-launch-v1",
       "dataset_lineage_id":"NO_DATA_ACCESS",
@@ -1429,7 +1429,8 @@
     {"decision_id":"RCV3-20260807-058","ledger_record_hash":"722847eabe2d75a54b1067bc7d63a4bc579e78c0a85a1ad3ce5fcae50941e6a9"},
     {"decision_id":"RCV3-20260807-059","ledger_record_hash":"930b6a046113f1f2d2c0ebd5710d08d910b54b37e997791772f6d2893e23e1e7"},
     {"decision_id":"RCV3-20260807-060","ledger_record_hash":"77b53d29e670a68c43681c48a10c5d59ef11ee40d1893ebdeb6515e85854b2fd"},
-    {"decision_id":"RCV3-20260808-061","ledger_record_hash":"f3a03d9fc83ed18cf28a9f3ce1d67bd82aeaa23a2446809a4ed6fbcea11feb43"}
+    {"decision_id":"RCV3-20260808-061","ledger_record_hash":"f3a03d9fc83ed18cf28a9f3ce1d67bd82aeaa23a2446809a4ed6fbcea11feb43"},
+    {"decision_id":"RCV3-20260808-062","ledger_record_hash":"06da9a76269d1722230d85bf9531cd596925f6459e306620c202d99bda17a3ff"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1639,6 +1640,10 @@
     {"edge_id":"EDGE.205","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260807-060","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.206","from_claim_id":"FEATURE.CALENDAR.STRICT_ASOF.V1.002","to_decision_id":"RCV3-20260808-061","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.207","from_claim_id":"COVERAGE.E3A.LAUNCH_CANDIDATES.V1.001","to_decision_id":"RCV3-20260808-061","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.208","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260808-061","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.208","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260808-061","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.209","from_claim_id":"FEATURE.CALENDAR.STRICT_ASOF.V1.003","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.210","from_claim_id":"COVERAGE.E3A.LAUNCH_CANDIDATES.V1.002","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.211","from_claim_id":"SECURITY.E2.DIAGNOSTIC.SEALED.V1.001","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.212","from_claim_id":"GOV.SECURITY.LOCKS.001","to_decision_id":"RCV3-20260808-062","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
