@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 GRAPH = ROOT / "reports/evidence/evidence-graph.json"
 LEDGER = ROOT / "reports/council/decision-ledger.jsonl"
 REVISION = "b7c20ed1da599109da9a94619fe95b9c5b2d2324"
+CORRECTED_REVISION = "0c5df46f8c756e79e6b7df5f2e74a27e8a90502f"
 INVALIDATED_E3A_SHA256 = "8236edf659f1e14f5dc9ff14cb0ac4dd3c36e9e76b7d1bff928a6a17b2c01794"
 INVALIDATED_CALENDAR_SHA256 = "3ef06d07ffc630daf3a02f4d74e5ffce8525d15a518e53114d7b1253bad8648b"
 INVALIDATED_E3B_SHA256 = "edc18398f275853bfd223b86cd30ec0b53a9aa803b133ec8ff01e2637304efb8"
@@ -148,6 +149,70 @@ def main() -> None:
             "status": "VERIFIED",
             "verified_by": ["DP5", "C2"],
         },
+        {
+            "claim_id": "COVERAGE.E3A.CAPABILITY_SCALE.V1.002",
+            "claim": (
+                "E3A measures 308 Ligue 1 fixtures with explicit grains and denominators: "
+                "six capabilities pass, Team Statistics preserves 578 UNKNOWN values, and "
+                "Calendar remains temporality-blocked."
+            ),
+            "scope": "E3A_LIGUE1_2024_EIGHT_AUTHORIZED_CAPABILITIES",
+            "source": "immutable verified fixture replay segment",
+            "grain": "one_capability_over_one_complete_competition_season",
+            "temporal_class": "MIXED_ROLE_CLASSIFIED",
+            "artifact": "reports/evidence/e3a/e3a-measurement-v1.json",
+            "hash": _file_hash("reports/evidence/e3a/e3a-measurement-v1.json"),
+            "code_revision": CORRECTED_REVISION,
+            "execution_id": "local-e3a-corrected-byte-identical-20260808",
+            "scientific_lineage_id": "p0-e3-capability-scale-v1",
+            "dataset_lineage_id": "E3A_LIGUE1_2024_SEG_000283",
+            "status": "PARTIAL",
+            "verified_by": ["DP6", "DP2"],
+            "successor_of": "COVERAGE.E3A.CAPABILITY_SCALE.V1.001",
+        },
+        {
+            "claim_id": "FEATURE.CALENDAR.REAL_ASOF.E3A.V1.002",
+            "claim": (
+                "The real E3A rows expose neither known_at nor a revision catalog; all "
+                "5,236 Calendar feature-fixture evaluations remain UNKNOWN and the "
+                "capability is BLOCKED_BY_TEMPORALITY."
+            ),
+            "scope": "CALENDAR_REAL_E3A_LIGUE1_2024",
+            "source": "real E3A temporal fields plus the verified synthetic Golden Pack",
+            "grain": "one_calendar_feature_per_fixture_cutoff",
+            "temporal_class": "STRICT_AS_OF_BLOCKED_BY_TEMPORALITY",
+            "artifact": "reports/evidence/e3a/e3a-calendar-asof-v1.json",
+            "hash": _file_hash("reports/evidence/e3a/e3a-calendar-asof-v1.json"),
+            "code_revision": CORRECTED_REVISION,
+            "execution_id": "local-e3a-calendar-corrected-20260808",
+            "scientific_lineage_id": "p0-e3-capability-scale-v1",
+            "dataset_lineage_id": "E3A_LIGUE1_2024_TEMPORAL_EVIDENCE",
+            "status": "BLOCKED",
+            "verified_by": ["DP6", "DP2"],
+            "successor_of": "FEATURE.CALENDAR.REAL_ASOF.E3A.V1.001",
+        },
+        {
+            "claim_id": "COVERAGE.E3B.CAPABILITY_SCALE.V1.002",
+            "claim": (
+                "Conditional E3B measures exactly the six E3A-passed capabilities over "
+                "1,756 fixtures in five leagues: five are reconstructed-ready and Lineup "
+                "is partial for two affected Serie A lineups; 52 valid card-empty fixtures "
+                "remain covered."
+            ),
+            "scope": "E3B_FIVE_LEAGUES_2024_E3A_PASSED_CAPABILITIES",
+            "source": "five immutable verified fixture replay segments",
+            "grain": "one_capability_per_league_season_then_weighted_global_aggregate",
+            "temporal_class": "POST_MATCH_RECONSTRUCTED_OR_LAGGABLE",
+            "artifact": "reports/evidence/e3b/e3b-measurement-v1.json",
+            "hash": _file_hash("reports/evidence/e3b/e3b-measurement-v1.json"),
+            "code_revision": CORRECTED_REVISION,
+            "execution_id": "local-e3b-redesigned-byte-identical-20260808",
+            "scientific_lineage_id": "p0-e3-capability-scale-v1",
+            "dataset_lineage_id": "E3B_FIVE_LEAGUES_2024_1756_FIXTURES",
+            "status": "PARTIAL",
+            "verified_by": ["DP6", "DP2"],
+            "successor_of": "COVERAGE.E3B.CAPABILITY_SCALE.V1.001",
+        },
     ]
     claim_ids = {claim["claim_id"] for claim in claims}
     decision_ids = {
@@ -158,6 +223,7 @@ def main() -> None:
         "RCV3-20260808-068",
         "RCV3-20260808-069",
         "RCV3-20260808-070",
+        "RCV3-20260808-071",
     }
     graph["claims"] = [claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids]
     graph["decision_nodes"] = [
@@ -173,6 +239,7 @@ def main() -> None:
         "RCV3-20260808-068",
         "RCV3-20260808-069",
         "RCV3-20260808-070",
+        "RCV3-20260808-071",
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
@@ -198,6 +265,11 @@ def main() -> None:
         ("COVERAGE.E3A.CAPABILITY_SCALE.V1.001", "RCV3-20260808-070"),
         ("FEATURE.CALENDAR.REAL_ASOF.E3A.V1.001", "RCV3-20260808-070"),
         ("COVERAGE.E3B.CAPABILITY_SCALE.V1.001", "RCV3-20260808-070"),
+        ("COVERAGE.E3A.SELECTION.V1.001", "RCV3-20260808-071"),
+        ("COVERAGE.E3A.CAPABILITY_SCALE.V1.002", "RCV3-20260808-071"),
+        ("FEATURE.CALENDAR.REAL_ASOF.E3A.V1.002", "RCV3-20260808-071"),
+        ("COVERAGE.E3B.CAPABILITY_SCALE.V1.002", "RCV3-20260808-071"),
+        ("SECURITY.E3.EXTERNAL_EFFECTS.ZERO.V1.001", "RCV3-20260808-071"),
     )
     first_edge = len(graph["edges"]) + 1
     graph["edges"].extend(
@@ -210,7 +282,7 @@ def main() -> None:
         }
         for offset, (claim_id, decision_id) in enumerate(relationships)
     )
-    graph["generated_at"] = "2026-08-08T07:47:00Z"
+    graph["generated_at"] = "2026-08-08T09:24:00Z"
     GRAPH.write_text(
         _compact_json(graph) + "\n",
         encoding="utf-8",

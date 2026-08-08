@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-08T07:47:00Z",
+  "generated_at":"2026-08-08T09:24:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1391,7 +1391,7 @@
       "grain":"one_capability_over_one_complete_competition_season",
       "temporal_class":"MIXED_ROLE_CLASSIFIED",
       "artifact":"reports/evidence/e3a/e3a-measurement-v1.json",
-      "hash":"68a0cdcb4dd812b883fc0e351c2a87061643d9a60751b3d9037139508dbd65b1",
+      "hash":"8236edf659f1e14f5dc9ff14cb0ac4dd3c36e9e76b7d1bff928a6a17b2c01794",
       "code_revision":"b7c20ed1da599109da9a94619fe95b9c5b2d2324",
       "execution_id":"local-e3a-byte-identical-20260808",
       "scientific_lineage_id":"p0-e3-capability-scale-v1",
@@ -1408,7 +1408,7 @@
       "grain":"one_calendar_feature_per_fixture_cutoff",
       "temporal_class":"STRICT_AS_OF_BLOCKED_BY_SOURCE",
       "artifact":"reports/evidence/e3a/e3a-calendar-asof-v1.json",
-      "hash":"c388faf0bd59f119fcbcdc62b203f477659890d594864acad70a981b2c0d1527",
+      "hash":"3ef06d07ffc630daf3a02f4d74e5ffce8525d15a518e53114d7b1253bad8648b",
       "code_revision":"b7c20ed1da599109da9a94619fe95b9c5b2d2324",
       "execution_id":"local-e3a-calendar-real-20260808",
       "scientific_lineage_id":"p0-e3-capability-scale-v1",
@@ -1425,7 +1425,7 @@
       "grain":"one_capability_per_league_season_then_weighted_global_aggregate",
       "temporal_class":"POST_MATCH_RECONSTRUCTED_OR_LAGGABLE",
       "artifact":"reports/evidence/e3b/e3b-measurement-v1.json",
-      "hash":"4f066196fa5a62ac4786769c8a08eef7d41ff2178b5b12a7938e4a69ec78a23b",
+      "hash":"edc18398f275853bfd223b86cd30ec0b53a9aa803b133ec8ff01e2637304efb8",
       "code_revision":"b7c20ed1da599109da9a94619fe95b9c5b2d2324",
       "execution_id":"local-e3b-byte-identical-20260808",
       "scientific_lineage_id":"p0-e3-capability-scale-v1",
@@ -1449,6 +1449,57 @@
       "dataset_lineage_id":"NO_EXTERNAL_DATA_CLIENT",
       "status":"VERIFIED",
       "verified_by":["DP5","C2"]
+    },
+    {
+      "claim_id":"COVERAGE.E3A.CAPABILITY_SCALE.V1.002",
+      "claim":"E3A measures 308 Ligue 1 fixtures with explicit grains and denominators: six capabilities pass, Team Statistics preserves 578 UNKNOWN values, and Calendar remains temporality-blocked.",
+      "scope":"E3A_LIGUE1_2024_EIGHT_AUTHORIZED_CAPABILITIES",
+      "source":"immutable verified fixture replay segment",
+      "grain":"one_capability_over_one_complete_competition_season",
+      "temporal_class":"MIXED_ROLE_CLASSIFIED",
+      "artifact":"reports/evidence/e3a/e3a-measurement-v1.json",
+      "hash":"43fdc0eccb19cfd3bd08d468d606c23a39a505578ee8a6a5ebc21e5864fc22fc",
+      "code_revision":"0c5df46f8c756e79e6b7df5f2e74a27e8a90502f",
+      "execution_id":"local-e3a-corrected-byte-identical-20260808",
+      "scientific_lineage_id":"p0-e3-capability-scale-v1",
+      "dataset_lineage_id":"E3A_LIGUE1_2024_SEG_000283",
+      "status":"PARTIAL",
+      "verified_by":["DP6","DP2"],
+      "successor_of":"COVERAGE.E3A.CAPABILITY_SCALE.V1.001"
+    },
+    {
+      "claim_id":"FEATURE.CALENDAR.REAL_ASOF.E3A.V1.002",
+      "claim":"The real E3A rows expose neither known_at nor a revision catalog; all 5,236 Calendar feature-fixture evaluations remain UNKNOWN and the capability is BLOCKED_BY_TEMPORALITY.",
+      "scope":"CALENDAR_REAL_E3A_LIGUE1_2024",
+      "source":"real E3A temporal fields plus the verified synthetic Golden Pack",
+      "grain":"one_calendar_feature_per_fixture_cutoff",
+      "temporal_class":"STRICT_AS_OF_BLOCKED_BY_TEMPORALITY",
+      "artifact":"reports/evidence/e3a/e3a-calendar-asof-v1.json",
+      "hash":"c388faf0bd59f119fcbcdc62b203f477659890d594864acad70a981b2c0d1527",
+      "code_revision":"0c5df46f8c756e79e6b7df5f2e74a27e8a90502f",
+      "execution_id":"local-e3a-calendar-corrected-20260808",
+      "scientific_lineage_id":"p0-e3-capability-scale-v1",
+      "dataset_lineage_id":"E3A_LIGUE1_2024_TEMPORAL_EVIDENCE",
+      "status":"BLOCKED",
+      "verified_by":["DP6","DP2"],
+      "successor_of":"FEATURE.CALENDAR.REAL_ASOF.E3A.V1.001"
+    },
+    {
+      "claim_id":"COVERAGE.E3B.CAPABILITY_SCALE.V1.002",
+      "claim":"Conditional E3B measures exactly the six E3A-passed capabilities over 1,756 fixtures in five leagues: five are reconstructed-ready and Lineup is partial for two affected Serie A lineups; 52 valid card-empty fixtures remain covered.",
+      "scope":"E3B_FIVE_LEAGUES_2024_E3A_PASSED_CAPABILITIES",
+      "source":"five immutable verified fixture replay segments",
+      "grain":"one_capability_per_league_season_then_weighted_global_aggregate",
+      "temporal_class":"POST_MATCH_RECONSTRUCTED_OR_LAGGABLE",
+      "artifact":"reports/evidence/e3b/e3b-measurement-v1.json",
+      "hash":"495a5b5c64e263f5cf3df303e33555269281725865bd358ee29385e5df972810",
+      "code_revision":"0c5df46f8c756e79e6b7df5f2e74a27e8a90502f",
+      "execution_id":"local-e3b-redesigned-byte-identical-20260808",
+      "scientific_lineage_id":"p0-e3-capability-scale-v1",
+      "dataset_lineage_id":"E3B_FIVE_LEAGUES_2024_1756_FIXTURES",
+      "status":"PARTIAL",
+      "verified_by":["DP6","DP2"],
+      "successor_of":"COVERAGE.E3B.CAPABILITY_SCALE.V1.001"
     }
   ],
   "decision_nodes":[
@@ -1519,7 +1570,10 @@
     {"decision_id":"RCV3-20260808-065","ledger_record_hash":"2cdba8a77ab019b9c177aae39802e03423fbe4156a5bd229462292d5bd56ec01"},
     {"decision_id":"RCV3-20260808-066","ledger_record_hash":"d9da6dcdf74acdce0e3e412eb0543158a98e8f519fab80c4b2dad0c828bb60af"},
     {"decision_id":"RCV3-20260808-067","ledger_record_hash":"cc5e6a2410bc298335b824d3d28216df88c7d53963b89191bcea47992816b087"},
-    {"decision_id":"RCV3-20260808-068","ledger_record_hash":"f6770f99f101e527b9f0e449e4f67350b72789ba87d2e2cc547092e85f760362"}
+    {"decision_id":"RCV3-20260808-068","ledger_record_hash":"f6770f99f101e527b9f0e449e4f67350b72789ba87d2e2cc547092e85f760362"},
+    {"decision_id":"RCV3-20260808-069","ledger_record_hash":"411c54095bbbc346fe64b3561ff8434b094188fde4a5a846a1dbdd754179ef80"},
+    {"decision_id":"RCV3-20260808-070","ledger_record_hash":"8029a11595d66024bcdc335c2df4165c88e2de652a79208039a51fbf4bb652eb"},
+    {"decision_id":"RCV3-20260808-071","ledger_record_hash":"f3491aeb57db93ba1ac776cd6625ada0cb3f1efbb28fb1638fe057b0225d7433"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -1751,6 +1805,16 @@
     {"edge_id":"EDGE.227","from_claim_id":"FEATURE.CALENDAR.REAL_ASOF.E3A.V1.001","to_decision_id":"RCV3-20260808-067","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.228","from_claim_id":"COVERAGE.E3B.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-067","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.229","from_claim_id":"COVERAGE.E3A.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-068","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.230","from_claim_id":"COVERAGE.E3B.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-068","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.230","from_claim_id":"COVERAGE.E3B.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-068","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.231","from_claim_id":"COVERAGE.E3A.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-069","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.232","from_claim_id":"COVERAGE.E3B.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-069","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.233","from_claim_id":"COVERAGE.E3A.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-070","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.234","from_claim_id":"FEATURE.CALENDAR.REAL_ASOF.E3A.V1.001","to_decision_id":"RCV3-20260808-070","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.235","from_claim_id":"COVERAGE.E3B.CAPABILITY_SCALE.V1.001","to_decision_id":"RCV3-20260808-070","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.236","from_claim_id":"COVERAGE.E3A.SELECTION.V1.001","to_decision_id":"RCV3-20260808-071","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.237","from_claim_id":"COVERAGE.E3A.CAPABILITY_SCALE.V1.002","to_decision_id":"RCV3-20260808-071","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.238","from_claim_id":"FEATURE.CALENDAR.REAL_ASOF.E3A.V1.002","to_decision_id":"RCV3-20260808-071","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.239","from_claim_id":"COVERAGE.E3B.CAPABILITY_SCALE.V1.002","to_decision_id":"RCV3-20260808-071","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.240","from_claim_id":"SECURITY.E3.EXTERNAL_EFFECTS.ZERO.V1.001","to_decision_id":"RCV3-20260808-071","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
