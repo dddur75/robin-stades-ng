@@ -1,0 +1,33 @@
+{
+  "schema_version": "phase-c-v2-dashboard-data-contract",
+  "generated_at": "2026-08-08T23:30:00Z",
+  "data_only": true,
+  "source_reports": [
+    "reports/hypothesis-research/v2/atomic-results-summary-v2.json",
+    "reports/hypothesis-research/v2/pair-results-summary-v2.json",
+    "reports/hypothesis-research/v2/campaign-multiplicity-v2.json",
+    "reports/hypothesis-research/v2/negative-controls-v2.json"
+  ],
+  "allowed_fields": [
+    "counts",
+    "coverage",
+    "status",
+    "q_value",
+    "historical_delta_log_loss",
+    "historical_delta_brier",
+    "replay",
+    "checkpoint"
+  ],
+  "forbidden_fields": [
+    "stake",
+    "bet",
+    "odds",
+    "roi",
+    "profit",
+    "clv",
+    "drawdown",
+    "promotion"
+  ],
+  "point_in_time_price_provenance": false,
+  "triple_search_locked": true
+}

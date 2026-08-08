@@ -1,0 +1,75 @@
+{
+  "schema_version": "phase-c-v2-exhaustive-property-campaign",
+  "generated_at": "2026-08-08T23:30:00Z",
+  "property_count": 16,
+  "tag_count": 150,
+  "atomic_test_count": 300,
+  "theoretical_pair_count": 11175,
+  "eligible_pair_count": 3590,
+  "pair_test_count": 7180,
+  "registry_hash": "c95bedfe0a02e2858722e93af13023b5cf4edb53692f7e46216599a3a3979d7d",
+  "property_contract_hash": "85c6ac5f4092fcebdd0c8a57389530c03f88d568a43768aa567a9e1bf9a89f36",
+  "source_manifest_hash": "97926c3ab20cfce4a9eb1be825839382575dc05470ae6adae3aecddd05a60f5d",
+  "mask_manifest_hash": "56e2b862a11ff968e5eb66183bff75e81383cc004648dc6c9d3fe85cbe070d4a",
+  "pair_space_hash": "e1aaf20ddca569fcaad260ba8b59a68f5fbeb82911e34faa9eefeabea741aa28",
+  "eligible_pair_ids_hash": "143cb4d93f5d2f314dc0918b25e827a5587fd01f6f4721413ffb21a5f372d36a",
+  "folds": [
+    {
+      "fold_id": "F1",
+      "train_end": 703,
+      "validation_end": 929,
+      "validation_start": "2024-12-14"
+    },
+    {
+      "fold_id": "F2",
+      "train_end": 929,
+      "validation_end": 1133,
+      "validation_start": "2025-01-19"
+    },
+    {
+      "fold_id": "F3",
+      "train_end": 1133,
+      "validation_end": 1345,
+      "validation_start": "2025-02-17"
+    },
+    {
+      "fold_id": "F4",
+      "train_end": 1345,
+      "validation_end": 1547,
+      "validation_start": "2025-03-30"
+    },
+    {
+      "fold_id": "F5",
+      "train_end": 1547,
+      "validation_end": 1756,
+      "validation_start": "2025-04-27"
+    }
+  ],
+  "multiple_testing": {
+    "atomic": "BH_GLOBAL_300_AND_PROPERTY_FAMILY_TARGET",
+    "pair": "BH_GLOBAL_7180_AND_PROPERTY_PAIR_FAMILY_TARGET",
+    "campaign": "BH_GLOBAL_7480",
+    "blocked_tests_p_value": 1.0
+  },
+  "pair_shard_count": 64,
+  "triple_search_locked": true,
+  "max_depth": 2,
+  "point_in_time_source_provenance": false,
+  "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+  "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
+  "roi": null,
+  "profit": null,
+  "clv": null,
+  "drawdown": null,
+  "external_effects": {
+    "provider_calls": 0,
+    "r2_gets": 0,
+    "r2_writes": 0,
+    "remote_sql": 0,
+    "odds_credits": 0,
+    "deployments": 0,
+    "real_bets": 0,
+    "triples": 0
+  },
+  "campaign_hash": "a3ae9a7b1025ae85b8faed1130cdb7b70c37b1b4fceb61f89f0c735d80093fcc"
+}

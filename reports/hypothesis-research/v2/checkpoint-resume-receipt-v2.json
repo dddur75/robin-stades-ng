@@ -1,0 +1,29 @@
+{
+  "schema_version": "phase-c-v2-checkpoint-resume-receipt",
+  "generated_at": "2026-08-08T23:30:00Z",
+  "campaign_hash": "a3ae9a7b1025ae85b8faed1130cdb7b70c37b1b4fceb61f89f0c735d80093fcc",
+  "pair_space_hash": "e1aaf20ddca569fcaad260ba8b59a68f5fbeb82911e34faa9eefeabea741aa28",
+  "shard_id": 0,
+  "shard_pair_count": 50,
+  "forced_interrupt_cursor": 17,
+  "interrupted_checkpoint_hash": "814a735f2ce17cc7c4f34041b2a09835f36fa4c2601fb36edae545bd3f958daa",
+  "interrupted_prefix_hash": "67334795e90e4dfae34eb6c37c14ed93640a485ab6a9e28c1458f0700a5e380c",
+  "resumed_checkpoint_hash": "b7b2815aad7f51f1d23dd6db63eaae2231148954ea70e15bc590cb11b54f0d8b",
+  "resumed_from": 17,
+  "recomputed_prefix_count": 0,
+  "prefix_17_preserved": true,
+  "resume_equals_clean": true,
+  "clean_results_hash": "e87216b54e0c91096df62785e586798b718476354690a6c64d98ebba0e94de6d",
+  "resumed_results_hash": "e87216b54e0c91096df62785e586798b718476354690a6c64d98ebba0e94de6d",
+  "completed_shard_skip_verified": true,
+  "external_effects": {
+    "provider_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "remote_sql": 0,
+    "odds_credits": 0,
+    "deployments": 0,
+    "triples": 0
+  },
+  "receipt_hash": "fb8ff822a56d8d3ab1786e03e38fc5106f6787ba0e2cf76703df17f0d2879328"
+}
