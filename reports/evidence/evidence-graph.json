@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-08T13:55:00Z",
+  "generated_at":"2026-08-08T14:35:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1807,7 +1807,8 @@
     {"decision_id":"RCV3-20260808-072","ledger_record_hash":"e99028e4a3acde46009e3e9a4c3e5487e773cbf7336a9125c320435f402e3e4d"},
     {"decision_id":"RCV3-20260808-073","ledger_record_hash":"3ea1cbebb2508e6b1415e78d92095772416b76373d70bf4a179adfb6f32e0147"},
     {"decision_id":"RCV3-20260808-074","ledger_record_hash":"6aaaf0107edd104a5dbecd7701bc5fa450408aa4f38ff807e11015bfc4fef28b"},
-    {"decision_id":"RCV3-20260808-075","ledger_record_hash":"f66b7852b2c1c7da0c51f1b2e2e3ced99b147cfdc416f06779fe2fb83d58b970"}
+    {"decision_id":"RCV3-20260808-075","ledger_record_hash":"f66b7852b2c1c7da0c51f1b2e2e3ced99b147cfdc416f06779fe2fb83d58b970"},
+    {"decision_id":"RCV3-20260808-076","ledger_record_hash":"266a793bffdbcfcb9dcedb22d0bc85a15754517af83746978a727746cb7283af"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2061,8 +2062,13 @@
     {"edge_id":"EDGE.249","from_claim_id":"EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001","to_decision_id":"RCV3-20260808-074","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.250","from_claim_id":"SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001","to_decision_id":"RCV3-20260808-074","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.251","from_claim_id":"GOV.PHASE_C.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-074","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.252","from_claim_id":"EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.253","from_claim_id":"EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.254","from_claim_id":"REPLAY.PHASE_C.DETERMINISM.V1.002","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.252","from_claim_id":"EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.253","from_claim_id":"EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.002","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.254","from_claim_id":"EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.255","from_claim_id":"EVAL.PHASE_C.PAIR_CAMPAIGN.V1.002","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.256","from_claim_id":"REPLAY.PHASE_C.DETERMINISM.V1.001","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.257","from_claim_id":"REPLAY.PHASE_C.DETERMINISM.V1.002","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.258","from_claim_id":"SECURITY.PHASE_C.ZERO_EFFECTS.TRIPLE_LOCK.V1.001","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.259","from_claim_id":"GOV.PHASE_C.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-075","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

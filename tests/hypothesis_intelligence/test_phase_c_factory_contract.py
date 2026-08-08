@@ -553,6 +553,30 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent() -> Non
         "REPLAY.PHASE_C.DETERMINISM.V1.002",
         "EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001",
     }
+    ledger = [
+        json.loads(line)
+        for line in (ROOT / "reports/council/decision-ledger.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    ]
+    record_075 = next(
+        row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
+    )
+    assert record_075["hash"] == (
+        "f66b7852b2c1c7da0c51f1b2e2e3ced99b147cfdc416f06779fe2fb83d58b970"
+    )
+    record_076 = next(
+        row for row in ledger if row["decision_id"] == "RCV3-20260808-076"
+    )
+    assert record_076["decision"].startswith("PASS_AND_HOLD")
+    assert record_076["context"]["supersedes_decision_id"] == record_075["decision_id"]
+    assert record_076["context"]["historical_record_075_authoritative"] is False
+    edges_to_075 = {
+        edge["from_claim_id"]
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == "RCV3-20260808-075"
+    }
+    assert edges_to_075 == set(record_075["proof"])
     assert not any(
         forbidden in row["claim"].lower()
         for row in claims.values()
