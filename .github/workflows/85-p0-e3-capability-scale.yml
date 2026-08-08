@@ -1,0 +1,218 @@
+name: "85 - P0 E3 Capability Scale"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execution_sha:
+        description: "Exact SHA on codex/p0-e3a-e3b-capability-scale-v1"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: p0-e3-capability-scale
+  cancel-in-progress: false
+
+env:
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  ODDS_CREDITS_ALLOWED: "0"
+  REMOTE_SQL_ALLOWED: "0"
+  R2_GET_ALLOWED: "0"
+  R2_LIST_ALLOWED: "0"
+  R2_HEAD_ALLOWED: "0"
+  R2_WRITES_ALLOWED: "0"
+  R2_DELETES_ALLOWED: "0"
+  DEPLOYMENT_ALLOWED: "0"
+  PUBLICATION_ALLOWED: "0"
+  PROMOTION_ALLOWED: "0"
+  REAL_BETS: "false"
+  TRIPLE_SEARCH_LOCKED: "true"
+  SOURCE_RUN_ID: "30853757779"
+  E3_BRANCH: "codex/p0-e3a-e3b-capability-scale-v1"
+
+jobs:
+  preflight:
+    name: Exact-SHA and immutable artifact preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      e3a_competition: ${{ steps.freeze.outputs.e3a_competition }}
+      e3a_artifact_id: ${{ steps.freeze.outputs.e3a_artifact_id }}
+      e3b_matrix: ${{ steps.freeze.outputs.e3b_matrix }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.execution_sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Require the exact remote E3 branch head
+        env:
+          EXECUTION_SHA: ${{ inputs.execution_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${EXECUTION_SHA}" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "${EXECUTION_SHA}"
+          remote_sha="$(git ls-remote origin "refs/heads/${E3_BRANCH}" | cut -f1)"
+          test -n "${remote_sha}"
+          test "${remote_sha}" = "${EXECUTION_SHA}"
+      - id: freeze
+        name: Trusted-main validation of the immutable artifact lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          expected = {
+              "source_run_id": 30853757779,
+              "source_run_attempt": 1,
+              "source_head_sha": "f489971c03b53e9ea1381655f1591328ed055d41",
+              "inventory_manifest_sha256": "87326eba00976c8cdd00c68e7d24b98c1ccd4f109b38681228f527bcb273e28d",
+              "artifacts": [
+                  {"competition": "Premier League", "competition_id": 39, "artifact_id": 8875626108, "size_in_bytes": 20706884, "artifact_digest": "sha256:b17053675296d10014386636921e57a4e3fc9b79d639dbb2d90a5920f6f4d0a9"},
+                  {"competition": "Ligue 1", "competition_id": 61, "artifact_id": 8875918562, "size_in_bytes": 16054335, "artifact_digest": "sha256:df2759c22473640146c51034603be8c549c72ff56773d73f8573603d9f58bfed"},
+                  {"competition": "Bundesliga", "competition_id": 78, "artifact_id": 8876203323, "size_in_bytes": 15462672, "artifact_digest": "sha256:2be7c17d8bc245cd60e4f2c6dfd4074e0c36189a1c7a28e12c3e458248d26625"},
+                  {"competition": "Serie A", "competition_id": 135, "artifact_id": 8875016575, "size_in_bytes": 21598553, "artifact_digest": "sha256:f585a2de9b783b14f78214e3904e4bc9f20ec4bd8d1db19e32b6484e60906d9f"},
+                  {"competition": "Liga", "competition_id": 140, "artifact_id": 8875329908, "size_in_bytes": 21183717, "artifact_digest": "sha256:67a0f609253a84cce832b8a553104e8626a925f6ca18b6303fb9cfbce729fe4c"},
+              ],
+          }
+          lock = json.loads(Path("configs/execution/p0-e3-artifact-lock-v1.json").read_text(encoding="utf-8"))
+          for key in ("source_run_id", "source_run_attempt", "source_head_sha", "inventory_manifest_sha256", "artifacts"):
+              if lock.get(key) != expected[key]:
+                  raise SystemExit(f"E3_ARTIFACT_LOCK_MISMATCH:{key}")
+          if lock.get("selected_e3a_competition") != "Ligue 1":
+              raise SystemExit("E3A_SELECTION_NOT_TRUSTED")
+          if lock.get("mission_source_bytes") != 95006161 or lock.get("mission_source_byte_limit") != 100000000:
+              raise SystemExit("E3_SOURCE_BUDGET_MISMATCH")
+          selected = next(row for row in expected["artifacts"] if row["competition"] == "Ligue 1")
+          others = [
+              {"competition": row["competition"], "artifact_id": row["artifact_id"], "slug": row["competition"].casefold().replace(" ", "-")}
+              for row in expected["artifacts"]
+              if row["competition"] != "Ligue 1"
+          ]
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as stream:
+              stream.write(f"e3a_competition={selected['competition']}\n")
+              stream.write(f"e3a_artifact_id={selected['artifact_id']}\n")
+              stream.write("e3b_matrix=" + json.dumps({"include": others}, separators=(",", ":")) + "\n")
+          PY
+
+  e3a:
+    name: E3A selected competition
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.execution_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          artifact-ids: ${{ needs.preflight.outputs.e3a_artifact_id }}
+          path: artifacts/e3/source
+      - name: Verify source, measure E3A, then reuse it as the fifth E3B league
+        run: >-
+          python scripts/run_p0_e3_capability_scale.py measure-selected
+          --competition "${{ needs.preflight.outputs.e3a_competition }}"
+          --source-root artifacts/e3/source
+          --e3a-output artifacts/e3/selected/e3a
+          --e3b-output artifacts/e3/selected/e3b
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p0-e3a-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e3/selected/**/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  e3b:
+    name: E3B ${{ matrix.competition }}
+    needs: [preflight, e3a]
+    if: ${{ needs.e3a.result == 'success' }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.preflight.outputs.e3b_matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.execution_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          artifact-ids: ${{ matrix.artifact_id }}
+          path: artifacts/e3/source
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p0-e3a-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e3/gate
+      - name: Verify source and measure only E3A-passed capabilities
+        run: >-
+          python scripts/run_p0_e3_capability_scale.py measure-league
+          --stage e3b
+          --competition "${{ matrix.competition }}"
+          --source-root artifacts/e3/source
+          --gate-file artifacts/e3/gate/e3a/e3a-gate-v1.json
+          --output "artifacts/e3/e3b/${{ matrix.slug }}"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p0-e3b-${{ matrix.slug }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e3/e3b/${{ matrix.slug }}/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  aggregate:
+    name: Weighted aggregation and byte-identical replay
+    needs: [preflight, e3a, e3b]
+    if: ${{ always() && needs.preflight.result == 'success' && needs.e3a.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.execution_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p0-e3a-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e3/results/selected
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: p0-e3b-*-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e3/results/other
+      - name: Aggregate only compact receipts and replay twice
+        run: >-
+          python scripts/run_p0_e3_capability_scale.py aggregate
+          --results-root artifacts/e3/results
+          --output artifacts/e3/reports
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p0-e3-capability-scale-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/e3/reports/*.json
+          if-no-files-found: error
+          retention-days: 90

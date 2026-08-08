@@ -124,8 +124,9 @@ Le seul écart de couverture se trouve sur une nouvelle fixture Liga de la strat
 temporelle 6 : fixture `1208603`, objet signé
 `2a106520004fcd3945b821db8130f2a671ad8ef7d17b83c8077fc495338c7135`.
 Au grain joueur-fixture, 39 statistiques sur 40 attendues sont reliées aux joueurs
-de lineup, avec une identité statistique hors grain et une valeur attendue
-conservée en `UNKNOWN`. Aucune attribution n'est inventée.
+de lineup, avec une anomalie agrégée d'identité ou de schéma et une valeur
+attendue conservée en `UNKNOWN`. Les preuves Git de cette campagne ne suffisent
+pas à classer plus précisément la cause. Aucune attribution n'est inventée.
 
 ## Concentration et limites
 

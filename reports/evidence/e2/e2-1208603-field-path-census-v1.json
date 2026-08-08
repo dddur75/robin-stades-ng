@@ -1,0 +1,1207 @@
+{
+  "fixture_id": 1208603,
+  "rows": [
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].events[*].assist.id",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 7,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL|STRING",
+      "json_path": "$.response[fixture].events[*].assist.name",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 7,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL|STRING",
+      "json_path": "$.response[fixture].events[*].comments",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 10,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].events[*].detail",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].events[*].player.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].events[*].player.name",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].events[*].team.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].events[*].team.logo",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].events[*].team.name",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].events[*].time.elapsed",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].events[*].time.extra",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 15,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].events[*].type",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 16,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].fixture.date",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].fixture.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].fixture.periods.first",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].fixture.periods.second",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].fixture.referee",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].fixture.status.elapsed",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].fixture.status.extra",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].fixture.status.long",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].fixture.status.short",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].fixture.timestamp",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].fixture.timezone",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].fixture.venue.city",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].fixture.venue.id",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].fixture.venue.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].goals.away",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].goals.home",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].league.country",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].league.flag",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].league.id",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].league.logo",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].league.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].league.round",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].league.season",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "BOOLEAN",
+      "json_path": "$.response[fixture].league.standings",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].lineups[*].coach.id",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].coach.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].coach.photo",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].formation",
+      "mapped_property": "FORMATION",
+      "mapped_status": "MAPPED",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "E2 formation input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].startXI[*].player.grid",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 0,
+      "observed_count": 22,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].lineups[*].startXI[*].player.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 22,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].startXI[*].player.name",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 0,
+      "observed_count": 22,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].lineups[*].startXI[*].player.number",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 0,
+      "observed_count": 22,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].startXI[*].player.pos",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 0,
+      "observed_count": 22,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "NULL",
+      "json_path": "$.response[fixture].lineups[*].substitutes[*].player.grid",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 18,
+      "observed_count": 18,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].lineups[*].substitutes[*].player.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 18,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].substitutes[*].player.name",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 0,
+      "observed_count": 18,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].lineups[*].substitutes[*].player.number",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 0,
+      "observed_count": 18,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "NULL|STRING",
+      "json_path": "$.response[fixture].lineups[*].substitutes[*].player.pos",
+      "mapped_property": "LINEUP",
+      "mapped_status": "MAPPED",
+      "null_count": 1,
+      "observed_count": 18,
+      "reason": "E2 lineup input",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.colors.goalkeeper.border",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.colors.goalkeeper.number",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.colors.goalkeeper.primary",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.colors.player.border",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.colors.player.number",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.colors.player.primary",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].lineups[*].team.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.logo",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].lineups[*].team.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].players[*].player.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].players[*].players[*].player.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].players[*].players[*].player.photo",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].cards.red",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].cards.yellow",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].dribbles.attempts",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 19,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].dribbles.past",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 26,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].dribbles.success",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 27,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].duels.total",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 11,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].duels.won",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 14,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].fouls.committed",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 19,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].fouls.drawn",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 20,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "BOOLEAN",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].games.captain",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].games.minutes",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 10,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].games.number",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].games.position",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL|STRING",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].games.rating",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 11,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "BOOLEAN",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].games.substitute",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].goals.assists",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 10,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].goals.conceded",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].goals.saves",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 39,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].goals.total",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 39,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].offsides",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 38,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL|STRING",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].passes.accuracy",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 11,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].passes.key",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 34,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].passes.total",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 10,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].penalty.commited",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 40,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].penalty.missed",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].penalty.saved",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 38,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].penalty.scored",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].penalty.won",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 40,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].shots.on",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 38,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].shots.total",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 35,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].tackles.blocks",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 35,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].tackles.interceptions",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 31,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL",
+      "json_path": "$.response[fixture].players[*].players[*].statistics[*].tackles.total",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 22,
+      "observed_count": 40,
+      "reason": "not mapped by the E2 identity measure",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].players[*].team.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].players[*].team.logo",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].players[*].team.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].players[*].team.update",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "NULL",
+      "json_path": "$.response[fixture].score.extratime.away",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 1,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL",
+      "json_path": "$.response[fixture].score.extratime.home",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 1,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].score.fulltime.away",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].score.fulltime.home",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].score.halftime.away",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].score.halftime.home",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL",
+      "json_path": "$.response[fixture].score.penalty.away",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 1,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "NULL",
+      "json_path": "$.response[fixture].score.penalty.home",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 1,
+      "observed_count": 1,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].statistics[*].statistics[*].type",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 36,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER|NULL|STRING",
+      "json_path": "$.response[fixture].statistics[*].statistics[*].value",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 2,
+      "observed_count": 36,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].statistics[*].team.id",
+      "mapped_property": "provider_identity",
+      "mapped_status": "IDENTITY_ONLY",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "identity and grain key",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].statistics[*].team.logo",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].statistics[*].team.name",
+      "mapped_property": null,
+      "mapped_status": "POST_MATCH_ONLY",
+      "null_count": 0,
+      "observed_count": 2,
+      "reason": "outside this identity-only diagnostic",
+      "temporal_class": "POST_MATCH_ONLY"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].teams.away.id",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].teams.away.logo",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].teams.away.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "BOOLEAN",
+      "json_path": "$.response[fixture].teams.away.winner",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "INTEGER",
+      "json_path": "$.response[fixture].teams.home.id",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].teams.home.logo",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "STRING",
+      "json_path": "$.response[fixture].teams.home.name",
+      "mapped_property": null,
+      "mapped_status": "IGNORED_WITH_REASON",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "display metadata not retained",
+      "temporal_class": "OBSERVED_AT"
+    },
+    {
+      "data_type": "BOOLEAN",
+      "json_path": "$.response[fixture].teams.home.winner",
+      "mapped_property": null,
+      "mapped_status": "UNMAPPED_FIELD",
+      "null_count": 0,
+      "observed_count": 1,
+      "reason": "not used by the bounded E2 identity measure",
+      "temporal_class": "UNKNOWN"
+    }
+  ],
+  "schema_version": "e2-1208603-field-path-census-v1",
+  "scope": "ONE_FIXTURE_ONLY_NO_PROVIDER_GENERALIZATION"
+}

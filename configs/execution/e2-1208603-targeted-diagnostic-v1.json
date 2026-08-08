@@ -1,0 +1,27 @@
+{
+  "schema_version": "e2-targeted-diagnostic-v1",
+  "fixture_id": 1208603,
+  "competition": "Liga",
+  "temporal_stratum": 6,
+  "object_id": "2a106520004fcd3945b821db8130f2a671ad8ef7d17b83c8077fc495338c7135",
+  "receipt_key": "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=3d02d48b574cf3cfa0affe37f977d65880bdd905482030997dc74fbd18b4d126/receipt.json",
+  "receipt_hash": "6ad37337ed5c2c75f66d4f9987b39c92ee6be58723823fcc697a4d7e6ed7385b",
+  "payload_key": "historical-deep-data/schema-v1/competition=api-football:140/season=2024/family=fixtures/endpoint=fixtures/task=3d02d48b574cf3cfa0affe37f977d65880bdd905482030997dc74fbd18b4d126/payload-d79d0e4f0d06715f8bf3eb4d3631b38e243e07eeadd402ae3e24e256920e80dc.json.gz",
+  "payload_hash": "d79d0e4f0d06715f8bf3eb4d3631b38e243e07eeadd402ae3e24e256920e80dc",
+  "stored_hash": "f97f7b4d020cd6d0d04c72a7333c7ab16049b10a7bffeb87ce51a175696e5bf2",
+  "stored_bytes": 70825,
+  "logical_bytes": 826506,
+  "budgets": {
+    "r2_get_max": 2,
+    "r2_bytes_max": 5000000,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "provider_calls": 0,
+    "remote_sql": 0,
+    "odds_credits": 0
+  },
+  "reviewed_by": ["R2_DATA_QUALITY", "R3_SCIENCE", "R4_GITHUB_R2"],
+  "raw_payload_retention": "FORBIDDEN"
+}

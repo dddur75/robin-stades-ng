@@ -1,0 +1,26 @@
+{
+  "schema_version": "calendar-strict-asof-golden-pack-v1",
+  "target_fixture_id": 1200,
+  "fixtures": [
+    {"fixture_id": 1001, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2024-12-01T00:00:00Z", "kickoff": "2024-12-20T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2024-12-20T20:00:00Z", "kickoff": "2024-12-20T18:00:00Z", "status": "FINISHED"}]},
+    {"fixture_id": 1002, "home_team_id": 2, "away_team_id": 1, "revisions": [{"known_at": "2024-12-15T00:00:00Z", "kickoff": "2025-01-02T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-02T20:00:00Z", "kickoff": "2025-01-02T18:00:00Z", "status": "FINISHED"}]},
+    {"fixture_id": 1003, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2024-12-15T00:00:00Z", "kickoff": "2025-01-05T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-04T10:00:00Z", "kickoff": "2025-01-05T18:00:00Z", "status": "CANCELLED"}]},
+    {"fixture_id": 1004, "home_team_id": 2, "away_team_id": 1, "revisions": [{"known_at": "2024-12-20T00:00:00Z", "kickoff": "2025-01-08T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-08T19:00:00Z", "kickoff": "2025-01-08T18:00:00Z", "status": "ABANDONED"}]},
+    {"fixture_id": 1005, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2024-12-20T00:00:00Z", "kickoff": "2025-01-10T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-10T20:00:00Z", "kickoff": "2025-01-10T18:00:00Z", "status": "FINISHED"}]},
+    {"fixture_id": 1006, "home_team_id": 2, "away_team_id": 1, "revisions": [{"known_at": "2024-12-20T00:00:00Z", "kickoff": "2025-01-12T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-11T10:00:00Z", "kickoff": "2025-01-12T18:00:00Z", "status": "POSTPONED"}]},
+    {"fixture_id": 1007, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2025-01-01T00:00:00Z", "kickoff": "2025-01-14T10:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-14T12:00:00Z", "kickoff": "2025-01-14T10:00:00Z", "status": "FINISHED"}]},
+    {"fixture_id": 1008, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2025-01-01T00:00:00Z", "kickoff": "2025-01-14T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-14T20:00:00Z", "kickoff": "2025-01-14T18:00:00Z", "status": "FINISHED"}]},
+    {"fixture_id": 1009, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2025-01-01T00:00:00Z", "kickoff": "2025-01-18T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-18T20:00:00Z", "kickoff": "2025-01-18T18:00:00Z", "status": "FINISHED"}]},
+    {"fixture_id": 1010, "home_team_id": 2, "away_team_id": 1, "revisions": [{"known_at": "2025-01-01T00:00:00Z", "kickoff": "2025-01-19T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-19T18:30:00Z", "kickoff": "2025-01-19T18:00:00Z", "status": "LIVE"}, {"known_at": "2025-01-20T21:00:00Z", "kickoff": "2025-01-19T18:00:00Z", "status": "FINISHED"}]},
+    {"fixture_id": 1011, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2025-01-01T00:00:00Z", "kickoff": "2025-01-16T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-15T10:00:00Z", "kickoff": "2025-01-21T18:00:00Z", "status": "SCHEDULED"}]},
+    {"fixture_id": 1012, "home_team_id": 2, "away_team_id": 1, "revisions": [{"known_at": "2025-01-21T10:00:00Z", "kickoff": "2025-01-24T18:00:00Z", "status": "SCHEDULED"}]},
+    {"fixture_id": 1013, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2025-01-01T00:00:00Z", "kickoff": "2025-01-22T18:00:00Z", "status": "SCHEDULED"}, {"known_at": "2025-01-21T10:00:00Z", "kickoff": "2025-01-22T18:00:00Z", "status": "POSTPONED"}]},
+    {"fixture_id": 1200, "home_team_id": 1, "away_team_id": 2, "revisions": [{"known_at": "2025-01-01T00:00:00Z", "kickoff": "2025-01-28T18:00:00Z", "status": "SCHEDULED"}]}
+  ],
+  "cases": [
+    {"case_id": "BEFORE_LATE_CHANGES", "cutoff": "2025-01-20T12:00:00Z", "catalog_complete_at_cutoff": true, "expected_sha256": "03be07bd32d30d78cecff15469f80447058234b1ca5c24988fd4dc7a8a3bc9a4"},
+    {"case_id": "AFTER_LATE_CHANGES", "cutoff": "2025-01-22T12:00:00Z", "catalog_complete_at_cutoff": true, "expected_sha256": "02efe573d95e9e0c829f9586d48a1cde81c9b68e32d2dcc1077d840805a7670d"},
+    {"case_id": "INCOMPLETE_CATALOG", "cutoff": "2025-01-20T12:00:00Z", "catalog_complete_at_cutoff": false, "expected_sha256": "c2c7660f248c754a18057498eac8f9c9a7d78e0975a83b7419eb71dc34a9b8df"},
+    {"case_id": "POST_KICKOFF_REJECTED", "cutoff": "2025-01-29T12:00:00Z", "catalog_complete_at_cutoff": true, "expected_sha256": "bee810203e93765ae291d26cf93ac4010b8b6d989529d296c52847c530dc93fc"}
+  ]
+}
