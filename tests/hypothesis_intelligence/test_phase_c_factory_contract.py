@@ -571,7 +571,14 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             )
         )
     }
-    assert len(claims) == 16
+    assert len(claims) == 23
+    v2_claims = {
+        claim_id: row for claim_id, row in claims.items() if ".V2." in claim_id
+    }
+    assert len(v2_claims) == 7
+    assert {row["code_revision"] for row in v2_claims.values()} == {
+        "a8a2bba20abcb8dbe320519b95e6cf5737a8b1d9"
+    }
     implementation_claims = {
         claim_id: row
         for claim_id, row in claims.items()
@@ -580,6 +587,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             "GOV.PHASE_C.PR37.CLOSURE_AUDIT.V1.001",
             "GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
         }
+        and claim_id not in v2_claims
     }
     assert {row["code_revision"] for row in implementation_claims.values()} == {
         "b2395964faf08a61ac45df36d547025a4b132e13"
@@ -620,6 +628,13 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "CONTROL.PHASE_C.PAIR_NEGATIVE.V1.001",
         "REPLAY.PHASE_C.DETERMINISM.V1.002",
         "EXECUTION.PHASE_C.CHECKPOINT_RESUME.V1.001",
+        "DATA.PHASE_C.V2.SANITIZED_SOURCE_BUNDLE.V1.001",
+        "FEATURE.PHASE_C.V2.PROPERTY_TAG_MASK_FREEZE.V1.001",
+        "EVAL.PHASE_C.V2.FULL_BOUNDED_CAMPAIGN.V1.001",
+        "REPLAY.PHASE_C.V2.FRESH_DETERMINISM.V1.001",
+        "REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001",
+        "SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
+        "GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001",
     }
     ledger_path = ROOT / "reports/council/decision-ledger.jsonl"
     ledger_bytes = ledger_path.read_bytes()
@@ -650,6 +665,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
             "RCV3-20260808-088",
             "RCV3-20260808-089",
             "RCV3-20260808-090",
+            "RCV3-20260808-091",
         }
     ]
     assert recovery_ids == [
@@ -668,6 +684,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "RCV3-20260808-088",
         "RCV3-20260808-089",
         "RCV3-20260808-090",
+        "RCV3-20260808-091",
     ]
     record_075 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-075"
@@ -763,6 +780,43 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "relation": "SUPPORTS",
         "status": "RECORDED",
     }
+    v2_claim_ids = [
+        "DATA.PHASE_C.V2.SANITIZED_SOURCE_BUNDLE.V1.001",
+        "FEATURE.PHASE_C.V2.PROPERTY_TAG_MASK_FREEZE.V1.001",
+        "EVAL.PHASE_C.V2.FULL_BOUNDED_CAMPAIGN.V1.001",
+        "REPLAY.PHASE_C.V2.FRESH_DETERMINISM.V1.001",
+        "REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001",
+        "SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
+        "GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001",
+    ]
+    assert [
+        edge_by_id[f"EDGE.{index:03d}"]["from_claim_id"]
+        for index in range(268, 275)
+    ] == v2_claim_ids
+    assert all(
+        edge_by_id[f"EDGE.{index:03d}"]["to_decision_id"]
+        == "RCV3-20260808-091"
+        for index in range(268, 275)
+    )
+    record_090 = next(
+        row for row in ledger if row["decision_id"] == "RCV3-20260808-090"
+    )
+    record_091 = next(
+        row for row in ledger if row["decision_id"] == "RCV3-20260808-091"
+    )
+    assert record_090["date"] == "2026-08-09T00:20:00Z"
+    assert record_091["context"]["corrects_timestamp_only_of_decision_id"] == (
+        "RCV3-20260808-090"
+    )
+    assert record_091["context"]["record_090_bytes_preserved"] is True
+    assert record_091["context"]["ratified_scientific_commit"] == (
+        "a8a2bba20abcb8dbe320519b95e6cf5737a8b1d9"
+    )
+    assert record_091["context"]["pr_required_state"] == "OPEN_DRAFT_NOT_MERGED"
+    assert record_091["context"]["workflow_dispatch_authorized"] is False
+    assert record_091["context"]["activation_authorized"] is False
+    assert record_091["context"]["merge_authorized"] is False
+    assert set(record_091["proof"]) == set(v2_claim_ids)
     record_088 = next(
         row for row in ledger if row["decision_id"] == "RCV3-20260808-088"
     )
