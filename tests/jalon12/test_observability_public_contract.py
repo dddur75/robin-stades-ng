@@ -191,12 +191,12 @@ def valid_replay_report() -> dict[str, object]:
             "postgresql": {
                 "duplicates_avoided": 1,
                 "inserts": 1,
-                "migration": "0009_jalon12_observatory",
+                "migration": "0014_robin_chronos_v1",
                 "payload_body_rows": 0,
                 "reconstruction_status": (
                     "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
                 ),
-                "tables": 16,
+                "tables": 22,
             },
         },
         extra={
@@ -277,7 +277,7 @@ def test_compact_snapshot_is_sourced_from_policy_and_fail_closed(
             "near_kickoff_reserve"
         ],
     }
-    assert snapshot["postgresql"]["migration"] == "0009_jalon12_observatory"
+    assert snapshot["postgresql"]["migration"] == "0014_robin_chronos_v1"
     assert snapshot["postgresql"]["payload_body_rows"] == 0
     assert snapshot["r2"]["deletions"] == 0
     assert len(snapshot["captures"]["by_family"]) == 9
@@ -355,9 +355,9 @@ def test_cockpit_accepts_valid_replay_then_rejects_single_guard_mutations(
     assert accepted_snapshot["r2"]["recovery_bytes"] == 112_345_679
     assert (
         accepted_snapshot["postgresql"]["migration"]
-        == "0009_jalon12_observatory"
+        == "0014_robin_chronos_v1"
     )
-    assert accepted_snapshot["postgresql"]["tables"] == 16
+    assert accepted_snapshot["postgresql"]["tables"] == 22
     assert accepted_snapshot["postgresql"]["payload_body_rows"] == 0
     assert accepted_snapshot["postgresql"]["lag"] == 0
     assert accepted_snapshot["postgresql"]["duplicates_avoided"] == 1

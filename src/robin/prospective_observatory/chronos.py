@@ -13,7 +13,7 @@ from datetime import datetime
 from decimal import Decimal, getcontext
 from enum import StrEnum
 from statistics import median
-from typing import Literal, Self
+from typing import Literal, Self, cast
 
 from pydantic import Field, model_validator
 
@@ -28,6 +28,8 @@ from robin.prospective_observatory.contracts import (
 CHRONOS_SCHEMA_VERSION = "robin-chronos-v1"
 PRICE_CONTRACT_VERSION = "point-in-time-price-contract-v1"
 TAG_SNAPSHOT_VERSION = "point-in-time-tag-snapshot-v1"
+CANONICAL_TAG_COUNT = 150
+MAX_MARKET_OVERROUND = Decimal("0.06")
 PROPORTIONAL_METHOD_ID = "PROPORTIONAL_COMPLETE_MARKET_V1"
 PROPORTIONAL_METHOD_VERSION = "1.0.0"
 REGION_ALLOWLIST = ("fr",)
@@ -142,7 +144,10 @@ class KnownAtFact(FrozenContract):
     request_contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     normalizer_version: str = Field(min_length=1, max_length=80)
     code_revision: str = Field(min_length=1, max_length=80)
-    supersedes_fact_id: str | None = None
+    supersedes_fact_id: str | None = Field(
+        default=None,
+        pattern=r"^known-at-fact:[0-9a-f]{64}$",
+    )
 
     @model_validator(mode="after")
     def validate_temporality(self) -> Self:
@@ -168,6 +173,16 @@ class KnownAtFact(FrozenContract):
             and self.known_at < self.response_received_at
         ):
             raise ValueError("CHRONOS_KNOWN_AT_BACKDATED")
+        if (
+            self.provider_updated_at is not None
+            and self.known_at is not None
+            and self.provider_updated_at > self.known_at
+            and self.quality_status
+            is not QualityStatus.PROVIDER_TIMESTAMP_INCONSISTENT
+        ):
+            raise ValueError("CHRONOS_PROVIDER_TIMESTAMP_NOT_FAIL_CLOSED")
+        if self.supersedes_fact_id == self.fact_id:
+            raise ValueError("CHRONOS_FACT_SELF_SUPERSESSION")
         expected = temporal_classification(
             known_at=self.known_at,
             cutoff_at=self.cutoff_at,
@@ -225,6 +240,12 @@ def build_known_at_fact(
         cutoff_at=receipt.cutoff_at,
         kickoff_at=receipt.kickoff_at,
     )
+    provider_updated = receipt.provider_updated_at
+    if (
+        provider_updated is not None
+        and ensure_utc(provider_updated, field="provider_updated_at") > known
+    ):
+        quality_status = QualityStatus.PROVIDER_TIMESTAMP_INCONSISTENT
     identity = {
         "fixture_id": receipt.fixture_id,
         "normalized_fact_id": normalized_fact_id,
@@ -301,6 +322,7 @@ class PriceObservation(FrozenContract):
     requested_at: datetime
     response_received_at: datetime
     provider_updated_at: datetime | None
+    price_age_seconds: int | None = Field(default=None, ge=0)
     known_at: datetime
     cutoff_id: str
     cutoff_at: datetime
@@ -323,10 +345,25 @@ class PriceObservation(FrozenContract):
         if requested > response or known != response:
             raise ValueError("CHRONOS_PRICE_KNOWN_AT_INVALID")
         if self.provider_updated_at is not None:
-            ensure_utc(
+            provider_updated = ensure_utc(
                 self.provider_updated_at,
                 field="provider_updated_at",
             )
+            expected_age = int((known - provider_updated).total_seconds())
+            if expected_age < 0:
+                if (
+                    self.quality_status
+                    is not QualityStatus.PROVIDER_TIMESTAMP_INCONSISTENT
+                    or self.price_age_seconds is not None
+                ):
+                    raise ValueError("CHRONOS_PRICE_PROVIDER_TIMESTAMP_INVALID")
+            elif self.price_age_seconds != expected_age:
+                raise ValueError("CHRONOS_PRICE_AGE_MISMATCH")
+        elif (
+            self.quality_status is not QualityStatus.NO_PRICE
+            or self.price_age_seconds is not None
+        ):
+            raise ValueError("CHRONOS_PRICE_PROVIDER_TIMESTAMP_REQUIRED")
         if self.bookmaker not in BOOKMAKER_ALLOWLIST:
             raise ValueError("CHRONOS_BOOKMAKER_NOT_ALLOWED")
         if self.region not in REGION_ALLOWLIST:
@@ -368,6 +405,8 @@ def build_price_observation(
     cutoff_id: str,
     request_contract_hash: str,
     code_revision: str,
+    provider_updated_at: datetime | None = None,
+    max_age_seconds: int = 3600,
 ) -> PriceObservation:
     known = ensure_utc(
         receipt.response_received_at,
@@ -389,13 +428,22 @@ def build_price_observation(
         "cutoff_id": cutoff_id,
         "request_contract_hash": request_contract_hash,
     }
-    provider_updated = receipt.provider_updated_at
-    quality_status = (
-        QualityStatus.PROVIDER_TIMESTAMP_INCONSISTENT
-        if provider_updated is not None
-        and ensure_utc(provider_updated, field="provider_updated_at") > known
-        else QualityStatus.VALID
-    )
+    provider_updated = provider_updated_at
+    price_age_seconds: int | None = None
+    if provider_updated is None:
+        quality_status = QualityStatus.NO_PRICE
+    else:
+        updated = ensure_utc(provider_updated, field="provider_updated_at")
+        age = int((known - updated).total_seconds())
+        if age < 0:
+            quality_status = QualityStatus.PROVIDER_TIMESTAMP_INCONSISTENT
+        else:
+            price_age_seconds = age
+            quality_status = (
+                QualityStatus.VALID
+                if age <= max_age_seconds
+                else QualityStatus.NO_PRICE
+            )
     return PriceObservation(
         price_snapshot_id="price-observation:" + canonical_sha256(identity),
         fixture_id=receipt.fixture_id,
@@ -407,7 +455,8 @@ def build_price_observation(
         odds_decimal=odds_decimal,
         requested_at=receipt.requested_at,
         response_received_at=known,
-        provider_updated_at=receipt.provider_updated_at,
+        provider_updated_at=provider_updated,
+        price_age_seconds=price_age_seconds,
         known_at=known,
         cutoff_id=cutoff_id,
         cutoff_at=receipt.cutoff_at,
@@ -497,6 +546,8 @@ def derive_complete_book_markets(
         implied = tuple(Decimal(1) / observation.odds_decimal for observation in ordered)
         total = sum(implied, Decimal(0))
         overround = total - Decimal(1)
+        if overround <= Decimal(0) or overround > MAX_MARKET_OVERROUND:
+            continue
         for observation, unscaled in zip(ordered, implied, strict=True):
             devigged = unscaled / total
             identity = {
@@ -518,10 +569,7 @@ def derive_complete_book_markets(
                     implied_probability=unscaled,
                     market_overround=overround,
                     devigged_probability=devigged,
-                    price_age_seconds=max(
-                        0,
-                        int((observation.cutoff_at - observation.known_at).total_seconds()),
-                    ),
+                    price_age_seconds=cast(int, observation.price_age_seconds),
                 )
             )
     return tuple(result)
@@ -612,11 +660,16 @@ class PointInTimeTagSnapshot(FrozenContract):
     facts_used: tuple[str, ...]
     fact_hashes: dict[str, str]
     tag_states: dict[str, TagState]
+    tag_fact_ids: dict[str, tuple[str, ...]]
     known_count: int = Field(ge=0)
     true_count: int = Field(ge=0)
     false_count: int = Field(ge=0)
     unknown_count: int = Field(ge=0)
     tag_snapshot_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    supersedes_tag_snapshot_hash: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{64}$",
+    )
 
     @model_validator(mode="after")
     def validate_counts(self) -> Self:
@@ -624,10 +677,24 @@ class PointInTimeTagSnapshot(FrozenContract):
             raise ValueError("CHRONOS_TAG_CUTOFF_INVALID")
         if self.facts_used != tuple(sorted(self.fact_hashes)):
             raise ValueError("CHRONOS_TAG_FACT_MANIFEST_INVALID")
+        if set(self.tag_fact_ids) != set(self.tag_states) or self.facts_used != tuple(
+            sorted(
+                {
+                    fact_id
+                    for fact_ids in self.tag_fact_ids.values()
+                    for fact_id in fact_ids
+                }
+            )
+        ):
+            raise ValueError("CHRONOS_TAG_FACT_REFERENCES_INVALID")
         if self.known_count != self.true_count + self.false_count:
             raise ValueError("CHRONOS_TAG_KNOWN_COUNT_INVALID")
         if self.known_count + self.unknown_count != len(self.tag_states):
             raise ValueError("CHRONOS_TAG_TOTAL_COUNT_INVALID")
+        if len(self.tag_states) != CANONICAL_TAG_COUNT:
+            raise ValueError("CHRONOS_TAG_COUNT_NOT_150")
+        if self.supersedes_tag_snapshot_hash == self.tag_snapshot_hash:
+            raise ValueError("CHRONOS_TAG_SELF_SUPERSESSION")
         return self
 
 
@@ -640,10 +707,41 @@ def freeze_tag_snapshot(
     tag_registry_hash: str,
     facts: Iterable[KnownAtFact],
     tag_states: Mapping[str, TagState],
+    tag_fact_ids: Mapping[str, Sequence[str]],
+    expected_tag_ids: Sequence[str],
+    supersedes_tag_snapshot_hash: str | None = None,
 ) -> PointInTimeTagSnapshot:
-    strict = strict_fact_view(facts)
-    fact_hashes = {fact.fact_id: fact.value_hash for fact in strict}
+    expected = tuple(sorted(expected_tag_ids))
+    if len(expected) != CANONICAL_TAG_COUNT or len(set(expected)) != len(expected):
+        raise ValueError("CHRONOS_TAG_REGISTRY_NOT_150")
     ordered_states = dict(sorted(tag_states.items()))
+    if tuple(ordered_states) != expected or set(tag_fact_ids) != set(expected):
+        raise ValueError("CHRONOS_TAG_REGISTRY_SCOPE_MISMATCH")
+    strict = {fact.fact_id: fact for fact in strict_fact_view(facts)}
+    cutoff = ensure_utc(cutoff_at, field="cutoff_at")
+    kickoff = ensure_utc(kickoff_at, field="kickoff_at")
+    for fact in strict.values():
+        if (
+            fact.fixture_id != fixture_id
+            or fact.cutoff_id != cutoff_id
+            or fact.cutoff_at != cutoff
+            or fact.kickoff_at != kickoff
+        ):
+            raise ValueError("CHRONOS_TAG_FACT_SCOPE_MISMATCH")
+    used_ids: set[str] = set()
+    for tag_id, state in ordered_states.items():
+        referenced = tuple(sorted(set(tag_fact_ids[tag_id])))
+        if state is TagState.UNKNOWN:
+            if referenced:
+                raise ValueError("CHRONOS_UNKNOWN_TAG_REFERENCES_FACT")
+            continue
+        if not referenced or any(fact_id not in strict for fact_id in referenced):
+            raise ValueError("CHRONOS_KNOWN_TAG_WITHOUT_ADMISSIBLE_FACT")
+        used_ids.update(referenced)
+    fact_hashes = {
+        fact_id: canonical_sha256(strict[fact_id].model_dump(mode="json"))
+        for fact_id in sorted(used_ids)
+    }
     true_count = sum(state is TagState.TRUE for state in ordered_states.values())
     false_count = sum(state is TagState.FALSE for state in ordered_states.values())
     unknown_count = sum(state is TagState.UNKNOWN for state in ordered_states.values())
@@ -655,6 +753,10 @@ def freeze_tag_snapshot(
         "tag_registry_hash": tag_registry_hash,
         "fact_hashes": fact_hashes,
         "tag_states": {key: value.value for key, value in ordered_states.items()},
+        "tag_fact_ids": {
+            key: tuple(sorted(set(tag_fact_ids[key]))) for key in expected
+        },
+        "supersedes_tag_snapshot_hash": supersedes_tag_snapshot_hash,
     }
     return PointInTimeTagSnapshot(
         fixture_id=fixture_id,
@@ -665,11 +767,15 @@ def freeze_tag_snapshot(
         facts_used=tuple(sorted(fact_hashes)),
         fact_hashes=fact_hashes,
         tag_states=ordered_states,
+        tag_fact_ids={
+            key: tuple(sorted(set(tag_fact_ids[key]))) for key in expected
+        },
         known_count=true_count + false_count,
         true_count=true_count,
         false_count=false_count,
         unknown_count=unknown_count,
         tag_snapshot_hash=canonical_sha256(identity),
+        supersedes_tag_snapshot_hash=supersedes_tag_snapshot_hash,
     )
 
 
@@ -749,6 +855,20 @@ class LineageIndex:
             return False
         if edge.upstream_id == edge.downstream_id:
             raise ValueError("CHRONOS_LINEAGE_SELF_CYCLE")
+        pending = [edge.downstream_id]
+        visited: set[str] = set()
+        while pending:
+            current = pending.pop()
+            if current == edge.upstream_id:
+                raise ValueError("CHRONOS_LINEAGE_CYCLE")
+            if current in visited:
+                continue
+            visited.add(current)
+            pending.extend(
+                candidate.downstream_id
+                for candidate in self._edges.values()
+                if candidate.upstream_id == current
+            )
         self._edges[edge.edge_id] = edge
         return True
 
@@ -851,6 +971,7 @@ def power_floor(
 __all__ = [
     "AggregatedMarketSnapshot",
     "BOOKMAKER_ALLOWLIST",
+    "CANONICAL_TAG_COUNT",
     "CanaryBudget",
     "ChronosMarket",
     "ChronosSelection",

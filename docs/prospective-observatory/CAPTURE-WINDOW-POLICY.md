@@ -170,7 +170,7 @@ admissible que si `opens_at <= response_received_at < cutoff_at < kickoff_at`.
 Le contrat de sortie sans travail est exact :
 
 ```text
-status=NO_DUE_WINDOW_SUCCESS
+status=CANARY_NOT_DUE_SCHEDULER_READY
 provider_calls=0
 odds_api_credits=0
 r2_puts=0

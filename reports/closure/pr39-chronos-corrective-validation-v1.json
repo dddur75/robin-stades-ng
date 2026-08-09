@@ -1,0 +1,85 @@
+{
+  "report_id": "PR39_CHRONOS_CORRECTIVE_VALIDATION_V1",
+  "generated_at": "2026-08-09T08:11:29Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 39,
+  "branch": "codex/robin-chronos-known-at-price-observatory-v1",
+  "parent_head": "19b82886a775eddbee5015f523e7d5f21379abb8",
+  "status": "LOCAL_CORRECTIVE_VALIDATED_PENDING_EXACT_SHA_REVIEW",
+  "review_findings_addressed": {
+    "temporal": [
+      "known_at equal to cutoff_at remains admissible",
+      "missing stale or future provider timestamps fail closed for price use",
+      "UNKNOWN facts may keep nullable request response and known-at timestamps"
+    ],
+    "prices": [
+      "the immutable source receipt hash is preserved",
+      "complete markets must satisfy the frozen overround ceiling",
+      "five-book market snapshots and explicit NO_PRICE data-quality events are materialized"
+    ],
+    "tags_and_lineage": [
+      "each cutoff snapshot contains exactly 150 canonical tags",
+      "non-UNKNOWN tags reference admissible same-fixture same-cutoff facts",
+      "fact supersession and multi-hop lineage cycles are rejected"
+    ],
+    "operations": [
+      "live capture requires immutable canary and price contracts plus safety locks",
+      "the canary selects at most five fixtures with at most one fixture per league",
+      "run-to-intent associations are append-only",
+      "replay uses one frozen namespace watermark and requires zero second-pass inserts"
+    ]
+  },
+  "validation": {
+    "chronos_and_temporal_targeted": {
+      "passed": 72,
+      "failed": 0
+    },
+    "jalon12_domain": {
+      "passed": 202,
+      "failed": 0
+    },
+    "jalon13_jalon14_domain": {
+      "passed": 54,
+      "failed": 0
+    },
+    "ruff_changed_scope": "PASS",
+    "mypy_core_files": "PASS",
+    "bandit_medium_or_high": 0,
+    "bandit_low_false_positive": "B105 on boolean second_pass_identical=True",
+    "json_files_parsed": 9,
+    "yaml_files_parsed": 11,
+    "git_diff_check": "PASS"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "workflow_dispatches": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triple_searches": 0
+  },
+  "locks": {
+    "production_locked": true,
+    "promotion_locked": true,
+    "triple_search_locked": true,
+    "no_bet_default": true,
+    "v3_status": "NOT_OPENED_INSUFFICIENT_POINT_IN_TIME_SUPPORT"
+  },
+  "authorization": {
+    "local_correction_commit": true,
+    "non_force_push_to_existing_draft_pr": true,
+    "exact_sha_read_only_review_required": true,
+    "exact_head_ci_required": true,
+    "ready": false,
+    "merge": false,
+    "workflow_activation": false,
+    "provider_canary": false
+  }
+}

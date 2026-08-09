@@ -339,3 +339,28 @@ def test_unexpected_key_and_corrupt_payload_block_namespace_verification() -> No
         tuple(repository.iter_captures())
     with pytest.raises(R2NamespaceIntegrityError):
         replay_from_r2(repository, InMemoryProjectionSink())
+
+
+def test_frozen_replay_inventory_excludes_late_arrival_until_next_audit() -> None:
+    repository = ProspectiveR2Repository(InMemoryObjectStore())
+    repository.capture(
+        payload={"response": [{"team": 1}]},
+        context=_context(),
+    )
+    watermark = repository.inventory_namespace()
+    repository.capture(
+        payload={"response": [{"team": 2}]},
+        context=_context(
+            window_id="fixture:LINEUP:H-0:45",
+            window_label="H-0:45",
+        ),
+    )
+    sink = InMemoryProjectionSink()
+    first = replay_from_r2(repository, sink, inventory=watermark)
+    second = replay_from_r2(repository, sink, inventory=watermark)
+    next_audit = replay_from_r2(repository, InMemoryProjectionSink())
+
+    assert first.payloads_replayed == 1
+    assert second.dataset_hash == first.dataset_hash
+    assert second.projections_inserted == 0
+    assert next_audit.payloads_replayed == 2

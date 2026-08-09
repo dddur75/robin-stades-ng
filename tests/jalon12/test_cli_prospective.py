@@ -757,7 +757,7 @@ def test_cache_capture_replay_and_second_operation_are_zero_cost(
 
     assert registry["provider_calls"] == 0
     assert first["provider_calls"] == 0
-    assert second["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert second["status"] == "CANARY_NOT_DUE_SCHEDULER_READY"
     assert second["provider_calls"] == 0
     assert second["odds_api_credits"] == 0
     assert replay["second_pass_inserts"] == 0
@@ -1173,7 +1173,7 @@ def test_sqlite_restart_and_r2_reconstruction_are_idempotent(
     assert second_replay["observatory"]["postgresql"]["inserts"] == 0
     assert second_replay["observatory"]["postgresql"]["duplicates_avoided"] > 0
     assert second_replay["observatory"]["postgresql"]["payload_body_rows"] == 0
-    assert second_replay["observatory"]["postgresql"]["tables"] == 16
+    assert second_replay["observatory"]["postgresql"]["tables"] == 22
     with rebuilt_engine.connect() as connection:  # type: ignore[attr-defined]
         for table_name in (
             "prospective_fixtures",
@@ -1320,12 +1320,12 @@ def test_exhausted_windows_make_no_third_provider_call(
         repository=repository,
         provider=unused_provider,
     )
-    assert third["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert third["status"] == "CANARY_NOT_DUE_SCHEDULER_READY"
     assert unused_provider.status_calls == 0
     assert unused_provider.fixture_calls == 0
 
 
-def test_capture_stops_at_open_circuit_without_phantom_quota_or_errors(
+def test_canary_one_fixture_per_league_bounds_failures_before_circuit(
     tmp_path: Path,
 ) -> None:
     fixtures = [
@@ -1379,9 +1379,118 @@ def test_capture_stops_at_open_circuit_without_phantom_quota_or_errors(
         provider=provider,
     )
 
-    assert report["status"] == "CAPTURE_STOPPED_CIRCUIT_OPEN"
-    assert report["circuit_open"] is True
-    assert transport.calls == 4
-    assert report["provider_calls"] == 4
-    assert state.budget_used(ProviderKind.API_FOOTBALL) == 4
-    assert report["provider_errors"] == 3
+    assert report["status"] == "CAPTURE_PARTIAL_PROVIDER_UNAVAILABLE"
+    assert report["circuit_open"] is False
+    assert report["selected_fixture_ids"] == ["api-football:9001"]
+    assert transport.calls == 2
+    assert report["provider_calls"] == 2
+    assert state.budget_used(ProviderKind.API_FOOTBALL) == 2
+    assert report["provider_errors"] == 1
+
+
+def test_five_book_price_consensus_and_chronos_artifacts_are_materialized(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    cache = _cache(tmp_path / "cache.json")
+    value = json.loads(cache.read_text(encoding="utf-8"))
+    event = value["payloads"]["api-football:9001"]["ODDS"][0]
+    event["bookmakers"] = [
+        {
+            "key": bookmaker,
+            "last_update": (NOW - timedelta(seconds=30)).isoformat(),
+            "markets": [
+                {
+                    "key": "h2h",
+                    "outcomes": [
+                        {"name": "Home 9001", "price": 2.0},
+                        {"name": "Draw", "price": 3.5},
+                        {"name": "Away 9001", "price": 4.0},
+                    ],
+                },
+                {
+                    "key": "totals",
+                    "outcomes": [
+                        {"name": "Over", "price": 1.91, "point": 2.5},
+                        {"name": "Under", "price": 1.91, "point": 2.5},
+                    ],
+                },
+            ],
+        }
+        for bookmaker in (
+            "betclic_fr",
+            "netbet_fr",
+            "pmu_fr",
+            "unibet_fr",
+            "winamax_fr",
+        )
+    ]
+    cache.write_text(json.dumps(value), encoding="utf-8")
+    output = tmp_path / "reports"
+    store = DirectoryObjectStore(tmp_path / "objects")
+    repository = ProspectiveR2Repository(store)
+    engine = _migrated_engine(tmp_path / "chronos-price.db", monkeypatch)
+    state = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output), state=state)
+    report = run_capture(
+        _args(
+            "capture-odds",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    with engine.connect() as connection:  # type: ignore[union-attr]
+        price_count = connection.execute(
+            select(func.count()).select_from(state.tables["price_snapshot_metadata"])
+        ).scalar_one()
+        derivation_count = connection.execute(
+            select(func.count()).select_from(
+                state.tables["price_derivation_metadata"]
+            )
+        ).scalar_one()
+        aggregate_rows = list(
+            connection.execute(
+                select(state.tables["market_snapshot_metadata"])
+            ).mappings()
+        )
+        dq_count = connection.execute(
+            select(func.count()).select_from(state.tables["data_quality_events"])
+        ).scalar_one()
+        canary_links = connection.execute(
+            select(func.count()).select_from(
+                state.tables["chronos_canary_run_windows"]
+            )
+        ).scalar_one()
+    assert report["captured"] >= 1
+    assert price_count >= 25
+    assert derivation_count >= 25
+    assert {row["market"] for row in aggregate_rows} == {
+        "MATCH_RESULT_90M",
+        "TOTAL_GOALS_2_5_90M",
+    }
+    assert all(row["confirmatory_admissible"] for row in aggregate_rows)
+    assert dq_count == 0
+    assert canary_links >= 1
+    keys = tuple(store.iter_keys("known-at/"))
+    assert all(
+        any(key.startswith(prefix) for key in keys)
+        for prefix in (
+            "known-at/facts/schema-v1/",
+            "known-at/prices/schema-v1/",
+            "known-at/receipts/schema-v1/",
+            "known-at/recovery/schema-v1/",
+        )
+    )

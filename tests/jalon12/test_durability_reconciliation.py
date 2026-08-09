@@ -396,7 +396,7 @@ def test_r2_capture_survives_sql_failure_and_reconciles_before_provider(
         provider=_ProviderMustNotBeCalled(),  # type: ignore[arg-type]
     )
 
-    assert report["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert report["status"] == "CANARY_NOT_DUE_SCHEDULER_READY"
     assert report["provider_calls"] == 0
     assert report["capture_attempts"] == 0
     assert any(receipt.window_id == due_fixture_window.window_id for receipt in state.receipts())
@@ -702,7 +702,7 @@ def test_zero_due_operation_has_exactly_zero_side_effects(
         provider=_ProviderMustNotBeCalled(),  # type: ignore[arg-type]
     )
 
-    assert report["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert report["status"] == "CANARY_NOT_DUE_SCHEDULER_READY"
     assert report["provider_calls"] == 0
     assert report["odds_api_credits"] == 0
     assert report["r2_puts"] == 0
@@ -731,7 +731,7 @@ def test_zero_due_reports_recovery_writes_separately_from_capture_puts(
         provider=_ProviderMustNotBeCalled(),  # type: ignore[arg-type]
     )
 
-    assert report["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert report["status"] == "CANARY_NOT_DUE_SCHEDULER_READY"
     assert report["r2_puts"] == 0
     assert report["recovery_r2_puts"] == 2
     assert report["provider_calls"] == 0

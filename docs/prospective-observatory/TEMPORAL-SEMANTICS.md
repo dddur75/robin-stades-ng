@@ -128,7 +128,7 @@ périmètre du gate, pas sur le nombre de reçus techniques. Les agrégats du
 cockpit ne remplacent jamais l’audit au grain fixture.
 
 Un passage sans fenêtre due est un état temporel positif et explicite :
-`NO_DUE_WINDOW_SUCCESS`. Il implique zéro appel fournisseur, zéro crédit Odds,
+`CANARY_NOT_DUE_SCHEDULER_READY`. Il implique zéro appel fournisseur, zéro crédit Odds,
 zéro `r2_puts` de capture et zéro tentative ; migration, estimation, rapport et
 réparation provider-free d’une intention antérieure peuvent néanmoins
 s’exécuter. Ces dernières écritures sont isolées dans `recovery_r2_puts`.

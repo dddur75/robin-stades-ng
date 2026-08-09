@@ -266,7 +266,7 @@ Le preflight kickoff player/lineup est borné aux seules fixtures dues. Une
 version avancée ou retardée ferme la capture, et seul le statut API-Football
 exact `NS` est admissible. Le cutoff est relu avant le preflight, avant chaque
 transport profond et à la réception. En l’absence de fenêtre due, le contrat exact est
-`NO_DUE_WINDOW_SUCCESS`, avec zéro appel fournisseur, zéro crédit Odds, zéro
+`CANARY_NOT_DUE_SCHEDULER_READY`, avec zéro appel fournisseur, zéro crédit Odds, zéro
 put de capture R2 et zéro tentative. Une réparation antérieure est publiée
 séparément dans `recovery_r2_puts` et ne change pas ce verdict.
 

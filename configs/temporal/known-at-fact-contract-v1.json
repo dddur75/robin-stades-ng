@@ -7,7 +7,9 @@
     "known_at >= response_received_at",
     "known_at <= cutoff_at is ON_TIME",
     "cutoff_at < kickoff_at",
-    "provider_updated_at never backdates known_at"
+    "provider_updated_at never backdates known_at",
+    "provider_updated_at > known_at is PROVIDER_TIMESTAMP_INCONSISTENT",
+    "KNOWN_AT_UNKNOWN persists with null requested/response/known_at timestamps"
   ],
   "temporal_classes": [
     "ON_TIME",

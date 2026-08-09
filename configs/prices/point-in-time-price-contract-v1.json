@@ -1,6 +1,6 @@
 {
   "schema_version": "point-in-time-price-contract-v1",
-  "status": "DRAFT_NOT_ACTIVATED",
+  "status": "CANARY_ONLY",
   "provider": "the-odds-api-v4",
   "region_allowlist": ["fr"],
   "bookmaker_allowlist": [
@@ -45,7 +45,9 @@
     "method_id": "PROPORTIONAL_COMPLETE_MARKET_V1",
     "version": "1.0.0",
     "definition": "p_s=(1/odds_s)/sum(1/odds)",
-    "definition_hash": "b59812e55b4c42ffd32db977860e87a60e38550c0f777027447611f843875c22"
+    "definition_hash": "b59812e55b4c42ffd32db977860e87a60e38550c0f777027447611f843875c22",
+    "overround_exclusive_min": "0",
+    "overround_inclusive_max": "0.06"
   },
   "aggregation": "PER_BOOK_DEVIG_THEN_CROSS_BOOK_MEDIAN_RENORMALIZED_V1",
   "locks": {

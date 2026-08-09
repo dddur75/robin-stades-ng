@@ -36,6 +36,22 @@
       "verified_by":["C0"]
     },
     {
+      "claim_id":"GOV.CHRONOS.PR39.CORRECTIVE_VALIDATION.V1.001",
+      "claim":"The first bounded corrective pass enforces inclusive cutoff admission, provider timestamp and overround fail-closed rules, five-book price aggregation, explicit NO_PRICE events, fact-bound 150-tag snapshots, multi-hop lineage cycle rejection, active canary ceilings and one-watermark replay while all external effects and scientific activation remain zero or locked.",
+      "scope":"ROBIN_CHRONOS_PR39_FIRST_CORRECTIVE_PASS",
+      "source":"bounded local corrective validation before the immutable successor commit",
+      "grain":"one_local_pr39_corrective_validation",
+      "temporal_class":"CODE_AND_LOCAL_EXECUTION_AS_OF",
+      "artifact":"reports/closure/pr39-chronos-corrective-validation-v1.json",
+      "hash":"4d3932f7e6023699d42b929338738ab4d328c7c3cb05abe0bab6bf0ba866f90f",
+      "code_revision":"UNCOMMITTED_CHRONOS_CORRECTION_FROM_19B82886",
+      "execution_id":"local-robin-chronos-correction-20260809",
+      "scientific_lineage_id":"NOT_APPLICABLE_CONTRACT_HARDENING",
+      "dataset_lineage_id":"NOT_APPLICABLE_SYNTHETIC_TESTS",
+      "status":"PARTIAL",
+      "verified_by":["C0"]
+    },
+    {
       "claim_id":"ENV.MAIN.HEAD.001",
       "claim":"The governance branch started from the exact remote main head observed after fetch.",
       "scope":"GOVERNANCE",
@@ -1889,8 +1905,9 @@
       "execution_id":"local-robin-chronos-design-20260809",
       "scientific_lineage_id":"NOT_APPLICABLE_COMPATIBILITY_TEST",
       "dataset_lineage_id":"NOT_APPLICABLE_SYNTHETIC_TEST",
-      "status":"PARTIAL",
-      "verified_by":["C0"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.CHRONOS.PR39.CORRECTIVE_VALIDATION.V1.001"
     }
   ],
   "decision_nodes":[
@@ -1986,7 +2003,8 @@
     {"decision_id":"RCV3-20260808-090","ledger_record_hash":"24927b7208e52f1a0deb248b5111592d3d634f1cc290d4ff4a377128893a555e"},
     {"decision_id":"RCV3-20260808-091","ledger_record_hash":"28d2aa6d06bf67762b5bad33a9a694a0d46d6b179e1d0f65031383eb2f885dcd"},
     {"decision_id":"RCV3-20260809-092","ledger_record_hash":"cc339208bb353e5f13985db48d1894cec9fa7304b68fb2216c702c8f17a52fcc"},
-    {"decision_id":"RCV3-20260809-093","ledger_record_hash":"caa3fb3c0e0ed9713d4e1ac10cca9dcf045733becd69265502fd7670b56ae651"}
+    {"decision_id":"RCV3-20260809-093","ledger_record_hash":"caa3fb3c0e0ed9713d4e1ac10cca9dcf045733becd69265502fd7670b56ae651"},
+    {"decision_id":"RCV3-20260809-094","ledger_record_hash":"3a3f6d216c2223b16c22629e471417607ead4ba103c43a072b6b579cc3dc183b"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2262,6 +2280,7 @@
     {"edge_id":"EDGE.271","from_claim_id":"REPLAY.PHASE_C.V2.FRESH_DETERMINISM.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.272","from_claim_id":"REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.273","from_claim_id":"SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.274","from_claim_id":"GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.274","from_claim_id":"GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.275","from_claim_id":"GOV.CHRONOS.PR39.CORRECTIVE_VALIDATION.V1.001","to_decision_id":"RCV3-20260809-094","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

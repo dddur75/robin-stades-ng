@@ -82,6 +82,7 @@ REQUIRED_GUARDS = {
     "REAL_BETS": "false",
     "NO_BET_DEFAULT": "true",
     "PROMOTION_LOCKED": "true",
+    "TRIPLE_SEARCH_LOCKED": "true",
     "SOCIAL_PUBLISHING_ENABLED": "false",
     "DEMO_MODE_ENABLED": "false",
 }

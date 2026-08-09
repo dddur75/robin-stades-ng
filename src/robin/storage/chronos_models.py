@@ -99,18 +99,53 @@ class CaptureIntentModel(Base):
     append_only: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
+class ChronosCanaryRunWindowModel(Base):
+    __tablename__ = "chronos_canary_run_windows"
+    __table_args__ = (
+        UniqueConstraint(
+            "canary_run_id",
+            "intent_id",
+            name="uq_chronos_canary_run_intent",
+        ),
+        CheckConstraint(
+            "length(plan_hash) = 64 AND append_only = true",
+            name="ck_chronos_canary_run_window",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    canary_run_id: Mapped[str] = mapped_column(
+        ForeignKey("chronos_canary_runs.id", ondelete="RESTRICT")
+    )
+    intent_id: Mapped[str] = mapped_column(
+        ForeignKey("capture_intents.id", ondelete="RESTRICT")
+    )
+    window_record_id: Mapped[str] = mapped_column(
+        ForeignKey("capture_windows.id", ondelete="RESTRICT")
+    )
+    fixture_id: Mapped[str] = mapped_column(String(120))
+    plan_hash: Mapped[str] = mapped_column(String(64))
+    linked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    code_revision: Mapped[str] = mapped_column(String(80))
+    append_only: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
 class KnownAtFactMetadataModel(Base):
     __tablename__ = "known_at_fact_metadata"
     __table_args__ = (
         CheckConstraint(
             "length(fact_id) > 64 AND length(source_object_hash) = 64 "
             "AND length(normalized_fact_hash) = 64 "
-            "AND requested_at <= response_received_at "
-            "AND response_received_at <= known_at AND cutoff_at < kickoff_at "
-            "AND ((temporal_class = 'ON_TIME' AND known_at <= cutoff_at) "
+            "AND (requested_at IS NULL OR response_received_at IS NULL "
+            "OR requested_at <= response_received_at) "
+            "AND (response_received_at IS NULL OR known_at IS NULL "
+            "OR response_received_at <= known_at) AND cutoff_at < kickoff_at "
+            "AND ((temporal_class = 'KNOWN_AT_UNKNOWN' AND known_at IS NULL) "
+            "OR (temporal_class = 'ON_TIME' AND known_at <= cutoff_at) "
             "OR (temporal_class = 'LATE_FOR_CUTOFF' "
             "AND known_at > cutoff_at AND known_at < kickoff_at) "
             "OR (temporal_class = 'POST_KICKOFF_ONLY' AND known_at >= kickoff_at)) "
+            "AND (supersedes_fact_id IS NULL OR supersedes_fact_id <> fact_id) "
             "AND append_only = true",
             name="ck_chronos_known_at_fact_temporal",
         ),
@@ -131,15 +166,21 @@ class KnownAtFactMetadataModel(Base):
     family: Mapped[str] = mapped_column(String(40))
     source_object_hash: Mapped[str] = mapped_column(String(64))
     normalized_fact_hash: Mapped[str] = mapped_column(String(64))
-    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    response_received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    requested_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    response_received_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     provider_updated_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
     effective_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
-    known_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    known_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     known_at_basis: Mapped[str] = mapped_column(String(80))
     cutoff_id: Mapped[str] = mapped_column(String(250))
     cutoff_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -147,6 +188,11 @@ class KnownAtFactMetadataModel(Base):
     temporal_class: Mapped[str] = mapped_column(String(40))
     scientific_role: Mapped[str] = mapped_column(String(40))
     quality_status: Mapped[str] = mapped_column(String(60))
+    supersedes_fact_id: Mapped[str | None] = mapped_column(
+        String(96),
+        ForeignKey("known_at_fact_metadata.fact_id", ondelete="RESTRICT"),
+        nullable=True,
+    )
     schema_version: Mapped[str] = mapped_column(String(80))
     code_revision: Mapped[str] = mapped_column(String(80))
     append_only: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -160,6 +206,12 @@ class PriceSnapshotMetadataModel(Base):
             "AND length(receipt_hash) = 64 AND odds_decimal > 1 "
             "AND requested_at <= response_received_at "
             "AND response_received_at = known_at AND cutoff_at < kickoff_at "
+            "AND ((temporal_class = 'ON_TIME' AND known_at <= cutoff_at) "
+            "OR (temporal_class = 'LATE_FOR_CUTOFF' "
+            "AND known_at > cutoff_at AND known_at < kickoff_at) "
+            "OR (temporal_class = 'POST_KICKOFF_ONLY' AND known_at >= kickoff_at)) "
+            "AND ((provider_updated_at IS NULL AND price_age_seconds IS NULL "
+            "AND quality_status = 'NO_PRICE') OR provider_updated_at IS NOT NULL) "
             "AND ((market = 'MATCH_RESULT_90M' AND line IS NULL "
             "AND selection IN ('HOME','DRAW','AWAY')) "
             "OR (market = 'TOTAL_GOALS_2_5_90M' AND line = 2.5 "
@@ -195,6 +247,7 @@ class PriceSnapshotMetadataModel(Base):
     provider_updated_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    price_age_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
     known_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     cutoff_id: Mapped[str] = mapped_column(String(250))
     cutoff_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -249,6 +302,57 @@ class PriceDerivationMetadataModel(Base):
     append_only: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
+class MarketSnapshotMetadataModel(Base):
+    __tablename__ = "market_snapshot_metadata"
+    __table_args__ = (
+        CheckConstraint(
+            "length(market_snapshot_id) > 64 AND length(bookmakers_hash) = 64 "
+            "AND length(input_set_hash) = 64 AND length(contract_hash) = 64 "
+            "AND bookmaker_count >= 1 AND bookmaker_count <= 5 "
+            "AND ((market = 'MATCH_RESULT_90M' AND line IS NULL "
+            "AND home_probability IS NOT NULL AND draw_probability IS NOT NULL "
+            "AND away_probability IS NOT NULL AND over_probability IS NULL "
+            "AND under_probability IS NULL) OR "
+            "(market = 'TOTAL_GOALS_2_5_90M' AND line = 2.5 "
+            "AND home_probability IS NULL AND draw_probability IS NULL "
+            "AND away_probability IS NULL AND over_probability IS NOT NULL "
+            "AND under_probability IS NOT NULL)) AND append_only = true",
+            name="ck_chronos_market_snapshot",
+        ),
+        Index("ix_chronos_market_fixture_cutoff", "fixture_id", "cutoff_id"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    market_snapshot_id: Mapped[str] = mapped_column(String(96), unique=True)
+    fixture_id: Mapped[str] = mapped_column(String(120))
+    cutoff_id: Mapped[str] = mapped_column(String(250))
+    market: Mapped[str] = mapped_column(String(60))
+    line: Mapped[Decimal | None] = mapped_column(Numeric(8, 3), nullable=True)
+    bookmakers_hash: Mapped[str] = mapped_column(String(64))
+    bookmaker_count: Mapped[int] = mapped_column(Integer)
+    input_set_hash: Mapped[str] = mapped_column(String(64))
+    contract_hash: Mapped[str] = mapped_column(String(64))
+    home_probability: Mapped[Decimal | None] = mapped_column(
+        Numeric(24, 18), nullable=True
+    )
+    draw_probability: Mapped[Decimal | None] = mapped_column(
+        Numeric(24, 18), nullable=True
+    )
+    away_probability: Mapped[Decimal | None] = mapped_column(
+        Numeric(24, 18), nullable=True
+    )
+    over_probability: Mapped[Decimal | None] = mapped_column(
+        Numeric(24, 18), nullable=True
+    )
+    under_probability: Mapped[Decimal | None] = mapped_column(
+        Numeric(24, 18), nullable=True
+    )
+    confirmatory_admissible: Mapped[bool] = mapped_column(Boolean)
+    quality_status: Mapped[str] = mapped_column(String(60))
+    code_revision: Mapped[str] = mapped_column(String(80))
+    append_only: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
 class TagSnapshotMetadataModel(Base):
     __tablename__ = "tag_snapshot_metadata"
     __table_args__ = (
@@ -257,6 +361,8 @@ class TagSnapshotMetadataModel(Base):
             "AND length(facts_manifest_hash) = 64 AND cutoff_at < kickoff_at "
             "AND true_count + false_count = known_count "
             "AND known_count + unknown_count = tag_count "
+            "AND (supersedes_tag_snapshot_hash IS NULL "
+            "OR supersedes_tag_snapshot_hash <> tag_snapshot_hash) "
             "AND append_only = true",
             name="ck_chronos_tag_snapshot",
         ),
@@ -277,6 +383,14 @@ class TagSnapshotMetadataModel(Base):
     false_count: Mapped[int] = mapped_column(Integer)
     unknown_count: Mapped[int] = mapped_column(Integer)
     tag_snapshot_r2_key: Mapped[str] = mapped_column(String(1500))
+    supersedes_tag_snapshot_hash: Mapped[str | None] = mapped_column(
+        String(64),
+        ForeignKey(
+            "tag_snapshot_metadata.tag_snapshot_hash",
+            ondelete="RESTRICT",
+        ),
+        nullable=True,
+    )
     schema_version: Mapped[str] = mapped_column(String(80))
     code_revision: Mapped[str] = mapped_column(String(80))
     append_only: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -329,6 +443,8 @@ class ChronosLineageEdgeModel(Base):
         ),
         CheckConstraint(
             "length(edge_hash) = 64 AND upstream_id <> downstream_id "
+            "AND length(upstream_hash) = 64 AND length(downstream_hash) = 64 "
+            "AND length(contract_hash) = 64 "
             "AND append_only = true",
             name="ck_chronos_lineage_edge",
         ),
@@ -343,6 +459,9 @@ class ChronosLineageEdgeModel(Base):
     downstream_type: Mapped[str] = mapped_column(String(40))
     downstream_id: Mapped[str] = mapped_column(String(160))
     relationship: Mapped[str] = mapped_column(String(60))
+    upstream_hash: Mapped[str] = mapped_column(String(64))
+    downstream_hash: Mapped[str] = mapped_column(String(64))
+    contract_hash: Mapped[str] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     code_revision: Mapped[str] = mapped_column(String(80))
     append_only: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -351,9 +470,11 @@ class ChronosLineageEdgeModel(Base):
 CHRONOS_TABLE_NAMES = (
     "chronos_canary_runs",
     "capture_intents",
+    "chronos_canary_run_windows",
     "known_at_fact_metadata",
     "price_snapshot_metadata",
     "price_derivation_metadata",
+    "market_snapshot_metadata",
     "tag_snapshot_metadata",
     "data_quality_events",
     "chronos_lineage_edges",
@@ -364,9 +485,11 @@ __all__ = [
     "CHRONOS_TABLE_NAMES",
     "CaptureIntentModel",
     "ChronosCanaryRunModel",
+    "ChronosCanaryRunWindowModel",
     "ChronosDataQualityEventModel",
     "ChronosLineageEdgeModel",
     "KnownAtFactMetadataModel",
+    "MarketSnapshotMetadataModel",
     "PriceDerivationMetadataModel",
     "PriceSnapshotMetadataModel",
     "TagSnapshotMetadataModel",

@@ -11,6 +11,7 @@
     "tag_registry_hash",
     "facts_used",
     "fact_hashes",
+    "tag_fact_ids",
     "tag_states",
     "known_count",
     "true_count",
@@ -18,7 +19,11 @@
     "unknown_count",
     "tag_snapshot_hash"
   ],
-  "fact_admission": "known_at <= cutoff_at AND STRICT_KNOWN_AT",
+  "fact_admission": "same fixture/cutoff/kickoff AND known_at <= cutoff_at AND STRICT_KNOWN_AT AND admitted quality",
+  "known_tag_policy": "TRUE_OR_FALSE_REQUIRES_AT_LEAST_ONE_REFERENCED_ADMISSIBLE_FACT",
+  "unknown_tag_policy": "UNKNOWN_REQUIRES_NO_REFERENCED_FACT",
+  "fact_hash_policy": "FULL_CANONICAL_FACT_ENVELOPE",
+  "registry_scope_policy": "EXACTLY_ALL_150_CANONICAL_TAG_IDS",
   "missing_value_semantics": "UNKNOWN_NOT_FALSE",
   "price_facts_allowed": false,
   "blocked_properties_opened": 0

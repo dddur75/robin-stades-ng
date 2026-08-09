@@ -12,6 +12,7 @@ Chaque entrée contient : traduction courte, explication longue, tonalité, icô
 | `LIVE_PROSPECTIVE_CAPTURE` | Observations pré-match en cours | information | 0 | aucune action publique |
 | `PROSPECTIVE_GATES_ACCUMULATING` | Les données s’accumulent progressivement | recherche | 0 | seuil inchangé |
 | `NO_DUE_WINDOW_SUCCESS` | Aucune capture nécessaire | positif | 0 | planificateur vérifié |
+| `CANARY_NOT_DUE_SCHEDULER_READY` | Canari prêt, aucune fenêtre due | positif | 0 | contrats Chronos vérifiés |
 | `CAPTURED_EMPTY` | Capture effectuée, aucune information publiée | neutre | 0 | réponse valide mais vide |
 | `MISSED_WINDOW` | Fenêtre de capture manquée | critique | 3 | examiner l’incident |
 | `TEMPORALITY_FAILED` | Donnée reçue trop tard | critique | 2 | exclue de la preuve pré-match |

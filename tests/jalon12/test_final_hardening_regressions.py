@@ -148,7 +148,7 @@ def _args(
         execute=False,
         estimate_file=None,
         competition="Ligue 1",
-        max_attempts=3,
+        max_attempts=2,
         max_objects=250,
     )
 
@@ -214,7 +214,7 @@ def test_zero_due_signed_execution_does_not_open_r2(
 
     report = run_capture(args, state=state)
 
-    assert report["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert report["status"] == "CANARY_NOT_DUE_SCHEDULER_READY"
     assert report["provider_calls"] == 0
     assert report["odds_api_credits"] == 0
     assert report["r2_puts"] == 0

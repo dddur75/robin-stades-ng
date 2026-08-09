@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import Any, Protocol, cast
 
 from botocore.exceptions import ClientError  # type: ignore[import-untyped]
-from sqlalchemy import MetaData, Table, inspect, select
+from sqlalchemy import MetaData, Table, inspect, select, text
 from sqlalchemy.engine import Connection, Engine
 
 from robin.domain.enums import DataAvailability, DataOrigin
@@ -38,13 +38,25 @@ from robin.prospective_observatory.budgets import (
 )
 from robin.prospective_observatory.chronos import (
     BOOKMAKER_ALLOWLIST,
+    CANONICAL_TAG_COUNT,
+    CanaryBudget,
     ChronosMarket,
     ChronosSelection,
+    LineageNodeKind,
     PriceObservation,
+    QualityStatus,
     ScientificRole,
+    TagState,
+    aggregate_market_snapshot,
     build_known_at_fact,
+    build_lineage_edge,
     build_price_observation,
     derive_complete_book_markets,
+    deterministic_fixture_canary,
+    freeze_tag_snapshot,
+)
+from robin.prospective_observatory.chronos_storage import (
+    ChronosArtifactRepository,
 )
 from robin.prospective_observatory.contracts import (
     AvailabilityStatus,
@@ -110,10 +122,19 @@ from robin.providers.the_odds_api import TheOddsApiProvider
 from robin.storage.database import build_engine
 
 DEFAULT_POLICY = Path("configs/prospective_observatory_v1.json")
+DEFAULT_CHRONOS_CANARY_POLICY = Path(
+    "configs/operations/robin-chronos-canary-v1.json"
+)
+DEFAULT_CHRONOS_PRICE_CONTRACT = Path(
+    "configs/prices/point-in-time-price-contract-v1.json"
+)
+DEFAULT_TAG_REGISTRY = Path(
+    "configs/hypothesis-tags/canonical-tag-registry-v2.json"
+)
 SCHEMA_VERSION = "prospective-observatory-operation-v1"
 SNAPSHOT_SCHEMA_VERSION = "prospective-observatory-snapshot-v1"
 EXPECTED_ALEMBIC_REVISION = "0014_robin_chronos_v1"
-OBSERVATORY_SCHEMA_REVISION = "0009_jalon12_observatory"
+OBSERVATORY_SCHEMA_REVISION = EXPECTED_ALEMBIC_REVISION
 SAFE_CODE_REVISION = "local-uncommitted"
 PLAYER_FAMILIES = (
     CaptureFamily.SQUAD,
@@ -313,6 +334,8 @@ class ObservatoryPolicy:
             "PRODUCTION_LOCKED": True,
             "REAL_BETS": False,
             "NO_BET_DEFAULT": True,
+            "PROMOTION_LOCKED": True,
+            "TRIPLE_SEARCH_LOCKED": True,
             "SOCIAL_PUBLISHING_ENABLED": False,
             "DEMO_MODE_ENABLED": False,
         }
@@ -1021,8 +1044,13 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         "capture_windows",
         "capture_attempts",
         "capture_receipts",
+        "chronos_canary_runs",
         "capture_intents",
+        "chronos_canary_run_windows",
+        "chronos_lineage_edges",
+        "data_quality_events",
         "known_at_fact_metadata",
+        "market_snapshot_metadata",
         "prospective_payload_index",
         "prospective_player_status",
         "prospective_injuries",
@@ -1031,6 +1059,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         "prospective_odds_snapshots",
         "price_snapshot_metadata",
         "price_derivation_metadata",
+        "tag_snapshot_metadata",
         "temporal_data_gates",
         "provider_budget_ledger",
     }
@@ -1135,7 +1164,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             "reserved_provider_units": (
                 2 if window.family is CaptureFamily.ODDS else 1
             ),
-            "reserved_r2_objects": 3,
+            "reserved_r2_objects": 100,
             "reserved_postgresql_rows": 1000,
             "policy_version": window.policy_version,
             "code_revision": window.code_revision,
@@ -1156,6 +1185,20 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         if not keys:
             raise RuntimeError(
                 f"PROSPECTIVE_DATABASE_KEY_COLUMNS_MISSING:{table_name}"
+            )
+        if connection.dialect.name == "postgresql":
+            lock_key = canonical_sha256(
+                {
+                    "table": table_name,
+                    "keys": [
+                        (key, _json_compatible(value))
+                        for key, value in sorted(keys.items())
+                    ],
+                }
+            )
+            connection.execute(
+                text("SELECT pg_advisory_xact_lock(hashtextextended(:key, 0))"),
+                {"key": lock_key},
             )
         predicate = [table.c[name] == value for name, value in keys.items()]
         existing = connection.execute(select(table).where(*predicate)).mappings().first()
@@ -1186,6 +1229,85 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 key_values=key_values,
                 values=values,
             )
+
+    def ensure_chronos_canary_run(
+        self,
+        *,
+        command: str,
+        windows: Iterable[CaptureWindow],
+        policy: Mapping[str, object],
+        policy_hash: str,
+        planned_at: datetime,
+        code_revision: str,
+    ) -> str:
+        window_ids = tuple(sorted(window.window_id for window in windows))
+        plan_hash = canonical_sha256(
+            {"command": command, "window_ids": window_ids}
+        )
+        canary_id = "chronos-canary:" + canonical_sha256(
+            {"plan_hash": plan_hash, "policy_hash": policy_hash}
+        )
+        row_id = _stable_id("chronos-canary", canary_id)
+        values = {
+            "id": row_id,
+            "canary_id": canary_id,
+            "plan_hash": plan_hash,
+            "policy_hash": policy_hash,
+            "planned_at": planned_at,
+            "activation_mode": str(policy["activation_mode"]),
+            "max_fixtures": int(cast(int, policy["max_fixtures"])),
+            "max_api_football_calls": int(
+                cast(int, policy["api_football_calls_max"])
+            ),
+            "max_odds_credits": int(
+                cast(int, policy["odds_credits_mission_max"])
+            ),
+            "max_r2_object_writes": int(
+                cast(int, policy["r2_object_writes_max"])
+            ),
+            "max_postgresql_rows": int(
+                cast(int, policy["postgresql_rows_max"])
+            ),
+            "max_technical_attempts": int(
+                cast(int, policy["max_technical_attempts"])
+            ),
+            "new_purchase_allowed": False,
+            "r2_deletes_allowed": 0,
+            "destructive_sql_allowed": 0,
+            "code_revision": code_revision,
+            "append_only": True,
+        }
+        self._insert_exact(
+            "chronos_canary_runs",
+            key_values={"canary_id": canary_id},
+            values=values,
+        )
+        for window in windows:
+            intent = self.intent_rows.get(window.window_id)
+            if intent is None:
+                raise RuntimeError("CHRONOS_CANARY_INTENT_MISSING")
+            link_key = canonical_sha256(
+                {"canary_run_id": row_id, "intent_id": intent["id"]}
+            )
+            self._insert_exact(
+                "chronos_canary_run_windows",
+                key_values={
+                    "canary_run_id": row_id,
+                    "intent_id": intent["id"],
+                },
+                values={
+                    "id": _stable_id("chronos-canary-link", link_key),
+                    "canary_run_id": row_id,
+                    "intent_id": intent["id"],
+                    "window_record_id": intent["window_record_id"],
+                    "fixture_id": intent["fixture_id"],
+                    "plan_hash": plan_hash,
+                    "linked_at": planned_at,
+                    "code_revision": code_revision,
+                    "append_only": True,
+                },
+            )
+        return row_id
 
     def _restore(self) -> None:
         fixture_table = self.tables["prospective_fixtures"]
@@ -1766,9 +1888,104 @@ class SQLAlchemyProjectionSink:
         state: SQLAlchemyOperationalState,
         *,
         skip_existing_projections: bool = False,
+        chronos_repository: ChronosArtifactRepository | None = None,
+        price_contract: Mapping[str, object] | None = None,
     ) -> None:
         self.state = state
         self.skip_existing_projections = skip_existing_projections
+        self.chronos_repository = chronos_repository
+        self.price_contract = dict(
+            price_contract
+            or _mapping(
+                _read_json(DEFAULT_CHRONOS_PRICE_CONTRACT),
+                error="CHRONOS_PRICE_CONTRACT_INVALID",
+            )
+        )
+        self.chronos_objects_inserted = 0
+
+    def _put_chronos(
+        self,
+        kind: str,
+        payload: object,
+    ) -> str:
+        digest = canonical_sha256(payload)
+        prefix = ChronosArtifactRepository.PREFIXES[cast(Any, kind)]
+        key = (
+            f"{prefix}/sha256/{digest[:2]}/{digest[2:4]}/"
+            f"{digest}.json.gz"
+        )
+        if self.chronos_repository is not None:
+            artifact = self.chronos_repository.put_json(
+                cast(Any, kind),
+                payload,
+            )
+            if artifact.key != key or artifact.sha256 != digest:
+                raise RuntimeError("CHRONOS_ARTIFACT_IDENTITY_MISMATCH")
+            self.chronos_repository.read_json(artifact)
+            self.chronos_objects_inserted += int(artifact.inserted)
+        return key
+
+    def _insert_lineage(self, edge: object, *, created_at: datetime) -> bool:
+        value = cast(Any, edge)
+        values = {
+            "id": _stable_id("chronos-lineage", value.edge_id),
+            "edge_hash": value.edge_id.split(":", 1)[1],
+            "upstream_type": value.upstream_kind.value,
+            "upstream_id": value.upstream_id,
+            "upstream_hash": value.upstream_hash,
+            "downstream_type": value.downstream_kind.value,
+            "downstream_id": value.downstream_id,
+            "downstream_hash": value.downstream_hash,
+            "relationship": value.relation,
+            "contract_hash": value.contract_hash,
+            "created_at": created_at,
+            "code_revision": value.code_revision,
+            "append_only": True,
+        }
+        if not hasattr(self.state, "engine"):
+            return self.state._insert_exact(
+                "chronos_lineage_edges",
+                key_values={"edge_hash": values["edge_hash"]},
+                values=values,
+            )
+        table = self.state.tables["chronos_lineage_edges"]
+        with self.state.engine.begin() as connection:
+            if connection.dialect.name == "postgresql":
+                connection.execute(
+                    text(
+                        "SELECT pg_advisory_xact_lock("
+                        "hashtextextended('chronos-lineage-graph', 0))"
+                    )
+                )
+            adjacency: dict[str, list[str]] = {}
+            for row in connection.execute(
+                select(table.c.upstream_id, table.c.downstream_id)
+            ):
+                adjacency.setdefault(str(row.upstream_id), []).append(
+                    str(row.downstream_id)
+                )
+            pending = [str(values["downstream_id"])]
+            upstream_id = str(values["upstream_id"])
+            visited: set[str] = set()
+            while pending:
+                current = pending.pop()
+                if current == upstream_id:
+                    raise RuntimeError("CHRONOS_SQL_LINEAGE_CYCLE")
+                if current in visited:
+                    continue
+                visited.add(current)
+                pending.extend(adjacency.get(current, ()))
+            return self.state._insert_exact_with_connection(
+                connection,
+                "chronos_lineage_edges",
+                key_values={"edge_hash": values["edge_hash"]},
+                values=values,
+            )
+
+    def _price_max_age(self, cutoff_id: str) -> int:
+        cutoffs = cast(Mapping[str, object], self.price_contract["cutoffs"])
+        cutoff = cast(Mapping[str, object], cutoffs[cutoff_id])
+        return int(cast(int, cutoff["price_max_age_seconds"]))
 
     def bootstrap(
         self,
@@ -2043,6 +2260,7 @@ class SQLAlchemyProjectionSink:
                 "temporal_class": fact.temporal_class.value,
                 "scientific_role": fact.scientific_role.value,
                 "quality_status": fact.quality_status.value,
+                "supersedes_fact_id": fact.supersedes_fact_id,
                 "schema_version": fact.schema_version,
                 "code_revision": fact.code_revision,
                 "append_only": True,
@@ -2051,6 +2269,38 @@ class SQLAlchemyProjectionSink:
                 "known_at_fact_metadata",
                 key_values={"fact_id": fact.fact_id},
                 values=values,
+            )
+            fact_payload = fact.model_dump(mode="json")
+            self._put_chronos("facts", fact_payload)
+            normalized_hash = fact.normalized_fact_id.split(":", 1)[1]
+            fact_hash = canonical_sha256(fact_payload)
+            inserted |= self._insert_lineage(
+                build_lineage_edge(
+                    upstream_kind=LineageNodeKind.RAW_OBJECT,
+                    upstream_id=f"raw:{fact.source_object_hash}",
+                    upstream_hash=fact.source_object_hash,
+                    downstream_kind=LineageNodeKind.NORMALIZED_FACT,
+                    downstream_id=fact.normalized_fact_id,
+                    downstream_hash=normalized_hash,
+                    relation="NORMALIZED_AS",
+                    contract_hash=fact.request_contract_hash,
+                    code_revision=fact.code_revision,
+                ),
+                created_at=cast(datetime, fact.known_at),
+            )
+            inserted |= self._insert_lineage(
+                build_lineage_edge(
+                    upstream_kind=LineageNodeKind.NORMALIZED_FACT,
+                    upstream_id=fact.normalized_fact_id,
+                    upstream_hash=normalized_hash,
+                    downstream_kind=LineageNodeKind.KNOWN_AT_FACT,
+                    downstream_id=fact.fact_id,
+                    downstream_hash=fact_hash,
+                    relation="ADMITTED_AT_CUTOFF",
+                    contract_hash=fact.request_contract_hash,
+                    code_revision=fact.code_revision,
+                ),
+                created_at=cast(datetime, fact.known_at),
             )
         return inserted
 
@@ -2127,6 +2377,134 @@ class SQLAlchemyProjectionSink:
             )
         return inserted
 
+    def _insert_dq_event(
+        self,
+        *,
+        receipt: CaptureReceipt,
+        cutoff_id: str,
+        event_code: str,
+        subject_type: str,
+        subject_id: str,
+        evidence: Mapping[str, object],
+        summary: str,
+    ) -> bool:
+        evidence_hash = canonical_sha256(evidence)
+        event_id = canonical_sha256(
+            {
+                "receipt_hash": receipt.receipt_hash,
+                "cutoff_id": cutoff_id,
+                "event_code": event_code,
+                "subject_type": subject_type,
+                "subject_id": subject_id,
+                "evidence_hash": evidence_hash,
+            }
+        )
+        intent = (
+            self.state.intent_rows.get(receipt.window_id)
+            if receipt.window_id is not None
+            else None
+        )
+        values = {
+            "id": _stable_id("chronos-dq", event_id),
+            "event_id": event_id,
+            "fixture_id": receipt.fixture_id,
+            "cutoff_id": cutoff_id,
+            "source": receipt.provider,
+            "family": receipt.family.value,
+            "event_code": event_code,
+            "severity": "WARNING",
+            "subject_type": subject_type,
+            "subject_id": subject_id,
+            "detected_at": receipt.response_received_at,
+            "evidence_hash": evidence_hash,
+            "receipt_id": _stable_id("receipt", receipt.receipt_hash),
+            "intent_id": intent["id"] if intent is not None else None,
+            "summary": summary[:500],
+            "code_revision": receipt.code_revision,
+            "append_only": True,
+        }
+        inserted = self.state._insert_exact(
+            "data_quality_events",
+            key_values={"event_id": event_id},
+            values=values,
+        )
+        self._put_chronos(
+            "facts",
+            {
+                "schema_version": "chronos-data-quality-event-v1",
+                **{
+                    key: _json_compatible(value)
+                    for key, value in values.items()
+                    if key not in {"id", "append_only"}
+                },
+            },
+        )
+        return inserted
+
+    def _tag_snapshot_rows(self, receipt: CaptureReceipt) -> bool:
+        if receipt.window_id is None:
+            return False
+        intent = self.state.intent_rows.get(receipt.window_id)
+        if intent is None:
+            raise RuntimeError("CHRONOS_TAG_INTENT_MISSING")
+        registry = _mapping(
+            _read_json(DEFAULT_TAG_REGISTRY),
+            error="CHRONOS_TAG_REGISTRY_INVALID",
+        )
+        tags = cast(list[object], registry["tags"])
+        tag_ids = tuple(
+            sorted(
+                str(cast(Mapping[str, object], tag)["tag_id"])
+                for tag in tags
+            )
+        )
+        if len(tag_ids) != CANONICAL_TAG_COUNT:
+            raise RuntimeError("CHRONOS_TAG_REGISTRY_NOT_150")
+        states = {tag_id: TagState.UNKNOWN for tag_id in tag_ids}
+        references: dict[str, tuple[str, ...]] = {
+            tag_id: () for tag_id in tag_ids
+        }
+        snapshot = freeze_tag_snapshot(
+            fixture_id=receipt.fixture_id,
+            cutoff_id=str(intent["cutoff_id"]),
+            cutoff_at=receipt.cutoff_at,
+            kickoff_at=receipt.kickoff_at,
+            tag_registry_hash=str(registry["registry_hash"]),
+            facts=(),
+            tag_states=states,
+            tag_fact_ids=references,
+            expected_tag_ids=tag_ids,
+        )
+        payload = snapshot.model_dump(mode="json")
+        artifact_key = self._put_chronos("facts", payload)
+        values = {
+            "id": _stable_id("chronos-tags", snapshot.tag_snapshot_hash),
+            "tag_snapshot_hash": snapshot.tag_snapshot_hash,
+            "fixture_id": snapshot.fixture_id,
+            "cutoff_id": snapshot.cutoff_id,
+            "cutoff_at": snapshot.cutoff_at,
+            "kickoff_at": snapshot.kickoff_at,
+            "tag_registry_hash": snapshot.tag_registry_hash,
+            "facts_manifest_hash": canonical_sha256(snapshot.fact_hashes),
+            "tag_count": len(snapshot.tag_states),
+            "known_count": snapshot.known_count,
+            "true_count": snapshot.true_count,
+            "false_count": snapshot.false_count,
+            "unknown_count": snapshot.unknown_count,
+            "tag_snapshot_r2_key": artifact_key,
+            "supersedes_tag_snapshot_hash": (
+                snapshot.supersedes_tag_snapshot_hash
+            ),
+            "schema_version": snapshot.schema_version,
+            "code_revision": "chronos-tag-snapshot-v1",
+            "append_only": True,
+        }
+        return self.state._insert_exact(
+            "tag_snapshot_metadata",
+            key_values={"tag_snapshot_hash": snapshot.tag_snapshot_hash},
+            values=values,
+        )
+
     def _odds_rows(
         self,
         receipt: CaptureReceipt,
@@ -2135,6 +2513,13 @@ class SQLAlchemyProjectionSink:
         inserted = False
         chronos_observations: list[PriceObservation] = []
         receipt_id = _stable_id("receipt", receipt.receipt_hash)
+        if receipt.window_id is None:
+            return False
+        intent = self.state.intent_rows.get(receipt.window_id)
+        if intent is None:
+            raise RuntimeError("CHRONOS_PRICE_INTENT_MISSING")
+        cutoff_id = str(intent["cutoff_id"])
+        complete_pairs: set[tuple[str, str]] = set()
         for event in self._records(projection):
             bookmakers = event.get("bookmakers")
             if not isinstance(bookmakers, list):
@@ -2189,6 +2574,7 @@ class SQLAlchemyProjectionSink:
                         for outcome in valid_outcomes
                     } != expected:
                         continue
+                    complete_pairs.add((bookmaker, provider_market))
                     prices = [
                         float(outcome["price"]) for outcome in valid_outcomes
                     ]
@@ -2240,20 +2626,12 @@ class SQLAlchemyProjectionSink:
                             },
                             values=values,
                         )
-                        if receipt.window_id is None:
-                            continue
-                        intent = self.state.intent_rows.get(receipt.window_id)
-                        if intent is None:
-                            raise RuntimeError("CHRONOS_PRICE_INTENT_MISSING")
                         provider_updated_at: datetime | None = None
                         last_update = bookmaker_value.get("last_update")
                         if isinstance(last_update, str) and last_update:
                             provider_updated_at = datetime.fromisoformat(
                                 last_update.replace("Z", "+00:00")
                             ).astimezone(UTC)
-                        receipt_with_update = receipt.model_copy(
-                            update={"provider_updated_at": provider_updated_at}
-                        )
                         normalized_selection = (
                             ChronosSelection.HOME
                             if provider_market == "h2h"
@@ -2278,17 +2656,19 @@ class SQLAlchemyProjectionSink:
                             else Decimal("2.5")
                         )
                         observation = build_price_observation(
-                            receipt=receipt_with_update,
+                            receipt=receipt,
                             bookmaker=bookmaker,
                             market=chronos_market,
                             selection=normalized_selection,
                             line=line,
                             odds_decimal=Decimal(str(outcome["price"])),
-                            cutoff_id=str(intent["cutoff_id"]),
+                            cutoff_id=cutoff_id,
                             request_contract_hash=str(
                                 intent["request_contract_hash"]
                             ),
                             code_revision=receipt.code_revision,
+                            provider_updated_at=provider_updated_at,
+                            max_age_seconds=self._price_max_age(cutoff_id),
                         )
                         chronos_observations.append(observation)
                         observation_values = {
@@ -2323,6 +2703,67 @@ class SQLAlchemyProjectionSink:
                             },
                             values=observation_values,
                         )
+                        observation_payload = observation.model_dump(mode="json")
+                        self._put_chronos("prices", observation_payload)
+                        observation_hash = canonical_sha256(observation_payload)
+                        inserted |= self._insert_lineage(
+                            build_lineage_edge(
+                                upstream_kind=LineageNodeKind.RAW_OBJECT,
+                                upstream_id=f"raw:{receipt.payload_sha256}",
+                                upstream_hash=receipt.payload_sha256,
+                                downstream_kind=LineageNodeKind.PRICE_SNAPSHOT,
+                                downstream_id=observation.price_snapshot_id,
+                                downstream_hash=observation_hash,
+                                relation="EXTRACTED_PRICE",
+                                contract_hash=str(
+                                    intent["request_contract_hash"]
+                                ),
+                                code_revision=receipt.code_revision,
+                            ),
+                            created_at=receipt.response_received_at,
+                        )
+                        if observation.quality_status is not QualityStatus.VALID:
+                            inserted |= self._insert_dq_event(
+                                receipt=receipt,
+                                cutoff_id=cutoff_id,
+                                event_code=observation.quality_status.value,
+                                subject_type="BOOKMAKER_MARKET",
+                                subject_id=f"{bookmaker}:{provider_market}",
+                                evidence={
+                                    "price_snapshot_id": (
+                                        observation.price_snapshot_id
+                                    ),
+                                    "provider_updated_at": (
+                                        provider_updated_at.isoformat()
+                                        if provider_updated_at is not None
+                                        else None
+                                    ),
+                                    "price_age_seconds": (
+                                        observation.price_age_seconds
+                                    ),
+                                },
+                                summary=(
+                                    "Price excluded fail-closed by provider "
+                                    "timestamp or freshness contract"
+                                ),
+                            )
+        for bookmaker in BOOKMAKER_ALLOWLIST:
+            for provider_market in ("h2h", "totals"):
+                if (bookmaker, provider_market) in complete_pairs:
+                    continue
+                inserted |= self._insert_dq_event(
+                    receipt=receipt,
+                    cutoff_id=cutoff_id,
+                    event_code="NO_PRICE",
+                    subject_type="BOOKMAKER_MARKET",
+                    subject_id=f"{bookmaker}:{provider_market}",
+                    evidence={
+                        "bookmaker": bookmaker,
+                        "provider_market": provider_market,
+                        "receipt_hash": receipt.receipt_hash,
+                    },
+                    summary="Required bookmaker market missing or incomplete",
+                )
         if chronos_observations:
             observations_by_key = {
                 (
@@ -2333,11 +2774,15 @@ class SQLAlchemyProjectionSink:
                 ): observation
                 for observation in chronos_observations
             }
+            derivations = derive_complete_book_markets(chronos_observations)
+            valid_bookmakers = {row.bookmaker for row in derivations}
             raw_prices: dict[
                 tuple[ChronosMarket, ChronosSelection, Decimal | None],
                 list[Decimal],
             ] = {}
             for observation in chronos_observations:
+                if observation.bookmaker not in valid_bookmakers:
+                    continue
                 raw_prices.setdefault(
                     (
                         observation.market,
@@ -2346,9 +2791,7 @@ class SQLAlchemyProjectionSink:
                     ),
                     [],
                 ).append(observation.odds_decimal)
-            for derivation in derive_complete_book_markets(
-                chronos_observations
-            ):
+            for derivation in derivations:
                 observation = observations_by_key[
                     (
                         derivation.bookmaker,
@@ -2428,6 +2871,83 @@ class SQLAlchemyProjectionSink:
                     },
                     values=derivation_values,
                 )
+                self._put_chronos(
+                    "prices",
+                    derivation.model_dump(mode="json"),
+                )
+            derivations_by_market: dict[
+                tuple[ChronosMarket, Decimal | None],
+                list[object],
+            ] = {}
+            for derivation in derivations:
+                derivations_by_market.setdefault(
+                    (derivation.market, derivation.line),
+                    [],
+                ).append(derivation)
+            probability_scale = Decimal("0.000000000000000001")
+            for market_rows in derivations_by_market.values():
+                aggregate = aggregate_market_snapshot(cast(Any, market_rows))
+                probabilities = aggregate.selection_probabilities
+                aggregate_values = {
+                    "id": _stable_id(
+                        "chronos-market", aggregate.snapshot_id
+                    ),
+                    "market_snapshot_id": aggregate.snapshot_id,
+                    "fixture_id": aggregate.fixture_id,
+                    "cutoff_id": aggregate.cutoff_id,
+                    "market": aggregate.market.value,
+                    "line": aggregate.line,
+                    "bookmakers_hash": canonical_sha256(
+                        aggregate.bookmakers
+                    ),
+                    "bookmaker_count": len(aggregate.bookmakers),
+                    "input_set_hash": aggregate.input_set_hash,
+                    "contract_hash": canonical_sha256(self.price_contract),
+                    "home_probability": probabilities.get(
+                        ChronosSelection.HOME
+                    ),
+                    "draw_probability": probabilities.get(
+                        ChronosSelection.DRAW
+                    ),
+                    "away_probability": probabilities.get(
+                        ChronosSelection.AWAY
+                    ),
+                    "over_probability": probabilities.get(
+                        ChronosSelection.OVER_2_5
+                    ),
+                    "under_probability": probabilities.get(
+                        ChronosSelection.UNDER_2_5
+                    ),
+                    "confirmatory_admissible": (
+                        aggregate.confirmatory_admissible
+                    ),
+                    "quality_status": aggregate.quality_status.value,
+                    "code_revision": receipt.code_revision,
+                    "append_only": True,
+                }
+                for name in (
+                    "home_probability",
+                    "draw_probability",
+                    "away_probability",
+                    "over_probability",
+                    "under_probability",
+                ):
+                    value = aggregate_values[name]
+                    if isinstance(value, Decimal):
+                        aggregate_values[name] = value.quantize(
+                            probability_scale
+                        )
+                inserted |= self.state._insert_exact(
+                    "market_snapshot_metadata",
+                    key_values={
+                        "market_snapshot_id": aggregate.snapshot_id
+                    },
+                    values=aggregate_values,
+                )
+                self._put_chronos(
+                    "prices",
+                    aggregate.model_dump(mode="json"),
+                )
         return inserted
 
     def insert_capture(
@@ -2443,15 +2963,43 @@ class SQLAlchemyProjectionSink:
             receipt_created=False,
         )
         inserted = self.state.persist_capture(stored)
+        self._put_chronos(
+            "receipts",
+            {
+                "schema_version": "chronos-receipt-manifest-v1",
+                "receipt_hash": receipt.receipt_hash,
+                "payload_sha256": receipt.payload_sha256,
+                "r2_key": receipt.r2_key,
+                "receipt_r2_key": receipt.receipt_r2_key,
+                "fixture_id": receipt.fixture_id,
+                "family": receipt.family.value,
+                "window_id": receipt.window_id,
+            },
+        )
+        self._put_chronos(
+            "recovery",
+            {
+                "schema_version": "chronos-recovery-completion-v1",
+                "receipt_hash": receipt.receipt_hash,
+                "payload_sha256": receipt.payload_sha256,
+                "status": "RAW_AND_RECEIPT_PRESENT",
+            },
+        )
         if not inserted and self.skip_existing_projections:
             # Replay validates every compact table against a projection
             # independently derived from R2 after this pass. Avoid thousands
             # of duplicate point queries here; missing or extra rows still
             # fail closed in _assert_r2_postgresql_projection_parity.
             return False
-        if receipt.quality_status is not AvailabilityStatus.CAPTURED:
+        if receipt.quality_status not in {
+            AvailabilityStatus.CAPTURED,
+            AvailabilityStatus.CAPTURED_EMPTY,
+        }:
             return inserted
-        inserted |= self._known_at_fact_rows(receipt, projection)
+        if receipt.quality_status is AvailabilityStatus.CAPTURED:
+            if receipt.family is not CaptureFamily.ODDS:
+                inserted |= self._known_at_fact_rows(receipt, projection)
+            inserted |= self._tag_snapshot_rows(receipt)
         if receipt.family in {
             CaptureFamily.SQUAD,
             CaptureFamily.INJURY,
@@ -2481,6 +3029,88 @@ def _json_compatible(value: object) -> object:
     if isinstance(value, Decimal):
         return format(value.normalize(), "f")
     return value
+
+
+def _load_chronos_capture_contracts(
+    args: argparse.Namespace,
+    *,
+    command: str,
+    provider_injected: bool = False,
+) -> tuple[dict[str, object], str, dict[str, object] | None, str | None]:
+    live = bool(args.execute and args.cache is None and not provider_injected)
+    canary_env = os.getenv("CHRONOS_CANARY_POLICY")
+    price_env = os.getenv("CHRONOS_PRICE_CONTRACT")
+    if live and not canary_env:
+        raise RuntimeError("CHRONOS_CANARY_POLICY_ENV_REQUIRED")
+    if live and command == "capture-odds" and not price_env:
+        raise RuntimeError("CHRONOS_PRICE_CONTRACT_ENV_REQUIRED")
+    if live and any(
+        os.getenv(name, "").strip().casefold() != "true"
+        for name in ("PROMOTION_LOCKED", "TRIPLE_SEARCH_LOCKED")
+    ):
+        raise RuntimeError("CHRONOS_RUNTIME_LOCKS_REQUIRED")
+    canary_path = Path(
+        cast(
+            str | os.PathLike[str],
+            canary_env
+            or getattr(
+                args,
+                "chronos_canary_policy",
+                DEFAULT_CHRONOS_CANARY_POLICY,
+            ),
+        )
+    )
+    canary = _mapping(
+        _read_json(canary_path),
+        error="CHRONOS_CANARY_POLICY_INVALID",
+    )
+    required_canary = {
+        "schema_version": "robin-chronos-canary-v1",
+        "activation_mode": "CANARY_ONLY",
+        "due_only": True,
+        "force_future_window": False,
+        "max_fixtures": 5,
+        "max_technical_attempts": 2,
+        "api_football_calls_max": 50,
+        "odds_credits_mission_max": 100,
+        "odds_credits_effective_max": 20,
+        "r2_object_writes_max": 2000,
+        "r2_deletes": 0,
+        "postgresql_rows_max": 10000,
+        "destructive_sql": 0,
+        "new_purchase_allowed": False,
+    }
+    if any(canary.get(key) != value for key, value in required_canary.items()):
+        raise RuntimeError("CHRONOS_CANARY_POLICY_NOT_FAIL_CLOSED")
+    price: dict[str, object] | None = None
+    price_hash: str | None = None
+    if command == "capture-odds":
+        price_path = Path(
+            cast(
+                str | os.PathLike[str],
+                price_env
+                or getattr(
+                    args,
+                    "chronos_price_contract",
+                    DEFAULT_CHRONOS_PRICE_CONTRACT,
+                ),
+            )
+        )
+        price = _mapping(
+            _read_json(price_path),
+            error="CHRONOS_PRICE_CONTRACT_INVALID",
+        )
+        if (
+            price.get("schema_version") != "point-in-time-price-contract-v1"
+            or price.get("status") != "CANARY_ONLY"
+            or tuple(cast(list[object], price.get("region_allowlist"))) != ("fr",)
+            or tuple(cast(list[object], price.get("bookmaker_allowlist")))
+            != BOOKMAKER_ALLOWLIST
+            or price.get("missing_bookmaker_policy") != "NO_PRICE"
+        ):
+            raise RuntimeError("CHRONOS_PRICE_CONTRACT_NOT_FAIL_CLOSED")
+        price_hash = canonical_sha256(price)
+    return canary, canonical_sha256(canary), price, price_hash
 
 
 def _provider_quota_remaining(result: ProviderResult) -> int | None:
@@ -4705,8 +5335,21 @@ class _ProjectionParityCollector:
         key_values: Mapping[str, object],
         values: Mapping[str, object],
     ) -> bool:
-        del key_values
-        self.rows.setdefault(table_name, []).append(dict(values))
+        rows = self.rows.setdefault(table_name, [])
+        for existing in rows:
+            if all(
+                _json_compatible(existing.get(key))
+                == _json_compatible(value)
+                for key, value in key_values.items()
+            ):
+                if _projection_row_fingerprint(
+                    existing
+                ) != _projection_row_fingerprint(values):
+                    raise ValueError(
+                        f"PROJECTION_PARITY_CONFLICT:{table_name}"
+                    )
+                return False
+        rows.append(dict(values))
         return True
 
 
@@ -4741,7 +5384,10 @@ def _assert_r2_postgresql_projection_parity(
         key=lambda item: item.receipt.receipt_hash,
     ):
         receipt = capture.receipt
-        if receipt.quality_status is not AvailabilityStatus.CAPTURED:
+        if receipt.quality_status not in {
+            AvailabilityStatus.CAPTURED,
+            AvailabilityStatus.CAPTURED_EMPTY,
+        }:
             continue
         projection = _operational_replay_projection(
             receipt,
@@ -4762,6 +5408,10 @@ def _assert_r2_postgresql_projection_parity(
         "prospective_odds_snapshots",
         "price_snapshot_metadata",
         "price_derivation_metadata",
+        "market_snapshot_metadata",
+        "tag_snapshot_metadata",
+        "data_quality_events",
+        "chronos_lineage_edges",
     )
     with state.engine.connect() as connection:
         for table_name in projection_tables:
@@ -4951,9 +5601,15 @@ def _reconcile_r2_state(
                 window.window_id for window in state.windows()
             }:
                 state.persist_capture(capture)
+    reconciliation_sink: ProjectionSink = state.projection_sink()
+    if isinstance(state, SQLAlchemyOperationalState):
+        reconciliation_sink = SQLAlchemyProjectionSink(
+            state,
+            chronos_repository=ChronosArtifactRepository(repository.store),
+        )
     durable = replay_from_r2(
         repository,
-        state.projection_sink(),
+        reconciliation_sink,
         normalizer=_operational_replay_projection,
     )
     attempts_reconstructed = _reconcile_receipt_attempts(state)
@@ -5288,6 +5944,40 @@ def _capture_payload_complete(
     return False
 
 
+def _capture_quality(
+    *,
+    received_at: datetime,
+    window: CaptureWindow,
+    payload: object,
+    fixture: ProspectiveFixture,
+) -> AvailabilityStatus:
+    """Classify receipt quality while preserving inclusive Chronos equality."""
+
+    if received_at > window.cutoff_at:
+        return AvailabilityStatus.TEMPORALITY_FAILED
+    if payload in ([], (), {}):
+        return (
+            AvailabilityStatus.CAPTURED_EMPTY
+            if window.family
+            in {
+                CaptureFamily.PLAYER_STATUS,
+                CaptureFamily.INJURY,
+                CaptureFamily.LINEUP,
+                CaptureFamily.FORMATION,
+            }
+            else AvailabilityStatus.INVALID_PAYLOAD
+        )
+    if _capture_payload_complete(
+        family=window.family,
+        payload=payload,
+        fixture=fixture,
+    ):
+        return AvailabilityStatus.CAPTURED
+    if window.family is CaptureFamily.ODDS:
+        return AvailabilityStatus.CAPTURED_EMPTY
+    return AvailabilityStatus.INVALID_PAYLOAD
+
+
 def run_capture(
     args: argparse.Namespace,
     *,
@@ -5311,6 +6001,13 @@ def run_capture(
         families=families,
         now=now,
         maximum_attempts=args.max_attempts,
+    )
+    canary_contract, canary_policy_hash, price_contract, price_contract_hash = (
+        _load_chronos_capture_contracts(
+            args,
+            command=command,
+            provider_injected=(provider is not None or not provisional_due),
+        )
     )
     provider_free_noop = (
         not provisional_due
@@ -5362,6 +6059,23 @@ def run_capture(
     fixture_by_id = {
         fixture.fixture_id: fixture for fixture in state.fixtures()
     }
+    fixture_ids_by_league: dict[str, list[str]] = {}
+    for window in due:
+        fixture = fixture_by_id.get(window.fixture_id)
+        if fixture is None:
+            raise RuntimeError("CAPTURE_WINDOW_FIXTURE_MISSING")
+        fixture_ids_by_league.setdefault(fixture.competition, []).append(
+            fixture.fixture_id
+        )
+    selected_fixture_ids = set(
+        deterministic_fixture_canary(
+            fixture_ids_by_league,
+            maximum=int(cast(int, canary_contract["max_fixtures"])),
+        )
+    )
+    due = tuple(
+        window for window in due if window.fixture_id in selected_fixture_ids
+    )
     provider_kind, units = _capture_estimated_units(
         command,
         due,
@@ -5394,6 +6108,41 @@ def run_capture(
         units_by_competition[sorted(units_by_competition)[0]] += 1
     if sum(units_by_competition.values()) != units:
         raise RuntimeError("PROSPECTIVE_PROVIDER_COMPETITION_COST_MISMATCH")
+    canary_budget = CanaryBudget(
+        max_fixtures=int(cast(int, canary_contract["max_fixtures"])),
+        max_technical_attempts=int(
+            cast(int, canary_contract["max_technical_attempts"])
+        ),
+        api_football_calls_max=int(
+            cast(int, canary_contract["api_football_calls_max"])
+        ),
+        odds_credits_max=int(
+            cast(int, canary_contract["odds_credits_effective_max"])
+        ),
+        r2_object_writes_max=int(
+            cast(int, canary_contract["r2_object_writes_max"])
+        ),
+        postgresql_rows_max=int(
+            cast(int, canary_contract["postgresql_rows_max"])
+        ),
+    )
+    provider_reserve_for_plan = policy.provider_reserve(provider_kind)
+    canary_budget.authorize(
+        fixtures=len(selected_fixture_ids),
+        attempts=(
+            min(args.max_attempts, 2)
+            if due and args.cache is not None
+            else args.max_attempts
+            if due
+            else 0
+        ),
+        api_football_calls=(units if provider_kind is ProviderKind.API_FOOTBALL else 0),
+        odds_credits=(units if provider_kind is ProviderKind.ODDS_API else 0),
+        r2_object_writes=len(due) * 100,
+        postgresql_rows=len(due) * 1000,
+        provider_remaining_after=provider_reserve_for_plan,
+        provider_reserve=provider_reserve_for_plan,
+    )
     budget_admissions: tuple[dict[str, object], ...] = ()
     if units:
         last_remaining = state.external_quota_remaining(
@@ -5423,6 +6172,14 @@ def run_capture(
     )
     estimate.pop("estimate_sha256")
     estimate["budget_admissions"] = list(budget_admissions)
+    estimate["chronos_canary_status"] = (
+        str(canary_contract["no_due_status"])
+        if not due
+        else "CANARY_DUE_BOUNDED"
+    )
+    estimate["chronos_canary_policy_hash"] = canary_policy_hash
+    estimate["chronos_price_contract_hash"] = price_contract_hash
+    estimate["selected_fixture_ids"] = sorted(selected_fixture_ids)
     estimate["estimate_sha256"] = canonical_sha256(estimate)
     report_prefix = CAPTURE_REPORT_NAMES[command]
     if args.estimate:
@@ -5467,7 +6224,9 @@ def run_capture(
             now=now,
             snapshot=snapshot,
             extra={
-                "status": "NO_DUE_WINDOW_SUCCESS",
+                "status": str(canary_contract["no_due_status"]),
+                "chronos_canary_policy_hash": canary_policy_hash,
+                "chronos_price_contract_hash": price_contract_hash,
                 "provider_calls": 0,
                 "odds_api_credits": 0,
                 "r2_puts": 0,
@@ -5487,6 +6246,23 @@ def run_capture(
         return report
     if repository is None:
         raise RuntimeError("PROSPECTIVE_R2_REPOSITORY_REQUIRED")
+
+    projection_sink: ProjectionSink = state.projection_sink()
+    if isinstance(state, SQLAlchemyOperationalState):
+        projection_sink = SQLAlchemyProjectionSink(
+            state,
+            chronos_repository=ChronosArtifactRepository(repository.store),
+            price_contract=price_contract,
+        )
+    if isinstance(state, SQLAlchemyOperationalState):
+        state.ensure_chronos_canary_run(
+            command=command,
+            windows=due,
+            policy=canary_contract,
+            policy_hash=canary_policy_hash,
+            planned_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
 
     configured_cap = policy.run_cap(provider_kind)
     admission_cap = (
@@ -6283,28 +7059,12 @@ def run_capture(
                 retry_attempts += int(attempt_number > 1)
                 identity_errors += 1
                 continue
-        if received_at >= window.cutoff_at:
-            quality = AvailabilityStatus.TEMPORALITY_FAILED
-        elif payload in ([], (), {}):
-            quality = (
-                AvailabilityStatus.CAPTURED_EMPTY
-                if window.family
-                in {
-                    CaptureFamily.PLAYER_STATUS,
-                    CaptureFamily.INJURY,
-                    CaptureFamily.LINEUP,
-                    CaptureFamily.FORMATION,
-                }
-                else AvailabilityStatus.INVALID_PAYLOAD
-            )
-        elif _capture_payload_complete(
-            family=window.family,
+        quality = _capture_quality(
+            received_at=received_at,
+            window=window,
             payload=payload,
             fixture=fixture,
-        ):
-            quality = AvailabilityStatus.CAPTURED
-        else:
-            quality = AvailabilityStatus.INVALID_PAYLOAD
+        )
         context = CaptureContext(
             window_id=window.window_id,
             window_label=window.label,
@@ -6353,7 +7113,10 @@ def run_capture(
             provider_reserve=provider_reserve,
         )
         state.persist_capture(capture)
-        if quality is AvailabilityStatus.CAPTURED:
+        if quality in {
+            AvailabilityStatus.CAPTURED,
+            AvailabilityStatus.CAPTURED_EMPTY,
+        }:
             projection = {
                 "fixture_id": capture.receipt.fixture_id,
                 "family": capture.receipt.family.value,
@@ -6363,7 +7126,7 @@ def run_capture(
             }
             projection_hash = canonical_sha256(projection)
             projection_inserts += int(
-                state.projection_sink().insert_capture(
+                projection_sink.insert_capture(
                     capture.receipt,
                     projection,
                     projection_hash,
@@ -6536,6 +7299,13 @@ def run_capture(
             "identity_errors": identity_errors,
             "circuit_open": circuit_open,
             "projection_inserts": projection_inserts,
+            "chronos_objects_inserted": getattr(
+                projection_sink, "chronos_objects_inserted", 0
+            ),
+            "chronos_canary_status": "CANARY_DUE_BOUNDED",
+            "chronos_canary_policy_hash": canary_policy_hash,
+            "chronos_price_contract_hash": price_contract_hash,
+            "selected_fixture_ids": sorted(selected_fixture_ids),
             "budget_admissions": list(budget_admissions),
             "estimated_units_by_competition": units_by_competition,
             "preflight_reconciliation": recovery,
@@ -6556,17 +7326,20 @@ def run_replay_audit(
     state = state or _database_state()
     _reject_non_durable_execution_inputs(args, state=state)
     repository = repository or _repository(cache_root=args.object_store_root)
+    inventory = repository.inventory_namespace()
 
     first_sink = InMemoryProjectionSink()
     first = replay_from_r2(
         repository,
         first_sink,
         normalizer=_operational_replay_projection,
+        inventory=inventory,
     )
     second = replay_from_r2(
         repository,
         first_sink,
         normalizer=_operational_replay_projection,
+        inventory=inventory,
     )
     if (
         first.dataset_hash != second.dataset_hash
@@ -6574,7 +7347,9 @@ def run_replay_audit(
         or second.duplicates_avoided != first.payloads_replayed
     ):
         raise RuntimeError("R2_REPLAY_NOT_IDEMPOTENT")
-    stored_captures = tuple(repository.iter_captures())
+    stored_captures = tuple(
+        repository.read_capture(key) for key in inventory.receipt_keys
+    )
     durable_sink = state.projection_sink()
     if isinstance(state, SQLAlchemyOperationalState):
         bootstrap = SQLAlchemyProjectionSink(state)
@@ -6584,13 +7359,29 @@ def run_replay_audit(
         )
         durable_sink = SQLAlchemyProjectionSink(
             state,
-            skip_existing_projections=True,
+            chronos_repository=ChronosArtifactRepository(repository.store),
         )
     durable = replay_from_r2(
         repository,
         durable_sink,
         normalizer=_operational_replay_projection,
+        inventory=inventory,
     )
+    chronos_objects_first = getattr(
+        durable_sink, "chronos_objects_inserted", 0
+    )
+    durable_second = replay_from_r2(
+        repository,
+        durable_sink,
+        normalizer=_operational_replay_projection,
+        inventory=inventory,
+    )
+    chronos_objects_second = (
+        getattr(durable_sink, "chronos_objects_inserted", 0)
+        - chronos_objects_first
+    )
+    if durable_second.projections_inserted != 0 or chronos_objects_second != 0:
+        raise RuntimeError("CHRONOS_DURABLE_REPLAY_NOT_IDEMPOTENT")
     attempts_reconstructed = _reconcile_receipt_attempts(state)
     budget_records = _reconcile_provider_budget_journal(
         state=state,
@@ -6676,6 +7467,14 @@ def run_replay_audit(
             ),
             "second_pass_inserts": second.projections_inserted,
             "second_pass_duplicates": second.duplicates_avoided,
+            "durable_second_pass_inserts": (
+                durable_second.projections_inserted
+            ),
+            "chronos_objects_first_pass": chronos_objects_first,
+            "chronos_objects_second_pass": chronos_objects_second,
+            "inventory_watermark_sha256": canonical_sha256(
+                inventory.receipt_keys
+            ),
             "provider_calls": 0,
             "odds_api_credits": 0,
             "hash_mismatches": first.hash_mismatches,
@@ -7308,6 +8107,16 @@ def _common(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--code-revision")
     parser.add_argument("--cache", type=Path)
     parser.add_argument("--object-store-root", type=Path)
+    parser.add_argument(
+        "--chronos-canary-policy",
+        type=Path,
+        default=DEFAULT_CHRONOS_CANARY_POLICY,
+    )
+    parser.add_argument(
+        "--chronos-price-contract",
+        type=Path,
+        default=DEFAULT_CHRONOS_PRICE_CONTRACT,
+    )
 
 
 def _estimate_execute(parser: argparse.ArgumentParser) -> None:

@@ -1708,8 +1708,8 @@ def merge_verified_replay_evidence(
             and isinstance(replay_postgresql, dict)
             and replay_postgresql.get("reconstruction_status")
             == "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
-        and replay_postgresql.get("migration") == "0009_jalon12_observatory"
-            and postgresql_counts.get("tables") == 16
+        and replay_postgresql.get("migration") == "0014_robin_chronos_v1"
+            and postgresql_counts.get("tables") == 22
         and postgresql_inserts is not None
         and postgresql_inserts <= payloads_replayed
         and postgresql_counts.get("payload_body_rows") == 0

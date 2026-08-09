@@ -45,6 +45,7 @@ from robin.prospective_observatory.prequential_storage import (
 NOW = datetime(2026, 8, 9, 8, 0, tzinfo=UTC)
 HASH = "a" * 64
 CONTRACT_HASH = "b" * 64
+TAG_IDS = tuple(f"tag-{index:03d}" for index in range(150))
 
 
 def _receipt(
@@ -144,6 +145,24 @@ def test_restrictive_evidence_can_only_delay_known_at() -> None:
         )
 
 
+def test_future_provider_timestamp_excludes_fact_from_strict_view() -> None:
+    receipt = _receipt().model_copy(
+        update={"provider_updated_at": NOW + timedelta(seconds=1)}
+    )
+    fact = build_known_at_fact(
+        receipt=receipt,
+        entity_id="entity",
+        normalized_value={"value": 1},
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        scientific_role=ScientificRole.STRICT_KNOWN_AT,
+        normalizer_version="test-v1",
+        code_revision="test-revision",
+    )
+    assert fact.quality_status.value == "PROVIDER_TIMESTAMP_INCONSISTENT"
+    assert strict_fact_view((fact,)) == ()
+
+
 def _price_observations(bookmakers: tuple[str, ...]) -> tuple[object, ...]:
     observations = []
     for bookmaker in bookmakers:
@@ -163,6 +182,8 @@ def _price_observations(bookmakers: tuple[str, ...]) -> tuple[object, ...]:
                     cutoff_id="NEAR_KICKOFF",
                     request_contract_hash=CONTRACT_HASH,
                     code_revision="test-revision",
+                    provider_updated_at=NOW - timedelta(seconds=30),
+                    max_age_seconds=600,
                 )
             )
     return tuple(observations)
@@ -188,6 +209,74 @@ def test_complete_market_devig_and_five_book_consensus() -> None:
 
 def test_incomplete_market_is_no_price_not_an_estimate() -> None:
     observations = _price_observations((BOOKMAKER_ALLOWLIST[0],))[:-1]
+    assert derive_complete_book_markets(observations) == ()
+
+
+def test_price_timestamp_and_freshness_fail_closed() -> None:
+    missing = build_price_observation(
+        receipt=_receipt(),
+        bookmaker=BOOKMAKER_ALLOWLIST[0],
+        market=ChronosMarket.MATCH_RESULT_90M,
+        selection=ChronosSelection.HOME,
+        line=None,
+        odds_decimal=Decimal("2.1"),
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        code_revision="test-revision",
+    )
+    stale = build_price_observation(
+        receipt=_receipt(),
+        bookmaker=BOOKMAKER_ALLOWLIST[0],
+        market=ChronosMarket.MATCH_RESULT_90M,
+        selection=ChronosSelection.HOME,
+        line=None,
+        odds_decimal=Decimal("2.1"),
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        code_revision="test-revision",
+        provider_updated_at=NOW - timedelta(seconds=601),
+        max_age_seconds=600,
+    )
+    future = build_price_observation(
+        receipt=_receipt(),
+        bookmaker=BOOKMAKER_ALLOWLIST[0],
+        market=ChronosMarket.MATCH_RESULT_90M,
+        selection=ChronosSelection.HOME,
+        line=None,
+        odds_decimal=Decimal("2.1"),
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        code_revision="test-revision",
+        provider_updated_at=NOW + timedelta(seconds=1),
+        max_age_seconds=600,
+    )
+    assert missing.quality_status.value == "NO_PRICE"
+    assert stale.quality_status.value == "NO_PRICE"
+    assert future.quality_status.value == "PROVIDER_TIMESTAMP_INCONSISTENT"
+    assert missing.receipt_hash == _receipt().receipt_hash
+
+
+def test_market_overround_outside_bound_is_not_derived() -> None:
+    observations = tuple(
+        build_price_observation(
+            receipt=_receipt(),
+            bookmaker=BOOKMAKER_ALLOWLIST[0],
+            market=ChronosMarket.MATCH_RESULT_90M,
+            selection=selection,
+            line=None,
+            odds_decimal=Decimal("1.50"),
+            cutoff_id="NEAR_KICKOFF",
+            request_contract_hash=CONTRACT_HASH,
+            code_revision="test-revision",
+            provider_updated_at=NOW - timedelta(seconds=30),
+            max_age_seconds=600,
+        )
+        for selection in (
+            ChronosSelection.HOME,
+            ChronosSelection.DRAW,
+            ChronosSelection.AWAY,
+        )
+    )
     assert derive_complete_book_markets(observations) == ()
 
 
@@ -236,13 +325,21 @@ def test_late_fact_cannot_enter_tag_snapshot() -> None:
         kickoff_at=NOW + timedelta(hours=2),
         tag_registry_hash=HASH,
         facts=(late, on_time),
-        tag_states={"tag-1": TagState.TRUE, "tag-2": TagState.UNKNOWN},
+        tag_states={
+            tag_id: (TagState.TRUE if tag_id == TAG_IDS[0] else TagState.UNKNOWN)
+            for tag_id in TAG_IDS
+        },
+        tag_fact_ids={
+            tag_id: ((on_time.fact_id,) if tag_id == TAG_IDS[0] else ())
+            for tag_id in TAG_IDS
+        },
+        expected_tag_ids=TAG_IDS,
     )
     assert snapshot.facts_used == (on_time.fact_id,)
     assert (snapshot.true_count, snapshot.false_count, snapshot.unknown_count) == (
         1,
         0,
-        1,
+        149,
     )
 
 
@@ -263,6 +360,38 @@ def test_lineage_is_append_only_and_bidirectional() -> None:
     assert index.append(edge) is False
     assert index.downstream("raw-1") == (edge,)
     assert index.upstream("fact-1") == (edge,)
+
+
+def test_lineage_rejects_multi_hop_cycle() -> None:
+    index = LineageIndex()
+    for upstream, downstream in (("a", "b"), ("b", "c")):
+        index.append(
+            build_lineage_edge(
+                upstream_kind=LineageNodeKind.RAW_OBJECT,
+                upstream_id=upstream,
+                upstream_hash=HASH,
+                downstream_kind=LineageNodeKind.NORMALIZED_FACT,
+                downstream_id=downstream,
+                downstream_hash=CONTRACT_HASH,
+                relation="DERIVED_FROM",
+                contract_hash=HASH,
+                code_revision="test-revision",
+            )
+        )
+    with pytest.raises(ValueError, match="CHRONOS_LINEAGE_CYCLE"):
+        index.append(
+            build_lineage_edge(
+                upstream_kind=LineageNodeKind.NORMALIZED_FACT,
+                upstream_id="c",
+                upstream_hash=HASH,
+                downstream_kind=LineageNodeKind.RAW_OBJECT,
+                downstream_id="a",
+                downstream_hash=CONTRACT_HASH,
+                relation="DERIVED_FROM",
+                contract_hash=HASH,
+                code_revision="test-revision",
+            )
+        )
 
 
 def test_chronos_storage_is_content_addressed_and_idempotent() -> None:

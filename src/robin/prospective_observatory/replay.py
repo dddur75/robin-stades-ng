@@ -10,6 +10,7 @@ from robin.prospective_observatory.contracts import CaptureReceipt, canonical_sh
 from robin.prospective_observatory.r2 import (
     ProspectiveR2Repository,
     R2NamespaceIntegrityError,
+    R2NamespaceInventory,
 )
 
 NormalizedProjection = Mapping[str, object]
@@ -101,8 +102,9 @@ def replay_from_r2(
     sink: ProjectionSink,
     *,
     normalizer: Normalizer | None = None,
+    inventory: R2NamespaceInventory | None = None,
 ) -> ReplayResult:
-    inventory = repository.inventory_namespace()
+    inventory = inventory or repository.inventory_namespace()
     if not inventory.verified:
         raise R2NamespaceIntegrityError(inventory)
 

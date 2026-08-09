@@ -15,6 +15,7 @@
   ],
   "append_only": true,
   "bidirectional_indexes": true,
+  "edge_hashes": ["upstream_hash", "downstream_hash", "contract_hash"],
   "missing_node_policy": "FAIL_CLOSED",
-  "cycle_policy": "FORBIDDEN"
+  "cycle_policy": "ALL_MULTI_HOP_CYCLES_FORBIDDEN"
 }

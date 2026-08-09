@@ -24,11 +24,14 @@ jobs:
     timeout-minutes: 15
     env:
       PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      CHRONOS_CANARY_POLICY: "configs/operations/robin-chronos-canary-v1.json"
       STORAGE_PAUSED: "true"
       P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
       REAL_BETS: "false"
       NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      TRIPLE_SEARCH_LOCKED: "true"
       SOCIAL_PUBLISHING_ENABLED: "false"
       DEMO_MODE_ENABLED: "false"
     steps:

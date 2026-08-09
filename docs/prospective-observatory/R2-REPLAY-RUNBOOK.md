@@ -28,7 +28,7 @@ R2
 - inventaire borné ou curseur explicite ;
 - `PRODUCTION_LOCKED` et tous les invariants actifs.
 
-La révision attendue est `0009_jalon12_observatory`.
+La révision attendue est `0014_robin_chronos_v1`.
 
 ## Commande
 

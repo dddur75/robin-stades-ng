@@ -132,7 +132,7 @@ les transports de contrôle sans reçu.
 10. premier snapshot de périmètre, audit R2/PostgreSQL des identités, puis
     snapshot Robin Live final.
 
-Si `windows_due=0`, publier `NO_DUE_WINDOW_SUCCESS` avec
+Si `windows_due=0`, publier `CANARY_NOT_DUE_SCHEDULER_READY` avec
 `provider_calls=0`, `odds_api_credits=0`, `r2_puts=0` et
 `capture_attempts=0`, puis s’arrêter. Une fixture enregistrée sans lineup,
 blessure ou cote due est un pilote sain. Le preflight de fraîcheur kickoff
@@ -222,7 +222,7 @@ Sur la branche de pré-fusion Jalon 12, le marqueur
 `[run-j12-replay-only]` autorise uniquement :
 
 1. la vérification de présence des secrets sans affichage ;
-2. `alembic upgrade head` jusqu’à `0009_jalon12_observatory` ;
+2. `alembic upgrade head` jusqu’à `0014_robin_chronos_v1` ;
 3. le replay intégral R2 avec credentials fournisseur vides ;
 4. les gates, le ledger, le snapshot Robin Live et son artefact.
 

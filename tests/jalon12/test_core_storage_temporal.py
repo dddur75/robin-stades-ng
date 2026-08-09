@@ -23,6 +23,7 @@ from robin.prospective_observatory import (
 )
 from robin.prospective_observatory.contracts import RetryDisposition
 from robin.prospective_observatory.r2 import AppendOnlyViolation
+from scripts.run_prospective_observatory import _capture_quality
 
 NOW = datetime(2026, 7, 27, 12, tzinfo=UTC)
 KICKOFF = datetime(2026, 8, 3, 20, tzinfo=UTC)
@@ -285,3 +286,31 @@ def test_late_capture_is_retained_but_not_admissible() -> None:
     assert temporal_admissibility(stored.receipt) is (
         AvailabilityStatus.TEMPORALITY_FAILED
     )
+
+
+def test_runtime_quality_accepts_response_exactly_at_cutoff() -> None:
+    fixture = _fixture()
+    window = schedule_windows(
+        fixture,
+        CaptureFamily.TEAM,
+        scheduled_at=NOW,
+        tolerance=timedelta(hours=1),
+    )[0]
+    payload = [
+        {
+            "home": {"id": fixture.home_team_id},
+            "away": {"id": fixture.away_team_id},
+        }
+    ]
+    assert _capture_quality(
+        received_at=window.cutoff_at,
+        window=window,
+        payload=payload,
+        fixture=fixture,
+    ) is AvailabilityStatus.CAPTURED
+    assert _capture_quality(
+        received_at=window.cutoff_at + timedelta(microseconds=1),
+        window=window,
+        payload=payload,
+        fixture=fixture,
+    ) is AvailabilityStatus.TEMPORALITY_FAILED

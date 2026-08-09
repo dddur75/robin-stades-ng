@@ -7,16 +7,20 @@
   "base_sha": "d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
   "head_ref": "codex/phase-c-full-bounded-expansion-v2",
   "initial_audited_head_sha": "f6d6b2480aa167fe825a2954e7a3a0e673f695ce",
-  "delivery_head_binding": "GIT_COMMIT_CONTAINING_THIS_REPORT",
+  "delivery_head_binding": "610291f72d726d9f4330e4194fbe678e2954d809",
   "github_state": {
-    "state": "OPEN",
-    "draft": true,
+    "state": "MERGED",
+    "draft": false,
     "mergeable": true,
-    "merged": false,
+    "merged": true,
+    "merge_commit_sha": "610291f72d726d9f4330e4194fbe678e2954d809",
+    "merged_at": "2026-08-09T06:26:39Z",
     "review_threads": 0,
     "review_submissions": 0,
     "initial_exact_head_ci": "PASS",
-    "delivery_exact_head_ci": "PENDING_AFTER_CORRECTIVE_COMMIT"
+    "delivery_exact_head_ci": "PASS_RUN_31297778274",
+    "main_ci": "PASS_RUN_31298892552",
+    "pages": "PASS_RUN_31298892284"
   },
   "repository_impact": {
     "changed_files": 184,
@@ -137,7 +141,7 @@
     "block_merge": false,
     "rationale": [
       "the normalized source evidence is not durably reconstructible from the temporary upstream artifact",
-      "the packed increment is bounded at 9577226 bytes for this one-off negative closure",
+      "the measured packed increment is bounded at 9681059 bytes for this one-off negative closure",
       "the committed payloads are sanitized normalized evidence rather than raw provider payloads",
       "removing detailed evidence now would weaken auditability of the zero-survivor result"
     ],
@@ -212,8 +216,8 @@
     "closed_objections": [
       "NEGATIVE_GUARD_EXECUTION_PROOF_ADDED"
     ],
-    "status": "PASS_LOCAL_AWAITING_EXACT_HEAD_CI",
-    "authorized_next_action": "COMMIT_PUSH_OBSERVE_EXACT_HEAD_CI_THEN_MARK_READY_AND_MERGE_COMMIT"
+    "status": "MERGED_AFTER_EXACT_HEAD_AND_MAIN_CI_PASS",
+    "authorized_next_action": "RETAIN_AS_NEGATIVE_PHASE_C_V2_EVIDENCE"
   },
-  "report_status": "FINAL_PRE_MERGE_AUDIT"
+  "report_status": "FINAL_POST_MERGE_AUDIT"
 }
