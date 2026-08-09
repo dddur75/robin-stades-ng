@@ -1,6 +1,6 @@
 {
   "schema_version": "pr41-chronos-control-plane-v2-validation-v1",
-  "generated_at": "2026-08-09T14:48:16Z",
+  "generated_at": "2026-08-09T15:15:11Z",
   "repository": "dddur75/robin-stades-ng",
   "branch": "codex/robin-chronos-control-plane-v2",
   "base_main_sha": "b03051d15e741eeb5293e0d3661572b2cb60eeba",
@@ -10,6 +10,7 @@
     "state_at_report_update": "OPEN_DRAFT_NOT_MERGED",
     "first_exact_ci_head_sha": "b8f812dae8888139d71f921df81b94861eccb66b",
     "second_exact_ci_head_sha": "74e18fff704ca601dcc5d523a968e8e48041204c",
+    "third_exact_ci_head_sha": "80bf442683a9d24b1b01dcdd2083885bc1ab593a",
     "head_sha": "RESOLVE_EXACTLY_FROM_GITHUB_AFTER_SUCCESSOR_COMMIT",
     "self_reference_note": "The commit carrying this report cannot contain its own Git SHA."
   },
@@ -87,7 +88,7 @@
   },
   "local_validation": {
     "chronos_suite": {
-      "passed": 100,
+      "passed": 101,
       "skipped": 7,
       "failed": 0,
       "skip_reason": "No local PostgreSQL contract service; GitHub CI provisions PostgreSQL 16."
@@ -139,7 +140,7 @@
         "cast authority_id to text in both fresh and idempotent claim RETURN QUERY branches",
         "place pytest.raises outside connection.begin_nested in all eight negative-test savepoints"
       ],
-      "successor_status": "FAILED_SECOND_RUN_ONE_TEST_HARNESS_GAP_CORRECTED",
+      "successor_status": "FAILED_THIRD_RUN_CI_MIGRATION_ACTOR_SEQUENCE_CORRECTED",
       "second_run": {
         "run_id": 31319007304,
         "head_sha": "74e18fff704ca601dcc5d523a968e8e48041204c",
@@ -156,7 +157,27 @@
           "name authorities and events explicitly in the same bounded TRUNCATE statement so the authority trigger is reached without CASCADE",
           "attempt a separate events-only TRUNCATE to prove the events trigger independently"
         ],
-        "next_status": "NOT_CREATED_PENDING_THIRD_COMMIT_PUSH_AND_AUTOMATIC_EXACT_HEAD_CI"
+        "next_status": "FAILED_THIRD_RUN_AFTER_TEST_HARNESS_CORRECTION"
+      },
+      "third_run": {
+        "run_id": 31319594154,
+        "head_sha": "80bf442683a9d24b1b01dcdd2083885bc1ab593a",
+        "status": "FAILED_MIGRATION_REUPGRADE_ACTOR_ACL_GRANTOR_MISMATCH",
+        "passed_jobs": [
+          "Historical Deep — contrat cache-only",
+          "Jalon 10 - entrees de preuve gelees"
+        ],
+        "failed_job": "tests",
+        "failed_step": "Tester les migrations",
+        "postgresql_contract_result": "7 passed",
+        "lifecycle_result": "FAILED_DURING_0014_REUPGRADE_BEFORE_GENERAL_TEST_SUITE",
+        "root_cause": "Revision 0014 granted its reviewed schema ACLs as robin_ci_migrator, but CI crossed the 0014-to-0013 downgrade boundary as robin. PostgreSQL retained the original grantor ACL, and the fail-closed reupgrade correctly rejected CHRONOS_ROLE_ACL_UNSAFE:chronos_reader.",
+        "correction": [
+          "cross the 0014-to-0013 downgrade boundary with the same isolated migrator that applied revision 0014",
+          "use the legacy migration owner only after revision 0014 has been removed",
+          "apply the same actor split before the final downgrade to base"
+        ],
+        "next_status": "NOT_CREATED_PENDING_FOURTH_COMMIT_PUSH_AND_AUTOMATIC_EXACT_HEAD_CI"
       }
     }
   },
@@ -173,6 +194,7 @@
     },
     "functions_require_pg_has_role_usage": true,
     "same_migrator_reupgrade": true,
+    "same_migrator_downgrade_boundary": true,
     "unexpected_relation_and_function_acl_rejected": true,
     "remote_database_used_by_this_mission": false
   },
@@ -343,7 +365,8 @@
     "activation_in_this_mission": false
   },
   "known_non_blocking_limits": [
-    "The bounded PostgreSQL TRUNCATE-trigger reachability correction still requires automatic exact-successor-head GitHub CI execution.",
+    "The bounded same-grantor migration lifecycle correction still requires automatic exact-successor-head GitHub CI execution.",
+    "The migration does not preflight current_user before downgrade; CI and the runbook require the original isolated migrator, while a wrong actor leaves a fail-closed ACL residue that blocks reupgrade.",
     "R2 custom metadata and caller-supplied receipt hash are audit-only and not authoritative for creation.",
     "A durable permit can conservatively overcount a crash before the first socket byte; it never undercounts dispatch permission.",
     "Cross-generation recovery is deliberately refused; old pending chains remain immutable.",
@@ -356,7 +379,7 @@
     "production_source_lines_raw": 1464,
     "memory_test_surface_lines": 354,
     "effective_runtime_lines": 1110,
-    "dedicated_test_lines": 1905,
+    "dedicated_test_lines": 1934,
     "migration_lines": 953,
     "control_plane_core_lines": 1197,
     "limits_status": "INDICATIVE_CORE_AND_TEST_LIMITS_MET"
@@ -364,7 +387,7 @@
   "costs": {
     "codex_elapsed_time": "NOT_MEASURED",
     "local_test_compute_cost": "NOT_MEASURED",
-    "github_ci_cost": "NOT_MEASURED_TWO_EXACT_HEAD_RUNS_FAILED_THIRD_PENDING",
+    "github_ci_cost": "NOT_MEASURED_THREE_EXACT_HEAD_RUNS_FAILED_FOURTH_PENDING",
     "external_service_cost_eur": 0,
     "maintenance": "ONE_MAIN_MIGRATION_THREE_NATURAL_RUNTIME_MODULES"
   },
@@ -392,7 +415,7 @@
     "run_binding": "RUN_BOUND_AUTHORITY_READY",
     "restore_fence": "RESTORE_FENCE_READY",
     "r2_ledger": "R2_ATTRIBUTABLE_EFFECT_LEDGER_READY",
-    "local_review": "PR41_DRAFT_FIX_PENDING_EXACT_HEAD_CI",
+    "local_review": "PR41_DRAFT_CI_ACTOR_CORRECTION_PENDING_EXACT_HEAD_CI",
     "global_before_exact_head_ci": "CHRONOS_CONTROL_PLANE_V2_FOUNDATION_READY_CONDITIONAL_EXACT_HEAD_CI"
   }
 }

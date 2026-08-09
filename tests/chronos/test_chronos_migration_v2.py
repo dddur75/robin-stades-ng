@@ -258,3 +258,21 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
     assert "p_now" not in source
     assert "test_now" not in source
     assert "fake_now" not in source
+
+
+def test_ci_crosses_revision_0014_with_the_same_migrator() -> None:
+    root = Path(__file__).resolve().parents[2]
+    workflow = (root / ".github" / "workflows" / "ci.yml").read_text(
+        encoding="utf-8"
+    )
+    migrator_downgrade = (
+        "ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@"
+        "localhost:5432/robin_ci' python -m alembic downgrade "
+        "0013_historical_evidence_index"
+    )
+    first_cycle = migrator_downgrade + "\n          python -m alembic downgrade 0002_jalon2_shadow"
+    cleanup_cycle = migrator_downgrade + "\n          python -m alembic downgrade base"
+
+    assert workflow.count(migrator_downgrade) == 2
+    assert first_cycle in workflow
+    assert cleanup_cycle in workflow

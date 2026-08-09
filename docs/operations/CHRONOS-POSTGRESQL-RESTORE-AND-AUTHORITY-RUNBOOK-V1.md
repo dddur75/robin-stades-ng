@@ -55,6 +55,12 @@ effective `pg_has_role(login, group, 'USAGE')` before enabling the Environment. 
 any later downgrade or reapplication of `0014`, freeze workflows and revoke these LOGIN
 memberships first; retain only the audited ADMIN-only migrator links.
 
+Upgrade, downgrade to `0013_historical_evidence_index`, and reapplication of revision
+`0014` must use the same isolated PostgreSQL `current_user`: the migrator that owns the
+revision objects and directly granted its reviewed ACLs. Only after that migrator has
+completed the `0014 -> 0013` boundary may the legacy migration owner downgrade older
+revisions. A different administrator is not a substitute for the original ACL grantor.
+
 ## External generation
 
 The generation is a random 256-bit nonce created outside PostgreSQL.
@@ -274,6 +280,8 @@ A restart must never be hidden by accepting the old authority.
 The migration downgrade is fail-closed:
 
 - if any authority or effect event exists, downgrade raises an error;
+- the same isolated migrator identity must cross the `0014 -> 0013` boundary;
+- the legacy migration owner may continue from `0013` only after that boundary succeeds;
 - operators must export and review evidence under a separate retention procedure;
 - no row may be deleted merely to make downgrade pass;
 - roles are not silently broadened to support an older runtime.
