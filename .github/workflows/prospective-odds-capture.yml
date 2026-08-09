@@ -38,13 +38,12 @@ jobs:
       - run: |
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
-      - name: Appliquer les migrations
+      - name: Verifier la revision PostgreSQL sans migration
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          alembic upgrade head
-          alembic current | grep -q "0013_historical_evidence_index"
+          python scripts/check_database_revision.py --expected 0013_historical_evidence_index
       - name: Estimer les crédits des fenêtres de cotes dues
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

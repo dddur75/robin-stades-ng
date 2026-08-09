@@ -51,14 +51,13 @@ jobs:
           --competition "${{ inputs.competition || 'ALL' }}"
           --policy "$PROSPECTIVE_POLICY"
           --output artifacts/prospective-observatory
-      - name: Appliquer les migrations
+      - name: Verifier la revision PostgreSQL sans migration
         if: github.event_name == 'schedule' || inputs.execute
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          alembic upgrade head
-          alembic current | grep -q "0013_historical_evidence_index"
+          python scripts/check_database_revision.py --expected 0013_historical_evidence_index
       - name: Enregistrer les cinq ligues dans R2 et PostgreSQL
         if: github.event_name == 'schedule' || inputs.execute
         env:

@@ -752,7 +752,7 @@ def test_registre_complet_est_persistant_et_idempotent(
     assert audit["demo_as_live"] == 0
 
 
-def test_bootstrap_vide_fait_rollback_upgrade_et_double_replay(
+def test_bootstrap_vide_refuse_toute_migration_automatique(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -764,16 +764,8 @@ def test_bootstrap_vide_fait_rollback_upgrade_et_double_replay(
     append_bridge(outbox, bridge)
     database = tmp_path / "bootstrap.db"
     url = f"sqlite+pysqlite:///{database.as_posix()}"
-    result = bootstrap(
-        registry=bridge,
-        database_url=url,
-        controlled_rollback=True,
-    )
-    assert result["status"] == "NEON_BOOTSTRAP_VERIFIED"
-    assert result["controlled_rollback_performed"] is True
-    assert result["second_persistence"]["records_inserted"] == 0
-    assert result["replay"]["provider_calls"] == 0
-    assert result["replay"]["quota_consumed"] == 0
+    with pytest.raises(RuntimeError, match="DATABASE_MIGRATION_REQUIRED"):
+        bootstrap(registry=bridge, database_url=url)
 
 
 def test_comptage_pre_rollback_refuse_une_table_inconnue(
