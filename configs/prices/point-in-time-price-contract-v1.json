@@ -1,0 +1,59 @@
+{
+  "schema_version": "point-in-time-price-contract-v1",
+  "status": "CANARY_ONLY",
+  "provider": "the-odds-api-v4",
+  "region_allowlist": ["fr"],
+  "bookmaker_allowlist": [
+    "betclic_fr",
+    "netbet_fr",
+    "pmu_fr",
+    "unibet_fr",
+    "winamax_fr"
+  ],
+  "request_policy": "EXPLICIT_BOOKMAKER_KEYS_ONLY",
+  "fallback_policy": "NONE",
+  "missing_bookmaker_policy": "NO_PRICE",
+  "known_at_rule": "response_received_at",
+  "markets": [
+    {
+      "market": "MATCH_RESULT_90M",
+      "provider_market": "h2h",
+      "line": null,
+      "selections": ["HOME", "DRAW", "AWAY"]
+    },
+    {
+      "market": "TOTAL_GOALS_2_5_90M",
+      "provider_market": "totals",
+      "line": "2.5",
+      "selections": ["OVER_2_5", "UNDER_2_5"]
+    }
+  ],
+  "cutoffs": {
+    "H24": {"legacy_alias": "J-1", "price_max_age_seconds": 3600},
+    "H6": {"legacy_alias": "H-6", "price_max_age_seconds": 3600},
+    "H2": {"legacy_alias": "H-2", "price_max_age_seconds": 1800},
+    "NEAR_KICKOFF": {"legacy_alias": "NEAR_KICKOFF", "price_max_age_seconds": 600}
+  },
+  "complete_market_policy": {
+    "same_receipt": true,
+    "match_result_required_selection_count": 3,
+    "total_2_5_required_selection_count": 2,
+    "confirmatory_bookmakers_required": 5,
+    "silent_substitution_allowed": false
+  },
+  "devig": {
+    "method_id": "PROPORTIONAL_COMPLETE_MARKET_V1",
+    "version": "1.0.0",
+    "definition": "p_s=(1/odds_s)/sum(1/odds)",
+    "definition_hash": "b59812e55b4c42ffd32db977860e87a60e38550c0f777027447611f843875c22",
+    "overround_exclusive_min": "0",
+    "overround_inclusive_max": "0.06"
+  },
+  "aggregation": "PER_BOOK_DEVIG_THEN_CROSS_BOOK_MEDIAN_RENORMALIZED_V1",
+  "locks": {
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "TRIPLE_SEARCH_LOCKED": true
+  }
+}
