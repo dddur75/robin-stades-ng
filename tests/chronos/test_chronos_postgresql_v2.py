@@ -359,7 +359,17 @@ def test_tables_are_append_only_even_for_owner(engine: Engine) -> None:
             DBAPIError,
             match="CHRONOS_APPEND_ONLY_MUTATION_FORBIDDEN",
         ), connection.begin_nested():
-            connection.execute(sa.text("TRUNCATE chronos_effect_authorities"))
+            connection.execute(
+                sa.text(
+                    "TRUNCATE public.chronos_effect_authorities, "
+                    "public.chronos_effect_events"
+                )
+            )
+        with pytest.raises(
+            DBAPIError,
+            match="CHRONOS_APPEND_ONLY_MUTATION_FORBIDDEN",
+        ), connection.begin_nested():
+            connection.execute(sa.text("TRUNCATE public.chronos_effect_events"))
         transaction.rollback()
 
 

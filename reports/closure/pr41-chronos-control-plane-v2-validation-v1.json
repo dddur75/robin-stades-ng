@@ -1,6 +1,6 @@
 {
   "schema_version": "pr41-chronos-control-plane-v2-validation-v1",
-  "generated_at": "2026-08-09T14:36:33Z",
+  "generated_at": "2026-08-09T14:48:16Z",
   "repository": "dddur75/robin-stades-ng",
   "branch": "codex/robin-chronos-control-plane-v2",
   "base_main_sha": "b03051d15e741eeb5293e0d3661572b2cb60eeba",
@@ -9,6 +9,7 @@
     "required_state": "OPEN_DRAFT_NOT_MERGED",
     "state_at_report_update": "OPEN_DRAFT_NOT_MERGED",
     "first_exact_ci_head_sha": "b8f812dae8888139d71f921df81b94861eccb66b",
+    "second_exact_ci_head_sha": "74e18fff704ca601dcc5d523a968e8e48041204c",
     "head_sha": "RESOLVE_EXACTLY_FROM_GITHUB_AFTER_SUCCESSOR_COMMIT",
     "self_reference_note": "The commit carrying this report cannot contain its own Git SHA."
   },
@@ -138,7 +139,25 @@
         "cast authority_id to text in both fresh and idempotent claim RETURN QUERY branches",
         "place pytest.raises outside connection.begin_nested in all eight negative-test savepoints"
       ],
-      "successor_status": "NOT_CREATED_PENDING_SUCCESSOR_COMMIT_PUSH_AND_EXACT_HEAD_CI"
+      "successor_status": "FAILED_SECOND_RUN_ONE_TEST_HARNESS_GAP_CORRECTED",
+      "second_run": {
+        "run_id": 31319007304,
+        "head_sha": "74e18fff704ca601dcc5d523a968e8e48041204c",
+        "status": "FAILED_POSTGRESQL_CONTRACT_TEST_REACHABILITY",
+        "passed_jobs": [
+          "Historical Deep — contrat cache-only",
+          "Jalon 10 - entrees de preuve gelees"
+        ],
+        "failed_job": "tests",
+        "failed_step": "Tester les migrations",
+        "postgresql_contract_result": "6 passed, 1 failed",
+        "root_cause": "The parent-only TRUNCATE was rejected by the events-to-authorities foreign key before PostgreSQL could invoke the expected BEFORE TRUNCATE trigger.",
+        "correction": [
+          "name authorities and events explicitly in the same bounded TRUNCATE statement so the authority trigger is reached without CASCADE",
+          "attempt a separate events-only TRUNCATE to prove the events trigger independently"
+        ],
+        "next_status": "NOT_CREATED_PENDING_THIRD_COMMIT_PUSH_AND_AUTOMATIC_EXACT_HEAD_CI"
+      }
     }
   },
   "postgresql16_ci_contract": {
@@ -324,7 +343,7 @@
     "activation_in_this_mission": false
   },
   "known_non_blocking_limits": [
-    "The bounded PostgreSQL tuple-type and savepoint corrections still require automatic exact-successor-head GitHub CI execution.",
+    "The bounded PostgreSQL TRUNCATE-trigger reachability correction still requires automatic exact-successor-head GitHub CI execution.",
     "R2 custom metadata and caller-supplied receipt hash are audit-only and not authoritative for creation.",
     "A durable permit can conservatively overcount a crash before the first socket byte; it never undercounts dispatch permission.",
     "Cross-generation recovery is deliberately refused; old pending chains remain immutable.",
@@ -345,7 +364,7 @@
   "costs": {
     "codex_elapsed_time": "NOT_MEASURED",
     "local_test_compute_cost": "NOT_MEASURED",
-    "github_ci_cost": "NOT_MEASURED_FIRST_EXACT_HEAD_RUN_FAILED_SUCCESSOR_PENDING",
+    "github_ci_cost": "NOT_MEASURED_TWO_EXACT_HEAD_RUNS_FAILED_THIRD_PENDING",
     "external_service_cost_eur": 0,
     "maintenance": "ONE_MAIN_MIGRATION_THREE_NATURAL_RUNTIME_MODULES"
   },
