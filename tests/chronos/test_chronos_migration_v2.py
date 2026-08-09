@@ -249,6 +249,7 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
         "CHRONOS_CONTROL_PLANE_DOWNGRADE_REFUSED_NONEMPTY",
     ):
         assert marker in source
+    assert source.count("RETURN QUERY SELECT a.authority_id::text") == 2
     assert "DROP ROLE" not in source
     assert "DROP EXTENSION" not in source
     assert "pg_catalog.sh_description" not in source

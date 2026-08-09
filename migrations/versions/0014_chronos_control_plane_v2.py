@@ -525,7 +525,7 @@ def _create_postgresql_functions() -> None:
               a.github_run_id::text, a.github_run_attempt::text,
               a.github_sha, a.github_workflow_ref, a.github_workflow_sha,
               a.github_repository, a.github_ref]);
-            RETURN QUERY SELECT a.authority_id, g.db_recorded_at, a.expires_at,
+            RETURN QUERY SELECT a.authority_id::text, g.db_recorded_at, a.expires_at,
               a.postgres_server_epoch, v_receipt_hash;
             RETURN;
           END IF;
@@ -561,7 +561,7 @@ def _create_postgresql_functions() -> None:
             a.github_run_id::text, a.github_run_attempt::text,
             a.github_sha, a.github_workflow_ref, a.github_workflow_sha,
             a.github_repository, a.github_ref]);
-          RETURN QUERY SELECT a.authority_id, v_now, a.expires_at,
+          RETURN QUERY SELECT a.authority_id::text, v_now, a.expires_at,
             a.postgres_server_epoch, v_receipt_hash;
         END;
         $fn$;

@@ -229,10 +229,10 @@ def test_server_clock_claim_is_atomic_and_hashes_match_python(engine: Engine) ->
                 "PUT_DISPATCHED",
             )
             assert dispatched["event_type"] == "PUT_DISPATCHED"
-            with connection.begin_nested(), pytest.raises(
+            with pytest.raises(
                 DBAPIError,
                 match="CHRONOS_DISPATCH_PERMIT_ALREADY_EXISTS",
-            ):
+            ), connection.begin_nested():
                 append(
                     connection,
                     authority_id,
@@ -284,18 +284,18 @@ def test_get_permit_and_finalization_are_allowed_after_put_expiry(
         )
         append(connection, authority_id, operation_id, "PUT_DISPATCHED")
         for forbidden in ("PREEXISTING_CONFIRMED", "INTEGRITY_CONFLICT"):
-            with connection.begin_nested(), pytest.raises(
+            with pytest.raises(
                 DBAPIError,
                 match="CHRONOS_EFFECT_TRANSITION_FORBIDDEN",
-            ):
+            ), connection.begin_nested():
                 append(connection, authority_id, operation_id, forbidden)
         connection.execute(sa.text("SELECT pg_sleep(1.05)"))
         permit = append(connection, authority_id, operation_id, "R2_GET_DISPATCHED")
         assert permit["event_type"] == "R2_GET_DISPATCHED"
-        with connection.begin_nested(), pytest.raises(
+        with pytest.raises(
             DBAPIError,
             match="CHRONOS_R2_GET_PERMIT_ALREADY_EXISTS",
-        ):
+        ), connection.begin_nested():
             append(connection, authority_id, operation_id, "R2_GET_DISPATCHED")
         final = append(connection, authority_id, operation_id, "PREEXISTING_CONFIRMED")
         assert final["event_type"] == "PREEXISTING_CONFIRMED"
@@ -307,21 +307,21 @@ def test_null_nonce_and_identity_inputs_fail_closed(engine: Engine) -> None:
     with engine.connect() as connection:
         transaction = connection.begin()
         authority_id = issue(connection)
-        with connection.begin_nested(), pytest.raises(
+        with pytest.raises(
             DBAPIError,
             match="CHRONOS_GENERATION_NONCE_INVALID",
-        ):
+        ), connection.begin_nested():
             claim(connection, authority_id, generation=None)
-        with connection.begin_nested(), pytest.raises(
+        with pytest.raises(
             DBAPIError,
             match="CHRONOS_CLAIM_INPUT_INVALID",
-        ):
+        ), connection.begin_nested():
             claim(connection, authority_id, run_id=None)
         receipt = claim(connection, authority_id)
-        with connection.begin_nested(), pytest.raises(
+        with pytest.raises(
             DBAPIError,
             match="CHRONOS_GENERATION_NONCE_INVALID",
-        ):
+        ), connection.begin_nested():
             append(
                 connection,
                 authority_id,
@@ -344,10 +344,10 @@ def test_tables_are_append_only_even_for_owner(engine: Engine) -> None:
     with engine.connect() as connection:
         transaction = connection.begin()
         authority_id = issue(connection)
-        with connection.begin_nested(), pytest.raises(
+        with pytest.raises(
             DBAPIError,
             match="CHRONOS_APPEND_ONLY_MUTATION_FORBIDDEN",
-        ):
+        ), connection.begin_nested():
             connection.execute(
                 sa.text(
                     "UPDATE chronos_effect_authorities SET mission_id='mutated' "
@@ -355,10 +355,10 @@ def test_tables_are_append_only_even_for_owner(engine: Engine) -> None:
                 ),
                 {"id": authority_id},
             )
-        with connection.begin_nested(), pytest.raises(
+        with pytest.raises(
             DBAPIError,
             match="CHRONOS_APPEND_ONLY_MUTATION_FORBIDDEN",
-        ):
+        ), connection.begin_nested():
             connection.execute(sa.text("TRUNCATE chronos_effect_authorities"))
         transaction.rollback()
 

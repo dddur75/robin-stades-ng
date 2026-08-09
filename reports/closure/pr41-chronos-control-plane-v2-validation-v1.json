@@ -1,14 +1,15 @@
 {
   "schema_version": "pr41-chronos-control-plane-v2-validation-v1",
-  "generated_at": "2026-08-09T14:01:15Z",
+  "generated_at": "2026-08-09T14:36:33Z",
   "repository": "dddur75/robin-stades-ng",
   "branch": "codex/robin-chronos-control-plane-v2",
   "base_main_sha": "b03051d15e741eeb5293e0d3661572b2cb60eeba",
   "pull_request": {
     "number": 41,
     "required_state": "OPEN_DRAFT_NOT_MERGED",
-    "state_at_report_creation": "TO_BE_CREATED_AFTER_COMMIT",
-    "head_sha": "RESOLVE_EXACTLY_FROM_GITHUB_AFTER_COMMIT",
+    "state_at_report_update": "OPEN_DRAFT_NOT_MERGED",
+    "first_exact_ci_head_sha": "b8f812dae8888139d71f921df81b94861eccb66b",
+    "head_sha": "RESOLVE_EXACTLY_FROM_GITHUB_AFTER_SUCCESSOR_COMMIT",
     "self_reference_note": "The commit carrying this report cannot contain its own Git SHA."
   },
   "scope": {
@@ -118,7 +119,27 @@
       "targeted_revalidation": "63 passed in tests/jalon4/test_durable_shadow.py",
       "final_status": "CORRECTED_TARGETED_EXACT_HEAD_FULL_CI_REQUIRED"
     },
-    "exact_head_github_ci": "PENDING_AUTOMATIC_RUN_AFTER_DRAFT_PR_CREATION"
+    "exact_head_github_ci": {
+      "first_run_id": 31318237766,
+      "first_head_sha": "b8f812dae8888139d71f921df81b94861eccb66b",
+      "first_run_status": "FAILED_POSTGRESQL_CONTRACT",
+      "passed_jobs": [
+        "Historical Deep — contrat cache-only",
+        "Jalon 10 - entrees de preuve gelees"
+      ],
+      "failed_job": "tests",
+      "failed_step": "Tester les migrations",
+      "postgresql_contract_result": "4 failed, 3 passed",
+      "root_causes": [
+        "PL/pgSQL RETURN QUERY returned varchar(96) where the declared TABLE column is text in both claim branches",
+        "eight PostgreSQL negative tests nested pytest.raises inside the savepoint, causing RELEASE SAVEPOINT after the expected error was swallowed"
+      ],
+      "correction": [
+        "cast authority_id to text in both fresh and idempotent claim RETURN QUERY branches",
+        "place pytest.raises outside connection.begin_nested in all eight negative-test savepoints"
+      ],
+      "successor_status": "NOT_CREATED_PENDING_SUCCESSOR_COMMIT_PUSH_AND_EXACT_HEAD_CI"
+    }
   },
   "postgresql16_ci_contract": {
     "migration_actor": "NOSUPERUSER_CREATEROLE",
@@ -303,7 +324,7 @@
     "activation_in_this_mission": false
   },
   "known_non_blocking_limits": [
-    "PostgreSQL 16 and default-ACL behavior still require exact-head GitHub CI execution.",
+    "The bounded PostgreSQL tuple-type and savepoint corrections still require automatic exact-successor-head GitHub CI execution.",
     "R2 custom metadata and caller-supplied receipt hash are audit-only and not authoritative for creation.",
     "A durable permit can conservatively overcount a crash before the first socket byte; it never undercounts dispatch permission.",
     "Cross-generation recovery is deliberately refused; old pending chains remain immutable.",
@@ -324,7 +345,7 @@
   "costs": {
     "codex_elapsed_time": "NOT_MEASURED",
     "local_test_compute_cost": "NOT_MEASURED",
-    "github_ci_cost": "PENDING_AUTOMATIC_EXACT_HEAD_RUN",
+    "github_ci_cost": "NOT_MEASURED_FIRST_EXACT_HEAD_RUN_FAILED_SUCCESSOR_PENDING",
     "external_service_cost_eur": 0,
     "maintenance": "ONE_MAIN_MIGRATION_THREE_NATURAL_RUNTIME_MODULES"
   },
@@ -352,7 +373,7 @@
     "run_binding": "RUN_BOUND_AUTHORITY_READY",
     "restore_fence": "RESTORE_FENCE_READY",
     "r2_ledger": "R2_ATTRIBUTABLE_EFFECT_LEDGER_READY",
-    "local_review": "PR41_READY_FOR_REVIEW",
+    "local_review": "PR41_DRAFT_FIX_PENDING_EXACT_HEAD_CI",
     "global_before_exact_head_ci": "CHRONOS_CONTROL_PLANE_V2_FOUNDATION_READY_CONDITIONAL_EXACT_HEAD_CI"
   }
 }
