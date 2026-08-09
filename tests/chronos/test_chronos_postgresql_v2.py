@@ -20,6 +20,19 @@ from robin.storage.database import build_engine
 POSTGRES_URL = os.getenv("ROBIN_TEST_POSTGRES_URL", "")
 MIGRATOR_ROLE = os.getenv("ROBIN_TEST_CHRONOS_MIGRATOR_ROLE", "")
 SENTINEL_ROLE = os.getenv("ROBIN_TEST_CHRONOS_SENTINEL_ROLE", "")
+SCOPED_LOGIN_URLS = {
+    "chronos_authority_runtime_login": os.getenv(
+        "ROBIN_TEST_CHRONOS_AUTHORITY_URL", ""
+    ),
+    "chronos_effect_runtime_login": os.getenv("ROBIN_TEST_CHRONOS_RUNTIME_URL", ""),
+    "chronos_reader_login": os.getenv("ROBIN_TEST_CHRONOS_READER_URL", ""),
+}
+SCOPED_LOGIN_GROUPS = {
+    "chronos_authority_runtime_login": "chronos_authority_executor",
+    "chronos_effect_runtime_login": "chronos_runtime_writer",
+    "chronos_reader_login": "chronos_reader",
+}
+SCOPED_LOGINS_CONFIGURED = all(SCOPED_LOGIN_URLS.values())
 pytestmark = pytest.mark.skipif(
     not POSTGRES_URL,
     reason="local PostgreSQL contract service is not configured",
@@ -383,17 +396,21 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 "WHERE rolname LIKE 'chronos_%' ORDER BY rolname"
             )
         ).mappings().all()
-        assert {row["rolname"] for row in role_rows} == {
+        expected_roles = {
             "chronos_authority_executor",
             "chronos_reader",
             "chronos_runtime_writer",
             "chronos_test_writer",
         }
+        if SCOPED_LOGINS_CONFIGURED:
+            expected_roles.update(SCOPED_LOGIN_GROUPS)
+        assert {row["rolname"] for row in role_rows} == expected_roles
         for row in role_rows:
+            is_scoped_login = row["rolname"] in SCOPED_LOGIN_GROUPS
+            assert row["rolcanlogin"] == is_scoped_login
             assert not any(
                 row[name]
                 for name in (
-                    "rolcanlogin",
                     "rolsuper",
                     "rolcreatedb",
                     "rolcreaterole",
@@ -402,7 +419,12 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 )
             )
             assert row["rolconfig"] is None
-            assert row["provenance"] == "managed-by:0014_chronos_control_plane_v2"
+            expected_provenance = (
+                "ci-only:scoped-login-contract"
+                if is_scoped_login
+                else "managed-by:0014_chronos_control_plane_v2"
+            )
+            assert row["provenance"] == expected_provenance
         memberships = connection.execute(
             sa.text(
                 "SELECT granted.rolname AS granted_role,member.rolname AS member_role,"
@@ -416,19 +438,38 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
             )
         ).mappings().all()
         if MIGRATOR_ROLE:
-            assert {row["granted_role"] for row in memberships} == {
+            migrator_groups = {
                 "chronos_authority_executor",
                 "chronos_reader",
                 "chronos_runtime_writer",
                 "chronos_test_writer",
             }
-            assert len(memberships) == 4
+            expected_memberships = {
+                (role, MIGRATOR_ROLE) for role in migrator_groups
+            }
+            if SCOPED_LOGINS_CONFIGURED:
+                expected_memberships.update(
+                    (group, login) for login, group in SCOPED_LOGIN_GROUPS.items()
+                )
+            assert {
+                (row["granted_role"], row["member_role"]) for row in memberships
+            } == expected_memberships
             assert all(
-                row["member_role"] == MIGRATOR_ROLE
-                and row["bootstrap_grantor"]
-                and row["admin_option"]
-                and not row["inherit_option"]
-                and not row["set_option"]
+                row["bootstrap_grantor"]
+                and (
+                    (
+                        row["member_role"] == MIGRATOR_ROLE
+                        and row["admin_option"]
+                        and not row["inherit_option"]
+                        and not row["set_option"]
+                    )
+                    or (
+                        row["member_role"] in SCOPED_LOGIN_GROUPS
+                        and not row["admin_option"]
+                        and row["inherit_option"]
+                        and row["set_option"]
+                    )
+                )
                 for row in memberships
             )
         else:
@@ -515,6 +556,60 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 "EXECUTE",
             ),
         }
+
+
+@pytest.mark.skipif(
+    not SCOPED_LOGINS_CONFIGURED,
+    reason="the three PostgreSQL 16 scoped LOGIN fixtures are not configured",
+)
+def test_scoped_login_connections_enforce_allows_and_denials() -> None:
+    engines = {
+        role: build_engine(url) for role, url in SCOPED_LOGIN_URLS.items()
+    }
+    try:
+        authority_engine = engines["chronos_authority_runtime_login"]
+        runtime_engine = engines["chronos_effect_runtime_login"]
+        reader_engine = engines["chronos_reader_login"]
+
+        with authority_engine.begin() as connection:
+            assert connection.scalar(sa.text("SELECT current_user")) == (
+                "chronos_authority_runtime_login"
+            )
+            authority_id = issue(connection)
+        with authority_engine.connect() as connection:
+            with pytest.raises(DBAPIError) as denied:
+                connection.execute(
+                    sa.text("SELECT * FROM public.chronos_get_effect_state(:operation_id)"),
+                    {"operation_id": "0" * 64},
+                ).all()
+            assert getattr(denied.value.orig, "sqlstate", None) == "42501"
+
+        with runtime_engine.begin() as connection:
+            assert connection.scalar(sa.text("SELECT current_user")) == (
+                "chronos_effect_runtime_login"
+            )
+            operation_id = str(claim(connection, authority_id)["operation_id"])
+        with runtime_engine.connect() as connection:
+            with pytest.raises(DBAPIError) as denied:
+                issue(connection)
+            assert getattr(denied.value.orig, "sqlstate", None) == "42501"
+
+        with reader_engine.connect() as connection:
+            assert connection.scalar(sa.text("SELECT current_user")) == (
+                "chronos_reader_login"
+            )
+            state = connection.execute(
+                sa.text("SELECT * FROM public.chronos_get_effect_state(:operation_id)"),
+                {"operation_id": operation_id},
+            ).mappings().one()
+            assert state["operation_id"] == operation_id
+        with reader_engine.connect() as connection:
+            with pytest.raises(DBAPIError) as denied:
+                claim(connection, authority_id)
+            assert getattr(denied.value.orig, "sqlstate", None) == "42501"
+    finally:
+        for value in engines.values():
+            value.dispose()
 
 
 @pytest.mark.skipif(

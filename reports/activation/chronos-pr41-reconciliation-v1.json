@@ -1,6 +1,6 @@
 {
   "schema_version": "chronos-pr41-reconciliation-v1",
-  "observed_at": "2026-08-09T18:31:53Z",
+  "observed_at": "2026-08-09T19:02:22Z",
   "pr": 41,
   "pr_head_before": "355f593406a33dc4c91b8bc6c22513ef58eb0848",
   "main_merged": "3a190e912d429af08bbe007cea9cf91d560329e9",
@@ -32,7 +32,32 @@
     "bandit_high": 0,
     "json_yaml_python_parse": "PASS",
     "git_diff_check": "PASS",
-    "full_suite": "PENDING_CLEAN_LF_MERGE_COMMIT"
+    "full_suite": {
+      "head": "94a4188469e5a1e8044f2c7bf1ddba32e75c8807",
+      "passed": 1439,
+      "skipped": 18,
+      "failed": 0,
+      "duration_seconds": 342.37,
+      "note": "single clean-LF full suite completed before the bounded scoped-LOGIN CI-test correction"
+    },
+    "scoped_login_correction": {
+      "cycle": 1,
+      "production_code_modified": false,
+      "migration_sql_modified": false,
+      "ci_contract": "three distinct LOGIN connections must each prove an allowed operation and an effective denial",
+      "lifecycle": "all downgrade and reupgrade validation completes before the stateful scoped-LOGIN contract, with no later downgrade",
+      "targeted_validation": {
+        "passed": 15,
+        "skipped_without_local_postgresql": 8,
+        "ruff": "PASS",
+        "mypy_strict": "PASS",
+        "yaml": "PASS",
+        "bash_syntax": "PASS",
+        "secret_scan": "PASS",
+        "git_diff_check": "PASS"
+      },
+      "postgresql_16_execution": "PENDING_EXACT_HEAD_CI"
+    }
   },
   "external_effects": {
     "provider_calls": 0,
@@ -53,5 +78,17 @@
     "in_progress_runs": 0,
     "workflow_reactivation_authorized": false
   },
-  "verdict": "PASS_AND_HOLD_PENDING_FULL_SUITE_CI_REVIEWS_AND_ENVIRONMENT"
+  "protected_environment": {
+    "name": "chronos-control-plane-production",
+    "created_at": "2026-08-09T18:40:41Z",
+    "secrets": 0,
+    "protected_branches_only": true,
+    "workflow_authority": 0
+  },
+  "prepublication_reviews": {
+    "dba_sec": {"score": 96, "p0": 0, "p1": 0, "verdict": "PASS_CONDITIONAL_EXACT_HEAD_CI"},
+    "sre": {"score": 96, "p0": 0, "p1": 0, "verdict": "PASS_CONDITIONAL_EXACT_HEAD_CI"},
+    "dp6_red": {"score": 100, "p0": 0, "p1": 0, "verdict": "PASS"}
+  },
+  "verdict": "PASS_AND_HOLD_PENDING_EXACT_HEAD_POSTGRESQL_CI_AND_FINAL_REVIEWS"
 }

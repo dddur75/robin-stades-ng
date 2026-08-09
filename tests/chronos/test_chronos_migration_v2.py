@@ -260,7 +260,7 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
     assert "fake_now" not in source
 
 
-def test_ci_crosses_revision_0014_with_the_same_migrator() -> None:
+def test_ci_finishes_downgrade_cycle_before_stateful_scoped_login_contract() -> None:
     root = Path(__file__).resolve().parents[2]
     workflow = (root / ".github" / "workflows" / "ci.yml").read_text(
         encoding="utf-8"
@@ -270,9 +270,18 @@ def test_ci_crosses_revision_0014_with_the_same_migrator() -> None:
         "localhost:5432/robin_ci' python -m alembic downgrade "
         "0013_historical_evidence_index"
     )
-    first_cycle = migrator_downgrade + "\n          python -m alembic downgrade 0002_jalon2_shadow"
-    cleanup_cycle = migrator_downgrade + "\n          python -m alembic downgrade base"
+    cleanup_cycle = (
+        migrator_downgrade
+        + "\n          python -m alembic downgrade 0002_jalon2_shadow"
+        + "\n          python -m alembic downgrade base"
+    )
+    scoped_contract = (
+        "tests/chronos/test_chronos_postgresql_v2.py::"
+        "test_scoped_login_connections_enforce_allows_and_denials"
+    )
 
-    assert workflow.count(migrator_downgrade) == 2
-    assert first_cycle in workflow
+    assert workflow.count(migrator_downgrade) == 1
     assert cleanup_cycle in workflow
+    assert workflow.count("python -m alembic upgrade head") == 2
+    assert scoped_contract in workflow
+    assert "python -m alembic downgrade" not in workflow.split(scoped_contract, 1)[1]
