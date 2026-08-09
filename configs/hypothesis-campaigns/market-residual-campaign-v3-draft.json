@@ -1,0 +1,27 @@
+{
+  "schema_version": "market-residual-campaign-v3-draft",
+  "status": "NOT_OPENED_INSUFFICIENT_POINT_IN_TIME_SUPPORT",
+  "execution_allowed": false,
+  "primary_question": "Does a target-blind tag or admissible pair improve outcome probability relative to the devigged market?",
+  "primary_cutoff": "NEAR_KICKOFF",
+  "secondary_cutoffs": ["H24", "H6", "H2"],
+  "markets": ["MATCH_RESULT_90M", "TOTAL_GOALS_2_5_90M"],
+  "hypothesis_universe": {"atomic": 150, "admissible_pairs": 3590, "outcomes": 2, "global_test_count": 7480},
+  "multiplicity": {"family": "GLOBAL", "bonferroni_alpha": 0.000006684491978609626},
+  "primary_metric": "delta_log_loss_vs_devigged_market",
+  "secondary_metrics": ["delta_brier_vs_market", "calibration_residual", "coverage", "price_freshness", "market_overround", "league_concentration", "team_concentration", "temporal_stability"],
+  "confirmatory_thresholds": {"delta_log_loss_min": 0.005, "delta_brier_min": 0.002, "positive_folds_min": 4, "fold_count": 5, "final_fold_positive": true},
+  "power": {
+    "alpha": "0.05/7480",
+    "target_power": [0.8, 0.9],
+    "effective_sample_floor_80pct": {"effect_0_20": 675, "effect_0_15": 1200, "effect_0_10": 2699},
+    "effective_sample_floor_90pct": {"effect_0_20": 794, "effect_0_15": 1412, "effect_0_10": 3176},
+    "calendar_fixture_formula": "ceil(n_eff * design_effect / (prevalence * admissible_price_coverage))",
+    "variance_pilot_settled_fixtures_per_market": 194,
+    "thresholds_frozen_before_outcomes": true
+  },
+  "roi_enabled": false,
+  "real_bets": false,
+  "promotion_locked": true,
+  "triple_search_locked": true
+}
