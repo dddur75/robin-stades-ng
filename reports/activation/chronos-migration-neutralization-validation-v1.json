@@ -43,14 +43,16 @@
     {"role": "DBA_SEC", "score": null, "verdict": "PASS_NEUTRALIZATION_STOP_BEFORE_MIGRATION", "critical_objections_open": 0}
   ],
   "full_suite_observation": {
-    "checkout": "WINDOWS_CRLF",
-    "passed": 1335,
+    "checkout": "CLEAN_LF_AT_18fd1b53cf9e8c733886e23bdab51842a409e9e8",
+    "passed": 1360,
     "skipped": 11,
-    "failed": 26,
-    "classification": "CHECKOUT_LINE_ENDING_ARTIFACT",
-    "representative_difference": "Git blob LF bytes differ from CRLF working-tree bytes for immutable Phase C evidence",
+    "failed": 1,
+    "duration_seconds": 474.17,
+    "classification": "NEW_NON_PHASE_C_EDGES_REJECTED_BY_FROZEN_PHASE_C_RECORDER",
+    "failing_test": "tests/hypothesis_intelligence/test_phase_c_factory_contract.py::test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent",
+    "correction": "remove the two redundant Chronos edges while retaining claims, proof references and the decision node",
     "accepted_as_full_suite_gate": false,
-    "required_next_check": "run exactly once from a clean LF checkout before merge"
+    "required_next_check": "targeted recorder regression followed by exact-head remote CI"
   },
   "activation_constraints": {
     "workflow_hold_required": true,

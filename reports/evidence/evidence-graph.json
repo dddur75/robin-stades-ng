@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-09T17:35:35Z",
+  "generated_at":"2026-08-09T05:22:39Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1502,6 +1502,38 @@
       "successor_of":"COVERAGE.E3B.CAPABILITY_SCALE.V1.001"
     },
     {
+      "claim_id":"SECURITY.CHRONOS.MIGRATION.NEUTRALIZATION.V1.001",
+      "claim":"All production-capable Chronos workflow and composite-action migration paths are replaced by a fail-closed read-only exact-revision guard; only two localhost PostgreSQL 16 CI migration tests retain upgrade head.",
+      "scope":"CHRONOS_MIGRATION_PATH_NEUTRALIZATION",
+      "source":"structural workflow audit, targeted regression suites and independent SRE, DP6/RED and DBA/SEC reviews",
+      "grain":"one_reviewed_uncommitted_change_set",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"reports/activation/chronos-migration-neutralization-validation-v1.json",
+      "hash":"816ee633bfba24f365f2e16146cb8e5644cf8e5cc3d0fe67fff9c1a86f34cc68",
+      "code_revision":"b03051d15e741eeb5293e0d3661572b2cb60eeba",
+      "execution_id":"local-chronos-neutralization-20260809T173535Z",
+      "scientific_lineage_id":"NOT_APPLICABLE_OPERATIONAL_CONTROL",
+      "dataset_lineage_id":"git-workflow-inventory-main-b03051d1",
+      "status":"VERIFIED",
+      "verified_by":["DP5","DP6","A2"]
+    },
+    {
+      "claim_id":"SECURITY.CHRONOS.WORKFLOW.HOLD.V1.001",
+      "claim":"All 34 identified migration-capable GitHub Actions workflows were disabled manually with no queued or in-progress run observed; provider, R2 and database effects remained zero during the hold.",
+      "scope":"CHRONOS_GITHUB_ACTIONS_HOLD",
+      "source":"GitHub Actions workflow state and run-queue observation",
+      "grain":"one_repository_workflow_hold",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/activation/chronos-workflow-hold-v1.json",
+      "hash":"0b6f1fe03ec23174b1172840d3503c21ac87c9baa89de763224072d992c0e133",
+      "code_revision":"b03051d15e741eeb5293e0d3661572b2cb60eeba",
+      "execution_id":"github-workflow-hold-20260809",
+      "scientific_lineage_id":"NOT_APPLICABLE_OPERATIONAL_CONTROL",
+      "dataset_lineage_id":"github-actions-workflow-inventory-main-b03051d1",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","A2"]
+    },
+    {
       "claim_id":"DATA.PHASE_C.RAW_FIELD_CENSUS.V1.001",
       "claim":"The sanitized Phase C census covers 286,075 normalized rows, eleven entity types, 223 entity paths plus forty envelope paths and exactly 1,756 scientific fixtures without committing raw values or fixture IDs.",
       "scope":"PHASE_C_FIVE_LOCKED_2024_SEGMENTS_SANITIZED_CENSUS",
@@ -1874,38 +1906,6 @@
       "dataset_lineage_id":"PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA",
       "status":"BLOCKED",
       "verified_by":["DP2","DP5","DP6"]
-    },
-    {
-      "claim_id":"SECURITY.CHRONOS.MIGRATION.NEUTRALIZATION.V1.001",
-      "claim":"All production-capable Chronos workflow and composite-action migration paths are replaced by a fail-closed read-only exact-revision guard; only two localhost PostgreSQL 16 CI migration tests retain upgrade head.",
-      "scope":"CHRONOS_MIGRATION_PATH_NEUTRALIZATION",
-      "source":"structural workflow audit, targeted regression suites and independent SRE, DP6/RED and DBA/SEC reviews",
-      "grain":"one_reviewed_uncommitted_change_set",
-      "temporal_class":"CODE_AS_OF",
-      "artifact":"reports/activation/chronos-migration-neutralization-validation-v1.json",
-      "hash":"200ec62577bc87433ec981e791477943a5bef8945f842ea0ab7fa696011eddf3",
-      "code_revision":"b03051d15e741eeb5293e0d3661572b2cb60eeba",
-      "execution_id":"local-chronos-neutralization-20260809T173535Z",
-      "scientific_lineage_id":"NOT_APPLICABLE_OPERATIONAL_CONTROL",
-      "dataset_lineage_id":"git-workflow-inventory-main-b03051d1",
-      "status":"VERIFIED",
-      "verified_by":["DP5","DP6","A2"]
-    },
-    {
-      "claim_id":"SECURITY.CHRONOS.WORKFLOW.HOLD.V1.001",
-      "claim":"All 34 identified migration-capable GitHub Actions workflows were disabled manually with no queued or in-progress run observed; provider, R2 and database effects remained zero during the hold.",
-      "scope":"CHRONOS_GITHUB_ACTIONS_HOLD",
-      "source":"GitHub Actions workflow state and run-queue observation",
-      "grain":"one_repository_workflow_hold",
-      "temporal_class":"OBSERVED_AT",
-      "artifact":"reports/activation/chronos-workflow-hold-v1.json",
-      "hash":"0b6f1fe03ec23174b1172840d3503c21ac87c9baa89de763224072d992c0e133",
-      "code_revision":"b03051d15e741eeb5293e0d3661572b2cb60eeba",
-      "execution_id":"github-workflow-hold-20260809",
-      "scientific_lineage_id":"NOT_APPLICABLE_OPERATIONAL_CONTROL",
-      "dataset_lineage_id":"github-actions-workflow-inventory-main-b03051d1",
-      "status":"VERIFIED",
-      "verified_by":["C0","DP5","A2"]
     }
   ],
   "decision_nodes":[
@@ -1982,6 +1982,8 @@
     {"decision_id":"RCV3-20260808-071","ledger_record_hash":"f3491aeb57db93ba1ac776cd6625ada0cb3f1efbb28fb1638fe057b0225d7433"},
     {"decision_id":"RCV3-20260808-072","ledger_record_hash":"e99028e4a3acde46009e3e9a4c3e5487e773cbf7336a9125c320435f402e3e4d"},
     {"decision_id":"RCV3-20260808-073","ledger_record_hash":"3ea1cbebb2508e6b1415e78d92095772416b76373d70bf4a179adfb6f32e0147"},
+    {"decision_id":"RCV3-20260809-093","ledger_record_hash":"1106d07ab59fd286a9f1a30b1e7d99445081c2cf4dfe3380da51b090fc5a3425"},
+    {"decision_id":"RCV3-20260809-094","ledger_record_hash":"45e3ab2b2fcae6ae5d3acf3ad408af9389b7112fbb4b94f51eb283d726589c7d"},
     {"decision_id":"RCV3-20260808-074","ledger_record_hash":"6aaaf0107edd104a5dbecd7701bc5fa450408aa4f38ff807e11015bfc4fef28b"},
     {"decision_id":"RCV3-20260808-075","ledger_record_hash":"f66b7852b2c1c7da0c51f1b2e2e3ced99b147cfdc416f06779fe2fb83d58b970"},
     {"decision_id":"RCV3-20260808-076","ledger_record_hash":"266a793bffdbcfcb9dcedb22d0bc85a15754517af83746978a727746cb7283af"},
@@ -2000,8 +2002,7 @@
     {"decision_id":"RCV3-20260808-089","ledger_record_hash":"5f0c79755d89035cfd3e8bc69c5ad09717f47c815af6b8dae77f6155a6bec1e9"},
     {"decision_id":"RCV3-20260808-090","ledger_record_hash":"24927b7208e52f1a0deb248b5111592d3d634f1cc290d4ff4a377128893a555e"},
     {"decision_id":"RCV3-20260808-091","ledger_record_hash":"28d2aa6d06bf67762b5bad33a9a694a0d46d6b179e1d0f65031383eb2f885dcd"},
-    {"decision_id":"RCV3-20260809-092","ledger_record_hash":"cc339208bb353e5f13985db48d1894cec9fa7304b68fb2216c702c8f17a52fcc"},
-    {"decision_id":"RCV3-20260809-093","ledger_record_hash":"1106d07ab59fd286a9f1a30b1e7d99445081c2cf4dfe3380da51b090fc5a3425"}
+    {"decision_id":"RCV3-20260809-092","ledger_record_hash":"cc339208bb353e5f13985db48d1894cec9fa7304b68fb2216c702c8f17a52fcc"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2277,8 +2278,6 @@
     {"edge_id":"EDGE.271","from_claim_id":"REPLAY.PHASE_C.V2.FRESH_DETERMINISM.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.272","from_claim_id":"REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.273","from_claim_id":"SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.274","from_claim_id":"GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.275","from_claim_id":"SECURITY.CHRONOS.MIGRATION.NEUTRALIZATION.V1.001","to_decision_id":"RCV3-20260809-093","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.276","from_claim_id":"SECURITY.CHRONOS.WORKFLOW.HOLD.V1.001","to_decision_id":"RCV3-20260809-093","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.274","from_claim_id":"GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
