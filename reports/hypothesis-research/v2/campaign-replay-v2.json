@@ -1,0 +1,1465 @@
+{
+  "schema_version": "phase-c-v2-campaign-replay",
+  "generated_at": "2026-08-08T23:30:00Z",
+  "fresh_campaign_runs": 2,
+  "fresh_reducers": 2,
+  "fresh_directory_contract": {
+    "work_root_count": 2,
+    "output_root_count": 2,
+    "all_four_roots_resolved_disjoint": true,
+    "all_four_roots_empty_before_run": true
+  },
+  "fresh_run_receipts": [
+    {
+      "schema_version": "phase-c-v2-fresh-campaign-run-receipt",
+      "run_label": "A",
+      "campaign_hash": "a3ae9a7b1025ae85b8faed1130cdb7b70c37b1b4fceb61f89f0c735d80093fcc",
+      "work_root_empty_before_run": true,
+      "atomic_executed_in_run": true,
+      "atomic_transport_sha256": "9a8bb9dbda0ef81442c898551fbfbd4bd04307aee4c5ba1df07aa07ec2d7b5da",
+      "pair_shard_count": 64,
+      "all_pair_shards_started_from_zero": true,
+      "all_pair_shards_complete": true,
+      "shards": [
+        {
+          "shard_id": 0,
+          "pair_count": 50,
+          "results_hash": "e87216b54e0c91096df62785e586798b718476354690a6c64d98ebba0e94de6d",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 1,
+          "pair_count": 54,
+          "results_hash": "b50bfbbd0ec834f203276d7aa39c11e9d276f3e86619c610d3aebd5b82a32a04",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 2,
+          "pair_count": 69,
+          "results_hash": "ea006d56bac6a6dbeb995e82575a5c34690f21d9d7badd8270f3eef0aed8b2b6",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 3,
+          "pair_count": 56,
+          "results_hash": "b5e499cdad12b985c76bb7dcd670a57a2add1e495e72d6b389a030423b8045d3",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 4,
+          "pair_count": 69,
+          "results_hash": "48404eb7c7c2478bc0022dfad332a53f9775a7216544859b76f750a8fbbb402b",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 5,
+          "pair_count": 53,
+          "results_hash": "3e07fbd8e36fd2c7b44c5b91d74e8217198d87970c9a4816e3889b91bfb21a1a",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 6,
+          "pair_count": 51,
+          "results_hash": "c068cbdd2bfbffa852185dfa120524cf3109eeb82bc9875087b6a18ceda292c3",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 7,
+          "pair_count": 62,
+          "results_hash": "f650c2008c6427df0b9c1ead58bda298cfc76b4b290fdfd6785164d07ce15f63",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 8,
+          "pair_count": 47,
+          "results_hash": "39d838035ddbe43668a40a090ce6a861efc18da57243cf47c4a3243199e7a618",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 9,
+          "pair_count": 56,
+          "results_hash": "0dfe228079fb8d5b408d9818e3e69d5ea397f466e8e8bfeac54d3958838f6b76",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 10,
+          "pair_count": 59,
+          "results_hash": "b95bc263eb27097bd8942f4a70d2d0785ebb1d48f4cf79eca77a476e8ffbee81",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 11,
+          "pair_count": 48,
+          "results_hash": "912c7bc721fa13cd94ecd362ac3ec679cd90358f46ec6c2862135e7d2cb10616",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 12,
+          "pair_count": 53,
+          "results_hash": "5355b924917305e65c28f44f8cd869732380779534ba7bf67952d68204449338",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 13,
+          "pair_count": 68,
+          "results_hash": "13a1835110f83c074140a42228a1df19c55f13f0fc22e2418ad4418dbb7a0da6",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 14,
+          "pair_count": 52,
+          "results_hash": "7a3e88a5d711617041442493353bca170f1a9f06d59ed99f18a2158ccdeca80d",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 15,
+          "pair_count": 55,
+          "results_hash": "278572cd5b4467a371f260fde255a7909452631da9eb02e42e46537ca389935c",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 16,
+          "pair_count": 59,
+          "results_hash": "573a259a4553928c8c9f5850bc40752946fc4094d6547e750749871016399b94",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 17,
+          "pair_count": 55,
+          "results_hash": "c3276d1d4cdec4821229e6ac9806e1051ce9d00eab8c3b6641b487a3e55bc50c",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 18,
+          "pair_count": 65,
+          "results_hash": "47d4fd8da8e390fc4e9a375537f35b01dc4db248516840defeff5947d9971ddd",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 19,
+          "pair_count": 53,
+          "results_hash": "7644a9d473cd0cec24274178e5ee72faa2c39c5e58464a4cf3a36e4276222647",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 20,
+          "pair_count": 53,
+          "results_hash": "4c430bb31e6bb0293fbb0223961f8634dab80227acd67910ac150e037f3e9833",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 21,
+          "pair_count": 55,
+          "results_hash": "89ed9aaebc084b2ad7655b7aa33e9d931f21a0ffeb5d53a81e3d328f17b7a997",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 22,
+          "pair_count": 47,
+          "results_hash": "4147fc0cb1cabe4b62c76231a2429ebe74062c5373facb626886eea937816b79",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 23,
+          "pair_count": 42,
+          "results_hash": "1f2e70e359aa08c16295a3ca998552feef17aaba2f0c2438ae0186073f21bb23",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 24,
+          "pair_count": 52,
+          "results_hash": "e3d599820d517a7e1a22754de0dc5a51884b7d184899d87476255b846ba19cdc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 25,
+          "pair_count": 57,
+          "results_hash": "623af59e92eb6a5e6461b36f5ddf316150aec87124e412e08977c8f897ea1354",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 26,
+          "pair_count": 51,
+          "results_hash": "6dde1cbc32f47e03998c1927108d90fd43f149186673d8c73eb7b48f579d01cc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 27,
+          "pair_count": 61,
+          "results_hash": "22b7bc768b85309fe48776c54c0e341a52c16bc58c9c5db1ddc6b344c474665a",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 28,
+          "pair_count": 60,
+          "results_hash": "8bb15afd74942014a521f429808b0d4cd1a944e54a0dbdf83f94519b24eb57c7",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 29,
+          "pair_count": 50,
+          "results_hash": "2f9e703a75e8c76ba10b08be1482943af28e1e3a8292bb016c7808d5807cb898",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 30,
+          "pair_count": 58,
+          "results_hash": "ae4164ed6d844a9c652295fc40c3c5e1cc23d13473fc97d3295324e5073d996f",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 31,
+          "pair_count": 60,
+          "results_hash": "d0485b83e041ed8b82381a1a3104791ea6c8f860e98abfb955b77635f14bc4b6",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 32,
+          "pair_count": 45,
+          "results_hash": "3522d13d8d45eb8d43e6cf425f0e11f61f131a72ff4e0647d9ad5cee3c39820c",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 33,
+          "pair_count": 65,
+          "results_hash": "bfbb2603915d50fdd02c5ae072245135dcd5760a3cccb5df88bb6c6164a1f6eb",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 34,
+          "pair_count": 54,
+          "results_hash": "d34491c2002ebaa21e0bfbda27ea6e6ade6833f66f397ab0986186716bdbfed5",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 35,
+          "pair_count": 58,
+          "results_hash": "0849f77233eb103773cd886e0ac2229cef68920cfe9a8253a6e2716c4922e377",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 36,
+          "pair_count": 61,
+          "results_hash": "49394b7185464c874ffcd81a3ec210c5c7a07c3d4095950c084214006f727af1",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 37,
+          "pair_count": 62,
+          "results_hash": "326578680b63bde9430e7ee3c71685a67754edfd4de579c1e80d8537f7196ef8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 38,
+          "pair_count": 55,
+          "results_hash": "cba6eb13442ecc28414f9282ebf7fc2a95ae4916b6d854517a3fc55089ff92f9",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 39,
+          "pair_count": 48,
+          "results_hash": "60d0df5bf9d0cb867c88c18105b539b89f75e72faae487d4a0c32901dc487f11",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 40,
+          "pair_count": 62,
+          "results_hash": "89b608fce501a2857f5dabefb761bea74ea60d036287e57c20392bf0be0df1d8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 41,
+          "pair_count": 63,
+          "results_hash": "492b5738373e1c736fda2c950a199d25d9b44b19b60ee8886432524e18f38f52",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 42,
+          "pair_count": 61,
+          "results_hash": "3af8e14346bcb247b88e087d841a4d6e38740a49a18b103d7875b82a87cee649",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 43,
+          "pair_count": 49,
+          "results_hash": "80d99e6c29fabca5c94ece23fbb67dc8f79a8a14083d05c53eb051b2afb10198",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 44,
+          "pair_count": 71,
+          "results_hash": "04e881713c6017fb55c1fe037bc01bf6b606cb12ac28a166ef58df3a7b8be2e7",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 45,
+          "pair_count": 44,
+          "results_hash": "4a9a8aa928216bc228b31a99992cfcce5fd960863bec579d12a9654c463bb712",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 46,
+          "pair_count": 56,
+          "results_hash": "4171059dd74b90ffbe96766b2585779544a59d6cd1b66b4181085d13cc3d8391",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 47,
+          "pair_count": 49,
+          "results_hash": "f54b6a68ae94aefa6931eb666a3be87dde73300fa6b6d17a067a4b4f2537e2fc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 48,
+          "pair_count": 72,
+          "results_hash": "4a4aeb022f97643769e78f4c29dae4ac810cbe10f9202c73172373580a3b0ab8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 49,
+          "pair_count": 64,
+          "results_hash": "e1330b88d84bff6dd5c92f3587d75cd98b314bc16c5747221962d1175e2eb8bc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 50,
+          "pair_count": 46,
+          "results_hash": "23d456e31bfc4c45a687e2b29a2f53c8428d465e8d9febec7e19488ac2777256",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 51,
+          "pair_count": 55,
+          "results_hash": "0441ad622b83d34d7daf0e092468cf1f4d7b4f048a33587bd89f17645fa5f667",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 52,
+          "pair_count": 41,
+          "results_hash": "9ddd2aca5a26887e414c26c5679d4836eae8a0bcee97f77dcee43389332f9a9e",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 53,
+          "pair_count": 56,
+          "results_hash": "ab92815570d918c444e7162e8056fe74a5d9e55cdb09b64ff29ea6c0aa75fac8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 54,
+          "pair_count": 62,
+          "results_hash": "88687382e87cd1d844f1b46aa88290c824533b6a5defb04152346e3f6f0272cf",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 55,
+          "pair_count": 50,
+          "results_hash": "1fe3c52fb9766c24f8a13bc8bab4ba9a3d0f3b875fe3c74f0a3bb5545185fbe0",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 56,
+          "pair_count": 52,
+          "results_hash": "073b1d8a24261961713736561ecb1195ee91dda82ed5b14c59b25e201e19d4ff",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 57,
+          "pair_count": 52,
+          "results_hash": "2f3ca02995ec2878a3f68d40a41d98e193b73af57580996b6a8ec6c00c74cdee",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 58,
+          "pair_count": 68,
+          "results_hash": "5c53df526cf19f2827b9277b5a923ff178dc42fc0d4ca74ab772cf0daad77941",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 59,
+          "pair_count": 52,
+          "results_hash": "f92550457a7032b48ba406e6be49ac1386fa91c6980d95c943e633c941bc68cd",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 60,
+          "pair_count": 65,
+          "results_hash": "811ea4ca7ed82096aa71b971c46cf4426610dc1abbd36f42be6e68eb7ada2a33",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 61,
+          "pair_count": 51,
+          "results_hash": "14858cfbbc645c574618939608efb7f0354de9f74e878f870d55f0bd42a492b8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 62,
+          "pair_count": 52,
+          "results_hash": "c857a61c8a0103629dd587eda73bba3aeb34ad2d3978341205409c261a164639",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 63,
+          "pair_count": 69,
+          "results_hash": "a13a59fa2653a3fb055e116c42d6e3f7311a60a74d5e75833b3e4a39bf82b51b",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        }
+      ],
+      "receipt_hash": "cef97c7f73fcd07ed720f45bb4f25d2e520374cc82d7114f72a180d64edb1e9d"
+    },
+    {
+      "schema_version": "phase-c-v2-fresh-campaign-run-receipt",
+      "run_label": "B",
+      "campaign_hash": "a3ae9a7b1025ae85b8faed1130cdb7b70c37b1b4fceb61f89f0c735d80093fcc",
+      "work_root_empty_before_run": true,
+      "atomic_executed_in_run": true,
+      "atomic_transport_sha256": "9a8bb9dbda0ef81442c898551fbfbd4bd04307aee4c5ba1df07aa07ec2d7b5da",
+      "pair_shard_count": 64,
+      "all_pair_shards_started_from_zero": true,
+      "all_pair_shards_complete": true,
+      "shards": [
+        {
+          "shard_id": 0,
+          "pair_count": 50,
+          "results_hash": "e87216b54e0c91096df62785e586798b718476354690a6c64d98ebba0e94de6d",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 1,
+          "pair_count": 54,
+          "results_hash": "b50bfbbd0ec834f203276d7aa39c11e9d276f3e86619c610d3aebd5b82a32a04",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 2,
+          "pair_count": 69,
+          "results_hash": "ea006d56bac6a6dbeb995e82575a5c34690f21d9d7badd8270f3eef0aed8b2b6",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 3,
+          "pair_count": 56,
+          "results_hash": "b5e499cdad12b985c76bb7dcd670a57a2add1e495e72d6b389a030423b8045d3",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 4,
+          "pair_count": 69,
+          "results_hash": "48404eb7c7c2478bc0022dfad332a53f9775a7216544859b76f750a8fbbb402b",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 5,
+          "pair_count": 53,
+          "results_hash": "3e07fbd8e36fd2c7b44c5b91d74e8217198d87970c9a4816e3889b91bfb21a1a",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 6,
+          "pair_count": 51,
+          "results_hash": "c068cbdd2bfbffa852185dfa120524cf3109eeb82bc9875087b6a18ceda292c3",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 7,
+          "pair_count": 62,
+          "results_hash": "f650c2008c6427df0b9c1ead58bda298cfc76b4b290fdfd6785164d07ce15f63",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 8,
+          "pair_count": 47,
+          "results_hash": "39d838035ddbe43668a40a090ce6a861efc18da57243cf47c4a3243199e7a618",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 9,
+          "pair_count": 56,
+          "results_hash": "0dfe228079fb8d5b408d9818e3e69d5ea397f466e8e8bfeac54d3958838f6b76",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 10,
+          "pair_count": 59,
+          "results_hash": "b95bc263eb27097bd8942f4a70d2d0785ebb1d48f4cf79eca77a476e8ffbee81",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 11,
+          "pair_count": 48,
+          "results_hash": "912c7bc721fa13cd94ecd362ac3ec679cd90358f46ec6c2862135e7d2cb10616",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 12,
+          "pair_count": 53,
+          "results_hash": "5355b924917305e65c28f44f8cd869732380779534ba7bf67952d68204449338",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 13,
+          "pair_count": 68,
+          "results_hash": "13a1835110f83c074140a42228a1df19c55f13f0fc22e2418ad4418dbb7a0da6",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 14,
+          "pair_count": 52,
+          "results_hash": "7a3e88a5d711617041442493353bca170f1a9f06d59ed99f18a2158ccdeca80d",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 15,
+          "pair_count": 55,
+          "results_hash": "278572cd5b4467a371f260fde255a7909452631da9eb02e42e46537ca389935c",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 16,
+          "pair_count": 59,
+          "results_hash": "573a259a4553928c8c9f5850bc40752946fc4094d6547e750749871016399b94",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 17,
+          "pair_count": 55,
+          "results_hash": "c3276d1d4cdec4821229e6ac9806e1051ce9d00eab8c3b6641b487a3e55bc50c",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 18,
+          "pair_count": 65,
+          "results_hash": "47d4fd8da8e390fc4e9a375537f35b01dc4db248516840defeff5947d9971ddd",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 19,
+          "pair_count": 53,
+          "results_hash": "7644a9d473cd0cec24274178e5ee72faa2c39c5e58464a4cf3a36e4276222647",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 20,
+          "pair_count": 53,
+          "results_hash": "4c430bb31e6bb0293fbb0223961f8634dab80227acd67910ac150e037f3e9833",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 21,
+          "pair_count": 55,
+          "results_hash": "89ed9aaebc084b2ad7655b7aa33e9d931f21a0ffeb5d53a81e3d328f17b7a997",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 22,
+          "pair_count": 47,
+          "results_hash": "4147fc0cb1cabe4b62c76231a2429ebe74062c5373facb626886eea937816b79",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 23,
+          "pair_count": 42,
+          "results_hash": "1f2e70e359aa08c16295a3ca998552feef17aaba2f0c2438ae0186073f21bb23",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 24,
+          "pair_count": 52,
+          "results_hash": "e3d599820d517a7e1a22754de0dc5a51884b7d184899d87476255b846ba19cdc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 25,
+          "pair_count": 57,
+          "results_hash": "623af59e92eb6a5e6461b36f5ddf316150aec87124e412e08977c8f897ea1354",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 26,
+          "pair_count": 51,
+          "results_hash": "6dde1cbc32f47e03998c1927108d90fd43f149186673d8c73eb7b48f579d01cc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 27,
+          "pair_count": 61,
+          "results_hash": "22b7bc768b85309fe48776c54c0e341a52c16bc58c9c5db1ddc6b344c474665a",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 28,
+          "pair_count": 60,
+          "results_hash": "8bb15afd74942014a521f429808b0d4cd1a944e54a0dbdf83f94519b24eb57c7",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 29,
+          "pair_count": 50,
+          "results_hash": "2f9e703a75e8c76ba10b08be1482943af28e1e3a8292bb016c7808d5807cb898",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 30,
+          "pair_count": 58,
+          "results_hash": "ae4164ed6d844a9c652295fc40c3c5e1cc23d13473fc97d3295324e5073d996f",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 31,
+          "pair_count": 60,
+          "results_hash": "d0485b83e041ed8b82381a1a3104791ea6c8f860e98abfb955b77635f14bc4b6",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 32,
+          "pair_count": 45,
+          "results_hash": "3522d13d8d45eb8d43e6cf425f0e11f61f131a72ff4e0647d9ad5cee3c39820c",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 33,
+          "pair_count": 65,
+          "results_hash": "bfbb2603915d50fdd02c5ae072245135dcd5760a3cccb5df88bb6c6164a1f6eb",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 34,
+          "pair_count": 54,
+          "results_hash": "d34491c2002ebaa21e0bfbda27ea6e6ade6833f66f397ab0986186716bdbfed5",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 35,
+          "pair_count": 58,
+          "results_hash": "0849f77233eb103773cd886e0ac2229cef68920cfe9a8253a6e2716c4922e377",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 36,
+          "pair_count": 61,
+          "results_hash": "49394b7185464c874ffcd81a3ec210c5c7a07c3d4095950c084214006f727af1",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 37,
+          "pair_count": 62,
+          "results_hash": "326578680b63bde9430e7ee3c71685a67754edfd4de579c1e80d8537f7196ef8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 38,
+          "pair_count": 55,
+          "results_hash": "cba6eb13442ecc28414f9282ebf7fc2a95ae4916b6d854517a3fc55089ff92f9",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 39,
+          "pair_count": 48,
+          "results_hash": "60d0df5bf9d0cb867c88c18105b539b89f75e72faae487d4a0c32901dc487f11",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 40,
+          "pair_count": 62,
+          "results_hash": "89b608fce501a2857f5dabefb761bea74ea60d036287e57c20392bf0be0df1d8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 41,
+          "pair_count": 63,
+          "results_hash": "492b5738373e1c736fda2c950a199d25d9b44b19b60ee8886432524e18f38f52",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 42,
+          "pair_count": 61,
+          "results_hash": "3af8e14346bcb247b88e087d841a4d6e38740a49a18b103d7875b82a87cee649",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 43,
+          "pair_count": 49,
+          "results_hash": "80d99e6c29fabca5c94ece23fbb67dc8f79a8a14083d05c53eb051b2afb10198",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 44,
+          "pair_count": 71,
+          "results_hash": "04e881713c6017fb55c1fe037bc01bf6b606cb12ac28a166ef58df3a7b8be2e7",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 45,
+          "pair_count": 44,
+          "results_hash": "4a9a8aa928216bc228b31a99992cfcce5fd960863bec579d12a9654c463bb712",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 46,
+          "pair_count": 56,
+          "results_hash": "4171059dd74b90ffbe96766b2585779544a59d6cd1b66b4181085d13cc3d8391",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 47,
+          "pair_count": 49,
+          "results_hash": "f54b6a68ae94aefa6931eb666a3be87dde73300fa6b6d17a067a4b4f2537e2fc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 48,
+          "pair_count": 72,
+          "results_hash": "4a4aeb022f97643769e78f4c29dae4ac810cbe10f9202c73172373580a3b0ab8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 49,
+          "pair_count": 64,
+          "results_hash": "e1330b88d84bff6dd5c92f3587d75cd98b314bc16c5747221962d1175e2eb8bc",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 50,
+          "pair_count": 46,
+          "results_hash": "23d456e31bfc4c45a687e2b29a2f53c8428d465e8d9febec7e19488ac2777256",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 51,
+          "pair_count": 55,
+          "results_hash": "0441ad622b83d34d7daf0e092468cf1f4d7b4f048a33587bd89f17645fa5f667",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 52,
+          "pair_count": 41,
+          "results_hash": "9ddd2aca5a26887e414c26c5679d4836eae8a0bcee97f77dcee43389332f9a9e",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 53,
+          "pair_count": 56,
+          "results_hash": "ab92815570d918c444e7162e8056fe74a5d9e55cdb09b64ff29ea6c0aa75fac8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 54,
+          "pair_count": 62,
+          "results_hash": "88687382e87cd1d844f1b46aa88290c824533b6a5defb04152346e3f6f0272cf",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 55,
+          "pair_count": 50,
+          "results_hash": "1fe3c52fb9766c24f8a13bc8bab4ba9a3d0f3b875fe3c74f0a3bb5545185fbe0",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 56,
+          "pair_count": 52,
+          "results_hash": "073b1d8a24261961713736561ecb1195ee91dda82ed5b14c59b25e201e19d4ff",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 57,
+          "pair_count": 52,
+          "results_hash": "2f3ca02995ec2878a3f68d40a41d98e193b73af57580996b6a8ec6c00c74cdee",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 58,
+          "pair_count": 68,
+          "results_hash": "5c53df526cf19f2827b9277b5a923ff178dc42fc0d4ca74ab772cf0daad77941",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 59,
+          "pair_count": 52,
+          "results_hash": "f92550457a7032b48ba406e6be49ac1386fa91c6980d95c943e633c941bc68cd",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 60,
+          "pair_count": 65,
+          "results_hash": "811ea4ca7ed82096aa71b971c46cf4426610dc1abbd36f42be6e68eb7ada2a33",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 61,
+          "pair_count": 51,
+          "results_hash": "14858cfbbc645c574618939608efb7f0354de9f74e878f870d55f0bd42a492b8",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 62,
+          "pair_count": 52,
+          "results_hash": "c857a61c8a0103629dd587eda73bba3aeb34ad2d3978341205409c261a164639",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        },
+        {
+          "shard_id": 63,
+          "pair_count": 69,
+          "results_hash": "a13a59fa2653a3fb055e116c42d6e3f7311a60a74d5e75833b3e4a39bf82b51b",
+          "resumed_from": 0,
+          "recomputed_prefix_count": 0
+        }
+      ],
+      "receipt_hash": "727da8e96610a1941343e2e5dba81b5192d87682b0f8335a2657c49d9f10ebff"
+    }
+  ],
+  "result_file_count": 86,
+  "result_files": [
+    {
+      "path": "reports/hypothesis-research/v2/atomic-results-summary-v2.json",
+      "bytes": 237250,
+      "sha256": "5c1e2c1333b107cc18e6ab0e3ac6d5a3e8c99e7c63c61aa8db9619517d412ebf"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/campaign-multiplicity-v2.json",
+      "bytes": 384,
+      "sha256": "4a0f3c64a69944dc69853445c2c6012c8c122d0922f98ad6f6bfd204eee630a3"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/dashboard-data-contract-v2.json",
+      "bytes": 806,
+      "sha256": "7756809542261c73625072286a51ad53b56c45c3a034361adc6a9e11b323bfd6"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full-results-manifest-v2.json",
+      "bytes": 37894,
+      "sha256": "ba2b52ea18bd0f57a934086f19995d69423fad2d280cccafe49a8683b7c0fdd7"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-00-v2.json.gz",
+      "bytes": 10655,
+      "sha256": "5ce162784a09b381224e8adb8eedc9815953b12334af76e2a0dcf9a4c5f0c413",
+      "content_sha256": "fd26b5d2a81d94ff0f50c88d534b46b458dff6ae45ffa8ffa9474e68abd726bd"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-01-v2.json.gz",
+      "bytes": 10554,
+      "sha256": "61d4d12ce6e77c0a77f36fe33971af8097ff1833e54733e8d2bd291dbb9c6b11",
+      "content_sha256": "4c288c4c6b4514748c55342932c58608d669d744b6b5520d307d53e30ff215e9"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-02-v2.json.gz",
+      "bytes": 10533,
+      "sha256": "1371fa51e5b820ceec253f23b44535ee9f996e031d84da7e7191a290b47022ef",
+      "content_sha256": "ddc261ae985cc825f0fa9fd5919f7c9920859196e78a5e492b8e79d00edc8458"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-03-v2.json.gz",
+      "bytes": 10887,
+      "sha256": "f5c9aba932de5fa8b1e801e6675f8263db531d99ea1c787ec530a311ebba079b",
+      "content_sha256": "40cf26f91774942ba817a46d81b5f4f4038c75a4d4e4fee31f21c8ed6857a5ae"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-04-v2.json.gz",
+      "bytes": 10603,
+      "sha256": "3037fd2848e0631e7686af1b1ec8bd4a4400cf9383b126624d0d1da986751529",
+      "content_sha256": "0ab1f3aaad5aef5a027417ed5032d8a11370f644cf8437649afb7b9bb2b79212"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-05-v2.json.gz",
+      "bytes": 10981,
+      "sha256": "8b510968ba045c87b078c2b2309415b0d5f968d5a57f74130c51b3b231653084",
+      "content_sha256": "4d0278450779575c03bcff41ffd1fd5d4431fabd9b8a76aaeb53e35a6a65e1fa"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-06-v2.json.gz",
+      "bytes": 9733,
+      "sha256": "d45638372bee56c0d56b0a2a9c778fb61661dc4da8f8f274f89182df58061b6c",
+      "content_sha256": "981634ba9e500a57673dbb04e2eb9d8def8a8c789440353a42052e2ab8777dd7"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-07-v2.json.gz",
+      "bytes": 9709,
+      "sha256": "36099824d868e34b9b932f06dd9eeeb74ae9f58ca55cc9500256db8442d6a0dc",
+      "content_sha256": "a0662135432d3b2811b1f073a5ee11b0e16b79f704b18784de93ccf2a0e550f2"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-08-v2.json.gz",
+      "bytes": 9828,
+      "sha256": "b90dd33722efa32135039cdaa6b8884fdff1d6b6aa28dee89c432d9416db91d8",
+      "content_sha256": "d73d3a4d2a5f3d78c5ce69332e37a795d7d63fcffd14cce1839f9b0c7f1cc763"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-09-v2.json.gz",
+      "bytes": 9590,
+      "sha256": "b85dfcc32a4ceceffb7b748f9516a5e24165cff8d20b7d5ea79d77beae93f678",
+      "content_sha256": "4e09092acde9b22e3afc594cd9540a2953fa16f7290bf9d021a85540c8f811e8"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-10-v2.json.gz",
+      "bytes": 10238,
+      "sha256": "8b537404fd4fa4b3c6bdf92ab3502c7c4ff52fe7bdbe04e7671cd6a25b794ba2",
+      "content_sha256": "54cda980288ea323e97f4731b8ba989883f8495d8244f0981306c5a3a66a6169"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-11-v2.json.gz",
+      "bytes": 9700,
+      "sha256": "6a852acc7e3adcb15498fd18f86d76bcf54a158b43496aab2f90605fc5ae77e2",
+      "content_sha256": "16e129b449f0f6931306778f17f38f56d8c9f98cedab1a8e0266f2df94891382"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-12-v2.json.gz",
+      "bytes": 9773,
+      "sha256": "9d3fb43b94ef97b05355f05f810c4013cbf3af4537d005ce03e160d575aeea16",
+      "content_sha256": "025f115a452ff0270c272d7751d762bf4396bf6df5dd2f2f67c07ccec6a3640b"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-13-v2.json.gz",
+      "bytes": 9573,
+      "sha256": "46356a8103a1f55eaffc4c3bd12e16f99be5c71c1e2f9f2176dfaa049819a710",
+      "content_sha256": "36a44fb874dfa814debc2072324d73dbe56c6e2e1d59d9903108ae4fc95ffcd6"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-14-v2.json.gz",
+      "bytes": 9768,
+      "sha256": "0329c95a2e21170669347d82338f1ca5f1176aa1179d5f7f9f6d1f31ddebe1fa",
+      "content_sha256": "523585bf692b6f691a51263cb5872da9be1cc6d51c81bd14a89c4583b6c5daa3"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/atomic-results-shard-15-v2.json.gz",
+      "bytes": 9812,
+      "sha256": "3095f42347fe5bce77d7e38d0d8a322bfc45ebdb8013e31fb5876b9585cc53ae",
+      "content_sha256": "2ed44cc22676c9a7bd216fd2c4235007d3e7a61b369c6702f22fb5b238876286"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-00-v2.json.gz",
+      "bytes": 115032,
+      "sha256": "7ee47f022759c9b0cbe9b618dd7658d93a08cbbfe13529d4bfa1955000ee9250",
+      "content_sha256": "ba650b3a40b518dc8b87ecdb11845a4f775543a1ea7ba890e9928f2032dad57c"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-01-v2.json.gz",
+      "bytes": 123662,
+      "sha256": "4eb726daef604f95100b307c2dda0ad66a3709a8badc0db29c8c0f9e6b1e5d18",
+      "content_sha256": "b6276f4b6a1cae36a113d92f02f98e9a5cb383776544496931cb092f3a21077b"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-02-v2.json.gz",
+      "bytes": 159784,
+      "sha256": "554030082f2536a831d4dee2de81772a41c1b886c14123b27e29e83be1799e98",
+      "content_sha256": "97cb7fd3efa8188d0fbf0dae2c2e57d59f2324f2e1a82ee72231b999ddfe4bf9"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-03-v2.json.gz",
+      "bytes": 128387,
+      "sha256": "8d3dacfc97a839d171147f8fddda6b26974208e8570a42fba296282b23d03482",
+      "content_sha256": "e6bb6f8e85f35ef30466fd2e732a3a4bb88969abc6c49ba1b9b51a444c4e6e5d"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-04-v2.json.gz",
+      "bytes": 159427,
+      "sha256": "87d74fbe0ab3b7cd6d7a7c4002209f7ad28d84c18677831235a4fbbe7887d037",
+      "content_sha256": "926a02e6657f6013aecca369a082df7c05c3ccf584d5ff6ad0196bfa0e674564"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-05-v2.json.gz",
+      "bytes": 118931,
+      "sha256": "9f7c06c530df77212245bdb7058728506ae1d7a1e783b8c945bc769fd4c443dc",
+      "content_sha256": "b22dfd1acce206be556cfe1522b490f6b66842f5ba00d181f98f078acbf53fc8"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-06-v2.json.gz",
+      "bytes": 116092,
+      "sha256": "3a444ebe55101c85d1cef296deeee785c9f94e7c481224423ca6ad46c013d4e6",
+      "content_sha256": "941c534a5b4fc28790107b22811af95ef2dc2c423a9533b6b57197126922b600"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-07-v2.json.gz",
+      "bytes": 141552,
+      "sha256": "93e3cf29ac32dd3a53271a0f78bf6e2b9d1ad906f0457f8d7b4d6084a0285326",
+      "content_sha256": "7a8f5fc5d28270bbf3ea2d9ba365b7ab15c8b5dd76d4f9f3bdea9daaaff0d2d1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-08-v2.json.gz",
+      "bytes": 107602,
+      "sha256": "9ea3a71dfb64681e31c9794063ba9e3d731c3e9dc1f31c3fb993e375cced371c",
+      "content_sha256": "21e1c3beb8b68645694172d95dfa0b71df67b74df2f56cd58435d13933b2bd55"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-09-v2.json.gz",
+      "bytes": 129431,
+      "sha256": "07fbcb2b494de9f55e9cd7a891064c9a3c18ef1d914d072aed493dd2d5b2d4ed",
+      "content_sha256": "b935c94516a6eb37d228e6a74f9ea2b40753f8bb9ab56f22e8354c2ce48cbdc7"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-10-v2.json.gz",
+      "bytes": 135826,
+      "sha256": "d7d72568c6187aab42ab327351e99f692af8763d08e4fac7f9f5d2337d1ac01e",
+      "content_sha256": "227b3177a081e373a8c4395de8924b3efe2788636a74b2454545c0b8d2e846a7"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-11-v2.json.gz",
+      "bytes": 110656,
+      "sha256": "0891dd2b3d98f371293b8d7408068c06d7f1dbfa463669318f5b334b2a438864",
+      "content_sha256": "6b3576b513f1d5e305159d408494002e386cd848d8412b4f9fda98dc7ed4365f"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-12-v2.json.gz",
+      "bytes": 121430,
+      "sha256": "c25be1e9c5bfa5dbcfdafc607d3923c898e32641617add01d1e3e1822829ed2b",
+      "content_sha256": "03ce31f49136ddb3ec1617e5fe877014b74770e6fe1eb49b9e8cfef1d4998175"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-13-v2.json.gz",
+      "bytes": 157621,
+      "sha256": "f63d28827aec28af846b80f4066df83026ec1997b65b7f14addd572da3ce00a5",
+      "content_sha256": "77207240389e469da09bc763883e5fff72a01c5c630e5f35f6c586514cffcf86"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-14-v2.json.gz",
+      "bytes": 120451,
+      "sha256": "cb21a275e36b6e3d0ef09383d0808f9ce58ca4f608070075b2aefae739841c41",
+      "content_sha256": "43949ac660ce57a26a28ea7d62e6ae61bbbc91ed2c41e8ce87fb94a137b4484b"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-15-v2.json.gz",
+      "bytes": 128733,
+      "sha256": "c6c22cdecd28ba59dd939eb23db063f64efef4ff8c5f847be17b609b9ff4f9cc",
+      "content_sha256": "792be2f296f8c456865b55ad132686f8694f5ac8cba9374db17d58f96663134c"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-16-v2.json.gz",
+      "bytes": 137145,
+      "sha256": "016b070cccbb670a290fdcd514c2d0000cad7a5fe21c2a21c8719a7c20893ad1",
+      "content_sha256": "43198b449d7f5829f25f867e7aafb3a93e48efd26ddcc0dcc5f513832a4fefd1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-17-v2.json.gz",
+      "bytes": 124574,
+      "sha256": "59b8d99cc40b7d9c0a9a581515c8ddfe4a49dfb3bc3f92780962e85ed189c01b",
+      "content_sha256": "9ab25f947ac82b470c997edc290a363650c00fd147cb449cf7a32bc28a55d1a4"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-18-v2.json.gz",
+      "bytes": 152651,
+      "sha256": "7604cf1e1ac3e7054e1e82429b38b5feeb6ca2c84165f8a4e9cfafd98f67740d",
+      "content_sha256": "fab6402c139011dad03ed6a58755345f6fac0eec027dea5adcdc54d595efea15"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-19-v2.json.gz",
+      "bytes": 124094,
+      "sha256": "7322bccb1d73a980dbf31163fc3f4e8000cec8cbbf6fba597bf3001d226b3edd",
+      "content_sha256": "d8a3145e55fad582191fda93933b801055636e0cb91f55ea3b31f0443e5cf0d2"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-20-v2.json.gz",
+      "bytes": 122356,
+      "sha256": "edfa1d83e383bbc7ce0f00e2ac41b199d056ccee7ca2cb4044085ef64c8a7725",
+      "content_sha256": "f0e5295eb62b21627ef6e23e17f2357c8fa4cfb92c8df674b649b26464e3d9c7"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-21-v2.json.gz",
+      "bytes": 127877,
+      "sha256": "4cadeb58a010f1a7feefc9d19aa9ff8f7210d4ee2646fcddd3539f27e3291ece",
+      "content_sha256": "df5082c95d109d9bc6b0c356b12d157e5b3e0f601a3bc75415ad83fff912656e"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-22-v2.json.gz",
+      "bytes": 108899,
+      "sha256": "506a0aa026945d6909abd8b49f5f2bacbad3465e0a116b69ea4ed687c8d4d68c",
+      "content_sha256": "a3d11bc969211d013deafe38efdd70eca5e0ab56b778428739e8f4959bfe8803"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-23-v2.json.gz",
+      "bytes": 98290,
+      "sha256": "f9fd381e50aef8abd03e9f7dc209b06269eb29840435909760a4a223c4089926",
+      "content_sha256": "02b7ed30a7ef2cfd03a43bfb2fed9896d4d48e56487675b0ea1fd12f4d964667"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-24-v2.json.gz",
+      "bytes": 119784,
+      "sha256": "b2b23dd3fead73edb65f936687778549243e3022abf4a098bbbb973a3fec5a98",
+      "content_sha256": "f218443e606ea7e780d8c2e757b8aa814d69b055657b7128e29a3ab748564d7b"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-25-v2.json.gz",
+      "bytes": 131504,
+      "sha256": "cb164dfb1e24cb0f75656289d32f80db922d2418b183253377ee3f441d6759d9",
+      "content_sha256": "c8aa463513f067bc74b0da1b49ec41a8930f8e8ee66f6b80e91755346c689ae9"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-26-v2.json.gz",
+      "bytes": 118410,
+      "sha256": "0defa97057cc1e3c157e278b3dbf29eecaf162fa9c42f5c94043c7bf5216897b",
+      "content_sha256": "54b019302e37e871ef8eb3fda235726508c2eb0f6974c58cc9d15e338fd6d659"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-27-v2.json.gz",
+      "bytes": 138830,
+      "sha256": "c253cdc2063a29450ddc4bc1103ccc213c8cd3eb6cd601fe11006babfdd5fd4c",
+      "content_sha256": "2fce8eba098a60de0941e1fe29ee12a60ae0dd90326b6e265a3bb57162bc90ef"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-28-v2.json.gz",
+      "bytes": 138524,
+      "sha256": "495eb787cff1abb4afeaabc4c39c17bcee4fdf499e41847cd04bc5b350f4e132",
+      "content_sha256": "a36e805d7cb1fdcc0b83b8042574b114bcac1b2929386bfaf9ea3f36317c3318"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-29-v2.json.gz",
+      "bytes": 117338,
+      "sha256": "e3e2beeee870e05d4789932f068dad94d73cceca9e4e423c8792af068a265507",
+      "content_sha256": "ef7650579a34bffb92f79fb88f5a469558d9b938639430f6a05fa58581286395"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-30-v2.json.gz",
+      "bytes": 134556,
+      "sha256": "a6b0b7307a3b5a0f625bdab0f8430f2daeb62dd4dd266da76d28385ee86850c8",
+      "content_sha256": "d6b42ed4d5ee58f65be09aa69bce71be6ed1aed5e0b79b50e6d0e1adbd3c6a0a"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-31-v2.json.gz",
+      "bytes": 138386,
+      "sha256": "2e7e854e645130e19fece6dcfc08e824bdcf70bc90ea6907fe49e2f7cceb828e",
+      "content_sha256": "aeda8c9c660225c99e3438f85745c8256dca72d588d48532b38da880dc6cbb58"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-32-v2.json.gz",
+      "bytes": 102891,
+      "sha256": "6f2f202bff11caf876661f1062d2ea386db634d7158c9980c29a206d84a95c97",
+      "content_sha256": "596af0118026250e0511e295771437a58f40df92b481df6ae8566208214f2c0a"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-33-v2.json.gz",
+      "bytes": 151802,
+      "sha256": "5ae39afb29421bcc8fee0d602374cf6ff66783387539cbe8ee567981ae03d41e",
+      "content_sha256": "d6f500f147133b5433039e45d494960fe58424607d66d80a48ab74c421320943"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-34-v2.json.gz",
+      "bytes": 124156,
+      "sha256": "bdf3e770e6f577fd71a1b499defa2ee8649ff54b4c6b51f296bd0355248979fa",
+      "content_sha256": "28c1083b6182c749ee2389f4a346a45aafafd284369b6be70e86ccd1e0f264db"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-35-v2.json.gz",
+      "bytes": 134481,
+      "sha256": "023cb470e3b32eea914b9268d71277a6ad0c665d6c313473ece074c1c9e57d8a",
+      "content_sha256": "eb5d077b6b34fe5de0edda56128c2c89724e0cda4a4646d5c4026f8ab7c28c2e"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-36-v2.json.gz",
+      "bytes": 140624,
+      "sha256": "a9b27892509bdcb750ccb9059667757905d6257a146a59d51371723986bf58e0",
+      "content_sha256": "7296a2e97c485323f2966a1eed3e767954a76df963a4e2c78020352b38c203fe"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-37-v2.json.gz",
+      "bytes": 142671,
+      "sha256": "7592f9c3791839c2d29a6d8ba97be5e292840d92dc27d89724b232baa8c09514",
+      "content_sha256": "723cb1d48d7ee2e6b897a5678e626e527e82c551c4bfe2e899a2112fc3907a44"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-38-v2.json.gz",
+      "bytes": 125681,
+      "sha256": "9e65ec3f56d7e87552b8f5f3f5e906547e53996ec016c47a1900fb3a5a58506b",
+      "content_sha256": "6eb179a7a2f1ed595a900992aa8c199d799186005f6c9fb637b281472ece154f"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-39-v2.json.gz",
+      "bytes": 111813,
+      "sha256": "11b6ec0ae23b569a8f89d40a99af853eccadfbcd0d3d803930c9b194e3866db3",
+      "content_sha256": "d1f3980b2cdd8538798a1b9c1f4f5056e4360ba16a124a9cab1f2cd4b74501fb"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-40-v2.json.gz",
+      "bytes": 143500,
+      "sha256": "e09f15f89502a0480c7219cf298411e2094b6805591bf62b5ca68b92828c88e9",
+      "content_sha256": "9680391c8e2e0cf951fe474e1dad4129b2a1d872b1abb7d7c848ca93509ef697"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-41-v2.json.gz",
+      "bytes": 142940,
+      "sha256": "f316d647148ec4a403154a1d6b016231e73d476a6a53ebedc4197664ca521338",
+      "content_sha256": "4469ebe45990b4dc0c36e710a061b387b2f4cff849232a508569dfe40f54ba3a"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-42-v2.json.gz",
+      "bytes": 141149,
+      "sha256": "7125dac4afa956d665a0cde52d30b8f23ed538d77dbfa8cd0a541eb46b4c19e5",
+      "content_sha256": "1fd4444669e7a93fe67a8bbc217bb3c8d5c6441c9469f74efb5b0cc1f0ff45bd"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-43-v2.json.gz",
+      "bytes": 111690,
+      "sha256": "11bc30ef8bc4d7029d60eeada1d7e2717c86343c55b3cdbeb457a172cd0dc87a",
+      "content_sha256": "0559fb1325bd0e14159c346f5cc1e8ff17e2d1b584f13586a93329ec7b90c2cb"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-44-v2.json.gz",
+      "bytes": 161338,
+      "sha256": "18ea3ef70ae89a2e9448d8b1cb970c5f91035f3d58f7ced3f21cc5da2dbbb931",
+      "content_sha256": "3e4ea720674aad54216d29c11d08f65ffb7c1bd0b72da51b50fe8feab5595a17"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-45-v2.json.gz",
+      "bytes": 102209,
+      "sha256": "be476be91b84cf6ed0e11fecb66cdb56b2ab147726dcea45e72fa52f1ae40122",
+      "content_sha256": "91d48da6269999f88d1d80f2b8612c33ac079ddf92d06cb882784ec86440bd56"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-46-v2.json.gz",
+      "bytes": 128118,
+      "sha256": "d2fd3f6786dcafde9ecb07d77a6c28870a2f00c6e2c061c7bdc394b5cc9911cc",
+      "content_sha256": "d6bcbee5fe754a8b68c0e627eee42d2c64dce4ce94a24a4b3476620ef0c4c057"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-47-v2.json.gz",
+      "bytes": 113585,
+      "sha256": "c98aadeb7927f580ec8b4fee92cb2f58935d7ce2d381d754de9633e05741745e",
+      "content_sha256": "9975939ac53586a27ff5189044d20853aca2ed15aa49ebb0960e1bd095ab62b4"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-48-v2.json.gz",
+      "bytes": 166338,
+      "sha256": "1e69c1e7b133b1b81873a74145b70063d77679088487b12bc6f12d36a77201ea",
+      "content_sha256": "91c776d1979909162563d00ce80d2d348cee2768a39858a17c1dbaa3a4a9e531"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-49-v2.json.gz",
+      "bytes": 147850,
+      "sha256": "6013e48710bea600dbfd3c79a1285be2242daf8d677fb02ce7a71ab7a2e12db4",
+      "content_sha256": "a77ff98871f62fae8244e4f9177041ad9c3361abcef2d895bf7672a1f67fc328"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-50-v2.json.gz",
+      "bytes": 107843,
+      "sha256": "cf4331bebd2d81c3d6cf83b409853e8f33badbcb28f85f66d37f7d48c0b471e6",
+      "content_sha256": "c024032bf465d41edb51b2c0ae393dcbdebe56349f2cb0cf615948aff899e3f6"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-51-v2.json.gz",
+      "bytes": 128518,
+      "sha256": "0be48a461ce0b18b4c7b5b2e501de3f324be2ef6fd24217828847ac1364027dd",
+      "content_sha256": "47529a04d3d1157f5f652f64c19ae4c03bd357306baddafb141f25137c024257"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-52-v2.json.gz",
+      "bytes": 94260,
+      "sha256": "ef1cc3a7a07d7838c89dd0c9ecc760421befc4408334863ce2fc0297c4d8e8f0",
+      "content_sha256": "61113b2c15e2254df60325ffb00b75651ea8d9b7718ca98c10e238628d9564e4"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-53-v2.json.gz",
+      "bytes": 129831,
+      "sha256": "5611fd7bd442643590a273b4902ccd57f450503e29a8a838f83cd75ba6fe3a89",
+      "content_sha256": "74824c1a51182a1447b2ab8793f069531c501ea6c2b607ab6f6e111e1fde6c57"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-54-v2.json.gz",
+      "bytes": 142158,
+      "sha256": "fc53a60e69ad3e019c3ad113f5ef49c567f450d6d6575a36622c180d237a5b89",
+      "content_sha256": "7276070b7625ac313b9c0f8b2f1313800469352575d241d9aca781f08b774130"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-55-v2.json.gz",
+      "bytes": 115310,
+      "sha256": "83a6fe59e70aa3a8eadefcc4ab390481106f3f293c5420aee14b3758925ac731",
+      "content_sha256": "54f48b2a466f7451d823ff71b9c00018854bb58620fadbe22953694aff1919c4"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-56-v2.json.gz",
+      "bytes": 121286,
+      "sha256": "3fd99268ba12dc73fd931551b7a4c526180f25da8d42a43cab4d02c23938f861",
+      "content_sha256": "ccd28131a62d39426eb1c032cf4585e2c52bbc85cefbfc8b182d347265cc6a10"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-57-v2.json.gz",
+      "bytes": 120237,
+      "sha256": "178cfe57e8e0ce7332416582978b5f89a30d09bba9dd8b3729c350b4a1d7c968",
+      "content_sha256": "3ab6cc81e9fe1e2745d1e2c70cf964e266499020c79103f1212a5cb936c34549"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-58-v2.json.gz",
+      "bytes": 155995,
+      "sha256": "20cf00c3947fab612a0f2535601bf1582a9790f5a506b59c049cde4b9d7c1dca",
+      "content_sha256": "8bbf33dc74881ec2a57d3801be1d0b3236f1858e9e855bd8ade8bb54f9d59f22"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-59-v2.json.gz",
+      "bytes": 120057,
+      "sha256": "f174141b062eab6a1c8ecef1e78c968b249e5f7a7709b28d6a49d14711334c5e",
+      "content_sha256": "91b20e207b5f9ead71b9d33d11abf9fa22b21662274e16aada4d1e1834bec93b"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-60-v2.json.gz",
+      "bytes": 148510,
+      "sha256": "967b38110c2bbada814af9b9cee51a5c035e465424b083a6dd8883f5aa76777a",
+      "content_sha256": "5e9267f986b81b902c7d963de8ce3c59d077a2b9c7d96c7ed1c4049dca669275"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-61-v2.json.gz",
+      "bytes": 117639,
+      "sha256": "416aae84b0f39fedefd1a567e7f3205cefcbeb94f92b0491498b8185bf62956e",
+      "content_sha256": "d3c30856d3cee4182c393aa8ed6651e145e1088c53c39945deaa303fc041b4fd"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-62-v2.json.gz",
+      "bytes": 120247,
+      "sha256": "b0127f8fefcea8d772aaa9c454f8ddb64d460dec7a237949232eac0cf1f2539a",
+      "content_sha256": "b437789a03483e7a2a1e7c36de692279395d281986f98c2d90f85e570026c871"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-63-v2.json.gz",
+      "bytes": 158939,
+      "sha256": "fff3d3e67424e634cd775bc06379b8dc94d6ec1f838314682a688e1a3e37613c",
+      "content_sha256": "4e68c7406c01f234cfff5da6a78d71c562ab676cbbdd6a865ee251f68fa481c7"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/negative-controls-v2.json",
+      "bytes": 12514,
+      "sha256": "ec5105f59439bab8229bc68562f631548f334a901a7265bdf75d3097ec1b6998"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/pair-results-summary-v2.json",
+      "bytes": 152589,
+      "sha256": "efa6e943ebf6875b59b2d0f6b7f6c2411e4cd0c017aa270ff7f5b16ffae5c9ff"
+    }
+  ],
+  "byte_identical_a_b_git": true,
+  "source_bundle_replay_runs": 2,
+  "source_bundle_replay_identical": true,
+  "additional_network_reads": 0,
+  "external_effects": {
+    "provider_calls": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "remote_sql": 0,
+    "odds_credits": 0,
+    "deployments": 0,
+    "triples": 0
+  },
+  "replay_hash": "3b27e09fed9fd64242ac7cdba10de3d6ad463e986522108848784c565b687f22"
+}

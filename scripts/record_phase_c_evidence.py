@@ -26,7 +26,12 @@ MAIN_INTEGRATION_DECISION_ID = "RCV3-20260808-085"
 MAIN_MERGE_RECEIPT_DECISION_ID = "RCV3-20260808-086"
 TEST_PORTABILITY_DECISION_ID = "RCV3-20260808-087"
 DELIVERY_DECISION_ID = "RCV3-20260808-088"
-GENERATED_AT = "2026-08-08T19:40:00Z"
+PAGES_RECLASSIFICATION_DECISION_ID = "RCV3-20260808-089"
+V2_FREEZE_COMMIT_DECISION_ID = "RCV3-20260808-090"
+V2_EXACT_COMMIT_REVIEW_DECISION_ID = "RCV3-20260808-091"
+PR38_CLOSURE_DECISION_ID = "RCV3-20260809-092"
+GENERATED_AT = "2026-08-09T05:22:39Z"
+V2_CODE_REVISION = "a8a2bba20abcb8dbe320519b95e6cf5737a8b1d9"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
 DATASET_LINEAGE_ID = "PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA"
@@ -364,6 +369,149 @@ def _claims() -> list[dict[str, Any]]:
             code_revision="008396bad19885386bd7d17ab07c75ee79bb0a9e",
             execution_id="local-phase-c-pr37-closure-20260808",
         ),
+        _claim(
+            claim_id="GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
+            claim=(
+                "The authorized PR37 merge triggered one repository-configured GitHub "
+                "Pages deployment. The staging artifact contains no forbidden heavy Phase C "
+                "evidence path, provider payload or demonstrated secret. It does publish the "
+                "pre-existing bounded V1 scientific summary, recorded separately from "
+                "mission-initiated publication and Phase C workflow deployments."
+            ),
+            scope="PR37_AUTOMATIC_REPOSITORY_PAGES_SIDE_EFFECT_RECLASSIFICATION",
+            source="GitHub Pages run, deployment, artifact inventory and terminal main CI",
+            grain="one_automatic_repository_pages_deployment",
+            temporal_class="REMOTE_DELIVERY_STATE_AS_OF",
+            artifact="reports/closure/automatic-pages-side-effect-reclassification-v1.json",
+            status="VERIFIED",
+            verified_by=["DP2", "DP5"],
+            code_revision="d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
+            execution_id="github-pages-run-31274388390",
+        ),
+        _claim(
+            claim_id="DATA.PHASE_C.V2.SANITIZED_SOURCE_BUNDLE.V1.001",
+            claim=(
+                "The durable sanitized V2 source bundle deterministically represents "
+                "286,075 locked source rows as 1,756 fixture ordinals and 3,512 team-fixture "
+                "facts, with target labels physically separated and no provider identifier, "
+                "raw payload, credential, URL or absolute path committed."
+            ),
+            scope="PHASE_C_V2_SANITIZED_LOCKED_SOURCE_BUNDLE",
+            source="five exact attempt-1 E3 source artifacts and fail-closed exporter",
+            grain="one_sanitized_fixture_or_team_fixture_fact",
+            temporal_class="HISTORICAL_RECONSTRUCTED_ONLY",
+            artifact="reports/closure/phase-c-v2-source-evidence/source-evidence-manifest-v2.json",
+            status="VERIFIED",
+            verified_by=["DP2", "DP5", "DP6"],
+            code_revision=V2_CODE_REVISION,
+            execution_id="local-phase-c-v2-bounded-a8a2bba2",
+        ),
+        _claim(
+            claim_id="FEATURE.PHASE_C.V2.PROPERTY_TAG_MASK_FREEZE.V1.001",
+            claim=(
+                "The label-blind V2 freeze selects 16 of 25 candidate properties and "
+                "materializes 150 tri-state tag masks: all eighty V1 tags remain identical "
+                "and seventy V2 tags are added under a historical-reconstruction ceiling; "
+                "strict point-in-time provenance remains false."
+            ),
+            scope="PHASE_C_V2_16_PROPERTY_150_TAG_MASK_FREEZE",
+            source="property contract, canonical registry, source-field registry and masks",
+            grain="one_canonical_tri_state_tag_mask",
+            temporal_class="HISTORICAL_RECONSTRUCTED_ONLY",
+            artifact="reports/hypothesis-masks/atomic-mask-manifest-v2.json",
+            status="PARTIAL",
+            verified_by=["DP2", "DP5", "DP6"],
+            code_revision=V2_CODE_REVISION,
+            execution_id="local-phase-c-v2-bounded-a8a2bba2",
+        ),
+        _claim(
+            claim_id="EVAL.PHASE_C.V2.FULL_BOUNDED_CAMPAIGN.V1.001",
+            claim=(
+                "The complete bounded V2 campaign evaluates 300 atomic tests and all 3,590 "
+                "target-blind admissible tag pairs through 7,180 pair tests and 7,480 "
+                "campaign-wide hypotheses. No pair survives campaign multiplicity, so no "
+                "promotion, betting interpretation or triple search is authorized."
+            ),
+            scope="PHASE_C_V2_FULL_BOUNDED_ATOMIC_AND_PAIR_CAMPAIGN",
+            source="full Git-sharded result manifest and campaign multiplicity reducer",
+            grain="one_atomic_or_pair_target_test",
+            temporal_class="FIVE_FOLD_HISTORICAL_RECONSTRUCTED_EVALUATION",
+            artifact="reports/closure/phase-c-v2-full-bounded-expansion-closure-v1.json",
+            status="PARTIAL",
+            verified_by=["DP2", "DP5", "DP6"],
+            code_revision=V2_CODE_REVISION,
+            execution_id="local-phase-c-v2-bounded-a8a2bba2",
+        ),
+        _claim(
+            claim_id="REPLAY.PHASE_C.V2.FRESH_DETERMINISM.V1.001",
+            claim=(
+                "Two disjoint fresh zero-egress campaign roots and two disjoint fresh reducer "
+                "roots reproduce all 86 tracked V2 result files byte-for-byte; each of the "
+                "64 pair shards starts from zero and recomputes no checkpoint prefix."
+            ),
+            scope="PHASE_C_V2_TWO_FRESH_CAMPAIGN_AND_REDUCER_REPLAY",
+            source="code-bound fresh-run receipts and Git result hashes",
+            grain="one_fresh_campaign_result_file_or_shard_receipt",
+            temporal_class="CODE_AS_OF",
+            artifact="reports/hypothesis-research/v2/campaign-replay-v2.json",
+            status="VERIFIED",
+            verified_by=["DP2", "DP5", "DP6"],
+            code_revision=V2_CODE_REVISION,
+            execution_id="local-phase-c-v2-bounded-a8a2bba2",
+        ),
+        _claim(
+            claim_id="REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001",
+            claim=(
+                "The V2 checkpoint proof interrupts an exact pair shard at cursor 17, "
+                "preserves the completed prefix, resumes without prefix recomputation and "
+                "reproduces the clean shard output with fail-closed lineage cross-links."
+            ),
+            scope="PHASE_C_V2_CURSOR_17_CHECKPOINT_RESUME_PROOF",
+            source="checkpoint, progress, fresh-run receipts and clean-versus-resumed hashes",
+            grain="one_interrupted_and_resumed_v2_pair_shard",
+            temporal_class="CODE_AS_OF",
+            artifact="reports/hypothesis-research/v2/checkpoint-resume-receipt-v2.json",
+            status="VERIFIED",
+            verified_by=["DP2", "DP5", "DP6"],
+            code_revision=V2_CODE_REVISION,
+            execution_id="local-phase-c-v2-bounded-a8a2bba2",
+        ),
+        _claim(
+            claim_id="SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
+            claim=(
+                "The bounded V2 construction and evaluation record zero provider, Odds, "
+                "remote SQL and R2 effects, zero mission-initiated deployment, publication, "
+                "real bet or promotion, and no triple execution. The separate historical "
+                "automatic repository Pages deployment count remains one."
+            ),
+            scope="PHASE_C_V2_ZERO_EXTERNAL_EFFECTS_AND_TRIPLE_LOCK",
+            source="closure effect accounting and independent security review",
+            grain="one_complete_bounded_v2_campaign",
+            temporal_class="CODE_AND_LOCAL_EXECUTION_AS_OF",
+            artifact="reports/closure/phase-c-v2-full-bounded-expansion-closure-v1.json",
+            status="VERIFIED",
+            verified_by=["DP2", "DP5", "DP6"],
+            code_revision=V2_CODE_REVISION,
+            execution_id="local-phase-c-v2-bounded-a8a2bba2",
+        ),
+        _claim(
+            claim_id="GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001",
+            claim=(
+                "Phase C V2 remains dormant after local completion: execution activation is "
+                "HOLD with null allowed_execution_sha and empty stage locks. The exact commit "
+                "may be published only to the existing draft PR for CI review; dispatch, "
+                "Ready, merge and activation remain blocked."
+            ),
+            scope="PHASE_C_V2_DRAFT_PUBLICATION_AND_ACTIVATION_HOLD",
+            source="activation contract, exact Git object and Council decision 091",
+            grain="one_phase_c_v2_activation_and_delivery_state",
+            temporal_class="CODE_AS_OF",
+            artifact="configs/execution/phase-c-execution-activation-v1.json",
+            status="BLOCKED",
+            verified_by=["DP2", "DP5", "DP6"],
+            code_revision=V2_CODE_REVISION,
+            execution_id="local-phase-c-v2-bounded-a8a2bba2",
+        ),
     ]
 
 
@@ -412,6 +560,10 @@ def main() -> None:
             MAIN_MERGE_RECEIPT_DECISION_ID,
             TEST_PORTABILITY_DECISION_ID,
             DELIVERY_DECISION_ID,
+            PAGES_RECLASSIFICATION_DECISION_ID,
+            V2_FREEZE_COMMIT_DECISION_ID,
+            V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+            PR38_CLOSURE_DECISION_ID,
         }
     ]
     if recovery_ids != [
@@ -428,6 +580,10 @@ def main() -> None:
         MAIN_MERGE_RECEIPT_DECISION_ID,
         TEST_PORTABILITY_DECISION_ID,
         DELIVERY_DECISION_ID,
+        PAGES_RECLASSIFICATION_DECISION_ID,
+        V2_FREEZE_COMMIT_DECISION_ID,
+        V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+        PR38_CLOSURE_DECISION_ID,
     ]:
         raise RuntimeError("PHASE_C_RECOVERY_DECISION_SEQUENCE_MISMATCH")
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
@@ -447,6 +603,10 @@ def main() -> None:
         MAIN_MERGE_RECEIPT_DECISION_ID,
         TEST_PORTABILITY_DECISION_ID,
         DELIVERY_DECISION_ID,
+        PAGES_RECLASSIFICATION_DECISION_ID,
+        V2_FREEZE_COMMIT_DECISION_ID,
+        V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+        PR38_CLOSURE_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
@@ -521,8 +681,36 @@ def main() -> None:
             "relation": "SUPPORTS",
             "status": "RECORDED",
         },
+        {
+            "edge_id": "EDGE.267",
+            "from_claim_id": "GOV.PHASE_C.PAGES.SIDE_EFFECT.V1.001",
+            "to_decision_id": PAGES_RECLASSIFICATION_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
     ]
-    expected_tail_edges = expected_correction_tail_edges + expected_closure_edges
+    v2_claim_ids = [
+        "DATA.PHASE_C.V2.SANITIZED_SOURCE_BUNDLE.V1.001",
+        "FEATURE.PHASE_C.V2.PROPERTY_TAG_MASK_FREEZE.V1.001",
+        "EVAL.PHASE_C.V2.FULL_BOUNDED_CAMPAIGN.V1.001",
+        "REPLAY.PHASE_C.V2.FRESH_DETERMINISM.V1.001",
+        "REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001",
+        "SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001",
+        "GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001",
+    ]
+    expected_v2_edges = [
+        {
+            "edge_id": f"EDGE.{index:03d}",
+            "from_claim_id": claim_id,
+            "to_decision_id": V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+        for index, claim_id in enumerate(v2_claim_ids, start=268)
+    ]
+    expected_tail_edges = (
+        expected_correction_tail_edges + expected_closure_edges + expected_v2_edges
+    )
     existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
     if existing_tail_edges not in (
         [],
@@ -533,6 +721,8 @@ def main() -> None:
         expected_correction_tail_edges + expected_closure_edges[:4],
         expected_correction_tail_edges + expected_closure_edges[:5],
         expected_correction_tail_edges + expected_closure_edges[:6],
+        expected_correction_tail_edges + expected_closure_edges[:7],
+        expected_correction_tail_edges + expected_closure_edges,
         expected_tail_edges,
     ):
         raise RuntimeError("PHASE_C_RECOVERY_EDGE_TAIL_MISMATCH")
@@ -561,6 +751,10 @@ def main() -> None:
         MAIN_MERGE_RECEIPT_DECISION_ID,
         TEST_PORTABILITY_DECISION_ID,
         DELIVERY_DECISION_ID,
+        PAGES_RECLASSIFICATION_DECISION_ID,
+        V2_FREEZE_COMMIT_DECISION_ID,
+        V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+        PR38_CLOSURE_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}

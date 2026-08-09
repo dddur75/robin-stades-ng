@@ -1,0 +1,219 @@
+{
+  "schema_version": "pr38-evidence-retention-and-repository-impact-v1",
+  "generated_at": "2026-08-09T05:10:00Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 38,
+  "base_ref": "origin/main",
+  "base_sha": "d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
+  "head_ref": "codex/phase-c-full-bounded-expansion-v2",
+  "initial_audited_head_sha": "f6d6b2480aa167fe825a2954e7a3a0e673f695ce",
+  "delivery_head_binding": "GIT_COMMIT_CONTAINING_THIS_REPORT",
+  "github_state": {
+    "state": "OPEN",
+    "draft": true,
+    "mergeable": true,
+    "merged": false,
+    "review_threads": 0,
+    "review_submissions": 0,
+    "initial_exact_head_ci": "PASS",
+    "delivery_exact_head_ci": "PENDING_AFTER_CORRECTIVE_COMMIT"
+  },
+  "repository_impact": {
+    "changed_files": 184,
+    "added_files": 180,
+    "insertions": 22054,
+    "deletions": 7,
+    "compressed_shards": 152,
+    "source_evidence_files": 10,
+    "generated_manifests": 3,
+    "generated_contracts_and_configs": 4,
+    "code_files": 5,
+    "test_files": 5,
+    "incremental_worktree_bytes": 10634374,
+    "incremental_git_object_bytes": 12086015,
+    "estimated_pack_growth": 9681059,
+    "measurement_method": {
+      "changed_files": "git diff --name-only origin/main...HEAD",
+      "incremental_worktree_bytes": "sum of added file sizes at HEAD",
+      "incremental_git_object_bytes": "sum of object sizes from git rev-list --objects origin/main..HEAD and git cat-file --batch-check",
+      "estimated_pack_growth": "size of a temporary git bundle containing HEAD excluding origin/main"
+    },
+    "category_bytes": {
+      "source_evidence": 92252,
+      "compressed_results": 9228323,
+      "mask_bundle": 36117,
+      "source_code": 260745,
+      "tests": 84689,
+      "other_configs_manifests_and_reports": 1394725
+    },
+    "cumulative_growth_projection": {
+      "assumption": "future campaigns repeat the measured packed increment without deduplication",
+      "monthly_bytes_per_year": 116172708,
+      "campaigns_to_approximately_500_mb": 54,
+      "interpretation": "acceptable for this immutable one-off closure, but not a default retention design for recurring prospective campaigns"
+    }
+  },
+  "evidence_classes": [
+    {
+      "class_id": "PHASE_C_V2_NORMALIZED_SOURCE_EVIDENCE",
+      "paths": [
+        "reports/closure/phase-c-v2-source-evidence/"
+      ],
+      "authoritative": true,
+      "derived": false,
+      "reconstructible": false,
+      "durable_source_available": true,
+      "upstream_durable_source_available": false,
+      "full_detail_required_for_audit": true,
+      "reason": "the upstream GitHub Artifact is temporary; the committed sanitized source bundle is the first durable replay source"
+    },
+    {
+      "class_id": "PHASE_C_V2_FREEZE_AND_CONTRACTS",
+      "paths": [
+        "configs/execution/phase-c-v2-source-lock.json",
+        "configs/hypothesis-campaigns/exhaustive-property-campaign-v2.json",
+        "configs/hypothesis-tags/canonical-tag-registry-v2.json",
+        "configs/hypothesis-tags/predictor-property-contract-v2.json",
+        "reports/hypothesis-genome/predictor-eligible-property-set-v2.json",
+        "reports/hypothesis-masks/atomic-mask-manifest-v2.json"
+      ],
+      "authoritative": true,
+      "derived": false,
+      "reconstructible": true,
+      "durable_source_available": true,
+      "full_detail_required_for_audit": true,
+      "reason": "these objects freeze the tested universe, multiplicity denominator, mappings, hashes and locks"
+    },
+    {
+      "class_id": "PHASE_C_V2_DETAILED_RESULTS",
+      "paths": [
+        "reports/hypothesis-research/v2/full/",
+        "reports/hypothesis-masks/mask-payload-bundle-v2.json.gz"
+      ],
+      "authoritative": false,
+      "derived": true,
+      "reconstructible": true,
+      "durable_source_available": true,
+      "full_detail_required_for_audit": true,
+      "reason": "results replay byte-identically from the committed source and code, while per-test detail is required to audit the zero-survivor claim and no durable external evidence store exists"
+    },
+    {
+      "class_id": "PHASE_C_V2_SUMMARIES_RECEIPTS_AND_CONTROLS",
+      "paths": [
+        "reports/hypothesis-research/v2/*.json",
+        "reports/closure/phase-c-v2-full-bounded-expansion-closure-v1.json",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json"
+      ],
+      "authoritative": true,
+      "derived": true,
+      "reconstructible": true,
+      "durable_source_available": true,
+      "full_detail_required_for_audit": true,
+      "reason": "hash-bound summaries, negative controls, checkpoint/replay receipts and lineage are the human- and machine-auditable closure record"
+    },
+    {
+      "class_id": "PHASE_C_V2_IMPLEMENTATION_AND_TESTS",
+      "paths": [
+        "src/robin/hypothesis_intelligence/phase_c_v2.py",
+        "scripts/*phase_c_v2*.py",
+        "scripts/record_phase_c_evidence.py",
+        "tests/hypothesis_intelligence/test_phase_c_v2_*.py",
+        "tests/hypothesis_intelligence/test_phase_c_factory_contract.py"
+      ],
+      "authoritative": false,
+      "derived": false,
+      "reconstructible": true,
+      "durable_source_available": true,
+      "full_detail_required_for_audit": true,
+      "reason": "the executable replay definition and fail-closed tests are necessary to verify the evidence"
+    }
+  ],
+  "retention_decision": {
+    "decision": "KEEP_DETAILED_EVIDENCE_IN_GIT",
+    "keep_in_git": true,
+    "archive_elsewhere": false,
+    "manifest_only": false,
+    "block_merge": false,
+    "rationale": [
+      "the normalized source evidence is not durably reconstructible from the temporary upstream artifact",
+      "the packed increment is bounded at 9577226 bytes for this one-off negative closure",
+      "the committed payloads are sanitized normalized evidence rather than raw provider payloads",
+      "removing detailed evidence now would weaken auditability of the zero-survivor result"
+    ],
+    "future_campaign_policy": "SPLIT_SOURCE_AND_RESULTS",
+    "future_policy_condition": "before recurring prospective campaigns, keep compact contracts, manifests, summaries and hashes in Git and place large detailed artifacts only in an authorized content-addressed append-only durable evidence store"
+  },
+  "scientific_integrity": {
+    "candidate_properties": 25,
+    "selected_properties": 16,
+    "blocked_properties": 9,
+    "tags": 150,
+    "tri_state_masks": 150,
+    "atomic_tests": 300,
+    "theoretical_pairs": 11175,
+    "structurally_admissible_pairs": 3590,
+    "evaluated_pairs": 3590,
+    "pair_tests": 7180,
+    "campaign_tests": 7480,
+    "pair_survivors": 0,
+    "negative_control_survivors": 0,
+    "triple_search_locked": true,
+    "point_in_time_source_provenance": false,
+    "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
+    "verdicts_preserved": [
+      "PHASE_C_FULL_BOUNDED_EXPANSION_PARTIAL",
+      "TRIPLE_SEARCH_REMAINS_LOCKED_NO_PAIR_SURVIVOR"
+    ]
+  },
+  "adversarial_review_correction": {
+    "initial_veto": "FOUR_GUARD_CONTROLS_WERE_DECLARATIVE_NOT_EXECUTED",
+    "resolution": "FOUR_GUARDS_INJECTED_THROUGH_SHARED_ATOMIC_AND_PAIR_CANDIDATE_ADMISSION_GATE",
+    "executed_guard_control_count": 4,
+    "executed_guard_track_count": 8,
+    "guard_execution_proof": "reports/hypothesis-research/v2/negative-control-guard-execution-v2.json",
+    "guard_execution_proof_hash": "303526eef93c3655168d437d95357ea1568af83651dbb1fdb20db8bfdfd1eb1f",
+    "stored_bh_p_values_recalculated": 7480,
+    "scientific_results_modified": false,
+    "thresholds_modified": false,
+    "multiplicity_denominators_modified": false,
+    "campaign_replayed": false
+  },
+  "validation": {
+    "targeted_phase_c_tests": {
+      "result": "PASS",
+      "passed": 64,
+      "duration_seconds": 25.5
+    },
+    "ruff_changed_python": "PASS",
+    "mypy_core_phase_c": "PASS",
+    "bandit_high_severity_findings": 0,
+    "json_files_validated": 21,
+    "git_diff_check": "PASS",
+    "secret_literal_scan": "PASS",
+    "raw_provider_payloads_in_git": false,
+    "absolute_paths_in_added_payloads": false,
+    "replay_byte_identical": true,
+    "checkpoint_resume_intact": true,
+    "negative_controls_intact": true,
+    "negative_guard_execution": "PASS",
+    "bh_recalculation_7480_tests": "PASS",
+    "immutable_scientific_artifacts_git_diff": "UNCHANGED"
+  },
+  "evidence_claim_ids": [
+    "DATA.PHASE_C.V2.SANITIZED_SOURCE_BUNDLE.V1.001",
+    "EVAL.PHASE_C.V2.FULL_BOUNDED_CAMPAIGN.V1.001",
+    "REPLAY.PHASE_C.V2.FRESH_DETERMINISM.V1.001",
+    "REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001",
+    "SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001"
+  ],
+  "merge_gate": {
+    "critical_objections": [],
+    "closed_objections": [
+      "NEGATIVE_GUARD_EXECUTION_PROOF_ADDED"
+    ],
+    "status": "PASS_LOCAL_AWAITING_EXACT_HEAD_CI",
+    "authorized_next_action": "COMMIT_PUSH_OBSERVE_EXACT_HEAD_CI_THEN_MARK_READY_AND_MERGE_COMMIT"
+  },
+  "report_status": "FINAL_PRE_MERGE_AUDIT"
+}

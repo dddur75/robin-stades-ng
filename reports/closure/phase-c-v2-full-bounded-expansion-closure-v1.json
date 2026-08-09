@@ -1,0 +1,323 @@
+{
+  "schema_version": "phase-c-v2-full-bounded-expansion-closure-v1",
+  "generated_at": "2026-08-08T23:30:00Z",
+  "mission": "PHASE C FOUNDATION CLOSURE AND FULL BOUNDED EXPANSION V2",
+  "git": {
+    "repository": "dddur75/robin-stades-ng",
+    "base_main_sha": "d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
+    "implementation_parent_sha": "10ea1d7fd34333daea10f7cbc7f42d6f2acb6bf2",
+    "branch": "codex/phase-c-full-bounded-expansion-v2",
+    "pull_request": 38,
+    "required_delivery_state": "OPEN_DRAFT_NOT_MERGED",
+    "delivery_head_sha": null,
+    "workflow_dispatches": 0,
+    "activation_state": "HOLD_DRAFT_NOT_ON_DEFAULT_BRANCH"
+  },
+  "deployments_and_publications": {
+    "automatic_repository_pages_deployments_observed": 1,
+    "documentation_site_publication_observed": true,
+    "bounded_v1_scientific_summary_publication_observed": true,
+    "mission_initiated_scientific_publications": 0,
+    "new_v2_results_publications": 0,
+    "forbidden_heavy_scientific_evidence_publications": 0,
+    "mission_initiated_deployments": 0,
+    "phase_c_workflow_deployments": 0,
+    "manual_pages_dispatches": 0,
+    "pages_configuration_changes": 0,
+    "forbidden_data_publications": 0,
+    "heavy_phase_c_evidence_publications": 0,
+    "provider_payload_publications": 0,
+    "secret_publications": 0,
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "remote_sql": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_get": 0,
+    "r2_write": 0,
+    "r2_delete": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triples": 0
+  },
+  "pages_reclassification": {
+    "automatic_side_effect": true,
+    "phase_c_execution_violation": false,
+    "exposure_audit": "PASSED",
+    "bounded_v1_summary_publication_observed": true,
+    "new_v2_results_publications": 0
+  },
+  "properties": {
+    "genome_property_count": 486,
+    "candidate_property_count": 25,
+    "selected_property_count": 16,
+    "selected_v1_property_count": 7,
+    "selected_v2_property_count": 9,
+    "blocked_candidate_count": 9,
+    "selected_property_ids": [
+      "football:attack:goals_scored",
+      "football:coach:substitutions",
+      "football:defence:goals_conceded",
+      "football:discipline_referee:recent_cards",
+      "football:discipline_referee:red_cards",
+      "football:discipline_referee:yellow_cards",
+      "football:formation_structure:formation",
+      "football:strength_form:after_result_performance",
+      "football:strength_form:form",
+      "football:strength_form:goals",
+      "football:strength_form:home_away_performance",
+      "football:strength_form:points",
+      "football:strength_form:ranking",
+      "football:strength_form:streak",
+      "football:strength_form:volatility",
+      "football:strength_form:weighted_form"
+    ],
+    "blocked_candidates": [
+      {
+        "property_id": "football:match_competition:matchday",
+        "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+      },
+      {
+        "property_id": "football:match_competition:month",
+        "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+      },
+      {
+        "property_id": "football:match_competition:round",
+        "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+      },
+      {
+        "property_id": "football:match_competition:season",
+        "block_reason": "RECONSTRUCTED_CONTEXT_CONSTANT_NOT_PREDICTOR"
+      },
+      {
+        "property_id": "football:match_competition:venue_role",
+        "block_reason": "IDENTITY_ORIENTATION_ALREADY_ENCODED"
+      },
+      {
+        "property_id": "football:match_competition:weekday",
+        "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+      },
+      {
+        "property_id": "football:player:assists",
+        "block_reason": "BLOCKED_BY_GRAIN_NO_PLAYER_POPULATION_AT_CUTOFF"
+      },
+      {
+        "property_id": "football:player:cards",
+        "block_reason": "BLOCKED_BY_GRAIN_NO_PLAYER_POPULATION_AT_CUTOFF"
+      },
+      {
+        "property_id": "football:player:goals",
+        "block_reason": "BLOCKED_BY_GRAIN_NO_PLAYER_POPULATION_AT_CUTOFF"
+      }
+    ],
+    "difference_from_up_to_25_explained": "Nine of the 25 public candidates remain fail-closed: four calendar fields lack revision-known_at provenance, season is a constant context, venue_role duplicates orientation, and three player fields lack a cutoff-observed player population.",
+    "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+    "point_in_time_source_provenance": false
+  },
+  "source": {
+    "manifest_hash": "97926c3ab20cfce4a9eb1be825839382575dc05470ae6adae3aecddd05a60f5d",
+    "source_row_count": 286075,
+    "fixture_count": 1756,
+    "team_match_fact_count": 3512,
+    "event_fact_count": 29033,
+    "substitution_fact_count": 15793,
+    "generic_card_fact_count": 7479,
+    "legacy_generic_card_fact_count": 7487,
+    "yellow_card_fact_count": 7150,
+    "dismissal_fact_count": 329,
+    "formation_fact_count": 3512,
+    "provider_ids_in_bundle": 0,
+    "target_labels_separate": true
+  },
+  "tags": {
+    "tag_count": 150,
+    "legacy_tag_count": 80,
+    "new_tag_count": 70,
+    "registry_hash": "c95bedfe0a02e2858722e93af13023b5cf4edb53692f7e46216599a3a3979d7d",
+    "legacy_objects_unchanged": true
+  },
+  "masks": {
+    "mask_count": 150,
+    "known_true_bytes_per_mask": 440,
+    "manifest_hash": "56e2b862a11ff968e5eb66183bff75e81383cc004648dc6c9d3fe85cbe070d4a",
+    "true_subset_known": true,
+    "unknown_preserved": true,
+    "target_labels_loaded_during_freeze": false
+  },
+  "atomic": {
+    "tag_count": 150,
+    "canonical_test_count": 300,
+    "row_status_counts": {
+      "LONG_TAIL_DEFERRED": 19,
+      "RAW_HISTORICAL_SIGNAL": 131
+    },
+    "test_status_counts": {
+      "LONG_TAIL_DEFERRED": 38,
+      "RAW_HISTORICAL_SIGNAL": 262
+    },
+    "fully_positive_leave_one_league_team_period_test_count": 40,
+    "surviving_test_count_after_campaign_bh": 0
+  },
+  "pairs": {
+    "theoretical_pair_count": 11175,
+    "same_property_pair_count": 763,
+    "distinct_property_pair_count": 10412,
+    "eligible_pair_count": 3590,
+    "pruned_pair_count": 7585,
+    "pruning_reasons": {
+      "SAME_PROPERTY_REDUNDANCY": 763,
+      "TARGET_BLIND_INTERSECTION_TRUE_LT_40": 2838,
+      "TARGET_BLIND_KNOWN_LT_320": 3984,
+      "TARGET_BLIND_STRUCTURAL_AND_SUPPORT_PASS": 3590
+    },
+    "evaluated_pair_count": 3590,
+    "canonical_test_count": 7180,
+    "row_status_counts": {
+      "LONG_TAIL_DEFERRED": 721,
+      "RAW_HISTORICAL_SIGNAL": 1298,
+      "REJECTED": 1571
+    },
+    "test_status_counts": {
+      "LONG_TAIL_DEFERRED": 1442,
+      "RAW_HISTORICAL_SIGNAL": 1476,
+      "REJECTED": 4262
+    },
+    "fully_positive_all_comparators_leave_one_league_team_period_test_count": 359,
+    "surviving_test_count": 0,
+    "comparators": [
+      "PARENT_A",
+      "PARENT_B",
+      "ADDITIVE"
+    ],
+    "label_oracle": false
+  },
+  "shards": {
+    "pair_census_shards": 64,
+    "atomic_result_shards": 16,
+    "pair_result_shards": 64,
+    "eligible_union_exact": true,
+    "duplicate_result_count": 0,
+    "missing_result_count": 0,
+    "maximum_git_blob_bytes": 166338
+  },
+  "multiplicity": {
+    "schema_version": "phase-c-v2-campaign-multiplicity",
+    "atomic_test_count": 300,
+    "pair_test_count": 7180,
+    "campaign_test_count": 7480,
+    "method": "BH_GLOBAL_STAGE_AND_FAMILY_THEN_BH_CAMPAIGN_GLOBAL_MAX_Q",
+    "blocked_tests_p_value": 1.0,
+    "surviving_pair_test_count": 0,
+    "triple_verdict": "TRIPLE_SEARCH_REMAINS_LOCKED_NO_PAIR_SURVIVOR",
+    "triple_search_locked": true
+  },
+  "stability": {
+    "dimensions": [
+      "LEAVE_ONE_LEAGUE_OUT",
+      "LEAVE_ONE_TEAM_OUT",
+      "LEAVE_ONE_PERIOD_OUT"
+    ],
+    "stored_per_test": true,
+    "pair_survivors_requiring_ultra_review": 0
+  },
+  "negative_controls": {
+    "control_count": 8,
+    "modeled_control_count": 4,
+    "guard_control_count": 4,
+    "executed_guard_control_count": 4,
+    "executed_guard_track_count": 8,
+    "guard_execution_proof": "reports/hypothesis-research/v2/negative-control-guard-execution-v2.json",
+    "guard_execution_proof_hash": "303526eef93c3655168d437d95357ea1568af83651dbb1fdb20db8bfdfd1eb1f",
+    "modeled_track_target_test_count": 16,
+    "surviving_control_count": 0,
+    "gate": "PASS"
+  },
+  "prices_and_bets": {
+    "point_in_time_price_provenance": false,
+    "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
+    "roi": null,
+    "profit": null,
+    "clv": null,
+    "drawdown": null,
+    "real_bets": 0,
+    "promotions": 0
+  },
+  "costs": {
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "remote_sql": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_get": 0,
+    "r2_write": 0,
+    "r2_delete": 0,
+    "phase_c_workflow_deployments": 0,
+    "manual_pages_dispatches": 0,
+    "external_financial_cost_eur": 0,
+    "git_result_evidence_bytes": 8846981
+  },
+  "replay": {
+    "fresh_campaign_runs": 2,
+    "fresh_reducers": 2,
+    "result_file_count": 86,
+    "byte_identical_a_b_git": true,
+    "source_bundle_replay_runs": 2,
+    "replay_hash": "3b27e09fed9fd64242ac7cdba10de3d6ad463e986522108848784c565b687f22"
+  },
+  "checkpoint_resume": {
+    "schema_version": "phase-c-v2-checkpoint-resume-receipt",
+    "generated_at": "2026-08-08T23:30:00Z",
+    "campaign_hash": "a3ae9a7b1025ae85b8faed1130cdb7b70c37b1b4fceb61f89f0c735d80093fcc",
+    "pair_space_hash": "e1aaf20ddca569fcaad260ba8b59a68f5fbeb82911e34faa9eefeabea741aa28",
+    "shard_id": 0,
+    "shard_pair_count": 50,
+    "forced_interrupt_cursor": 17,
+    "interrupted_checkpoint_hash": "814a735f2ce17cc7c4f34041b2a09835f36fa4c2601fb36edae545bd3f958daa",
+    "interrupted_prefix_hash": "67334795e90e4dfae34eb6c37c14ed93640a485ab6a9e28c1458f0700a5e380c",
+    "resumed_checkpoint_hash": "b7b2815aad7f51f1d23dd6db63eaae2231148954ea70e15bc590cb11b54f0d8b",
+    "resumed_from": 17,
+    "recomputed_prefix_count": 0,
+    "prefix_17_preserved": true,
+    "resume_equals_clean": true,
+    "clean_results_hash": "e87216b54e0c91096df62785e586798b718476354690a6c64d98ebba0e94de6d",
+    "resumed_results_hash": "e87216b54e0c91096df62785e586798b718476354690a6c64d98ebba0e94de6d",
+    "completed_shard_skip_verified": true,
+    "external_effects": {
+      "provider_calls": 0,
+      "r2_reads": 0,
+      "r2_writes": 0,
+      "remote_sql": 0,
+      "odds_credits": 0,
+      "deployments": 0,
+      "triples": 0
+    },
+    "receipt_hash": "fb8ff822a56d8d3ab1786e03e38fc5106f6787ba0e2cf76703df17f0d2879328"
+  },
+  "dashboard": {
+    "contract": "reports/hypothesis-research/v2/dashboard-data-contract-v2.json",
+    "data_only": true,
+    "betting_outputs_forbidden": true
+  },
+  "security": {
+    "forbidden_data_publications": 0,
+    "heavy_phase_c_evidence_publications": 0,
+    "provider_payload_publications": 0,
+    "secret_publications": 0,
+    "manual_deployments": 0,
+    "manual_publications": 0,
+    "triple_search_executed": false,
+    "max_depth": 2
+  },
+  "next_mission": {
+    "verdict": "NO_TRIPLE_EXECUTION_AUTHORIZED",
+    "recommended": "Acquire real revision-known_at and point-in-time source provenance before any prospective or betting interpretation; keep the current V2 evidence immutable."
+  },
+  "verdicts": [
+    "AUTOMATIC_GITHUB_PAGES_SIDE_EFFECT_RECLASSIFIED",
+    "PUBLICATION_EXPOSURE_AUDIT_PASSED",
+    "PHASE_C_V2_RESUMED_AFTER_NON_BLOCKING_SIDE_EFFECT",
+    "PHASE_C_FULL_BOUNDED_EXPANSION_READY",
+    "TRIPLE_SEARCH_REMAINS_LOCKED_NO_PAIR_SURVIVOR"
+  ],
+  "report_hash": "9a1062f6807b8fe719e0b7e70555ce10c9d8185cf962bbac4ff493e7f8a23941"
+}

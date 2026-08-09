@@ -1,0 +1,11 @@
+{
+  "schema_version": "phase-c-v2-source-export-receipt",
+  "manifest_hash": "97926c3ab20cfce4a9eb1be825839382575dc05470ae6adae3aecddd05a60f5d",
+  "double_export_required": true,
+  "provider_calls": 0,
+  "r2_gets": 0,
+  "remote_sql": 0,
+  "odds_credits": 0,
+  "manual_deployments": 0,
+  "triples": 0
+}

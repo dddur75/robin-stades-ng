@@ -1,0 +1,11 @@
+{
+  "schema_version": "phase-c-v2-campaign-multiplicity",
+  "atomic_test_count": 300,
+  "pair_test_count": 7180,
+  "campaign_test_count": 7480,
+  "method": "BH_GLOBAL_STAGE_AND_FAMILY_THEN_BH_CAMPAIGN_GLOBAL_MAX_Q",
+  "blocked_tests_p_value": 1.0,
+  "surviving_pair_test_count": 0,
+  "triple_verdict": "TRIPLE_SEARCH_REMAINS_LOCKED_NO_PAIR_SURVIVOR",
+  "triple_search_locked": true
+}

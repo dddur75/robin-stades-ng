@@ -1,0 +1,61 @@
+{
+  "schema_version": "phase-c-v2-source-export-replay",
+  "manifest_hash": "97926c3ab20cfce4a9eb1be825839382575dc05470ae6adae3aecddd05a60f5d",
+  "replay_runs": 2,
+  "replay_identical": true,
+  "compared_file_count": 9,
+  "files": [
+    {
+      "path": "fixture-universe-v2.json.gz",
+      "bytes": 9232,
+      "sha256": "c20869451a87fb3d8209976a198fa3354d840f40ae94d6e1e470ca7e97b54b19"
+    },
+    {
+      "path": "source-evidence-manifest-v2.json",
+      "bytes": 4789,
+      "sha256": "e91d8753b1c4894127b077c7409915b8b84e016847a34c89268d86205b04bd68"
+    },
+    {
+      "path": "source-export-receipt-v2.json",
+      "bytes": 302,
+      "sha256": "abb48d900ab1a41bb030e71a1741d8dfdd519922637a2b60a63161002300d273"
+    },
+    {
+      "path": "target-labels-v2.json.gz",
+      "bytes": 5587,
+      "sha256": "e7d0975d1efd54edb7228560a96c2281f1317fcfbaa1a19d890656508419d2dc"
+    },
+    {
+      "path": "team-match-facts-competition-01-v2.json.gz",
+      "bytes": 15509,
+      "sha256": "25a66d43b1a4daead2e4d91f85e54346ac3d9a53f42f1dc787318de32ebfbf1f"
+    },
+    {
+      "path": "team-match-facts-competition-02-v2.json.gz",
+      "bytes": 12692,
+      "sha256": "29f03c5fe2c41ccf8efb95477f5144b90d0f7064580f38535ffb40d987faf814"
+    },
+    {
+      "path": "team-match-facts-competition-03-v2.json.gz",
+      "bytes": 14937,
+      "sha256": "aecc2c84b8c23cf24fffecef61f1492b6edd0f9dbc446273ce90e21836e61f7a"
+    },
+    {
+      "path": "team-match-facts-competition-04-v2.json.gz",
+      "bytes": 15211,
+      "sha256": "b80746b9078f8e69bef70b4e2b4a00c0b61e1da33c25188b08bcd7bbc5d29faa"
+    },
+    {
+      "path": "team-match-facts-competition-05-v2.json.gz",
+      "bytes": 12059,
+      "sha256": "1a00b41d0e34a31a72484623dd466339eb391abbfd4ee7343d49c35987be92be"
+    }
+  ],
+  "additional_network_reads": 0,
+  "provider_calls": 0,
+  "r2_gets": 0,
+  "remote_sql": 0,
+  "odds_credits": 0,
+  "manual_deployments": 0,
+  "triples": 0
+}

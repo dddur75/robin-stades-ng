@@ -1,0 +1,772 @@
+{
+  "schema_version": "predictor-property-contract-v2",
+  "frozen_at": "2026-08-08T20:30:00Z",
+  "contract_scope": "TARGET_BLIND_HISTORICAL_RECONSTRUCTED_ONLY",
+  "candidate_property_count": 25,
+  "selected_property_count": 16,
+  "selected_v1_property_count": 7,
+  "selected_v2_property_count": 9,
+  "blocked_candidate_count": 9,
+  "strict_property_count": 0,
+  "point_in_time_source_provenance": false,
+  "target_kickoff_exclusive": true,
+  "source_embargo": "PT6H",
+  "transform_registry": {
+    "PRIOR_SUBSTITUTIONS_MEAN": {
+      "formula": "MEAN(DISTINCT_SCIENTIFIC_SUBSTITUTION_FACT_COUNT_PER_PRIOR_FIXTURE)",
+      "windows": [
+        "L10",
+        "L3",
+        "L5",
+        "SEASON_TO_DATE"
+      ],
+      "minimum_history": {
+        "fixed_windows": "EXACT_N",
+        "season_to_date": 3
+      },
+      "source_status": "ALL_INSPECTED_COLLECTIONS_KNOWN",
+      "unknown_policy": "UNKNOWN_ON_MISSING_INVALID_OR_UNCLASSIFIABLE_EVENT_COLLECTION"
+    },
+    "PRIOR_YELLOW_CARDS_MEAN": {
+      "formula": "MEAN(YELLOW_OR_SECOND_YELLOW_SCIENTIFIC_FACT_COUNT_PER_PRIOR_FIXTURE)",
+      "windows": [
+        "L10",
+        "L3",
+        "L5",
+        "SEASON_TO_DATE"
+      ],
+      "minimum_history": {
+        "fixed_windows": "EXACT_N",
+        "season_to_date": 3
+      },
+      "second_yellow_policy": "COUNTS_AS_YELLOW_AND_DISMISSAL",
+      "unknown_policy": "UNKNOWN_ON_MISSING_INVALID_OR_UNCLASSIFIABLE_CARD_DETAIL"
+    },
+    "PRIOR_DISMISSALS_MEAN": {
+      "formula": "MEAN(RED_OR_SECOND_YELLOW_SCIENTIFIC_FACT_COUNT_PER_PRIOR_FIXTURE)",
+      "windows": [
+        "L10",
+        "L3",
+        "L5",
+        "SEASON_TO_DATE"
+      ],
+      "minimum_history": {
+        "fixed_windows": "EXACT_N",
+        "season_to_date": 3
+      },
+      "operator": "GT_0_FIXED",
+      "second_yellow_policy": "COUNTS_AS_YELLOW_AND_DISMISSAL",
+      "unknown_policy": "UNKNOWN_ON_MISSING_INVALID_OR_UNCLASSIFIABLE_CARD_DETAIL"
+    },
+    "LAST_PRIOR_FORMATION": {
+      "formula": "FORMATION_OF_IMMEDIATELY_PRECEDING_ADMISSIBLE_FIXTURE_NO_SKIP_BACK",
+      "window": "LAST1",
+      "categories": [
+        "3-4-3",
+        "3-5-2",
+        "4-1-4-1",
+        "4-2-3-1",
+        "4-3-3",
+        "4-4-2",
+        "5-3-2",
+        "5-4-1"
+      ],
+      "known_other_policy": "ALL_SELECTED_CATEGORY_TAGS_FALSE",
+      "unknown_policy": "ALL_TAGS_UNKNOWN_IF_MISSING_OR_AMBIGUOUS"
+    },
+    "AFTER_RESULT_POINTS_PER_MATCH": {
+      "formula": "MEAN(POINTS_OF_DESTINATION_MATCH_FOR_CONSECUTIVE_PRIOR_TRANSITIONS_WHERE_SOURCE_RESULT_EQUALS_CATEGORY)",
+      "categories": [
+        "DRAW",
+        "LOSS",
+        "WIN"
+      ],
+      "minimum_transition_count": 3,
+      "latest_prior_gate": "CATEGORY_MISMATCH_IS_FALSE;CATEGORY_MATCH_WITH_LOW_SUPPORT_IS_UNKNOWN",
+      "target_transition_forbidden": true,
+      "unknown_policy": "NO_BRIDGE_ACROSS_UNKNOWN_MATCH"
+    },
+    "SAME_ORIENTATION_POINTS_PER_MATCH": {
+      "formula": "MEAN(PRIOR_POINTS_WHERE_PRIOR_SIDE_EQUALS_TARGET_SIDE)",
+      "windows": [
+        "L10",
+        "L3",
+        "L5",
+        "SEASON_TO_DATE"
+      ],
+      "minimum_history": {
+        "fixed_windows": "EXACT_N",
+        "season_to_date": 3
+      },
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_INCOMPLETE"
+    },
+    "RECONSTRUCTED_TABLE_STRENGTH_PERCENTILE": {
+      "formula": "ONE_MINUS_MIDRANK_MINUS_ONE_OVER_N_MINUS_ONE",
+      "ranking_keys": [
+        "POINTS_DESC",
+        "GOAL_DIFFERENCE_DESC",
+        "GOALS_FOR_DESC"
+      ],
+      "residual_tie_policy": "SHARED_MIDRANK_NEVER_PROVIDER_ID",
+      "participant_universe": "TEAMS_SEEN_BEFORE_CUTOFF",
+      "minimum_team_matches": 3,
+      "minimum_participants": 2,
+      "same_kickoff_excluded": true
+    },
+    "CURRENT_RESULT_STREAK": {
+      "formula": "CONSECUTIVE_CATEGORY_RESULT_COUNT_ENDING_AT_LATEST_PRIOR_ADMISSIBLE_FIXTURE",
+      "categories": [
+        "DRAW",
+        "LOSS",
+        "WIN"
+      ],
+      "threshold": 2,
+      "unknown_policy": "UNKNOWN_IF_NO_PRIOR_HISTORY"
+    },
+    "WEIGHTED_POINTS_HALF_LIFE_5": {
+      "formula": "SUM(POINTS_I*2**(-AGE_I/5))/SUM(2**(-AGE_I/5))",
+      "age_unit": "MATCH_ORDINAL_NEWEST_ZERO",
+      "half_life": 5,
+      "windows": [
+        "L10",
+        "L3",
+        "L5",
+        "SEASON_TO_DATE"
+      ],
+      "minimum_history": {
+        "fixed_windows": "EXACT_N",
+        "season_to_date": 3
+      },
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_INCOMPLETE"
+    }
+  },
+  "transform_registry_hash": "135632fcbbc9f3fd6d76bc3bd62b1d81b6b142dfe11830ed9c7eefc4fc0f54ff",
+  "properties": [
+    {
+      "property_id": "football:attack:goals_scored",
+      "family": "attack",
+      "disposition": "SELECTED_V1",
+      "raw_scientific_role": "TARGET_ONLY_POST_RESULT",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "PRIOR_FAILED_TO_SCORE_RATE",
+        "PRIOR_GOALS_FOR_MEAN"
+      ],
+      "tag_count": 16,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": null,
+      "block_reason": null
+    },
+    {
+      "property_id": "football:coach:substitutions",
+      "family": "coach",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "TARGET_ONLY_POST_RESULT",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:982321a60173c95e8b346af77f7a88aaac60b8b42324bdebe0b1e7b62211ecc8",
+        "field:95b1656bed49705209413b426c77ef6e0a5b70908fe0f6d2bde0ab917f8f24f0",
+        "field:ea554b88a710302170553376c0f04bbcefa69ffd5624f85fad249be84bc9ab5e",
+        "field:49a2694ab2efaac219aadb264e50790bea22b0cb10c74741c635ce9518a0f377",
+        "field:a0716c49f71e24d08efb0304b822abe4dfa681566654d136a6141567a0076914",
+        "field:ad92cfa3b7d56481a3539ddb539b486abf5050dbe3c52c513202f123a9687e82",
+        "field:952e4f8d4685e83f1f20577725218622716b5d94c763562347b69b50933f9274",
+        "field:f97a28e77391329844bccd6d60d2967f9e88b00ea231f3193cfd72f68b742393"
+      ],
+      "transform_ids": [
+        "PRIOR_SUBSTITUTIONS_MEAN"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "FORMULA_AND_DURABLE_SOURCE_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:defence:goals_conceded",
+      "family": "defence",
+      "disposition": "SELECTED_V1",
+      "raw_scientific_role": "TARGET_ONLY_POST_RESULT",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "PRIOR_CLEAN_SHEET_RATE",
+        "PRIOR_GOALS_AGAINST_MEAN"
+      ],
+      "tag_count": 16,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": null,
+      "block_reason": null
+    },
+    {
+      "property_id": "football:discipline_referee:recent_cards",
+      "family": "discipline_referee",
+      "disposition": "SELECTED_V1",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:982321a60173c95e8b346af77f7a88aaac60b8b42324bdebe0b1e7b62211ecc8",
+        "field:95b1656bed49705209413b426c77ef6e0a5b70908fe0f6d2bde0ab917f8f24f0",
+        "field:ea554b88a710302170553376c0f04bbcefa69ffd5624f85fad249be84bc9ab5e",
+        "field:49a2694ab2efaac219aadb264e50790bea22b0cb10c74741c635ce9518a0f377",
+        "field:a0716c49f71e24d08efb0304b822abe4dfa681566654d136a6141567a0076914",
+        "field:ad92cfa3b7d56481a3539ddb539b486abf5050dbe3c52c513202f123a9687e82",
+        "field:952e4f8d4685e83f1f20577725218622716b5d94c763562347b69b50933f9274",
+        "field:f97a28e77391329844bccd6d60d2967f9e88b00ea231f3193cfd72f68b742393"
+      ],
+      "transform_ids": [
+        "PRIOR_GENERIC_CARD_MEAN"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": null,
+      "block_reason": null
+    },
+    {
+      "property_id": "football:discipline_referee:red_cards",
+      "family": "discipline_referee",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "TARGET_ONLY_POST_RESULT",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:982321a60173c95e8b346af77f7a88aaac60b8b42324bdebe0b1e7b62211ecc8",
+        "field:95b1656bed49705209413b426c77ef6e0a5b70908fe0f6d2bde0ab917f8f24f0",
+        "field:ea554b88a710302170553376c0f04bbcefa69ffd5624f85fad249be84bc9ab5e",
+        "field:49a2694ab2efaac219aadb264e50790bea22b0cb10c74741c635ce9518a0f377",
+        "field:a0716c49f71e24d08efb0304b822abe4dfa681566654d136a6141567a0076914",
+        "field:ad92cfa3b7d56481a3539ddb539b486abf5050dbe3c52c513202f123a9687e82",
+        "field:952e4f8d4685e83f1f20577725218622716b5d94c763562347b69b50933f9274",
+        "field:f97a28e77391329844bccd6d60d2967f9e88b00ea231f3193cfd72f68b742393"
+      ],
+      "transform_ids": [
+        "PRIOR_DISMISSALS_MEAN"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "COLOURED_CARD_SOURCE_AUTHORITY_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:discipline_referee:yellow_cards",
+      "family": "discipline_referee",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "TARGET_ONLY_POST_RESULT",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:982321a60173c95e8b346af77f7a88aaac60b8b42324bdebe0b1e7b62211ecc8",
+        "field:95b1656bed49705209413b426c77ef6e0a5b70908fe0f6d2bde0ab917f8f24f0",
+        "field:ea554b88a710302170553376c0f04bbcefa69ffd5624f85fad249be84bc9ab5e",
+        "field:49a2694ab2efaac219aadb264e50790bea22b0cb10c74741c635ce9518a0f377",
+        "field:a0716c49f71e24d08efb0304b822abe4dfa681566654d136a6141567a0076914",
+        "field:ad92cfa3b7d56481a3539ddb539b486abf5050dbe3c52c513202f123a9687e82",
+        "field:952e4f8d4685e83f1f20577725218622716b5d94c763562347b69b50933f9274",
+        "field:f97a28e77391329844bccd6d60d2967f9e88b00ea231f3193cfd72f68b742393"
+      ],
+      "transform_ids": [
+        "PRIOR_YELLOW_CARDS_MEAN"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "COLOURED_CARD_SOURCE_AUTHORITY_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:formation_structure:formation",
+      "family": "formation_structure",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "RECONSTRUCTED_POST_MATCH",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:5921b05b7a92730cbb2628123acc325aadd6e15b19324696dd0523a5fa924162"
+      ],
+      "transform_ids": [
+        "LAST_PRIOR_FORMATION"
+      ],
+      "tag_count": 16,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "FORMATION_ONTOLOGY_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:match_competition:matchday",
+      "family": "match_competition",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+    },
+    {
+      "property_id": "football:match_competition:month",
+      "family": "match_competition",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+    },
+    {
+      "property_id": "football:match_competition:round",
+      "family": "match_competition",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+    },
+    {
+      "property_id": "football:match_competition:season",
+      "family": "match_competition",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "RECONSTRUCTED_CONTEXT_CONSTANT_NOT_PREDICTOR"
+    },
+    {
+      "property_id": "football:match_competition:venue_role",
+      "family": "match_competition",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "IDENTITY_ORIENTATION_ALREADY_ENCODED"
+    },
+    {
+      "property_id": "football:match_competition:weekday",
+      "family": "match_competition",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "BLOCKED_BY_TEMPORALITY_NO_REVISION_KNOWN_AT"
+    },
+    {
+      "property_id": "football:player:assists",
+      "family": "player",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "BLOCKED_BY_GRAIN_NO_PLAYER_POPULATION_AT_CUTOFF"
+    },
+    {
+      "property_id": "football:player:cards",
+      "family": "player",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "BLOCKED_BY_GRAIN_NO_PLAYER_POPULATION_AT_CUTOFF"
+    },
+    {
+      "property_id": "football:player:goals",
+      "family": "player",
+      "disposition": "BLOCKED_V2",
+      "raw_scientific_role": "TARGET_ONLY_OR_RECONSTRUCTED_CONTEXT",
+      "transform_scientific_role": "NOT_MATERIALIZED_V2",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [],
+      "transform_ids": [],
+      "tag_count": 0,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "DEFERRED_PUBLIC_ELIGIBLE_NOT_TESTED_V1",
+      "block_reason": "BLOCKED_BY_GRAIN_NO_PLAYER_POPULATION_AT_CUTOFF"
+    },
+    {
+      "property_id": "football:strength_form:after_result_performance",
+      "family": "strength_form",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "AFTER_RESULT_POINTS_PER_MATCH"
+      ],
+      "tag_count": 6,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "TRANSITION_FORMULA_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:form",
+      "family": "strength_form",
+      "disposition": "SELECTED_V1",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "PRIOR_WIN_RATE",
+        "PRIOR_DRAW_RATE"
+      ],
+      "tag_count": 16,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": null,
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:goals",
+      "family": "strength_form",
+      "disposition": "SELECTED_V1",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "PRIOR_TOTAL_GOALS_MEAN"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": null,
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:home_away_performance",
+      "family": "strength_form",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "SAME_ORIENTATION_POINTS_PER_MATCH"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "ORIENTATION_FORMULA_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:points",
+      "family": "strength_form",
+      "disposition": "SELECTED_V1",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "PRIOR_POINTS_PER_MATCH"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": null,
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:ranking",
+      "family": "strength_form",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "RECONSTRUCTED_TABLE_STRENGTH_PERCENTILE"
+      ],
+      "tag_count": 2,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "RANKING_FORMULA_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:streak",
+      "family": "strength_form",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "CURRENT_RESULT_STREAK"
+      ],
+      "tag_count": 6,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "STREAK_FORMULA_NOT_FROZEN_V1",
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:volatility",
+      "family": "strength_form",
+      "disposition": "SELECTED_V1",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "PRIOR_POINTS_STDDEV"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": null,
+      "block_reason": null
+    },
+    {
+      "property_id": "football:strength_form:weighted_form",
+      "family": "strength_form",
+      "disposition": "SELECTED_V2",
+      "raw_scientific_role": "LAGGED_RECONSTRUCTED_ONLY",
+      "transform_scientific_role": "PREDICTOR_ELIGIBLE_HISTORICAL_LAGGED",
+      "proof_ceiling": "HISTORICAL_RECONSTRUCTED_ONLY",
+      "strict_point_in_time": false,
+      "provider_known_at_provenance": false,
+      "grain": "one team orientation in one target fixture",
+      "source_fields": [
+        "field:80df18ec219fd8ebe4411408338cce93bb8ee682f1b574800b1c009302d2680f",
+        "field:3f393eaada0404646007ab79e549e9f8d74e9e0074819f0e3148aae252043a9f",
+        "field:b31b88303e48eddbd472886014d09652dd8785d9c525a091beeff7fa33b19b35",
+        "field:65c227999b97dc294ffa7c108da9005cb313fbb4d895f6324ccbea727a8f98dd",
+        "field:fd418c1ace7324b1343ff48ccbee5b3a54fe1b094417ffe52f2bccb53c4249c9",
+        "field:91771929468cbd06966dbd21f14be083b1727cbe848e425833f4b2de43588a98"
+      ],
+      "transform_ids": [
+        "WEIGHTED_POINTS_HALF_LIFE_5"
+      ],
+      "tag_count": 8,
+      "cutoff": "PRIOR_FIXTURE_AVAILABLE_PROXY_AT_STRICTLY_BEFORE_TARGET_KICKOFF",
+      "source_embargo": "PT6H_AFTER_PRIOR_FIXTURE_KICKOFF",
+      "unknown_policy": "UNKNOWN_IF_REQUIRED_HISTORY_SOURCE_OR_CLASSIFICATION_INCOMPLETE",
+      "previous_defer_reason": "WEIGHTING_FORMULA_NOT_FROZEN_V1",
+      "block_reason": null
+    }
+  ],
+  "contract_hash": "85c6ac5f4092fcebdd0c8a57389530c03f88d568a43768aa567a9e1bf9a89f36"
+}

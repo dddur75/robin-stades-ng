@@ -1,0 +1,3793 @@
+{
+  "schema_version": "phase-c-v2-pair-results-summary",
+  "generated_at": "2026-08-08T23:30:00Z",
+  "verdict": "PAIR_CAMPAIGN_EXHAUSTIVE_OVER_FROZEN_ELIGIBLE_SPACE",
+  "pair_count": 3590,
+  "canonical_test_count": 7180,
+  "campaign_test_count": 7480,
+  "status_counts": {
+    "LONG_TAIL_DEFERRED": 721,
+    "RAW_HISTORICAL_SIGNAL": 1298,
+    "REJECTED": 1571
+  },
+  "surviving_test_count": 0,
+  "review_queue_pair_count": 50,
+  "triple_search_locked": true,
+  "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
+  "roi": null,
+  "profit": null,
+  "clv": null,
+  "drawdown": null,
+  "full_result_shards": [
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-00-v2.json.gz",
+      "bytes": 115032,
+      "sha256": "7ee47f022759c9b0cbe9b618dd7658d93a08cbbfe13529d4bfa1955000ee9250",
+      "content_sha256": "ba650b3a40b518dc8b87ecdb11845a4f775543a1ea7ba890e9928f2032dad57c",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-01-v2.json.gz",
+      "bytes": 123662,
+      "sha256": "4eb726daef604f95100b307c2dda0ad66a3709a8badc0db29c8c0f9e6b1e5d18",
+      "content_sha256": "b6276f4b6a1cae36a113d92f02f98e9a5cb383776544496931cb092f3a21077b",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-02-v2.json.gz",
+      "bytes": 159784,
+      "sha256": "554030082f2536a831d4dee2de81772a41c1b886c14123b27e29e83be1799e98",
+      "content_sha256": "97cb7fd3efa8188d0fbf0dae2c2e57d59f2324f2e1a82ee72231b999ddfe4bf9",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-03-v2.json.gz",
+      "bytes": 128387,
+      "sha256": "8d3dacfc97a839d171147f8fddda6b26974208e8570a42fba296282b23d03482",
+      "content_sha256": "e6bb6f8e85f35ef30466fd2e732a3a4bb88969abc6c49ba1b9b51a444c4e6e5d",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-04-v2.json.gz",
+      "bytes": 159427,
+      "sha256": "87d74fbe0ab3b7cd6d7a7c4002209f7ad28d84c18677831235a4fbbe7887d037",
+      "content_sha256": "926a02e6657f6013aecca369a082df7c05c3ccf584d5ff6ad0196bfa0e674564",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-05-v2.json.gz",
+      "bytes": 118931,
+      "sha256": "9f7c06c530df77212245bdb7058728506ae1d7a1e783b8c945bc769fd4c443dc",
+      "content_sha256": "b22dfd1acce206be556cfe1522b490f6b66842f5ba00d181f98f078acbf53fc8",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-06-v2.json.gz",
+      "bytes": 116092,
+      "sha256": "3a444ebe55101c85d1cef296deeee785c9f94e7c481224423ca6ad46c013d4e6",
+      "content_sha256": "941c534a5b4fc28790107b22811af95ef2dc2c423a9533b6b57197126922b600",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-07-v2.json.gz",
+      "bytes": 141552,
+      "sha256": "93e3cf29ac32dd3a53271a0f78bf6e2b9d1ad906f0457f8d7b4d6084a0285326",
+      "content_sha256": "7a8f5fc5d28270bbf3ea2d9ba365b7ab15c8b5dd76d4f9f3bdea9daaaff0d2d1",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-08-v2.json.gz",
+      "bytes": 107602,
+      "sha256": "9ea3a71dfb64681e31c9794063ba9e3d731c3e9dc1f31c3fb993e375cced371c",
+      "content_sha256": "21e1c3beb8b68645694172d95dfa0b71df67b74df2f56cd58435d13933b2bd55",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-09-v2.json.gz",
+      "bytes": 129431,
+      "sha256": "07fbcb2b494de9f55e9cd7a891064c9a3c18ef1d914d072aed493dd2d5b2d4ed",
+      "content_sha256": "b935c94516a6eb37d228e6a74f9ea2b40753f8bb9ab56f22e8354c2ce48cbdc7",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-10-v2.json.gz",
+      "bytes": 135826,
+      "sha256": "d7d72568c6187aab42ab327351e99f692af8763d08e4fac7f9f5d2337d1ac01e",
+      "content_sha256": "227b3177a081e373a8c4395de8924b3efe2788636a74b2454545c0b8d2e846a7",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-11-v2.json.gz",
+      "bytes": 110656,
+      "sha256": "0891dd2b3d98f371293b8d7408068c06d7f1dbfa463669318f5b334b2a438864",
+      "content_sha256": "6b3576b513f1d5e305159d408494002e386cd848d8412b4f9fda98dc7ed4365f",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-12-v2.json.gz",
+      "bytes": 121430,
+      "sha256": "c25be1e9c5bfa5dbcfdafc607d3923c898e32641617add01d1e3e1822829ed2b",
+      "content_sha256": "03ce31f49136ddb3ec1617e5fe877014b74770e6fe1eb49b9e8cfef1d4998175",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-13-v2.json.gz",
+      "bytes": 157621,
+      "sha256": "f63d28827aec28af846b80f4066df83026ec1997b65b7f14addd572da3ce00a5",
+      "content_sha256": "77207240389e469da09bc763883e5fff72a01c5c630e5f35f6c586514cffcf86",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-14-v2.json.gz",
+      "bytes": 120451,
+      "sha256": "cb21a275e36b6e3d0ef09383d0808f9ce58ca4f608070075b2aefae739841c41",
+      "content_sha256": "43949ac660ce57a26a28ea7d62e6ae61bbbc91ed2c41e8ce87fb94a137b4484b",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-15-v2.json.gz",
+      "bytes": 128733,
+      "sha256": "c6c22cdecd28ba59dd939eb23db063f64efef4ff8c5f847be17b609b9ff4f9cc",
+      "content_sha256": "792be2f296f8c456865b55ad132686f8694f5ac8cba9374db17d58f96663134c",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-16-v2.json.gz",
+      "bytes": 137145,
+      "sha256": "016b070cccbb670a290fdcd514c2d0000cad7a5fe21c2a21c8719a7c20893ad1",
+      "content_sha256": "43198b449d7f5829f25f867e7aafb3a93e48efd26ddcc0dcc5f513832a4fefd1",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-17-v2.json.gz",
+      "bytes": 124574,
+      "sha256": "59b8d99cc40b7d9c0a9a581515c8ddfe4a49dfb3bc3f92780962e85ed189c01b",
+      "content_sha256": "9ab25f947ac82b470c997edc290a363650c00fd147cb449cf7a32bc28a55d1a4",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-18-v2.json.gz",
+      "bytes": 152651,
+      "sha256": "7604cf1e1ac3e7054e1e82429b38b5feeb6ca2c84165f8a4e9cfafd98f67740d",
+      "content_sha256": "fab6402c139011dad03ed6a58755345f6fac0eec027dea5adcdc54d595efea15",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-19-v2.json.gz",
+      "bytes": 124094,
+      "sha256": "7322bccb1d73a980dbf31163fc3f4e8000cec8cbbf6fba597bf3001d226b3edd",
+      "content_sha256": "d8a3145e55fad582191fda93933b801055636e0cb91f55ea3b31f0443e5cf0d2",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-20-v2.json.gz",
+      "bytes": 122356,
+      "sha256": "edfa1d83e383bbc7ce0f00e2ac41b199d056ccee7ca2cb4044085ef64c8a7725",
+      "content_sha256": "f0e5295eb62b21627ef6e23e17f2357c8fa4cfb92c8df674b649b26464e3d9c7",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-21-v2.json.gz",
+      "bytes": 127877,
+      "sha256": "4cadeb58a010f1a7feefc9d19aa9ff8f7210d4ee2646fcddd3539f27e3291ece",
+      "content_sha256": "df5082c95d109d9bc6b0c356b12d157e5b3e0f601a3bc75415ad83fff912656e",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-22-v2.json.gz",
+      "bytes": 108899,
+      "sha256": "506a0aa026945d6909abd8b49f5f2bacbad3465e0a116b69ea4ed687c8d4d68c",
+      "content_sha256": "a3d11bc969211d013deafe38efdd70eca5e0ab56b778428739e8f4959bfe8803",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-23-v2.json.gz",
+      "bytes": 98290,
+      "sha256": "f9fd381e50aef8abd03e9f7dc209b06269eb29840435909760a4a223c4089926",
+      "content_sha256": "02b7ed30a7ef2cfd03a43bfb2fed9896d4d48e56487675b0ea1fd12f4d964667",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-24-v2.json.gz",
+      "bytes": 119784,
+      "sha256": "b2b23dd3fead73edb65f936687778549243e3022abf4a098bbbb973a3fec5a98",
+      "content_sha256": "f218443e606ea7e780d8c2e757b8aa814d69b055657b7128e29a3ab748564d7b",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-25-v2.json.gz",
+      "bytes": 131504,
+      "sha256": "cb164dfb1e24cb0f75656289d32f80db922d2418b183253377ee3f441d6759d9",
+      "content_sha256": "c8aa463513f067bc74b0da1b49ec41a8930f8e8ee66f6b80e91755346c689ae9",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-26-v2.json.gz",
+      "bytes": 118410,
+      "sha256": "0defa97057cc1e3c157e278b3dbf29eecaf162fa9c42f5c94043c7bf5216897b",
+      "content_sha256": "54b019302e37e871ef8eb3fda235726508c2eb0f6974c58cc9d15e338fd6d659",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-27-v2.json.gz",
+      "bytes": 138830,
+      "sha256": "c253cdc2063a29450ddc4bc1103ccc213c8cd3eb6cd601fe11006babfdd5fd4c",
+      "content_sha256": "2fce8eba098a60de0941e1fe29ee12a60ae0dd90326b6e265a3bb57162bc90ef",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-28-v2.json.gz",
+      "bytes": 138524,
+      "sha256": "495eb787cff1abb4afeaabc4c39c17bcee4fdf499e41847cd04bc5b350f4e132",
+      "content_sha256": "a36e805d7cb1fdcc0b83b8042574b114bcac1b2929386bfaf9ea3f36317c3318",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-29-v2.json.gz",
+      "bytes": 117338,
+      "sha256": "e3e2beeee870e05d4789932f068dad94d73cceca9e4e423c8792af068a265507",
+      "content_sha256": "ef7650579a34bffb92f79fb88f5a469558d9b938639430f6a05fa58581286395",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-30-v2.json.gz",
+      "bytes": 134556,
+      "sha256": "a6b0b7307a3b5a0f625bdab0f8430f2daeb62dd4dd266da76d28385ee86850c8",
+      "content_sha256": "d6b42ed4d5ee58f65be09aa69bce71be6ed1aed5e0b79b50e6d0e1adbd3c6a0a",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-31-v2.json.gz",
+      "bytes": 138386,
+      "sha256": "2e7e854e645130e19fece6dcfc08e824bdcf70bc90ea6907fe49e2f7cceb828e",
+      "content_sha256": "aeda8c9c660225c99e3438f85745c8256dca72d588d48532b38da880dc6cbb58",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-32-v2.json.gz",
+      "bytes": 102891,
+      "sha256": "6f2f202bff11caf876661f1062d2ea386db634d7158c9980c29a206d84a95c97",
+      "content_sha256": "596af0118026250e0511e295771437a58f40df92b481df6ae8566208214f2c0a",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-33-v2.json.gz",
+      "bytes": 151802,
+      "sha256": "5ae39afb29421bcc8fee0d602374cf6ff66783387539cbe8ee567981ae03d41e",
+      "content_sha256": "d6f500f147133b5433039e45d494960fe58424607d66d80a48ab74c421320943",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-34-v2.json.gz",
+      "bytes": 124156,
+      "sha256": "bdf3e770e6f577fd71a1b499defa2ee8649ff54b4c6b51f296bd0355248979fa",
+      "content_sha256": "28c1083b6182c749ee2389f4a346a45aafafd284369b6be70e86ccd1e0f264db",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-35-v2.json.gz",
+      "bytes": 134481,
+      "sha256": "023cb470e3b32eea914b9268d71277a6ad0c665d6c313473ece074c1c9e57d8a",
+      "content_sha256": "eb5d077b6b34fe5de0edda56128c2c89724e0cda4a4646d5c4026f8ab7c28c2e",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-36-v2.json.gz",
+      "bytes": 140624,
+      "sha256": "a9b27892509bdcb750ccb9059667757905d6257a146a59d51371723986bf58e0",
+      "content_sha256": "7296a2e97c485323f2966a1eed3e767954a76df963a4e2c78020352b38c203fe",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-37-v2.json.gz",
+      "bytes": 142671,
+      "sha256": "7592f9c3791839c2d29a6d8ba97be5e292840d92dc27d89724b232baa8c09514",
+      "content_sha256": "723cb1d48d7ee2e6b897a5678e626e527e82c551c4bfe2e899a2112fc3907a44",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-38-v2.json.gz",
+      "bytes": 125681,
+      "sha256": "9e65ec3f56d7e87552b8f5f3f5e906547e53996ec016c47a1900fb3a5a58506b",
+      "content_sha256": "6eb179a7a2f1ed595a900992aa8c199d799186005f6c9fb637b281472ece154f",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-39-v2.json.gz",
+      "bytes": 111813,
+      "sha256": "11b6ec0ae23b569a8f89d40a99af853eccadfbcd0d3d803930c9b194e3866db3",
+      "content_sha256": "d1f3980b2cdd8538798a1b9c1f4f5056e4360ba16a124a9cab1f2cd4b74501fb",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-40-v2.json.gz",
+      "bytes": 143500,
+      "sha256": "e09f15f89502a0480c7219cf298411e2094b6805591bf62b5ca68b92828c88e9",
+      "content_sha256": "9680391c8e2e0cf951fe474e1dad4129b2a1d872b1abb7d7c848ca93509ef697",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-41-v2.json.gz",
+      "bytes": 142940,
+      "sha256": "f316d647148ec4a403154a1d6b016231e73d476a6a53ebedc4197664ca521338",
+      "content_sha256": "4469ebe45990b4dc0c36e710a061b387b2f4cff849232a508569dfe40f54ba3a",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-42-v2.json.gz",
+      "bytes": 141149,
+      "sha256": "7125dac4afa956d665a0cde52d30b8f23ed538d77dbfa8cd0a541eb46b4c19e5",
+      "content_sha256": "1fd4444669e7a93fe67a8bbc217bb3c8d5c6441c9469f74efb5b0cc1f0ff45bd",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-43-v2.json.gz",
+      "bytes": 111690,
+      "sha256": "11bc30ef8bc4d7029d60eeada1d7e2717c86343c55b3cdbeb457a172cd0dc87a",
+      "content_sha256": "0559fb1325bd0e14159c346f5cc1e8ff17e2d1b584f13586a93329ec7b90c2cb",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-44-v2.json.gz",
+      "bytes": 161338,
+      "sha256": "18ea3ef70ae89a2e9448d8b1cb970c5f91035f3d58f7ced3f21cc5da2dbbb931",
+      "content_sha256": "3e4ea720674aad54216d29c11d08f65ffb7c1bd0b72da51b50fe8feab5595a17",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-45-v2.json.gz",
+      "bytes": 102209,
+      "sha256": "be476be91b84cf6ed0e11fecb66cdb56b2ab147726dcea45e72fa52f1ae40122",
+      "content_sha256": "91d48da6269999f88d1d80f2b8612c33ac079ddf92d06cb882784ec86440bd56",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-46-v2.json.gz",
+      "bytes": 128118,
+      "sha256": "d2fd3f6786dcafde9ecb07d77a6c28870a2f00c6e2c061c7bdc394b5cc9911cc",
+      "content_sha256": "d6bcbee5fe754a8b68c0e627eee42d2c64dce4ce94a24a4b3476620ef0c4c057",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-47-v2.json.gz",
+      "bytes": 113585,
+      "sha256": "c98aadeb7927f580ec8b4fee92cb2f58935d7ce2d381d754de9633e05741745e",
+      "content_sha256": "9975939ac53586a27ff5189044d20853aca2ed15aa49ebb0960e1bd095ab62b4",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-48-v2.json.gz",
+      "bytes": 166338,
+      "sha256": "1e69c1e7b133b1b81873a74145b70063d77679088487b12bc6f12d36a77201ea",
+      "content_sha256": "91c776d1979909162563d00ce80d2d348cee2768a39858a17c1dbaa3a4a9e531",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-49-v2.json.gz",
+      "bytes": 147850,
+      "sha256": "6013e48710bea600dbfd3c79a1285be2242daf8d677fb02ce7a71ab7a2e12db4",
+      "content_sha256": "a77ff98871f62fae8244e4f9177041ad9c3361abcef2d895bf7672a1f67fc328",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-50-v2.json.gz",
+      "bytes": 107843,
+      "sha256": "cf4331bebd2d81c3d6cf83b409853e8f33badbcb28f85f66d37f7d48c0b471e6",
+      "content_sha256": "c024032bf465d41edb51b2c0ae393dcbdebe56349f2cb0cf615948aff899e3f6",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-51-v2.json.gz",
+      "bytes": 128518,
+      "sha256": "0be48a461ce0b18b4c7b5b2e501de3f324be2ef6fd24217828847ac1364027dd",
+      "content_sha256": "47529a04d3d1157f5f652f64c19ae4c03bd357306baddafb141f25137c024257",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-52-v2.json.gz",
+      "bytes": 94260,
+      "sha256": "ef1cc3a7a07d7838c89dd0c9ecc760421befc4408334863ce2fc0297c4d8e8f0",
+      "content_sha256": "61113b2c15e2254df60325ffb00b75651ea8d9b7718ca98c10e238628d9564e4",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-53-v2.json.gz",
+      "bytes": 129831,
+      "sha256": "5611fd7bd442643590a273b4902ccd57f450503e29a8a838f83cd75ba6fe3a89",
+      "content_sha256": "74824c1a51182a1447b2ab8793f069531c501ea6c2b607ab6f6e111e1fde6c57",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-54-v2.json.gz",
+      "bytes": 142158,
+      "sha256": "fc53a60e69ad3e019c3ad113f5ef49c567f450d6d6575a36622c180d237a5b89",
+      "content_sha256": "7276070b7625ac313b9c0f8b2f1313800469352575d241d9aca781f08b774130",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-55-v2.json.gz",
+      "bytes": 115310,
+      "sha256": "83a6fe59e70aa3a8eadefcc4ab390481106f3f293c5420aee14b3758925ac731",
+      "content_sha256": "54f48b2a466f7451d823ff71b9c00018854bb58620fadbe22953694aff1919c4",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-56-v2.json.gz",
+      "bytes": 121286,
+      "sha256": "3fd99268ba12dc73fd931551b7a4c526180f25da8d42a43cab4d02c23938f861",
+      "content_sha256": "ccd28131a62d39426eb1c032cf4585e2c52bbc85cefbfc8b182d347265cc6a10",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-57-v2.json.gz",
+      "bytes": 120237,
+      "sha256": "178cfe57e8e0ce7332416582978b5f89a30d09bba9dd8b3729c350b4a1d7c968",
+      "content_sha256": "3ab6cc81e9fe1e2745d1e2c70cf964e266499020c79103f1212a5cb936c34549",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-58-v2.json.gz",
+      "bytes": 155995,
+      "sha256": "20cf00c3947fab612a0f2535601bf1582a9790f5a506b59c049cde4b9d7c1dca",
+      "content_sha256": "8bbf33dc74881ec2a57d3801be1d0b3236f1858e9e855bd8ade8bb54f9d59f22",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-59-v2.json.gz",
+      "bytes": 120057,
+      "sha256": "f174141b062eab6a1c8ecef1e78c968b249e5f7a7709b28d6a49d14711334c5e",
+      "content_sha256": "91b20e207b5f9ead71b9d33d11abf9fa22b21662274e16aada4d1e1834bec93b",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-60-v2.json.gz",
+      "bytes": 148510,
+      "sha256": "967b38110c2bbada814af9b9cee51a5c035e465424b083a6dd8883f5aa76777a",
+      "content_sha256": "5e9267f986b81b902c7d963de8ce3c59d077a2b9c7d96c7ed1c4049dca669275",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-61-v2.json.gz",
+      "bytes": 117639,
+      "sha256": "416aae84b0f39fedefd1a567e7f3205cefcbeb94f92b0491498b8185bf62956e",
+      "content_sha256": "d3c30856d3cee4182c393aa8ed6651e145e1088c53c39945deaa303fc041b4fd",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-62-v2.json.gz",
+      "bytes": 120247,
+      "sha256": "b0127f8fefcea8d772aaa9c454f8ddb64d460dec7a237949232eac0cf1f2539a",
+      "content_sha256": "b437789a03483e7a2a1e7c36de692279395d281986f98c2d90f85e570026c871",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    },
+    {
+      "path": "reports/hypothesis-research/v2/full/pair-results-shard-63-v2.json.gz",
+      "bytes": 158939,
+      "sha256": "fff3d3e67424e634cd775bc06379b8dc94d6ec1f838314682a688e1a3e37613c",
+      "content_sha256": "4e68c7406c01f234cfff5da6a78d71c562ab676cbbdd6a865ee251f68fa481c7",
+      "compression": "GZIP_MTIME_0",
+      "transport_identity": "RUNTIME_BOUND",
+      "reconstruction_identity": "CANONICAL_DECOMPRESSED_CONTENT_SHA256",
+      "python": "3.12.10",
+      "zlib_build": "1.3.1",
+      "zlib_runtime": "1.3.1"
+    }
+  ],
+  "review_queue": [
+    {
+      "pair_id": "pair:000477c0ec65c0c613447f48d8975923f928e0ca8517a3691239c9f85d7406e7",
+      "parent_a": "TEAM_AWAY.COACH.SUBSTITUTIONS_MEAN.L5.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.YELLOW_CARDS_MEAN.L5.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 107,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0021068,
+            "PARENT_A": -0.00154381,
+            "PARENT_B": 0.00036203
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00040488,
+            "PARENT_A": -0.00045492,
+            "PARENT_B": 2.847e-05
+          },
+          "p_value_raw_intersection_union": 0.8769082641,
+          "p_value": 0.8769082641,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "4c240fe2088761558af7c779b0c8bb6cffe2891614f05702dfa3b3874ddc5ac9",
+          "hypothesis_id": "hypothesis:35f712e114242f2cc0ca44b19f6910ba4a2f2527eb306dc77fa53a30f838c9e5"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 107,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00017639,
+            "PARENT_A": -0.00137204,
+            "PARENT_B": 0.00106308
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -7.921e-05,
+            "PARENT_A": -0.00066929,
+            "PARENT_B": 0.00052684
+          },
+          "p_value_raw_intersection_union": 0.9674895018,
+          "p_value": 0.9674895018,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "98def5964ec688c15a1162bc47205764dfd94a1b562655f3f12d248b1b56c1ad",
+          "hypothesis_id": "hypothesis:e935328faff03ff840b6676b32d2e15383eea2f084765fea94a30e5f608c7c2b"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:000a2dd962b2889d4f2d2071e5f4bcd740809e55c69b9529c16bd796b1484900",
+      "parent_a": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 160,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00445506,
+            "PARENT_A": -0.00813768,
+            "PARENT_B": -0.00644993
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00097452,
+            "PARENT_A": -0.00165886,
+            "PARENT_B": -0.00127282
+          },
+          "p_value_raw_intersection_union": 0.9789165361,
+          "p_value": 0.9789165361,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "d18dce212da5e025323414d7892078edf004f23391fe57a5369e3b9b1341e78c",
+          "hypothesis_id": "hypothesis:6f9ba8cd95e1637e72f7e13ad7ab5f4c15a516e26cde2b46fc907abd365b55b4"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 160,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.0009467,
+            "PARENT_A": -0.00179091,
+            "PARENT_B": -0.00164572
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00051361,
+            "PARENT_A": -0.00092283,
+            "PARENT_B": -0.00080411
+          },
+          "p_value_raw_intersection_union": 0.6854614025,
+          "p_value": 0.6854614025,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "9566593dc44c18e0375cb8c08b7307a183d85f3b59cb7ad5932adc5551264cac",
+          "hypothesis_id": "hypothesis:c586f3e3aff41d3dd6063420909ad4fca3b27e89f8b161f4b7d3a2635e00e6b4"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:001759eb533fbaace66bfce447460e6dc4d5179297f12c32e7ecad42a6f190e3",
+      "parent_a": "TEAM_AWAY.COACH.SUBSTITUTIONS_MEAN.SEASON_TO_DATE.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 95,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00037662,
+            "PARENT_A": -0.00281466,
+            "PARENT_B": -1.571e-05
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00011568,
+            "PARENT_A": -0.00077142,
+            "PARENT_B": 0.00018225
+          },
+          "p_value_raw_intersection_union": 0.5128843087,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "041e235ab991a2dc30c3d5c5b1f93915a82fe084e1f9d383618317d14114dbeb",
+          "hypothesis_id": "hypothesis:edce179b602cfb975c51f11c673074a0bf1c7a111af39d94c153f3659375a1e4"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 95,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00176448,
+            "PARENT_A": 0.00026925,
+            "PARENT_B": 0.00104579
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0008374,
+            "PARENT_A": 0.00012061,
+            "PARENT_B": 0.00049689
+          },
+          "p_value_raw_intersection_union": 0.2226094221,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "cd7634aa1d66f8630bd4745eb996e698878fbdc85450b918c12ebb974e90b16c",
+          "hypothesis_id": "hypothesis:c7ebf87e73d6e2d0a814b895c4f660a55bacddcef5f27f9aeca67dc75bd020b1"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:001d516f19a32b1f350cd74a7b97de7c6422257273e8f8945ba22a7efca044cd",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 148,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0042981,
+            "PARENT_A": 0.00080557,
+            "PARENT_B": 0.00140865
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00085253,
+            "PARENT_A": -5.045e-05,
+            "PARENT_B": 0.00033301
+          },
+          "p_value_raw_intersection_union": 0.3012119484,
+          "p_value": 0.3012119484,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "be77963ea509798d14d785f59ea36192c18774cadae2f577196f49c834a4654a",
+          "hypothesis_id": "hypothesis:1f04a96b32dbe3e45d6157411a6af3657449558b3f1acb555ef8d1fcdac106e0"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 148,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00071813,
+            "PARENT_A": 0.00041818,
+            "PARENT_B": -0.00017095
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00036368,
+            "PARENT_A": 0.00021413,
+            "PARENT_B": -8.209e-05
+          },
+          "p_value_raw_intersection_union": 0.7878576171,
+          "p_value": 0.7878576171,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "9a56c908ac9feaeb1b8f3f4601594777dc2f9d9757bbde9cdbceac4a38c46717",
+          "hypothesis_id": "hypothesis:32a99dc2f815f8b12535bc345b7211051b2e9c6df56addb4dc056091095009ac"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:003202ac26b927a959ff8ca8b05fbb342599ad77ccce85d5e7bbafb9cf95b3b4",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.DISMISSALS_MEAN.L3.GT_0.V2",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 89,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00023938,
+            "PARENT_A": -0.00161205,
+            "PARENT_B": -0.00127587
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -5.941e-05,
+            "PARENT_A": -0.00041216,
+            "PARENT_B": -0.00029569
+          },
+          "p_value_raw_intersection_union": 0.9561172835,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "6a6f3cea20c80fcdf37a606e7813da27f71cd30e8ba43f0ba4e794d401bff94b",
+          "hypothesis_id": "hypothesis:2be5f8981984cb618994641a0676a6ffce4380accb56bcf20dcdbcc9b757c535"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 89,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0002548,
+            "PARENT_A": 0.00048151,
+            "PARENT_B": 0.0002973
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0001209,
+            "PARENT_A": 0.00022714,
+            "PARENT_B": 0.00015025
+          },
+          "p_value_raw_intersection_union": 0.4440302497,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "0d26be4e52cecd48526d31e9803660cb54ed2703fb3375ae26cb0a643de6d3b6",
+          "hypothesis_id": "hypothesis:13c72a0b10537efa59bc5eaefd14a439d669ed09f9cfc3713ca50bc73c0127cc"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0063b690c2f13ab1d30fe4206e6a4f67a360dfb8bb07cc4df323c662b1bd191e",
+      "parent_a": "TEAM_HOME.STRENGTH_FORM.SAME_ORIENTATION_POINTS_PER_MATCH.L3.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WEIGHTED_POINTS_HL5.L3.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 235,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00589671,
+            "PARENT_A": -0.01006402,
+            "PARENT_B": -0.00082315
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00148898,
+            "PARENT_A": -0.00180254,
+            "PARENT_B": 0.00011682
+          },
+          "p_value_raw_intersection_union": 0.7541171858,
+          "p_value": 0.7541171858,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "d4a1f725b3a98bfeb5f948f881b66e785b95e0089f7574f722b6a72ab8fb7e74",
+          "hypothesis_id": "hypothesis:55f62b7cafb747cd799b5e8e6f76437769f1fbbf1b1e7a251d0ff81ab5c80252"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 235,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 6.465e-05,
+            "PARENT_A": -0.00035301,
+            "PARENT_B": 0.00168577
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 2.137e-05,
+            "PARENT_A": -0.00018673,
+            "PARENT_B": 0.00081292
+          },
+          "p_value_raw_intersection_union": 0.6277734026,
+          "p_value": 0.6277734026,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "4100d3155d026abd5bfd5179267ca6ff0e78928e31174a05fc72dfea68e81571",
+          "hypothesis_id": "hypothesis:670202d34713e854bbe6574645129968d25bed6b41c0077edc06b0a3062050ec"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:006d2fb03ccb54e985582f65fc46f26af53ebfd998ae5e6d154db5150775c40a",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L5.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 178,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00134473,
+            "PARENT_A": -0.00197643,
+            "PARENT_B": -0.00233405
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00049555,
+            "PARENT_A": -0.00054154,
+            "PARENT_B": -0.00059754
+          },
+          "p_value_raw_intersection_union": 0.9678947219,
+          "p_value": 0.9678947219,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "abe9b84e2389f31947b6920d5c69e2fa6faa26770fc44bb09fa767e76b921452",
+          "hypothesis_id": "hypothesis:7285e133bc7496b8b0ee85514fd6e2b98b4a6ea5a7c43abe286ddbeb60e28efa"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 178,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00070312,
+            "PARENT_A": 0.00037109,
+            "PARENT_B": 0.00101008
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00035894,
+            "PARENT_A": 0.00019525,
+            "PARENT_B": 0.00050378
+          },
+          "p_value_raw_intersection_union": 0.4382431941,
+          "p_value": 0.4382431941,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "c3206d4050eb191fda96090ff504c5af85b22e70aef5476a87d4fb4d744b20d0",
+          "hypothesis_id": "hypothesis:0813d230788751fa4f2bb6f7e8cd674d219cba060c21efb0b523658e4cd1e270"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:00703b29fdbdaedb0a900a7bb7c666d35e25b78f172cfe3ee79d96e71ac8dfd9",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.COACH.SUBSTITUTIONS_MEAN.L3.HIGH_Q67.V2",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 132,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00074576,
+            "PARENT_A": -0.00129554,
+            "PARENT_B": -0.00067152
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 8.745e-05,
+            "PARENT_A": -0.00039994,
+            "PARENT_B": -0.00013582
+          },
+          "p_value_raw_intersection_union": 0.7982496475,
+          "p_value": 0.7982496475,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "42770b024891c1da6eb8c5e5e7010f82b56172ac5017091ade0e18f7755be371",
+          "hypothesis_id": "hypothesis:5dc97ec05781b6e4caee013f444774a3f65a408b2462e917f1397e26ebe07813"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 132,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00230852,
+            "PARENT_A": 0.00048798,
+            "PARENT_B": 0.00192194
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00112793,
+            "PARENT_A": 0.00022932,
+            "PARENT_B": 0.00093847
+          },
+          "p_value_raw_intersection_union": 0.3932015066,
+          "p_value": 0.3932015066,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "cbff5a1ad47e0fd59767624edf7b3f92fe8174e8c3944c8babe75b6da80a2fda",
+          "hypothesis_id": "hypothesis:3596a199bdef72815be9508ed8f79b5c439611fb2c41872200508da94747c13b"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:008ffa7346ee655137c7f559fb57a8845fce861d743ab2625ad82e0144004027",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DISCIPLINE_REFEREE.YELLOW_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 50,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00278411,
+            "PARENT_A": -0.00213284,
+            "PARENT_B": -0.00229018
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00081134,
+            "PARENT_A": -0.00069835,
+            "PARENT_B": -0.00074023
+          },
+          "p_value_raw_intersection_union": 0.7185339218,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "0fd50fe2f9290206ade5c608f8c2e1ddc108e0ebb7aaf94d3af813ddb40a8a42",
+          "hypothesis_id": "hypothesis:ec144e7aa192f302fd3c113a7fa4580cc44ea36fe39c4cd0f5a1a596cd45d877"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 50,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0002915,
+            "PARENT_A": -0.00068858,
+            "PARENT_B": 5.39e-05
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0001467,
+            "PARENT_A": -0.00032621,
+            "PARENT_B": 4.114e-05
+          },
+          "p_value_raw_intersection_union": 0.9049990504,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "23350e9b93a7ad28a63fc2358f9ebbe3682d4ee255f4d28529440093501305e3",
+          "hypothesis_id": "hypothesis:970fd90678337cba878bf7ed9d4863348c344c10b87cb9e4f281563bed67869d"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:009be890ab516e300b7a54d56d7b331b4e31d1ce2e9753360dfa2a0e8f39754e",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 144,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00230432,
+            "PARENT_A": 5.459e-05,
+            "PARENT_B": 0.00649794
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00047682,
+            "PARENT_A": 1.474e-05,
+            "PARENT_B": 0.001516
+          },
+          "p_value_raw_intersection_union": 0.6160774361,
+          "p_value": 0.6160774361,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "9693680fa01e8a608ab77237c34b98e8804196ae8edc4c2cf7457e098889dff2",
+          "hypothesis_id": "hypothesis:bc410f5dd255d8c26f4e5d21e01a60e907cf93ea32f0da29bc473dff921b1cb7"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 144,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00075373,
+            "PARENT_A": -1.104e-05,
+            "PARENT_B": -0.00121047
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00039226,
+            "PARENT_A": -3.29e-06,
+            "PARENT_B": -0.00061228
+          },
+          "p_value_raw_intersection_union": 0.4786320238,
+          "p_value": 0.4786320238,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "c14736ebe1fb774c8aa38ec0a5cdec3afc62e902ca6942bc7aa3a007e75dfcc0",
+          "hypothesis_id": "hypothesis:d5c29f292d2888213516dc58fac4c283c6826d8d24787fbd9ae505a94d5b8aa7"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:00b33aec44c9864eda844893de28af1087835bc518b61544e826298de618f474",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 348,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00044267,
+            "PARENT_A": 0.00236909,
+            "PARENT_B": -0.00125759
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 9.413e-05,
+            "PARENT_A": 0.00058555,
+            "PARENT_B": -0.00037528
+          },
+          "p_value_raw_intersection_union": 0.288841774,
+          "p_value": 0.288841774,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "cc74d8b916ea3058fdee60d4c8e6c2be63761f9503a57311f660b8e6165f00a4",
+          "hypothesis_id": "hypothesis:52975507e826a46476aae6a671f6b9a1f52fad5b1bcf6302542bdd6e2d41ce0b"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 348,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 8.68e-05,
+            "PARENT_A": -0.00032152,
+            "PARENT_B": -0.0008538
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 3.94e-05,
+            "PARENT_A": -0.00013566,
+            "PARENT_B": -0.00042253
+          },
+          "p_value_raw_intersection_union": 0.9381832296,
+          "p_value": 0.9381832296,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "79dea227c40efe68142adfb3350b9353ed0c0eb5959b7e0332470a2c977ce9d9",
+          "hypothesis_id": "hypothesis:f52aa11f7fcc3740ba3f11ba752f8d5b982f3d1e18764cf424074f0aa9aa8169"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:00d48e0fc80cc7e12ddd7bc9e558aca576df15c758e16e8c3eae9315feb83922",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 126,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00237482,
+            "PARENT_A": -0.00231223,
+            "PARENT_B": 0.00195933
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00056114,
+            "PARENT_A": -0.00050552,
+            "PARENT_B": 0.00042985
+          },
+          "p_value_raw_intersection_union": 0.9328380045,
+          "p_value": 0.9328380045,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "6348c1219e45d1b9f444240cf77c45acb511dbbc4a8054035ea8258ba711c767",
+          "hypothesis_id": "hypothesis:486aab52e899e36dfbd4dd25c5722827fc6f31c5e117c1f2bf4555ba79199cd5"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 126,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00035421,
+            "PARENT_A": -0.00091467,
+            "PARENT_B": -0.00090932
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00018245,
+            "PARENT_A": -0.00044072,
+            "PARENT_B": -0.00046006
+          },
+          "p_value_raw_intersection_union": 0.920971358,
+          "p_value": 0.920971358,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "d2ba61b275ebfb17152036e6fed2efc11d3d3370a671e5cf29d8754b0998fea4",
+          "hypothesis_id": "hypothesis:b027c6348a795c87d288892fcae392b3ed35da38f6503d4fc21dc333b713790a"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:00e750f7b04463c35030b459a5acbc6b151b3f27d5e0b4f427a57a0adc2941c8",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.DISMISSALS_MEAN.SEASON_TO_DATE.GT_0.V2",
+      "parent_b": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 244,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00060692,
+            "PARENT_A": 0.00476234,
+            "PARENT_B": -0.00169038
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00014997,
+            "PARENT_A": 0.00115078,
+            "PARENT_B": -0.00039459
+          },
+          "p_value_raw_intersection_union": 0.5821532427,
+          "p_value": 0.5821532427,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "d41bc997584f67fc5bfa946dd09801d4f39c5be4f24979f54935c21f162d08f9",
+          "hypothesis_id": "hypothesis:8aab5cf078c9c770f0a47ac2a37df3fbe9ea4adc7fd1bcf5324a734271b9848e"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 244,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00028333,
+            "PARENT_A": -0.00013493,
+            "PARENT_B": 0.00033512
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00014392,
+            "PARENT_A": -5.657e-05,
+            "PARENT_B": 0.00016558
+          },
+          "p_value_raw_intersection_union": 0.6626691314,
+          "p_value": 0.6626691314,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "e6873e5bb5d9717a4474408fdae14ed798442f7ac97fa5e48ba03066705c11f1",
+          "hypothesis_id": "hypothesis:236fdedcc35050c41078245e0b226cda1870b6b452c50d7904f597add6697bab"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:010d7ebc0af7fc4332f9484e5bc3b99452ea4dab4f95561386406941d7c66de2",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WEIGHTED_POINTS_HL5.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 109,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.01959745,
+            "PARENT_A": -0.00610108,
+            "PARENT_B": -0.01688034
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00489359,
+            "PARENT_A": -0.00138103,
+            "PARENT_B": -0.00442429
+          },
+          "p_value_raw_intersection_union": 0.9928575338,
+          "p_value": 0.9928575338,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "d0038ac8701fd034003bca89970cdf40d2e8a37403b01708ec57483fb94004bb",
+          "hypothesis_id": "hypothesis:fbee242f2da88a520fed998539be386426021ab948c075f40b612e6bc8ee5ae1"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 109,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00118487,
+            "PARENT_A": 0.00035168,
+            "PARENT_B": -0.00147488
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00056561,
+            "PARENT_A": 0.00017051,
+            "PARENT_B": -0.0007065
+          },
+          "p_value_raw_intersection_union": 0.9659389429,
+          "p_value": 0.9659389429,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "405722b0326f438a6f481bd7b09db1c7fd05e71b8c092f944f8ca34bc17bea7f",
+          "hypothesis_id": "hypothesis:1c28fcbeb7b75bd0d5aaaa04a7acacda78b3b0ded9409c61be5ebf7beac6d615"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:010f7d2c7c8e65a1431d85528656be61fe04974d81affe1be4d2e487da032e59",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 214,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00066901,
+            "PARENT_A": -0.00469991,
+            "PARENT_B": 0.0041647
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00049314,
+            "PARENT_A": -0.00130459,
+            "PARENT_B": 0.00098617
+          },
+          "p_value_raw_intersection_union": 0.965974666,
+          "p_value": 0.965974666,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "2ae817fe71d181c11ea9f7518d7b44e5699fcfb7b0d04aaf9dbf6e74506edc65",
+          "hypothesis_id": "hypothesis:bede43b909105fb483e1c1b17506109aeb83c1d0c4b2f005aad3d46857ed25aa"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 214,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00269865,
+            "PARENT_A": -0.00072682,
+            "PARENT_B": 0.00317569
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00130476,
+            "PARENT_A": -0.0003397,
+            "PARENT_B": 0.00154512
+          },
+          "p_value_raw_intersection_union": 0.9226193318,
+          "p_value": 0.9226193318,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "e3eac0a57f8b5b274d2cbd2c6d7d54cd5f06fc4b624fba9ec8f8094ebf3b8619",
+          "hypothesis_id": "hypothesis:c1898f2eb24c3c5b5188a6d846ceddc6f1337a6df8b7ad2f9fa86dffe1696913"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0113f24d3030f3443a8974700254f6c9eb2e0a8bb07c323c5d5129296f7eeb25",
+      "parent_a": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.SAME_ORIENTATION_POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 235,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00456678,
+            "PARENT_A": 0.01129527,
+            "PARENT_B": -0.00450304
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00038649,
+            "PARENT_A": 0.00212639,
+            "PARENT_B": -0.0010566
+          },
+          "p_value_raw_intersection_union": 0.9086847442,
+          "p_value": 0.9086847442,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "a642effd64c6394f5040afa653ce85f3467948ac9c259a13ac1def44e6d43d18",
+          "hypothesis_id": "hypothesis:95cf842f82dae70a7cdd45aa2639f5847dcdbb7f36197ea65b83c92f9f14af4a"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 235,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00087417,
+            "PARENT_A": 0.00184309,
+            "PARENT_B": -0.00100871
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00041123,
+            "PARENT_A": 0.00089374,
+            "PARENT_B": -0.00048412
+          },
+          "p_value_raw_intersection_union": 0.5367241317,
+          "p_value": 0.5367241317,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "241c4809c474411190e018f0186b124737803a7d18a61c6b908d0b842efc7720",
+          "hypothesis_id": "hypothesis:4f5c9c1087e629d3612f9789be034f91d28cdb929601bb157d203b2a8ccbe266"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:012913865651c83a68154905ce429af3efea9651887c27b5b914df6e8c4ffd70",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.YELLOW_CARDS_MEAN.L5.HIGH_Q67.V2",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.WEIGHTED_POINTS_HL5.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 60,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.01049663,
+            "PARENT_A": -0.00055836,
+            "PARENT_B": 0.0058129
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00244025,
+            "PARENT_A": -0.00013119,
+            "PARENT_B": 0.00137027
+          },
+          "p_value_raw_intersection_union": 0.6824973596,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "dd8406703ba31e72426b8bedfe6a2f7f7352b6a58638421146fea2121f86c33f",
+          "hypothesis_id": "hypothesis:f38c81438381bc3b3209f34b0a8c8e3a50c68e4b0f076346817b1d9a3929e446"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 60,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00478546,
+            "PARENT_A": 0.00092545,
+            "PARENT_B": 0.00344793
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00227057,
+            "PARENT_A": 0.00044608,
+            "PARENT_B": 0.00161887
+          },
+          "p_value_raw_intersection_union": 0.9833282782,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "3bb08cc0caa370af7f7f6487e683799f511d7fa1374e870f2acf1d8437a2b9e1",
+          "hypothesis_id": "hypothesis:84cd4470a6303b66eaf7f55c54f55286b1dbfae7a5b0b7f329c53fe7ca27f140"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:012d650bda3c4b29536e959814b33e21d01e9654ac6063cc6765287f10779ff2",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.SAME_ORIENTATION_POINTS_PER_MATCH.L3.HIGH_Q67.V2",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 198,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00369234,
+            "PARENT_A": -0.00135042,
+            "PARENT_B": -0.0008397
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00071259,
+            "PARENT_A": -0.00042633,
+            "PARENT_B": -0.00018923
+          },
+          "p_value_raw_intersection_union": 0.3091513482,
+          "p_value": 0.3091513482,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "427d47485dd21683c6258fc02ee3e4d9352506b5cfc7a990fde22e6d4cd3090b",
+          "hypothesis_id": "hypothesis:13405aac5d15d53d9c38a741d948f41ce79fefeb7c49ddbab37d450297cc2926"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 198,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00106115,
+            "PARENT_A": 0.0008655,
+            "PARENT_B": 0.00056224
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00052285,
+            "PARENT_A": 0.00041192,
+            "PARENT_B": 0.00027565
+          },
+          "p_value_raw_intersection_union": 0.9368703849,
+          "p_value": 0.9368703849,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "ebe6c30ed6932566c3f72b10ff9aebf5a1a05bbd59d29bb3ca5396a57f4fdce6",
+          "hypothesis_id": "hypothesis:fd283876df8fc368708da50aea7889d761138f28ca6cf025d6c2da8f1214af4f"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:01381fb1514051d5b7b00bd3d0cf1ab7e14d3e4752bd5743ecc9cc0a653cd523",
+      "parent_a": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 80,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00115655,
+            "PARENT_A": -0.00226449,
+            "PARENT_B": 4.565e-05
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00052542,
+            "PARENT_A": -0.00038712,
+            "PARENT_B": 0.00024067
+          },
+          "p_value_raw_intersection_union": 0.7833085302,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "502dcad94f91606847273d406c67e85b35c67f57455e972f4523c246f423eb32",
+          "hypothesis_id": "hypothesis:330d489becd7e39c0ae7962df784fb1127633e13e71fd91f91060ac7c5efcffb"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 80,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00117707,
+            "PARENT_A": 0.00078356,
+            "PARENT_B": 0.00028186
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00058697,
+            "PARENT_A": 0.00039565,
+            "PARENT_B": 0.000139
+          },
+          "p_value_raw_intersection_union": 0.4474865376,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "6874c623d2f286ddad927267faecd9d503958bf3e22a18ec74be3a822205f008",
+          "hypothesis_id": "hypothesis:87d3f7f02ad16028b13de1973d7b1cb7438378acf23356596dc6302182af2d58"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:016aa7e9fb74e1c0152a1f0ad090c5d258d96d66aa6bc9213ccd9417a0e79a5a",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 393,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0022777,
+            "PARENT_A": 0.00108217,
+            "PARENT_B": 0.00029136
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00028406,
+            "PARENT_A": 0.00029995,
+            "PARENT_B": -0.00019255
+          },
+          "p_value_raw_intersection_union": 0.4820816302,
+          "p_value": 0.4820816302,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "cac77a674e757df6d173ab2de62cbcaa28bb4ad42d464a4a93858c73aba957a3",
+          "hypothesis_id": "hypothesis:820e2589323bf2151fe2b6c403869233959b3f40ce49a728c1c3fb3c139968d9"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 393,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00073698,
+            "PARENT_A": -0.00019112,
+            "PARENT_B": 6.561e-05
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00037103,
+            "PARENT_A": -8.195e-05,
+            "PARENT_B": 4.449e-05
+          },
+          "p_value_raw_intersection_union": 0.7264614474,
+          "p_value": 0.7264614474,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "efecadd0947258b34f11e5c69269a888c0d1e3c0814ec2a258c216dff3c93681",
+          "hypothesis_id": "hypothesis:af0979bd69ff64a98bb51bbea68926d724a05a7b4a2283a74ed8876fdffb66e4"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:016bae1840adc68b3fec88e89127562806da4f7962858b7d8fedb7bec1b27e17",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WEIGHTED_POINTS_HL5.L5.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 201,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00397415,
+            "PARENT_A": -0.01353329,
+            "PARENT_B": 0.00414231
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00164001,
+            "PARENT_A": -0.00300091,
+            "PARENT_B": 0.00118045
+          },
+          "p_value_raw_intersection_union": 0.8703797329,
+          "p_value": 0.8703797329,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "ffd8dcd322a8b84c2eda722dc83e0e381a1594180447ecc00d4beb26e57ee100",
+          "hypothesis_id": "hypothesis:01e69978848b13e13d21bbc1e80c57bd9922e0d9168f8840cdad9561e51e2434"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 201,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00073861,
+            "PARENT_A": -0.00166076,
+            "PARENT_B": 0.00166634
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00026483,
+            "PARENT_A": -0.00083625,
+            "PARENT_B": 0.00085637
+          },
+          "p_value_raw_intersection_union": 0.7976388564,
+          "p_value": 0.7976388564,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "6c2d2dce19a7c8366e0fd03cc0e0774c2fffe942ac2bc6f9df9c26789538f9e5",
+          "hypothesis_id": "hypothesis:a7b5b4578f36fd608cddafbeb68a6a71d5f486c51ba6be2824103c53ff50a929"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0171bac0c40574e6b5f69958f426e65c24f9aa796d1ea411c424c6b911fa7809",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.RECONSTRUCTED_TABLE_STRENGTH_PERCENTILE.SEASON_TO_DATE.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L5.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 143,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.0072104,
+            "PARENT_A": -0.01064198,
+            "PARENT_B": -0.01030784
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00198163,
+            "PARENT_A": -0.00295174,
+            "PARENT_B": -0.00258399
+          },
+          "p_value_raw_intersection_union": 0.9986525032,
+          "p_value": 0.9986525032,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "62227811c073cc658690aaeb3aba9e51e90240da3d30def6206ac6b20226b924",
+          "hypothesis_id": "hypothesis:e5bf43fdd3e4aeab0d27db1686be8d70f249c3b637cdeec021ad5f3ef60c6e2e"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 143,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00257036,
+            "PARENT_A": 0.00099719,
+            "PARENT_B": 0.00192648
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00121836,
+            "PARENT_A": 0.00046547,
+            "PARENT_B": 0.00092932
+          },
+          "p_value_raw_intersection_union": 0.9623647596,
+          "p_value": 0.9623647596,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "a8f96026ecc23b8f30232aea31e25331f44a61bffb25034efa933d886fc78a1f",
+          "hypothesis_id": "hypothesis:6a1232025670386c06fd60fd61c30c482baba64d6a51a8d2a7c38e81bd129178"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:019b6ef822e3b26cfd2f4c8cc41b3ed733f1e48847b15bb45c585a41c9beb03a",
+      "parent_a": "TEAM_AWAY.ATTACK.FAILED_TO_SCORE_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.L3.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 185,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00072184,
+            "PARENT_A": -0.00151748,
+            "PARENT_B": 0.00348704
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -3.986e-05,
+            "PARENT_A": -0.00053747,
+            "PARENT_B": 0.00081818
+          },
+          "p_value_raw_intersection_union": 0.9150244907,
+          "p_value": 0.9150244907,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "81b2603826d32ade64da38990819d600d68e20ab42b7de8e49ee6a95157abaa8",
+          "hypothesis_id": "hypothesis:5ed5479b50d1164844777ec49f8184fac977d1105a812db348d2e5c976ebe48f"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 185,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00075437,
+            "PARENT_A": 0.00010316,
+            "PARENT_B": 0.00283916
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00037214,
+            "PARENT_A": 7.03e-05,
+            "PARENT_B": 0.00142932
+          },
+          "p_value_raw_intersection_union": 0.8541807126,
+          "p_value": 0.8541807126,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "ed3d6c85e395366e1a452e822ff9e025f4d0f527480c7d2345d4640ef9441ddd",
+          "hypothesis_id": "hypothesis:d769bfb1b265fd2c7e22aaf84be11720899032fd142add1f65838e08236674fe"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:01bd6808d6c0229994d23d8eeaa1f4771ad0f524f166712dbe08116df761b9bb",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 280,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00090506,
+            "PARENT_A": 0.00268711,
+            "PARENT_B": -0.00341576
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00023085,
+            "PARENT_A": 0.0007096,
+            "PARENT_B": -0.00073452
+          },
+          "p_value_raw_intersection_union": 0.6206582198,
+          "p_value": 0.6206582198,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "beb58ef16c5213b0deb0b9d51c2d7ff9b07099c2ebc71ecd9f03fa8be9258d59",
+          "hypothesis_id": "hypothesis:1a2fdbfa1f4073e1922da9d6775e59e1eef47955db01968ec21e785844b9d50c"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 280,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00047444,
+            "PARENT_A": 0.00022569,
+            "PARENT_B": -0.0003862
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00018687,
+            "PARENT_A": 9.516e-05,
+            "PARENT_B": -0.00021742
+          },
+          "p_value_raw_intersection_union": 0.9216424287,
+          "p_value": 0.9216424287,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "a6a68abb2dcb86c3eccf83b88ee37ac98ca64a134b79aec66b379e01dc406c79",
+          "hypothesis_id": "hypothesis:b17da53bbf026fb3cc7af5056c010227b09a7fd1ac0bb793ddb3e679a6bfc3ff"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:01c1c8648c7a9b32cbb241ec5a816b51a5dd15ab5af747a7b5bcc13ffe54e843",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.WEIGHTED_POINTS_HL5.L5.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 147,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00644892,
+            "PARENT_A": 0.00787423,
+            "PARENT_B": -0.00054541
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0005254,
+            "PARENT_A": 0.0016379,
+            "PARENT_B": -0.00081456
+          },
+          "p_value_raw_intersection_union": 0.6411697883,
+          "p_value": 0.6411697883,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "a5c0c271d2046eabd16581503df82286056825f8216908ea4d053fd467034f25",
+          "hypothesis_id": "hypothesis:1c52cbbd64739710ecbb4269128c1ddd439bfccde8e3bbb6c0529181137f96a1"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 147,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0028618,
+            "PARENT_A": 0.00183719,
+            "PARENT_B": 0.00035997
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00137947,
+            "PARENT_A": 0.00087089,
+            "PARENT_B": 0.00018811
+          },
+          "p_value_raw_intersection_union": 0.9581786034,
+          "p_value": 0.9581786034,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "65942d9dba3a93cd6228dcc91b28a33f7d86373051a9dd63e0c6792bc7b9cc61",
+          "hypothesis_id": "hypothesis:0b2ea453ece8ecf7abf989c64e57cfae83e265203a4cb18b0b00e2140e31f5a2"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:01e49fae141ee15707ddad38f79cdf946e8a95bd3e2798aa7d1caf334ac8d1b3",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 410,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00043322,
+            "PARENT_A": -0.00070524,
+            "PARENT_B": -0.0008555
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00020774,
+            "PARENT_A": -0.00020751,
+            "PARENT_B": -0.0005421
+          },
+          "p_value_raw_intersection_union": 0.995539421,
+          "p_value": 0.995539421,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "330028c7dbba224ae1c731fd7f29eeb941111a44c83a2e8db67cecd770577148",
+          "hypothesis_id": "hypothesis:ee888db140cf752c677a292532c104c453fe0bc2d3e1acbeed89b9c677e56154"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 410,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00183056,
+            "PARENT_A": 0.00091169,
+            "PARENT_B": 0.00085781
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00089428,
+            "PARENT_A": 0.00044842,
+            "PARENT_B": 0.00041719
+          },
+          "p_value_raw_intersection_union": 0.216159797,
+          "p_value": 0.216159797,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "6ef95b514cd8499defb6abf3833b29d4a350bbc4f517ad981e07f1eb9688c897",
+          "hypothesis_id": "hypothesis:a556fe608fdbdc867c8fd57c2216480098c7059c05501c353fd0f3720fe5a91f"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:01ea34078b9522ed4088a05cc3f3c7265d786887064929c06caa4158be12b228",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.RECONSTRUCTED_TABLE_STRENGTH_PERCENTILE.SEASON_TO_DATE.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WEIGHTED_POINTS_HL5.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 123,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.01249658,
+            "PARENT_A": 0.0013793,
+            "PARENT_B": -0.01456868
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00351821,
+            "PARENT_A": 0.00033799,
+            "PARENT_B": -0.00385557
+          },
+          "p_value_raw_intersection_union": 0.9912567969,
+          "p_value": 0.9912567969,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "dd9d103c14a6a626fd6b9c2abe545589b614a44ccc7f9f4d35bf81b73bac7250",
+          "hypothesis_id": "hypothesis:72bf882c6e11b9b69c125d66fd509f9aed7224f46deffdddc52b7647972d8f27"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 123,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.0007254,
+            "PARENT_A": 0.0007887,
+            "PARENT_B": -0.00140546
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00036341,
+            "PARENT_A": 0.00035844,
+            "PARENT_B": -0.00067525
+          },
+          "p_value_raw_intersection_union": 0.9950213413,
+          "p_value": 0.9950213413,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "9bf23de37d73276cdaad9c2c2400c71b278d3c7a7ddc911ef28aac3fe3a5b0b0",
+          "hypothesis_id": "hypothesis:652b49e2be7ec1190aa4fe29c61955dce2b83d7479a97b3129e9afcfc454a68f"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:01f5a20014974c93226e386d10e6882b99b46147c45cd8c807cd27c15ace9deb",
+      "parent_a": "TEAM_AWAY.COACH.SUBSTITUTIONS_MEAN.L3.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 136,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00054105,
+            "PARENT_A": 0.00693093,
+            "PARENT_B": -0.00222414
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00032904,
+            "PARENT_A": 0.00148002,
+            "PARENT_B": -0.00060753
+          },
+          "p_value_raw_intersection_union": 0.7747660956,
+          "p_value": 0.7747660956,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "371563858b1dbd30596c2c853ed7cdba848e3eba173cc1112b940141b2f6ea7e",
+          "hypothesis_id": "hypothesis:abc82ee730ecdae9b77e6afd9438104162eaad118d0e70b3ecacbca93c5a2d0d"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 136,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00017067,
+            "PARENT_A": -0.00029556,
+            "PARENT_B": -0.00059463
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -9.704e-05,
+            "PARENT_A": -0.00014763,
+            "PARENT_B": -0.00028643
+          },
+          "p_value_raw_intersection_union": 0.8508512957,
+          "p_value": 0.8508512957,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "d05baea649830eba7923dda2fadfae5d8c93d8ea5e3a05d6bba28619b0894fa2",
+          "hypothesis_id": "hypothesis:c3552b61d0100c689714345cfbc42267fb0325e8b0767460b5a6f7c0c25c428c"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:01fd3763772f39a702b38025d8ef53881dae9053f2286f757cb84bf95d4545ef",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.RECONSTRUCTED_TABLE_STRENGTH_PERCENTILE.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 97,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.02014403,
+            "PARENT_A": 0.00979962,
+            "PARENT_B": -0.01827472
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00526985,
+            "PARENT_A": 0.00201819,
+            "PARENT_B": -0.00481226
+          },
+          "p_value_raw_intersection_union": 0.9795798101,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "e6a27ff8205cdfc305fa1435f84d2ceb891261e1dd969d794fa4d6ae3ccff2eb",
+          "hypothesis_id": "hypothesis:d70eb0825483aaae17bf53b4c8ec90a87413fd9d1346d641d94068f08e38c799"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 97,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00388921,
+            "PARENT_A": -0.00128263,
+            "PARENT_B": -0.00435161
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.0019064,
+            "PARENT_A": -0.00062441,
+            "PARENT_B": -0.00213642
+          },
+          "p_value_raw_intersection_union": 0.9914873636,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "f2671e0a8e008c9ca64ae1133f9e748837c7eea075200937e86b493a1bb2e60b",
+          "hypothesis_id": "hypothesis:5c612573e48d972d71bb767887c3992be86ac1e63743c940de61d4071346b5e4"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0224a0872b19be8ffd54f25eb1fa1811425f012a47fb8c0c1e5e7d9ffc822977",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.WEIGHTED_POINTS_HL5.L3.HIGH_Q67.V2",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 351,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.01609177,
+            "PARENT_A": 0.00060346,
+            "PARENT_B": 0.00434051
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00318808,
+            "PARENT_A": 0.00012366,
+            "PARENT_B": 0.00074477
+          },
+          "p_value_raw_intersection_union": 0.1508906572,
+          "p_value": 0.1508906572,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "049e74171c3df23f4fc2956172cb4fda13cb09d402fd9a9edda82e74fb40ee08",
+          "hypothesis_id": "hypothesis:a40c8cf63831c2b77f8bd480b49de1e75dd9dea37132658cea6de1f35a14e740"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 351,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0044424,
+            "PARENT_A": -0.00019551,
+            "PARENT_B": 0.0012325
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00215093,
+            "PARENT_A": -0.00011092,
+            "PARENT_B": 0.00061977
+          },
+          "p_value_raw_intersection_union": 0.5104157535,
+          "p_value": 0.5104157535,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "833b9c5e4399e3b436c72bbc15ea23432baae54863d0f9c803ef38962d0f196c",
+          "hypothesis_id": "hypothesis:84cf92b535da40141407de7cb203e6ff0edc74de1716c54028e0b62f83a5418a"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:02309f1cdadeb65551dbdb72498f2d1aa362689ace2518cd1f966c32963baa36",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.YELLOW_CARDS_MEAN.L5.HIGH_Q67.V2",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L5.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 116,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00438131,
+            "PARENT_A": 0.00049708,
+            "PARENT_B": 0.00073699
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00096359,
+            "PARENT_A": 0.00017058,
+            "PARENT_B": 0.00020779
+          },
+          "p_value_raw_intersection_union": 0.8684190783,
+          "p_value": 0.8684190783,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "bb62cc0a78bab6d11ad8ad2d72adedeacb7856c4f44966550e57907429e9e393",
+          "hypothesis_id": "hypothesis:6d89d8cf3ea1199ee5d74c04ed47b37ebbdc6db103e0dfcdb4adf37dd6b54edc"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 116,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00186532,
+            "PARENT_A": 0.00189746,
+            "PARENT_B": 0.00085169
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0009221,
+            "PARENT_A": 0.00093565,
+            "PARENT_B": 0.00043275
+          },
+          "p_value_raw_intersection_union": 0.3371885721,
+          "p_value": 0.3371885721,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "08a398564b7540eea77a9921c0db8e254df9ef0c0893df54e2b1da1dc8ea5334",
+          "hypothesis_id": "hypothesis:2650448ba22e465072c44e5d7a006ff6814c9977106361927521fee77caa56b5"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:024ab91807af378f665eae88eff6c91bc659b0a376ffc662551f6e0aa1e7214f",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.POINTS_PER_MATCH.L5.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 114,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00796903,
+            "PARENT_A": -0.00281836,
+            "PARENT_B": 0.00585281
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0016041,
+            "PARENT_A": -0.00061589,
+            "PARENT_B": 0.00115393
+          },
+          "p_value_raw_intersection_union": 0.6532265837,
+          "p_value": 0.6532265837,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "84d515621239135363dbfde985f2407035338eb84ea176d81824d81c5a1541a0",
+          "hypothesis_id": "hypothesis:950e4a264e86143e6f57d3f56a4a36a05ccb140a4777653211c16a011485d2a5"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 114,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00281198,
+            "PARENT_A": 0.00060902,
+            "PARENT_B": 0.00248616
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00135474,
+            "PARENT_A": 0.00029795,
+            "PARENT_B": 0.00120106
+          },
+          "p_value_raw_intersection_union": 0.9581594599,
+          "p_value": 0.9581594599,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "f0466786f788a84b2b7689a7846511793de4a70b0f434757646248e445822514",
+          "hypothesis_id": "hypothesis:0ab6d1d479f512837ff1b9aa9e077ac88a0efbc0a0f2eb6d4cf888f0d1134cf5"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:02511813f7569c02d09b2c02d6480942461a0c31d3ce34acb575d733c2977ec2",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.YELLOW_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 101,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00674912,
+            "PARENT_A": -0.00071557,
+            "PARENT_B": -0.00410117
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00195901,
+            "PARENT_A": -0.00016683,
+            "PARENT_B": -0.00123686
+          },
+          "p_value_raw_intersection_union": 0.9899240656,
+          "p_value": 0.9899240656,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "8cff2dc2a414b46538e6c8c3bf2d2db7fc789b9a12049d6f94a472902c6ba2ce",
+          "hypothesis_id": "hypothesis:ca4d1d07eb792121d42924d36471dc4344b7937f48f387a7e3657425137df518"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 101,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 9.135e-05,
+            "PARENT_A": 0.00074566,
+            "PARENT_B": -0.00094447
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 4.602e-05,
+            "PARENT_A": 0.00036425,
+            "PARENT_B": -0.00045238
+          },
+          "p_value_raw_intersection_union": 0.9584096003,
+          "p_value": 0.9584096003,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "a9ab899972b56fbfb47e3ed5a5dc7fbb9ddd766feb04395893550f2aa8a6352f",
+          "hypothesis_id": "hypothesis:2d5a537d766c7d7b6f66720bffcde70e6a4e775ce3061478214deeeee5b3cf81"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0253c04a5a45e278709f0c83b10ccf7149450e7bfeb127a701c628ecd99e5697",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.WEIGHTED_POINTS_HL5.SEASON_TO_DATE.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.SEASON_TO_DATE.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 123,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00470643,
+            "PARENT_A": 0.0021388,
+            "PARENT_B": -0.00510698
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00081968,
+            "PARENT_A": 0.00034678,
+            "PARENT_B": -0.00138521
+          },
+          "p_value_raw_intersection_union": 0.7684454995,
+          "p_value": 0.7684454995,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "4ae53cd6f31d25478038c72c5620a92fbc3819e227e0f7198d6593f668729973",
+          "hypothesis_id": "hypothesis:3d8bf2d2c6d5ef7e55ecc75db124009f0ed3463dd21d070f7227cdf84148d541"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 123,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00307121,
+            "PARENT_A": 0.00281003,
+            "PARENT_B": -0.00040746
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00146244,
+            "PARENT_A": 0.00133685,
+            "PARENT_B": -0.0001732
+          },
+          "p_value_raw_intersection_union": 0.928984191,
+          "p_value": 0.928984191,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "9546938d01a316cc131bae082d8584f5626a006b87fd61f25ec88846dc839da7",
+          "hypothesis_id": "hypothesis:4b86a866733a843a86e3cf08bfbcaf818ad085e80b974c687f6bd2b529bbcad1"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0255867798618440d7083ee64391f93a4824fa97e405b3f16aef35d346fcacef",
+      "parent_a": "TEAM_HOME.STRENGTH_FORM.POINTS_VOLATILITY.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.WIN_RATE.L3.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 425,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00022908,
+            "PARENT_A": 0.00016316,
+            "PARENT_B": -0.00200227
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00027544,
+            "PARENT_A": 4.357e-05,
+            "PARENT_B": -0.00082887
+          },
+          "p_value_raw_intersection_union": 0.6678880973,
+          "p_value": 0.6678880973,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "7067d4304360aec739d72bac95aadbb94f065e9e467449324656f2ff25b1dc37",
+          "hypothesis_id": "hypothesis:ae832fdeaea3be3da3d864bea580287da94ea6c7ba3a2a63840e892b50a6498f"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 425,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00102306,
+            "PARENT_A": 5.17e-06,
+            "PARENT_B": 0.00068433
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00049735,
+            "PARENT_A": 2.5e-06,
+            "PARENT_B": 0.00033319
+          },
+          "p_value_raw_intersection_union": 0.1883526286,
+          "p_value": 0.1883526286,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "bbad8fa0ab259c926829d8d40e3a514fa15ee705e2b70f102cb63a76636412f1",
+          "hypothesis_id": "hypothesis:6106253fe274f87681ad6deebd762c0d0a575ff3d67c2c1e7f1c93ef599e3948"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0293adb20f152f492faa826da10491d35ab6b269dd47b230b7f4ffacb6a6430e",
+      "parent_a": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.DISMISSALS_MEAN.L5.GT_0.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 192,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00547552,
+            "PARENT_A": -1.585e-05,
+            "PARENT_B": 0.00053334
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00121768,
+            "PARENT_A": -8.447e-05,
+            "PARENT_B": 5.107e-05
+          },
+          "p_value_raw_intersection_union": 0.6236234375,
+          "p_value": 0.6236234375,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "5ce3054f98aa560a8310a1052b0b0502837c8f727bfb9e9ae71a7596d5635374",
+          "hypothesis_id": "hypothesis:d7f47b4683fd76ed5b4c31e9ade51b0ca05e87a1c192d2484605cd5fbed7c97b"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 192,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -7.565e-05,
+            "PARENT_A": -0.00031512,
+            "PARENT_B": 0.00022525
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -3.546e-05,
+            "PARENT_A": -0.00016274,
+            "PARENT_B": 0.00011871
+          },
+          "p_value_raw_intersection_union": 0.6592244437,
+          "p_value": 0.6592244437,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "333964ab7d6b9d30ac07c4d8d6b78994638a5896dc741ac2efae524925d782cb",
+          "hypothesis_id": "hypothesis:3c8b08d8ffc780a2dfaa807e0010503727ad19d771330309d034f93b557199b2"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:02998a11b290cdcfc46ed8d273430f362885131bea0523bd146e0677aa16fcc1",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.DISMISSALS_MEAN.L3.GT_0.V2",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 53,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00126696,
+            "PARENT_A": -0.00167428,
+            "PARENT_B": 0.00128979
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 8.321e-05,
+            "PARENT_A": -0.00058822,
+            "PARENT_B": 0.00036398
+          },
+          "p_value_raw_intersection_union": 0.9315336082,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "e92855bc500027ed38a0d668c2599755e69757b551c0f92313d1534933395a04",
+          "hypothesis_id": "hypothesis:c635f804dd6dcb692d0a4659cf97bd7c55349b98713e5e3e8505019e29d8683a"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 53,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00117837,
+            "PARENT_A": -0.00015575,
+            "PARENT_B": 0.00069632
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00058722,
+            "PARENT_A": -6.665e-05,
+            "PARENT_B": 0.00034915
+          },
+          "p_value_raw_intersection_union": 0.5760680584,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "9271d4dbffa502e6b7480b844b0324d8fe048457f7e59711e286ead29aba4242",
+          "hypothesis_id": "hypothesis:84ea76574dfec557e8519e43cbd660707401ab207ace391e57978ccfe07c00ec"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:02b189bc4b072f14935f96c91de986af9afbcf7e417df4a2f6f9e35e0316a215",
+      "parent_a": "TEAM_HOME.ATTACK.FAILED_TO_SCORE_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.COACH.SUBSTITUTIONS_MEAN.L5.HIGH_Q67.V2",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 218,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00122652,
+            "PARENT_A": -0.003405,
+            "PARENT_B": 0.00089732
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.0002377,
+            "PARENT_A": -0.0007698,
+            "PARENT_B": 0.0003421
+          },
+          "p_value_raw_intersection_union": 0.9249930708,
+          "p_value": 0.9249930708,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "2d2e88d7c664f1ba782a2d4c1e8b9f79cf33e672b5ca56520e2f14f6e6224942",
+          "hypothesis_id": "hypothesis:36eb2918653857d6e163bd472b4a9d28354c764e3c33a01e9282587ede047aa0"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 218,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00080451,
+            "PARENT_A": 0.00012469,
+            "PARENT_B": 0.00042262
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00036863,
+            "PARENT_A": 2.974e-05,
+            "PARENT_B": 0.00020666
+          },
+          "p_value_raw_intersection_union": 0.773504431,
+          "p_value": 0.773504431,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "e0dee2cdf63ff5ed29aa116ed5e19f47eba56fc7fb948a84b61e3c4d0b457aac",
+          "hypothesis_id": "hypothesis:e156c1d88e7ca85840ea7e8fc504015af6e854aaf61dbaef0d2351c9202b7df1"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:02c20955f392c7ad1b747823cbf2179a5a0212c4e2047b01a0bbd43d4f2011fd",
+      "parent_a": "TEAM_AWAY.COACH.SUBSTITUTIONS_MEAN.L5.HIGH_Q67.V2",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.SAME_ORIENTATION_POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 111,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00171986,
+            "PARENT_A": -0.00413472,
+            "PARENT_B": -0.0003773
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0003562,
+            "PARENT_A": -0.00109195,
+            "PARENT_B": -0.00012605
+          },
+          "p_value_raw_intersection_union": 0.7772988951,
+          "p_value": 0.7772988951,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "7fc5684f553f8634351c88dec744806844bd21d76fd0b1441ea1e3f954ea23f3",
+          "hypothesis_id": "hypothesis:518b3455c674be9bc7b73c2b90da847f2c3ccdd502ab920429013c0624a8530d"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 111,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -5.619e-05,
+            "PARENT_A": -0.00051863,
+            "PARENT_B": 0.00097495
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -6.582e-05,
+            "PARENT_A": -0.00030302,
+            "PARENT_B": 0.00044112
+          },
+          "p_value_raw_intersection_union": 0.9962353206,
+          "p_value": 0.9962353206,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "df06b91c57b5ec81c08586b6828cea39e070b1e3abe8b3a52a138999c5d320ea",
+          "hypothesis_id": "hypothesis:57754c13a72ff1649e35217c18e16eb1ae6d667a6fc0db45703e45b12b7a7d9c"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:03026cf1321f63c92e7aa71cced017ca95cebac28f12cd877c0a5e99a7ad00b9",
+      "parent_a": "TEAM_AWAY.DEFENCE.GOALS_AGAINST_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.COACH.SUBSTITUTIONS_MEAN.L5.HIGH_Q67.V2",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 90,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00110135,
+            "PARENT_A": -0.00257462,
+            "PARENT_B": -0.00101137
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00052894,
+            "PARENT_A": -0.00090818,
+            "PARENT_B": -0.00021281
+          },
+          "p_value_raw_intersection_union": 0.9791582332,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "4bd0a0db2321e671402f3219a5b70af23b964981af003b2ce8a56e3d8fbd5409",
+          "hypothesis_id": "hypothesis:b96bccc59d62fce01b8071ce45fc1bf75a50d3e804da4a25a5893d3ad261b135"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 90,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00101961,
+            "PARENT_A": 0.00032823,
+            "PARENT_B": 0.00060705
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00050057,
+            "PARENT_A": 0.00015779,
+            "PARENT_B": 0.00029814
+          },
+          "p_value_raw_intersection_union": 0.1478998914,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "95ab3d0972e00e5b8087c8914edac7fa93dafc9143aab778d9f34c6bedb68df3",
+          "hypothesis_id": "hypothesis:e3dfdbfc504f3e59eaa65677c1afe9cae004165de25948ec01b0bb8647306c84"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:031b8696905889fe7f2ae59900a821ab7cfccde8508616269ec229727255bf11",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.WEIGHTED_POINTS_HL5.L5.HIGH_Q67.V2",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.L5.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 361,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.0183229,
+            "PARENT_A": 0.0001208,
+            "PARENT_B": 0.00023938
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0036764,
+            "PARENT_A": 2.558e-05,
+            "PARENT_B": -0.00017361
+          },
+          "p_value_raw_intersection_union": 0.5625638565,
+          "p_value": 0.5625638565,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "a0d0fbe7ce729bb7906f10fdf434545825fa6756c602029ebd50e637f5ac7e0b",
+          "hypothesis_id": "hypothesis:62c0047f83626f95ffd7b258b006b2b8cc15099d4a30c529c21519da4d4f4e06"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 361,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00496669,
+            "PARENT_A": -3.319e-05,
+            "PARENT_B": 0.00075663
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00239866,
+            "PARENT_A": -1.479e-05,
+            "PARENT_B": 0.00041372
+          },
+          "p_value_raw_intersection_union": 0.2517892503,
+          "p_value": 0.2517892503,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "9e8c34138bfc3e27189d007b5910a89d2b18b6995f51396dede5d4c5d369dae9",
+          "hypothesis_id": "hypothesis:31fd47c334798a1c50ae7e2054255a398dd75b27d12b746f06b4377f94b32f34"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:033055cd495b60769cb5049486e5df5101984998b9a0e849a728772aa9ac308a",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.L5.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.DEFENCE.GOALS_AGAINST_MEAN.L5.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 121,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00455289,
+            "PARENT_A": 2.717e-05,
+            "PARENT_B": -0.00365134
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.0010699,
+            "PARENT_A": 3.662e-05,
+            "PARENT_B": -0.00070507
+          },
+          "p_value_raw_intersection_union": 0.8956682768,
+          "p_value": 0.8956682768,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "1316c6bb7c16aa4b81dbe31cf7c1131048fba18c7b96607c54935d9d49286232",
+          "hypothesis_id": "hypothesis:852ac143bc30a0f47229c30bc7ef1225a3f873fa704ef13fc04fb5d6d2c066ac"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 121,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00053965,
+            "PARENT_A": -0.00034576,
+            "PARENT_B": 0.00031771
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00027012,
+            "PARENT_A": -0.00016116,
+            "PARENT_B": 0.00014849
+          },
+          "p_value_raw_intersection_union": 0.9498716552,
+          "p_value": 0.9498716552,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "a2d5c3db3371178f3932c444221738e8d3814e7f3308b5dbaff335a13cc9a6f4",
+          "hypothesis_id": "hypothesis:4964036a2f611858be66182f8809b821a3e5196805b35587db9ba89956e27295"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0331890412d00d90a17cd30f39757a3b8bc761f57eb0173e5af5489d84d60113",
+      "parent_a": "TEAM_AWAY.ATTACK.GOALS_FOR_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.L3.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 205,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -7.884e-05,
+            "PARENT_A": -0.0022758,
+            "PARENT_B": 0.00313797
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -5.865e-05,
+            "PARENT_A": -0.00052141,
+            "PARENT_B": 0.00078849
+          },
+          "p_value_raw_intersection_union": 0.788293321,
+          "p_value": 0.788293321,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "b9951dbe56a7af0762ee38c8f09ccc4b4be08c8c5dd387ea274ce663984804bb",
+          "hypothesis_id": "hypothesis:c48cde78c1639fde7d219b1f3567ea0f65c8032bfa89f28cedade74b462363c8"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 205,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00036093,
+            "PARENT_A": -0.00049546,
+            "PARENT_B": 9.81e-06
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00016527,
+            "PARENT_A": -0.00023616,
+            "PARENT_B": 5.43e-06
+          },
+          "p_value_raw_intersection_union": 0.8709518425,
+          "p_value": 0.8709518425,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "67e4b9088fd9799b9dac4cc5ec2eb9d28e94c1f546fbb8fe97ba75668b4917ff",
+          "hypothesis_id": "hypothesis:2531490ee3d2ab7a3f093e6a5b53b5b0c436e03ec61c1af656e1a005d31884b5"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:033587236bdc319826ba8fb1f6754924af5bd0757941dbbe463662019ee7af73",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.SAME_ORIENTATION_POINTS_PER_MATCH.L3.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.DISMISSALS_MEAN.SEASON_TO_DATE.GT_0.V2",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 411,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 2.938e-05,
+            "PARENT_A": 0.00025336,
+            "PARENT_B": -0.00400418
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -1.799e-05,
+            "PARENT_A": 2.391e-05,
+            "PARENT_B": -0.00095624
+          },
+          "p_value_raw_intersection_union": 0.747464289,
+          "p_value": 0.747464289,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "f354fb3fbba1238a5da9af6a75071b1c63e903aec4af5df103cfd14dfdedce0f",
+          "hypothesis_id": "hypothesis:cd9cb4cbc8c41e969c9bc041ed59cc0331ed34844982b178161b190f3ab47f05"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 411,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00209083,
+            "PARENT_A": 0.00083294,
+            "PARENT_B": 0.00116284
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00104641,
+            "PARENT_A": 0.00040696,
+            "PARENT_B": 0.00057283
+          },
+          "p_value_raw_intersection_union": 0.8453571437,
+          "p_value": 0.8453571437,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "ddf6cc9fa9944c266af4beabb4f3a3e1b59e829036a9a67a0921f1b1c63e33b8",
+          "hypothesis_id": "hypothesis:dcaad890d72a191bbd359765b9947983af79946b23fe685ca40c1948376d3124"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0341c637e0f2d3773e23bc445112cc30973c26a4421829e05e1722719c0a7d51",
+      "parent_a": "TEAM_AWAY.DISCIPLINE_REFEREE.GENERIC_CARDS_MEAN.SEASON_TO_DATE.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.WIN_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "status": "LONG_TAIL_DEFERRED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 47,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00314702,
+            "PARENT_A": -0.00648403,
+            "PARENT_B": -0.00069915
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00072721,
+            "PARENT_A": -0.00154234,
+            "PARENT_B": -0.00010611
+          },
+          "p_value_raw_intersection_union": 0.9502328259,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "40cbf8ad2199f78a9441191b616eb5febf7aa9bca1d248323b7f97ed751e4022",
+          "hypothesis_id": "hypothesis:d561f8b9e783c277006a24baf1422c0a57b138b866f0a5d9b56e57de9959ea9f"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 47,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00136579,
+            "PARENT_A": -0.00081952,
+            "PARENT_B": -0.00165654
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00067693,
+            "PARENT_A": -0.00038406,
+            "PARENT_B": -0.00081249
+          },
+          "p_value_raw_intersection_union": 0.999998704,
+          "p_value": 1.0,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "LONG_TAIL_DEFERRED",
+          "review_gate": "SUSPICIOUS_EDGE_REVIEW",
+          "pair_snapshot_hash": "819e6a8a3fdf8e47b0882f4eea46a5f9b5a2a676584a6c845901bce39de861f9",
+          "hypothesis_id": "hypothesis:82bb4fcd4126c16b005e8a71a5211de343b5e5a6c2425196d6264a8a1a50b278"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0371551734a660cfc7ae5cdca97beef087215b830fc57be24eebf6e850fd97c9",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.DISCIPLINE_REFEREE.DISMISSALS_MEAN.SEASON_TO_DATE.GT_0.V2",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 521,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00350523,
+            "PARENT_A": 0.00082993,
+            "PARENT_B": 0.00194745
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00081428,
+            "PARENT_A": 0.00019691,
+            "PARENT_B": 0.00041079
+          },
+          "p_value_raw_intersection_union": 0.8977267381,
+          "p_value": 0.8977267381,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "8a0d7eaebb5d49caed9a6ed2d82ed9e7139ec126b6940fda2f551fb316330d0d",
+          "hypothesis_id": "hypothesis:4dac32f93556c154e7a5555cbc69841caff78f2d9260cb83bf35758c62bc1a7b"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 521,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00046768,
+            "PARENT_A": 0.00047555,
+            "PARENT_B": -0.00046019
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00024414,
+            "PARENT_A": 0.00024081,
+            "PARENT_B": -0.00021313
+          },
+          "p_value_raw_intersection_union": 0.7205545321,
+          "p_value": 0.7205545321,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "052ba14c7bd2b636d9636d701f94d909f1fa8a057bad9cfa110b751a77c6b483",
+          "hypothesis_id": "hypothesis:49703485069a9885f6d299cfdd9337c0ae9f71a5ef33b72a99b3b8e6aea5b864"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:038ab7e0aaa03b1d7ff53e260197388caf3c0fb201d42a867ab3da3b6ec0213b",
+      "parent_a": "TEAM_HOME.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.SAME_ORIENTATION_POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V2",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 236,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00292403,
+            "PARENT_A": 0.01054797,
+            "PARENT_B": -0.00509371
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00085779,
+            "PARENT_A": 0.00240159,
+            "PARENT_B": -0.00130491
+          },
+          "p_value_raw_intersection_union": 0.5680417344,
+          "p_value": 0.5680417344,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "35bc0dcd7d75f590ec948ee236da3bcc10242924e00bf5c0578a4d426db5260a",
+          "hypothesis_id": "hypothesis:8857e47e9a8af0ded45e7494de7e38a75b94fa6d42505f15f2e882f2313261c4"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 236,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00117116,
+            "PARENT_A": 0.00148516,
+            "PARENT_B": -0.00113053
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00055,
+            "PARENT_A": 0.00070638,
+            "PARENT_B": -0.00052807
+          },
+          "p_value_raw_intersection_union": 0.7709944897,
+          "p_value": 0.7709944897,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "0bba1a7f1009b0d893cf0e863c9c370fcc911d07b6ea375dcabaddec0149b40e",
+          "hypothesis_id": "hypothesis:639dbc631ba32eb587d38591ea6e21a2ffdf6d79417788fd87c0becdfb60a16f"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:038e89cfe974ec45d34c8d7e47b90dbcc5de3e252b94e4224eb162584b801897",
+      "parent_a": "TEAM_AWAY.DEFENCE.CLEAN_SHEET_RATE.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_AWAY.STRENGTH_FORM.OVER_2_5_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 131,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00377234,
+            "PARENT_A": 0.0018162,
+            "PARENT_B": 0.00239726
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00091521,
+            "PARENT_A": 0.00049789,
+            "PARENT_B": 0.00057096
+          },
+          "p_value_raw_intersection_union": 0.8740544693,
+          "p_value": 0.8740544693,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "ce489c28e0992e3fd1293ea644b78de7c4cbccf9eb0e25932245aaf3928aa682",
+          "hypothesis_id": "hypothesis:55872ae943b688a6201cf26024268bc442cef5c5f00821a26a6fb4b1baccc383"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 131,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00172751,
+            "PARENT_A": 0.00119793,
+            "PARENT_B": 0.00080568
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00083568,
+            "PARENT_A": 0.00058486,
+            "PARENT_B": 0.00037991
+          },
+          "p_value_raw_intersection_union": 0.3449443919,
+          "p_value": 0.3449443919,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "1aadfe6b095c940d2dcfc883e2573f919686af29fddafc356661f92c3592837c",
+          "hypothesis_id": "hypothesis:9b8c623fdb10b89a6d786f223b588e9ff4ba417eb61a9337182769400e437af2"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0396a087a520f3620caaeb3c82f18129bf13412d1009f258f663001ff24247d7",
+      "parent_a": "TEAM_AWAY.STRENGTH_FORM.SAME_ORIENTATION_POINTS_PER_MATCH.SEASON_TO_DATE.HIGH_Q67.V2",
+      "parent_b": "TEAM_HOME.DISCIPLINE_REFEREE.DISMISSALS_MEAN.L5.GT_0.V2",
+      "status": "RAW_HISTORICAL_SIGNAL",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1049,
+          "true_oof": 107,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00032246,
+            "PARENT_A": -0.00553887,
+            "PARENT_B": -0.00613789
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 2.83e-05,
+            "PARENT_A": -0.00109792,
+            "PARENT_B": -0.00131465
+          },
+          "p_value_raw_intersection_union": 0.954605798,
+          "p_value": 0.954605798,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "f211bf5dc79ff7e4486c0cda5f1ac9c05e745c584054ef83f5351f4efc298541",
+          "hypothesis_id": "hypothesis:e1bc8bfdaa75cbc7324336c615e37c1c14ee24772031888f461a4e3386da5251"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1049,
+          "true_oof": 107,
+          "unknown_oof": 4,
+          "coverage_oof": 0.99620133,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": 0.00090828,
+            "PARENT_A": 0.00045811,
+            "PARENT_B": 0.00054196
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 0.00045335,
+            "PARENT_A": 0.00022831,
+            "PARENT_B": 0.00025918
+          },
+          "p_value_raw_intersection_union": 0.9961309439,
+          "p_value": 0.9961309439,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "RAW_HISTORICAL_SIGNAL",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "c567779110788042e069e676fbb3c72e789fea7afe4ad9d90c68f59d64a127f2",
+          "hypothesis_id": "hypothesis:0c405149549a30440e604e4e5a90e6efc7daaf9a050c4c598731fdd4f4d2ee2b"
+        }
+      }
+    },
+    {
+      "pair_id": "pair:0397de4ebbc1381f11479b6d158491f73d573cc9c9b7eecfb81a8d3763e4377e",
+      "parent_a": "TEAM_HOME.ATTACK.GOALS_FOR_MEAN.L3.HIGH_Q67.V1",
+      "parent_b": "TEAM_HOME.STRENGTH_FORM.DRAW_RATE.SEASON_TO_DATE.HIGH_Q67.V1",
+      "status": "REJECTED",
+      "target_metrics": {
+        "MATCH_RESULT_90M": {
+          "known_oof": 1051,
+          "true_oof": 96,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -0.00433114,
+            "PARENT_A": -0.00528932,
+            "PARENT_B": 0.00140631
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": -0.00123144,
+            "PARENT_A": -0.00149846,
+            "PARENT_B": 0.0004118
+          },
+          "p_value_raw_intersection_union": 0.9676815293,
+          "p_value": 0.9676815293,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "aa837f287cb83b2451cd92ba3b0a6c654852b60f3ab3c9f270c41c5544ec952b",
+          "hypothesis_id": "hypothesis:c245e3a0aca37fa3a6ee24a921b44acb2da695212217e8aeb1891999b30ff6e5"
+        },
+        "TOTAL_GOALS_2_5_90M": {
+          "known_oof": 1051,
+          "true_oof": 96,
+          "unknown_oof": 2,
+          "coverage_oof": 0.99810066,
+          "delta_log_loss_by_comparator": {
+            "ADDITIVE": -1.614e-05,
+            "PARENT_A": -0.00083464,
+            "PARENT_B": 0.00059885
+          },
+          "delta_brier_by_comparator": {
+            "ADDITIVE": 5.34e-06,
+            "PARENT_A": -0.00039816,
+            "PARENT_B": 0.00030641
+          },
+          "p_value_raw_intersection_union": 0.9591594486,
+          "p_value": 0.9591594486,
+          "q_value_pair_global": 1.0,
+          "q_value_family": 1.0,
+          "q_value_campaign_global": 1.0,
+          "q_value": 1.0,
+          "status": "REJECTED",
+          "review_gate": "STANDARD_REVIEW",
+          "pair_snapshot_hash": "4f3c3939c89f0681fd535b84cbfd1a64f29aa01defc035b2cd2654d627ec7b64",
+          "hypothesis_id": "hypothesis:1c44b5f34b5c01c261bd443678613ddcc781c4d59cda8505b965511a90ab4eb6"
+        }
+      }
+    }
+  ]
+}

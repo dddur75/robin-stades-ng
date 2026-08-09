@@ -1,0 +1,195 @@
+{
+  "schema_version": "automatic-pages-side-effect-reclassification-v1",
+  "audited_at": "2026-08-08T19:53:00Z",
+  "repository": "dddur75/robin-stades-ng",
+  "source_main_sha": "d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
+  "source_pr": 37,
+  "source_pr_state": "MERGED",
+  "reclassification": {
+    "previous_verdict": "BLOCKED_EXTERNAL_ACTION_AUTOMATIC_GITHUB_PAGES_DEPLOYMENT",
+    "current_verdicts": [
+      "AUTOMATIC_REPOSITORY_SIDE_EFFECT_OBSERVED",
+      "NOT_A_PHASE_C_EXECUTION_VIOLATION",
+      "PHASE_C_V2_RESUME_AUTHORIZED"
+    ],
+    "historical_fact_preserved": true,
+    "phase_c_execution_violation": false,
+    "blocking_condition_met": false,
+    "reason": "The repository-configured Pages pipeline ran automatically after the authorized PR37 merge. The mission did not dispatch Pages, alter Pages configuration, or publish a forbidden Phase C payload."
+  },
+  "pages": {
+    "run_id": 31274388390,
+    "run_event": "dynamic",
+    "run_status": "completed",
+    "run_conclusion": "success",
+    "run_created_at": "2026-08-08T19:25:25Z",
+    "run_updated_at": "2026-08-08T19:26:03Z",
+    "deployment_id": 5811926799,
+    "deployment_environment": "github-pages",
+    "deployment_status": "success",
+    "artifact_id": 9026574468,
+    "artifact_name": "github-pages",
+    "artifact_size_bytes": 459637,
+    "artifact_digest": "sha256:5bb277862a92a66070139cb9b17e7fe095041ba0ed4b3bb20ebd3c322e695d06",
+    "artifact_expired": false,
+    "artifact_tar_bytes": 2641920,
+    "artifact_member_count": 392,
+    "artifact_extracted_file_count": 366,
+    "hypothesis_intelligence_file_count": 20,
+    "targeted_phase_c_documents": [
+      "hypothesis-intelligence/ATOMIC-AND-PAIR-CAMPAIGN-V1.md",
+      "hypothesis-intelligence/ATOMIC-AND-PAIR-CAMPAIGN-V1.html",
+      "hypothesis-intelligence/MASK-ENGINE-DECISION-V1.md",
+      "hypothesis-intelligence/MASK-ENGINE-DECISION-V1.html",
+      "hypothesis-intelligence/PHASE-C-EXECUTION-CONTRACT-V1.md",
+      "hypothesis-intelligence/PHASE-C-EXECUTION-CONTRACT-V1.html"
+    ],
+    "forbidden_heavy_paths_checked": [
+      "reports/hypothesis-research/pair-results-v1.json",
+      "reports/hypothesis-research/atomic-results-v1.json",
+      "reports/data-quality/raw-field-census-v1.json",
+      "configs/hypothesis-tags/canonical-tag-registry-v1.json",
+      "reports/hypothesis-genome/e3-property-reconciliation-v1.json"
+    ],
+    "forbidden_heavy_paths_present": [],
+    "secret_publication_detected": false,
+    "provider_payload_publication_detected": false,
+    "forbidden_sensitive_identifier_publication_detected": false,
+    "unsanitized_phase_c_file_publication_detected": false,
+    "bounded_v1_scientific_summary_publication_detected": true,
+    "published_scientific_summary_paths": [
+      "hypothesis-intelligence/ATOMIC-AND-PAIR-CAMPAIGN-V1.md",
+      "hypothesis-intelligence/ATOMIC-AND-PAIR-CAMPAIGN-V1.html"
+    ],
+    "pages_configuration_changed_by_mission": false,
+    "manual_pages_dispatch_by_mission": false,
+    "audit_methods": [
+      "GITHUB_ARTIFACT_ID_SIZE_DIGEST_AND_HEAD_VERIFICATION",
+      "SAFE_TAR_MEMBER_VALIDATION",
+      "FULL_EXTRACTED_PATH_INVENTORY",
+      "FORBIDDEN_HEAVY_PATH_EXACT_ABSENCE",
+      "MARKDOWN_AND_HTML_HIGH_CONFIDENCE_SECRET_SIGNATURE_SCAN"
+    ],
+    "secret_signature_path_count": 0,
+    "forbidden_heavy_filename_reference_count": 0
+  },
+  "main_ci": {
+    "run_id": 31274388820,
+    "event": "push",
+    "head_sha": "d4ce1836ef8f42f37e284126a7190ebf051f6dbf",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-08-08T19:25:26Z",
+    "updated_at": "2026-08-08T19:52:21Z",
+    "required_jobs": {
+      "Historical Deep — contrat cache-only": "success",
+      "Jalon 10 - entrees de preuve gelees": "success",
+      "tests": "success",
+      "Robin Experience — preuves visuelles": "success"
+    },
+    "intentional_skips": {
+      "Pilote Jalon 12 R2-first borne": "skipped"
+    },
+    "validated_domains": [
+      "lint",
+      "mypy_strict",
+      "security",
+      "secrets",
+      "migrations",
+      "domain_tests",
+      "temporal_anti_leakage",
+      "replay_and_storage",
+      "cockpit",
+      "visual_evidence"
+    ],
+    "artifacts": [
+      {
+        "artifact_id": 9026620854,
+        "name": "hypothesis-evidence-campaign-inputs-31274388820-1",
+        "size_bytes": 253008,
+        "digest": "sha256:4d9b2e852abd33f15d4fbcd3434963da5a870af516c4b09d4fe03ea35c132c9e",
+        "role": "STANDARD_CI_INPUTS"
+      },
+      {
+        "artifact_id": 9026621052,
+        "name": "hypothesis-evidence-compact-campaign-31274388820-1",
+        "size_bytes": 2819,
+        "digest": "sha256:920b7c8ff78dd9ef63c5776610a3fdc633e9ab7bde0d14634916f921cd8cff3f",
+        "role": "STANDARD_CI_COMPACT"
+      },
+      {
+        "artifact_id": 9026870105,
+        "name": "robin-experience-visual-31274388820-1",
+        "size_bytes": 21909879,
+        "digest": "sha256:f4da06e38b32639f2d48b0cfc774ed5816df90a42675b39449b9bf89aaa570d3",
+        "role": "STANDARD_CI_VISUAL_EVIDENCE"
+      }
+    ],
+    "artifact_count": 3,
+    "artifact_total_bytes": 22165706
+  },
+  "stopped_worktree_inventory": {
+    "worktrees_checked": [
+      {
+        "path": "WORKTREE:hypothesis-tag-mask-pair-factory-v1-recovery",
+        "head": "1edde120ac2cf9b30e5c8df4112d5bec696d7bdb",
+        "uncommitted_files": []
+      },
+      {
+        "path": "WORKTREE:hypothesis-tag-mask-pair-factory-v1",
+        "head": "b67444defc4f6d8785a8986be640e2e43fe3866c",
+        "uncommitted_files": []
+      }
+    ],
+    "instruction_reference_uncommitted_file_count": 9,
+    "observed_uncommitted_file_count": 0,
+    "reconciliation": "NO_NINE_FILE_UNCOMMITTED_SNAPSHOT_EXISTS_IN_EITHER_RELEVANT_WORKTREE",
+    "files": [],
+    "classification": "NO_UNCOMMITTED_FILES_TO_TRANSFER",
+    "useful_audit_lost": false,
+    "old_worktrees_clean": true
+  },
+  "effect_accounting": {
+    "automatic_repository_pages_deployments_observed": 1,
+    "documentation_site_publication_observed": true,
+    "bounded_v1_scientific_summary_publication_observed": true,
+    "mission_initiated_scientific_publications": 0,
+    "new_v2_results_publications": 0,
+    "forbidden_heavy_scientific_evidence_publications": 0,
+    "mission_initiated_deployments": 0,
+    "phase_c_workflow_deployments": 0,
+    "manual_pages_dispatches": 0,
+    "pages_configuration_changes": 0,
+    "forbidden_data_publications": 0,
+    "heavy_phase_c_evidence_publications": 0,
+    "provider_payload_publications": 0,
+    "secret_publications": 0,
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "remote_sql": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_get": 0,
+    "r2_write": 0,
+    "r2_delete": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triples": 0
+  },
+  "github_actions_artifact_accounting": {
+    "artifact_uploads_observed": 4,
+    "artifact_bytes_observed": 22625343,
+    "standard_ci_artifacts": 3,
+    "standard_ci_artifact_bytes": 22165706,
+    "pages_staging_artifacts": 1,
+    "pages_staging_artifact_bytes": 459637
+  },
+  "publication_exposure_audit": "PASSED",
+  "phase_c_v2_resume": "AUTHORIZED",
+  "triple_search_locked": true,
+  "price_track": "BLOCKED_NO_POINT_IN_TIME_PRICES",
+  "roi": null,
+  "profit": null,
+  "clv": null,
+  "drawdown": null
+}

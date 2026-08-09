@@ -1,0 +1,549 @@
+{
+  "schema_version": "phase-c-v2-negative-controls",
+  "control_count": 8,
+  "guard_control_count": 4,
+  "modeled_control_count": 4,
+  "modeled_track_target_test_count": 16,
+  "guard_records": [
+    {
+      "control_id": "FUTURE_FEATURE",
+      "atomic_status": "REJECTED_FUTURE_OR_EQUAL_CUTOFF",
+      "pair_status": "REJECTED_FUTURE_OR_EQUAL_CUTOFF",
+      "modeled": false
+    },
+    {
+      "control_id": "SHIFTED_PRICE",
+      "atomic_status": "REJECTED_NO_POINT_IN_TIME_PRICES",
+      "pair_status": "REJECTED_NO_POINT_IN_TIME_PRICES",
+      "modeled": false
+    },
+    {
+      "control_id": "POST_RESULT_FIELD",
+      "atomic_status": "REJECTED_TARGET_FIXTURE_POST_RESULT",
+      "pair_status": "REJECTED_TARGET_FIXTURE_POST_RESULT",
+      "modeled": false
+    },
+    {
+      "control_id": "WINNER_LOSER_IDENTITY",
+      "atomic_status": "REJECTED_TARGET_DERIVED_IDENTITY",
+      "pair_status": "REJECTED_TARGET_DERIVED_IDENTITY",
+      "modeled": false
+    }
+  ],
+  "modeled_records": [
+    {
+      "control_id": "SHUFFLED_LEAGUE_MONTH",
+      "track": "ATOMIC",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 353,
+      "fold_true_counts": [
+        85,
+        67,
+        74,
+        54,
+        73
+      ],
+      "p_values_raw": {
+        "BASE": 0.9561894681
+      },
+      "p_value_raw": 0.9561894681,
+      "p_value": 0.9561894681,
+      "delta_log_loss": {
+        "BASE": -0.00170624
+      },
+      "delta_brier": {
+        "BASE": -0.00030309
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "SHUFFLED_LEAGUE_MONTH",
+      "track": "ATOMIC",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 353,
+      "fold_true_counts": [
+        85,
+        67,
+        74,
+        54,
+        73
+      ],
+      "p_values_raw": {
+        "BASE": 0.5958836297
+      },
+      "p_value_raw": 0.5958836297,
+      "p_value": 0.5958836297,
+      "delta_log_loss": {
+        "BASE": -0.0004654
+      },
+      "delta_brier": {
+        "BASE": -0.00022607
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "SHUFFLED_LEAGUE_MONTH",
+      "track": "PAIR",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 111,
+      "fold_true_counts": [
+        22,
+        15,
+        28,
+        18,
+        28
+      ],
+      "p_values_raw": {
+        "PARENT_A": 0.3381202679,
+        "PARENT_B": 0.8683575042,
+        "ADDITIVE": 0.5448480657
+      },
+      "p_value_raw": 0.8683575042,
+      "p_value": 0.8683575042,
+      "delta_log_loss": {
+        "PARENT_A": 0.00026994,
+        "PARENT_B": -0.00103232,
+        "ADDITIVE": 0.00075835
+      },
+      "delta_brier": {
+        "PARENT_A": 2.124e-05,
+        "PARENT_B": -0.00016347,
+        "ADDITIVE": 0.00013507
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "SHUFFLED_LEAGUE_MONTH",
+      "track": "PAIR",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 111,
+      "fold_true_counts": [
+        22,
+        15,
+        28,
+        18,
+        28
+      ],
+      "p_values_raw": {
+        "PARENT_A": 0.706081574,
+        "PARENT_B": 0.5319406417,
+        "ADDITIVE": 0.4829615494
+      },
+      "p_value_raw": 0.706081574,
+      "p_value": 0.706081574,
+      "delta_log_loss": {
+        "PARENT_A": -3.806e-05,
+        "PARENT_B": -0.00016016,
+        "ADDITIVE": 0.00030873
+      },
+      "delta_brier": {
+        "PARENT_A": -3.108e-05,
+        "PARENT_B": -9.346e-05,
+        "ADDITIVE": 0.00013634
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "RANDOM_PREVALENCE_UNKNOWN",
+      "track": "ATOMIC",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 842,
+      "true_oof": 267,
+      "fold_true_counts": [
+        55,
+        47,
+        53,
+        60,
+        52
+      ],
+      "p_values_raw": {
+        "BASE": 0.8299925615
+      },
+      "p_value_raw": 0.8299925615,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "BASE": 0.00090084
+      },
+      "delta_brier": {
+        "BASE": 0.00033069
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "RANDOM_PREVALENCE_UNKNOWN",
+      "track": "ATOMIC",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 842,
+      "true_oof": 267,
+      "fold_true_counts": [
+        55,
+        47,
+        53,
+        60,
+        52
+      ],
+      "p_values_raw": {
+        "BASE": 0.9282408084
+      },
+      "p_value_raw": 0.9282408084,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "BASE": -0.00084828
+      },
+      "delta_brier": {
+        "BASE": -0.000409
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "RANDOM_PREVALENCE_UNKNOWN",
+      "track": "PAIR",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 669,
+      "true_oof": 70,
+      "fold_true_counts": [
+        14,
+        12,
+        17,
+        14,
+        13
+      ],
+      "p_values_raw": {
+        "PARENT_A": 0.2739496019,
+        "PARENT_B": 0.7390615007,
+        "ADDITIVE": 0.6845246761
+      },
+      "p_value_raw": 0.7390615007,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "PARENT_A": -0.00261073,
+        "PARENT_B": 0.00291035,
+        "ADDITIVE": 0.00072968
+      },
+      "delta_brier": {
+        "PARENT_A": -0.00070493,
+        "PARENT_B": 0.00073157,
+        "ADDITIVE": 0.00015934
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "RANDOM_PREVALENCE_UNKNOWN",
+      "track": "PAIR",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 669,
+      "true_oof": 70,
+      "fold_true_counts": [
+        14,
+        12,
+        17,
+        14,
+        13
+      ],
+      "p_values_raw": {
+        "PARENT_A": 0.6348721086,
+        "PARENT_B": 0.8777736765,
+        "ADDITIVE": 0.7917141162
+      },
+      "p_value_raw": 0.8777736765,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "PARENT_A": -0.00013707,
+        "PARENT_B": -0.0020226,
+        "ADDITIVE": -0.00113108
+      },
+      "delta_brier": {
+        "PARENT_A": -6.804e-05,
+        "PARENT_B": -0.00097437,
+        "ADDITIVE": -0.00054853
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "IMPOSSIBLE_FALSE",
+      "track": "ATOMIC",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 0,
+      "fold_true_counts": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "p_values_raw": {
+        "BASE": 0.6805095837
+      },
+      "p_value_raw": 0.6805095837,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "BASE": -2.253e-05
+      },
+      "delta_brier": {
+        "BASE": -5.36e-06
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "IMPOSSIBLE_FALSE",
+      "track": "ATOMIC",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 0,
+      "fold_true_counts": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "p_values_raw": {
+        "BASE": 0.6052666138
+      },
+      "p_value_raw": 0.6052666138,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "BASE": -3.1e-06
+      },
+      "delta_brier": {
+        "BASE": -1.44e-06
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "IMPOSSIBLE_FALSE",
+      "track": "PAIR",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 0,
+      "fold_true_counts": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "p_values_raw": {
+        "PARENT_A": 1.0,
+        "PARENT_B": 1.0,
+        "ADDITIVE": 0.3172304457
+      },
+      "p_value_raw": 1.0,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 2.264e-05
+      },
+      "delta_brier": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 5.39e-06
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "IMPOSSIBLE_FALSE",
+      "track": "PAIR",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 0,
+      "fold_true_counts": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "p_values_raw": {
+        "PARENT_A": 1.0,
+        "PARENT_B": 1.0,
+        "ADDITIVE": 0.3939563993
+      },
+      "p_value_raw": 1.0,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 3.11e-06
+      },
+      "delta_brier": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 1.45e-06
+      },
+      "support_gate": false,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "ALWAYS_TRUE",
+      "track": "ATOMIC",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 1053,
+      "fold_true_counts": [
+        226,
+        204,
+        212,
+        202,
+        209
+      ],
+      "p_values_raw": {
+        "BASE": 0.6805095837
+      },
+      "p_value_raw": 0.6805095837,
+      "p_value": 0.6805095837,
+      "delta_log_loss": {
+        "BASE": -2.253e-05
+      },
+      "delta_brier": {
+        "BASE": -5.36e-06
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "ALWAYS_TRUE",
+      "track": "ATOMIC",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 1053,
+      "fold_true_counts": [
+        226,
+        204,
+        212,
+        202,
+        209
+      ],
+      "p_values_raw": {
+        "BASE": 0.6052666138
+      },
+      "p_value_raw": 0.6052666138,
+      "p_value": 0.6052666138,
+      "delta_log_loss": {
+        "BASE": -3.1e-06
+      },
+      "delta_brier": {
+        "BASE": -1.44e-06
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "ALWAYS_TRUE",
+      "track": "PAIR",
+      "target_id": "MATCH_RESULT_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 1053,
+      "fold_true_counts": [
+        226,
+        204,
+        212,
+        202,
+        209
+      ],
+      "p_values_raw": {
+        "PARENT_A": 1.0,
+        "PARENT_B": 1.0,
+        "ADDITIVE": 0.3172304457
+      },
+      "p_value_raw": 1.0,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 2.264e-05
+      },
+      "delta_brier": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 5.39e-06
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "ALWAYS_TRUE",
+      "track": "PAIR",
+      "target_id": "TOTAL_GOALS_2_5_90M",
+      "execution": "MODELED_FIVE_FOLD_OOF",
+      "known_oof": 1053,
+      "true_oof": 1053,
+      "fold_true_counts": [
+        226,
+        204,
+        212,
+        202,
+        209
+      ],
+      "p_values_raw": {
+        "PARENT_A": 1.0,
+        "PARENT_B": 1.0,
+        "ADDITIVE": 0.3939563993
+      },
+      "p_value_raw": 1.0,
+      "p_value": 1.0,
+      "delta_log_loss": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 3.11e-06
+      },
+      "delta_brier": {
+        "PARENT_A": 0,
+        "PARENT_B": 0,
+        "ADDITIVE": 1.45e-06
+      },
+      "support_gate": true,
+      "q_value": 1.0,
+      "status": "REJECTED"
+    }
+  ],
+  "surviving_control_count": 0,
+  "negative_control_gate": "PASS"
+}
