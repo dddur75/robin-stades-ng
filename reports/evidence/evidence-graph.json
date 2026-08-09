@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-09T10:42:00Z",
+  "generated_at":"2026-08-09T10:53:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -83,7 +83,24 @@
       "scientific_lineage_id":"NOT_APPLICABLE_OPERATIONAL_HARDENING",
       "dataset_lineage_id":"NOT_APPLICABLE_SYNTHETIC_TESTS",
       "status":"PARTIAL",
-      "verified_by":["C0"]
+      "verified_by":["C0"],
+      "superseded_by":"GOV.CHRONOS.PR39.FAIL_AND_STOP.V4.001"
+    },
+    {
+      "claim_id":"GOV.CHRONOS.PR39.FAIL_AND_STOP.V4.001",
+      "claim":"Exact review of the minimum Chronos correction leaves two DP6 P1 vetoes in durable time authority and attributable R2 physical-write accounting; the second similar failure therefore produces CANARY_TECHNICAL_PARTIAL and FAIL_AND_STOP with no Ready, merge, activation or complete local suite.",
+      "scope":"ROBIN_CHRONOS_PR39_FAIL_AND_STOP",
+      "source":"C2, DP6 and RP8 exact-SHA reviews of 0ec749d82a2fe5545d109f1f3922f31c5d62455a",
+      "grain":"one_exact_pr39_stop_decision",
+      "temporal_class":"EXACT_CODE_REVIEW_AS_OF",
+      "artifact":"reports/closure/pr39-chronos-fail-and-stop-v4.json",
+      "hash":"d28f4403d831884646d54efc61dd967c95c4885f45d9bdb57b414681bfa2370a",
+      "code_revision":"0ec749d82a2fe5545d109f1f3922f31c5d62455a",
+      "execution_id":"pr39-exact-stop-review-20260809",
+      "scientific_lineage_id":"NOT_APPLICABLE_GOVERNANCE_STOP",
+      "dataset_lineage_id":"NOT_APPLICABLE_NO_PROVIDER_EXECUTION",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP6"]
     },
     {
       "claim_id":"ENV.MAIN.HEAD.001",
@@ -2040,7 +2057,8 @@
     {"decision_id":"RCV3-20260809-093","ledger_record_hash":"caa3fb3c0e0ed9713d4e1ac10cca9dcf045733becd69265502fd7670b56ae651"},
     {"decision_id":"RCV3-20260809-094","ledger_record_hash":"3a3f6d216c2223b16c22629e471417607ead4ba103c43a072b6b579cc3dc183b"},
     {"decision_id":"RCV3-20260809-095","ledger_record_hash":"b5f4600288fb17106ddc7c44fdbd56930bcde3ba2a2af177f1c32f4dc263282c"},
-    {"decision_id":"RCV3-20260809-096","ledger_record_hash":"9159bbf70f33d9174301ed0d6fa16f4b7c45f9a9501710040829434c2ea26a93"}
+    {"decision_id":"RCV3-20260809-096","ledger_record_hash":"9159bbf70f33d9174301ed0d6fa16f4b7c45f9a9501710040829434c2ea26a93"},
+    {"decision_id":"RCV3-20260809-097","ledger_record_hash":"eb5a7fb113a27bfe11df731d061dff04b244044bad412a70517a0a5dab4657bf"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2319,6 +2337,7 @@
     {"edge_id":"EDGE.274","from_claim_id":"GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.275","from_claim_id":"GOV.CHRONOS.PR39.CORRECTIVE_VALIDATION.V1.001","to_decision_id":"RCV3-20260809-094","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.276","from_claim_id":"GOV.CHRONOS.PR39.FAIL_CLOSED_REDESIGN.V2.001","to_decision_id":"RCV3-20260809-095","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.277","from_claim_id":"GOV.CHRONOS.PR39.SRE_CORRECTIVE_VALIDATION.V3.001","to_decision_id":"RCV3-20260809-096","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.277","from_claim_id":"GOV.CHRONOS.PR39.SRE_CORRECTIVE_VALIDATION.V3.001","to_decision_id":"RCV3-20260809-096","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.278","from_claim_id":"GOV.CHRONOS.PR39.FAIL_AND_STOP.V4.001","to_decision_id":"RCV3-20260809-097","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

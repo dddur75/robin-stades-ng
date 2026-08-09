@@ -736,6 +736,13 @@ def main() -> None:
             "relation": "SUPPORTS",
             "status": "RECORDED",
         },
+        {
+            "edge_id": "EDGE.278",
+            "from_claim_id": "GOV.CHRONOS.PR39.FAIL_AND_STOP.V4.001",
+            "to_decision_id": "RCV3-20260809-097",
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
     ]
     existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
     if existing_tail_edges not in (

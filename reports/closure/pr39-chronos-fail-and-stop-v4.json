@@ -1,0 +1,105 @@
+{
+  "report_id": "PR39_CHRONOS_FAIL_AND_STOP_V4",
+  "generated_at": "2026-08-09T10:51:36Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 39,
+  "branch": "codex/robin-chronos-known-at-price-observatory-v1",
+  "reviewed_code_revision": "0ec749d82a2fe5545d109f1f3922f31c5d62455a",
+  "status": "CANARY_TECHNICAL_PARTIAL",
+  "decision": "FAIL_AND_STOP",
+  "ready": false,
+  "merge": false,
+  "provider_canary": false,
+  "v3_opened": false,
+  "reason": "The minimum same-architecture correction received a second similar DP6 veto. A third identical attempt or a third architecture is prohibited by the governance contract.",
+  "exact_sha_reviews": {
+    "C2": {
+      "verdict": "PASS_READY_MERGE",
+      "confidence": 0.98,
+      "open_p0": 0,
+      "open_p1": 0
+    },
+    "RP8": {
+      "verdict": "PASS_READY_MERGE_PRICE_ONLY",
+      "open_p0": 0,
+      "open_p1": 0,
+      "provider_canary": "VETO",
+      "v3": "VETO_NOT_OPENED"
+    },
+    "DP6": {
+      "verdict": "VETO_READY_MERGE",
+      "open_p0": 0,
+      "open_p1": 2,
+      "findings": [
+        {
+          "id": "DP6-P1-DURABLE-TIME-AUTHORITY",
+          "finding": "PostgreSQL provider-free commands authorize from the user-supplied --now value, so an expired mission can be reactivated with a past timestamp.",
+          "required_redesign": "Bind durable authorization to a trusted wall-clock source and reserve injected time for Memory or SQLite tests."
+        },
+        {
+          "id": "DP6-P1-R2-PHYSICAL-WRITE-ATTRIBUTION",
+          "finding": "Exact-byte presence after put_if_absent=false cannot distinguish a mission crash from an identical object that predated the mission, so ACTUAL is not exact.",
+          "required_redesign": "Persist an attributable CREATED, PREEXISTING or PUT_COMMITTED_ACTUAL_PENDING operation state before reporting physical writes."
+        }
+      ]
+    }
+  },
+  "verified_foundation": {
+    "temporal_known_at_contract": "PASS_C2",
+    "canonical_150_tag_snapshots": "PASS_C2",
+    "lineage_and_supersession": "PASS_C2",
+    "price_fail_closed_and_exact_contract_hash": "PASS_RP8",
+    "five_book_two_market_derivation": "PASS_RP8",
+    "scoped_replay_and_no_namespace_capture_reconciliation": "PASS_C2_DP6",
+    "durable_cohort_and_cumulative_reservations": "PASS_DP6",
+    "lossy_0015_downgrade": "BLOCKED_FAIL_CLOSED"
+  },
+  "validation": {
+    "chronos_and_jalon12_domain": "240 passed",
+    "migration_prequential_hypothesis_compatibility": "347 passed",
+    "governance_and_recorder": "12 passed",
+    "exact_sha_c2_targeted": "8 passed",
+    "exact_sha_rp8_targeted": "10 passed",
+    "ruff": "PASS",
+    "mypy": "PASS_172_SOURCE_FILES",
+    "bandit": "PASS",
+    "secret_scan": "PASS",
+    "git_diff_check": "PASS",
+    "complete_local_suite": "NOT_RUN_BY_DESIGN_AFTER_OPEN_VETO",
+    "exact_ci_run_id": 31309058559,
+    "exact_ci_merge_gate": "NON_DECISIVE_AFTER_DP6_VETO"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "workflow_dispatches": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triple_searches": 0
+  },
+  "locks": {
+    "production_locked": true,
+    "storage_paused": true,
+    "p3_p4_paused": true,
+    "no_bet_default": true,
+    "promotion_locked": true,
+    "triple_search_locked": true,
+    "social_publishing_enabled": false
+  },
+  "next_mission": {
+    "required_stage": "E1_NEW_ARCHITECTURE_DECISION",
+    "automatic_continuation_authorized": false,
+    "minimum_design_questions": [
+      "trusted durable clock boundary independent of CLI test time",
+      "attributable cross-system R2 physical-write state machine",
+      "backup and restore contract for PostgreSQL canary control-plane authority"
+    ]
+  }
+}
