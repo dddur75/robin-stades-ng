@@ -224,6 +224,10 @@
     "control_count": 8,
     "modeled_control_count": 4,
     "guard_control_count": 4,
+    "executed_guard_control_count": 4,
+    "executed_guard_track_count": 8,
+    "guard_execution_proof": "reports/hypothesis-research/v2/negative-control-guard-execution-v2.json",
+    "guard_execution_proof_hash": "303526eef93c3655168d437d95357ea1568af83651dbb1fdb20db8bfdfd1eb1f",
     "modeled_track_target_test_count": 16,
     "surviving_control_count": 0,
     "gate": "PASS"
@@ -315,5 +319,5 @@
     "PHASE_C_FULL_BOUNDED_EXPANSION_READY",
     "TRIPLE_SEARCH_REMAINS_LOCKED_NO_PAIR_SURVIVOR"
   ],
-  "report_hash": "b7ba02a1ff93f9d489e324639df08eb999eac410dbeeda3c3b1a9c9c7ad12891"
+  "report_hash": "9a1062f6807b8fe719e0b7e70555ce10c9d8185cf962bbac4ff493e7f8a23941"
 }

@@ -53,8 +53,9 @@ def test_no_pair_survivor_keeps_triples_locked() -> None:
     assert pair_summary["drawdown"] is None
 
 
-def test_all_eight_negative_controls_execute_and_none_survive() -> None:
+def test_all_eight_negative_controls_are_modeled_or_executed_and_none_survive() -> None:
     controls = read_json(REPORT_ROOT / "negative-controls-v2.json")
+    guard_proof = campaign.verify_negative_guard_execution_proof()
     assert controls["control_count"] == 8
     assert controls["guard_control_count"] == 4
     assert controls["modeled_control_count"] == 4
@@ -62,12 +63,110 @@ def test_all_eight_negative_controls_execute_and_none_survive() -> None:
     assert controls["surviving_control_count"] == 0
     assert controls["negative_control_gate"] == "PASS"
     assert len(controls["guard_records"]) == 4  # type: ignore[arg-type]
+    assert guard_proof["guard_control_count"] == 4
+    assert guard_proof["executed_guard_control_count"] == 4
+    assert guard_proof["executed_guard_track_count"] == 8
+    assert guard_proof["negative_control_guard_gate"] == "PASS"
+    guard_records = guard_proof["records"]
+    assert isinstance(guard_records, list)
+    assert {row["track"] for row in guard_records} == {"ATOMIC", "PAIR"}
+    assert {row["status"] for row in guard_records} == {"REJECTED"}
+    assert {row["execution"] for row in guard_records} == {
+        "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE"
+    }
     modeled = controls["modeled_records"]
     assert isinstance(modeled, list)
     assert len(modeled) == 16
     assert {row["track"] for row in modeled} == {"ATOMIC", "PAIR"}
     assert {row["execution"] for row in modeled} == {"MODELED_FIVE_FOLD_OOF"}
     assert {row["status"] for row in modeled} == {"REJECTED"}
+
+
+def test_rehashed_declarative_guard_proof_is_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    copied = tmp_path / "negative-control-guard-execution-v2.json"
+    proof = campaign.verify_negative_guard_execution_proof()
+    records = proof["records"]
+    assert isinstance(records, list)
+    records[0]["status"] = "DECLARED_NOT_EXECUTED"
+    proof["proof_hash"] = campaign.v2.object_hash(
+        {key: value for key, value in proof.items() if key != "proof_hash"}
+    )
+    copied.write_bytes(campaign.v2.canonical_bytes(proof) + b"\n")
+    monkeypatch.setattr(campaign, "NEGATIVE_GUARD_PROOF", copied)
+    with pytest.raises(
+        RuntimeError, match="PHASE_C_V2_NEGATIVE_GUARD_EXECUTION_MISMATCH"
+    ):
+        campaign.verify_negative_guard_execution_proof()
+
+
+def test_all_frozen_tags_pass_the_shared_temporal_admission_gate() -> None:
+    registry = read_json(
+        ROOT / "configs/hypothesis-tags/canonical-tag-registry-v2.json"
+    )
+    tags = registry["tags"]
+    assert isinstance(tags, list)
+    assert len(tags) == 150
+    for track in ("ATOMIC", "PAIR"):
+        for tag in tags:
+            campaign.validate_candidate_admission(
+                campaign.admission_candidate_from_tag(tag, track=track)
+            )
+
+
+def test_bh_q_values_recalculate_from_all_7480_stored_p_values() -> None:
+    atomic_metrics: list[dict[str, object]] = []
+    pair_metrics: list[dict[str, object]] = []
+    for path in sorted((REPORT_ROOT / "full").glob("atomic-results-shard-*-v2.json.gz")):
+        with gzip.open(path, "rt", encoding="utf-8") as stream:
+            payload = json.load(stream)
+        atomic_metrics.extend(
+            metric
+            for row in payload["records"]
+            for metric in row["target_metrics"].values()
+        )
+    for path in sorted((REPORT_ROOT / "full").glob("pair-results-shard-*-v2.json.gz")):
+        with gzip.open(path, "rt", encoding="utf-8") as stream:
+            payload = json.load(stream)
+        pair_metrics.extend(
+            metric
+            for row in payload["records"]
+            for metric in row["target_metrics"].values()
+        )
+    assert len(atomic_metrics) == 300
+    assert len(pair_metrics) == 7_180
+
+    def p_rows(metrics: list[dict[str, object]]) -> list[tuple[str, float]]:
+        return [
+            (str(metric["canonical_test_id"]), float(metric["p_value"]))
+            for metric in metrics
+        ]
+
+    q_atomic = campaign.v2.bh_adjust(p_rows(atomic_metrics))
+    q_pair = campaign.v2.bh_adjust(p_rows(pair_metrics))
+    q_campaign = campaign.v2.bh_adjust(p_rows(atomic_metrics + pair_metrics))
+    for metric in atomic_metrics:
+        test_id = str(metric["canonical_test_id"])
+        assert metric["q_value_atomic_global"] == q_atomic[test_id]
+        assert metric["q_value_campaign_global"] == q_campaign[test_id]
+    for metric in pair_metrics:
+        test_id = str(metric["canonical_test_id"])
+        assert metric["q_value_pair_global"] == q_pair[test_id]
+        assert metric["q_value_campaign_global"] == q_campaign[test_id]
+
+    for metrics, q_field in (
+        (atomic_metrics, "q_value_family"),
+        (pair_metrics, "q_value_family"),
+    ):
+        family_ids = sorted({str(metric["family_id"]) for metric in metrics})
+        for family_id in family_ids:
+            family = [
+                metric for metric in metrics if str(metric["family_id"]) == family_id
+            ]
+            q_family = campaign.v2.bh_adjust(p_rows(family))
+            for metric in family:
+                assert metric[q_field] == q_family[str(metric["canonical_test_id"])]
 
 
 def test_full_result_shards_are_git_durable_small_and_exact_union() -> None:

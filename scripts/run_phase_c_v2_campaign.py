@@ -40,6 +40,9 @@ ATOMIC_SUMMARY = ROOT / "reports/hypothesis-research/v2/atomic-results-summary-v
 PAIR_RESULTS_SUMMARY = ROOT / "reports/hypothesis-research/v2/pair-results-summary-v2.json"
 MULTIPLICITY_SUMMARY = ROOT / "reports/hypothesis-research/v2/campaign-multiplicity-v2.json"
 NEGATIVE_CONTROLS = ROOT / "reports/hypothesis-research/v2/negative-controls-v2.json"
+NEGATIVE_GUARD_PROOF = (
+    ROOT / "reports/hypothesis-research/v2/negative-control-guard-execution-v2.json"
+)
 RESULT_MANIFEST = ROOT / "reports/hypothesis-research/v2/full-results-manifest-v2.json"
 CHECKPOINT_RECEIPT = ROOT / "reports/hypothesis-research/v2/checkpoint-resume-receipt-v2.json"
 CAMPAIGN_REPLAY = ROOT / "reports/hypothesis-research/v2/campaign-replay-v2.json"
@@ -735,6 +738,8 @@ def verify_freeze() -> dict[str, Any]:
 
 def run_atomic(work_root: Path) -> dict[str, Any]:
     registry, inputs, observations, labels, fold_states, baselines = load_context()
+    for tag in registry["tags"]:
+        validate_candidate_admission(admission_candidate_from_tag(tag, track="ATOMIC"))
     report = v2.evaluate_atomic(
         registry, inputs, observations, labels, fold_states, baselines
     )
@@ -855,6 +860,12 @@ def run_pair_shard(
                 complete=False,
             )
             break
+        for parent_key in ("parent_a", "parent_b"):
+            validate_candidate_admission(
+                admission_candidate_from_tag(
+                    registry_by_id[str(pair[parent_key])], track="PAIR"
+                )
+            )
         row = v2.evaluate_pair_raw(
             pair,
             registry_by_id,
@@ -1214,6 +1225,137 @@ def build_negative_controls(
         "surviving_control_count": 0,
         "negative_control_gate": "PASS",
     }
+
+
+GUARD_REJECTION_REASONS = {
+    "FUTURE_FEATURE": "REJECTED_FUTURE_OR_EQUAL_CUTOFF",
+    "SHIFTED_PRICE": "REJECTED_NO_POINT_IN_TIME_PRICES",
+    "POST_RESULT_FIELD": "REJECTED_TARGET_FIXTURE_POST_RESULT",
+    "WINNER_LOSER_IDENTITY": "REJECTED_TARGET_DERIVED_IDENTITY",
+}
+
+
+def admission_candidate_from_tag(
+    tag: Mapping[str, Any], *, track: str
+) -> dict[str, Any]:
+    """Build the common admission envelope used before atomic and pair evaluation."""
+    availability_relation = "UNVERIFIED_TEMPORAL_CONTRACT"
+    if (
+        tag.get("cutoff") == "TARGET_KICKOFF_EXCLUSIVE_WITH_PT6H_SOURCE_EMBARGO"
+        and tag.get("temporal_class") == "LAGGED_RECONSTRUCTED_ONLY"
+    ):
+        availability_relation = "STRICTLY_BEFORE_TARGET_KICKOFF"
+    return {
+        "candidate_id": str(tag["tag_id"]),
+        "track": track,
+        "availability_relation": availability_relation,
+        "scientific_role": str(tag["scientific_role"]),
+        "requires_point_in_time_price": False,
+        "point_in_time_price_provenance": False,
+    }
+
+
+def validate_candidate_admission(candidate: Mapping[str, Any]) -> None:
+    """Reject leakage and unavailable-price candidates at the shared entry gate."""
+    if candidate.get("track") not in {"ATOMIC", "PAIR"}:
+        raise RuntimeError("PHASE_C_V2_CANDIDATE_TRACK_INVALID")
+    if candidate.get("availability_relation") != "STRICTLY_BEFORE_TARGET_KICKOFF":
+        raise RuntimeError("REJECTED_FUTURE_OR_EQUAL_CUTOFF")
+    if candidate.get("requires_point_in_time_price") is True and candidate.get(
+        "point_in_time_price_provenance"
+    ) is not True:
+        raise RuntimeError("REJECTED_NO_POINT_IN_TIME_PRICES")
+    if candidate.get("scientific_role") == "TARGET_ONLY_POST_RESULT":
+        raise RuntimeError("REJECTED_TARGET_FIXTURE_POST_RESULT")
+    if candidate.get("scientific_role") == "TARGET_DERIVED_IDENTITY":
+        raise RuntimeError("REJECTED_TARGET_DERIVED_IDENTITY")
+    if candidate.get("scientific_role") != "FOOTBALL_PREDICTOR":
+        raise RuntimeError("PHASE_C_V2_CANDIDATE_SCIENTIFIC_ROLE_INVALID")
+
+
+def injected_guard_candidate(control_id: str, track: str) -> dict[str, Any]:
+    candidate: dict[str, Any] = {
+        "candidate_id": f"NEGATIVE_CONTROL:{control_id}:{track}",
+        "track": track,
+        "availability_relation": "STRICTLY_BEFORE_TARGET_KICKOFF",
+        "scientific_role": "FOOTBALL_PREDICTOR",
+        "requires_point_in_time_price": False,
+        "point_in_time_price_provenance": False,
+    }
+    if control_id == "FUTURE_FEATURE":
+        candidate["availability_relation"] = "AT_OR_AFTER_TARGET_KICKOFF"
+    elif control_id == "SHIFTED_PRICE":
+        candidate["requires_point_in_time_price"] = True
+    elif control_id == "POST_RESULT_FIELD":
+        candidate["scientific_role"] = "TARGET_ONLY_POST_RESULT"
+    elif control_id == "WINNER_LOSER_IDENTITY":
+        candidate["scientific_role"] = "TARGET_DERIVED_IDENTITY"
+    else:
+        raise ValueError(f"PHASE_C_V2_GUARD_CONTROL_UNKNOWN:{control_id}")
+    return candidate
+
+
+def build_negative_guard_execution_proof() -> dict[str, Any]:
+    records: list[dict[str, Any]] = []
+    for control_id, expected_reason in GUARD_REJECTION_REASONS.items():
+        for track in ("ATOMIC", "PAIR"):
+            candidate = injected_guard_candidate(control_id, track)
+            rejected = False
+            rejection_reason: str | None = None
+            try:
+                validate_candidate_admission(candidate)
+            except RuntimeError as error:
+                rejected = True
+                rejection_reason = str(error)
+            if not rejected or rejection_reason != expected_reason:
+                raise RuntimeError(
+                    f"PHASE_C_V2_GUARD_CONTROL_NOT_REJECTED:{control_id}:{track}"
+                )
+            records.append(
+                {
+                    "control_id": control_id,
+                    "track": track,
+                    "input_hash": v2.object_hash(candidate),
+                    "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+                    "rejection_stage": "CANDIDATE_ADMISSION",
+                    "rejection_reason": rejection_reason,
+                    "status": "REJECTED",
+                }
+            )
+    proof: dict[str, Any] = {
+        "schema_version": "phase-c-v2-negative-control-guard-execution",
+        "generated_at": GENERATED_AT,
+        "guard_control_count": len(GUARD_REJECTION_REASONS),
+        "executed_guard_control_count": len(
+            {str(row["control_id"]) for row in records}
+        ),
+        "executed_guard_track_count": len(records),
+        "records": records,
+        "negative_control_guard_gate": "PASS",
+        "external_effects": {
+            "provider_calls": 0,
+            "odds_credits": 0,
+            "r2_reads": 0,
+            "r2_writes": 0,
+            "remote_sql": 0,
+            "triples": 0,
+        },
+    }
+    proof["proof_hash"] = v2.object_hash(proof)
+    return proof
+
+
+def verify_negative_guard_execution_proof() -> dict[str, Any]:
+    proof = read_json(NEGATIVE_GUARD_PROOF)
+    verify_self_hash(
+        proof,
+        "proof_hash",
+        "PHASE_C_V2_NEGATIVE_GUARD_PROOF_HASH_MISMATCH",
+    )
+    expected = build_negative_guard_execution_proof()
+    if proof != expected:
+        raise RuntimeError("PHASE_C_V2_NEGATIVE_GUARD_EXECUTION_MISMATCH")
+    return proof
 
 
 def _atomic_compact(report: Mapping[str, Any], descriptors: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
@@ -2053,6 +2195,7 @@ def build_closure_report(*, write: bool = True) -> dict[str, Any]:
     pairs = read_json(PAIR_RESULTS_SUMMARY)
     multiplicity = read_json(MULTIPLICITY_SUMMARY)
     controls = read_json(NEGATIVE_CONTROLS)
+    guard_proof = verify_negative_guard_execution_proof()
     replay = verify_replay_manifest()
     resume = verify_checkpoint_receipt()
     pages = read_json(
@@ -2235,6 +2378,17 @@ def build_closure_report(*, write: bool = True) -> dict[str, Any]:
             "control_count": controls["control_count"],
             "modeled_control_count": controls["modeled_control_count"],
             "guard_control_count": controls["guard_control_count"],
+            "executed_guard_control_count": guard_proof[
+                "executed_guard_control_count"
+            ],
+            "executed_guard_track_count": guard_proof[
+                "executed_guard_track_count"
+            ],
+            "guard_execution_proof": (
+                "reports/hypothesis-research/v2/"
+                "negative-control-guard-execution-v2.json"
+            ),
+            "guard_execution_proof_hash": guard_proof["proof_hash"],
             "modeled_track_target_test_count": controls["modeled_track_target_test_count"],
             "surviving_control_count": controls["surviving_control_count"],
             "gate": controls["negative_control_gate"],
@@ -2320,6 +2474,7 @@ def verify_closure_report() -> dict[str, Any]:
     result_manifest = verify_results(ROOT)
     replay = verify_replay_manifest()
     receipt = verify_checkpoint_receipt()
+    guard_proof = verify_negative_guard_execution_proof()
     registry = read_json(REGISTRY)
     mask_manifest = read_json(MASK_MANIFEST)
     pair_summary = read_json(PAIR_SUMMARY)
@@ -2337,6 +2492,10 @@ def verify_closure_report() -> dict[str, Any]:
         "replay": report["replay"]["replay_hash"] == replay["replay_hash"],
         "receipt": report["checkpoint_resume"]["receipt_hash"]
         == receipt["receipt_hash"],
+        "negative_guard": report["negative_controls"][
+            "guard_execution_proof_hash"
+        ]
+        == guard_proof["proof_hash"],
     }
     if not all(expected_links.values()):
         failed = sorted(key for key, passed in expected_links.items() if not passed)
@@ -2378,6 +2537,10 @@ def verify_closure_report() -> dict[str, Any]:
         or report["pairs"]["label_oracle"] is not False
         or report["multiplicity"]["triple_search_locked"] is not True
         or report["multiplicity"]["surviving_pair_test_count"] != 0
+        or report["negative_controls"]["executed_guard_control_count"] != 4
+        or report["negative_controls"]["executed_guard_track_count"] != 8
+        or report["negative_controls"]["surviving_control_count"] != 0
+        or report["negative_controls"]["gate"] != "PASS"
         or report["security"]
         != {
             "forbidden_data_publications": 0,
@@ -2444,6 +2607,8 @@ def parse_args() -> argparse.Namespace:
             "pairs",
             "reduce",
             "verify-results",
+            "guard-proof",
+            "verify-guard-proof",
             "prove-resume",
             "replay",
             "closure",
@@ -2469,6 +2634,11 @@ def main() -> None:
         verify_freeze()
     elif args.command == "verify-results":
         verify_results(args.output_root)
+    elif args.command == "guard-proof":
+        write_json(NEGATIVE_GUARD_PROOF, build_negative_guard_execution_proof())
+        verify_negative_guard_execution_proof()
+    elif args.command == "verify-guard-proof":
+        verify_negative_guard_execution_proof()
     elif args.command == "closure":
         build_closure_report()
         verify_closure_report()

@@ -1,0 +1,91 @@
+{
+  "schema_version": "phase-c-v2-negative-control-guard-execution",
+  "generated_at": "2026-08-08T23:30:00Z",
+  "guard_control_count": 4,
+  "executed_guard_control_count": 4,
+  "executed_guard_track_count": 8,
+  "records": [
+    {
+      "control_id": "FUTURE_FEATURE",
+      "track": "ATOMIC",
+      "input_hash": "ccfdcfb5dae1d24fac260e91b6aa32d65e1626710ae5ce9306d44a853160c6fd",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_FUTURE_OR_EQUAL_CUTOFF",
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "FUTURE_FEATURE",
+      "track": "PAIR",
+      "input_hash": "026b9d98e9dc41f44e71244b9e433e8dab55ca2fe3e5143532b52328ceb8bf32",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_FUTURE_OR_EQUAL_CUTOFF",
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "SHIFTED_PRICE",
+      "track": "ATOMIC",
+      "input_hash": "65060bc8a1a71787b6ba6c53fa07e2db3e4d3cb837222a26a20b3a43fd033ae7",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_NO_POINT_IN_TIME_PRICES",
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "SHIFTED_PRICE",
+      "track": "PAIR",
+      "input_hash": "01eedad9bb6e8087aa37482c5996e9fea4b875a8a25cd009fbb7c72d62c2ee25",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_NO_POINT_IN_TIME_PRICES",
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "POST_RESULT_FIELD",
+      "track": "ATOMIC",
+      "input_hash": "142d1df5c6aa0f710e87fce8323f2eab136a9553535ec2a4a4cf69edb9e4866d",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_TARGET_FIXTURE_POST_RESULT",
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "POST_RESULT_FIELD",
+      "track": "PAIR",
+      "input_hash": "2d1e5fa045b857febbf8172d6ca69d2012cc7cf99b6366692cfc7b206036a73b",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_TARGET_FIXTURE_POST_RESULT",
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "WINNER_LOSER_IDENTITY",
+      "track": "ATOMIC",
+      "input_hash": "2f0c6044c4db3572f5516ba5da6b09f9b7617c535292ac548fc0ec1f2cce9ebf",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_TARGET_DERIVED_IDENTITY",
+      "status": "REJECTED"
+    },
+    {
+      "control_id": "WINNER_LOSER_IDENTITY",
+      "track": "PAIR",
+      "input_hash": "c2073fcfc4446e5b123a1dded5c263197aa49ea957cbbadd0c588cce4f3d9020",
+      "execution": "INJECTED_SHARED_CANDIDATE_ADMISSION_GATE",
+      "rejection_stage": "CANDIDATE_ADMISSION",
+      "rejection_reason": "REJECTED_TARGET_DERIVED_IDENTITY",
+      "status": "REJECTED"
+    }
+  ],
+  "negative_control_guard_gate": "PASS",
+  "external_effects": {
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "remote_sql": 0,
+    "triples": 0
+  },
+  "proof_hash": "303526eef93c3655168d437d95357ea1568af83651dbb1fdb20db8bfdfd1eb1f"
+}

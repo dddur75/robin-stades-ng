@@ -65,6 +65,11 @@ def freeze_copy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     )
     monkeypatch.setattr(
         campaign,
+        "MASK_PAYLOAD",
+        copied / "reports/hypothesis-masks/mask-payload-bundle-v2.json.gz",
+    )
+    monkeypatch.setattr(
+        campaign,
         "PAIR_SUMMARY",
         copied / "reports/hypothesis-research/v2/pair-census-summary-v2.json",
     )
@@ -164,31 +169,38 @@ def test_all_80_v1_structural_masks_are_bit_exact(
 
 
 def test_target_label_mutation_cannot_change_registry_masks_or_pair_space(
-    frozen: tuple[
-        dict[str, object],
-        v2.FeatureInputs,
-        object,
-        dict[str, tuple[int, int]],
-        object,
-    ],
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    registry, _, _, masks, _ = frozen
-    before = v2.object_hash(
-        {
-            "registry_hash": registry["registry_hash"],
-            "masks": {key: [value[0], value[1]] for key, value in sorted(masks.items())},
-        }
-    )
+    copied = freeze_copy(tmp_path, monkeypatch)
+    before_mask = load(campaign.MASK_MANIFEST)
+    before = {
+        "registry_hash": load(campaign.REGISTRY)["registry_hash"],
+        "mask_records_hash": v2.object_hash(before_mask["records"]),
+        "mask_payload_content_sha256": before_mask["payload"][  # type: ignore[index]
+            "content_sha256"
+        ],
+        "pair_space_hash": load(campaign.PAIR_SUMMARY)["pair_space_hash"],
+    }
     labels = list(v2.load_target_labels(BUNDLE))
     labels.reverse()
     labels = [dict(row, match_result_90m="MUTATED") for row in labels]
     assert labels
-    after = v2.object_hash(
-        {
-            "registry_hash": registry["registry_hash"],
-            "masks": {key: [value[0], value[1]] for key, value in sorted(masks.items())},
-        }
-    )
+
+    def reject_target_label_load(_: Path) -> tuple[dict[str, str], ...]:
+        raise AssertionError("target labels entered target-blind freeze")
+
+    monkeypatch.setattr(v2, "load_target_labels", reject_target_label_load)
+    campaign.build_freeze()
+    after_mask = load(campaign.MASK_MANIFEST)
+    after = {
+        "registry_hash": load(campaign.REGISTRY)["registry_hash"],
+        "mask_records_hash": v2.object_hash(after_mask["records"]),
+        "mask_payload_content_sha256": after_mask["payload"][  # type: ignore[index]
+            "content_sha256"
+        ],
+        "pair_space_hash": load(campaign.PAIR_SUMMARY)["pair_space_hash"],
+    }
+    assert copied == campaign.ROOT
     assert before == after
 
 
