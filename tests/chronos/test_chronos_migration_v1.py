@@ -106,6 +106,7 @@ def test_migration_creates_append_only_tables_and_round_trips(tmp_path: Path) ->
         "plan_hash": "a" * 64,
         "policy_hash": "b" * 64,
         "planned_at": NOW,
+        "expires_at": NOW + timedelta(days=7),
         "activation_mode": "CANARY_ONLY",
         "max_fixtures": 5,
         "max_api_football_calls": 50,
@@ -159,8 +160,20 @@ def test_migration_creates_append_only_tables_and_round_trips(tmp_path: Path) ->
                 append_only=True,
             )
         )
-    command.downgrade(config, "0014_robin_chronos_v1")
-    inspector = sa.inspect(engine)
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_0015_REPLAY_REQUIRED:chronos_canary_runs",
+    ):
+        command.downgrade(config, "0014_robin_chronos_v1")
+
+    roundtrip_url = (
+        f"sqlite+pysqlite:///{(tmp_path / 'chronos-roundtrip.db').as_posix()}"
+    )
+    roundtrip_config = _config(roundtrip_url)
+    command.upgrade(roundtrip_config, "head")
+    roundtrip_engine = build_engine(roundtrip_url)
+    command.downgrade(roundtrip_config, "0014_robin_chronos_v1")
+    inspector = sa.inspect(roundtrip_engine)
     names_at_0014 = set(inspector.get_table_names())
     assert not {
         "chronos_canary_cohort_fixtures",
@@ -176,11 +189,15 @@ def test_migration_creates_append_only_tables_and_round_trips(tmp_path: Path) ->
         column["name"]
         for column in inspector.get_columns("known_at_fact_metadata")
     }
-    command.upgrade(config, "head")
-    assert set(CHRONOS_TABLE_NAMES) <= set(sa.inspect(engine).get_table_names())
-    command.downgrade(config, "0013_historical_evidence_index")
-    assert not set(CHRONOS_TABLE_NAMES) & set(sa.inspect(engine).get_table_names())
-    command.upgrade(config, "head")
+    command.upgrade(roundtrip_config, "head")
+    assert set(CHRONOS_TABLE_NAMES) <= set(
+        sa.inspect(roundtrip_engine).get_table_names()
+    )
+    command.downgrade(roundtrip_config, "0013_historical_evidence_index")
+    assert not set(CHRONOS_TABLE_NAMES) & set(
+        sa.inspect(roundtrip_engine).get_table_names()
+    )
+    command.upgrade(roundtrip_config, "head")
 
 
 def test_migration_backfills_missing_payload_index_without_mutation(

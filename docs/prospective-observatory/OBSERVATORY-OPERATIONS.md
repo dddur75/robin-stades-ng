@@ -207,6 +207,12 @@ Préserver reçus, payloads R2, tentatives et run id. Ne pas relancer hors fenê
 Rejouer depuis R2 pour PostgreSQL. Une panne durable ouvre un incident
 explicite ; aucune perte silencieuse ni suppression corrective n’est permise.
 
+L'autorité canari expire pour tous les chemins, y compris scheduler, replay,
+gates et rapports provider-free. Après `expires_at`, ne pas prolonger le run :
+ouvrir une nouvelle autorité revue. Un crash après un `PUT` R2 est repris par
+lecture et comparaison des octets avant journalisation `ACTUAL`. Le downgrade
+`0015` est interdit dès qu'une table Chronos contient une preuve.
+
 Le succès de reconstruction porte `R2_REPLAY_VERIFIED` et
 `CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2`. Un index fixture
 incomplet porte `R2_REPLAY_PARTIAL_FIXTURE_INDEX` et

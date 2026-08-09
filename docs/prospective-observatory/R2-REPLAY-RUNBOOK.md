@@ -25,6 +25,9 @@ R2
 - destination PostgreSQL explicite et migrée ; en exploitation, les tables
   d’autorité du canari doivent déjà exister et correspondre exactement au
   contrat gelé ; le replay refuse de les inventer ;
+- l'heure du replay doit rester dans l'intervalle inclusif
+  `authorized_at <= now <= expires_at` persisté dans l'autorité ; scheduler,
+  replay, gates et rapports provider-free échouent tous après expiration ;
 - inventaire exhaustif du namespace pour l’intégrité, puis sélection bornée
   par la cohorte, les fenêtres liées et `planned_at` ;
 - `PRODUCTION_LOCKED` et tous les invariants actifs.
@@ -154,6 +157,16 @@ Les clés compactes `pcg1` des guards restent sous 250 caractères et les clés
 `provider_budget_ledger.idempotency_key VARCHAR(250)` dans PostgreSQL.
 
 Aucun replay ne supprime ni ne corrige en place un objet R2.
+
+Chaque `PUT` canari réserve d'abord sa capacité dans PostgreSQL. Si le processus
+tombe après l'écriture R2 mais avant le journal `ACTUAL`, le retry relit l'objet,
+exige les octets exacts puis complète idempotemment `ACTUAL`. Un objet divergent
+produit `CHRONOS_CANARY_R2_RECONCILIATION_MISMATCH` et bloque la reprise.
+
+La migration `0015` est fail-closed au downgrade : toute ligne Chronos, y
+compris cohorte, usages, liens, marchés ou nœuds lineage, produit
+`CHRONOS_0015_REPLAY_REQUIRED:<table>`. Aucun downgrade ne peut effacer une
+preuve append-only ; une procédure d'export/restauration distincte est requise.
 
 Un run de capture, même sans fenêtre due, ne réconcilie jamais le namespace
 R2. Son rapport conserve les compteurs distincts :

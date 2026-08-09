@@ -197,6 +197,19 @@ def _parse_utc(value: str | None) -> datetime:
     return parsed.astimezone(UTC)
 
 
+def _require_canary_authority_active(
+    policy: Mapping[str, object],
+    *,
+    at: datetime,
+) -> tuple[datetime, datetime]:
+    authorized_at = _parse_utc(str(policy.get("authorized_at", "")))
+    expires_at = _parse_utc(str(policy.get("expires_at", "")))
+    observed_at = _parse_utc(at.isoformat())
+    if not authorized_at <= observed_at <= expires_at:
+        raise RuntimeError("CHRONOS_CANARY_AUTHORITY_NOT_ACTIVE")
+    return authorized_at, expires_at
+
+
 def _write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -1321,10 +1334,14 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         *,
         policy: Mapping[str, object],
         policy_hash: str,
+        as_of: datetime,
         code_revision: str,
     ) -> str:
         mission_id = str(policy["mission_id"])
-        planned_at = _parse_utc(str(policy["authorized_at"]))
+        planned_at, expires_at = _require_canary_authority_active(
+            policy,
+            at=as_of,
+        )
         plan_hash = canonical_sha256(
             {"mission_id": mission_id, "policy_hash": policy_hash}
         )
@@ -1336,6 +1353,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             "plan_hash": plan_hash,
             "policy_hash": policy_hash,
             "planned_at": planned_at,
+            "expires_at": expires_at,
             "activation_mode": str(policy["activation_mode"]),
             "max_fixtures": int(cast(int, policy["max_fixtures"])),
             "max_api_football_calls": int(
@@ -1514,9 +1532,15 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         *,
         policy: Mapping[str, object],
         policy_hash: str,
+        as_of: datetime,
         code_revision: str,
     ) -> tuple[str, datetime, tuple[str, ...], tuple[str, ...]]:
         """Read, but never invent, the durable authority for scoped replay."""
+
+        authorized_at, expires_at = _require_canary_authority_active(
+            policy,
+            at=as_of,
+        )
 
         canaries = self.tables["chronos_canary_runs"]
         cohort = self.tables["chronos_canary_cohort_fixtures"]
@@ -1538,6 +1562,8 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                     }
                 ),
                 "activation_mode": str(policy["activation_mode"]),
+                "planned_at": authorized_at,
+                "expires_at": expires_at,
                 "max_fixtures": int(cast(int, policy["max_fixtures"])),
                 "max_api_football_calls": int(
                     cast(int, policy["api_football_calls_max"])
@@ -1643,6 +1669,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         recorded_at: datetime,
         code_revision: str,
     ) -> None:
+        _require_canary_authority_active(policy, at=recorded_at)
         self.canary_run_id = canary_run_id
         self.canary_limits = {
             "API_FOOTBALL_CALL": int(cast(int, policy["api_football_calls_max"])),
@@ -2432,13 +2459,20 @@ class CanaryBoundObjectStore:
             actual=False,
         )
         inserted = self.store.put_if_absent(key, data)
-        if inserted:
-            self.state.record_canary_usage(
-                resource_kind="R2_OBJECT",
-                operation_key=operation_key,
-                units=1,
-                actual=True,
-            )
+        if not inserted:
+            # RESERVED is the durable cross-system intent.  A retry after a
+            # crash between the immutable PUT and the SQL ACTUAL journal sees
+            # the already-present object; exact bytes close the journal without
+            # another write.  A mismatch is never treated as our effect.
+            existing = self.store.get_object(key)
+            if existing != data:
+                raise RuntimeError("CHRONOS_CANARY_R2_RECONCILIATION_MISMATCH")
+        self.state.record_canary_usage(
+            resource_kind="R2_OBJECT",
+            operation_key=operation_key,
+            units=1,
+            actual=True,
+        )
         return inserted
 
     def iter_keys(self, prefix: str) -> Iterable[str]:
@@ -3402,13 +3436,19 @@ class SQLAlchemyProjectionSink:
                             "outside the frozen ]0,0.06] interval"
                         ),
                     )
-            valid_bookmakers = {row.bookmaker for row in derivations}
+            valid_bookmaker_markets = {
+                (row.bookmaker, row.market, row.line) for row in derivations
+            }
             raw_prices: dict[
                 tuple[ChronosMarket, ChronosSelection, Decimal | None],
                 list[Decimal],
             ] = {}
             for observation in chronos_observations:
-                if observation.bookmaker not in valid_bookmakers:
+                if (
+                    observation.bookmaker,
+                    observation.market,
+                    observation.line,
+                ) not in valid_bookmaker_markets:
                     continue
                 raw_prices.setdefault(
                     (
@@ -4908,6 +4948,7 @@ def run_fixture_registry(
         canary_run_id = state.ensure_chronos_canary_mission(
             policy=canary_contract,
             policy_hash=canary_policy_hash,
+            as_of=now,
             code_revision=_code_revision(args.code_revision),
         )
         state.activate_canary_guard(
@@ -5317,6 +5358,7 @@ def run_scheduler(
         canary_run_id = state.ensure_chronos_canary_mission(
             policy=canary_contract,
             policy_hash=canary_policy_hash,
+            as_of=now,
             code_revision=_code_revision(args.code_revision),
         )
         state.activate_canary_guard(
@@ -6925,6 +6967,7 @@ def run_capture(
         canary_run_id = state.ensure_chronos_canary_mission(
             policy=canary_contract,
             policy_hash=canary_policy_hash,
+            as_of=now,
             code_revision=_code_revision(args.code_revision),
         )
         state.activate_canary_guard(
@@ -8273,6 +8316,7 @@ def run_replay_audit(
             ) = state.chronos_canary_replay_scope(
                 policy=canary_contract,
                 policy_hash=canary_policy_hash,
+                as_of=now,
                 code_revision=_code_revision(args.code_revision),
             )
         except RuntimeError as error:
@@ -8774,6 +8818,7 @@ def run_gate_report(
         ) = state.chronos_canary_replay_scope(
             policy=canary_contract,
             policy_hash=canary_policy_hash,
+            as_of=now,
             code_revision=_code_revision(args.code_revision),
         )
         canary_fixture_ids = set(cohort_fixture_ids)
@@ -9197,6 +9242,7 @@ def run_next_due_report(
             state.chronos_canary_replay_scope(
                 policy=canary_contract,
                 policy_hash=canary_policy_hash,
+                as_of=now,
                 code_revision=_code_revision(args.code_revision),
             )
         )

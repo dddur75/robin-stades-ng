@@ -48,7 +48,7 @@ from scripts.run_prospective_observatory import (
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
-NOW = datetime(2026, 8, 1, 12, tzinfo=UTC)
+NOW = datetime(2026, 8, 9, 8, tzinfo=UTC)
 
 
 def _fixture_record(

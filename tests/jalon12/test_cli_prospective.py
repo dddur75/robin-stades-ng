@@ -55,7 +55,8 @@ from scripts.run_prospective_observatory import (
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY = ROOT / "configs" / "prospective_observatory_v1.json"
-NOW = datetime(2026, 8, 1, 12, 0, tzinfo=UTC)
+NOW = datetime(2026, 8, 9, 8, 0, tzinfo=UTC)
+CANARY_ACTIVE_AT = datetime(2026, 8, 9, 8, 0, tzinfo=UTC)
 
 
 def _fixture_record(
@@ -1505,12 +1506,13 @@ def test_durable_canary_usage_is_cumulative_across_restart(
     mission_id = state.ensure_chronos_canary_mission(
         policy=policy,
         policy_hash=policy_hash,
+        as_of=CANARY_ACTIVE_AT,
         code_revision="canary-test",
     )
     state.activate_canary_guard(
         canary_run_id=mission_id,
         policy=policy,
-        recorded_at=NOW,
+        recorded_at=CANARY_ACTIVE_AT,
         code_revision="canary-test",
     )
     for index in range(20):
@@ -1536,13 +1538,14 @@ def test_durable_canary_usage_is_cumulative_across_restart(
     restarted_mission_id = restarted.ensure_chronos_canary_mission(
         policy=policy,
         policy_hash=policy_hash,
+        as_of=CANARY_ACTIVE_AT + timedelta(minutes=1),
         code_revision="canary-test",
     )
     assert restarted_mission_id == mission_id
     restarted.activate_canary_guard(
         canary_run_id=restarted_mission_id,
         policy=policy,
-        recorded_at=NOW + timedelta(minutes=1),
+        recorded_at=CANARY_ACTIVE_AT + timedelta(minutes=1),
         code_revision="canary-test",
     )
     with pytest.raises(
@@ -1566,6 +1569,64 @@ def test_durable_canary_usage_is_cumulative_across_restart(
     assert rows[0]["planned_at"].replace(tzinfo=UTC) == datetime(
         2026, 8, 9, tzinfo=UTC
     )
+    assert rows[0]["expires_at"].replace(tzinfo=UTC) == datetime(
+        2026, 8, 16, 23, 59, 59, tzinfo=UTC
+    )
+
+
+def test_canary_authority_window_blocks_every_durable_guard(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    engine = _migrated_engine(tmp_path / "canary-expiry.db", monkeypatch)
+    state = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
+    policy = json.loads(
+        (ROOT / "configs/operations/robin-chronos-canary-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    policy_hash = canonical_sha256(policy)
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_CANARY_AUTHORITY_NOT_ACTIVE",
+    ):
+        state.ensure_chronos_canary_mission(
+            policy=policy,
+            policy_hash=policy_hash,
+            as_of=datetime(2026, 8, 8, 23, 59, 59, tzinfo=UTC),
+            code_revision="canary-expiry-test",
+        )
+    canaries = state.tables["chronos_canary_runs"]
+    with engine.connect() as connection:  # type: ignore[union-attr]
+        assert connection.scalar(select(func.count()).select_from(canaries)) == 0
+
+    mission_id = state.ensure_chronos_canary_mission(
+        policy=policy,
+        policy_hash=policy_hash,
+        as_of=CANARY_ACTIVE_AT,
+        code_revision="canary-expiry-test",
+    )
+    expired_at = datetime(2026, 8, 17, tzinfo=UTC)
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_CANARY_AUTHORITY_NOT_ACTIVE",
+    ):
+        state.activate_canary_guard(
+            canary_run_id=mission_id,
+            policy=policy,
+            recorded_at=expired_at,
+            code_revision="canary-expiry-test",
+        )
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_CANARY_AUTHORITY_NOT_ACTIVE",
+    ):
+        state.chronos_canary_replay_scope(
+            policy=policy,
+            policy_hash=policy_hash,
+            as_of=expired_at,
+            code_revision="canary-expiry-test",
+        )
 
 
 def test_durable_canary_cohort_is_global_across_invocations(
@@ -1613,12 +1674,13 @@ def test_durable_canary_cohort_is_global_across_invocations(
     mission_id = state.ensure_chronos_canary_mission(
         policy=policy,
         policy_hash=policy_hash,
+        as_of=CANARY_ACTIVE_AT,
         code_revision="canary-test",
     )
     state.activate_canary_guard(
         canary_run_id=mission_id,
         policy=policy,
-        recorded_at=NOW,
+        recorded_at=CANARY_ACTIVE_AT,
         code_revision="canary-test",
     )
     first_ids = {f"api-football:{fixture_id}" for fixture_id in range(9001, 9005)}
@@ -1643,12 +1705,13 @@ def test_durable_canary_cohort_is_global_across_invocations(
     assert restarted.ensure_chronos_canary_mission(
         policy=policy,
         policy_hash=policy_hash,
+        as_of=CANARY_ACTIVE_AT + timedelta(minutes=1),
         code_revision="canary-test",
     ) == mission_id
     restarted.activate_canary_guard(
         canary_run_id=mission_id,
         policy=policy,
-        recorded_at=NOW + timedelta(minutes=1),
+        recorded_at=CANARY_ACTIVE_AT + timedelta(minutes=1),
         code_revision="canary-test",
     )
     selected_second = restarted.reserve_chronos_canary_cohort(
@@ -1693,12 +1756,13 @@ def test_canary_counts_actual_sql_and_r2_writes_before_overflow(
     mission_id = state.ensure_chronos_canary_mission(
         policy=policy,
         policy_hash=canonical_sha256(policy),
+        as_of=CANARY_ACTIVE_AT,
         code_revision="canary-test",
     )
     state.activate_canary_guard(
         canary_run_id=mission_id,
         policy=policy,
-        recorded_at=NOW,
+        recorded_at=CANARY_ACTIVE_AT,
         code_revision="canary-test",
     )
 
@@ -1753,6 +1817,67 @@ def test_canary_counts_actual_sql_and_r2_writes_before_overflow(
     assert state.canary_usage_totals() == {
         "POSTGRES_ROW": {"reserved": 2, "actual": 2},
         "R2_OBJECT": {"reserved": 1, "actual": 1},
+    }
+
+
+def test_canary_repairs_r2_actual_after_post_put_crash(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    engine = _migrated_engine(tmp_path / "canary-r2-crash.db", monkeypatch)
+    state = SQLAlchemyOperationalState(engine)
+    policy = json.loads(
+        (ROOT / "configs/operations/robin-chronos-canary-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    mission_id = state.ensure_chronos_canary_mission(
+        policy=policy,
+        policy_hash=canonical_sha256(policy),
+        as_of=CANARY_ACTIVE_AT,
+        code_revision="canary-r2-crash-test",
+    )
+    state.activate_canary_guard(
+        canary_run_id=mission_id,
+        policy=policy,
+        recorded_at=CANARY_ACTIVE_AT,
+        code_revision="canary-r2-crash-test",
+    )
+    raw_store = DirectoryObjectStore(tmp_path / "canary-r2-crash-objects")
+    store = CanaryBoundObjectStore(raw_store, state)
+    original_record = state.record_canary_usage
+    crash_once = True
+
+    def record_with_crash(
+        *,
+        resource_kind: str,
+        operation_key: str,
+        units: int,
+        actual: bool,
+    ) -> bool:
+        nonlocal crash_once
+        if resource_kind == "R2_OBJECT" and actual and crash_once:
+            crash_once = False
+            raise RuntimeError("SIMULATED_POST_R2_PUT_CRASH")
+        return original_record(
+            resource_kind=resource_kind,
+            operation_key=operation_key,
+            units=units,
+            actual=actual,
+        )
+
+    monkeypatch.setattr(state, "record_canary_usage", record_with_crash)
+    with pytest.raises(RuntimeError, match="SIMULATED_POST_R2_PUT_CRASH"):
+        store.put_if_absent("known-at/test/crash.json", b"immutable")
+    assert raw_store.get_object("known-at/test/crash.json") == b"immutable"
+    monkeypatch.setattr(state, "record_canary_usage", original_record)
+    assert not store.put_if_absent(
+        "known-at/test/crash.json",
+        b"immutable",
+    )
+    assert state.canary_usage_totals()["R2_OBJECT"] == {
+        "reserved": 1,
+        "actual": 1,
     }
 
 
@@ -1855,6 +1980,52 @@ def test_overround_rejection_emits_dq_and_never_reaches_legacy_prices(
     }
     assert {row["event_code"] for row in dq_rows} == {"NO_PRICE"}
     assert all("outside the frozen" in row["summary"] for row in dq_rows)
+
+
+def test_descriptive_prices_exclude_bookmaker_market_rejected_by_overround(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    cache = _five_book_odds_cache(
+        tmp_path / "cache.json",
+        last_update=NOW - timedelta(seconds=30),
+    )
+    value = json.loads(cache.read_text(encoding="utf-8"))
+    bookmakers = value["payloads"]["api-football:9001"]["ODDS"][0][
+        "bookmakers"
+    ]
+    rejected_totals = next(
+        market
+        for market in bookmakers[0]["markets"]
+        if market["key"] == "totals"
+    )
+    for outcome in rejected_totals["outcomes"]:
+        outcome["price"] = 5.0
+    cache.write_text(json.dumps(value), encoding="utf-8")
+
+    engine, state, _, _ = _run_sql_odds_capture(
+        tmp_path,
+        monkeypatch,
+        cache=cache,
+    )
+    derivations = state.tables["price_derivation_metadata"]
+    with engine.connect() as connection:  # type: ignore[union-attr]
+        total_rows = list(
+            connection.execute(
+                select(derivations).where(
+                    derivations.c.market == "TOTAL_GOALS_2_5_90M"
+                )
+            ).mappings()
+        )
+    assert len(total_rows) == 8
+    assert all(
+        float(row["best_available_price"]) == pytest.approx(1.91)
+        for row in total_rows
+    )
+    assert all(
+        float(row["median_market_price"]) == pytest.approx(1.91)
+        for row in total_rows
+    )
 
 
 def test_stale_prices_never_reach_active_prequential_legacy_table(

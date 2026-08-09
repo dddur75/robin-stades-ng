@@ -39,7 +39,8 @@ class ChronosCanaryRunModel(Base):
             "AND max_odds_credits <= 100 AND max_r2_object_writes <= 2000 "
             "AND max_postgresql_rows <= 10000 AND max_technical_attempts <= 2 "
             "AND new_purchase_allowed = false AND r2_deletes_allowed = 0 "
-            "AND destructive_sql_allowed = 0 AND append_only = true",
+            "AND destructive_sql_allowed = 0 AND planned_at < expires_at "
+            "AND append_only = true",
             name="ck_chronos_canary_bounds",
         ),
     )
@@ -49,6 +50,7 @@ class ChronosCanaryRunModel(Base):
     plan_hash: Mapped[str] = mapped_column(String(64))
     policy_hash: Mapped[str] = mapped_column(String(64))
     planned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     activation_mode: Mapped[str] = mapped_column(String(40))
     max_fixtures: Mapped[int] = mapped_column(Integer)
     max_api_football_calls: Mapped[int] = mapped_column(Integer)

@@ -1,0 +1,72 @@
+{
+  "report_id": "PR39_CHRONOS_SRE_CORRECTIVE_VALIDATION_V3",
+  "generated_at": "2026-08-09T10:40:03Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 39,
+  "branch": "codex/robin-chronos-known-at-price-observatory-v1",
+  "parent_head": "1e505566c06716e568c323860f514f435c6804d3",
+  "status": "LOCAL_MINIMUM_CORRECTION_VALIDATED_PENDING_EXACT_SHA_REVIEW",
+  "correction_scope": {
+    "architecture_changed": false,
+    "reason": "The first audit of the redesigned architecture found three new SRE P1 defects and one non-blocking price P2. This is the single minimum same-scope correction allowed before another exact-head decision.",
+    "findings_closed": [
+      "all durable guard paths enforce authorized_at <= now <= expires_at and persist the exact expiry",
+      "an R2 retry repairs a missing ACTUAL event only after exact-byte verification of the immutable object",
+      "0015 refuses every downgrade that would discard any Chronos evidence or control-plane row",
+      "descriptive best and median prices include only admissible bookmaker-market pairs"
+    ]
+  },
+  "validation": {
+    "focused_expiry_r2_recovery_and_price_pair": {
+      "passed": 3,
+      "failed": 0
+    },
+    "chronos_migration": {
+      "passed": 4,
+      "failed": 0
+    },
+    "chronos_and_jalon12_domain": {
+      "passed": 240,
+      "failed": 0
+    },
+    "migration_prequential_hypothesis_compatibility": {
+      "passed": 347,
+      "failed": 0
+    },
+    "ruff_ci_scope": "PASS",
+    "mypy_core_scope": "PASS_172_SOURCE_FILES",
+    "bandit_ci_scope": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "workflow_dispatches": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triple_searches": 0
+  },
+  "scientific_limits": {
+    "real_chronos_odds_captures_proven": 0,
+    "v3_status": "NOT_OPENED_INSUFFICIENT_POINT_IN_TIME_SUPPORT",
+    "clv_or_roi_claim_authorized": false,
+    "provider_canary_authorized": false
+  },
+  "authorization": {
+    "one_local_minimum_correction_commit": true,
+    "one_non_force_push_to_existing_draft_pr": true,
+    "exact_sha_read_only_review_required": true,
+    "exact_head_ci_required": true,
+    "ready": false,
+    "merge": false,
+    "workflow_activation": false,
+    "provider_canary": false
+  }
+}

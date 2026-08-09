@@ -6,6 +6,7 @@ Revises: 0014_robin_chronos_v1
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Any, cast
 
 import sqlalchemy as sa
@@ -32,6 +33,15 @@ PRICE_CONTRACT_HASH = (
 )
 CANONICAL_TAG_REGISTRY_HASH = (
     "c95bedfe0a02e2858722e93af13023b5cf4edb53692f7e46216599a3a3979d7d"
+)
+CANARY_AUTHORITY_EXPIRES_AT = datetime(
+    2026,
+    8,
+    16,
+    23,
+    59,
+    59,
+    tzinfo=UTC,
 )
 NAMING_CONVENTION = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s"
@@ -169,6 +179,40 @@ def _upgrade_known_at() -> None:
             "(temporal_class = 'POST_KICKOFF_ONLY' "
             "AND known_at >= kickoff_at)) AND "
             "(supersedes_fact_id IS NULL OR supersedes_fact_id <> fact_id) "
+            "AND append_only = true",
+        )
+
+
+def _upgrade_canary_authority() -> None:
+    columns = _columns("chronos_canary_runs")
+    if "expires_at" in columns:
+        return
+    op.add_column(
+        "chronos_canary_runs",
+        sa.Column("expires_at", sa.DateTime(timezone=True), nullable=True),
+    )
+    op.execute(
+        sa.text(
+            "UPDATE chronos_canary_runs SET expires_at = :expires_at "
+            "WHERE expires_at IS NULL"
+        ).bindparams(expires_at=CANARY_AUTHORITY_EXPIRES_AT)
+    )
+    with op.batch_alter_table("chronos_canary_runs") as batch:
+        if "ck_chronos_canary_bounds" in _checks("chronos_canary_runs"):
+            batch.drop_constraint("ck_chronos_canary_bounds", type_="check")
+        batch.alter_column(
+            "expires_at",
+            existing_type=sa.DateTime(timezone=True),
+            nullable=False,
+        )
+        batch.create_check_constraint(
+            "ck_chronos_canary_bounds",
+            "max_fixtures <= 5 AND max_api_football_calls <= 50 "
+            "AND max_odds_credits <= 100 AND max_r2_object_writes <= 2000 "
+            "AND max_postgresql_rows <= 10000 "
+            "AND max_technical_attempts <= 2 "
+            "AND new_purchase_allowed = false AND r2_deletes_allowed = 0 "
+            "AND destructive_sql_allowed = 0 AND planned_at < expires_at "
             "AND append_only = true",
         )
 
@@ -414,10 +458,34 @@ def _create_attempt_guard() -> None:
         )
 
 
+def _assert_downgrade_safe() -> None:
+    for table_name in chronos_models.CHRONOS_TABLE_NAMES:
+        _assert_empty(table_name)
+
+
 def _downgrade_existing_tables() -> None:
     """Restore the exact 0014 column/check shape or refuse lossy conversion."""
 
     bind = op.get_bind()
+    # No Chronos evidence or control-plane row may be discarded by a schema
+    # downgrade.  Operators must export/replay under an explicit retention
+    # procedure instead of silently dropping append-only authority, usage,
+    # market, tag or lineage records.
+    _assert_downgrade_safe()
+
+    with op.batch_alter_table("chronos_canary_runs") as batch:
+        batch.drop_constraint("ck_chronos_canary_bounds", type_="check")
+        batch.drop_column("expires_at")
+        batch.create_check_constraint(
+            "ck_chronos_canary_bounds",
+            "max_fixtures <= 5 AND max_api_football_calls <= 50 "
+            "AND max_odds_credits <= 100 AND max_r2_object_writes <= 2000 "
+            "AND max_postgresql_rows <= 10000 "
+            "AND max_technical_attempts <= 2 "
+            "AND new_purchase_allowed = false AND r2_deletes_allowed = 0 "
+            "AND destructive_sql_allowed = 0 AND append_only = true",
+        )
+
     facts = sa.Table(
         "known_at_fact_metadata", sa.MetaData(), autoload_with=bind
     )
@@ -547,6 +615,7 @@ def upgrade() -> None:
     for table_name in NEW_TABLES:
         if table_name not in existing:
             Base.metadata.tables[table_name].create(bind=bind, checkfirst=True)
+    _upgrade_canary_authority()
     _upgrade_known_at()
     capture_intent_column_added = _upgrade_capture_intents()
     _replace_check_if_columns_added(
@@ -655,6 +724,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     bind = op.get_bind()
+    _assert_downgrade_safe()
     dialect = bind.dialect.name
     if dialect == "postgresql":
         op.execute(
