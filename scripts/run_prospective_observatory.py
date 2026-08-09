@@ -101,7 +101,7 @@ from robin.storage.database import build_engine
 DEFAULT_POLICY = Path("configs/prospective_observatory_v1.json")
 SCHEMA_VERSION = "prospective-observatory-operation-v1"
 SNAPSHOT_SCHEMA_VERSION = "prospective-observatory-snapshot-v1"
-EXPECTED_ALEMBIC_REVISION = "0013_historical_evidence_index"
+EXPECTED_ALEMBIC_REVISION = "0014_chronos_control_plane_v2"
 OBSERVATORY_SCHEMA_REVISION = "0009_jalon12_observatory"
 SAFE_CODE_REVISION = "local-uncommitted"
 PLAYER_FAMILIES = (
@@ -1034,7 +1034,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 "SELECT version_num FROM alembic_version"
             ).scalar_one()
         if str(revision) != EXPECTED_ALEMBIC_REVISION:
-            raise RuntimeError("PROSPECTIVE_DATABASE_REVISION_0013_REQUIRED")
+            raise RuntimeError("PROSPECTIVE_DATABASE_REVISION_CURRENT_REQUIRED")
         metadata = MetaData()
         metadata.reflect(bind=engine, only=sorted(self.REQUIRED_TABLES))
         self.tables = {name: metadata.tables[name] for name in self.REQUIRED_TABLES}

@@ -33,6 +33,9 @@ HISTORICAL_EVIDENCE_INDEX_TABLES = frozenset(
         "hypothesis_historical_evidence_summaries",
     }
 )
+CHRONOS_CONTROL_PLANE_TABLES = frozenset(
+    {"chronos_effect_authorities", "chronos_effect_events"}
+)
 
 
 def alembic_config(database_url: str) -> Config:
@@ -48,12 +51,15 @@ def table_row_counts(database_url: str) -> dict[str, int]:
         for name in inspect(engine).get_table_names()
         if name != "alembic_version"
     )
-    known_tables = set(metadata.tables) | HISTORICAL_EVIDENCE_INDEX_TABLES
+    additional_tables = (
+        HISTORICAL_EVIDENCE_INDEX_TABLES | CHRONOS_CONTROL_PLANE_TABLES
+    )
+    known_tables = set(metadata.tables) | additional_tables
     unknown_tables = set(names) - known_tables
     if unknown_tables:
         raise RuntimeError("tables inconnues présentes ; rollback refusé")
     reflected_metadata = MetaData()
-    reflected_names = sorted(set(names) & HISTORICAL_EVIDENCE_INDEX_TABLES)
+    reflected_names = sorted(set(names) & additional_tables)
     if reflected_names:
         reflected_metadata.reflect(bind=engine, only=reflected_names)
     counts: dict[str, int] = {}

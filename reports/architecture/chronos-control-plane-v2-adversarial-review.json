@@ -1,0 +1,181 @@
+{
+  "schema_version": "chronos-control-plane-v2-adversarial-review-v1",
+  "generated_at": "2026-08-09T11:37:58.526Z",
+  "repository": "dddur75/robin-stades-ng",
+  "frozen_pr": {
+    "number": 39,
+    "head_sha": "ea983c0f42177317a9c8e91f4e49974df2b63525",
+    "decision": "FAIL_AND_STOP",
+    "open_p0": 0,
+    "open_p1": 2
+  },
+  "decision": {
+    "architecture": "DB_CLOCKED_RUN_BOUND_EFFECT_LEDGER",
+    "status": "ACCEPTED_FOR_IMPLEMENTATION",
+    "score": 96,
+    "minimum_score": 95,
+    "open_p0": 0,
+    "open_p1": 0,
+    "options": [
+      {
+        "id": "A",
+        "name": "PATCH_PR39_ARCHITECTURE",
+        "verdict": "SAME_ARCHITECTURE_PROHIBITED",
+        "score": null
+      },
+      {
+        "id": "B",
+        "name": "DB_CLOCKED_AUTHORITY_APPEND_ONLY_EFFECT_LEDGER",
+        "verdict": "SELECTED",
+        "score": 96
+      },
+      {
+        "id": "C",
+        "name": "EXTERNAL_COORDINATOR_SERVICE",
+        "verdict": "VALID_FALLBACK_NOT_SELECTED",
+        "score": 78
+      }
+    ]
+  },
+  "reproduced_pr39_findings": [
+    {
+      "id": "DP6-P1-DURABLE-TIME-AUTHORITY",
+      "status": "REPRODUCED_IN_PR39",
+      "design_resolution": "PostgreSQL clock_timestamp only; no production clock injection; exact GitHub run/attempt binding; epoch and external generation nonce fence."
+    },
+    {
+      "id": "DP6-P1-R2-PHYSICAL-WRITE-ATTRIBUTION",
+      "status": "REPRODUCED_IN_PR39",
+      "design_resolution": "Append-only per-operation events; unique first attempt; explicit CREATED/PREEXISTING/PENDING/CONFLICT; no inference from object presence."
+    }
+  ],
+  "reviews": {
+    "DP6": {
+      "verdict": "PASS",
+      "open_p0": 0,
+      "open_p1": 0,
+      "notes": [
+        "DB clock is authoritative and half-open expiry is enforced.",
+        "Cross-system uncertainty is durable rather than hidden.",
+        "Each PUT or exact-key GET has a unique durable permit and consumes budget conservatively."
+      ]
+    },
+    "SEC": {
+      "verdict": "PASS",
+      "open_p0": 0,
+      "open_p1": 0,
+      "notes": [
+        "External 256-bit generation nonce is secret; PostgreSQL stores only its hash.",
+        "Run, attempt, SHA, workflow, repository and ref are exact-bound.",
+        "SECURITY DEFINER functions pin search_path and PUBLIC has no execution."
+      ]
+    },
+    "SRE": {
+      "verdict": "PASS",
+      "open_p0": 0,
+      "open_p1": 0,
+      "notes": [
+        "Server epoch fences compute restart.",
+        "Restore requires revoked logins, rotated generation and new run/authority.",
+        "Migrator, authority, runtime and reader credentials remain separated."
+      ]
+    },
+    "C2": {
+      "verdict": "PASS",
+      "open_p0": 0,
+      "open_p1": 0,
+      "notes": [
+        "Known-at, cutoff, tag, lineage and supersession contracts are unchanged.",
+        "Production clock boundary does not alter scientific timestamps."
+      ]
+    },
+    "RP8": {
+      "verdict": "PASS_PRICE_ONLY",
+      "open_p0": 0,
+      "open_p1": 0,
+      "notes": [
+        "Five-book, two-market, freshness, complete-market, proportional devig and median formulas are unchanged.",
+        "Provider canary remains vetoed; V3 remains draft."
+      ]
+    },
+    "RED": {
+      "verdict": "PASS",
+      "open_p0": 0,
+      "open_p1": 0,
+      "notes": [
+        "Old run/attempt, stale time, restore, restart, concurrent worker and preexisting-object attacks fail closed.",
+        "409, contradictory HTTP/error codes and retry-after-lost-response never invent PREEXISTING.",
+        "Recovery observation never becomes CREATED without attributable proof."
+      ]
+    }
+  },
+  "required_implementation_controls": [
+    "PostgreSQL production adapter rejects injected_clock, now, test_now and fake_now.",
+    "TestClock is limited to Memory, SQLite and tests.",
+    "Authority functions use clock_timestamp() and pg_postmaster_start_time().",
+    "External protected generation nonce is rotated after restore or compute boundary changes.",
+    "R2 SDK automatic write retries are disabled or any retry-capable outcome is pending.",
+    "Each PUT_DISPATCHED consumes one unit, including 412.",
+    "Each exact-key GET requires the unique R2_GET_DISPATCHED permit; replay never reads twice.",
+    "No physical_writes_actual metric exists.",
+    "No direct runtime DML and no UPDATE/DELETE of append-only events.",
+    "Downgrade refuses non-empty authority or ledger tables."
+  ],
+  "adversarial_cases": [
+    "expired authority replayed with caller-supplied past time",
+    "same run_id with a new run_attempt",
+    "other SHA, workflow ref/SHA, repository or ref",
+    "old authority after PostgreSQL restart",
+    "restored snapshot containing old authority and claims",
+    "two workers reserve the same operation",
+    "object byte-identical before mission",
+    "created PUT with lost network response",
+    "412 after an internal SDK retry",
+    "409 ConditionalRequestConflict",
+    "contradictory HTTP status and provider error code",
+    "crash after R2_GET_DISPATCHED and concurrent recovery replay",
+    "crash before authority, after authority, after reservation, at dispatch, after response and before final event",
+    "replay and second pass"
+  ],
+  "known_nonblocking_limits": [
+    {
+      "id": "R2_METADATA_ATTRIBUTION_NOT_PROVEN",
+      "severity": "P2",
+      "control": "Metadata-based promotion is disabled; recovery remains pending."
+    },
+    {
+      "id": "CROSS_SYSTEM_ATOMICITY_IMPOSSIBLE",
+      "severity": "P2",
+      "control": "Dispatch accounting may overcount a crash between SQL permit and socket; it never undercounts."
+    },
+    {
+      "id": "CROSS_GENERATION_RECOVERY_DEFERRED",
+      "severity": "P2",
+      "control": "A restored old operation remains immutable and pending; no R2 read or mutation is authorized by a new run without a separately reviewed reconciliation ledger."
+    }
+  ],
+  "verdicts": [
+    "CHRONOS_CONTROL_PLANE_E1_ARCHITECTURE_ACCEPTED",
+    "DB_CLOCK_AUTHORITY_READY_DESIGN",
+    "RUN_BOUND_AUTHORITY_READY_DESIGN",
+    "RESTORE_FENCE_READY_DESIGN",
+    "R2_ATTRIBUTABLE_EFFECT_LEDGER_READY_DESIGN"
+  ],
+  "external_effects": {
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "remote_postgresql_reads": 0,
+    "remote_postgresql_writes": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_get": 0,
+    "r2_put": 0,
+    "r2_delete": 0,
+    "workflow_dispatches": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triples": 0
+  }
+}

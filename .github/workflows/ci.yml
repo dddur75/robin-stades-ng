@@ -219,7 +219,7 @@ jobs:
         run: >-
           python -m ruff check
           src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12 tests/jalon13 tests/jalon14
-          tests/hypothesis_intelligence tests/hypothesis_evidence
+          tests/hypothesis_intelligence tests/hypothesis_evidence tests/chronos
           scripts migrations
       - name: Typage strict
         run: |
@@ -235,6 +235,7 @@ jobs:
           scripts/build_hypothesis_evidence.py
           scripts/build_hypothesis_evidence_site_pages.py
           migrations/versions/0013_historical_evidence_index.py
+          migrations/versions/0014_chronos_control_plane_v2.py
       - name: Verification des secrets
         run: python scripts/check_no_secrets.py
       - name: Cohérence des dépendances
@@ -244,11 +245,46 @@ jobs:
       - name: Tester les migrations
         env:
           ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+          ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+          ROBIN_TEST_CHRONOS_MIGRATOR_ROLE: robin_ci_migrator
+          ROBIN_TEST_CHRONOS_SENTINEL_ROLE: robin_acl_sentinel
         run: |
-          python -m alembic upgrade head
-          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger','prequential_feature_snapshots','prequential_model_versions','prequential_predictions','prequential_fixture_settlements','prequential_prediction_scores','prequential_metric_snapshots','prequential_training_runs','prequential_ledger_events','hypothesis_registry','hypothesis_versions','hypothesis_discovery_metrics','hypothesis_prospective_contracts','hypothesis_observations','hypothesis_settlements','hypothesis_status_events','hypothesis_historical_evidence_summaries','hypothesis_evidence_artifact_indexes','historical_fixture_evidence_indexes','hypothesis_fixture_membership_indexes'} <= names"
+          python -m alembic upgrade 0013_historical_evidence_index
+          python - <<'PY'
+          import os
+          import sqlalchemy as sa
+          from robin.storage.database import build_engine
+
+          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
+          with engine.begin() as connection:
+              connection.exec_driver_sql(
+                  "CREATE ROLE robin_acl_sentinel NOLOGIN"
+              )
+              connection.exec_driver_sql(
+                  "CREATE ROLE robin_ci_migrator LOGIN NOSUPERUSER "
+                  "CREATEROLE PASSWORD 'chronos_ci'"
+              )
+              connection.exec_driver_sql(
+                  "GRANT USAGE, CREATE ON SCHEMA public TO "
+                  "robin_ci_migrator WITH GRANT OPTION"
+              )
+              connection.exec_driver_sql(
+                  "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "
+                  "public.alembic_version TO robin_ci_migrator"
+              )
+              connection.exec_driver_sql(
+                  "ALTER DEFAULT PRIVILEGES FOR ROLE robin_ci_migrator "
+                  "IN SCHEMA public GRANT INSERT ON TABLES TO "
+                  "robin_acl_sentinel"
+              )
+          engine.dispose()
+          PY
+          ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python -m alembic upgrade head
+          python -m pytest -q tests/chronos/test_chronos_postgresql_v2.py
+          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger','prequential_feature_snapshots','prequential_model_versions','prequential_predictions','prequential_fixture_settlements','prequential_prediction_scores','prequential_metric_snapshots','prequential_training_runs','prequential_ledger_events','hypothesis_registry','hypothesis_versions','hypothesis_discovery_metrics','hypothesis_prospective_contracts','hypothesis_observations','hypothesis_settlements','hypothesis_status_events','hypothesis_historical_evidence_summaries','hypothesis_evidence_artifact_indexes','historical_fixture_evidence_indexes','hypothesis_fixture_membership_indexes','chronos_effect_authorities','chronos_effect_events'} <= names"
           python -m alembic downgrade 0002_jalon2_shadow
-          python -m alembic upgrade head
+          python -m alembic upgrade 0013_historical_evidence_index
+          ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python -m alembic upgrade head
           python -m alembic downgrade base
       - name: Executer les tests
         run: python -m pytest -q
