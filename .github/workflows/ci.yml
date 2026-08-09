@@ -246,6 +246,8 @@ jobs:
           ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
         run: |
           python -m alembic upgrade head
+          python -m alembic downgrade 0013_historical_evidence_index
+          python scripts/check_database_revision.py --expected 0013_historical_evidence_index
           python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'raw_payloads','scheduler_windows','burn_in_daily_metrics','historical_backfill_tasks','feature_snapshots','backtest_runs','pattern_definitions','pattern_runs','pattern_evaluations','pattern_decisions','pattern_settlements','bankroll_events','evidence_ledger','experiment_registry','deep_feature_definitions','deep_feature_observations','coverage_gates','matchup_hypotheses','matchup_evaluations','prospective_watchlist','shadow_candidate_versions','prospective_fixtures','capture_windows','capture_attempts','capture_receipts','prospective_payload_index','prospective_player_status','prospective_injuries','prospective_lineups','prospective_formations','prospective_odds_snapshots','temporal_data_gates','provider_budget_ledger','prequential_feature_snapshots','prequential_model_versions','prequential_predictions','prequential_fixture_settlements','prequential_prediction_scores','prequential_metric_snapshots','prequential_training_runs','prequential_ledger_events','hypothesis_registry','hypothesis_versions','hypothesis_discovery_metrics','hypothesis_prospective_contracts','hypothesis_observations','hypothesis_settlements','hypothesis_status_events','hypothesis_historical_evidence_summaries','hypothesis_evidence_artifact_indexes','historical_fixture_evidence_indexes','hypothesis_fixture_membership_indexes'} <= names"
           python -m alembic downgrade 0002_jalon2_shadow
           python -m alembic upgrade head
@@ -417,13 +419,12 @@ jobs:
               exit 1
             fi
           done
-      - name: Migrer PostgreSQL Neon en 0011
+      - name: Verifier PostgreSQL Neon en lecture seule
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python -m alembic upgrade head
-          python -m alembic current | grep -q "0013_historical_evidence_index"
+          python scripts/check_database_revision.py --expected 0013_historical_evidence_index
       - name: Estimer puis enregistrer les fixtures Ligue 1
         if: >-
           contains(github.event.head_commit.message, '[run-j12-pilot]') &&

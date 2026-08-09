@@ -22,6 +22,10 @@ jobs:
       - run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
+      - uses: ./.github/actions/database-revision-guard
+        with:
+          database-url: ${{ secrets.DATABASE_URL }}
+          expected-revision: 0013_historical_evidence_index
       - uses: ./.github/actions/historical-state-restore
       - name: Vérifier les verrous et le cache
         shell: bash
@@ -42,7 +46,6 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python -m alembic upgrade head
           python scripts/persist_pattern_campaign.py \
             --campaign artifacts/pattern-research/campaign-summary.json \
             --output artifacts/pattern-research/postgresql.json

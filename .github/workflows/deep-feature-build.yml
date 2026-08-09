@@ -36,6 +36,10 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install boto3
           python -m pip install --no-deps -e .
+      - uses: ./.github/actions/database-revision-guard
+        with:
+          database-url: ${{ secrets.DATABASE_URL }}
+          expected-revision: 0013_historical_evidence_index
       - uses: ./.github/actions/historical-state-restore
       - name: Construire le dataset cache-only et la preuve scientifique
         run: >-
@@ -45,12 +49,11 @@ jobs:
           --source-commit "$(git -C .historical-registry rev-parse HEAD)"
           --main-commit "${{ github.sha }}"
           --main-ci-run-id "${{ github.run_id }}"
-      - name: Migrer et persister deux fois dans PostgreSQL
+      - name: Persister deux fois dans PostgreSQL
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python -m alembic upgrade head
           python scripts/persist_deep_football.py \
             --artifacts artifacts/deep-feature-build \
             --code-revision "${{ github.sha }}" \

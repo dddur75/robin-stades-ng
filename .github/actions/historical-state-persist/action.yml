@@ -127,6 +127,13 @@ runs:
       run: >-
         echo "::warning::R2 indisponible ou circuit ouvert ; historical-data
         reste la source principale et le lag durable sera rejoué."
+    - name: Verifier la revision PostgreSQL sans migration
+      if: inputs.database-url != ''
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database-url }}
+        ROBIN_DATABASE_URL: ${{ inputs.database-url }}
+      run: python scripts/check_database_revision.py --expected 0013_historical_evidence_index
     - name: Synchroniser PostgreSQL
       id: postgresql
       if: inputs.database-url != ''
@@ -136,7 +143,6 @@ runs:
         DATABASE_URL: ${{ inputs.database-url }}
         ROBIN_DATABASE_URL: ${{ inputs.database-url }}
       run: |
-        python -m alembic upgrade head
         python scripts/run_historical_pipeline.py \
           --state data/historical \
           --run-id "${{ inputs.run-id }}" \
