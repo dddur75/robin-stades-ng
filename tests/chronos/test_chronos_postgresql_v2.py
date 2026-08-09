@@ -588,7 +588,15 @@ def test_scoped_login_connections_enforce_allows_and_denials() -> None:
             assert connection.scalar(sa.text("SELECT current_user")) == (
                 "chronos_effect_runtime_login"
             )
-            operation_id = str(claim(connection, authority_id)["operation_id"])
+            claim(connection, authority_id)
+            operation_id = derive_operation_id(
+                mission_id=MISSION,
+                github_run_id=RUN_ID,
+                github_run_attempt=RUN_ATTEMPT,
+                resource_kind=RESOURCE_KIND,
+                canonical_key=RESOURCE_KEY,
+                canonical_payload_hash=PAYLOAD_HASH,
+            )
         with runtime_engine.connect() as connection:
             with pytest.raises(DBAPIError) as denied:
                 issue(connection)

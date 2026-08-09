@@ -1,6 +1,6 @@
 {
   "schema_version": "chronos-pr41-reconciliation-v1",
-  "observed_at": "2026-08-09T19:02:22Z",
+  "observed_at": "2026-08-09T19:14:49Z",
   "pr": 41,
   "pr_head_before": "355f593406a33dc4c91b8bc6c22513ef58eb0848",
   "main_merged": "3a190e912d429af08bbe007cea9cf91d560329e9",
@@ -41,7 +41,7 @@
       "note": "single clean-LF full suite completed before the bounded scoped-LOGIN CI-test correction"
     },
     "scoped_login_correction": {
-      "cycle": 1,
+      "cycle": 2,
       "production_code_modified": false,
       "migration_sql_modified": false,
       "ci_contract": "three distinct LOGIN connections must each prove an allowed operation and an effective denial",
@@ -56,7 +56,16 @@
         "secret_scan": "PASS",
         "git_diff_check": "PASS"
       },
-      "postgresql_16_execution": "PENDING_EXACT_HEAD_CI"
+      "postgresql_16_execution": {
+        "run": 31330717771,
+        "head": "fc5c52e04e84f87d5fa0eb18eebca6c6f3c7743f",
+        "result": "FAILED_TEST_ONLY_NO_SUCH_RETURNED_COLUMN",
+        "postgresql_contracts_before_scoped": "7_PASSED_1_SCOPED_SKIPPED",
+        "scoped_inventory": "PASSED",
+        "scoped_runtime_claim": "PASSED_BEFORE_TEST_LOOKUP_ERROR",
+        "fix": "derive the canonical operation_id locally instead of reading a non-returned claim column",
+        "next_exact_head_ci": "PENDING"
+      }
     }
   },
   "external_effects": {
@@ -87,8 +96,8 @@
   },
   "prepublication_reviews": {
     "dba_sec": {"score": 96, "p0": 0, "p1": 0, "verdict": "PASS_CONDITIONAL_EXACT_HEAD_CI"},
-    "sre": {"score": 96, "p0": 0, "p1": 0, "verdict": "PASS_CONDITIONAL_EXACT_HEAD_CI"},
+    "sre": {"score": 97, "p0": 0, "p1": 0, "verdict": "PASS_CONDITIONAL_EXACT_HEAD_CI"},
     "dp6_red": {"score": 100, "p0": 0, "p1": 0, "verdict": "PASS"}
   },
-  "verdict": "PASS_AND_HOLD_PENDING_EXACT_HEAD_POSTGRESQL_CI_AND_FINAL_REVIEWS"
+  "verdict": "PASS_AND_HOLD_PENDING_SECOND_AND_FINAL_EXACT_HEAD_POSTGRESQL_CI"
 }
