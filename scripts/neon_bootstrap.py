@@ -1,4 +1,4 @@
-"""Mise en service sûre de Neon et migration du registre shadow."""
+"""Synchronisation legacy du registre, sans autorité de migration."""
 
 from __future__ import annotations
 
@@ -7,13 +7,10 @@ import json
 import os
 from pathlib import Path
 
-from alembic import command
-from alembic.config import Config
 from sqlalchemy import MetaData, func, inspect, select, text
 
 from robin.storage.database import (
     DatabaseConfigurationError,
-    alembic_database_url,
     build_engine,
     normalize_database_url,
 )
@@ -22,9 +19,11 @@ from robin.storage.durable_schema import JALON4_TABLES, metadata
 if __package__:
     from scripts.manage_durable_registry import audit_database, persist_registry
 else:
-    from manage_durable_registry import audit_database, persist_registry
+    from manage_durable_registry import (  # type: ignore[import-not-found,no-redef]
+        audit_database,
+        persist_registry,
+    )
 
-ROOT = Path(__file__).resolve().parents[1]
 HISTORICAL_EVIDENCE_INDEX_TABLES = frozenset(
     {
         "historical_fixture_evidence_indexes",
@@ -36,12 +35,7 @@ HISTORICAL_EVIDENCE_INDEX_TABLES = frozenset(
 CHRONOS_CONTROL_PLANE_TABLES = frozenset(
     {"chronos_effect_authorities", "chronos_effect_events"}
 )
-
-
-def alembic_config(database_url: str) -> Config:
-    config = Config(str(ROOT / "alembic.ini"))
-    config.set_main_option("sqlalchemy.url", alembic_database_url(database_url))
-    return config
+EXPECTED_REVISION = "0013_historical_evidence_index"
 
 
 def table_row_counts(database_url: str) -> dict[str, int]:
@@ -94,32 +88,18 @@ def bootstrap(
     *,
     registry: Path,
     database_url: str,
-    controlled_rollback: bool,
 ) -> dict[str, object]:
     normalized = normalize_database_url(database_url)
     engine = build_engine(normalized)
     with engine.connect() as connection:
         connection.execute(text("SELECT 1"))
-    config = alembic_config(normalized)
-    command.upgrade(config, "head")
-    tables_after_upgrade = set(inspect(engine).get_table_names())
-    missing_tables = sorted(JALON4_TABLES - tables_after_upgrade)
-    if missing_tables:
-        raise RuntimeError("tables durables manquantes après migration")
-    rollback_performed = False
-    rollback_skipped_reason: str | None = None
-    if controlled_rollback:
-        counts_before_rollback = table_row_counts(normalized)
-        if any(counts_before_rollback.values()):
-            rollback_skipped_reason = "DATA_ALREADY_PRESENT"
-        else:
-            command.downgrade(config, "0002_jalon2_shadow")
-            remaining = set(inspect(engine).get_table_names())
-            if JALON4_TABLES & remaining:
-                raise RuntimeError("rollback contrôlé incomplet")
-            command.upgrade(config, "head")
-            rollback_performed = True
     revision = migration_revision(normalized)
+    if revision != EXPECTED_REVISION:
+        raise RuntimeError("DATABASE_MIGRATION_REQUIRED")
+    tables = set(inspect(engine).get_table_names())
+    missing_tables = sorted(JALON4_TABLES - tables)
+    if missing_tables:
+        raise RuntimeError("DATABASE_MIGRATION_REQUIRED")
     first = persist_registry(registry, normalized)
     second = persist_registry(registry, normalized)
     audit = audit_database(registry, normalized)
@@ -128,14 +108,13 @@ def bootstrap(
     if second["records_inserted"] or second["raw_payloads_inserted"]:
         raise RuntimeError("replay non idempotent")
     return {
-        "status": "NEON_BOOTSTRAP_VERIFIED",
+        "status": "NEON_BOOTSTRAP_VERIFIED_READ_ONLY_REVISION",
         "postgresql": "CONNECTED_AND_PERSISTED",
         "driver": "postgresql+psycopg",
         "ssl_required": "sslmode=require" in normalized,
         "migration_revision": revision,
-        "controlled_rollback_requested": controlled_rollback,
-        "controlled_rollback_performed": rollback_performed,
-        "controlled_rollback_skipped_reason": rollback_skipped_reason,
+        "automatic_migration_performed": False,
+        "controlled_rollback_performed": False,
         "first_persistence": first,
         "second_persistence": second,
         "audit": audit,
@@ -169,14 +148,12 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--registry", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
-    parser.add_argument("--controlled-rollback", action="store_true")
     args = parser.parse_args()
     database_url = os.getenv("ROBIN_DATABASE_URL")
     try:
         result = bootstrap(
             registry=args.registry,
             database_url=database_url or "",
-            controlled_rollback=args.controlled_rollback,
         )
     except Exception as error:  # aucun détail fournisseur ou secret dans les logs
         result = safe_failure(error)

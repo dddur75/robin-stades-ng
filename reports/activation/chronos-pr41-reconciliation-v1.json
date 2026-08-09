@@ -1,0 +1,57 @@
+{
+  "schema_version": "chronos-pr41-reconciliation-v1",
+  "observed_at": "2026-08-09T18:31:53Z",
+  "pr": 41,
+  "pr_head_before": "355f593406a33dc4c91b8bc6c22513ef58eb0848",
+  "main_merged": "3a190e912d429af08bbe007cea9cf91d560329e9",
+  "merge_method": "NO_REBASE_NO_FORCE_PUSH",
+  "worktree": "WORKTREE:chronos-pr41-reconciliation-v1",
+  "conflicts": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "resolution": "preserve the two PostgreSQL 16 local 0014 upgrade/downgrade cycles and place the read-only 0013 guard before the second 0014 upgrade"
+    },
+    {
+      "path": "scripts/neon_bootstrap.py",
+      "resolution": "retain Chronos table awareness while removing Alembic mutation authority and requiring the exact read-only 0013 revision"
+    },
+    {
+      "path": "reports/council/decision-ledger.jsonl",
+      "resolution": "preserve main decisions 093-094 and rechain the four PR41 records as 095-098 with their original IDs and hashes recorded as provenance"
+    },
+    {
+      "path": "reports/evidence/evidence-graph.json",
+      "resolution": "bind decision nodes 095-098 to the reconciled ledger hashes without extending the frozen Phase C edge tail"
+    }
+  ],
+  "local_validation": {
+    "targeted_tests": {"passed": 194, "skipped": 7, "failed": 0},
+    "postgresql_16_local": "UNAVAILABLE_EXACT_HEAD_CI_REQUIRED",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit_high": 0,
+    "json_yaml_python_parse": "PASS",
+    "git_diff_check": "PASS",
+    "full_suite": "PENDING_CLEAN_LF_MERGE_COMMIT"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "api_football_calls": 0,
+    "odds_credits": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_get": 0,
+    "r2_put": 0,
+    "r2_delete": 0,
+    "remote_database_reads": 0,
+    "remote_database_writes": 0,
+    "workflow_dispatches": 0
+  },
+  "hold": {
+    "migration_capable_workflows_held": 34,
+    "queued_runs": 0,
+    "in_progress_runs": 0,
+    "workflow_reactivation_authorized": false
+  },
+  "verdict": "PASS_AND_HOLD_PENDING_FULL_SUITE_CI_REVIEWS_AND_ENVIRONMENT"
+}

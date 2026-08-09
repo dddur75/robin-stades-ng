@@ -35,13 +35,11 @@ jobs:
         with:
           ref: shadow-data
           path: .bootstrap-registry
-      - name: Initialiser et synchroniser Neon
+      - name: Verifier la revision Neon sans migration
         if: env.ROBIN_DATABASE_URL != ''
         run: >-
-          python scripts/neon_bootstrap.py
-          --registry .bootstrap-registry
-          --report data/shadow/neon/bootstrap.json
-          --controlled-rollback
+          python scripts/check_database_revision.py
+          --expected 0013_historical_evidence_index
       - name: Calculer la sante
         env:
           DURABLE_STORAGE_REQUIRED: "true"

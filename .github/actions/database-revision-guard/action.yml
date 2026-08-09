@@ -1,0 +1,20 @@
+name: "Database revision guard"
+description: "Fail closed unless the database is at one exact Alembic revision"
+inputs:
+  database-url:
+    description: "Runtime PostgreSQL URL used only for a read-only revision check"
+    required: true
+  expected-revision:
+    description: "Exact Alembic revision allowed for this workload"
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Verifier la revision sans migration
+      shell: bash
+      env:
+        ROBIN_DATABASE_URL: ${{ inputs.database-url }}
+        EXPECTED_DATABASE_REVISION: ${{ inputs.expected-revision }}
+      run: >-
+        python scripts/check_database_revision.py
+        --expected "$EXPECTED_DATABASE_REVISION"

@@ -285,6 +285,7 @@ jobs:
           ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python -m alembic downgrade 0013_historical_evidence_index
           python -m alembic downgrade 0002_jalon2_shadow
           python -m alembic upgrade 0013_historical_evidence_index
+          python scripts/check_database_revision.py --expected 0013_historical_evidence_index
           ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python -m alembic upgrade head
           ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python -m alembic downgrade 0013_historical_evidence_index
           python -m alembic downgrade base
@@ -455,13 +456,12 @@ jobs:
               exit 1
             fi
           done
-      - name: Migrer PostgreSQL Neon en 0011
+      - name: Verifier PostgreSQL Neon en lecture seule
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python -m alembic upgrade head
-          python -m alembic current | grep -q "0013_historical_evidence_index"
+          python scripts/check_database_revision.py --expected 0013_historical_evidence_index
       - name: Estimer puis enregistrer les fixtures Ligue 1
         if: >-
           contains(github.event.head_commit.message, '[run-j12-pilot]') &&

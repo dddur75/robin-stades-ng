@@ -1,0 +1,64 @@
+{
+  "schema_version": "chronos-migration-neutralization-validation-v1",
+  "base_revision": "b03051d15e741eeb5293e0d3661572b2cb60eeba",
+  "branch": "codex/chronos-migration-path-neutralization-v1",
+  "review_state": "PASS_AND_HOLD",
+  "scope": {
+    "ordinary_migration_capable_workflows": 33,
+    "additional_ci_workflow": 1,
+    "composite_actions": 2,
+    "migration_helpers": 1,
+    "held_workflows": 34
+  },
+  "contract": {
+    "expected_database_revision": "0013_historical_evidence_index",
+    "production_upgrade_head_count": 0,
+    "production_downgrade_count": 0,
+    "ci_ephemeral_upgrade_head_count": 2,
+    "ci_ephemeral_database": "postgresql:16-alpine on localhost",
+    "revision_mismatch_result": "DATABASE_MIGRATION_REQUIRED",
+    "provider_calls": 0,
+    "api_football_calls": 0,
+    "odds_credits": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "remote_database_writes": 0
+  },
+  "local_validation": {
+    "targeted_tests": {"passed": 82, "failed": 0},
+    "domain_tests": {"passed": 162, "failed": 0},
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit_high": 0,
+    "yaml_documents_parsed": 80,
+    "json_documents_parsed": 3,
+    "python_ast_documents_parsed": 3,
+    "secret_scan": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "independent_reviews": [
+    {"role": "SRE", "score": 98, "verdict": "PASS_UNDER_HOLD", "critical_objections_open": 0},
+    {"role": "DP6_RED", "score": 97, "verdict": "PASS_UNDER_HOLD", "critical_objections_open": 0},
+    {"role": "DBA_SEC", "score": null, "verdict": "PASS_NEUTRALIZATION_STOP_BEFORE_MIGRATION", "critical_objections_open": 0}
+  ],
+  "full_suite_observation": {
+    "checkout": "CLEAN_LF_AT_18fd1b53cf9e8c733886e23bdab51842a409e9e8",
+    "passed": 1360,
+    "skipped": 11,
+    "failed": 1,
+    "duration_seconds": 474.17,
+    "classification": "NEW_NON_PHASE_C_EDGES_REJECTED_BY_FROZEN_PHASE_C_RECORDER",
+    "failing_test": "tests/hypothesis_intelligence/test_phase_c_factory_contract.py::test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent",
+    "correction": "remove the two redundant Chronos edges while retaining claims, proof references and the decision node",
+    "accepted_as_full_suite_gate": false,
+    "required_next_check": "targeted recorder regression followed by exact-head remote CI"
+  },
+  "activation_constraints": {
+    "workflow_hold_required": true,
+    "historical_refs_review_required_before_reactivation": true,
+    "legacy_database_url_replacement_or_revocation_required": true,
+    "neon_migration_authorized": false,
+    "workflow_reactivation_authorized": false
+  }
+}

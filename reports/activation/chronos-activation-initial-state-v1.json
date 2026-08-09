@@ -1,0 +1,105 @@
+{
+  "schema_version": "chronos-activation-initial-state-v1",
+  "observed_at": "2026-08-09T16:50:00Z",
+  "repository": "dddur75/robin-stades-ng",
+  "entry_checkout": {
+    "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2",
+    "branch": "codex/hypothesis-universe-experience-v1",
+    "head": "ddf946642bcfccdc7ed206abd484db0336fdc34a",
+    "associated_pr": null,
+    "clean": false,
+    "purpose": "PROTECTED_ENTRY_ONLY",
+    "preserved_untracked_paths": [".worktrees/"]
+  },
+  "relevant_worktrees": [
+    {
+      "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2 Worktrees/chronos-e1-planning-v2",
+      "branch": "codex/robin-chronos-control-plane-v2",
+      "head": "355f593406a33dc4c91b8bc6c22513ef58eb0848",
+      "associated_pr": 41,
+      "clean": true,
+      "purpose": "PR41_CONTROL_PLANE"
+    },
+    {
+      "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2 Worktrees/robin-chronos-foundation-v1",
+      "branch": "codex/robin-chronos-foundation-v1",
+      "head": "b4b549b1caf46d69a53a1c1efe7298aab3f6f928",
+      "associated_pr": 40,
+      "clean": true,
+      "purpose": "MERGED_SCIENTIFIC_FOUNDATION"
+    },
+    {
+      "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2 Worktrees/robin-chronos-known-at-price-observatory-v1",
+      "branch": "codex/robin-chronos-known-at-price-observatory-v1",
+      "head": "ea983c0f42177317a9c8e91f4e49974df2b63525",
+      "associated_pr": 39,
+      "clean": true,
+      "purpose": "CLOSED_SUPERSEDED_PR39"
+    }
+  ],
+  "other_worktrees_observed": 20,
+  "git": {
+    "origin_main": "b03051d15e741eeb5293e0d3661572b2cb60eeba",
+    "pr39": {
+      "state": "CLOSED",
+      "draft": true,
+      "merged": false,
+      "head": "ea983c0f42177317a9c8e91f4e49974df2b63525"
+    },
+    "pr40": {
+      "state": "MERGED",
+      "merge_commit": "b03051d15e741eeb5293e0d3661572b2cb60eeba",
+      "head": "b4b549b1caf46d69a53a1c1efe7298aab3f6f928"
+    },
+    "pr41": {
+      "state": "OPEN",
+      "draft": true,
+      "merged": false,
+      "base": "main",
+      "head": "355f593406a33dc4c91b8bc6c22513ef58eb0848",
+      "mergeable": "MERGEABLE",
+      "merge_state": "CLEAN",
+      "changed_files": 30,
+      "additions": 6677,
+      "deletions": 110,
+      "exact_head_ci_run": 31320652138,
+      "exact_head_ci": "SUCCESS",
+      "github_reviews": 0
+    }
+  },
+  "github_controls": {
+    "ruleset": {
+      "id": 20591337,
+      "name": "main-trusted-pr-ci-v1",
+      "enforcement": "active",
+      "target": "refs/heads/main",
+      "bypass_actors": 0,
+      "merge_method": "merge",
+      "required_approvals": 0,
+      "thread_resolution_required": true,
+      "strict_required_checks": true
+    },
+    "protected_environments": ["github-pages"],
+    "chronos_environment_present": false,
+    "repository_variable_names": [],
+    "repository_secret_names": [
+      "API_FOOTBALL_KEY",
+      "DATABASE_URL",
+      "ODDS_API_KEY",
+      "R2_ACCESS_KEY_ID",
+      "R2_ACCOUNT_ID",
+      "R2_BUCKET_NAME",
+      "R2_SECRET_ACCESS_KEY"
+    ],
+    "workflow_count": 75,
+    "workflow_files_on_main": 74,
+    "dynamic_workflows": ["dynamic/pages/pages-build-deployment"],
+    "workflow_states_initial": {"active": 75, "disabled": 0},
+    "queued_runs_initial": 0,
+    "in_progress_runs_initial": 0
+  },
+  "secret_values_observed": false,
+  "provider_calls": 0,
+  "odds_credits": 0,
+  "r2_operations": 0
+}

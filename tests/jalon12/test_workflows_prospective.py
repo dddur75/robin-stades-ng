@@ -60,11 +60,12 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert all(value in workflow for value in required), name
         assert all(value not in workflow.casefold() for value in forbidden), name
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
-        assert "alembic upgrade head" in workflow
         assert (
-            'alembic current | grep -q "0013_historical_evidence_index"'
+            "python scripts/check_database_revision.py "
+            "--expected 0013_historical_evidence_index"
             in workflow
         )
+        assert "alembic upgrade" not in workflow
 
 
 def test_central_policy_owns_provider_caps_reserves_and_markets() -> None:
@@ -126,7 +127,8 @@ def test_prequential_workflows_share_state_lock_and_safety_contract() -> None:
         'SOCIAL_PUBLISHING_ENABLED: "false"',
         'DEMO_MODE_ENABLED: "false"',
         'ODDS_API_CREDITS_ALLOWED: "0"',
-        'alembic current | grep -q "0013_historical_evidence_index"',
+        "python scripts/check_database_revision.py "
+        "--expected 0013_historical_evidence_index",
         "retention-days: 90",
     )
     for name in PREQUENTIAL_WORKFLOWS:
@@ -175,7 +177,7 @@ def test_capture_workflows_estimate_before_explicit_bounded_execution() -> None:
         assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
         assert "R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}" in workflow
         assert "ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}" in workflow
-        assert "alembic upgrade head" in workflow
+        assert "alembic upgrade" not in workflow
 
 
 def test_fixture_registry_is_dynamic_bounded_and_persisted_r2_first() -> None:
@@ -192,7 +194,7 @@ def test_fixture_registry_is_dynamic_bounded_and_persisted_r2_first() -> None:
     assert "API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}" in workflow
     assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
     assert "ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}" in workflow
-    assert "alembic upgrade head" in workflow
+    assert "alembic upgrade" not in workflow
 
 
 def test_registry_discovery_horizon_does_not_change_capture_windows() -> None:

@@ -43,6 +43,12 @@ runs:
           git commit -m "shadow: persist run ${{ inputs.run-id }}"
           git push origin HEAD:shadow-data
         fi
+    - name: Verifier la revision PostgreSQL sans migration
+      if: inputs.database-url != ''
+      shell: bash
+      env:
+        ROBIN_DATABASE_URL: ${{ inputs.database-url }}
+      run: python scripts/check_database_revision.py --expected 0013_historical_evidence_index
     - name: Synchroniser PostgreSQL depuis le registre durable
       id: postgresql
       if: inputs.database-url != ''
@@ -51,7 +57,6 @@ runs:
       env:
         ROBIN_DATABASE_URL: ${{ inputs.database-url }}
       run: |
-        python -m alembic upgrade head
         python scripts/manage_durable_registry.py persist-registry \
           --registry .durable-registry
         python scripts/manage_durable_registry.py audit-database \
