@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
@@ -27,12 +27,22 @@ from robin.providers.http import JsonHttpProvider
 
 class TheOddsApiProvider(JsonHttpProvider):
     SPORT_KEY = "soccer_france_ligue_one"
+    CHRONOS_REGION_KEYS = ("fr",)
+    CHRONOS_BOOKMAKER_KEYS = (
+        "betclic_fr",
+        "netbet_fr",
+        "pmu_fr",
+        "unibet_fr",
+        "winamax_fr",
+    )
 
     def __init__(
         self,
         *,
         api_key: str | None,
         sport_key: str = SPORT_KEY,
+        region_keys: Sequence[str] = CHRONOS_REGION_KEYS,
+        bookmaker_keys: Sequence[str] = CHRONOS_BOOKMAKER_KEYS,
         **kwargs: Any,
     ) -> None:
         if not sport_key or any(
@@ -40,7 +50,13 @@ class TheOddsApiProvider(JsonHttpProvider):
             for character in sport_key
         ):
             raise ValueError("ODDS_API_SPORT_KEY_INVALID")
+        if tuple(region_keys) != self.CHRONOS_REGION_KEYS:
+            raise ValueError("ODDS_API_REGION_KEYS_INVALID")
+        if tuple(bookmaker_keys) != self.CHRONOS_BOOKMAKER_KEYS:
+            raise ValueError("ODDS_API_BOOKMAKER_KEYS_INVALID")
         self.sport_key = sport_key
+        self.region_keys = tuple(region_keys)
+        self.bookmaker_keys = tuple(bookmaker_keys)
         super().__init__(
             provider_name="the-odds-api",
             base_url="https://api.the-odds-api.com/v4",
@@ -100,7 +116,8 @@ class TheOddsApiProvider(JsonHttpProvider):
         return self._request(
             f"/sports/{sport_key}/odds",
             params={
-                "regions": "eu",
+                "regions": ",".join(self.region_keys),
+                "bookmakers": ",".join(self.bookmaker_keys),
                 "markets": "h2h,totals",
                 "oddsFormat": "decimal",
                 "dateFormat": "iso",
@@ -111,7 +128,8 @@ class TheOddsApiProvider(JsonHttpProvider):
         return self._request(
             f"/sports/{self.sport_key}/events/{event_id}/odds",
             params={
-                "regions": "eu",
+                "regions": ",".join(self.region_keys),
+                "bookmakers": ",".join(self.bookmaker_keys),
                 "markets": "h2h,totals",
                 "oddsFormat": "decimal",
                 "dateFormat": "iso",

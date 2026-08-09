@@ -16,7 +16,8 @@ from sqlalchemy.schema import CreateTable
 
 from robin.storage.database import build_engine
 
-HEAD = "0013_historical_evidence_index"
+HEAD = "0014_robin_chronos_v1"
+HISTORICAL_EVIDENCE_MIGRATION = "0013_historical_evidence_index"
 TABLES = {
     "hypothesis_historical_evidence_summaries",
     "hypothesis_evidence_artifact_indexes",
@@ -146,7 +147,7 @@ def test_historical_evidence_projection_is_compact_and_postgresql_safe() -> None
     assert scripts.get_current_head() == HEAD
     assert len(HEAD) <= 32
 
-    revision = scripts.get_revision(HEAD)
+    revision = scripts.get_revision(HISTORICAL_EVIDENCE_MIGRATION)
     assert revision is not None
     migration_metadata = revision.module.metadata
     assert TABLES == set(migration_metadata.tables)

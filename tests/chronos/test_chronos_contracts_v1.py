@@ -1,0 +1,314 @@
+from __future__ import annotations
+
+import json
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal
+
+import pytest
+
+from robin.prospective_observatory.chronos import (
+    BOOKMAKER_ALLOWLIST,
+    CanaryBudget,
+    ChronosMarket,
+    ChronosSelection,
+    LineageIndex,
+    LineageNodeKind,
+    ScientificRole,
+    TagState,
+    TemporalClass,
+    aggregate_market_snapshot,
+    build_known_at_fact,
+    build_lineage_edge,
+    build_price_observation,
+    derive_complete_book_markets,
+    deterministic_fixture_canary,
+    freeze_tag_snapshot,
+    power_floor,
+    strict_fact_view,
+    temporal_classification,
+)
+from robin.prospective_observatory.chronos_storage import (
+    ChronosArtifactRepository,
+)
+from robin.prospective_observatory.contracts import (
+    AvailabilityStatus,
+    CaptureFamily,
+    CaptureReceipt,
+    canonical_sha256,
+    receipt_scope_sha256,
+)
+from robin.prospective_observatory.prequential_storage import (
+    ArtifactIntegrityError,
+    InMemoryArtifactStore,
+)
+
+NOW = datetime(2026, 8, 9, 8, 0, tzinfo=UTC)
+HASH = "a" * 64
+CONTRACT_HASH = "b" * 64
+
+
+def _receipt(
+    *,
+    response_received_at: datetime = NOW,
+    cutoff_at: datetime = NOW + timedelta(hours=1),
+    kickoff_at: datetime = NOW + timedelta(hours=2),
+) -> CaptureReceipt:
+    window_id = "prospective-window-v3:test"
+    scope = receipt_scope_sha256(
+        window_id=window_id,
+        window_label="NEAR_KICKOFF",
+    )
+    return CaptureReceipt(
+        window_id=window_id,
+        window_label="NEAR_KICKOFF",
+        fixture_id="fixture-1",
+        competition="Ligue 1",
+        season="2026",
+        provider="the-odds-api",
+        family=CaptureFamily.ODDS,
+        requested_at=response_received_at - timedelta(seconds=1),
+        response_received_at=response_received_at,
+        observed_at=response_received_at,
+        kickoff_at=kickoff_at,
+        cutoff_at=cutoff_at,
+        seconds_before_kickoff=int(
+            (kickoff_at - response_received_at).total_seconds()
+        ),
+        http_status=200,
+        payload_sha256=HASH,
+        payload_bytes=123,
+        stored_bytes=90,
+        r2_key=f"prospective-deep-data/schema-v1/payload-{HASH}.json.gz",
+        receipt_r2_key=(
+            "prospective-deep-data/schema-v1/"
+            f"receipt-{scope}-{HASH}.json"
+        ),
+        source_endpoint="/sports/soccer_france_ligue_one/odds",
+        complete=True,
+        quality_status=AvailabilityStatus.CAPTURED,
+        provider_calls=1,
+        code_revision="test-revision",
+        materialized_at=response_received_at + timedelta(seconds=1),
+    )
+
+
+@pytest.mark.parametrize(
+    ("known_at", "expected"),
+    [
+        (NOW, TemporalClass.ON_TIME),
+        (NOW + timedelta(hours=1), TemporalClass.ON_TIME),
+        (NOW + timedelta(hours=1, microseconds=1), TemporalClass.LATE_FOR_CUTOFF),
+        (NOW + timedelta(hours=2), TemporalClass.POST_KICKOFF_ONLY),
+        (None, TemporalClass.KNOWN_AT_UNKNOWN),
+    ],
+)
+def test_temporal_classification_is_inclusive_at_cutoff(
+    known_at: datetime | None,
+    expected: TemporalClass,
+) -> None:
+    assert temporal_classification(
+        known_at=known_at,
+        cutoff_at=NOW + timedelta(hours=1),
+        kickoff_at=NOW + timedelta(hours=2),
+    ) is expected
+
+
+def test_known_at_fact_never_uses_provider_timestamp_to_backdate() -> None:
+    fact = build_known_at_fact(
+        receipt=_receipt(),
+        entity_id="bookmaker:betclic_fr",
+        normalized_value={"available": True},
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        scientific_role=ScientificRole.STRICT_KNOWN_AT,
+        normalizer_version="test-v1",
+        code_revision="test-revision",
+    )
+    assert fact.known_at == NOW
+    assert fact.temporal_class is TemporalClass.ON_TIME
+    assert strict_fact_view((fact,)) == (fact,)
+
+
+def test_restrictive_evidence_can_only_delay_known_at() -> None:
+    with pytest.raises(ValueError, match="CHRONOS_RESTRICTIVE_PROOF_BACKDATED"):
+        build_known_at_fact(
+            receipt=_receipt(),
+            entity_id="entity",
+            normalized_value={"value": 1},
+            cutoff_id="NEAR_KICKOFF",
+            request_contract_hash=CONTRACT_HASH,
+            scientific_role=ScientificRole.STRICT_KNOWN_AT,
+            normalizer_version="test-v1",
+            code_revision="test-revision",
+            restrictive_available_at=NOW - timedelta(seconds=1),
+        )
+
+
+def _price_observations(bookmakers: tuple[str, ...]) -> tuple[object, ...]:
+    observations = []
+    for bookmaker in bookmakers:
+        for selection, odds in (
+            (ChronosSelection.HOME, Decimal("2.10")),
+            (ChronosSelection.DRAW, Decimal("3.40")),
+            (ChronosSelection.AWAY, Decimal("3.70")),
+        ):
+            observations.append(
+                build_price_observation(
+                    receipt=_receipt(),
+                    bookmaker=bookmaker,
+                    market=ChronosMarket.MATCH_RESULT_90M,
+                    selection=selection,
+                    line=None,
+                    odds_decimal=odds,
+                    cutoff_id="NEAR_KICKOFF",
+                    request_contract_hash=CONTRACT_HASH,
+                    code_revision="test-revision",
+                )
+            )
+    return tuple(observations)
+
+
+def test_complete_market_devig_and_five_book_consensus() -> None:
+    derivations = derive_complete_book_markets(_price_observations(BOOKMAKER_ALLOWLIST))
+    assert len(derivations) == 15
+    for bookmaker in BOOKMAKER_ALLOWLIST:
+        total = sum(
+            (
+                row.devigged_probability
+                for row in derivations
+                if row.bookmaker == bookmaker
+            ),
+            Decimal(0),
+        )
+        assert total == Decimal(1)
+    snapshot = aggregate_market_snapshot(derivations)
+    assert snapshot.confirmatory_admissible is True
+    assert sum(snapshot.selection_probabilities.values(), Decimal(0)) == Decimal(1)
+
+
+def test_incomplete_market_is_no_price_not_an_estimate() -> None:
+    observations = _price_observations((BOOKMAKER_ALLOWLIST[0],))[:-1]
+    assert derive_complete_book_markets(observations) == ()
+
+
+def test_total_line_must_be_exactly_two_point_five() -> None:
+    with pytest.raises(ValueError, match="CHRONOS_TOTAL_2_5_SELECTION_INVALID"):
+        build_price_observation(
+            receipt=_receipt(),
+            bookmaker=BOOKMAKER_ALLOWLIST[0],
+            market=ChronosMarket.TOTAL_GOALS_2_5_90M,
+            selection=ChronosSelection.OVER_2_5,
+            line=Decimal("3.5"),
+            odds_decimal=Decimal("1.9"),
+            cutoff_id="H2",
+            request_contract_hash=CONTRACT_HASH,
+            code_revision="test-revision",
+        )
+
+
+def test_late_fact_cannot_enter_tag_snapshot() -> None:
+    on_time = build_known_at_fact(
+        receipt=_receipt(),
+        entity_id="entity:on-time",
+        normalized_value={"value": 1},
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        scientific_role=ScientificRole.STRICT_KNOWN_AT,
+        normalizer_version="test-v1",
+        code_revision="test-revision",
+    )
+    late = build_known_at_fact(
+        receipt=_receipt(
+            response_received_at=NOW + timedelta(hours=1, minutes=1),
+        ),
+        entity_id="entity:late",
+        normalized_value={"value": 2},
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        scientific_role=ScientificRole.STRICT_KNOWN_AT,
+        normalizer_version="test-v1",
+        code_revision="test-revision",
+    )
+    snapshot = freeze_tag_snapshot(
+        fixture_id="fixture-1",
+        cutoff_id="NEAR_KICKOFF",
+        cutoff_at=NOW + timedelta(hours=1),
+        kickoff_at=NOW + timedelta(hours=2),
+        tag_registry_hash=HASH,
+        facts=(late, on_time),
+        tag_states={"tag-1": TagState.TRUE, "tag-2": TagState.UNKNOWN},
+    )
+    assert snapshot.facts_used == (on_time.fact_id,)
+    assert (snapshot.true_count, snapshot.false_count, snapshot.unknown_count) == (
+        1,
+        0,
+        1,
+    )
+
+
+def test_lineage_is_append_only_and_bidirectional() -> None:
+    edge = build_lineage_edge(
+        upstream_kind=LineageNodeKind.RAW_OBJECT,
+        upstream_id="raw-1",
+        upstream_hash=HASH,
+        downstream_kind=LineageNodeKind.KNOWN_AT_FACT,
+        downstream_id="fact-1",
+        downstream_hash=CONTRACT_HASH,
+        relation="DERIVED_FROM",
+        contract_hash=HASH,
+        code_revision="test-revision",
+    )
+    index = LineageIndex()
+    assert index.append(edge) is True
+    assert index.append(edge) is False
+    assert index.downstream("raw-1") == (edge,)
+    assert index.upstream("fact-1") == (edge,)
+
+
+def test_chronos_storage_is_content_addressed_and_idempotent() -> None:
+    store = InMemoryArtifactStore()
+    repository = ChronosArtifactRepository(store)
+    first = repository.put_json("facts", {"fixture_id": "fixture-1"})
+    second = repository.put_json("facts", {"fixture_id": "fixture-1"})
+    assert first.key.startswith("known-at/facts/")
+    assert first.inserted is True
+    assert second.inserted is False
+    assert json.loads(repository.read_json(first)) == {"fixture_id": "fixture-1"}
+    store._objects[first.key] = b"tampered"  # noqa: SLF001 - deliberate tamper test
+    with pytest.raises(ArtifactIntegrityError):
+        repository.read_json(first)
+
+
+def test_canary_limits_and_fixture_selection_are_fail_closed() -> None:
+    selected = deterministic_fixture_canary(
+        {"Ligue 1": ("f2", "f1"), "Premier League": ("f3",)},
+    )
+    assert selected == ("f1", "f3")
+    budget = CanaryBudget()
+    budget.authorize(
+        fixtures=5,
+        attempts=2,
+        api_football_calls=50,
+        odds_credits=20,
+        r2_object_writes=2000,
+        postgresql_rows=10000,
+        provider_remaining_after=4000,
+        provider_reserve=4000,
+    )
+    with pytest.raises(ValueError, match="CHRONOS_CANARY_FIXTURES_LIMIT"):
+        budget.authorize(
+            fixtures=6,
+            attempts=1,
+            api_football_calls=0,
+            odds_credits=0,
+            r2_object_writes=0,
+            postgresql_rows=0,
+            provider_remaining_after=4000,
+            provider_reserve=4000,
+        )
+
+
+def test_v3_power_floor_is_frozen_and_not_thirty() -> None:
+    assert power_floor(standardized_effect=Decimal("0.20")) == 675
+    assert power_floor(standardized_effect=Decimal("0.10"), power="0.90") == 3176
+    assert canonical_sha256({"tests": 7480}) != HASH

@@ -1,0 +1,17 @@
+{
+  "schema_version": "robin-chronos-canary-v1",
+  "activation_mode": "CANARY_ONLY",
+  "due_only": true,
+  "force_future_window": false,
+  "max_fixtures": 5,
+  "max_technical_attempts": 2,
+  "api_football_calls_max": 50,
+  "odds_credits_mission_max": 100,
+  "odds_credits_effective_max": 20,
+  "r2_object_writes_max": 2000,
+  "r2_deletes": 0,
+  "postgresql_rows_max": 10000,
+  "destructive_sql": 0,
+  "new_purchase_allowed": false,
+  "no_due_status": "CANARY_NOT_DUE_SCHEDULER_READY"
+}

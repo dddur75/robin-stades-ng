@@ -1,0 +1,46 @@
+{
+  "schema_version": "historical-price-source-audit-v1",
+  "generated_at": "2026-08-09T06:30:00Z",
+  "verdict": "HISTORICAL_PRICE_POINT_IN_TIME_SUPPORT_NOT_PROVED",
+  "repository_evidence": {
+    "current_prospective_replay_odds_captures": 0,
+    "current_prospective_replay_odds_credits": 0,
+    "legacy_live_odds_proof": "run 30095046115 captured one snapshot and 90 quotes on 2026-07-24",
+    "legacy_live_proof_is_current_chronos_capture": false,
+    "football_data_prices": "SOURCE_PRICE_CLASS_ONLY",
+    "intraday_known_at_proved": false,
+    "opening_closing_separation_proved": false,
+    "clv_permitted": false,
+    "roi_permitted": false
+  },
+  "potential_sources": [
+    {
+      "source": "existing R2/PostgreSQL receipts",
+      "coverage": "bounded legacy receipts",
+      "markets": ["h2h", "totals"],
+      "bookmakers": "receipt-dependent",
+      "timestamps": "response timestamps available only where captured live",
+      "oldest_date": "2026-07-24 proven live odds run",
+      "estimated_cost": 0,
+      "licence": "existing entitlement terms",
+      "technical_complexity": "LOW",
+      "scientific_value": "PROSPECTIVE_ONLY",
+      "decision": "USE_EXISTING_ENTITLEMENT"
+    },
+    {
+      "source": "The Odds API historical endpoint",
+      "coverage": "provider-dependent historical snapshots",
+      "markets": ["h2h", "totals"],
+      "bookmakers": "requested keys",
+      "timestamps": "closest provider snapshot at or before requested time",
+      "oldest_date": "plan-dependent",
+      "estimated_cost": "10 credits per region per market per historical request per official guide",
+      "licence": "provider plan required",
+      "technical_complexity": "MEDIUM",
+      "scientific_value": "HISTORICAL_RECONSTRUCTED_POINT_IN_TIME_ONLY",
+      "decision": "PAID_SOURCE_REVIEW_REQUIRED"
+    }
+  ],
+  "purchase_executed": false,
+  "official_documentation": "https://the-odds-api.com/liveapi/guides/v4/"
+}

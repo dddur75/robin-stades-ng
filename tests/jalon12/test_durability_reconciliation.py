@@ -100,7 +100,7 @@ def _args(
         execute=False,
         estimate_file=None,
         competition="Ligue 1",
-        max_attempts=3,
+        max_attempts=2,
         max_objects=250,
     )
 

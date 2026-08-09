@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: prospective-deep-state
+  group: known-at-price-capture
   cancel-in-progress: false
 
 jobs:
@@ -24,6 +24,8 @@ jobs:
     timeout-minutes: 20
     env:
       PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      CHRONOS_PRICE_CONTRACT: "configs/prices/point-in-time-price-contract-v1.json"
+      CHRONOS_CANARY_POLICY: "configs/operations/robin-chronos-canary-v1.json"
       STORAGE_PAUSED: "true"
       P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
@@ -44,7 +46,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0013_historical_evidence_index"
+          alembic current | grep -q "0014_robin_chronos_v1"
       - name: Estimer les crédits des fenêtres de cotes dues
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -52,7 +54,7 @@ jobs:
         run: >-
           python scripts/run_prospective_observatory.py capture-odds
           --estimate
-          --max-attempts 3
+          --max-attempts 2
           --policy "$PROSPECTIVE_POLICY"
           --output artifacts/prospective-observatory
       - name: Capturer dans R2 puis indexer PostgreSQL
@@ -68,7 +70,7 @@ jobs:
         run: >-
           python scripts/run_prospective_observatory.py capture-odds
           --execute
-          --max-attempts 3
+          --max-attempts 2
           --policy "$PROSPECTIVE_POLICY"
           --estimate-file artifacts/prospective-observatory/odds-capture-estimate.json
           --output artifacts/prospective-observatory

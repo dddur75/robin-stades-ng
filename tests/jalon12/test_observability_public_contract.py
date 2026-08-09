@@ -196,7 +196,7 @@ def valid_replay_report() -> dict[str, object]:
                 "reconstruction_status": (
                     "CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_FROM_R2"
                 ),
-                "tables": 12,
+                "tables": 16,
             },
         },
         extra={
@@ -357,7 +357,7 @@ def test_cockpit_accepts_valid_replay_then_rejects_single_guard_mutations(
         accepted_snapshot["postgresql"]["migration"]
         == "0009_jalon12_observatory"
     )
-    assert accepted_snapshot["postgresql"]["tables"] == 12
+    assert accepted_snapshot["postgresql"]["tables"] == 16
     assert accepted_snapshot["postgresql"]["payload_body_rows"] == 0
     assert accepted_snapshot["postgresql"]["lag"] == 0
     assert accepted_snapshot["postgresql"]["duplicates_avoided"] == 1

@@ -1,0 +1,20 @@
+{
+  "schema_version": "chronos-lineage-contract-v1",
+  "status": "READY",
+  "chain": [
+    "raw_object_hash",
+    "normalized_fact_id",
+    "known_at_fact_version",
+    "tag_id+tag_version",
+    "tag_snapshot_hash",
+    "price_snapshot_hash",
+    "hypothesis_version",
+    "strategy_version",
+    "decision_id",
+    "settlement_id"
+  ],
+  "append_only": true,
+  "bidirectional_indexes": true,
+  "missing_node_policy": "FAIL_CLOSED",
+  "cycle_policy": "FORBIDDEN"
+}

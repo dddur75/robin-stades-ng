@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: prospective-deep-state
+  group: known-at-feature-capture
   cancel-in-progress: false
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0013_historical_evidence_index"
+          alembic current | grep -q "0014_robin_chronos_v1"
       - name: Planifier seulement les fenêtres dues
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -61,7 +61,7 @@ jobs:
           python scripts/run_prospective_observatory.py capture-general
           --estimate
           --policy "$PROSPECTIVE_POLICY"
-          --max-attempts 3
+          --max-attempts 2
           --output artifacts/prospective-observatory
       - name: Capturer fixtures, équipes et états dus R2-first
         if: github.event_name == 'schedule' || inputs.execute
@@ -78,7 +78,7 @@ jobs:
           --execute
           --policy "$PROSPECTIVE_POLICY"
           --estimate-file artifacts/prospective-observatory/general-capture-estimate.json
-          --max-attempts 3
+          --max-attempts 2
           --output artifacts/prospective-observatory
       - uses: actions/upload-artifact@v4
         with:

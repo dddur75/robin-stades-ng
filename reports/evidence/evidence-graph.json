@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-09T05:22:39Z",
+  "generated_at":"2026-08-09T07:12:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -259,8 +259,9 @@
       "execution_id":"pr26-main-merge-20260804T151108Z",
       "scientific_lineage_id":"NOT_APPLICABLE_MERGE_RESOLUTION",
       "dataset_lineage_id":"NOT_APPLICABLE_MERGE_RESOLUTION",
-      "status":"VERIFIED",
-      "verified_by":["C0","A2"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0","A2"],
+      "superseded_by":"GOV.CHRONOS.J12.COMPATIBILITY.V1.001"
     },
     {
       "claim_id":"GOV.EVIDENCE.PORTABILITY.001",
@@ -1874,6 +1875,22 @@
       "dataset_lineage_id":"PHASE_C_SOURCE_RUN_30853757779_ATTEMPT_1_INVENTORY_87326EBA",
       "status":"BLOCKED",
       "verified_by":["DP2","DP5","DP6"]
+    },
+    {
+      "claim_id":"GOV.CHRONOS.J12.COMPATIBILITY.V1.001",
+      "claim":"The Jalon 12 compatibility tests preserve the historical merge behavior while extending reconstruction expectations to the append-only Chronos schema.",
+      "scope":"ROBIN_CHRONOS_JALON12_COMPATIBILITY",
+      "source":"bounded local domain tests before the initial Chronos design commit",
+      "grain":"one_jalon12_cli_compatibility_test_module",
+      "temporal_class":"CODE_AS_OF",
+      "artifact":"tests/jalon12/test_cli_prospective.py",
+      "hash":"6bb5ae003e24531a7281868d6426cb09f822403d2eda78e49263028acb2d1245",
+      "code_revision":"UNCOMMITTED_CHRONOS_DESIGN",
+      "execution_id":"local-robin-chronos-design-20260809",
+      "scientific_lineage_id":"NOT_APPLICABLE_COMPATIBILITY_TEST",
+      "dataset_lineage_id":"NOT_APPLICABLE_SYNTHETIC_TEST",
+      "status":"PARTIAL",
+      "verified_by":["C0"]
     }
   ],
   "decision_nodes":[
@@ -1968,7 +1985,8 @@
     {"decision_id":"RCV3-20260808-089","ledger_record_hash":"5f0c79755d89035cfd3e8bc69c5ad09717f47c815af6b8dae77f6155a6bec1e9"},
     {"decision_id":"RCV3-20260808-090","ledger_record_hash":"24927b7208e52f1a0deb248b5111592d3d634f1cc290d4ff4a377128893a555e"},
     {"decision_id":"RCV3-20260808-091","ledger_record_hash":"28d2aa6d06bf67762b5bad33a9a694a0d46d6b179e1d0f65031383eb2f885dcd"},
-    {"decision_id":"RCV3-20260809-092","ledger_record_hash":"cc339208bb353e5f13985db48d1894cec9fa7304b68fb2216c702c8f17a52fcc"}
+    {"decision_id":"RCV3-20260809-092","ledger_record_hash":"cc339208bb353e5f13985db48d1894cec9fa7304b68fb2216c702c8f17a52fcc"},
+    {"decision_id":"RCV3-20260809-093","ledger_record_hash":"caa3fb3c0e0ed9713d4e1ac10cca9dcf045733becd69265502fd7670b56ae651"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},

@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: prospective-deep-state
+  group: known-at-fixture-registry
   cancel-in-progress: false
 
 jobs:
@@ -58,7 +58,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0013_historical_evidence_index"
+          alembic current | grep -q "0014_robin_chronos_v1"
       - name: Enregistrer les cinq ligues dans R2 et PostgreSQL
         if: github.event_name == 'schedule' || inputs.execute
         env:

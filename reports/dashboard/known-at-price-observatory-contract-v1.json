@@ -1,0 +1,31 @@
+{
+  "schema_version": "known-at-price-observatory-dashboard-contract-v1",
+  "delivery": "DATA_ONLY_NO_FRONTEND_CHANGE_NO_DEPLOYMENT",
+  "dimensions": ["competition", "fixture_id", "family", "cutoff_id", "bookmaker", "market", "quality_status"],
+  "metrics": [
+    "fixtures_tracked",
+    "windows_due",
+    "windows_captured",
+    "strict_facts",
+    "late_facts",
+    "post_kickoff_facts",
+    "known_at_unknown",
+    "prices_captured",
+    "prices_missing",
+    "bookmakers_present",
+    "price_freshness_seconds",
+    "tag_snapshots",
+    "tag_true",
+    "tag_false",
+    "tag_unknown",
+    "data_quality_events",
+    "provider_calls",
+    "provider_credits",
+    "r2_objects",
+    "postgresql_rows",
+    "next_due_capture"
+  ],
+  "lineage_navigation": "BIDIRECTIONAL_RAW_TO_SETTLEMENT",
+  "raw_payload_exposure": false,
+  "real_bet_metrics": false
+}

@@ -146,14 +146,14 @@ def _cache(path: Path, *, now: datetime = NOW) -> Path:
                         ).isoformat(),
                         "bookmakers": [
                             {
-                                "key": "book",
+                                "key": "betclic_fr",
                                 "markets": [
                                     {
                                         "key": "h2h",
                                         "outcomes": [
-                                            {"name": "Home", "price": 2.0},
+                                            {"name": "Home 9001", "price": 2.0},
                                             {"name": "Draw", "price": 3.5},
-                                            {"name": "Away", "price": 4.0},
+                                            {"name": "Away 9001", "price": 4.0},
                                         ],
                                     }
                                 ],
@@ -188,7 +188,7 @@ def _args(
         execute=False,
         estimate_file=None,
         competition="Ligue 1",
-        max_attempts=3,
+        max_attempts=2,
         max_objects=250,
     )
 
@@ -1173,7 +1173,7 @@ def test_sqlite_restart_and_r2_reconstruction_are_idempotent(
     assert second_replay["observatory"]["postgresql"]["inserts"] == 0
     assert second_replay["observatory"]["postgresql"]["duplicates_avoided"] > 0
     assert second_replay["observatory"]["postgresql"]["payload_body_rows"] == 0
-    assert second_replay["observatory"]["postgresql"]["tables"] == 12
+    assert second_replay["observatory"]["postgresql"]["tables"] == 16
     with rebuilt_engine.connect() as connection:  # type: ignore[attr-defined]
         for table_name in (
             "prospective_fixtures",
@@ -1274,7 +1274,7 @@ def test_provider_error_then_success_uses_durable_attempt_number(
     assert cockpit["ledger"]["events"] > 0
 
 
-def test_exhausted_windows_make_no_fourth_provider_call(
+def test_exhausted_windows_make_no_third_provider_call(
     tmp_path: Path,
     monkeypatch: object,
 ) -> None:
@@ -1297,7 +1297,7 @@ def test_exhausted_windows_make_no_fourth_provider_call(
     )
     run_scheduler(_args("scheduler", output=output), state=state)
 
-    for expected_attempt in (1, 2, 3):
+    for expected_attempt in (1, 2):
         provider = _FakeApiFootball(fail=True)
         report = _execute_capture(
             "capture-general",
@@ -1313,14 +1313,14 @@ def test_exhausted_windows_make_no_fourth_provider_call(
         assert report["provider_errors"] > 0
 
     unused_provider = _FakeApiFootball(fail=True)
-    fourth = _execute_capture(
+    third = _execute_capture(
         "capture-general",
         output=output,
         state=state,
         repository=repository,
         provider=unused_provider,
     )
-    assert fourth["status"] == "NO_DUE_WINDOW_SUCCESS"
+    assert third["status"] == "NO_DUE_WINDOW_SUCCESS"
     assert unused_provider.status_calls == 0
     assert unused_provider.fixture_calls == 0
 

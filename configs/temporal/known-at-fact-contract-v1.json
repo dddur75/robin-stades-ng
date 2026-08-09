@@ -1,0 +1,38 @@
+{
+  "schema_version": "known-at-fact-contract-v1",
+  "status": "READY",
+  "known_at_rule": "response_received_at_unless_later_restrictive_proof",
+  "invariants": [
+    "requested_at <= response_received_at",
+    "known_at >= response_received_at",
+    "known_at <= cutoff_at is ON_TIME",
+    "cutoff_at < kickoff_at",
+    "provider_updated_at never backdates known_at"
+  ],
+  "temporal_classes": [
+    "ON_TIME",
+    "LATE_FOR_CUTOFF",
+    "POST_KICKOFF_ONLY",
+    "KNOWN_AT_UNKNOWN"
+  ],
+  "scientific_roles": [
+    "STRICT_KNOWN_AT",
+    "KNOWN_AT_WITH_LIMITATION",
+    "RECONSTRUCTED_POST_MATCH",
+    "TARGET_ONLY",
+    "IDENTITY_ONLY",
+    "QUALITY_ONLY",
+    "UNKNOWN"
+  ],
+  "cutoffs": {
+    "H24": {"legacy_alias": "J-1", "minutes_before_kickoff": 1440},
+    "H6": {"legacy_alias": "H-6", "minutes_before_kickoff": 360},
+    "H2": {"legacy_alias": "H-2", "minutes_before_kickoff": 120},
+    "NEAR_KICKOFF": {"legacy_alias": "NEAR_KICKOFF", "minutes_before_kickoff": 1}
+  },
+  "storage": {
+    "raw": "R2_CONTENT_ADDRESSED_APPEND_ONLY",
+    "metadata": "POSTGRESQL_APPEND_ONLY",
+    "git_raw_payloads_allowed": 0
+  }
+}

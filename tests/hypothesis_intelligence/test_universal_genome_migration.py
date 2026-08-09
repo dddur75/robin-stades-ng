@@ -13,7 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from robin.storage.database import build_engine
 from robin.storage.universal_genome_models import UNIVERSAL_GENOME_TABLES
 
-HEAD = "0013_historical_evidence_index"
+HEAD = "0014_robin_chronos_v1"
 
 
 def _config(url: str) -> Config:

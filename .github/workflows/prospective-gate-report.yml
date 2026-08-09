@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: prospective-deep-state
+  group: known-at-replay
   cancel-in-progress: false
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0013_historical_evidence_index"
+          alembic current | grep -q "0014_robin_chronos_v1"
       - name: Rejouer R2 sans fournisseur sur le même état verrouillé
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

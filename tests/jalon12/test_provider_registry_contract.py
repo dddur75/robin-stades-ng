@@ -113,3 +113,32 @@ def test_transport_error_never_leaks_query_parameter_secret() -> None:
 
     assert str(captured.value) == "the-odds-api: transport_error"
     assert secret not in repr(captured.value)
+
+
+def test_chronos_odds_request_freezes_french_region_and_books() -> None:
+    transport = _Transport()
+    provider = TheOddsApiProvider(
+        api_key="test-only-secret",
+        transport=transport,
+    )
+
+    provider.get_odds()
+
+    params = transport.calls[0]["params"]
+    assert isinstance(params, dict)
+    assert params == {
+        "regions": "fr",
+        "bookmakers": "betclic_fr,netbet_fr,pmu_fr,unibet_fr,winamax_fr",
+        "markets": "h2h,totals",
+        "oddsFormat": "decimal",
+        "dateFormat": "iso",
+        "apiKey": "test-only-secret",
+    }
+
+
+def test_chronos_odds_request_rejects_bookmaker_substitution() -> None:
+    with pytest.raises(ValueError, match="ODDS_API_BOOKMAKER_KEYS_INVALID"):
+        TheOddsApiProvider(
+            api_key="test-only-secret",
+            bookmaker_keys=("pinnacle",),
+        )

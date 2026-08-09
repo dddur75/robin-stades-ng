@@ -1,0 +1,44 @@
+{
+  "schema_version": "known-at-and-price-source-capability-matrix-v1",
+  "generated_at": "2026-08-09T06:30:00Z",
+  "sources": [
+    {
+      "source": "api-football-v3",
+      "entitlement": "AVAILABLE_EXISTING_ENTITLEMENT",
+      "families": ["FIXTURE", "TEAM", "SQUAD", "PLAYER_STATUS", "INJURY", "LINEUP", "FORMATION", "STANDINGS"],
+      "prospective_known_at": "PROSPECTIVE_KNOWN_AT_CAPABLE",
+      "provider_timestamps": "PARTIAL",
+      "limits": "existing repository policy and provider response headers",
+      "official_documentation": "https://www.api-football.com/documentation?source=post_page",
+      "purchase_required": false
+    },
+    {
+      "source": "the-odds-api-v4",
+      "entitlement": "AVAILABLE_EXISTING_ENTITLEMENT",
+      "families": ["PRICE"],
+      "prospective_known_at": "PRICE_POINT_IN_TIME_CAPABLE",
+      "current_observatory_proof": "NO_CURRENT_CHRONOS_PRICE_CAPTURE_PROVED",
+      "historical_endpoint": "PURCHASE_REQUIRED",
+      "official_documentation": "https://the-odds-api.com/liveapi/guides/v4/",
+      "purchase_required": false
+    },
+    {
+      "source": "football-data-historical-csv",
+      "entitlement": "AVAILABLE_EXISTING_ENTITLEMENT",
+      "families": ["FIXTURE", "TARGET", "SOURCE_PRICE_CLASS"],
+      "prospective_known_at": "HISTORICAL_WITHOUT_KNOWN_AT",
+      "point_in_time_prices": false,
+      "purchase_required": false
+    }
+  ],
+  "secrets_detected_by_name_only": [
+    "API_FOOTBALL_KEY",
+    "ODDS_API_KEY",
+    "DATABASE_URL",
+    "R2_ACCOUNT_ID",
+    "R2_ACCESS_KEY_ID",
+    "R2_SECRET_ACCESS_KEY",
+    "R2_BUCKET_NAME"
+  ],
+  "secret_values_read": 0
+}

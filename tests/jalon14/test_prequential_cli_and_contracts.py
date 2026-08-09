@@ -243,7 +243,7 @@ def test_workflows_are_isolated_serial_and_never_cancel_in_progress() -> None:
     }
     for value in workflows.values():
         assert value["concurrency"] == {
-            "group": "prospective-deep-state",
+            "group": "prequential-learning-state",
             "cancel-in-progress": False,
         }
         job = next(iter(value["jobs"].values()))

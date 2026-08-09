@@ -19,12 +19,13 @@ from collections import Counter
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, Protocol, cast
 
 from botocore.exceptions import ClientError  # type: ignore[import-untyped]
 from sqlalchemy import MetaData, Table, inspect, select
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import Connection, Engine
 
 from robin.domain.enums import DataAvailability, DataOrigin
 from robin.prospective_observatory.budgets import (
@@ -34,6 +35,16 @@ from robin.prospective_observatory.budgets import (
     BudgetExceeded,
     BudgetLedger,
     ProviderKind,
+)
+from robin.prospective_observatory.chronos import (
+    BOOKMAKER_ALLOWLIST,
+    ChronosMarket,
+    ChronosSelection,
+    PriceObservation,
+    ScientificRole,
+    build_known_at_fact,
+    build_price_observation,
+    derive_complete_book_markets,
 )
 from robin.prospective_observatory.contracts import (
     AvailabilityStatus,
@@ -101,7 +112,7 @@ from robin.storage.database import build_engine
 DEFAULT_POLICY = Path("configs/prospective_observatory_v1.json")
 SCHEMA_VERSION = "prospective-observatory-operation-v1"
 SNAPSHOT_SCHEMA_VERSION = "prospective-observatory-snapshot-v1"
-EXPECTED_ALEMBIC_REVISION = "0013_historical_evidence_index"
+EXPECTED_ALEMBIC_REVISION = "0014_robin_chronos_v1"
 OBSERVATORY_SCHEMA_REVISION = "0009_jalon12_observatory"
 SAFE_CODE_REVISION = "local-uncommitted"
 PLAYER_FAMILIES = (
@@ -1010,31 +1021,37 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         "capture_windows",
         "capture_attempts",
         "capture_receipts",
+        "capture_intents",
+        "known_at_fact_metadata",
         "prospective_payload_index",
         "prospective_player_status",
         "prospective_injuries",
         "prospective_lineups",
         "prospective_formations",
         "prospective_odds_snapshots",
+        "price_snapshot_metadata",
+        "price_derivation_metadata",
         "temporal_data_gates",
         "provider_budget_ledger",
     }
 
     def __init__(self, engine: Engine) -> None:
         super().__init__()
+        self.payload_index_rows: dict[str, dict[str, object]] = {}
+        self.intent_rows: dict[str, dict[str, object]] = {}
         self.engine = engine
+        with engine.connect() as connection:
+            revision = connection.exec_driver_sql(
+                "SELECT version_num FROM alembic_version"
+            ).scalar_one()
+        if str(revision) != EXPECTED_ALEMBIC_REVISION:
+            raise RuntimeError("PROSPECTIVE_DATABASE_REVISION_0014_REQUIRED")
         names = set(inspect(engine).get_table_names())
         missing = self.REQUIRED_TABLES - names
         if missing:
             raise RuntimeError(
                 f"PROSPECTIVE_DATABASE_TABLES_MISSING:{','.join(sorted(missing))}"
             )
-        with engine.connect() as connection:
-            revision = connection.exec_driver_sql(
-                "SELECT version_num FROM alembic_version"
-            ).scalar_one()
-        if str(revision) != EXPECTED_ALEMBIC_REVISION:
-            raise RuntimeError("PROSPECTIVE_DATABASE_REVISION_0013_REQUIRED")
         metadata = MetaData()
         metadata.reflect(bind=engine, only=sorted(self.REQUIRED_TABLES))
         self.tables = {name: metadata.tables[name] for name in self.REQUIRED_TABLES}
@@ -1044,8 +1061,90 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
     def _row_for(table: Table, values: Mapping[str, object]) -> dict[str, object]:
         return {key: value for key, value in values.items() if key in table.c}
 
-    def _insert_exact(
+    @staticmethod
+    def _payload_index_values(receipt: CaptureReceipt) -> dict[str, object]:
+        receipt_id = _stable_id("receipt", receipt.receipt_hash)
+        return {
+            "id": _stable_id("payload-index", receipt.receipt_hash),
+            "receipt_id": receipt_id,
+            "fixture_id": receipt.fixture_id,
+            "family": receipt.family.value,
+            "payload_sha256": receipt.payload_sha256,
+            "payload_bytes": receipt.payload_bytes,
+            "stored_bytes": receipt.stored_bytes,
+            "r2_key": receipt.r2_key,
+            "receipt_r2_key": receipt.receipt_r2_key,
+            "observed_at": receipt.observed_at,
+            "indexed_at": receipt.materialized_at,
+            "code_revision": receipt.code_revision,
+            "append_only": True,
+        }
+
+    @staticmethod
+    def _capture_intent_values(window: CaptureWindow) -> dict[str, object]:
+        source = (
+            "the-odds-api"
+            if window.family is CaptureFamily.ODDS
+            else "api-football"
+        )
+        provider_kind = (
+            ProviderKind.ODDS_API.value
+            if window.family is CaptureFamily.ODDS
+            else ProviderKind.API_FOOTBALL.value
+        )
+        cutoff_id = {
+            "J-1": "H24",
+            "H-6": "H6",
+            "H-2": "H2",
+            "NEAR_KICKOFF": "NEAR_KICKOFF",
+        }.get(window.label, window.label)
+        request_contract_hash = canonical_sha256(
+            {
+                "schema_version": "chronos-request-contract-v1",
+                "source": source,
+                "family": window.family.value,
+                "cutoff_id": cutoff_id,
+                "policy_version": window.policy_version,
+            }
+        )
+        identity = {
+            "fixture_id": window.fixture_id,
+            "cutoff_id": cutoff_id,
+            "source": source,
+            "family": window.family.value,
+            "request_contract_hash": request_contract_hash,
+        }
+        # A fixture may be corrected or reactivated while keeping its business
+        # identifier and kickoff.  The versioned window is therefore part of
+        # the immutable intent identity even though it is represented in SQL
+        # by ``window_record_id`` rather than a duplicate text column.
+        intent_hash = canonical_sha256({**identity, "window_id": window.window_id})
+        return {
+            "id": _stable_id("chronos-intent", intent_hash),
+            "intent_hash": intent_hash,
+            "canary_run_id": None,
+            "window_record_id": _stable_id("window", window.window_id),
+            **identity,
+            "provider_kind": provider_kind,
+            "opens_at": window.opens_at,
+            "due_at": window.due_at,
+            "cutoff_at": window.cutoff_at,
+            "kickoff_at": window.kickoff_at,
+            "created_at": window.scheduled_at,
+            "max_technical_attempts": 2,
+            "reserved_provider_units": (
+                2 if window.family is CaptureFamily.ODDS else 1
+            ),
+            "reserved_r2_objects": 3,
+            "reserved_postgresql_rows": 1000,
+            "policy_version": window.policy_version,
+            "code_revision": window.code_revision,
+            "append_only": True,
+        }
+
+    def _insert_exact_with_connection(
         self,
+        connection: Connection,
         table_name: str,
         *,
         key_values: Mapping[str, object],
@@ -1055,26 +1154,46 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         row = self._row_for(table, values)
         keys = self._row_for(table, key_values)
         if not keys:
-            raise RuntimeError(f"PROSPECTIVE_DATABASE_KEY_COLUMNS_MISSING:{table_name}")
+            raise RuntimeError(
+                f"PROSPECTIVE_DATABASE_KEY_COLUMNS_MISSING:{table_name}"
+            )
         predicate = [table.c[name] == value for name, value in keys.items()]
-        with self.engine.begin() as connection:
-            existing = connection.execute(select(table).where(*predicate)).mappings().first()
-            if existing is not None:
-                comparable = {key: existing[key] for key in row if key in existing}
-                if any(
-                    _json_compatible(comparable[key]) != _json_compatible(value)
-                    for key, value in row.items()
-                ):
-                    raise ValueError(f"PROSPECTIVE_DATABASE_IDEMPOTENCY_CONFLICT:{table_name}")
-                return False
-            connection.execute(table.insert().values(**row))
+        existing = connection.execute(select(table).where(*predicate)).mappings().first()
+        if existing is not None:
+            comparable = {key: existing[key] for key in row if key in existing}
+            if any(
+                _json_compatible(comparable[key]) != _json_compatible(value)
+                for key, value in row.items()
+            ):
+                raise ValueError(
+                    f"PROSPECTIVE_DATABASE_IDEMPOTENCY_CONFLICT:{table_name}"
+                )
+            return False
+        connection.execute(table.insert().values(**row))
         return True
+
+    def _insert_exact(
+        self,
+        table_name: str,
+        *,
+        key_values: Mapping[str, object],
+        values: Mapping[str, object],
+    ) -> bool:
+        with self.engine.begin() as connection:
+            return self._insert_exact_with_connection(
+                connection,
+                table_name,
+                key_values=key_values,
+                values=values,
+            )
 
     def _restore(self) -> None:
         fixture_table = self.tables["prospective_fixtures"]
         window_table = self.tables["capture_windows"]
         attempt_table = self.tables["capture_attempts"]
         receipt_table = self.tables["capture_receipts"]
+        index_table = self.tables["prospective_payload_index"]
+        intent_table = self.tables["capture_intents"]
         budget_table = self.tables["provider_budget_ledger"]
         with self.engine.connect() as connection:
             fixture_rows = connection.execute(select(fixture_table)).mappings()
@@ -1130,6 +1249,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                     }
                 )
                 self.attempt_rows[attempt.idempotency_key] = attempt
+            receipt_hash_by_id: dict[str, str] = {}
             for row in connection.execute(select(receipt_table)).mappings():
                 receipt_data = {
                     key: _db_value(row[key])
@@ -1138,6 +1258,36 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 }
                 receipt = CaptureReceipt.model_validate(receipt_data)
                 self.receipt_rows[receipt.receipt_hash] = receipt
+                receipt_hash_by_id[str(row["id"])] = receipt.receipt_hash
+            for row in connection.execute(select(index_table)).mappings():
+                receipt_hash = receipt_hash_by_id.get(str(row["receipt_id"]))
+                if receipt_hash is None:
+                    raise RuntimeError("PROSPECTIVE_PAYLOAD_INDEX_ORPHAN")
+                receipt = self.receipt_rows[receipt_hash]
+                expected = self._row_for(
+                    index_table,
+                    self._payload_index_values(receipt),
+                )
+                if any(
+                    _json_compatible(row[key]) != _json_compatible(value)
+                    for key, value in expected.items()
+                ):
+                    raise ValueError(
+                        "PROSPECTIVE_DATABASE_IDEMPOTENCY_CONFLICT:"
+                        "prospective_payload_index"
+                    )
+                self.payload_index_rows[receipt_hash] = expected
+            window_id_by_record = {
+                _stable_id("window", window_id): window_id
+                for window_id in self.window_rows
+            }
+            for row in connection.execute(select(intent_table)).mappings():
+                window_id = window_id_by_record.get(str(row["window_record_id"]))
+                if window_id is None:
+                    raise RuntimeError("CHRONOS_CAPTURE_INTENT_WINDOW_MISSING")
+                self.intent_rows[window_id] = {
+                    key: _db_value(row[key]) for key in row
+                }
             for row in connection.execute(select(budget_table)).mappings():
                 key = str(row["idempotency_key"])
                 self.budget_rows[key] = BudgetEntry(
@@ -1255,14 +1405,26 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             self._row_for(table, values)
             for _, values in pending.values()
         ]
+        intent_values = {
+            window_id: self._capture_intent_values(window)
+            for window_id, (window, _) in pending.items()
+        }
         with self.engine.begin() as connection:
             connection.execute(table.insert(), rows)
+            for values in intent_values.values():
+                self._insert_exact_with_connection(
+                    connection,
+                    "capture_intents",
+                    key_values={"intent_hash": values["intent_hash"]},
+                    values=values,
+                )
         self.window_rows.update(
             {
                 window_id: window
                 for window_id, (window, _) in pending.items()
             }
         )
+        self.intent_rows.update(intent_values)
         return len(pending), duplicates
 
     def append_attempt(self, attempt: CaptureAttempt) -> bool:
@@ -1290,7 +1452,6 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         if existing is not None:
             if existing != receipt:
                 raise ValueError("CAPTURE_RECEIPT_IDEMPOTENCY_CONFLICT")
-            return False
         values = receipt.model_dump()
         receipt_id = _stable_id("receipt", receipt.receipt_hash)
         values.update(
@@ -1306,32 +1467,38 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 "append_only": True,
             }
         )
-        inserted = self._insert_exact(
-            "capture_receipts",
-            key_values={"receipt_hash": receipt.receipt_hash},
-            values=values,
+        index_values = self._payload_index_values(receipt)
+        mirrored_index = self.payload_index_rows.get(receipt.receipt_hash)
+        expected_index = self._row_for(
+            self.tables["prospective_payload_index"],
+            index_values,
         )
-        index_values = {
-            "id": _stable_id("payload-index", receipt.receipt_hash),
-            "receipt_id": receipt_id,
-            "fixture_id": receipt.fixture_id,
-            "family": receipt.family.value,
-            "payload_sha256": receipt.payload_sha256,
-            "payload_bytes": receipt.payload_bytes,
-            "stored_bytes": receipt.stored_bytes,
-            "r2_key": receipt.r2_key,
-            "receipt_r2_key": receipt.receipt_r2_key,
-            "observed_at": receipt.observed_at,
-            "indexed_at": receipt.materialized_at,
-            "code_revision": receipt.code_revision,
-            "append_only": True,
-        }
-        self._insert_exact(
-            "prospective_payload_index",
-            key_values={"receipt_id": receipt_id},
-            values=index_values,
-        )
+        if existing is not None and mirrored_index is not None:
+            if any(
+                _json_compatible(mirrored_index[key])
+                != _json_compatible(value)
+                for key, value in expected_index.items()
+            ):
+                raise ValueError(
+                    "PROSPECTIVE_DATABASE_IDEMPOTENCY_CONFLICT:"
+                    "prospective_payload_index"
+                )
+            return False
+        with self.engine.begin() as connection:
+            inserted = self._insert_exact_with_connection(
+                connection,
+                "capture_receipts",
+                key_values={"receipt_hash": receipt.receipt_hash},
+                values=values,
+            )
+            self._insert_exact_with_connection(
+                connection,
+                "prospective_payload_index",
+                key_values={"receipt_id": receipt_id},
+                values=index_values,
+            )
         self.receipt_rows[receipt.receipt_hash] = receipt
+        self.payload_index_rows[receipt.receipt_hash] = expected_index
         return inserted
 
     def append_budget(
@@ -1824,6 +1991,69 @@ class SQLAlchemyProjectionSink:
             )
         return inserted
 
+    def _known_at_fact_rows(
+        self,
+        receipt: CaptureReceipt,
+        projection: Mapping[str, object],
+    ) -> bool:
+        if receipt.window_id is None:
+            return False
+        intent = self.state.intent_rows.get(receipt.window_id)
+        if intent is None:
+            raise RuntimeError("CHRONOS_FACT_INTENT_MISSING")
+        inserted = False
+        receipt_id = _stable_id("receipt", receipt.receipt_hash)
+        for record in self._records(projection):
+            entity_id = (
+                _record_id(record)
+                or _record_id(record.get("player"))
+                or _record_id(record.get("team"))
+                or canonical_sha256(record)
+            )
+            fact = build_known_at_fact(
+                receipt=receipt,
+                entity_id=entity_id,
+                normalized_value=record,
+                cutoff_id=str(intent["cutoff_id"]),
+                request_contract_hash=str(intent["request_contract_hash"]),
+                scientific_role=ScientificRole.STRICT_KNOWN_AT,
+                normalizer_version="prospective-observatory-projection-v1",
+                code_revision=receipt.code_revision,
+            )
+            values = {
+                "id": _stable_id("chronos-fact", fact.fact_id),
+                "fact_id": fact.fact_id,
+                "intent_id": intent["id"],
+                "receipt_id": receipt_id,
+                "fixture_id": fact.fixture_id,
+                "entity_id": fact.entity_id,
+                "source": fact.source,
+                "family": fact.family.value,
+                "source_object_hash": fact.source_object_hash,
+                "normalized_fact_hash": fact.normalized_fact_id.split(":", 1)[1],
+                "requested_at": fact.requested_at,
+                "response_received_at": fact.response_received_at,
+                "provider_updated_at": fact.provider_updated_at,
+                "effective_at": fact.effective_at,
+                "known_at": fact.known_at,
+                "known_at_basis": fact.known_at_basis,
+                "cutoff_id": fact.cutoff_id,
+                "cutoff_at": fact.cutoff_at,
+                "kickoff_at": fact.kickoff_at,
+                "temporal_class": fact.temporal_class.value,
+                "scientific_role": fact.scientific_role.value,
+                "quality_status": fact.quality_status.value,
+                "schema_version": fact.schema_version,
+                "code_revision": fact.code_revision,
+                "append_only": True,
+            }
+            inserted |= self.state._insert_exact(
+                "known_at_fact_metadata",
+                key_values={"fact_id": fact.fact_id},
+                values=values,
+            )
+        return inserted
+
     def _lineup_rows(
         self,
         receipt: CaptureReceipt,
@@ -1903,6 +2133,7 @@ class SQLAlchemyProjectionSink:
         projection: Mapping[str, object],
     ) -> bool:
         inserted = False
+        chronos_observations: list[PriceObservation] = []
         receipt_id = _stable_id("receipt", receipt.receipt_hash)
         for event in self._records(projection):
             bookmakers = event.get("bookmakers")
@@ -1913,7 +2144,10 @@ class SQLAlchemyProjectionSink:
                     continue
                 bookmaker = str(bookmaker_value.get("key", "")).strip()
                 markets = bookmaker_value.get("markets")
-                if not bookmaker or not isinstance(markets, list):
+                if (
+                    bookmaker not in BOOKMAKER_ALLOWLIST
+                    or not isinstance(markets, list)
+                ):
                     continue
                 for market_value in markets:
                     if not isinstance(market_value, Mapping):
@@ -1926,29 +2160,43 @@ class SQLAlchemyProjectionSink:
                     outcomes = market_value.get("outcomes")
                     if market is None or not isinstance(outcomes, list):
                         continue
-                    prices = [
-                        float(outcome["price"])
+                    home_team = str(event.get("home_team", "")).strip()
+                    away_team = str(event.get("away_team", "")).strip()
+                    expected = (
+                        {home_team.casefold(), "draw", away_team.casefold()}
+                        if provider_market == "h2h"
+                        else {"over", "under"}
+                    )
+                    valid_outcomes = [
+                        outcome
                         for outcome in outcomes
                         if isinstance(outcome, Mapping)
+                        and str(outcome.get("name", "")).strip().casefold()
+                        in expected
                         and isinstance(outcome.get("price"), (int, float))
                         and float(outcome["price"]) > 1.0
                         and (
                             provider_market != "totals"
-                            or float(outcome.get("point", 0.0)) == 2.5
+                            or (
+                                isinstance(outcome.get("point"), (int, float))
+                                and float(cast(float | int, outcome["point"]))
+                                == 2.5
+                            )
                         )
                     ]
-                    margin = max(sum(1.0 / price for price in prices) - 1.0, 0.0)
-                    for outcome in outcomes:
-                        if (
-                            not isinstance(outcome, Mapping)
-                            or not isinstance(outcome.get("price"), (int, float))
-                            or float(outcome["price"]) <= 1.0
-                            or (
-                                provider_market == "totals"
-                                and float(outcome.get("point", 0.0)) != 2.5
-                            )
-                        ):
-                            continue
+                    if {
+                        str(outcome.get("name", "")).strip().casefold()
+                        for outcome in valid_outcomes
+                    } != expected:
+                        continue
+                    prices = [
+                        float(outcome["price"]) for outcome in valid_outcomes
+                    ]
+                    margin = max(
+                        sum(1.0 / price for price in prices) - 1.0,
+                        0.0,
+                    )
+                    for outcome in valid_outcomes:
                         selection = str(outcome.get("name", "")).strip()
                         if not selection:
                             continue
@@ -1992,6 +2240,194 @@ class SQLAlchemyProjectionSink:
                             },
                             values=values,
                         )
+                        if receipt.window_id is None:
+                            continue
+                        intent = self.state.intent_rows.get(receipt.window_id)
+                        if intent is None:
+                            raise RuntimeError("CHRONOS_PRICE_INTENT_MISSING")
+                        provider_updated_at: datetime | None = None
+                        last_update = bookmaker_value.get("last_update")
+                        if isinstance(last_update, str) and last_update:
+                            provider_updated_at = datetime.fromisoformat(
+                                last_update.replace("Z", "+00:00")
+                            ).astimezone(UTC)
+                        receipt_with_update = receipt.model_copy(
+                            update={"provider_updated_at": provider_updated_at}
+                        )
+                        normalized_selection = (
+                            ChronosSelection.HOME
+                            if provider_market == "h2h"
+                            and selection.casefold() == home_team.casefold()
+                            else ChronosSelection.AWAY
+                            if provider_market == "h2h"
+                            and selection.casefold() == away_team.casefold()
+                            else ChronosSelection.DRAW
+                            if provider_market == "h2h"
+                            else ChronosSelection.OVER_2_5
+                            if selection.casefold() == "over"
+                            else ChronosSelection.UNDER_2_5
+                        )
+                        chronos_market = (
+                            ChronosMarket.MATCH_RESULT_90M
+                            if provider_market == "h2h"
+                            else ChronosMarket.TOTAL_GOALS_2_5_90M
+                        )
+                        line = (
+                            None
+                            if provider_market == "h2h"
+                            else Decimal("2.5")
+                        )
+                        observation = build_price_observation(
+                            receipt=receipt_with_update,
+                            bookmaker=bookmaker,
+                            market=chronos_market,
+                            selection=normalized_selection,
+                            line=line,
+                            odds_decimal=Decimal(str(outcome["price"])),
+                            cutoff_id=str(intent["cutoff_id"]),
+                            request_contract_hash=str(
+                                intent["request_contract_hash"]
+                            ),
+                            code_revision=receipt.code_revision,
+                        )
+                        chronos_observations.append(observation)
+                        observation_values = {
+                            "id": _stable_id(
+                                "chronos-price",
+                                observation.price_snapshot_id,
+                            ),
+                            "price_snapshot_id": observation.price_snapshot_id,
+                            "intent_id": intent["id"],
+                            "receipt_id": receipt_id,
+                            **observation.model_dump(
+                                exclude={
+                                    "schema_version",
+                                    "price_snapshot_id",
+                                }
+                            ),
+                            "bookmaker_policy_hash": canonical_sha256(
+                                {
+                                    "bookmakers": BOOKMAKER_ALLOWLIST,
+                                    "regions": ("fr",),
+                                    "fallback": "NONE",
+                                }
+                            ),
+                            "append_only": True,
+                        }
+                        inserted |= self.state._insert_exact(
+                            "price_snapshot_metadata",
+                            key_values={
+                                "price_snapshot_id": (
+                                    observation.price_snapshot_id
+                                )
+                            },
+                            values=observation_values,
+                        )
+        if chronos_observations:
+            observations_by_key = {
+                (
+                    observation.bookmaker,
+                    observation.market,
+                    observation.selection,
+                    observation.line,
+                ): observation
+                for observation in chronos_observations
+            }
+            raw_prices: dict[
+                tuple[ChronosMarket, ChronosSelection, Decimal | None],
+                list[Decimal],
+            ] = {}
+            for observation in chronos_observations:
+                raw_prices.setdefault(
+                    (
+                        observation.market,
+                        observation.selection,
+                        observation.line,
+                    ),
+                    [],
+                ).append(observation.odds_decimal)
+            for derivation in derive_complete_book_markets(
+                chronos_observations
+            ):
+                observation = observations_by_key[
+                    (
+                        derivation.bookmaker,
+                        derivation.market,
+                        derivation.selection,
+                        derivation.line,
+                    )
+                ]
+                ordered_prices: list[Decimal] = [
+                    pair[1]
+                    for pair in sorted(
+                        (
+                            (float(price), price)
+                            for price in raw_prices[
+                                (
+                                    derivation.market,
+                                    derivation.selection,
+                                    derivation.line,
+                                )
+                            ]
+                        ),
+                        key=lambda pair: pair[0],
+                    )
+                ]
+                median_price = ordered_prices[len(ordered_prices) // 2]
+                # Canonical scientific metadata is frozen at 12 decimal places.
+                # This is precise beyond the source odds while remaining exactly
+                # reproducible through SQLite's numeric affinity and PostgreSQL.
+                probability_scale = Decimal("0.000000000001")
+                price_scale = Decimal("0.000000000001")
+                derivation_values = {
+                    "id": _stable_id(
+                        "chronos-derivation",
+                        derivation.derivation_id,
+                    ),
+                    "derivation_id": derivation.derivation_id,
+                    "price_snapshot_id": _stable_id(
+                        "chronos-price",
+                        observation.price_snapshot_id,
+                    ),
+                    "fixture_id": derivation.fixture_id,
+                    "cutoff_id": derivation.cutoff_id,
+                    "market": derivation.market.value,
+                    "selection": derivation.selection.value,
+                    "source_price_set_hash": (
+                        derivation.source_price_set_hash
+                    ),
+                    "method_id": derivation.method_id,
+                    "method_version": derivation.method_version,
+                    "definition_hash": derivation.definition_hash,
+                    "inputs_hash": derivation.source_price_set_hash,
+                    "implied_probability": (
+                        derivation.implied_probability.quantize(
+                            probability_scale
+                        )
+                    ),
+                    "market_overround": derivation.market_overround.quantize(
+                        probability_scale
+                    ),
+                    "devigged_probability": (
+                        derivation.devigged_probability.quantize(
+                            probability_scale
+                        )
+                    ),
+                    "best_available_price": ordered_prices[-1].quantize(
+                        price_scale
+                    ),
+                    "median_market_price": median_price.quantize(price_scale),
+                    "price_age_seconds": derivation.price_age_seconds,
+                    "code_revision": receipt.code_revision,
+                    "append_only": True,
+                }
+                inserted |= self.state._insert_exact(
+                    "price_derivation_metadata",
+                    key_values={
+                        "derivation_id": derivation.derivation_id
+                    },
+                    values=derivation_values,
+                )
         return inserted
 
     def insert_capture(
@@ -2015,6 +2451,7 @@ class SQLAlchemyProjectionSink:
             return False
         if receipt.quality_status is not AvailabilityStatus.CAPTURED:
             return inserted
+        inserted |= self._known_at_fact_rows(receipt, projection)
         if receipt.family in {
             CaptureFamily.SQUAD,
             CaptureFamily.INJURY,
@@ -2041,6 +2478,8 @@ def _json_compatible(value: object) -> object:
         return normalized.isoformat()
     if hasattr(value, "value"):
         return getattr(value, "value")
+    if isinstance(value, Decimal):
+        return format(value.normalize(), "f")
     return value
 
 
@@ -4248,8 +4687,12 @@ def _reconcile_provider_budget_journal(
 class _ProjectionParityCollector:
     """Duck-typed sink state used to derive exact rows from R2 payloads."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        intent_rows: Mapping[str, dict[str, object]],
+    ) -> None:
         self.rows: dict[str, list[dict[str, object]]] = {}
+        self.intent_rows = dict(intent_rows)
 
     def persist_capture(self, capture: StoredCapture) -> bool:
         del capture
@@ -4268,9 +4711,17 @@ class _ProjectionParityCollector:
 
 
 def _projection_row_fingerprint(row: Mapping[str, object]) -> str:
+    parity_scale = Decimal("0.000000000001")
+
+    def parity_value(value: object) -> object:
+        normalized = _db_value(value)
+        if isinstance(normalized, Decimal):
+            return format(normalized.quantize(parity_scale).normalize(), "f")
+        return _json_compatible(normalized)
+
     return canonical_sha256(
         {
-            key: _json_compatible(_db_value(value))
+            key: parity_value(value)
             for key, value in sorted(row.items())
         }
     )
@@ -4281,7 +4732,7 @@ def _assert_r2_postgresql_projection_parity(
     state: SQLAlchemyOperationalState,
     captures: tuple[StoredCapture, ...],
 ) -> None:
-    collector = _ProjectionParityCollector()
+    collector = _ProjectionParityCollector(state.intent_rows)
     sink = SQLAlchemyProjectionSink(
         cast(SQLAlchemyOperationalState, cast(object, collector))
     )
@@ -4303,25 +4754,29 @@ def _assert_r2_postgresql_projection_parity(
         )
 
     projection_tables = (
+        "known_at_fact_metadata",
         "prospective_player_status",
         "prospective_injuries",
         "prospective_lineups",
         "prospective_formations",
         "prospective_odds_snapshots",
+        "price_snapshot_metadata",
+        "price_derivation_metadata",
     )
     with state.engine.connect() as connection:
         for table_name in projection_tables:
-            expected = sorted(
-                _projection_row_fingerprint(row)
-                for row in collector.rows.get(table_name, [])
-            )
-            actual = sorted(
-                _projection_row_fingerprint(
-                    cast(Mapping[str, object], row)
-                )
-                for row in connection.execute(
+            expected_rows = collector.rows.get(table_name, [])
+            actual_rows = list(
+                connection.execute(
                     select(state.tables[table_name])
                 ).mappings()
+            )
+            expected = sorted(
+                _projection_row_fingerprint(row) for row in expected_rows
+            )
+            actual = sorted(
+                _projection_row_fingerprint(cast(Mapping[str, object], row))
+                for row in actual_rows
             )
             if actual != expected:
                 raise RuntimeError(
@@ -4692,10 +5147,13 @@ def _odds_payload_has_supported_price(
         bookmakers = event.get("bookmakers")
         if not isinstance(bookmakers, list):
             continue
+        home_team = str(event.get("home_team", "")).strip().casefold()
+        away_team = str(event.get("away_team", "")).strip().casefold()
         for bookmaker in bookmakers:
             if (
                 not isinstance(bookmaker, Mapping)
-                or not str(bookmaker.get("key", "")).strip()
+                or str(bookmaker.get("key", "")).strip()
+                not in BOOKMAKER_ALLOWLIST
                 or not isinstance(bookmaker.get("markets"), list)
             ):
                 continue
@@ -4708,23 +5166,27 @@ def _odds_payload_has_supported_price(
                     outcomes, list
                 ):
                     continue
-                for outcome in outcomes:
-                    if not isinstance(outcome, Mapping):
-                        continue
-                    price = outcome.get("price")
-                    if (
-                        str(outcome.get("name", "")).strip()
-                        and isinstance(price, (int, float))
-                        and float(price) > 1.0
-                        and (
-                            market_key != "totals"
-                            or (
-                                isinstance(outcome.get("point"), (int, float))
-                                and float(cast(float | int, outcome["point"])) == 2.5
-                            )
+                selections = {
+                    str(outcome.get("name", "")).strip().casefold()
+                    for outcome in outcomes
+                    if isinstance(outcome, Mapping)
+                    and isinstance(outcome.get("price"), (int, float))
+                    and float(outcome["price"]) > 1.0
+                    and (
+                        market_key != "totals"
+                        or (
+                            isinstance(outcome.get("point"), (int, float))
+                            and float(cast(float | int, outcome["point"])) == 2.5
                         )
-                    ):
-                        return True
+                    )
+                }
+                expected = (
+                    {home_team, "draw", away_team}
+                    if market_key == "h2h"
+                    else {"over", "under"}
+                )
+                if selections == expected:
+                    return True
     return False
 
 
@@ -6795,7 +7257,7 @@ def run_pilot_mock(args: argparse.Namespace) -> dict[str, object]:
         capture_args.estimate = False
         capture_args.execute = False
         capture_args.estimate_file = None
-        capture_args.max_attempts = 3
+        capture_args.max_attempts = 2
         captures.append(
             run_capture(
                 capture_args,
@@ -6863,7 +7325,7 @@ def build_parser() -> argparse.ArgumentParser:
     _common(registry)
     _estimate_execute(registry)
     registry.add_argument("--competition", default="Ligue 1")
-    registry.add_argument("--max-attempts", type=int, default=1, choices=(1, 2, 3))
+    registry.add_argument("--max-attempts", type=int, default=1, choices=(1, 2))
 
     scheduler = commands.add_parser("scheduler")
     _common(scheduler)
@@ -6872,7 +7334,7 @@ def build_parser() -> argparse.ArgumentParser:
         capture = commands.add_parser(name)
         _common(capture)
         _estimate_execute(capture)
-        capture.add_argument("--max-attempts", type=int, default=3, choices=(1, 2, 3))
+        capture.add_argument("--max-attempts", type=int, default=2, choices=(1, 2))
 
     replay = commands.add_parser("replay-audit")
     _common(replay)

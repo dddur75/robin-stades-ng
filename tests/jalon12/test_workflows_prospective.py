@@ -33,7 +33,6 @@ def _workflow(name: str) -> str:
 
 def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() -> None:
     required = (
-        "group: prospective-deep-state",
         "cancel-in-progress: false",
         'PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"',
         'STORAGE_PAUSED: "true"',
@@ -62,9 +61,20 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
         assert "alembic upgrade head" in workflow
         assert (
-            'alembic current | grep -q "0013_historical_evidence_index"'
+            'alembic current | grep -q "0014_robin_chronos_v1"'
             in workflow
         )
+    expected_groups = {
+        "prospective-fixture-registry.yml": "known-at-fixture-registry",
+        "prospective-deep-scheduler.yml": "known-at-feature-capture",
+        "prospective-player-capture.yml": "known-at-feature-capture",
+        "prospective-lineup-capture.yml": "known-at-feature-capture",
+        "prospective-odds-capture.yml": "known-at-price-capture",
+        "prospective-r2-replay-audit.yml": "known-at-replay",
+        "prospective-gate-report.yml": "known-at-replay",
+    }
+    for name, group in expected_groups.items():
+        assert f"group: {group}" in _workflow(name)
 
 
 def test_central_policy_owns_provider_caps_reserves_and_markets() -> None:
@@ -114,7 +124,7 @@ def test_prequential_workflows_share_state_lock_and_safety_contract() -> None:
         "prequential-training.yml": ("train", "replay", "status"),
     }
     required = (
-        "group: prospective-deep-state",
+        "group: prequential-learning-state",
         "cancel-in-progress: false",
         "contents: read",
         'STORAGE_PAUSED: "true"',
@@ -126,7 +136,7 @@ def test_prequential_workflows_share_state_lock_and_safety_contract() -> None:
         'SOCIAL_PUBLISHING_ENABLED: "false"',
         'DEMO_MODE_ENABLED: "false"',
         'ODDS_API_CREDITS_ALLOWED: "0"',
-        'alembic current | grep -q "0013_historical_evidence_index"',
+        'alembic current | grep -q "0014_robin_chronos_v1"',
         "retention-days: 90",
     )
     for name in PREQUENTIAL_WORKFLOWS:
@@ -168,9 +178,8 @@ def test_capture_workflows_estimate_before_explicit_bounded_execution() -> None:
         execute = workflow.index("--execute")
         assert estimate < execute
         assert "--estimate-file" in workflow
-        # Each hourly run performs one physical request. Up to three durable
-        # hourly attempts are allowed while the original window stays open.
-        assert "--max-attempts 3" in workflow
+        # Chronos canary policy permits at most two technical attempts.
+        assert "--max-attempts 2" in workflow
         assert "github.event_name == 'schedule' || inputs.execute" in workflow
         assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
         assert "R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}" in workflow

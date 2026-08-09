@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: prospective-deep-state
+  group: prequential-learning-state
   cancel-in-progress: false
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python -m alembic upgrade head
-          python -m alembic current | grep -q "0013_historical_evidence_index"
+          python -m alembic current | grep -q "0014_robin_chronos_v1"
       - name: Régler uniquement les résultats finaux vérifiés
         env:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
