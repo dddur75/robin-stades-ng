@@ -29,7 +29,8 @@ DELIVERY_DECISION_ID = "RCV3-20260808-088"
 PAGES_RECLASSIFICATION_DECISION_ID = "RCV3-20260808-089"
 V2_FREEZE_COMMIT_DECISION_ID = "RCV3-20260808-090"
 V2_EXACT_COMMIT_REVIEW_DECISION_ID = "RCV3-20260808-091"
-GENERATED_AT = "2026-08-08T22:21:10Z"
+PR38_CLOSURE_DECISION_ID = "RCV3-20260809-092"
+GENERATED_AT = "2026-08-09T05:22:39Z"
 V2_CODE_REVISION = "a8a2bba20abcb8dbe320519b95e6cf5737a8b1d9"
 EXECUTION_ID = "local-phase-c-bounded-20260808-b2395964"
 SCIENTIFIC_LINEAGE_ID = "hypothesis-tag-mask-pair-factory-v1-bounded"
@@ -562,6 +563,7 @@ def main() -> None:
             PAGES_RECLASSIFICATION_DECISION_ID,
             V2_FREEZE_COMMIT_DECISION_ID,
             V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+            PR38_CLOSURE_DECISION_ID,
         }
     ]
     if recovery_ids != [
@@ -581,6 +583,7 @@ def main() -> None:
         PAGES_RECLASSIFICATION_DECISION_ID,
         V2_FREEZE_COMMIT_DECISION_ID,
         V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+        PR38_CLOSURE_DECISION_ID,
     ]:
         raise RuntimeError("PHASE_C_RECOVERY_DECISION_SEQUENCE_MISMATCH")
     ledger_hashes = {record["decision_id"]: record["hash"] for record in records}
@@ -603,6 +606,7 @@ def main() -> None:
         PAGES_RECLASSIFICATION_DECISION_ID,
         V2_FREEZE_COMMIT_DECISION_ID,
         V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+        PR38_CLOSURE_DECISION_ID,
     }
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
@@ -750,6 +754,7 @@ def main() -> None:
         PAGES_RECLASSIFICATION_DECISION_ID,
         V2_FREEZE_COMMIT_DECISION_ID,
         V2_EXACT_COMMIT_REVIEW_DECISION_ID,
+        PR38_CLOSURE_DECISION_ID,
     ):
         graph["decision_nodes"].append(
             {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
