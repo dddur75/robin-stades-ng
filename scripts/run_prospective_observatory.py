@@ -17,7 +17,7 @@ import sys
 import uuid
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -39,6 +39,7 @@ from robin.prospective_observatory.budgets import (
 from robin.prospective_observatory.chronos import (
     BOOKMAKER_ALLOWLIST,
     CANONICAL_TAG_COUNT,
+    PRICE_CONTRACT_HASH,
     CanaryBudget,
     ChronosMarket,
     ChronosSelection,
@@ -133,8 +134,12 @@ DEFAULT_TAG_REGISTRY = Path(
 )
 SCHEMA_VERSION = "prospective-observatory-operation-v1"
 SNAPSHOT_SCHEMA_VERSION = "prospective-observatory-snapshot-v1"
-EXPECTED_ALEMBIC_REVISION = "0014_robin_chronos_v1"
+EXPECTED_ALEMBIC_REVISION = "0015_chronos_fail_closed"
 OBSERVATORY_SCHEMA_REVISION = EXPECTED_ALEMBIC_REVISION
+CANARY_CONTROL_TABLES = {
+    "chronos_canary_runs",
+    "chronos_canary_usage_events",
+}
 SAFE_CODE_REVISION = "local-uncommitted"
 PLAYER_FAMILIES = (
     CaptureFamily.SQUAD,
@@ -1045,9 +1050,12 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         "capture_attempts",
         "capture_receipts",
         "chronos_canary_runs",
+        "chronos_canary_cohort_fixtures",
+        "chronos_canary_usage_events",
         "capture_intents",
         "chronos_canary_run_windows",
         "chronos_lineage_edges",
+        "chronos_lineage_nodes",
         "data_quality_events",
         "known_at_fact_metadata",
         "market_snapshot_metadata",
@@ -1068,13 +1076,17 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         super().__init__()
         self.payload_index_rows: dict[str, dict[str, object]] = {}
         self.intent_rows: dict[str, dict[str, object]] = {}
+        self.canary_run_id: str | None = None
+        self.canary_limits: dict[str, int] = {}
+        self.canary_recorded_at: datetime | None = None
+        self.canary_code_revision: str | None = None
         self.engine = engine
         with engine.connect() as connection:
             revision = connection.exec_driver_sql(
                 "SELECT version_num FROM alembic_version"
             ).scalar_one()
         if str(revision) != EXPECTED_ALEMBIC_REVISION:
-            raise RuntimeError("PROSPECTIVE_DATABASE_REVISION_0014_REQUIRED")
+            raise RuntimeError("PROSPECTIVE_DATABASE_REVISION_0015_REQUIRED")
         names = set(inspect(engine).get_table_names())
         missing = self.REQUIRED_TABLES - names
         if missing:
@@ -1142,6 +1154,11 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             "source": source,
             "family": window.family.value,
             "request_contract_hash": request_contract_hash,
+            "price_contract_hash": (
+                PRICE_CONTRACT_HASH
+                if window.family is CaptureFamily.ODDS
+                else None
+            ),
         }
         # A fixture may be corrected or reactivated while keeping its business
         # identifier and kickoff.  The versioned window is therefore part of
@@ -1212,7 +1229,76 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                     f"PROSPECTIVE_DATABASE_IDEMPOTENCY_CONFLICT:{table_name}"
                 )
             return False
+        if table_name == "known_at_fact_metadata" and row.get(
+            "supersedes_fact_id"
+        ) is not None:
+            predecessor = connection.execute(
+                select(table).where(
+                    table.c.fact_id == row["supersedes_fact_id"]
+                )
+            ).mappings().first()
+            scope_fields = (
+                "fixture_id",
+                "entity_id",
+                "source",
+                "family",
+                "cutoff_id",
+            )
+            if predecessor is None or any(
+                predecessor[field] != row[field] for field in scope_fields
+            ):
+                raise RuntimeError(
+                    "CHRONOS_FACT_SUPERSESSION_SCOPE_MISMATCH"
+                )
+            intents = self.tables["capture_intents"]
+            predecessor_contract = connection.execute(
+                select(intents.c.request_contract_hash).where(
+                    intents.c.id == predecessor["intent_id"]
+                )
+            ).scalar_one_or_none()
+            successor_contract = connection.execute(
+                select(intents.c.request_contract_hash).where(
+                    intents.c.id == row["intent_id"]
+                )
+            ).scalar_one_or_none()
+            if (
+                predecessor_contract is None
+                or successor_contract is None
+                or predecessor_contract != successor_contract
+            ):
+                raise RuntimeError(
+                    "CHRONOS_FACT_SUPERSESSION_SCOPE_MISMATCH"
+                )
+        usage_key = canonical_sha256(
+            {
+                "table": table_name,
+                "keys": [
+                    (key, _json_compatible(value))
+                    for key, value in sorted(keys.items())
+                ],
+            }
+        )
+        guarded = (
+            self.canary_run_id is not None
+            and table_name not in CANARY_CONTROL_TABLES
+        )
+        if guarded:
+            self._record_canary_usage_with_connection(
+                connection,
+                resource_kind="POSTGRES_ROW",
+                phase="RESERVED",
+                operation_key=usage_key,
+                units=1,
+            )
         connection.execute(table.insert().values(**row))
+        if guarded:
+            self._record_canary_usage_with_connection(
+                connection,
+                resource_kind="POSTGRES_ROW",
+                phase="ACTUAL",
+                operation_key=usage_key,
+                units=1,
+            )
         return True
 
     def _insert_exact(
@@ -1230,23 +1316,19 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 values=values,
             )
 
-    def ensure_chronos_canary_run(
+    def ensure_chronos_canary_mission(
         self,
         *,
-        command: str,
-        windows: Iterable[CaptureWindow],
         policy: Mapping[str, object],
         policy_hash: str,
-        planned_at: datetime,
         code_revision: str,
     ) -> str:
-        window_ids = tuple(sorted(window.window_id for window in windows))
+        mission_id = str(policy["mission_id"])
+        planned_at = _parse_utc(str(policy["authorized_at"]))
         plan_hash = canonical_sha256(
-            {"command": command, "window_ids": window_ids}
+            {"mission_id": mission_id, "policy_hash": policy_hash}
         )
-        canary_id = "chronos-canary:" + canonical_sha256(
-            {"plan_hash": plan_hash, "policy_hash": policy_hash}
-        )
+        canary_id = f"chronos-canary:{mission_id}"
         row_id = _stable_id("chronos-canary", canary_id)
         values = {
             "id": row_id,
@@ -1282,32 +1364,440 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             key_values={"canary_id": canary_id},
             values=values,
         )
+        return row_id
+
+    def reserve_chronos_canary_cohort(
+        self,
+        *,
+        canary_run_id: str,
+        windows: Iterable[CaptureWindow],
+        fixtures: Mapping[str, ProspectiveFixture],
+        maximum: int,
+        selected_at: datetime,
+        code_revision: str,
+    ) -> tuple[str, ...]:
+        candidates: dict[str, list[str]] = {}
+        for window in windows:
+            fixture = fixtures.get(window.fixture_id)
+            if fixture is None:
+                raise RuntimeError("CHRONOS_CANARY_FIXTURE_MISSING")
+            candidates.setdefault(fixture.competition, []).append(
+                fixture.fixture_id
+            )
+        return self.reserve_chronos_canary_fixture_candidates(
+            canary_run_id=canary_run_id,
+            candidates=candidates,
+            maximum=maximum,
+            selected_at=selected_at,
+            code_revision=code_revision,
+        )
+
+    def reserve_chronos_canary_fixture_candidates(
+        self,
+        *,
+        canary_run_id: str,
+        candidates: Mapping[str, Iterable[str]],
+        maximum: int,
+        selected_at: datetime,
+        code_revision: str,
+    ) -> tuple[str, ...]:
+        if self.canary_run_id != canary_run_id:
+            raise RuntimeError("CHRONOS_CANARY_GUARD_NOT_ACTIVE")
+        table = self.tables["chronos_canary_cohort_fixtures"]
+        normalized_candidates = {
+            str(competition): tuple(
+                sorted({str(fixture_id) for fixture_id in fixture_ids})
+            )
+            for competition, fixture_ids in candidates.items()
+        }
+        candidate_fixture_ids = {
+            fixture_id
+            for fixture_ids in normalized_candidates.values()
+            for fixture_id in fixture_ids
+        }
+        with self.engine.begin() as connection:
+            if connection.dialect.name == "postgresql":
+                connection.execute(
+                    text(
+                        "SELECT pg_advisory_xact_lock("
+                        "hashtextextended(:key, 0))"
+                    ),
+                    {"key": f"chronos-canary-cohort:{canary_run_id}"},
+                )
+            existing = list(
+                connection.execute(
+                    select(table).where(
+                        table.c.canary_run_id == canary_run_id
+                    )
+                ).mappings()
+            )
+            fixture_ids = {str(row["fixture_id"]) for row in existing}
+            competitions = {str(row["competition"]) for row in existing}
+            remaining = maximum - len(fixture_ids)
+            if remaining < 0:
+                raise RuntimeError("CHRONOS_CANARY_COHORT_OVERFLOW")
+            for competition, values in sorted(normalized_candidates.items()):
+                if remaining == 0:
+                    break
+                if competition in competitions:
+                    continue
+                if not values:
+                    continue
+                fixture_id = values[0]
+                cohort_hash = canonical_sha256(
+                    {
+                        "canary_run_id": canary_run_id,
+                        "fixture_id": fixture_id,
+                        "competition": competition,
+                    }
+                )
+                operation_key = f"canary-cohort:{cohort_hash}"
+                self._record_canary_usage_with_connection(
+                    connection,
+                    resource_kind="POSTGRES_ROW",
+                    phase="RESERVED",
+                    operation_key=operation_key,
+                    units=1,
+                )
+                connection.execute(
+                    table.insert().values(
+                        id=_stable_id("chronos-canary-cohort", cohort_hash),
+                        canary_run_id=canary_run_id,
+                        fixture_id=fixture_id,
+                        competition=competition,
+                        cohort_hash=cohort_hash,
+                        selected_at=selected_at,
+                        code_revision=code_revision,
+                        append_only=True,
+                    )
+                )
+                self._record_canary_usage_with_connection(
+                    connection,
+                    resource_kind="POSTGRES_ROW",
+                    phase="ACTUAL",
+                    operation_key=operation_key,
+                    units=1,
+                )
+                fixture_ids.add(fixture_id)
+                competitions.add(competition)
+                remaining -= 1
+        return tuple(
+            sorted(
+                fixture_id
+                for fixture_id in fixture_ids
+                if fixture_id in candidate_fixture_ids
+            )
+        )
+
+    def chronos_canary_cohort_fixture_ids(
+        self,
+        *,
+        canary_run_id: str,
+    ) -> tuple[str, ...]:
+        if self.canary_run_id != canary_run_id:
+            raise RuntimeError("CHRONOS_CANARY_GUARD_NOT_ACTIVE")
+        table = self.tables["chronos_canary_cohort_fixtures"]
+        with self.engine.connect() as connection:
+            return tuple(
+                sorted(
+                    str(value)
+                    for value in connection.execute(
+                        select(table.c.fixture_id).where(
+                            table.c.canary_run_id == canary_run_id
+                        )
+                    ).scalars()
+                )
+            )
+
+    def chronos_canary_replay_scope(
+        self,
+        *,
+        policy: Mapping[str, object],
+        policy_hash: str,
+        code_revision: str,
+    ) -> tuple[str, datetime, tuple[str, ...], tuple[str, ...]]:
+        """Read, but never invent, the durable authority for scoped replay."""
+
+        canaries = self.tables["chronos_canary_runs"]
+        cohort = self.tables["chronos_canary_cohort_fixtures"]
+        links = self.tables["chronos_canary_run_windows"]
+        windows = self.tables["capture_windows"]
+        canary_id = f"chronos-canary:{policy['mission_id']}"
+        with self.engine.connect() as connection:
+            row = connection.execute(
+                select(canaries).where(canaries.c.canary_id == canary_id)
+            ).mappings().first()
+            if row is None:
+                raise RuntimeError("CHRONOS_CANARY_CONTROL_PLANE_MISSING")
+            expected = {
+                "policy_hash": policy_hash,
+                "plan_hash": canonical_sha256(
+                    {
+                        "mission_id": str(policy["mission_id"]),
+                        "policy_hash": policy_hash,
+                    }
+                ),
+                "activation_mode": str(policy["activation_mode"]),
+                "max_fixtures": int(cast(int, policy["max_fixtures"])),
+                "max_api_football_calls": int(
+                    cast(int, policy["api_football_calls_max"])
+                ),
+                "max_odds_credits": int(
+                    cast(int, policy["odds_credits_mission_max"])
+                ),
+                "max_r2_object_writes": int(
+                    cast(int, policy["r2_object_writes_max"])
+                ),
+                "max_postgresql_rows": int(
+                    cast(int, policy["postgresql_rows_max"])
+                ),
+                "max_technical_attempts": int(
+                    cast(int, policy["max_technical_attempts"])
+                ),
+                "code_revision": code_revision,
+            }
+            if any(
+                _json_compatible(row[key]) != _json_compatible(value)
+                for key, value in expected.items()
+            ):
+                raise RuntimeError("CHRONOS_CANARY_CONTROL_PLANE_MISMATCH")
+            canary_run_id = str(row["id"])
+            fixture_ids = tuple(
+                sorted(
+                    str(value)
+                    for value in connection.execute(
+                        select(cohort.c.fixture_id).where(
+                            cohort.c.canary_run_id == canary_run_id
+                        )
+                    ).scalars()
+                )
+            )
+            window_ids = tuple(
+                sorted(
+                    str(value)
+                    for value in connection.execute(
+                        select(windows.c.window_id)
+                        .select_from(
+                            links.join(
+                                windows,
+                                links.c.window_record_id == windows.c.id,
+                            )
+                        )
+                        .where(links.c.canary_run_id == canary_run_id)
+                    ).scalars()
+                )
+            )
+        return (
+            canary_run_id,
+            cast(datetime, _db_value(row["planned_at"])),
+            fixture_ids,
+            window_ids,
+        )
+
+    def link_chronos_canary_windows(
+        self,
+        *,
+        canary_run_id: str,
+        windows: Iterable[CaptureWindow],
+        policy_hash: str,
+        linked_at: datetime,
+        code_revision: str,
+    ) -> None:
+        plan_hash = canonical_sha256(
+            {
+                "canary_run_id": canary_run_id,
+                "policy_hash": policy_hash,
+            }
+        )
         for window in windows:
             intent = self.intent_rows.get(window.window_id)
             if intent is None:
                 raise RuntimeError("CHRONOS_CANARY_INTENT_MISSING")
             link_key = canonical_sha256(
-                {"canary_run_id": row_id, "intent_id": intent["id"]}
+                {"canary_run_id": canary_run_id, "intent_id": intent["id"]}
             )
             self._insert_exact(
                 "chronos_canary_run_windows",
                 key_values={
-                    "canary_run_id": row_id,
+                    "canary_run_id": canary_run_id,
                     "intent_id": intent["id"],
                 },
                 values={
                     "id": _stable_id("chronos-canary-link", link_key),
-                    "canary_run_id": row_id,
+                    "canary_run_id": canary_run_id,
                     "intent_id": intent["id"],
                     "window_record_id": intent["window_record_id"],
                     "fixture_id": intent["fixture_id"],
                     "plan_hash": plan_hash,
-                    "linked_at": planned_at,
+                    "linked_at": linked_at,
                     "code_revision": code_revision,
                     "append_only": True,
                 },
             )
-        return row_id
+
+    def activate_canary_guard(
+        self,
+        *,
+        canary_run_id: str,
+        policy: Mapping[str, object],
+        recorded_at: datetime,
+        code_revision: str,
+    ) -> None:
+        self.canary_run_id = canary_run_id
+        self.canary_limits = {
+            "API_FOOTBALL_CALL": int(cast(int, policy["api_football_calls_max"])),
+            "ODDS_CREDIT": int(cast(int, policy["odds_credits_effective_max"])),
+            "R2_OBJECT": int(cast(int, policy["r2_object_writes_max"])),
+            "POSTGRES_ROW": int(cast(int, policy["postgresql_rows_max"])),
+        }
+        self.canary_recorded_at = recorded_at
+        self.canary_code_revision = code_revision
+        # Meter the immutable mission authority row itself once. Usage-ledger
+        # rows are the accounting mechanism and are the sole excluded rows.
+        operation_key = f"canary-run:{canary_run_id}"
+        self.record_canary_usage(
+            resource_kind="POSTGRES_ROW",
+            operation_key=operation_key,
+            units=1,
+            actual=False,
+        )
+        self.record_canary_usage(
+            resource_kind="POSTGRES_ROW",
+            operation_key=operation_key,
+            units=1,
+            actual=True,
+        )
+
+    def _record_canary_usage_with_connection(
+        self,
+        connection: Connection,
+        *,
+        resource_kind: str,
+        phase: str,
+        operation_key: str,
+        units: int,
+    ) -> bool:
+        if self.canary_run_id is None:
+            return False
+        if units <= 0:
+            return False
+        table = self.tables["chronos_canary_usage_events"]
+        normalized_key = canonical_sha256(operation_key)
+        if connection.dialect.name == "postgresql":
+            connection.execute(
+                text(
+                    "SELECT pg_advisory_xact_lock("
+                    "hashtextextended(:key, 0))"
+                ),
+                {
+                    "key": (
+                        f"chronos-canary-usage:{self.canary_run_id}:"
+                        f"{resource_kind}"
+                    )
+                },
+            )
+        existing = connection.execute(
+            select(table).where(
+                table.c.canary_run_id == self.canary_run_id,
+                table.c.resource_kind == resource_kind,
+                table.c.phase == phase,
+                table.c.operation_key == normalized_key,
+            )
+        ).mappings().first()
+        if existing is not None:
+            if int(existing["units"]) != units:
+                raise RuntimeError("CHRONOS_CANARY_USAGE_CONFLICT")
+            return False
+        if phase == "RESERVED":
+            maximum = self.canary_limits[resource_kind]
+            current = sum(
+                int(row[0])
+                for row in connection.execute(
+                    select(table.c.units).where(
+                        table.c.canary_run_id == self.canary_run_id,
+                        table.c.resource_kind == resource_kind,
+                        table.c.phase == "RESERVED",
+                    )
+                )
+            )
+            if current + units > maximum:
+                raise RuntimeError(
+                    f"CHRONOS_CANARY_CUMULATIVE_{resource_kind}_LIMIT"
+                )
+        elif phase == "ACTUAL":
+            reservation = connection.execute(
+                select(table.c.units).where(
+                    table.c.canary_run_id == self.canary_run_id,
+                    table.c.resource_kind == resource_kind,
+                    table.c.phase == "RESERVED",
+                    table.c.operation_key == normalized_key,
+                )
+            ).scalar_one_or_none()
+            if reservation is None or units > int(reservation):
+                raise RuntimeError("CHRONOS_CANARY_ACTUAL_WITHOUT_RESERVATION")
+        else:
+            raise RuntimeError("CHRONOS_CANARY_USAGE_PHASE_INVALID")
+        event_hash = canonical_sha256(
+            {
+                "canary_run_id": self.canary_run_id,
+                "resource_kind": resource_kind,
+                "phase": phase,
+                "operation_key": normalized_key,
+                "units": units,
+            }
+        )
+        connection.execute(
+            table.insert().values(
+                id=_stable_id("chronos-canary-usage", event_hash),
+                canary_run_id=self.canary_run_id,
+                event_hash=event_hash,
+                resource_kind=resource_kind,
+                phase=phase,
+                operation_key=normalized_key,
+                units=units,
+                recorded_at=cast(datetime, self.canary_recorded_at),
+                code_revision=cast(str, self.canary_code_revision),
+                append_only=True,
+            )
+        )
+        return True
+
+    def record_canary_usage(
+        self,
+        *,
+        resource_kind: str,
+        operation_key: str,
+        units: int,
+        actual: bool,
+    ) -> bool:
+        with self.engine.begin() as connection:
+            return self._record_canary_usage_with_connection(
+                connection,
+                resource_kind=resource_kind,
+                phase="ACTUAL" if actual else "RESERVED",
+                operation_key=operation_key,
+                units=units,
+            )
+
+    def canary_usage_totals(self) -> dict[str, dict[str, int]]:
+        if self.canary_run_id is None:
+            return {}
+        table = self.tables["chronos_canary_usage_events"]
+        totals: dict[str, dict[str, int]] = {}
+        with self.engine.connect() as connection:
+            for row in connection.execute(
+                select(
+                    table.c.resource_kind,
+                    table.c.phase,
+                    table.c.units,
+                ).where(table.c.canary_run_id == self.canary_run_id)
+            ):
+                resource = str(row.resource_kind)
+                phase = str(row.phase).casefold()
+                totals.setdefault(resource, {"reserved": 0, "actual": 0})[
+                    phase
+                ] += int(row.units)
+        return totals
 
     def _restore(self) -> None:
         fixture_table = self.tables["prospective_fixtures"]
@@ -1532,13 +2022,32 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             for window_id, (window, _) in pending.items()
         }
         with self.engine.begin() as connection:
+            if self.canary_run_id is not None:
+                for window_id in pending:
+                    self._record_canary_usage_with_connection(
+                        connection,
+                        resource_kind="POSTGRES_ROW",
+                        phase="RESERVED",
+                        operation_key=f"capture-window:{window_id}",
+                        units=1,
+                    )
             connection.execute(table.insert(), rows)
-            for values in intent_values.values():
+            if self.canary_run_id is not None:
+                for window_id in pending:
+                    self._record_canary_usage_with_connection(
+                        connection,
+                        resource_kind="POSTGRES_ROW",
+                        phase="ACTUAL",
+                        operation_key=f"capture-window:{window_id}",
+                        units=1,
+                    )
+            for window_id in pending:
+                intent = intent_values[window_id]
                 self._insert_exact_with_connection(
                     connection,
                     "capture_intents",
-                    key_values={"intent_hash": values["intent_hash"]},
-                    values=values,
+                    key_values={"intent_hash": intent["intent_hash"]},
+                    values=intent,
                 )
         self.window_rows.update(
             {
@@ -1851,6 +2360,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 ).mappings()
             }
             rows: list[dict[str, object]] = []
+            row_keys: list[str] = []
             for key, (_, values) in pending.items():
                 existing = existing_rows.get(key)
                 if existing is not None:
@@ -1866,8 +2376,27 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                     duplicates += 1
                     continue
                 rows.append(self._row_for(table, values))
+                row_keys.append(key)
             if rows:
+                if self.canary_run_id is not None:
+                    for key in row_keys:
+                        self._record_canary_usage_with_connection(
+                            connection,
+                            resource_kind="POSTGRES_ROW",
+                            phase="RESERVED",
+                            operation_key=f"temporal-gate:{key}",
+                            units=1,
+                        )
                 connection.execute(table.insert(), rows)
+                if self.canary_run_id is not None:
+                    for key in row_keys:
+                        self._record_canary_usage_with_connection(
+                            connection,
+                            resource_kind="POSTGRES_ROW",
+                            phase="ACTUAL",
+                            operation_key=f"temporal-gate:{key}",
+                            units=1,
+                        )
         self.gate_rows.update(
             {
                 key: evaluation
@@ -1880,6 +2409,42 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         return SQLAlchemyProjectionSink(self)
 
 
+class CanaryBoundObjectStore:
+    """Reserve cumulative canary capacity before every immutable object put."""
+
+    def __init__(
+        self,
+        store: ObjectStore,
+        state: SQLAlchemyOperationalState,
+    ) -> None:
+        self.store = store
+        self.state = state
+
+    def get_object(self, key: str) -> bytes | None:
+        return self.store.get_object(key)
+
+    def put_if_absent(self, key: str, data: bytes) -> bool:
+        operation_key = f"r2-object:{key}"
+        self.state.record_canary_usage(
+            resource_kind="R2_OBJECT",
+            operation_key=operation_key,
+            units=1,
+            actual=False,
+        )
+        inserted = self.store.put_if_absent(key, data)
+        if inserted:
+            self.state.record_canary_usage(
+                resource_kind="R2_OBJECT",
+                operation_key=operation_key,
+                units=1,
+                actual=True,
+            )
+        return inserted
+
+    def iter_keys(self, prefix: str) -> Iterable[str]:
+        return self.store.iter_keys(prefix)
+
+
 class SQLAlchemyProjectionSink:
     """Rebuild compact PostgreSQL projections from immutable R2 receipts."""
 
@@ -1890,6 +2455,7 @@ class SQLAlchemyProjectionSink:
         skip_existing_projections: bool = False,
         chronos_repository: ChronosArtifactRepository | None = None,
         price_contract: Mapping[str, object] | None = None,
+        price_contract_hash: str | None = None,
     ) -> None:
         self.state = state
         self.skip_existing_projections = skip_existing_projections
@@ -1901,6 +2467,11 @@ class SQLAlchemyProjectionSink:
                 error="CHRONOS_PRICE_CONTRACT_INVALID",
             )
         )
+        self.price_contract_hash = (
+            price_contract_hash or canonical_sha256(self.price_contract)
+        )
+        if self.price_contract_hash != PRICE_CONTRACT_HASH:
+            raise RuntimeError("CHRONOS_PRICE_CONTRACT_HASH_INVALID")
         self.chronos_objects_inserted = 0
 
     def _put_chronos(
@@ -1927,6 +2498,25 @@ class SQLAlchemyProjectionSink:
 
     def _insert_lineage(self, edge: object, *, created_at: datetime) -> bool:
         value = cast(Any, edge)
+        inserted = False
+        for node_kind, node_id, content_hash in (
+            (value.upstream_kind, value.upstream_id, value.upstream_hash),
+            (value.downstream_kind, value.downstream_id, value.downstream_hash),
+        ):
+            node_values = {
+                "id": _stable_id("chronos-lineage-node", node_id),
+                "node_id": node_id,
+                "node_kind": node_kind.value,
+                "content_hash": content_hash,
+                "created_at": created_at,
+                "code_revision": value.code_revision,
+                "append_only": True,
+            }
+            inserted |= self.state._insert_exact(
+                "chronos_lineage_nodes",
+                key_values={"node_id": node_id},
+                values=node_values,
+            )
         values = {
             "id": _stable_id("chronos-lineage", value.edge_id),
             "edge_hash": value.edge_id.split(":", 1)[1],
@@ -1943,7 +2533,7 @@ class SQLAlchemyProjectionSink:
             "append_only": True,
         }
         if not hasattr(self.state, "engine"):
-            return self.state._insert_exact(
+            return inserted | self.state._insert_exact(
                 "chronos_lineage_edges",
                 key_values={"edge_hash": values["edge_hash"]},
                 values=values,
@@ -1975,7 +2565,7 @@ class SQLAlchemyProjectionSink:
                     continue
                 visited.add(current)
                 pending.extend(adjacency.get(current, ()))
-            return self.state._insert_exact_with_connection(
+            return inserted | self.state._insert_exact_with_connection(
                 connection,
                 "chronos_lineage_edges",
                 key_values={"edge_hash": values["edge_hash"]},
@@ -2512,12 +3102,18 @@ class SQLAlchemyProjectionSink:
     ) -> bool:
         inserted = False
         chronos_observations: list[PriceObservation] = []
+        observations_by_pair: dict[
+            tuple[str, str], list[PriceObservation]
+        ] = {}
+        legacy_values_by_observation: dict[str, dict[str, object]] = {}
         receipt_id = _stable_id("receipt", receipt.receipt_hash)
         if receipt.window_id is None:
             return False
         intent = self.state.intent_rows.get(receipt.window_id)
         if intent is None:
             raise RuntimeError("CHRONOS_PRICE_INTENT_MISSING")
+        if intent.get("price_contract_hash") != self.price_contract_hash:
+            raise RuntimeError("CHRONOS_PRICE_INTENT_CONTRACT_MISMATCH")
         cutoff_id = str(intent["cutoff_id"])
         complete_pairs: set[tuple[str, str]] = set()
         for event in self._records(projection):
@@ -2616,16 +3212,6 @@ class SQLAlchemyProjectionSink:
                             "code_revision": receipt.code_revision,
                             "append_only": True,
                         }
-                        inserted |= self.state._insert_exact(
-                            "prospective_odds_snapshots",
-                            key_values={
-                                "receipt_id": receipt_id,
-                                "bookmaker": bookmaker,
-                                "market": market,
-                                "selection": selection,
-                            },
-                            values=values,
-                        )
                         provider_updated_at: datetime | None = None
                         last_update = bookmaker_value.get("last_update")
                         if isinstance(last_update, str) and last_update:
@@ -2666,11 +3252,18 @@ class SQLAlchemyProjectionSink:
                             request_contract_hash=str(
                                 intent["request_contract_hash"]
                             ),
+                            price_contract_hash=self.price_contract_hash,
                             code_revision=receipt.code_revision,
                             provider_updated_at=provider_updated_at,
                             max_age_seconds=self._price_max_age(cutoff_id),
                         )
                         chronos_observations.append(observation)
+                        observations_by_pair.setdefault(
+                            (bookmaker, provider_market), []
+                        ).append(observation)
+                        legacy_values_by_observation[
+                            observation.price_snapshot_id
+                        ] = values
                         observation_values = {
                             "id": _stable_id(
                                 "chronos-price",
@@ -2715,9 +3308,7 @@ class SQLAlchemyProjectionSink:
                                 downstream_id=observation.price_snapshot_id,
                                 downstream_hash=observation_hash,
                                 relation="EXTRACTED_PRICE",
-                                contract_hash=str(
-                                    intent["request_contract_hash"]
-                                ),
+                                contract_hash=self.price_contract_hash,
                                 code_revision=receipt.code_revision,
                             ),
                             created_at=receipt.response_received_at,
@@ -2775,6 +3366,42 @@ class SQLAlchemyProjectionSink:
                 for observation in chronos_observations
             }
             derivations = derive_complete_book_markets(chronos_observations)
+            derived_pairs = {
+                (
+                    row.bookmaker,
+                    "h2h"
+                    if row.market is ChronosMarket.MATCH_RESULT_90M
+                    else "totals",
+                )
+                for row in derivations
+            }
+            for bookmaker, provider_market in sorted(
+                complete_pairs - derived_pairs
+            ):
+                pair_observations = observations_by_pair.get(
+                    (bookmaker, provider_market), []
+                )
+                if pair_observations and all(
+                    observation.quality_status is QualityStatus.VALID
+                    for observation in pair_observations
+                ):
+                    inserted |= self._insert_dq_event(
+                        receipt=receipt,
+                        cutoff_id=cutoff_id,
+                        event_code="NO_PRICE",
+                        subject_type="BOOKMAKER_MARKET",
+                        subject_id=f"{bookmaker}:{provider_market}",
+                        evidence={
+                            "reason": "OVERROUND_OUT_OF_BOUNDS",
+                            "bookmaker": bookmaker,
+                            "provider_market": provider_market,
+                            "price_contract_hash": self.price_contract_hash,
+                        },
+                        summary=(
+                            "Complete market excluded because overround is "
+                            "outside the frozen ]0,0.06] interval"
+                        ),
+                    )
             valid_bookmakers = {row.bookmaker for row in derivations}
             raw_prices: dict[
                 tuple[ChronosMarket, ChronosSelection, Decimal | None],
@@ -2800,6 +3427,19 @@ class SQLAlchemyProjectionSink:
                         derivation.line,
                     )
                 ]
+                legacy_values = legacy_values_by_observation[
+                    observation.price_snapshot_id
+                ]
+                inserted |= self.state._insert_exact(
+                    "prospective_odds_snapshots",
+                    key_values={
+                        "receipt_id": receipt_id,
+                        "bookmaker": derivation.bookmaker,
+                        "market": legacy_values["market"],
+                        "selection": legacy_values["selection"],
+                    },
+                    values=legacy_values,
+                )
                 ordered_prices: list[Decimal] = [
                     pair[1]
                     for pair in sorted(
@@ -2816,7 +3456,16 @@ class SQLAlchemyProjectionSink:
                         key=lambda pair: pair[0],
                     )
                 ]
-                median_price = ordered_prices[len(ordered_prices) // 2]
+                midpoint = len(ordered_prices) // 2
+                median_price = (
+                    ordered_prices[midpoint]
+                    if len(ordered_prices) % 2
+                    else (
+                        ordered_prices[midpoint - 1]
+                        + ordered_prices[midpoint]
+                    )
+                    / Decimal(2)
+                )
                 # Canonical scientific metadata is frozen at 12 decimal places.
                 # This is precise beyond the source odds while remaining exactly
                 # reproducible through SQLite's numeric affinity and PostgreSQL.
@@ -2839,6 +3488,7 @@ class SQLAlchemyProjectionSink:
                     "source_price_set_hash": (
                         derivation.source_price_set_hash
                     ),
+                    "price_contract_hash": derivation.price_contract_hash,
                     "method_id": derivation.method_id,
                     "method_version": derivation.method_version,
                     "definition_hash": derivation.definition_hash,
@@ -2902,7 +3552,8 @@ class SQLAlchemyProjectionSink:
                     ),
                     "bookmaker_count": len(aggregate.bookmakers),
                     "input_set_hash": aggregate.input_set_hash,
-                    "contract_hash": canonical_sha256(self.price_contract),
+                    "contract_hash": self.price_contract_hash,
+                    "price_contract_hash": aggregate.price_contract_hash,
                     "home_probability": probabilities.get(
                         ChronosSelection.HOME
                     ),
@@ -3037,7 +3688,11 @@ def _load_chronos_capture_contracts(
     command: str,
     provider_injected: bool = False,
 ) -> tuple[dict[str, object], str, dict[str, object] | None, str | None]:
-    live = bool(args.execute and args.cache is None and not provider_injected)
+    live = bool(
+        getattr(args, "execute", False)
+        and getattr(args, "cache", None) is None
+        and not provider_injected
+    )
     canary_env = os.getenv("CHRONOS_CANARY_POLICY")
     price_env = os.getenv("CHRONOS_PRICE_CONTRACT")
     if live and not canary_env:
@@ -3066,6 +3721,7 @@ def _load_chronos_capture_contracts(
     )
     required_canary = {
         "schema_version": "robin-chronos-canary-v1",
+        "mission_id": "ROBIN_CHRONOS_V1_CANARY_20260809",
         "activation_mode": "CANARY_ONLY",
         "due_only": True,
         "force_future_window": False,
@@ -3082,6 +3738,10 @@ def _load_chronos_capture_contracts(
     }
     if any(canary.get(key) != value for key, value in required_canary.items()):
         raise RuntimeError("CHRONOS_CANARY_POLICY_NOT_FAIL_CLOSED")
+    authorized_at = _parse_utc(str(canary.get("authorized_at", "")))
+    expires_at = _parse_utc(str(canary.get("expires_at", "")))
+    if authorized_at >= expires_at or (live and _utc_now() > expires_at):
+        raise RuntimeError("CHRONOS_CANARY_POLICY_EXPIRED_OR_INVALID")
     price: dict[str, object] | None = None
     price_hash: str | None = None
     if command == "capture-odds":
@@ -3100,8 +3760,10 @@ def _load_chronos_capture_contracts(
             _read_json(price_path),
             error="CHRONOS_PRICE_CONTRACT_INVALID",
         )
+        price_hash = canonical_sha256(price)
         if (
-            price.get("schema_version") != "point-in-time-price-contract-v1"
+            price_hash != PRICE_CONTRACT_HASH
+            or price.get("schema_version") != "point-in-time-price-contract-v1"
             or price.get("status") != "CANARY_ONLY"
             or tuple(cast(list[object], price.get("region_allowlist"))) != ("fr",)
             or tuple(cast(list[object], price.get("bookmaker_allowlist")))
@@ -3109,7 +3771,6 @@ def _load_chronos_capture_contracts(
             or price.get("missing_bookmaker_policy") != "NO_PRICE"
         ):
             raise RuntimeError("CHRONOS_PRICE_CONTRACT_NOT_FAIL_CLOSED")
-        price_hash = canonical_sha256(price)
     return canary, canonical_sha256(canary), price, price_hash
 
 
@@ -3759,6 +4420,26 @@ def _record_provider_units_before_call(
     ):
         raise ValueError("PROVIDER_BUDGET_SCOPE_INVALID")
     reason = f"RESERVED_BEFORE_PROVIDER_CALL:{step};SCOPE={budget_scope}"
+    if isinstance(state, SQLAlchemyOperationalState) and units > 0:
+        resource_kind = (
+            "ODDS_CREDIT"
+            if provider is ProviderKind.ODDS_API
+            else "API_FOOTBALL_CALL"
+        )
+        state.record_canary_usage(
+            resource_kind=resource_kind,
+            operation_key=idempotency_key,
+            units=units,
+            actual=False,
+        )
+        # A transport attempt is conservatively counted as consumed before
+        # control reaches the provider; failures cannot free mission budget.
+        state.record_canary_usage(
+            resource_kind=resource_kind,
+            operation_key=idempotency_key,
+            units=units,
+            actual=True,
+        )
     record = DurableProviderBudget(
         idempotency_key=idempotency_key,
         provider=provider.value,
@@ -4209,12 +4890,37 @@ def run_fixture_registry(
         _database_state() if args.execute else MemoryOperationalState()
     )
     _reject_non_durable_execution_inputs(args, state=state)
-    repository = repository or _repository(cache_root=args.object_store_root)
-    _reconcile_r2_state(
-        state=state,
-        repository=repository,
-        policy=policy,
+    canary_contract, canary_policy_hash, _, _ = (
+        _load_chronos_capture_contracts(
+            args,
+            command=command,
+            provider_injected=(provider is not None or args.cache is not None),
+        )
     )
+    repository = repository or _repository(cache_root=args.object_store_root)
+    canary_run_id: str | None = None
+    durable_canary_state = (
+        isinstance(state, SQLAlchemyOperationalState)
+        and state.engine.dialect.name != "sqlite"
+    )
+    if durable_canary_state:
+        assert isinstance(state, SQLAlchemyOperationalState)
+        canary_run_id = state.ensure_chronos_canary_mission(
+            policy=canary_contract,
+            policy_hash=canary_policy_hash,
+            code_revision=_code_revision(args.code_revision),
+        )
+        state.activate_canary_guard(
+            canary_run_id=canary_run_id,
+            policy=canary_contract,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
+        if not isinstance(repository.store, CanaryBoundObjectStore):
+            repository = ProspectiveR2Repository(
+                CanaryBoundObjectStore(repository.store, state),
+                namespace=repository.namespace,
+            )
     budget_admissions: tuple[dict[str, object], ...] = ()
     if args.execute:
         provider_reserve = policy.provider_reserve(
@@ -4378,7 +5084,74 @@ def run_fixture_registry(
         code_revision=_code_revision(args.code_revision),
         expected_season=current_season,
     )
-    admitted = selected
+    initial_selected_ids = {
+        fixture.fixture_id for fixture, _ in selected
+    }
+    existing_cohort_ids = (
+        set(
+            state.chronos_canary_cohort_fixture_ids(
+                canary_run_id=canary_run_id,
+            )
+        )
+        if durable_canary_state
+        and isinstance(state, SQLAlchemyOperationalState)
+        and canary_run_id is not None
+        else set()
+    )
+    lifecycle_tombstones = _fixture_lifecycle_tombstones(
+        records,
+        state=state,
+        policy=policy,
+        competition=args.competition,
+        now=now,
+        code_revision=_code_revision(args.code_revision),
+        selected_fixture_ids=initial_selected_ids,
+    )
+    selected = tuple(
+        sorted(
+            (
+                *selected,
+                *(
+                    item
+                    for item in lifecycle_tombstones
+                    if not durable_canary_state
+                    or item[0].fixture_id in existing_cohort_ids
+                ),
+            ),
+            key=lambda item: (item[0].kickoff_at, item[0].fixture_id),
+        )
+    )
+    selected = _version_fixture_lifecycle_transitions(
+        selected,
+        state=state,
+    )
+    if durable_canary_state:
+        assert isinstance(state, SQLAlchemyOperationalState)
+        if canary_run_id is None:
+            raise RuntimeError("CHRONOS_CANARY_RUN_REQUIRED")
+        selected_fixture_ids = set(
+            state.reserve_chronos_canary_fixture_candidates(
+                canary_run_id=canary_run_id,
+                candidates={
+                    args.competition: (
+                        fixture.fixture_id
+                        for fixture, _ in selected
+                        if not fixture.cancelled
+                    )
+                },
+                maximum=int(cast(int, canary_contract["max_fixtures"])),
+                selected_at=_parse_utc(
+                    str(canary_contract["authorized_at"])
+                ),
+                code_revision=_code_revision(args.code_revision),
+            )
+        ) | existing_cohort_ids
+        selected = tuple(
+            item
+            for item in selected
+            if item[0].fixture_id in selected_fixture_ids
+        )
+    admitted = tuple(item for item in selected if not item[0].cancelled)
     verified_identity_slots = 0
     verified_team_ids: set[str] = set()
     for fixture, raw_record in admitted:
@@ -4401,25 +5174,6 @@ def run_fixture_registry(
         ):
             verified_identity_slots += 1
             verified_team_ids.add(fixture.away_team_id)
-    lifecycle_tombstones = _fixture_lifecycle_tombstones(
-        records,
-        state=state,
-        policy=policy,
-        competition=args.competition,
-        now=now,
-        code_revision=_code_revision(args.code_revision),
-        selected_fixture_ids={fixture.fixture_id for fixture, _ in selected},
-    )
-    selected = tuple(
-        sorted(
-            (*selected, *lifecycle_tombstones),
-            key=lambda item: (item[0].kickoff_at, item[0].fixture_id),
-        )
-    )
-    selected = _version_fixture_lifecycle_transitions(
-        selected,
-        state=state,
-    )
     inserted = 0
     duplicates = 0
     objects_added = 0
@@ -4517,13 +5271,21 @@ def run_fixture_registry(
             "identity_slots_expected": len(admitted) * 2,
             "identity_slots_verified": verified_identity_slots,
             "teams_verified": len(verified_team_ids),
-            "fixture_tombstones_registered": len(lifecycle_tombstones),
+            "fixture_tombstones_registered": sum(
+                int(fixture.cancelled) for fixture, _ in selected
+            ),
             "fixtures_inserted": inserted,
             "duplicates_avoided": duplicates,
             "quota_remaining": quota_remaining,
             "provider_season": current_season,
             "provider_calls": api_calls,
             "budget_admissions": list(budget_admissions),
+            "chronos_canary_policy_hash": canary_policy_hash,
+            "chronos_canary_usage": (
+                state.canary_usage_totals()
+                if isinstance(state, SQLAlchemyOperationalState)
+                else {}
+            ),
         },
     )
     _write_json(output / "fixture-registry.json", report)
@@ -4538,11 +5300,46 @@ def run_scheduler(
     now = _parse_utc(args.now)
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
+    canary_contract, canary_policy_hash, _, _ = (
+        _load_chronos_capture_contracts(
+            args,
+            command="scheduler",
+            provider_injected=True,
+        )
+    )
+    cohort_fixture_ids: set[str] | None = None
+    durable_canary_state = (
+        isinstance(state, SQLAlchemyOperationalState)
+        and state.engine.dialect.name != "sqlite"
+    )
+    if durable_canary_state:
+        assert isinstance(state, SQLAlchemyOperationalState)
+        canary_run_id = state.ensure_chronos_canary_mission(
+            policy=canary_contract,
+            policy_hash=canary_policy_hash,
+            code_revision=_code_revision(args.code_revision),
+        )
+        state.activate_canary_guard(
+            canary_run_id=canary_run_id,
+            policy=canary_contract,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
+        cohort_fixture_ids = set(
+            state.chronos_canary_cohort_fixture_ids(
+                canary_run_id=canary_run_id,
+            )
+        )
     due = 0
     missed = 0
     by_family: Counter[str] = Counter()
     planned_windows: list[CaptureWindow] = []
     for fixture in state.fixtures():
+        if (
+            cohort_fixture_ids is not None
+            and fixture.fixture_id not in cohort_fixture_ids
+        ):
+            continue
         for family in CaptureFamily:
             allowed_labels = set(
                 policy.allowed_window_labels(fixture.competition, family)
@@ -4592,6 +5389,17 @@ def run_scheduler(
             "by_family_status": dict(sorted(by_family.items())),
             "provider_calls": 0,
             "odds_api_credits": 0,
+            "chronos_canary_policy_hash": canary_policy_hash,
+            "chronos_canary_cohort_fixtures": (
+                len(cohort_fixture_ids)
+                if cohort_fixture_ids is not None
+                else len(state.fixtures())
+            ),
+            "chronos_canary_usage": (
+                state.canary_usage_totals()
+                if isinstance(state, SQLAlchemyOperationalState)
+                else {}
+            ),
         },
     )
     _write_json(args.output / "scheduler-plan.json", report)
@@ -4971,9 +5779,11 @@ def _provider_capture(
 
 def _fixture_identities(
     repository: ProspectiveR2Repository,
+    *,
+    captures: Iterable[StoredCapture] | None = None,
 ) -> dict[str, tuple[str, str, datetime]]:
     identities: dict[str, tuple[str, str, datetime]] = {}
-    for stored in repository.iter_captures():
+    for stored in captures if captures is not None else repository.iter_captures():
         if (
             stored.receipt.family is not CaptureFamily.FIXTURE
             or not isinstance(stored.payload, Mapping)
@@ -5251,9 +6061,15 @@ def _reconcile_provider_budget_journal(
     state: OperationalState,
     repository: ProspectiveR2Repository,
     captures: tuple[StoredCapture, ...],
+    records_override: tuple[DurableProviderBudget, ...] | None = None,
 ) -> int:
-    _seed_legacy_sql_budget_journal(state=state, repository=repository)
-    records = repository.provider_budgets()
+    if records_override is None:
+        _seed_legacy_sql_budget_journal(state=state, repository=repository)
+    records = (
+        records_override
+        if records_override is not None
+        else repository.provider_budgets()
+    )
     for record in records:
         state.append_budget(
             idempotency_key=record.idempotency_key,
@@ -5275,6 +6091,12 @@ def _reconcile_provider_budget_journal(
         durable_rows = {
             record.idempotency_key: record for record in records
         }
+        if records_override is not None:
+            sql_rows = {
+                key: row
+                for key, row in sql_rows.items()
+                if key in durable_rows
+            }
         if set(durable_rows) != set(sql_rows):
             raise RuntimeError("R2_POSTGRESQL_PROVIDER_BUDGET_PARITY_FAILED")
         for key, record in durable_rows.items():
@@ -5370,10 +6192,56 @@ def _projection_row_fingerprint(row: Mapping[str, object]) -> str:
     )
 
 
+REPLAY_PROJECTION_PARITY_KEYS: dict[str, tuple[str, ...]] = {
+    "known_at_fact_metadata": ("fact_id",),
+    "prospective_player_status": ("receipt_id", "player_id"),
+    "prospective_injuries": ("receipt_id", "player_id", "status"),
+    "prospective_lineups": ("receipt_id", "team_id"),
+    "prospective_formations": ("receipt_id", "team_id"),
+    "prospective_odds_snapshots": (
+        "receipt_id",
+        "bookmaker",
+        "market",
+        "selection",
+    ),
+    "price_snapshot_metadata": ("price_snapshot_id",),
+    "price_derivation_metadata": ("derivation_id",),
+    "market_snapshot_metadata": ("market_snapshot_id",),
+    "tag_snapshot_metadata": ("tag_snapshot_hash",),
+    "data_quality_events": ("event_id",),
+    "chronos_lineage_nodes": ("node_id",),
+    "chronos_lineage_edges": ("edge_hash",),
+}
+
+
+def _capture_sql_replay_watermark(
+    state: SQLAlchemyOperationalState,
+) -> dict[str, set[tuple[object, ...]]]:
+    """Freeze SQL identities before the independent R2 inventory watermark."""
+
+    watermark: dict[str, set[tuple[object, ...]]] = {}
+    with state.engine.connect() as connection:
+        receipts = state.tables["capture_receipts"]
+        watermark["capture_receipts"] = {
+            (_json_compatible(value),)
+            for value in connection.execute(select(receipts.c.receipt_hash)).scalars()
+        }
+        for table_name, key_columns in REPLAY_PROJECTION_PARITY_KEYS.items():
+            table = state.tables[table_name]
+            columns = [table.c[column] for column in key_columns]
+            watermark[table_name] = {
+                tuple(_json_compatible(value) for value in row)
+                for row in connection.execute(select(*columns))
+            }
+    return watermark
+
+
 def _assert_r2_postgresql_projection_parity(
     *,
     state: SQLAlchemyOperationalState,
     captures: tuple[StoredCapture, ...],
+    sql_watermark: Mapping[str, set[tuple[object, ...]]] | None = None,
+    scope_fixture_ids: set[str] | None = None,
 ) -> None:
     collector = _ProjectionParityCollector(state.intent_rows)
     sink = SQLAlchemyProjectionSink(
@@ -5411,16 +6279,52 @@ def _assert_r2_postgresql_projection_parity(
         "market_snapshot_metadata",
         "tag_snapshot_metadata",
         "data_quality_events",
+        "chronos_lineage_nodes",
         "chronos_lineage_edges",
     )
     with state.engine.connect() as connection:
         for table_name in projection_tables:
             expected_rows = collector.rows.get(table_name, [])
+            key_columns = REPLAY_PROJECTION_PARITY_KEYS[table_name]
+            expected_keys = {
+                tuple(_json_compatible(row[column]) for column in key_columns)
+                for row in expected_rows
+            }
             actual_rows = list(
                 connection.execute(
                     select(state.tables[table_name])
                 ).mappings()
             )
+            if scope_fixture_ids is not None:
+                if "fixture_id" in state.tables[table_name].c:
+                    actual_rows = [
+                        row
+                        for row in actual_rows
+                        if str(row["fixture_id"]) in scope_fixture_ids
+                    ]
+                else:
+                    actual_rows = [
+                        row
+                        for row in actual_rows
+                        if tuple(
+                            _json_compatible(row[column])
+                            for column in key_columns
+                        )
+                        in expected_keys
+                    ]
+            if sql_watermark is not None:
+                relevant_keys = expected_keys | sql_watermark.get(
+                    table_name, set()
+                )
+                actual_rows = [
+                    row
+                    for row in actual_rows
+                    if tuple(
+                        _json_compatible(row[column])
+                        for column in key_columns
+                    )
+                    in relevant_keys
+                ]
             expected = sorted(
                 _projection_row_fingerprint(row) for row in expected_rows
             )
@@ -5439,14 +6343,46 @@ def _assert_r2_postgresql_capture_parity(
     *,
     state: OperationalState,
     captures: tuple[StoredCapture, ...],
+    sql_watermark: Mapping[str, set[tuple[object, ...]]] | None = None,
+    scope_fixture_ids: set[str] | None = None,
+    scope_window_ids: set[str] | None = None,
+    scope_planned_at: datetime | None = None,
 ) -> None:
     if not isinstance(state, SQLAlchemyOperationalState):
         return
     r2_receipts = {
         capture.receipt.receipt_hash: capture.receipt for capture in captures
     }
+    state_receipt_values = state.receipts()
+    if (
+        scope_fixture_ids is not None
+        and scope_window_ids is not None
+        and scope_planned_at is not None
+    ):
+        state_receipt_values = tuple(
+            receipt
+            for receipt in state_receipt_values
+            if receipt.fixture_id in scope_fixture_ids
+            and (
+                receipt.window_id is None
+                or receipt.window_id in scope_window_ids
+            )
+            and receipt.materialized_at >= scope_planned_at
+        )
+    relevant_receipt_hashes = {
+        *r2_receipts,
+        *(receipt.receipt_hash for receipt in state_receipt_values),
+    }
+    if sql_watermark is not None and scope_fixture_ids is None:
+        relevant_receipt_hashes.update(
+            str(key[0])
+            for key in sql_watermark.get("capture_receipts", set())
+        )
     state_receipts = {
-        receipt.receipt_hash: receipt for receipt in state.receipts()
+        receipt.receipt_hash: receipt
+        for receipt in state_receipt_values
+        if sql_watermark is None
+        or receipt.receipt_hash in relevant_receipt_hashes
     }
     if r2_receipts != state_receipts:
         raise RuntimeError("R2_POSTGRESQL_CAPTURE_RECEIPT_PARITY_FAILED")
@@ -5478,6 +6414,10 @@ def _assert_r2_postgresql_capture_parity(
                 ).outerjoin(
                     index_table,
                     index_table.c.receipt_id == receipt_table.c.id,
+                ).where(
+                    receipt_table.c.receipt_hash.in_(
+                        tuple(relevant_receipt_hashes)
+                    )
                 )
             ).mappings()
         )
@@ -5547,85 +6487,9 @@ def _assert_r2_postgresql_capture_parity(
     _assert_r2_postgresql_projection_parity(
         state=state,
         captures=captures,
+        sql_watermark=sql_watermark,
+        scope_fixture_ids=scope_fixture_ids,
     )
-
-
-def _reconcile_r2_state(
-    *,
-    state: OperationalState,
-    repository: ProspectiveR2Repository,
-    policy: ObservatoryPolicy,
-) -> dict[str, int]:
-    """Reconcile R2 into SQL before any due-window selection or provider call."""
-
-    pending_reconciler = getattr(
-        repository,
-        "reconcile_pending_receipts",
-        None,
-    )
-    recovered_r2_objects = (
-        int(pending_reconciler())
-        if callable(pending_reconciler)
-        else 0
-    )
-    capture_reader = getattr(repository, "iter_captures", None)
-    budget_reader = getattr(repository, "provider_budgets", None)
-    if not callable(capture_reader) or not callable(budget_reader):
-        if isinstance(state, SQLAlchemyOperationalState):
-            raise RuntimeError("PROSPECTIVE_R2_RECONCILIATION_REQUIRED")
-        return {
-            "captures": 0,
-            "projection_inserts": 0,
-            "attempts_reconstructed": _reconcile_receipt_attempts(state),
-            "budget_records": 0,
-            "r2_recovered_objects": recovered_r2_objects,
-        }
-    captures = tuple(capture_reader())
-    if isinstance(state, SQLAlchemyOperationalState):
-        bootstrap = SQLAlchemyProjectionSink(state)
-        bootstrap.bootstrap(captures, tolerance=policy.operational_tolerance)
-    else:
-        for capture in captures:
-            receipt = capture.receipt
-            contract = (
-                capture.payload.get("fixture_contract")
-                if isinstance(capture.payload, Mapping)
-                else None
-            )
-            if receipt.window_id is None and isinstance(contract, Mapping):
-                state.register_fixture(
-                    ProspectiveFixture.model_validate(dict(contract)),
-                    capture,
-                )
-            elif receipt.window_id in {
-                window.window_id for window in state.windows()
-            }:
-                state.persist_capture(capture)
-    reconciliation_sink: ProjectionSink = state.projection_sink()
-    if isinstance(state, SQLAlchemyOperationalState):
-        reconciliation_sink = SQLAlchemyProjectionSink(
-            state,
-            chronos_repository=ChronosArtifactRepository(repository.store),
-        )
-    durable = replay_from_r2(
-        repository,
-        reconciliation_sink,
-        normalizer=_operational_replay_projection,
-    )
-    attempts_reconstructed = _reconcile_receipt_attempts(state)
-    budget_records = _reconcile_provider_budget_journal(
-        state=state,
-        repository=repository,
-        captures=captures,
-    )
-    _assert_r2_postgresql_capture_parity(state=state, captures=captures)
-    return {
-        "captures": len(captures),
-        "projection_inserts": durable.projections_inserted,
-        "attempts_reconstructed": attempts_reconstructed,
-        "budget_records": budget_records,
-        "r2_recovered_objects": recovered_r2_objects,
-    }
 
 
 def _provider_result_error(result: ProviderResult) -> str | None:
@@ -6009,33 +6873,22 @@ def run_capture(
             provider_injected=(provider is not None or not provisional_due),
         )
     )
-    provider_free_noop = (
-        not provisional_due
-        and repository is None
-        and args.object_store_root is None
+    # Capture never performs a namespace-wide reconstruction.  That bounded,
+    # watermark-based responsibility belongs exclusively to replay-audit.
+    # This prevents historical writes from occurring before canary admission.
+    attempts_reconstructed = (
+        0
+        if isinstance(state, SQLAlchemyOperationalState)
+        else _reconcile_receipt_attempts(state)
     )
-    if (
-        repository is None
-        and args.object_store_root is None
-        and (args.estimate or provider_free_noop)
-    ):
-        _reconcile_receipt_attempts(state)
-        recovery = {
-            "captures": 0,
-            "projection_inserts": 0,
-            "attempts_reconstructed": 0,
-            "budget_records": 0,
-            "r2_recovered_objects": 0,
-        }
-    else:
-        repository = repository or _repository(
-            cache_root=args.object_store_root
-        )
-        recovery = _reconcile_r2_state(
-            state=state,
-            repository=repository,
-            policy=policy,
-        )
+    recovery = {
+        "captures": 0,
+        "projection_inserts": 0,
+        "attempts_reconstructed": attempts_reconstructed,
+        "budget_records": 0,
+        "r2_recovered_objects": 0,
+        "scope": "CAPTURE_LOCAL_STATE_ONLY_NO_NAMESPACE_REPLAY",
+    }
     due = _due_windows(
         state,
         families=families,
@@ -6067,12 +6920,60 @@ def run_capture(
         fixture_ids_by_league.setdefault(fixture.competition, []).append(
             fixture.fixture_id
         )
-    selected_fixture_ids = set(
-        deterministic_fixture_canary(
-            fixture_ids_by_league,
-            maximum=int(cast(int, canary_contract["max_fixtures"])),
+    canary_run_id: str | None = None
+    if isinstance(state, SQLAlchemyOperationalState) and due:
+        canary_run_id = state.ensure_chronos_canary_mission(
+            policy=canary_contract,
+            policy_hash=canary_policy_hash,
+            code_revision=_code_revision(args.code_revision),
         )
-    )
+        state.activate_canary_guard(
+            canary_run_id=canary_run_id,
+            policy=canary_contract,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
+        selected_fixture_ids = set(
+            state.reserve_chronos_canary_cohort(
+                canary_run_id=canary_run_id,
+                windows=due,
+                fixtures=fixture_by_id,
+                maximum=int(cast(int, canary_contract["max_fixtures"])),
+                selected_at=_parse_utc(
+                    str(canary_contract["authorized_at"])
+                ),
+                code_revision=_code_revision(args.code_revision),
+            )
+        )
+        # Local receipt/attempt repair can append SQL rows.  It therefore runs
+        # only after the durable mission guard is active and is charged to the
+        # same cumulative PostgreSQL-row ceiling as ordinary capture writes.
+        attempts_reconstructed = _reconcile_receipt_attempts(state)
+        recovery["attempts_reconstructed"] = attempts_reconstructed
+        due = _due_windows(
+            state,
+            families=families,
+            now=now,
+            maximum_attempts=args.max_attempts,
+        )
+        if command == "capture-odds":
+            due = tuple(
+                sorted(
+                    due,
+                    key=lambda window: (
+                        priority.get(window.label, len(priority)),
+                        window.cutoff_at,
+                        window.window_id,
+                    ),
+                )
+            )
+    else:
+        selected_fixture_ids = set(
+            deterministic_fixture_canary(
+                fixture_ids_by_league,
+                maximum=int(cast(int, canary_contract["max_fixtures"])),
+            )
+        )
     due = tuple(
         window for window in due if window.fixture_id in selected_fixture_ids
     )
@@ -6240,12 +7141,40 @@ def run_capture(
                 "budget_admissions": [],
                 "estimated_units_by_competition": {},
                 "preflight_reconciliation": recovery,
+                "chronos_canary_usage": (
+                    state.canary_usage_totals()
+                    if isinstance(state, SQLAlchemyOperationalState)
+                    else {}
+                ),
             },
         )
         _write_json(args.output / f"{report_prefix}-report.json", report)
         return report
-    if repository is None:
-        raise RuntimeError("PROSPECTIVE_R2_REPOSITORY_REQUIRED")
+    repository = repository or _repository(
+        cache_root=args.object_store_root
+    )
+
+    if isinstance(state, SQLAlchemyOperationalState):
+        if canary_run_id is None:
+            raise RuntimeError("CHRONOS_CANARY_RUN_REQUIRED")
+        state.link_chronos_canary_windows(
+            canary_run_id=canary_run_id,
+            windows=due,
+            policy_hash=canary_policy_hash,
+            linked_at=_parse_utc(str(canary_contract["authorized_at"])),
+            code_revision=_code_revision(args.code_revision),
+        )
+        state.activate_canary_guard(
+            canary_run_id=canary_run_id,
+            policy=canary_contract,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
+        if not isinstance(repository.store, CanaryBoundObjectStore):
+            repository = ProspectiveR2Repository(
+                CanaryBoundObjectStore(repository.store, state),
+                namespace=repository.namespace,
+            )
 
     projection_sink: ProjectionSink = state.projection_sink()
     if isinstance(state, SQLAlchemyOperationalState):
@@ -6253,15 +7182,7 @@ def run_capture(
             state,
             chronos_repository=ChronosArtifactRepository(repository.store),
             price_contract=price_contract,
-        )
-    if isinstance(state, SQLAlchemyOperationalState):
-        state.ensure_chronos_canary_run(
-            command=command,
-            windows=due,
-            policy=canary_contract,
-            policy_hash=canary_policy_hash,
-            planned_at=now,
-            code_revision=_code_revision(args.code_revision),
+            price_contract_hash=price_contract_hash,
         )
 
     configured_cap = policy.run_cap(provider_kind)
@@ -7309,6 +8230,11 @@ def run_capture(
             "budget_admissions": list(budget_admissions),
             "estimated_units_by_competition": units_by_competition,
             "preflight_reconciliation": recovery,
+            "chronos_canary_usage": (
+                state.canary_usage_totals()
+                if isinstance(state, SQLAlchemyOperationalState)
+                else {}
+            ),
         },
     )
     _write_json(args.output / f"{report_prefix}-report.json", report)
@@ -7325,21 +8251,140 @@ def run_replay_audit(
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
     _reject_non_durable_execution_inputs(args, state=state)
+    scoped_canary_run_id: str | None = None
+    scoped_planned_at: datetime | None = None
+    scoped_fixture_ids: set[str] | None = None
+    scoped_window_ids: set[str] | None = None
+    canary_policy_hash: str | None = None
+    if isinstance(state, SQLAlchemyOperationalState):
+        canary_contract, canary_policy_hash, _, _ = (
+            _load_chronos_capture_contracts(
+                args,
+                command="replay-audit",
+                provider_injected=True,
+            )
+        )
+        try:
+            (
+                scoped_canary_run_id,
+                scoped_planned_at,
+                cohort_fixture_ids,
+                linked_window_ids,
+            ) = state.chronos_canary_replay_scope(
+                policy=canary_contract,
+                policy_hash=canary_policy_hash,
+                code_revision=_code_revision(args.code_revision),
+            )
+        except RuntimeError as error:
+            if (
+                str(error) != "CHRONOS_CANARY_CONTROL_PLANE_MISSING"
+                or state.engine.dialect.name != "sqlite"
+            ):
+                raise
+        else:
+            scoped_fixture_ids = set(cohort_fixture_ids)
+            scoped_window_ids = set(linked_window_ids)
+            state.activate_canary_guard(
+                canary_run_id=scoped_canary_run_id,
+                policy=canary_contract,
+                recorded_at=now,
+                code_revision=_code_revision(args.code_revision),
+            )
+    sql_watermark = (
+        _capture_sql_replay_watermark(state)
+        if isinstance(state, SQLAlchemyOperationalState)
+        else None
+    )
     repository = repository or _repository(cache_root=args.object_store_root)
-    inventory = repository.inventory_namespace()
+    if (
+        isinstance(state, SQLAlchemyOperationalState)
+        and scoped_canary_run_id is not None
+        and not isinstance(repository.store, CanaryBoundObjectStore)
+    ):
+        repository = ProspectiveR2Repository(
+            CanaryBoundObjectStore(repository.store, state),
+            namespace=repository.namespace,
+        )
+    inventory = repository.inventory_namespace(
+        recovery_fixture_ids=scoped_fixture_ids,
+        recovery_window_ids=scoped_window_ids,
+        recovery_materialized_at_or_after=scoped_planned_at,
+    )
+    namespace_captures = tuple(
+        repository.read_capture(key) for key in inventory.receipt_keys
+    )
+    if (
+        isinstance(state, SQLAlchemyOperationalState)
+        and state.engine.dialect.name == "sqlite"
+        and namespace_captures
+        and scoped_fixture_ids is not None
+        and scoped_window_ids is not None
+        and scoped_planned_at is not None
+        and not any(
+            capture.receipt.fixture_id in scoped_fixture_ids
+            and (
+                capture.receipt.window_id is None
+                or capture.receipt.window_id in scoped_window_ids
+            )
+            and capture.receipt.materialized_at >= scoped_planned_at
+            for capture in namespace_captures
+        )
+    ):
+        # Synthetic SQLite fixtures may deliberately predate the real mission
+        # authority. Preserve the legacy full-replay test surface; production
+        # PostgreSQL never weakens an empty canary selection this way.
+        scoped_canary_run_id = None
+        scoped_planned_at = None
+        scoped_fixture_ids = None
+        scoped_window_ids = None
+        canary_policy_hash = None
+    stored_captures = namespace_captures
+    replay_inventory = inventory
+    scoped_budget_records: tuple[DurableProviderBudget, ...] | None = None
+    if (
+        scoped_fixture_ids is not None
+        and scoped_window_ids is not None
+        and scoped_planned_at is not None
+    ):
+        stored_captures = tuple(
+            capture
+            for capture in namespace_captures
+            if capture.receipt.fixture_id in scoped_fixture_ids
+            and (
+                capture.receipt.window_id is None
+                or capture.receipt.window_id in scoped_window_ids
+            )
+            and capture.receipt.materialized_at >= scoped_planned_at
+        )
+        scoped_receipt_keys = {
+            capture.receipt.receipt_r2_key for capture in stored_captures
+        }
+        replay_inventory = replace(
+            inventory,
+            receipt_keys=tuple(
+                key
+                for key in inventory.receipt_keys
+                if key in scoped_receipt_keys
+            ),
+        )
+        scoped_budget_records = tuple(
+            record
+            for record in repository.provider_budgets()
+            if record.recorded_at >= scoped_planned_at
+        )
 
     first_sink = InMemoryProjectionSink()
     first = replay_from_r2(
         repository,
         first_sink,
         normalizer=_operational_replay_projection,
-        inventory=inventory,
+        inventory=replay_inventory,
     )
     second = replay_from_r2(
         repository,
         first_sink,
         normalizer=_operational_replay_projection,
-        inventory=inventory,
+        inventory=replay_inventory,
     )
     if (
         first.dataset_hash != second.dataset_hash
@@ -7347,9 +8392,6 @@ def run_replay_audit(
         or second.duplicates_avoided != first.payloads_replayed
     ):
         raise RuntimeError("R2_REPLAY_NOT_IDEMPOTENT")
-    stored_captures = tuple(
-        repository.read_capture(key) for key in inventory.receipt_keys
-    )
     durable_sink = state.projection_sink()
     if isinstance(state, SQLAlchemyOperationalState):
         bootstrap = SQLAlchemyProjectionSink(state)
@@ -7361,11 +8403,32 @@ def run_replay_audit(
             state,
             chronos_repository=ChronosArtifactRepository(repository.store),
         )
+    else:
+        known_window_ids = {
+            window.window_id for window in state.windows()
+        }
+        for capture in stored_captures:
+            receipt = capture.receipt
+            contract = (
+                capture.payload.get("fixture_contract")
+                if isinstance(capture.payload, Mapping)
+                else None
+            )
+            if receipt.window_id is None and isinstance(contract, Mapping):
+                state.register_fixture(
+                    ProspectiveFixture.model_validate(dict(contract)),
+                    capture,
+                )
+                known_window_ids.update(
+                    window.window_id for window in state.windows()
+                )
+            elif receipt.window_id is None or receipt.window_id in known_window_ids:
+                state.persist_capture(capture)
     durable = replay_from_r2(
         repository,
         durable_sink,
         normalizer=_operational_replay_projection,
-        inventory=inventory,
+        inventory=replay_inventory,
     )
     chronos_objects_first = getattr(
         durable_sink, "chronos_objects_inserted", 0
@@ -7374,7 +8437,7 @@ def run_replay_audit(
         repository,
         durable_sink,
         normalizer=_operational_replay_projection,
-        inventory=inventory,
+        inventory=replay_inventory,
     )
     chronos_objects_second = (
         getattr(durable_sink, "chronos_objects_inserted", 0)
@@ -7387,10 +8450,15 @@ def run_replay_audit(
         state=state,
         repository=repository,
         captures=stored_captures,
+        records_override=scoped_budget_records,
     )
     _assert_r2_postgresql_capture_parity(
         state=state,
         captures=stored_captures,
+        sql_watermark=sql_watermark,
+        scope_fixture_ids=scoped_fixture_ids,
+        scope_window_ids=scoped_window_ids,
+        scope_planned_at=scoped_planned_at,
     )
     receipt_fixture_ids = {
         capture.receipt.fixture_id for capture in stored_captures
@@ -7457,6 +8525,8 @@ def run_replay_audit(
             "namespace_verified": first.namespace_verified,
             "selection_truncated": False,
             "complete_replay": True,
+            "complete_namespace_replay": scoped_canary_run_id is None,
+            "complete_canary_replay": scoped_canary_run_id is not None,
             "payloads_replayed": first.payloads_replayed,
             "dataset_hash": first.dataset_hash,
             "capture_set_sha256": _capture_set_sha256(
@@ -7475,6 +8545,9 @@ def run_replay_audit(
             "inventory_watermark_sha256": canonical_sha256(
                 inventory.receipt_keys
             ),
+            "replay_selection_watermark_sha256": canonical_sha256(
+                replay_inventory.receipt_keys
+            ),
             "provider_calls": 0,
             "odds_api_credits": 0,
             "hash_mismatches": first.hash_mismatches,
@@ -7483,6 +8556,33 @@ def run_replay_audit(
             "fixture_ids_expected": len(receipt_fixture_ids),
             "attempts_reconstructed": attempts_reconstructed,
             "budget_records_reconstructed": budget_records,
+            "replay_scope": (
+                "CANARY_COHORT_SCIENTIFIC_PROJECTIONS_AND_PROVIDER_BUDGETS"
+                if scoped_canary_run_id is not None
+                else "SCIENTIFIC_CAPTURE_PROJECTIONS_AND_PROVIDER_BUDGETS"
+            ),
+            "chronos_canary_run_id": scoped_canary_run_id,
+            "chronos_canary_policy_hash": canary_policy_hash,
+            "chronos_canary_fixture_count": (
+                len(scoped_fixture_ids)
+                if scoped_fixture_ids is not None
+                else None
+            ),
+            "chronos_canary_window_count": (
+                len(scoped_window_ids)
+                if scoped_window_ids is not None
+                else None
+            ),
+            "namespace_receipts_examined": len(inventory.receipt_keys),
+            "control_plane_reconstruction": (
+                "PRESERVED_NOT_REPLAYED_AUTHORITY_IS_NOT_RECONSTRUCTED"
+            ),
+            "control_plane_tables": [
+                "chronos_canary_runs",
+                "chronos_canary_cohort_fixtures",
+                "chronos_canary_usage_events",
+                "chronos_canary_run_windows",
+            ],
         },
     )
     _write_json(args.output / "r2-replay-audit.json", report)
@@ -7494,10 +8594,23 @@ def _aggregate_operational_snapshot(
     *,
     state: OperationalState,
     now: datetime,
+    fixture_ids: set[str] | None = None,
 ) -> None:
-    receipts = state.receipts()
-    attempts = state.attempts()
-    windows = _active_windows(state)
+    receipts = tuple(
+        receipt
+        for receipt in state.receipts()
+        if fixture_ids is None or receipt.fixture_id in fixture_ids
+    )
+    attempts = tuple(
+        attempt
+        for attempt in state.attempts()
+        if fixture_ids is None or attempt.fixture_id in fixture_ids
+    )
+    windows = tuple(
+        window
+        for window in _active_windows(state)
+        if fixture_ids is None or window.fixture_id in fixture_ids
+    )
     completed_window_ids = {
         receipt.window_id
         for receipt in receipts
@@ -7637,6 +8750,40 @@ def run_gate_report(
     now = _parse_utc(args.now)
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
+    canary_fixture_ids: set[str] | None = None
+    canary_window_ids: set[str] | None = None
+    canary_planned_at: datetime | None = None
+    canary_policy_hash: str | None = None
+    canary_run_id: str | None = None
+    if (
+        isinstance(state, SQLAlchemyOperationalState)
+        and state.engine.dialect.name != "sqlite"
+    ):
+        canary_contract, canary_policy_hash, _, _ = (
+            _load_chronos_capture_contracts(
+                args,
+                command="gate-report",
+                provider_injected=True,
+            )
+        )
+        (
+            canary_run_id,
+            canary_planned_at,
+            cohort_fixture_ids,
+            linked_window_ids,
+        ) = state.chronos_canary_replay_scope(
+            policy=canary_contract,
+            policy_hash=canary_policy_hash,
+            code_revision=_code_revision(args.code_revision),
+        )
+        canary_fixture_ids = set(cohort_fixture_ids)
+        canary_window_ids = set(linked_window_ids)
+        state.activate_canary_guard(
+            canary_run_id=canary_run_id,
+            policy=canary_contract,
+            recorded_at=now,
+            code_revision=_code_revision(args.code_revision),
+        )
     if (
         repository is not None
         or (
@@ -7648,19 +8795,100 @@ def run_gate_report(
         repository = repository or _repository(
             cache_root=getattr(args, "object_store_root", None)
         )
-        _reconcile_r2_state(
-            state=state,
-            repository=repository,
-            policy=policy,
-        )
+        if (
+            isinstance(state, SQLAlchemyOperationalState)
+            and canary_run_id is not None
+            and not isinstance(repository.store, CanaryBoundObjectStore)
+        ):
+            repository = ProspectiveR2Repository(
+                CanaryBoundObjectStore(repository.store, state),
+                namespace=repository.namespace,
+            )
     else:
         _reconcile_receipt_attempts(state)
-    fixtures = state.fixtures()
-    lifecycle_heads = state.fixture_lifecycle_heads()
-    all_windows = state.windows()
-    windows = _active_windows(state)
-    receipts = state.receipts()
-    identities = _fixture_identities(repository) if repository is not None else {}
+    fixtures = tuple(
+        fixture
+        for fixture in state.fixtures()
+        if canary_fixture_ids is None
+        or fixture.fixture_id in canary_fixture_ids
+    )
+    lifecycle_heads = tuple(
+        fixture
+        for fixture in state.fixture_lifecycle_heads()
+        if canary_fixture_ids is None
+        or fixture.fixture_id in canary_fixture_ids
+    )
+    all_windows = tuple(
+        window
+        for window in state.windows()
+        if canary_fixture_ids is None
+        or window.fixture_id in canary_fixture_ids
+    )
+    windows = tuple(
+        window
+        for window in _active_windows(state)
+        if canary_fixture_ids is None
+        or window.fixture_id in canary_fixture_ids
+    )
+    receipts = tuple(
+        receipt
+        for receipt in state.receipts()
+        if canary_fixture_ids is None
+        or (
+            receipt.fixture_id in canary_fixture_ids
+            and (
+                receipt.window_id is None
+                or canary_window_ids is None
+                or receipt.window_id in canary_window_ids
+            )
+            and (
+                canary_planned_at is None
+                or receipt.materialized_at >= canary_planned_at
+            )
+        )
+    )
+    attempts = tuple(
+        attempt
+        for attempt in state.attempts()
+        if canary_fixture_ids is None
+        or (
+            attempt.fixture_id in canary_fixture_ids
+            and (
+                canary_window_ids is None
+                or attempt.window_id in canary_window_ids
+            )
+        )
+    )
+    identity_captures: tuple[StoredCapture, ...] | None = None
+    if (
+        repository is not None
+        and canary_fixture_ids is not None
+        and canary_window_ids is not None
+        and canary_planned_at is not None
+    ):
+        identity_inventory = repository.inventory_namespace(
+            recovery_fixture_ids=canary_fixture_ids,
+            recovery_window_ids=canary_window_ids,
+            recovery_materialized_at_or_after=canary_planned_at,
+        )
+        identity_captures = tuple(
+            capture
+            for capture in (
+                repository.read_capture(key)
+                for key in identity_inventory.receipt_keys
+            )
+            if capture.receipt.fixture_id in canary_fixture_ids
+            and (
+                capture.receipt.window_id is None
+                or capture.receipt.window_id in canary_window_ids
+            )
+            and capture.receipt.materialized_at >= canary_planned_at
+        )
+    identities = (
+        _fixture_identities(repository, captures=identity_captures)
+        if repository is not None
+        else {}
+    )
     completed_window_ids = {
         receipt.window_id
         for receipt in receipts
@@ -7693,9 +8921,14 @@ def run_gate_report(
     )
     aggregates = aggregate_gate_evaluations(evaluations)
     ledger = build_observatory_ledger(
-        fixtures=state.fixture_versions(),
+        fixtures=tuple(
+            fixture
+            for fixture in state.fixture_versions()
+            if canary_fixture_ids is None
+            or fixture.fixture_id in canary_fixture_ids
+        ),
         windows=all_windows,
-        attempts=state.attempts(),
+        attempts=attempts,
         receipts=receipts,
         gates=evaluations,
         frozen_at=now,
@@ -7716,13 +8949,28 @@ def run_gate_report(
         }
     )
     snapshot = _base_snapshot(policy, now=now)
-    _aggregate_operational_snapshot(snapshot, state=state, now=now)
+    _aggregate_operational_snapshot(
+        snapshot,
+        state=state,
+        now=now,
+        fixture_ids=canary_fixture_ids,
+    )
     snapshot["ledger"] = ledger_summary
     due_windows = _due_windows(
         state,
         families=tuple(CaptureFamily),
         now=now,
     )
+    if canary_fixture_ids is not None:
+        due_windows = tuple(
+            window
+            for window in due_windows
+            if window.fixture_id in canary_fixture_ids
+            and (
+                canary_window_ids is None
+                or window.window_id in canary_window_ids
+            )
+        )
     cast(dict[str, object], snapshot["fixtures"]).update(
         {
             "tracked": len(fixtures),
@@ -7892,7 +9140,7 @@ def run_gate_report(
         snapshot=snapshot,
         extra={
             "status": snapshot["status"],
-            "fixtures": len(state.fixtures()),
+            "fixtures": len(fixtures),
             "active_windows": len(windows),
             "inactive_windows": len(all_windows) - len(windows),
             "receipts": len(receipts),
@@ -7909,6 +9157,13 @@ def run_gate_report(
             "odds_api_credits": 0,
             "decisions": 0,
             "stakes": 0,
+            "chronos_canary_run_id": canary_run_id,
+            "chronos_canary_policy_hash": canary_policy_hash,
+            "chronos_canary_usage": (
+                state.canary_usage_totals()
+                if isinstance(state, SQLAlchemyOperationalState)
+                else {}
+            ),
         },
     )
     _write_json(args.output / "gate-report.json", report)
@@ -7925,7 +9180,34 @@ def run_next_due_report(
     now = _parse_utc(args.now)
     policy = ObservatoryPolicy.load(args.policy)
     state = state or _database_state()
-    fixtures = {fixture.fixture_id: fixture for fixture in state.fixtures()}
+    canary_fixture_ids: set[str] | None = None
+    canary_window_ids: set[str] | None = None
+    if (
+        isinstance(state, SQLAlchemyOperationalState)
+        and state.engine.dialect.name != "sqlite"
+    ):
+        canary_contract, canary_policy_hash, _, _ = (
+            _load_chronos_capture_contracts(
+                args,
+                command="next-due-report",
+                provider_injected=True,
+            )
+        )
+        _, _, cohort_fixture_ids, linked_window_ids = (
+            state.chronos_canary_replay_scope(
+                policy=canary_contract,
+                policy_hash=canary_policy_hash,
+                code_revision=_code_revision(args.code_revision),
+            )
+        )
+        canary_fixture_ids = set(cohort_fixture_ids)
+        canary_window_ids = set(linked_window_ids)
+    fixtures = {
+        fixture.fixture_id: fixture
+        for fixture in state.fixtures()
+        if canary_fixture_ids is None
+        or fixture.fixture_id in canary_fixture_ids
+    }
     completed = {
         receipt.window_id
         for receipt in state.receipts()
@@ -7979,6 +9261,15 @@ def run_next_due_report(
         CaptureWindow,
     ] = {}
     for window in _active_windows(state):
+        if (
+            canary_fixture_ids is not None
+            and (
+                window.fixture_id not in canary_fixture_ids
+                or canary_window_ids is None
+                or window.window_id not in canary_window_ids
+            )
+        ):
+            continue
         if window.window_id in completed or window.cutoff_at <= now:
             continue
         key = (window.fixture_id, window.family)
@@ -8022,7 +9313,16 @@ def run_next_due_report(
             policy.value["capture_windows"],
         )["policy_version"],
         "fixtures": len(fixtures),
-        "active_windows": len(_active_windows(state)),
+        "active_windows": sum(
+            1
+            for window in _active_windows(state)
+            if canary_fixture_ids is None
+            or (
+                window.fixture_id in canary_fixture_ids
+                and canary_window_ids is not None
+                and window.window_id in canary_window_ids
+            )
+        ),
         "entries": entries,
         "provider_calls": 0,
         "odds_api_credits": 0,

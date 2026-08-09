@@ -225,6 +225,7 @@ def test_zero_due_signed_execution_does_not_open_r2(
         "attempts_reconstructed": 0,
         "budget_records": 0,
         "r2_recovered_objects": 0,
+        "scope": "CAPTURE_LOCAL_STATE_ONLY_NO_NAMESPACE_REPLAY",
     }
 
 

@@ -61,7 +61,7 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
         assert "alembic upgrade head" in workflow
         assert (
-            'alembic current | grep -q "0014_robin_chronos_v1"'
+            'alembic current | grep -q "0015_chronos_fail_closed"'
             in workflow
         )
     expected_groups = {
@@ -136,7 +136,7 @@ def test_prequential_workflows_share_state_lock_and_safety_contract() -> None:
         'SOCIAL_PUBLISHING_ENABLED: "false"',
         'DEMO_MODE_ENABLED: "false"',
         'ODDS_API_CREDITS_ALLOWED: "0"',
-        'alembic current | grep -q "0014_robin_chronos_v1"',
+        'alembic current | grep -q "0015_chronos_fail_closed"',
         "retention-days: 90",
     )
     for name in PREQUENTIAL_WORKFLOWS:
@@ -223,7 +223,8 @@ def test_odds_scope_and_zero_cost_replay_are_explicit() -> None:
     assert '--policy "$PROSPECTIVE_POLICY"' in odds
     assert "ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}" in odds
     assert "--max-objects" not in replay
-    assert "Rejouer intégralement R2 sans fournisseur" in replay
+    assert "Rejouer le sous-ensemble canari R2 sans fournisseur" in replay
+    assert "CHRONOS_CANARY_POLICY" in replay
     for workflow in (replay, gates):
         assert 'API_FOOTBALL_CALLS_ALLOWED: "0"' in workflow
         assert 'ODDS_API_CREDITS_ALLOWED: "0"' in workflow

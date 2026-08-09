@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-09T07:12:00Z",
+  "generated_at":"2026-08-09T10:15:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -47,6 +47,23 @@
       "code_revision":"UNCOMMITTED_CHRONOS_CORRECTION_FROM_19B82886",
       "execution_id":"local-robin-chronos-correction-20260809",
       "scientific_lineage_id":"NOT_APPLICABLE_CONTRACT_HARDENING",
+      "dataset_lineage_id":"NOT_APPLICABLE_SYNTHETIC_TESTS",
+      "status":"PARTIAL",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.CHRONOS.PR39.FAIL_CLOSED_REDESIGN.V2.001"
+    },
+    {
+      "claim_id":"GOV.CHRONOS.PR39.FAIL_CLOSED_REDESIGN.V2.001",
+      "claim":"The second-remediation Chronos redesign replaces per-invocation estimates and global replay with one durable fixed cohort, cumulative pre-effect metering, scoped dual-watermark recovery, fail-closed price admission for all active consumers, exact canonical contracts, node-complete lineage and an incremental migration while every external effect and scientific activation remains zero or locked.",
+      "scope":"ROBIN_CHRONOS_PR39_FAIL_CLOSED_REDESIGN",
+      "source":"bounded local redesign validation before the immutable successor commit",
+      "grain":"one_local_pr39_fail_closed_redesign_validation",
+      "temporal_class":"CODE_AND_LOCAL_EXECUTION_AS_OF",
+      "artifact":"reports/closure/pr39-chronos-fail-closed-redesign-validation-v2.json",
+      "hash":"2cc08e7535d4ba9b8a480f80c43b0405185a6558ce569d06a4aca5ef61482111",
+      "code_revision":"UNCOMMITTED_CHRONOS_REDESIGN_FROM_5C0753EE",
+      "execution_id":"local-robin-chronos-fail-closed-redesign-20260809",
+      "scientific_lineage_id":"NOT_APPLICABLE_CONTRACT_AND_RUNTIME_REDESIGN",
       "dataset_lineage_id":"NOT_APPLICABLE_SYNTHETIC_TESTS",
       "status":"PARTIAL",
       "verified_by":["C0"]
@@ -2004,7 +2021,8 @@
     {"decision_id":"RCV3-20260808-091","ledger_record_hash":"28d2aa6d06bf67762b5bad33a9a694a0d46d6b179e1d0f65031383eb2f885dcd"},
     {"decision_id":"RCV3-20260809-092","ledger_record_hash":"cc339208bb353e5f13985db48d1894cec9fa7304b68fb2216c702c8f17a52fcc"},
     {"decision_id":"RCV3-20260809-093","ledger_record_hash":"caa3fb3c0e0ed9713d4e1ac10cca9dcf045733becd69265502fd7670b56ae651"},
-    {"decision_id":"RCV3-20260809-094","ledger_record_hash":"3a3f6d216c2223b16c22629e471417607ead4ba103c43a072b6b579cc3dc183b"}
+    {"decision_id":"RCV3-20260809-094","ledger_record_hash":"3a3f6d216c2223b16c22629e471417607ead4ba103c43a072b6b579cc3dc183b"},
+    {"decision_id":"RCV3-20260809-095","ledger_record_hash":"b5f4600288fb17106ddc7c44fdbd56930bcde3ba2a2af177f1c32f4dc263282c"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2281,6 +2299,7 @@
     {"edge_id":"EDGE.272","from_claim_id":"REPLAY.PHASE_C.V2.CHECKPOINT_RESUME.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.273","from_claim_id":"SECURITY.PHASE_C.V2.ZERO_EFFECTS.TRIPLE_LOCK.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.274","from_claim_id":"GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001","to_decision_id":"RCV3-20260808-091","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.275","from_claim_id":"GOV.CHRONOS.PR39.CORRECTIVE_VALIDATION.V1.001","to_decision_id":"RCV3-20260809-094","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.275","from_claim_id":"GOV.CHRONOS.PR39.CORRECTIVE_VALIDATION.V1.001","to_decision_id":"RCV3-20260809-094","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.276","from_claim_id":"GOV.CHRONOS.PR39.FAIL_CLOSED_REDESIGN.V2.001","to_decision_id":"RCV3-20260809-095","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

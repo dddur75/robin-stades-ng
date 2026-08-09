@@ -22,13 +22,20 @@ R2
 - journal `prospective-deep-budget/prospective-provider-budget-v1`
   accessible en lecture ;
 - aucune variable de clé fournisseur transmise au job ;
-- destination PostgreSQL explicite et migrée ; préférer une base jetable vide
-  pour l’audit, n’utiliser Neon durable que dans le workflow opérationnel
-  autorisé avec parité stricte ;
-- inventaire borné ou curseur explicite ;
+- destination PostgreSQL explicite et migrée ; en exploitation, les tables
+  d’autorité du canari doivent déjà exister et correspondre exactement au
+  contrat gelé ; le replay refuse de les inventer ;
+- inventaire exhaustif du namespace pour l’intégrité, puis sélection bornée
+  par la cohorte, les fenêtres liées et `planned_at` ;
 - `PRODUCTION_LOCKED` et tous les invariants actifs.
 
-La révision attendue est `0014_robin_chronos_v1`.
+La révision attendue est `0015_chronos_fail_closed`.
+
+Le replay certifié reconstruit les projections scientifiques de capture et le
+journal des coûts fournisseur depuis le watermark R2 figé. Les tables
+d'autorité du canari (`chronos_canary_runs`, cohorte, usages et liens de
+fenêtres) sont préservées mais ne sont jamais réinventées depuis des payloads :
+une autorisation d'exécution n'est pas une donnée scientifique reconstructible.
 
 ## Commande
 
@@ -44,9 +51,10 @@ rapport.
 
 ## Séquence
 
-1. inventorier et valider exhaustivement toutes les intentions de reprise ;
-2. matérialiser de façon idempotente le payload et le reçu exacts de chaque
-   intention valide, sans appel fournisseur ;
+1. lire l’autorité PostgreSQL existante et geler cohorte, fenêtres et
+   `planned_at` sans créer de grant ;
+2. inventorier et valider exhaustivement toutes les intentions de reprise,
+   mais ne matérialiser que celles qui appartiennent au canari ;
 3. inventorier exhaustivement toutes les clés, payloads et reçus ;
 4. refuser avant toute projection les payloads orphelins, reçus orphelins,
    clés inattendues, objets illisibles et divergences d’intégrité ;
@@ -54,11 +62,12 @@ rapport.
 6. télécharger l’objet correspondant sans l’écrire dans Git ;
 7. décompresser et recalculer le SHA-256 ;
 8. normaliser avec la révision déclarée ;
-9. compléter idempotemment dans R2 toute ligne budget legacy encore présente
-   seulement dans PostgreSQL, puis reprojeter le journal R2 complet ;
+9. reprojeter uniquement les coûts R2 enregistrés depuis `planned_at` ; le
+   seeding legacy global est interdit dans le chemin canari ;
 10. projeter dans la base cible autorisée ;
-11. vérifier la parité bidirectionnelle des reçus, index payloads et budgets,
-    puis l’égalité exacte des cinq tables de projection entre R2 et PostgreSQL ;
+11. vérifier la parité bidirectionnelle des reçus, index payloads et budgets
+    du canari, puis l’égalité exacte de toutes les tables de projection
+    scientifique entre R2 et PostgreSQL ;
 12. rejouer une seconde fois ;
 13. comparer dataset hash, identités, ensemble exact des reçus et compteurs ;
 14. publier séparément objets/octets physiques uniques, objets/octets de
@@ -84,7 +93,7 @@ postgresql.reconstruction_status=CAPTURE_PROJECTIONS_AND_BUDGET_RECONSTRUCTIBLE_
 Le second passage doit insérer zéro nouvelle ligne métier et incrémenter le
 compteur de doublons évités.
 
-Les cinq tables comparées par empreinte de ligne complète sont :
+Les tables comparées par empreinte de ligne complète sont :
 
 ```text
 prospective_player_status
@@ -92,6 +101,14 @@ prospective_injuries
 prospective_lineups
 prospective_formations
 prospective_odds_snapshots
+known_at_fact_metadata
+price_snapshot_metadata
+price_derivation_metadata
+market_snapshot_metadata
+tag_snapshot_metadata
+data_quality_events
+chronos_lineage_nodes
+chronos_lineage_edges
 ```
 
 Une ligne supplémentaire, manquante ou mutée produit
@@ -138,16 +155,17 @@ Les clés compactes `pcg1` des guards restent sous 250 caractères et les clés
 
 Aucun replay ne supprime ni ne corrige en place un objet R2.
 
-Lorsqu’un run de capture sans fenêtre due réconcilie d’abord R2, son rapport
-distingue :
+Un run de capture, même sans fenêtre due, ne réconcilie jamais le namespace
+R2. Son rapport conserve les compteurs distincts :
 
 ```text
 r2_puts=<objets de la capture courante>
 recovery_r2_puts=<objets rematérialisés depuis une intention antérieure>
 ```
 
-`r2_puts=0` n’interdit pas une réparation provider-free ; celle-ci doit
-apparaître uniquement dans `recovery_r2_puts`.
+`recovery_r2_puts` reste donc à zéro dans la capture. Toute réparation
+provider-free appartient exclusivement à `replay-audit` et consomme les
+plafonds cumulatifs du même canari.
 
 ## Matrice d’interruption
 

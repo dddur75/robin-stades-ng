@@ -47,7 +47,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0014_robin_chronos_v1"
+          alembic current | grep -q "0015_chronos_fail_closed"
       - name: Estimer le coût des fenêtres lineup dues
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

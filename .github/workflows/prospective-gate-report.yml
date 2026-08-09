@@ -18,6 +18,7 @@ jobs:
     timeout-minutes: 90
     env:
       PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      CHRONOS_CANARY_POLICY: "configs/operations/robin-chronos-canary-v1.json"
       STORAGE_PAUSED: "true"
       P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
@@ -42,7 +43,7 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0014_robin_chronos_v1"
+          alembic current | grep -q "0015_chronos_fail_closed"
       - name: Rejouer R2 sans fournisseur sur le même état verrouillé
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

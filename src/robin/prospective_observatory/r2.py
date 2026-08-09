@@ -546,7 +546,13 @@ class ProspectiveR2Repository:
             raise PayloadIntegrityError("R2_PAYLOAD_MISSING")
         return self._payload_from_compressed(receipt, compressed)
 
-    def reconcile_pending_receipts(self) -> int:
+    def reconcile_pending_receipts(
+        self,
+        *,
+        fixture_ids: set[str] | None = None,
+        window_ids: set[str] | None = None,
+        materialized_at_or_after: datetime | None = None,
+    ) -> int:
         """Materialize receipts proven by an immutable recovery intent.
 
         Recovery is deliberately narrow: the canonical intent contains the
@@ -624,6 +630,19 @@ class ProspectiveR2Repository:
                 raise ReceiptRecoveryIntegrityError(
                     "R2_RECEIPT_RECOVERY_INTENT_MISMATCH"
                 )
+            if fixture_ids is not None and (
+                receipt.fixture_id not in fixture_ids
+                or (
+                    receipt.window_id is not None
+                    and window_ids is not None
+                    and receipt.window_id not in window_ids
+                )
+                or (
+                    materialized_at_or_after is not None
+                    and receipt.materialized_at < materialized_at_or_after
+                )
+            ):
+                continue
             try:
                 self._payload_from_compressed(receipt, compressed_payload)
                 payload_created = self._put_immutable(
@@ -647,10 +666,25 @@ class ProspectiveR2Repository:
             recovered += int(payload_created) + int(receipt_created)
         return recovered
 
-    def inventory_namespace(self) -> R2NamespaceInventory:
+    def inventory_namespace(
+        self,
+        *,
+        recovery_fixture_ids: set[str] | None = None,
+        recovery_window_ids: set[str] | None = None,
+        recovery_materialized_at_or_after: datetime | None = None,
+    ) -> R2NamespaceInventory:
         """Recover attributed writes, then validate every raw namespace object."""
 
-        self.reconcile_pending_receipts()
+        if recovery_fixture_ids is None:
+            self.reconcile_pending_receipts()
+        else:
+            self.reconcile_pending_receipts(
+                fixture_ids=recovery_fixture_ids,
+                window_ids=recovery_window_ids,
+                materialized_at_or_after=(
+                    recovery_materialized_at_or_after
+                ),
+            )
         namespace_prefix = f"{self.namespace}/"
         recovery_prefix = (
             f"{R2_RECOVERY_NAMESPACE}/{R2_SCHEMA_VERSION}/"

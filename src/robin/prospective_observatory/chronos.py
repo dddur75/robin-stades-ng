@@ -29,6 +29,15 @@ CHRONOS_SCHEMA_VERSION = "robin-chronos-v1"
 PRICE_CONTRACT_VERSION = "point-in-time-price-contract-v1"
 TAG_SNAPSHOT_VERSION = "point-in-time-tag-snapshot-v1"
 CANONICAL_TAG_COUNT = 150
+CANONICAL_TAG_REGISTRY_HASH = (
+    "c95bedfe0a02e2858722e93af13023b5cf4edb53692f7e46216599a3a3979d7d"
+)
+CANONICAL_TAG_IDS_HASH = (
+    "7ee5de13f2c8f8ffd919a5bcb43474d34bd41a74cfc6f7552aeb5624ec6293f8"
+)
+PRICE_CONTRACT_HASH = (
+    "18835b64961986d154a1bc26211c0c2ee09075af42aa59a954d6ba5461e3de4c"
+)
 MAX_MARKET_OVERROUND = Decimal("0.06")
 PROPORTIONAL_METHOD_ID = "PROPORTIONAL_COMPLETE_MARKET_V1"
 PROPORTIONAL_METHOD_VERSION = "1.0.0"
@@ -190,6 +199,16 @@ class KnownAtFact(FrozenContract):
         )
         if self.temporal_class is not expected:
             raise ValueError("CHRONOS_TEMPORAL_CLASS_MISMATCH")
+        timestamps = (
+            self.requested_at,
+            self.response_received_at,
+            self.known_at,
+        )
+        if self.temporal_class is TemporalClass.KNOWN_AT_UNKNOWN:
+            if any(value is not None for value in timestamps):
+                raise ValueError("CHRONOS_UNKNOWN_TIMESTAMPS_MUST_BE_NULL")
+        elif any(value is None for value in timestamps):
+            raise ValueError("CHRONOS_KNOWN_TIMESTAMPS_REQUIRED")
         return self
 
 
@@ -206,7 +225,7 @@ def build_known_at_fact(
     restrictive_available_at: datetime | None = None,
     effective_at: datetime | None = None,
     quality_status: QualityStatus = QualityStatus.VALID,
-    supersedes_fact_id: str | None = None,
+    supersedes_fact: KnownAtFact | None = None,
 ) -> KnownAtFact:
     """Build a fact without accepting a caller-provided ``known_at`` value."""
 
@@ -246,6 +265,27 @@ def build_known_at_fact(
         and ensure_utc(provider_updated, field="provider_updated_at") > known
     ):
         quality_status = QualityStatus.PROVIDER_TIMESTAMP_INCONSISTENT
+    supersedes_fact_id: str | None = None
+    if supersedes_fact is not None:
+        predecessor_scope = (
+            supersedes_fact.fixture_id,
+            supersedes_fact.entity_id,
+            supersedes_fact.source,
+            supersedes_fact.family,
+            supersedes_fact.cutoff_id,
+            supersedes_fact.request_contract_hash,
+        )
+        successor_scope = (
+            receipt.fixture_id,
+            entity_id,
+            receipt.provider,
+            receipt.family,
+            cutoff_id,
+            request_contract_hash,
+        )
+        if predecessor_scope != successor_scope:
+            raise ValueError("CHRONOS_FACT_SUPERSESSION_SCOPE_MISMATCH")
+        supersedes_fact_id = supersedes_fact.fact_id
     identity = {
         "fixture_id": receipt.fixture_id,
         "normalized_fact_id": normalized_fact_id,
@@ -330,12 +370,15 @@ class PriceObservation(FrozenContract):
     raw_object_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     receipt_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     request_contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    price_contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     temporal_class: TemporalClass
     quality_status: QualityStatus
     code_revision: str
 
     @model_validator(mode="after")
     def validate_price(self) -> Self:
+        if self.price_contract_hash != PRICE_CONTRACT_HASH:
+            raise ValueError("CHRONOS_PRICE_CONTRACT_MISMATCH")
         requested = ensure_utc(self.requested_at, field="requested_at")
         response = ensure_utc(
             self.response_received_at,
@@ -404,6 +447,7 @@ def build_price_observation(
     odds_decimal: Decimal,
     cutoff_id: str,
     request_contract_hash: str,
+    price_contract_hash: str,
     code_revision: str,
     provider_updated_at: datetime | None = None,
     max_age_seconds: int = 3600,
@@ -427,6 +471,7 @@ def build_price_observation(
         "odds_decimal": str(odds_decimal),
         "cutoff_id": cutoff_id,
         "request_contract_hash": request_contract_hash,
+        "price_contract_hash": price_contract_hash,
     }
     provider_updated = provider_updated_at
     price_age_seconds: int | None = None
@@ -464,6 +509,7 @@ def build_price_observation(
         raw_object_hash=receipt.payload_sha256,
         receipt_hash=receipt.receipt_hash,
         request_contract_hash=request_contract_hash,
+        price_contract_hash=price_contract_hash,
         temporal_class=temporal_class,
         quality_status=quality_status,
         code_revision=code_revision,
@@ -479,6 +525,7 @@ class PriceDerivation(FrozenContract):
     selection: ChronosSelection
     line: Decimal | None
     source_price_set_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    price_contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     method_id: Literal["PROPORTIONAL_COMPLETE_MARKET_V1"] = (
         "PROPORTIONAL_COMPLETE_MARKET_V1"
     )
@@ -488,6 +535,12 @@ class PriceDerivation(FrozenContract):
     market_overround: Decimal
     devigged_probability: Decimal
     price_age_seconds: int = Field(ge=0)
+
+    @model_validator(mode="after")
+    def validate_price_contract(self) -> Self:
+        if self.price_contract_hash != PRICE_CONTRACT_HASH:
+            raise ValueError("CHRONOS_PRICE_CONTRACT_MISMATCH")
+        return self
 
 
 def _required_selections(market: ChronosMarket) -> tuple[ChronosSelection, ...]:
@@ -507,7 +560,7 @@ def derive_complete_book_markets(
 
     getcontext().prec = 28
     grouped: dict[
-        tuple[str, str, ChronosMarket, Decimal | None, str],
+        tuple[str, str, ChronosMarket, Decimal | None, str, str],
         dict[ChronosSelection, PriceObservation],
     ] = defaultdict(dict)
     for observation in observations:
@@ -522,6 +575,7 @@ def derive_complete_book_markets(
             observation.market,
             observation.line,
             observation.receipt_hash,
+            observation.price_contract_hash,
         )
         existing = grouped[key].get(observation.selection)
         if existing is None or observation.observation_hash < existing.observation_hash:
@@ -535,7 +589,7 @@ def derive_complete_book_markets(
         }
     )
     for key, selection_map in sorted(grouped.items(), key=lambda item: str(item[0])):
-        fixture_id, bookmaker, market, line, _ = key
+        fixture_id, bookmaker, market, line, _, price_contract_hash = key
         required = _required_selections(market)
         if set(selection_map) != set(required):
             continue
@@ -565,6 +619,7 @@ def derive_complete_book_markets(
                     selection=observation.selection,
                     line=line,
                     source_price_set_hash=source_hash,
+                    price_contract_hash=price_contract_hash,
                     definition_hash=definition_hash,
                     implied_probability=unscaled,
                     market_overround=overround,
@@ -584,8 +639,15 @@ class AggregatedMarketSnapshot(FrozenContract):
     bookmakers: tuple[str, ...]
     selection_probabilities: dict[ChronosSelection, Decimal]
     input_set_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    price_contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     confirmatory_admissible: bool
     quality_status: QualityStatus
+
+    @model_validator(mode="after")
+    def validate_price_contract(self) -> Self:
+        if self.price_contract_hash != PRICE_CONTRACT_HASH:
+            raise ValueError("CHRONOS_PRICE_CONTRACT_MISMATCH")
+        return self
 
 
 def aggregate_market_snapshot(
@@ -597,6 +659,10 @@ def aggregate_market_snapshot(
     identity_keys = {(row.fixture_id, row.cutoff_id, row.market, row.line) for row in rows}
     if len(identity_keys) != 1:
         raise ValueError("CHRONOS_MARKET_AGGREGATION_SCOPE_MIXED")
+    price_contract_hashes = {row.price_contract_hash for row in rows}
+    if len(price_contract_hashes) != 1:
+        raise ValueError("CHRONOS_MARKET_PRICE_CONTRACT_MIXED")
+    price_contract_hash = price_contract_hashes.pop()
     fixture_id, cutoff_id, market, line = identity_keys.pop()
     by_selection: dict[ChronosSelection, list[Decimal]] = defaultdict(list)
     by_bookmaker: dict[str, set[ChronosSelection]] = defaultdict(set)
@@ -633,6 +699,7 @@ def aggregate_market_snapshot(
             )
         },
         "input_set_hash": input_hash,
+        "price_contract_hash": price_contract_hash,
     }
     return AggregatedMarketSnapshot(
         snapshot_id="market-snapshot:" + canonical_sha256(identity),
@@ -643,6 +710,7 @@ def aggregate_market_snapshot(
         bookmakers=complete_books,
         selection_probabilities=probabilities,
         input_set_hash=input_hash,
+        price_contract_hash=price_contract_hash,
         confirmatory_admissible=confirmatory,
         quality_status=(QualityStatus.VALID if confirmatory else QualityStatus.NO_PRICE),
     )
@@ -714,6 +782,11 @@ def freeze_tag_snapshot(
     expected = tuple(sorted(expected_tag_ids))
     if len(expected) != CANONICAL_TAG_COUNT or len(set(expected)) != len(expected):
         raise ValueError("CHRONOS_TAG_REGISTRY_NOT_150")
+    if (
+        tag_registry_hash != CANONICAL_TAG_REGISTRY_HASH
+        or canonical_sha256(expected) != CANONICAL_TAG_IDS_HASH
+    ):
+        raise ValueError("CHRONOS_TAG_REGISTRY_NOT_CANONICAL")
     ordered_states = dict(sorted(tag_states.items()))
     if tuple(ordered_states) != expected or set(tag_fact_ids) != set(expected):
         raise ValueError("CHRONOS_TAG_REGISTRY_SCOPE_MISMATCH")
@@ -804,6 +877,12 @@ class LineageEdge(FrozenContract):
     code_revision: str
 
 
+class LineageNode(FrozenContract):
+    node_id: str
+    node_kind: LineageNodeKind
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 def build_lineage_edge(
     *,
     upstream_kind: LineageNodeKind,
@@ -846,6 +925,16 @@ class LineageIndex:
 
     def __init__(self) -> None:
         self._edges: dict[str, LineageEdge] = {}
+        self._nodes: dict[str, LineageNode] = {}
+
+    def add_node(self, node: LineageNode) -> bool:
+        existing = self._nodes.get(node.node_id)
+        if existing is not None:
+            if existing != node:
+                raise ValueError("CHRONOS_LINEAGE_NODE_CONFLICT")
+            return False
+        self._nodes[node.node_id] = node
+        return True
 
     def append(self, edge: LineageEdge) -> bool:
         existing = self._edges.get(edge.edge_id)
@@ -855,6 +944,21 @@ class LineageIndex:
             return False
         if edge.upstream_id == edge.downstream_id:
             raise ValueError("CHRONOS_LINEAGE_SELF_CYCLE")
+        expected_nodes = (
+            LineageNode(
+                node_id=edge.upstream_id,
+                node_kind=edge.upstream_kind,
+                content_hash=edge.upstream_hash,
+            ),
+            LineageNode(
+                node_id=edge.downstream_id,
+                node_kind=edge.downstream_kind,
+                content_hash=edge.downstream_hash,
+            ),
+        )
+        for expected_node in expected_nodes:
+            if self._nodes.get(expected_node.node_id) != expected_node:
+                raise ValueError("CHRONOS_LINEAGE_NODE_MISSING_OR_MISMATCH")
         pending = [edge.downstream_id]
         visited: set[str] = set()
         while pending:
@@ -972,16 +1076,20 @@ __all__ = [
     "AggregatedMarketSnapshot",
     "BOOKMAKER_ALLOWLIST",
     "CANONICAL_TAG_COUNT",
+    "CANONICAL_TAG_IDS_HASH",
+    "CANONICAL_TAG_REGISTRY_HASH",
     "CanaryBudget",
     "ChronosMarket",
     "ChronosSelection",
     "KnownAtFact",
     "LineageEdge",
     "LineageIndex",
+    "LineageNode",
     "LineageNodeKind",
     "PointInTimeTagSnapshot",
     "PriceDerivation",
     "PriceObservation",
+    "PRICE_CONTRACT_HASH",
     "QualityStatus",
     "REGION_ALLOWLIST",
     "ScientificRole",

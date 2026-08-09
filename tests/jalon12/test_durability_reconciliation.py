@@ -10,6 +10,7 @@ from alembic import command
 from alembic.config import Config
 from sqlalchemy import event, func, select
 
+import scripts.run_prospective_observatory as observatory_script
 from robin.domain.enums import DataAvailability, DataOrigin
 from robin.prospective_observatory import (
     AvailabilityStatus,
@@ -327,7 +328,7 @@ def _provider_billed_capture(
     )
 
 
-def test_r2_capture_survives_sql_failure_and_reconciles_before_provider(
+def test_r2_capture_survives_sql_failure_and_replays_before_provider(
     tmp_path: Path,
 ) -> None:
     output = tmp_path / "reports"
@@ -377,6 +378,13 @@ def test_r2_capture_survives_sql_failure_and_reconciles_before_provider(
         capture.receipt.window_id == due_fixture_window.window_id
         for capture in repository.iter_captures()
     )
+
+    replay = run_replay_audit(
+        _args("replay-audit", output=output),
+        state=state,
+        repository=repository,
+    )
+    assert replay["status"] == "R2_REPLAY_VERIFIED"
 
     estimate = _args("capture-general", output=output)
     estimate.estimate = True
@@ -526,6 +534,13 @@ def test_completed_freshness_guard_replays_receipt_and_allows_deep_call(
     assert provider.status_calls == 1
     assert provider.fixture_calls == 1
     assert provider.lineup_calls == 0
+
+    replay = run_replay_audit(
+        _args("replay-audit", output=output),
+        state=state,
+        repository=repository,
+    )
+    assert replay["status"] == "R2_REPLAY_VERIFIED"
 
     second_execute = _signed_args(
         "capture-lineup",
@@ -713,7 +728,7 @@ def test_zero_due_operation_has_exactly_zero_side_effects(
     assert state.budget_used(ProviderKind.ODDS_API) == 0
 
 
-def test_zero_due_reports_recovery_writes_separately_from_capture_puts(
+def test_zero_due_capture_does_not_reconcile_missing_r2_objects(
     tmp_path: Path,
 ) -> None:
     cache = tmp_path / "empty-cache.json"
@@ -733,9 +748,11 @@ def test_zero_due_reports_recovery_writes_separately_from_capture_puts(
 
     assert report["status"] == "CANARY_NOT_DUE_SCHEDULER_READY"
     assert report["r2_puts"] == 0
-    assert report["recovery_r2_puts"] == 2
+    assert report["recovery_r2_puts"] == 0
     assert report["provider_calls"] == 0
     assert report["capture_attempts"] == 0
+    assert capture.receipt.r2_key not in store.objects
+    assert capture.receipt.receipt_r2_key not in store.objects
 
 
 def test_extra_postgresql_projection_is_rejected_by_r2_parity(
@@ -822,6 +839,150 @@ def test_extra_postgresql_projection_is_rejected_by_r2_parity(
             state=state,
             repository=repository,
         )
+
+
+def test_post_watermark_sql_projection_is_ignored_by_replay_parity(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    cache = _cache(tmp_path / "post-watermark-cache.json")
+    repository = ProspectiveR2Repository(_CountingObjectStore())
+    state = _migrated_state(tmp_path / "post-watermark.db", monkeypatch)
+    output = tmp_path / "post-watermark-reports"
+    run_fixture_registry(
+        _args("fixture-registry", output=output, cache=cache),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output), state=state)
+    run_capture(
+        _args("capture-player", output=output, cache=cache),
+        state=state,
+        repository=repository,
+    )
+    receipt = next(
+        item
+        for item in state.receipts()
+        if item.family is CaptureFamily.PLAYER_STATUS
+        and item.window_id is not None
+    )
+    original_watermark = observatory_script._capture_sql_replay_watermark
+
+    def watermark_then_concurrent_insert(
+        current_state: SQLAlchemyOperationalState,
+    ) -> dict[str, set[tuple[object, ...]]]:
+        watermark = original_watermark(current_state)
+        receipt_table = current_state.tables["capture_receipts"]
+        projection_table = current_state.tables[
+            "prospective_player_status"
+        ]
+        with current_state.engine.begin() as connection:
+            receipt_id = connection.execute(
+                select(receipt_table.c.id).where(
+                    receipt_table.c.receipt_hash == receipt.receipt_hash
+                )
+            ).scalar_one()
+            connection.execute(
+                projection_table.insert().values(
+                    id="00000000-0000-0000-0000-000000000002",
+                    receipt_id=receipt_id,
+                    fixture_id=receipt.fixture_id,
+                    team_id=receipt.fixture_id,
+                    player_id="post-watermark",
+                    status="CONCURRENT",
+                    reason=None,
+                    observed_at=receipt.observed_at,
+                    cutoff_at=receipt.cutoff_at,
+                    projection_hash="1" * 64,
+                    code_revision=receipt.code_revision,
+                    append_only=True,
+                )
+            )
+        return watermark
+
+    monkeypatch.setattr(
+        observatory_script,
+        "_capture_sql_replay_watermark",
+        watermark_then_concurrent_insert,
+    )
+    report = run_replay_audit(
+        _args("replay-audit", output=output),
+        state=state,
+        repository=repository,
+    )
+
+    assert report["status"] == "R2_REPLAY_VERIFIED"
+
+
+def test_replay_with_durable_authority_selects_only_canary_cohort(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    canary = json.loads(
+        (
+            ROOT / "configs/operations/robin-chronos-canary-v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    canary["authorized_at"] = "2026-07-31T00:00:00Z"
+    canary_path = tmp_path / "canary.json"
+    canary_path.write_text(json.dumps(canary), encoding="utf-8")
+    monkeypatch.setenv("CHRONOS_CANARY_POLICY", str(canary_path))
+
+    cache = _cache(tmp_path / "scoped-cache.json")
+    repository = ProspectiveR2Repository(_CountingObjectStore())
+    state = _migrated_state(tmp_path / "scoped.db", monkeypatch)
+    output = tmp_path / "scoped-reports"
+    run_fixture_registry(
+        _args("fixture-registry", output=output, cache=cache),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output), state=state)
+    run_capture(
+        _args("capture-player", output=output, cache=cache),
+        state=state,
+        repository=repository,
+    )
+    repository.capture(
+        payload={"normalized_family_records": []},
+        context=CaptureContext(
+            window_id=None,
+            window_label="REGISTRY",
+            fixture_id="api-football:outside-canary",
+            competition="Ligue 1",
+            season="2026",
+            provider="cache-test",
+            family=CaptureFamily.FIXTURE,
+            requested_at=NOW,
+            response_received_at=NOW,
+            observed_at=NOW,
+            kickoff_at=KICKOFF,
+            cutoff_at=KICKOFF - timedelta(microseconds=1),
+            http_status=200,
+            source_endpoint="cache://outside-canary",
+            complete=True,
+            quality_status=AvailabilityStatus.CAPTURED,
+            provider_calls=0,
+            code_revision="durability-reconciliation-test",
+            materialized_at=NOW,
+        ),
+    )
+
+    report = run_replay_audit(
+        _args("replay-audit", output=output),
+        state=state,
+        repository=repository,
+    )
+
+    assert report["status"] == "R2_REPLAY_VERIFIED"
+    assert report["replay_scope"] == (
+        "CANARY_COHORT_SCIENTIFIC_PROJECTIONS_AND_PROVIDER_BUDGETS"
+    )
+    assert report["chronos_canary_fixture_count"] == 1
+    assert report["namespace_receipts_examined"] > report["payloads_replayed"]
+    assert "api-football:outside-canary" not in {
+        fixture.fixture_id for fixture in state.fixtures()
+    }
 
 
 def test_partial_legacy_budget_seed_completes_and_rebuilds(

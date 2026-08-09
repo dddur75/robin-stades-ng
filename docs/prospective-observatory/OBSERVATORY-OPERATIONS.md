@@ -177,8 +177,9 @@ pnpm --dir cockpit test
 Le builder refuse un rapport sans `PRODUCTION_LOCKED`, avec `real_bets=true`,
 publication sociale active, démo active ou décisions non nulles.
 
-`prospective-gate-report.yml` exécute dans le même verrou un replay R2 complet
-sans fournisseur, puis le gate report et la synthèse par ligue. Il construit
+`prospective-gate-report.yml` exécute dans le même verrou un replay R2 du
+sous-ensemble canari sans fournisseur, puis le gate report et la synthèse par
+ligue. Il construit
 un premier périmètre, vérifie chaque identité contre le reçu R2 et sa projection
 PostgreSQL, reconstruit le snapshot final et teste Robin Experience. Le gate,
 les identités et le cockpit sont ainsi liés au même ensemble exact de reçus,
@@ -222,8 +223,9 @@ Sur la branche de pré-fusion Jalon 12, le marqueur
 `[run-j12-replay-only]` autorise uniquement :
 
 1. la vérification de présence des secrets sans affichage ;
-2. `alembic upgrade head` jusqu’à `0014_robin_chronos_v1` ;
-3. le replay intégral R2 avec credentials fournisseur vides ;
+2. `alembic upgrade head` jusqu’à `0015_chronos_fail_closed` ;
+3. le replay R2 borné par l’autorité canari existante, avec credentials
+   fournisseur vides ;
 4. les gates, le ledger, le snapshot Robin Live et son artefact.
 
 Les étapes fixture-registry, scheduler et captures doivent apparaître

@@ -1,0 +1,98 @@
+{
+  "report_id": "PR39_CHRONOS_FAIL_CLOSED_REDESIGN_VALIDATION_V2",
+  "generated_at": "2026-08-09T10:10:16Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 39,
+  "branch": "codex/robin-chronos-known-at-price-observatory-v1",
+  "parent_head": "5c0753ee2334c3253003d67cd426d5ecac1375f3",
+  "status": "LOCAL_REDESIGN_VALIDATED_PENDING_EXACT_SHA_REVIEW",
+  "governance_trigger": {
+    "protocol": "FAIL_AND_REDESIGN",
+    "remediation_attempt": 2,
+    "reason": "The first exact-head correction retained critical canary-boundary, replay-concurrency and price-consumer failures. A second same-level patch is prohibited.",
+    "architecture": "DURABLE_COHORT_METERED_SCOPED_REPLAY"
+  },
+  "redesign_guarantees": {
+    "durable_canary": [
+      "one immutable mission and cohort are reserved in PostgreSQL",
+      "the cohort is globally capped at five fixtures with one fixture per league",
+      "provider calls, Odds credits, R2 objects and PostgreSQL rows are reserved and metered cumulatively before the corresponding effect",
+      "delayed retries reuse the durable mission instead of creating a volatile planned-at identity"
+    ],
+    "bounded_replay": [
+      "durable replay requires a pre-existing exact-policy and exact-code-revision canary authority",
+      "R2 recovery and SQL reconstruction are scoped to the cohort, linked windows and mission watermark",
+      "capture never performs namespace-wide historical reconciliation",
+      "parity uses one frozen R2 inventory plus an SQL watermark and verifies all thirteen Chronos projection tables"
+    ],
+    "fail_closed_prices": [
+      "missing stale or future provider timestamps never enter the legacy prequential price table",
+      "overround rejection emits replayable NO_PRICE data-quality evidence",
+      "the exact immutable price-contract hash is bound to observations, derived markets and aggregates",
+      "five-book confirmatory aggregation remains restricted to the frozen French allowlist and two complete 90-minute markets"
+    ],
+    "temporal_tags_lineage": [
+      "UNKNOWN temporal facts require the complete nullable timestamp tuple",
+      "supersession is restricted to the same scientific business key",
+      "tag snapshots require the exact canonical 150-tag registry and registry hash",
+      "lineage rejects missing nodes and multi-hop cycles"
+    ],
+    "migration": [
+      "the historical 0014 revision remains immutable",
+      "0015 upgrades already-migrated 0014 databases and has a tested inverse downgrade"
+    ]
+  },
+  "validation": {
+    "focused_gate_replay_canary": {
+      "passed": 14,
+      "failed": 0,
+      "deselected": 35
+    },
+    "chronos_and_jalon12_domain": {
+      "passed": 238,
+      "failed": 0
+    },
+    "migration_prequential_hypothesis_compatibility": {
+      "passed": 347,
+      "failed": 0
+    },
+    "ruff_ci_scope": "PASS",
+    "mypy_core_scope": "PASS_172_SOURCE_FILES",
+    "bandit_ci_scope": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "odds_api_credits": 0,
+    "remote_sql_reads": 0,
+    "remote_sql_writes": 0,
+    "r2_reads": 0,
+    "r2_writes": 0,
+    "r2_deletes": 0,
+    "workflow_dispatches": 0,
+    "deployments": 0,
+    "purchases": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triple_searches": 0
+  },
+  "scientific_limits": {
+    "real_chronos_odds_captures_proven": 0,
+    "v3_status": "NOT_OPENED_INSUFFICIENT_POINT_IN_TIME_SUPPORT",
+    "campaign_tests": 7480,
+    "pair_survivors": 0,
+    "clv_or_roi_claim_authorized": false,
+    "provider_canary_authorized": false
+  },
+  "authorization": {
+    "local_redesign_commit": true,
+    "non_force_push_to_existing_draft_pr": true,
+    "exact_sha_read_only_review_required": true,
+    "exact_head_ci_required": true,
+    "one_complete_local_suite_reserved_before_merge": true,
+    "ready": false,
+    "merge": false,
+    "workflow_activation": false,
+    "provider_canary": false
+  }
+}

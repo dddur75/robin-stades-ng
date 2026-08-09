@@ -3,15 +3,20 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 from robin.prospective_observatory.chronos import (
     BOOKMAKER_ALLOWLIST,
+    CANONICAL_TAG_REGISTRY_HASH,
+    PRICE_CONTRACT_HASH,
     CanaryBudget,
     ChronosMarket,
     ChronosSelection,
+    KnownAtFact,
     LineageIndex,
+    LineageNode,
     LineageNodeKind,
     ScientificRole,
     TagState,
@@ -45,7 +50,12 @@ from robin.prospective_observatory.prequential_storage import (
 NOW = datetime(2026, 8, 9, 8, 0, tzinfo=UTC)
 HASH = "a" * 64
 CONTRACT_HASH = "b" * 64
-TAG_IDS = tuple(f"tag-{index:03d}" for index in range(150))
+TAG_REGISTRY = json.loads(
+    Path("configs/hypothesis-tags/canonical-tag-registry-v2.json").read_text(
+        encoding="utf-8"
+    )
+)
+TAG_IDS = tuple(sorted(tag["tag_id"] for tag in TAG_REGISTRY["tags"]))
 
 
 def _receipt(
@@ -145,6 +155,55 @@ def test_restrictive_evidence_can_only_delay_known_at() -> None:
         )
 
 
+def test_known_at_unknown_rejects_partial_timestamp_evidence() -> None:
+    fact = build_known_at_fact(
+        receipt=_receipt(),
+        entity_id="entity",
+        normalized_value={"value": 1},
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        scientific_role=ScientificRole.STRICT_KNOWN_AT,
+        normalizer_version="test-v1",
+        code_revision="test-revision",
+    )
+    values = fact.model_dump()
+    values.update(
+        {
+            "requested_at": None,
+            "known_at": None,
+            "temporal_class": "KNOWN_AT_UNKNOWN",
+        }
+    )
+    with pytest.raises(ValueError, match="CHRONOS_UNKNOWN_TIMESTAMPS_MUST_BE_NULL"):
+        KnownAtFact.model_validate(values)
+
+
+def test_fact_supersession_rejects_cross_fixture_predecessor() -> None:
+    predecessor = build_known_at_fact(
+        receipt=_receipt(),
+        entity_id="entity",
+        normalized_value={"value": 1},
+        cutoff_id="NEAR_KICKOFF",
+        request_contract_hash=CONTRACT_HASH,
+        scientific_role=ScientificRole.STRICT_KNOWN_AT,
+        normalizer_version="test-v1",
+        code_revision="test-revision",
+    )
+    successor_receipt = _receipt().model_copy(update={"fixture_id": "fixture-2"})
+    with pytest.raises(ValueError, match="CHRONOS_FACT_SUPERSESSION_SCOPE_MISMATCH"):
+        build_known_at_fact(
+            receipt=successor_receipt,
+            entity_id="entity",
+            normalized_value={"value": 2},
+            cutoff_id="NEAR_KICKOFF",
+            request_contract_hash=CONTRACT_HASH,
+            scientific_role=ScientificRole.STRICT_KNOWN_AT,
+            normalizer_version="test-v1",
+            code_revision="test-revision",
+            supersedes_fact=predecessor,
+        )
+
+
 def test_future_provider_timestamp_excludes_fact_from_strict_view() -> None:
     receipt = _receipt().model_copy(
         update={"provider_updated_at": NOW + timedelta(seconds=1)}
@@ -181,6 +240,7 @@ def _price_observations(bookmakers: tuple[str, ...]) -> tuple[object, ...]:
                     odds_decimal=odds,
                     cutoff_id="NEAR_KICKOFF",
                     request_contract_hash=CONTRACT_HASH,
+                    price_contract_hash=PRICE_CONTRACT_HASH,
                     code_revision="test-revision",
                     provider_updated_at=NOW - timedelta(seconds=30),
                     max_age_seconds=600,
@@ -222,6 +282,7 @@ def test_price_timestamp_and_freshness_fail_closed() -> None:
         odds_decimal=Decimal("2.1"),
         cutoff_id="NEAR_KICKOFF",
         request_contract_hash=CONTRACT_HASH,
+        price_contract_hash=PRICE_CONTRACT_HASH,
         code_revision="test-revision",
     )
     stale = build_price_observation(
@@ -233,6 +294,7 @@ def test_price_timestamp_and_freshness_fail_closed() -> None:
         odds_decimal=Decimal("2.1"),
         cutoff_id="NEAR_KICKOFF",
         request_contract_hash=CONTRACT_HASH,
+        price_contract_hash=PRICE_CONTRACT_HASH,
         code_revision="test-revision",
         provider_updated_at=NOW - timedelta(seconds=601),
         max_age_seconds=600,
@@ -246,6 +308,7 @@ def test_price_timestamp_and_freshness_fail_closed() -> None:
         odds_decimal=Decimal("2.1"),
         cutoff_id="NEAR_KICKOFF",
         request_contract_hash=CONTRACT_HASH,
+        price_contract_hash=PRICE_CONTRACT_HASH,
         code_revision="test-revision",
         provider_updated_at=NOW + timedelta(seconds=1),
         max_age_seconds=600,
@@ -254,6 +317,24 @@ def test_price_timestamp_and_freshness_fail_closed() -> None:
     assert stale.quality_status.value == "NO_PRICE"
     assert future.quality_status.value == "PROVIDER_TIMESTAMP_INCONSISTENT"
     assert missing.receipt_hash == _receipt().receipt_hash
+
+
+def test_price_observation_requires_exact_frozen_contract() -> None:
+    with pytest.raises(ValueError, match="CHRONOS_PRICE_CONTRACT_MISMATCH"):
+        build_price_observation(
+            receipt=_receipt(),
+            bookmaker=BOOKMAKER_ALLOWLIST[0],
+            market=ChronosMarket.MATCH_RESULT_90M,
+            selection=ChronosSelection.HOME,
+            line=None,
+            odds_decimal=Decimal("2.1"),
+            cutoff_id="NEAR_KICKOFF",
+            request_contract_hash=CONTRACT_HASH,
+            price_contract_hash="c" * 64,
+            code_revision="test-revision",
+            provider_updated_at=NOW - timedelta(seconds=30),
+            max_age_seconds=600,
+        )
 
 
 def test_market_overround_outside_bound_is_not_derived() -> None:
@@ -267,6 +348,7 @@ def test_market_overround_outside_bound_is_not_derived() -> None:
             odds_decimal=Decimal("1.50"),
             cutoff_id="NEAR_KICKOFF",
             request_contract_hash=CONTRACT_HASH,
+            price_contract_hash=PRICE_CONTRACT_HASH,
             code_revision="test-revision",
             provider_updated_at=NOW - timedelta(seconds=30),
             max_age_seconds=600,
@@ -291,6 +373,7 @@ def test_total_line_must_be_exactly_two_point_five() -> None:
             odds_decimal=Decimal("1.9"),
             cutoff_id="H2",
             request_contract_hash=CONTRACT_HASH,
+            price_contract_hash=PRICE_CONTRACT_HASH,
             code_revision="test-revision",
         )
 
@@ -323,7 +406,7 @@ def test_late_fact_cannot_enter_tag_snapshot() -> None:
         cutoff_id="NEAR_KICKOFF",
         cutoff_at=NOW + timedelta(hours=1),
         kickoff_at=NOW + timedelta(hours=2),
-        tag_registry_hash=HASH,
+        tag_registry_hash=CANONICAL_TAG_REGISTRY_HASH,
         facts=(late, on_time),
         tag_states={
             tag_id: (TagState.TRUE if tag_id == TAG_IDS[0] else TagState.UNKNOWN)
@@ -343,6 +426,22 @@ def test_late_fact_cannot_enter_tag_snapshot() -> None:
     )
 
 
+def test_tag_snapshot_rejects_arbitrary_150_id_registry() -> None:
+    arbitrary = tuple(f"arbitrary-{index:03d}" for index in range(150))
+    with pytest.raises(ValueError, match="CHRONOS_TAG_REGISTRY_NOT_CANONICAL"):
+        freeze_tag_snapshot(
+            fixture_id="fixture-1",
+            cutoff_id="NEAR_KICKOFF",
+            cutoff_at=NOW + timedelta(hours=1),
+            kickoff_at=NOW + timedelta(hours=2),
+            tag_registry_hash="c" * 64,
+            facts=(),
+            tag_states={tag_id: TagState.UNKNOWN for tag_id in arbitrary},
+            tag_fact_ids={tag_id: () for tag_id in arbitrary},
+            expected_tag_ids=arbitrary,
+        )
+
+
 def test_lineage_is_append_only_and_bidirectional() -> None:
     edge = build_lineage_edge(
         upstream_kind=LineageNodeKind.RAW_OBJECT,
@@ -356,6 +455,20 @@ def test_lineage_is_append_only_and_bidirectional() -> None:
         code_revision="test-revision",
     )
     index = LineageIndex()
+    index.add_node(
+        LineageNode(
+            node_id=edge.upstream_id,
+            node_kind=edge.upstream_kind,
+            content_hash=edge.upstream_hash,
+        )
+    )
+    index.add_node(
+        LineageNode(
+            node_id=edge.downstream_id,
+            node_kind=edge.downstream_kind,
+            content_hash=edge.downstream_hash,
+        )
+    )
     assert index.append(edge) is True
     assert index.append(edge) is False
     assert index.downstream("raw-1") == (edge,)
@@ -365,33 +478,62 @@ def test_lineage_is_append_only_and_bidirectional() -> None:
 def test_lineage_rejects_multi_hop_cycle() -> None:
     index = LineageIndex()
     for upstream, downstream in (("a", "b"), ("b", "c")):
-        index.append(
-            build_lineage_edge(
-                upstream_kind=LineageNodeKind.RAW_OBJECT,
-                upstream_id=upstream,
-                upstream_hash=HASH,
-                downstream_kind=LineageNodeKind.NORMALIZED_FACT,
-                downstream_id=downstream,
-                downstream_hash=CONTRACT_HASH,
-                relation="DERIVED_FROM",
-                contract_hash=HASH,
-                code_revision="test-revision",
+        edge = build_lineage_edge(
+            upstream_kind=LineageNodeKind.NORMALIZED_FACT,
+            upstream_id=upstream,
+            upstream_hash=HASH,
+            downstream_kind=LineageNodeKind.NORMALIZED_FACT,
+            downstream_id=downstream,
+            downstream_hash=HASH,
+            relation="DERIVED_FROM",
+            contract_hash=HASH,
+            code_revision="test-revision",
+        )
+        index.add_node(
+            LineageNode(
+                node_id=edge.upstream_id,
+                node_kind=edge.upstream_kind,
+                content_hash=edge.upstream_hash,
             )
         )
+        index.add_node(
+            LineageNode(
+                node_id=edge.downstream_id,
+                node_kind=edge.downstream_kind,
+                content_hash=edge.downstream_hash,
+            )
+        )
+        index.append(edge)
     with pytest.raises(ValueError, match="CHRONOS_LINEAGE_CYCLE"):
         index.append(
             build_lineage_edge(
                 upstream_kind=LineageNodeKind.NORMALIZED_FACT,
                 upstream_id="c",
                 upstream_hash=HASH,
-                downstream_kind=LineageNodeKind.RAW_OBJECT,
+                downstream_kind=LineageNodeKind.NORMALIZED_FACT,
                 downstream_id="a",
-                downstream_hash=CONTRACT_HASH,
+                downstream_hash=HASH,
                 relation="DERIVED_FROM",
                 contract_hash=HASH,
                 code_revision="test-revision",
             )
         )
+
+
+def test_lineage_rejects_edge_with_unregistered_node() -> None:
+    edge = build_lineage_edge(
+        upstream_kind=LineageNodeKind.RAW_OBJECT,
+        upstream_id="raw-missing",
+        upstream_hash=HASH,
+        downstream_kind=LineageNodeKind.KNOWN_AT_FACT,
+        downstream_id="fact-missing",
+        downstream_hash=CONTRACT_HASH,
+        relation="DERIVED_FROM",
+        contract_hash=HASH,
+        code_revision="test-revision",
+    )
+    with pytest.raises(ValueError, match="CHRONOS_LINEAGE_NODE_MISSING_OR_MISMATCH"):
+        LineageIndex().append(edge)
 
 
 def test_chronos_storage_is_content_addressed_and_idempotent() -> None:

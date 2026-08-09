@@ -18,8 +18,11 @@ from robin.prospective_observatory.contracts import (
     AvailabilityStatus,
     CaptureContext,
     CaptureFamily,
+    ProspectiveFixture,
+    canonical_sha256,
 )
 from robin.prospective_observatory.r2 import ProspectiveR2Repository
+from robin.prospective_observatory.temporal import schedule_windows
 from robin.providers.api_football import ApiFootballProvider
 from robin.providers.contracts import (
     CircuitOpenError,
@@ -30,6 +33,7 @@ from robin.providers.contracts import (
 from robin.storage.database import build_engine
 from scripts.build_cockpit_snapshot import build_prospective_observatory
 from scripts.run_prospective_observatory import (
+    CanaryBoundObjectStore,
     DirectoryObjectStore,
     MemoryOperationalState,
     ObservatoryPolicy,
@@ -199,6 +203,93 @@ def _migrated_engine(path: Path, monkeypatch: object) -> object:
     config = Config(str(ROOT / "alembic.ini"))
     command.upgrade(config, "head")
     return build_engine(database_url)
+
+
+def _five_book_odds_cache(
+    path: Path,
+    *,
+    last_update: datetime,
+    h2h_prices: tuple[float, float, float] = (2.0, 3.5, 4.0),
+    total_prices: tuple[float, float] = (1.91, 1.91),
+) -> Path:
+    cache = _cache(path)
+    value = json.loads(cache.read_text(encoding="utf-8"))
+    event = value["payloads"]["api-football:9001"]["ODDS"][0]
+    event["bookmakers"] = [
+        {
+            "key": bookmaker,
+            "last_update": last_update.isoformat(),
+            "markets": [
+                {
+                    "key": "h2h",
+                    "outcomes": [
+                        {"name": "Home 9001", "price": h2h_prices[0]},
+                        {"name": "Draw", "price": h2h_prices[1]},
+                        {"name": "Away 9001", "price": h2h_prices[2]},
+                    ],
+                },
+                {
+                    "key": "totals",
+                    "outcomes": [
+                        {
+                            "name": "Over",
+                            "price": total_prices[0],
+                            "point": 2.5,
+                        },
+                        {
+                            "name": "Under",
+                            "price": total_prices[1],
+                            "point": 2.5,
+                        },
+                    ],
+                },
+            ],
+        }
+        for bookmaker in (
+            "betclic_fr",
+            "netbet_fr",
+            "pmu_fr",
+            "unibet_fr",
+            "winamax_fr",
+        )
+    ]
+    cache.write_text(json.dumps(value), encoding="utf-8")
+    return cache
+
+
+def _run_sql_odds_capture(
+    tmp_path: Path,
+    monkeypatch: object,
+    *,
+    cache: Path,
+) -> tuple[object, SQLAlchemyOperationalState, dict[str, object], DirectoryObjectStore]:
+    output = tmp_path / "reports"
+    store = DirectoryObjectStore(tmp_path / "objects")
+    repository = ProspectiveR2Repository(store)
+    engine = _migrated_engine(tmp_path / "chronos-price.db", monkeypatch)
+    state = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output), state=state)
+    report = run_capture(
+        _args(
+            "capture-odds",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    return engine, state, report, store
 
 
 class _FakeApiFootball:
@@ -1170,10 +1261,16 @@ def test_sqlite_restart_and_r2_reconstruction_are_idempotent(
         repository=repository,
     )
     assert first_replay["status"] == "R2_REPLAY_VERIFIED"
+    assert first_replay["replay_scope"] == (
+        "SCIENTIFIC_CAPTURE_PROJECTIONS_AND_PROVIDER_BUDGETS"
+    )
+    assert first_replay["control_plane_reconstruction"] == (
+        "PRESERVED_NOT_REPLAYED_AUTHORITY_IS_NOT_RECONSTRUCTED"
+    )
     assert second_replay["observatory"]["postgresql"]["inserts"] == 0
     assert second_replay["observatory"]["postgresql"]["duplicates_avoided"] > 0
     assert second_replay["observatory"]["postgresql"]["payload_body_rows"] == 0
-    assert second_replay["observatory"]["postgresql"]["tables"] == 22
+    assert second_replay["observatory"]["postgresql"]["tables"] == 25
     with rebuilt_engine.connect() as connection:  # type: ignore[attr-defined]
         for table_name in (
             "prospective_fixtures",
@@ -1181,10 +1278,15 @@ def test_sqlite_restart_and_r2_reconstruction_are_idempotent(
             "prospective_injuries",
             "prospective_lineups",
             "prospective_formations",
-            "prospective_odds_snapshots",
         ):
             table = Table(table_name, MetaData(), autoload_with=rebuilt_engine)
             assert connection.execute(select(func.count()).select_from(table)).scalar_one() > 0
+        odds = Table(
+            "prospective_odds_snapshots",
+            MetaData(),
+            autoload_with=rebuilt_engine,
+        )
+        assert connection.execute(select(func.count()).select_from(odds)).scalar_one() == 0
 
 
 def test_provider_error_then_success_uses_durable_attempt_number(
@@ -1388,69 +1490,284 @@ def test_canary_one_fixture_per_league_bounds_failures_before_circuit(
     assert report["provider_errors"] == 1
 
 
+def test_durable_canary_usage_is_cumulative_across_restart(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    engine = _migrated_engine(tmp_path / "canary-usage.db", monkeypatch)
+    state = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
+    policy = json.loads(
+        (ROOT / "configs/operations/robin-chronos-canary-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    policy_hash = canonical_sha256(policy)
+    mission_id = state.ensure_chronos_canary_mission(
+        policy=policy,
+        policy_hash=policy_hash,
+        code_revision="canary-test",
+    )
+    state.activate_canary_guard(
+        canary_run_id=mission_id,
+        policy=policy,
+        recorded_at=NOW,
+        code_revision="canary-test",
+    )
+    for index in range(20):
+        operation_key = f"odds-credit-{index}"
+        assert state.record_canary_usage(
+            resource_kind="ODDS_CREDIT",
+            operation_key=operation_key,
+            units=1,
+            actual=False,
+        )
+        assert state.record_canary_usage(
+            resource_kind="ODDS_CREDIT",
+            operation_key=operation_key,
+            units=1,
+            actual=True,
+        )
+    engine.dispose()  # type: ignore[union-attr]
+
+    restarted_engine = build_engine(
+        f"sqlite:///{(tmp_path / 'canary-usage.db').as_posix()}"
+    )
+    restarted = SQLAlchemyOperationalState(restarted_engine)
+    restarted_mission_id = restarted.ensure_chronos_canary_mission(
+        policy=policy,
+        policy_hash=policy_hash,
+        code_revision="canary-test",
+    )
+    assert restarted_mission_id == mission_id
+    restarted.activate_canary_guard(
+        canary_run_id=restarted_mission_id,
+        policy=policy,
+        recorded_at=NOW + timedelta(minutes=1),
+        code_revision="canary-test",
+    )
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_CANARY_CUMULATIVE_ODDS_CREDIT_LIMIT",
+    ):
+        restarted.record_canary_usage(
+            resource_kind="ODDS_CREDIT",
+            operation_key="odds-credit-overflow",
+            units=1,
+            actual=False,
+        )
+    assert restarted.canary_usage_totals()["ODDS_CREDIT"] == {
+        "reserved": 20,
+        "actual": 20,
+    }
+    canaries = restarted.tables["chronos_canary_runs"]
+    with restarted_engine.connect() as connection:
+        rows = list(connection.execute(select(canaries)).mappings())
+    assert len(rows) == 1
+    assert rows[0]["planned_at"].replace(tzinfo=UTC) == datetime(
+        2026, 8, 9, tzinfo=UTC
+    )
+
+
+def test_durable_canary_cohort_is_global_across_invocations(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    competitions = (
+        (9001, 61, "Ligue 1"),
+        (9002, 39, "Premier League"),
+        (9003, 140, "Liga"),
+        (9004, 78, "Bundesliga"),
+        (9005, 135, "Serie A"),
+        (9006, 61, "Ligue 1"),
+    )
+    fixture_map = {}
+    windows_by_fixture = {}
+    for fixture_id, league_id, league_name in competitions:
+        fixture = ProspectiveFixture(
+            fixture_id=f"api-football:{fixture_id}",
+            competition=league_name,
+            season="2026",
+            phase="Regular Season - 1",
+            home_team_id=str(fixture_id * 2),
+            away_team_id=str(fixture_id * 2 + 1),
+            kickoff_at=NOW + timedelta(hours=2),
+            provider="api-football",
+            provider_fixture_id=str(fixture_id),
+            registered_at=NOW,
+            code_revision="canary-test",
+        )
+        fixture_map[fixture.fixture_id] = fixture
+        windows_by_fixture[fixture.fixture_id] = schedule_windows(
+            fixture,
+            CaptureFamily.ODDS,
+            scheduled_at=NOW,
+        )
+    engine = _migrated_engine(tmp_path / "cohort.db", monkeypatch)
+    state = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
+    policy = json.loads(
+        (ROOT / "configs/operations/robin-chronos-canary-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    policy_hash = canonical_sha256(policy)
+    mission_id = state.ensure_chronos_canary_mission(
+        policy=policy,
+        policy_hash=policy_hash,
+        code_revision="canary-test",
+    )
+    state.activate_canary_guard(
+        canary_run_id=mission_id,
+        policy=policy,
+        recorded_at=NOW,
+        code_revision="canary-test",
+    )
+    first_ids = {f"api-football:{fixture_id}" for fixture_id in range(9001, 9005)}
+    second_ids = {"api-football:9005", "api-football:9006"}
+    first_windows = tuple(
+        window
+        for fixture_id in first_ids
+        for window in windows_by_fixture[fixture_id]
+    )
+    assert len(
+        state.reserve_chronos_canary_cohort(
+            canary_run_id=mission_id,
+            windows=first_windows,
+            fixtures=fixture_map,
+            maximum=5,
+            selected_at=NOW,
+            code_revision="canary-test",
+        )
+    ) == 4
+
+    restarted = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
+    assert restarted.ensure_chronos_canary_mission(
+        policy=policy,
+        policy_hash=policy_hash,
+        code_revision="canary-test",
+    ) == mission_id
+    restarted.activate_canary_guard(
+        canary_run_id=mission_id,
+        policy=policy,
+        recorded_at=NOW + timedelta(minutes=1),
+        code_revision="canary-test",
+    )
+    selected_second = restarted.reserve_chronos_canary_cohort(
+        canary_run_id=mission_id,
+        windows=tuple(
+            window
+            for fixture_id in second_ids
+            for window in windows_by_fixture[fixture_id]
+        ),
+        fixtures=fixture_map,
+        maximum=5,
+        selected_at=NOW + timedelta(minutes=1),
+        code_revision="canary-test",
+    )
+    assert selected_second == ("api-football:9005",)
+    cohort = restarted.tables["chronos_canary_cohort_fixtures"]
+    with engine.connect() as connection:  # type: ignore[union-attr]
+        rows = list(connection.execute(select(cohort)).mappings())
+    assert len(rows) == 5
+    assert len({row["competition"] for row in rows}) == 5
+    assert "api-football:9006" not in {row["fixture_id"] for row in rows}
+
+
+def test_canary_counts_actual_sql_and_r2_writes_before_overflow(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    engine = _migrated_engine(tmp_path / "canary-actual.db", monkeypatch)
+    state = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
+    policy = json.loads(
+        (ROOT / "configs/operations/robin-chronos-canary-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    policy.update(
+        {
+            "mission_id": "CANARY_ACTUAL_WRITE_TEST",
+            "postgresql_rows_max": 2,
+            "r2_object_writes_max": 1,
+        }
+    )
+    mission_id = state.ensure_chronos_canary_mission(
+        policy=policy,
+        policy_hash=canonical_sha256(policy),
+        code_revision="canary-test",
+    )
+    state.activate_canary_guard(
+        canary_run_id=mission_id,
+        policy=policy,
+        recorded_at=NOW,
+        code_revision="canary-test",
+    )
+
+    def dq_values(event_hash: str) -> dict[str, object]:
+        return {
+            "id": event_hash[:8] + "-0000-0000-0000-000000000000",
+            "event_id": event_hash,
+            "fixture_id": "fixture-canary",
+            "cutoff_id": "NEAR_KICKOFF",
+            "source": "the-odds-api",
+            "family": "ODDS",
+            "event_code": "NO_PRICE",
+            "severity": "WARN",
+            "subject_type": "MARKET",
+            "subject_id": "fixture-canary:market",
+            "detected_at": NOW,
+            "evidence_hash": "e" * 64,
+            "receipt_id": None,
+            "intent_id": None,
+            "summary": "canary accounting test",
+            "code_revision": "canary-test",
+            "append_only": True,
+        }
+
+    first_event = "a" * 64
+    assert state._insert_exact(  # noqa: SLF001 - direct guard contract test
+        "data_quality_events",
+        key_values={"event_id": first_event},
+        values=dq_values(first_event),
+    )
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_CANARY_CUMULATIVE_POSTGRES_ROW_LIMIT",
+    ):
+        second_event = "b" * 64
+        state._insert_exact(  # noqa: SLF001 - direct guard contract test
+            "data_quality_events",
+            key_values={"event_id": second_event},
+            values=dq_values(second_event),
+        )
+
+    store = CanaryBoundObjectStore(
+        DirectoryObjectStore(tmp_path / "canary-objects"),
+        state,
+    )
+    assert store.put_if_absent("known-at/test/one.json", b"one")
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_CANARY_CUMULATIVE_R2_OBJECT_LIMIT",
+    ):
+        store.put_if_absent("known-at/test/two.json", b"two")
+    assert state.canary_usage_totals() == {
+        "POSTGRES_ROW": {"reserved": 2, "actual": 2},
+        "R2_OBJECT": {"reserved": 1, "actual": 1},
+    }
+
+
 def test_five_book_price_consensus_and_chronos_artifacts_are_materialized(
     tmp_path: Path,
     monkeypatch: object,
 ) -> None:
-    cache = _cache(tmp_path / "cache.json")
-    value = json.loads(cache.read_text(encoding="utf-8"))
-    event = value["payloads"]["api-football:9001"]["ODDS"][0]
-    event["bookmakers"] = [
-        {
-            "key": bookmaker,
-            "last_update": (NOW - timedelta(seconds=30)).isoformat(),
-            "markets": [
-                {
-                    "key": "h2h",
-                    "outcomes": [
-                        {"name": "Home 9001", "price": 2.0},
-                        {"name": "Draw", "price": 3.5},
-                        {"name": "Away 9001", "price": 4.0},
-                    ],
-                },
-                {
-                    "key": "totals",
-                    "outcomes": [
-                        {"name": "Over", "price": 1.91, "point": 2.5},
-                        {"name": "Under", "price": 1.91, "point": 2.5},
-                    ],
-                },
-            ],
-        }
-        for bookmaker in (
-            "betclic_fr",
-            "netbet_fr",
-            "pmu_fr",
-            "unibet_fr",
-            "winamax_fr",
-        )
-    ]
-    cache.write_text(json.dumps(value), encoding="utf-8")
-    output = tmp_path / "reports"
-    store = DirectoryObjectStore(tmp_path / "objects")
-    repository = ProspectiveR2Repository(store)
-    engine = _migrated_engine(tmp_path / "chronos-price.db", monkeypatch)
-    state = SQLAlchemyOperationalState(engine)  # type: ignore[arg-type]
-    run_fixture_registry(
-        _args(
-            "fixture-registry",
-            output=output,
-            cache=cache,
-            object_store_root=tmp_path / "objects",
-        ),
-        state=state,
-        repository=repository,
+    cache = _five_book_odds_cache(
+        tmp_path / "cache.json",
+        last_update=NOW - timedelta(seconds=30),
     )
-    run_scheduler(_args("scheduler", output=output), state=state)
-    report = run_capture(
-        _args(
-            "capture-odds",
-            output=output,
-            cache=cache,
-            object_store_root=tmp_path / "objects",
-        ),
-        state=state,
-        repository=repository,
+    engine, state, report, store = _run_sql_odds_capture(
+        tmp_path,
+        monkeypatch,
+        cache=cache,
     )
     with engine.connect() as connection:  # type: ignore[union-attr]
         price_count = connection.execute(
@@ -1494,3 +1811,130 @@ def test_five_book_price_consensus_and_chronos_artifacts_are_materialized(
             "known-at/recovery/schema-v1/",
         )
     )
+
+
+def test_overround_rejection_emits_dq_and_never_reaches_legacy_prices(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    cache = _five_book_odds_cache(
+        tmp_path / "cache.json",
+        last_update=NOW - timedelta(seconds=30),
+        h2h_prices=(1.5, 1.5, 1.5),
+        total_prices=(1.5, 1.5),
+    )
+    engine, state, report, _ = _run_sql_odds_capture(
+        tmp_path,
+        monkeypatch,
+        cache=cache,
+    )
+    with engine.connect() as connection:  # type: ignore[union-attr]
+        counts = {
+            table_name: connection.execute(
+                select(func.count()).select_from(state.tables[table_name])
+            ).scalar_one()
+            for table_name in (
+                "price_snapshot_metadata",
+                "price_derivation_metadata",
+                "market_snapshot_metadata",
+                "prospective_odds_snapshots",
+                "data_quality_events",
+            )
+        }
+        dq_rows = list(
+            connection.execute(select(state.tables["data_quality_events"]))
+            .mappings()
+        )
+    assert report["captured"] >= 1
+    assert counts == {
+        "price_snapshot_metadata": 25,
+        "price_derivation_metadata": 0,
+        "market_snapshot_metadata": 0,
+        "prospective_odds_snapshots": 0,
+        "data_quality_events": 10,
+    }
+    assert {row["event_code"] for row in dq_rows} == {"NO_PRICE"}
+    assert all("outside the frozen" in row["summary"] for row in dq_rows)
+
+
+def test_stale_prices_never_reach_active_prequential_legacy_table(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    cache = _five_book_odds_cache(
+        tmp_path / "cache.json",
+        last_update=NOW - timedelta(seconds=601),
+    )
+    engine, state, report, _ = _run_sql_odds_capture(
+        tmp_path,
+        monkeypatch,
+        cache=cache,
+    )
+    with engine.connect() as connection:  # type: ignore[union-attr]
+        legacy_count = connection.execute(
+            select(func.count()).select_from(
+                state.tables["prospective_odds_snapshots"]
+            )
+        ).scalar_one()
+        derivation_count = connection.execute(
+            select(func.count()).select_from(
+                state.tables["price_derivation_metadata"]
+            )
+        ).scalar_one()
+        dq_count = connection.execute(
+            select(func.count()).select_from(state.tables["data_quality_events"])
+        ).scalar_one()
+    assert report["captured"] >= 1
+    assert legacy_count == 0
+    assert derivation_count == 0
+    assert dq_count == 25
+
+
+def test_price_contract_mutation_fails_before_provider_call(
+    tmp_path: Path,
+) -> None:
+    cache = _cache(tmp_path / "cache.json")
+    output = tmp_path / "reports"
+    repository = ProspectiveR2Repository(
+        DirectoryObjectStore(tmp_path / "objects")
+    )
+    state = MemoryOperationalState()
+    run_fixture_registry(
+        _args(
+            "fixture-registry",
+            output=output,
+            cache=cache,
+            object_store_root=tmp_path / "objects",
+        ),
+        state=state,
+        repository=repository,
+    )
+    run_scheduler(_args("scheduler", output=output), state=state)
+    mutated_contract = json.loads(
+        (ROOT / "configs/prices/point-in-time-price-contract-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    mutated_contract["aggregation"] = "UNAUTHORIZED_MUTATION"
+    mutated_path = tmp_path / "mutated-price-contract.json"
+    mutated_path.write_text(json.dumps(mutated_contract), encoding="utf-8")
+    args = _args(
+        "capture-odds",
+        output=output,
+        cache=cache,
+        object_store_root=tmp_path / "objects",
+    )
+    args.chronos_price_contract = mutated_path
+    unused_provider = _FakeApiFootball(fail=False)
+    with pytest.raises(
+        RuntimeError,
+        match="CHRONOS_PRICE_CONTRACT_NOT_FAIL_CLOSED",
+    ):
+        run_capture(
+            args,
+            state=state,
+            repository=repository,
+            provider=unused_provider,  # type: ignore[arg-type]
+        )
+    assert unused_provider.status_calls == 0
+    assert unused_provider.fixture_calls == 0

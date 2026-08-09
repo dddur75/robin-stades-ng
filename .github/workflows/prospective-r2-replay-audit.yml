@@ -18,6 +18,7 @@ jobs:
     timeout-minutes: 30
     env:
       PROSPECTIVE_POLICY: "configs/prospective_observatory_v1.json"
+      CHRONOS_CANARY_POLICY: "configs/operations/robin-chronos-canary-v1.json"
       STORAGE_PAUSED: "true"
       P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
@@ -42,8 +43,8 @@ jobs:
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alembic upgrade head
-          alembic current | grep -q "0014_robin_chronos_v1"
-      - name: Rejouer intégralement R2 sans fournisseur
+          alembic current | grep -q "0015_chronos_fail_closed"
+      - name: Rejouer le sous-ensemble canari R2 sans fournisseur
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}

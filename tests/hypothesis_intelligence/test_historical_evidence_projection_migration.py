@@ -16,7 +16,7 @@ from sqlalchemy.schema import CreateTable
 
 from robin.storage.database import build_engine
 
-HEAD = "0014_robin_chronos_v1"
+HEAD = "0015_chronos_fail_closed"
 HISTORICAL_EVIDENCE_MIGRATION = "0013_historical_evidence_index"
 TABLES = {
     "hypothesis_historical_evidence_summaries",

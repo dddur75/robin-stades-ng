@@ -22,7 +22,19 @@ down_revision = "0013_historical_evidence_index"
 branch_labels = None
 depends_on = None
 
-CREATE_ORDER = chronos_models.CHRONOS_TABLE_NAMES
+# Frozen to the exact table set published by the initial 0014 revision.  New
+# models must be introduced by successor migrations; importing the live list
+# here would make an already-applied Alembic revision change meaning over time.
+CREATE_ORDER = (
+    "chronos_canary_runs",
+    "capture_intents",
+    "known_at_fact_metadata",
+    "price_snapshot_metadata",
+    "price_derivation_metadata",
+    "tag_snapshot_metadata",
+    "data_quality_events",
+    "chronos_lineage_edges",
+)
 
 
 def _stable_payload_index_id(receipt_hash: str) -> str:

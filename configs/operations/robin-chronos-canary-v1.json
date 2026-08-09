@@ -1,5 +1,8 @@
 {
   "schema_version": "robin-chronos-canary-v1",
+  "mission_id": "ROBIN_CHRONOS_V1_CANARY_20260809",
+  "authorized_at": "2026-08-09T00:00:00Z",
+  "expires_at": "2026-08-16T23:59:59Z",
   "activation_mode": "CANARY_ONLY",
   "due_only": true,
   "force_future_window": false,

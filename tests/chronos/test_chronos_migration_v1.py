@@ -23,7 +23,7 @@ from robin.storage.database import build_engine
 from scripts.run_prospective_observatory import SQLAlchemyOperationalState
 
 ROOT = Path(__file__).resolve().parents[2]
-HEAD = "0014_robin_chronos_v1"
+HEAD = "0015_chronos_fail_closed"
 NOW = datetime(2026, 8, 9, 8, tzinfo=UTC)
 
 
@@ -129,6 +129,55 @@ def test_migration_creates_append_only_tables_and_round_trips(tmp_path: Path) ->
         )
     with pytest.raises(IntegrityError), engine.begin() as connection:
         connection.execute(canaries.delete().where(canaries.c.id == row["id"]))
+    known_at_checks = {
+        str(check["name"]): str(check["sqltext"])
+        for check in sa.inspect(engine).get_check_constraints(
+            "known_at_fact_metadata"
+        )
+    }
+    temporal_check = known_at_checks["ck_chronos_known_at_fact_temporal"]
+    assert "requested_at IS NULL" in temporal_check
+    assert "response_received_at IS NULL" in temporal_check
+    edges = sa.Table(
+        "chronos_lineage_edges", sa.MetaData(), autoload_with=engine
+    )
+    with pytest.raises(IntegrityError), engine.begin() as connection:
+        connection.execute(
+            edges.insert().values(
+                id=str(uuid.uuid4()),
+                edge_hash="c" * 64,
+                upstream_type="RAW_OBJECT",
+                upstream_id="raw-missing",
+                upstream_hash="a" * 64,
+                downstream_type="KNOWN_AT_FACT",
+                downstream_id="fact-missing",
+                downstream_hash="b" * 64,
+                relationship="DERIVED_FROM",
+                contract_hash="d" * 64,
+                created_at=NOW,
+                code_revision="test-revision",
+                append_only=True,
+            )
+        )
+    command.downgrade(config, "0014_robin_chronos_v1")
+    inspector = sa.inspect(engine)
+    names_at_0014 = set(inspector.get_table_names())
+    assert not {
+        "chronos_canary_cohort_fixtures",
+        "chronos_canary_usage_events",
+        "chronos_canary_run_windows",
+        "market_snapshot_metadata",
+        "chronos_lineage_nodes",
+    } & names_at_0014
+    assert "price_contract_hash" not in {
+        column["name"] for column in inspector.get_columns("capture_intents")
+    }
+    assert "supersedes_fact_id" not in {
+        column["name"]
+        for column in inspector.get_columns("known_at_fact_metadata")
+    }
+    command.upgrade(config, "head")
+    assert set(CHRONOS_TABLE_NAMES) <= set(sa.inspect(engine).get_table_names())
     command.downgrade(config, "0013_historical_evidence_index")
     assert not set(CHRONOS_TABLE_NAMES) & set(sa.inspect(engine).get_table_names())
     command.upgrade(config, "head")

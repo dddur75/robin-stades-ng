@@ -13,7 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from robin.storage.database import build_engine
 from robin.storage.universal_genome_models import UNIVERSAL_GENOME_TABLES
 
-HEAD = "0014_robin_chronos_v1"
+HEAD = "0015_chronos_fail_closed"
 
 
 def _config(url: str) -> Config:

@@ -14,7 +14,7 @@ from robin.storage.database import build_engine
 from robin.storage.hypothesis_models import HYPOTHESIS_TABLES
 from robin.storage.models import Base
 
-HEAD = "0014_robin_chronos_v1"
+HEAD = "0015_chronos_fail_closed"
 
 
 def _config(url: str) -> Config:

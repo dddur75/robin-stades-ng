@@ -611,7 +611,6 @@ def main() -> None:
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
     claims = _claims()
-    claim_ids = {claim["claim_id"] for claim in claims}
     missing_correction_proof_claim_ids = [
         "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
         "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
@@ -711,6 +710,26 @@ def main() -> None:
     expected_tail_edges = (
         expected_correction_tail_edges + expected_closure_edges + expected_v2_edges
     )
+    # Phase C is an immutable prefix, but the evidence graph is also an
+    # append-only cross-campaign ledger.  A later Chronos governance edge must
+    # survive an idempotent Phase C recorder pass instead of being rejected or
+    # truncated merely because it is outside this recorder's campaign scope.
+    expected_successor_edges = [
+        {
+            "edge_id": "EDGE.275",
+            "from_claim_id": "GOV.CHRONOS.PR39.CORRECTIVE_VALIDATION.V1.001",
+            "to_decision_id": "RCV3-20260809-094",
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.276",
+            "from_claim_id": "GOV.CHRONOS.PR39.FAIL_CLOSED_REDESIGN.V2.001",
+            "to_decision_id": "RCV3-20260809-095",
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+    ]
     existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
     if existing_tail_edges not in (
         [],
@@ -724,17 +743,28 @@ def main() -> None:
         expected_correction_tail_edges + expected_closure_edges[:7],
         expected_correction_tail_edges + expected_closure_edges,
         expected_tail_edges,
+        expected_tail_edges + expected_successor_edges,
     ):
         raise RuntimeError("PHASE_C_RECOVERY_EDGE_TAIL_MISMATCH")
+    preserved_successor_edges = (
+        expected_successor_edges
+        if existing_tail_edges == expected_tail_edges + expected_successor_edges
+        else []
+    )
+    claims_by_id = {claim["claim_id"]: claim for claim in claims}
+    existing_claim_ids = {
+        claim["claim_id"] for claim in graph["claims"]
+    }
     graph["claims"] = [
-        claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids
+        claims_by_id.get(claim["claim_id"], claim)
+        for claim in graph["claims"]
     ]
-    graph["claims"].extend(claims)
-    graph["decision_nodes"] = [
-        node
-        for node in graph["decision_nodes"]
-        if node["decision_id"] not in decision_ids
-    ]
+    graph["claims"].extend(
+        claim
+        for claim in claims
+        if claim["claim_id"] not in existing_claim_ids
+    )
+    decision_nodes_by_id: dict[str, dict[str, str]] = {}
     for decision_id in (
         ORIGINAL_DECISION_ID,
         CORRECTION_DECISION_ID,
@@ -756,11 +786,27 @@ def main() -> None:
         V2_EXACT_COMMIT_REVIEW_DECISION_ID,
         PR38_CLOSURE_DECISION_ID,
     ):
-        graph["decision_nodes"].append(
-            {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
-        )
-    graph["edges"] = historical_edges + expected_tail_edges
-    graph["generated_at"] = GENERATED_AT
+        decision_nodes_by_id[decision_id] = {
+            "decision_id": decision_id,
+            "ledger_record_hash": ledger_hashes[decision_id],
+        }
+    existing_decision_ids = {
+        node["decision_id"] for node in graph["decision_nodes"]
+    }
+    graph["decision_nodes"] = [
+        decision_nodes_by_id.get(node["decision_id"], node)
+        for node in graph["decision_nodes"]
+    ]
+    graph["decision_nodes"].extend(
+        node
+        for decision_id, node in decision_nodes_by_id.items()
+        if decision_id not in existing_decision_ids
+    )
+    graph["edges"] = (
+        historical_edges + expected_tail_edges + preserved_successor_edges
+    )
+    if not preserved_successor_edges:
+        graph["generated_at"] = GENERATED_AT
     GRAPH.write_text(_compact_json(graph) + "\n", encoding="utf-8", newline="\n")
 
 
