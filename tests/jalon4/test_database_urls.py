@@ -63,6 +63,7 @@ def test_postgresql_pool_revalide_les_connexions_longues(
     assert captured["pool_pre_ping"] is True
     assert captured["pool_recycle"] == 240
     assert captured["connect_args"] == {"connect_timeout": 10}
+    assert captured["hide_parameters"] is True
 
 
 def test_mot_de_passe_encode_et_sslmode_sont_preserves() -> None:

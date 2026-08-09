@@ -1,0 +1,421 @@
+{
+  "schema_version": "pr41-chronos-control-plane-v2-validation-v1",
+  "generated_at": "2026-08-09T15:15:11Z",
+  "repository": "dddur75/robin-stades-ng",
+  "branch": "codex/robin-chronos-control-plane-v2",
+  "base_main_sha": "b03051d15e741eeb5293e0d3661572b2cb60eeba",
+  "pull_request": {
+    "number": 41,
+    "required_state": "OPEN_DRAFT_NOT_MERGED",
+    "state_at_report_update": "OPEN_DRAFT_NOT_MERGED",
+    "first_exact_ci_head_sha": "b8f812dae8888139d71f921df81b94861eccb66b",
+    "second_exact_ci_head_sha": "74e18fff704ca601dcc5d523a968e8e48041204c",
+    "third_exact_ci_head_sha": "80bf442683a9d24b1b01dcdd2083885bc1ab593a",
+    "head_sha": "RESOLVE_EXACTLY_FROM_GITHUB_AFTER_SUCCESSOR_COMMIT",
+    "self_reference_note": "The commit carrying this report cannot contain its own Git SHA."
+  },
+  "scope": {
+    "decision": "DB_CLOCKED_RUN_BOUND_EFFECT_LEDGER",
+    "included": [
+      "PostgreSQL server-clocked authority",
+      "exact GitHub run and attempt binding",
+      "server epoch and external generation fence",
+      "append-only effect ledger",
+      "single-attempt conditional R2 adapter",
+      "durable PUT and GET permits",
+      "migration, downgrade guard, tests and restore runbook"
+    ],
+    "excluded": [
+      "foundation contracts already merged in PR40",
+      "Neon migration",
+      "workflow activation",
+      "provider-free canary execution",
+      "provider canary",
+      "scientific workflow changes"
+    ]
+  },
+  "architecture": {
+    "option_a": {
+      "score": null,
+      "verdict": "SAME_ARCHITECTURE_PROHIBITED"
+    },
+    "option_b": {
+      "score": 96,
+      "verdict": "ACCEPTED"
+    },
+    "option_c": {
+      "score": 78,
+      "verdict": "FALLBACK_ONLY"
+    },
+    "p0": 0,
+    "p1": 0
+  },
+  "independent_reviews": {
+    "dp6_red": {
+      "status": "PASS",
+      "score": 96,
+      "p0": 0,
+      "p1": 0,
+      "p2": 3
+    },
+    "sec_sql": {
+      "status": "PASS_CONDITIONAL_EXACT_HEAD_CI",
+      "score": 96,
+      "p0": 0,
+      "p1": 0,
+      "p2": 3
+    },
+    "sre": {
+      "status": "PASS_CONDITIONAL_EXACT_HEAD_POSTGRESQL16_CI",
+      "score": 96,
+      "p0": 0,
+      "p1": 0,
+      "p2": 5,
+      "report_absence_p2_resolved_by_this_artifact": true
+    },
+    "c2": {
+      "status": "PASS",
+      "score": 100,
+      "p0": 0,
+      "p1": 0
+    },
+    "rp8": {
+      "status": "PASS_PRICE_ONLY",
+      "score": 100,
+      "p0": 0,
+      "p1": 0
+    }
+  },
+  "local_validation": {
+    "chronos_suite": {
+      "passed": 101,
+      "skipped": 7,
+      "failed": 0,
+      "skip_reason": "No local PostgreSQL contract service; GitHub CI provisions PostgreSQL 16."
+    },
+    "combined_targeted_selection": {
+      "passed": 154,
+      "skipped": 7,
+      "failed": 0
+    },
+    "foundation_and_phase_c_v2": {
+      "passed": 77,
+      "failed": 0,
+      "foundation_contracts": 23,
+      "phase_c_v2_contracts": 54
+    },
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "compileall": "PASS",
+    "json_yaml": "PASS",
+    "secret_scan": "PASS",
+    "pip_check": "PASS",
+    "git_diff_check": "PASS",
+    "full_pytest_before_commit": {
+      "passed": 1428,
+      "skipped": 18,
+      "failed": 1,
+      "finding": "neon_bootstrap rejected the two newly migrated Chronos tables as unknown",
+      "correction": "Chronos tables added to the reflected controlled-rollback allowlist",
+      "targeted_revalidation": "63 passed in tests/jalon4/test_durable_shadow.py",
+      "final_status": "CORRECTED_TARGETED_EXACT_HEAD_FULL_CI_REQUIRED"
+    },
+    "exact_head_github_ci": {
+      "first_run_id": 31318237766,
+      "first_head_sha": "b8f812dae8888139d71f921df81b94861eccb66b",
+      "first_run_status": "FAILED_POSTGRESQL_CONTRACT",
+      "passed_jobs": [
+        "Historical Deep — contrat cache-only",
+        "Jalon 10 - entrees de preuve gelees"
+      ],
+      "failed_job": "tests",
+      "failed_step": "Tester les migrations",
+      "postgresql_contract_result": "4 failed, 3 passed",
+      "root_causes": [
+        "PL/pgSQL RETURN QUERY returned varchar(96) where the declared TABLE column is text in both claim branches",
+        "eight PostgreSQL negative tests nested pytest.raises inside the savepoint, causing RELEASE SAVEPOINT after the expected error was swallowed"
+      ],
+      "correction": [
+        "cast authority_id to text in both fresh and idempotent claim RETURN QUERY branches",
+        "place pytest.raises outside connection.begin_nested in all eight negative-test savepoints"
+      ],
+      "successor_status": "FAILED_THIRD_RUN_CI_MIGRATION_ACTOR_SEQUENCE_CORRECTED",
+      "second_run": {
+        "run_id": 31319007304,
+        "head_sha": "74e18fff704ca601dcc5d523a968e8e48041204c",
+        "status": "FAILED_POSTGRESQL_CONTRACT_TEST_REACHABILITY",
+        "passed_jobs": [
+          "Historical Deep — contrat cache-only",
+          "Jalon 10 - entrees de preuve gelees"
+        ],
+        "failed_job": "tests",
+        "failed_step": "Tester les migrations",
+        "postgresql_contract_result": "6 passed, 1 failed",
+        "root_cause": "The parent-only TRUNCATE was rejected by the events-to-authorities foreign key before PostgreSQL could invoke the expected BEFORE TRUNCATE trigger.",
+        "correction": [
+          "name authorities and events explicitly in the same bounded TRUNCATE statement so the authority trigger is reached without CASCADE",
+          "attempt a separate events-only TRUNCATE to prove the events trigger independently"
+        ],
+        "next_status": "FAILED_THIRD_RUN_AFTER_TEST_HARNESS_CORRECTION"
+      },
+      "third_run": {
+        "run_id": 31319594154,
+        "head_sha": "80bf442683a9d24b1b01dcdd2083885bc1ab593a",
+        "status": "FAILED_MIGRATION_REUPGRADE_ACTOR_ACL_GRANTOR_MISMATCH",
+        "passed_jobs": [
+          "Historical Deep — contrat cache-only",
+          "Jalon 10 - entrees de preuve gelees"
+        ],
+        "failed_job": "tests",
+        "failed_step": "Tester les migrations",
+        "postgresql_contract_result": "7 passed",
+        "lifecycle_result": "FAILED_DURING_0014_REUPGRADE_BEFORE_GENERAL_TEST_SUITE",
+        "root_cause": "Revision 0014 granted its reviewed schema ACLs as robin_ci_migrator, but CI crossed the 0014-to-0013 downgrade boundary as robin. PostgreSQL retained the original grantor ACL, and the fail-closed reupgrade correctly rejected CHRONOS_ROLE_ACL_UNSAFE:chronos_reader.",
+        "correction": [
+          "cross the 0014-to-0013 downgrade boundary with the same isolated migrator that applied revision 0014",
+          "use the legacy migration owner only after revision 0014 has been removed",
+          "apply the same actor split before the final downgrade to base"
+        ],
+        "next_status": "NOT_CREATED_PENDING_FOURTH_COMMIT_PUSH_AND_AUTOMATIC_EXACT_HEAD_CI"
+      }
+    }
+  },
+  "postgresql16_ci_contract": {
+    "migration_actor": "NOSUPERUSER_CREATEROLE",
+    "default_acl_sentinel": true,
+    "implicit_memberships_allowed": {
+      "count": 4,
+      "grantor": "BOOTSTRAP_SUPERUSER_OID_10",
+      "admin": true,
+      "inherit": false,
+      "set": false,
+      "runtime_usage": false
+    },
+    "functions_require_pg_has_role_usage": true,
+    "same_migrator_reupgrade": true,
+    "same_migrator_downgrade_boundary": true,
+    "unexpected_relation_and_function_acl_rejected": true,
+    "remote_database_used_by_this_mission": false
+  },
+  "r2_attribution": {
+    "sdk_write_attempts_max": 1,
+    "durable_put_permits_max_per_operation": 1,
+    "durable_get_permits_max_per_operation": 1,
+    "created_requires": "single non-retryable 2xx response",
+    "preexisting_requires": "single non-retryable 412 then durable GET permit and exact bytes",
+    "request_timeout_http_400": "PUT_COMMITTED_ACTUAL_PENDING",
+    "http_409": "PUT_COMMITTED_ACTUAL_PENDING",
+    "lost_response": "PUT_COMMITTED_ACTUAL_PENDING",
+    "matching_bytes_after_ambiguous_write": "RECOVERY_OBSERVED_MATCHING_OBJECT_NOT_CREATED",
+    "physical_writes_actual_counter": false
+  },
+  "crash_matrix": [
+    {
+      "case": "before_authority_grant",
+      "durable_state": "NONE",
+      "put_budget_consumed": 0,
+      "get_budget_consumed": 0,
+      "retry": "NEW_AUTHORITY_ISSUE_ALLOWED",
+      "attribution": "NONE",
+      "second_pass": "NO_PRIOR_EFFECT"
+    },
+    {
+      "case": "inside_atomic_grant_and_reserve",
+      "durable_state": "AUTHORITY_ROW_ONLY_NO_EFFECT_EVENTS",
+      "put_budget_consumed": 0,
+      "get_budget_consumed": 0,
+      "retry": "CLAIM_ALLOWED_WHILE_ACTIVE",
+      "attribution": "NONE",
+      "second_pass": "ATOMIC_GRANT_AND_RESERVE"
+    },
+    {
+      "case": "after_effect_reserved",
+      "durable_state": "EFFECT_RESERVED",
+      "put_budget_consumed": 0,
+      "get_budget_consumed": 0,
+      "retry": "SAME_CLAIM_IDEMPOTENT",
+      "attribution": "NONE",
+      "second_pass": "ONE_DISPATCH_MAY_BE_PERMITTED_WHILE_ACTIVE"
+    },
+    {
+      "case": "authority_expires_after_reserve_before_dispatch_attempt",
+      "durable_state": "EFFECT_RESERVED",
+      "put_budget_consumed": 0,
+      "get_budget_consumed": 0,
+      "retry": "DISPATCH_WILL_BE_REJECTED",
+      "attribution": "NONE",
+      "second_pass": "NO_NETWORK_UNTIL_DISPATCH_ATTEMPT"
+    },
+    {
+      "case": "dispatch_attempt_after_authority_expiry",
+      "durable_state": "FAILED_BEFORE_DISPATCH",
+      "put_budget_consumed": 0,
+      "get_budget_consumed": 0,
+      "retry": "NO_PUT",
+      "attribution": "NONE",
+      "second_pass": "TERMINAL_NO_NETWORK"
+    },
+    {
+      "case": "after_put_permit_before_socket",
+      "durable_state": "PUT_DISPATCHED",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 0,
+      "retry": "NO_SECOND_PUT",
+      "attribution": "UNKNOWN",
+      "second_pass": "PENDING_WITHOUT_NETWORK_WRITE"
+    },
+    {
+      "case": "hard_crash_during_put_socket",
+      "durable_state": "PUT_DISPATCHED",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 0,
+      "retry": "NO_SECOND_PUT",
+      "attribution": "UNKNOWN",
+      "second_pass": "PENDING_WITHOUT_NETWORK_WRITE"
+    },
+    {
+      "case": "handled_transport_error_or_lost_response",
+      "durable_state": "PUT_COMMITTED_ACTUAL_PENDING",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 0,
+      "retry": "NO_SECOND_PUT",
+      "attribution": "UNKNOWN",
+      "second_pass": "OPTIONAL_SINGLE_DURABLE_GET"
+    },
+    {
+      "case": "created_response_before_final_event",
+      "durable_state": "PUT_DISPATCHED",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 0,
+      "retry": "NO_SECOND_PUT",
+      "attribution": "UNKNOWN_AFTER_CRASH",
+      "second_pass": "PENDING_NOT_CREATED"
+    },
+    {
+      "case": "precondition_response_before_get_permit",
+      "durable_state": "PUT_DISPATCHED",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 0,
+      "retry": "NO_SECOND_PUT",
+      "attribution": "UNKNOWN",
+      "second_pass": "PENDING_THEN_AT_MOST_ONE_GET"
+    },
+    {
+      "case": "after_get_permit_before_get_socket",
+      "durable_state": "R2_GET_DISPATCHED",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 1,
+      "retry": "NO_SECOND_GET",
+      "attribution": "UNKNOWN",
+      "second_pass": "READ_ONLY_STATE_NO_NETWORK"
+    },
+    {
+      "case": "after_preexisting_final_event",
+      "durable_state": "PREEXISTING_CONFIRMED",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 1,
+      "retry": "TERMINAL_IDEMPOTENT",
+      "attribution": "PREEXISTING_NOT_CREATED",
+      "second_pass": "SAME_TERMINAL_EVENT"
+    },
+    {
+      "case": "after_created_final_event",
+      "durable_state": "CREATED_CONFIRMED",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": 0,
+      "retry": "TERMINAL_IDEMPOTENT",
+      "attribution": "CREATED_FROM_SINGLE_2XX",
+      "second_pass": "SAME_TERMINAL_EVENT"
+    },
+    {
+      "case": "pending_replay",
+      "durable_state": "PUT_COMMITTED_ACTUAL_PENDING",
+      "put_budget_consumed": 1,
+      "get_budget_consumed": "ZERO_OR_ONE_ALREADY_DURABLE",
+      "retry": "NO_PUT_AND_NO_DUPLICATE_GET",
+      "attribution": "UNKNOWN_OR_RECOVERY_ONLY",
+      "second_pass": "FAIL_CLOSED"
+    },
+    {
+      "case": "after_postgresql_restore",
+      "durable_state": "OLD_CHAIN_READ_ONLY",
+      "put_budget_consumed": "UNCHANGED",
+      "get_budget_consumed": "UNCHANGED",
+      "retry": "OLD_AUTHORITY_REJECTED",
+      "attribution": "UNCHANGED_UNKNOWN_IF_PENDING",
+      "second_pass": "AUTHORITY_REJECTED_AFTER_RESTORE"
+    },
+    {
+      "case": "after_compute_restart",
+      "durable_state": "OLD_CHAIN_READ_ONLY",
+      "put_budget_consumed": "UNCHANGED",
+      "get_budget_consumed": "UNCHANGED",
+      "retry": "SERVER_EPOCH_MISMATCH",
+      "attribution": "UNCHANGED",
+      "second_pass": "NEW_RUN_GENERATION_AND_AUTHORITY_REQUIRED"
+    }
+  ],
+  "activation_hazards": {
+    "automatic_workflows_reaching_alembic_upgrade_head": 23,
+    "manual_paths_reaching_migration_code": 10,
+    "existing_protected_environment_references": 0,
+    "stale_0013_guards": "INTENTIONAL_FAIL_CLOSED_INTERLOCK_UNTIL_ACTIVATION_MISSION",
+    "required_next_action": "DISABLE_FIRST_THEN_DRAIN_REMOVE_AUTO_UPGRADES_AND_MIGRATE_ONCE_WITH_ISOLATED_MIGRATOR",
+    "activation_in_this_mission": false
+  },
+  "known_non_blocking_limits": [
+    "The bounded same-grantor migration lifecycle correction still requires automatic exact-successor-head GitHub CI execution.",
+    "The migration does not preflight current_user before downgrade; CI and the runbook require the original isolated migrator, while a wrong actor leaves a fail-closed ACL residue that blocks reupgrade.",
+    "R2 custom metadata and caller-supplied receipt hash are audit-only and not authoritative for creation.",
+    "A durable permit can conservatively overcount a crash before the first socket byte; it never undercounts dispatch permission.",
+    "Cross-generation recovery is deliberately refused; old pending chains remain immutable.",
+    "The ACL audit does not enumerate column-only ACLs or explicitly assert is_grantable=false.",
+    "Direct SQL checks are less strict than Python about lowercase hexadecimal alphabet.",
+    "SQLite downgrade locking is test-only and weaker than the PostgreSQL ACCESS EXCLUSIVE path.",
+    "Automatic migration paths and stale 0013 interlocks are deferred to the controlled activation mission."
+  ],
+  "complexity": {
+    "production_source_lines_raw": 1464,
+    "memory_test_surface_lines": 354,
+    "effective_runtime_lines": 1110,
+    "dedicated_test_lines": 1934,
+    "migration_lines": 953,
+    "control_plane_core_lines": 1197,
+    "limits_status": "INDICATIVE_CORE_AND_TEST_LIMITS_MET"
+  },
+  "costs": {
+    "codex_elapsed_time": "NOT_MEASURED",
+    "local_test_compute_cost": "NOT_MEASURED",
+    "github_ci_cost": "NOT_MEASURED_THREE_EXACT_HEAD_RUNS_FAILED_FOURTH_PENDING",
+    "external_service_cost_eur": 0,
+    "maintenance": "ONE_MAIN_MIGRATION_THREE_NATURAL_RUNTIME_MODULES"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "remote_postgresql_reads": 0,
+    "remote_postgresql_writes": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_get": 0,
+    "r2_put": 0,
+    "r2_delete": 0,
+    "scientific_workflow_dispatches": 0,
+    "voluntary_deployments": 0,
+    "purchases": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triples": 0,
+    "external_cost_eur": 0
+  },
+  "verdicts": {
+    "architecture": "CHRONOS_CONTROL_PLANE_E1_ARCHITECTURE_ACCEPTED",
+    "db_clock": "DB_CLOCK_AUTHORITY_READY",
+    "run_binding": "RUN_BOUND_AUTHORITY_READY",
+    "restore_fence": "RESTORE_FENCE_READY",
+    "r2_ledger": "R2_ATTRIBUTABLE_EFFECT_LEDGER_READY",
+    "local_review": "PR41_DRAFT_CI_ACTOR_CORRECTION_PENDING_EXACT_HEAD_CI",
+    "global_before_exact_head_ci": "CHRONOS_CONTROL_PLANE_V2_FOUNDATION_READY_CONDITIONAL_EXACT_HEAD_CI"
+  }
+}

@@ -1,0 +1,757 @@
+{
+  "schema_version": "pr39-foundation-control-plane-split-audit-v1",
+  "generated_at": "2026-08-09T11:37:09.419Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 39,
+  "title": "Robin Chronos V1 — Known-At and Point-in-Time Price Observatory",
+  "state": {
+    "open": true,
+    "draft": true,
+    "merged": false,
+    "mergeable": true,
+    "merge_state_status": "BLOCKED",
+    "decision": "FAIL_AND_STOP"
+  },
+  "base": {
+    "branch": "main",
+    "sha": "610291f72d726d9f4330e4194fbe678e2954d809"
+  },
+  "head": {
+    "branch": "codex/robin-chronos-known-at-price-observatory-v1",
+    "sha": "ea983c0f42177317a9c8e91f4e49974df2b63525"
+  },
+  "diff": {
+    "changed_files": 71,
+    "additions": 8851,
+    "deletions": 438,
+    "inventory_match": true
+  },
+  "policy": "A mixed file is classified by its dangerous control-plane or activation content; PASS_SUBSET never makes the whole file extractible.",
+  "counts": {
+    "PURE_FOUNDATION": 11,
+    "MIGRATION_CONTROL_PLANE": 2,
+    "HANDOFF": 5,
+    "REPORT_HISTORICAL": 10,
+    "WORKFLOW_ACTIVATION": 16,
+    "CONTROL_PLANE": 9,
+    "TEST_FOUNDATION": 1,
+    "TEST_CONTROL_PLANE": 17
+  },
+  "verdicts": [
+    "PR39_FROZEN_AUDIT_COMPLETE",
+    "FAIL_AND_STOP_PRESERVED",
+    "FOUNDATION_EXTRACTION_REQUIRES_FILE_SPLIT"
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prequential-prediction.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prequential-settlement.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prequential-training.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-deep-scheduler.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-fixture-registry.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-gate-report.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-lineup-capture.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-odds-capture.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_PRICE_ONLY_CANARY_VETO",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-player-capture.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-r2-replay-audit.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": ".github/workflows/prospective-watchlist-build.yml",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "ACTIVATION",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": "configs/hypothesis-campaigns/market-residual-campaign-v3-draft.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "PASS",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "configs/hypothesis-tags/point-in-time-tag-snapshot-contract-v1.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "N/A",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "configs/lineage/chronos-lineage-contract-v1.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "N/A",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "configs/operations/robin-chronos-canary-v1.json",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": "configs/prices/point-in-time-price-contract-v1.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "PASS",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "configs/prospective_observatory_v1.json",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "ACTIVATION",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": "configs/temporal/known-at-fact-contract-v1.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "N/A",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "docs/hypothesis-intelligence/MARKET-RESIDUAL-CAMPAIGN-V3-DRAFT.md",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "N/A",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "docs/prices/POINT-IN-TIME-PRICE-CONTRACT-V1.md",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "PASS",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "docs/prospective-observatory/CAPTURE-WINDOW-POLICY.md",
+      "classification": "HANDOFF",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Documentation mêlant fondation valide et sémantique du control-plane vetoed."
+    },
+    {
+      "path": "docs/prospective-observatory/JALON-12-REPORT.md",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "HISTORICAL",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "docs/prospective-observatory/OBSERVATORY-OPERATIONS.md",
+      "classification": "HANDOFF",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Documentation mêlant fondation valide et sémantique du control-plane vetoed."
+    },
+    {
+      "path": "docs/prospective-observatory/R2-REPLAY-RUNBOOK.md",
+      "classification": "HANDOFF",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "R2_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Documentation mêlant fondation valide et sémantique du control-plane vetoed."
+    },
+    {
+      "path": "docs/prospective-observatory/TEMPORAL-SEMANTICS.md",
+      "classification": "HANDOFF",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "R2_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Documentation mêlant fondation valide et sémantique du control-plane vetoed."
+    },
+    {
+      "path": "docs/temporal/KNOWN-AT-FACT-CONTRACT-V1.md",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "N/A",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "docs/ux/STATUS-TRANSLATION-CATALOG.md",
+      "classification": "HANDOFF",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Documentation mêlant fondation valide et sémantique du control-plane vetoed."
+    },
+    {
+      "path": "migrations/versions/0014_robin_chronos_v1.py",
+      "classification": "MIGRATION_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR40_AND_PR41_SPLIT",
+      "reason": "Migration mixte : autorité/canari et tables scientifiques sont couplés."
+    },
+    {
+      "path": "migrations/versions/0015_chronos_fail_closed_redesign.py",
+      "classification": "MIGRATION_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR40_AND_PR41_SPLIT",
+      "reason": "Migration mixte : autorité/canari et tables scientifiques sont couplés."
+    },
+    {
+      "path": "reports/closure/pr38-evidence-retention-and-repository-impact-v1.json",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "HISTORICAL",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/closure/pr39-chronos-corrective-validation-v1.json",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "HISTORICAL",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/closure/pr39-chronos-fail-and-stop-v4.json",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "RECORDS_BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/closure/pr39-chronos-fail-closed-redesign-validation-v2.json",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "HISTORICAL",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/closure/pr39-chronos-sre-corrective-validation-v3.json",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "HISTORICAL",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/council/decision-ledger.jsonl",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "RECORDS_BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/dashboard/known-at-price-observatory-contract-v1.json",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "OPERATIONAL_CONTROL_PLANE",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Contrat dashboard mêlant métriques provider, R2, PostgreSQL et next_due_capture; activation et observabilité différées."
+    },
+    {
+      "path": "reports/data-quality/blocked-property-gap-analysis-v1.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "N/A",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "reports/data-sources/known-at-and-price-source-capability-matrix-v1.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "PASS",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "reports/evidence/evidence-graph.json",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "RECORDS_BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/jalon12/observatory-snapshot.json",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "HISTORICAL",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "reports/prices/historical-price-source-audit-v1.json",
+      "classification": "PURE_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "PASS",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": true,
+      "target_pr": "PR40",
+      "reason": "Contrat, documentation ou audit provider-free indépendant du control-plane PR39."
+    },
+    {
+      "path": "scripts/build_cockpit_snapshot.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Implémentation dépendante de l’autorité temporelle ou de l’attribution R2 vetoed."
+    },
+    {
+      "path": "scripts/record_phase_c_evidence.py",
+      "classification": "REPORT_HISTORICAL",
+      "c2_status": "HISTORICAL",
+      "rp8_status": "HISTORICAL",
+      "dp6_dependency": "HISTORICAL",
+      "safe_to_extract": false,
+      "target_pr": "PR39_ARCHIVE",
+      "reason": "Preuve historique à préserver sur PR39 sans la transporter dans les nouvelles PR."
+    },
+    {
+      "path": "scripts/run_prequential_learning_factory.py",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": "scripts/run_prospective_observatory.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Implémentation dépendante de l’autorité temporelle ou de l’attribution R2 vetoed."
+    },
+    {
+      "path": "src/robin/prospective_observatory/chronos.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR40_AND_PR41_SPLIT",
+      "reason": "Fichier mixte : noyau scientifique valide et budget/sélection canari; extraction entière interdite."
+    },
+    {
+      "path": "src/robin/prospective_observatory/chronos_storage.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Implémentation dépendante de l’autorité temporelle ou de l’attribution R2 vetoed."
+    },
+    {
+      "path": "src/robin/prospective_observatory/r2.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Implémentation dépendante de l’autorité temporelle ou de l’attribution R2 vetoed."
+    },
+    {
+      "path": "src/robin/prospective_observatory/replay.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Implémentation dépendante de l’autorité temporelle ou de l’attribution R2 vetoed."
+    },
+    {
+      "path": "src/robin/providers/the_odds_api.py",
+      "classification": "WORKFLOW_ACTIVATION",
+      "c2_status": "N/A",
+      "rp8_status": "PASS_PRICE_ONLY_CANARY_VETO",
+      "dp6_dependency": "ACTIVATION",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Modifie un chemin runtime, fournisseur, workflow ou canari déjà actif; activation interdite."
+    },
+    {
+      "path": "src/robin/storage/__init__.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR40_AND_PR41_SPLIT",
+      "reason": "Implémentation dépendante de l’autorité temporelle ou de l’attribution R2 vetoed."
+    },
+    {
+      "path": "src/robin/storage/chronos_models.py",
+      "classification": "CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR40_AND_PR41_SPLIT",
+      "reason": "Implémentation dépendante de l’autorité temporelle ou de l’attribution R2 vetoed."
+    },
+    {
+      "path": "tests/chronos/test_chronos_contracts_v1.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR40_AND_PR41_SPLIT",
+      "reason": "Tests fondation mêlés aux tests R2 et canari; split obligatoire."
+    },
+    {
+      "path": "tests/chronos/test_chronos_migration_v1.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR40_AND_PR41_SPLIT",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/hypothesis_intelligence/test_historical_evidence_projection_migration.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/hypothesis_intelligence/test_hypothesis_intelligence_migration.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/hypothesis_intelligence/test_universal_genome_migration.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon10/test_migration.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon11/test_migration_persistence.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_cli_prospective.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_core_storage_temporal.py",
+      "classification": "TEST_FOUNDATION",
+      "c2_status": "PASS",
+      "rp8_status": "N/A",
+      "dp6_dependency": "NONE",
+      "safe_to_extract": false,
+      "target_pr": "PR40_REWRITE",
+      "reason": "Assertions C2 pures, mais helper importé depuis le monolithe control-plane; réécriture requise."
+    },
+    {
+      "path": "tests/jalon12/test_durability_reconciliation.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_final_hardening_regressions.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_migration_prospective_observatory.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_observability_public_contract.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_provider_registry_contract.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "PASS_SUBSET",
+      "dp6_dependency": "ACTIVATION",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_r2_namespace_inventory.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon12/test_workflows_prospective.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "PASS_SUBSET",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "DEFER_ACTIVATION",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon14/test_prequential_cli_and_contracts.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "BOTH_P1",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    },
+    {
+      "path": "tests/jalon14/test_prequential_persistence.py",
+      "classification": "TEST_CONTROL_PLANE",
+      "c2_status": "N/A",
+      "rp8_status": "N/A",
+      "dp6_dependency": "MIGRATION_CP",
+      "safe_to_extract": false,
+      "target_pr": "PR41_REDESIGN",
+      "reason": "Test lié à la migration, au runtime, au canari ou au state machine PR39."
+    }
+  ]
+}

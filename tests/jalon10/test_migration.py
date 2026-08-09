@@ -67,7 +67,7 @@ def test_upgrade_downgrade_upgrade_cree_le_schema_jalon10(
     assert JALON10_TABLES <= set(sa.inspect(engine).get_table_names())
     with engine.connect() as connection:
         revision = connection.scalar(sa.text("SELECT version_num FROM alembic_version"))
-    assert revision == "0013_historical_evidence_index"
+    assert revision == "0014_chronos_control_plane_v2"
 
 
 def test_0007_versionne_la_contrainte_sans_recrire_0006(

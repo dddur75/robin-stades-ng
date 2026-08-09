@@ -67,6 +67,7 @@ def build_engine(database_url: str, *, echo: bool = False) -> Engine:
             url,
             echo=echo,
             future=True,
+            hide_parameters=True,
             connect_args=connect_args,
             pool_pre_ping=True,
             pool_recycle=240,
@@ -76,6 +77,7 @@ def build_engine(database_url: str, *, echo: bool = False) -> Engine:
             url,
             echo=echo,
             future=True,
+            hide_parameters=True,
             connect_args=connect_args,
         )
     if url.get_backend_name() == "sqlite":
