@@ -2061,6 +2061,7 @@
     {"decision_id":"RCV3-20260810-105","ledger_record_hash":"f4efe1175c7e500054c8cc66c59b87b02fcdbc6050e4183399340d143c62346f"},
     {"decision_id":"RCV3-20260810-106","ledger_record_hash":"a92409a22e2a03bf04451f36c48a543fd210b4bb7a2b4e848669537272b67f51"},
     {"decision_id":"RCV3-20260810-107","ledger_record_hash":"6540a6118cce1d4349a71b75d0f76a45018a4542d8c437bee8253a7829e9552e"},
+    {"decision_id":"RCV3-20260810-108","ledger_record_hash":"9fc57aa4ee60c0fe5c25884270337af2d2a237aa3831c5003b836e3cf383e747"},
     {"decision_id":"RCV3-20260808-074","ledger_record_hash":"6aaaf0107edd104a5dbecd7701bc5fa450408aa4f38ff807e11015bfc4fef28b"},
     {"decision_id":"RCV3-20260808-075","ledger_record_hash":"f66b7852b2c1c7da0c51f1b2e2e3ced99b147cfdc416f06779fe2fb83d58b970"},
     {"decision_id":"RCV3-20260808-076","ledger_record_hash":"266a793bffdbcfcb9dcedb22d0bc85a15754517af83746978a727746cb7283af"},
@@ -2368,6 +2369,7 @@
     {"edge_id":"EDGE.284","from_claim_id":"SECURITY.CHRONOS.WORKFLOW.HOLD.V1.001","to_decision_id":"RCV3-20260810-105","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.285","from_claim_id":"GitHub Actions run 31377719199","to_decision_id":"RCV3-20260810-106","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.286","from_claim_id":"reports/architecture/chronos-role-lifecycle-e1-v1-pre-ci-review.json","to_decision_id":"RCV3-20260810-106","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.287","from_claim_id":"SECURITY.CHRONOS.DUAL_PRINCIPAL.PG16.V2.001","to_decision_id":"RCV3-20260810-107","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.287","from_claim_id":"SECURITY.CHRONOS.DUAL_PRINCIPAL.PG16.V2.001","to_decision_id":"RCV3-20260810-107","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.288","from_claim_id":"SECURITY.CHRONOS.DUAL_PRINCIPAL.PG16.V2.001","to_decision_id":"RCV3-20260810-108","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

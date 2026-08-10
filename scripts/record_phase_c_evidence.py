@@ -611,7 +611,6 @@ def main() -> None:
     if not decision_ids <= set(ledger_hashes):
         raise RuntimeError("PHASE_C_METADATA_DECISION_MISSING")
     claims = _claims()
-    claim_ids = {claim["claim_id"] for claim in claims}
     missing_correction_proof_claim_ids = [
         "EVAL.PHASE_C.ATOMIC_CAMPAIGN.V1.001",
         "EVAL.PHASE_C.PAIR_CAMPAIGN.V1.001",
@@ -712,7 +711,7 @@ def main() -> None:
         expected_correction_tail_edges + expected_closure_edges + expected_v2_edges
     )
     existing_tail_edges = graph["edges"][HISTORICAL_EDGE_COUNT:]
-    if existing_tail_edges not in (
+    allowed_incomplete_tails: tuple[list[Any], ...] = (
         [],
         expected_correction_tail_edges,
         expected_correction_tail_edges + expected_closure_edges[:1],
@@ -724,18 +723,50 @@ def main() -> None:
         expected_correction_tail_edges + expected_closure_edges[:7],
         expected_correction_tail_edges + expected_closure_edges,
         expected_tail_edges,
-    ):
+    )
+    extension_edges: list[dict[str, object]] = []
+    if existing_tail_edges in allowed_incomplete_tails:
+        pass
+    elif existing_tail_edges[: len(expected_tail_edges)] == expected_tail_edges:
+        extension_edges = existing_tail_edges[len(expected_tail_edges) :]
+        graph_claim_ids = {claim["claim_id"] for claim in graph["claims"]}
+        first_extension_id = HISTORICAL_EDGE_COUNT + len(expected_tail_edges) + 1
+        required_edge_fields = {
+            "edge_id",
+            "from_claim_id",
+            "to_decision_id",
+            "relation",
+            "status",
+        }
+        for offset, edge in enumerate(extension_edges):
+            if (
+                not isinstance(edge, dict)
+                or set(edge) != required_edge_fields
+                or edge["edge_id"] != f"EDGE.{first_extension_id + offset:03d}"
+                or edge["from_claim_id"] not in graph_claim_ids
+                or edge["to_decision_id"] not in ledger_hashes
+                or edge["relation"] != "SUPPORTS"
+                or edge["status"] != "RECORDED"
+            ):
+                raise RuntimeError("PHASE_C_RECOVERY_EXTENSION_EDGE_INVALID")
+    else:
         raise RuntimeError("PHASE_C_RECOVERY_EDGE_TAIL_MISMATCH")
-    graph["claims"] = [
-        claim for claim in graph["claims"] if claim["claim_id"] not in claim_ids
-    ]
-    graph["claims"].extend(claims)
-    graph["decision_nodes"] = [
-        node
-        for node in graph["decision_nodes"]
-        if node["decision_id"] not in decision_ids
-    ]
-    for decision_id in (
+    replacement_claims = {claim["claim_id"]: claim for claim in claims}
+    seen_claim_ids: set[str] = set()
+    preserved_claims: list[dict[str, Any]] = []
+    for existing_claim in graph["claims"]:
+        claim_id = existing_claim["claim_id"]
+        if claim_id in replacement_claims:
+            preserved_claims.append(replacement_claims[claim_id])
+            seen_claim_ids.add(claim_id)
+        else:
+            preserved_claims.append(existing_claim)
+    preserved_claims.extend(
+        claim for claim in claims if claim["claim_id"] not in seen_claim_ids
+    )
+    graph["claims"] = preserved_claims
+
+    phase_decision_ids = (
         ORIGINAL_DECISION_ID,
         CORRECTION_DECISION_ID,
         RECOVERY_DECISION_ID,
@@ -755,11 +786,30 @@ def main() -> None:
         V2_FREEZE_COMMIT_DECISION_ID,
         V2_EXACT_COMMIT_REVIEW_DECISION_ID,
         PR38_CLOSURE_DECISION_ID,
-    ):
-        graph["decision_nodes"].append(
-            {"decision_id": decision_id, "ledger_record_hash": ledger_hashes[decision_id]}
-        )
-    graph["edges"] = historical_edges + expected_tail_edges
+    )
+    replacement_nodes = {
+        decision_id: {
+            "decision_id": decision_id,
+            "ledger_record_hash": ledger_hashes[decision_id],
+        }
+        for decision_id in phase_decision_ids
+    }
+    seen_decision_ids: set[str] = set()
+    preserved_nodes: list[dict[str, Any]] = []
+    for existing_node in graph["decision_nodes"]:
+        decision_id = existing_node["decision_id"]
+        if decision_id in replacement_nodes:
+            preserved_nodes.append(replacement_nodes[decision_id])
+            seen_decision_ids.add(decision_id)
+        else:
+            preserved_nodes.append(existing_node)
+    preserved_nodes.extend(
+        replacement_nodes[decision_id]
+        for decision_id in phase_decision_ids
+        if decision_id not in seen_decision_ids
+    )
+    graph["decision_nodes"] = preserved_nodes
+    graph["edges"] = historical_edges + expected_tail_edges + extension_edges
     graph["generated_at"] = GENERATED_AT
     GRAPH.write_text(_compact_json(graph) + "\n", encoding="utf-8", newline="\n")
 
