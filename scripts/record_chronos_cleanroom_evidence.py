@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
+import subprocess  # nosec B404
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +17,13 @@ SOURCE_SHA = "a25b288b5fc3c9eb6cd95ddb10f88db6a0aec1db"
 BASE_TIP_ID = "RCV3-20260809-101"
 BASE_TIP_HASH = "e6dd93c253e9449ea70ad33fe22c0728b22b0b74dd109c52a9664284da891828"
 NEW_IDS = [f"RCV3-20260810-{suffix:03d}" for suffix in range(109, 116)]
+CORRECTION_ID = "RCV3-20260810-116"
+CORRECTION_REPORT = "reports/closure/chronos-cleanroom-full-suite-correction-v1.json"
+DELIVERY_TIP_HASH = "d034d69a372147ed704c0c0bf0b06207b38b365cb1a269f8afe6b7092d8ca966"
+CORRECTION_TIP_HASH = "49b94117cabc79af013065190ad239a5f818dc0b1dc46ae1621a203d8702b82a"
+CORRECTION_REPORT_SHA256 = "78213c715dd59724c88fc048970f61627cc5d8bac7021c7a2adf610c7b5090f3"
+CORRECTION_GENERATED_AT = "2026-08-10T23:05:00Z"
+CORRECTION_CLAIM_ID = "GOV.CHRONOS.CLEANROOM.FULL_SUITE.CORRECTION.V1.001"
 REPORTS = {
     "audit": "reports/closure/pr45-file-classification-v1.json",
     "paths": "reports/closure/pr45-absolute-path-and-ledger-audit-v1.json",
@@ -85,7 +92,7 @@ def file_sha256(path: str) -> str:
 
 
 def changed_files() -> list[str]:
-    result = subprocess.run(
+    result = subprocess.run(  # nosec B603 B607
         ["git", "status", "--porcelain=v1", "--untracked-files=all"],
         cwd=ROOT,
         check=True,
@@ -418,6 +425,170 @@ def build_records(claims: list[dict[str, Any]], files: list[str]) -> list[dict[s
     return result
 
 
+def full_suite_correction_claim() -> dict[str, Any]:
+    return claim(
+        CORRECTION_CLAIM_ID,
+        "The clean-LF full suite exposed and bounded one Phase C recorder portability defect; LF-normalized text hashes and extension-aware generated_at preservation restore byte-idempotence without changing any scientific evidence.",
+        "CLEANROOM_POST_REVIEW_FULL_SUITE_PORTABILITY_CORRECTION",
+        "clean-LF full-suite failure, targeted reproduction and three read-only corrective reviews",
+        CORRECTION_REPORT,
+        ["C0", "DP5", "DP6", "C4"],
+    )
+
+
+def full_suite_correction_record(correction_claim: dict[str, Any]) -> dict[str, Any]:
+    return record(
+        CORRECTION_ID,
+        "FULL_SUITE_PORTABILITY_CORRECTION",
+        "2026-08-10T23:05:00Z",
+        "Accept the bounded Phase C recorder idempotence correction discovered by the first clean-LF full suite.",
+        [
+            "The first clean-LF full suite passed 1509 tests, skipped 21 environment-bound tests and failed one recorder idempotence test.",
+            "The correction changes neither historical claims nor scientific values and performs no external operation.",
+        ],
+        [correction_claim["claim_id"]],
+        "PASS_BOUNDED_CORRECTION. Authorize one local corrective commit and Draft PR CI; Ready and merge remain gated on the repeated clean-LF full suite and exact-head CI.",
+        {
+            **common_context(),
+            "first_cleanroom_commit": "ddf776045a7f5c95186b163b19de6502a41a810e",
+            "reviewed_correction_tree_sha": "359c5fdbe5dace77e7e1875bda07232d62874418",
+            "correction_report": CORRECTION_REPORT,
+            "first_full_suite": {"passed": 1509, "skipped": 21, "failed": 1},
+            "targeted_idempotence_test": "PASS",
+            "reviews": {
+                "DP5": {"roles": ["PORT", "SRE"], "verdict": "PASS"},
+                "DP6": {"roles": ["EVIDENCE", "DBA"], "verdict": "PASS", "score": 99},
+                "C4": {"roles": ["SEC", "RED"], "verdict": "PASS", "score": 98},
+            },
+            "p0": 0,
+            "p1": 0,
+        },
+        DELIVERY_TIP_HASH,
+    )
+
+
+def verify_graph_shape(
+    records: list[dict[str, Any]],
+    graph: dict[str, Any],
+) -> None:
+    claims = graph["claims"]
+    nodes = graph["decision_nodes"]
+    edges = graph["edges"]
+    claim_ids = [item["claim_id"] for item in claims]
+    decision_ids = [item["decision_id"] for item in records]
+    if len(claim_ids) != len(set(claim_ids)):
+        raise SystemExit("GRAPH_DUPLICATE_CLAIM_ID")
+    if len(nodes) != len(records):
+        raise SystemExit("GRAPH_DECISION_NODE_COUNT_MISMATCH")
+    if len(edges) != len({item["edge_id"] for item in edges}):
+        raise SystemExit("GRAPH_DUPLICATE_EDGE_ID")
+    required_edge_fields = {
+        "edge_id",
+        "from_claim_id",
+        "to_decision_id",
+        "relation",
+        "status",
+    }
+    for index, edge in enumerate(edges, start=1):
+        if (
+            set(edge) != required_edge_fields
+            or edge["edge_id"] != f"EDGE.{index:03d}"
+            or edge["from_claim_id"] not in claim_ids
+            or edge["to_decision_id"] not in decision_ids
+            or edge["relation"] != "SUPPORTS"
+            or edge["status"] != "RECORDED"
+        ):
+            raise SystemExit(f"GRAPH_EDGE_INVALID:{index}")
+
+
+def verify_delivery_final(records: list[dict[str, Any]], graph: dict[str, Any]) -> None:
+    verify_final(records, graph)
+    verify_graph_shape(records, graph)
+    if (
+        len(records) != 108
+        or len(graph["claims"]) != 124
+        or len(graph["decision_nodes"]) != 108
+        or len(graph["edges"]) != 295
+        or records[-1]["decision_id"] != NEW_IDS[-1]
+        or records[-1]["hash"] != DELIVERY_TIP_HASH
+        or graph.get("generated_at") != "2026-08-10T20:14:00Z"
+    ):
+        raise SystemExit("CLEANROOM_DELIVERY_FINAL_STATE_INVALID")
+
+
+def verify_correction_final(records: list[dict[str, Any]], graph: dict[str, Any]) -> None:
+    verify_final(records, graph)
+    verify_graph_shape(records, graph)
+    expected_claim = full_suite_correction_claim()
+    expected_record = full_suite_correction_record(expected_claim)
+    expected_node = {
+        "decision_id": CORRECTION_ID,
+        "ledger_record_hash": CORRECTION_TIP_HASH,
+    }
+    expected_edge = {
+        "edge_id": "EDGE.296",
+        "from_claim_id": CORRECTION_CLAIM_ID,
+        "to_decision_id": CORRECTION_ID,
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    if file_sha256(CORRECTION_REPORT) != CORRECTION_REPORT_SHA256:
+        raise SystemExit("CLEANROOM_CORRECTION_REPORT_HASH_INVALID")
+    if (
+        len(records) != 109
+        or len(graph["claims"]) != 125
+        or len(graph["decision_nodes"]) != 109
+        or len(graph["edges"]) != 296
+        or records[-2]["hash"] != DELIVERY_TIP_HASH
+        or records[-1] != expected_record
+        or records[-1]["hash"] != CORRECTION_TIP_HASH
+        or graph["claims"][-1] != expected_claim
+        or graph["decision_nodes"][-1] != expected_node
+        or graph["edges"][-1] != expected_edge
+        or graph.get("generated_at") != CORRECTION_GENERATED_AT
+    ):
+        raise SystemExit("CLEANROOM_CORRECTION_FINAL_STATE_INVALID")
+
+
+def append_full_suite_correction(
+    original_ledger: str,
+    records: list[dict[str, Any]],
+    graph: dict[str, Any],
+) -> None:
+    verify_delivery_final(records, graph)
+    correction_claim = full_suite_correction_claim()
+    correction_record = full_suite_correction_record(correction_claim)
+    records.append(correction_record)
+    graph["generated_at"] = CORRECTION_GENERATED_AT
+    graph["claims"].append(correction_claim)
+    graph["decision_nodes"].append(
+        {
+            "decision_id": correction_record["decision_id"],
+            "ledger_record_hash": correction_record["hash"],
+        }
+    )
+    graph["edges"].append(
+        {
+            "edge_id": "EDGE.296",
+            "from_claim_id": correction_claim["claim_id"],
+            "to_decision_id": correction_record["decision_id"],
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+    )
+    separator = "" if original_ledger.endswith("\n") else "\n"
+    appended = json.dumps(
+        correction_record, ensure_ascii=False, separators=(",", ":")
+    ) + "\n"
+    LEDGER.write_text(
+        original_ledger + separator + appended,
+        encoding="utf-8",
+        newline="\n",
+    )
+    GRAPH.write_text(compact_json(graph) + "\n", encoding="utf-8", newline="\n")
+    verify_correction_final(records, graph)
+
+
 def verify_final(records: list[dict[str, Any]], graph: dict[str, Any]) -> None:
     validate_chain(records)
     by_id = {record["decision_id"]: record["hash"] for record in records}
@@ -441,6 +612,14 @@ def main() -> None:
     original_ledger = LEDGER.read_text(encoding="utf-8")
     records = [json.loads(line) for line in original_ledger.splitlines() if line.strip()]
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
+    if records[-1]["decision_id"] == CORRECTION_ID:
+        verify_correction_final(records, graph)
+        print("CHRONOS_CLEANROOM_CORRECTION_VERIFIED")
+        return
+    if records[-1]["decision_id"] == NEW_IDS[-1]:
+        append_full_suite_correction(original_ledger, records, graph)
+        print("CHRONOS_CLEANROOM_CORRECTION_RECORDED")
+        return
     if len(records) > 101:
         validate_chain(records)
         suffix_length = len(records) - 101

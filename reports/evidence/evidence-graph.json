@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-10T20:14:00Z",
+  "generated_at":"2026-08-10T23:05:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -2018,6 +2018,22 @@
       "dataset_lineage_id":"PR45_VALIDATION_RUNS_31413302734_31427069583",
       "status":"VERIFIED",
       "verified_by":["DP5","DP6","C4"]
+    },
+    {
+      "claim_id":"GOV.CHRONOS.CLEANROOM.FULL_SUITE.CORRECTION.V1.001",
+      "claim":"The clean-LF full suite exposed and bounded one Phase C recorder portability defect; LF-normalized text hashes and extension-aware generated_at preservation restore byte-idempotence without changing any scientific evidence.",
+      "scope":"CLEANROOM_POST_REVIEW_FULL_SUITE_PORTABILITY_CORRECTION",
+      "source":"clean-LF full-suite failure, targeted reproduction and three read-only corrective reviews",
+      "grain":"one_chronos_cleanroom_portable_integration",
+      "temporal_class":"CODE_AND_LOCAL_EXECUTION_AS_OF",
+      "artifact":"reports/closure/chronos-cleanroom-full-suite-correction-v1.json",
+      "hash":"78213c715dd59724c88fc048970f61627cc5d8bac7021c7a2adf610c7b5090f3",
+      "code_revision":"8591024b1ef96d766ab0e1090c45d15e3a25d429",
+      "execution_id":"chronos-cleanroom-portable-integration-v1-precommit",
+      "scientific_lineage_id":"chronos-dual-principal-authority-e1-v2",
+      "dataset_lineage_id":"PR45_VALIDATION_RUNS_31413302734_31427069583",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","DP6","C4"]
     }
   ],
   "decision_nodes":[
@@ -2128,7 +2144,8 @@
     {"decision_id":"RCV3-20260810-112","ledger_record_hash":"9639bc83acb99489d7bda8aebb65b45a835810b305c135c61d11720c34749d81"},
     {"decision_id":"RCV3-20260810-113","ledger_record_hash":"644e801296572d9665c459a62639763368b2111a632ab1378323a6f4677a51c0"},
     {"decision_id":"RCV3-20260810-114","ledger_record_hash":"983f5754617d1b9791d17fa2cc453a3c6a8f5215c36e5ec1bc23b49b5b2a8b34"},
-    {"decision_id":"RCV3-20260810-115","ledger_record_hash":"d034d69a372147ed704c0c0bf0b06207b38b365cb1a269f8afe6b7092d8ca966"}
+    {"decision_id":"RCV3-20260810-115","ledger_record_hash":"d034d69a372147ed704c0c0bf0b06207b38b365cb1a269f8afe6b7092d8ca966"},
+    {"decision_id":"RCV3-20260810-116","ledger_record_hash":"49b94117cabc79af013065190ad239a5f818dc0b1dc46ae1621a203d8702b82a"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2425,6 +2442,7 @@
     {"edge_id":"EDGE.292","from_claim_id":"PORT.CHRONOS.PARQUET.VERSION_DRIFT.V1.001","to_decision_id":"RCV3-20260810-114","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.293","from_claim_id":"SECURITY.CHRONOS.CLEANROOM.PATHS.V1.001","to_decision_id":"RCV3-20260810-114","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.294","from_claim_id":"SECURITY.CHRONOS.MAIN.PATHS.SANITIZED.V1.001","to_decision_id":"RCV3-20260810-114","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.295","from_claim_id":"GOV.CHRONOS.CLEANROOM.PRE_CI.REVIEW.V1.001","to_decision_id":"RCV3-20260810-115","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.295","from_claim_id":"GOV.CHRONOS.CLEANROOM.PRE_CI.REVIEW.V1.001","to_decision_id":"RCV3-20260810-115","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.296","from_claim_id":"GOV.CHRONOS.CLEANROOM.FULL_SUITE.CORRECTION.V1.001","to_decision_id":"RCV3-20260810-116","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

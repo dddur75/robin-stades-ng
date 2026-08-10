@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,7 +46,14 @@ HISTORICAL_LEDGER_D034_SHA256 = (
 
 
 def _file_hash(relative: str) -> str:
-    return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+    portable = PurePosixPath(relative)
+    if portable.is_absolute() or ".." in portable.parts or "\\" in relative:
+        raise ValueError(f"PHASE_C_ARTIFACT_PATH_NOT_PORTABLE:{relative}")
+    artifact = ROOT.joinpath(*portable.parts)
+    payload = artifact.read_bytes()
+    if artifact.suffix.casefold() in {".csv", ".json", ".jsonl", ".md", ".yaml", ".yml"}:
+        payload = payload.replace(b"\r\n", b"\n")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _canonical_hash(value: object) -> str:
@@ -519,6 +526,9 @@ def main() -> None:
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
     if not isinstance(graph, dict):
         raise TypeError("EVIDENCE_GRAPH_OBJECT_REQUIRED")
+    existing_generated_at = graph.get("generated_at")
+    if not isinstance(existing_generated_at, str):
+        raise TypeError("EVIDENCE_GRAPH_GENERATED_AT_REQUIRED")
     historical_edges = graph["edges"][:HISTORICAL_EDGE_COUNT]
     if (
         len(historical_edges) != HISTORICAL_EDGE_COUNT
@@ -810,7 +820,7 @@ def main() -> None:
     )
     graph["decision_nodes"] = preserved_nodes
     graph["edges"] = historical_edges + expected_tail_edges + extension_edges
-    graph["generated_at"] = GENERATED_AT
+    graph["generated_at"] = existing_generated_at if extension_edges else GENERATED_AT
     GRAPH.write_text(_compact_json(graph) + "\n", encoding="utf-8", newline="\n")
 
 
