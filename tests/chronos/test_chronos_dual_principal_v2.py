@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -69,6 +70,41 @@ def test_ci_covers_both_lifecycle_admin_profiles() -> None:
     assert "- superuser" in source
     assert "- non_superuser_createrole" in source
     assert "run_chronos_dual_principal_ci_v2.py" in source
+
+
+def test_visual_ci_materializes_untracked_node_pages_before_build_and_tests() -> None:
+    source = WORKFLOW.read_text(encoding="utf-8")
+    visual = source[source.index("  visual-regression:") :]
+
+    setup_python = visual.index("uses: actions/setup-python@v5")
+    install_generator = visual.index("Installer le générateur de présentation")
+    install_requirements = visual.index(
+        "python -m pip install -r requirements.txt"
+    )
+    install_repository = visual.index("python -m pip install --no-deps -e .")
+    build_data = visual.index("pnpm run build:data")
+    page_guard = visual.index(
+        "test -s public/data/hypotheses/nodes/page-001.json"
+    )
+    vinext_build = visual.index("pnpm exec vinext build")
+    node_tests = visual.index("node --test tests/*.test.mjs")
+
+    assert setup_python < install_generator < install_requirements
+    assert install_requirements < install_repository < build_data
+    assert build_data < page_guard < vinext_build < node_tests
+    assert visual.count("pnpm run build:data") == 1
+    assert "continue-on-error" not in visual
+    assert "|| true" not in visual
+    assert "--test-skip-pattern" not in visual
+
+    tracked_pages = subprocess.run(
+        ["git", "ls-files", "cockpit/public/data/hypotheses/nodes/*.json"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    assert tracked_pages == []
 
 
 def test_pre_set_fail_closed_checks_cover_authority_public_and_password_state() -> None:
