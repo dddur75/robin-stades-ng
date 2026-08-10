@@ -3,7 +3,8 @@
   "observed_at": "2026-08-09T16:50:00Z",
   "repository": "dddur75/robin-stades-ng",
   "entry_checkout": {
-    "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2",
+    "worktree": "WORKTREE:protected-entry-checkout",
+    "historical_local_path_sha256": "dfc22e472d5041902ab5a7139d2843c33de359593f3355de15476d78d092d04e",
     "branch": "codex/hypothesis-universe-experience-v1",
     "head": "ddf946642bcfccdc7ed206abd484db0336fdc34a",
     "associated_pr": null,
@@ -13,7 +14,8 @@
   },
   "relevant_worktrees": [
     {
-      "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2 Worktrees/chronos-e1-planning-v2",
+      "worktree": "WORKTREE:chronos-e1-planning-v2",
+      "historical_local_path_sha256": "9b3c5a798a2205b930ae06971c9e98ef25fff6468602ae82feb013d7319abb32",
       "branch": "codex/robin-chronos-control-plane-v2",
       "head": "355f593406a33dc4c91b8bc6c22513ef58eb0848",
       "associated_pr": 41,
@@ -21,7 +23,8 @@
       "purpose": "PR41_CONTROL_PLANE"
     },
     {
-      "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2 Worktrees/robin-chronos-foundation-v1",
+      "worktree": "WORKTREE:robin-chronos-foundation-v1",
+      "historical_local_path_sha256": "3688eb4b4f1ba4603e221f64e0c82aadfde8e6b1db34bc6e86cc59c9531b1924",
       "branch": "codex/robin-chronos-foundation-v1",
       "head": "b4b549b1caf46d69a53a1c1efe7298aab3f6f928",
       "associated_pr": 40,
@@ -29,7 +32,8 @@
       "purpose": "MERGED_SCIENTIFIC_FOUNDATION"
     },
     {
-      "worktree": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2 Worktrees/robin-chronos-known-at-price-observatory-v1",
+      "worktree": "WORKTREE:robin-chronos-known-at-price-observatory-v1",
+      "historical_local_path_sha256": "1a3bd3e54c85632cd626c01b0d0cf6464ae3cfdad6768f687e994264d3ef60e2",
       "branch": "codex/robin-chronos-known-at-price-observatory-v1",
       "head": "ea983c0f42177317a9c8e91f4e49974df2b63525",
       "associated_pr": 39,
@@ -98,6 +102,7 @@
     "queued_runs_initial": 0,
     "in_progress_runs_initial": 0
   },
+  "historical_local_paths_redacted_by_successor": true,
   "secret_values_observed": false,
   "provider_calls": 0,
   "odds_credits": 0,

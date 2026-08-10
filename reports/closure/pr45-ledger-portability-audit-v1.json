@@ -1,0 +1,40 @@
+{
+  "base_sha": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+  "evidence_graph": {
+    "main_counts": {
+      "claims": 117,
+      "decision_nodes": 101,
+      "edge_tip": "EDGE.274",
+      "edges": 274
+    },
+    "pr45_delta": {
+      "claims": 4,
+      "decision_nodes": 7,
+      "edges": 14,
+      "imported": false
+    }
+  },
+  "head_sha": "a25b288b5fc3c9eb6cd95ddb10f88db6a0aec1db",
+  "main_ledger": {
+    "chain_valid": true,
+    "record_count": 101,
+    "tip_decision_id": "RCV3-20260809-101",
+    "tip_hash": "e6dd93c253e9449ea70ad33fe22c0728b22b0b74dd109c52a9664284da891828"
+  },
+  "pr45_suffix": {
+    "all_contain_local_worktree_reference": true,
+    "imported": false,
+    "record_count": 7,
+    "record_ids": [
+      "RCV3-20260810-102",
+      "RCV3-20260810-103",
+      "RCV3-20260810-104",
+      "RCV3-20260810-105",
+      "RCV3-20260810-106",
+      "RCV3-20260810-107",
+      "RCV3-20260810-108"
+    ]
+  },
+  "schema_version": "pr45-ledger-portability-audit-v1",
+  "verdict": "REBUILD_APPEND_ONLY_FROM_MAIN_TIP"
+}

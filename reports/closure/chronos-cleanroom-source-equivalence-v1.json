@@ -1,0 +1,460 @@
+{
+  "cleanroom_base_sha": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+  "files": [
+    {
+      "PR45_blob_sha": "8e4fbf102ca09564cc4a6565ce42c7482b82bc60",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "95f995134152b55402f181180e76acba516c9065",
+      "difference_type": "IMPORT_WITH_CONTEXT_ISOLATION",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_context_isolation",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": ".github/workflows/chronos-bootstrap-ci-v3.yml"
+    },
+    {
+      "PR45_blob_sha": "23b135b046ab7c3cee336711ecfb74b7a9a35fc2",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "EXCLUDE_SECURITY_P1_MUTATIVE_WORKFLOW",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "exclude_security_p1_mutative_workflow",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": ".github/workflows/chronos-production-bootstrap-v3.yml"
+    },
+    {
+      "PR45_blob_sha": "ae1aa1d12913a5b307ed24e09623924761bc0ea4",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "e1db056e4d7095e0ea17471db5246fe698692926",
+      "difference_type": "IMPORT_WITH_IMMUTABLE_ACTION_PINS",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_immutable_action_pins",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": ".github/workflows/chronos-provider-free-canary-v3.yml"
+    },
+    {
+      "PR45_blob_sha": "393ef8e03e391209a5ec9d9a420e1068d6abb7db",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "38ad51d6248b356d5cb28661a5a1b6c74d0d4b14",
+      "difference_type": "IMPORT_WITH_CANONICAL_WINDOWS_ARTIFACT",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_canonical_windows_artifact",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": ".github/workflows/ci.yml"
+    },
+    {
+      "PR45_blob_sha": "360e93b91b4aa815e63d156e2b62f00cafec64a0",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "3c4aae74ac9caadbcba88fe67ee9231039f20f1e",
+      "difference_type": "DO_NOT_IMPORT",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "do_not_import",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "NEXT-MISSION-BRIEF.md"
+    },
+    {
+      "PR45_blob_sha": "6481d5a6bacd0cb4362c7d06e34d8edd25b31237",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "38707404b9bd288467068c4d0d2c454afa1a70f4",
+      "difference_type": "DO_NOT_IMPORT",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "do_not_import",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "NEXT-MISSION-PROMPT.md"
+    },
+    {
+      "PR45_blob_sha": "9bea643877c9726bec66d994fe8231770bf6b4e9",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "9bea643877c9726bec66d994fe8231770bf6b4e9",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "docs/architecture/CHRONOS-DUAL-PRINCIPAL-AUTHORITY-E1-V2-ADR.md"
+    },
+    {
+      "PR45_blob_sha": "d713286f544e2487d00e13db8a16271b0e5b31f6",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "docs/architecture/CHRONOS-ROLE-LIFECYCLE-E1-V1-ADR.md"
+    },
+    {
+      "PR45_blob_sha": "9ec81ba8378a61ff48e7f543a82f08644605a723",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "DO_NOT_IMPORT",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "do_not_import",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "docs/handoffs/CHRONOS-PRODUCTION-BOOTSTRAP-V3-HANDOFF.md"
+    },
+    {
+      "PR45_blob_sha": "e17c94805d258bdd4ee8a1245da28e694cee8ba4",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "e17c94805d258bdd4ee8a1245da28e694cee8ba4",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "docs/operations/CHRONOS-DUAL-PRINCIPAL-LIFECYCLE-V1.md"
+    },
+    {
+      "PR45_blob_sha": "e18bf46b70738cf232c4f485c12aa35ac6c5f622",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "EXCLUDE_SUPERSEDED_OWNER_MODEL",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "exclude_superseded_owner_model",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "docs/operations/CHRONOS-NEON-ROLE-LIFECYCLE-V1.md"
+    },
+    {
+      "PR45_blob_sha": "70059e8ae6d5cfb7beaf31a4576c452cba06073b",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "EXCLUDE_STALE_MIGRATOR_MODEL",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "exclude_stale_migrator_model",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "docs/operations/CHRONOS-PRODUCTION-BOOTSTRAP-V3.md"
+    },
+    {
+      "PR45_blob_sha": "c309a725d502ed60a9329e4efb601bb47cb8910c",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "DO_NOT_IMPORT",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "do_not_import",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "docs/operations/CHRONOS-PRODUCTION-ONE-HUMAN-ACTION-RESUME-V3.md"
+    },
+    {
+      "PR45_blob_sha": "9178a73b927d461747377eaa2c9818226f05d820",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "9178a73b927d461747377eaa2c9818226f05d820",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "migrations/env.py"
+    },
+    {
+      "PR45_blob_sha": "2e2a3f7391c26a878342474499d89978430181a2",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "2e2a3f7391c26a878342474499d89978430181a2",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "migrations/versions/0014_chronos_control_plane_v2.py"
+    },
+    {
+      "PR45_blob_sha": "6e641a0bbc28a8eb1c9dd6e6f6e3c2f169d8cfcb",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/activation/chronos-production-bootstrap-contract-v3.json"
+    },
+    {
+      "PR45_blob_sha": "80a00b29baf65df1f7f54bbb97596f757017c4f9",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/activation/chronos-production-bootstrap-independent-review-v3.json"
+    },
+    {
+      "PR45_blob_sha": "08cd946fd73ec252173c14524e2f48e28e26429a",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "DO_NOT_IMPORT",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "do_not_import",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/activation/chronos-production-bootstrap-initial-state-v3.json"
+    },
+    {
+      "PR45_blob_sha": "04361ac09bab0ea31367b69ec03878df7c0d8515",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/activation/chronos-production-workflow-hold-v3.json"
+    },
+    {
+      "PR45_blob_sha": "c152c4b7c1e13817edc4cdb828a03b2beebcc9f5",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "c152c4b7c1e13817edc4cdb828a03b2beebcc9f5",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/activation/chronos-provider-free-canary-contract-v3.json"
+    },
+    {
+      "PR45_blob_sha": "a2eb282afbd9a1c26423912ef8bbce3127e0b7d3",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "EXCLUDE_STALE_OWNER_EDGE_MODEL",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "exclude_stale_owner_edge_model",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/activation/chronos-role-edge-matrix-v1.json"
+    },
+    {
+      "PR45_blob_sha": "05bf0285b3b3f8831f182a64e625be491056fc4b",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/architecture/chronos-dual-principal-authority-e1-v2-review.json"
+    },
+    {
+      "PR45_blob_sha": "9e7b601b242ee0b7c5472f289819386e6a2e3ecf",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/architecture/chronos-role-lifecycle-e1-v1-pre-ci-review.json"
+    },
+    {
+      "PR45_blob_sha": "9d9265f3672964f2a37fcdb27663e50e38340345",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/architecture/chronos-role-lifecycle-e1-v1-review.json"
+    },
+    {
+      "PR45_blob_sha": "8d659c1f8f252b31b551de5b9522699da89a15c8",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REFERENCE_PR45_RUNS_ONLY",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "reference_pr45_runs_only",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/closure/chronos-dual-principal-authority-e1-v2-validation.json"
+    },
+    {
+      "PR45_blob_sha": "cf2718a63d9ae42d4d2b71c919a0a0043aaea0bf",
+      "cleanroom_base_blob_sha": "0bc8379c5d39ce280543b32622c727cf764c9e26",
+      "cleanroom_blob_sha": null,
+      "difference_type": "REBUILD_FROM_MAIN_TIP",
+      "equivalence_status": "EVIDENCE_REFERENCE_REBUILT",
+      "reason": "rebuild_from_main_tip",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/council/decision-ledger.jsonl"
+    },
+    {
+      "PR45_blob_sha": "acecb68a107190e17a3d343a9b93160b1ad80274",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REGENERATE_ON_CLEANROOM_SHA",
+      "equivalence_status": "EVIDENCE_REFERENCE_REBUILT",
+      "reason": "regenerate_on_cleanroom_sha",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/evidence/chronos-dual-principal-non-superuser-pg16-v2.json"
+    },
+    {
+      "PR45_blob_sha": "2c15e08d3abef3981f85d8c75e7dd8bea2019ca2",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "REGENERATE_ON_CLEANROOM_SHA",
+      "equivalence_status": "EVIDENCE_REFERENCE_REBUILT",
+      "reason": "regenerate_on_cleanroom_sha",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/evidence/chronos-dual-principal-superuser-pg16-v2.json"
+    },
+    {
+      "PR45_blob_sha": "319e5d3e378d5d3c382355b57691731b6aa0e487",
+      "cleanroom_base_blob_sha": "a5762f2a5aa2b14cf3f81c49947344f5e2471464",
+      "cleanroom_blob_sha": null,
+      "difference_type": "REBUILD_FROM_MAIN_EDGE_274",
+      "equivalence_status": "EVIDENCE_REFERENCE_REBUILT",
+      "reason": "rebuild_from_main_edge_274",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "reports/evidence/evidence-graph.json"
+    },
+    {
+      "PR45_blob_sha": "bd56748bdc18fb52bcff66c0a43804b58af69d52",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "bd56748bdc18fb52bcff66c0a43804b58af69d52",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "scripts/check_chronos_github_hold_v3.py"
+    },
+    {
+      "PR45_blob_sha": "04039d262d20e1f6b1c296b8124a64dc2b6d1be5",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "8285f82a3ae61e151b3e632f9cba691d94d62f4a",
+      "difference_type": "IMPORT_WITH_SECURITY_FIX",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_security_fix",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "scripts/check_no_secrets.py"
+    },
+    {
+      "PR45_blob_sha": "bdb372103e8aed576c1a503a1048fd6e5ca096d9",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "bdb372103e8aed576c1a503a1048fd6e5ca096d9",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_without_mutative_workflow",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "scripts/chronos_production_bootstrap_v3.py"
+    },
+    {
+      "PR45_blob_sha": "562422e2b0c934dbdf184bf9994f4b4a60980315",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "562422e2b0c934dbdf184bf9994f4b4a60980315",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "scripts/record_phase_c_evidence.py"
+    },
+    {
+      "PR45_blob_sha": "50c7a1ab71063ad0979780c8f954ea3cb6e81556",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "9c754cc49c0033d6585330fec0bb75a066892b29",
+      "difference_type": "IMPORT_WITH_GIT_BLOB_PROVENANCE",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_git_blob_provenance",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "scripts/run_chronos_dual_principal_ci_v2.py"
+    },
+    {
+      "PR45_blob_sha": "4c43f5cb8d13e8269ce315629a29af09c15c38df",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "4c43f5cb8d13e8269ce315629a29af09c15c38df",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "scripts/run_chronos_provider_free_canary_v3.py"
+    },
+    {
+      "PR45_blob_sha": "a8ffd37fc90f25e0ac5cb86c9f1b23e01c51fb93",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": null,
+      "difference_type": "EXCLUDE_OBSOLETE_SHIM",
+      "equivalence_status": "INTENTIONALLY_EXCLUDED",
+      "reason": "exclude_obsolete_shim",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "scripts/run_chronos_role_lifecycle_ci_v1.py"
+    },
+    {
+      "PR45_blob_sha": "f6e26200fc20e8d5241094778303a4ce085da750",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "f6e26200fc20e8d5241094778303a4ce085da750",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "src/robin/chronos_alembic.py"
+    },
+    {
+      "PR45_blob_sha": "c9b57f2e21d472b384b2b0d005e4ba5a49f463bb",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "c9b57f2e21d472b384b2b0d005e4ba5a49f463bb",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "src/robin/chronos_production.py"
+    },
+    {
+      "PR45_blob_sha": "7676c9136c99bc193ce06dffa1d92c350613aa0e",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "7676c9136c99bc193ce06dffa1d92c350613aa0e",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "src/robin/chronos_role_lifecycle.py"
+    },
+    {
+      "PR45_blob_sha": "4c6969b8f680c6a877cda640c32cd24ff5ce64d2",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "6f9848c74e7053206819e9d5f5daab0b26b0cce7",
+      "difference_type": "IMPORT_WITH_SECURITY_FIX",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_security_fix",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "tests/activation/test_check_no_secrets_v3.py"
+    },
+    {
+      "PR45_blob_sha": "a33d1f1ffcfde104a18c36e8a15b176ae1d4e2a8",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "20959a609f814a13f22bb4860665d2d8e2803cf2",
+      "difference_type": "IMPORT_WITH_MUTATIVE_WORKFLOW_EXCLUSION",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_mutative_workflow_exclusion",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "tests/activation/test_chronos_production_bootstrap_v3.py"
+    },
+    {
+      "PR45_blob_sha": "fd9d7162b374d1d0efb92eeef6358910bc3cdef8",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "fd9d7162b374d1d0efb92eeef6358910bc3cdef8",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "tests/activation/test_migration_path_neutralization.py"
+    },
+    {
+      "PR45_blob_sha": "792825e449a04d814e0b15e1f97887b55c5b7e17",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "0e4844200d799bf324e2d7a7a83b9160d2a7f58e",
+      "difference_type": "IMPORT_WITH_IMMUTABLE_ACTION_PIN_ASSERTION",
+      "equivalence_status": "PORTABILITY_FIX_ONLY",
+      "reason": "import_with_immutable_action_pin_assertion",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "tests/chronos/test_chronos_dual_principal_v2.py"
+    },
+    {
+      "PR45_blob_sha": "1b58e88aba7bd21ecc3416b01213a969eb413223",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "1b58e88aba7bd21ecc3416b01213a969eb413223",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "tests/chronos/test_chronos_migration_v2.py"
+    },
+    {
+      "PR45_blob_sha": "8770152ac799020f58f50567e1375689e170d986",
+      "cleanroom_base_blob_sha": null,
+      "cleanroom_blob_sha": "8770152ac799020f58f50567e1375689e170d986",
+      "difference_type": "NONE",
+      "equivalence_status": "BYTE_IDENTICAL",
+      "reason": "import_byte_identical",
+      "reviewer": "C0_CLEANROOM_WITH_PR45_READ_ONLY_AUDITS",
+      "source_path": "tests/chronos/test_chronos_postgresql_v2.py"
+    }
+  ],
+  "schema_version": "chronos-cleanroom-source-equivalence-v1",
+  "source_head_sha": "a25b288b5fc3c9eb6cd95ddb10f88db6a0aec1db",
+  "source_pr": 45,
+  "unexplained_difference_count": 0,
+  "verdict": "CHRONOS_CLEANROOM_EXTRACTION_READY"
+}

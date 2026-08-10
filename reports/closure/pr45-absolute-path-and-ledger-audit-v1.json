@@ -1,0 +1,114 @@
+{
+  "base_sha": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+  "head_sha": "a25b288b5fc3c9eb6cd95ddb10f88db6a0aec1db",
+  "historical_records_rewritten": 0,
+  "occurrences": [
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "json_report",
+      "line": 6,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "dfc22e472d5041902ab5a7139d2843c33de359593f3355de15476d78d092d04e",
+      "path": "reports/activation/chronos-production-bootstrap-initial-state-v3.json",
+      "record_id": null,
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "json_report",
+      "line": 16,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "3926ad9c9f1e5e629c17bd4ee61f01d9a0143a0c9c0d871f322f4eb52cbf1bad",
+      "path": "reports/activation/chronos-production-bootstrap-initial-state-v3.json",
+      "record_id": null,
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "append_only_ledger",
+      "line": 102,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "3926ad9c9f1e5e629c17bd4ee61f01d9a0143a0c9c0d871f322f4eb52cbf1bad",
+      "path": "reports/council/decision-ledger.jsonl",
+      "record_id": "RCV3-20260810-102",
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "append_only_ledger",
+      "line": 103,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "3926ad9c9f1e5e629c17bd4ee61f01d9a0143a0c9c0d871f322f4eb52cbf1bad",
+      "path": "reports/council/decision-ledger.jsonl",
+      "record_id": "RCV3-20260810-103",
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "append_only_ledger",
+      "line": 104,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "3926ad9c9f1e5e629c17bd4ee61f01d9a0143a0c9c0d871f322f4eb52cbf1bad",
+      "path": "reports/council/decision-ledger.jsonl",
+      "record_id": "RCV3-20260810-104",
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "append_only_ledger",
+      "line": 105,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "8c48fcb9123cc419a55713100ade7db3f33737c7421de8502394224c0f234794",
+      "path": "reports/council/decision-ledger.jsonl",
+      "record_id": "RCV3-20260810-105",
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "append_only_ledger",
+      "line": 106,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "8c48fcb9123cc419a55713100ade7db3f33737c7421de8502394224c0f234794",
+      "path": "reports/council/decision-ledger.jsonl",
+      "record_id": "RCV3-20260810-106",
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "append_only_ledger",
+      "line": 107,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "3b4390176de43ab446ce8176f739c19c586d884583a8eeb809ed581b75483ffa",
+      "path": "reports/council/decision-ledger.jsonl",
+      "record_id": "RCV3-20260810-107",
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    },
+    {
+      "historical_or_current": "historical_pr45",
+      "ledger_or_document": "append_only_ledger",
+      "line": 108,
+      "local_value_label": "LOCAL_PATH_REDACTED",
+      "local_value_sha256": "3b4390176de43ab446ce8176f739c19c586d884583a8eeb809ed581b75483ffa",
+      "path": "reports/council/decision-ledger.jsonl",
+      "record_id": "RCV3-20260810-108",
+      "replacement_strategy": "exclude_and_reference_git_object",
+      "rewritable": false
+    }
+  ],
+  "placeholders_classified_as_legitimate": true,
+  "pull_request": 45,
+  "real_local_path_occurrence_count": 9,
+  "repository": "dddur75/robin-stades-ng",
+  "schema_version": "pr45-absolute-path-and-ledger-audit-v1",
+  "unique_local_path_count": 4,
+  "urls_classified_as_legitimate": true,
+  "verdict": "PR45_AUDITED_AS_VALIDATED_NON_PORTABLE_HISTORY"
+}

@@ -55,9 +55,7 @@ def test_postgresql_pool_revalide_les_connexions_longues(
         "create_engine",
         fake_create_engine,
     )
-    engine = database_module.build_engine(
-        "postgresql+psycopg://robin:secret@localhost:5432/robin"
-    )
+    engine = database_module.build_engine("postgresql+psycopg://robin:secret@localhost:5432/robin")
 
     assert engine is sentinel
     assert captured["pool_pre_ping"] is True
@@ -68,7 +66,7 @@ def test_postgresql_pool_revalide_les_connexions_longues(
 
 def test_mot_de_passe_encode_et_sslmode_sont_preserves() -> None:
     value = (
-        "postgresql://robin:p%40ss%3Aword%2Fplus@ep-example.neon.tech/robin"
+        "postgresql://robin:p%40ss%3Aword%2Fplus@ep-example.neon.tech/robin"  # SECRET_SCANNER_TEST_FIXTURE
         "?sslmode=require"
     )
     normalized = normalize_database_url(value)
@@ -107,7 +105,5 @@ def test_secret_invalide_ne_fuit_pas_dans_diagnostic(
 def test_exception_de_configuration_ne_reprend_pas_la_valeur() -> None:
     secret_marker = "AUTRE_SECRET_INTERDIT"
     with pytest.raises(DatabaseConfigurationError) as captured:
-        normalize_database_url(
-            f"unsupported://robin:{secret_marker}@example.invalid/robin"
-        )
+        normalize_database_url(f"unsupported://robin:{secret_marker}@example.invalid/robin")
     assert secret_marker not in str(captured.value)

@@ -101,14 +101,17 @@ def test_ci_replays_frozen_jalon10_on_windows_before_linux_checks() -> None:
     path = ROOT / ".github" / "workflows" / "ci.yml"
     workflow = yaml.safe_load(path.read_text("utf-8"))
     jobs = workflow["jobs"]
-    evidence_job = jobs["hypothesis-evidence-inputs"]
+    evidence_job = jobs["frozen-evidence-windows"]
     tests_job = jobs["tests"]
     visual_job = jobs["visual-regression"]
 
     assert evidence_job["runs-on"] == "windows-latest"
     assert tests_job["runs-on"] == "ubuntu-latest"
-    assert tests_job["needs"] == "hypothesis-evidence-inputs"
-    assert visual_job["needs"] == ["hypothesis-evidence-inputs", "tests"]
+    assert set(tests_job["needs"]) == {
+        "frozen-evidence-windows",
+        "chronos-postgresql-profiles",
+    }
+    assert set(visual_job["needs"]) == {"frozen-evidence-windows", "tests"}
 
     evidence_commands = "\n".join(
         str(step.get("run", "")) for step in evidence_job["steps"]
@@ -124,7 +127,7 @@ def test_ci_replays_frozen_jalon10_on_windows_before_linux_checks() -> None:
     upload_steps = {
         step["with"]["name"]: step["with"]
         for step in evidence_job["steps"]
-        if step.get("uses") == "actions/upload-artifact@v4"
+        if str(step.get("uses", "")).startswith("actions/upload-artifact@")
     }
     artifact_name = (
         "hypothesis-evidence-campaign-inputs-"
@@ -146,7 +149,7 @@ def test_ci_replays_frozen_jalon10_on_windows_before_linux_checks() -> None:
         download_steps = {
             step["with"]["name"]: step["with"]
             for step in consumer_job["steps"]
-            if step.get("uses") == "actions/download-artifact@v4"
+            if str(step.get("uses", "")).startswith("actions/download-artifact@")
         }
         assert download_steps[artifact_name] == {
             "name": artifact_name,

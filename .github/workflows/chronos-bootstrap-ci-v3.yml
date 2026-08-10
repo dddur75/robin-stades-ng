@@ -1,0 +1,184 @@
+name: "Chronos Dual-Principal Bootstrap CI V2"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chronos-bootstrap-ci-v3-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  historical-deep-quality:
+    name: "Chronos source and activation"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - run: python -m pytest -q tests/chronos tests/activation
+
+  hypothesis-evidence-inputs:
+    name: "Chronos static contracts"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --only-binary=:all: --no-deps --require-hashes -r requirements-chronos-static.lock
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          for path in sorted(Path('.github/workflows').glob('*.yml')):
+              yaml.safe_load(path.read_text(encoding='utf-8'))
+          PY
+      - run: python scripts/check_no_secrets.py
+      - run: python scripts/check_no_tracked_absolute_paths.py
+
+  tests:
+    name: "tests (${{ matrix.admin-profile }})"
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        admin-profile:
+          - superuser
+          - non_superuser_createrole
+    services:
+      postgres:
+        image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+        env:
+          POSTGRES_DB: robin_ci
+          POSTGRES_USER: robin
+          POSTGRES_PASSWORD: robin_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U robin -d robin_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Reproduire le creator edge PostgreSQL 16
+        env:
+          ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+        run: >-
+          python -m pytest -q
+          tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_createrole_receives_unrevokable_admin_edge
+      - name: Valider le lifecycle dual-principal et le cycle 0014
+        env:
+          ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+          CHRONOS_CI_ADMIN_PROFILE: ${{ matrix.admin-profile }}
+        run: python scripts/run_chronos_dual_principal_ci_v2.py
+      - name: Valider les huit contrats PostgreSQL 16
+        env:
+          ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+          ROBIN_TEST_CHRONOS_MIGRATOR_ROLE: robin_ci_migrator
+          ROBIN_TEST_CHRONOS_BOOTSTRAP_AUTHORITY_ROLE: chronos_bootstrap_authority
+          ROBIN_TEST_CHRONOS_LIFECYCLE_ADMIN_ROLE: ${{ matrix.admin-profile == 'superuser' && 'robin' || 'robin_ci_lifecycle_admin' }}
+          ROBIN_TEST_CHRONOS_AUTHORITY_URL: postgresql+psycopg://chronos_authority_runtime_login:chronos_authority_ci@localhost:5432/robin_ci
+          ROBIN_TEST_CHRONOS_RUNTIME_URL: postgresql+psycopg://chronos_effect_runtime_login:chronos_runtime_ci@localhost:5432/robin_ci
+          ROBIN_TEST_CHRONOS_READER_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
+        run: |
+          python -m pytest -q \
+            --junitxml=.ci/chronos-postgresql-contracts-${{ matrix.admin-profile }}-v2.xml \
+            tests/chronos/test_chronos_postgresql_v2.py::test_server_clock_claim_is_atomic_and_hashes_match_python \
+            tests/chronos/test_chronos_postgresql_v2.py::test_database_expiry_cannot_be_reactivated_by_caller_time \
+            tests/chronos/test_chronos_postgresql_v2.py::test_get_permit_and_finalization_are_allowed_after_put_expiry \
+            tests/chronos/test_chronos_postgresql_v2.py::test_null_nonce_and_identity_inputs_fail_closed \
+            tests/chronos/test_chronos_postgresql_v2.py::test_tables_are_append_only_even_for_owner \
+            tests/chronos/test_chronos_postgresql_v2.py::test_roles_have_only_the_reviewed_capabilities \
+            tests/chronos/test_chronos_postgresql_v2.py::test_scoped_login_connections_enforce_allows_and_denials \
+            tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge
+      - name: Valider la revision reader
+        env:
+          ROBIN_DATABASE_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
+        run: python scripts/check_database_revision.py --expected 0014_chronos_control_plane_v2
+      - run: python -m pytest -q
+      - run: python -m ruff check src/robin scripts tests/chronos tests/activation migrations
+      - run: >-
+          python -m mypy --strict
+          src/robin/chronos_production.py
+          src/robin/chronos_role_lifecycle.py
+          scripts/chronos_production_bootstrap_v3.py
+          scripts/run_chronos_dual_principal_ci_v2.py
+          scripts/check_chronos_github_hold_v3.py
+          scripts/run_chronos_provider_free_canary_v3.py
+      - run: >-
+          python -m bandit -q -r
+          src/robin
+          scripts/chronos_production_bootstrap_v3.py
+          scripts/run_chronos_dual_principal_ci_v2.py
+          scripts/check_chronos_github_hold_v3.py
+          scripts/run_chronos_provider_free_canary_v3.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: chronos-dual-principal-${{ matrix.admin-profile }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .ci/chronos-dual-principal-${{ matrix.admin-profile }}-v2.json
+            .ci/chronos-postgresql-contracts-${{ matrix.admin-profile }}-v2.xml
+          if-no-files-found: error
+
+  visual-regression:
+    needs: tests
+    name: "Chronos provider-free Cockpit"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer le générateur de présentation
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22.13.0"
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: "11.9.0"
+      - working-directory: cockpit
+        run: pnpm install --frozen-lockfile
+      - name: Construire l'artifact serveur avant les tests SSR
+        working-directory: cockpit
+        run: |
+          pnpm run typecheck
+          pnpm run lint
+          pnpm run build:data
+          test -s public/data/hypotheses/nodes/page-001.json
+          pnpm exec vinext build
+          node --test tests/*.test.mjs
+          pnpm run test:model

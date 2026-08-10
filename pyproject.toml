@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=75"]
+requires = ["setuptools==84.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,7 +17,7 @@ dependencies = [
   "pandas>=2.2",
   "pydantic>=2.9,<3",
   "psycopg[binary]>=3.2,<4",
-  "pyarrow>=15",
+  "pyarrow==25.0.0",
   "polars==1.43.0",
   "PyYAML>=6.0",
   "requests>=2.31",

@@ -1,0 +1,18 @@
+{
+  "schema_version": "chronos-provider-free-canary-contract-v3",
+  "workflow": ".github/workflows/chronos-provider-free-canary-v3.yml",
+  "dispatch_only": true,
+  "environment": "chronos-control-plane-production",
+  "provider_secrets_referenced": [],
+  "payload": "SYNTHETIC_NON_FOOTBALL_JSON",
+  "object_key": "chronos/provider-free-canary/v3/<object-operation-id>.json",
+  "operation_identity_note": "The physical key uses a preimage-free logical object operation id; the DB ledger operation_id also binds that final key and is reported separately, avoiding a circular hash definition.",
+  "budgets": {
+    "authority_grants_max": 1, "effect_reservations_max": 1,
+    "r2_put_max": 1, "r2_get_max": 1, "r2_list": 0,
+    "r2_head": 0, "r2_delete": 0, "provider_calls": 0, "odds_credits": 0
+  },
+  "replay": {"new_authorities": 0, "new_reservations": 0, "new_put": 0, "new_get": 0},
+  "ambiguous_outcome": "PUT_COMMITTED_ACTUAL_PENDING",
+  "verdict": "CONTRACT_READY_FOR_CI"
+}
