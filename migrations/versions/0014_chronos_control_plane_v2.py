@@ -281,7 +281,10 @@ def _create_postgresql_roles() -> None:
                 AND NOT (
                   m.roleid=v_oid
                   AND m.member=v_migrator_oid
-                  AND m.grantor='10'::pg_catalog.oid
+                  AND EXISTS (
+                    SELECT 1 FROM pg_catalog.pg_roles grantor
+                    WHERE grantor.oid=m.grantor AND grantor.rolsuper
+                  )
                   AND m.admin_option
                   AND NOT m.inherit_option
                   AND NOT m.set_option)

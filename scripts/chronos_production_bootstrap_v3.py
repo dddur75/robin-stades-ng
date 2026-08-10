@@ -575,7 +575,13 @@ def _create_migrator(
             )
             cursor.execute(
                 sql.SQL(
-                    "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "
+                    "GRANT SELECT ON TABLE public.alembic_version TO {} "
+                    "WITH GRANT OPTION"
+                ).format(sql.Identifier(role))
+            )
+            cursor.execute(
+                sql.SQL(
+                    "GRANT INSERT, UPDATE, DELETE ON TABLE "
                     "public.alembic_version TO {}"
                 ).format(sql.Identifier(role))
             )
@@ -627,6 +633,11 @@ def _create_scoped_logins(migrator_url: str) -> None:
                 cursor.execute(
                     sql.SQL("GRANT {} TO {}").format(
                         sql.Identifier(group), sql.Identifier(login)
+                    )
+                )
+                cursor.execute(
+                    sql.SQL("REVOKE {} FROM CURRENT_USER").format(
+                        sql.Identifier(login)
                     )
                 )
                 cursor.execute(

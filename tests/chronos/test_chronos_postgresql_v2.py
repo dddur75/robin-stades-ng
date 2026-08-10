@@ -428,11 +428,13 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
         memberships = connection.execute(
             sa.text(
                 "SELECT granted.rolname AS granted_role,member.rolname AS member_role,"
-                "m.grantor='10'::pg_catalog.oid AS bootstrap_grantor,"
+                "grantor.rolname AS grantor_role,"
+                "grantor.rolsuper AS grantor_superuser,"
                 "m.admin_option,m.inherit_option,m.set_option "
                 "FROM pg_catalog.pg_auth_members m "
                 "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
                 "JOIN pg_catalog.pg_roles member ON member.oid=m.member "
+                "JOIN pg_catalog.pg_roles grantor ON grantor.oid=m.grantor "
                 "WHERE granted.rolname LIKE 'chronos_%' "
                 "OR member.rolname LIKE 'chronos_%'"
             )
@@ -455,20 +457,20 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 (row["granted_role"], row["member_role"]) for row in memberships
             } == expected_memberships
             assert all(
-                row["bootstrap_grantor"]
-                and (
-                    (
-                        row["member_role"] == MIGRATOR_ROLE
-                        and row["admin_option"]
-                        and not row["inherit_option"]
-                        and not row["set_option"]
-                    )
-                    or (
-                        row["member_role"] in SCOPED_LOGIN_GROUPS
-                        and not row["admin_option"]
-                        and row["inherit_option"]
-                        and row["set_option"]
-                    )
+                (
+                    row["member_role"] == MIGRATOR_ROLE
+                    and row["grantor_superuser"]
+                    and row["admin_option"]
+                    and not row["inherit_option"]
+                    and not row["set_option"]
+                )
+                or (
+                    row["member_role"] in SCOPED_LOGIN_GROUPS
+                    and row["grantor_role"] == MIGRATOR_ROLE
+                    and not row["grantor_superuser"]
+                    and not row["admin_option"]
+                    and row["inherit_option"]
+                    and row["set_option"]
                 )
                 for row in memberships
             )

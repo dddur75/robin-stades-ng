@@ -108,7 +108,11 @@ jobs:
                   "robin_ci_migrator WITH GRANT OPTION"
               )
               connection.exec_driver_sql(
-                  "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "
+                  "GRANT SELECT ON TABLE public.alembic_version TO "
+                  "robin_ci_migrator WITH GRANT OPTION"
+              )
+              connection.exec_driver_sql(
+                  "GRANT INSERT, UPDATE, DELETE ON TABLE "
                   "public.alembic_version TO robin_ci_migrator"
               )
               connection.exec_driver_sql(
@@ -144,6 +148,7 @@ jobs:
                       f"NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD '{password}'"
                   )
                   connection.exec_driver_sql(f"GRANT {group} TO {login}")
+                  connection.exec_driver_sql(f"REVOKE {login} FROM CURRENT_USER")
                   connection.exec_driver_sql(
                       f"COMMENT ON ROLE {login} IS 'ci-only:scoped-login-contract'"
                   )
@@ -191,4 +196,8 @@ jobs:
       - working-directory: cockpit
         run: pnpm install --frozen-lockfile
       - working-directory: cockpit
-        run: pnpm test
+        run: |
+          pnpm run typecheck
+          pnpm run lint
+          node --test tests/*.test.mjs
+          pnpm run test:model

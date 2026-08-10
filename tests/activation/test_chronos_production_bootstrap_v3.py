@@ -79,6 +79,28 @@ def test_bootstrap_workflow_has_three_exclusive_modes_and_no_auto_head() -> None
     assert "NEON_API_KEY" not in str(document["jobs"]["verify"])
 
 
+def test_migrator_delegates_only_revision_read_and_drops_implicit_memberships() -> None:
+    bootstrap = (
+        ROOT / "scripts" / "chronos_production_bootstrap_v3.py"
+    ).read_text(encoding="utf-8")
+    ci = (WORKFLOWS / "chronos-bootstrap-ci-v3.yml").read_text(encoding="utf-8")
+    for content in (bootstrap, ci):
+        assert "GRANT SELECT ON TABLE public.alembic_version" in content
+        assert "WITH GRANT OPTION" in content
+        assert "GRANT INSERT, UPDATE, DELETE ON TABLE" in content
+        assert "FROM CURRENT_USER" in content
+    migration = (
+        ROOT / "migrations" / "versions" / "0014_chronos_control_plane_v2.py"
+    ).read_text(encoding="utf-8")
+    postgresql_test = (
+        ROOT / "tests" / "chronos" / "test_chronos_postgresql_v2.py"
+    ).read_text(encoding="utf-8")
+    assert "grantor.rolsuper" in migration
+    assert "grantor.rolsuper" in postgresql_test
+    assert "grantor='10'" not in migration
+    assert "grantor='10'" not in postgresql_test
+
+
 def test_canary_has_only_the_reviewed_r2_surface_and_budgets() -> None:
     workflow = (
         WORKFLOWS / "chronos-provider-free-canary-v3.yml"

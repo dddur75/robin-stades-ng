@@ -39,6 +39,22 @@
   ],
   "p0_open": 0,
   "p1_open_before_ci": 0,
+  "first_exact_head_ci": {
+    "run_id": 31343668450,
+    "head_sha": "7b174aadb18d9e1cae66d4190233fc33352cf279",
+    "passed_contexts": [
+      "Historical Deep — contrat cache-only",
+      "Jalon 10 - entrees de preuve gelees"
+    ],
+    "failed_contexts": ["tests", "Robin Experience — preuves visuelles"],
+    "root_causes": [
+      "PostgreSQL 16 implicit reverse memberships from non-superuser CREATE ROLE",
+      "missing SELECT grant option on public.alembic_version",
+      "visual context invoked unrelated Phase C data generation"
+    ],
+    "correction_cycle": 1,
+    "manual_rerun": false
+  },
   "final_review_required_after_ci": true,
   "provider_calls": 0,
   "r2_operations": 0
