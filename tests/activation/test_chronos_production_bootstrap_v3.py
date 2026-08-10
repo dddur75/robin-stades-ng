@@ -111,6 +111,19 @@ def test_bootstrap_owner_provisions_roles_and_migrator_is_nocreaterole() -> None
     assert "grantor='10'" not in postgresql_test
 
 
+def test_role_valid_until_avoids_typed_bind_in_utility_grammar() -> None:
+    lifecycle = (ROOT / "src" / "robin" / "chronos_role_lifecycle.py").read_text(
+        encoding="utf-8"
+    )
+    runner = (
+        ROOT / "scripts" / "run_chronos_role_lifecycle_ci_v1.py"
+    ).read_text(encoding="utf-8")
+    for content in (lifecycle, runner):
+        assert "PASSWORD %s" in content
+        assert "VALID UNTIL %s" not in content
+        assert "sql.Literal(valid_until.isoformat())" in content
+
+
 def test_neon_identity_routes_are_rejected_before_network() -> None:
     client = NeonClient("test-only-neon-key")
     for method, path in (

@@ -1057,9 +1057,12 @@ def provision_migrator(
                     sql.SQL(
                         "CREATE ROLE {} LOGIN NOINHERIT NOSUPERUSER NOCREATEDB "
                         "NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %s "
-                        "VALID UNTIL %s"
-                    ).format(sql.Identifier(role)),
-                    (password, valid_until),
+                        "VALID UNTIL {}"
+                    ).format(
+                        sql.Identifier(role),
+                        sql.Literal(valid_until.isoformat()),
+                    ),
+                    (password,),
                 )
                 client_cursor.execute(
                     sql.SQL("COMMENT ON ROLE {} IS %s").format(
@@ -1104,9 +1107,12 @@ def provision_migrator(
                     sql.SQL(
                         "ALTER ROLE {} LOGIN NOINHERIT NOSUPERUSER NOCREATEDB "
                         "NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %s "
-                        "VALID UNTIL %s"
-                    ).format(sql.Identifier(role)),
-                    (password, valid_until),
+                        "VALID UNTIL {}"
+                    ).format(
+                        sql.Identifier(role),
+                        sql.Literal(valid_until.isoformat()),
+                    ),
+                    (password,),
                 )
         cursor.execute(
             sql.SQL("GRANT USAGE ON SCHEMA public TO {} WITH GRANT OPTION").format(

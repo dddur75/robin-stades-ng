@@ -93,6 +93,7 @@ def _alembic(database_url: str, *arguments: str) -> None:
 
 
 def _bootstrap_owner(superuser_url: str) -> None:
+    valid_until = datetime.now(UTC) + timedelta(minutes=10)
     with psycopg.connect(
         _psycopg_url(superuser_url), connect_timeout=10
     ) as connection:
@@ -101,12 +102,12 @@ def _bootstrap_owner(superuser_url: str) -> None:
                 sql.SQL(
                     "CREATE ROLE {} LOGIN NOINHERIT NOSUPERUSER NOCREATEDB "
                     "CREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %s "
-                    "VALID UNTIL %s"
-                ).format(sql.Identifier(BOOTSTRAP_OWNER)),
-                (
-                    BOOTSTRAP_PASSWORD,
-                    datetime.now(UTC) + timedelta(minutes=10),
+                    "VALID UNTIL {}"
+                ).format(
+                    sql.Identifier(BOOTSTRAP_OWNER),
+                    sql.Literal(valid_until.isoformat()),
                 ),
+                (BOOTSTRAP_PASSWORD,),
             )
             cursor.execute(
                 sql.SQL(
