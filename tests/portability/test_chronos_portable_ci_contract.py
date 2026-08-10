@@ -51,6 +51,18 @@ def test_windows_producer_precedes_linux_consumers() -> None:
     }
 
 
+def test_manifest_producer_and_consumers_share_available_exact_python() -> None:
+    jobs = load("ci.yml")["jobs"]  # type: ignore[index]
+    for job_name in ("frozen-evidence-windows", "tests", "visual-regression"):
+        setup_steps = [
+            step
+            for step in jobs[job_name]["steps"]  # type: ignore[index]
+            if str(step.get("uses", "")).startswith("actions/setup-python@")
+        ]
+        assert len(setup_steps) == 1
+        assert setup_steps[0]["with"]["python-version"] == "3.12.10"
+
+
 def test_exact_tests_gate_is_fail_closed_on_every_prerequisite() -> None:
     jobs = load("ci.yml")["jobs"]  # type: ignore[index]
     exact_tests = jobs["tests"]  # type: ignore[index]
