@@ -32,7 +32,6 @@ from robin.prospective_observatory.chronos_control_plane import (
 )
 from scripts.chronos_production_bootstrap_v3 import (
     NeonClient,
-    _alembic_environment,
     _attempt_cleanup_steps,
 )
 
@@ -85,7 +84,7 @@ def test_bootstrap_workflow_has_three_exclusive_modes_and_no_auto_head() -> None
     assert "NEON_API_KEY" not in str(document["jobs"]["verify"])
 
 
-def test_bootstrap_owner_provisions_roles_and_migrator_is_nocreaterole() -> None:
+def test_dual_principal_provisions_roles_and_migrator_is_nocreaterole() -> None:
     bootstrap = (
         ROOT / "scripts" / "chronos_production_bootstrap_v3.py"
     ).read_text(encoding="utf-8")
@@ -96,7 +95,7 @@ def test_bootstrap_owner_provisions_roles_and_migrator_is_nocreaterole() -> None
     assert "provision_chronos_group_roles" in bootstrap
     assert "provision_migrator" in bootstrap
     assert "provision_runtime_logins" in bootstrap
-    assert "run_chronos_role_lifecycle_ci_v1.py" in ci
+    assert "run_chronos_dual_principal_ci_v2.py" in ci
     migration = (
         ROOT / "migrations" / "versions" / "0014_chronos_control_plane_v2.py"
     ).read_text(encoding="utf-8")
@@ -116,12 +115,12 @@ def test_role_valid_until_avoids_typed_bind_in_utility_grammar() -> None:
         encoding="utf-8"
     )
     runner = (
-        ROOT / "scripts" / "run_chronos_role_lifecycle_ci_v1.py"
+        ROOT / "scripts" / "run_chronos_dual_principal_ci_v2.py"
     ).read_text(encoding="utf-8")
+    assert "PASSWORD %s" in lifecycle
+    assert "sql.Literal(valid_until.isoformat())" in lifecycle
     for content in (lifecycle, runner):
-        assert "PASSWORD %s" in content
         assert "VALID UNTIL %s" not in content
-        assert "sql.Literal(valid_until.isoformat())" in content
 
 
 def test_neon_identity_routes_are_rejected_before_network() -> None:
@@ -136,57 +135,54 @@ def test_neon_identity_routes_are_rejected_before_network() -> None:
             client.request(method, path)
 
 
-def test_alembic_subprocess_receives_no_bootstrap_or_runtime_secret(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    sensitive = (
-        "NEON_API_KEY",
-        "NEON_BOOTSTRAP_DATABASE_URL",
-        "CHRONOS_BOOTSTRAP_AUTHORITY_PASSWORD",
-        "CHRONOS_BOOTSTRAP_RUNTIME_PASSWORD",
-        "CHRONOS_BOOTSTRAP_READER_PASSWORD",
-        "CHRONOS_CONTROL_PLANE_GENERATION_NONCE",
+def test_alembic_runs_in_the_fenced_process_with_an_injected_connection() -> None:
+    bootstrap = (
+        ROOT / "scripts" / "chronos_production_bootstrap_v3.py"
+    ).read_text(encoding="utf-8")
+    migration_environment = (ROOT / "migrations" / "env.py").read_text(
+        encoding="utf-8"
     )
-    for name in sensitive:
-        monkeypatch.setenv(name, f"sentinel-{name.lower()}")
-    environment = _alembic_environment("postgresql://migrator:scoped@db/robin")
-    assert environment["ROBIN_DATABASE_URL"].startswith("postgresql://migrator:")
-    assert not set(sensitive).intersection(environment)
+    fenced_runner = (ROOT / "src" / "robin" / "chronos_alembic.py").read_text(
+        encoding="utf-8"
+    )
+    assert "subprocess.run" not in bootstrap
+    assert "run_fenced_alembic" in bootstrap
+    assert 'configuration.attributes["connection"]' in fenced_runner
+    assert 'config.attributes.get("connection")' in migration_environment
+    assert "CHRONOS_ALEMBIC_EXECUTION_FAILED" in fenced_runner
 
 
-def test_cleanup_attempts_terminalization_after_migrator_cleanup_failure() -> None:
+def test_cleanup_attempts_external_cleanup_after_migrator_failure() -> None:
     attempted: list[str] = []
 
     def fail_migrator() -> None:
         attempted.append("migrator")
         raise RuntimeError("injected-disable-failure")
 
-    def terminalize_owner() -> None:
-        attempted.append("owner")
+    def cleanup_executor() -> None:
+        attempted.append("executor")
 
     with pytest.raises(ChronosProductionError, match="CHRONOS_LIFECYCLE_CLEANUP_FAILED"):
-        _attempt_cleanup_steps((fail_migrator, terminalize_owner))
-    assert attempted == ["migrator", "owner"]
+        _attempt_cleanup_steps((fail_migrator, cleanup_executor))
+    assert attempted == ["migrator", "executor"]
 
 
-def test_role_edge_matrix_contract_has_exact_eleven_edges() -> None:
+def test_role_edge_matrix_contract_classifies_both_admin_profiles() -> None:
     document = json.loads(
         (
             ROOT
             / "reports"
-            / "activation"
-            / "chronos-role-edge-matrix-v1.json"
+            / "architecture"
+            / "chronos-dual-principal-authority-e1-v2-review.json"
         ).read_text(encoding="utf-8")
     )
-    assert document["phase_edge_counts"] == {
-        "groups": 4,
-        "migrator": 5,
-        "final": 11,
-    }
-    assert len(document["edges"]) == 11
-    assert document["forbidden_edge_count"] == 0
-    assert document["runtime_effective_bootstrap_edge_count"] == 0
-    assert document["migrator_runtime_edge_count"] == 0
+    assert document["admin_profiles"]["superuser"]["active_final_edges"] == 12
+    assert document["admin_profiles"]["superuser"]["terminal_edges"] == 11
+    non_super = document["admin_profiles"]["non_superuser_createrole"]
+    assert non_super["active_final_edges"] == 14
+    assert non_super["terminal_edges"] == 12
+    assert document["terminal_invariants"]["executor_roles"] == 0
+    assert document["terminal_invariants"]["forbidden_edges"] == 0
 
 
 def test_canary_has_only_the_reviewed_r2_surface_and_budgets() -> None:

@@ -1,0 +1,52 @@
+{
+  "schema_version": "chronos-dual-principal-pg16-evidence-summary-v2",
+  "claim_id": "SECURITY.CHRONOS.DUAL_PRINCIPAL.PG16.V2.001",
+  "observed_at": "2026-08-10T15:05:18+02:00",
+  "profile": "superuser",
+  "postgresql_version": "16.14",
+  "source_artifact": ".ci/chronos-dual-principal-superuser-v2.json",
+  "source_artifact_sha256": "e33084a91757e86212410976c820ca29c1453761525ca9f3003d49cf31b36251",
+  "source_sha256": {
+    "migrations/env.py": "85a13230a475a3e0e30207fc5be7554b60fbe7ee66d507e25e2fc8a2a772d252",
+    "migrations/versions/0013_historical_evidence_index.py": "1756d328dff735527ee42afca2644835946fd8138643220f2fd93b703a842ff1",
+    "migrations/versions/0014_chronos_control_plane_v2.py": "f7d0d675b23c73c9539236c281219aecaf235e00b52c1934206aee51697b5f90",
+    "scripts/chronos_production_bootstrap_v3.py": "4e7e276e5f0f33f4ae01fee15abccae4545f5a9d9982f1bd838869825f5a6c8b",
+    "scripts/run_chronos_dual_principal_ci_v2.py": "a18d202a6e4ecc03093b4eec4bd94448c693a9fa4de98462064a1eeb2a4bf92b",
+    "src/robin/chronos_alembic.py": "89c89ab59960bdec5ba277c769bda460f09495c3e238362f084af4e5b2fca268",
+    "src/robin/chronos_role_lifecycle.py": "46c156b73fc89d987c35da712500073684dc70df336cb30200b4fc599a813feb"
+  },
+  "micro_experiments": "3_OF_3_PASS",
+  "crash_checkpoints": "7_OF_7_PASS",
+  "negative_contracts": "23_OF_23_PASS",
+  "postgresql_contracts": {
+    "result": "8_OF_8_PASS",
+    "junit_artifact": ".ci/chronos-postgresql-contracts-superuser-v2.xml",
+    "junit_sha256": "a4e44bd5f4084cd533a82630eeb60b6da859108685c08098f1c1d7c5f03e2b02",
+    "test_source": "tests/chronos/test_chronos_postgresql_v2.py",
+    "test_source_sha256": "5eb5a66f908fecde0c0c10f8b21ab8321ca910c05b1cf35d177f9fb4997f7f0b",
+    "workflow_source_sha256": "94858e7da63dc7ecf19fc2896ffa46dd3af3c8fbbee6ecd13d4470bdf6082d52"
+  },
+  "migration_cycle": "0013->0014->0013->0014:PASS",
+  "migration_dispatches": 1,
+  "migration_backend": {
+    "alembic_backend_observed": true,
+    "alembic_version_lock_wait_observed": true,
+    "backend_terminated_before_client_wait": true,
+    "client_kill_fallback": false,
+    "sessions_after": 0
+  },
+  "role_edges": {
+    "active_final": 12,
+    "terminal": 11,
+    "forbidden_terminal": 0
+  },
+  "terminal": {
+    "executor_roles": 0,
+    "executor_memberships": 0,
+    "runtime_to_authority_paths": 0,
+    "runtime_to_lifecycle_admin_paths": 0,
+    "authority_password_null": true,
+    "migrator_password_null": true
+  },
+  "artifact_retention": "FULL_JSON_UPLOADED_BY_CHRONOS_BOOTSTRAP_CI_V3"
+}

@@ -1,4 +1,4 @@
-name: "Chronos Bootstrap CI V3"
+name: "Chronos Dual-Principal Bootstrap CI V2"
 
 on:
   pull_request:
@@ -52,12 +52,18 @@ jobs:
       - run: python scripts/check_no_secrets.py
 
   tests:
-    name: "tests"
+    name: "tests (${{ matrix.admin-profile }})"
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        admin-profile:
+          - superuser
+          - non_superuser_createrole
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:16.14-alpine
         env:
           POSTGRES_DB: robin_ci
           POSTGRES_USER: robin
@@ -87,20 +93,23 @@ jobs:
         run: >-
           python -m pytest -q
           tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_createrole_receives_unrevokable_admin_edge
-      - name: Valider le lifecycle bootstrap-owned et le cycle 0014
+      - name: Valider le lifecycle dual-principal et le cycle 0014
         env:
           ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
-        run: python scripts/run_chronos_role_lifecycle_ci_v1.py
+          CHRONOS_CI_ADMIN_PROFILE: ${{ matrix.admin-profile }}
+        run: python scripts/run_chronos_dual_principal_ci_v2.py
       - name: Valider les huit contrats PostgreSQL 16
         env:
           ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
           ROBIN_TEST_CHRONOS_MIGRATOR_ROLE: robin_ci_migrator
-          ROBIN_TEST_CHRONOS_BOOTSTRAP_OWNER_ROLE: robin_ci_bootstrap_owner
+          ROBIN_TEST_CHRONOS_BOOTSTRAP_AUTHORITY_ROLE: chronos_bootstrap_authority
+          ROBIN_TEST_CHRONOS_LIFECYCLE_ADMIN_ROLE: ${{ matrix.admin-profile == 'superuser' && 'robin' || 'robin_ci_lifecycle_admin' }}
           ROBIN_TEST_CHRONOS_AUTHORITY_URL: postgresql+psycopg://chronos_authority_runtime_login:chronos_authority_ci@localhost:5432/robin_ci
           ROBIN_TEST_CHRONOS_RUNTIME_URL: postgresql+psycopg://chronos_effect_runtime_login:chronos_runtime_ci@localhost:5432/robin_ci
           ROBIN_TEST_CHRONOS_READER_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
         run: |
           python -m pytest -q \
+            --junitxml=.ci/chronos-postgresql-contracts-${{ matrix.admin-profile }}-v2.xml \
             tests/chronos/test_chronos_postgresql_v2.py::test_server_clock_claim_is_atomic_and_hashes_match_python \
             tests/chronos/test_chronos_postgresql_v2.py::test_database_expiry_cannot_be_reactivated_by_caller_time \
             tests/chronos/test_chronos_postgresql_v2.py::test_get_permit_and_finalization_are_allowed_after_put_expiry \
@@ -120,20 +129,22 @@ jobs:
           src/robin/chronos_production.py
           src/robin/chronos_role_lifecycle.py
           scripts/chronos_production_bootstrap_v3.py
-          scripts/run_chronos_role_lifecycle_ci_v1.py
+          scripts/run_chronos_dual_principal_ci_v2.py
           scripts/check_chronos_github_hold_v3.py
           scripts/run_chronos_provider_free_canary_v3.py
       - run: >-
           python -m bandit -q -r
           src/robin
           scripts/chronos_production_bootstrap_v3.py
-          scripts/run_chronos_role_lifecycle_ci_v1.py
+          scripts/run_chronos_dual_principal_ci_v2.py
           scripts/check_chronos_github_hold_v3.py
           scripts/run_chronos_provider_free_canary_v3.py
       - uses: actions/upload-artifact@v4
         with:
-          name: chronos-role-edge-matrix-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .ci/chronos-role-edge-matrix-v1.json
+          name: chronos-dual-principal-${{ matrix.admin-profile }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .ci/chronos-dual-principal-${{ matrix.admin-profile }}-v2.json
+            .ci/chronos-postgresql-contracts-${{ matrix.admin-profile }}-v2.xml
           if-no-files-found: error
 
   visual-regression:

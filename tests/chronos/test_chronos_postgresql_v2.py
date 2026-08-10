@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import hashlib
 import os
@@ -21,7 +21,8 @@ from robin.storage.database import build_engine
 POSTGRES_URL = os.getenv("ROBIN_TEST_POSTGRES_URL", "")
 MIGRATOR_ROLE = os.getenv("ROBIN_TEST_CHRONOS_MIGRATOR_ROLE", "")
 MIGRATOR_URL = os.getenv("ROBIN_TEST_CHRONOS_MIGRATOR_URL", "")
-BOOTSTRAP_OWNER_ROLE = os.getenv("ROBIN_TEST_CHRONOS_BOOTSTRAP_OWNER_ROLE", "")
+BOOTSTRAP_AUTHORITY_ROLE = os.getenv("ROBIN_TEST_CHRONOS_BOOTSTRAP_AUTHORITY_ROLE", "")
+LIFECYCLE_ADMIN_ROLE = os.getenv("ROBIN_TEST_CHRONOS_LIFECYCLE_ADMIN_ROLE", "")
 SCOPED_LOGIN_URLS = {
     "chronos_authority_runtime_login": os.getenv(
         "ROBIN_TEST_CHRONOS_AUTHORITY_URL", ""
@@ -525,26 +526,29 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
             "chronos_reader",
             "chronos_runtime_writer",
             "chronos_test_writer",
+            BOOTSTRAP_AUTHORITY_ROLE,
         }
         if SCOPED_LOGINS_CONFIGURED:
             expected_roles.update(SCOPED_LOGIN_GROUPS)
         assert {row["rolname"] for row in role_rows} == expected_roles
         for row in role_rows:
             is_scoped_login = row["rolname"] in SCOPED_LOGIN_GROUPS
+            is_bootstrap_authority = row["rolname"] == BOOTSTRAP_AUTHORITY_ROLE
             assert row["rolcanlogin"] == is_scoped_login
             assert not any(
                 row[name]
                 for name in (
                     "rolsuper",
                     "rolcreatedb",
-                    "rolcreaterole",
                     "rolreplication",
                     "rolbypassrls",
                 )
             )
+            assert bool(row["rolcreaterole"]) is is_bootstrap_authority
             assert row["rolconfig"] is None
             expected_provenance = (
-                "managed-by:chronos-role-lifecycle-e1-v1"
+                "managed-by:chronos-dual-principal-authority-e1-v2"
+                + (":authority" if is_bootstrap_authority else "")
             )
             assert row["provenance"] == expected_provenance
         memberships = connection.execute(
@@ -566,35 +570,58 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 "OR granted.rolname=:migrator OR member.rolname=:migrator "
                 "OR granted.rolname=:owner OR member.rolname=:owner"
             ),
-            {"migrator": MIGRATOR_ROLE, "owner": BOOTSTRAP_OWNER_ROLE},
+            {"migrator": MIGRATOR_ROLE, "owner": BOOTSTRAP_AUTHORITY_ROLE},
         ).mappings().all()
-        if MIGRATOR_ROLE and BOOTSTRAP_OWNER_ROLE:
+        if MIGRATOR_ROLE and BOOTSTRAP_AUTHORITY_ROLE:
             migrator_groups = set(SCOPED_LOGIN_GROUPS.values()) | {
                 "chronos_test_writer"
             }
             expected_memberships = {
-                (role, BOOTSTRAP_OWNER_ROLE) for role in migrator_groups
+                (role, BOOTSTRAP_AUTHORITY_ROLE) for role in migrator_groups
             }
             if SCOPED_LOGINS_CONFIGURED:
                 expected_memberships.update(
                     (group, login) for login, group in SCOPED_LOGIN_GROUPS.items()
                 )
                 expected_memberships.update(
-                    (login, BOOTSTRAP_OWNER_ROLE) for login in SCOPED_LOGIN_GROUPS
+                    (login, BOOTSTRAP_AUTHORITY_ROLE) for login in SCOPED_LOGIN_GROUPS
                 )
-            expected_memberships.add((MIGRATOR_ROLE, BOOTSTRAP_OWNER_ROLE))
+            expected_memberships.add((MIGRATOR_ROLE, BOOTSTRAP_AUTHORITY_ROLE))
+            lifecycle_admin_superuser = bool(
+                connection.scalar(
+                    sa.text(
+                        "SELECT rolsuper FROM pg_catalog.pg_roles WHERE rolname=:role"
+                    ),
+                    {"role": LIFECYCLE_ADMIN_ROLE},
+                )
+            )
+            if LIFECYCLE_ADMIN_ROLE and not lifecycle_admin_superuser:
+                expected_memberships.add(
+                    (BOOTSTRAP_AUTHORITY_ROLE, LIFECYCLE_ADMIN_ROLE)
+                )
             assert {
                 (row["granted_role"], row["member_role"]) for row in memberships
             } == expected_memberships
             system_grantors = {
                 row["grantor_role"]
                 for row in memberships
-                if row["member_role"] == BOOTSTRAP_OWNER_ROLE
+                if row["member_role"] == BOOTSTRAP_AUTHORITY_ROLE
             }
             assert len(system_grantors) == 1
             assert all(
                 (
-                    row["member_role"] == BOOTSTRAP_OWNER_ROLE
+                    row["member_role"] == BOOTSTRAP_AUTHORITY_ROLE
+                    and row["grantor_superuser"]
+                    and row["admin_option"]
+                    and not row["inherit_option"]
+                    and not row["set_option"]
+                    and not row["runtime_usage"]
+                    and not row["runtime_set"]
+                )
+                or (
+                    not lifecycle_admin_superuser
+                    and row["granted_role"] == BOOTSTRAP_AUTHORITY_ROLE
+                    and row["member_role"] == LIFECYCLE_ADMIN_ROLE
                     and row["grantor_superuser"]
                     and row["admin_option"]
                     and not row["inherit_option"]
@@ -604,7 +631,7 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 )
                 or (
                     row["member_role"] in SCOPED_LOGIN_GROUPS
-                    and row["grantor_role"] == BOOTSTRAP_OWNER_ROLE
+                    and row["grantor_role"] == BOOTSTRAP_AUTHORITY_ROLE
                     and not row["grantor_superuser"]
                     and not row["admin_option"]
                     and row["inherit_option"]
@@ -780,7 +807,7 @@ def test_scoped_login_connections_enforce_allows_and_denials() -> None:
 
 
 @pytest.mark.skipif(
-    not MIGRATOR_ROLE or not BOOTSTRAP_OWNER_ROLE,
+    not MIGRATOR_ROLE or not BOOTSTRAP_AUTHORITY_ROLE,
     reason="the PostgreSQL 16 non-superuser migrator fixture is not configured",
 )
 def test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge(
@@ -803,11 +830,11 @@ def test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge(
                 "JOIN pg_catalog.pg_authid a ON a.oid=r.oid "
                 "WHERE r.rolname=ANY(:roles) ORDER BY r.rolname"
             ),
-            {"roles": [MIGRATOR_ROLE, BOOTSTRAP_OWNER_ROLE]},
+            {"roles": [MIGRATOR_ROLE, BOOTSTRAP_AUTHORITY_ROLE]},
         ).mappings().all()
         assert [dict(row) for row in terminal_states] == [
             {
-                "rolname": BOOTSTRAP_OWNER_ROLE,
+                "rolname": BOOTSTRAP_AUTHORITY_ROLE,
                 "rolcanlogin": False,
                 "rolcreaterole": True,
                 "password_null": True,
@@ -824,7 +851,7 @@ def test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge(
                 "SELECT count(*) FROM pg_catalog.pg_stat_activity "
                 "WHERE usename=ANY(:roles)"
             ),
-            {"roles": [MIGRATOR_ROLE, BOOTSTRAP_OWNER_ROLE]},
+            {"roles": [MIGRATOR_ROLE, BOOTSTRAP_AUTHORITY_ROLE]},
         )
         assert active_lifecycle_sessions == 0
         migrator_runtime_edges = connection.scalar(

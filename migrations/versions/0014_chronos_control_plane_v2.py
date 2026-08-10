@@ -250,7 +250,7 @@ def _assert_postgresql_roles() -> None:
         DECLARE v_unsafe boolean;
         DECLARE v_oid oid;
         DECLARE v_marker constant text :=
-          'managed-by:chronos-role-lifecycle-e1-v1';
+          'managed-by:chronos-dual-principal-authority-e1-v2';
         BEGIN
           IF current_setting('statement_timeout')::interval <= interval '0'
              OR current_setting('statement_timeout')::interval > interval '300 seconds'

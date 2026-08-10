@@ -1,0 +1,76 @@
+{
+  "schema_version": "chronos-dual-principal-authority-e1-v2-validation",
+  "claim_id": "SECURITY.CHRONOS.DUAL_PRINCIPAL.PG16.V2.001",
+  "observed_at": "2026-08-10T15:06:00+02:00",
+  "verdict": "CHRONOS_DUAL_PRINCIPAL_AUTHORITY_E1_V2_LOCAL_READY_CI_PENDING",
+  "postgresql_16": {
+    "version": "16.14",
+    "micro_experiments": "3_OF_3_PASS",
+    "admin_profiles": "2_OF_2_PASS",
+    "crash_checkpoints": "7_OF_7_PASS",
+    "negative_contracts": "23_OF_23_PASS",
+    "database_contracts": "8_OF_8_PASS",
+    "migration_cycle": "PASS"
+  },
+  "static_gates": {
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "compileall": "PASS"
+  },
+  "postgresql_evidence": {
+    "superuser_summary": "reports/evidence/chronos-dual-principal-superuser-pg16-v2.json",
+    "superuser_full_artifact_sha256": "e33084a91757e86212410976c820ca29c1453761525ca9f3003d49cf31b36251",
+    "superuser_postgresql_contracts_junit_sha256": "a4e44bd5f4084cd533a82630eeb60b6da859108685c08098f1c1d7c5f03e2b02",
+    "non_superuser_summary": "reports/evidence/chronos-dual-principal-non-superuser-pg16-v2.json",
+    "non_superuser_full_artifact_sha256": "74805f46a689ddd4e51faf5a9612f090663dc2674792d48c4b23f46b6f429bbc",
+    "non_superuser_postgresql_contracts_junit_sha256": "fb7584454721c5352938f02e6019083803f759b5358f69e90fc14504391df169",
+    "postgresql_contract_test_source_sha256": "5eb5a66f908fecde0c0c10f8b21ab8321ca910c05b1cf35d177f9fb4997f7f0b",
+    "postgresql_contract_workflow_sha256": "94858e7da63dc7ecf19fc2896ffa46dd3af3c8fbbee6ecd13d4470bdf6082d52",
+    "source_bound": true,
+    "alembic_version_lock_wait_observed": true,
+    "client_kill_fallback": false
+  },
+  "single_local_full_suite": {
+    "passed": 1442,
+    "skipped": 21,
+    "failed": 29,
+    "task_failures_identified": 2,
+    "task_failures_fixed_by_targeted_revalidation": 2,
+    "remaining_historical_phase_c_failures": 27,
+    "rerun": false,
+    "classification": "PRE_EXISTING_PHASE_C_HASH_AND_REPLAY_DRIFT"
+  },
+  "ci": {
+    "status": "PENDING_FIRST_EXACT_HEAD_CI",
+    "run_id": null,
+    "head_sha": null,
+    "manual_reruns": 0
+  },
+  "pull_requests": {
+    "43": "OPEN_DRAFT_UNMERGED",
+    "44": "OPEN_DRAFT_UNMERGED",
+    "replacement": "PENDING_CREATION"
+  },
+  "final_verdicts_pending_ci": [
+    "POSTGRESQL_SELF_TERMINALIZATION_ARCHITECTURE_REJECTED",
+    "DUAL_PRINCIPAL_BOOTSTRAP_AUTHORITY_ACCEPTED",
+    "PERMANENT_NOLOGIN_AUTHORITY_READY",
+    "EPHEMERAL_BOOTSTRAP_EXECUTOR_READY",
+    "POSTGRESQL_CONTRACTS_8_OF_8",
+    "CHRONOS_DUAL_PRINCIPAL_AUTHORITY_E1_V2_READY_FOR_REVIEW"
+  ],
+  "external_effects": {
+    "neon_api_calls": 0,
+    "production_postgresql_reads": 0,
+    "production_postgresql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "purchases": 0,
+    "deployments": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triples": 0
+  }
+}

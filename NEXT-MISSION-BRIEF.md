@@ -1,75 +1,59 @@
-# Next Mission Brief — Chronos Neon Recovery E1 V1
+# Next Mission Brief — Chronos Dual-Principal Neon Capability Preflight
 
-## Mission boundary
+## Starting boundary
 
-This brief starts only after the Draft pull request headed by
-`codex/chronos-role-lifecycle-e1-v1` has passed all required checks. The current
-mission deliberately performs no Neon API call, no production SQL, no provider
-call, no R2 operation, no purchase, and no deployment.
+The next mission starts only after the draft PR for
+`codex/chronos-dual-principal-authority-e1-v2` has green exact-head CI. This
+mission produced no Neon API call, production PostgreSQL read or write, R2
+operation, provider call, purchase, deployment, real bet or promotion.
 
-The next mission owns the controlled production activation. It must use very
-high reasoning, stop on any failed gate, and preserve the evidence chain.
+The accepted architecture is documented in
+`docs/architecture/CHRONOS-DUAL-PRINCIPAL-AUTHORITY-E1-V2-ADR.md`; its lifecycle
+is documented in `docs/operations/CHRONOS-DUAL-PRINCIPAL-LIFECYCLE-V1.md`.
 
-## Required starting state
+## Mandatory first phase
 
-- The replacement pull request is open, Draft, mergeable, and green.
-- PR #43 is closed without merge and marked
-  `SUPERSEDED_BY_CHRONOS_ROLE_LIFECYCLE_E1_V1`.
-- Its exact head derives from frozen commit
-  `b942f24f8306fbf96717c2a69dbb80a1ff16d4eb`.
-- PostgreSQL 16 contracts are 8/8, the migration cycle passes, SSR/visual
-  checks pass, and the exact role-edge matrix contains no forbidden edge.
-- Existing bootstrap secrets are available through the approved secret store;
-  they must never be printed, copied into files, or committed.
+Perform only these steps, in order:
 
-## Ordered execution
+1. review the new draft PR, its exact diff and all exact-head CI evidence;
+2. merge it only if repository protections, reviews and all required checks are
+   satisfied;
+3. verify `main` contains the reviewed merge result and remains green;
+4. run a read-only capability preflight for the real
+   `NEON_BOOTSTRAP_DATABASE_URL` principal.
 
-1. Re-review and merge the replacement pull request. Do not bypass protections.
-2. Verify `main` contains the reviewed exact head and rerun the required main
-   checks if repository policy requires them.
-3. Create a dedicated Neon recovery branch from that exact `main` head.
-4. Reuse the existing bootstrap secrets; do not create parallel credentials.
-5. Run `PREFLIGHT` and verify its signature, expiry, branch identity, revision
-   `0013`, clean role inventory, and zero forbidden membership.
-6. Pre-provision the four group roles and the stable NOCREATEROLE migrator with
-   the bootstrap owner. Preserve the expected 4→5 edge cardinalities.
-7. Migrate exactly once to revision `0014`, then disable the migrator before
-   provisioning any runtime LOGIN.
-8. Create or exactly adopt the three runtime LOGIN roles with the bootstrap
-   owner and grant only the three functional memberships. The final graph must
-   contain exactly 11 classified edges.
-9. Install the scoped runtime secrets in the approved secret store without
-   exposing their values.
-10. Run `VERIFY`, including the bidirectional graph audit, grantor/options
-    checks, role attributes, object ACLs, revision guard, and zero-session
-    terminal state.
-11. Run the reusable provider-free canary. It must not call any provider or use
-    paid odds credits.
-12. Remove or rotate bootstrap secret material according to the runbook, while
-    retaining the dormant bootstrap owner as `NOLOGIN CREATEROLE`, password
-    NULL, settings reset, and zero sessions.
+The capability preflight must establish the direct endpoint identity,
+PostgreSQL version, `session_user = current_user`, LOGIN, superuser or
+`CREATEROLE`, advisory-lock support, visibility of the privileged password
+catalog needed by the terminal proof, role-management semantics, and exact
+current revision. It must also inventory existing Chronos authority, executor,
+migrator, runtime roles and memberships without printing a URL or secret.
 
-## Stop conditions
+If any required capability is absent or any unknown lifecycle residue exists,
+stop with a capability report. Do not alter a role, run Alembic, create a
+recovery branch or improvise a weaker proof.
 
-Stop without repair-in-place if any of these is observed: an unexpected role or
-membership, a mismatched grantor or option, revision other than `0013` at
-preflight, an expired artifact, more than one Alembic dispatch, a runtime role
-created through Neon identity APIs, a migrator with CREATEROLE, an effective
-runtime path to a bootstrap-admin role, a provider call, or an unbounded secret.
+## Activation remains separately gated
 
-Any recovery must begin from a newly reviewed plan and preserve the same stable
-migrator identity/OID contract.
+The preflight result does not itself authorize activation. A later explicit
+decision must bind the reviewed `main` SHA, signed preflight, recovery point,
+current revision and exact role inventory before any database mutation.
 
-## Completion evidence
+If separately authorized after the capability review, activation must use the
+permanent NOLOGIN authority and a fresh ephemeral executor. It must never make
+the authority LOGIN, reuse an expired executor, issue a second Alembic dispatch
+at proven revision 0014, or leave an executor in terminal state.
 
-Record exact commit and workflow run identifiers, preflight/verify artifact
-hashes, migration revision, 8/8 PostgreSQL contracts, the observed 11-edge
-matrix, canary result, secret-cleanup result, zero forbidden edges, zero active
-bootstrap/migrator sessions, and explicit zero counts for external-cost and
-provider operations.
+## Evidence to return
 
-## Historical compatibility archive — no authority
+Return the draft PR and merge identifiers, exact `main` SHA, CI run identifiers,
+capability matrix, sanitized role/membership inventory, current revision,
+advisory-lock result, privileged-catalog visibility result, and explicit counts
+for every external action. Secret values and complete database URLs must never
+appear in output or artifacts.
 
-The frozen literals `troisième architecture` and
-`capability-scoped-evidence-ladder-v2` identify a superseded handoff only.
-They do not authorize restarting that campaign and do not alter this brief.
+## Historical campaign freeze
+
+The earlier « troisième architecture » and its
+`capability-scoped-evidence-ladder-v2` remain historical, closed evidence. This
+handoff cannot restart that V1 campaign or reinterpret its budgets.

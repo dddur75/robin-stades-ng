@@ -1,0 +1,195 @@
+{
+  "schema_version": "chronos-dual-principal-authority-e1-v2-review",
+  "claim_id": "SECURITY.CHRONOS.DUAL_PRINCIPAL.PG16.V2.001",
+  "observed_at": "2026-08-10T15:06:00+02:00",
+  "verdict": "DUAL_PRINCIPAL_BOOTSTRAP_AUTHORITY_ACCEPTED",
+  "source": {
+    "repository": "dddur75/robin-stades-ng",
+    "base_head": "769a462248f8af8f8a90616472ebe7512c169468",
+    "branch": "codex/chronos-dual-principal-authority-e1-v2",
+    "writer": "C0"
+  },
+  "options": [
+    {
+      "name": "self_terminalizing_login_owner",
+      "decision": "REJECTED",
+      "reason": "PostgreSQL 16 returns SQLSTATE 42501 because a non-superuser role is not its own administrator."
+    },
+    {
+      "name": "external_admin_as_chronos_identity",
+      "decision": "REJECTED",
+      "reason": "It couples provenance and functional provisioning to the infrastructure identity and removes the bounded SET ROLE proof."
+    },
+    {
+      "name": "permanent_nologin_authority_ephemeral_executor",
+      "decision": "ACCEPTED",
+      "reason": "Authentication and CREATEROLE authority are separated and no executor remains terminally."
+    }
+  ],
+  "micro_experiments": {
+    "postgresql_version": "16.14",
+    "A_set_role_delegation": "PASS",
+    "B_minimal_migrator_alter": "PASS",
+    "C_external_cleanup": "PASS"
+  },
+  "source_bound_postgresql_evidence": {
+    "superuser": {
+      "summary": "reports/evidence/chronos-dual-principal-superuser-pg16-v2.json",
+      "full_artifact_sha256": "e33084a91757e86212410976c820ca29c1453761525ca9f3003d49cf31b36251",
+      "postgresql_contracts_junit_sha256": "a4e44bd5f4084cd533a82630eeb60b6da859108685c08098f1c1d7c5f03e2b02"
+    },
+    "non_superuser_createrole": {
+      "summary": "reports/evidence/chronos-dual-principal-non-superuser-pg16-v2.json",
+      "full_artifact_sha256": "74805f46a689ddd4e51faf5a9612f090663dc2674792d48c4b23f46b6f429bbc",
+      "postgresql_contracts_junit_sha256": "fb7584454721c5352938f02e6019083803f759b5358f69e90fc14504391df169"
+    },
+    "source_hashes_include": [
+      "migrations/env.py",
+      "migrations/versions/0013_historical_evidence_index.py",
+      "migrations/versions/0014_chronos_control_plane_v2.py",
+      "scripts/chronos_production_bootstrap_v3.py",
+      "scripts/run_chronos_dual_principal_ci_v2.py",
+      "src/robin/chronos_alembic.py",
+      "src/robin/chronos_role_lifecycle.py",
+      "tests/chronos/test_chronos_postgresql_v2.py",
+      ".github/workflows/chronos-bootstrap-ci-v3.yml"
+    ]
+  },
+  "admin_profiles": {
+    "superuser": {
+      "groups_edges": 5,
+      "migrator_edges": 6,
+      "active_final_edges": 12,
+      "terminal_edges": 11,
+      "temporary_edges_removed": 1
+    },
+    "non_superuser_createrole": {
+      "groups_edges": 7,
+      "migrator_edges": 8,
+      "active_final_edges": 14,
+      "terminal_edges": 12,
+      "temporary_edges_removed": 2,
+      "permanent_external_edges": 1
+    }
+  },
+  "edge_classes": [
+    "EXPECTED_RUNTIME_GROUP_EDGE",
+    "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+    "EXPECTED_MIGRATOR_ADMIN_EDGE",
+    "EXPECTED_LIFECYCLE_ADMIN_AUTHORITY_EDGE",
+    "EXPECTED_EXECUTOR_ADMIN_EDGE",
+    "EXPECTED_EXECUTOR_SET_EDGE"
+  ],
+  "crash_matrix": {
+    "authority_created": "PASS",
+    "executor_created": "PASS",
+    "executor_granted": "PASS",
+    "after_set_role": "PASS",
+    "during_migration": "PASS",
+    "migrator_disabled": "PASS",
+    "before_executor_deleted": "PASS"
+  },
+  "migration_crash_proof": {
+    "real_alembic_backend": true,
+    "alembic_version_lock_wait_observed": true,
+    "backend_terminated_before_client_wait": true,
+    "client_kill_fallback": false,
+    "sessions_after": 0,
+    "revision_after": "0013_historical_evidence_index"
+  },
+  "negative_tests": {
+    "executor_without_set_true": "PASS",
+    "executor_with_inherit_true": "PASS",
+    "executor_with_admin_true": "PASS",
+    "executor_with_direct_createrole": "PASS",
+    "executor_create_role_before_set": "PASS",
+    "runtime_set_role_authority": "PASS",
+    "runtime_set_role_lifecycle_admin": "PASS",
+    "executor_connected_during_cleanup": "PASS",
+    "expired_executor": "PASS",
+    "unexpected_executor": "PASS",
+    "two_executors": "PASS",
+    "concurrent_executor_attempt": "PASS",
+    "hidden_membership": "PASS",
+    "hidden_authority_membership": "PASS",
+    "authority_password_non_null": "PASS",
+    "public_effective_privilege": "PASS",
+    "public_column_privilege": "PASS",
+    "public_alembic_mutation": "PASS",
+    "same_executor_name_reuse": "PASS",
+    "active_migrator_session": "PASS",
+    "login_migrator_requires_disable": "PASS",
+    "migrator_nonminimal_reactivation": "PASS",
+    "authority_self_terminalization": "PASS"
+  },
+  "postgresql_contracts": {
+    "passed": 8,
+    "total": 8,
+    "verdict": "POSTGRESQL_CONTRACTS_8_OF_8",
+    "test_source_sha256": "5eb5a66f908fecde0c0c10f8b21ab8321ca910c05b1cf35d177f9fb4997f7f0b",
+    "workflow_source_sha256": "94858e7da63dc7ecf19fc2896ffa46dd3af3c8fbbee6ecd13d4470bdf6082d52",
+    "machine_receipts": "2_OF_2_JUNIT_PASS"
+  },
+  "migration_cycle": {
+    "sequence": "0013->0014->0013->0014",
+    "dispatches": 1,
+    "stable_authority_oid": true,
+    "stable_migrator_oid": true,
+    "stable_functional_roles": true,
+    "verdict": "PASS"
+  },
+  "source_contracts": {
+    "defaclobjtype_text_cast_count": 2,
+    "migration_0014_objects_and_acls_only": true,
+    "migrator_reactivation_minimal": true,
+    "migrator_terminalization_minimal": true,
+    "self_alter_login_path_count": 0,
+    "executor_password_in_evidence": false,
+    "advisory_lock": true,
+    "locked_revision_reread_before_dispatch": true,
+    "fenced_in_process_alembic": true,
+    "pg_authid_rolpassword_select_proven": true,
+    "effective_public_table_column_revision_privileges_rejected": true
+  },
+  "terminal_invariants": {
+    "executor_roles": 0,
+    "executor_memberships": 0,
+    "runtime_to_authority_paths": 0,
+    "runtime_to_lifecycle_admin_paths": 0,
+    "migrator_runtime_edges": 0,
+    "forbidden_edges": 0,
+    "hidden_edges": 0,
+    "authority_login": false,
+    "authority_password_null": true,
+    "migrator_login": false,
+    "migrator_password_null": true
+  },
+  "reviews": {
+    "DBA_DP6": "PASS",
+    "SEC_RED": "PASS",
+    "SRE_DP5": "PASS"
+  },
+  "ci": {
+    "cycle": 0,
+    "status": "PENDING_FIRST_EXACT_HEAD_CI",
+    "manual_reruns": 0
+  },
+  "pull_requests": {
+    "43": "OPEN_DRAFT_UNMERGED_AT_REVIEW",
+    "44": "OPEN_DRAFT_UNMERGED_AT_REVIEW",
+    "replacement": "PENDING_CREATION"
+  },
+  "external_effects": {
+    "neon_api_calls": 0,
+    "production_postgresql_reads": 0,
+    "production_postgresql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "purchases": 0,
+    "deployments": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triples": 0
+  }
+}

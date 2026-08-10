@@ -226,7 +226,7 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
         "chronos_test_writer",
         "chronos_runtime_writer",
         "chronos_authority_executor",
-        "managed-by:chronos-role-lifecycle-e1-v1",
+        "managed-by:chronos-dual-principal-authority-e1-v2",
         "CHRONOS_GROUP_ROLE_MISSING",
         "CHRONOS_ROLE_PROVENANCE_UNSAFE",
         "CHRONOS_ROLE_ACL_UNSAFE",
@@ -259,25 +259,26 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
     assert "fake_now" not in source
 
 
-def test_ci_runs_bootstrap_owned_role_lifecycle_and_complete_migration_cycle() -> None:
+def test_ci_runs_dual_principal_lifecycle_and_complete_migration_cycle() -> None:
     root = Path(__file__).resolve().parents[2]
     workflow = (root / ".github" / "workflows" / "ci.yml").read_text(
         encoding="utf-8"
     )
     runner = (
-        root / "scripts" / "run_chronos_role_lifecycle_ci_v1.py"
+        root / "scripts" / "run_chronos_dual_principal_ci_v2.py"
     ).read_text(encoding="utf-8")
     scoped_contract = (
         "tests/chronos/test_chronos_postgresql_v2.py::"
         "test_scoped_login_connections_enforce_allows_and_denials"
     )
 
-    assert "run_chronos_role_lifecycle_ci_v1.py" in workflow
+    assert "run_chronos_dual_principal_ci_v2.py" in workflow
     assert "provision_chronos_group_roles" in runner
     assert "provision_migrator" in runner
     assert "provision_runtime_logins" in runner
     assert '_alembic(migrator_url, "downgrade", REVISION_0013)' in runner
-    assert runner.count('_alembic(migrator_url, "upgrade", REVISION_0014)') == 2
+    assert runner.count('_alembic(migrator_url, "upgrade", REVISION_0014)') == 1
+    assert "run_fenced_alembic(migrator_url, REVISION_0014)" in runner
     assert scoped_contract in workflow
     assert "CREATEROLE PASSWORD 'chronos_ci'" not in workflow
     assert "FROM CURRENT_USER" not in workflow
