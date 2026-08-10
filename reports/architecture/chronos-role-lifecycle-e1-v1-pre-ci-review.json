@@ -1,0 +1,91 @@
+{
+  "schema_version": "chronos-role-lifecycle-e1-v1-pre-ci-review",
+  "generated_at": "2026-08-10T10:02:48Z",
+  "repository": "dddur75/robin-stades-ng",
+  "branch": "codex/chronos-role-lifecycle-e1-v1",
+  "frozen_base_sha": "b942f24f8306fbf96717c2a69dbb80a1ff16d4eb",
+  "verdict": {
+    "status": "PASS_FOR_EXACT_POSTGRESQL16_CI",
+    "open_p0": 0,
+    "open_p1": 0,
+    "production_activation_authorized": false
+  },
+  "reviews": {
+    "DBA_RED": {
+      "verdict": "PASS",
+      "score": 98,
+      "open_p0": 0,
+      "open_p1": 0
+    },
+    "SEC": {
+      "verdict": "PASS",
+      "score": 98,
+      "open_p0": 0,
+      "open_p1": 0
+    },
+    "DP6_SRE": {
+      "verdict": "PASS",
+      "score": 98,
+      "open_p0": 0,
+      "open_p1": 0
+    }
+  },
+  "local_validation": {
+    "chronos_activation_tests": {
+      "passed": 134,
+      "skipped": 10,
+      "reason_skipped": "PostgreSQL 16 service and scoped LOGIN fixtures are CI-only"
+    },
+    "compatibility_tests": {
+      "passed": 41,
+      "skipped": 0
+    },
+    "single_full_suite_run_before_final_targeted_fixes": {
+      "passed": 1432,
+      "skipped": 21,
+      "failed": 28,
+      "classification": {
+        "pre_existing_windows_line_ending_hash_contracts": 26,
+        "task_regressions_subsequently_fixed": 2
+      },
+      "rerun_policy": "not rerun; repository instructions allow one full-suite run"
+    },
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "compileall": "PASS",
+    "yaml_json_parse": "PASS",
+    "secret_scan": "PASS",
+    "git_diff_check": "PASS_WITH_KNOWN_CRLF_WARNINGS"
+  },
+  "postgresql16_ci_gate": {
+    "status": "PENDING_REMOTE_CI",
+    "required_contracts": 8,
+    "required_contract_passes": 8,
+    "required_final_edges": 11,
+    "required_role_oid_stability": true,
+    "required_terminal_password_proof": "pg_authid_as_ci_superuser",
+    "required_visual_dependency": "after_postgresql16"
+  },
+  "security_controls": [
+    "bootstrap owner provisions all four groups, stable migrator and three runtime LOGIN roles",
+    "migrator is always NOCREATEROLE and LOGIN only during the bounded Alembic window",
+    "migration 0014 mutates objects and ACLs but never roles or memberships",
+    "global ACL and ownership inventories are exact by grantee, grantor, signature and schema",
+    "role inventory and graph cardinalities are exact at 4, 5 and 11 edges",
+    "bootstrap and migrator cleanup attempts are independent and terminal audits are fail closed",
+    "Neon role, user and identity API routes are excluded"
+  ],
+  "external_effects": {
+    "neon_api_calls": 0,
+    "remote_postgresql_reads": 0,
+    "remote_postgresql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "purchases": 0,
+    "deployments": 0,
+    "real_bets": 0,
+    "promotions": 0
+  }
+}

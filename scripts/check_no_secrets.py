@@ -43,6 +43,10 @@ PATTERNS = {
         r"CHRONOS_BOOTSTRAP_(?:AUTHORITY|RUNTIME|READER)_PASSWORD\s*=\s*"
         r"(?!\$\{\{)[^\s#][^\r\n]{15,}"
     ),
+    "Chronos bootstrap owner DSN literal": re.compile(
+        r"NEON_BOOTSTRAP_DATABASE_URL\s*=\s*"
+        r"(?!\$\{\{)[^\s#][^\r\n]{15,}"
+    ),
 }
 
 

@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 import pytest
 import sqlalchemy as sa
 from sqlalchemy.engine import Connection, Engine
+from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import DBAPIError
 
 from robin.prospective_observatory.chronos_control_plane import (
@@ -19,7 +20,8 @@ from robin.storage.database import build_engine
 
 POSTGRES_URL = os.getenv("ROBIN_TEST_POSTGRES_URL", "")
 MIGRATOR_ROLE = os.getenv("ROBIN_TEST_CHRONOS_MIGRATOR_ROLE", "")
-SENTINEL_ROLE = os.getenv("ROBIN_TEST_CHRONOS_SENTINEL_ROLE", "")
+MIGRATOR_URL = os.getenv("ROBIN_TEST_CHRONOS_MIGRATOR_URL", "")
+BOOTSTRAP_OWNER_ROLE = os.getenv("ROBIN_TEST_CHRONOS_BOOTSTRAP_OWNER_ROLE", "")
 SCOPED_LOGIN_URLS = {
     "chronos_authority_runtime_login": os.getenv(
         "ROBIN_TEST_CHRONOS_AUTHORITY_URL", ""
@@ -172,6 +174,128 @@ def framed_hash(*parts: object) -> str:
         encoded = str(part).encode()
         digest.update(str(len(encoded)).encode() + b":" + encoded)
     return digest.hexdigest()
+
+
+def test_non_superuser_createrole_receives_unrevokable_admin_edge(
+    engine: Engine,
+) -> None:
+    creator = "rds_ci_createrole_root_cause"
+    created_login = "rds_ci_created_login_root_cause"
+    with engine.begin() as connection:
+        connection.execute(
+            sa.text(
+                f"CREATE ROLE {creator} LOGIN NOINHERIT NOSUPERUSER "
+                "NOCREATEDB CREATEROLE NOREPLICATION NOBYPASSRLS "
+                "PASSWORD 'root_cause_only'"
+            )
+        )
+    creator_url = make_url(POSTGRES_URL).set(
+        username=creator,
+        password="root_cause_only",
+    )
+    creator_engine = sa.create_engine(creator_url)
+    try:
+        with creator_engine.begin() as connection:
+            connection.execute(sa.text("SET LOCAL createrole_self_grant = ''"))
+            assert connection.scalar(
+                sa.text("SELECT current_setting('createrole_self_grant')")
+            ) == ""
+            connection.execute(
+                sa.text(
+                    f"CREATE ROLE {created_login} LOGIN NOINHERIT NOSUPERUSER "
+                    "NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS "
+                    "PASSWORD 'created_login_only'"
+                )
+            )
+
+        def automatic_edge() -> sa.RowMapping:
+            with engine.connect() as connection:
+                return connection.execute(
+                    sa.text(
+                        "SELECT grantor.rolsuper AS grantor_superuser,"
+                        "m.admin_option,m.inherit_option,m.set_option "
+                        "FROM pg_catalog.pg_auth_members m "
+                        "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
+                        "JOIN pg_catalog.pg_roles member ON member.oid=m.member "
+                        "JOIN pg_catalog.pg_roles grantor ON grantor.oid=m.grantor "
+                        "WHERE granted.rolname=:granted AND member.rolname=:member"
+                    ),
+                    {"granted": created_login, "member": creator},
+                ).mappings().one()
+
+        assert dict(automatic_edge()) == {
+            "grantor_superuser": True,
+            "admin_option": True,
+            "inherit_option": False,
+            "set_option": False,
+        }
+        try:
+            with creator_engine.begin() as connection:
+                connection.execute(
+                    sa.text(f"REVOKE {created_login} FROM CURRENT_USER")
+                )
+        except DBAPIError:
+            pass
+        assert dict(automatic_edge()) == {
+            "grantor_superuser": True,
+            "admin_option": True,
+            "inherit_option": False,
+            "set_option": False,
+        }
+    finally:
+        creator_engine.dispose()
+        with engine.begin() as connection:
+            connection.execute(sa.text(f"DROP ROLE {created_login}"))
+            connection.execute(sa.text(f"DROP ROLE {creator}"))
+
+
+@pytest.mark.skipif(
+    not MIGRATOR_URL or not MIGRATOR_ROLE,
+    reason="the active PostgreSQL 16 migrator fixture is not configured",
+)
+def test_nocreaterole_migrator_cannot_mutate_role_lifecycle() -> None:
+    migrator_engine = sa.create_engine(MIGRATOR_URL)
+    try:
+        with migrator_engine.connect() as connection:
+            assert connection.scalar(
+                sa.text(
+                    "SELECT rolcreaterole FROM pg_catalog.pg_roles "
+                    "WHERE rolname=current_user"
+                )
+            ) is False
+            assert connection.scalar(
+                sa.text(
+                    "SELECT current_setting('statement_timeout')::interval "
+                    "= interval '1 second'"
+                )
+            )
+            assert connection.scalar(
+                sa.text(
+                    "SELECT current_setting('idle_session_timeout')::interval "
+                    "= interval '60 seconds'"
+                )
+            )
+            assert connection.scalar(
+                sa.text(
+                    "SELECT current_setting('idle_in_transaction_session_timeout')"
+                    "::interval = interval '60 seconds'"
+                )
+            )
+            with pytest.raises(DBAPIError) as cancelled:
+                connection.execute(sa.text("SELECT pg_sleep(2)"))
+            assert getattr(cancelled.value.orig, "sqlstate", None) == "57014"
+        forbidden = (
+            "CREATE ROLE rds_forbidden_migrator_alias NOLOGIN",
+            "ALTER ROLE chronos_reader LOGIN",
+            f"GRANT chronos_reader TO {MIGRATOR_ROLE}",
+        )
+        for statement in forbidden:
+            with migrator_engine.connect() as connection:
+                with pytest.raises(DBAPIError) as denied:
+                    connection.execute(sa.text(statement))
+                assert getattr(denied.value.orig, "sqlstate", None) == "42501"
+    finally:
+        migrator_engine.dispose()
 
 
 def test_server_clock_claim_is_atomic_and_hashes_match_python(engine: Engine) -> None:
@@ -420,9 +544,7 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
             )
             assert row["rolconfig"] is None
             expected_provenance = (
-                "ci-only:scoped-login-contract"
-                if is_scoped_login
-                else "managed-by:0014_chronos_control_plane_v2"
+                "managed-by:chronos-role-lifecycle-e1-v1"
             )
             assert row["provenance"] == expected_provenance
         memberships = connection.execute(
@@ -430,47 +552,65 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 "SELECT granted.rolname AS granted_role,member.rolname AS member_role,"
                 "grantor.rolname AS grantor_role,"
                 "grantor.rolsuper AS grantor_superuser,"
-                "m.admin_option,m.inherit_option,m.set_option "
+                "m.admin_option,m.inherit_option,m.set_option,"
+                "pg_catalog.pg_has_role(member.oid,granted.oid,'USAGE') "
+                "AS runtime_usage,"
+                "pg_catalog.pg_has_role(member.oid,granted.oid,'SET') "
+                "AS runtime_set "
                 "FROM pg_catalog.pg_auth_members m "
                 "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
                 "JOIN pg_catalog.pg_roles member ON member.oid=m.member "
                 "JOIN pg_catalog.pg_roles grantor ON grantor.oid=m.grantor "
                 "WHERE granted.rolname LIKE 'chronos_%' "
-                "OR member.rolname LIKE 'chronos_%'"
-            )
+                "OR member.rolname LIKE 'chronos_%' "
+                "OR granted.rolname=:migrator OR member.rolname=:migrator "
+                "OR granted.rolname=:owner OR member.rolname=:owner"
+            ),
+            {"migrator": MIGRATOR_ROLE, "owner": BOOTSTRAP_OWNER_ROLE},
         ).mappings().all()
-        if MIGRATOR_ROLE:
-            migrator_groups = {
-                "chronos_authority_executor",
-                "chronos_reader",
-                "chronos_runtime_writer",
-                "chronos_test_writer",
+        if MIGRATOR_ROLE and BOOTSTRAP_OWNER_ROLE:
+            migrator_groups = set(SCOPED_LOGIN_GROUPS.values()) | {
+                "chronos_test_writer"
             }
             expected_memberships = {
-                (role, MIGRATOR_ROLE) for role in migrator_groups
+                (role, BOOTSTRAP_OWNER_ROLE) for role in migrator_groups
             }
             if SCOPED_LOGINS_CONFIGURED:
                 expected_memberships.update(
                     (group, login) for login, group in SCOPED_LOGIN_GROUPS.items()
                 )
+                expected_memberships.update(
+                    (login, BOOTSTRAP_OWNER_ROLE) for login in SCOPED_LOGIN_GROUPS
+                )
+            expected_memberships.add((MIGRATOR_ROLE, BOOTSTRAP_OWNER_ROLE))
             assert {
                 (row["granted_role"], row["member_role"]) for row in memberships
             } == expected_memberships
+            system_grantors = {
+                row["grantor_role"]
+                for row in memberships
+                if row["member_role"] == BOOTSTRAP_OWNER_ROLE
+            }
+            assert len(system_grantors) == 1
             assert all(
                 (
-                    row["member_role"] == MIGRATOR_ROLE
+                    row["member_role"] == BOOTSTRAP_OWNER_ROLE
                     and row["grantor_superuser"]
                     and row["admin_option"]
                     and not row["inherit_option"]
                     and not row["set_option"]
+                    and not row["runtime_usage"]
+                    and not row["runtime_set"]
                 )
                 or (
                     row["member_role"] in SCOPED_LOGIN_GROUPS
-                    and row["grantor_role"] == MIGRATOR_ROLE
+                    and row["grantor_role"] == BOOTSTRAP_OWNER_ROLE
                     and not row["grantor_superuser"]
                     and not row["admin_option"]
                     and row["inherit_option"]
-                    and row["set_option"]
+                    and not row["set_option"]
+                    and row["runtime_usage"]
+                    and not row["runtime_set"]
                 )
                 for row in memberships
             )
@@ -620,16 +760,30 @@ def test_scoped_login_connections_enforce_allows_and_denials() -> None:
             with pytest.raises(DBAPIError) as denied:
                 claim(connection, authority_id)
             assert getattr(denied.value.orig, "sqlstate", None) == "42501"
+
+        for login, scoped_engine in engines.items():
+            other_login = next(name for name in engines if name != login)
+            for statement in (
+                "CREATE ROLE rds_forbidden_runtime_alias NOLOGIN",
+                f"ALTER ROLE {other_login} CREATEROLE",
+                f"GRANT chronos_reader TO {login}",
+                f"SET ROLE {other_login}",
+                f"SET ROLE {MIGRATOR_ROLE}",
+            ):
+                with scoped_engine.connect() as connection:
+                    with pytest.raises(DBAPIError) as denied:
+                        connection.execute(sa.text(statement))
+                    assert getattr(denied.value.orig, "sqlstate", None) == "42501"
     finally:
         for value in engines.values():
             value.dispose()
 
 
 @pytest.mark.skipif(
-    not MIGRATOR_ROLE or not SENTINEL_ROLE,
+    not MIGRATOR_ROLE or not BOOTSTRAP_OWNER_ROLE,
     reason="the PostgreSQL 16 non-superuser migrator fixture is not configured",
 )
-def test_non_superuser_migrator_is_admin_only_and_default_acl_is_neutralized(
+def test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge(
     engine: Engine,
 ) -> None:
     with engine.connect() as connection:
@@ -640,37 +794,51 @@ def test_non_superuser_migrator_is_admin_only_and_default_acl_is_neutralized(
             ),
             {"role": MIGRATOR_ROLE},
         ).mappings().one()
-        assert dict(migrator) == {"rolsuper": False, "rolcreaterole": True}
-        default_insert = connection.scalar(
+        assert dict(migrator) == {"rolsuper": False, "rolcreaterole": False}
+        terminal_states = connection.execute(
             sa.text(
-                "SELECT count(*) FROM pg_catalog.pg_default_acl d "
-                "JOIN pg_catalog.pg_roles owner ON owner.oid=d.defaclrole "
-                "CROSS JOIN LATERAL pg_catalog.aclexplode(d.defaclacl) acl "
-                "JOIN pg_catalog.pg_roles grantee ON grantee.oid=acl.grantee "
-                "WHERE owner.rolname=:owner AND grantee.rolname=:sentinel "
-                "AND acl.privilege_type='INSERT'"
+                "SELECT r.rolname,r.rolcanlogin,r.rolcreaterole,"
+                "a.rolpassword IS NULL AS password_null "
+                "FROM pg_catalog.pg_roles r "
+                "JOIN pg_catalog.pg_authid a ON a.oid=r.oid "
+                "WHERE r.rolname=ANY(:roles) ORDER BY r.rolname"
             ),
-            {"owner": MIGRATOR_ROLE, "sentinel": SENTINEL_ROLE},
+            {"roles": [MIGRATOR_ROLE, BOOTSTRAP_OWNER_ROLE]},
+        ).mappings().all()
+        assert [dict(row) for row in terminal_states] == [
+            {
+                "rolname": BOOTSTRAP_OWNER_ROLE,
+                "rolcanlogin": False,
+                "rolcreaterole": True,
+                "password_null": True,
+            },
+            {
+                "rolname": MIGRATOR_ROLE,
+                "rolcanlogin": False,
+                "rolcreaterole": False,
+                "password_null": True,
+            },
+        ]
+        active_lifecycle_sessions = connection.scalar(
+            sa.text(
+                "SELECT count(*) FROM pg_catalog.pg_stat_activity "
+                "WHERE usename=ANY(:roles)"
+            ),
+            {"roles": [MIGRATOR_ROLE, BOOTSTRAP_OWNER_ROLE]},
         )
-        assert default_insert == 1
-        usable_chronos_roles = connection.scalar(
+        assert active_lifecycle_sessions == 0
+        migrator_runtime_edges = connection.scalar(
             sa.text(
                 "SELECT count(*) FROM pg_catalog.pg_auth_members m "
                 "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
                 "JOIN pg_catalog.pg_roles member ON member.oid=m.member "
-                "WHERE granted.rolname LIKE 'chronos_%' "
-                "AND member.rolname=:migrator "
-                "AND pg_catalog.pg_has_role(member.oid,granted.oid,'USAGE')"
+                "WHERE (granted.rolname=:migrator "
+                "AND member.rolname=ANY(:runtime)) OR "
+                "(member.rolname=:migrator AND granted.rolname=ANY(:runtime))"
             ),
-            {"migrator": MIGRATOR_ROLE},
+            {
+                "migrator": MIGRATOR_ROLE,
+                "runtime": list(SCOPED_LOGIN_GROUPS),
+            },
         )
-        assert usable_chronos_roles == 0
-        sentinel_table_privileges = connection.scalar(
-            sa.text(
-                "SELECT count(*) FROM information_schema.role_table_grants "
-                "WHERE grantee=:sentinel AND table_schema='public' "
-                "AND table_name LIKE 'chronos_%'"
-            ),
-            {"sentinel": SENTINEL_ROLE},
-        )
-        assert sentinel_table_privileges == 0
+        assert migrator_runtime_edges == 0

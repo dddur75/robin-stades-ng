@@ -242,29 +242,35 @@ def _create_sqlite_guards() -> None:
     )
 
 
-def _create_postgresql_roles() -> None:
+def _assert_postgresql_roles() -> None:
     op.execute(
         """
         DO $roles$
         DECLARE v_role text;
         DECLARE v_unsafe boolean;
         DECLARE v_oid oid;
-        DECLARE v_migrator_oid oid;
         DECLARE v_marker constant text :=
-          'managed-by:0014_chronos_control_plane_v2';
+          'managed-by:chronos-role-lifecycle-e1-v1';
         BEGIN
-          SELECT oid INTO STRICT v_migrator_oid
-          FROM pg_catalog.pg_roles WHERE rolname=current_user;
+          IF current_setting('statement_timeout')::interval <= interval '0'
+             OR current_setting('statement_timeout')::interval > interval '300 seconds'
+             OR current_setting('idle_session_timeout')::interval <= interval '0'
+             OR current_setting('idle_session_timeout')::interval > interval '60 seconds'
+             OR current_setting('idle_in_transaction_session_timeout')::interval
+                <= interval '0'
+             OR current_setting('idle_in_transaction_session_timeout')::interval
+                > interval '60 seconds' THEN
+            RAISE EXCEPTION 'CHRONOS_MIGRATOR_TIMEOUTS_UNSAFE';
+          END IF;
           FOREACH v_role IN ARRAY ARRAY[
             'chronos_reader', 'chronos_test_writer',
             'chronos_runtime_writer', 'chronos_authority_executor'
           ] LOOP
             IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname=v_role) THEN
-              EXECUTE pg_catalog.format('CREATE ROLE %I NOLOGIN', v_role);
-              EXECUTE pg_catalog.format('COMMENT ON ROLE %I IS %L', v_role, v_marker);
+              RAISE EXCEPTION 'CHRONOS_GROUP_ROLE_MISSING:%', v_role;
             END IF;
             SELECT oid,
-                   rolcanlogin OR rolsuper OR rolcreatedb OR rolcreaterole
+                   rolcanlogin OR NOT rolinherit OR rolsuper OR rolcreatedb OR rolcreaterole
                    OR rolreplication OR rolbypassrls OR rolconfig IS NOT NULL
             INTO v_oid, v_unsafe
             FROM pg_catalog.pg_roles WHERE rolname=v_role;
@@ -274,22 +280,6 @@ def _create_postgresql_roles() -> None:
             IF pg_catalog.shobj_description(v_oid, 'pg_authid')
                IS DISTINCT FROM v_marker THEN
               RAISE EXCEPTION 'CHRONOS_ROLE_PROVENANCE_UNSAFE:%', v_role;
-            END IF;
-            IF EXISTS (
-              SELECT 1 FROM pg_catalog.pg_auth_members m
-              WHERE (m.roleid=v_oid OR m.member=v_oid)
-                AND NOT (
-                  m.roleid=v_oid
-                  AND m.member=v_migrator_oid
-                  AND EXISTS (
-                    SELECT 1 FROM pg_catalog.pg_roles grantor
-                    WHERE grantor.oid=m.grantor AND grantor.rolsuper
-                  )
-                  AND m.admin_option
-                  AND NOT m.inherit_option
-                  AND NOT m.set_option)
-            ) THEN
-              RAISE EXCEPTION 'CHRONOS_ROLE_MEMBERSHIP_UNSAFE:%', v_role;
             END IF;
             IF EXISTS (
               SELECT 1 FROM pg_catalog.pg_db_role_setting WHERE setrole=v_oid
@@ -923,11 +913,12 @@ def upgrade() -> None:
     existing = set(inspect(bind).get_table_names(schema=schema))
     if set(TABLES).intersection(existing):
         raise RuntimeError("CHRONOS_CONTROL_PLANE_UPGRADE_SCHEMA_DRIFT")
+    if bind.dialect.name == "postgresql":
+        _assert_postgresql_roles()
     storage = _storage_metadata(bind.dialect.name)
     for table in storage.sorted_tables:
         table.create(bind=bind, checkfirst=False)
     if bind.dialect.name == "postgresql":
-        _create_postgresql_roles()
         _create_postgresql_functions()
         _create_postgresql_guards_and_grants()
     elif bind.dialect.name == "sqlite":

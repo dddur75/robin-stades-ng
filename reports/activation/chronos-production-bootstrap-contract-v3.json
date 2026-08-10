@@ -9,7 +9,8 @@
   "concurrency": {"group": "chronos-production-bootstrap-v3", "cancel_in_progress": false},
   "preflight_binding": [
     "main_sha", "workflow_sha", "project_id", "production_branch_id",
-    "current_revision", "recovery_branch_id", "preflight_hash"
+    "current_revision", "recovery_branch_id", "role_inventory_hash",
+    "preflight_hash"
   ],
   "preflight_signature": "HMAC-SHA256",
   "connection_contract": {
@@ -22,8 +23,38 @@
     "dispatch_max": 1,
     "upgrade_head_forbidden": true,
     "temporary_migrator": true,
+    "persistent_migrator_role_identity": true,
+    "bootstrap_owner_window_max_minutes": 10,
+    "migrator_window_max_minutes": 6,
+    "migrator_born_createrole": false,
     "migrator_terminal_login": false,
-    "migrator_terminal_createrole": false
+    "migrator_terminal_createrole": false,
+    "migrator_terminal_password_null": true,
+    "migrator_terminal_sessions": 0,
+    "dormant_grant_options": [
+      "public:USAGE",
+      "public.alembic_version:SELECT"
+    ]
+  },
+  "role_lifecycle": {
+    "architecture": "BOOTSTRAP_OWNED_ROLE_LIFECYCLE",
+    "group_roles_preprovisioned": true,
+    "alembic_manages_roles": false,
+    "runtime_logins_created_by_bootstrap_owner": true,
+    "neon_identity_api_allowed": false,
+    "resume_revisions": [
+      "0013_historical_evidence_index",
+      "0014_chronos_control_plane_v2"
+    ],
+    "runtime_resume_cardinalities": [0, 1, 2, 3],
+    "expected_final_edge_count": 11,
+    "forbidden_edge_count": 0,
+    "migrator_runtime_edge_count": 0,
+    "runtime_effective_bootstrap_edge_count": 0,
+    "final_matrix_after_terminalization": true,
+    "bootstrap_owner_terminal_login": false,
+    "bootstrap_owner_terminal_password_null": true,
+    "bootstrap_owner_terminal_sessions": 0
   },
   "scoped_logins": {
     "chronos_authority_runtime_login": "chronos_authority_executor",

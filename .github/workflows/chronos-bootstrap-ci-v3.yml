@@ -54,7 +54,7 @@ jobs:
   tests:
     name: "tests"
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     services:
       postgres:
         image: postgres:16-alpine
@@ -81,105 +81,63 @@ jobs:
       - run: |
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
-      - name: Valider PostgreSQL 16 de 0013 vers 0014 ciblee
+      - name: Reproduire le creator edge PostgreSQL 16
         env:
-          ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+          ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+        run: >-
+          python -m pytest -q
+          tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_createrole_receives_unrevokable_admin_edge
+      - name: Valider le lifecycle bootstrap-owned et le cycle 0014
+        env:
+          ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+        run: python scripts/run_chronos_role_lifecycle_ci_v1.py
+      - name: Valider les huit contrats PostgreSQL 16
+        env:
           ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
           ROBIN_TEST_CHRONOS_MIGRATOR_ROLE: robin_ci_migrator
-          ROBIN_TEST_CHRONOS_SENTINEL_ROLE: robin_acl_sentinel
+          ROBIN_TEST_CHRONOS_BOOTSTRAP_OWNER_ROLE: robin_ci_bootstrap_owner
           ROBIN_TEST_CHRONOS_AUTHORITY_URL: postgresql+psycopg://chronos_authority_runtime_login:chronos_authority_ci@localhost:5432/robin_ci
           ROBIN_TEST_CHRONOS_RUNTIME_URL: postgresql+psycopg://chronos_effect_runtime_login:chronos_runtime_ci@localhost:5432/robin_ci
           ROBIN_TEST_CHRONOS_READER_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
         run: |
-          python -m alembic upgrade 0013_historical_evidence_index
-          python - <<'PY'
-          import os
-          from robin.storage.database import build_engine
-
-          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
-          with engine.begin() as connection:
-              connection.exec_driver_sql("CREATE ROLE robin_acl_sentinel NOLOGIN")
-              connection.exec_driver_sql(
-                  "CREATE ROLE robin_ci_migrator LOGIN NOSUPERUSER NOCREATEDB "
-                  "CREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD 'chronos_ci'"
-              )
-              connection.exec_driver_sql(
-                  "GRANT USAGE, CREATE ON SCHEMA public TO "
-                  "robin_ci_migrator WITH GRANT OPTION"
-              )
-              connection.exec_driver_sql(
-                  "GRANT SELECT ON TABLE public.alembic_version TO "
-                  "robin_ci_migrator WITH GRANT OPTION"
-              )
-              connection.exec_driver_sql(
-                  "GRANT INSERT, UPDATE, DELETE ON TABLE "
-                  "public.alembic_version TO robin_ci_migrator"
-              )
-              connection.exec_driver_sql(
-                  "ALTER DEFAULT PRIVILEGES FOR ROLE robin_ci_migrator "
-                  "IN SCHEMA public GRANT INSERT ON TABLES TO robin_acl_sentinel"
-              )
-          engine.dispose()
-          PY
-          ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python -m alembic upgrade 0014_chronos_control_plane_v2
-          python scripts/check_database_revision.py --expected 0014_chronos_control_plane_v2
-          ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python - <<'PY'
-          import os
-          from robin.storage.database import build_engine
-
-          accounts = (
-              (
-                  "chronos_authority_runtime_login",
-                  "chronos_authority_ci",
-                  "chronos_authority_executor",
-              ),
-              (
-                  "chronos_effect_runtime_login",
-                  "chronos_runtime_ci",
-                  "chronos_runtime_writer",
-              ),
-              ("chronos_reader_login", "chronos_reader_ci", "chronos_reader"),
-          )
-          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
-          with engine.begin() as connection:
-              for login, password, group in accounts:
-                  connection.exec_driver_sql(
-                      f"CREATE ROLE {login} LOGIN NOSUPERUSER NOCREATEDB "
-                      f"NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD '{password}'"
-                  )
-                  connection.exec_driver_sql(f"GRANT {group} TO {login}")
-                  connection.exec_driver_sql(f"REVOKE {login} FROM CURRENT_USER")
-                  connection.exec_driver_sql(
-                      f"COMMENT ON ROLE {login} IS 'ci-only:scoped-login-contract'"
-                  )
-          engine.dispose()
-          PY
-          python -m pytest -q tests/chronos/test_chronos_postgresql_v2.py
-          python - <<'PY'
-          import os
-          from robin.storage.database import build_engine
-
-          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
-          with engine.begin() as connection:
-              connection.exec_driver_sql(
-                  "ALTER ROLE robin_ci_migrator NOLOGIN NOSUPERUSER "
-                  "NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS"
-              )
-              state = connection.exec_driver_sql(
-                  "SELECT rolcanlogin,rolsuper,rolcreatedb,rolcreaterole,"
-                  "rolreplication,rolbypassrls FROM pg_catalog.pg_roles "
-                  "WHERE rolname='robin_ci_migrator'"
-              ).mappings().one()
-              if any(state.values()):
-                  raise RuntimeError("CHRONOS_MIGRATOR_NOT_TERMINAL")
-          engine.dispose()
-          PY
+          python -m pytest -q \
+            tests/chronos/test_chronos_postgresql_v2.py::test_server_clock_claim_is_atomic_and_hashes_match_python \
+            tests/chronos/test_chronos_postgresql_v2.py::test_database_expiry_cannot_be_reactivated_by_caller_time \
+            tests/chronos/test_chronos_postgresql_v2.py::test_get_permit_and_finalization_are_allowed_after_put_expiry \
+            tests/chronos/test_chronos_postgresql_v2.py::test_null_nonce_and_identity_inputs_fail_closed \
+            tests/chronos/test_chronos_postgresql_v2.py::test_tables_are_append_only_even_for_owner \
+            tests/chronos/test_chronos_postgresql_v2.py::test_roles_have_only_the_reviewed_capabilities \
+            tests/chronos/test_chronos_postgresql_v2.py::test_scoped_login_connections_enforce_allows_and_denials \
+            tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge
+      - name: Valider la revision reader
+        env:
+          ROBIN_DATABASE_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
+        run: python scripts/check_database_revision.py --expected 0014_chronos_control_plane_v2
       - run: python -m pytest -q
-      - run: python -m ruff check src scripts tests
-      - run: python -m mypy --strict src/robin/chronos_production.py scripts/chronos_production_bootstrap_v3.py scripts/check_chronos_github_hold_v3.py scripts/run_chronos_provider_free_canary_v3.py
-      - run: python -m bandit -q -r src/robin scripts/chronos_production_bootstrap_v3.py scripts/check_chronos_github_hold_v3.py scripts/run_chronos_provider_free_canary_v3.py
+      - run: python -m ruff check src/robin scripts tests/chronos tests/activation migrations
+      - run: >-
+          python -m mypy --strict
+          src/robin/chronos_production.py
+          src/robin/chronos_role_lifecycle.py
+          scripts/chronos_production_bootstrap_v3.py
+          scripts/run_chronos_role_lifecycle_ci_v1.py
+          scripts/check_chronos_github_hold_v3.py
+          scripts/run_chronos_provider_free_canary_v3.py
+      - run: >-
+          python -m bandit -q -r
+          src/robin
+          scripts/chronos_production_bootstrap_v3.py
+          scripts/run_chronos_role_lifecycle_ci_v1.py
+          scripts/check_chronos_github_hold_v3.py
+          scripts/run_chronos_provider_free_canary_v3.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chronos-role-edge-matrix-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci/chronos-role-edge-matrix-v1.json
+          if-no-files-found: error
 
   visual-regression:
+    needs: tests
     name: "Robin Experience — preuves visuelles"
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -195,9 +153,11 @@ jobs:
           version: "11.9.0"
       - working-directory: cockpit
         run: pnpm install --frozen-lockfile
-      - working-directory: cockpit
+      - name: Construire l'artifact serveur avant les tests SSR
+        working-directory: cockpit
         run: |
           pnpm run typecheck
           pnpm run lint
+          pnpm exec vinext build
           node --test tests/*.test.mjs
           pnpm run test:model

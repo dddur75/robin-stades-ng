@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from collections.abc import Callable, Mapping
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
@@ -28,6 +29,11 @@ from robin.prospective_observatory.chronos_control_plane import (
     GitHubRunIdentity,
     MemoryChronosControlPlane,
     ObservedObject,
+)
+from scripts.chronos_production_bootstrap_v3 import (
+    NeonClient,
+    _alembic_environment,
+    _attempt_cleanup_steps,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -79,26 +85,95 @@ def test_bootstrap_workflow_has_three_exclusive_modes_and_no_auto_head() -> None
     assert "NEON_API_KEY" not in str(document["jobs"]["verify"])
 
 
-def test_migrator_delegates_only_revision_read_and_drops_implicit_memberships() -> None:
+def test_bootstrap_owner_provisions_roles_and_migrator_is_nocreaterole() -> None:
     bootstrap = (
         ROOT / "scripts" / "chronos_production_bootstrap_v3.py"
     ).read_text(encoding="utf-8")
     ci = (WORKFLOWS / "chronos-bootstrap-ci-v3.yml").read_text(encoding="utf-8")
     for content in (bootstrap, ci):
-        assert "GRANT SELECT ON TABLE public.alembic_version" in content
-        assert "WITH GRANT OPTION" in content
-        assert "GRANT INSERT, UPDATE, DELETE ON TABLE" in content
-        assert "FROM CURRENT_USER" in content
+        assert "FROM CURRENT_USER" not in content
+        assert "CREATEROLE PASSWORD" not in content
+    assert "provision_chronos_group_roles" in bootstrap
+    assert "provision_migrator" in bootstrap
+    assert "provision_runtime_logins" in bootstrap
+    assert "run_chronos_role_lifecycle_ci_v1.py" in ci
     migration = (
         ROOT / "migrations" / "versions" / "0014_chronos_control_plane_v2.py"
     ).read_text(encoding="utf-8")
     postgresql_test = (
         ROOT / "tests" / "chronos" / "test_chronos_postgresql_v2.py"
     ).read_text(encoding="utf-8")
-    assert "grantor.rolsuper" in migration
+    assert "CHRONOS_GROUP_ROLE_MISSING" in migration
+    assert "CREATE ROLE" not in migration
+    assert "DROP ROLE" not in migration
+    assert "ALTER ROLE" not in migration
     assert "grantor.rolsuper" in postgresql_test
-    assert "grantor='10'" not in migration
     assert "grantor='10'" not in postgresql_test
+
+
+def test_neon_identity_routes_are_rejected_before_network() -> None:
+    client = NeonClient("test-only-neon-key")
+    for method, path in (
+        ("GET", "/projects/project/roles"),
+        ("POST", "/projects/project/roles"),
+        ("POST", "/projects/project/users"),
+        ("POST", "/projects/project/identities"),
+    ):
+        with pytest.raises(ChronosProductionError, match="CHRONOS_NEON_ROUTE_FORBIDDEN"):
+            client.request(method, path)
+
+
+def test_alembic_subprocess_receives_no_bootstrap_or_runtime_secret(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sensitive = (
+        "NEON_API_KEY",
+        "NEON_BOOTSTRAP_DATABASE_URL",
+        "CHRONOS_BOOTSTRAP_AUTHORITY_PASSWORD",
+        "CHRONOS_BOOTSTRAP_RUNTIME_PASSWORD",
+        "CHRONOS_BOOTSTRAP_READER_PASSWORD",
+        "CHRONOS_CONTROL_PLANE_GENERATION_NONCE",
+    )
+    for name in sensitive:
+        monkeypatch.setenv(name, f"sentinel-{name.lower()}")
+    environment = _alembic_environment("postgresql://migrator:scoped@db/robin")
+    assert environment["ROBIN_DATABASE_URL"].startswith("postgresql://migrator:")
+    assert not set(sensitive).intersection(environment)
+
+
+def test_cleanup_attempts_terminalization_after_migrator_cleanup_failure() -> None:
+    attempted: list[str] = []
+
+    def fail_migrator() -> None:
+        attempted.append("migrator")
+        raise RuntimeError("injected-disable-failure")
+
+    def terminalize_owner() -> None:
+        attempted.append("owner")
+
+    with pytest.raises(ChronosProductionError, match="CHRONOS_LIFECYCLE_CLEANUP_FAILED"):
+        _attempt_cleanup_steps((fail_migrator, terminalize_owner))
+    assert attempted == ["migrator", "owner"]
+
+
+def test_role_edge_matrix_contract_has_exact_eleven_edges() -> None:
+    document = json.loads(
+        (
+            ROOT
+            / "reports"
+            / "activation"
+            / "chronos-role-edge-matrix-v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert document["phase_edge_counts"] == {
+        "groups": 4,
+        "migrator": 5,
+        "final": 11,
+    }
+    assert len(document["edges"]) == 11
+    assert document["forbidden_edge_count"] == 0
+    assert document["runtime_effective_bootstrap_edge_count"] == 0
+    assert document["migrator_runtime_edge_count"] == 0
 
 
 def test_canary_has_only_the_reviewed_r2_surface_and_budgets() -> None:
@@ -175,6 +250,28 @@ def test_signed_preflight_is_bound_and_tampering_is_rejected() -> None:
         ChronosProductionError, match="CHRONOS_PREFLIGHT_SIGNATURE_MISMATCH"
     ):
         verify_signed_document(tampered, "sentinel-signing-key")
+
+
+def test_signed_preflight_can_bind_an_exact_0014_resume() -> None:
+    artifact: dict[str, object] = {
+        "main_sha": SHA,
+        "workflow_sha": WORKFLOW_SHA,
+        "project_id": "project-robin",
+        "production_branch_id": "branch-production",
+        "current_revision": "0014_chronos_control_plane_v2",
+        "recovery_branch_id": "branch-recovery",
+        "golden_gate": "CHRONOS_MIGRATION_READY",
+    }
+    artifact["preflight_hash"] = preflight_hash(artifact)  # type: ignore[arg-type]
+    assert_exact_preflight_binding(
+        artifact,  # type: ignore[arg-type]
+        main_sha=SHA,
+        workflow_sha=WORKFLOW_SHA,
+        project_id="project-robin",
+        production_branch_id="branch-production",
+        recovery_branch_id="branch-recovery",
+        current_revision="0014_chronos_control_plane_v2",
+    )
 
 
 class MutableClock:

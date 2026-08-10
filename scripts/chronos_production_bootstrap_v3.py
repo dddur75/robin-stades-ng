@@ -9,19 +9,20 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import secrets
 import subprocess  # nosec B404
 import sys
 import time
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
 
 import psycopg
 import requests
-from psycopg import Connection, sql
+from psycopg import Connection
 
 from robin.chronos_production import (
     EXPECTED_AFTER_REVISION,
@@ -41,15 +42,26 @@ from robin.chronos_production import (
     validate_direct_postgres_url,
     verify_signed_document,
 )
+from robin.chronos_role_lifecycle import (
+    GROUP_ROLES,
+    MIGRATOR_MARKER,
+    assert_bootstrap_owner,
+    assert_migrator_disabled,
+    assert_post_migration_role_state,
+    audit_role_edges,
+    audit_terminal_lifecycle,
+    disable_migrator,
+    provision_chronos_group_roles,
+    provision_migrator,
+    provision_runtime_logins,
+    role_inventory_hash,
+    stable_migrator_role,
+    terminalize_bootstrap_owner,
+)
 
 NEON_API = "https://console.neon.tech/api/v2"
 EXPECTED_TABLES = ("chronos_effect_authorities", "chronos_effect_events")
-EXPECTED_GROUPS = (
-    "chronos_authority_executor",
-    "chronos_reader",
-    "chronos_runtime_writer",
-    "chronos_test_writer",
-)
+EXPECTED_GROUPS = GROUP_ROLES
 EXPECTED_FUNCTIONS = (
     "chronos_append_effect_event",
     "chronos_claim_effect_authority",
@@ -67,6 +79,14 @@ EXPECTED_TRIGGERS = (
     "trg_chronos_events_no_truncate",
 )
 NO_VALUES_OBSERVED = False
+_NEON_ALLOWED_ROUTES = (
+    re.compile(r"^GET /projects\?limit=100$"),
+    re.compile(r"^GET /projects/[^/?]+$"),
+    re.compile(r"^GET /projects/[^/?]+/branches\?limit=100$"),
+    re.compile(r"^GET /projects/[^/?]+/branches/[^/?]+$"),
+    re.compile(r"^GET /projects/[^/?]+/endpoints$"),
+    re.compile(r"^POST /projects/[^/?]+/branches$"),
+)
 
 
 def _required(name: str) -> str:
@@ -158,9 +178,12 @@ class NeonClient:
         *,
         payload: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        route = f"{method.upper()} {path}"
+        if not any(pattern.fullmatch(route) for pattern in _NEON_ALLOWED_ROUTES):
+            raise ChronosProductionError("CHRONOS_NEON_ROUTE_FORBIDDEN")
         try:
             response = self._session.request(
-                method,
+                method.upper(),
                 NEON_API + path,
                 json=payload,
                 timeout=30,
@@ -479,8 +502,42 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
     identity = resolve_neon_identity(client, target)
     recovery = create_recovery_point(client, identity)
     database = inspect_database(database_url)
-    if database["current_revision"] != EXPECTED_BEFORE_REVISION:
+    with psycopg.connect(database_url, connect_timeout=10) as connection:
+        preflight_role_inventory_hash = role_inventory_hash(connection)
+    if database["current_revision"] not in {
+        EXPECTED_BEFORE_REVISION,
+        EXPECTED_AFTER_REVISION,
+    }:
         raise ChronosProductionError("UNEXPECTED_DATABASE_REVISION")
+    if database["current_revision"] == EXPECTED_AFTER_REVISION:
+        _assert_post_migration(database)
+        migrator_role = stable_migrator_role(identity.production_branch_id)
+        existing_runtime = {
+            str(row["rolname"])
+            for row in cast(list[dict[str, Any]], database["roles"])
+            if str(row["rolname"]) in {login for login, _, _ in SCOPED_LOGINS}
+        }
+        resume_phase = (
+            "final"
+            if len(existing_runtime) == len(SCOPED_LOGINS)
+            else "runtime_partial"
+            if existing_runtime
+            else "migrator"
+        )
+        with psycopg.connect(database_url, connect_timeout=10) as connection:
+            bootstrap_owner = assert_bootstrap_owner(connection)
+            assert_post_migration_role_state(
+                connection,
+                migrator_role=migrator_role,
+                bootstrap_owner=bootstrap_owner,
+            )
+            audit_role_edges(
+                connection,
+                phase=resume_phase,
+                bootstrap_owner=bootstrap_owner,
+                migrator_role=migrator_role,
+                runtime_roles=sorted(existing_runtime),
+            )
     migration_file = (
         Path(__file__).resolve().parents[1]
         / "migrations"
@@ -507,6 +564,7 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         "endpoint_id": identity.endpoint_id,
         "region": identity.region,
         "database": database,
+        "role_inventory_hash": preflight_role_inventory_hash,
         "recovery": recovery_report,
         "workflow_hold": {
             "verdict": hold.get("verdict"),
@@ -521,20 +579,23 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         "purchases": 0,
     }
     _write_json(report_dir / "chronos-neon-preflight-v3.json", preflight_report)
+    artifact_created_at = _utc_now()
     artifact: dict[str, Any] = {
         "schema_version": "chronos-preflight-artifact-v3",
         "main_sha": main_sha,
         "workflow_sha": workflow_sha,
         "project_id": identity.project_id,
         "production_branch_id": identity.production_branch_id,
-        "current_revision": EXPECTED_BEFORE_REVISION,
+        "current_revision": database["current_revision"],
+        "role_inventory_hash": preflight_role_inventory_hash,
         "recovery_branch_id": recovery["recovery_branch_id"],
         "golden_gate": "CHRONOS_MIGRATION_READY",
         "database_host": target.host,
         "database_port": target.port,
         "database_name": target.database,
         "sslmode": target.sslmode,
-        "created_at": _timestamp(_utc_now()),
+        "created_at": _timestamp(artifact_created_at),
+        "expires_at": _timestamp(artifact_created_at + timedelta(hours=1)),
         "preflight_run_id": _required_public("GITHUB_RUN_ID"),
         "preflight_run_attempt": _required_public("GITHUB_RUN_ATTEMPT"),
     }
@@ -544,146 +605,78 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
     return preflight_report
 
 
-def _create_migrator(
-    database_url: str,
-    target: DirectPostgresTarget,
-    run_id: str,
-) -> tuple[str, str, str]:
-    numeric = "".join(character for character in run_id if character.isdigit())
-    if not numeric:
-        raise ChronosProductionError("CHRONOS_RUN_ID_INVALID")
-    role = f"chronos_migrator_v3_{numeric}"[:63]
-    password = secrets.token_urlsafe(48)
-    with psycopg.connect(database_url, connect_timeout=10) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT 1 FROM pg_catalog.pg_roles WHERE rolname=%s", (role,)
-            )
-            if cursor.fetchone() is not None:
-                raise ChronosProductionError("CHRONOS_MIGRATOR_ALREADY_EXISTS")
-            cursor.execute(
-                sql.SQL(
-                    "CREATE ROLE {} LOGIN NOSUPERUSER NOCREATEDB CREATEROLE "
-                    "NOREPLICATION NOBYPASSRLS PASSWORD %s"
-                ).format(sql.Identifier(role)),
-                (password,),
-            )
-            cursor.execute(
-                sql.SQL("GRANT USAGE, CREATE ON SCHEMA public TO {} WITH GRANT OPTION").format(
-                    sql.Identifier(role)
-                )
-            )
-            cursor.execute(
-                sql.SQL(
-                    "GRANT SELECT ON TABLE public.alembic_version TO {} "
-                    "WITH GRANT OPTION"
-                ).format(sql.Identifier(role))
-            )
-            cursor.execute(
-                sql.SQL(
-                    "GRANT INSERT, UPDATE, DELETE ON TABLE "
-                    "public.alembic_version TO {}"
-                ).format(sql.Identifier(role))
-            )
-            cursor.execute(
-                sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(role)),
-                ("managed-by:chronos-production-bootstrap-v3",),
-            )
-    migrator_url = build_scoped_database_url(
-        target,
-        username=role,
-        password=password,
-    )
-    return role, password, migrator_url
+def _preflight_expiry(artifact: Mapping[str, Any]) -> datetime:
+    value = artifact.get("expires_at")
+    if not isinstance(value, str):
+        raise ChronosProductionError("CHRONOS_PREFLIGHT_EXPIRY_MISSING")
+    try:
+        expiry = datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(UTC)
+    except ValueError:
+        raise ChronosProductionError("CHRONOS_PREFLIGHT_EXPIRY_INVALID") from None
+    if expiry <= _utc_now():
+        raise ChronosProductionError("CHRONOS_PREFLIGHT_EXPIRED")
+    return expiry
 
 
-def _disable_migrator(database_url: str, role: str) -> None:
-    with psycopg.connect(database_url, connect_timeout=10) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                sql.SQL(
-                    "ALTER ROLE {} NOLOGIN NOCREATEROLE NOCREATEDB NOSUPERUSER "
-                    "NOREPLICATION NOBYPASSRLS"
-                ).format(sql.Identifier(role))
-            )
-
-
-def _create_scoped_logins(migrator_url: str) -> None:
-    accounts = [
+def _runtime_accounts() -> list[tuple[str, str, str]]:
+    return [
         (login, group, _required(secret_name))
         for login, group, secret_name in SCOPED_LOGINS
     ]
-    with psycopg.connect(migrator_url, connect_timeout=10) as connection:
-        with connection.cursor() as cursor:
-            for login, group, password in accounts:
-                cursor.execute(
-                    "SELECT 1 FROM pg_catalog.pg_roles WHERE rolname=%s", (login,)
-                )
-                if cursor.fetchone() is not None:
-                    raise ChronosProductionError(
-                        "CHRONOS_SCOPED_LOGIN_ALREADY_EXISTS"
-                    )
-                cursor.execute(
-                    sql.SQL(
-                        "CREATE ROLE {} LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE "
-                        "NOREPLICATION NOBYPASSRLS PASSWORD %s"
-                    ).format(sql.Identifier(login)),
-                    (password,),
-                )
-                cursor.execute(
-                    sql.SQL("GRANT {} TO {}").format(
-                        sql.Identifier(group), sql.Identifier(login)
-                    )
-                )
-                cursor.execute(
-                    sql.SQL("REVOKE {} FROM CURRENT_USER").format(
-                        sql.Identifier(login)
-                    )
-                )
-                cursor.execute(
-                    sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(login)),
-                    ("managed-by:chronos-production-bootstrap-v3",),
-                )
 
 
-def _verify_scoped_logins(database_url: str, migrator_role: str) -> None:
-    expected = {login: group for login, group, _ in SCOPED_LOGINS}
+def _assert_migrator_disabled(
+    database_url: str, role: str, bootstrap_owner: str
+) -> None:
     with psycopg.connect(database_url, connect_timeout=10) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT rolname,rolcanlogin,rolsuper,rolcreatedb,rolcreaterole,"
-                "rolreplication,rolbypassrls FROM pg_catalog.pg_roles "
-                "WHERE rolname = ANY(%s) ORDER BY rolname",
-                (list(expected),),
-            )
-            role_rows = cursor.fetchall()
-            if {str(row[0]) for row in role_rows} != set(expected):
-                raise ChronosProductionError("CHRONOS_SCOPED_IDENTITIES_PARTIAL")
-            if any(
-                not bool(row[1]) or any(bool(value) for value in row[2:])
-                for row in role_rows
-            ):
-                raise ChronosProductionError("CHRONOS_SCOPED_LOGIN_UNSAFE")
-            cursor.execute(
-                "SELECT member.rolname,granted.rolname FROM pg_catalog.pg_auth_members m "
-                "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
-                "JOIN pg_catalog.pg_roles member ON member.oid=m.member "
-                "WHERE member.rolname = ANY(%s) ORDER BY member.rolname,granted.rolname",
-                (list(expected),),
-            )
-            memberships = [(str(row[0]), str(row[1])) for row in cursor.fetchall()]
-            if memberships != sorted(expected.items()):
-                raise ChronosProductionError("CHRONOS_SCOPED_MEMBERSHIP_MISMATCH")
-            if any(group == "chronos_test_writer" for _, group in memberships):
-                raise ChronosProductionError("CHRONOS_TEST_WRITER_MEMBERSHIP_FORBIDDEN")
-            cursor.execute(
-                "SELECT rolcanlogin,rolcreaterole,rolsuper,rolcreatedb,rolreplication,"
-                "rolbypassrls FROM pg_catalog.pg_roles WHERE rolname=%s",
-                (migrator_role,),
-            )
-            migrator = cursor.fetchone()
-            if migrator is None or any(bool(value) for value in migrator):
-                raise ChronosProductionError("CHRONOS_MIGRATOR_NOT_DISABLED")
+        assert_migrator_disabled(
+            connection, role=role, bootstrap_owner=bootstrap_owner
+        )
+
+
+_ALEMBIC_ENV_ALLOWLIST = (
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "PATH",
+    "PGSSLROOTCERT",
+    "PYTHONPATH",
+    "SSL_CERT_DIR",
+    "SSL_CERT_FILE",
+    "SYSTEMROOT",
+    "TMP",
+    "TMPDIR",
+    "TEMP",
+    "TZ",
+    "VIRTUAL_ENV",
+)
+_ALEMBIC_PGOPTIONS = (
+    "-c statement_timeout=300000 "
+    "-c idle_session_timeout=60000 "
+    "-c idle_in_transaction_session_timeout=60000"
+)
+
+
+def _alembic_environment(database_url: str) -> dict[str, str]:
+    environment = {
+        name: value
+        for name in _ALEMBIC_ENV_ALLOWLIST
+        if (value := os.getenv(name)) is not None
+    }
+    environment["ROBIN_DATABASE_URL"] = database_url
+    environment["PGOPTIONS"] = _ALEMBIC_PGOPTIONS
+    return environment
+
+
+def _attempt_cleanup_steps(steps: Sequence[Callable[[], None]]) -> None:
+    errors: list[Exception] = []
+    for step in steps:
+        try:
+            step()
+        except Exception as error:
+            errors.append(error)
+    if errors:
+        raise ChronosProductionError("CHRONOS_LIFECYCLE_CLEANUP_FAILED") from errors[0]
 
 
 def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
@@ -702,6 +695,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
     if not isinstance(raw_artifact, dict):
         raise ChronosProductionError("CHRONOS_PREFLIGHT_ARTIFACT_INVALID")
     artifact = verify_signed_document(cast(dict[str, Any], raw_artifact), api_key)
+    preflight_expiry = _preflight_expiry(artifact)
     client = NeonClient(api_key)
     identity = resolve_neon_identity(client, target)
     recovery_branch_id = str(artifact.get("recovery_branch_id", ""))
@@ -715,65 +709,237 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         project_id=identity.project_id,
         production_branch_id=identity.production_branch_id,
         recovery_branch_id=recovery_branch_id,
+        current_revision=str(artifact.get("current_revision", "")),
     )
     before = inspect_database(database_url)
-    if before["current_revision"] != EXPECTED_BEFORE_REVISION:
+    with psycopg.connect(database_url, connect_timeout=10) as connection:
+        migrate_role_inventory_hash = role_inventory_hash(connection)
+    if artifact.get("role_inventory_hash") != migrate_role_inventory_hash:
+        raise ChronosProductionError("CHRONOS_PREFLIGHT_ROLE_INVENTORY_MISMATCH")
+    if before["current_revision"] not in {
+        EXPECTED_BEFORE_REVISION,
+        EXPECTED_AFTER_REVISION,
+    }:
         raise ChronosProductionError("UNEXPECTED_DATABASE_REVISION")
-    run_id = _required_public("GITHUB_RUN_ID")
-    migrator_role, _migrator_password, migrator_url = _create_migrator(
-        database_url, target, run_id
-    )
-    dispatches = 1
-    process_environment = dict(os.environ)
-    process_environment["ROBIN_DATABASE_URL"] = migrator_url
-    try:
-        completed = subprocess.run(  # nosec B603
-            [sys.executable, "-m", "alembic", "upgrade", MIGRATION_TARGET],
-            env=process_environment,
-            check=False,
-            capture_output=True,
-            text=False,
-            timeout=300,
+    if artifact.get("current_revision") != before["current_revision"]:
+        raise ChronosProductionError("CHRONOS_PREFLIGHT_REVISION_MISMATCH")
+    migrator_role = stable_migrator_role(identity.production_branch_id)
+    migrator_password = secrets.token_urlsafe(48)
+    with psycopg.connect(database_url, connect_timeout=10) as connection:
+        bootstrap_owner = assert_bootstrap_owner(
+            connection, deadline=preflight_expiry
         )
-        return_code: int | None = completed.returncode
-    except subprocess.TimeoutExpired:
-        return_code = None
-    finally:
-        process_environment.pop("ROBIN_DATABASE_URL", None)
-    after = inspect_database(database_url)
-    outcome = "MIGRATION_OUTCOME_AMBIGUOUS"
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname=%s)",
+                (migrator_role,),
+            )
+            role_exists = cursor.fetchone()
+    migrator_exists = bool(role_exists and role_exists[0])
+    group_audit: dict[str, Any] | None = None
+    migrator_audit: dict[str, Any] | None = None
+    final_audit: dict[str, Any] | None = None
+    dispatches = 0
+    return_code: int | None = 0
+    outcome = "MIGRATION_RESUMED"
+    after = before
+    migrator_disabled = False
+    owner_terminalized = False
     try:
-        _assert_post_migration(after)
-    except ChronosProductionError:
-        if after.get("current_revision") == EXPECTED_BEFORE_REVISION:
-            outcome = "MIGRATION_NOT_APPLIED"
-    else:
-        outcome = "MIGRATION_CONFIRMED"
-    if outcome != "MIGRATION_CONFIRMED":
-        _disable_migrator(database_url, migrator_role)
-        report = {
-            "schema_version": "chronos-neon-migration-v3",
-            "verdict": (
-                "NEON_CHRONOS_MIGRATION_BLOCKED"
-                if outcome == "MIGRATION_NOT_APPLIED"
-                else "NEON_CHRONOS_MIGRATION_AMBIGUOUS"
-            ),
-            "migration_outcome": outcome,
-            "migration_dispatches": dispatches,
-            "subprocess_return_code": return_code,
-            "revision_before": before.get("current_revision"),
-            "revision_after": after.get("current_revision"),
-            "migrator_login": False,
-            "provider_calls": 0,
-            "r2_operations": 0,
-        }
-        _write_json(report_dir / "chronos-neon-migration-v3.json", report)
-        raise ChronosProductionError(outcome)
-    _create_scoped_logins(migrator_url)
-    _disable_migrator(database_url, migrator_role)
-    _verify_scoped_logins(database_url, migrator_role)
-    final = inspect_database(database_url)
-    _assert_post_migration(final)
+        if before["current_revision"] == EXPECTED_BEFORE_REVISION:
+            with psycopg.connect(database_url, connect_timeout=10) as connection:
+                provisioned_groups = provision_chronos_group_roles(
+                    connection, migrator_role=migrator_role
+                )
+                group_audit = provisioned_groups.report()
+                runtime_at_start = {
+                    str(row["role"])
+                    for row in provisioned_groups.role_inventory
+                    if str(row["role"]) in {login for login, _, _ in SCOPED_LOGINS}
+                }
+                migration_audit_phase = (
+                    provisioned_groups.phase
+                    if provisioned_groups.phase in {"final", "runtime_partial"}
+                    else "migrator"
+                )
+                migrator_valid_until = min(
+                    preflight_expiry,
+                    _utc_now() + timedelta(minutes=6),
+                )
+                provisioned_migrator = provision_migrator(
+                    connection,
+                    role=migrator_role,
+                    password=migrator_password,
+                    valid_until=migrator_valid_until,
+                    pinned_system_grantor=(
+                        provisioned_groups.bootstrap_system_grantor
+                    ),
+                    audit_phase=migration_audit_phase,
+                    runtime_roles=sorted(runtime_at_start),
+                )
+                migrator_audit = provisioned_migrator.report()
+            migrator_exists = True
+            migrator_url = build_scoped_database_url(
+                target,
+                username=migrator_role,
+                password=migrator_password,
+            )
+            process_environment = _alembic_environment(migrator_url)
+            dispatches = 1
+            try:
+                completed = subprocess.run(  # nosec B603
+                    [sys.executable, "-m", "alembic", "upgrade", MIGRATION_TARGET],
+                    env=process_environment,
+                    check=False,
+                    capture_output=True,
+                    text=False,
+                    timeout=300,
+                )
+                return_code = completed.returncode
+            except subprocess.TimeoutExpired:
+                return_code = None
+            finally:
+                process_environment.pop("ROBIN_DATABASE_URL", None)
+                with psycopg.connect(
+                    database_url, connect_timeout=10
+                ) as connection:
+                    disable_migrator(connection, role=migrator_role)
+                migrator_disabled = True
+            after = inspect_database(database_url)
+            outcome = "MIGRATION_OUTCOME_AMBIGUOUS"
+            try:
+                _assert_post_migration(after)
+            except ChronosProductionError:
+                if after.get("current_revision") == EXPECTED_BEFORE_REVISION:
+                    outcome = "MIGRATION_NOT_APPLIED"
+            else:
+                outcome = "MIGRATION_CONFIRMED"
+            if outcome != "MIGRATION_CONFIRMED":
+                raise ChronosProductionError(outcome)
+            with psycopg.connect(database_url, connect_timeout=10) as connection:
+                assert_post_migration_role_state(
+                    connection,
+                    migrator_role=migrator_role,
+                    bootstrap_owner=bootstrap_owner,
+                )
+        else:
+            _assert_post_migration(before)
+            existing_runtime = {
+                str(row["rolname"])
+                for row in cast(list[dict[str, Any]], before["roles"])
+                if str(row["rolname"])
+                in {login for login, _, _ in SCOPED_LOGINS}
+            }
+            resume_phase = (
+                "final"
+                if len(existing_runtime) == len(SCOPED_LOGINS)
+                else "runtime_partial"
+                if existing_runtime
+                else "migrator"
+            )
+            with psycopg.connect(database_url, connect_timeout=10) as connection:
+                assert_bootstrap_owner(connection, deadline=preflight_expiry)
+                disable_migrator(connection, role=migrator_role)
+                migrator_disabled = True
+                assert_post_migration_role_state(
+                    connection,
+                    migrator_role=migrator_role,
+                    bootstrap_owner=bootstrap_owner,
+                )
+                resumed = audit_role_edges(
+                    connection,
+                    phase=resume_phase,
+                    bootstrap_owner=bootstrap_owner,
+                    migrator_role=migrator_role,
+                    runtime_roles=sorted(existing_runtime),
+                )
+                migrator_audit = resumed.report()
+
+        _assert_migrator_disabled(
+            database_url, migrator_role, bootstrap_owner
+        )
+        pinned_grantor = str(
+            (migrator_audit or {}).get("bootstrap_system_grantor", "")
+        )
+        if not pinned_grantor:
+            raise ChronosProductionError("CHRONOS_BOOTSTRAP_GRANTOR_MISSING")
+        runtime_accounts = _runtime_accounts()
+        with psycopg.connect(database_url, connect_timeout=10) as connection:
+            provisioned_runtime = provision_runtime_logins(
+                connection,
+                accounts=runtime_accounts,
+                migrator_role=migrator_role,
+                pinned_system_grantor=pinned_grantor,
+            )
+            final_audit = provisioned_runtime.report()
+        final = inspect_database(database_url)
+        _assert_post_migration(final)
+        _assert_migrator_disabled(
+            database_url, migrator_role, bootstrap_owner
+        )
+        with psycopg.connect(database_url, connect_timeout=10) as connection:
+            terminalize_bootstrap_owner(connection)
+        owner_terminalized = True
+        reader_login, _, reader_password = runtime_accounts[2]
+        reader_url = build_scoped_database_url(
+            target, username=reader_login, password=reader_password
+        )
+        with psycopg.connect(reader_url, connect_timeout=10) as connection:
+            terminal_audit = audit_terminal_lifecycle(
+                connection,
+                bootstrap_owner=bootstrap_owner,
+                migrator_role=migrator_role,
+            ).report()
+        _write_json(
+            report_dir / "chronos-role-edge-matrix-v1.json",
+            {
+                "schema_version": "chronos-role-edge-matrix-v1",
+                "verdict": "BIDIRECTIONAL_ROLE_EDGE_AUDIT_READY",
+                "migration_cycle": "NOT_RUN_IN_PRODUCTION_ACTIVATION",
+                "password_state": {
+                    "bootstrap_owner": "CLEARED_BY_COMMITTED_ALTER_ROLE",
+                    "migrator": "CLEARED_BY_COMMITTED_ALTER_ROLE",
+                    "catalog_visibility": "PG_AUTHID_SUPERUSER_ONLY",
+                },
+                "phases": [
+                    report
+                    for report in (
+                        group_audit,
+                        migrator_audit,
+                        final_audit,
+                        terminal_audit,
+                    )
+                    if report is not None
+                ],
+                "edges": terminal_audit["edges"],
+                "edge_count": terminal_audit["edge_count"],
+                "forbidden_edge_count": terminal_audit[
+                    "forbidden_edge_count"
+                ],
+                "runtime_effective_bootstrap_edge_count": terminal_audit[
+                    "runtime_effective_bootstrap_edge_count"
+                ],
+                "migrator_runtime_edge_count": terminal_audit[
+                    "migrator_runtime_edge_count"
+                ],
+            },
+        )
+    except Exception:
+        cleanup_steps: list[Callable[[], None]] = []
+        if migrator_exists and not migrator_disabled:
+            def cleanup_migrator() -> None:
+                with psycopg.connect(database_url, connect_timeout=10) as connection:
+                    disable_migrator(connection, role=migrator_role)
+
+            cleanup_steps.append(cleanup_migrator)
+        if not owner_terminalized:
+            def cleanup_owner() -> None:
+                with psycopg.connect(database_url, connect_timeout=10) as connection:
+                    terminalize_bootstrap_owner(connection)
+
+            cleanup_steps.append(cleanup_owner)
+        _attempt_cleanup_steps(cleanup_steps)
+        raise
     nonce = _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE")
     output: dict[str, Any] = {
         "schema_version": "chronos-bootstrap-output-v3",
@@ -816,6 +982,10 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         "migrator_role": migrator_role,
         "migrator_login": False,
         "migrator_createrole": False,
+        "role_edge_matrix": "chronos-role-edge-matrix-v1.json",
+        "forbidden_membership": 0,
+        "migrator_runtime_membership": 0,
+        "runtime_effective_bootstrap_edge": 0,
         "provider_calls": 0,
         "r2_operations": 0,
         "destructive_sql": 0,
@@ -887,12 +1057,50 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
             raise ChronosProductionError("CHRONOS_VERIFY_MEMBERSHIP_MISMATCH")
     if len({str(report["server_epoch"]) for report in reports.values()}) != 1:
         raise ChronosProductionError("CHRONOS_VERIFY_SERVER_EPOCH_MISMATCH")
+    with psycopg.connect(urls["reader"], connect_timeout=10) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT rolname FROM pg_catalog.pg_roles "
+                "WHERE pg_catalog.shobj_description(oid,'pg_authid')=%s",
+                (MIGRATOR_MARKER,),
+            )
+            migrators = [str(row[0]) for row in cursor.fetchall()]
+            cursor.execute(
+                "SELECT DISTINCT member.rolname "
+                "FROM pg_catalog.pg_auth_members m "
+                "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
+                "JOIN pg_catalog.pg_roles member ON member.oid=m.member "
+                "WHERE granted.rolname=ANY(%s) AND m.admin_option "
+                "AND NOT m.inherit_option AND NOT m.set_option",
+                (list(GROUP_ROLES),),
+            )
+            owners = [str(row[0]) for row in cursor.fetchall()]
+        if len(migrators) != 1 or len(owners) != 1:
+            raise ChronosProductionError("CHRONOS_VERIFY_ROLE_LIFECYCLE_AMBIGUOUS")
+        edge_audit = audit_terminal_lifecycle(
+            connection,
+            bootstrap_owner=owners[0],
+            migrator_role=migrators[0],
+        )
+    _write_json(
+        report_dir / "chronos-role-edge-matrix-v1.json",
+        {
+            "schema_version": "chronos-role-edge-matrix-v1",
+            "verdict": "BIDIRECTIONAL_ROLE_EDGE_AUDIT_READY",
+            **edge_audit.report(),
+        },
+    )
     result = {
         "schema_version": "chronos-production-verify-v3",
         "verdict": "CHRONOS_SCOPED_IDENTITIES_READY",
         "revision": EXPECTED_AFTER_REVISION,
         "identities": reports,
         "business_data_modified": False,
+        "forbidden_membership": edge_audit.forbidden_edge_count,
+        "migrator_runtime_membership": edge_audit.migrator_runtime_edge_count,
+        "runtime_effective_bootstrap_edge": (
+            edge_audit.runtime_effective_bootstrap_edge_count
+        ),
         "provider_calls": 0,
         "r2_operations": 0,
     }

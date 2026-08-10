@@ -1,0 +1,137 @@
+{
+  "schema_version": "chronos-role-lifecycle-e1-v1-review",
+  "generated_at": "2026-08-10T00:00:00Z",
+  "repository": "dddur75/robin-stades-ng",
+  "frozen_predecessor": {
+    "pr": 43,
+    "head_sha": "b942f24f8306fbf96717c2a69dbb80a1ff16d4eb",
+    "state": "OPEN_DRAFT_NOT_MERGED_FAIL_AND_STOP",
+    "supersession_pending_replacement_ci": true
+  },
+  "root_cause_evidence": {
+    "postgresql_major": 16,
+    "runs": [31343668450, 31344137405],
+    "reproduced_edges": [
+      ["chronos_authority_runtime_login", "robin_ci_migrator"],
+      ["chronos_effect_runtime_login", "robin_ci_migrator"],
+      ["chronos_reader_login", "robin_ci_migrator"]
+    ],
+    "options": {
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "grantor": "bootstrap_system_superuser"
+    },
+    "creator_revoke": "INEFFECTIVE_OR_REFUSED",
+    "contract_result": "7_PASSED_1_FAILED_ON_BOTH_RUNS"
+  },
+  "decision": {
+    "architecture": "BOOTSTRAP_OWNED_ROLE_LIFECYCLE",
+    "status": "ACCEPTED_FOR_IMPLEMENTATION",
+    "score": 97,
+    "minimum_score": 95,
+    "open_p0": 0,
+    "open_p1": 0,
+    "options": [
+      {
+        "id": "A",
+        "name": "MIGRATOR_CREATEROLE_PLUS_REVOKE",
+        "verdict": "REJECTED_IMPOSSIBLE_POSTGRESQL16"
+      },
+      {
+        "id": "B",
+        "name": "BOOTSTRAP_OWNER_PROVISIONS_ROLES_MIGRATOR_NOCREATEROLE",
+        "verdict": "ACCEPTED"
+      },
+      {
+        "id": "C",
+        "name": "NEON_API_PROVISIONS_RUNTIME_LOGINS",
+        "verdict": "REJECTED_NEON_SUPERUSER_RISK"
+      }
+    ]
+  },
+  "reviews": {
+    "DP6": {
+      "canonical_agent": "DP6",
+      "verdict": "PASS",
+      "score": 98,
+      "open_p0": 0,
+      "open_p1": 0,
+      "controls": [
+        "migrator disabled immediately after Alembic and before runtime provisioning",
+        "stable migrator identity and OID across downgrade and re-upgrade",
+        "resumable 0013 or 0014 lifecycle with cleanup failure overriding success"
+      ]
+    },
+    "DBA": {
+      "canonical_agent": "DP4",
+      "verdict": "PASS",
+      "score": 97,
+      "open_p0": 0,
+      "open_p1": 0,
+      "controls": [
+        "pre and post migration role-graph audit",
+        "exact functional and bootstrap-system grantor identities",
+        "same persistent migrator owner for object lifecycle"
+      ]
+    },
+    "SEC": {
+      "canonical_agent": "C4",
+      "verdict": "PASS",
+      "score": 98,
+      "open_p0": 0,
+      "open_p1": 0,
+      "controls": [
+        "bidirectional and transitive USAGE and SET audit",
+        "group anti-smuggling checks for settings ACL ownership and memberships",
+        "bootstrap owner terminal NOLOGIN password null zero sessions with dormant CREATEROLE"
+      ]
+    },
+    "RED": {
+      "canonical_agent": "A2",
+      "verdict": "PASS",
+      "score": 97,
+      "open_p0": 0,
+      "open_p1": 0,
+      "controls": [
+        "numeric bootstrap and migrator authentication windows with timeouts",
+        "exact stage role inventories and 4 to 5 to 11 edge cardinalities",
+        "Neon identity routes excluded and provider-managed runtime identities rejected"
+      ]
+    }
+  },
+  "required_implementation_controls": [
+    "provision_chronos_group_roles runs as the bootstrap owner before Alembic",
+    "migration 0014 asserts groups and contains no role lifecycle mutation",
+    "migrator is born NOCREATEROLE and rolcreaterole=false is asserted before Alembic",
+    "runtime LOGIN identities are created only by the bootstrap owner after migration",
+    "functional grants explicitly set ADMIN FALSE INHERIT TRUE SET FALSE",
+    "bidirectional audit classifies exactly eleven final edges and computes effective paths",
+    "downgrade changes no role or membership and re-upgrade uses the same migrator OID",
+    "all lifecycle passwords are bound parameters and never interpolated or reported",
+    "provider-free canary and manual-only production workflows remain held"
+  ],
+  "verdicts": [
+    "POSTGRESQL16_CREATOR_EDGE_ROOT_CAUSE_PROVEN",
+    "BOOTSTRAP_OWNED_ROLE_LIFECYCLE_ACCEPTED",
+    "MIGRATOR_NOCREATEROLE_READY_DESIGN",
+    "BIDIRECTIONAL_ROLE_EDGE_AUDIT_READY_DESIGN"
+  ],
+  "external_effects": {
+    "neon_api_calls": 0,
+    "remote_postgresql_reads": 0,
+    "remote_postgresql_writes": 0,
+    "r2_list": 0,
+    "r2_head": 0,
+    "r2_get": 0,
+    "r2_put": 0,
+    "r2_delete": 0,
+    "provider_calls": 0,
+    "odds_credits": 0,
+    "purchases": 0,
+    "deployments": 0,
+    "real_bets": 0,
+    "promotions": 0,
+    "triples": 0
+  }
+}

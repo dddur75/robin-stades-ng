@@ -1,198 +1,75 @@
-> **Statut historique:** `SUPERSEDED_BY_CHRONOS_PRODUCTION_BOOTSTRAP_V3`.
-> Conservé comme preuve; ne pas utiliser comme source d’autorité. Le handoff
-> courant est `docs/handoffs/CHRONOS-PRODUCTION-BOOTSTRAP-V3-HANDOFF.md`.
+# Next Mission Brief — Chronos Neon Recovery E1 V1
 
-# Next Mission Brief — Chronos Control Plane V2 Review and Controlled Activation
+## Mission boundary
 
-Status: `NOT_EXECUTED`
+This brief starts only after the Draft pull request headed by
+`codex/chronos-role-lifecycle-e1-v1` has passed all required checks. The current
+mission deliberately performs no Neon API call, no production SQL, no provider
+call, no R2 operation, no purchase, and no deployment.
 
-Reasoning: Very high
+The next mission owns the controlled production activation. It must use very
+high reasoning, stop on any failed gate, and preserve the evidence chain.
 
-## Mandatory pins
+## Required starting state
 
-```text
-repository = dddur75/robin-stades-ng
-pr = 41
-branch = codex/robin-chronos-control-plane-v2
-pr41_head = RESOLVE_EXACTLY_FROM_GITHUB_BEFORE_ANY_ACTION
-main_before_merge = b03051d15e741eeb5293e0d3661572b2cb60eeba
-migration = 0014_chronos_control_plane_v2
-```
+- The replacement pull request is open, Draft, mergeable, and green.
+- PR #43 is closed without merge and marked
+  `SUPERSEDED_BY_CHRONOS_ROLE_LIFECYCLE_E1_V1`.
+- Its exact head derives from frozen commit
+  `b942f24f8306fbf96717c2a69dbb80a1ff16d4eb`.
+- PostgreSQL 16 contracts are 8/8, the migration cycle passes, SSR/visual
+  checks pass, and the exact role-edge matrix contains no forbidden edge.
+- Existing bootstrap secrets are available through the approved secret store;
+  they must never be printed, copied into files, or committed.
 
-The mission must stop if the PR head, base, checks, or file inventory cannot be
-resolved exactly. The PR head above is deliberately resolved at execution time because
-the final review commit cannot contain its own SHA.
+## Ordered execution
 
-Read the provider-free validation evidence at
-`reports/closure/pr41-chronos-control-plane-v2-validation-v1.json`; preserve its
-explicit exact-head CI and PostgreSQL 16 proof gates.
-
-## Starting facts to reverify
-
-- PR #39 is closed, not merged, and its remote branch is preserved at
-  `ea983c0f42177317a9c8e91f4e49974df2b63525`.
-- PR #40 is merged as `b03051d15e741eeb5293e0d3661572b2cb60eeba`; its source
-  branch remains at `b4b549b1caf46d69a53a1c1efe7298aab3f6f928`.
-- PR #41 must still be draft and unmerged.
-- No remote/Neon Chronos migration, live provider call, external R2 operation, or
-  GitHub canary was executed by the preceding mission.
-- No current workflow uses a protected GitHub Environment.
-
-## Mandatory order
-
-1. Resolve and pin the exact PR #41 head, base, diff, reviews, and CI results.
-2. Snapshot the enabled/disabled state of every workflow and inventory all queued or
-   in-flight GitHub Actions runs.
-3. Disable the 23 automatic workflows below first, in dependency order (downstream
-   `workflow_run` consumers before their producers). Then cancel or drain runs under
-   the approved policy and re-list until both queued and in-progress counts are zero.
-   Preserve each prior state for individual restoration. Do not dispatch any manual
-   workflow during this window; hold or administratively lock every manual migration
-   path listed below as well.
-4. Remove automatic `alembic upgrade head` from all 23 direct and indirect paths in a
-   separate reviewed activation change. No legacy workflow may retain a migrator
-   credential. After the one controlled migration in step 11, replace stale `0013`
-   guards with read-only `0014_chronos_control_plane_v2` checks before any individual
-   workflow is re-enabled.
-5. Obtain independent `DP6`, `SEC`, `SRE`, `C2`, `RP8`, and `RED` PASS on the exact
-   PR head, with zero P0/P1 and score at least 95/100.
-6. Create and configure the protected GitHub Environment
-   `chronos-control-plane-production`, but keep it disabled and prepare only sealed
-   secret slots before migration. The Chronos group roles do not exist yet. Keep the
-   existing isolated migrator credential outside every workflow and Environment.
-7. Merge PR #41 only after every prior gate is green, every automatic and manual
-   migration path is held, and no queued or in-progress run remains.
-8. Verify the exact merge SHA on `main`.
-9. Generate a new 256-bit generation nonce outside PostgreSQL. Never log or persist
-   the nonce in Git, artifacts, reports, or database rows.
-10. Revoke the legacy shared `DATABASE_URL`; only the isolated administrative channel
-    may retain the migrator credential.
-11. Explicitly migrate Neon once with the isolated migrator role:
-   `alembic upgrade 0014_chronos_control_plane_v2`.
-12. After the migration creates the four `NOLOGIN` group roles with zero usable
-    memberships, verify any PostgreSQL 16 migrator links are exactly bootstrap-granted
-    ADMIN-only (`INHERIT=false`, `SET=false`) and fail `pg_has_role(...,'USAGE')`. Then
-    create fresh and distinct authority, runtime, and reader LOGIN principals. Grant
-    each principal exactly its matching group role; never add a usable migrator grant,
-    rotate their credentials, and place only those scoped credentials plus the new
-    generation nonce in the still-disabled protected Environment. Keep
-    `chronos_test_writer` without production membership.
-13. Verify revision, tables, append-only triggers, functions, exact LOGIN-to-group
-    memberships, absence of cross-membership, effective `pg_has_role(...,'USAGE')`
-    identities,
-    grants,
-    PostgreSQL server epoch, and generation hash.
-14. In a separate PR, add a manual-only provider-free canary workflow. It must have
-    no `schedule`, `push`, or `workflow_run` trigger and must use the protected
-    Environment.
-15. Run one exact GitHub run/attempt and one reserved operation. Verify the complete
-    hash chain and effect accounting before any further action.
-16. Re-enable only workflows individually audited as compatible. Never reactivate all
-    23 as a batch.
-17. Treat a provider canary as `DEFAULT_DENY` unless a new append-only decision names
-    its provider, endpoint, fixture, run identity, expiry, and budgets.
-18. Publish a final report with all SHA pins, reviews, role/grant evidence, migration,
-    epoch, non-secret generation ID, effect events, budgets, and final workflow states.
-
-## Workflows that must be held before merge
-
-```text
-api-football-coverage.yml
-collect-fixtures.yml
-collect-odds.yml
-daily-health.yml
-external-validation.yml
-feature-factory.yml
-historical-backfill.yml
-historical-backtesting.yml
-historical-market-quality.yml
-historical-quality.yml
-model-training.yml
-post-match-settlement.yml
-pre-match-shadow.yml
-prequential-prediction.yml
-prequential-settlement.yml
-prequential-training.yml
-prospective-deep-scheduler.yml
-prospective-fixture-registry.yml
-prospective-gate-report.yml
-prospective-lineup-capture.yml
-prospective-odds-capture.yml
-prospective-player-capture.yml
-prospective-r2-replay-audit.yml
-```
-
-The indirect migration paths that must also be audited are:
-
-```text
-.github/actions/historical-state-persist/action.yml
-.github/actions/durable-shadow/action.yml
-scripts/neon_bootstrap.py
-```
-
-The following manual workflows can also reach migration code and must not be
-dispatched during the hold. Disable them or enforce an equivalent administrative lock;
-`jalon11-operational-one-shot.yml` is included because it calls
-`deep-feature-build.yml`.
-
-```text
-critical-gate-backfill.yml
-historical-market-ingestion.yml
-market-model-validation.yml
-strategy-lab-v4.yml
-pattern-discovery.yml
-pattern-settlement.yml
-pattern-validation.yml
-shadow-pattern-decisions.yml
-deep-feature-build.yml
-jalon11-operational-one-shot.yml
-```
-
-The old revision guards occur after `alembic upgrade head`; they stop a workload but
-cannot stop an automatic Neon migration. Holding every path and removing automatic
-upgrades is therefore a merge precondition, not a post-merge cleanup.
-
-## Provider-free canary ceiling
-
-```text
-provider_calls = 0
-odds_credits = 0
-R2_PUT <= 1
-R2_GET <= 1, only after a 412 or explicit recovery
-R2_LIST = 0
-R2_HEAD = 0
-R2_DELETE = 0
-PostgreSQL = controlled migration and Chronos events only
-workflow_dispatch = 1
-deployments = 0
-purchases = 0
-real_bets = 0
-promotions = 0
-triples = 0
-```
-
-Every `PUT_DISPATCHED` consumes one unit, including 412 and ambiguous outcomes. A
-GET requires the unique durable `R2_GET_DISPATCHED` permit before network I/O; a crash
-or replay never sends a second GET. Old chains restored across an epoch or generation
-boundary remain immutable and must not trigger R2 traffic. A
-409, SDK retry possibility, lost response, or insufficient attribution stays pending
-or conflict. Presence of matching bytes never proves physical creation.
-
-## Provider canary
-
-The provider canary remains locked after the provider-free canary. A later decision may
-authorize at most one fixture, one provider request, one possible Odds credit, and one
-single-attempt conditional PUT. Without that decision, stop after provider-free review.
+1. Re-review and merge the replacement pull request. Do not bypass protections.
+2. Verify `main` contains the reviewed exact head and rerun the required main
+   checks if repository policy requires them.
+3. Create a dedicated Neon recovery branch from that exact `main` head.
+4. Reuse the existing bootstrap secrets; do not create parallel credentials.
+5. Run `PREFLIGHT` and verify its signature, expiry, branch identity, revision
+   `0013`, clean role inventory, and zero forbidden membership.
+6. Pre-provision the four group roles and the stable NOCREATEROLE migrator with
+   the bootstrap owner. Preserve the expected 4→5 edge cardinalities.
+7. Migrate exactly once to revision `0014`, then disable the migrator before
+   provisioning any runtime LOGIN.
+8. Create or exactly adopt the three runtime LOGIN roles with the bootstrap
+   owner and grant only the three functional memberships. The final graph must
+   contain exactly 11 classified edges.
+9. Install the scoped runtime secrets in the approved secret store without
+   exposing their values.
+10. Run `VERIFY`, including the bidirectional graph audit, grantor/options
+    checks, role attributes, object ACLs, revision guard, and zero-session
+    terminal state.
+11. Run the reusable provider-free canary. It must not call any provider or use
+    paid odds credits.
+12. Remove or rotate bootstrap secret material according to the runbook, while
+    retaining the dormant bootstrap owner as `NOLOGIN CREATEROLE`, password
+    NULL, settings reset, and zero sessions.
 
 ## Stop conditions
 
-Stop without merge, migration, or canary for any SHA drift, non-green exact-head CI,
-P0/P1, score below 95, workflow not drained, unprotected environment, unsafe role or
-grant, leaked nonce, epoch/generation mismatch, R2 ambiguity promoted to created or
-preexisting, downgrade weakness, or exceeded budget.
+Stop without repair-in-place if any of these is observed: an unexpected role or
+membership, a mismatched grantor or option, revision other than `0013` at
+preflight, an expired artifact, more than one Alembic dispatch, a runtime role
+created through Neon identity APIs, a migrator with CREATEROLE, an effective
+runtime path to a bootstrap-admin role, a provider call, or an unbounded secret.
 
-## Superseded historical handoffs
+Any recovery must begin from a newly reviewed plan and preserve the same stable
+migrator identity/OID contract.
 
-This archive preserves earlier fail-closed contracts; it is not current execution
-authority. The troisième architecture and `capability-scoped-evidence-ladder-v2`
-handoffs remain superseded and cannot restart E1A or any earlier campaign.
+## Completion evidence
+
+Record exact commit and workflow run identifiers, preflight/verify artifact
+hashes, migration revision, 8/8 PostgreSQL contracts, the observed 11-edge
+matrix, canary result, secret-cleanup result, zero forbidden edges, zero active
+bootstrap/migrator sessions, and explicit zero counts for external-cost and
+provider operations.
+
+## Historical compatibility archive — no authority
+
+The frozen literals `troisième architecture` and
+`capability-scoped-evidence-ladder-v2` identify a superseded handoff only.
+They do not authorize restarting that campaign and do not alter this brief.

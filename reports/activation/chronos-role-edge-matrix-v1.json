@@ -1,0 +1,150 @@
+{
+  "schema_version": "chronos-role-edge-matrix-v1",
+  "matrix_kind": "POSTGRESQL16_CI_EXPECTED_CONTRACT",
+  "observation_status": "PENDING_EXACT_HEAD_CI",
+  "bootstrap_owner": "robin_ci_bootstrap_owner",
+  "bootstrap_system_grantor": "robin",
+  "migrator_role": "robin_ci_migrator",
+  "phase_edge_counts": {
+    "groups": 4,
+    "migrator": 5,
+    "final": 11
+  },
+  "edges": [
+    {
+      "granted_role": "chronos_authority_executor",
+      "member_role": "chronos_authority_runtime_login",
+      "grantor_role": "robin_ci_bootstrap_owner",
+      "grantor_superuser": false,
+      "admin_option": false,
+      "inherit_option": true,
+      "set_option": false,
+      "classification": "EXPECTED_RUNTIME_GROUP_EDGE",
+      "runtime_effective": true,
+      "reason": "exact authority function inheritance without ADMIN or SET"
+    },
+    {
+      "granted_role": "chronos_runtime_writer",
+      "member_role": "chronos_effect_runtime_login",
+      "grantor_role": "robin_ci_bootstrap_owner",
+      "grantor_superuser": false,
+      "admin_option": false,
+      "inherit_option": true,
+      "set_option": false,
+      "classification": "EXPECTED_RUNTIME_GROUP_EDGE",
+      "runtime_effective": true,
+      "reason": "exact effect function inheritance without ADMIN or SET"
+    },
+    {
+      "granted_role": "chronos_reader",
+      "member_role": "chronos_reader_login",
+      "grantor_role": "robin_ci_bootstrap_owner",
+      "grantor_superuser": false,
+      "admin_option": false,
+      "inherit_option": true,
+      "set_option": false,
+      "classification": "EXPECTED_RUNTIME_GROUP_EDGE",
+      "runtime_effective": true,
+      "reason": "exact reader object inheritance without ADMIN or SET"
+    },
+    {
+      "granted_role": "chronos_authority_executor",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    },
+    {
+      "granted_role": "chronos_reader",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    },
+    {
+      "granted_role": "chronos_runtime_writer",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    },
+    {
+      "granted_role": "chronos_test_writer",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    },
+    {
+      "granted_role": "chronos_authority_runtime_login",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    },
+    {
+      "granted_role": "chronos_effect_runtime_login",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    },
+    {
+      "granted_role": "chronos_reader_login",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_BOOTSTRAP_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    },
+    {
+      "granted_role": "robin_ci_migrator",
+      "member_role": "robin_ci_bootstrap_owner",
+      "grantor_role": "robin",
+      "grantor_superuser": true,
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false,
+      "classification": "EXPECTED_MIGRATOR_ADMIN_EDGE",
+      "runtime_effective": false,
+      "reason": "automatic PostgreSQL creator edge to offline bootstrap owner"
+    }
+  ],
+  "forbidden_edge_count": 0,
+  "runtime_effective_bootstrap_edge_count": 0,
+  "migrator_runtime_edge_count": 0
+}

@@ -226,13 +226,10 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
         "chronos_test_writer",
         "chronos_runtime_writer",
         "chronos_authority_executor",
-        "managed-by:0014_chronos_control_plane_v2",
+        "managed-by:chronos-role-lifecycle-e1-v1",
+        "CHRONOS_GROUP_ROLE_MISSING",
         "CHRONOS_ROLE_PROVENANCE_UNSAFE",
         "CHRONOS_ROLE_ACL_UNSAFE",
-        "m.admin_option",
-        "NOT m.inherit_option",
-        "NOT m.set_option",
-        "'USAGE'",
         "pg_catalog.shobj_description",
         "REVOKE ALL PRIVILEGES ON TABLE",
         "CHRONOS_OBJECT_ACL_UNSAFE",
@@ -250,7 +247,9 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
     ):
         assert marker in source
     assert source.count("RETURN QUERY SELECT a.authority_id::text") == 2
+    assert "CREATE ROLE" not in source
     assert "DROP ROLE" not in source
+    assert "ALTER ROLE" not in source
     assert "DROP EXTENSION" not in source
     assert "pg_catalog.sh_description" not in source
     assert "REVOKE EXECUTE ON ALL FUNCTIONS" not in source
@@ -260,28 +259,25 @@ def test_postgresql_contract_is_server_clocked_role_separated_and_scoped() -> No
     assert "fake_now" not in source
 
 
-def test_ci_finishes_downgrade_cycle_before_stateful_scoped_login_contract() -> None:
+def test_ci_runs_bootstrap_owned_role_lifecycle_and_complete_migration_cycle() -> None:
     root = Path(__file__).resolve().parents[2]
     workflow = (root / ".github" / "workflows" / "ci.yml").read_text(
         encoding="utf-8"
     )
-    migrator_downgrade = (
-        "ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@"
-        "localhost:5432/robin_ci' python -m alembic downgrade "
-        "0013_historical_evidence_index"
-    )
-    cleanup_cycle = (
-        migrator_downgrade
-        + "\n          python -m alembic downgrade 0002_jalon2_shadow"
-        + "\n          python -m alembic downgrade base"
-    )
+    runner = (
+        root / "scripts" / "run_chronos_role_lifecycle_ci_v1.py"
+    ).read_text(encoding="utf-8")
     scoped_contract = (
         "tests/chronos/test_chronos_postgresql_v2.py::"
         "test_scoped_login_connections_enforce_allows_and_denials"
     )
 
-    assert workflow.count(migrator_downgrade) == 1
-    assert cleanup_cycle in workflow
-    assert workflow.count("python -m alembic upgrade head") == 2
+    assert "run_chronos_role_lifecycle_ci_v1.py" in workflow
+    assert "provision_chronos_group_roles" in runner
+    assert "provision_migrator" in runner
+    assert "provision_runtime_logins" in runner
+    assert '_alembic(migrator_url, "downgrade", REVISION_0013)' in runner
+    assert runner.count('_alembic(migrator_url, "upgrade", REVISION_0014)') == 2
     assert scoped_contract in workflow
-    assert "python -m alembic downgrade" not in workflow.split(scoped_contract, 1)[1]
+    assert "CREATEROLE PASSWORD 'chronos_ci'" not in workflow
+    assert "FROM CURRENT_USER" not in workflow

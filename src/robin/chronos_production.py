@@ -203,6 +203,7 @@ def assert_exact_preflight_binding(
     project_id: str,
     production_branch_id: str,
     recovery_branch_id: str,
+    current_revision: str = EXPECTED_BEFORE_REVISION,
 ) -> None:
     """Reject stale, replayed, or cross-project PREFLIGHT artifacts."""
 
@@ -211,7 +212,7 @@ def assert_exact_preflight_binding(
         "workflow_sha": require_sha(workflow_sha, field="workflow_sha"),
         "project_id": project_id,
         "production_branch_id": production_branch_id,
-        "current_revision": EXPECTED_BEFORE_REVISION,
+        "current_revision": current_revision,
         "recovery_branch_id": recovery_branch_id,
     }
     for field, value in expected.items():
