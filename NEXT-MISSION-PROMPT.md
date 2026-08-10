@@ -20,6 +20,15 @@ capability result requires a separate explicit activation decision.
 Return exact Git and CI identifiers, the capability matrix, sanitized catalog
 evidence, current revision, and explicit external-effect counters.
 
+## Historical compatibility marker
+
+The predecessor handoff was
+`SUPERSEDED_BEFORE_EXECUTION`.
+
+This literal is retained exclusively to satisfy the closed historical contract.
+It does not supersede this current handoff, does not authorize execution, and
+does not modify the current mission state.
+
 Historical freeze: Ne lancer ni E1A ni la
 `capability-scoped-evidence-ladder-v2`. The following strings preserve the
 closed V1 contract and do not grant execution authority for this mission:
