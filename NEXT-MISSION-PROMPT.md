@@ -1,3 +1,6 @@
+> **Statut historique:** `SUPERSEDED_BY_CHRONOS_PRODUCTION_BOOTSTRAP_V3`.
+> Conservé comme preuve; ne pas exécuter. Utiliser le handoff V3 courant.
+
 # Prompt — Chronos Control Plane V2 Controlled Review and Activation
 
 Work in very-high reasoning mode. Read `NEXT-MISSION-BRIEF.md`, the E1 ADR, the

@@ -606,6 +606,9 @@ def test_scoped_login_connections_enforce_allows_and_denials() -> None:
             assert connection.scalar(sa.text("SELECT current_user")) == (
                 "chronos_reader_login"
             )
+            assert connection.scalar(
+                sa.text("SELECT version_num FROM public.alembic_version")
+            ) == "0014_chronos_control_plane_v2"
             state = connection.execute(
                 sa.text("SELECT * FROM public.chronos_get_effect_state(:operation_id)"),
                 {"operation_id": operation_id},

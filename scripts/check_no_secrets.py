@@ -1,4 +1,4 @@
-"""Fail CI when tracked text contains a credential-shaped literal."""
+"""Fail CI when repository or generated evidence contains credential literals."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ TEXT_SUFFIXES = {
     ".ini",
     ".js",
     ".json",
+    ".log",
     ".md",
     ".mjs",
     ".py",
@@ -30,35 +31,57 @@ PATTERNS = {
     "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     "Odds API literal": re.compile(r"ODDS_API_KEY\s*=\s*[^\s#][^\r\n]{7,}"),
     "API-Football literal": re.compile(r"API_FOOTBALL_KEY\s*=\s*[^\s#][^\r\n]{7,}"),
+    "Neon API key": re.compile(r"\bnapi_[A-Za-z0-9_-]{24,}\b"),
+    "Neon production DSN": re.compile(
+        r"postgresql(?:\+psycopg)?://[^:\s/]+:(?!secret@)[^@\s]+@"
+        r"ep-[a-z0-9-]+\.[a-z0-9-]+\.aws\.neon\.tech/[^\s]+"
+    ),
+    "Chronos generation nonce literal": re.compile(
+        r"CHRONOS_CONTROL_PLANE_GENERATION_NONCE\s*=\s*['\"]?[0-9a-fA-F]{64}"
+    ),
+    "Chronos scoped password literal": re.compile(
+        r"CHRONOS_BOOTSTRAP_(?:AUTHORITY|RUNTIME|READER)_PASSWORD\s*=\s*"
+        r"(?!\$\{\{)[^\s#][^\r\n]{15,}"
+    ),
 }
 
 
-def tracked_files() -> list[Path]:
+def repository_files() -> list[Path]:
     result = subprocess.run(
-        ["git", "ls-files", "-z"],
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
         cwd=ROOT,
         check=True,
         capture_output=True,
     )
-    return [
+    files = {
         ROOT / item.decode("utf-8")
         for item in result.stdout.split(b"\0")
         if item
-    ]
+    }
+    for generated_root in (ROOT / ".chronos", ROOT / ".ci", ROOT / "artifacts"):
+        if generated_root.is_dir():
+            files.update(path for path in generated_root.rglob("*") if path.is_file())
+    files.update(path for path in ROOT.glob("*.log") if path.is_file())
+    return sorted(files)
 
 
-def main() -> None:
+def find_secret_literals(paths: list[Path]) -> list[str]:
     findings: list[str] = []
-    for path in tracked_files():
+    for path in paths:
         if path.suffix.lower() not in TEXT_SUFFIXES or path.stat().st_size > 2_000_000:
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")
         for label, pattern in PATTERNS.items():
             if pattern.search(text):
-                findings.append(f"{path.relative_to(ROOT)}: {label}")
+                findings.append(f"{path}: {label}")
+    return findings
+
+
+def main() -> None:
+    findings = find_secret_literals(repository_files())
     if findings:
         raise SystemExit("Secrets potentiels détectés:\n" + "\n".join(findings))
-    print("Aucun secret littéral détecté dans les fichiers suivis.")
+    print("Aucun secret littéral détecté dans le dépôt et ses preuves générées.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,39 @@
+{
+  "schema_version": "chronos-production-bootstrap-contract-v3",
+  "base_revision": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+  "migration_target": "0014_chronos_control_plane_v2",
+  "workflow": ".github/workflows/chronos-production-bootstrap-v3.yml",
+  "modes": ["PREFLIGHT", "MIGRATE", "VERIFY"],
+  "dispatch_only": true,
+  "environment": "chronos-control-plane-production",
+  "concurrency": {"group": "chronos-production-bootstrap-v3", "cancel_in_progress": false},
+  "preflight_binding": [
+    "main_sha", "workflow_sha", "project_id", "production_branch_id",
+    "current_revision", "recovery_branch_id", "preflight_hash"
+  ],
+  "preflight_signature": "HMAC-SHA256",
+  "connection_contract": {
+    "postgresql_only": true,
+    "direct_endpoint_only": true,
+    "ssl_required": true,
+    "pooled_endpoint_forbidden": true
+  },
+  "migration_contract": {
+    "dispatch_max": 1,
+    "upgrade_head_forbidden": true,
+    "temporary_migrator": true,
+    "migrator_terminal_login": false,
+    "migrator_terminal_createrole": false
+  },
+  "scoped_logins": {
+    "chronos_authority_runtime_login": "chronos_authority_executor",
+    "chronos_effect_runtime_login": "chronos_runtime_writer",
+    "chronos_reader_login": "chronos_reader"
+  },
+  "published_secret_fields": [],
+  "provider_calls": 0,
+  "odds_credits": 0,
+  "r2_operations_before_canary": 0,
+  "purchases": 0,
+  "verdict": "CONTRACT_READY_FOR_CI"
+}

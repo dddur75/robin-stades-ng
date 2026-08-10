@@ -1,0 +1,84 @@
+name: "Chronos Provider-Free Canary V3"
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_main_sha:
+        description: "SHA main exact autorise"
+        required: true
+        type: string
+      expected_generation_hash:
+        description: "Hash non secret de la generation active"
+        required: true
+        type: string
+
+concurrency:
+  group: chronos-provider-free-canary-v3
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: chronos-control-plane-production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Refuser toute relance du run
+        shell: bash
+        run: test "$GITHUB_RUN_ATTEMPT" = "1" || exit 1
+      - name: Installer le runtime borne
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Masquer les credentials DB et R2
+        shell: bash
+        env:
+          CHRONOS_AUTHORITY_DATABASE_URL: ${{ secrets.CHRONOS_AUTHORITY_DATABASE_URL }}
+          CHRONOS_RUNTIME_DATABASE_URL: ${{ secrets.CHRONOS_RUNTIME_DATABASE_URL }}
+          CHRONOS_READER_DATABASE_URL: ${{ secrets.CHRONOS_READER_DATABASE_URL }}
+          CHRONOS_CONTROL_PLANE_GENERATION_NONCE: ${{ secrets.CHRONOS_CONTROL_PLANE_GENERATION_NONCE }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          for name in CHRONOS_AUTHORITY_DATABASE_URL CHRONOS_RUNTIME_DATABASE_URL CHRONOS_READER_DATABASE_URL CHRONOS_CONTROL_PLANE_GENERATION_NONCE R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME; do
+            test -n "${!name:-}" || { echo "MISSING_SECRET:$name"; exit 1; }
+            echo "::add-mask::${!name}"
+          done
+      - name: Prouver les refus temporels et la restauration sans reseau
+        run: >-
+          python -m pytest -q
+          tests/activation/test_chronos_production_bootstrap_v3.py
+          -k "old_authorities or restore or replay"
+      - name: Executer un PUT maximum et son replay sans reseau
+        env:
+          CHRONOS_AUTHORITY_DATABASE_URL: ${{ secrets.CHRONOS_AUTHORITY_DATABASE_URL }}
+          CHRONOS_RUNTIME_DATABASE_URL: ${{ secrets.CHRONOS_RUNTIME_DATABASE_URL }}
+          CHRONOS_READER_DATABASE_URL: ${{ secrets.CHRONOS_READER_DATABASE_URL }}
+          CHRONOS_CONTROL_PLANE_GENERATION_NONCE: ${{ secrets.CHRONOS_CONTROL_PLANE_GENERATION_NONCE }}
+          CHRONOS_EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          CHRONOS_EXPECTED_GENERATION_HASH: ${{ inputs.expected_generation_hash }}
+          CHRONOS_OFFLINE_GUARDS_VERIFIED: "true"
+          CHRONOS_CANARY_REPORT: .chronos/reports/chronos-provider-free-canary-v3.json
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: python scripts/run_chronos_provider_free_canary_v3.py
+      - name: Publier uniquement le rapport sanitise
+        uses: actions/upload-artifact@v4
+        with:
+          name: chronos-provider-free-canary-v3-${{ github.run_id }}
+          path: .chronos/reports/chronos-provider-free-canary-v3.json
+          if-no-files-found: error
+          retention-days: 14

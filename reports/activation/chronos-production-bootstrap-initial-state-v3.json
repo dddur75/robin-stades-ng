@@ -1,0 +1,70 @@
+{
+  "schema_version": "chronos-production-bootstrap-initial-state-v3",
+  "observed_at": "2026-08-10T01:25:59+02:00",
+  "repository": "dddur75/robin-stades-ng",
+  "entry_checkout": {
+    "worktree_path": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2",
+    "branch": "codex/hypothesis-universe-experience-v1",
+    "head": "ddf946642bcfccdc7ed206abd484db0336fdc34a",
+    "associated_pr": 25,
+    "associated_pr_state": "MERGED",
+    "clean": false,
+    "preserved_untracked_paths": [".worktrees/"],
+    "purpose": "PROTECTED_ENTRY_ONLY"
+  },
+  "production_worktree": {
+    "worktree_path": "C:/Users/ddura/OneDrive/Documents/Robin des stades V2 Worktrees/chronos-production-bootstrap-v3",
+    "branch": "codex/chronos-production-bootstrap-v3",
+    "base": "origin/main",
+    "head": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+    "clean_at_creation": true,
+    "purpose": "C0_DESIGNATED_WRITER"
+  },
+  "git": {
+    "main_initial": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+    "pr39": {"state": "CLOSED", "merged": false, "classification": "SUPERSEDED"},
+    "pr40": {"state": "MERGED", "merge_commit": "b03051d15e741eeb5293e0d3661572b2cb60eeba"},
+    "pr41": {"state": "MERGED", "merge_commit": "8591024b1ef96d766ab0e1090c45d15e3a25d429"},
+    "pr42": {"state": "MERGED", "merge_commit": "3a190e912d429af08bbe007cea9cf91d560329e9"},
+    "open_pull_requests": 0
+  },
+  "github_controls": {
+    "ruleset": {
+      "id": 20591337,
+      "name": "main-trusted-pr-ci-v1",
+      "enforcement": "active",
+      "required_approvals": 0,
+      "required_status_checks": [
+        "Historical Deep — contrat cache-only",
+        "Jalon 10 - entrees de preuve gelees",
+        "tests",
+        "Robin Experience — preuves visuelles"
+      ],
+      "strict": true,
+      "force_push_forbidden": true
+    },
+    "environment": {
+      "name": "chronos-control-plane-production",
+      "exists": true,
+      "protected_branches_only": true,
+      "reviewers": 0,
+      "wait_timer_minutes": 0
+    },
+    "environment_secret_names": ["NEON_API_KEY", "NEON_BOOTSTRAP_DATABASE_URL"],
+    "repository_secret_names": [
+      "API_FOOTBALL_KEY", "DATABASE_URL", "ODDS_API_KEY",
+      "R2_ACCESS_KEY_ID", "R2_ACCOUNT_ID", "R2_BUCKET_NAME", "R2_SECRET_ACCESS_KEY"
+    ],
+    "workflow_count": 75,
+    "workflow_states_initial": {"active": 41, "disabled_manually": 34},
+    "queued_runs_initial": 0,
+    "in_progress_runs_initial": 0
+  },
+  "differences_from_expected": [],
+  "secret_values_observed": false,
+  "provider_calls": 0,
+  "odds_credits": 0,
+  "r2_operations": 0,
+  "remote_database_writes": 0,
+  "purchases": 0
+}

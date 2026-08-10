@@ -1,0 +1,194 @@
+name: "Chronos Bootstrap CI V3"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chronos-bootstrap-ci-v3-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  historical-deep-quality:
+    name: "Historical Deep — contrat cache-only"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - run: python -m pytest -q tests/chronos tests/activation
+
+  hypothesis-evidence-inputs:
+    name: "Jalon 10 - entrees de preuve gelees"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install PyYAML
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          for path in sorted(Path('.github/workflows').glob('*.yml')):
+              yaml.safe_load(path.read_text(encoding='utf-8'))
+          PY
+      - run: python scripts/check_no_secrets.py
+
+  tests:
+    name: "tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: robin_ci
+          POSTGRES_USER: robin
+          POSTGRES_PASSWORD: robin_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U robin -d robin_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Valider PostgreSQL 16 de 0013 vers 0014 ciblee
+        env:
+          ROBIN_DATABASE_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+          ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
+          ROBIN_TEST_CHRONOS_MIGRATOR_ROLE: robin_ci_migrator
+          ROBIN_TEST_CHRONOS_SENTINEL_ROLE: robin_acl_sentinel
+          ROBIN_TEST_CHRONOS_AUTHORITY_URL: postgresql+psycopg://chronos_authority_runtime_login:chronos_authority_ci@localhost:5432/robin_ci
+          ROBIN_TEST_CHRONOS_RUNTIME_URL: postgresql+psycopg://chronos_effect_runtime_login:chronos_runtime_ci@localhost:5432/robin_ci
+          ROBIN_TEST_CHRONOS_READER_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
+        run: |
+          python -m alembic upgrade 0013_historical_evidence_index
+          python - <<'PY'
+          import os
+          from robin.storage.database import build_engine
+
+          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
+          with engine.begin() as connection:
+              connection.exec_driver_sql("CREATE ROLE robin_acl_sentinel NOLOGIN")
+              connection.exec_driver_sql(
+                  "CREATE ROLE robin_ci_migrator LOGIN NOSUPERUSER NOCREATEDB "
+                  "CREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD 'chronos_ci'"
+              )
+              connection.exec_driver_sql(
+                  "GRANT USAGE, CREATE ON SCHEMA public TO "
+                  "robin_ci_migrator WITH GRANT OPTION"
+              )
+              connection.exec_driver_sql(
+                  "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "
+                  "public.alembic_version TO robin_ci_migrator"
+              )
+              connection.exec_driver_sql(
+                  "ALTER DEFAULT PRIVILEGES FOR ROLE robin_ci_migrator "
+                  "IN SCHEMA public GRANT INSERT ON TABLES TO robin_acl_sentinel"
+              )
+          engine.dispose()
+          PY
+          ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python -m alembic upgrade 0014_chronos_control_plane_v2
+          python scripts/check_database_revision.py --expected 0014_chronos_control_plane_v2
+          ROBIN_DATABASE_URL='postgresql+psycopg://robin_ci_migrator:chronos_ci@localhost:5432/robin_ci' python - <<'PY'
+          import os
+          from robin.storage.database import build_engine
+
+          accounts = (
+              (
+                  "chronos_authority_runtime_login",
+                  "chronos_authority_ci",
+                  "chronos_authority_executor",
+              ),
+              (
+                  "chronos_effect_runtime_login",
+                  "chronos_runtime_ci",
+                  "chronos_runtime_writer",
+              ),
+              ("chronos_reader_login", "chronos_reader_ci", "chronos_reader"),
+          )
+          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
+          with engine.begin() as connection:
+              for login, password, group in accounts:
+                  connection.exec_driver_sql(
+                      f"CREATE ROLE {login} LOGIN NOSUPERUSER NOCREATEDB "
+                      f"NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD '{password}'"
+                  )
+                  connection.exec_driver_sql(f"GRANT {group} TO {login}")
+                  connection.exec_driver_sql(
+                      f"COMMENT ON ROLE {login} IS 'ci-only:scoped-login-contract'"
+                  )
+          engine.dispose()
+          PY
+          python -m pytest -q tests/chronos/test_chronos_postgresql_v2.py
+          python - <<'PY'
+          import os
+          from robin.storage.database import build_engine
+
+          engine = build_engine(os.environ["ROBIN_DATABASE_URL"])
+          with engine.begin() as connection:
+              connection.exec_driver_sql(
+                  "ALTER ROLE robin_ci_migrator NOLOGIN NOSUPERUSER "
+                  "NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS"
+              )
+              state = connection.exec_driver_sql(
+                  "SELECT rolcanlogin,rolsuper,rolcreatedb,rolcreaterole,"
+                  "rolreplication,rolbypassrls FROM pg_catalog.pg_roles "
+                  "WHERE rolname='robin_ci_migrator'"
+              ).mappings().one()
+              if any(state.values()):
+                  raise RuntimeError("CHRONOS_MIGRATOR_NOT_TERMINAL")
+          engine.dispose()
+          PY
+      - run: python -m pytest -q
+      - run: python -m ruff check src scripts tests
+      - run: python -m mypy --strict src/robin/chronos_production.py scripts/chronos_production_bootstrap_v3.py scripts/check_chronos_github_hold_v3.py scripts/run_chronos_provider_free_canary_v3.py
+      - run: python -m bandit -q -r src/robin scripts/chronos_production_bootstrap_v3.py scripts/check_chronos_github_hold_v3.py scripts/run_chronos_provider_free_canary_v3.py
+
+  visual-regression:
+    name: "Robin Experience — preuves visuelles"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.9.0"
+      - working-directory: cockpit
+        run: pnpm install --frozen-lockfile
+      - working-directory: cockpit
+        run: pnpm test

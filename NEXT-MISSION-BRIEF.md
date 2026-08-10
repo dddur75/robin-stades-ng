@@ -1,3 +1,7 @@
+> **Statut historique:** `SUPERSEDED_BY_CHRONOS_PRODUCTION_BOOTSTRAP_V3`.
+> Conservé comme preuve; ne pas utiliser comme source d’autorité. Le handoff
+> courant est `docs/handoffs/CHRONOS-PRODUCTION-BOOTSTRAP-V3-HANDOFF.md`.
+
 # Next Mission Brief — Chronos Control Plane V2 Review and Controlled Activation
 
 Status: `NOT_EXECUTED`

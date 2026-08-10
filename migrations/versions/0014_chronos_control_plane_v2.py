@@ -726,6 +726,7 @@ def _create_postgresql_guards_and_grants() -> None:
         REVOKE ALL ON public.chronos_effect_accounting FROM PUBLIC,
           chronos_reader, chronos_test_writer, chronos_runtime_writer,
           chronos_authority_executor;
+        REVOKE ALL ON public.alembic_version FROM chronos_reader;
         REVOKE EXECUTE ON FUNCTION public.chronos_framed_sha256(text[]),
           public.chronos_effect_event_hash(
             bigint,text,text,text,text,text,text,timestamptz,
@@ -785,6 +786,7 @@ def _create_postgresql_guards_and_grants() -> None:
 
         GRANT USAGE ON SCHEMA public TO chronos_reader,
           chronos_runtime_writer, chronos_authority_executor;
+        GRANT SELECT ON public.alembic_version TO chronos_reader;
         GRANT SELECT ON public.chronos_effect_accounting TO chronos_reader;
         GRANT EXECUTE ON FUNCTION public.chronos_issue_effect_authority(
           text,bigint,integer,text,text,text,text,text,bytea,integer,text)
@@ -874,6 +876,7 @@ def _drop_postgresql_objects() -> None:
     op.execute(
         """
         REVOKE ALL ON public.chronos_effect_accounting FROM chronos_reader;
+        REVOKE ALL ON public.alembic_version FROM chronos_reader;
         REVOKE USAGE ON SCHEMA public FROM chronos_reader,
           chronos_runtime_writer, chronos_authority_executor;
         REVOKE EXECUTE ON FUNCTION public.chronos_issue_effect_authority(
