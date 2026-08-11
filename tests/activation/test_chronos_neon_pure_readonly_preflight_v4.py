@@ -6,6 +6,7 @@ import re
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, cast
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 import yaml
@@ -15,14 +16,18 @@ from robin.chronos_production import DirectPostgresTarget
 from scripts.chronos_neon_pure_readonly_preflight_v4 import (
     GO_VERDICT,
     MAX_NEON_GETS,
+    MAX_PROJECT_ITEMS,
+    MAX_PROJECT_PAGES,
     MAX_SQL_STATEMENTS,
     NO_GO_REASONS,
     NO_GO_VERDICT,
+    PROJECT_PAGE_LIMIT,
     SQL_STATEMENTS,
     GateChecks,
     NeonObservation,
     NeonReadOnlyClient,
     _inspect_database,
+    _list_projects_bounded,
     _read_authority_inventory,
     _read_revisions,
     _resolve_neon_identity,
@@ -50,6 +55,13 @@ NEON_API_FIXTURE = (
     / "fixtures"
     / "chronos_neon_pure_readonly_preflight_v4_neon_api.json"
 )
+IDENTITY_GOLDEN = (
+    ROOT
+    / "tests"
+    / "activation"
+    / "fixtures"
+    / "chronos_neon_project_identity_pagination_v1_golden_pack.json"
+)
 FORBIDDEN_SQL = frozenset(
     {
         "CREATE",
@@ -76,9 +88,7 @@ def _on(document: dict[object, object]) -> object:
 
 def _golden_cases() -> list[dict[str, Any]]:
     document = json.loads(GOLDEN.read_text(encoding="utf-8"))
-    assert document["schema_version"] == (
-        "chronos-neon-pure-readonly-preflight-v4-golden-pack"
-    )
+    assert document["schema_version"] == ("chronos-neon-pure-readonly-preflight-v4-golden-pack")
     return cast(list[dict[str, Any]], document["cases"])
 
 
@@ -172,7 +182,7 @@ def test_sql_is_bounded_and_has_no_mutating_statement() -> None:
     assert "default_transaction_read_only=on" in source
     assert "statement_timeout=15000" in source
     assert "lock_timeout=3000" in source
-    assert "sql_write_count\": 0" in source
+    assert 'sql_write_count": 0' in source
     assert "ORDER BY version_num" in SQL_STATEMENTS[7]
     assert 'endpoint_state == "active"' in source
 
@@ -234,13 +244,22 @@ class _FixtureNeonClient:
         self.fixture = fixture
         self.get_count = 0
 
-    def get(self, path: str) -> dict[str, Any]:
+    def require_get_budget(self, required: int, gate: str) -> None:
+        if self.get_count + required > MAX_NEON_GETS:
+            raise RuntimeError(gate)
+
+    def get(
+        self,
+        path: str,
+        *,
+        query: dict[str, object] | None = None,
+    ) -> dict[str, Any]:
         self.get_count += 1
-        if path == "/projects?limit=12":
+        if path == "/projects":
             return cast(dict[str, Any], self.fixture["projects"])
         if path == "/projects/synthetic-project":
             return cast(dict[str, Any], self.fixture["project_detail"])
-        if path == "/projects/synthetic-project/branches?limit=10000":
+        if path == "/projects/synthetic-project/branches":
             return cast(dict[str, Any], self.fixture["branches"])
         if path == "/projects/synthetic-project/endpoints":
             return cast(dict[str, Any], self.fixture["endpoints"])
@@ -278,14 +297,17 @@ def test_neon_api_fixture_proves_exact_identity_and_owner_branch_allowance(
     assert observed.endpoint_state == "active"
     assert observed.owner_branch_count == 1
     assert observed.branch_limit == 5
-    assert client.get_count == 4
+    assert observed.identity_path == "CONFIGURED_PROJECT_ID"
+    assert observed.identity_verdict == "CONFIGURED_PROJECT_IDENTITY_PROVEN"
+    assert observed.project_pages_read == 0
+    assert client.get_count == 3
 
 
 @pytest.mark.parametrize(
     ("field", "value", "reason"),
     [
-        ("pagination", {"next": "another-page"}, "RECOVERY_BRANCH_NOT_FEASIBLE"),
-        ("pagination", "malformed", "RECOVERY_BRANCH_NOT_FEASIBLE"),
+        ("pagination", {"cursor": "wrong-parser"}, "NEON_PRODUCTION_BRANCH_AMBIGUOUS"),
+        ("pagination", "malformed", "NEON_PRODUCTION_BRANCH_AMBIGUOUS"),
     ],
 )
 def test_neon_branch_inventory_fails_closed_when_pagination_is_not_complete(
@@ -317,9 +339,432 @@ def test_neon_missing_branch_limit_is_unknown_not_purchase(
         )
 
 
+class _ApiResponse:
+    def __init__(self, document: dict[str, Any], status_code: int = 200) -> None:
+        self._document = deepcopy(document)
+        self.status_code = status_code
+
+    def json(self) -> dict[str, Any]:
+        return deepcopy(self._document)
+
+
+class _ScriptedNeonSession:
+    def __init__(
+        self,
+        *,
+        project_pages: list[dict[str, Any]] | None = None,
+        details: dict[str, dict[str, Any]] | None = None,
+        branches: dict[str, list[dict[str, Any]]] | None = None,
+        endpoints: dict[str, dict[str, Any]] | None = None,
+        detail_status: dict[str, int] | None = None,
+    ) -> None:
+        self.project_pages = project_pages or []
+        self.details = details or {}
+        self.branches = branches or {}
+        self.endpoints = endpoints or {}
+        self.detail_status = detail_status or {}
+        self.project_page_index = 0
+        self.branch_page_indexes: dict[str, int] = {}
+        self.urls: list[str] = []
+        self.paths: list[str] = []
+
+    def get(self, url: str, **_kwargs: object) -> _ApiResponse:
+        self.urls.append(url)
+        parsed = urlparse(url)
+        path = parsed.path.removeprefix("/api/v2")
+        query = parse_qs(parsed.query, keep_blank_values=True)
+        self.paths.append(path)
+        if path == "/projects":
+            assert query["limit"] == [str(PROJECT_PAGE_LIMIT)]
+            if self.project_page_index:
+                previous = self.project_pages[self.project_page_index - 1]
+                assert query["cursor"] == [previous["pagination"]["cursor"]]
+            else:
+                assert "cursor" not in query
+            page = self.project_pages[self.project_page_index]
+            self.project_page_index += 1
+            return _ApiResponse(page)
+        match = re.fullmatch(r"/projects/([a-z0-9-]{1,60})(.*)", path)
+        if match is None:
+            raise AssertionError(f"unexpected synthetic route: {path}")
+        project_id, suffix = match.groups()
+        if suffix == "":
+            status = self.detail_status.get(project_id, 200)
+            return _ApiResponse(self.details.get(project_id, {}), status)
+        if suffix == "/endpoints":
+            return _ApiResponse(self.endpoints[project_id])
+        if suffix == "/branches":
+            assert query["limit"] == ["10000"]
+            assert query["sort_by"] == ["updated_at"]
+            assert query["sort_order"] == ["asc"]
+            assert query["include_deleted"] == ["false"]
+            index = self.branch_page_indexes.get(project_id, 0)
+            pages = self.branches[project_id]
+            if index:
+                assert query["cursor"] == [pages[index - 1]["pagination"]["next"]]
+            else:
+                assert "cursor" not in query
+            self.branch_page_indexes[project_id] = index + 1
+            return _ApiResponse(pages[index])
+        raise AssertionError(f"unexpected synthetic route: {path}")
+
+
+def _project(project_id: str) -> dict[str, Any]:
+    return {
+        "id": project_id,
+        "name": f"name-{project_id}",
+        "owner_id": "owner-shared",
+    }
+
+
+def _project_page(
+    project_ids: list[str],
+    *,
+    cursor: str | None = None,
+    unavailable: list[str] | None = None,
+) -> dict[str, Any]:
+    page: dict[str, Any] = {
+        "projects": [_project(project_id) for project_id in project_ids],
+        "unavailable_project_ids": unavailable or [],
+    }
+    if cursor is not None:
+        page["pagination"] = {"cursor": cursor}
+    return page
+
+
+def _detail(project_id: str) -> dict[str, Any]:
+    return {
+        "project": {
+            "id": project_id,
+            "name": f"name-{project_id}",
+            "owner_id": "owner-shared",
+            "region_id": "aws-eu-synthetic-1",
+            "history_retention_seconds": 86_400,
+            "owner": {"branches_limit": 20},
+        }
+    }
+
+
+def _branch(
+    *,
+    branch_id: str = "branch-production",
+    default: bool = True,
+) -> dict[str, Any]:
+    return {
+        "id": branch_id,
+        "name": "production",
+        "current_state": "ready",
+        "default": default,
+    }
+
+
+def _endpoint(
+    project_id: str,
+    *,
+    endpoint_id: str = "endpoint-production",
+    branch_id: str = "branch-production",
+    host: str = "ep-synthetic.neon.tech",
+    state: str = "active",
+) -> dict[str, Any]:
+    return {
+        "id": endpoint_id,
+        "project_id": project_id,
+        "branch_id": branch_id,
+        "host": host,
+        "type": "read_write",
+        "current_state": state,
+        "disabled": False,
+        "region_id": "aws-eu-synthetic-1",
+    }
+
+
+def _client(session: _ScriptedNeonSession) -> NeonReadOnlyClient:
+    return NeonReadOnlyClient("synthetic-only", session=session)  # type: ignore[arg-type]
+
+
+def _identity_golden_cases() -> dict[str, dict[str, Any]]:
+    document = json.loads(IDENTITY_GOLDEN.read_text(encoding="utf-8"))
+    assert document["schema_version"] == ("chronos-neon-project-identity-pagination-v1-golden-pack")
+    return {case["case_id"]: case for case in document["cases"]}
+
+
+def _project_pagination_scenario(case_id: str) -> tuple[list[dict[str, Any]], int]:
+    if case_id == "PROJECTS_ONE_PAGE":
+        return [_project_page(["project-a"])], 0
+    if case_id == "PROJECTS_TWO_PAGES":
+        return [
+            _project_page(["project-a"], cursor="cursor-one"),
+            _project_page(["project-b"]),
+        ], 0
+    if case_id == "PROJECTS_THREE_PAGES":
+        return [
+            _project_page(["project-a"], cursor="cursor-one"),
+            _project_page(["project-b"], cursor="cursor-two"),
+            _project_page(["project-c"]),
+        ], 0
+    if case_id == "PROJECTS_CURSOR_REPEATED":
+        return [
+            _project_page(["project-a"], cursor="cursor-one"),
+            _project_page(["project-b"], cursor="cursor-one"),
+        ], 0
+    if case_id == "PROJECTS_CURSOR_CYCLE":
+        return [
+            _project_page(["project-a"], cursor="cursor-one"),
+            _project_page(["project-b"], cursor="cursor-two"),
+            _project_page(["project-c"], cursor="cursor-one"),
+        ], 0
+    if case_id == "PROJECTS_DUPLICATE_ID_ACROSS_PAGES":
+        return [
+            _project_page(["project-a"], cursor="cursor-one"),
+            _project_page(["project-a", "project-b"]),
+        ], 0
+    if case_id == "PROJECTS_UNAVAILABLE_NON_EMPTY":
+        return [_project_page(["project-a"], unavailable=["project-missing"])], 0
+    if case_id == "PROJECTS_MALFORMED_PAGINATION":
+        page = _project_page(["project-a"])
+        page["pagination"] = {}
+        return [page], 0
+    if case_id == "PROJECTS_TOO_MANY_PAGES":
+        return [
+            _project_page(["project-a"], cursor="cursor-one"),
+            _project_page(["project-b"], cursor="cursor-two"),
+            _project_page(["project-c"], cursor="cursor-three"),
+        ], 0
+    if case_id == "PROJECTS_TOO_MANY_ITEMS":
+        ids = [f"project-{index}" for index in range(MAX_PROJECT_ITEMS + 1)]
+        return [_project_page(ids)], 0
+    if case_id == "PROJECTS_GET_BUDGET_EXHAUSTED":
+        return [_project_page(["project-a"])], MAX_NEON_GETS - 4
+    raise AssertionError(case_id)
+
+
+@pytest.mark.parametrize(
+    "case_id",
+    [
+        "PROJECTS_ONE_PAGE",
+        "PROJECTS_TWO_PAGES",
+        "PROJECTS_THREE_PAGES",
+        "PROJECTS_CURSOR_CYCLE",
+        "PROJECTS_CURSOR_REPEATED",
+        "PROJECTS_DUPLICATE_ID_ACROSS_PAGES",
+        "PROJECTS_UNAVAILABLE_NON_EMPTY",
+        "PROJECTS_MALFORMED_PAGINATION",
+        "PROJECTS_TOO_MANY_PAGES",
+        "PROJECTS_TOO_MANY_ITEMS",
+        "PROJECTS_GET_BUDGET_EXHAUSTED",
+    ],
+)
+def test_project_pagination_golden_pack(case_id: str) -> None:
+    case = _identity_golden_cases()[case_id]
+    pages, initial_get_count = _project_pagination_scenario(case_id)
+    session = _ScriptedNeonSession(project_pages=pages)
+    client = _client(session)
+    client.get_count = initial_get_count
+    audit = preflight_module.IdentityAudit("BOUNDED_DISCOVERY")
+    if case["expected_gate"] is None:
+        projects = _list_projects_bounded(client, audit)
+        assert len(projects) == len(pages)
+        assert audit.project_pages_read == len(pages)
+    else:
+        with pytest.raises(preflight_module.PreflightNoGo) as caught:
+            _list_projects_bounded(client, audit)
+        assert caught.value.gate == case["expected_gate"]
+    assert client.get_count <= MAX_NEON_GETS
+    assert audit.project_pages_read <= MAX_PROJECT_PAGES
+
+
+def _configured_session(case_id: str) -> _ScriptedNeonSession:
+    project_id = "synthetic-project"
+    detail_status = {project_id: 404} if case_id == "CONFIGURED_ID_NOT_FOUND" else {}
+    branch = _branch(default=case_id != "CONFIGURED_ID_NON_DEFAULT_BRANCH")
+    endpoints = [_endpoint(project_id)]
+    if case_id == "CONFIGURED_ID_ENDPOINT_MISSING":
+        endpoints[0]["host"] = "ep-other.neon.tech"
+    elif case_id == "CONFIGURED_ID_ENDPOINT_DUPLICATED":
+        endpoints.append(_endpoint(project_id, endpoint_id="endpoint-duplicate"))
+    elif case_id == "CONFIGURED_ID_WRONG_BRANCH":
+        endpoints[0]["branch_id"] = "branch-other"
+    elif case_id == "CONFIGURED_ID_IDLE_ENDPOINT":
+        endpoints[0]["current_state"] = "idle"
+    return _ScriptedNeonSession(
+        details={project_id: _detail(project_id)},
+        branches={project_id: [{"branches": [branch], "pagination": {}}]},
+        endpoints={project_id: {"endpoints": endpoints}},
+        detail_status=detail_status,
+    )
+
+
+@pytest.mark.parametrize(
+    "case_id",
+    [
+        "CONFIGURED_ID_VALID_EXACT_ENDPOINT",
+        "CONFIGURED_ID_NOT_FOUND",
+        "CONFIGURED_ID_INVALID",
+        "CONFIGURED_ID_ENDPOINT_MISSING",
+        "CONFIGURED_ID_ENDPOINT_DUPLICATED",
+        "CONFIGURED_ID_WRONG_BRANCH",
+        "CONFIGURED_ID_NON_DEFAULT_BRANCH",
+        "CONFIGURED_ID_IDLE_ENDPOINT",
+    ],
+)
+def test_configured_project_identity_golden_pack(
+    case_id: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    case = _identity_golden_cases()[case_id]
+    configured = "invalid/project" if case_id == "CONFIGURED_ID_INVALID" else "synthetic-project"
+    monkeypatch.setenv("NEON_PROJECT_ID", configured)
+    session = _configured_session(case_id)
+    client = _client(session)
+    if case["expected_gate"] is None:
+        observed = _resolve_neon_identity(client, _synthetic_target())
+        assert observed.identity_verdict == case["expected_identity_verdict"]
+        assert observed.project_pages_read == 0
+        assert observed.endpoint_projects_inspected == 1
+    else:
+        with pytest.raises(preflight_module.PreflightNoGo) as caught:
+            _resolve_neon_identity(client, _synthetic_target())
+        assert caught.value.gate == case["expected_gate"]
+    assert "/projects" not in session.paths
+    assert client.get_count <= MAX_NEON_GETS
+
+
+def _discovery_session(case_id: str) -> _ScriptedNeonSession:
+    if case_id == "DISCOVERY_BUDGET_TOO_SMALL":
+        ids = [f"project-{index}" for index in range(MAX_PROJECT_ITEMS + 1)]
+        return _ScriptedNeonSession(project_pages=[_project_page(ids)])
+    project_ids = ["project-a"]
+    pages = [_project_page(project_ids)]
+    if case_id in {"DISCOVERY_MULTIPLE_ENDPOINT_MATCH", "DISCOVERY_PAGINATED_UNIQUE_MATCH"}:
+        project_ids = ["project-a", "project-b"]
+    if case_id == "DISCOVERY_PAGINATED_UNIQUE_MATCH":
+        pages = [
+            _project_page(["project-a"], cursor="opaque:/?& cursor"),
+            _project_page(["project-b"]),
+        ]
+    elif len(project_ids) == 2:
+        pages = [_project_page(project_ids)]
+    details = {project_id: _detail(project_id) for project_id in project_ids}
+    branches = {
+        project_id: [{"branches": [_branch()], "pagination": {}}] for project_id in project_ids
+    }
+    endpoints: dict[str, dict[str, Any]] = {}
+    for index, project_id in enumerate(project_ids):
+        host = "ep-other.neon.tech"
+        if case_id == "DISCOVERY_UNIQUE_ENDPOINT_MATCH":
+            host = "ep-synthetic.neon.tech"
+        elif case_id == "DISCOVERY_MULTIPLE_ENDPOINT_MATCH":
+            host = "ep-synthetic.neon.tech"
+        elif case_id == "DISCOVERY_PAGINATED_UNIQUE_MATCH" and index == 1:
+            host = "ep-synthetic.neon.tech"
+        endpoints[project_id] = {"endpoints": [_endpoint(project_id, host=host)]}
+    return _ScriptedNeonSession(
+        project_pages=pages,
+        details=details,
+        branches=branches,
+        endpoints=endpoints,
+    )
+
+
+@pytest.mark.parametrize(
+    "case_id",
+    [
+        "DISCOVERY_UNIQUE_ENDPOINT_MATCH",
+        "DISCOVERY_ZERO_ENDPOINT_MATCH",
+        "DISCOVERY_MULTIPLE_ENDPOINT_MATCH",
+        "DISCOVERY_BUDGET_TOO_SMALL",
+        "DISCOVERY_PAGINATED_UNIQUE_MATCH",
+    ],
+)
+def test_bounded_discovery_golden_pack(
+    case_id: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
+    case = _identity_golden_cases()[case_id]
+    session = _discovery_session(case_id)
+    client = _client(session)
+    if case["expected_gate"] is None:
+        observed = _resolve_neon_identity(client, _synthetic_target())
+        assert observed.identity_verdict == case["expected_identity_verdict"]
+        assert observed.project_pages_read == len(session.project_pages)
+        assert observed.endpoint_projects_inspected == len(session.endpoints)
+    else:
+        with pytest.raises(preflight_module.PreflightNoGo) as caught:
+            _resolve_neon_identity(client, _synthetic_target())
+        assert caught.value.gate == case["expected_gate"]
+        if case_id == "DISCOVERY_BUDGET_TOO_SMALL":
+            assert caught.value.sanitized_evidence is not None
+            assert caught.value.sanitized_evidence["recommendation"] == (
+                "NEON_PROJECT_ID_RECOMMENDED_FOR_BOUNDED_IDENTITY"
+            )
+            assert session.paths == ["/projects"]
+    assert client.get_count <= MAX_NEON_GETS
+    if case_id == "DISCOVERY_PAGINATED_UNIQUE_MATCH":
+        cursor_url = next(url for url in session.urls if "cursor=" in url)
+        assert "opaque:/?& cursor" not in cursor_url
+        assert "cursor=opaque%3A%2F%3F%26+cursor" in cursor_url
+
+
+def test_projects_and_branches_use_distinct_pagination_parsers() -> None:
+    project_page = _project_page(["project-a"])
+    project_page["pagination"] = {"next": "branch-style"}
+    project_client = _client(_ScriptedNeonSession(project_pages=[project_page]))
+    with pytest.raises(preflight_module.PreflightNoGo) as project_error:
+        _list_projects_bounded(
+            project_client,
+            preflight_module.IdentityAudit("BOUNDED_DISCOVERY"),
+        )
+    assert project_error.value.gate == "project_pagination_invalid"
+
+    fixture = _neon_api_fixture()
+    fixture["branches"]["pagination"] = {"cursor": "project-style"}
+    client = _FixtureNeonClient(fixture)
+    with pytest.raises(preflight_module.PreflightNoGo) as branch_error:
+        preflight_module._list_branches_bounded(
+            client,  # type: ignore[arg-type]
+            "synthetic-project",
+            preflight_module.IdentityAudit("CONFIGURED_PROJECT_ID"),
+            reserve_after=0,
+        )
+    assert branch_error.value.gate == "branch_inventory_truncated"
+
+
+def test_branch_cursor_is_followed_encoded_and_never_reported_raw(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("NEON_PROJECT_ID", "synthetic-project")
+    raw_cursor = "branch:/?& cursor"
+    session = _ScriptedNeonSession(
+        details={"synthetic-project": _detail("synthetic-project")},
+        branches={
+            "synthetic-project": [
+                {
+                    "branches": [_branch()],
+                    "pagination": {
+                        "next": raw_cursor,
+                        "sort_by": "updated_at",
+                        "sort_order": "asc",
+                    },
+                },
+                {"branches": [_branch(branch_id="branch-secondary")]},
+            ]
+        },
+        endpoints={"synthetic-project": {"endpoints": [_endpoint("synthetic-project")]}},
+    )
+    observed = _resolve_neon_identity(_client(session), _synthetic_target())
+    assert observed.api_get_count == 4
+    cursor_url = next(url for url in session.urls if "cursor=" in url)
+    assert raw_cursor not in cursor_url
+    assert "cursor=branch%3A%2F%3F%26+cursor" in cursor_url
+    assert raw_cursor not in json.dumps(_sanitized_neon(observed), sort_keys=True)
+
+
 def test_sanitized_neon_observation_hashes_branch_name() -> None:
     sentinel = "provider-branch-name-must-not-leak"
     observed = NeonObservation(
+        identity_path="CONFIGURED_PROJECT_ID",
+        identity_verdict="CONFIGURED_PROJECT_IDENTITY_PROVEN",
         project_id="project",
         project_name="project-name",
         region="region",
@@ -334,6 +779,9 @@ def test_sanitized_neon_observation_hashes_branch_name() -> None:
         owner_branch_count=1,
         branch_limit=5,
         history_retention_seconds=1,
+        project_pages_read=0,
+        projects_observed=1,
+        endpoint_projects_inspected=1,
         api_get_count=4,
     )
     serialized = json.dumps(_sanitized_neon(observed), sort_keys=True)
@@ -375,9 +823,7 @@ def test_preflight_uses_shared_secure_dsn_contract(query: str) -> None:
     normalized, target = _validated_psycopg_url(dsn)
     assert normalized.startswith("postgresql://")
     assert target.sslmode in {"require", "verify-full"}
-    assert target.channel_binding == (
-        "require" if "channel_binding=require" in query else None
-    )
+    assert target.channel_binding == ("require" if "channel_binding=require" in query else None)
 
 
 def test_unexpected_query_name_is_hashed_in_sanitized_failure_profile() -> None:
@@ -390,9 +836,7 @@ def test_unexpected_query_name_is_hashed_in_sanitized_failure_profile() -> None:
     with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN") as caught:
         _validated_psycopg_url(dsn)
     profile = caught.value.dsn_security_profile
-    assert profile["contract_verdict"] == (
-        "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"
-    )
+    assert profile["contract_verdict"] == ("NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT")
     assert profile["unexpected_parameter_count"] == 1
     assert unexpected_name not in json.dumps(profile, sort_keys=True)
     assert caught.value.gate == "database_url_parameters_forbidden"
@@ -423,8 +867,7 @@ def test_libpq_redirection_fails_before_psycopg_connect(
     monkeypatch.setattr(preflight_module.psycopg, "connect", forbidden_connect)
     dsn = (
         "postgresql://synthetic_user:synthetic_password@"
-        "ep-synthetic.neon.tech/synthetic_database?sslmode=require&"
-        + override
+        "ep-synthetic.neon.tech/synthetic_database?sslmode=require&" + override
     )
     with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
         _inspect_database(dsn)
@@ -479,10 +922,7 @@ def test_ambiguous_userinfo_fails_before_preflight_connect(
         raise AssertionError("psycopg.connect must remain unreachable")
 
     monkeypatch.setattr(preflight_module.psycopg, "connect", forbidden_connect)
-    dsn = (
-        f"postgresql://{netloc}/synthetic_database?"
-        "sslmode=require&channel_binding=require"
-    )
+    dsn = f"postgresql://{netloc}/synthetic_database?sslmode=require&channel_binding=require"
     with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
         _inspect_database(dsn)
     assert connect_calls == 0

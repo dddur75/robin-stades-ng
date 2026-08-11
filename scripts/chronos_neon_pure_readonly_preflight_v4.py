@@ -13,11 +13,11 @@ import json
 import os
 import re
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol, cast
-from urllib.parse import parse_qsl, urlparse
+from urllib.parse import parse_qsl, urlencode, urlparse
 
 import psycopg
 import requests
@@ -38,8 +38,13 @@ REPORT_SCHEMA = "chronos-neon-pure-readonly-preflight-v4"
 GO_VERDICT = "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION"
 NO_GO_VERDICT = "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED"
 MAX_NEON_GETS = 25
-MAX_PROJECT_SCAN = 11
+PROJECT_PAGE_LIMIT = 400
+MAX_PROJECT_PAGES = 3
+MAX_BRANCH_PAGES = 3
 MAX_BRANCH_PAGE = 10_000
+MAX_PROJECTS_FOR_ENDPOINT_DISCOVERY = MAX_NEON_GETS - MAX_PROJECT_PAGES - MAX_BRANCH_PAGES - 1
+MAX_PROJECT_ITEMS = MAX_PROJECTS_FOR_ENDPOINT_DISCOVERY
+MAX_BRANCH_ITEMS = MAX_BRANCH_PAGE * MAX_BRANCH_PAGES
 MAX_SQL_STATEMENTS = 25
 EXPECTED_STATEMENT_TIMEOUT_MS = 15_000
 EXPECTED_LOCK_TIMEOUT_MS = 3_000
@@ -64,15 +69,13 @@ SQL_STATEMENTS: tuple[str, ...] = (
     "SHOW transaction_read_only",
     "SHOW statement_timeout",
     "SHOW lock_timeout",
-    "SELECT current_database(), session_user, current_user, "
-    "current_setting('server_version')",
+    "SELECT current_database(), session_user, current_user, current_setting('server_version')",
     "SELECT ssl FROM pg_catalog.pg_stat_ssl WHERE pid=pg_catalog.pg_backend_pid()",
     "SELECT version_num FROM public.alembic_version ORDER BY version_num",
     "SELECT rolname, rolcanlogin, rolsuper, rolcreatedb, rolcreaterole, "
     "rolreplication, rolbypassrls FROM pg_catalog.pg_roles "
     "WHERE rolname=current_user",
-    "SELECT count(*) = 1 AS visible FROM pg_catalog.pg_authid "
-    "WHERE rolname=current_user",
+    "SELECT count(*) = 1 AS visible FROM pg_catalog.pg_authid WHERE rolname=current_user",
     "SELECT rolname, rolcanlogin, rolsuper, rolcreatedb, rolcreaterole, "
     "rolreplication, rolbypassrls FROM pg_catalog.pg_roles "
     "WHERE rolname LIKE 'chronos_%' ORDER BY rolname",
@@ -135,6 +138,8 @@ class GateDecision:
 
 @dataclass(frozen=True, slots=True)
 class NeonObservation:
+    identity_path: str
+    identity_verdict: str
     project_id: str
     project_name: str
     region: str
@@ -149,7 +154,44 @@ class NeonObservation:
     owner_branch_count: int
     branch_limit: int
     history_retention_seconds: int
+    project_pages_read: int
+    projects_observed: int
+    endpoint_projects_inspected: int
     api_get_count: int
+
+
+@dataclass(slots=True)
+class IdentityAudit:
+    identity_path: str
+    project_pages_read: int = 0
+    projects_observed: int = 0
+    endpoint_projects_inspected: int = 0
+    project_id: str | None = None
+    endpoint_id: str | None = None
+    branch_id: str | None = None
+    project_cursor_fingerprints: set[str] = field(default_factory=set)
+    branch_cursor_fingerprints: set[str] = field(default_factory=set)
+
+    def sanitized(self, *, api_get_count: int, gate: str | None = None) -> dict[str, object]:
+        evidence: dict[str, object] = {
+            "identity_path": self.identity_path,
+            "project_pages_read": self.project_pages_read,
+            "projects_observed": self.projects_observed,
+            "endpoint_projects_inspected": self.endpoint_projects_inspected,
+            "global_project_inventory_gets": self.project_pages_read,
+            "api_get_count": api_get_count,
+            "project_cursor_fingerprints": sorted(self.project_cursor_fingerprints),
+            "branch_cursor_fingerprints": sorted(self.branch_cursor_fingerprints),
+        }
+        if self.project_id is not None:
+            evidence["project_id_sha256"] = _fingerprint(self.project_id)
+        if self.endpoint_id is not None:
+            evidence["endpoint_id_sha256"] = _fingerprint(self.endpoint_id)
+        if self.branch_id is not None:
+            evidence["branch_id_sha256"] = _fingerprint(self.branch_id)
+        if gate == "project_identity_discovery_budget_exceeded":
+            evidence["recommendation"] = "NEON_PROJECT_ID_RECOMMENDED_FOR_BOUNDED_IDENTITY"
+        return evidence
 
 
 @dataclass(frozen=True, slots=True)
@@ -184,6 +226,7 @@ class PreflightNoGo(RuntimeError):
         gate: str,
         *,
         dsn_security_profile: Mapping[str, object] | None = None,
+        sanitized_evidence: Mapping[str, object] | None = None,
     ) -> None:
         if reason not in NO_GO_REASONS:
             raise ValueError("INVALID_NO_GO_REASON")
@@ -191,6 +234,7 @@ class PreflightNoGo(RuntimeError):
         self.reason = reason
         self.gate = gate
         self.dsn_security_profile = dsn_security_profile
+        self.sanitized_evidence = sanitized_evidence
 
 
 def evaluate_checks(checks: GateChecks) -> GateDecision:
@@ -235,10 +279,10 @@ def _fingerprint(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
-def _safe_identifier(value: object) -> str:
+def _safe_identifier(value: object, *, gate: str = "unsafe_identifier") -> str:
     identifier = str(value)
     if _SAFE_ID.fullmatch(identifier) is None:
-        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "unsafe_identifier")
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
     return identifier
 
 
@@ -264,19 +308,29 @@ class NeonReadOnlyClient:
         self._session = session or requests.Session()
         self.get_count = 0
 
-    def get(self, path: str) -> dict[str, Any]:
-        if not path.startswith("/projects") or ".." in path:
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_route_forbidden"
-            )
+    def require_get_budget(self, required: int, gate: str) -> None:
+        """Prove that a complete planned suffix still fits before a GET."""
+
+        if required < 1 or self.get_count + required > MAX_NEON_GETS:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+
+    def get(
+        self,
+        path: str,
+        *,
+        query: Mapping[str, object] | None = None,
+    ) -> dict[str, Any]:
+        if not path.startswith("/projects") or ".." in path or "?" in path or "#" in path:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_route_forbidden")
         if self.get_count >= MAX_NEON_GETS:
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_get_budget_exhausted"
-            )
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_get_budget_exhausted")
         self.get_count += 1
+        request_url = NEON_API + path
+        if query:
+            request_url += "?" + urlencode(query, doseq=False, safe="")
         try:
             response = self._session.get(
-                NEON_API + path,
+                request_url,
                 headers={
                     "Authorization": f"Bearer {self._api_key}",
                     "Accept": "application/json",
@@ -285,9 +339,7 @@ class NeonReadOnlyClient:
                 allow_redirects=False,
             )
         except requests.RequestException:
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_unavailable"
-            ) from None
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_unavailable") from None
         if not 200 <= response.status_code < 300:
             raise PreflightNoGo(
                 "NEON_PROJECT_IDENTITY_AMBIGUOUS",
@@ -300,68 +352,239 @@ class NeonReadOnlyClient:
                 "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_invalid_json"
             ) from None
         if not isinstance(document, dict):
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_invalid_document"
-            )
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_invalid_document")
         return cast(dict[str, Any], document)
 
 
 def _project_details(document: Mapping[str, Any]) -> dict[str, Any]:
     project = document.get("project")
     if not isinstance(project, dict):
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_details_missing"
-        )
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_details_missing")
     return cast(dict[str, Any], project)
-
-
-def _candidate_projects(client: NeonReadOnlyClient) -> list[dict[str, Any]]:
-    configured = os.getenv("NEON_PROJECT_ID", "").strip()
-    document = client.get(f"/projects?limit={MAX_PROJECT_SCAN + 1}")
-    projects = _dict_list(document, "projects", "NEON_PROJECT_IDENTITY_AMBIGUOUS")
-    if not projects or len(projects) > MAX_PROJECT_SCAN:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_scan_not_unique_bounded"
-        )
-    unavailable = document.get("unavailable", [])
-    if not isinstance(unavailable, list) or unavailable:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_inventory_incomplete"
-        )
-    pagination = document.get("pagination")
-    if pagination is not None:
-        if not isinstance(pagination, dict) or any(pagination.values()):
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_inventory_paginated"
-            )
-    owner_ids = {str(project.get("owner_id", "")) for project in projects}
-    if len(owner_ids) != 1 or "" in owner_ids:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_owner_scope_ambiguous"
-        )
-    if configured:
-        project_id = _safe_identifier(configured)
-        if sum(str(project.get("id", "")) == project_id for project in projects) != 1:
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS", "configured_project_not_in_inventory"
-            )
-    return projects
 
 
 def _branch_state(branch: Mapping[str, Any]) -> str:
     return str(branch.get("current_state", branch.get("state", ""))).lower()
 
 
-def _complete_branch_page(document: Mapping[str, Any], count: int) -> bool:
-    pagination = document.get("pagination")
-    if pagination is None:
-        return count < MAX_BRANCH_PAGE
-    if not isinstance(pagination, dict):
-        return False
-    next_cursor = pagination.get("next")
-    if next_cursor not in (None, ""):
-        return False
-    return count < MAX_BRANCH_PAGE
+def _project_page_cursor(document: Mapping[str, Any]) -> str | None:
+    """Parse the List projects Pagination contract (`pagination.cursor`)."""
+
+    if "pagination" not in document:
+        return None
+    pagination = document["pagination"]
+    if not isinstance(pagination, dict) or set(pagination) != {"cursor"}:
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_pagination_invalid")
+    cursor = pagination.get("cursor")
+    if not isinstance(cursor, str) or not cursor:
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_pagination_invalid")
+    return cursor
+
+
+def _list_projects_bounded(
+    client: NeonReadOnlyClient,
+    audit: IdentityAudit,
+) -> list[dict[str, Any]]:
+    """Enumerate a complete project inventory without partial endpoint scans."""
+
+    projects: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    seen_pages: set[str] = set()
+    cursor: str | None = None
+    while True:
+        if audit.project_pages_read >= MAX_PROJECT_PAGES:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_pagination_invalid")
+        client.require_get_budget(
+            1 + len(projects) + 1 + MAX_BRANCH_PAGES,
+            "project_identity_discovery_budget_exceeded",
+        )
+        query: dict[str, object] = {"limit": PROJECT_PAGE_LIMIT}
+        if cursor is not None:
+            query["cursor"] = cursor
+        document = client.get("/projects", query=query)
+        audit.project_pages_read += 1
+        page = _dict_list(
+            document,
+            "projects",
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+        )
+        unavailable = document.get("unavailable_project_ids", [])
+        if not isinstance(unavailable, list) or unavailable:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_inventory_incomplete")
+        page_ids: list[str] = []
+        for project in page:
+            project_id = _safe_identifier(project.get("id", ""), gate="project_pagination_invalid")
+            owner_id = project.get("owner_id")
+            if not isinstance(owner_id, str) or not owner_id:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "project_inventory_incomplete",
+                )
+            page_ids.append(project_id)
+        page_fingerprint = _fingerprint("\x00".join(page_ids))
+        if page_fingerprint in seen_pages:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_pagination_invalid")
+        seen_pages.add(page_fingerprint)
+        for project, project_id in zip(page, page_ids, strict=True):
+            if project_id in seen_ids:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "project_inventory_duplicate_id",
+                )
+            seen_ids.add(project_id)
+            projects.append(project)
+        audit.projects_observed = len(projects)
+        if len(projects) > MAX_PROJECT_ITEMS:
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "project_identity_discovery_budget_exceeded",
+            )
+        next_cursor = _project_page_cursor(document)
+        if next_cursor is None:
+            break
+        cursor_fingerprint = _fingerprint(next_cursor)
+        if cursor_fingerprint in audit.project_cursor_fingerprints:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_cursor_cycle")
+        audit.project_cursor_fingerprints.add(cursor_fingerprint)
+        if len(projects) >= MAX_PROJECT_ITEMS:
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "project_identity_discovery_budget_exceeded",
+            )
+        cursor = next_cursor
+    owner_ids = {str(project["owner_id"]) for project in projects}
+    if len(owner_ids) > 1:
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_inventory_incomplete")
+    client.require_get_budget(
+        len(projects) + 1 + MAX_BRANCH_PAGES,
+        "project_identity_discovery_budget_exceeded",
+    )
+    return projects
+
+
+def _branch_page_cursor(
+    document: Mapping[str, Any],
+    audit: IdentityAudit,
+) -> str | None:
+    """Parse only the List branches CursorPagination (`pagination.next`)."""
+
+    if "pagination" not in document:
+        return None
+    pagination = document["pagination"]
+    allowed = {"next", "sort_by", "sort_order"}
+    if not isinstance(pagination, dict) or not set(pagination) <= allowed:
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+    if pagination.get("sort_by", "updated_at") != "updated_at":
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+    if pagination.get("sort_order", "asc") != "asc":
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+    if "next" not in pagination:
+        return None
+    cursor = pagination["next"]
+    if not isinstance(cursor, str) or not cursor:
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+    fingerprint = _fingerprint(cursor)
+    if fingerprint in audit.branch_cursor_fingerprints:
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+    audit.branch_cursor_fingerprints.add(fingerprint)
+    return cursor
+
+
+def _list_branches_bounded(
+    client: NeonReadOnlyClient,
+    project_id: str,
+    audit: IdentityAudit,
+    *,
+    reserve_after: int,
+) -> list[dict[str, Any]]:
+    branches: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    seen_pages: set[str] = set()
+    cursor: str | None = None
+    pages = 0
+    while True:
+        if pages >= MAX_BRANCH_PAGES:
+            raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+        client.require_get_budget(1 + reserve_after, "neon_get_budget_exhausted")
+        query: dict[str, object] = {
+            "limit": MAX_BRANCH_PAGE,
+            "sort_by": "updated_at",
+            "sort_order": "asc",
+            "include_deleted": "false",
+        }
+        if cursor is not None:
+            query["cursor"] = cursor
+        document = client.get(f"/projects/{project_id}/branches", query=query)
+        pages += 1
+        page = _dict_list(
+            document,
+            "branches",
+            "NEON_PRODUCTION_BRANCH_AMBIGUOUS",
+        )
+        page_ids = [
+            _safe_identifier(branch.get("id", ""), gate="branch_inventory_truncated")
+            for branch in page
+        ]
+        page_fingerprint = _fingerprint("\x00".join(page_ids))
+        if page_fingerprint in seen_pages:
+            raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+        seen_pages.add(page_fingerprint)
+        for branch, branch_id in zip(page, page_ids, strict=True):
+            if branch_id in seen_ids:
+                raise PreflightNoGo(
+                    "NEON_PRODUCTION_BRANCH_AMBIGUOUS",
+                    "branch_inventory_truncated",
+                )
+            seen_ids.add(branch_id)
+            branches.append(branch)
+        if len(branches) > MAX_BRANCH_ITEMS:
+            raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
+        cursor = _branch_page_cursor(document, audit)
+        if cursor is None:
+            return branches
+
+
+def _validated_project_detail(
+    document: Mapping[str, Any],
+    project_id: str,
+    *,
+    expected_owner_id: str | None,
+    gate: str,
+) -> dict[str, Any]:
+    project = _project_details(document)
+    if str(project.get("id", "")) != project_id:
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    owner_id = project.get("owner_id")
+    owner = project.get("owner")
+    if (
+        not isinstance(owner_id, str)
+        or not owner_id
+        or not isinstance(owner, dict)
+        or (expected_owner_id is not None and owner_id != expected_owner_id)
+    ):
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    return project
+
+
+def _project_endpoints(
+    document: Mapping[str, Any],
+    project_id: str,
+    *,
+    gate: str,
+) -> list[dict[str, Any]]:
+    endpoints = _dict_list(
+        document,
+        "endpoints",
+        "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+    )
+    for endpoint in endpoints:
+        _safe_identifier(endpoint.get("id", ""), gate=gate)
+        _safe_identifier(endpoint.get("branch_id", ""), gate=gate)
+        if str(endpoint.get("project_id", "")) != project_id:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+        if not isinstance(endpoint.get("host"), str):
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    return endpoints
 
 
 def _bounded_int(
@@ -388,54 +611,165 @@ def _resolve_neon_identity(
     client: NeonReadOnlyClient,
     target: DirectPostgresTarget,
 ) -> NeonObservation:
-    matches: list[tuple[dict[str, Any], dict[str, Any], dict[str, Any]]] = []
-    projects = _candidate_projects(client)
-    owner_branch_count = 0
-    for project in projects:
-        project_id = _safe_identifier(project.get("id", ""))
-        branches = _dict_list(
-            branches_document := client.get(
-                f"/projects/{project_id}/branches?limit={MAX_BRANCH_PAGE}"
-            ),
-            "branches",
-            "NEON_PRODUCTION_BRANCH_AMBIGUOUS",
-        )
-        if not _complete_branch_page(branches_document, len(branches)):
-            raise PreflightNoGo(
-                "RECOVERY_BRANCH_NOT_FEASIBLE", "branch_inventory_truncated"
-            )
-        owner_branch_count += len(branches)
-        endpoints = _dict_list(
-            client.get(f"/projects/{project_id}/endpoints"),
-            "endpoints",
-            "DIRECT_ENDPOINT_NOT_PROVEN",
-        )
-        branches_by_id = {
-            str(branch.get("id", "")): branch
-            for branch in branches
-            if isinstance(branch.get("id"), str)
-        }
-        for endpoint in endpoints:
-            host = str(endpoint.get("host", "")).lower()
-            if host != target.host:
-                continue
-            branch = branches_by_id.get(str(endpoint.get("branch_id", "")))
-            if branch is not None:
-                matches.append((project, branch, endpoint))
-    if len(matches) != 1:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "dsn_endpoint_match_not_unique"
-        )
-    project, branch, endpoint = matches[0]
-    project_id = _safe_identifier(project.get("id", ""))
     configured = os.getenv("NEON_PROJECT_ID", "").strip()
-    if configured and configured != project_id:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "configured_project_mismatch"
+    audit = IdentityAudit(
+        identity_path=("CONFIGURED_PROJECT_ID" if configured else "BOUNDED_DISCOVERY")
+    )
+    try:
+        if configured:
+            project_id = _safe_identifier(
+                configured,
+                gate="configured_project_invalid",
+            )
+            audit.project_id = project_id
+            client.require_get_budget(
+                1 + MAX_BRANCH_PAGES + 1,
+                "neon_get_budget_exhausted",
+            )
+            try:
+                detailed = _validated_project_detail(
+                    client.get(f"/projects/{project_id}"),
+                    project_id,
+                    expected_owner_id=None,
+                    gate="configured_project_not_accessible",
+                )
+            except PreflightNoGo as error:
+                if error.gate == "configured_project_invalid":
+                    raise
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "configured_project_not_accessible",
+                ) from None
+            audit.projects_observed = 1
+            branches = _list_branches_bounded(
+                client,
+                project_id,
+                audit,
+                reserve_after=1,
+            )
+            client.require_get_budget(1, "neon_get_budget_exhausted")
+            endpoints = _project_endpoints(
+                client.get(f"/projects/{project_id}/endpoints"),
+                project_id,
+                gate="configured_project_endpoint_missing",
+            )
+            audit.endpoint_projects_inspected = 1
+            matches = [
+                endpoint for endpoint in endpoints if str(endpoint["host"]).lower() == target.host
+            ]
+            if not matches:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "configured_project_endpoint_missing",
+                )
+            if len(matches) != 1:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "configured_project_endpoint_not_unique",
+                )
+            endpoint = matches[0]
+            identity_verdict = "CONFIGURED_PROJECT_IDENTITY_PROVEN"
+        else:
+            projects = _list_projects_bounded(client, audit)
+            matches_with_projects: list[tuple[dict[str, Any], dict[str, Any]]] = []
+            for index, project in enumerate(projects):
+                remaining_projects = len(projects) - index
+                client.require_get_budget(
+                    remaining_projects + 1 + MAX_BRANCH_PAGES,
+                    "project_identity_discovery_budget_exceeded",
+                )
+                project_id = _safe_identifier(
+                    project.get("id", ""), gate="project_pagination_invalid"
+                )
+                endpoints = _project_endpoints(
+                    client.get(f"/projects/{project_id}/endpoints"),
+                    project_id,
+                    gate="project_inventory_incomplete",
+                )
+                audit.endpoint_projects_inspected += 1
+                matches_with_projects.extend(
+                    (project, endpoint)
+                    for endpoint in endpoints
+                    if str(endpoint["host"]).lower() == target.host
+                )
+            if not matches_with_projects:
+                raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "dsn_endpoint_match_missing")
+            if len(matches_with_projects) != 1:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "dsn_endpoint_match_not_unique",
+                )
+            project, endpoint = matches_with_projects[0]
+            project_id = _safe_identifier(project.get("id", ""), gate="project_pagination_invalid")
+            audit.project_id = project_id
+            client.require_get_budget(
+                1 + MAX_BRANCH_PAGES,
+                "project_identity_discovery_budget_exceeded",
+            )
+            detailed = _validated_project_detail(
+                client.get(f"/projects/{project_id}"),
+                project_id,
+                expected_owner_id=str(project["owner_id"]),
+                gate="project_inventory_incomplete",
+            )
+            branches = _list_branches_bounded(
+                client,
+                project_id,
+                audit,
+                reserve_after=0,
+            )
+            identity_verdict = "BOUNDED_PROJECT_IDENTITY_PROVEN"
+        return _finalize_neon_identity(
+            client=client,
+            target=target,
+            audit=audit,
+            identity_verdict=identity_verdict,
+            detailed=detailed,
+            branches=branches,
+            endpoint=endpoint,
         )
-    detailed = _project_details(client.get(f"/projects/{project_id}"))
+    except PreflightNoGo as error:
+        if error.sanitized_evidence is not None:
+            raise
+        raise PreflightNoGo(
+            error.reason,
+            error.gate,
+            sanitized_evidence=audit.sanitized(
+                api_get_count=client.get_count,
+                gate=error.gate,
+            ),
+        ) from None
+
+
+def _finalize_neon_identity(
+    *,
+    client: NeonReadOnlyClient,
+    target: DirectPostgresTarget,
+    audit: IdentityAudit,
+    identity_verdict: str,
+    detailed: Mapping[str, Any],
+    branches: Sequence[Mapping[str, Any]],
+    endpoint: Mapping[str, Any],
+) -> NeonObservation:
+    project_id = _safe_identifier(detailed.get("id", ""))
+    branches_by_id = {
+        str(branch.get("id", "")): branch
+        for branch in branches
+        if isinstance(branch.get("id"), str)
+    }
+    branch = branches_by_id.get(str(endpoint.get("branch_id", "")))
+    if branch is None:
+        gate = (
+            "configured_project_endpoint_missing"
+            if audit.identity_path == "CONFIGURED_PROJECT_ID"
+            else "dsn_endpoint_match_missing"
+        )
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
     branch_id = _safe_identifier(branch.get("id", ""))
     endpoint_id = _safe_identifier(endpoint.get("id", ""))
+    audit.project_id = project_id
+    audit.branch_id = branch_id
+    audit.endpoint_id = endpoint_id
     endpoint_host = str(endpoint.get("host", "")).lower()
     branch_name = str(branch.get("name", ""))
     branch_default = bool(branch.get("default", branch.get("primary", False)))
@@ -449,26 +783,18 @@ def _resolve_neon_identity(
         and str(endpoint.get("type", "")) == "read_write"
         and endpoint_state == "active"
         and not bool(endpoint.get("disabled", False))
+        and endpoint.get("pending_state") in (None, "active")
+        and str(endpoint.get("project_id", "")) == project_id
     )
     if not direct:
         raise PreflightNoGo("DIRECT_ENDPOINT_NOT_PROVEN", "endpoint_not_direct")
     if branch_state not in {"active", "ready"}:
-        raise PreflightNoGo(
-            "NEON_PRODUCTION_BRANCH_AMBIGUOUS", "production_branch_not_ready"
-        )
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "production_branch_not_ready")
     if not branch_default:
-        raise PreflightNoGo(
-            "NEON_PRODUCTION_BRANCH_AMBIGUOUS", "dsn_branch_is_not_default"
-        )
-    if str(detailed.get("owner_id", "")) != str(project.get("owner_id", "")):
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_owner_detail_mismatch"
-        )
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "dsn_branch_is_not_default")
     owner = detailed.get("owner")
     if not isinstance(owner, dict):
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "branch_limit_contract_missing"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "branch_limit_contract_missing")
     branch_limit = _bounded_int(
         owner.get("branches_limit"),
         minimum=1,
@@ -485,6 +811,8 @@ def _resolve_neon_identity(
     parent_id = str(parent) if isinstance(parent, str) and parent else None
     region = str(endpoint.get("region_id", detailed.get("region_id", "")))
     return NeonObservation(
+        identity_path=audit.identity_path,
+        identity_verdict=identity_verdict,
         project_id=project_id,
         project_name=project_name,
         region=region,
@@ -496,9 +824,12 @@ def _resolve_neon_identity(
         endpoint_host=endpoint_host,
         endpoint_state=endpoint_state,
         branch_state=branch_state,
-        owner_branch_count=owner_branch_count,
+        owner_branch_count=len(branches),
         branch_limit=branch_limit,
         history_retention_seconds=history_retention_seconds,
+        project_pages_read=audit.project_pages_read,
+        projects_observed=audit.projects_observed,
+        endpoint_projects_inspected=audit.endpoint_projects_inspected,
         api_get_count=client.get_count,
     )
 
@@ -569,9 +900,7 @@ def _invalid_dsn_security_profile(database_url: str) -> dict[str, object]:
         )
     except (TypeError, UnicodeError, ValueError):
         return {
-            "contract_verdict": (
-                "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"
-            ),
+            "contract_verdict": ("NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"),
             "query_parse": "INVALID",
             "unexpected_parameter_count": 0,
             "unexpected_parameter_name_hashes": [],
@@ -579,16 +908,10 @@ def _invalid_dsn_security_profile(database_url: str) -> dict[str, object]:
     reviewed_keys = frozenset({"sslmode", "channel_binding"})
     unexpected = [key for key, _ in query_items if key not in reviewed_keys]
     profile: dict[str, object] = {
-        "contract_verdict": (
-            "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"
-        ),
-        "reviewed_query_keys": sorted(
-            {key for key, _ in query_items if key in reviewed_keys}
-        ),
+        "contract_verdict": ("NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"),
+        "reviewed_query_keys": sorted({key for key, _ in query_items if key in reviewed_keys}),
         "unexpected_parameter_count": len(unexpected),
-        "unexpected_parameter_name_hashes": sorted(
-            _fingerprint(key) for key in unexpected
-        ),
+        "unexpected_parameter_name_hashes": sorted(_fingerprint(key) for key in unexpected),
     }
     values: dict[str, list[str]] = {}
     for key, value in query_items:
@@ -757,9 +1080,7 @@ def _github_get(path: str) -> dict[str, Any]:
             "RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_state_invalid"
         ) from None
     if not isinstance(document, dict):
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_state_invalid"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_state_invalid")
     return cast(dict[str, Any], document)
 
 
@@ -770,18 +1091,12 @@ def _github_actions_state(
 ) -> tuple[int, int, int]:
     counts: dict[str, int] = {}
     for status in ("queued", "in_progress"):
-        document = _github_get(
-            f"/repos/{repository}/actions/runs?status={status}&per_page=100"
-        )
+        document = _github_get(f"/repos/{repository}/actions/runs?status={status}&per_page=100")
         runs = document.get("workflow_runs")
         if not isinstance(runs, list):
-            raise PreflightNoGo(
-                "RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_runs_invalid"
-            )
+            raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_runs_invalid")
         counts[status] = sum(
-            1
-            for run in runs
-            if isinstance(run, dict) and int(run.get("id", 0)) != run_id
+            1 for run in runs if isinstance(run, dict) and int(run.get("id", 0)) != run_id
         )
     dispatches = _github_get(
         f"/repos/{repository}/actions/workflows/"
@@ -790,18 +1105,12 @@ def _github_actions_state(
     )
     runs = dispatches.get("workflow_runs")
     if not isinstance(runs, list):
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_dispatch_history_invalid"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_dispatch_history_invalid")
     exact_dispatches = [
-        run
-        for run in runs
-        if isinstance(run, dict) and str(run.get("head_sha", "")) == main_sha
+        run for run in runs if isinstance(run, dict) and str(run.get("head_sha", "")) == main_sha
     ]
     if not any(int(run.get("id", 0)) == run_id for run in exact_dispatches):
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "current_dispatch_not_observed"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "current_dispatch_not_observed")
     return counts["queued"], counts["in_progress"], len(exact_dispatches)
 
 
@@ -813,10 +1122,7 @@ def _bootstrap_authority_plausible(database: DatabaseObservation) -> bool:
     return (
         database.session_user == current_user
         and database.lifecycle_admin_can_login
-        and (
-            database.lifecycle_admin_superuser
-            or database.lifecycle_admin_createrole
-        )
+        and (database.lifecycle_admin_superuser or database.lifecycle_admin_createrole)
         and database.privileged_catalog_visible
         and not forbidden
     )
@@ -841,6 +1147,12 @@ def _sanitize_rows(
 
 def _sanitized_neon(neon: NeonObservation) -> dict[str, object]:
     return {
+        "identity_path": neon.identity_path,
+        "project_identity_verdict": neon.identity_verdict,
+        "global_project_inventory_gets": neon.project_pages_read,
+        "project_pages_read": neon.project_pages_read,
+        "projects_observed": neon.projects_observed,
+        "endpoint_projects_inspected": neon.endpoint_projects_inspected,
         "project_id_sha256": _fingerprint(neon.project_id),
         "project_name_sha256": _fingerprint(neon.project_name),
         "region": neon.region,
@@ -848,9 +1160,7 @@ def _sanitized_neon(neon: NeonObservation) -> dict[str, object]:
         "production_branch_name_sha256": _fingerprint(neon.branch_name),
         "production_branch_default": neon.branch_default,
         "production_branch_parent_id_sha256": (
-            _fingerprint(neon.branch_parent_id)
-            if neon.branch_parent_id is not None
-            else None
+            _fingerprint(neon.branch_parent_id) if neon.branch_parent_id is not None else None
         ),
         "recovery_parent_id_sha256": _fingerprint(neon.branch_id),
         "endpoint_id_sha256": _fingerprint(neon.endpoint_id),
@@ -881,9 +1191,7 @@ def _report(
 ) -> dict[str, object]:
     return {
         "schema_version": REPORT_SCHEMA,
-        "observed_at": datetime.now(UTC).isoformat(timespec="seconds").replace(
-            "+00:00", "Z"
-        ),
+        "observed_at": datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
         "source": {
             "repository": EXPECTED_REPOSITORY,
             "ref": EXPECTED_REF,
@@ -893,9 +1201,7 @@ def _report(
         },
         "verdict": decision.verdict,
         "reason": decision.reason,
-        "dsn_contract_verdict": (
-            "NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT"
-        ),
+        "dsn_contract_verdict": ("NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT"),
         "dsn_security_profile": dict(dsn_security_profile),
         "checks": asdict(checks),
         "neon": _sanitized_neon(neon),
@@ -910,18 +1216,14 @@ def _report(
             "statement_timeout_ms": database.statement_timeout_ms,
             "lock_timeout_ms": database.lock_timeout_ms,
             "lifecycle_admin_sha256": _fingerprint(database.current_user),
-            "bootstrap_authority_plausible": _bootstrap_authority_plausible(
-                database
-            ),
+            "bootstrap_authority_plausible": _bootstrap_authority_plausible(database),
             "existing_chronos_roles": _sanitize_rows(
                 database.chronos_roles,
                 identity_keys=frozenset({"rolname"}),
             ),
             "existing_chronos_memberships": _sanitize_rows(
                 database.chronos_memberships,
-                identity_keys=frozenset(
-                    {"granted_role", "member_role", "grantor_role"}
-                ),
+                identity_keys=frozenset({"granted_role", "member_role", "grantor_role"}),
             ),
             "existing_chronos_objects": _sanitize_rows(
                 database.chronos_objects,
@@ -955,12 +1257,11 @@ def _no_go_report(
     gate: str,
     *,
     dsn_security_profile: Mapping[str, object] | None = None,
+    sanitized_evidence: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
     report: dict[str, object] = {
         "schema_version": REPORT_SCHEMA,
-        "observed_at": datetime.now(UTC).isoformat(timespec="seconds").replace(
-            "+00:00", "Z"
-        ),
+        "observed_at": datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
         "source": {
             "repository": os.getenv("GITHUB_REPOSITORY", "UNKNOWN"),
             "ref": os.getenv("GITHUB_REF", "UNKNOWN"),
@@ -989,6 +1290,8 @@ def _no_go_report(
             "contract_verdict",
             "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT",
         )
+    if sanitized_evidence is not None:
+        report["neon"] = dict(sanitized_evidence)
     return report
 
 
@@ -999,30 +1302,20 @@ def run_preflight() -> dict[str, object]:
     run_attempt = _required_context("GITHUB_RUN_ATTEMPT")
     run_id = int(_required_context("GITHUB_RUN_ID"))
     if repository != EXPECTED_REPOSITORY or git_ref != EXPECTED_REF:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_source_not_exact_main"
-        )
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_source_not_exact_main")
     if _HEX_SHA.fullmatch(main_sha) is None:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_main_sha_invalid"
-        )
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_main_sha_invalid")
     if run_attempt != "1":
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "workflow_rerun_forbidden"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "workflow_rerun_forbidden")
     queue_count, in_progress_count, dispatch_count = _github_actions_state(
         repository,
         run_id,
         main_sha,
     )
     if dispatch_count != 1:
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "exact_main_dispatch_not_unique"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "exact_main_dispatch_not_unique")
     if queue_count != 0 or in_progress_count != 0:
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_not_quiescent"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_not_quiescent")
     api_key = _required_context("NEON_API_KEY")
     database_url = _required_context("NEON_BOOTSTRAP_DATABASE_URL")
     _, target = _validated_psycopg_url(database_url)
@@ -1052,8 +1345,7 @@ def run_preflight() -> dict[str, object]:
             direct_endpoint_verified=sql_safety,
             ssl_verified=database.ssl,
             expected_revision_verified=(
-                database.revision_count == 1
-                and database.revision == EXPECTED_REVISION
+                database.revision_count == 1 and database.revision == EXPECTED_REVISION
             ),
             bootstrap_authority_plausible=_bootstrap_authority_plausible(database),
             recovery_branch_feasible=recovery_feasible,
@@ -1078,6 +1370,7 @@ def run_preflight() -> dict[str, object]:
             error.reason,
             error.gate,
             dsn_security_profile=dsn_security_profile,
+            sanitized_evidence=error.sanitized_evidence,
         ) from None
 
 
@@ -1100,11 +1393,10 @@ def main() -> None:
             error.reason,
             error.gate,
             dsn_security_profile=error.dsn_security_profile,
+            sanitized_evidence=error.sanitized_evidence,
         )
     except Exception:
-        report = _no_go_report(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "unexpected_sanitized_failure"
-        )
+        report = _no_go_report("NEON_PROJECT_IDENTITY_AMBIGUOUS", "unexpected_sanitized_failure")
     _write_report(args.report, report)
     print(str(report["verdict"]))
 

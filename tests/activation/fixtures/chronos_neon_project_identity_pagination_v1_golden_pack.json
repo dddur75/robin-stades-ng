@@ -1,0 +1,29 @@
+{
+  "schema_version": "chronos-neon-project-identity-pagination-v1-golden-pack",
+  "cases": [
+    {"case_id": "PROJECTS_ONE_PAGE", "expected_gate": null},
+    {"case_id": "PROJECTS_TWO_PAGES", "expected_gate": null},
+    {"case_id": "PROJECTS_THREE_PAGES", "expected_gate": null},
+    {"case_id": "PROJECTS_CURSOR_CYCLE", "expected_gate": "project_cursor_cycle"},
+    {"case_id": "PROJECTS_CURSOR_REPEATED", "expected_gate": "project_cursor_cycle"},
+    {"case_id": "PROJECTS_DUPLICATE_ID_ACROSS_PAGES", "expected_gate": "project_inventory_duplicate_id"},
+    {"case_id": "PROJECTS_UNAVAILABLE_NON_EMPTY", "expected_gate": "project_inventory_incomplete"},
+    {"case_id": "PROJECTS_MALFORMED_PAGINATION", "expected_gate": "project_pagination_invalid"},
+    {"case_id": "PROJECTS_TOO_MANY_PAGES", "expected_gate": "project_pagination_invalid"},
+    {"case_id": "PROJECTS_TOO_MANY_ITEMS", "expected_gate": "project_identity_discovery_budget_exceeded"},
+    {"case_id": "PROJECTS_GET_BUDGET_EXHAUSTED", "expected_gate": "project_identity_discovery_budget_exceeded"},
+    {"case_id": "CONFIGURED_ID_VALID_EXACT_ENDPOINT", "expected_gate": null, "expected_identity_verdict": "CONFIGURED_PROJECT_IDENTITY_PROVEN"},
+    {"case_id": "CONFIGURED_ID_NOT_FOUND", "expected_gate": "configured_project_not_accessible"},
+    {"case_id": "CONFIGURED_ID_INVALID", "expected_gate": "configured_project_invalid"},
+    {"case_id": "CONFIGURED_ID_ENDPOINT_MISSING", "expected_gate": "configured_project_endpoint_missing"},
+    {"case_id": "CONFIGURED_ID_ENDPOINT_DUPLICATED", "expected_gate": "configured_project_endpoint_not_unique"},
+    {"case_id": "CONFIGURED_ID_WRONG_BRANCH", "expected_gate": "configured_project_endpoint_missing"},
+    {"case_id": "CONFIGURED_ID_NON_DEFAULT_BRANCH", "expected_gate": "dsn_branch_is_not_default"},
+    {"case_id": "CONFIGURED_ID_IDLE_ENDPOINT", "expected_gate": "endpoint_not_direct"},
+    {"case_id": "DISCOVERY_UNIQUE_ENDPOINT_MATCH", "expected_gate": null, "expected_identity_verdict": "BOUNDED_PROJECT_IDENTITY_PROVEN"},
+    {"case_id": "DISCOVERY_ZERO_ENDPOINT_MATCH", "expected_gate": "dsn_endpoint_match_missing"},
+    {"case_id": "DISCOVERY_MULTIPLE_ENDPOINT_MATCH", "expected_gate": "dsn_endpoint_match_not_unique"},
+    {"case_id": "DISCOVERY_BUDGET_TOO_SMALL", "expected_gate": "project_identity_discovery_budget_exceeded"},
+    {"case_id": "DISCOVERY_PAGINATED_UNIQUE_MATCH", "expected_gate": null, "expected_identity_verdict": "BOUNDED_PROJECT_IDENTITY_PROVEN"}
+  ]
+}
