@@ -178,12 +178,19 @@ class DatabaseObservation:
 class PreflightNoGo(RuntimeError):
     """Sanitized expected refusal with an approved reason code."""
 
-    def __init__(self, reason: str, gate: str) -> None:
+    def __init__(
+        self,
+        reason: str,
+        gate: str,
+        *,
+        dsn_security_profile: Mapping[str, object] | None = None,
+    ) -> None:
         if reason not in NO_GO_REASONS:
             raise ValueError("INVALID_NO_GO_REASON")
         super().__init__(reason)
         self.reason = reason
         self.gate = gate
+        self.dsn_security_profile = dsn_security_profile
 
 
 def evaluate_checks(checks: GateChecks) -> GateDecision:
@@ -510,7 +517,46 @@ def _milliseconds(value: object) -> int:
 
 
 def _validated_psycopg_url(database_url: str) -> tuple[str, DirectPostgresTarget]:
-    """Return a DSN whose only libpq query option is the validated sslmode."""
+    """Return a psycopg DSN accepted by the shared canonical validator."""
+
+    try:
+        target = validate_direct_postgres_url(database_url)
+    except ChronosProductionError as error:
+        parameter_gates = {
+            "CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN",
+            "CHRONOS_CHANNEL_BINDING_REQUIRED",
+        }
+        raise PreflightNoGo(
+            "DIRECT_ENDPOINT_NOT_PROVEN",
+            (
+                "database_url_parameters_forbidden"
+                if str(error) in parameter_gates
+                else "direct_database_url_invalid"
+            ),
+            dsn_security_profile=_invalid_dsn_security_profile(database_url),
+        ) from None
+    normalized = database_url.replace("postgresql+psycopg://", "postgresql://", 1)
+    return normalized, target
+
+
+def _target_dsn_security_profile(
+    target: DirectPostgresTarget,
+) -> dict[str, object]:
+    query_keys = ["sslmode"]
+    if target.channel_binding is not None:
+        query_keys.append("channel_binding")
+    return {
+        "contract_verdict": "NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT",
+        "query_keys": sorted(query_keys),
+        "sslmode": target.sslmode,
+        "channel_binding": target.channel_binding,
+        "unexpected_parameter_count": 0,
+        "unexpected_parameter_name_hashes": [],
+    }
+
+
+def _invalid_dsn_security_profile(database_url: str) -> dict[str, object]:
+    """Describe only reviewed keys; hash every unreviewed query-key name."""
 
     try:
         parsed = urlparse(database_url)
@@ -518,27 +564,47 @@ def _validated_psycopg_url(database_url: str) -> tuple[str, DirectPostgresTarget
             parsed.query,
             keep_blank_values=True,
             strict_parsing=True,
+            encoding="utf-8",
+            errors="strict",
         )
-    except (TypeError, ValueError):
-        raise PreflightNoGo(
-            "DIRECT_ENDPOINT_NOT_PROVEN", "direct_database_url_invalid"
-        ) from None
-    if parsed.params or parsed.fragment or len(query_items) != 1:
-        raise PreflightNoGo(
-            "DIRECT_ENDPOINT_NOT_PROVEN", "database_url_parameters_forbidden"
-        )
-    if query_items[0][0] != "sslmode":
-        raise PreflightNoGo(
-            "DIRECT_ENDPOINT_NOT_PROVEN", "database_url_parameters_forbidden"
-        )
-    try:
-        target = validate_direct_postgres_url(database_url)
-    except ChronosProductionError:
-        raise PreflightNoGo(
-            "DIRECT_ENDPOINT_NOT_PROVEN", "direct_database_url_invalid"
-        ) from None
-    normalized = database_url.replace("postgresql+psycopg://", "postgresql://", 1)
-    return normalized, target
+    except (TypeError, UnicodeError, ValueError):
+        return {
+            "contract_verdict": (
+                "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"
+            ),
+            "query_parse": "INVALID",
+            "unexpected_parameter_count": 0,
+            "unexpected_parameter_name_hashes": [],
+        }
+    reviewed_keys = frozenset({"sslmode", "channel_binding"})
+    unexpected = [key for key, _ in query_items if key not in reviewed_keys]
+    profile: dict[str, object] = {
+        "contract_verdict": (
+            "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"
+        ),
+        "reviewed_query_keys": sorted(
+            {key for key, _ in query_items if key in reviewed_keys}
+        ),
+        "unexpected_parameter_count": len(unexpected),
+        "unexpected_parameter_name_hashes": sorted(
+            _fingerprint(key) for key in unexpected
+        ),
+    }
+    values: dict[str, list[str]] = {}
+    for key, value in query_items:
+        if key in reviewed_keys:
+            values.setdefault(key, []).append(value)
+    ssl_values = values.get("sslmode", [])
+    if len(ssl_values) == 1 and ssl_values[0] in {
+        "require",
+        "verify-ca",
+        "verify-full",
+    }:
+        profile["sslmode"] = ssl_values[0]
+    binding_values = values.get("channel_binding", [])
+    if len(binding_values) == 1 and binding_values[0] == "require":
+        profile["channel_binding"] = "require"
+    return profile
 
 
 def _one(cursor: psycopg.Cursor[dict[str, Any]]) -> dict[str, Any]:
@@ -811,6 +877,7 @@ def _report(
     queue_count: int,
     in_progress_count: int,
     dispatch_count: int,
+    dsn_security_profile: Mapping[str, object],
 ) -> dict[str, object]:
     return {
         "schema_version": REPORT_SCHEMA,
@@ -826,6 +893,10 @@ def _report(
         },
         "verdict": decision.verdict,
         "reason": decision.reason,
+        "dsn_contract_verdict": (
+            "NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT"
+        ),
+        "dsn_security_profile": dict(dsn_security_profile),
         "checks": asdict(checks),
         "neon": _sanitized_neon(neon),
         "postgresql": {
@@ -879,8 +950,13 @@ def _report(
     }
 
 
-def _no_go_report(reason: str, gate: str) -> dict[str, object]:
-    return {
+def _no_go_report(
+    reason: str,
+    gate: str,
+    *,
+    dsn_security_profile: Mapping[str, object] | None = None,
+) -> dict[str, object]:
+    report: dict[str, object] = {
         "schema_version": REPORT_SCHEMA,
         "observed_at": datetime.now(UTC).isoformat(timespec="seconds").replace(
             "+00:00", "Z"
@@ -907,6 +983,13 @@ def _no_go_report(reason: str, gate: str) -> dict[str, object]:
             "sensitive_values_exposed": 0,
         },
     }
+    if dsn_security_profile is not None:
+        report["dsn_security_profile"] = dict(dsn_security_profile)
+        report["dsn_contract_verdict"] = dsn_security_profile.get(
+            "contract_verdict",
+            "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT",
+        )
+    return report
 
 
 def run_preflight() -> dict[str, object]:
@@ -943,53 +1026,59 @@ def run_preflight() -> dict[str, object]:
     api_key = _required_context("NEON_API_KEY")
     database_url = _required_context("NEON_BOOTSTRAP_DATABASE_URL")
     _, target = _validated_psycopg_url(database_url)
-    if not target.host.endswith(".neon.tech"):
-        raise PreflightNoGo("DIRECT_ENDPOINT_NOT_PROVEN", "non_neon_database_host")
-    client = NeonReadOnlyClient(api_key)
-    neon = _resolve_neon_identity(client, target)
-    database = _inspect_database(database_url)
-    purchase_required = (
-        neon.owner_branch_count + 1 > neon.branch_limit
-    )
-    recovery_feasible = (
-        neon.history_retention_seconds > 0
-        and neon.branch_id != ""
-        and neon.branch_state in {"active", "ready"}
-        and not purchase_required
-    )
-    sql_safety = (
-        database.default_transaction_read_only
-        and database.transaction_read_only
-        and database.statement_timeout_ms == EXPECTED_STATEMENT_TIMEOUT_MS
-        and database.lock_timeout_ms == EXPECTED_LOCK_TIMEOUT_MS
-        and database.sql_statement_count <= MAX_SQL_STATEMENTS
-    )
-    checks = GateChecks(
-        secrets_present=True,
-        project_identity_verified=True,
-        production_branch_verified=True,
-        direct_endpoint_verified=sql_safety,
-        ssl_verified=database.ssl,
-        expected_revision_verified=(
-            database.revision_count == 1 and database.revision == EXPECTED_REVISION
-        ),
-        bootstrap_authority_plausible=_bootstrap_authority_plausible(database),
-        recovery_branch_feasible=recovery_feasible,
-        purchase_required=purchase_required,
-        github_queue_empty=queue_count == 0,
-        github_in_progress_empty=in_progress_count == 0,
-        github_dispatch_unique=dispatch_count == 1,
-    )
-    decision = evaluate_checks(checks)
-    return _report(
-        checks=checks,
-        decision=decision,
-        neon=neon,
-        database=database,
-        queue_count=queue_count,
-        in_progress_count=in_progress_count,
-        dispatch_count=dispatch_count,
-    )
+    dsn_security_profile = _target_dsn_security_profile(target)
+    try:
+        client = NeonReadOnlyClient(api_key)
+        neon = _resolve_neon_identity(client, target)
+        database = _inspect_database(database_url)
+        purchase_required = neon.owner_branch_count + 1 > neon.branch_limit
+        recovery_feasible = (
+            neon.history_retention_seconds > 0
+            and neon.branch_id != ""
+            and neon.branch_state in {"active", "ready"}
+            and not purchase_required
+        )
+        sql_safety = (
+            database.default_transaction_read_only
+            and database.transaction_read_only
+            and database.statement_timeout_ms == EXPECTED_STATEMENT_TIMEOUT_MS
+            and database.lock_timeout_ms == EXPECTED_LOCK_TIMEOUT_MS
+            and database.sql_statement_count <= MAX_SQL_STATEMENTS
+        )
+        checks = GateChecks(
+            secrets_present=True,
+            project_identity_verified=True,
+            production_branch_verified=True,
+            direct_endpoint_verified=sql_safety,
+            ssl_verified=database.ssl,
+            expected_revision_verified=(
+                database.revision_count == 1
+                and database.revision == EXPECTED_REVISION
+            ),
+            bootstrap_authority_plausible=_bootstrap_authority_plausible(database),
+            recovery_branch_feasible=recovery_feasible,
+            purchase_required=purchase_required,
+            github_queue_empty=queue_count == 0,
+            github_in_progress_empty=in_progress_count == 0,
+            github_dispatch_unique=dispatch_count == 1,
+        )
+        decision = evaluate_checks(checks)
+        return _report(
+            checks=checks,
+            decision=decision,
+            neon=neon,
+            database=database,
+            queue_count=queue_count,
+            in_progress_count=in_progress_count,
+            dispatch_count=dispatch_count,
+            dsn_security_profile=dsn_security_profile,
+        )
+    except PreflightNoGo as error:
+        raise PreflightNoGo(
+            error.reason,
+            error.gate,
+            dsn_security_profile=dsn_security_profile,
+        ) from None
 
 
 def _write_report(path: Path, report: Mapping[str, object]) -> None:
@@ -1007,7 +1096,11 @@ def main() -> None:
     try:
         report = run_preflight()
     except PreflightNoGo as error:
-        report = _no_go_report(error.reason, error.gate)
+        report = _no_go_report(
+            error.reason,
+            error.gate,
+            dsn_security_profile=error.dsn_security_profile,
+        )
     except Exception:
         report = _no_go_report(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS", "unexpected_sanitized_failure"

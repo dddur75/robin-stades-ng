@@ -235,7 +235,13 @@ def execute_canary(output: Path) -> dict[str, Any]:
     runtime_target = validate_direct_postgres_url(runtime_url)
     reader_target = validate_direct_postgres_url(reader_url)
     targets = {
-        (target.host, target.port, target.database, target.sslmode)
+        (
+            target.host,
+            target.port,
+            target.database,
+            target.sslmode,
+            target.channel_binding,
+        )
         for target in (authority_target, runtime_target, reader_target)
     }
     if len(targets) != 1:

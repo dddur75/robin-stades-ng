@@ -6,12 +6,16 @@ from collections.abc import Callable, Mapping
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from urllib.parse import parse_qsl, urlparse
 
 import pytest
 import yaml
+from psycopg.conninfo import conninfo_to_dict
 
+import scripts.chronos_production_bootstrap_v3 as bootstrap_module
 from robin.chronos_production import (
     ChronosProductionError,
+    DirectPostgresTarget,
     assert_exact_preflight_binding,
     build_scoped_database_url,
     preflight_hash,
@@ -33,6 +37,7 @@ from robin.prospective_observatory.chronos_control_plane import (
 from scripts.chronos_production_bootstrap_v3 import (
     NeonClient,
     _attempt_cleanup_steps,
+    inspect_database,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -193,18 +198,212 @@ def test_direct_database_contract_fails_closed(value: str) -> None:
         validate_direct_postgres_url(value)
 
 
+@pytest.mark.parametrize(
+    ("query", "sslmode", "channel_binding"),
+    [
+        ("sslmode=require", "require", None),
+        ("sslmode=require&channel_binding=require", "require", "require"),
+        ("channel_binding=require&sslmode=require", "require", "require"),
+        ("sslmode=verify-ca&channel_binding=require", "verify-ca", "require"),
+        ("sslmode=verify-full&channel_binding=require", "verify-full", "require"),
+    ],
+)
+def test_canonical_dsn_allowlist_accepts_only_reviewed_secure_sets(
+    query: str,
+    sslmode: str,
+    channel_binding: str | None,
+) -> None:
+    target = validate_direct_postgres_url(
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/robin?"  # SECRET_SCANNER_TEST_FIXTURE
+        + query
+    )
+    assert target.sslmode == sslmode
+    assert target.channel_binding == channel_binding
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "sslmode=require&channel_binding=prefer",
+        "sslmode=require&channel_binding=disable",
+        "sslmode=require&channel_binding=",
+        "sslmode=require&channel_binding=require&channel_binding=require",
+        "sslmode=require&sslmode=require",
+        "sslmode=require&SSLMode=require",
+        "sslmode=require&host=attacker.example",
+        "sslmode=require&hostaddr=192.0.2.10",
+        "sslmode=require&port=6543",
+        "sslmode=require&dbname=other",
+        "sslmode=require&user=other",
+        "sslmode=require&password=other",
+        "sslmode=require&options=-csearch_path%3Dpublic",
+        "sslmode=require&service=other",
+        "sslmode=require&connect_timeout=10",
+        "sslmode=require&application_name=other",
+        "sslmode=require&unexpected_future_parameter=value",
+        "sslmode=disable",
+        "sslmode=allow",
+        "sslmode=prefer",
+    ],
+)
+def test_canonical_dsn_allowlist_rejects_overrides_and_downgrades(
+    query: str,
+) -> None:
+    with pytest.raises(ChronosProductionError):
+        validate_direct_postgres_url(
+            "postgresql://owner:bootstrap@ep-name.eu.neon.tech/robin?"  # SECRET_SCANNER_TEST_FIXTURE
+            + query
+        )
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/robin;host=attacker?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/robin?sslmode=require#fragment",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://:bootstrap@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/a/b?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name-pooler.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name-%70ooler.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-safe.eu.neon.tech%2Cep-other.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@%2Ftmp%2Fep-safe.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "POSTGRESQL://owner:bootstrap@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql+psycopg://owner:bootstrap@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-first.eu.neon.tech,ep-second.eu.neon.tech@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:raw:colon@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech:0/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bad%@ep-name.eu.neon.tech/robin?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/rob%in?sslmode=require",  # SECRET_SCANNER_TEST_FIXTURE
+    ],
+)
+def test_canonical_dsn_rejects_ambiguous_url_structure(value: str) -> None:
+    with pytest.raises(ChronosProductionError):
+        validate_direct_postgres_url(value)
+
+
+def test_direct_target_rejects_arbitrary_channel_binding() -> None:
+    with pytest.raises(ChronosProductionError, match="CHANNEL_BINDING_REQUIRED"):
+        DirectPostgresTarget(
+            host="ep-name.eu.neon.tech",
+            port=5432,
+            database="robin",
+            username="owner",
+            sslmode="require",
+            channel_binding="prefer",
+        )
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "sslmode",
+        "sslmode=require&",
+        "sslmode=require&&channel_binding=require",
+        "channel_binding=require",
+        "sslmode=",
+        "ssl%6dode=require",
+        "sslmode=require&ssl%6dode=require",
+    ],
+)
+def test_canonical_dsn_rejects_malformed_or_encoded_query_keys(query: str) -> None:
+    with pytest.raises(ChronosProductionError):
+        validate_direct_postgres_url(
+            "postgresql://owner:bootstrap@ep-name.eu.neon.tech/robin?"  # SECRET_SCANNER_TEST_FIXTURE
+            + query
+        )
+
+
+@pytest.mark.parametrize(
+    "host",
+    [
+        "ep-name-%70ooler.eu.neon.tech",
+        "ep-safe.eu.neon.tech%2Cep-other.eu.neon.tech",
+        "%2Ftmp%2Fep-safe.eu.neon.tech",
+    ],
+)
+def test_encoded_host_redirection_fails_before_bootstrap_connect(
+    monkeypatch: pytest.MonkeyPatch,
+    host: str,
+) -> None:
+    connect_calls = 0
+
+    def forbidden_connect(*_args: object, **_kwargs: object) -> object:
+        nonlocal connect_calls
+        connect_calls += 1
+        raise AssertionError("psycopg.connect must remain unreachable")
+
+    monkeypatch.setattr(bootstrap_module.psycopg, "connect", forbidden_connect)
+    with pytest.raises(ChronosProductionError):
+        inspect_database(
+            "postgresql://owner:bootstrap@"  # SECRET_SCANNER_TEST_FIXTURE
+            f"{host}/robin?sslmode=require&channel_binding=require"
+        )
+    assert connect_calls == 0
+
+
+@pytest.mark.parametrize(
+    "netloc",
+    [
+        "owner:bootstrap@ep-first.eu.neon.tech,ep-second.eu.neon.tech@ep-name.eu.neon.tech",
+        "owner:bootstrap@@ep-name.eu.neon.tech",
+    ],
+)
+def test_ambiguous_userinfo_fails_before_bootstrap_connect(
+    monkeypatch: pytest.MonkeyPatch,
+    netloc: str,
+) -> None:
+    connect_calls = 0
+
+    def forbidden_connect(*_args: object, **_kwargs: object) -> object:
+        nonlocal connect_calls
+        connect_calls += 1
+        raise AssertionError("psycopg.connect must remain unreachable")
+
+    monkeypatch.setattr(bootstrap_module.psycopg, "connect", forbidden_connect)
+    with pytest.raises(ChronosProductionError):
+        inspect_database(
+            f"postgresql://{netloc}/robin?sslmode=require&channel_binding=require"  # SECRET_SCANNER_TEST_FIXTURE
+        )
+    assert connect_calls == 0
+
+
 def test_scoped_urls_encode_credentials_and_keep_tls() -> None:
     target = validate_direct_postgres_url(
-        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/robin?sslmode=require"  # SECRET_SCANNER_TEST_FIXTURE
+        "postgresql://owner:bootstrap@ep-name.eu.neon.tech/robin?sslmode=require&channel_binding=require"  # SECRET_SCANNER_TEST_FIXTURE
     )
+    scoped_password = "p@ss:/?#% with spaces"
     value = build_scoped_database_url(
         target,
         username="chronos_reader_login",
-        password="p@ss:/?#% with spaces",
+        password=scoped_password,
     )
-    assert "p@ss" not in value
-    assert "p%40ss%3A%2F%3F%23%25%20with%20spaces" in value
-    assert value.endswith("sslmode=require")
+    assert scoped_password not in value
+    rebuilt = validate_direct_postgres_url(value)
+    parsed = urlparse(value)
+    assert rebuilt.host == target.host
+    assert rebuilt.port == target.port
+    assert rebuilt.database == target.database
+    assert rebuilt.username == "chronos_reader_login"
+    assert parsed.password is not None
+    assert rebuilt.sslmode == target.sslmode
+    assert rebuilt.channel_binding == "require"
+    assert {key for key, _ in parse_qsl(parsed.query)} == {
+        "sslmode",
+        "channel_binding",
+    }
+    libpq = conninfo_to_dict(value)
+    assert libpq["host"] == target.host
+    assert int(libpq.get("port", "5432")) == target.port
+    assert libpq["dbname"] == target.database
+    assert libpq["user"] == "chronos_reader_login"
+    assert hashlib.sha256(libpq["password"].encode()).digest() == hashlib.sha256(
+        scoped_password.encode()
+    ).digest()
+    assert libpq["sslmode"] == target.sslmode
+    assert libpq["channel_binding"] == "require"
 
 
 def test_signed_preflight_is_bound_and_tampering_is_rejected() -> None:

@@ -1,0 +1,333 @@
+{
+  "schema_version": "chronos-neon-secure-dsn-contract-reconciliation-v1",
+  "observed_at": "2026-08-11T17:30:01Z",
+  "repository": "dddur75/robin-stades-ng",
+  "base_main_sha": "361d12b8a1955f1f237c484802478c23c0e81020",
+  "previous_preflight_run": 31506581741,
+  "previous_preflight_attempt": 1,
+  "previous_preflight_sha": "361d12b8a1955f1f237c484802478c23c0e81020",
+  "previous_report_sha256": "5f9b0ded7611799774d2dabe981fab51621182673a44b851050bf31583185347",
+  "previous_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+  "previous_reason": "DIRECT_ENDPOINT_NOT_PROVEN",
+  "previous_gate": "database_url_parameters_forbidden",
+  "official_neon_channel_binding_support": "PROVEN",
+  "postgres_libpq_channel_binding_support": "PROVEN",
+  "root_cause": "PENDING_NEW_READ_ONLY_OBSERVATION",
+  "software_root_cause": "VALIDATOR_TOO_STRICT_FOR_CURRENT_SECURE_NEON_DSN",
+  "root_cause_scope": "SOFTWARE_DIVERGENCE_PROVEN_SECRET_SPECIFIC_CAUSE_NOT_YET_PROVEN",
+  "previous_run_secret_query_profile": "UNKNOWN_NOT_EXPOSED_BY_V4_REPORT",
+  "official_sources": [
+    {
+      "authority": "Neon",
+      "url": "https://neon.com/docs/changelog/2025-06-27",
+      "proof": "Neon Console connection strings include channel_binding=require by default alongside sslmode=require."
+    },
+    {
+      "authority": "Neon",
+      "url": "https://neon.com/docs/changelog/2025-07-25",
+      "proof": "Neon CLI and API connection strings also include channel_binding=require."
+    },
+    {
+      "authority": "PostgreSQL",
+      "url": "https://www.postgresql.org/docs/current/libpq-connect.html",
+      "proof": "libpq defines channel_binding=require as requiring the connection to employ channel binding and defines require, verify-ca and verify-full as TLS-enforcing sslmode values."
+    },
+    {
+      "authority": "Psycopg",
+      "url": "https://www.psycopg.org/psycopg3/docs/api/pq.html",
+      "proof": "Psycopg is built around libpq, which owns PostgreSQL connection processing."
+    }
+  ],
+  "neon_current_secure_connection_profile": {
+    "sslmode": "require",
+    "channel_binding": "require",
+    "status": "PROVEN"
+  },
+  "contract_before": {
+    "shared_validator": "sslmode secure was required but unreviewed query keys were not rejected",
+    "preflight_validator": "exactly one sslmode query pair was required",
+    "scoped_url_builder": "only sslmode was copied",
+    "verdict": "DIVERGENT_AND_CHANNEL_BINDING_DROPPED"
+  },
+  "contract_after": {
+    "canonical_authority": "robin.chronos_production.validate_direct_postgres_url",
+    "required_query_key": "sslmode",
+    "allowed_sslmode_values": [
+      "require",
+      "verify-ca",
+      "verify-full"
+    ],
+    "optional_query_key": "channel_binding",
+    "only_allowed_channel_binding_value": "require",
+    "allowed_query_key_sets": [
+      [
+        "sslmode"
+      ],
+      [
+        "channel_binding",
+        "sslmode"
+      ]
+    ],
+    "unknown_key_policy": "FAIL_CLOSED_EXPLICIT_ALLOWLIST",
+    "accepted_uri_scheme": "postgresql://",
+    "percent_encoded_hostname_policy": "REJECT_BEFORE_LIBPQ",
+    "userinfo_policy": "EXACTLY_ONE_RAW_AT_AND_ONE_RAW_COLON_SEPARATOR",
+    "duplicate_key_policy": "REJECT",
+    "query_order_significant": false,
+    "scoped_url_policy": "COPY_ONLY_VALIDATED_SSLMODE_AND_CHANNEL_BINDING",
+    "verdict": "PREFLIGHT_AND_MIGRATION_DSN_CONTRACT_RECONCILED"
+  },
+  "call_site_audit": [
+    {
+      "call_site": "scripts/chronos_neon_pure_readonly_preflight_v4.py::_validated_psycopg_url",
+      "purpose": "preflight validation and psycopg scheme normalization",
+      "live_or_test": "LIVE_READ_ONLY",
+      "parses_dsn": "VIA_CANONICAL_AUTHORITY",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": "SCHEME_ONLY",
+      "preserves_channel_binding": true,
+      "may_connect": false,
+      "may_mutate": false
+    },
+    {
+      "call_site": "scripts/chronos_neon_pure_readonly_preflight_v4.py::_inspect_database",
+      "purpose": "bounded PostgreSQL read-only observation",
+      "live_or_test": "LIVE_READ_ONLY",
+      "parses_dsn": "VIA__validated_psycopg_url",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": false,
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": false
+    },
+    {
+      "call_site": "scripts/chronos_neon_pure_readonly_preflight_v4.py::run_preflight",
+      "purpose": "validate before Neon GET identity reconciliation and PostgreSQL observation",
+      "live_or_test": "LIVE_READ_ONLY",
+      "parses_dsn": "VIA__validated_psycopg_url",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": false,
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": false
+    },
+    {
+      "call_site": "scripts/chronos_production_bootstrap_v3.py::inspect_database",
+      "purpose": "future bootstrap database inspection",
+      "live_or_test": "LIVE_FUTURE_MIGRATION_PATH",
+      "parses_dsn": "VIA_CANONICAL_AUTHORITY",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": false,
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": false
+    },
+    {
+      "call_site": "scripts/chronos_production_bootstrap_v3.py::run_preflight",
+      "purpose": "future mutation-capable bootstrap preflight",
+      "live_or_test": "LIVE_HELD",
+      "parses_dsn": "VIA_CANONICAL_AUTHORITY",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": false,
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": true
+    },
+    {
+      "call_site": "scripts/chronos_production_bootstrap_v3.py::run_migrate",
+      "purpose": "future separately authorized migration and scoped credential provisioning",
+      "live_or_test": "LIVE_HELD",
+      "parses_dsn": "VIA_CANONICAL_AUTHORITY",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": "VIA_BUILD_SCOPED_DATABASE_URL",
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": true
+    },
+    {
+      "call_site": "scripts/chronos_production_bootstrap_v3.py::run_verify",
+      "purpose": "verify each installed scoped role URL",
+      "live_or_test": "LIVE_HELD",
+      "parses_dsn": "VIA_CANONICAL_AUTHORITY",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": false,
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": false
+    },
+    {
+      "call_site": "scripts/chronos_production_bootstrap_v3.py::build_scoped_database_url calls",
+      "purpose": "build executor and migrator URLs with new credentials",
+      "live_or_test": "LIVE_HELD",
+      "parses_dsn": false,
+      "accepted_query_parameters": [
+        "validated sslmode",
+        "validated channel_binding=require"
+      ],
+      "rebuilds_dsn": true,
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": true
+    },
+    {
+      "call_site": "scripts/run_chronos_provider_free_canary_v3.py::execute_canary",
+      "purpose": "validate and reconcile authority, runtime and reader targets",
+      "live_or_test": "LIVE_HELD",
+      "parses_dsn": "VIA_CANONICAL_AUTHORITY_THREE_TIMES",
+      "accepted_query_parameters": [
+        "sslmode",
+        "channel_binding=require"
+      ],
+      "rebuilds_dsn": false,
+      "preserves_channel_binding": true,
+      "may_connect": true,
+      "may_mutate": true
+    },
+    {
+      "call_site": "scripts/run_chronos_dual_principal_ci_v2.py::_psycopg_url and _scoped_url",
+      "purpose": "local disposable PostgreSQL integration test URL conversion",
+      "live_or_test": "TEST_ONLY_LOCAL_CONTAINER",
+      "parses_dsn": "SQLALCHEMY_URL_TEST_HELPER_NOT_PRODUCTION_VALIDATOR",
+      "accepted_query_parameters": "INHERITS_LOCAL_TEST_INPUT",
+      "rebuilds_dsn": true,
+      "preserves_channel_binding": "NOT_APPLICABLE_LOCAL_TEST_DSN",
+      "may_connect": true,
+      "may_mutate": true
+    }
+  ],
+  "test_matrix": {
+    "allowlist_pass": [
+      "sslmode=require",
+      "sslmode=require plus channel_binding=require",
+      "channel_binding=require before sslmode=require",
+      "sslmode=verify-ca plus channel_binding=require",
+      "sslmode=verify-full plus channel_binding=require"
+    ],
+    "allowlist_fail": [
+      "channel_binding prefer, disable or blank",
+      "duplicate sslmode or channel_binding",
+      "case-variant SSLMode",
+      "host, hostaddr, port, dbname, user or password override",
+      "options, service, connect_timeout or application_name",
+      "unknown future parameter",
+      "fragment, semicolon path parameter, missing userinfo, missing password or missing database",
+      "pooled endpoint",
+      "percent-encoded pooler, multi-host or Unix-socket hostname",
+      "SQLAlchemy-only or mixed-case URI scheme",
+      "malformed query or percent-encoded query key",
+      "ambiguous multiple-at userinfo or raw extra userinfo colon",
+      "invalid percent escape"
+    ],
+    "tls_downgrade_fail": [
+      "sslmode=disable",
+      "sslmode=allow",
+      "sslmode=prefer",
+      "channel_binding=disable",
+      "channel_binding=prefer"
+    ],
+    "anti_redirect": {
+      "parameters": [
+        "host",
+        "hostaddr",
+        "port",
+        "dbname",
+        "user",
+        "service"
+      ],
+      "psycopg_connect_call_count": 0,
+      "verdict": "PASS"
+    },
+    "scoped_url_preservation": "PASS_LIBPQ_CONNINFO_PARSED"
+  },
+  "reviews": {
+    "DP5_SRE": {
+      "verdict": "PASS",
+      "score": 99
+    },
+    "DP6_DBA": {
+      "verdict": "PASS",
+      "score": 98
+    },
+    "C4_SEC_RED": {
+      "verdict": "PASS",
+      "score": 97,
+      "red_team_question": "Does channel_binding support enable redirection, TLS downgrade, database change, role change or pooler use?",
+      "answer": "NO"
+    },
+    "p0": 0,
+    "p1": 0,
+    "minimum_score": 97,
+    "publication_gate": "PASS_PRE_CI"
+  },
+  "local_validation": {
+    "focused_dsn_tests": {
+      "passed": 120,
+      "failed": 0
+    },
+    "chronos_activation_domain": {
+      "passed": 248,
+      "skipped_local_postgresql": 10,
+      "failed": 0
+    },
+    "repository_wide_unique_windows_diagnostic": {
+      "passed": 1596,
+      "skipped": 23,
+      "failed": 26,
+      "failure_class": "PRE_EXISTING_PHASE_C_CRLF_BYTE_IDENTITY",
+      "phase_c_files_modified": false,
+      "definitive_validation": "AUTOMATIC_PR_EXACT_HEAD_LINUX_CI"
+    },
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "compileall": "PASS",
+    "json_yaml": "PASS",
+    "secret_scan": "PASS",
+    "absolute_path_scan": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "effects_before_merge": {
+    "secret_modified": false,
+    "github_actions_secret_updates": 0,
+    "environment_secret_updates": 0,
+    "neon_api_gets": 0,
+    "neon_api_mutations": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "migration_dispatches": 0,
+    "migration_0014": 0,
+    "r2_operations": 0,
+    "provider_calls": 0
+  },
+  "verdicts": {
+    "contract": "NEON_SECURE_DSN_CONTRACT_RECONCILED",
+    "redirection": "LIBPQ_REDIRECTION_GUARDS_PRESERVED",
+    "scoped_security": "SECURE_CHANNEL_BINDING_PROPAGATED_TO_SCOPED_URLS",
+    "live_secret_profile": "PENDING_NEW_READ_ONLY_OBSERVATION_AFTER_MERGE",
+    "migration_readiness": "PENDING_NEW_READ_ONLY_OBSERVATION_AFTER_MERGE",
+    "global": "CHRONOS_NEON_SECURE_DSN_OR_PREFLIGHT_PARTIAL"
+  },
+  "next_gate": "INDEPENDENT_REVIEW_THEN_LOCAL_FULL_VALIDATION_AND_PR_CI",
+  "migration_authorized": false
+}
