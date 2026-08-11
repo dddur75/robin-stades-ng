@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-11T13:40:17Z",
+  "generated_at":"2026-08-11T17:30:01Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -2114,6 +2114,22 @@
       "dataset_lineage_id":"NO_DATASET_GOVERNANCE_VALIDATION_ONLY",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","DP6"]
+    },
+    {
+      "claim_id":"GOV.CHRONOS.NEON.SECURE_DSN.CONTRACT.V1.001",
+      "claim":"The Chronos DSN authority accepts the current secure Neon channel-binding profile, preserves it in libpq-compatible scoped URLs, and rejects reviewed downgrade and redirection forms before any database connection without reading a production secret or performing a mutation.",
+      "scope":"CHRONOS_NEON_SECURE_DSN_CONTRACT_RECONCILIATION_V1_PRE_CI",
+      "source":"Official Neon and PostgreSQL documentation, 120 focused tests, 248 Chronos and activation tests, static validation, and independent DP5, DP6 and C4 read-only reviews",
+      "grain":"one_canonical_neon_secure_dsn_contract",
+      "temporal_class":"CODE_AND_LOCAL_EXECUTION_AS_OF",
+      "artifact":"reports/activation/chronos-neon-secure-dsn-contract-reconciliation-v1.json",
+      "hash":"0f965b19c450c295789d57b271b74ba3a08efe97e11d4ecb067e40d6b354489f",
+      "code_revision":"361d12b8a1955f1f237c484802478c23c0e81020",
+      "execution_id":"local-neon-secure-dsn-contract-v1-20260811T173001Z",
+      "scientific_lineage_id":"chronos-neon-secure-dsn-contract-v1",
+      "dataset_lineage_id":"NO_PRODUCTION_DATA_LOCAL_SYNTHETIC_ONLY",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","DP6","C4"]
     }
   ],
   "decision_nodes":[
@@ -2230,7 +2246,8 @@
     {"decision_id":"RCV3-20260811-118","ledger_record_hash":"45bdecf73253f05f64b38a5170e30d6c90ea0eca7321b84aa15789964f30a51d"},
     {"decision_id":"RCV3-20260811-119","ledger_record_hash":"a1951937a6af243fa64945eb5c246c2c1cc40d72e07f6275fabedfe843fe0889"},
     {"decision_id":"RCV3-20260811-120","ledger_record_hash":"d8264054b2766213a48ce095547dfd0058d0307dcd531db398f514f46c491ce6"},
-    {"decision_id":"RCV3-20260811-121","ledger_record_hash":"33741e011bb600476dcaf8802378e1a46affc7f06091f9d678fed3e2be19759b"}
+    {"decision_id":"RCV3-20260811-121","ledger_record_hash":"33741e011bb600476dcaf8802378e1a46affc7f06091f9d678fed3e2be19759b"},
+    {"decision_id":"RCV3-20260811-122","ledger_record_hash":"e6f32b33506b2ce6fad5187719654d2e8b234cb97980fc1d3ddd44fe16bff07a"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2533,6 +2550,7 @@
     {"edge_id":"EDGE.298","from_claim_id":"PORT.CHRONOS.FROZEN_MANIFEST.GIT_BLOB.V2.001","to_decision_id":"RCV3-20260811-118","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.299","from_claim_id":"GOV.COUNCIL.TEMPORAL.DETERMINISM.V1.001","to_decision_id":"RCV3-20260811-119","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.300","from_claim_id":"GOV.CHRONOS.NEON.PURE_READONLY.PREFLIGHT.V4.001","to_decision_id":"RCV3-20260811-120","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.301","from_claim_id":"GOV.COUNCIL.APPEND_ONLY.HISTORICAL.PREFIX.V1.001","to_decision_id":"RCV3-20260811-121","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.301","from_claim_id":"GOV.COUNCIL.APPEND_ONLY.HISTORICAL.PREFIX.V1.001","to_decision_id":"RCV3-20260811-121","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.302","from_claim_id":"GOV.CHRONOS.NEON.SECURE_DSN.CONTRACT.V1.001","to_decision_id":"RCV3-20260811-122","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

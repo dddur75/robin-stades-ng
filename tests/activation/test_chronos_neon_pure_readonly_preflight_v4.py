@@ -22,6 +22,7 @@ from scripts.chronos_neon_pure_readonly_preflight_v4 import (
     GateChecks,
     NeonObservation,
     NeonReadOnlyClient,
+    _inspect_database,
     _read_authority_inventory,
     _read_revisions,
     _resolve_neon_identity,
@@ -356,6 +357,135 @@ def test_database_url_rejects_libpq_override_parameters(suffix: str) -> None:
     )
     with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
         _validated_psycopg_url(dsn)
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "sslmode=require",
+        "sslmode=require&channel_binding=require",
+        "channel_binding=require&sslmode=verify-full",
+    ],
+)
+def test_preflight_uses_shared_secure_dsn_contract(query: str) -> None:
+    dsn = (
+        "postgresql://synthetic_user:synthetic_password@"
+        f"ep-synthetic.neon.tech/synthetic_database?{query}"
+    )
+    normalized, target = _validated_psycopg_url(dsn)
+    assert normalized.startswith("postgresql://")
+    assert target.sslmode in {"require", "verify-full"}
+    assert target.channel_binding == (
+        "require" if "channel_binding=require" in query else None
+    )
+
+
+def test_unexpected_query_name_is_hashed_in_sanitized_failure_profile() -> None:
+    unexpected_name = "synthetic_sensitive_parameter_name"
+    dsn = (
+        "postgresql://synthetic_user:synthetic_password@"
+        "ep-synthetic.neon.tech/synthetic_database?sslmode=require&"
+        f"{unexpected_name}=synthetic_value"
+    )
+    with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN") as caught:
+        _validated_psycopg_url(dsn)
+    profile = caught.value.dsn_security_profile
+    assert profile["contract_verdict"] == (
+        "NEON_BOOTSTRAP_DSN_STILL_OUTSIDE_REVIEWED_CONTRACT"
+    )
+    assert profile["unexpected_parameter_count"] == 1
+    assert unexpected_name not in json.dumps(profile, sort_keys=True)
+    assert caught.value.gate == "database_url_parameters_forbidden"
+
+
+@pytest.mark.parametrize(
+    "override",
+    [
+        "host=attacker.example",
+        "hostaddr=192.0.2.10",
+        "port=6543",
+        "dbname=other",
+        "user=other",
+        "service=other",
+    ],
+)
+def test_libpq_redirection_fails_before_psycopg_connect(
+    monkeypatch: pytest.MonkeyPatch,
+    override: str,
+) -> None:
+    connect_calls = 0
+
+    def forbidden_connect(*_args: object, **_kwargs: object) -> object:
+        nonlocal connect_calls
+        connect_calls += 1
+        raise AssertionError("psycopg.connect must remain unreachable")
+
+    monkeypatch.setattr(preflight_module.psycopg, "connect", forbidden_connect)
+    dsn = (
+        "postgresql://synthetic_user:synthetic_password@"
+        "ep-synthetic.neon.tech/synthetic_database?sslmode=require&"
+        + override
+    )
+    with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
+        _inspect_database(dsn)
+    assert connect_calls == 0
+
+
+@pytest.mark.parametrize(
+    "host",
+    [
+        "ep-synthetic-%70ooler.eu.neon.tech",
+        "ep-safe.eu.neon.tech%2Cep-other.eu.neon.tech",
+        "%2Ftmp%2Fep-safe.eu.neon.tech",
+    ],
+)
+def test_encoded_host_redirection_fails_before_preflight_connect(
+    monkeypatch: pytest.MonkeyPatch,
+    host: str,
+) -> None:
+    connect_calls = 0
+
+    def forbidden_connect(*_args: object, **_kwargs: object) -> object:
+        nonlocal connect_calls
+        connect_calls += 1
+        raise AssertionError("psycopg.connect must remain unreachable")
+
+    monkeypatch.setattr(preflight_module.psycopg, "connect", forbidden_connect)
+    dsn = (
+        "postgresql://synthetic_user:synthetic_password@"
+        f"{host}/synthetic_database?sslmode=require&channel_binding=require"
+    )
+    with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
+        _inspect_database(dsn)
+    assert connect_calls == 0
+
+
+@pytest.mark.parametrize(
+    "netloc",
+    [
+        "synthetic_user:synthetic_password@ep-first.eu.neon.tech,ep-second.eu.neon.tech@ep-legit.eu.neon.tech",
+        "synthetic_user:synthetic_password@@ep-legit.eu.neon.tech",
+    ],
+)
+def test_ambiguous_userinfo_fails_before_preflight_connect(
+    monkeypatch: pytest.MonkeyPatch,
+    netloc: str,
+) -> None:
+    connect_calls = 0
+
+    def forbidden_connect(*_args: object, **_kwargs: object) -> object:
+        nonlocal connect_calls
+        connect_calls += 1
+        raise AssertionError("psycopg.connect must remain unreachable")
+
+    monkeypatch.setattr(preflight_module.psycopg, "connect", forbidden_connect)
+    dsn = (
+        f"postgresql://{netloc}/synthetic_database?"
+        "sslmode=require&channel_binding=require"
+    )
+    with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
+        _inspect_database(dsn)
+    assert connect_calls == 0
 
 
 class _FailingSqlCursor:

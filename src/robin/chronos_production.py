@@ -8,7 +8,7 @@ import json
 import re
 from dataclasses import dataclass
 from typing import Any
-from urllib.parse import parse_qs, quote, urlencode, urlparse, urlunparse
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
 EXPECTED_REPOSITORY = "dddur75/robin-stades-ng"
 EXPECTED_REF = "refs/heads/main"
@@ -37,7 +37,12 @@ SCOPED_LOGINS = (
 _HEX_40 = re.compile(r"^[0-9a-f]{40}$")
 _HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 _SAFE_IDENTIFIER = re.compile(r"^[a-z][a-z0-9_]{0,62}$")
+_SAFE_NEON_HOST = re.compile(
+    r"^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.neon\.tech$"
+)
+_INVALID_PERCENT_ESCAPE = re.compile(r"%(?![0-9a-fA-F]{2})")
 _SAFE_SSL_MODES = frozenset({"require", "verify-ca", "verify-full"})
+_SAFE_QUERY_KEYS = frozenset({"sslmode", "channel_binding"})
 
 
 class ChronosProductionError(RuntimeError):
@@ -73,38 +78,101 @@ class DirectPostgresTarget:
     database: str
     username: str
     sslmode: str
+    channel_binding: str | None = None
+
+    def __post_init__(self) -> None:
+        if (
+            self.host != self.host.lower()
+            or _SAFE_NEON_HOST.fullmatch(self.host) is None
+            or "pooler" in self.host
+            or "-pool" in self.host
+            or ".pool." in self.host
+        ):
+            raise ChronosProductionError("CHRONOS_DIRECT_DATABASE_HOST_INVALID")
+        if not 1 <= self.port <= 65_535:
+            raise ChronosProductionError("CHRONOS_DATABASE_URL_INVALID")
+        if not self.database or "/" in self.database:
+            raise ChronosProductionError("CHRONOS_DATABASE_NAME_INVALID")
+        if not self.username:
+            raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_MISSING")
+        if self.sslmode not in _SAFE_SSL_MODES:
+            raise ChronosProductionError("CHRONOS_SSL_REQUIRED")
+        if self.channel_binding not in {None, "require"}:
+            raise ChronosProductionError("CHRONOS_CHANNEL_BINDING_REQUIRED")
 
 
 def validate_direct_postgres_url(value: str) -> DirectPostgresTarget:
-    """Reject non-PostgreSQL, pooled, passwordless, or non-TLS URLs."""
+    """Apply the canonical fail-closed Chronos production DSN contract."""
 
+    if not isinstance(value, str) or not value.startswith("postgresql://"):
+        raise ChronosProductionError("CHRONOS_DATABASE_SCHEME_INVALID")
+    if _INVALID_PERCENT_ESCAPE.search(value) is not None:
+        raise ChronosProductionError("CHRONOS_DATABASE_URL_INVALID")
     try:
         parsed = urlparse(value)
-        port = parsed.port or 5432
-    except (TypeError, ValueError):
+        parsed_port = parsed.port
+        port = 5432 if parsed_port is None else parsed_port
+        username = unquote(parsed.username or "", errors="strict")
+        database = unquote(parsed.path.removeprefix("/"), errors="strict")
+        query_items = parse_qsl(
+            parsed.query,
+            keep_blank_values=True,
+            strict_parsing=True,
+            encoding="utf-8",
+            errors="strict",
+        )
+        raw_query_keys = []
+        for field in parsed.query.split("&"):
+            if field.count("=") != 1:
+                raise ValueError("malformed query field")
+            raw_query_keys.append(field.partition("=")[0])
+    except (TypeError, UnicodeError, ValueError):
         raise ChronosProductionError("CHRONOS_DATABASE_URL_INVALID") from None
-    if parsed.scheme not in {"postgresql", "postgresql+psycopg"}:
+    if parsed.scheme != "postgresql":
         raise ChronosProductionError("CHRONOS_DATABASE_SCHEME_INVALID")
-    host = (parsed.hostname or "").lower()
+    if parsed.params or parsed.fragment or ";" in parsed.path:
+        raise ChronosProductionError("CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN")
+    if parsed.netloc.count("@") != 1:
+        raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_INVALID")
+    raw_userinfo, _, _ = parsed.netloc.partition("@")
+    if raw_userinfo.count(":") != 1:
+        raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_INVALID")
+    raw_host = parsed.hostname or ""
+    host = raw_host.lower()
     if not host or host == "localhost" or host.endswith(".localhost"):
+        raise ChronosProductionError("CHRONOS_DIRECT_DATABASE_HOST_INVALID")
+    if "%" in raw_host or _SAFE_NEON_HOST.fullmatch(host) is None:
         raise ChronosProductionError("CHRONOS_DIRECT_DATABASE_HOST_INVALID")
     if "pooler" in host or "-pool" in host or ".pool." in host:
         raise ChronosProductionError("CHRONOS_POOLED_ENDPOINT_FORBIDDEN")
-    if parsed.username is None or parsed.password is None:
+    if not username or parsed.password is None or not parsed.password:
         raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_MISSING")
-    database = parsed.path.removeprefix("/")
     if not database or "/" in database:
         raise ChronosProductionError("CHRONOS_DATABASE_NAME_INVALID")
-    query = parse_qs(parsed.query, keep_blank_values=True)
-    ssl_values = query.get("sslmode", [])
-    if len(ssl_values) != 1 or ssl_values[0] not in _SAFE_SSL_MODES:
+    query: dict[str, str] = {}
+    if any(key not in _SAFE_QUERY_KEYS for key in raw_query_keys):
+        raise ChronosProductionError("CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN")
+    for key, item in query_items:
+        if key not in _SAFE_QUERY_KEYS or not item or key in query:
+            raise ChronosProductionError(
+                "CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN"
+            )
+        query[key] = item
+    if set(query) not in ({"sslmode"}, _SAFE_QUERY_KEYS):
+        raise ChronosProductionError("CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN")
+    sslmode = query["sslmode"]
+    if sslmode not in _SAFE_SSL_MODES:
         raise ChronosProductionError("CHRONOS_SSL_REQUIRED")
+    channel_binding = query.get("channel_binding")
+    if channel_binding is not None and channel_binding != "require":
+        raise ChronosProductionError("CHRONOS_CHANNEL_BINDING_REQUIRED")
     return DirectPostgresTarget(
         host=host,
         port=port,
         database=database,
-        username=parsed.username,
-        sslmode=ssl_values[0],
+        username=username,
+        sslmode=sslmode,
+        channel_binding=channel_binding,
     )
 
 
@@ -122,13 +190,18 @@ def build_scoped_database_url(
     netloc = f"{quote(username, safe='')}:{quote(password, safe='')}@{target.host}"
     if target.port != 5432:
         netloc += f":{target.port}"
+    query_items = [("sslmode", target.sslmode)]
+    if target.channel_binding is not None:
+        if target.channel_binding != "require":
+            raise ChronosProductionError("CHRONOS_CHANNEL_BINDING_REQUIRED")
+        query_items.append(("channel_binding", target.channel_binding))
     return urlunparse(
         (
-            "postgresql+psycopg",
+            "postgresql",
             netloc,
             "/" + quote(target.database, safe=""),
             "",
-            urlencode({"sslmode": target.sslmode}),
+            urlencode(query_items),
             "",
         )
     )

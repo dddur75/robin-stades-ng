@@ -333,13 +333,14 @@ jobs:
           python -m mypy --explicit-package-bases scripts/run_five_league_expansion.py
           python -m mypy --explicit-package-bases scripts/run_prequential_learning_factory.py
           python -m mypy --explicit-package-bases scripts/build_hypothesis_intelligence.py
-          python -m mypy --strict scripts/build_hypothesis_evidence.py scripts/build_hypothesis_evidence_site_pages.py
+          python -m mypy --strict scripts/build_hypothesis_evidence.py scripts/build_hypothesis_evidence_site_pages.py scripts/chronos_neon_pure_readonly_preflight_v4.py
       - name: Securite basique
         run: >-
           python -m bandit -q -r
           src/robin
           scripts/build_hypothesis_evidence.py
           scripts/build_hypothesis_evidence_site_pages.py
+          scripts/chronos_neon_pure_readonly_preflight_v4.py
           migrations/versions/0013_historical_evidence_index.py
           migrations/versions/0014_chronos_control_plane_v2.py
       - name: Verification des secrets

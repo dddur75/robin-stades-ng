@@ -132,6 +132,7 @@ jobs:
           scripts/run_chronos_dual_principal_ci_v2.py
           scripts/check_chronos_github_hold_v3.py
           scripts/run_chronos_provider_free_canary_v3.py
+          scripts/chronos_neon_pure_readonly_preflight_v4.py
       - run: >-
           python -m bandit -q -r
           src/robin
@@ -139,6 +140,7 @@ jobs:
           scripts/run_chronos_dual_principal_ci_v2.py
           scripts/check_chronos_github_hold_v3.py
           scripts/run_chronos_provider_free_canary_v3.py
+          scripts/chronos_neon_pure_readonly_preflight_v4.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: chronos-dual-principal-${{ matrix.admin-profile }}-${{ github.run_id }}-${{ github.run_attempt }}
