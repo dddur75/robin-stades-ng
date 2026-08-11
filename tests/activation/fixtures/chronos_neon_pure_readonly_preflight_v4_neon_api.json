@@ -1,0 +1,49 @@
+{
+  "projects": {
+    "projects": [
+      {
+        "id": "synthetic-project",
+        "name": "synthetic-project-name",
+        "owner_id": "synthetic-owner"
+      }
+    ],
+    "unavailable": [],
+    "pagination": {}
+  },
+  "project_detail": {
+    "project": {
+      "id": "synthetic-project",
+      "name": "synthetic-project-name",
+      "owner_id": "synthetic-owner",
+      "region_id": "aws-eu-synthetic-1",
+      "history_retention_seconds": 86400,
+      "owner": {
+        "branches_limit": 5
+      }
+    }
+  },
+  "branches": {
+    "branches": [
+      {
+        "id": "synthetic-branch",
+        "name": "synthetic-production",
+        "current_state": "ready",
+        "default": true
+      }
+    ],
+    "pagination": {}
+  },
+  "endpoints": {
+    "endpoints": [
+      {
+        "id": "synthetic-endpoint",
+        "branch_id": "synthetic-branch",
+        "host": "ep-synthetic.neon.tech",
+        "type": "read_write",
+        "current_state": "active",
+        "disabled": false,
+        "region_id": "aws-eu-synthetic-1"
+      }
+    ]
+  }
+}
