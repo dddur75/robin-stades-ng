@@ -39,16 +39,18 @@ def _prefix(
     records: list[dict[str, object]],
     graph: dict[str, object],
     *,
-    remove: int,
+    record_count: int,
+    claim_count: int,
+    edge_count: int,
     generated_at: str,
 ) -> tuple[list[dict[str, object]], dict[str, object]]:
-    prefix_records = copy.deepcopy(records[:-remove])
+    prefix_records = copy.deepcopy(records[:record_count])
     prefix_graph = copy.deepcopy(graph)
-    prefix_graph["claims"] = prefix_graph["claims"][:-remove]  # type: ignore[index]
+    prefix_graph["claims"] = prefix_graph["claims"][:claim_count]  # type: ignore[index]
     prefix_graph["decision_nodes"] = prefix_graph["decision_nodes"][  # type: ignore[index]
-        :-remove
+        :record_count
     ]
-    prefix_graph["edges"] = prefix_graph["edges"][:-remove]  # type: ignore[index]
+    prefix_graph["edges"] = prefix_graph["edges"][:edge_count]  # type: ignore[index]
     prefix_graph["generated_at"] = generated_at
     return prefix_records, prefix_graph
 
@@ -57,7 +59,12 @@ def _correction_prefix(
     records: list[dict[str, object]], graph: dict[str, object]
 ) -> tuple[list[dict[str, object]], dict[str, object]]:
     return _prefix(
-        records, graph, remove=3, generated_at=CORRECTION_GENERATED_AT
+        records,
+        graph,
+        record_count=109,
+        claim_count=125,
+        edge_count=296,
+        generated_at=CORRECTION_GENERATED_AT,
     )
 
 
@@ -65,7 +72,12 @@ def _ci1_prefix(
     records: list[dict[str, object]], graph: dict[str, object]
 ) -> tuple[list[dict[str, object]], dict[str, object]]:
     return _prefix(
-        records, graph, remove=2, generated_at=CI1_CORRECTION_GENERATED_AT
+        records,
+        graph,
+        record_count=110,
+        claim_count=126,
+        edge_count=297,
+        generated_at=CI1_CORRECTION_GENERATED_AT,
     )
 
 
@@ -73,7 +85,25 @@ def _portability_prefix(
     records: list[dict[str, object]], graph: dict[str, object]
 ) -> tuple[list[dict[str, object]], dict[str, object]]:
     return _prefix(
-        records, graph, remove=1, generated_at=PORTABILITY_CORRECTION_GENERATED_AT
+        records,
+        graph,
+        record_count=111,
+        claim_count=127,
+        edge_count=298,
+        generated_at=PORTABILITY_CORRECTION_GENERATED_AT,
+    )
+
+
+def _temporal_prefix(
+    records: list[dict[str, object]], graph: dict[str, object]
+) -> tuple[list[dict[str, object]], dict[str, object]]:
+    return _prefix(
+        records,
+        graph,
+        record_count=112,
+        claim_count=128,
+        edge_count=299,
+        generated_at=TEMPORAL_CORRECTION_GENERATED_AT,
     )
 
 
@@ -173,6 +203,7 @@ def test_portability_correction_rejects_rehashed_authority_escalation() -> None:
 
 def test_temporal_correction_final_state_is_exact_and_read_only() -> None:
     records, graph = _evidence()
+    records, graph = _temporal_prefix(records, graph)
     before_records = copy.deepcopy(records)
     before_graph = copy.deepcopy(graph)
     verify_temporal_correction_final(records, graph)
@@ -183,6 +214,7 @@ def test_temporal_correction_final_state_is_exact_and_read_only() -> None:
 
 def test_temporal_correction_final_state_rejects_missing_final_edge() -> None:
     records, graph = _evidence()
+    records, graph = _temporal_prefix(records, graph)
     graph["edges"].pop()  # type: ignore[union-attr]
     with pytest.raises(SystemExit, match="TEMPORAL_CORRECTION_FINAL_STATE_INVALID"):
         verify_temporal_correction_final(records, graph)
@@ -190,6 +222,7 @@ def test_temporal_correction_final_state_rejects_missing_final_edge() -> None:
 
 def test_temporal_correction_rejects_rehashed_authority_escalation() -> None:
     records, graph = _evidence()
+    records, graph = _temporal_prefix(records, graph)
     final = records[-1]
     final["decision"] = "READY_AND_MERGE_AUTHORIZED"
     final["hash"] = canonical_hash(

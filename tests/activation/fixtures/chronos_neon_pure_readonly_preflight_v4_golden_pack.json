@@ -1,0 +1,138 @@
+{
+  "schema_version": "chronos-neon-pure-readonly-preflight-v4-golden-pack",
+  "cases": [
+    {
+      "case_id": "all_readonly_gates_proven",
+      "checks": {
+        "secrets_present": true,
+        "project_identity_verified": true,
+        "production_branch_verified": true,
+        "direct_endpoint_verified": true,
+        "ssl_verified": true,
+        "expected_revision_verified": true,
+        "bootstrap_authority_plausible": true,
+        "recovery_branch_feasible": true,
+        "purchase_required": false,
+        "github_queue_empty": true,
+        "github_in_progress_empty": true,
+        "github_dispatch_unique": true
+      },
+      "expected_verdict": "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION",
+      "expected_reason": null
+    },
+    {
+      "case_id": "revision_drift_fails_closed",
+      "checks": {
+        "secrets_present": true,
+        "project_identity_verified": true,
+        "production_branch_verified": true,
+        "direct_endpoint_verified": true,
+        "ssl_verified": true,
+        "expected_revision_verified": false,
+        "bootstrap_authority_plausible": true,
+        "recovery_branch_feasible": true,
+        "purchase_required": false,
+        "github_queue_empty": true,
+        "github_in_progress_empty": true,
+        "github_dispatch_unique": true
+      },
+      "expected_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+      "expected_reason": "UNEXPECTED_DATABASE_REVISION"
+    },
+    {
+      "case_id": "pooled_endpoint_fails_closed",
+      "checks": {
+        "secrets_present": true,
+        "project_identity_verified": true,
+        "production_branch_verified": true,
+        "direct_endpoint_verified": false,
+        "ssl_verified": true,
+        "expected_revision_verified": true,
+        "bootstrap_authority_plausible": true,
+        "recovery_branch_feasible": true,
+        "purchase_required": false,
+        "github_queue_empty": true,
+        "github_in_progress_empty": true,
+        "github_dispatch_unique": true
+      },
+      "expected_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+      "expected_reason": "DIRECT_ENDPOINT_NOT_PROVEN"
+    },
+    {
+      "case_id": "missing_secret_fails_first",
+      "checks": {
+        "secrets_present": false,
+        "project_identity_verified": false,
+        "production_branch_verified": false,
+        "direct_endpoint_verified": false,
+        "ssl_verified": false,
+        "expected_revision_verified": false,
+        "bootstrap_authority_plausible": false,
+        "recovery_branch_feasible": false,
+        "purchase_required": false,
+        "github_queue_empty": false,
+        "github_in_progress_empty": false,
+        "github_dispatch_unique": false
+      },
+      "expected_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+      "expected_reason": "SECRET_MISSING"
+    },
+    {
+      "case_id": "branch_allowance_exhausted",
+      "checks": {
+        "secrets_present": true,
+        "project_identity_verified": true,
+        "production_branch_verified": true,
+        "direct_endpoint_verified": true,
+        "ssl_verified": true,
+        "expected_revision_verified": true,
+        "bootstrap_authority_plausible": true,
+        "recovery_branch_feasible": false,
+        "purchase_required": true,
+        "github_queue_empty": true,
+        "github_in_progress_empty": true,
+        "github_dispatch_unique": true
+      },
+      "expected_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+      "expected_reason": "PURCHASE_REQUIRED"
+    },
+    {
+      "case_id": "concurrent_run_blocks_recovery_feasibility",
+      "checks": {
+        "secrets_present": true,
+        "project_identity_verified": true,
+        "production_branch_verified": true,
+        "direct_endpoint_verified": true,
+        "ssl_verified": true,
+        "expected_revision_verified": true,
+        "bootstrap_authority_plausible": true,
+        "recovery_branch_feasible": true,
+        "purchase_required": false,
+        "github_queue_empty": true,
+        "github_in_progress_empty": false,
+        "github_dispatch_unique": true
+      },
+      "expected_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+      "expected_reason": "RECOVERY_BRANCH_NOT_FEASIBLE"
+    },
+    {
+      "case_id": "second_exact_main_dispatch_fails_closed",
+      "checks": {
+        "secrets_present": true,
+        "project_identity_verified": true,
+        "production_branch_verified": true,
+        "direct_endpoint_verified": true,
+        "ssl_verified": true,
+        "expected_revision_verified": true,
+        "bootstrap_authority_plausible": true,
+        "recovery_branch_feasible": true,
+        "purchase_required": false,
+        "github_queue_empty": true,
+        "github_in_progress_empty": true,
+        "github_dispatch_unique": false
+      },
+      "expected_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+      "expected_reason": "RECOVERY_BRANCH_NOT_FEASIBLE"
+    }
+  ]
+}
