@@ -30,6 +30,21 @@ CI1_CORRECTION_REPORT_SHA256 = "09e0019373fde42688958d6fe8eed38c322424979124965a
 CI1_CORRECTION_TIP_HASH = "ea40d55aec25913956cc7ec4c8dec88dc34152c6c37ad48b572423cafc27b221"
 CI1_CORRECTION_GENERATED_AT = "2026-08-10T23:36:00Z"
 CI1_CORRECTION_CLAIM_ID = "GOV.CHRONOS.CLEANROOM.CI1.CORRECTION.V1.001"
+PORTABILITY_CORRECTION_ID = "RCV3-20260811-118"
+PORTABILITY_CORRECTION_REPORT = (
+    "reports/portability/frozen-evidence-manifest-cross-platform-root-cause-v1.json"
+)
+PORTABILITY_CORRECTION_REPORT_SHA256 = (
+    "0bbc800296eac20f5dcaf89db452f316592159745070a61fccac812632b2cf57"
+)
+PORTABILITY_CORRECTION_TIP_HASH = (
+    "45bdecf73253f05f64b38a5170e30d6c90ea0eca7321b84aa15789964f30a51d"
+)
+PORTABILITY_CORRECTION_GENERATED_AT = "2026-08-11T05:31:52Z"
+PORTABILITY_CORRECTION_CLAIM_ID = (
+    "PORT.CHRONOS.FROZEN_MANIFEST.GIT_BLOB.V2.001"
+)
+PORTABILITY_REVIEWS_COMPLETE = True
 REPORTS = {
     "audit": "reports/closure/pr45-file-classification-v1.json",
     "paths": "reports/closure/pr45-absolute-path-and-ledger-audit-v1.json",
@@ -717,6 +732,164 @@ def append_ci1_correction(
     verify_ci1_correction_final(records, graph)
 
 
+def portability_correction_claim() -> dict[str, Any]:
+    return {
+        "claim_id": PORTABILITY_CORRECTION_CLAIM_ID,
+        "claim": (
+            "GitHub run 31443189487 proved that manifest v1 hashed tracked "
+            "generator and dependency-lock worktree bytes; manifest v2 binds "
+            "those fields to exact Git blobs at source_sha while retaining exact "
+            "runtime and Parquet bytes."
+        ),
+        "scope": "FROZEN_EVIDENCE_CROSS_PLATFORM_PROVENANCE_CORRECTION",
+        "source": (
+            "GitHub run 31443189487 artifacts and logs, Git-object micro-experiment, "
+            "LF/CRLF real-checkout simulation and three read-only reviews"
+        ),
+        "grain": "one_chronos_cleanroom_portable_integration",
+        "temporal_class": "CODE_AND_LOCAL_EXECUTION_AS_OF",
+        "artifact": PORTABILITY_CORRECTION_REPORT,
+        "hash": file_sha256(PORTABILITY_CORRECTION_REPORT),
+        "code_revision": "0b19c7fb83c3323117a626aff575c8abb335374b",
+        "execution_id": "github-actions-31443189487-plus-local-git-blob-v2",
+        "scientific_lineage_id": "chronos-dual-principal-authority-e1-v2",
+        "dataset_lineage_id": "RUN_31443189487_CANONICAL_WINDOWS_ARTIFACTS",
+        "status": "VERIFIED",
+        "verified_by": ["C0", "DP5", "DP6", "C4"],
+    }
+
+
+def portability_correction_record(correction_claim: dict[str, Any]) -> dict[str, Any]:
+    return record(
+        PORTABILITY_CORRECTION_ID,
+        "CI2_PORTABLE_MANIFEST_CORRECTION",
+        PORTABILITY_CORRECTION_GENERATED_AT,
+        "Bind frozen-evidence tracked provenance to exact Git blobs at source_sha and preserve runtime inputs as transferred bytes.",
+        [
+            "Run 31443189487 failed only because manifest v1 depended on Windows CRLF worktree materialization.",
+            "requirements-evidence.lock would produce the same deterministic mismatch if it remained worktree-bound.",
+            "A third corrective architecture cycle is forbidden after this bounded final correction.",
+        ],
+        [correction_claim["claim_id"]],
+        "PASS_BOUNDED_FINAL_CORRECTION. Authorize one local commit and one non-force push to PR46; Ready and merge remain gated on exact-head CI success.",
+        {
+            **common_context(),
+            "pull_request": 46,
+            "failed_run_id": 31443189487,
+            "failed_head_sha": "0b19c7fb83c3323117a626aff575c8abb335374b",
+            "failed_tree_sha": "2060a1dfeaf642d92ae1e01745869f21f17462a3",
+            "failed_job_id": 93635337472,
+            "failed_step": "Verifier les bytes et le manifeste canoniques",
+            "failed_code": "FROZEN_EVIDENCE_GENERATOR_HASH_MISMATCH",
+            "root_cause": "WORKTREE_LINE_ENDING_DEPENDENCE",
+            "correction_report": PORTABILITY_CORRECTION_REPORT,
+            "schema_before": "frozen-evidence-portable-manifest-v1",
+            "schema_after": "frozen-evidence-portable-manifest-v2",
+            "generator_hash_basis": "git_blob_bytes_at_source_sha",
+            "dependency_lock_hash_basis": "git_blob_bytes_at_source_sha",
+            "inputs_hash_basis": "runtime_file_bytes",
+            "cross_platform_manifest_sha256": (
+                "1bfdf0dd72786149e1181e3d017c17d917e3d0ea05b733852291569dc1bfea03"
+            ),
+            "targeted_tests": {"passed": 62, "skipped": 2, "failed": 0},
+            "reviews": {
+                "DP5": {"roles": ["PORT", "SRE"], "verdict": "PASS", "score": 98},
+                "DP6": {
+                    "roles": ["EVIDENCE", "DBA"],
+                    "verdict": "PASS",
+                    "score": 98,
+                },
+                "C4": {"roles": ["SEC", "RED"], "verdict": "PASS", "score": 98},
+            },
+            "corrective_ci_cycles_used": 2,
+            "corrective_ci_cycles_maximum": 2,
+            "third_architectural_cycle_authorized": False,
+            "next_source_sha_binding": "EXACT_COMMIT_CONTAINING_THIS_RECORD",
+            "next_ci_run_binding": "AUTOMATIC_PR46_EXACT_HEAD_RUN",
+            "p0": 0,
+            "p1": 0,
+        },
+        CI1_CORRECTION_TIP_HASH,
+    )
+
+
+def verify_portability_correction_final(
+    records: list[dict[str, Any]], graph: dict[str, Any]
+) -> None:
+    verify_final(records, graph)
+    verify_graph_shape(records, graph)
+    correction_claim = portability_correction_claim()
+    correction_record = portability_correction_record(correction_claim)
+    expected_node = {
+        "decision_id": PORTABILITY_CORRECTION_ID,
+        "ledger_record_hash": PORTABILITY_CORRECTION_TIP_HASH,
+    }
+    expected_edge = {
+        "edge_id": "EDGE.298",
+        "from_claim_id": PORTABILITY_CORRECTION_CLAIM_ID,
+        "to_decision_id": PORTABILITY_CORRECTION_ID,
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    if file_sha256(PORTABILITY_CORRECTION_REPORT) != PORTABILITY_CORRECTION_REPORT_SHA256:
+        raise SystemExit("CLEANROOM_PORTABILITY_CORRECTION_REPORT_HASH_INVALID")
+    if (
+        len(records) != 111
+        or len(graph["claims"]) != 127
+        or len(graph["decision_nodes"]) != 111
+        or len(graph["edges"]) != 298
+        or records[-2]["hash"] != CI1_CORRECTION_TIP_HASH
+        or records[-1] != correction_record
+        or records[-1]["hash"] != PORTABILITY_CORRECTION_TIP_HASH
+        or graph["claims"][-1] != correction_claim
+        or graph["decision_nodes"][-1] != expected_node
+        or graph["edges"][-1] != expected_edge
+        or graph.get("generated_at") != PORTABILITY_CORRECTION_GENERATED_AT
+    ):
+        raise SystemExit("CLEANROOM_PORTABILITY_CORRECTION_FINAL_STATE_INVALID")
+
+
+def append_portability_correction(
+    original_ledger: str,
+    records: list[dict[str, Any]],
+    graph: dict[str, Any],
+) -> None:
+    if not PORTABILITY_REVIEWS_COMPLETE:
+        raise SystemExit("CLEANROOM_PORTABILITY_REVIEWS_PENDING")
+    verify_ci1_correction_final(records, graph)
+    correction_claim = portability_correction_claim()
+    correction_record = portability_correction_record(correction_claim)
+    records.append(correction_record)
+    graph["generated_at"] = PORTABILITY_CORRECTION_GENERATED_AT
+    graph["claims"].append(correction_claim)
+    graph["decision_nodes"].append(
+        {
+            "decision_id": correction_record["decision_id"],
+            "ledger_record_hash": correction_record["hash"],
+        }
+    )
+    graph["edges"].append(
+        {
+            "edge_id": "EDGE.298",
+            "from_claim_id": correction_claim["claim_id"],
+            "to_decision_id": correction_record["decision_id"],
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+    )
+    separator = "" if original_ledger.endswith("\n") else "\n"
+    appended = json.dumps(
+        correction_record, ensure_ascii=False, separators=(",", ":")
+    ) + "\n"
+    LEDGER.write_text(
+        original_ledger + separator + appended,
+        encoding="utf-8",
+        newline="\n",
+    )
+    GRAPH.write_text(compact_json(graph) + "\n", encoding="utf-8", newline="\n")
+    verify_portability_correction_final(records, graph)
+
+
 def verify_final(records: list[dict[str, Any]], graph: dict[str, Any]) -> None:
     validate_chain(records)
     by_id = {record["decision_id"]: record["hash"] for record in records}
@@ -740,9 +913,13 @@ def main() -> None:
     original_ledger = LEDGER.read_text(encoding="utf-8")
     records = [json.loads(line) for line in original_ledger.splitlines() if line.strip()]
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
+    if records[-1]["decision_id"] == PORTABILITY_CORRECTION_ID:
+        verify_portability_correction_final(records, graph)
+        print("CHRONOS_CLEANROOM_PORTABILITY_CORRECTION_VERIFIED")
+        return
     if records[-1]["decision_id"] == CI1_CORRECTION_ID:
-        verify_ci1_correction_final(records, graph)
-        print("CHRONOS_CLEANROOM_CI1_CORRECTION_VERIFIED")
+        append_portability_correction(original_ledger, records, graph)
+        print("CHRONOS_CLEANROOM_PORTABILITY_CORRECTION_RECORDED")
         return
     if records[-1]["decision_id"] == CORRECTION_ID:
         append_ci1_correction(original_ledger, records, graph)
