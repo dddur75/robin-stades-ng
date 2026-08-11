@@ -7,8 +7,7 @@
         "owner_id": "synthetic-owner"
       }
     ],
-    "unavailable": [],
-    "pagination": {}
+    "unavailable_project_ids": []
   },
   "project_detail": {
     "project": {
@@ -37,6 +36,7 @@
     "endpoints": [
       {
         "id": "synthetic-endpoint",
+        "project_id": "synthetic-project",
         "branch_id": "synthetic-branch",
         "host": "ep-synthetic.neon.tech",
         "type": "read_write",
