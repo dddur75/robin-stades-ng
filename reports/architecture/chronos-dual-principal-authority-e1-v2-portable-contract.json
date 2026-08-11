@@ -1,0 +1,49 @@
+{
+  "schema_version": "chronos-dual-principal-authority-e1-v2-portable-contract",
+  "source": {
+    "pull_request": 45,
+    "head_sha": "a25b288b5fc3c9eb6cd95ddb10f88db6a0aec1db",
+    "specialized_ci_run": 31413302734,
+    "canonical_ci_run": 31427069583
+  },
+  "admin_profiles": {
+    "superuser": {
+      "groups_edges": 5,
+      "migrator_edges": 6,
+      "active_final_edges": 12,
+      "terminal_edges": 11,
+      "temporary_edges_removed": 1
+    },
+    "non_superuser_createrole": {
+      "groups_edges": 7,
+      "migrator_edges": 8,
+      "active_final_edges": 14,
+      "terminal_edges": 12,
+      "temporary_edges_removed": 2,
+      "permanent_external_edges": 1
+    }
+  },
+  "terminal_invariants": {
+    "executor_roles": 0,
+    "executor_memberships": 0,
+    "runtime_to_authority_paths": 0,
+    "runtime_to_lifecycle_admin_paths": 0,
+    "migrator_runtime_edges": 0,
+    "forbidden_edges": 0,
+    "hidden_edges": 0,
+    "authority_login": false,
+    "authority_password_null": true,
+    "migrator_login": false,
+    "migrator_password_null": true
+  },
+  "validation": {
+    "postgresql_profiles": {
+      "superuser": {"passed": 1476, "skipped": 21, "failed": 0},
+      "non_superuser_createrole": {"passed": 1476, "skipped": 21, "failed": 0}
+    },
+    "postgresql_contracts": "8/8",
+    "crash_matrix": "7/7",
+    "negative_tests": "23/23",
+    "verdict": "HISTORICAL_VALIDATION_REFERENCED_BY_GIT_OBJECTS"
+  }
+}

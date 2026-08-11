@@ -1,0 +1,47 @@
+{
+  "artifacts": [
+    {
+      "bytes": 1629100,
+      "canonical_sha256": "b16150b9620bb1af4d68bfa0f9c30de2786e3107dfb4b1b1f0152bbdf44be3ce",
+      "linux_sha256": "e09998f409a47ec03bf4b607375e2bd2fec6aacb7e94e170835b492043b054fe",
+      "name": "historical_fixture_evidence.parquet",
+      "rows": 10732
+    },
+    {
+      "bytes": 37506146,
+      "canonical_sha256": "95f5745803cd76d93bbd949debd5219723506838d15d3d8d034cb82bf710aeea",
+      "linux_sha256": "21dc8b24595237a64e619937b1d9bb1a327df1572104758097ab62d8fb208113",
+      "name": "hypothesis_fixture_membership.parquet",
+      "rows": 681466
+    },
+    {
+      "bytes": 583157,
+      "canonical_sha256": "ae3f4b5590c54bb036533871245258f7714d86e4e368c9b6244b524e821e0058",
+      "linux_sha256": "b9a0d6b9af9d01d7f8f3bf2dae8ae7c9f762030b306a85ebad7f4c5f28bbfa12",
+      "name": "hypothesis_historical_evidence_summary.parquet",
+      "rows": 700
+    }
+  ],
+  "canonical_created_by": "parquet-cpp-arrow version 25.0.0",
+  "canonical_run_id": 31427069583,
+  "classification": "METADATA_ONLY",
+  "column_order": "BYTE_IDENTICAL",
+  "compression": "BYTE_IDENTICAL_ZSTD_LEVEL_3",
+  "floating_point_bit_patterns": "BYTE_IDENTICAL",
+  "linux_created_by": "parquet-cpp-arrow version 25.0.1",
+  "micro_experiment": {
+    "method": "replace only created_by version suffix 25.0.0 with 25.0.1",
+    "result": "all three transformed SHA-256 equal the Linux run SHA-256",
+    "scope": "three representative frozen parquet footers; one byte per file"
+  },
+  "null_positions": "BYTE_IDENTICAL",
+  "root_cause": "UNPINNED_PYARROW_DEPENDENCY_VERSION_DRIFT",
+  "row_counts": "IDENTICAL",
+  "schema": "BYTE_IDENTICAL",
+  "schema_version": "parquet-windows-linux-root-cause-v1",
+  "scientific_divergence": false,
+  "solution": "PIN_PYARROW_25_0_0_AND_TRANSFER_CANONICAL_WINDOWS_ARTIFACT",
+  "sorted_canonical_rows": "BYTE_IDENTICAL",
+  "source_head_sha": "a25b288b5fc3c9eb6cd95ddb10f88db6a0aec1db",
+  "verdict": "PARQUET_CROSS_PLATFORM_ROOT_CAUSE_PROVEN"
+}

@@ -130,8 +130,13 @@ def load_json(path: Path) -> dict[str, Any]:
     return value
 
 
-def validate_manifest(manifest: Mapping[str, Any], *, root: Path) -> None:
-    """Fail closed when launch authority or frozen inputs drift."""
+def validate_manifest_contract(
+    manifest: Mapping[str, Any],
+    *,
+    root: Path,
+    activation_override: Mapping[str, Any] | None = None,
+) -> None:
+    """Validate the frozen contract without granting live execution authority."""
 
     _validate_manifest_values(manifest)
     for field, relative_path in HASHED_INPUTS.items():
@@ -142,6 +147,21 @@ def validate_manifest(manifest: Mapping[str, Any], *, root: Path) -> None:
         capability_contract
     ):
         raise ValueError("capability_contract_canonical_hash mismatch")
+    _validate_council_activation_contract(
+        manifest,
+        root=root,
+        activation_override=activation_override,
+    )
+
+
+def validate_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    root: Path,
+) -> None:
+    """Validate frozen inputs and fail closed on live Council expiration."""
+
+    validate_manifest_contract(manifest, root=root)
     validate_council_activation(manifest, root=root)
 
 
@@ -332,7 +352,25 @@ def validate_council_activation(
     activation_override: Mapping[str, Any] | None = None,
     now: datetime | None = None,
 ) -> None:
-    """Validate the separate exact eight-field Council authority envelope."""
+    """Validate the exact Council envelope and its live UTC expiration."""
+
+    expires_at = _validate_council_activation_contract(
+        manifest,
+        root=root,
+        activation_override=activation_override,
+    )
+    reference = now or datetime.now(timezone.utc)
+    if expires_at <= reference:
+        raise ValueError("Council activation is expired")
+
+
+def _validate_council_activation_contract(
+    manifest: Mapping[str, Any],
+    *,
+    root: Path,
+    activation_override: Mapping[str, Any] | None = None,
+) -> datetime:
+    """Validate Council structure and binding without consulting wall time."""
 
     council = _mapping(manifest.get("council_activation"), "council_activation")
     activation: Mapping[str, Any] = (
@@ -368,9 +406,7 @@ def validate_council_activation(
         raise ValueError("Council activation expiration is invalid") from exc
     if expires_at.tzinfo is None:
         raise ValueError("Council activation expiration must be timezone-aware")
-    reference = now or datetime.now(timezone.utc)
-    if expires_at <= reference:
-        raise ValueError("Council activation is expired")
+    return expires_at
 
 
 def build_golden_pack() -> dict[str, Any]:

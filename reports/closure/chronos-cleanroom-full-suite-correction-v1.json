@@ -1,0 +1,105 @@
+{
+  "schema_version": "chronos-cleanroom-full-suite-correction-v1",
+  "recorded_at": "2026-08-10T23:05:00Z",
+  "branch": "codex/chronos-cleanroom-portable-integration-v1",
+  "base_sha": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+  "first_cleanroom_commit": "ddf776045a7f5c95186b163b19de6502a41a810e",
+  "first_clean_lf_full_suite": {
+    "passed": 1509,
+    "skipped": 21,
+    "failed": 1,
+    "duration_seconds": 357.17,
+    "failure": "test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent"
+  },
+  "root_cause": {
+    "classification": "PORTABILITY_ONLY_RECORDER_IDEMPOTENCE",
+    "details": [
+      "Phase C artifact hashes used raw checkout bytes, so CRLF text differed from Git LF evidence.",
+      "The Phase C recorder reset generated_at even when preserving later Chronos graph extensions."
+    ],
+    "scientific_divergence": false,
+    "historical_claim_change": false,
+    "ledger_rewrite": false
+  },
+  "correction": {
+    "reviewed_tree_sha": "359c5fdbe5dace77e7e1875bda07232d62874418",
+    "file": "scripts/record_phase_c_evidence.py",
+    "blob_sha": "d09c8eb1bb5cce40e88f41088aaf95059c51179f",
+    "changes": [
+      "Reject non-portable and parent-traversal artifact paths.",
+      "Normalize CRLF to LF only for explicit text artifact extensions before SHA-256.",
+      "Preserve the existing graph generated_at when validated later edges are retained."
+    ]
+  },
+  "targeted_validation": {
+    "recorder_idempotence": "PASS",
+    "graph_output": "BYTE_IDENTICAL",
+    "claims": "124_OF_124_UNCHANGED",
+    "decision_nodes": "108_OF_108_UNCHANGED",
+    "edges": "295_OF_295_UNCHANGED",
+    "ledger": "UNCHANGED",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit": "PASS"
+  },
+  "closure_hardening": {
+    "finding": "The first correction verifier accepted a missing final evidence edge or a rehashed authority escalation because it checked self-consistency without canonical final-state anchors.",
+    "resolution": [
+      "Require exact delivery and correction ledger tips.",
+      "Rebuild and compare the canonical correction claim and record.",
+      "Require exact claim, record, node and edge counts and sequential edge identities.",
+      "Require the exact generated_at value, final node and EDGE.296.",
+      "Reject a missing final edge and a rehashed Ready/merge authorization in negative tests."
+    ],
+    "scientific_change": false,
+    "authority_expansion": false
+  },
+  "independent_review": [
+    {
+      "agent_id": "DP5",
+      "roles": [
+        "PORT",
+        "SRE"
+      ],
+      "verdict": "PASS",
+      "p0": 0,
+      "p1": 0
+    },
+    {
+      "agent_id": "DP6",
+      "roles": [
+        "EVIDENCE",
+        "DBA"
+      ],
+      "verdict": "PASS",
+      "score": 99,
+      "p0": 0,
+      "p1": 0
+    },
+    {
+      "agent_id": "C4",
+      "roles": [
+        "SEC",
+        "RED"
+      ],
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0
+    }
+  ],
+  "gate": {
+    "verdict": "PASS_BOUNDED_CORRECTION",
+    "p0": 0,
+    "p1": 0,
+    "authorization": "ONE_LOCAL_CORRECTION_COMMIT_AND_DRAFT_PR_CI"
+  },
+  "external_effects": {
+    "neon_calls": 0,
+    "production_postgresql_reads": 0,
+    "production_postgresql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "migration_dispatches": 0
+  }
+}

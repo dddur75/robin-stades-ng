@@ -1,0 +1,196 @@
+{
+  "schema_version": "frozen-evidence-manifest-cross-platform-root-cause-v1",
+  "recorded_at": "2026-08-11T05:31:52Z",
+  "repository": "dddur75/robin-stades-ng",
+  "pull_request": 46,
+  "branch": "codex/chronos-cleanroom-portable-integration-v1",
+  "source_identity": {
+    "source_sha": "0b19c7fb83c3323117a626aff575c8abb335374b",
+    "tree_sha": "2060a1dfeaf642d92ae1e01745869f21f17462a3",
+    "artifact_manifest_source_matches": true,
+    "artifact_manifest_tree_matches": true,
+    "source_identity_divergence": false
+  },
+  "failed_ci": {
+    "run_id": 31443189487,
+    "workflow": "00 - Qualite continue",
+    "job": "tests",
+    "job_id": 93635337472,
+    "failed_step": "Verifier les bytes et le manifeste canoniques",
+    "error": "FROZEN_EVIDENCE_GENERATOR_HASH_MISMATCH",
+    "other_observed_failure": false
+  },
+  "hypothesis": "WORKTREE_LINE_ENDING_DEPENDENCE",
+  "micro_experiment": {
+    "method": "Compare SHA-256 of git cat-file blob bytes at source_sha, reproducible Windows CRLF checkout bytes, and canonical LF bytes; then recompute the manifest combined-hash contract.",
+    "files": [
+      {
+        "path": "scripts/build_hypothesis_evidence.py",
+        "git_blob_sha256": "912b27cffe8987976429678d2bceb58d27805f3998cf7e96e991913366cc3e0f",
+        "windows_checkout_sha256": "d8dc3d25ffb7f2133d659986f02df5ad9082aadf478b8d758aba7295f60a3aae",
+        "canonical_lf_sha256": "912b27cffe8987976429678d2bceb58d27805f3998cf7e96e991913366cc3e0f",
+        "git_blob_bytes": 5033,
+        "windows_checkout_bytes": 5168,
+        "git_blob_crlf": 0,
+        "windows_checkout_crlf": 135,
+        "same_semantic_source": true,
+        "different_worktree_bytes": true
+      },
+      {
+        "path": "src/robin/hypothesis_evidence/contracts.py",
+        "git_blob_sha256": "afa2754ad6c827f1aa0220e2bb282662ad525c605b9aea8bc7b539ea828026de",
+        "windows_checkout_sha256": "3b71a36051a7169ce96e8cd1820332abb4804860d41b5a7859a680d4779fbb2c",
+        "canonical_lf_sha256": "afa2754ad6c827f1aa0220e2bb282662ad525c605b9aea8bc7b539ea828026de",
+        "git_blob_bytes": 12561,
+        "windows_checkout_bytes": 12914,
+        "git_blob_crlf": 0,
+        "windows_checkout_crlf": 353,
+        "same_semantic_source": true,
+        "different_worktree_bytes": true
+      },
+      {
+        "path": "src/robin/hypothesis_evidence/factory.py",
+        "git_blob_sha256": "eb495e97388fef28c19730380d0061c9ff5addca54a137ee0137c2f4e9c10070",
+        "windows_checkout_sha256": "e697c8e977e47dbe9ef4c236130dc7e6e413cd8138fdb83cdeb640f6c64d51c1",
+        "canonical_lf_sha256": "eb495e97388fef28c19730380d0061c9ff5addca54a137ee0137c2f4e9c10070",
+        "git_blob_bytes": 56185,
+        "windows_checkout_bytes": 57701,
+        "git_blob_crlf": 0,
+        "windows_checkout_crlf": 1516,
+        "same_semantic_source": true,
+        "different_worktree_bytes": true
+      },
+      {
+        "path": "src/robin/hypothesis_evidence/source.py",
+        "git_blob_sha256": "dc91648732a34542af51e43217d86cc27f4a84ae235f02af029ce44e24f9c504",
+        "windows_checkout_sha256": "6beb1eb093abf83e657cd77eefcd939fc6325e528b1b91b0745530d252e24ed3",
+        "canonical_lf_sha256": "dc91648732a34542af51e43217d86cc27f4a84ae235f02af029ce44e24f9c504",
+        "git_blob_bytes": 11590,
+        "windows_checkout_bytes": 11969,
+        "git_blob_crlf": 0,
+        "windows_checkout_crlf": 379,
+        "same_semantic_source": true,
+        "different_worktree_bytes": true
+      },
+      {
+        "path": "requirements-evidence.lock",
+        "git_blob_sha256": "dffd6c2a0c4777504fcafeb8dee6aa5a5aab252e548e5c006c64cfb2ef787ac4",
+        "windows_checkout_sha256": "f8210327d609c431fb56d07ebca23e4ca9136f13168a8a0382b78f9398821632",
+        "canonical_lf_sha256": "dffd6c2a0c4777504fcafeb8dee6aa5a5aab252e548e5c006c64cfb2ef787ac4",
+        "git_blob_bytes": 679,
+        "windows_checkout_bytes": 690,
+        "git_blob_crlf": 0,
+        "windows_checkout_crlf": 11,
+        "same_semantic_source": true,
+        "different_worktree_bytes": true,
+        "windows_checkout_basis": "Exact LF-to-CRLF checkout reproduction confirmed by the CI-produced dependency_lock_hash."
+      }
+    ],
+    "combined_hashes": {
+      "generators": {
+        "ci_windows_manifest": "72617d0fbdfb0dd7d54e84c0be6bc08de34371b1237ee89b86d43be43f6a3410",
+        "windows_worktree": "72617d0fbdfb0dd7d54e84c0be6bc08de34371b1237ee89b86d43be43f6a3410",
+        "git_blobs_at_source_sha": "2a5fe13634233022ac83c667e7e3d299cfa5ea808f6ff9fd306091249439f6c5",
+        "canonical_lf": "2a5fe13634233022ac83c667e7e3d299cfa5ea808f6ff9fd306091249439f6c5"
+      },
+      "dependency_lock": {
+        "ci_windows_manifest": "63b2098a39446a1abd0899607e9ddae22243e33df2042c4b1889e2b66586962a",
+        "windows_worktree": "63b2098a39446a1abd0899607e9ddae22243e33df2042c4b1889e2b66586962a",
+        "git_blob_at_source_sha": "7a2c16d90379ca88052a19c367910df13d5e563ffce780a98c500dc8f493eb5d",
+        "canonical_lf": "7a2c16d90379ca88052a19c367910df13d5e563ffce780a98c500dc8f493eb5d",
+        "would_fail_after_generator_fix_if_left_worktree_bound": true
+      }
+    },
+    "minimum_proof": {
+      "same_git_blob": true,
+      "same_semantic_source": true,
+      "different_worktree_bytes": true,
+      "different_sha256": true
+    }
+  },
+  "root_cause": {
+    "classification": "WORKTREE_LINE_ENDING_DEPENDENCE",
+    "verdict": "FROZEN_MANIFEST_TRACKED_SOURCE_HASH_WAS_WORKTREE_DEPENDENT",
+    "explanation": "Manifest v1 read tracked provenance from the materialized worktree. Windows CRLF and Linux LF checkouts of the same Git blobs therefore produced different generator and dependency-lock hashes."
+  },
+  "corrective_contract": {
+    "schema_version": "frozen-evidence-portable-manifest-v2",
+    "versioning_rationale": "Manifest v1 and its implementation are absent from origin/main 8591024b1ef96d766ab0e1090c45d15e3a25d429; v2 records the corrected semantics before first durable merge.",
+    "silent_semantic_change": false,
+    "inputs_hash_basis": "runtime_file_bytes",
+    "generator_hash_basis": "git_blob_bytes_at_source_sha",
+    "dependency_lock_hash_basis": "git_blob_bytes_at_source_sha",
+    "artifact_file_sha256_basis": "runtime_file_bytes",
+    "artifact_semantic_hash_basis": "canonical_scientific_contents",
+    "platform_special_case": false,
+    "newline_normalization_used_as_authority": false,
+    "verdict": "FROZEN_MANIFEST_GIT_BLOB_PROVENANCE_READY"
+  },
+  "cross_platform_validation": {
+    "source_sha": "0b19c7fb83c3323117a626aff575c8abb335374b",
+    "lf_checkout": "BUILD_AND_VERIFY_PASS",
+    "crlf_checkout": "BUILD_AND_VERIFY_PASS",
+    "manifest_sha256_lf": "1bfdf0dd72786149e1181e3d017c17d917e3d0ea05b733852291569dc1bfea03",
+    "manifest_sha256_crlf": "1bfdf0dd72786149e1181e3d017c17d917e3d0ea05b733852291569dc1bfea03",
+    "manifest_byte_identical": true,
+    "generator_hash_identical": true,
+    "dependency_lock_hash_identical": true,
+    "runtime_and_parquet_inputs": "Exact downloaded artifacts from run 31443189487",
+    "targeted_tests": "62_PASSED_2_SYMLINK_TESTS_SKIPPED_ON_LOCAL_WINDOWS"
+  },
+  "unchanged": [
+    "CANONICAL_WINDOWS_PARQUET_BYTES",
+    "HISTORICAL_FROZEN_HASHES",
+    "SCIENTIFIC_DATA",
+    "SEMANTIC_HASH",
+    "FILE_SHA256",
+    "GENERATOR_HASH_FIELD",
+    "DEPENDENCY_LOCK_HASH_FIELD",
+    "GENERATOR_GIT_BLOBS_AT_SOURCE_SHA",
+    "DEPENDENCY_LOCK_GIT_BLOB_AT_SOURCE_SHA"
+  ],
+  "intentionally_changed_hash_values": {
+    "generator_hash": {
+      "v1_windows_worktree_basis": "72617d0fbdfb0dd7d54e84c0be6bc08de34371b1237ee89b86d43be43f6a3410",
+      "v2_git_blob_basis": "2a5fe13634233022ac83c667e7e3d299cfa5ea808f6ff9fd306091249439f6c5"
+    },
+    "dependency_lock_hash": {
+      "v1_windows_worktree_basis": "63b2098a39446a1abd0899607e9ddae22243e33df2042c4b1889e2b66586962a",
+      "v2_git_blob_basis": "7a2c16d90379ca88052a19c367910df13d5e563ffce780a98c500dc8f493eb5d"
+    }
+  },
+  "independent_review": [
+    {
+      "agent_id": "DP5",
+      "roles": ["PORT", "SRE"],
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0
+    },
+    {
+      "agent_id": "DP6",
+      "roles": ["EVIDENCE", "DBA"],
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0
+    },
+    {
+      "agent_id": "C4",
+      "roles": ["SEC", "RED"],
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0
+    }
+  ],
+  "external_effects": {
+    "neon_api_calls": 0,
+    "production_postgresql_reads": 0,
+    "production_postgresql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "migration_dispatches": 0
+  }
+}

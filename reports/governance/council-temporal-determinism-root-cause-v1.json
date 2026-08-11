@@ -1,0 +1,143 @@
+{
+  "schema_version": "council-temporal-determinism-root-cause-v1",
+  "generated_at": "2026-08-11T10:46:57Z",
+  "mission": "LOOP_48_COUNCIL_TEMPORAL_DETERMINISM_CLOSURE",
+  "verdict": "FROZEN_CONTRACT_VALIDATION_WAS_COUPLED_TO_LIVE_AUTHORITY_CLOCK",
+  "failure": {
+    "taxonomy": "GOVERNANCE_TEST_TIME_DEPENDENCE",
+    "root_cause": "FROZEN_GOVERNANCE_TEST_DEPENDS_ON_WALL_CLOCK",
+    "previous_root_cause": "FROZEN_EVIDENCE_CROSS_PLATFORM_PROVENANCE",
+    "github_actions_run": 31462358073,
+    "failed_head_sha": "eba31bf562d41d45bebda46fc831e308a8668566",
+    "test": "tests/preflight/test_p0_capability_launch_readiness_v1.py::test_manifest_is_frozen_and_fail_closed",
+    "exception": "ValueError: Council activation is expired",
+    "observed_repository_result": {
+      "passed": 1541,
+      "skipped": 21,
+      "failed": 1
+    }
+  },
+  "causal_chain": [
+    "The manifest declares FUTURE_MISSION_CONTRACT_NOT_ACTIVE.",
+    "The frozen-manifest test called validate_manifest.",
+    "validate_manifest combined frozen integrity checks with validate_council_activation.",
+    "validate_council_activation used datetime.now(timezone.utc) by default.",
+    "The unchanged expires_at boundary passed before expiry and failed after expiry."
+  ],
+  "expired_authority": {
+    "path": "configs/execution/p0-capability-council-activation-v1.json",
+    "expires_at": "2026-08-10T23:59:59Z",
+    "git_blob_sha256": "e700d754a853de1a7b39e5edd76e759c1acca711992ef1712848eda6bfd51ad4",
+    "modified": false,
+    "new_authority_granted": false,
+    "r2_authority_renewed": false,
+    "live_expiration_guard_weakened": false
+  },
+  "correction_architecture": {
+    "frozen_contract": {
+      "entrypoint": "validate_manifest_contract",
+      "authority_granted": false,
+      "wall_clock_dependency": false,
+      "checks": [
+        "manifest exact field set and canonical values",
+        "allowed and forbidden stages",
+        "budgets and stop conditions",
+        "hashed inputs and canonical capability contract",
+        "Council exact field set and mission binding",
+        "Council authorized stages and maximum stage",
+        "Council external effects and budgets",
+        "Council source_hash",
+        "expires_at syntax and timezone awareness"
+      ]
+    },
+    "live_authority": {
+      "entrypoint": "validate_manifest",
+      "composition": [
+        "validate_manifest_contract",
+        "validate_council_activation"
+      ],
+      "default_clock": "datetime.now(timezone.utc)",
+      "expiration_rule": "expires_at > current_utc_time",
+      "boundary_rule": "expires_at <= current_utc_time is rejected",
+      "fail_closed": true
+    }
+  },
+  "call_site_audit": {
+    "validate_manifest_contract": [
+      {
+        "path": "tests/preflight/test_p0_capability_launch_readiness_v1.py",
+        "classification": "TEST_REPLAY",
+        "purpose": "frozen contract integrity and deterministic drift tests"
+      }
+    ],
+    "validate_manifest": [
+      {
+        "path": "tests/preflight/test_p0_capability_launch_readiness_v1.py",
+        "classification": "TEST_REPLAY",
+        "purpose": "prove the live entrypoint passes before expiry and rejects at or after expiry"
+      }
+    ],
+    "validate_council_activation": [
+      {
+        "path": "src/robin/governance/capability_launch_preflight.py",
+        "classification": "LIVE_PREFLIGHT_EXECUTION_ENTRYPOINT",
+        "purpose": "mandatory live expiration guard composed by validate_manifest"
+      },
+      {
+        "path": "tests/preflight/test_p0_capability_launch_readiness_v1.py",
+        "classification": "TEST_REPLAY",
+        "purpose": "effect drift and explicit expiration rejection"
+      }
+    ],
+    "non_test_live_call_sites": 0,
+    "non_test_execution_call_sites": 0,
+    "reason": "The frozen manifest is a future mission contract and has no active execution caller. The only live-capable public entrypoint remains validate_manifest, which always invokes the expiration guard."
+  },
+  "red_team": {
+    "operations_reviewed": [
+      "PREFLIGHT",
+      "MIGRATE",
+      "VERIFY",
+      "provider-free canary",
+      "R2 effect execution"
+    ],
+    "downgraded_live_call_sites": 0,
+    "contract_validator_imported_by_non_test_code": false,
+    "expired_activation_can_authorize_execution": false,
+    "verdict": "LIVE_COUNCIL_EXPIRY_GUARD_PRESERVED"
+  },
+  "temporal_micro_proof": {
+    "expires_at": "2026-08-10T23:59:59Z",
+    "t_minus_one_second": {
+      "frozen_contract": "PASS",
+      "live_authority": "PASS"
+    },
+    "t_exact": {
+      "frozen_contract": "PASS",
+      "live_authority": "FAIL_EXPIRED"
+    },
+    "t_plus_one_second": {
+      "frozen_contract": "PASS",
+      "live_authority": "FAIL_EXPIRED"
+    }
+  },
+  "required_drift_guards": {
+    "external_effects": "FAIL_CLOSED",
+    "source_hash": "FAIL_CLOSED",
+    "authorized_stages": "FAIL_CLOSED",
+    "budgets": "FAIL_CLOSED"
+  },
+  "external_effects": {
+    "github_repository_actions_only": true,
+    "neon_api_calls": 0,
+    "production_postgresql_reads": 0,
+    "production_postgresql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "migration_dispatches": 0
+  },
+  "verdicts": [
+    "FROZEN_CONTRACT_VALIDATION_DECOUPLED_FROM_LIVE_COUNCIL_CLOCK",
+    "LIVE_COUNCIL_EXPIRY_GUARD_PRESERVED"
+  ]
+}

@@ -95,7 +95,7 @@ def test_ordinary_workflows_and_composite_actions_cannot_migrate() -> None:
         path
         for pattern in ("*.yml", "*.yaml")
         for path in WORKFLOW_ROOT.glob(pattern)
-        if path.name != "ci.yml"
+        if path.name not in {"ci.yml", "chronos-bootstrap-ci-v3.yml"}
     ]
     composite_actions = list((ROOT / ".github" / "actions").glob("*/action.yml"))
     for path in ordinary_workflows + composite_actions:
@@ -104,9 +104,21 @@ def test_ordinary_workflows_and_composite_actions_cannot_migrate() -> None:
         assert "alembic downgrade" not in content, path
         assert "neon_bootstrap.py" not in content, path
         assert "MIGRATOR_DATABASE_URL" not in content, path
-    assert ci.count("alembic upgrade head") == 2
+    assert "alembic upgrade head" not in ci
+    assert ci.count("run_chronos_dual_principal_ci_v2.py") == 1
     assert "postgresql+psycopg://robin:robin_ci@localhost" in ci
     assert GUARD in ci
+    bootstrap_ci = (WORKFLOW_ROOT / "chronos-bootstrap-ci-v3.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "alembic upgrade head" not in bootstrap_ci
+    assert (
+        bootstrap_ci.count(
+            "run: python scripts/run_chronos_dual_principal_ci_v2.py"
+        )
+        == 1
+    )
+    assert "postgresql+psycopg://robin:robin_ci@localhost" in bootstrap_ci
     bootstrap = (ROOT / "scripts" / "neon_bootstrap.py").read_text(
         encoding="utf-8"
     )

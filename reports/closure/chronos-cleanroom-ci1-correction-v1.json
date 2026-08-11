@@ -1,0 +1,107 @@
+{
+  "schema_version": "chronos-cleanroom-ci1-correction-v1",
+  "recorded_at": "2026-08-10T23:36:00Z",
+  "branch": "codex/chronos-cleanroom-portable-integration-v1",
+  "pull_request": 46,
+  "ci1": {
+    "run_id": 31442379957,
+    "head_sha": "49498bc1dfb785937f680306bf72a00cb9dff9ed",
+    "conclusion": "FAILURE",
+    "historical_deep": "SUCCESS",
+    "jalon_10": "FAILURE",
+    "tests": "FAILURE_FAIL_CLOSED",
+    "chronos_profiles": "SKIPPED_AFTER_PRODUCER_FAILURE",
+    "visual": "SKIPPED_AFTER_TESTS_FAILURE",
+    "failed_job_id": 93629584236
+  },
+  "root_cause": {
+    "classification": "DETERMINISTIC_RUNNER_RUNTIME_AVAILABILITY",
+    "message": "Python 3.12.13 with architecture x64 was not found for Windows 2025.",
+    "failed_step": "actions/setup-python",
+    "before_dependency_install": true,
+    "before_parquet_rebuild": true,
+    "scientific_divergence": false,
+    "architecture_change": false
+  },
+  "availability_evidence": {
+    "source": "https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json",
+    "python_3_12_13": "LINUX_ONLY",
+    "python_3_12_10": "STABLE_WINDOWS_X64_AND_LINUX_X64"
+  },
+  "correction": {
+    "reviewed_tree_sha": "3f04489597fe5ef913a9786eb841c4eb24e6bd65",
+    "files": [
+      ".github/workflows/ci.yml",
+      "tests/portability/test_chronos_portable_ci_contract.py"
+    ],
+    "producer_python": "3.12.10",
+    "tests_consumer_python": "3.12.10",
+    "visual_consumer_python": "3.12.10",
+    "static_contract": "EXACTLY_ONE_SETUP_PYTHON_PER_JOB_AND_SHARED_EXACT_VERSION"
+  },
+  "unchanged": [
+    "PYARROW_25_0_0",
+    "REQUIREMENTS_EVIDENCE_HASHES",
+    "CANONICAL_PARQUET_HASHES",
+    "MANIFEST_SOURCE_TREE_INPUT_GENERATOR_LOCK_RUNTIME_BINDINGS",
+    "WINDOWS_PRODUCER_LINUX_VERIFY_ONLY_GRAPH",
+    "FAIL_CLOSED_TESTS_AGGREGATOR",
+    "VISUAL_DEPENDENCY_ON_TESTS"
+  ],
+  "validation": {
+    "targeted_tests": "18_PASSED",
+    "ruff": "PASS",
+    "diff_check": "PASS"
+  },
+  "independent_review": [
+    {
+      "agent_id": "DP5",
+      "roles": [
+        "PORT",
+        "SRE"
+      ],
+      "verdict": "PASS",
+      "score": 99,
+      "p0": 0,
+      "p1": 0
+    },
+    {
+      "agent_id": "DP6",
+      "roles": [
+        "EVIDENCE",
+        "DBA"
+      ],
+      "verdict": "PASS",
+      "score": 99,
+      "p0": 0,
+      "p1": 0
+    },
+    {
+      "agent_id": "C4",
+      "roles": [
+        "SEC",
+        "RED"
+      ],
+      "verdict": "PASS",
+      "score": 99,
+      "p0": 0,
+      "p1": 0
+    }
+  ],
+  "gate": {
+    "verdict": "CI2_BOUNDED_CORRECTION_AUTHORIZED",
+    "corrective_ci_cycles_used": 1,
+    "corrective_ci_cycles_maximum": 2,
+    "rerun_old_sha": false,
+    "ready": false,
+    "merge": false
+  },
+  "external_effects": {
+    "neon_calls": 0,
+    "production_postgresql_reads": 0,
+    "production_postgresql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "migration_dispatches": 0
+  }
+}

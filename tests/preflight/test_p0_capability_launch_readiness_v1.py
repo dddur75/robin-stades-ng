@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -19,6 +19,7 @@ from robin.governance.capability_launch_preflight import (
     run_synthetic_preflight,
     validate_council_activation,
     validate_manifest,
+    validate_manifest_contract,
 )
 
 ROOT = Path(__file__).parents[2]
@@ -37,7 +38,7 @@ def capability_contract() -> dict[str, object]:
 
 
 def test_manifest_is_frozen_and_fail_closed(manifest: dict[str, object]) -> None:
-    validate_manifest(manifest, root=ROOT)
+    validate_manifest_contract(manifest, root=ROOT)
     assert tuple(manifest["allowed_stages"]) == ALLOWED_STAGES
     assert tuple(manifest["forbidden_stages"]) == FORBIDDEN_STAGES
     assert manifest["maximum_stage"] == "PAIR_SEARCH"
@@ -63,7 +64,7 @@ def test_manifest_rejects_hash_drift(
     changed = dict(manifest)
     changed["capability_contract_hash"] = "0" * 64
     with pytest.raises(ValueError, match="capability_contract_hash mismatch"):
-        validate_manifest(changed, root=ROOT)
+        validate_manifest_contract(changed, root=ROOT)
 
 
 def test_manifest_rejects_budget_checkpoint_stop_and_source_drift(
@@ -85,12 +86,12 @@ def test_manifest_rejects_budget_checkpoint_stop_and_source_drift(
             target = target[key]
         target[keys[-1]] = value
         with pytest.raises(ValueError):
-            validate_manifest(changed, root=ROOT)
+            validate_manifest_contract(changed, root=ROOT)
 
     changed = deepcopy(manifest)
     changed["stop_conditions"].remove("UNKNOWN_COERCED")
     with pytest.raises(ValueError, match="stop_conditions drift"):
-        validate_manifest(changed, root=ROOT)
+        validate_manifest_contract(changed, root=ROOT)
 
 
 @pytest.mark.parametrize(
@@ -114,7 +115,7 @@ def test_manifest_rejects_unknown_authority_fields(
         target = target[key]
     target["unlimited_external_budget"] = 1
     with pytest.raises(ValueError):
-        validate_manifest(changed, root=ROOT)
+        validate_manifest_contract(changed, root=ROOT)
 
 
 def test_council_activation_rejects_effect_drift_and_expiration(
@@ -141,6 +142,81 @@ def test_council_activation_rejects_effect_drift_and_expiration(
             root=ROOT,
             activation_override=expired,
             now=datetime(2026, 8, 7, tzinfo=timezone.utc),
+        )
+
+
+def test_frozen_contract_remains_valid_after_wall_clock_expiry(
+    manifest: dict[str, object],
+) -> None:
+    activation = load_json(
+        ROOT / "configs/execution/p0-capability-council-activation-v1.json"
+    )
+    expires_at = datetime.fromisoformat(
+        str(activation["expires_at"]).replace("Z", "+00:00")
+    )
+    assert expires_at + timedelta(seconds=1) > expires_at
+    validate_manifest_contract(manifest, root=ROOT)
+    with pytest.raises(ValueError, match="Council activation is expired"):
+        validate_manifest(manifest, root=ROOT)
+
+
+def test_live_activation_is_valid_one_second_before_expiration(
+    manifest: dict[str, object],
+) -> None:
+    activation = load_json(
+        ROOT / "configs/execution/p0-capability-council-activation-v1.json"
+    )
+    expires_at = datetime.fromisoformat(
+        str(activation["expires_at"]).replace("Z", "+00:00")
+    )
+    validate_council_activation(
+        manifest,
+        root=ROOT,
+        activation_override=activation,
+        now=expires_at - timedelta(seconds=1),
+    )
+
+
+@pytest.mark.parametrize("offset_seconds", [0, 1])
+def test_live_activation_fails_at_and_after_expiration(
+    manifest: dict[str, object], offset_seconds: int
+) -> None:
+    activation = load_json(
+        ROOT / "configs/execution/p0-capability-council-activation-v1.json"
+    )
+    expires_at = datetime.fromisoformat(
+        str(activation["expires_at"]).replace("Z", "+00:00")
+    )
+    with pytest.raises(ValueError, match="Council activation is expired"):
+        validate_council_activation(
+            manifest,
+            root=ROOT,
+            activation_override=activation,
+            now=expires_at + timedelta(seconds=offset_seconds),
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("external_effects", [], "external effects drift"),
+        ("source_hash", "0" * 64, "source hash mismatch"),
+        ("authorized_stages", ["E1"], "evidence stages drift"),
+        ("compute_budget", 3001, "budgets drift"),
+    ],
+)
+def test_frozen_contract_rejects_council_authority_drift(
+    manifest: dict[str, object], field: str, value: object, message: str
+) -> None:
+    activation = load_json(
+        ROOT / "configs/execution/p0-capability-council-activation-v1.json"
+    )
+    activation[field] = value
+    with pytest.raises(ValueError, match=message):
+        validate_manifest_contract(
+            manifest,
+            root=ROOT,
+            activation_override=activation,
         )
 
 

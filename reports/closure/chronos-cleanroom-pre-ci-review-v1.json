@@ -1,0 +1,93 @@
+{
+  "schema_version": "chronos-cleanroom-pre-ci-review-v1",
+  "recorded_at": "2026-08-10T22:49:00Z",
+  "branch": "codex/chronos-cleanroom-portable-integration-v1",
+  "base_sha": "8591024b1ef96d766ab0e1090c45d15e3a25d429",
+  "source_pr": 45,
+  "source_head_sha": "a25b288b5fc3c9eb6cd95ddb10f88db6a0aec1db",
+  "reviewed_index": {
+    "tree_sha": "c47c4f54a9afd57fbce6f3394360447cdad97a5a",
+    "staged_file_count": 46,
+    "ledger_tip_id": "RCV3-20260810-114",
+    "ledger_tip_hash": "3850d66917a81d96895309825c1b981dd486a508a149cabd1098423398ef8c8c",
+    "graph_counts": {
+      "claims": 123,
+      "decision_nodes": 107,
+      "edges": 294
+    }
+  },
+  "reviewers": [
+    {
+      "agent_id": "DP5",
+      "roles": [
+        "PORT",
+        "SRE"
+      ],
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0,
+      "read_only": true
+    },
+    {
+      "agent_id": "DP6",
+      "roles": [
+        "EVIDENCE",
+        "DBA"
+      ],
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0,
+      "read_only": true
+    },
+    {
+      "agent_id": "C4",
+      "roles": [
+        "SEC",
+        "RED"
+      ],
+      "verdict": "PASS",
+      "score": 97,
+      "p0": 0,
+      "p1": 0,
+      "read_only": true
+    }
+  ],
+  "role_gate": {
+    "PORT": "PASS",
+    "EVIDENCE": "PASS",
+    "DBA": "PASS",
+    "SRE": "PASS",
+    "SEC": "PASS",
+    "RED": "PASS"
+  },
+  "aggregate": {
+    "verdict": "PASS_PRE_CI",
+    "minimum_score": 97,
+    "p0": 0,
+    "p1": 0,
+    "required_minimum_score": 95
+  },
+  "validated": [
+    "NO_TRACKED_ABSOLUTE_PATH",
+    "MAIN_LEDGER_PREFIX_BYTE_EXACT",
+    "CLEANROOM_SOURCE_EQUIVALENCE_45_OF_45",
+    "PARQUET_METADATA_ONLY_ROOT_CAUSE_PROVEN",
+    "FROZEN_EVIDENCE_MANIFEST_FAIL_CLOSED",
+    "CHRONOS_DATABASE_INVARIANTS_PRESERVED",
+    "PRODUCTION_CANARY_SUPPLY_CHAIN_HASH_BOUND"
+  ],
+  "authorization": {
+    "local_commit": true,
+    "non_force_draft_pr_publication": true,
+    "ready_for_review": false,
+    "merge": false,
+    "production_canary": false,
+    "neon_calls": false,
+    "database_writes": false,
+    "r2_operations": false,
+    "provider_calls": false
+  },
+  "remaining_gate": "FULL_CLEAN_LF_LOCAL_SUITE_AND_EXACT_HEAD_CANONICAL_CI"
+}
