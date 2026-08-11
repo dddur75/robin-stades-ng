@@ -45,6 +45,18 @@ PORTABILITY_CORRECTION_CLAIM_ID = (
     "PORT.CHRONOS.FROZEN_MANIFEST.GIT_BLOB.V2.001"
 )
 PORTABILITY_REVIEWS_COMPLETE = True
+TEMPORAL_CORRECTION_ID = "RCV3-20260811-119"
+TEMPORAL_CORRECTION_REPORT = (
+    "reports/governance/council-temporal-determinism-root-cause-v1.json"
+)
+TEMPORAL_CORRECTION_REPORT_SHA256 = (
+    "261863c1f34f74dd247061c8677874fc4db09b31bca70b33e1000fa9548c0506"
+)
+TEMPORAL_CORRECTION_TIP_HASH = (
+    "a1951937a6af243fa64945eb5c246c2c1cc40d72e07f6275fabedfe843fe0889"
+)
+TEMPORAL_CORRECTION_GENERATED_AT = "2026-08-11T10:46:57Z"
+TEMPORAL_CORRECTION_CLAIM_ID = "GOV.COUNCIL.TEMPORAL.DETERMINISM.V1.001"
 REPORTS = {
     "audit": "reports/closure/pr45-file-classification-v1.json",
     "paths": "reports/closure/pr45-absolute-path-and-ledger-audit-v1.json",
@@ -890,6 +902,180 @@ def append_portability_correction(
     verify_portability_correction_final(records, graph)
 
 
+def temporal_correction_claim() -> dict[str, Any]:
+    return {
+        "claim_id": TEMPORAL_CORRECTION_CLAIM_ID,
+        "claim": (
+            "GitHub run 31462358073 proved that frozen contract validation was "
+            "coupled to the live Council clock; static contract validation is now "
+            "time-invariant while live validation still rejects at and after expiry."
+        ),
+        "scope": "FROZEN_GOVERNANCE_TEMPORAL_DETERMINISM_CORRECTION",
+        "source": (
+            "GitHub run 31462358073 logs, complete validator call-site audit and "
+            "the deterministic expiry-boundary micro-proof"
+        ),
+        "grain": "one_council_activation_contract",
+        "temporal_class": "CODE_AND_LOCAL_EXECUTION_AS_OF",
+        "artifact": TEMPORAL_CORRECTION_REPORT,
+        "hash": file_sha256(TEMPORAL_CORRECTION_REPORT),
+        "code_revision": "eba31bf562d41d45bebda46fc831e308a8668566",
+        "execution_id": "github-actions-31462358073-plus-local-temporal-proof-v1",
+        "scientific_lineage_id": "chronos-dual-principal-authority-e1-v2",
+        "dataset_lineage_id": "NO_DATASET_GOVERNANCE_VALIDATION_ONLY",
+        "status": "VERIFIED",
+        "verified_by": ["C0", "DP5", "DP6", "C4"],
+    }
+
+
+def temporal_correction_record(correction_claim: dict[str, Any]) -> dict[str, Any]:
+    return record(
+        TEMPORAL_CORRECTION_ID,
+        "COUNCIL_TEMPORAL_TEST_DETERMINISM_DECISION",
+        TEMPORAL_CORRECTION_GENERATED_AT,
+        (
+            "Separate deterministic frozen-contract validation from the live "
+            "Council expiration decision without changing the expired authority."
+        ),
+        [
+            "A historical contract test must not change result with calendar time.",
+            "Any live preflight or execution must still fail at or after expires_at.",
+            "No Council, R2, Neon, PostgreSQL or provider authority is renewed.",
+        ],
+        [correction_claim["claim_id"]],
+        (
+            "PASS_BOUNDED_CORRECTION. Add a non-authorizing frozen-contract "
+            "validator and preserve validate_manifest as the live fail-closed "
+            "entrypoint; authorize one non-force PR46 publication cycle for this "
+            "independent failure taxonomy."
+        ),
+        {
+            **common_context(),
+            "pull_request": 46,
+            "old_ci_run_id": 31462358073,
+            "old_head_sha": "eba31bf562d41d45bebda46fc831e308a8668566",
+            "failure_taxonomy": "GOVERNANCE_TEST_TIME_DEPENDENCE",
+            "root_cause": "FROZEN_GOVERNANCE_TEST_DEPENDS_ON_WALL_CLOCK",
+            "correction_report": TEMPORAL_CORRECTION_REPORT,
+            "worktree": "WORKTREE:chronos-cleanroom-portable-integration-v1",
+            "branch": "codex/chronos-cleanroom-portable-integration-v1",
+            "head": "eba31bf562d41d45bebda46fc831e308a8668566",
+            "writer": "C0_DESIGNATED_ROOT",
+            "files": [
+                "reports/council/decision-ledger.jsonl",
+                "reports/evidence/evidence-graph.json",
+                TEMPORAL_CORRECTION_REPORT,
+                "scripts/record_chronos_cleanroom_evidence.py",
+                "src/robin/governance/capability_launch_preflight.py",
+                "tests/portability/test_chronos_cleanroom_evidence_recorder.py",
+                "tests/preflight/test_p0_capability_launch_readiness_v1.py",
+            ],
+            "expired_authority_modified": False,
+            "new_authority_granted": False,
+            "r2_authority_renewed": False,
+            "live_expiration_guard_weakened": False,
+            "live_council_expiry_guard": "PRESERVED",
+            "targeted_tests": {
+                "preflight": "38 passed",
+                "governance_activation_and_recorder": "108 passed",
+            },
+            "reused_evidence": [
+                "GitHub Actions run 31462358073",
+                "PR46 old head eba31bf562d41d45bebda46fc831e308a8668566",
+                "Council blob SHA-256 e700d754a853de1a7b39e5edd76e759c1acca711992ef1712848eda6bfd51ad4",
+            ],
+            "reviews": {
+                "DP5": {"roles": ["PLATFORM", "SRE"], "score": 99},
+                "DP6": {"roles": ["EVIDENCE", "DBA"], "score": 99},
+                "C4": {"roles": ["SEC", "RED"], "score": 99},
+            },
+            "call_site_audit": {
+                "contract_validator_non_test_imports": 0,
+                "live_validator_requires_expiry_guard": True,
+            },
+            "next_ci_run_binding": "AUTOMATIC_PR46_EXACT_HEAD_RUN",
+            "p0": 0,
+            "p1": 0,
+        },
+        PORTABILITY_CORRECTION_TIP_HASH,
+    )
+
+
+def verify_temporal_correction_final(
+    records: list[dict[str, Any]], graph: dict[str, Any]
+) -> None:
+    verify_final(records, graph)
+    verify_graph_shape(records, graph)
+    correction_claim = temporal_correction_claim()
+    correction_record = temporal_correction_record(correction_claim)
+    expected_node = {
+        "decision_id": TEMPORAL_CORRECTION_ID,
+        "ledger_record_hash": TEMPORAL_CORRECTION_TIP_HASH,
+    }
+    expected_edge = {
+        "edge_id": "EDGE.299",
+        "from_claim_id": TEMPORAL_CORRECTION_CLAIM_ID,
+        "to_decision_id": TEMPORAL_CORRECTION_ID,
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    if file_sha256(TEMPORAL_CORRECTION_REPORT) != TEMPORAL_CORRECTION_REPORT_SHA256:
+        raise SystemExit("COUNCIL_TEMPORAL_CORRECTION_REPORT_HASH_INVALID")
+    if (
+        len(records) != 112
+        or len(graph["claims"]) != 128
+        or len(graph["decision_nodes"]) != 112
+        or len(graph["edges"]) != 299
+        or records[-2]["hash"] != PORTABILITY_CORRECTION_TIP_HASH
+        or records[-1] != correction_record
+        or records[-1]["hash"] != TEMPORAL_CORRECTION_TIP_HASH
+        or graph["claims"][-1] != correction_claim
+        or graph["decision_nodes"][-1] != expected_node
+        or graph["edges"][-1] != expected_edge
+        or graph.get("generated_at") != TEMPORAL_CORRECTION_GENERATED_AT
+    ):
+        raise SystemExit("COUNCIL_TEMPORAL_CORRECTION_FINAL_STATE_INVALID")
+
+
+def append_temporal_correction(
+    original_ledger: str,
+    records: list[dict[str, Any]],
+    graph: dict[str, Any],
+) -> None:
+    verify_portability_correction_final(records, graph)
+    correction_claim = temporal_correction_claim()
+    correction_record = temporal_correction_record(correction_claim)
+    records.append(correction_record)
+    graph["generated_at"] = TEMPORAL_CORRECTION_GENERATED_AT
+    graph["claims"].append(correction_claim)
+    graph["decision_nodes"].append(
+        {
+            "decision_id": correction_record["decision_id"],
+            "ledger_record_hash": correction_record["hash"],
+        }
+    )
+    graph["edges"].append(
+        {
+            "edge_id": "EDGE.299",
+            "from_claim_id": correction_claim["claim_id"],
+            "to_decision_id": correction_record["decision_id"],
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+    )
+    separator = "" if original_ledger.endswith("\n") else "\n"
+    appended = json.dumps(
+        correction_record, ensure_ascii=False, separators=(",", ":")
+    ) + "\n"
+    LEDGER.write_text(
+        original_ledger + separator + appended,
+        encoding="utf-8",
+        newline="\n",
+    )
+    GRAPH.write_text(compact_json(graph) + "\n", encoding="utf-8", newline="\n")
+    verify_temporal_correction_final(records, graph)
+
+
 def verify_final(records: list[dict[str, Any]], graph: dict[str, Any]) -> None:
     validate_chain(records)
     by_id = {record["decision_id"]: record["hash"] for record in records}
@@ -913,9 +1099,13 @@ def main() -> None:
     original_ledger = LEDGER.read_text(encoding="utf-8")
     records = [json.loads(line) for line in original_ledger.splitlines() if line.strip()]
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
+    if records[-1]["decision_id"] == TEMPORAL_CORRECTION_ID:
+        verify_temporal_correction_final(records, graph)
+        print("COUNCIL_TEMPORAL_CORRECTION_VERIFIED")
+        return
     if records[-1]["decision_id"] == PORTABILITY_CORRECTION_ID:
-        verify_portability_correction_final(records, graph)
-        print("CHRONOS_CLEANROOM_PORTABILITY_CORRECTION_VERIFIED")
+        append_temporal_correction(original_ledger, records, graph)
+        print("COUNCIL_TEMPORAL_CORRECTION_RECORDED")
         return
     if records[-1]["decision_id"] == CI1_CORRECTION_ID:
         append_portability_correction(original_ledger, records, graph)

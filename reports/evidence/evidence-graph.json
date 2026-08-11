@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-11T05:31:52Z",
+  "generated_at":"2026-08-11T10:46:57Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -1985,7 +1985,7 @@
       "scientific_lineage_id":"chronos-dual-principal-authority-e1-v2",
       "dataset_lineage_id":"PR45_VALIDATION_RUNS_31413302734_31427069583",
       "status":"VERIFIED",
-      "verified_by":["C0","DP5","DP6"]
+      "verified_by":["C0","DP5","DP6","C4"]
     },
     {
       "claim_id":"SECURITY.CHRONOS.MAIN.PATHS.SANITIZED.V1.001",
@@ -2064,6 +2064,22 @@
       "execution_id":"github-actions-31443189487-plus-local-git-blob-v2",
       "scientific_lineage_id":"chronos-dual-principal-authority-e1-v2",
       "dataset_lineage_id":"RUN_31443189487_CANONICAL_WINDOWS_ARTIFACTS",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","DP6","C4"]
+    },
+    {
+      "claim_id":"GOV.COUNCIL.TEMPORAL.DETERMINISM.V1.001",
+      "claim":"GitHub run 31462358073 proved that frozen contract validation was coupled to the live Council clock; static contract validation is now time-invariant while live validation still rejects at and after expiry.",
+      "scope":"FROZEN_GOVERNANCE_TEMPORAL_DETERMINISM_CORRECTION",
+      "source":"GitHub run 31462358073 logs, complete validator call-site audit and the deterministic expiry-boundary micro-proof",
+      "grain":"one_council_activation_contract",
+      "temporal_class":"CODE_AND_LOCAL_EXECUTION_AS_OF",
+      "artifact":"reports/governance/council-temporal-determinism-root-cause-v1.json",
+      "hash":"261863c1f34f74dd247061c8677874fc4db09b31bca70b33e1000fa9548c0506",
+      "code_revision":"eba31bf562d41d45bebda46fc831e308a8668566",
+      "execution_id":"github-actions-31462358073-plus-local-temporal-proof-v1",
+      "scientific_lineage_id":"chronos-dual-principal-authority-e1-v2",
+      "dataset_lineage_id":"NO_DATASET_GOVERNANCE_VALIDATION_ONLY",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","DP6","C4"]
     }
@@ -2179,7 +2195,8 @@
     {"decision_id":"RCV3-20260810-115","ledger_record_hash":"d034d69a372147ed704c0c0bf0b06207b38b365cb1a269f8afe6b7092d8ca966"},
     {"decision_id":"RCV3-20260810-116","ledger_record_hash":"49b94117cabc79af013065190ad239a5f818dc0b1dc46ae1621a203d8702b82a"},
     {"decision_id":"RCV3-20260810-117","ledger_record_hash":"ea40d55aec25913956cc7ec4c8dec88dc34152c6c37ad48b572423cafc27b221"},
-    {"decision_id":"RCV3-20260811-118","ledger_record_hash":"45bdecf73253f05f64b38a5170e30d6c90ea0eca7321b84aa15789964f30a51d"}
+    {"decision_id":"RCV3-20260811-118","ledger_record_hash":"45bdecf73253f05f64b38a5170e30d6c90ea0eca7321b84aa15789964f30a51d"},
+    {"decision_id":"RCV3-20260811-119","ledger_record_hash":"a1951937a6af243fa64945eb5c246c2c1cc40d72e07f6275fabedfe843fe0889"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2479,6 +2496,7 @@
     {"edge_id":"EDGE.295","from_claim_id":"GOV.CHRONOS.CLEANROOM.PRE_CI.REVIEW.V1.001","to_decision_id":"RCV3-20260810-115","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.296","from_claim_id":"GOV.CHRONOS.CLEANROOM.FULL_SUITE.CORRECTION.V1.001","to_decision_id":"RCV3-20260810-116","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.297","from_claim_id":"GOV.CHRONOS.CLEANROOM.CI1.CORRECTION.V1.001","to_decision_id":"RCV3-20260810-117","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.298","from_claim_id":"PORT.CHRONOS.FROZEN_MANIFEST.GIT_BLOB.V2.001","to_decision_id":"RCV3-20260811-118","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.298","from_claim_id":"PORT.CHRONOS.FROZEN_MANIFEST.GIT_BLOB.V2.001","to_decision_id":"RCV3-20260811-118","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.299","from_claim_id":"GOV.COUNCIL.TEMPORAL.DETERMINISM.V1.001","to_decision_id":"RCV3-20260811-119","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
