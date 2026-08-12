@@ -1,0 +1,24 @@
+{
+  "schema_version": "chronos-neon-controlled-idle-wake-readonly-v1-golden-pack",
+  "cases": [
+    {"case_id": "IDENTITY_COMPLETE_ENDPOINT_ACTIVE", "expected": "CONTROLLED_NEON_READONLY_WAKE_NOT_REQUIRED"},
+    {"case_id": "IDENTITY_COMPLETE_ENDPOINT_IDLE", "expected": "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"},
+    {"case_id": "IDLE_FINITE_SCALE_TO_ZERO", "expected": "FINITE_SCALE_TO_ZERO"},
+    {"case_id": "IDLE_DEFAULT_SCALE_TO_ZERO", "expected": "DEFAULT_SCALE_TO_ZERO"},
+    {"case_id": "IDLE_ALWAYS_ACTIVE_CONFIGURATION", "expected_gate": "compute_return_to_idle_not_proven"},
+    {"case_id": "IDLE_SCALE_TO_ZERO_UNKNOWN", "expected_gate": "suspend_timeout_contract_invalid"},
+    {"case_id": "IDLE_CONNECTION_WAKE_SUCCESS", "expected": "CONTROLLED_NEON_READONLY_WAKE_EXECUTED_ONCE"},
+    {"case_id": "IDLE_CONNECTION_WAKE_FAILURE_NO_RETRY", "expected_gate": "single_connection_attempt_did_not_complete"},
+    {"case_id": "READ_ONLY_STARTUP_OPTIONS_MISSING", "expected_gate": "startup_options_required"},
+    {"case_id": "FIRST_SQL_NOT_BEGIN_READ_ONLY", "expected_gate": "first_sql_not_begin_read_only"},
+    {"case_id": "TRANSACTION_READ_ONLY_FALSE", "expected_gate": "direct_endpoint_not_proven"},
+    {"case_id": "SSL_FALSE", "expected_gate": "ssl_not_proven"},
+    {"case_id": "EXPECTED_REVISION_0013", "expected": "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION"},
+    {"case_id": "UNEXPECTED_REVISION_0014", "expected_gate": "unexpected_database_revision"},
+    {"case_id": "MULTIPLE_ALEMBIC_REVISIONS", "expected_gate": "unexpected_database_revision"},
+    {"case_id": "BOOTSTRAP_AUTHORITY_SUFFICIENT", "expected": "BOOTSTRAP_AUTHORITY_CAPABILITIES_PROVEN"},
+    {"case_id": "BOOTSTRAP_AUTHORITY_INSUFFICIENT", "expected_gate": "bootstrap_authority_insufficient"},
+    {"case_id": "RECOVERY_FEASIBLE", "expected": "NEON_RECOVERY_BRANCH_CREATION_FEASIBLE"},
+    {"case_id": "PURCHASE_REQUIRED", "expected_gate": "purchase_required"}
+  ]
+}
