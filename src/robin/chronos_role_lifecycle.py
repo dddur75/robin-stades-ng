@@ -409,9 +409,22 @@ def provision_permanent_bootstrap_authority(
                     (AUTHORITY_MARKER,),
                 )
         cursor.execute(
-            sql.SQL(
-                "GRANT USAGE, CREATE ON SCHEMA public TO {} WITH GRANT OPTION"
-            ).format(sql.Identifier(authority))
+            "SELECT owner.rolname, pg_catalog.pg_has_role("
+            "CURRENT_USER,n.nspowner,'SET') FROM pg_catalog.pg_namespace n "
+            "JOIN pg_catalog.pg_roles owner ON owner.oid=n.nspowner "
+            "WHERE n.nspname='public'"
+        )
+        schema_owner = cursor.fetchone()
+        if schema_owner is None:
+            raise ChronosProductionError("CHRONOS_PUBLIC_SCHEMA_OWNER_MISSING")
+        schema_owner_name = str(schema_owner[0])
+        can_set_schema_owner = bool(schema_owner[1])
+        _grant_bootstrap_authority_schema(
+            cursor,
+            authority=authority,
+            lifecycle_admin=lifecycle_admin,
+            schema_owner_name=schema_owner_name,
+            can_set_schema_owner=can_set_schema_owner,
         )
         cursor.execute(
             sql.SQL(
@@ -439,6 +452,32 @@ def provision_permanent_bootstrap_authority(
         lifecycle_admin,
         lifecycle_admin_superuser,
     )
+
+
+def _grant_bootstrap_authority_schema(
+    cursor: Any,
+    *,
+    authority: str,
+    lifecycle_admin: str,
+    schema_owner_name: str,
+    can_set_schema_owner: bool,
+) -> None:
+    """Grant schema ACLs without masking a failed GRANT with RESET ROLE."""
+
+    switched_to_schema_owner = (
+        schema_owner_name != lifecycle_admin and can_set_schema_owner
+    )
+    if switched_to_schema_owner:
+        cursor.execute(
+            sql.SQL("SET LOCAL ROLE {}").format(sql.Identifier(schema_owner_name))
+        )
+    cursor.execute(
+        sql.SQL(
+            "GRANT USAGE, CREATE ON SCHEMA public TO {} WITH GRANT OPTION"
+        ).format(sql.Identifier(authority))
+    )
+    if switched_to_schema_owner:
+        cursor.execute("RESET ROLE")
 
 
 def _executor_names(connection: Connection[Any]) -> list[str]:

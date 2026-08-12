@@ -40,7 +40,7 @@ class _Response:
     def __init__(self, document: dict[str, Any]) -> None:
         self._document = deepcopy(document)
 
-    def json(self) -> dict[str, Any]:
+    def json(self, **_kwargs: object) -> dict[str, Any]:
         return deepcopy(self._document)
 
 
@@ -51,10 +51,20 @@ class _IdleIdentitySession:
         state: str = "idle",
         suspend_timeout_seconds: int | None = 300,
         project_id_mismatch: bool = False,
+        branch_count: int = 1,
+        history_retention_seconds: int = 86_400,
+        subscription_type: str = "launch",
+        billing_plan: str = "launch",
+        postgresql_major: int = 16,
     ) -> None:
         self.state = state
         self.suspend_timeout_seconds = suspend_timeout_seconds
         self.project_id_mismatch = project_id_mismatch
+        self.branch_count = branch_count
+        self.history_retention_seconds = history_retention_seconds
+        self.subscription_type = subscription_type
+        self.billing_plan = billing_plan
+        self.postgresql_major = postgresql_major
         self.paths: list[str] = []
 
     def _endpoint(self) -> dict[str, Any]:
@@ -68,6 +78,7 @@ class _IdleIdentitySession:
             "type": "read_write",
             "current_state": self.state,
             "pending_state": None,
+            "autoscaling_limit_max_cu": 1,
             "pooler_enabled": False,
             "disabled": False,
             "region_id": "aws-eu-synthetic-1",
@@ -81,6 +92,14 @@ class _IdleIdentitySession:
         path = parsed.path.removeprefix("/api/v2")
         query = parse_qs(parsed.query)
         self.paths.append(path)
+        if path == "/auth":
+            return _Response(
+                {"account_id": "owner-production", "auth_method": "api_key_org"}
+            )
+        if path == "/organizations/owner-production":
+            return _Response(
+                {"id": "owner-production", "plan": self.billing_plan}
+            )
         if path == "/projects":
             assert query["limit"] == [str(base.PROJECT_PAGE_LIMIT)]
             return _Response(
@@ -109,8 +128,12 @@ class _IdleIdentitySession:
                         "name": "production",
                         "owner_id": "owner-production",
                         "region_id": "aws-eu-synthetic-1",
-                        "history_retention_seconds": 86_400,
-                        "owner": {"branches_limit": 5},
+                        "history_retention_seconds": self.history_retention_seconds,
+                        "pg_version": self.postgresql_major,
+                        "owner": {
+                            "branches_limit": 100,
+                            "subscription_type": self.subscription_type,
+                        },
                     }
                 }
             )
@@ -119,16 +142,23 @@ class _IdleIdentitySession:
                 {
                     "branches": [
                         {
-                            "id": "branch-production",
+                            "id": (
+                                "branch-production"
+                                if index == 0
+                                else f"branch-{index}"
+                            ),
                             "project_id": "project-production",
-                            "name": "production",
+                            "name": "production" if index == 0 else f"branch-{index}",
                             "current_state": "ready",
-                            "default": True,
+                            "default": index == 0,
                         }
+                        for index in range(self.branch_count)
                     ],
                     "pagination": {},
                 }
             )
+        if path == "/projects/project-production/branches/count":
+            return _Response({"count": self.branch_count})
         if path == (
             "/projects/project-production/branches/branch-production/endpoints"
         ):
@@ -145,6 +175,7 @@ def _target() -> DirectPostgresTarget:
         database="synthetic_database",
         username="synthetic_user",
         sslmode="require",
+        channel_binding="require",
     )
 
 
@@ -169,14 +200,17 @@ def _neon(
         endpoint_host="ep-synthetic.neon.tech",
         endpoint_state=state,
         branch_state="ready",
+        owner_id="owner-shared",
         owner_branch_count=owner_branch_count,
         branch_limit=branch_limit,
         history_retention_seconds=86_400,
+        postgresql_major=16,
         project_pages_read=1,
         projects_observed=1,
         endpoint_projects_inspected=1,
-        api_get_count=6,
+        api_get_count=9,
         suspend_timeout_seconds=suspend_timeout_seconds,
+        project_inventory_exhaustive=True,
         endpoint_detail_reads=1,
         project_detail_reads=1,
         branch_pages_read=1,
@@ -189,6 +223,14 @@ def _neon(
             "DEFAULT_BRANCH_RELATIONSHIP_CONCORDANT",
             "BRANCH_ENDPOINT_CONCORDANT",
         ),
+        branch_capacity_proven=True,
+        autoscaling_limit_max_cu=1,
+        owner_scope_verdict="ORGANIZATION_WIDE_API_KEY",
+        branch_count_reads=1,
+        subscription_type="launch",
+        billing_plan="launch",
+        target_project_branch_count=1,
+        bill_free_branch_capacity_proven=True,
     )
 
 
@@ -202,9 +244,9 @@ def _database(
 ) -> base.DatabaseObservation:
     return base.DatabaseObservation(
         database_name="synthetic_database",
-        session_user="bootstrap-owner",
-        current_user="bootstrap-owner",
-        postgresql_version="17.0",
+        session_user="synthetic_user",
+        current_user="synthetic_user",
+        postgresql_version="16.14",
         ssl=ssl,
         revision=revision,
         revision_count=revision_count,
@@ -219,7 +261,21 @@ def _database(
         chronos_roles=(),
         chronos_memberships=(),
         chronos_objects=(),
-        sql_statement_count=14,
+        sql_statement_count=len(base.SQL_STATEMENTS),
+        postgresql_version_num=160014,
+        bootstrap_grantable_capabilities=(
+            "schema_usage_grantable",
+            "schema_create_grantable",
+            "table_select_grantable",
+            "table_insert_grantable",
+            "table_update_grantable",
+            "table_delete_grantable",
+            "authority_role_memberships_clean",
+        ),
+        sql_read_count=15,
+        bootstrap_targets_valid=True,
+        sql_statement_completed_count=len(base.SQL_STATEMENTS),
+        sql_read_attempt_count=15,
     )
 
 
@@ -237,20 +293,19 @@ def _run_synthetic(
         "GITHUB_SHA": "a" * 40,
         "GITHUB_RUN_ATTEMPT": "1",
         "GITHUB_RUN_ID": "1234",
+        "GITHUB_TOKEN": "synthetic-github-token",
         "NEON_API_KEY": "synthetic-key",
-        "NEON_BOOTSTRAP_DATABASE_URL": "synthetic-dsn",
+        "NEON_BOOTSTRAP_DATABASE_URL": (
+            "postgresql://synthetic_user:synthetic_password@"
+            "ep-synthetic.neon.tech/synthetic_database?"
+            "sslmode=require&channel_binding=require"
+        ),
     }.items():
         monkeypatch.setenv(name, value)
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
+    monkeypatch.delenv("NEON_ORG_ID", raising=False)
     monkeypatch.setattr(base, "_github_actions_state", lambda *_a, **_k: (0, 0, 1))
     monkeypatch.setattr(base, "_validated_psycopg_url", lambda _dsn: (_dsn, _target()))
-    monkeypatch.setattr(
-        base,
-        "_target_dsn_security_profile",
-        lambda _target: {
-            "contract_verdict": "NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT"
-        },
-    )
     monkeypatch.setattr(base, "NeonReadOnlyClient", lambda _key: object())
 
     def resolve(*_args: object, **_kwargs: object) -> base.NeonObservation:
@@ -263,12 +318,15 @@ def _run_synthetic(
     def inspect(
         _dsn: str,
         *,
+        expected_postgresql_major: int,
         before_connect: Any = None,
         after_connect: Any = None,
+        inspection_audit: Any = None,
     ) -> base.DatabaseObservation:
         nonlocal calls
         calls += 1
         assert calls == 1
+        assert expected_postgresql_major == (neon or _neon()).postgresql_major
         before_connect()
         if connection_error:
             raise base.PreflightNoGo(
@@ -287,12 +345,12 @@ def test_workflow_is_one_shot_bounded_and_environment_protected() -> None:
     document = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
     on = document.get("on", document.get(True))
     assert set(on) == {"workflow_dispatch"}
-    assert document["permissions"] == {"contents": "read"}
+    assert document["permissions"] == {"actions": "read", "contents": "read"}
     assert document["concurrency"]["cancel-in-progress"] is False
     job = document["jobs"]["preflight"]
     assert job["environment"] == "chronos-control-plane-production"
     live = next(step for step in job["steps"] if "run" in step and "timeout" in step["run"])
-    assert "timeout --signal=TERM 120s" in live["run"]
+    assert "timeout --signal=TERM --kill-after=5s 120s" in live["run"]
     module_entrypoint = (
         "python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1"
     )
@@ -303,7 +361,27 @@ def test_workflow_is_one_shot_bounded_and_environment_protected() -> None:
     assert workflow_source.count(module_entrypoint) == 1
     assert file_entrypoint not in workflow_source
     assert live["working-directory"] == "${{ github.workspace }}"
-    assert "NEON_PROJECT_ID" in live["env"]
+    assert live["id"] == "live_preflight"
+    assert live["env"]["GITHUB_TOKEN"] == "${{ github.token }}"
+    assert "NEON_PROJECT_ID" not in live["env"]
+    assert "NEON_ORG_ID" in live["env"]
+    guard = next(
+        step
+        for step in job["steps"]
+        if "chronos_live_path_artifact_guard_v1" in step.get("run", "")
+    )
+    upload = next(step for step in job["steps"] if "upload-artifact@" in step.get("uses", ""))
+    assert guard["if"] == "always()"
+    assert guard["id"] == "artifact_guard"
+    assert set(guard["env"]) == {
+        "GITHUB_TOKEN",
+        "NEON_API_KEY",
+        "NEON_BOOTSTRAP_DATABASE_URL",
+        "NEON_PROJECT_ID",
+        "NEON_ORG_ID",
+    }
+    assert 'steps.live_preflight.outcome' in guard["run"]
+    assert upload["if"] == "${{ always() && steps.artifact_guard.outcome == 'success' }}"
 
 
 def test_linux_module_entrypoint_smoke_runs_exact_command_from_repo_root() -> None:
@@ -382,8 +460,11 @@ def test_idle_endpoint_completes_identity_before_any_connection(
     assert observed.endpoint_state == "idle"
     assert observed.suspend_timeout_seconds == 300
     assert session.paths == [
+        "/auth",
+        "/organizations/owner-production",
         "/projects",
         "/projects/project-production/endpoints",
+        "/projects/project-production/branches/count",
         "/projects/project-production/endpoints/endpoint-production",
         "/projects/project-production",
         "/projects/project-production/branches",
@@ -420,9 +501,9 @@ def test_idle_connection_is_attempted_once_and_counted_as_one_wake(
 def test_active_endpoint_requires_no_wake(monkeypatch: pytest.MonkeyPatch) -> None:
     report = _run_synthetic(monkeypatch, neon=_neon(state="active"))
     assert report["connection_attempt_count"] == 1
-    assert report["compute_wake_events"] == 0
+    assert report["compute_wake_events"] == 1
     assert report["lifecycle"]["wake_verdict"] == (
-        "CONTROLLED_NEON_READONLY_WAKE_NOT_REQUIRED"
+        "COMPUTE_WAKE_UPPER_BOUND_ONE_FROM_ACTIVE_SNAPSHOT"
     )
 
 
@@ -440,7 +521,7 @@ def test_connection_failure_is_not_retried_and_wake_is_conservatively_counted(
     assert report["failed_gate"] == "single_connection_attempt_did_not_complete"
 
 
-def test_active_connection_failure_does_not_invent_a_wake(
+def test_active_connection_failure_uses_conservative_wake_upper_bound(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     report = _run_synthetic(
@@ -449,14 +530,19 @@ def test_active_connection_failure_does_not_invent_a_wake(
         connection_error=True,
     )
     assert report["connection_attempt_count"] == 1
-    assert report["compute_wake_events"] == 0
-    assert report["reason"] == "DIRECT_ENDPOINT_NOT_PROVEN"
-    assert report["failed_gate"] == "postgresql_readonly_inspection_failed"
+    assert report["compute_wake_events"] == 1
+    assert report["reason"] == "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE"
+    assert report["failed_gate"] == "single_connection_attempt_did_not_complete"
 
 
 @pytest.mark.parametrize(
     ("timeout", "classification", "effective"),
-    [(300, "FINITE_SCALE_TO_ZERO", 300), (0, "DEFAULT_SCALE_TO_ZERO", 300)],
+    [
+        (60, "FINITE_SCALE_TO_ZERO", 60),
+        (119, "FINITE_SCALE_TO_ZERO", 119),
+        (300, "FINITE_SCALE_TO_ZERO", 300),
+        (0, "DEFAULT_SCALE_TO_ZERO", 300),
+    ],
 )
 def test_scale_to_zero_finite_and_default_contracts(
     timeout: int,
@@ -468,8 +554,8 @@ def test_scale_to_zero_finite_and_default_contracts(
     ) == (classification, effective)
 
 
-@pytest.mark.parametrize("timeout", [-1, 60, 119])
-def test_scale_to_zero_refuses_always_active_or_too_short(timeout: int) -> None:
+@pytest.mark.parametrize("timeout", [-1])
+def test_scale_to_zero_refuses_always_active(timeout: int) -> None:
     with pytest.raises(base.PreflightNoGo) as caught:
         controlled._scale_to_zero_contract(_neon(suspend_timeout_seconds=timeout))
     assert caught.value.reason == "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN"
@@ -539,13 +625,16 @@ def test_recovery_and_purchase_verdicts(monkeypatch: pytest.MonkeyPatch) -> None
     assert ready["postgresql"]["revision_count"] == 1
 
 
-def test_purchase_required_remains_no_go(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_hard_branch_capacity_exhaustion_is_not_misreported_as_purchase(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     report = _run_synthetic(
         monkeypatch,
         neon=_neon(owner_branch_count=5, branch_limit=5),
     )
-    assert report["failed_gate"] == "purchase_required"
-    assert report["recovery_verdict"] == "PURCHASE_REQUIRED"
+    assert report["failed_gate"] == "branch_capacity_exhausted"
+    assert report["purchase_required"] is False
+    assert report["recovery_verdict"] == "NEON_RECOVERY_BRANCH_CREATION_BLOCKED"
     assert report["effects"]["purchases"] == 0
 
 
@@ -575,7 +664,7 @@ def test_report_retains_nine_zero_effects_plus_wake(
 ) -> None:
     report = _run_synthetic(monkeypatch)
     effects = report["effects"]
-    assert set(effects) == {
+    assert {
         "neon_mutations",
         "production_sql_writes",
         "recovery_branch_creations",
@@ -586,9 +675,22 @@ def test_report_retains_nine_zero_effects_plus_wake(
         "purchases",
         "sensitive_values_exposed",
         "compute_wake_events",
-    }
+    } < set(effects)
     assert effects["compute_wake_events"] == 1
-    assert all(value == 0 for key, value in effects.items() if key != "compute_wake_events")
+    for key in (
+        "neon_mutations",
+        "production_sql_writes",
+        "recovery_branch_creations",
+        "role_creations",
+        "migration_0014",
+        "r2_operations",
+        "provider_calls",
+        "purchases",
+        "sensitive_values_exposed",
+        "sql_write_count",
+        "postgresql_retries",
+    ):
+        assert effects[key] == 0
 
 
 def test_golden_pack_has_all_required_scenarios() -> None:

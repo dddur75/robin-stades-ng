@@ -272,7 +272,7 @@ def test_ci_runs_dual_principal_lifecycle_and_complete_migration_cycle() -> None
         "test_scoped_login_connections_enforce_allows_and_denials"
     )
 
-    assert "run_chronos_dual_principal_ci_v2.py" in workflow
+    assert "python -m scripts.run_chronos_dual_principal_ci_v2" in workflow
     assert "provision_chronos_group_roles" in runner
     assert "provision_migrator" in runner
     assert "provision_runtime_logins" in runner

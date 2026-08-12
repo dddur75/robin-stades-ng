@@ -1,0 +1,250 @@
+{
+  "schema_version": "chronos-end-to-end-live-path-certification-v1",
+  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
+  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.002",
+  "observed_at": "2026-08-12T18:20:54Z",
+  "repository": "dddur75/robin-stades-ng",
+  "base_main_sha": "6140e09cb38b5fecee5da85882aa8a879dbce780",
+  "branch": "codex/chronos-residual-defect-extermination-v1",
+  "scope": "OFFLINE_CERTIFICATION_BEFORE_ONE_NEW_CONTROLLED_LIVE",
+  "certification_status": "PASS_OFFLINE_FROZEN_EXACT_PATH_TRIPLE_REVIEW",
+  "live_path_call_graph": [
+    {
+      "component": "GitHub workflow",
+      "caller": "workflow_dispatch",
+      "input": "exact main run context plus step-scoped secrets",
+      "output": "bounded producer outcome and exact hidden report path",
+      "external_effect": "none before producer",
+      "failure_modes": ["wrong cwd", "wrong module", "missing dependency", "timeout", "nonzero process"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["exact YAML contract", "module --help", "GNU timeout", "subprocess outcome matrix"]
+    },
+    {
+      "component": "GitHub guards",
+      "caller": "run_preflight",
+      "input": "repository, ref, SHA, run id, attempt, step-scoped token, complete one-page workflow runs and refs/heads/main",
+      "output": "current-main SHA, exact dispatch uniqueness and quiescence proof",
+      "external_effect": "bounded GitHub GET only",
+      "failure_modes": ["wrong source", "attempt two", "queued", "in progress", "zero/two dispatches", "malformed API", "unavailable API"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["authenticated isolated transport", "duplicate-key and duplicate-run rejection", "complete-one-page or NO-GO envelope", "stale-main and strict-type tests"]
+    },
+    {
+      "component": "canonical DSN",
+      "caller": "run_preflight and artifact guard",
+      "input": "NEON_BOOTSTRAP_DATABASE_URL and ambient environment names",
+      "output": "direct host, port 5432, database, principal, sslmode and channel binding",
+      "external_effect": "zero",
+      "failure_modes": ["missing", "empty", "malformed", "override", "pooler", "multi-host", "ambient PG variable"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["canonical allowlist", "anti-redirection", "environment binding"]
+    },
+    {
+      "component": "Neon identity and recovery",
+      "caller": "_resolve_neon_identity",
+      "input": "GET-only auth, organization, project, endpoint, branch and count documents",
+      "output": "owner, project, default root branch, direct endpoint, lifecycle, capacity and price proofs",
+      "external_effect": "at most twenty-five GET, zero mutation",
+      "failure_modes": ["pagination ambiguity", "identity duplicate", "transition", "unsupported lifecycle", "capacity", "purchase"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["documented/legacy/adversarial fixtures and opaque OpenAPI maps", "configured and discovered full endpoint witness", "owner-scope and capacity boundaries", "full external-boundary replay"]
+    },
+    {
+      "component": "controlled wake and PostgreSQL inspection",
+      "caller": "controlled.run_preflight",
+      "input": "fully proven direct endpoint and canonical DSN",
+      "output": "one observed or conservatively bounded connection/wake plus exact database evidence",
+      "external_effect": "at most one connection and one possible compute wake; zero retry",
+      "failure_modes": ["DNS", "TLS", "timeout", "refusal", "indeterminate wake", "SQL ordinal failure"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["connect fault matrix", "one-connect invariant", "late-failure conservative counters"]
+    },
+    {
+      "component": "PostgreSQL catalog proof",
+      "caller": "_inspect_database",
+      "input": "one secure connection with read-only startup options",
+      "output": "target, SSL, timeouts, exact 0013, protected-role membership topology, grantor-compatible capabilities and empty remnant inventories",
+      "external_effect": "eighteen explicit statements, fifteen reads, zero writes, explicit rollback",
+      "failure_modes": ["session contract", "wrong target", "unsafe object", "revision", "authority", "remnants"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["real PG16 eighteen-statement replay for superuser and CREATEROLE profiles", "canonical Neon platform ACL and recursive hostile authority rejection", "fifteen independent noncanonical catalog mutations", "every-ordinal fault injection", "catalog semantics review"]
+    },
+    {
+      "component": "report and artifact guard",
+      "caller": "producer main then always-run guard",
+      "input": "producer JSON bytes and exact live step outcome",
+      "output": "validated original report or atomic sanitized fallback with observed/conservative Neon and PostgreSQL effect ledgers",
+      "external_effect": "one exact-file artifact upload only after guard success",
+      "failure_modes": ["duplicate key", "deep or malformed JSON", "secret", "wrong source", "contradiction", "serialization", "write failure", "wrong path"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["recursive schema and causal mutation matrix", "secret collisions", "python -S and malformed/deep fallback subprocess", "path identity"]
+    }
+  ],
+  "stages": [
+    {"stage": "WORKFLOW", "status": "PASS", "proof": "manual-only dispatch, pinned external actions, bounded job and live timeout, exact guard/upload wiring"},
+    {"stage": "ENTRYPOINT", "status": "PASS", "proof": "python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1 from github.workspace"},
+    {"stage": "IMPORTS", "status": "PASS", "proof": "Python 3.12.10, PYTHONPATH=github.workspace/src and module smoke"},
+    {"stage": "GITHUB_GUARDS", "status": "PASS", "proof": "strict current-main SHA, attempt-one, unique-dispatch and complete one-page quiescence parser"},
+    {"stage": "DSN", "status": "PASS", "proof": "canonical direct Neon DSN and ambient-libpq refusal"},
+    {"stage": "PROJECT", "status": "PASS", "proof": "configured pure identity or exhaustive positive ownership witness"},
+    {"stage": "ENDPOINT", "status": "PASS", "proof": "one global exact direct read-write non-disabled host match"},
+    {"stage": "PROJECT_DETAIL", "status": "PASS", "proof": "owner, plan, PostgreSQL major, branch limit and history contract"},
+    {"stage": "BRANCH", "status": "PASS", "proof": "bounded semantic pagination, exactly one ready default root branch"},
+    {"stage": "BRANCH_ENDPOINT", "status": "PASS", "proof": "branch-scoped endpoint ownership witness"},
+    {"stage": "LIFECYCLE", "status": "PASS", "proof": "active or controlled idle, documented suspension timeout and finite maximum CU >=0.25"},
+    {"stage": "WAKE", "status": "PASS", "proof": "only the first and only direct read-only connection may wake idle compute; no start API"},
+    {"stage": "CONNECTION", "status": "PASS", "proof": "attempts <=1, successes <=1 and retries=0 with conservative uncertain outcome"},
+    {"stage": "READONLY", "status": "PASS", "proof": "autocommit startup, first explicit BEGIN READ ONLY, session checks and explicit rollback"},
+    {"stage": "SSL", "status": "PASS", "proof": "secure URI contract plus pg_stat_ssl=true"},
+    {"stage": "REVISION", "status": "PASS", "proof": "locked exact canonical public.alembic_version with one row 0013_historical_evidence_index, exact storage/history fields and no extension dependency"},
+    {"stage": "AUTHORITY", "status": "PASS", "proof": "catalog visibility, role capabilities, exclusive protected-role memberships and direct grantor-compatible ACL proof including constrained Neon platform ACL"},
+    {"stage": "RECOVERY", "status": "PASS", "proof": "owner-wide hard capacity, exact target count, retention and bill-free allowance proved separately"},
+    {"stage": "REPORT", "status": "PASS", "proof": "closed GO/NO-GO variants, partial PostgreSQL evidence, exact or conservative Neon/PostgreSQL counters and no raw identity"},
+    {"stage": "ARTIFACT", "status": "PASS", "proof": "duplicate-key-safe guard, atomic fallback and exact-file guarded upload"}
+  ],
+  "budgets": {
+    "maximum_wall_clock_seconds": 120,
+    "maximum_neon_gets": 25,
+    "maximum_neon_mutations": 0,
+    "maximum_postgresql_connection_attempts": 1,
+    "maximum_compute_wake_events": 1,
+    "maximum_sql_statements": 25,
+    "happy_path_sql_statements": 18,
+    "happy_path_sql_reads": 15,
+    "maximum_sql_writes": 0,
+    "automatic_retries": 0,
+    "migration_0014": 0
+  },
+  "offline_replays": {
+    "full_happy_path": {
+      "status": "PASS",
+      "network_boundaries_mocked_only": ["GitHub GET", "Neon GET", "psycopg.connect"],
+      "verdict": "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION",
+      "neon_gets": 9,
+      "postgresql_connection_attempts": 1,
+      "sql_statements": 18,
+      "sql_reads": 15,
+      "sql_writes": 0
+    },
+    "no_go_families": {
+      "status": "PASS",
+      "families": [
+        "GITHUB",
+        "DSN",
+        "PROJECT",
+        "ENDPOINT",
+        "BRANCH",
+        "LIFECYCLE",
+        "CONNECTION",
+        "SQL_SESSION",
+        "REVISION",
+        "AUTHORITY",
+        "RECOVERY",
+        "REPORT",
+        "ARTIFACT"
+      ],
+      "correct_gate": true,
+      "later_effects_absent": true,
+      "sanitized_report_exists": true
+    }
+  },
+  "fault_matrix": {
+    "status": "PASS",
+    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
+    "exact_test_file": "tests/activation/test_chronos_end_to_end_live_path_v1.py",
+    "workflow_command_result": "364 passed, 1 skipped on Windows for the exact three-file workflow command; GNU timeout case delegated to exact-head Linux CI",
+    "dual_principal_command_result": "15 passed in the separate dual-principal matrix",
+    "domain_regression_result": "481 passed, 1 skipped across the exact eight-file bounded Chronos activation, migration, dual-principal and portability matrix",
+    "fault_scenarios_collected": 246,
+    "fault_scenarios_passed_locally": 245,
+    "fault_scenarios_linux_ci_only": 1,
+    "linux_timeout_test_required_in_exact_head_ci": true
+  },
+  "external_contracts": {
+    "github_environment_branch_boundary": {
+      "observed_at": "2026-08-12T18:34:00Z",
+      "environment": "chronos-control-plane-production",
+      "protected_branches_only": true,
+      "custom_branch_policies": false,
+      "protected_branches": ["main"],
+      "active_ruleset": "main-trusted-pr-ci-v1",
+      "environment_secret_names": ["NEON_API_KEY", "NEON_BOOTSTRAP_DATABASE_URL"],
+      "sanitized_observation_sha256": "30504cc1abac7673cdb63f21b1c6228d0b87dfcec889976ec7295835b6a2d239",
+      "revalidate_before_dispatch": true
+    },
+    "branch_pagination": "SEMANTICALLY_RECONCILED",
+    "project_pagination": "SEMANTICALLY_RECONCILED",
+    "project_ownership": "ORGANIZATION_SCOPE_PROVEN",
+    "pooling": "DIRECT_HOSTNAME_AUTHORITATIVE",
+    "scale_to_zero": "DOCUMENTED_TIMEOUT_AND_FINITE_MAXIMUM_CU_CONTRACT_ENFORCED",
+    "postgresql": "PG16_REPOSITORY_CERTIFICATION_ONLY",
+    "raw_previous_live_envelope": "UNKNOWN_NOT_PRESERVED_AND_NOT_INVENTED"
+  },
+  "local_validation": {
+    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
+    "ruff": "PASS_CHANGED_SCOPE",
+    "mypy_strict": "PASS_9_CHANGED_PRODUCTION_SOURCES_INCLUDING_MIGRATIONS_ENV",
+    "bandit": "PASS_ZERO_FINDINGS_CHANGED_PRODUCTION_SCOPE",
+    "compileall": "PASS_CHANGED_PRODUCTION_AND_E2E_TEST_SCOPE",
+    "secret_scan": "PASS_NO_LITERAL_SECRET_DETECTED",
+    "git_diff_check": "PASS_NO_WHITESPACE_ERROR_CRLF_WARNINGS_ONLY",
+    "single_full_suite": {
+      "status": "COMPLETED_EXACTLY_ONCE",
+      "passed": 1889,
+      "skipped": 24,
+      "failed": 69,
+      "failure_class": "GOVERNANCE_HASH_CASCADE_AND_PRE_EXISTING_WINDOWS_CRLF_PHASE_C_BYTE_IDENTITY",
+      "rerun_forbidden": true,
+      "definitive_new_delta_validation": "TARGETED_LOCAL_MATRICES_AND_EXACT_HEAD_LINUX_CI"
+    }
+  },
+  "quality_gates": {
+    "known_live_reachable_defects": 0,
+    "known_untested_live_path_stages": 0,
+    "defects_intentionally_deferred": 0,
+    "open_p0": 0,
+    "open_p1": 0
+  },
+  "governance": {
+    "mission_id": "CHRONOS_LOOP53",
+    "manifest": "configs/execution/chronos-residual-defect-extermination-v1.json",
+    "source_hash": "5f40475be65fa358a2b409edb2f320993596124e2055a1b5056e8641db0ab498",
+    "writer": "C0",
+    "triple_keys": ["DP5", "DP6", "C4"]
+  },
+  "reviews": {
+    "DP5_PLATFORM_SRE": {"verdict": "PASS", "score": 97, "p0": 0, "p1": 0},
+    "DP6_EVIDENCE_DBA": {"verdict": "PASS", "score": 97, "p0": 0, "p1": 0},
+    "C4_SEC_RED": {"verdict": "PASS", "score": 97, "p0": 0, "p1": 0},
+    "minimum_required_score": 95,
+    "red_team_question": "If the next live fails, is it likely to reveal a genuinely unknown external property rather than an obvious offline-detectable defect?",
+    "answer": "YES"
+  },
+  "pre_merge_external_effects": {
+    "neon_gets": 0,
+    "neon_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "compute_wake_events": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "migration_0014": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "secret_updates": 0,
+    "variable_updates": 0,
+    "workflow_dispatches": 0
+  },
+  "verdicts": [
+    "CHRONOS_END_TO_END_LIVE_PATH_CERTIFIED_OFFLINE_EXACT_PATH",
+    "CHRONOS_RESIDUAL_DEFECT_EXTERMINATION_CLOSED",
+    "CHRONOS_EXTERNAL_CONTRACTS_SEMANTICALLY_FAIL_CLOSED",
+    "CHRONOS_KNOWN_LIVE_REACHABLE_P0_P1_ZERO",
+    "CHRONOS_KNOWN_LIVE_REACHABLE_DEFECTS_ZERO",
+    "CHRONOS_KNOWN_UNTESTED_LIVE_PATH_STAGES_ZERO"
+  ],
+  "live_authorization": "HELD_UNTIL_EXACT_HEAD_CI_MERGE_GREEN_MAIN_PAGES_QUIESCENCE_AND_ZERO_PRIOR_DISPATCH_ON_NEW_SHA",
+  "migration_authorized": false
+}

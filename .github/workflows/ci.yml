@@ -241,12 +241,101 @@ jobs:
     name: "Chronos PostgreSQL profiles"
     needs: frozen-evidence-windows
     uses: ./.github/workflows/chronos-bootstrap-ci-v3.yml
+    with:
+      checkout_ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+  chronos-end-to-end-live-path-replay:
+    name: "End-to-End Live Path Replay"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - run: >-
+          python -m pytest -q
+          tests/activation/test_chronos_end_to_end_live_path_v1.py::test_full_live_path_replay_only_mocks_external_boundaries
+          tests/activation/test_chronos_end_to_end_live_path_v1.py::test_full_no_go_replays_stop_at_the_correct_gate
+
+  chronos-residual-fault-matrix:
+    name: "Residual Fault Matrix"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - run: >-
+          python -m pytest -q
+          tests/activation/test_chronos_neon_pure_readonly_preflight_v4.py
+          tests/activation/test_chronos_neon_controlled_idle_wake_readonly_v1.py
+          tests/activation/test_chronos_end_to_end_live_path_v1.py
+
+  chronos-exact-workflow-entrypoint:
+    name: "Exact Workflow Entrypoint"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+          cache: pip
+      - run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Exercise the exact bounded module and guard commands
+        shell: bash
+        env:
+          GITHUB_REPOSITORY: dddur75/robin-stades-ng
+          GITHUB_REF: refs/heads/main
+          GITHUB_SHA: 0000000000000000000000000000000000000000
+          GITHUB_RUN_ATTEMPT: "1"
+          GITHUB_RUN_ID: malformed-offline-id
+        run: |
+          mkdir -p .chronos/reports
+          timeout --signal=TERM --kill-after=5s 120s \
+            python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1 \
+            --report .chronos/reports/exact-entrypoint.json
+          python -m scripts.chronos_live_path_artifact_guard_v1 \
+            --report .chronos/reports/exact-entrypoint.json \
+            --schema chronos-neon-controlled-idle-wake-readonly-v1 \
+            --live-outcome success
+          python -c "import json,pathlib; d=json.loads(pathlib.Path('.chronos/reports/exact-entrypoint.json').read_text()); assert d['verdict']=='CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED'; assert d['failed_gate']=='invalid:GITHUB_RUN_ID'"
 
   tests:
     name: tests
     needs:
       - frozen-evidence-windows
       - chronos-postgresql-profiles
+      - chronos-end-to-end-live-path-replay
+      - chronos-residual-fault-matrix
+      - chronos-exact-workflow-entrypoint
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -269,9 +358,15 @@ jobs:
         env:
           FROZEN_EVIDENCE_RESULT: ${{ needs.frozen-evidence-windows.result }}
           CHRONOS_PROFILES_RESULT: ${{ needs.chronos-postgresql-profiles.result }}
+          E2E_LIVE_PATH_RESULT: ${{ needs.chronos-end-to-end-live-path-replay.result }}
+          RESIDUAL_FAULT_MATRIX_RESULT: ${{ needs.chronos-residual-fault-matrix.result }}
+          EXACT_WORKFLOW_ENTRYPOINT_RESULT: ${{ needs.chronos-exact-workflow-entrypoint.result }}
         run: |
           test "$FROZEN_EVIDENCE_RESULT" = "success"
           test "$CHRONOS_PROFILES_RESULT" = "success"
+          test "$E2E_LIVE_PATH_RESULT" = "success"
+          test "$RESIDUAL_FAULT_MATRIX_RESULT" = "success"
+          test "$EXACT_WORKFLOW_ENTRYPOINT_RESULT" = "success"
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
@@ -362,7 +457,7 @@ jobs:
           ROBIN_TEST_CHRONOS_READER_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
         run: |
           python -m pytest -q tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_createrole_receives_unrevokable_admin_edge
-          python scripts/run_chronos_dual_principal_ci_v2.py
+          python -m scripts.run_chronos_dual_principal_ci_v2
           python -m pytest -q \
             tests/chronos/test_chronos_postgresql_v2.py::test_server_clock_claim_is_atomic_and_hashes_match_python \
             tests/chronos/test_chronos_postgresql_v2.py::test_database_expiry_cannot_be_reactivated_by_caller_time \

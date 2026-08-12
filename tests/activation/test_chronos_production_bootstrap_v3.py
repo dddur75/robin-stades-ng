@@ -131,6 +131,8 @@ def test_alembic_runs_in_the_fenced_process_with_an_injected_connection() -> Non
     assert "run_fenced_alembic" in bootstrap
     assert 'configuration.attributes["connection"]' in fenced_runner
     assert 'config.attributes.get("connection")' in migration_environment
+    assert '"-c search_path=pg_catalog"' in fenced_runner
+    assert 'common["version_table_schema"] = "public"' in migration_environment
     assert "CHRONOS_ALEMBIC_EXECUTION_FAILED" in fenced_runner
 
 
@@ -201,7 +203,6 @@ def test_direct_database_contract_fails_closed(value: str) -> None:
 @pytest.mark.parametrize(
     ("query", "sslmode", "channel_binding"),
     [
-        ("sslmode=require", "require", None),
         ("sslmode=require&channel_binding=require", "require", "require"),
         ("channel_binding=require&sslmode=require", "require", "require"),
         ("sslmode=verify-ca&channel_binding=require", "verify-ca", "require"),

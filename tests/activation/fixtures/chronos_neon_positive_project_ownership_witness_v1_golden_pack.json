@@ -4,14 +4,14 @@
     {"case_id": "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH", "expected_gate": null},
     {"case_id": "FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH", "expected_gate": null},
     {"case_id": "FIRST_PAGE_NO_MATCH_CURSOR_CONTINUES", "expected_gate": null},
-    {"case_id": "FIRST_PAGE_MATCH_CURSOR_PRESENT_BUT_NOT_FOLLOWED", "expected_gate": null},
+    {"case_id": "FIRST_PAGE_MATCH_CURSOR_FOLLOWED", "expected_gate": null},
     {"case_id": "FIRST_PAGE_MULTIPLE_EXACT_MATCHES", "expected_gate": "positive_endpoint_match_not_unique"},
     {"case_id": "ENDPOINT_DETAIL_PROJECT_MISMATCH", "expected_gate": "endpoint_detail_project_mismatch"},
     {"case_id": "ENDPOINT_DETAIL_BRANCH_MISMATCH", "expected_gate": "endpoint_detail_branch_mismatch"},
     {"case_id": "ENDPOINT_DETAIL_HOST_MISMATCH", "expected_gate": "endpoint_detail_host_mismatch"},
     {"case_id": "PROJECT_DETAIL_ID_MISMATCH", "expected_gate": "project_detail_id_or_owner_mismatch"},
     {"case_id": "BRANCH_RELATIONSHIP_MISSING", "expected_gate": "branch_relationship_missing"},
-    {"case_id": "BRANCH_NOT_DEFAULT", "expected_gate": "dsn_branch_is_not_default"},
+    {"case_id": "BRANCH_NOT_DEFAULT", "expected_gate": "default_branch_not_unique"},
     {"case_id": "BRANCH_ENDPOINT_CONFIRMATION_MISMATCH", "expected_gate": "branch_endpoint_confirmation_mismatch"},
     {"case_id": "NO_MATCH_THEN_CURSOR_CYCLE", "expected_gate": "project_cursor_cycle"}
   ]

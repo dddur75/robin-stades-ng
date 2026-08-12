@@ -1,4 +1,12 @@
 {
+  "auth": {
+    "account_id": "synthetic-owner",
+    "auth_method": "api_key_org"
+  },
+  "organization": {
+    "id": "synthetic-owner",
+    "plan": "launch"
+  },
   "projects": {
     "projects": [
       {
@@ -16,8 +24,10 @@
       "owner_id": "synthetic-owner",
       "region_id": "aws-eu-synthetic-1",
       "history_retention_seconds": 86400,
+      "pg_version": 16,
       "owner": {
-        "branches_limit": 5
+        "branches_limit": 5,
+        "subscription_type": "launch"
       }
     }
   },
@@ -33,6 +43,9 @@
     ],
     "pagination": {}
   },
+  "branch_count": {
+    "count": 1
+  },
   "endpoints": {
     "endpoints": [
       {
@@ -42,6 +55,8 @@
         "host": "ep-synthetic.neon.tech",
         "type": "read_write",
         "current_state": "active",
+        "autoscaling_limit_max_cu": 1,
+        "suspend_timeout_seconds": 300,
         "pooler_enabled": false,
         "disabled": false,
         "region_id": "aws-eu-synthetic-1"

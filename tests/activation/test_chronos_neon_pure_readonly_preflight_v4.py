@@ -110,7 +110,7 @@ def test_synthetic_golden_pack(case: dict[str, Any]) -> None:
 def test_workflow_is_manual_environment_protected_and_single_attempt() -> None:
     document = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
     assert set(_on(document)) == {"workflow_dispatch"}
-    assert document["permissions"] == {"contents": "read"}
+    assert document["permissions"] == {"actions": "read", "contents": "read"}
     assert document["concurrency"] == {
         "group": "chronos-neon-pure-readonly-preflight-v4",
         "cancel-in-progress": False,
@@ -120,6 +120,9 @@ def test_workflow_is_manual_environment_protected_and_single_attempt() -> None:
     assert job["timeout-minutes"] == 15
     setup = next(step for step in job["steps"] if "actions/setup-python@" in step.get("uses", ""))
     assert setup["with"]["python-version"] == "3.12.10"
+    assert "cache" not in setup["with"]
+    assert job["if"] == "${{ github.run_attempt == 1 }}"
+    assert job["steps"][0]["name"] == "Refuser toute relance"
     content = WORKFLOW.read_text(encoding="utf-8")
     assert 'test "$GITHUB_RUN_ATTEMPT" = "1"' in content
     assert "schedule:" not in content
@@ -143,7 +146,38 @@ def test_workflow_actions_are_sha_pinned_and_artifact_is_sanitized_only() -> Non
     assert "chronos-neon-pure-readonly-preflight-v4.json" in serialized
     assert "NEON_API_KEY" in serialized
     assert "NEON_BOOTSTRAP_DATABASE_URL" in serialized
-    assert "GITHUB_TOKEN" not in serialized
+    assert "NEON_ORG_ID" in serialized
+    assert "GITHUB_TOKEN" in serialized
+    live = next(step for step in steps if step.get("id") == "live_preflight")
+    guard = next(step for step in steps if step.get("id") == "artifact_guard")
+    upload = next(
+        step for step in steps if "actions/upload-artifact@" in step.get("uses", "")
+    )
+    assert live["working-directory"] == "${{ github.workspace }}"
+    assert live["env"]["GITHUB_TOKEN"] == "${{ github.token }}"
+    assert "timeout --signal=TERM --kill-after=5s 120s" in live["run"]
+    assert "python -m scripts.chronos_neon_pure_readonly_preflight_v4" in live["run"]
+    assert guard["if"] == "always()"
+    assert guard["working-directory"] == "${{ github.workspace }}"
+    assert "--schema chronos-neon-pure-readonly-preflight-v4" in guard["run"]
+    assert 'steps.live_preflight.outcome' in guard["run"]
+    assert set(guard["env"]) == {
+        "GITHUB_TOKEN",
+        "NEON_API_KEY",
+        "NEON_BOOTSTRAP_DATABASE_URL",
+        "NEON_PROJECT_ID",
+        "NEON_ORG_ID",
+    }
+    assert upload["if"] == (
+        "${{ always() && steps.artifact_guard.outcome == 'success' }}"
+    )
+    test_step = next(
+        step
+        for step in steps
+        if "test_chronos_neon_pure_readonly_preflight_v4.py" in step.get("run", "")
+    )
+    assert "test_chronos_neon_controlled_idle_wake_readonly_v1.py" in test_step["run"]
+    assert "test_chronos_end_to_end_live_path_v1.py" in test_step["run"]
 
 
 def test_supply_chain_lock_is_minimal_hashed_and_mutator_free() -> None:
@@ -180,9 +214,10 @@ def test_sql_is_bounded_and_has_no_mutating_statement() -> None:
     assert len(SQL_STATEMENTS) <= MAX_SQL_STATEMENTS == 25
     assert SQL_STATEMENTS[0] == "BEGIN READ ONLY"
     assert SQL_STATEMENTS[-1] == "ROLLBACK"
-    allowed_leaders = {"BEGIN", "SHOW", "SELECT", "ROLLBACK"}
+    allowed_leaders = {"BEGIN", "SHOW", "SELECT", "WITH", "LOCK", "ROLLBACK"}
     for statement in SQL_STATEMENTS:
-        tokens = set(re.findall(r"\b[A-Z_]+\b", statement.upper()))
+        without_literals = re.sub(r"'[^']*'", "''", statement)
+        tokens = set(re.findall(r"\b[A-Z_]+\b", without_literals.upper()))
         assert statement.split(maxsplit=1)[0].upper() in allowed_leaders
         assert not (FORBIDDEN_SQL & tokens)
     source = SCRIPT.read_text(encoding="utf-8")
@@ -190,7 +225,36 @@ def test_sql_is_bounded_and_has_no_mutating_statement() -> None:
     assert "statement_timeout=15000" in source
     assert "lock_timeout=3000" in source
     assert 'sql_write_count": 0' in source
-    assert "ORDER BY version_num" in SQL_STATEMENTS[7]
+    assert "pg_catalog.pg_class" in SQL_STATEMENTS[
+        preflight_module.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK
+    ]
+    assert "IN SHARE MODE" in SQL_STATEMENTS[preflight_module.SQL_LOCK_ALEMBIC_VERSION]
+    assert "ORDER BY version_num" in SQL_STATEMENTS[preflight_module.SQL_REVISION]
+    assert "FROM ONLY public.alembic_version" in SQL_STATEMENTS[
+        preflight_module.SQL_REVISION
+    ]
+    for ordinal in (
+        preflight_module.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK,
+        preflight_module.SQL_TARGET_CLASSIFICATION_AFTER_LOCK,
+    ):
+        classification = SQL_STATEMENTS[ordinal]
+        assert "FROM pg_catalog.pg_trigger tg" in classification
+        assert "FROM pg_catalog.pg_rewrite rw" in classification
+        assert "con.conname='alembic_version_pkc'" in classification
+        assert "pg_catalog.count(*) FROM pg_catalog.pg_constraint" in classification
+        assert "pg_catalog.count(*) FROM pg_catalog.pg_index" in classification
+        assert "pg_catalog.pg_attrdef" in classification
+        assert "att.attacl" in classification
+        assert "acl.privilege_type='CREATE'" in classification
+    inventory = SQL_STATEMENTS[preflight_module.SQL_CHRONOS_OBJECTS]
+    for collision in (
+        "uq_chronos_authority_run_revision",
+        "uq_chronos_event_operation_type",
+        "uq_chronos_event_operation_sequence",
+        "uq_chronos_event_authority_sequence",
+        "uq_chronos_event_previous_hash",
+    ):
+        assert collision in inventory
     assert 'endpoint_state == "active"' in source
 
 
@@ -226,7 +290,7 @@ def test_neon_client_rejects_non_project_route_before_network() -> None:
 class _SyntheticResponse:
     status_code = 200
 
-    def json(self) -> dict[str, object]:
+    def json(self, **_kwargs: object) -> dict[str, object]:
         return {}
 
 
@@ -265,6 +329,10 @@ class _FixtureNeonClient:
         query: dict[str, object] | None = None,
     ) -> dict[str, Any]:
         self.get_count += 1
+        if path == "/auth":
+            return cast(dict[str, Any], self.fixture["auth"])
+        if path == "/organizations/synthetic-owner":
+            return cast(dict[str, Any], self.fixture["organization"])
         if path == "/projects":
             return cast(dict[str, Any], self.fixture["projects"])
         if path == "/projects/synthetic-project":
@@ -273,6 +341,12 @@ class _FixtureNeonClient:
             return cast(dict[str, Any], self.fixture["branches"])
         if path == "/projects/synthetic-project/endpoints":
             return cast(dict[str, Any], self.fixture["endpoints"])
+        if path == "/projects/synthetic-project/endpoints/synthetic-endpoint":
+            return {"endpoint": deepcopy(self.fixture["endpoints"]["endpoints"][0])}
+        if path == "/projects/synthetic-project/branches/synthetic-branch/endpoints":
+            return cast(dict[str, Any], self.fixture["endpoints"])
+        if path == "/projects/synthetic-project/branches/count":
+            return cast(dict[str, Any], self.fixture["branch_count"])
         raise AssertionError(f"unexpected synthetic route: {path}")
 
 
@@ -309,8 +383,12 @@ def test_neon_api_fixture_proves_exact_identity_and_owner_branch_allowance(
     assert observed.branch_limit == 5
     assert observed.identity_path == "CONFIGURED_PROJECT_ID"
     assert observed.identity_verdict == "CONFIGURED_PROJECT_IDENTITY_PROVEN"
-    assert observed.project_pages_read == 0
-    assert client.get_count == 3
+    assert observed.project_pages_read == 1
+    assert observed.project_inventory_exhaustive is True
+    assert observed.branch_capacity_proven is True
+    assert observed.endpoint_detail_reads == 1
+    assert observed.branch_endpoint_reads == 1
+    assert client.get_count == 9
 
 
 @pytest.mark.parametrize(
@@ -354,7 +432,7 @@ class _ApiResponse:
         self._document = deepcopy(document)
         self.status_code = status_code
 
-    def json(self) -> dict[str, Any]:
+    def json(self, **_kwargs: object) -> dict[str, Any]:
         return deepcopy(self._document)
 
 
@@ -370,6 +448,18 @@ class _ScriptedNeonSession:
         branch_endpoints: dict[str, dict[str, Any]] | None = None,
         detail_status: dict[str, int] | None = None,
         enforce_candidate_first: bool = False,
+        account_id: str = "owner-shared",
+        auth_method: str = "api_key_org",
+        organization_status: int = 200,
+        account_branch_limit: int = 20,
+        account_plan: str = "launch",
+        user_organization_id: str = "owner-shared",
+        user_organization_count: int = 1,
+        user_organization_role: str = "admin",
+        member_pagination_next: str | None = None,
+        member_contains_self: bool = True,
+        member_second_page_contains_self: bool = False,
+        branch_count_overrides: dict[str, int] | None = None,
     ) -> None:
         self.project_pages = project_pages or []
         self.details = details or {}
@@ -383,6 +473,23 @@ class _ScriptedNeonSession:
         self.branch_endpoints = branch_endpoints or deepcopy(self.endpoints)
         self.detail_status = detail_status or {}
         self.enforce_candidate_first = enforce_candidate_first
+        self.account_id = account_id
+        self.auth_method = auth_method
+        self.organization_status = organization_status
+        self.account_branch_limit = account_branch_limit
+        self.account_plan = account_plan
+        self.user_organization_id = user_organization_id
+        self.user_organization_count = user_organization_count
+        self.user_organization_ids = [user_organization_id] + [
+            f"{user_organization_id}-{index}"
+            for index in range(2, user_organization_count + 1)
+        ]
+        self.user_organization_role = user_organization_role
+        self.member_pagination_next = member_pagination_next
+        self.member_contains_self = member_contains_self
+        self.member_second_page_contains_self = member_second_page_contains_self
+        self.member_page_index = 0
+        self.branch_count_overrides = branch_count_overrides or {}
         self.project_page_index = 0
         self.branch_page_indexes: dict[str, int] = {}
         self.urls: list[str] = []
@@ -394,6 +501,77 @@ class _ScriptedNeonSession:
         path = parsed.path.removeprefix("/api/v2")
         query = parse_qs(parsed.query, keep_blank_values=True)
         self.paths.append(path)
+        if path == "/auth":
+            return _ApiResponse(
+                {"account_id": self.account_id, "auth_method": self.auth_method}
+            )
+        if path == f"/organizations/{self.account_id}":
+            return _ApiResponse(
+                {"id": self.account_id, "plan": self.account_plan},
+                self.organization_status,
+            )
+        if path == "/users/me":
+            return _ApiResponse(
+                {
+                    "id": self.account_id,
+                    "branches_limit": self.account_branch_limit,
+                    "plan": self.account_plan,
+                }
+            )
+        if path == "/users/me/organizations":
+            return _ApiResponse(
+                {
+                    "organizations": [
+                        {
+                            "id": organization_id,
+                            "plan": self.account_plan,
+                        }
+                        for organization_id in self.user_organization_ids
+                    ]
+                }
+            )
+        member_match = re.fullmatch(r"/organizations/([^/]+)/members", path)
+        if member_match is not None:
+            organization_id = member_match.group(1)
+            assert organization_id in self.user_organization_ids
+            expected_member_query = {
+                "limit": ["500"],
+                "sort_by": ["role"],
+                "sort_order": ["asc"],
+            }
+            if self.member_page_index:
+                expected_member_query["cursor"] = [self.member_pagination_next]
+            assert query == expected_member_query
+            contains_self = self.member_contains_self or (
+                self.member_page_index == 1
+                and self.member_second_page_contains_self
+            )
+            next_cursor = (
+                self.member_pagination_next
+                if self.member_page_index == 0
+                else None
+            )
+            self.member_page_index += 1
+            return _ApiResponse(
+                {
+                    "members": ([
+                        {
+                            "member": {
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "user_id": self.account_id,
+                                "org_id": organization_id,
+                                "role": self.user_organization_role,
+                            },
+                            "user": {},
+                        }
+                    ] if contains_self else []),
+                    "pagination": (
+                        {"next": next_cursor}
+                        if next_cursor is not None
+                        else {}
+                    ),
+                }
+            )
         if path == "/projects":
             assert query["limit"] == [str(PROJECT_PAGE_LIMIT)]
             if self.project_page_index:
@@ -430,6 +608,15 @@ class _ScriptedNeonSession:
                 assert "cursor" not in query
             self.branch_page_indexes[project_id] = index + 1
             return _ApiResponse(pages[index])
+        if suffix == "/branches/count":
+            if project_id in self.branch_count_overrides:
+                return _ApiResponse(
+                    {"count": self.branch_count_overrides[project_id]}
+                )
+            pages = self.branches.get(project_id, [])
+            return _ApiResponse(
+                {"count": sum(len(page.get("branches", [])) for page in pages)}
+            )
         if re.fullmatch(
             r"/branches/[a-z0-9-]{1,60}/endpoints",
             suffix,
@@ -443,6 +630,7 @@ def _project(project_id: str) -> dict[str, Any]:
         "id": project_id,
         "name": f"name-{project_id}",
         "owner_id": "owner-shared",
+        "org_id": "owner-shared",
     }
 
 
@@ -467,9 +655,11 @@ def _detail(project_id: str) -> dict[str, Any]:
             "id": project_id,
             "name": f"name-{project_id}",
             "owner_id": "owner-shared",
+            "org_id": "owner-shared",
             "region_id": "aws-eu-synthetic-1",
             "history_retention_seconds": 86_400,
-            "owner": {"branches_limit": 20},
+            "pg_version": 16,
+            "owner": {"branches_limit": 20, "subscription_type": "launch"},
         }
     }
 
@@ -504,6 +694,8 @@ def _endpoint(
         "host": host,
         "type": "read_write",
         "current_state": state,
+        "autoscaling_limit_max_cu": 1,
+        "suspend_timeout_seconds": 300,
         "pooler_enabled": False,
         "disabled": False,
         "region_id": "aws-eu-synthetic-1",
@@ -619,6 +811,7 @@ def _configured_session(case_id: str) -> _ScriptedNeonSession:
     elif case_id == "CONFIGURED_ID_IDLE_ENDPOINT":
         endpoints[0]["current_state"] = "idle"
     return _ScriptedNeonSession(
+        project_pages=[_project_page([project_id])],
         details={project_id: _detail(project_id)},
         branches={project_id: [{"branches": [branch], "pagination": {}}]},
         endpoints={project_id: {"endpoints": endpoints}},
@@ -651,14 +844,75 @@ def test_configured_project_identity_golden_pack(
     if case["expected_gate"] is None:
         observed = _resolve_neon_identity(client, _synthetic_target())
         assert observed.identity_verdict == case["expected_identity_verdict"]
-        assert observed.project_pages_read == 0
+        assert observed.project_pages_read == 1
         assert observed.endpoint_projects_inspected == 1
+        assert observed.project_inventory_exhaustive is True
+        assert observed.branch_capacity_proven is True
     else:
         with pytest.raises(preflight_module.PreflightNoGo) as caught:
             _resolve_neon_identity(client, _synthetic_target())
         assert caught.value.gate == case["expected_gate"]
-    assert "/projects" not in session.paths
+    if case_id != "CONFIGURED_ID_INVALID":
+        assert "/projects" in session.paths
     assert client.get_count <= MAX_NEON_GETS
+
+
+@pytest.mark.parametrize(
+    ("location", "expected_gate"),
+    [
+        ("summary", "project_inventory_incomplete"),
+        ("detail", "project_detail_id_or_owner_mismatch"),
+    ],
+)
+def test_configured_project_owner_and_org_identity_must_agree(
+    monkeypatch: pytest.MonkeyPatch,
+    location: str,
+    expected_gate: str,
+) -> None:
+    monkeypatch.setenv("NEON_PROJECT_ID", "synthetic-project")
+    session = _configured_session("CONFIGURED_ID_VALID_EXACT_ENDPOINT")
+    if location == "summary":
+        session.project_pages[0]["projects"][0]["org_id"] = "owner-other"
+    else:
+        session.details["synthetic-project"]["project"]["org_id"] = "owner-other"
+    with pytest.raises(preflight_module.PreflightNoGo) as caught:
+        _resolve_neon_identity(_client(session), _synthetic_target())
+    assert caught.value.gate == expected_gate
+
+
+def test_legacy_project_owner_without_org_id_remains_semantically_unambiguous(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("NEON_PROJECT_ID", "synthetic-project")
+    session = _configured_session("CONFIGURED_ID_VALID_EXACT_ENDPOINT")
+    session.project_pages[0]["projects"][0].pop("org_id")
+    session.details["synthetic-project"]["project"].pop("org_id")
+    observed = _resolve_neon_identity(_client(session), _synthetic_target())
+    assert observed.identity_verdict == "CONFIGURED_PROJECT_IDENTITY_PROVEN"
+
+
+@pytest.mark.parametrize(
+    ("location", "expected_gate"),
+    [
+        ("summary", "project_inventory_incomplete"),
+        ("detail", "project_detail_id_or_owner_mismatch"),
+    ],
+)
+def test_project_without_org_id_binds_legacy_owner_to_selected_organization(
+    monkeypatch: pytest.MonkeyPatch,
+    location: str,
+    expected_gate: str,
+) -> None:
+    monkeypatch.setenv("NEON_PROJECT_ID", "synthetic-project")
+    session = _configured_session("CONFIGURED_ID_VALID_EXACT_ENDPOINT")
+    summary = session.project_pages[0]["projects"][0]
+    detail = session.details["synthetic-project"]["project"]
+    summary.pop("org_id")
+    detail.pop("org_id")
+    (summary if location == "summary" else detail)["owner_id"] = "owner-other"
+    with pytest.raises(preflight_module.PreflightNoGo) as caught:
+        _resolve_neon_identity(_client(session), _synthetic_target())
+    assert caught.value.gate == expected_gate
 
 
 def _discovery_session(case_id: str) -> _ScriptedNeonSession:
@@ -730,7 +984,11 @@ def test_bounded_discovery_golden_pack(
         assert caught.value.gate == case["expected_gate"]
         if case_id == "DISCOVERY_BUDGET_TOO_SMALL":
             assert caught.value.sanitized_evidence is not None
-            assert session.paths == ["/projects"]
+            assert session.paths == [
+                "/auth",
+                "/organizations/owner-shared",
+                "/projects",
+            ]
     assert client.get_count <= MAX_NEON_GETS
     if case_id == "DISCOVERY_PAGINATED_UNIQUE_MATCH":
         cursor_url = next(url for url in session.urls if "cursor=" in url)
@@ -761,8 +1019,12 @@ def _positive_witness_session(case_id: str) -> _ScriptedNeonSession:
             _project_page(["project-a"], cursor="cursor-a"),
             _project_page(["project-b"]),
         ]
-    elif case_id == "FIRST_PAGE_MATCH_CURSOR_PRESENT_BUT_NOT_FOLLOWED":
-        pages = [_project_page(["project-a"], cursor="cursor-never-followed")]
+    elif case_id == "FIRST_PAGE_MATCH_CURSOR_FOLLOWED":
+        project_ids = ["project-a", "project-b"]
+        pages = [
+            _project_page(["project-a"], cursor="cursor-followed"),
+            _project_page(["project-b"]),
+        ]
     elif case_id == "FIRST_PAGE_MULTIPLE_EXACT_MATCHES":
         project_ids = ["project-a", "project-b"]
         pages = [_project_page(project_ids)]
@@ -858,7 +1120,7 @@ def test_positive_project_ownership_witness_golden_pack(
         assert observed.identity_verdict == (
             "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
         )
-        assert observed.project_inventory_exhaustive is False
+        assert observed.project_inventory_exhaustive is True
         assert observed.endpoint_detail_reads == 1
         assert observed.project_detail_reads == 1
         assert observed.branch_endpoint_reads == 1
@@ -871,17 +1133,17 @@ def test_positive_project_ownership_witness_golden_pack(
         assert caught.value.sanitized_evidence is not None
     assert client.get_count <= MAX_NEON_GETS
 
-    if case_id == "FIRST_PAGE_MATCH_CURSOR_PRESENT_BUT_NOT_FOLLOWED":
-        assert session.project_page_index == 1
-        assert not any("cursor=" in url for url in session.urls)
+    if case_id == "FIRST_PAGE_MATCH_CURSOR_FOLLOWED":
+        assert session.project_page_index == 2
+        assert any("cursor=" in url for url in session.urls)
     if case_id == "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH":
-        assert session.paths[:2] == [
+        assert session.paths[2:4] == [
             "/projects",
             "/projects/project-a/endpoints",
         ]
         assert session.project_page_index == 1
     if case_id == "FIRST_PAGE_NO_MATCH_CURSOR_CONTINUES":
-        assert session.paths[:4] == [
+        assert session.paths[2:6] == [
             "/projects",
             "/projects/project-a/endpoints",
             "/projects",
@@ -890,6 +1152,66 @@ def test_positive_project_ownership_witness_golden_pack(
     if case_id == "NO_MATCH_THEN_CURSOR_CYCLE":
         assert caught.value.sanitized_evidence["cursor_continuation_requested"] is True
         assert caught.value.sanitized_evidence["cursor_cycle_encountered"] is True
+
+
+def test_project_endpoint_inventory_rejects_dangling_branch_membership(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
+    session = _positive_witness_session(
+        "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH"
+    )
+    dangling = deepcopy(session.endpoints["project-a"]["endpoints"][0])
+    dangling["id"] = "endpoint-dangling"
+    dangling["branch_id"] = "branch-does-not-exist"
+    dangling["host"] = "ep-unrelated.neon.tech"
+    session.endpoints["project-a"]["endpoints"].append(dangling)
+
+    with pytest.raises(preflight_module.PreflightNoGo) as caught:
+        _resolve_neon_identity(_client(session), _synthetic_target())
+
+    assert caught.value.gate == "branch_endpoint_confirmation_mismatch"
+
+
+@pytest.mark.parametrize("surface", ["endpoint", "branch"])
+def test_external_lifecycle_enums_are_case_sensitive(
+    monkeypatch: pytest.MonkeyPatch,
+    surface: str,
+) -> None:
+    monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
+    session = _positive_witness_session(
+        "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH"
+    )
+    if surface == "endpoint":
+        session.endpoints["project-a"]["endpoints"][0]["current_state"] = "ACTIVE"
+        session.endpoint_details["project-a"]["endpoint"]["current_state"] = "ACTIVE"
+    else:
+        session.branches["project-a"][0]["branches"][0]["current_state"] = "READY"
+
+    with pytest.raises(preflight_module.PreflightNoGo):
+        _resolve_neon_identity(_client(session), _synthetic_target())
+
+
+@pytest.mark.parametrize("contradiction", ["endpoint_detail", "branch_endpoint"])
+def test_configured_identity_requires_endpoint_and_branch_corroboration(
+    monkeypatch: pytest.MonkeyPatch,
+    contradiction: str,
+) -> None:
+    monkeypatch.setenv("NEON_PROJECT_ID", "synthetic-project")
+    session = _configured_session("CONFIGURED_ID_VALID_EXACT_ENDPOINT")
+    if contradiction == "endpoint_detail":
+        session.endpoint_details["synthetic-project"]["endpoint"]["disabled"] = True
+        expected_gate = "endpoint_detail_disabled"
+    else:
+        session.branch_endpoints["synthetic-project"]["endpoints"][0][
+            "branch_id"
+        ] = "branch-other"
+        expected_gate = "branch_endpoint_confirmation_mismatch"
+
+    with pytest.raises(preflight_module.PreflightNoGo) as caught:
+        _resolve_neon_identity(_client(session), _synthetic_target())
+
+    assert caught.value.gate == expected_gate
 
 
 def test_positive_witness_is_order_independent_and_never_selects_by_position(
@@ -967,6 +1289,7 @@ def test_branch_cursor_is_followed_encoded_and_never_reported_raw(
     monkeypatch.setenv("NEON_PROJECT_ID", "synthetic-project")
     raw_cursor = "branch:/?& cursor"
     session = _ScriptedNeonSession(
+        project_pages=[_project_page(["synthetic-project"])],
         details={"synthetic-project": _detail("synthetic-project")},
         branches={
             "synthetic-project": [
@@ -978,13 +1301,17 @@ def test_branch_cursor_is_followed_encoded_and_never_reported_raw(
                         "sort_order": "asc",
                     },
                 },
-                {"branches": [_branch(branch_id="branch-secondary")]},
+                {
+                    "branches": [
+                        _branch(branch_id="branch-secondary", default=False)
+                    ]
+                },
             ]
         },
         endpoints={"synthetic-project": {"endpoints": [_endpoint("synthetic-project")]}},
     )
     observed = _resolve_neon_identity(_client(session), _synthetic_target())
-    assert observed.api_get_count == 4
+    assert observed.api_get_count == 10
     cursor_url = next(url for url in session.urls if "cursor=" in url)
     assert raw_cursor not in cursor_url
     assert "cursor=branch%3A%2F%3F%26+cursor" in cursor_url
@@ -1007,9 +1334,11 @@ def test_sanitized_neon_observation_hashes_branch_name() -> None:
         endpoint_host="endpoint.neon.tech",
         endpoint_state="active",
         branch_state="ready",
+        owner_id="owner-shared",
         owner_branch_count=1,
         branch_limit=5,
         history_retention_seconds=1,
+        postgresql_major=16,
         project_pages_read=0,
         projects_observed=1,
         endpoint_projects_inspected=1,
@@ -1041,7 +1370,6 @@ def test_database_url_rejects_libpq_override_parameters(suffix: str) -> None:
 @pytest.mark.parametrize(
     "query",
     [
-        "sslmode=require",
         "sslmode=require&channel_binding=require",
         "channel_binding=require&sslmode=verify-full",
     ],
@@ -1054,7 +1382,7 @@ def test_preflight_uses_shared_secure_dsn_contract(query: str) -> None:
     normalized, target = _validated_psycopg_url(dsn)
     assert normalized.startswith("postgresql://")
     assert target.sslmode in {"require", "verify-full"}
-    assert target.channel_binding == ("require" if "channel_binding=require" in query else None)
+    assert target.channel_binding == "require"
 
 
 def test_unexpected_query_name_is_hashed_in_sanitized_failure_profile() -> None:
@@ -1101,7 +1429,7 @@ def test_libpq_redirection_fails_before_psycopg_connect(
         "ep-synthetic.neon.tech/synthetic_database?sslmode=require&" + override
     )
     with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
-        _inspect_database(dsn)
+        _inspect_database(dsn, expected_postgresql_major=16)
     assert connect_calls == 0
 
 
@@ -1130,7 +1458,7 @@ def test_encoded_host_redirection_fails_before_preflight_connect(
         f"{host}/synthetic_database?sslmode=require&channel_binding=require"
     )
     with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
-        _inspect_database(dsn)
+        _inspect_database(dsn, expected_postgresql_major=16)
     assert connect_calls == 0
 
 
@@ -1155,7 +1483,7 @@ def test_ambiguous_userinfo_fails_before_preflight_connect(
     monkeypatch.setattr(preflight_module.psycopg, "connect", forbidden_connect)
     dsn = f"postgresql://{netloc}/synthetic_database?sslmode=require&channel_binding=require"
     with pytest.raises(RuntimeError, match="DIRECT_ENDPOINT_NOT_PROVEN"):
-        _inspect_database(dsn)
+        _inspect_database(dsn, expected_postgresql_major=16)
     assert connect_calls == 0
 
 

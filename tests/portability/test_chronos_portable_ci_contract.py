@@ -44,6 +44,9 @@ def test_windows_producer_precedes_linux_consumers() -> None:
     assert set(jobs["tests"]["needs"]) == {  # type: ignore[index]
         "frozen-evidence-windows",
         "chronos-postgresql-profiles",
+        "chronos-end-to-end-live-path-replay",
+        "chronos-residual-fault-matrix",
+        "chronos-exact-workflow-entrypoint",
     }
     assert set(jobs["visual-regression"]["needs"]) == {  # type: ignore[index]
         "frozen-evidence-windows",
@@ -70,7 +73,10 @@ def test_exact_tests_gate_is_fail_closed_on_every_prerequisite() -> None:
     serialized = yaml.safe_dump(exact_tests)
     assert "needs.frozen-evidence-windows.result" in serialized
     assert "needs.chronos-postgresql-profiles.result" in serialized
-    assert serialized.count('= "success"') == 2
+    assert "needs.chronos-end-to-end-live-path-replay.result" in serialized
+    assert "needs.chronos-residual-fault-matrix.result" in serialized
+    assert "needs.chronos-exact-workflow-entrypoint.result" in serialized
+    assert serialized.count('= "success"') == 5
 
 
 def test_specialized_profiles_are_reusable_or_manual_only() -> None:

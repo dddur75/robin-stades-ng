@@ -15,7 +15,8 @@ from robin.storage.database import database_url_object
 _ALEMBIC_SESSION_OPTIONS = (
     "-c statement_timeout=300000 "
     "-c idle_session_timeout=60000 "
-    "-c idle_in_transaction_session_timeout=60000"
+    "-c idle_in_transaction_session_timeout=60000 "
+    "-c search_path=pg_catalog"
 )
 
 

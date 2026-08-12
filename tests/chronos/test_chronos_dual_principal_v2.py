@@ -3,6 +3,10 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+import pytest
+
+from robin.chronos_role_lifecycle import _grant_bootstrap_authority_schema
+
 ROOT = Path(__file__).resolve().parents[2]
 LIFECYCLE = ROOT / "src" / "robin" / "chronos_role_lifecycle.py"
 RUNNER = ROOT / "scripts" / "run_chronos_dual_principal_ci_v2.py"
@@ -45,6 +49,37 @@ def test_acl_default_object_type_is_explicitly_text_in_both_audits() -> None:
     assert source.count("defaclobjtype::text") == 2
 
 
+def test_authority_grants_pin_the_postcondition_grantors() -> None:
+    source = LIFECYCLE.read_text(encoding="utf-8")
+    assert "pg_catalog.pg_has_role(" in source
+    assert "n.nspowner,'SET'" in source
+    assert 'sql.SQL("SET LOCAL ROLE {}")' in source
+    assert 'cursor.execute("RESET ROLE")' in source
+    assert "GRANTED BY" not in source
+
+
+def test_failed_schema_grant_is_not_masked_by_reset_role() -> None:
+    class FailingGrantCursor:
+        def __init__(self) -> None:
+            self.statements: list[object] = []
+
+        def execute(self, statement: object) -> None:
+            self.statements.append(statement)
+            if len(self.statements) == 2:
+                raise RuntimeError("primary schema grant failure")
+
+    cursor = FailingGrantCursor()
+    with pytest.raises(RuntimeError, match="primary schema grant failure"):
+        _grant_bootstrap_authority_schema(
+            cursor,
+            authority="chronos_bootstrap_authority",
+            lifecycle_admin="lifecycle_admin",
+            schema_owner_name="database_owner",
+            can_set_schema_owner=True,
+        )
+    assert len(cursor.statements) == 2
+
+
 def test_migration_0014_contains_objects_and_acls_only() -> None:
     source = MIGRATION.read_text(encoding="utf-8")
     for forbidden in ("CREATE ROLE", "ALTER ROLE", "DROP ROLE"):
@@ -70,6 +105,26 @@ def test_ci_covers_both_lifecycle_admin_profiles() -> None:
     assert "- superuser" in source
     assert "- non_superuser_createrole" in source
     assert "run_chronos_dual_principal_ci_v2.py" in source
+
+
+def test_ci_executes_the_complete_readonly_preflight_ledger_before_role_mutation() -> None:
+    source = RUNNER.read_text(encoding="utf-8")
+    main_source = source[source.index("def main() -> None:") :]
+    superuser_proof = "superuser_readonly_preflight_catalog_contract = ("
+    lifecycle_proof = "lifecycle_admin_readonly_preflight_catalog_contract = ("
+    first_role_mutation = "provision_permanent_bootstrap_authority(admin)"
+    assert "for ordinal, statement in enumerate(statements)" in source
+    assert 'if len(statements) != 18' in source
+    assert '"sql_statement_count": len(statements)' in source
+    assert '"sql_read_count": len(rows_by_ordinal)' in source
+    assert superuser_proof in source
+    assert lifecycle_proof in source
+    assert main_source.index(superuser_proof) < main_source.index(
+        "_prepare_admin_profile(superuser_url, profile)"
+    )
+    assert main_source.index(lifecycle_proof) < main_source.index(first_role_mutation)
+    assert 'expected_user="robin"' in source
+    assert "ADMIN_ROLE if profile == PROFILE_NON_SUPERUSER" in source
 
 
 def test_visual_ci_materializes_untracked_node_pages_before_build_and_tests() -> None:

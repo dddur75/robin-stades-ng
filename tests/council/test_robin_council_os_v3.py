@@ -84,6 +84,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
     assert set(matrix["missions"]) == {
         "GOVERNANCE",
         "PR26",
+        "CHRONOS_LOOP53",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -161,12 +162,271 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
     assert schema["properties"]["mission_id"]["enum"] == [
         "GOVERNANCE",
         "PR26",
+        "CHRONOS_LOOP53",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
     ]
     assert schema["$defs"]["fact"]["additionalProperties"] is False
     assert schema["$defs"]["risk"]["additionalProperties"] is False
+
+
+def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:
+    matrix = load_json("configs/agents/mission-activation-matrix-v3.json")
+    manifest = load_json(
+        "configs/execution/chronos-residual-defect-extermination-v1.json"
+    )
+    assert set(manifest) == {
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "external_effects",
+        "compute_budget",
+        "time_budget",
+        "source_hash",
+        "expires_at",
+    }
+    assert manifest["mission_id"] == "CHRONOS_LOOP53"
+    assert manifest["authorized_stages"] == ["E1", "E2", "E3A", "E3B", "E4"]
+    assert manifest["maximum_stage"] == "E4"
+    assert manifest["external_effects"] == [
+        "git_remote_write",
+        "github_pull_request_write",
+        "github_merge_commit",
+        "github_actions_observe",
+        "github_actions_dispatch_exactly_once",
+        "github_actions_sanitized_report_upload_exactly_once",
+        "neon_control_plane_read_only",
+        "neon_compute_wake_at_most_once",
+        "postgresql_read_only_connection_at_most_once",
+    ]
+    authorization = matrix["authorization"]
+    assert authorization["mission_manifest_external_effects"] == (
+        "MUST_NOT_OVERRIDE_THIS_AUTHORIZATION_MATRIX"
+    )
+    assert authorization["chronos_loop53_live_effect_budget"] == (
+        "NEON_GETS_MAX_25;NEON_MUTATIONS_0;"
+        "POSTGRESQL_READ_ONLY_CONNECTION_ATTEMPTS_MAX_1;"
+        "POSTGRESQL_CONNECTION_RETRIES_0;COMPUTE_WAKE_EVENTS_MAX_1;"
+        "SQL_STATEMENTS_MAX_25;SQL_READ_ONLY_ONLY;SQL_WRITES_0;"
+        "RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;MIGRATION_0014_0;"
+        "R2_OPERATIONS_0;PROVIDER_CALLS_0;PURCHASES_0"
+    )
+    dispatch = authorization["chronos_loop53_dispatch"]
+    assert "ALLOW_EXACTLY_ONE_SANITIZED_REPORT_ARTIFACT_UPLOAD" in dispatch
+    assert "FORBID_RERUN_31587004959" in dispatch
+    assert (
+        "FORBID_SECOND_DISPATCH_6140e09cb38b5fecee5da85882aa8a879dbce780"
+        in dispatch
+    )
+    mission = matrix["missions"]["CHRONOS_LOOP53"]
+    assert mission["scale_ceiling"] == manifest["maximum_stage"]
+    assert mission["delivery_keys"] == {
+        "platform": ["DP5"],
+        "data": ["DP6"],
+        "security": ["C4"],
+    }
+    exact_loop53_paths = {
+        ".github/workflows/chronos-bootstrap-ci-v3.yml",
+        ".github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml",
+        ".github/workflows/chronos-neon-pure-readonly-preflight-v4.yml",
+        ".github/workflows/ci.yml",
+        "configs/agents/agent-report-schema-v3.json",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "configs/execution/chronos-residual-defect-extermination-v1.json",
+        "migrations/env.py",
+        "reports/activation/chronos-end-to-end-live-path-certification-v1.json",
+        "reports/activation/chronos-residual-defect-inventory-v1.json",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "scripts/chronos_live_path_artifact_guard_v1.py",
+        "scripts/chronos_neon_controlled_idle_wake_readonly_v1.py",
+        "scripts/chronos_neon_pure_readonly_preflight_v4.py",
+        "scripts/chronos_production_bootstrap_v3.py",
+        "scripts/run_chronos_dual_principal_ci_v2.py",
+        "src/robin/chronos_alembic.py",
+        "src/robin/chronos_production.py",
+        "src/robin/chronos_role_lifecycle.py",
+        "tests/activation/fixtures/chronos_neon_live_contract_structures_v1.json",
+        "tests/activation/fixtures/chronos_neon_positive_project_ownership_witness_v1_golden_pack.json",
+        "tests/activation/fixtures/chronos_neon_project_identity_pagination_v1_golden_pack.json",
+        "tests/activation/fixtures/chronos_neon_pure_readonly_preflight_v4_neon_api.json",
+        "tests/activation/test_chronos_end_to_end_live_path_v1.py",
+        "tests/activation/test_chronos_neon_controlled_idle_wake_readonly_v1.py",
+        "tests/activation/test_chronos_neon_pure_readonly_preflight_v4.py",
+        "tests/activation/test_chronos_production_bootstrap_v3.py",
+        "tests/activation/test_migration_path_neutralization.py",
+        "tests/chronos/test_chronos_dual_principal_v2.py",
+        "tests/chronos/test_chronos_migration_v2.py",
+        "tests/council/test_robin_council_os_v3.py",
+        "tests/portability/test_chronos_portable_ci_contract.py",
+    }
+    assert set(mission["allowed_paths"]) == exact_loop53_paths
+    assert all(not path.endswith("/") for path in mission["allowed_paths"])
+
+    graph = load_json("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    historical_loop53_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.001",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.001",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.001",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.001",
+    }
+    current_loop53_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.002",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.002",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.002",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
+    }
+    assert historical_loop53_claim_ids | current_loop53_claim_ids <= set(claims)
+    assert claims["GOV.AUTHORIZATION.COVERAGE.002"] == {
+        **claims["GOV.AUTHORIZATION.COVERAGE.002"],
+        "status": "SUPERSEDED",
+        "superseded_by": "GOV.AUTHORIZATION.CHRONOS_LOOP53.001",
+    }
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.002"]["status"] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.002"]["superseded_by"] == (
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.001"
+    )
+    old_workflow_claim = claims[
+        "GOV.CHRONOS.NEON.CONTROLLED_WAKE.ENTRYPOINT.CORRECTION.V1.001"
+    ]
+    assert old_workflow_claim["status"] == "SUPERSEDED"
+    assert old_workflow_claim["superseded_by"] == (
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001"
+    )
+    for old_claim_id, new_claim_id in {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.001": (
+            "GOV.AUTHORIZATION.CHRONOS_LOOP53.002"
+        ),
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.001": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.002"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.001": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.002"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.001": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+
+    ledger = [
+        json.loads(line)
+        for line in (ROOT / "reports/council/decision-ledger.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+    loop53_record = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-127"
+    )
+    assert loop53_record["decision_id"] == "RCV3-20260812-127"
+    assert loop53_record["record_type"] == "MISSION_AUTHORIZED"
+    assert set(loop53_record["proof"]) == historical_loop53_claim_ids
+    assert loop53_record["context"]["delivery_keys"] == {
+        "platform": "DP5",
+        "data": "DP6",
+        "security": "C4",
+    }
+    clarification = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-128"
+    )
+    assert clarification["decision_id"] == "RCV3-20260812-128"
+    assert clarification["record_type"] == "MISSION_AUTHORITY_CLARIFICATION"
+    assert clarification["context"]["stage_order"] == [
+        "FROZEN_TRIPLE_REVIEW",
+        "LOCAL_COMMIT_NON_FORCE_PUSH_AND_ONE_PULL_REQUEST",
+        "EXACT_HEAD_CI_GREEN",
+        "MERGE_COMMIT",
+        "MERGED_MAIN_CI_AND_PAGES_GREEN_THEN_ACTIONS_QUIESCENT",
+        "EXACTLY_ONE_NEW_ATTEMPT_ONE_CONTROLLED_READONLY_DISPATCH",
+    ]
+    assert clarification["context"]["migration_authorized"] is False
+    metric_correction = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-129"
+    )
+    assert metric_correction["decision_id"] == "RCV3-20260812-129"
+    assert metric_correction["record_type"] == "EVIDENCE_METRIC_CORRECTION"
+    assert metric_correction["context"] == {
+        "authority_expanded": False,
+        "bounded_matrix_collected": 482,
+        "bounded_matrix_file_count": 8,
+        "bounded_matrix_result": "481 passed, 1 skipped",
+        "corrects_metric_in": "RCV3-20260812-127",
+        "dual_principal_file": "15 passed",
+        "external_effects": 0,
+        "reason": (
+            "test_primary_sql_failure_survives_a_secondary_rollback_failure "
+            "added one passing case"
+        ),
+        "workflow_exact_three_file_command": "364 passed, 1 skipped",
+    }
+    inventory_correction = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-130"
+    )
+    assert inventory_correction["decision_id"] == "RCV3-20260812-130"
+    assert inventory_correction["record_type"] == (
+        "RESIDUAL_DEFECT_INVENTORY_CORRECTION"
+    )
+    assert inventory_correction["context"]["added_defect_id"] == (
+        "CHR53-EVIDENCE-002"
+    )
+    assert inventory_correction["context"]["counts"] == {
+        "deferred": 0,
+        "discovered": 78,
+        "fixed": 77,
+        "known_live_reachable_defects": 0,
+        "known_untested_live_path_stages": 0,
+        "open_p0": 0,
+        "open_p1": 0,
+        "p0": 12,
+        "p1": 60,
+        "p2": 6,
+        "p3": 0,
+        "privacy_boundary": 1,
+    }
+    frozen_reviews = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-131"
+    )
+    assert frozen_reviews["decision_id"] == "RCV3-20260812-131"
+    assert frozen_reviews["record_type"] == "FROZEN_TRIPLE_REVIEW_ACCEPTED"
+    assert frozen_reviews["context"]["reviews"] == {
+        "C4": {"p0": 0, "p1": 0, "score": 98, "verdict": "PASS"},
+        "DP5": {"p0": 0, "p1": 0, "score": 97, "verdict": "PASS"},
+        "DP6": {"p0": 0, "p1": 0, "score": 97, "verdict": "PASS"},
+    }
+    assert frozen_reviews["context"]["red_team_answer"] == "YES"
+    assert frozen_reviews["context"]["live_authorized_now"] is False
+    scope_correction = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-132"
+    )
+    assert scope_correction["decision_id"] == "RCV3-20260812-132"
+    assert scope_correction["record_type"] == "MISSION_EXACT_PATH_SCOPE_CORRECTION"
+    assert set(scope_correction["proof"]) == current_loop53_claim_ids
+    assert set(scope_correction["context"]["exact_allowed_paths"]) == (
+        exact_loop53_paths
+    )
+    assert scope_correction["context"]["changed_path_count"] == 33
+    assert scope_correction["context"]["outside_exact_allowlist"] == []
+    assert scope_correction["context"]["prior_reviews_applicable"] is False
+    exact_path_reviews = ledger[-1]
+    assert exact_path_reviews["decision_id"] == "RCV3-20260812-133"
+    assert exact_path_reviews["record_type"] == (
+        "EXACT_PATH_FROZEN_TRIPLE_REVIEW_ACCEPTED"
+    )
+    assert set(exact_path_reviews["proof"]) == current_loop53_claim_ids
+    assert exact_path_reviews["context"]["reviews"] == {
+        "C4": {"p0": 0, "p1": 0, "score": 97, "verdict": "PASS"},
+        "DP5": {"p0": 0, "p1": 0, "score": 97, "verdict": "PASS"},
+        "DP6": {"p0": 0, "p1": 0, "score": 97, "verdict": "PASS"},
+    }
+    assert exact_path_reviews["context"]["red_team_answer"] == "YES"
+    assert exact_path_reviews["context"]["changed_paths_equal_allowed"] is True
+    assert exact_path_reviews["context"]["live_authorized_now"] is False
 
 
 def test_scale_policy_has_stop_rules_and_strict_job_ceiling() -> None:

@@ -9,13 +9,19 @@ It never calls a mutating Neon API and never executes writable SQL.
 from __future__ import annotations
 
 import argparse
+import math
 import os
+import shlex
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Mapping
 
 import scripts.chronos_neon_pure_readonly_preflight_v4 as base
-from robin.chronos_production import EXPECTED_REF, EXPECTED_REPOSITORY
+from robin.chronos_production import (
+    EXPECTED_REF,
+    EXPECTED_REPOSITORY,
+    DirectPostgresTarget,
+)
 
 REPORT_SCHEMA = "chronos-neon-controlled-idle-wake-readonly-v1"
 WORKFLOW_FILE = "chronos-neon-controlled-idle-wake-readonly-v1.yml"
@@ -33,6 +39,7 @@ class ConnectionWakeAudit:
     connection_attempt_count: int = 0
     connection_succeeded: bool = False
     compute_wake_events: int = 0
+    compute_wake_events_observed: int = 0
     wake_verdict: str = "CONTROLLED_NEON_READONLY_WAKE_NOT_AUTHORIZED"
 
     def before_connect(self) -> None:
@@ -45,14 +52,24 @@ class ConnectionWakeAudit:
 
     def after_connect(self) -> None:
         self.connection_succeeded = True
+        self.compute_wake_events = 1
         if self.endpoint_pre_wake_state == "idle":
-            self.compute_wake_events = 1
+            self.compute_wake_events_observed = 1
             self.wake_verdict = "CONTROLLED_NEON_READONLY_WAKE_EXECUTED_ONCE"
         else:
-            self.wake_verdict = "CONTROLLED_NEON_READONLY_WAKE_NOT_REQUIRED"
+            self.wake_verdict = "COMPUTE_WAKE_UPPER_BOUND_ONE_FROM_ACTIVE_SNAPSHOT"
 
 
 def _scale_to_zero_contract(neon: base.NeonObservation) -> tuple[str, int]:
+    if (
+        neon.autoscaling_limit_max_cu is None
+        or not math.isfinite(neon.autoscaling_limit_max_cu)
+        or neon.autoscaling_limit_max_cu < 0.25
+    ):
+        raise base.PreflightNoGo(
+            "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN",
+            "autoscaling_limit_contract_invalid",
+        )
     timeout = neon.suspend_timeout_seconds
     if timeout == -1:
         raise base.PreflightNoGo(
@@ -70,11 +87,6 @@ def _scale_to_zero_contract(neon: base.NeonObservation) -> tuple[str, int]:
             "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN",
             "compute_return_to_idle_not_proven",
         )
-    if MAXIMUM_PREFLIGHT_WALL_CLOCK_SECONDS * 5 > effective_timeout * 2:
-        raise base.PreflightNoGo(
-            "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN",
-            "compute_wake_window_insufficient",
-        )
     return classification, effective_timeout
 
 
@@ -82,12 +94,27 @@ def _validate_readonly_connection_contract(
     startup_options: str,
     sql_statements: tuple[str, ...],
 ) -> None:
-    required = (
-        "default_transaction_read_only=on",
-        "statement_timeout=15000",
-        "lock_timeout=3000",
-    )
-    if not all(option in startup_options for option in required):
+    expected = {
+        "default_transaction_read_only": "on",
+        "statement_timeout": "15000",
+        "lock_timeout": "3000",
+        "search_path": "pg_catalog",
+    }
+    try:
+        tokens = shlex.split(startup_options, posix=True)
+    except ValueError:
+        tokens = []
+    observed: dict[str, str] = {}
+    if len(tokens) % 2 != 0:
+        observed = {}
+    else:
+        for flag, assignment in zip(tokens[::2], tokens[1::2], strict=True):
+            key, separator, value = assignment.partition("=")
+            if flag != "-c" or separator != "=" or key in observed:
+                observed = {}
+                break
+            observed[key] = value
+    if observed != expected:
         raise base.PreflightNoGo(
             "DIRECT_ENDPOINT_NOT_PROVEN",
             "startup_options_required",
@@ -120,21 +147,21 @@ def _recovery_verdict(
     return "NEON_RECOVERY_BRANCH_CREATION_BLOCKED"
 
 
-def _decision_gate(checks: base.GateChecks) -> str | None:
-    ordered = (
-        (not checks.project_identity_verified, "project_identity_not_proven"),
-        (not checks.production_branch_verified, "production_branch_not_proven"),
-        (not checks.direct_endpoint_verified, "direct_endpoint_not_proven"),
-        (not checks.ssl_verified, "ssl_not_proven"),
-        (not checks.expected_revision_verified, "unexpected_database_revision"),
-        (not checks.bootstrap_authority_plausible, "bootstrap_authority_insufficient"),
-        (checks.purchase_required, "purchase_required"),
-        (not checks.recovery_branch_feasible, "recovery_branch_not_feasible"),
-        (not checks.github_queue_empty, "github_actions_queue_not_empty"),
-        (not checks.github_in_progress_empty, "github_actions_in_progress_not_empty"),
-        (not checks.github_dispatch_unique, "exact_main_dispatch_not_unique"),
+def _database_target_proven(
+    database: base.DatabaseObservation,
+    target: DirectPostgresTarget,
+    expected_postgresql_major: int,
+) -> bool:
+    return (
+        database.database_name == target.database
+        and database.session_user == target.username
+        and database.current_user == database.session_user
+        and database.postgresql_version_num // 10000 == expected_postgresql_major
     )
-    return next((gate for failed, gate in ordered if failed), None)
+
+
+def _decision_gate(checks: base.GateChecks) -> str | None:
+    return base.failed_gate(checks)
 
 
 def _lifecycle_payload(audit: ConnectionWakeAudit) -> dict[str, object]:
@@ -168,29 +195,21 @@ def _controlled_no_go_report(
         audit.connection_attempt_count == 1 and not audit.connection_succeeded
     )
     if incomplete_attempt:
-        wake_events = 1 if audit.endpoint_pre_wake_state == "idle" else 0
-        wake_certainty = (
-            "CONSERVATIVE_UPPER_BOUND_AFTER_SINGLE_CONNECTION_ATTEMPT"
-            if audit.endpoint_pre_wake_state == "idle"
-            else "PRE_WAKE_STATE_ALREADY_ACTIVE"
-        )
-        if audit.endpoint_pre_wake_state == "idle":
-            reason = "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE"
-            gate = "single_connection_attempt_did_not_complete"
+        wake_events = 1
+        wake_certainty = "CONSERVATIVE_UPPER_BOUND_AFTER_SINGLE_CONNECTION_ATTEMPT"
+        reason = "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE"
+        gate = "single_connection_attempt_did_not_complete"
     report = base._no_go_report(
         reason,
         gate,
         dsn_security_profile=error.dsn_security_profile,
         sanitized_evidence=error.sanitized_evidence,
+        sanitized_postgresql_evidence=error.sanitized_postgresql_evidence,
     )
     lifecycle = _lifecycle_payload(audit)
     lifecycle["compute_wake_events"] = wake_events
     if incomplete_attempt:
-        lifecycle["wake_verdict"] = (
-            "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE"
-            if audit.endpoint_pre_wake_state == "idle"
-            else "CONTROLLED_NEON_READONLY_WAKE_NOT_REQUIRED"
-        )
+        lifecycle["wake_verdict"] = "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE"
     report.update(
         {
             "schema_version": REPORT_SCHEMA,
@@ -203,12 +222,22 @@ def _controlled_no_go_report(
             "connection_attempt_count": audit.connection_attempt_count,
             "compute_wake_events": wake_events,
             "compute_wake_certainty": wake_certainty,
+            "recovery_verdict": (
+                "PURCHASE_REQUIRED"
+                if reason == "PURCHASE_REQUIRED"
+                else "NEON_RECOVERY_BRANCH_CREATION_BLOCKED"
+            ),
+            "purchase_required": reason == "PURCHASE_REQUIRED",
         }
     )
     effects = report["effects"]
     if not isinstance(effects, dict):
         raise RuntimeError("INVALID_EFFECTS_REPORT")
     effects["compute_wake_events"] = wake_events
+    effects["postgresql_connection_attempts"] = audit.connection_attempt_count
+    effects["postgresql_retries"] = 0
+    for key, value in error.effect_counts.items():
+        effects[key] = value
     return report
 
 
@@ -256,6 +285,11 @@ def _controlled_success_report(
             "lifecycle": _lifecycle_payload(audit),
             "connection_attempt_count": audit.connection_attempt_count,
             "compute_wake_events": audit.compute_wake_events,
+            "compute_wake_certainty": (
+                "OBSERVED_IDLE_TO_CONNECTED"
+                if audit.compute_wake_events_observed == 1
+                else "CONSERVATIVE_UPPER_BOUND_FROM_ACTIVE_SNAPSHOT"
+            ),
             "bootstrap_authority_verdict": _bootstrap_authority_verdict(database),
             "recovery_verdict": _recovery_verdict(
                 purchase_required=purchase_required,
@@ -268,11 +302,53 @@ def _controlled_success_report(
     if not isinstance(postgresql, dict):
         raise RuntimeError("INVALID_POSTGRESQL_REPORT")
     postgresql["connection_attempt_count"] = audit.connection_attempt_count
-    postgresql["sql_read_count"] = max(0, database.sql_statement_count - 2)
+    postgresql["sql_read_count"] = database.sql_read_count
     effects = report["effects"]
     if not isinstance(effects, dict):
         raise RuntimeError("INVALID_EFFECTS_REPORT")
     effects["compute_wake_events"] = audit.compute_wake_events
+    effects["postgresql_connection_attempts"] = audit.connection_attempt_count
+    effects["postgresql_retries"] = 0
+    return report
+
+
+def _conservative_technical_failure_report(gate: str) -> dict[str, object]:
+    """Represent an unobserved late failure without asserting false zero effects."""
+
+    audit = ConnectionWakeAudit(
+        connection_attempt_count=1,
+        connection_succeeded=True,
+        compute_wake_events=1,
+    )
+    report = _controlled_no_go_report(
+        base.PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            gate,
+            effect_counts={
+                "neon_get_count": base.MAX_NEON_GETS,
+                "postgresql_connection_attempts": 1,
+                "postgresql_connection_successes": 1,
+                "postgresql_retries": 0,
+                "sql_statement_count": base.MAX_SQL_STATEMENTS,
+                "sql_statement_completed_count": base.MAX_SQL_STATEMENTS,
+                "sql_read_attempt_count": base.MAX_SQL_STATEMENTS,
+                "sql_read_count": base.MAX_SQL_STATEMENTS,
+                "sql_write_count": 0,
+                "begin_read_only_attempted": 1,
+                "begin_read_only_completed": 1,
+                "rollback_attempted": 1,
+                "rollback_completed": 1,
+            },
+        ),
+        audit,
+    )
+    report["effect_counter_certainty"] = "CONSERVATIVE_UPPER_BOUNDS_ONLY"
+    report["compute_wake_certainty"] = (
+        "CONSERVATIVE_UPPER_BOUND_AFTER_UNOBSERVED_EXIT"
+    )
+    lifecycle = report["lifecycle"]
+    if isinstance(lifecycle, dict):
+        lifecycle["wake_verdict"] = "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE"
     return report
 
 
@@ -282,7 +358,7 @@ def run_preflight() -> dict[str, object]:
     git_ref = base._required_context("GITHUB_REF")
     main_sha = base._required_context("GITHUB_SHA")
     run_attempt = base._required_context("GITHUB_RUN_ATTEMPT")
-    run_id = int(base._required_context("GITHUB_RUN_ID"))
+    run_id = base._positive_integer_context("GITHUB_RUN_ID")
     if repository != EXPECTED_REPOSITORY or git_ref != EXPECTED_REF:
         raise base.PreflightNoGo(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_source_not_exact_main"
@@ -313,59 +389,98 @@ def run_preflight() -> dict[str, object]:
         raise base.PreflightNoGo(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_project_id_must_remain_absent"
         )
-    api_key = base._required_context("NEON_API_KEY")
+    api_key = base._required_sensitive_context("NEON_API_KEY")
     database_url = base._required_context("NEON_BOOTSTRAP_DATABASE_URL")
     _, target = base._validated_psycopg_url(database_url)
     dsn_security_profile = base._target_dsn_security_profile(target)
     try:
+        base._reject_libpq_environment()
         client = base.NeonReadOnlyClient(api_key)
         neon = base._resolve_neon_identity(client, target, allow_idle=True)
-        audit.endpoint_pre_wake_state = neon.endpoint_state
-        audit.identity_complete_before_wake = (
-            neon.identity_verdict == "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
-            and neon.branch_default
-        )
-        classification, effective_timeout = _scale_to_zero_contract(neon)
-        audit.scale_to_zero_classification = classification
-        audit.configured_suspend_timeout_seconds = neon.suspend_timeout_seconds
-        audit.effective_suspend_timeout_seconds = effective_timeout
-        if not audit.identity_complete_before_wake:
-            raise base.PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
-                "identity_incomplete_before_connection",
+        try:
+            audit.endpoint_pre_wake_state = neon.endpoint_state
+            audit.identity_complete_before_wake = (
+                neon.identity_verdict == "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
+                and neon.branch_default
+                and neon.project_inventory_exhaustive
             )
-        _validate_readonly_connection_contract(
-            base.READONLY_STARTUP_OPTIONS,
-            base.SQL_STATEMENTS,
-        )
+            classification, effective_timeout = _scale_to_zero_contract(neon)
+            audit.scale_to_zero_classification = classification
+            audit.configured_suspend_timeout_seconds = neon.suspend_timeout_seconds
+            audit.effective_suspend_timeout_seconds = effective_timeout
+            if not audit.identity_complete_before_wake:
+                raise base.PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "identity_incomplete_before_connection",
+                )
+            if not neon.branch_capacity_proven:
+                raise base.PreflightNoGo(
+                    "RECOVERY_BRANCH_NOT_FEASIBLE", "branch_capacity_ambiguous"
+                )
+            if neon.owner_branch_count + 1 > neon.branch_limit:
+                raise base.PreflightNoGo(
+                    "RECOVERY_BRANCH_NOT_FEASIBLE", "branch_capacity_exhausted"
+                )
+            purchase_required = not neon.bill_free_branch_capacity_proven
+            if purchase_required:
+                raise base.PreflightNoGo("PURCHASE_REQUIRED", "purchase_required")
+            recovery_feasible = (
+                neon.history_retention_seconds > 0
+                and neon.branch_id != ""
+                and neon.branch_state == "ready"
+            )
+            if not recovery_feasible:
+                raise base.PreflightNoGo(
+                    "RECOVERY_BRANCH_NOT_FEASIBLE", "recovery_branch_not_feasible"
+                )
+            _validate_readonly_connection_contract(
+                base.READONLY_STARTUP_OPTIONS,
+                base.SQL_STATEMENTS,
+            )
+        except base.PreflightNoGo as error:
+            raise base.PreflightNoGo(
+                error.reason,
+                error.gate,
+                dsn_security_profile=dsn_security_profile,
+                sanitized_evidence=error.sanitized_evidence
+                or base._sanitized_neon(neon),
+                sanitized_postgresql_evidence=(
+                    error.sanitized_postgresql_evidence
+                ),
+                effect_counts=error.effect_counts,
+            ) from None
+        inspection_audit = base.DatabaseInspectionAudit()
         try:
             database = base._inspect_database(
                 database_url,
+                expected_postgresql_major=neon.postgresql_major,
                 before_connect=audit.before_connect,
                 after_connect=audit.after_connect,
+                inspection_audit=inspection_audit,
             )
         except base.PreflightNoGo as error:
             evidence = base._sanitized_neon(neon)
-            evidence["lifecycle"] = _lifecycle_payload(audit)
             raise base.PreflightNoGo(
                 error.reason,
                 error.gate,
                 dsn_security_profile=dsn_security_profile,
                 sanitized_evidence=evidence,
+                sanitized_postgresql_evidence=(
+                    error.sanitized_postgresql_evidence
+                ),
+                effect_counts=error.effect_counts,
             ) from None
-        purchase_required = neon.owner_branch_count + 1 > neon.branch_limit
-        recovery_feasible = (
-            neon.history_retention_seconds > 0
-            and neon.branch_id != ""
-            and neon.branch_state in {"active", "ready"}
-            and not purchase_required
-        )
         sql_safety = (
             database.default_transaction_read_only
             and database.transaction_read_only
             and database.statement_timeout_ms == base.EXPECTED_STATEMENT_TIMEOUT_MS
             and database.lock_timeout_ms == base.EXPECTED_LOCK_TIMEOUT_MS
             and database.sql_statement_count <= base.MAX_SQL_STATEMENTS
+            and _database_target_proven(
+                database,
+                target,
+                neon.postgresql_major,
+            )
         )
         checks = base.GateChecks(
             secrets_present=True,
@@ -405,6 +520,10 @@ def run_preflight() -> dict[str, object]:
                 error.gate,
                 dsn_security_profile=dsn_security_profile,
                 sanitized_evidence=error.sanitized_evidence,
+                sanitized_postgresql_evidence=(
+                    error.sanitized_postgresql_evidence
+                ),
+                effect_counts=error.effect_counts,
             )
         return _controlled_no_go_report(error, audit)
 
@@ -417,7 +536,19 @@ def main() -> None:
         report = run_preflight()
     except base.PreflightNoGo as error:
         report = _controlled_no_go_report(error, ConnectionWakeAudit())
-    base._write_report(args.report, report)
+    except Exception:
+        report = _conservative_technical_failure_report(
+            "unexpected_sanitized_failure"
+        )
+    try:
+        base._write_report(args.report, report)
+    except Exception:
+        fallback = _conservative_technical_failure_report(
+            "report_serialization_or_write_failure"
+        )
+        base._write_report(args.report, fallback)
+        report = fallback
+    print(str(report["verdict"]))
 
 
 if __name__ == "__main__":

@@ -35,6 +35,7 @@ from robin.chronos_production import (
     DirectPostgresTarget,
     assert_exact_preflight_binding,
     build_scoped_database_url,
+    connect_direct_postgres,
     generation_hash,
     preflight_hash,
     require_sha,
@@ -88,6 +89,12 @@ EXPECTED_TRIGGERS = (
     "trg_chronos_events_append_only",
     "trg_chronos_events_no_truncate",
 )
+
+
+def _connect_direct(database_url: str) -> Connection[Any]:
+    """Seal every production connection against ambient libpq overrides."""
+
+    return connect_direct_postgres(database_url, connector=psycopg.connect)
 NO_VALUES_OBSERVED = False
 _NEON_ALLOWED_ROUTES = (
     re.compile(r"^GET /projects\?limit=100$"),
@@ -366,7 +373,7 @@ def create_recovery_point(
 
 def inspect_database(database_url: str) -> dict[str, Any]:
     target = validate_direct_postgres_url(database_url)
-    with psycopg.connect(database_url, connect_timeout=10) as connection:
+    with _connect_direct(database_url) as connection:
         revision = _scalar(
             connection,
             "SELECT version_num FROM public.alembic_version",
@@ -510,11 +517,11 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
     target = validate_direct_postgres_url(database_url)
     client = NeonClient(api_key)
     identity = resolve_neon_identity(client, target)
-    with psycopg.connect(database_url, connect_timeout=10) as capability_connection:
+    with _connect_direct(database_url) as capability_connection:
         assert_privileged_catalog_visibility(capability_connection)
     recovery = create_recovery_point(client, identity)
     database = inspect_database(database_url)
-    with psycopg.connect(database_url, connect_timeout=10) as connection:
+    with _connect_direct(database_url) as connection:
         preflight_role_inventory_hash = role_inventory_hash(connection)
         preflight_role_inventory = role_inventory_snapshot(connection)
     if database["current_revision"] not in {
@@ -525,7 +532,7 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
     if database["current_revision"] == EXPECTED_AFTER_REVISION:
         _assert_post_migration(database)
         migrator_role = stable_migrator_role(identity.production_branch_id)
-        with psycopg.connect(database_url, connect_timeout=10) as connection:
+        with _connect_direct(database_url) as connection:
             lifecycle_admin = str(_scalar(connection, "SELECT current_user"))
             audit_terminal_lifecycle(
                 connection,
@@ -660,7 +667,7 @@ def _assert_resume_role_inventory(
 def _assert_migrator_disabled(
     database_url: str, role: str, bootstrap_owner: str
 ) -> None:
-    with psycopg.connect(database_url, connect_timeout=10) as connection:
+    with _connect_direct(database_url) as connection:
         assert_migrator_disabled(
             connection, role=role, bootstrap_owner=bootstrap_owner
         )
@@ -723,7 +730,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         preflight_expiry,
         _utc_now() + timedelta(minutes=9),
     )
-    admin = psycopg.connect(database_url, connect_timeout=10)
+    admin = _connect_direct(database_url)
     lock_held = False
     lease = None
     authority_connection: Connection[Any] | None = None
@@ -775,7 +782,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
             username=lease.executor_role,
             password=executor_password,
         )
-        authority_connection = psycopg.connect(executor_url, connect_timeout=10)
+        authority_connection = _connect_direct(executor_url)
         assert_executor_cannot_create_role(
             authority_connection,
             probe_role="chronos_executor_pre_set_probe",
@@ -1065,7 +1072,7 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
     reports: dict[str, Any] = {}
     for role, database_url in urls.items():
         target = validate_direct_postgres_url(database_url)
-        with psycopg.connect(database_url, connect_timeout=10) as connection:
+        with _connect_direct(database_url) as connection:
             current_user = str(_scalar(connection, "SELECT current_user"))
             revision = (
                 str(
@@ -1119,7 +1126,7 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
             raise ChronosProductionError("CHRONOS_VERIFY_MEMBERSHIP_MISMATCH")
     if len({str(report["server_epoch"]) for report in reports.values()}) != 1:
         raise ChronosProductionError("CHRONOS_VERIFY_SERVER_EPOCH_MISMATCH")
-    with psycopg.connect(urls["reader"], connect_timeout=10) as connection:
+    with _connect_direct(urls["reader"]) as connection:
         with connection.cursor() as cursor:
             cursor.execute(
                 "SELECT rolname,rolcanlogin,rolcreaterole FROM pg_catalog.pg_roles "
