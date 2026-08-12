@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import ast
 import json
+import subprocess
+import sys
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, NoReturn
@@ -291,7 +293,82 @@ def test_workflow_is_one_shot_bounded_and_environment_protected() -> None:
     assert job["environment"] == "chronos-control-plane-production"
     live = next(step for step in job["steps"] if "run" in step and "timeout" in step["run"])
     assert "timeout --signal=TERM 120s" in live["run"]
+    module_entrypoint = (
+        "python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1"
+    )
+    file_entrypoint = (
+        "python scripts/chronos_neon_controlled_idle_wake_readonly_v1.py"
+    )
+    workflow_source = WORKFLOW.read_text(encoding="utf-8")
+    assert workflow_source.count(module_entrypoint) == 1
+    assert file_entrypoint not in workflow_source
+    assert live["working-directory"] == "${{ github.workspace }}"
     assert "NEON_PROJECT_ID" in live["env"]
+
+
+def test_linux_module_entrypoint_smoke_runs_exact_command_from_repo_root() -> None:
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "scripts.chronos_neon_controlled_idle_wake_readonly_v1",
+            "--help",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    output = completed.stdout + completed.stderr
+    assert completed.returncode == 0, output
+    assert "ModuleNotFoundError" not in output
+
+
+def test_application_no_go_main_writes_sanitized_json_report(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    sensitive_values = {
+        "NEON_API_KEY": "synthetic-api-key-that-must-not-leak",
+        "NEON_BOOTSTRAP_DATABASE_URL": (
+            "postgresql://synthetic-user:synthetic-password@"
+            "ep-raw-sensitive.neon.tech/synthetic_database?sslmode=require"
+        ),
+        "NEON_PROJECT_ID": "raw-project-id-that-must-not-leak",
+    }
+    for name, value in sensitive_values.items():
+        monkeypatch.setenv(name, value)
+
+    def application_no_go() -> NoReturn:
+        raise base.PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "synthetic_application_no_go",
+        )
+
+    report_path = tmp_path / "controlled-no-go.json"
+    monkeypatch.setattr(controlled, "run_preflight", application_no_go)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["chronos-neon-controlled-idle-wake", "--report", str(report_path)],
+    )
+
+    controlled.main()
+
+    serialized = report_path.read_text(encoding="utf-8")
+    report = json.loads(serialized)
+    assert report["verdict"] == base.NO_GO_VERDICT
+    assert report["failed_gate"] == "synthetic_application_no_go"
+    forbidden_values = (
+        *sensitive_values.values(),
+        "synthetic-password",
+        "ep-raw-sensitive.neon.tech",
+        "raw-branch-id-that-must-not-leak",
+        "raw-endpoint-id-that-must-not-leak",
+        "raw-cursor-that-must-not-leak",
+    )
+    for sensitive in forbidden_values:
+        assert sensitive not in serialized
 
 
 def test_idle_endpoint_completes_identity_before_any_connection(

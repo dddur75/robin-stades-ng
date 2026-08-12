@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-12T05:00:33Z",
+  "generated_at":"2026-08-12T08:37:27Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -2178,6 +2178,22 @@
       "dataset_lineage_id":"NO_PRODUCTION_DATA_LOCAL_SYNTHETIC_ONLY",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","DP6","C4"]
+    },
+    {
+      "claim_id":"GOV.CHRONOS.NEON.CONTROLLED_WAKE.ENTRYPOINT.CORRECTION.V1.001",
+      "claim":"The failed controlled-wake run used a file-path entrypoint and stopped at module import before Neon or PostgreSQL access; invoking the same unchanged implementation as a Python module from the explicit GitHub workspace root resolves that entrypoint defect while preserving all external-effect budgets and application NO-GO report sanitization.",
+      "scope":"CHRONOS_NEON_CONTROLLED_WAKE_ENTRYPOINT_CORRECTION_V1_PRE_CI",
+      "source":"GitHub Actions run 31576728499 step metadata and sanitized exception; exact Python 3.12 module-entrypoint smoke; 110 Controlled Wake and V4 regressions; 402 activation/Chronos/Council/portability tests; one complete local suite; and DP5, DP6 and C4 read-only reviews",
+      "grain":"one_linux_python_module_entrypoint_correction",
+      "temporal_class":"CODE_AND_LOCAL_EXECUTION_AS_OF",
+      "artifact":".github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml",
+      "hash":"1287976f6f21b486e4a83f2631df28df4fddf5212c0eecb9fa93fb7e22cfc33c",
+      "code_revision":"12b067d7e5de464be6b2ebc84e030b78a545a2df",
+      "execution_id":"local-neon-controlled-wake-entrypoint-v1-20260812T083727Z",
+      "scientific_lineage_id":"chronos-neon-controlled-wake-entrypoint-v1",
+      "dataset_lineage_id":"NO_PRODUCTION_DATA_LOCAL_SYNTHETIC_ONLY",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","DP6","C4"]
     }
   ],
   "decision_nodes":[
@@ -2298,7 +2314,8 @@
     {"decision_id":"RCV3-20260811-122","ledger_record_hash":"e6f32b33506b2ce6fad5187719654d2e8b234cb97980fc1d3ddd44fe16bff07a"},
     {"decision_id":"RCV3-20260811-123","ledger_record_hash":"2f67846a91f9ae3151c9a91a5de80e81fa726bb8af3149f0f0632f73c5cb47e1"},
     {"decision_id":"RCV3-20260812-124","ledger_record_hash":"8afc25cdadefaad09305071df4192ccfed5639a38063140a303812e0248eef8f"},
-    {"decision_id":"RCV3-20260812-125","ledger_record_hash":"940a2b50949a07a25c5e4f931dd3ecdb6b59b687128ff7258a902ac578952ac8"}
+    {"decision_id":"RCV3-20260812-125","ledger_record_hash":"940a2b50949a07a25c5e4f931dd3ecdb6b59b687128ff7258a902ac578952ac8"},
+    {"decision_id":"RCV3-20260812-126","ledger_record_hash":"afcd93078ba059ef3cb4259401aab362ab684996a7b9ae8dd65f0566febeb451"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2605,6 +2622,7 @@
     {"edge_id":"EDGE.302","from_claim_id":"GOV.CHRONOS.NEON.SECURE_DSN.CONTRACT.V1.001","to_decision_id":"RCV3-20260811-122","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.303","from_claim_id":"GOV.CHRONOS.NEON.PROJECT_ID.PAGINATION.V1.001","to_decision_id":"RCV3-20260811-123","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.304","from_claim_id":"GOV.CHRONOS.NEON.POSITIVE_PROJECT_OWNERSHIP.V1.001","to_decision_id":"RCV3-20260812-124","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.305","from_claim_id":"GOV.CHRONOS.NEON.CONTROLLED_IDLE_WAKE.READONLY.V1.001","to_decision_id":"RCV3-20260812-125","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.305","from_claim_id":"GOV.CHRONOS.NEON.CONTROLLED_IDLE_WAKE.READONLY.V1.001","to_decision_id":"RCV3-20260812-125","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.306","from_claim_id":"GOV.CHRONOS.NEON.CONTROLLED_WAKE.ENTRYPOINT.CORRECTION.V1.001","to_decision_id":"RCV3-20260812-126","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

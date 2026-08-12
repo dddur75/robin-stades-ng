@@ -61,8 +61,9 @@ jobs:
           NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
         run: >-
           timeout --signal=TERM 120s
-          python scripts/chronos_neon_controlled_idle_wake_readonly_v1.py
+          python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1
           --report .chronos/reports/chronos-neon-controlled-idle-wake-readonly-v1.json
+        working-directory: ${{ github.workspace }}
       - name: Publier uniquement le rapport sanitise
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
