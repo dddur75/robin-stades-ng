@@ -62,6 +62,13 @@ IDENTITY_GOLDEN = (
     / "fixtures"
     / "chronos_neon_project_identity_pagination_v1_golden_pack.json"
 )
+POSITIVE_WITNESS_GOLDEN = (
+    ROOT
+    / "tests"
+    / "activation"
+    / "fixtures"
+    / "chronos_neon_positive_project_ownership_witness_v1_golden_pack.json"
+)
 FORBIDDEN_SQL = frozenset(
     {
         "CREATE",
@@ -356,13 +363,23 @@ class _ScriptedNeonSession:
         details: dict[str, dict[str, Any]] | None = None,
         branches: dict[str, list[dict[str, Any]]] | None = None,
         endpoints: dict[str, dict[str, Any]] | None = None,
+        endpoint_details: dict[str, dict[str, Any]] | None = None,
+        branch_endpoints: dict[str, dict[str, Any]] | None = None,
         detail_status: dict[str, int] | None = None,
+        enforce_candidate_first: bool = False,
     ) -> None:
         self.project_pages = project_pages or []
         self.details = details or {}
         self.branches = branches or {}
         self.endpoints = endpoints or {}
+        self.endpoint_details = endpoint_details or {
+            project_id: {"endpoint": deepcopy(document["endpoints"][0])}
+            for project_id, document in self.endpoints.items()
+            if document.get("endpoints")
+        }
+        self.branch_endpoints = branch_endpoints or deepcopy(self.endpoints)
         self.detail_status = detail_status or {}
+        self.enforce_candidate_first = enforce_candidate_first
         self.project_page_index = 0
         self.branch_page_indexes: dict[str, int] = {}
         self.urls: list[str] = []
@@ -377,6 +394,8 @@ class _ScriptedNeonSession:
         if path == "/projects":
             assert query["limit"] == [str(PROJECT_PAGE_LIMIT)]
             if self.project_page_index:
+                if self.enforce_candidate_first:
+                    assert self.paths[-2].endswith("/endpoints")
                 previous = self.project_pages[self.project_page_index - 1]
                 assert query["cursor"] == [previous["pagination"]["cursor"]]
             else:
@@ -393,6 +412,8 @@ class _ScriptedNeonSession:
             return _ApiResponse(self.details.get(project_id, {}), status)
         if suffix == "/endpoints":
             return _ApiResponse(self.endpoints[project_id])
+        if re.fullmatch(r"/endpoints/[a-z0-9-]{1,60}", suffix):
+            return _ApiResponse(self.endpoint_details[project_id])
         if suffix == "/branches":
             assert query["limit"] == ["10000"]
             assert query["sort_by"] == ["updated_at"]
@@ -406,6 +427,11 @@ class _ScriptedNeonSession:
                 assert "cursor" not in query
             self.branch_page_indexes[project_id] = index + 1
             return _ApiResponse(pages[index])
+        if re.fullmatch(
+            r"/branches/[a-z0-9-]{1,60}/endpoints",
+            suffix,
+        ):
+            return _ApiResponse(self.branch_endpoints[project_id])
         raise AssertionError(f"unexpected synthetic route: {path}")
 
 
@@ -448,10 +474,12 @@ def _detail(project_id: str) -> dict[str, Any]:
 def _branch(
     *,
     branch_id: str = "branch-production",
+    project_id: str = "synthetic-project",
     default: bool = True,
 ) -> dict[str, Any]:
     return {
         "id": branch_id,
+        "project_id": project_id,
         "name": "production",
         "current_state": "ready",
         "default": default,
@@ -473,6 +501,7 @@ def _endpoint(
         "host": host,
         "type": "read_write",
         "current_state": state,
+        "pooler_enabled": False,
         "disabled": False,
         "region_id": "aws-eu-synthetic-1",
     }
@@ -646,7 +675,10 @@ def _discovery_session(case_id: str) -> _ScriptedNeonSession:
         pages = [_project_page(project_ids)]
     details = {project_id: _detail(project_id) for project_id in project_ids}
     branches = {
-        project_id: [{"branches": [_branch()], "pagination": {}}] for project_id in project_ids
+        project_id: [
+            {"branches": [_branch(project_id=project_id)], "pagination": {}}
+        ]
+        for project_id in project_ids
     }
     endpoints: dict[str, dict[str, Any]] = {}
     for index, project_id in enumerate(project_ids):
@@ -695,15 +727,211 @@ def test_bounded_discovery_golden_pack(
         assert caught.value.gate == case["expected_gate"]
         if case_id == "DISCOVERY_BUDGET_TOO_SMALL":
             assert caught.value.sanitized_evidence is not None
-            assert caught.value.sanitized_evidence["recommendation"] == (
-                "NEON_PROJECT_ID_RECOMMENDED_FOR_BOUNDED_IDENTITY"
-            )
             assert session.paths == ["/projects"]
     assert client.get_count <= MAX_NEON_GETS
     if case_id == "DISCOVERY_PAGINATED_UNIQUE_MATCH":
         cursor_url = next(url for url in session.urls if "cursor=" in url)
         assert "opaque:/?& cursor" not in cursor_url
         assert "cursor=opaque%3A%2F%3F%26+cursor" in cursor_url
+
+
+def _positive_witness_cases() -> dict[str, dict[str, Any]]:
+    document = json.loads(POSITIVE_WITNESS_GOLDEN.read_text(encoding="utf-8"))
+    assert document["schema_version"] == (
+        "chronos-neon-positive-project-ownership-witness-v1-golden-pack"
+    )
+    return {case["case_id"]: case for case in document["cases"]}
+
+
+def _positive_witness_session(case_id: str) -> _ScriptedNeonSession:
+    project_ids = ["project-a"]
+    pages = [_project_page(project_ids)]
+    matching_project = "project-a"
+    if case_id == "FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH":
+        project_ids = ["project-a", "project-b", "project-c"]
+        matching_project = "project-b"
+        pages = [_project_page(project_ids)]
+    elif case_id == "FIRST_PAGE_NO_MATCH_CURSOR_CONTINUES":
+        project_ids = ["project-a", "project-b"]
+        matching_project = "project-b"
+        pages = [
+            _project_page(["project-a"], cursor="cursor-a"),
+            _project_page(["project-b"]),
+        ]
+    elif case_id == "FIRST_PAGE_MATCH_CURSOR_PRESENT_BUT_NOT_FOLLOWED":
+        pages = [_project_page(["project-a"], cursor="cursor-never-followed")]
+    elif case_id == "FIRST_PAGE_MULTIPLE_EXACT_MATCHES":
+        project_ids = ["project-a", "project-b"]
+        pages = [_project_page(project_ids)]
+    elif case_id == "NO_MATCH_THEN_CURSOR_CYCLE":
+        project_ids = ["project-a", "project-b"]
+        matching_project = ""
+        pages = [
+            _project_page(["project-a"], cursor="cursor-cycle"),
+            _project_page(["project-b"], cursor="cursor-cycle"),
+        ]
+
+    details = {project_id: _detail(project_id) for project_id in project_ids}
+    branches = {
+        project_id: [
+            {"branches": [_branch(project_id=project_id)], "pagination": {}}
+        ]
+        for project_id in project_ids
+    }
+    endpoints: dict[str, dict[str, Any]] = {}
+    for project_id in project_ids:
+        exact = project_id == matching_project
+        if case_id == "FIRST_PAGE_MULTIPLE_EXACT_MATCHES":
+            exact = True
+        endpoints[project_id] = {
+            "endpoints": [
+                _endpoint(
+                    project_id,
+                    host=(
+                        "ep-synthetic.neon.tech"
+                        if exact
+                        else f"ep-other-{project_id}.neon.tech"
+                    ),
+                )
+            ]
+        }
+    endpoint_details = {
+        project_id: {"endpoint": deepcopy(document["endpoints"][0])}
+        for project_id, document in endpoints.items()
+    }
+    branch_endpoints = deepcopy(endpoints)
+
+    if case_id == "ENDPOINT_DETAIL_PROJECT_MISMATCH":
+        endpoint_details[matching_project]["endpoint"]["project_id"] = "project-other"
+    elif case_id == "ENDPOINT_DETAIL_BRANCH_MISMATCH":
+        endpoint_details[matching_project]["endpoint"]["branch_id"] = "branch-other"
+    elif case_id == "ENDPOINT_DETAIL_HOST_MISMATCH":
+        endpoint_details[matching_project]["endpoint"]["host"] = "ep-other.neon.tech"
+    elif case_id == "PROJECT_DETAIL_ID_MISMATCH":
+        details[matching_project]["project"]["id"] = "project-other"
+    elif case_id == "BRANCH_RELATIONSHIP_MISSING":
+        branches[matching_project] = [
+            {
+                "branches": [
+                    _branch(branch_id="branch-other", project_id=matching_project)
+                ],
+                "pagination": {},
+            }
+        ]
+    elif case_id == "BRANCH_NOT_DEFAULT":
+        branches[matching_project] = [
+            {
+                "branches": [_branch(project_id=matching_project, default=False)],
+                "pagination": {},
+            }
+        ]
+    elif case_id == "BRANCH_ENDPOINT_CONFIRMATION_MISMATCH":
+        branch_endpoints[matching_project]["endpoints"][0]["host"] = (
+            "ep-other.neon.tech"
+        )
+    return _ScriptedNeonSession(
+        project_pages=pages,
+        details=details,
+        branches=branches,
+        endpoints=endpoints,
+        endpoint_details=endpoint_details,
+        branch_endpoints=branch_endpoints,
+        enforce_candidate_first=True,
+    )
+
+
+@pytest.mark.parametrize("case_id", list(_positive_witness_cases()))
+def test_positive_project_ownership_witness_golden_pack(
+    case_id: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
+    case = _positive_witness_cases()[case_id]
+    session = _positive_witness_session(case_id)
+    client = _client(session)
+    if case["expected_gate"] is None:
+        observed = _resolve_neon_identity(client, _synthetic_target())
+        assert observed.identity_path == "POSITIVE_ENDPOINT_WITNESS"
+        assert observed.identity_verdict == (
+            "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
+        )
+        assert observed.project_inventory_exhaustive is False
+        assert observed.endpoint_detail_reads == 1
+        assert observed.project_detail_reads == 1
+        assert observed.branch_endpoint_reads == 1
+        assert observed.cursor_cycle_encountered is False
+        assert len(observed.positive_witness_checks) == 6
+    else:
+        with pytest.raises(preflight_module.PreflightNoGo) as caught:
+            _resolve_neon_identity(client, _synthetic_target())
+        assert caught.value.gate == case["expected_gate"]
+        assert caught.value.sanitized_evidence is not None
+    assert client.get_count <= MAX_NEON_GETS
+
+    if case_id == "FIRST_PAGE_MATCH_CURSOR_PRESENT_BUT_NOT_FOLLOWED":
+        assert session.project_page_index == 1
+        assert not any("cursor=" in url for url in session.urls)
+    if case_id == "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH":
+        assert session.paths[:2] == [
+            "/projects",
+            "/projects/project-a/endpoints",
+        ]
+        assert session.project_page_index == 1
+    if case_id == "FIRST_PAGE_NO_MATCH_CURSOR_CONTINUES":
+        assert session.paths[:4] == [
+            "/projects",
+            "/projects/project-a/endpoints",
+            "/projects",
+            "/projects/project-b/endpoints",
+        ]
+    if case_id == "NO_MATCH_THEN_CURSOR_CYCLE":
+        assert caught.value.sanitized_evidence["cursor_continuation_requested"] is True
+        assert caught.value.sanitized_evidence["cursor_cycle_encountered"] is True
+
+
+def test_positive_witness_is_order_independent_and_never_selects_by_position(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
+    fingerprints: set[str] = set()
+    for order in (
+        ["project-a", "project-b", "project-c"],
+        ["project-c", "project-a", "project-b"],
+        ["project-b", "project-c", "project-a"],
+    ):
+        session = _positive_witness_session(
+            "FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH"
+        )
+        session.project_pages = [_project_page(order)]
+        observed = _resolve_neon_identity(_client(session), _synthetic_target())
+        fingerprints.add(_sanitized_neon(observed)["project_id_sha256"])
+    assert len(fingerprints) == 1
+
+
+def test_positive_witness_sanitization_rejects_raw_identity_and_cursor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
+    success = _resolve_neon_identity(
+        _client(_positive_witness_session("FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH")),
+        _synthetic_target(),
+    )
+    serialized = json.dumps(_sanitized_neon(success), sort_keys=True)
+    for forbidden in (
+        success.project_id,
+        success.endpoint_id,
+        success.branch_id,
+        success.endpoint_host,
+    ):
+        assert forbidden not in serialized
+
+    cycle_client = _client(_positive_witness_session("NO_MATCH_THEN_CURSOR_CYCLE"))
+    with pytest.raises(preflight_module.PreflightNoGo) as caught:
+        _resolve_neon_identity(cycle_client, _synthetic_target())
+    refusal = json.dumps(caught.value.sanitized_evidence, sort_keys=True)
+    assert "cursor-cycle" not in refusal
+    assert "project-a" not in refusal
+    assert "project-b" not in refusal
 
 
 def test_projects_and_branches_use_distinct_pagination_parsers() -> None:

@@ -42,7 +42,10 @@ PROJECT_PAGE_LIMIT = 400
 MAX_PROJECT_PAGES = 3
 MAX_BRANCH_PAGES = 3
 MAX_BRANCH_PAGE = 10_000
-MAX_PROJECTS_FOR_ENDPOINT_DISCOVERY = MAX_NEON_GETS - MAX_PROJECT_PAGES - MAX_BRANCH_PAGES - 1
+POSITIVE_WITNESS_GET_RESERVE = 1 + 1 + MAX_BRANCH_PAGES + 1
+MAX_PROJECTS_FOR_ENDPOINT_DISCOVERY = (
+    MAX_NEON_GETS - MAX_PROJECT_PAGES - POSITIVE_WITNESS_GET_RESERVE
+)
 MAX_PROJECT_ITEMS = MAX_PROJECTS_FOR_ENDPOINT_DISCOVERY
 MAX_BRANCH_ITEMS = MAX_BRANCH_PAGE * MAX_BRANCH_PAGES
 MAX_SQL_STATEMENTS = 25
@@ -158,6 +161,14 @@ class NeonObservation:
     projects_observed: int
     endpoint_projects_inspected: int
     api_get_count: int
+    project_inventory_exhaustive: bool = False
+    endpoint_detail_reads: int = 0
+    project_detail_reads: int = 0
+    branch_pages_read: int = 0
+    branch_endpoint_reads: int = 0
+    cursor_continuation_requested: bool = False
+    cursor_cycle_encountered: bool = False
+    positive_witness_checks: tuple[str, ...] = ()
 
 
 @dataclass(slots=True)
@@ -169,19 +180,38 @@ class IdentityAudit:
     project_id: str | None = None
     endpoint_id: str | None = None
     branch_id: str | None = None
+    project_inventory_exhaustive: bool = False
+    endpoint_detail_reads: int = 0
+    project_detail_reads: int = 0
+    branch_pages_read: int = 0
+    branch_endpoint_reads: int = 0
+    cursor_continuation_requested: bool = False
+    cursor_cycle_encountered: bool = False
+    positive_witness_checks: list[str] = field(default_factory=list)
     project_cursor_fingerprints: set[str] = field(default_factory=set)
     branch_cursor_fingerprints: set[str] = field(default_factory=set)
 
     def sanitized(self, *, api_get_count: int, gate: str | None = None) -> dict[str, object]:
         evidence: dict[str, object] = {
             "identity_path": self.identity_path,
+            "identity_proof_mode": (
+                "POSITIVE_OWNERSHIP"
+                if self.identity_path == "POSITIVE_ENDPOINT_WITNESS"
+                else self.identity_path
+            ),
+            "project_identity_verdict": "NEON_PROJECT_IDENTITY_NOT_PROVEN",
             "project_pages_read": self.project_pages_read,
             "projects_observed": self.projects_observed,
             "endpoint_projects_inspected": self.endpoint_projects_inspected,
-            "global_project_inventory_gets": self.project_pages_read,
+            "project_inventory_exhaustive": self.project_inventory_exhaustive,
+            "endpoint_detail_reads": self.endpoint_detail_reads,
+            "project_detail_reads": self.project_detail_reads,
+            "branch_pages_read": self.branch_pages_read,
+            "branch_endpoint_reads": self.branch_endpoint_reads,
+            "cursor_continuation_requested": self.cursor_continuation_requested,
+            "cursor_cycle_encountered": self.cursor_cycle_encountered,
+            "positive_witness_checks": list(self.positive_witness_checks),
             "api_get_count": api_get_count,
-            "project_cursor_fingerprints": sorted(self.project_cursor_fingerprints),
-            "branch_cursor_fingerprints": sorted(self.branch_cursor_fingerprints),
         }
         if self.project_id is not None:
             evidence["project_id_sha256"] = _fingerprint(self.project_id)
@@ -189,8 +219,6 @@ class IdentityAudit:
             evidence["endpoint_id_sha256"] = _fingerprint(self.endpoint_id)
         if self.branch_id is not None:
             evidence["branch_id_sha256"] = _fingerprint(self.branch_id)
-        if gate == "project_identity_discovery_budget_exceeded":
-            evidence["recommendation"] = "NEON_PROJECT_ID_RECOMMENDED_FOR_BOUNDED_IDENTITY"
         return evidence
 
 
@@ -516,6 +544,7 @@ def _list_branches_bounded(
             query["cursor"] = cursor
         document = client.get(f"/projects/{project_id}/branches", query=query)
         pages += 1
+        audit.branch_pages_read += 1
         page = _dict_list(
             document,
             "branches",
@@ -607,6 +636,301 @@ def _bounded_int(
     return parsed
 
 
+def _positive_endpoint_candidate(
+    endpoint: Mapping[str, Any],
+    *,
+    project_id: str,
+    target: DirectPostgresTarget,
+) -> bool:
+    """Return an exact scoped candidate, failing closed on an invalid exact match."""
+
+    endpoint_host = str(endpoint.get("host", "")).lower()
+    if endpoint_host != target.host:
+        return False
+    valid = (
+        str(endpoint.get("project_id", "")) == project_id
+        and str(endpoint.get("type", "")) == "read_write"
+        and endpoint.get("pooler_enabled") is False
+        and "pooler" not in endpoint_host
+        and endpoint.get("disabled") is False
+    )
+    if not valid:
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "positive_endpoint_candidate_invalid",
+        )
+    return True
+
+
+def _progressive_positive_candidate(
+    client: NeonReadOnlyClient,
+    target: DirectPostgresTarget,
+    audit: IdentityAudit,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Inspect each page's project endpoints before requesting another page."""
+
+    seen_ids: set[str] = set()
+    seen_pages: set[str] = set()
+    cursor: str | None = None
+    while True:
+        if audit.project_pages_read >= MAX_PROJECT_PAGES:
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "project_pagination_invalid",
+            )
+        client.require_get_budget(
+            1 + POSITIVE_WITNESS_GET_RESERVE,
+            "project_identity_discovery_budget_exceeded",
+        )
+        query: dict[str, object] = {"limit": PROJECT_PAGE_LIMIT}
+        if cursor is not None:
+            query["cursor"] = cursor
+        document = client.get("/projects", query=query)
+        audit.project_pages_read += 1
+        page = _dict_list(
+            document,
+            "projects",
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+        )
+        unavailable = document.get("unavailable_project_ids", [])
+        if not isinstance(unavailable, list) or unavailable:
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "project_inventory_incomplete",
+            )
+        page_ids: list[str] = []
+        page_seen_ids: set[str] = set()
+        for project in page:
+            project_id = _safe_identifier(
+                project.get("id", ""), gate="project_pagination_invalid"
+            )
+            _safe_identifier(
+                project.get("owner_id", ""), gate="project_inventory_incomplete"
+            )
+            if project_id in seen_ids or project_id in page_seen_ids:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "project_inventory_duplicate_id",
+                )
+            page_ids.append(project_id)
+            page_seen_ids.add(project_id)
+        page_fingerprint = _fingerprint("\x00".join(page_ids))
+        repeated_page = page_fingerprint in seen_pages
+        seen_ids.update(page_ids)
+        audit.projects_observed = len(seen_ids)
+        if audit.projects_observed > MAX_PROJECT_ITEMS:
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "project_identity_discovery_budget_exceeded",
+            )
+        next_cursor = _project_page_cursor(document)
+        matches: list[tuple[dict[str, Any], dict[str, Any]]] = []
+        for index, (project, project_id) in enumerate(zip(page, page_ids, strict=True)):
+            remaining_on_page = len(page) - index
+            client.require_get_budget(
+                remaining_on_page + POSITIVE_WITNESS_GET_RESERVE,
+                "project_identity_discovery_budget_exceeded",
+            )
+            endpoints = _project_endpoints(
+                client.get(f"/projects/{project_id}/endpoints"),
+                project_id,
+                gate="project_inventory_incomplete",
+            )
+            audit.endpoint_projects_inspected += 1
+            for endpoint in endpoints:
+                if _positive_endpoint_candidate(
+                    endpoint,
+                    project_id=project_id,
+                    target=target,
+                ):
+                    matches.append((project, endpoint))
+                    if len(matches) > 1:
+                        raise PreflightNoGo(
+                            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                            "positive_endpoint_match_not_unique",
+                        )
+        if matches:
+            return matches[0]
+        if next_cursor is None:
+            if repeated_page:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    "project_pagination_invalid",
+                )
+            seen_pages.add(page_fingerprint)
+            audit.project_inventory_exhaustive = True
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "dsn_endpoint_match_missing",
+            )
+        cursor_fingerprint = _fingerprint(next_cursor)
+        if cursor_fingerprint in audit.project_cursor_fingerprints:
+            audit.cursor_cycle_encountered = True
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "project_cursor_cycle",
+            )
+        if repeated_page:
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "project_pagination_invalid",
+            )
+        seen_pages.add(page_fingerprint)
+        audit.project_cursor_fingerprints.add(cursor_fingerprint)
+        audit.cursor_continuation_requested = True
+        cursor = next_cursor
+
+
+def _endpoint_detail(
+    document: Mapping[str, Any],
+    *,
+    project_id: str,
+    candidate: Mapping[str, Any],
+    target: DirectPostgresTarget,
+) -> dict[str, Any]:
+    endpoint = document.get("endpoint")
+    if not isinstance(endpoint, dict):
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "endpoint_detail_missing",
+        )
+    detailed = cast(dict[str, Any], endpoint)
+    _safe_identifier(detailed.get("id", ""), gate="endpoint_detail_invalid")
+    _safe_identifier(detailed.get("project_id", ""), gate="endpoint_detail_invalid")
+    _safe_identifier(detailed.get("branch_id", ""), gate="endpoint_detail_invalid")
+    if not isinstance(detailed.get("host"), str):
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "endpoint_detail_invalid",
+        )
+    comparisons = (
+        (detailed.get("id") == candidate.get("id"), "endpoint_detail_id_mismatch"),
+        (
+            detailed.get("project_id") == project_id,
+            "endpoint_detail_project_mismatch",
+        ),
+        (
+            detailed.get("branch_id") == candidate.get("branch_id"),
+            "endpoint_detail_branch_mismatch",
+        ),
+        (
+            str(detailed.get("host", "")).lower() == target.host,
+            "endpoint_detail_host_mismatch",
+        ),
+        (detailed.get("type") == "read_write", "endpoint_detail_type_mismatch"),
+        (detailed.get("current_state") == "active", "endpoint_detail_not_active"),
+        (detailed.get("disabled") is False, "endpoint_detail_disabled"),
+        (detailed.get("pooler_enabled") is False, "endpoint_detail_pooled"),
+        (
+            detailed.get("pending_state") in (None, "active"),
+            "endpoint_detail_transitioning",
+        ),
+    )
+    for passed, gate in comparisons:
+        if not passed:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    return detailed
+
+
+def _positive_ownership_witness(
+    client: NeonReadOnlyClient,
+    target: DirectPostgresTarget,
+    audit: IdentityAudit,
+    project_summary: Mapping[str, Any],
+    candidate: Mapping[str, Any],
+) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
+    project_id = _safe_identifier(
+        project_summary.get("id", ""), gate="project_pagination_invalid"
+    )
+    endpoint_id = _safe_identifier(
+        candidate.get("id", ""), gate="positive_endpoint_candidate_invalid"
+    )
+    branch_id = _safe_identifier(
+        candidate.get("branch_id", ""), gate="positive_endpoint_candidate_invalid"
+    )
+    client.require_get_budget(
+        POSITIVE_WITNESS_GET_RESERVE,
+        "project_identity_discovery_budget_exceeded",
+    )
+    endpoint_document = client.get(f"/projects/{project_id}/endpoints/{endpoint_id}")
+    audit.endpoint_detail_reads += 1
+    detailed_endpoint = _endpoint_detail(
+        endpoint_document,
+        project_id=project_id,
+        candidate=candidate,
+        target=target,
+    )
+    audit.positive_witness_checks.append("ENDPOINT_DETAIL_CONCORDANT")
+
+    project_document = client.get(f"/projects/{project_id}")
+    audit.project_detail_reads += 1
+    detailed_project = _validated_project_detail(
+        project_document,
+        project_id,
+        expected_owner_id=str(project_summary["owner_id"]),
+        gate="project_detail_id_or_owner_mismatch",
+    )
+    audit.positive_witness_checks.append("PROJECT_DETAIL_CONCORDANT")
+
+    branches = _list_branches_bounded(
+        client,
+        project_id,
+        audit,
+        reserve_after=1,
+    )
+    branch_matches = [branch for branch in branches if branch.get("id") == branch_id]
+    if len(branch_matches) != 1:
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "branch_relationship_missing",
+        )
+    branch = branch_matches[0]
+    if str(branch.get("project_id", "")) != project_id:
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "branch_project_mismatch",
+        )
+    if branch.get("default") is not True:
+        raise PreflightNoGo(
+            "NEON_PRODUCTION_BRANCH_AMBIGUOUS",
+            "dsn_branch_is_not_default",
+        )
+    if _branch_state(branch) not in {"active", "ready"}:
+        raise PreflightNoGo(
+            "NEON_PRODUCTION_BRANCH_AMBIGUOUS",
+            "production_branch_not_ready",
+        )
+    audit.positive_witness_checks.append("DEFAULT_BRANCH_RELATIONSHIP_CONCORDANT")
+
+    branch_endpoint_document = client.get(
+        f"/projects/{project_id}/branches/{branch_id}/endpoints"
+    )
+    audit.branch_endpoint_reads += 1
+    branch_endpoints = _project_endpoints(
+        branch_endpoint_document,
+        project_id,
+        gate="branch_endpoint_confirmation_mismatch",
+    )
+    confirmations = [item for item in branch_endpoints if item.get("id") == endpoint_id]
+    if len(confirmations) != 1:
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "branch_endpoint_confirmation_mismatch",
+        )
+    confirmation = confirmations[0]
+    if (
+        confirmation.get("branch_id") != branch_id
+        or str(confirmation.get("host", "")).lower() != target.host
+        or confirmation.get("type") != "read_write"
+    ):
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "branch_endpoint_confirmation_mismatch",
+        )
+    audit.positive_witness_checks.append("BRANCH_ENDPOINT_CONCORDANT")
+    return detailed_project, branches, detailed_endpoint
+
+
 def _resolve_neon_identity(
     client: NeonReadOnlyClient,
     target: DirectPostgresTarget,
@@ -627,8 +951,10 @@ def _resolve_neon_identity(
                 "neon_get_budget_exhausted",
             )
             try:
+                project_document = client.get(f"/projects/{project_id}")
+                audit.project_detail_reads += 1
                 detailed = _validated_project_detail(
-                    client.get(f"/projects/{project_id}"),
+                    project_document,
                     project_id,
                     expected_owner_id=None,
                     gate="configured_project_not_accessible",
@@ -670,55 +996,25 @@ def _resolve_neon_identity(
             endpoint = matches[0]
             identity_verdict = "CONFIGURED_PROJECT_IDENTITY_PROVEN"
         else:
-            projects = _list_projects_bounded(client, audit)
-            matches_with_projects: list[tuple[dict[str, Any], dict[str, Any]]] = []
-            for index, project in enumerate(projects):
-                remaining_projects = len(projects) - index
-                client.require_get_budget(
-                    remaining_projects + 1 + MAX_BRANCH_PAGES,
-                    "project_identity_discovery_budget_exceeded",
-                )
-                project_id = _safe_identifier(
-                    project.get("id", ""), gate="project_pagination_invalid"
-                )
-                endpoints = _project_endpoints(
-                    client.get(f"/projects/{project_id}/endpoints"),
-                    project_id,
-                    gate="project_inventory_incomplete",
-                )
-                audit.endpoint_projects_inspected += 1
-                matches_with_projects.extend(
-                    (project, endpoint)
-                    for endpoint in endpoints
-                    if str(endpoint["host"]).lower() == target.host
-                )
-            if not matches_with_projects:
-                raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "dsn_endpoint_match_missing")
-            if len(matches_with_projects) != 1:
-                raise PreflightNoGo(
-                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
-                    "dsn_endpoint_match_not_unique",
-                )
-            project, endpoint = matches_with_projects[0]
-            project_id = _safe_identifier(project.get("id", ""), gate="project_pagination_invalid")
-            audit.project_id = project_id
-            client.require_get_budget(
-                1 + MAX_BRANCH_PAGES,
-                "project_identity_discovery_budget_exceeded",
+            audit.identity_path = "POSITIVE_ENDPOINT_WITNESS"
+            project, candidate = _progressive_positive_candidate(client, target, audit)
+            audit.project_id = _safe_identifier(project.get("id", ""))
+            audit.endpoint_id = _safe_identifier(candidate.get("id", ""))
+            audit.branch_id = _safe_identifier(candidate.get("branch_id", ""))
+            audit.positive_witness_checks.extend(
+                [
+                    "EXACT_DSN_HOST_MATCH",
+                    "PROJECT_SCOPED_ENDPOINT_INVENTORY",
+                ]
             )
-            detailed = _validated_project_detail(
-                client.get(f"/projects/{project_id}"),
-                project_id,
-                expected_owner_id=str(project["owner_id"]),
-                gate="project_inventory_incomplete",
-            )
-            branches = _list_branches_bounded(
+            detailed, branches, endpoint = _positive_ownership_witness(
                 client,
-                project_id,
+                target,
                 audit,
-                reserve_after=0,
+                project,
+                candidate,
             )
-            identity_verdict = "BOUNDED_PROJECT_IDENTITY_PROVEN"
+            identity_verdict = "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
         return _finalize_neon_identity(
             client=client,
             target=target,
@@ -782,7 +1078,8 @@ def _finalize_neon_identity(
         and "pooler" not in endpoint_host
         and str(endpoint.get("type", "")) == "read_write"
         and endpoint_state == "active"
-        and not bool(endpoint.get("disabled", False))
+        and endpoint.get("pooler_enabled") is False
+        and endpoint.get("disabled") is False
         and endpoint.get("pending_state") in (None, "active")
         and str(endpoint.get("project_id", "")) == project_id
     )
@@ -831,6 +1128,14 @@ def _finalize_neon_identity(
         projects_observed=audit.projects_observed,
         endpoint_projects_inspected=audit.endpoint_projects_inspected,
         api_get_count=client.get_count,
+        project_inventory_exhaustive=audit.project_inventory_exhaustive,
+        endpoint_detail_reads=audit.endpoint_detail_reads,
+        project_detail_reads=audit.project_detail_reads,
+        branch_pages_read=audit.branch_pages_read,
+        branch_endpoint_reads=audit.branch_endpoint_reads,
+        cursor_continuation_requested=audit.cursor_continuation_requested,
+        cursor_cycle_encountered=audit.cursor_cycle_encountered,
+        positive_witness_checks=tuple(audit.positive_witness_checks),
     )
 
 
@@ -1146,13 +1451,24 @@ def _sanitize_rows(
 
 
 def _sanitized_neon(neon: NeonObservation) -> dict[str, object]:
+    positive = neon.identity_verdict == "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
     return {
         "identity_path": neon.identity_path,
+        "identity_proof_mode": "POSITIVE_OWNERSHIP" if positive else neon.identity_path,
         "project_identity_verdict": neon.identity_verdict,
-        "global_project_inventory_gets": neon.project_pages_read,
+        "neon_project_identity_verdict": "NEON_PROJECT_IDENTITY_PROVEN",
+        "project_inventory_exhaustive": neon.project_inventory_exhaustive,
         "project_pages_read": neon.project_pages_read,
         "projects_observed": neon.projects_observed,
         "endpoint_projects_inspected": neon.endpoint_projects_inspected,
+        "endpoint_inventory_reads": neon.endpoint_projects_inspected,
+        "endpoint_detail_reads": neon.endpoint_detail_reads,
+        "project_detail_reads": neon.project_detail_reads,
+        "branch_pages_read": neon.branch_pages_read,
+        "branch_endpoint_reads": neon.branch_endpoint_reads,
+        "cursor_continuation_requested": neon.cursor_continuation_requested,
+        "cursor_cycle_encountered": neon.cursor_cycle_encountered,
+        "positive_witness_checks": list(neon.positive_witness_checks),
         "project_id_sha256": _fingerprint(neon.project_id),
         "project_name_sha256": _fingerprint(neon.project_name),
         "region": neon.region,

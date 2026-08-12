@@ -25,6 +25,7 @@
     "branches": [
       {
         "id": "synthetic-branch",
+        "project_id": "synthetic-project",
         "name": "synthetic-production",
         "current_state": "ready",
         "default": true
@@ -41,6 +42,7 @@
         "host": "ep-synthetic.neon.tech",
         "type": "read_write",
         "current_state": "active",
+        "pooler_enabled": false,
         "disabled": false,
         "region_id": "aws-eu-synthetic-1"
       }
