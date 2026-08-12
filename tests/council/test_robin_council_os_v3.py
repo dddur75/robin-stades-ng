@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -213,11 +214,28 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "R2_OPERATIONS_0;PROVIDER_CALLS_0;PURCHASES_0"
     )
     dispatch = authorization["chronos_loop53_dispatch"]
+    assert "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED" in dispatch
     assert "ALLOW_EXACTLY_ONE_SANITIZED_REPORT_ARTIFACT_UPLOAD" in dispatch
     assert "FORBID_RERUN_31587004959" in dispatch
     assert (
         "FORBID_SECOND_DISPATCH_6140e09cb38b5fecee5da85882aa8a879dbce780"
         in dispatch
+    )
+    delivery = authorization["chronos_loop53_delivery"]
+    assert (
+        "ALLOW_ONE_INITIAL_BRANCH_PUSH_AND_EXACTLY_ONE_CORRECTIVE_NON_FORCE_PUSH_"
+        "TO_THE_SAME_EXISTING_PULL_REQUEST_53_AFTER_FAILED_EXACT_HEAD_RUN_31634267437"
+        in delivery
+    )
+    assert "ALLOW_NO_OTHER_PUSH" in delivery
+    assert "FORBID_RERUN_31634267437" in delivery
+    assert "FORBID_SQUASH_REBASE_FORCE_PUSH_AND_BRANCH_DELETE" in delivery
+    assert "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED" in delivery
+    assert authorization["chronos_loop53_external_authority_boundary"] == (
+        "REQUIRE_WORKFLOW_IDS_319920551_327137040_327137044_329278452_"
+        "329420317_DISABLED_MANUALLY_BEFORE_CORRECTIVE_PUSH_IN_NEW_EXACT_HEAD_"
+        "CI_IMMEDIATELY_BEFORE_MERGE_AND_BEFORE_LIVE;ON_DRIFT_FAIL_AND_STOP_"
+        "NO_PUSH_NO_MERGE_NO_LIVE_PENDING_SEPARATE_OWNER_AUTHORITY"
     )
     mission = matrix["missions"]["CHRONOS_LOOP53"]
     assert mission["scale_ceiling"] == manifest["maximum_stage"]
@@ -233,6 +251,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         ".github/workflows/ci.yml",
         "configs/agents/agent-report-schema-v3.json",
         "configs/agents/mission-activation-matrix-v3.json",
+        "configs/data/p0-coverage-authority-matrix-snapshot-v1.json",
         "configs/execution/chronos-residual-defect-extermination-v1.json",
         "migrations/env.py",
         "reports/activation/chronos-end-to-end-live-path-certification-v1.json",
@@ -244,7 +263,10 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "scripts/chronos_neon_pure_readonly_preflight_v4.py",
         "scripts/chronos_production_bootstrap_v3.py",
         "scripts/run_chronos_dual_principal_ci_v2.py",
+        "scripts/run_p0_e2_capability_sample.py",
         "src/robin/chronos_alembic.py",
+        "src/robin/historical_deep/coverage_evidence.py",
+        "src/robin/historical_deep/e1b_canary.py",
         "src/robin/chronos_production.py",
         "src/robin/chronos_role_lifecycle.py",
         "tests/activation/fixtures/chronos_neon_live_contract_structures_v1.json",
@@ -258,29 +280,140 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "tests/activation/test_migration_path_neutralization.py",
         "tests/chronos/test_chronos_dual_principal_v2.py",
         "tests/chronos/test_chronos_migration_v2.py",
+        "tests/coverage/test_scale_pack_mapping_v2.py",
         "tests/council/test_robin_council_os_v3.py",
+        "tests/historical_deep/test_coverage_proof_export.py",
+        "tests/historical_deep/test_workflow_contracts.py",
         "tests/portability/test_chronos_portable_ci_contract.py",
     }
     assert set(mission["allowed_paths"]) == exact_loop53_paths
     assert all(not path.endswith("/") for path in mission["allowed_paths"])
+    tracked_changes = set(
+        subprocess.run(
+            [
+                "git",
+                "diff",
+                "--name-only",
+                "6140e09cb38b5fecee5da85882aa8a879dbce780",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+    )
+    untracked_changes = set(
+        subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+    )
+    assert tracked_changes | untracked_changes == exact_loop53_paths
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    historical_loop53_claim_ids = {
+    initial_loop53_claim_ids = {
         "GOV.AUTHORIZATION.CHRONOS_LOOP53.001",
         "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.001",
         "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
         "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.001",
         "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.001",
     }
-    current_loop53_claim_ids = {
+    exact_path_loop53_claim_ids = {
         "GOV.AUTHORIZATION.CHRONOS_LOOP53.002",
         "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.002",
         "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
         "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.002",
         "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
     }
-    assert historical_loop53_claim_ids | current_loop53_claim_ids <= set(claims)
+    correction_candidate_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.003",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.003",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.003",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.003",
+    }
+    redesign_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.003",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.004",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.004",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.004",
+    }
+    causal_order_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.003",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.005",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.005",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.005",
+    }
+    canonical_boundary_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.003",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.006",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.006",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.006",
+    }
+    current_loop53_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.004",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.007",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.007",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.007",
+    }
+    aligned_boundary_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.005",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.008",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.008",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.008",
+    }
+    current_observation_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.006",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.009",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.009",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.009",
+    }
+    final_review_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.006",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.010",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.009",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.010",
+    }
+    push_gate_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.006",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.011",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.010",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.011",
+    }
+    status_gate_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.006",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.012",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012",
+    }
+    assert (
+        initial_loop53_claim_ids
+        | exact_path_loop53_claim_ids
+        | correction_candidate_claim_ids
+        | redesign_claim_ids
+        | causal_order_claim_ids
+        | canonical_boundary_claim_ids
+        | current_loop53_claim_ids
+        | aligned_boundary_claim_ids
+        | current_observation_claim_ids
+        | final_review_claim_ids
+        | push_gate_claim_ids
+        | status_gate_claim_ids
+        <= set(claims)
+    )
     assert claims["GOV.AUTHORIZATION.COVERAGE.002"] == {
         **claims["GOV.AUTHORIZATION.COVERAGE.002"],
         "status": "SUPERSEDED",
@@ -313,6 +446,173 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     }.items():
         assert claims[old_claim_id]["status"] == "SUPERSEDED"
         assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.011": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.012"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.010": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.011": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.010": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.011"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.009": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.010"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.010": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.011"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.009": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.010"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.009": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.010"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.005": (
+            "GOV.AUTHORIZATION.CHRONOS_LOOP53.006"
+        ),
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.008": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.009"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.008": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.009"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.008": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.009"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.004": (
+            "GOV.AUTHORIZATION.CHRONOS_LOOP53.005"
+        ),
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.007": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.008"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.007": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.008"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.007": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.008"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.003": (
+            "GOV.AUTHORIZATION.CHRONOS_LOOP53.004"
+        ),
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.006": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.007"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.006": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.007"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.006": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.007"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.005": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.006"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.005": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.006"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.005": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.006"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.004": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.005"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.004": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.005"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.004": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.005"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.003": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.004"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.003": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.004"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.003": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.004"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.002": (
+            "GOV.AUTHORIZATION.CHRONOS_LOOP53.003"
+        ),
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.002": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.003"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.002": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.003"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.003"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.006"]["status"] == "PARTIAL"
+    assert claims["GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.009"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.010"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.011"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.012"][
+        "status"
+    ] == "PARTIAL"
+    assert claims["GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011"][
+        "status"
+    ] == "PARTIAL"
+    assert claims["GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012"][
+        "status"
+    ] == "PARTIAL"
+    snapshot = ROOT / "configs/data/p0-coverage-authority-matrix-snapshot-v1.json"
+    assert artifact_sha256(snapshot) == (
+        "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"
+    )
+    historical_resolver = (
+        ROOT / "src/robin/historical_deep/coverage_evidence.py"
+    ).read_text(encoding="utf-8")
+    assert "_historical_contract_hash_matches" in historical_resolver
+    assert "p0-coverage-authority-matrix-snapshot-v1.json" in historical_resolver
 
     ledger = [
         json.loads(line)
@@ -326,7 +626,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     )
     assert loop53_record["decision_id"] == "RCV3-20260812-127"
     assert loop53_record["record_type"] == "MISSION_AUTHORIZED"
-    assert set(loop53_record["proof"]) == historical_loop53_claim_ids
+    assert set(loop53_record["proof"]) == initial_loop53_claim_ids
     assert loop53_record["context"]["delivery_keys"] == {
         "platform": "DP5",
         "data": "DP6",
@@ -406,19 +706,30 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     )
     assert scope_correction["decision_id"] == "RCV3-20260812-132"
     assert scope_correction["record_type"] == "MISSION_EXACT_PATH_SCOPE_CORRECTION"
-    assert set(scope_correction["proof"]) == current_loop53_claim_ids
+    assert set(scope_correction["proof"]) == exact_path_loop53_claim_ids
     assert set(scope_correction["context"]["exact_allowed_paths"]) == (
         exact_loop53_paths
+        - {
+            "configs/data/p0-coverage-authority-matrix-snapshot-v1.json",
+            "src/robin/historical_deep/coverage_evidence.py",
+            "src/robin/historical_deep/e1b_canary.py",
+            "scripts/run_p0_e2_capability_sample.py",
+            "tests/coverage/test_scale_pack_mapping_v2.py",
+            "tests/historical_deep/test_coverage_proof_export.py",
+            "tests/historical_deep/test_workflow_contracts.py",
+        }
     )
     assert scope_correction["context"]["changed_path_count"] == 33
     assert scope_correction["context"]["outside_exact_allowlist"] == []
     assert scope_correction["context"]["prior_reviews_applicable"] is False
-    exact_path_reviews = ledger[-1]
+    exact_path_reviews = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-133"
+    )
     assert exact_path_reviews["decision_id"] == "RCV3-20260812-133"
     assert exact_path_reviews["record_type"] == (
         "EXACT_PATH_FROZEN_TRIPLE_REVIEW_ACCEPTED"
     )
-    assert set(exact_path_reviews["proof"]) == current_loop53_claim_ids
+    assert set(exact_path_reviews["proof"]) == exact_path_loop53_claim_ids
     assert exact_path_reviews["context"]["reviews"] == {
         "C4": {"p0": 0, "p1": 0, "score": 97, "verdict": "PASS"},
         "DP5": {"p0": 0, "p1": 0, "score": 97, "verdict": "PASS"},
@@ -427,6 +738,625 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     assert exact_path_reviews["context"]["red_team_answer"] == "YES"
     assert exact_path_reviews["context"]["changed_paths_equal_allowed"] is True
     assert exact_path_reviews["context"]["live_authorized_now"] is False
+    correction = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-134"
+    )
+    assert correction["decision_id"] == "RCV3-20260812-134"
+    assert correction["record_type"] == "FAILURE"
+    assert set(correction["proof"]) == correction_candidate_claim_ids
+    assert correction["context"]["failed_exact_head_run"] == {
+        "attempt": 1,
+        "head_sha": "42a78d4e1a17b3bf5b04f5f006dde1dad5e0c82a",
+        "rerun_performed": False,
+        "run_id": 31634267437,
+    }
+    assert correction["context"]["failed_contexts"] == [
+        "Historical Deep quality",
+        "Chronos exact workflow entrypoint",
+        "Chronos PostgreSQL profile superuser",
+        "Chronos PostgreSQL profile non_superuser_createrole",
+    ]
+    assert correction["context"]["changed_path_count"] == 38
+    assert correction["context"]["changed_paths_equal_allowed"] is True
+    assert correction["context"]["prior_reviews_applicable"] is False
+    assert correction["context"]["corrective_push_authorized"] == (
+        "EXACTLY_ONE_NON_FORCE_PUSH_TO_EXISTING_PR_53_AFTER_NEW_FROZEN_REVIEWS"
+    )
+    assert correction["context"]["live_workflow_dispatched"] is False
+    assert correction["context"]["migration_authorized"] is False
+    correction_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == correction["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in correction_edges} == set(
+        correction["proof"]
+    )
+    assert all(
+        edge["relation"] == "SUPPORTS" and edge["status"] == "RECORDED"
+        for edge in correction_edges
+    )
+    redesign = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-135"
+    )
+    assert redesign["record_type"] == "REDESIGN"
+    assert set(redesign["proof"]) == redesign_claim_ids
+    assert redesign["context"]["invalidates_snapshot_record"] == (
+        "RCV3-20260812-134"
+    )
+    assert redesign["context"]["added_defect_id"] == "CHR53-CI-008"
+    assert redesign["context"]["stage_reset"] == "E1"
+    assert redesign["context"]["valid_platform_topologies"] == [
+        "ZERO_EXACT_EDGE_ZERO_DESCENDANT",
+        "ONE_EXACT_ACTOR_EDGE_ONE_ACTOR_DESCENDANT",
+    ]
+    assert redesign["context"]["live_authorized_now"] is False
+    assert redesign["context"]["corrective_push_authorized_now"] is False
+    redesign_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == redesign["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in redesign_edges} == set(
+        redesign["proof"]
+    )
+    causal_order = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-136"
+    )
+    assert causal_order["record_type"] == "DECISION"
+    assert set(causal_order["proof"]) == causal_order_claim_ids
+    assert causal_order["context"]["added_defect_id"] == "CHR53-EVIDENCE-003"
+    assert causal_order["context"]["stage_order"] == [
+        "BOUNDED_LOCAL_PROOF_AND_FRESH_FROZEN_TRIPLE_REVIEW",
+        "ONE_CORRECTIVE_LOCAL_COMMIT_AND_NON_FORCE_PUSH_TO_EXISTING_PR_53",
+        "NEW_EXACT_HEAD_LINUX_CI_GREEN_INCLUDING_REAL_PG16_HOSTILE_TOPOLOGIES",
+        "MERGE_COMMIT",
+        "MERGED_MAIN_CI_AND_PAGES_GREEN_THEN_ACTIONS_QUIESCENT",
+        "EXACTLY_ONE_NEW_ATTEMPT_ONE_CONTROLLED_READONLY_DISPATCH",
+    ]
+    assert causal_order["context"]["current_push_authorized"] is False
+    assert causal_order["context"]["live_authorized_now"] is False
+    assert causal_order["context"]["migration_authorized"] is False
+    causal_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == causal_order["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in causal_edges} == set(
+        causal_order["proof"]
+    )
+    journal_veto = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-137"
+    )
+    assert journal_veto["record_type"] == "VETO"
+    assert journal_veto["decision"] == "PASS_AND_HOLD"
+    assert set(journal_veto["proof"]) == canonical_boundary_claim_ids
+    assert journal_veto["context"]["added_defect_id"] == "CHR53-GOV-006"
+    assert journal_veto["context"]["legacy_prefix"] == {
+        "classification": (
+            "IMMUTABLE_LEGACY_EVIDENCE_PREFIX_NONCONFORMING_TO_V3_1_ENUMS_"
+            "NON_AUTHORITATIVE_FOR_NEW_RUNTIME_DECISIONS"
+        ),
+        "decision_enum_deviations": 127,
+        "record_count": 129,
+        "record_type_enum_deviations": 33,
+        "tip_hash": (
+            "a882c44b09abba2c28c76411c52ea5e80abe9958dfb6e86a02242fef19ff344f"
+        ),
+        "tip_id": "RCV3-20260812-136",
+    }
+    assert journal_veto["context"]["canonical_suffix_start"] == (
+        "RCV3-20260812-137"
+    )
+    assert journal_veto["context"]["current_push_authorized"] is False
+    assert journal_veto["context"]["live_authorized_now"] is False
+    assert journal_veto["context"]["migration_authorized"] is False
+    allowed_record_types = {
+        "MISSION_AUTHORIZED",
+        "STAGE_STARTED",
+        "STAGE_FINISHED",
+        "DECISION",
+        "FAILURE",
+        "VETO",
+        "REDESIGN",
+    }
+    allowed_decisions = {
+        "PASS_AND_SCALE",
+        "PASS_AND_HOLD",
+        "FAIL_AND_REDESIGN",
+        "FAIL_AND_STOP",
+        "BLOCKED_EXTERNAL_ACTION",
+    }
+    boundary_index = ledger.index(journal_veto)
+    legacy_prefix = ledger[:boundary_index]
+    canonical_suffix = ledger[boundary_index:]
+    assert len(legacy_prefix) == 129
+    assert sum(
+        record["record_type"] not in allowed_record_types for record in legacy_prefix
+    ) == 33
+    assert sum(
+        record["decision"] not in allowed_decisions for record in legacy_prefix
+    ) == 127
+    assert all(
+        record["record_type"] in allowed_record_types for record in canonical_suffix
+    )
+    assert all(record["decision"] in allowed_decisions for record in canonical_suffix)
+
+    def rehash_mutation(field: str, value: str) -> dict[str, Any]:
+        mutated = {**journal_veto, field: value}
+        canonical = json.dumps(
+            {key: item for key, item in mutated.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        mutated["hash"] = hashlib.sha256(canonical).hexdigest()
+        return mutated
+
+    forbidden_type = rehash_mutation("record_type", "EVIDENCE_CORRECTION")
+    forbidden_decision = rehash_mutation("decision", "PASS_AND_HOLD. narrative")
+    assert forbidden_type["record_type"] not in allowed_record_types
+    assert forbidden_decision["decision"] not in allowed_decisions
+    journal_veto_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == journal_veto["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in journal_veto_edges} == set(
+        journal_veto["proof"]
+    )
+    consumer_veto = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-138"
+    )
+    assert consumer_veto["record_type"] == "VETO"
+    assert consumer_veto["decision"] == "PASS_AND_HOLD"
+    assert set(consumer_veto["proof"]) == current_loop53_claim_ids
+    assert consumer_veto["context"]["added_defect_ids"] == [
+        "CHR53-GOV-007",
+        "CHR53-EVIDENCE-004",
+    ]
+    assert consumer_veto["context"]["changed_path_count"] == 40
+    assert consumer_veto["context"]["file_scope_expanded"] is True
+    assert consumer_veto["context"]["file_scope_change"] == (
+        "38_TO_40_FOR_MINIMAL_DISCOVERED_P1_CORRECTION"
+    )
+    assert consumer_veto["context"]["external_effect_authority_expanded"] is False
+    assert consumer_veto["context"]["legacy_authority_consumers"] == {
+        "e1b": "DENY_NO_CANONICAL_SUFFIX_AUTHORITY_AT_CORRECTED_REVISION",
+        "e2": "DENY_NO_CANONICAL_SUFFIX_AUTHORITY_AT_CORRECTED_REVISION",
+        "replacement_authority_created": False,
+    }
+    assert consumer_veto["context"]["external_boundary"] == {
+        "disabled_workflow_ids": [
+            319920551,
+            327137040,
+            327137044,
+            329278452,
+            329420317,
+        ],
+        "expected_state": "disabled_manually",
+        "historical_refs_rewritten": False,
+        "observed_at": "2026-08-12T22:00:47Z",
+        "on_drift": (
+            "FAIL_AND_STOP_NO_PUSH_NO_MERGE_NO_LIVE_PENDING_SEPARATE_OWNER_"
+            "AUTHORITY"
+        ),
+        "revalidate": [
+            "BEFORE_CORRECTIVE_PUSH",
+            "IN_NEW_EXACT_HEAD_CI",
+            "IMMEDIATELY_BEFORE_MERGE",
+            "BEFORE_LIVE",
+        ],
+        "sanitized_observation_sha256": (
+            "f226731b04491264972a3777d3c60d2a6e174cecbf54854d050edecdd8e83803"
+        ),
+    }
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.007"][
+        "temporal_class"
+    ] == "CODE_AND_EXTERNAL_CONFIGURATION_AS_OF"
+    assert consumer_veto["context"]["current_push_authorized"] is False
+    assert consumer_veto["context"]["live_authorized_now"] is False
+    assert consumer_veto["context"]["migration_authorized"] is False
+    consumer_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == consumer_veto["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in consumer_edges} == set(
+        consumer_veto["proof"]
+    )
+    evidence_veto = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-139"
+    )
+    assert evidence_veto["record_type"] == "VETO"
+    assert evidence_veto["decision"] == "PASS_AND_HOLD"
+    assert set(evidence_veto["proof"]) == aligned_boundary_claim_ids
+    assert evidence_veto["context"]["added_defect_ids"] == [
+        "CHR53-EVIDENCE-005",
+        "CHR53-EVIDENCE-006",
+    ]
+    assert evidence_veto["context"]["invalidates_snapshot_record"] == (
+        "RCV3-20260812-138"
+    )
+    expected_workflow_ids = [
+        319920551,
+        327137040,
+        327137044,
+        329278452,
+        329420317,
+    ]
+    expected_checkpoints = [
+        "BEFORE_CORRECTIVE_PUSH",
+        "IN_NEW_EXACT_HEAD_CI",
+        "IMMEDIATELY_BEFORE_MERGE",
+        "BEFORE_LIVE",
+    ]
+    assert evidence_veto["context"]["external_boundary"] == {
+        "disabled_workflow_ids": expected_workflow_ids,
+        "expected_state": "disabled_manually",
+        "on_drift": (
+            "FAIL_AND_STOP_NO_PUSH_NO_MERGE_NO_LIVE_PENDING_SEPARATE_OWNER_"
+            "AUTHORITY"
+        ),
+        "revalidate": expected_checkpoints,
+    }
+    assert evidence_veto["context"]["current_push_authorized"] is False
+    assert evidence_veto["context"]["live_authorized_now"] is False
+    assert evidence_veto["context"]["migration_authorized"] is False
+    evidence_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == evidence_veto["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in evidence_edges} == set(
+        evidence_veto["proof"]
+    )
+    observation_veto = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-140"
+    )
+    assert observation_veto["record_type"] == "VETO"
+    assert observation_veto["decision"] == "PASS_AND_HOLD"
+    assert set(observation_veto["proof"]) == current_observation_claim_ids
+    assert observation_veto["context"]["added_defect_id"] == (
+        "CHR53-EVIDENCE-007"
+    )
+    assert observation_veto["context"]["invalidates_snapshot_record"] == (
+        "RCV3-20260812-139"
+    )
+    assert observation_veto["context"]["full_observation"] == {
+        "observed_at": "2026-08-12T22:00:47Z",
+        "sanitized_observation_sha256": (
+            "f226731b04491264972a3777d3c60d2a6e174cecbf54854d050edecdd8e83803"
+        ),
+        "preserved": True,
+    }
+    assert observation_veto["context"]["workflow_state_revalidation"] == {
+        "checked_at": "2026-08-12T22:37:31Z",
+        "sanitized_observation_sha256": (
+            "6d94da1c5bf52d0740732f5606711cbda3ee7b823f1e225729d1158c528eaf58"
+        ),
+        "disabled_workflow_ids": expected_workflow_ids,
+        "expected_state": "disabled_manually",
+    }
+    assert observation_veto["context"]["external_boundary_policy"] == {
+        "revalidate": expected_checkpoints,
+        "on_drift": (
+            "FAIL_AND_STOP_NO_PUSH_NO_MERGE_NO_LIVE_PENDING_SEPARATE_OWNER_"
+            "AUTHORITY"
+        ),
+    }
+    assert observation_veto["context"]["prior_observation_hash_preserved_in_"
+        "historical_lineage"] is True
+    assert observation_veto["context"]["current_observation_hash_recomputed"] is True
+    assert observation_veto["context"]["current_push_authorized"] is False
+    assert observation_veto["context"]["live_authorized_now"] is False
+    assert observation_veto["context"]["migration_authorized"] is False
+    observation_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == observation_veto["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in observation_edges} == set(
+        observation_veto["proof"]
+    )
+    final_reviews = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-141"
+    )
+    assert final_reviews["record_type"] == "DECISION"
+    assert final_reviews["decision"] == "PASS_AND_HOLD"
+    assert set(final_reviews["proof"]) == final_review_claim_ids
+    assert final_reviews["context"]["reviewed_snapshot"] == {
+        "aggregate_algorithm": (
+            "SHA256_CONCAT_SORTED_UTF8_PATH_NUL_RAW_FILE_SHA256_DIGEST"
+        ),
+        "aggregate_sha256": (
+            "69b7848a7cf8625b4c252aa7d9d5322c925dfe828488d85cab9097e536f389a8"
+        ),
+        "changed_path_count": 40,
+        "changed_paths_equal_allowed": True,
+        "staged_files": 0,
+        "ledger_tip": (
+            "a0b942c20bf316bb07d60210479e9f56223a35bd0531c691443d1a63c61c1619"
+        ),
+        "graph_counts": {"claims": 169, "decision_nodes": 133, "edges": 369},
+    }
+    assert final_reviews["context"]["reviews"] == {
+        "DP5": {"verdict": "PASS", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+        "DP6": {"verdict": "PASS", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+        "C4": {
+            "verdict": "PASS_AND_HOLD",
+            "score": 97,
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+        },
+    }
+    assert final_reviews["context"]["red_team_answer"] == "YES"
+    assert final_reviews["context"]["pre_push_external_boundary"] == {
+        "checked_at": "2026-08-12T23:15:39Z",
+        "workflow_ids": expected_workflow_ids,
+        "expected_state": "disabled_manually",
+        "result": "PASS",
+    }
+    assert final_reviews["context"]["current_push_authorized"] is True
+    assert final_reviews["context"]["merge_authorized_now"] is False
+    assert final_reviews["context"]["live_authorized_now"] is False
+    assert final_reviews["context"]["migration_authorized"] is False
+    final_review_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == final_reviews["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in final_review_edges} == set(
+        final_reviews["proof"]
+    )
+    push_gate_correction = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-142"
+    )
+    assert push_gate_correction["record_type"] == "VETO"
+    assert push_gate_correction["decision"] == "PASS_AND_HOLD"
+    assert set(push_gate_correction["proof"]) == push_gate_claim_ids
+    assert push_gate_correction["context"]["added_defect_id"] == (
+        "CHR53-EVIDENCE-008"
+    )
+    assert push_gate_correction["context"]["invalidates_snapshot_record"] == (
+        "RCV3-20260812-141"
+    )
+    push_gate_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == push_gate_correction["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in push_gate_edges} == set(
+        push_gate_correction["proof"]
+    )
+    status_gate_correction = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260812-143"
+    )
+    assert status_gate_correction["record_type"] == "VETO"
+    assert status_gate_correction["decision"] == "PASS_AND_HOLD"
+    assert set(status_gate_correction["proof"]) == status_gate_claim_ids
+    assert status_gate_correction["context"]["added_defect_id"] == (
+        "CHR53-EVIDENCE-009"
+    )
+    assert status_gate_correction["context"]["invalidates_snapshot_record"] == (
+        "RCV3-20260812-142"
+    )
+    status_gate_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == status_gate_correction["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in status_gate_edges} == set(
+        status_gate_correction["proof"]
+    )
+    certification = load_json(
+        "reports/activation/chronos-end-to-end-live-path-certification-v1.json"
+    )
+    inventory = load_json(
+        "reports/activation/chronos-residual-defect-inventory-v1.json"
+    )
+    assert certification["claim_id"] == (
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012"
+    )
+    assert certification["inventory_claim_id"] == (
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011"
+    )
+    assert certification["reviews"] == {
+        "DP5_PLATFORM_SRE": {
+            "verdict": "PASS",
+            "score": 98,
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+        },
+        "DP6_EVIDENCE_DBA": {
+            "verdict": "PASS",
+            "score": 98,
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+        },
+        "C4_SEC_RED": {
+            "verdict": "PASS_AND_HOLD",
+            "score": 97,
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+        },
+        "minimum_required_score": 95,
+        "red_team_question": (
+            "If the next live fails, is it likely to reveal a genuinely unknown "
+            "external property rather than an obvious offline-detectable defect?"
+        ),
+        "answer": "YES",
+    }
+    assert certification["corrective_delivery_gate_order"][
+        "current_push_authorized"
+    ] is True
+    assert certification["corrective_delivery_gate_order"]["current_stage"] == (
+        "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN"
+    )
+    assert certification["certification_status"] == (
+        "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI"
+    )
+    assert certification["corrective_delivery_gate_order"][
+        "pre_push_boundary_receipt"
+    ] == {
+        "decision_id": "RCV3-20260812-141",
+        "checked_at": "2026-08-12T23:15:39Z",
+        "workflow_ids": expected_workflow_ids,
+        "expected_state": "disabled_manually",
+        "result": "PASS",
+    }
+    boundary = certification["external_contracts"][
+        "historical_authority_workflow_boundary"
+    ]
+    assert [item["workflow_id"] for item in boundary["disabled_workflows"]] == (
+        expected_workflow_ids
+    )
+    assert boundary["observed_at"] == "2026-08-12T22:00:47Z"
+    canonical_boundary = json.dumps(
+        {
+            key: value
+            for key, value in boundary.items()
+            if key != "sanitized_observation_sha256"
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert hashlib.sha256(canonical_boundary).hexdigest() == (
+        boundary["sanitized_observation_sha256"]
+    )
+    assert boundary["sanitized_observation_sha256"] == (
+        "f226731b04491264972a3777d3c60d2a6e174cecbf54854d050edecdd8e83803"
+    )
+    policy = certification["external_contracts"][
+        "historical_authority_workflow_policy"
+    ]
+    assert policy == {
+        "required_workflow_ids": expected_workflow_ids,
+        "required_state": "disabled_manually",
+        "revalidate": expected_checkpoints,
+        "on_state_drift": evidence_veto["context"]["external_boundary"][
+            "on_drift"
+        ],
+        "authority_matrix_gate": (
+            "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED"
+        ),
+    }
+    revalidation = certification["external_contracts"][
+        "historical_authority_workflow_state_revalidation"
+    ]
+    assert revalidation["checked_at"] == "2026-08-12T22:37:31Z"
+    assert revalidation["repository"] == "dddur75/robin-stades-ng"
+    assert [item["workflow_id"] for item in revalidation["workflows"]] == (
+        expected_workflow_ids
+    )
+    assert all(item["state"] == "disabled_manually" for item in revalidation["workflows"])
+    canonical_revalidation = json.dumps(
+        {
+            key: value
+            for key, value in revalidation.items()
+            if key != "sanitized_observation_sha256"
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert hashlib.sha256(canonical_revalidation).hexdigest() == (
+        revalidation["sanitized_observation_sha256"]
+    )
+    assert revalidation["sanitized_observation_sha256"] == (
+        "6d94da1c5bf52d0740732f5606711cbda3ee7b823f1e225729d1158c528eaf58"
+    )
+    assert all(
+        boundary[key]
+        for key in (
+            "revalidate_before_corrective_push",
+            "revalidate_in_new_exact_head_ci",
+            "revalidate_immediately_before_merge",
+            "revalidate_before_live",
+        )
+    )
+    assert certification["governance"]["legacy_authority_consumers"][
+        "authority_matrix_gate"
+    ] == "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED"
+    assert certification["corrective_delivery_gate_order"][
+        "pre_push_external_boundary"
+    ] == (
+        "REVALIDATE_WORKFLOW_IDS_319920551_327137040_327137044_329278452_"
+        "329420317_DISABLED_MANUALLY_OR_ABORT"
+    )
+    assert certification["governance"]["legacy_authority_consumers"][
+        "historical_workflow_state_precondition"
+    ] == (
+        "WORKFLOW_IDS_319920551_327137040_327137044_329278452_329420317_"
+        "DISABLED_MANUALLY_AT_OBSERVATION_AND_REVALIDATED_BEFORE_CORRECTIVE_"
+        "PUSH_IN_NEW_EXACT_HEAD_CI_IMMEDIATELY_BEFORE_MERGE_AND_BEFORE_LIVE"
+    )
+    boundary_defect = next(
+        item for item in inventory["defects"] if item["defect_id"] == "CHR53-EVIDENCE-004"
+    )
+    assert boundary_defect["external_effect_before_failure"] == (
+        "zero in the observed state because workflow IDs 319920551, 327137040, "
+        "327137044, 329278452 and 329420317 are disabled_manually; re-enabling "
+        "an old workflow would restore its historical bounded R2-read path"
+    )
+    assert boundary_defect["fix_required"] == (
+        "scope consumer revocation to the corrected code revision, preserve "
+        "historical refs, bind the exact five disabled workflow IDs and "
+        "unprotected ref observations, and require fail-closed revalidation "
+        "before the corrective push, in new exact-head CI, immediately before "
+        "merge and before any Chronos live authorization"
+    )
+    assert boundary_defect["test_added"] == (
+        "Council binds CODE_AND_EXTERNAL_CONFIGURATION_AS_OF scope, the exact "
+        "five workflow IDs/states, all four revalidation checkpoints, historical "
+        "ref non-rewrite, zero external-effect expansion and abort-on-drift "
+        "preconditions"
+    )
+    defect = next(
+        item for item in inventory["defects"] if item["defect_id"] == "CHR53-EVIDENCE-005"
+    )
+    assert defect["severity"] == "P2"
+    assert defect["status"] == "FIXED"
+    metric_defect = next(
+        item for item in inventory["defects"] if item["defect_id"] == "CHR53-EVIDENCE-006"
+    )
+    assert metric_defect["severity"] == "P2"
+    assert metric_defect["status"] == "FIXED"
+    hash_defect = next(
+        item for item in inventory["defects"] if item["defect_id"] == "CHR53-EVIDENCE-007"
+    )
+    assert hash_defect["severity"] == "P1"
+    assert hash_defect["status"] == "FIXED"
+    stage_defect = next(
+        item for item in inventory["defects"] if item["defect_id"] == "CHR53-EVIDENCE-008"
+    )
+    assert stage_defect["severity"] == "P2"
+    assert stage_defect["live_reachable"] is False
+    assert stage_defect["status"] == "FIXED"
+    status_defect = next(
+        item for item in inventory["defects"] if item["defect_id"] == "CHR53-EVIDENCE-009"
+    )
+    assert status_defect["severity"] == "P2"
+    assert status_defect["live_reachable"] is False
+    assert status_defect["status"] == "FIXED"
+    production_sources = {
+        path
+        for path in exact_loop53_paths
+        if path.endswith(".py") and not path.startswith("tests/")
+    }
+    assert len(production_sources) == 12
+    assert certification["local_validation"]["mypy_strict"] == (
+        "PASS_STRICT_ALL_TWELVE_CHANGED_PRODUCTION_SOURCES"
+    )
+    assert inventory["counts"]["discovered"] == 93
+    assert inventory["counts"]["fixed"] == 92
+    assert inventory["counts"]["p1_discovered"] == 70
+    assert inventory["counts"]["p2_discovered"] == 11
 
 
 def test_scale_policy_has_stop_rules_and_strict_job_ceiling() -> None:

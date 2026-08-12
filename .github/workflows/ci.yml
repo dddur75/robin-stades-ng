@@ -30,10 +30,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
           cache: pip
@@ -310,23 +311,38 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install --no-deps -e .
       - name: Exercise the exact bounded module and guard commands
-        shell: bash
-        env:
-          GITHUB_REPOSITORY: dddur75/robin-stades-ng
-          GITHUB_REF: refs/heads/main
-          GITHUB_SHA: 0000000000000000000000000000000000000000
-          GITHUB_RUN_ATTEMPT: "1"
-          GITHUB_RUN_ID: malformed-offline-id
         run: |
-          mkdir -p .chronos/reports
-          timeout --signal=TERM --kill-after=5s 120s \
-            python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1 \
-            --report .chronos/reports/exact-entrypoint.json
-          python -m scripts.chronos_live_path_artifact_guard_v1 \
-            --report .chronos/reports/exact-entrypoint.json \
-            --schema chronos-neon-controlled-idle-wake-readonly-v1 \
-            --live-outcome success
-          python -c "import json,pathlib; d=json.loads(pathlib.Path('.chronos/reports/exact-entrypoint.json').read_text()); assert d['verdict']=='CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED'; assert d['failed_gate']=='invalid:GITHUB_RUN_ID'"
+          python -m pytest -q \
+            tests/activation/test_chronos_end_to_end_live_path_v1.py::test_exact_module_command_with_malformed_run_id_still_writes_report
+
+  historical-authority-workflows-disabled:
+    name: "Historical Authority Workflows Disabled"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Refuser toute ancienne route R2 reactivable
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_disabled() {
+            local workflow_id="$1"
+            local expected_path="$2"
+            local observed
+            observed="$(gh api --method GET \
+              "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}" \
+              --jq '[.id,.path,.state] | @tsv')"
+            test "${observed}" = "${workflow_id}"$'\t'"${expected_path}"$'\t'disabled_manually
+          }
+          assert_disabled 319920551 .github/workflows/historical-backfill.yml
+          assert_disabled 327137040 .github/workflows/79-historical-deep-night-controller.yml
+          assert_disabled 327137044 .github/workflows/81-historical-deep-coverage-proof-export.yml
+          assert_disabled 329278452 .github/workflows/82-p0-e1b-five-league-canary.yml
+          assert_disabled 329420317 .github/workflows/83-p0-e2-capability-sample.yml
 
   tests:
     name: tests
@@ -336,6 +352,7 @@ jobs:
       - chronos-end-to-end-live-path-replay
       - chronos-residual-fault-matrix
       - chronos-exact-workflow-entrypoint
+      - historical-authority-workflows-disabled
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -361,12 +378,14 @@ jobs:
           E2E_LIVE_PATH_RESULT: ${{ needs.chronos-end-to-end-live-path-replay.result }}
           RESIDUAL_FAULT_MATRIX_RESULT: ${{ needs.chronos-residual-fault-matrix.result }}
           EXACT_WORKFLOW_ENTRYPOINT_RESULT: ${{ needs.chronos-exact-workflow-entrypoint.result }}
+          HISTORICAL_AUTHORITY_BOUNDARY_RESULT: ${{ needs.historical-authority-workflows-disabled.result }}
         run: |
           test "$FROZEN_EVIDENCE_RESULT" = "success"
           test "$CHRONOS_PROFILES_RESULT" = "success"
           test "$E2E_LIVE_PATH_RESULT" = "success"
           test "$RESIDUAL_FAULT_MATRIX_RESULT" = "success"
           test "$EXACT_WORKFLOW_ENTRYPOINT_RESULT" = "success"
+          test "$HISTORICAL_AUTHORITY_BOUNDARY_RESULT" = "success"
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0

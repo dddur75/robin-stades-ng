@@ -343,6 +343,156 @@ def _assert_neon_platform_acl_shared_member_rejected(
                 )
 
 
+def _assert_neon_platform_lifecycle_audit_rejects_descendants(
+    superuser_url: str,
+    *,
+    audited_connection: psycopg.Connection[Any],
+    baseline: RoleEdgeAudit,
+) -> None:
+    """Execute the lifecycle audit against direct and transitive hostile peers."""
+
+    peer_role = "chronos_ci_hostile_lifecycle_peer_" + uuid.uuid4().hex[:12]
+    with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
+        with ClientCursor(connection) as cursor:
+            cursor.execute(
+                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(
+                    sql.Identifier(peer_role)
+                )
+            )
+    def run_audit() -> RoleEdgeAudit:
+        return audit_role_edges(
+            audited_connection,
+            phase=baseline.phase,
+            bootstrap_owner=baseline.bootstrap_owner,
+            lifecycle_admin=baseline.lifecycle_admin,
+            executor_role=baseline.executor_role,
+            migrator_role=baseline.migrator_role,
+            pinned_system_grantor=baseline.bootstrap_system_grantor,
+        )
+
+    try:
+        for protected_role in ("neon_superuser", baseline.lifecycle_admin):
+            with psycopg.connect(
+                _psycopg_url(superuser_url), connect_timeout=10
+            ) as connection:
+                with ClientCursor(connection) as cursor:
+                    cursor.execute(
+                        sql.SQL("GRANT {} TO {}").format(
+                            sql.Identifier(protected_role),
+                            sql.Identifier(peer_role),
+                        )
+                    )
+            try:
+                run_audit()
+            except ChronosProductionError as error:
+                if str(error) != "CHRONOS_ROLE_EDGE_AUDIT_FAILED":
+                    raise
+            else:
+                raise RuntimeError(
+                    "CHRONOS_CI_NEON_PLATFORM_HOSTILE_DESCENDANT_ACCEPTED"
+                )
+            finally:
+                with psycopg.connect(
+                    _psycopg_url(superuser_url), connect_timeout=10
+                ) as connection:
+                    with ClientCursor(connection) as cursor:
+                        cursor.execute(
+                            sql.SQL("REVOKE {} FROM {}").format(
+                                sql.Identifier(protected_role),
+                                sql.Identifier(peer_role),
+                            )
+                        )
+    finally:
+        with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
+            with ClientCursor(connection) as cursor:
+                for protected_role in ("neon_superuser", baseline.lifecycle_admin):
+                    cursor.execute(
+                        sql.SQL("REVOKE {} FROM {}").format(
+                            sql.Identifier(protected_role),
+                            sql.Identifier(peer_role),
+                        )
+                    )
+                cursor.execute(
+                    sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role))
+                )
+    recovered = run_audit()
+    if (
+        recovered.neon_platform_edge_count != 1
+        or recovered.neon_platform_descendant_count != 1
+    ):
+        raise RuntimeError("CHRONOS_CI_NEON_PLATFORM_AUDIT_DID_NOT_RECOVER")
+
+
+def _assert_neon_platform_lifecycle_audit_rejects_orphans(
+    superuser_url: str,
+    *,
+    audited_connection: psycopg.Connection[Any],
+    baseline: RoleEdgeAudit,
+) -> None:
+    """Reject a platform descendant when the canonical actor edge is absent."""
+
+    peer_role = "chronos_ci_hostile_platform_orphan_" + uuid.uuid4().hex[:12]
+
+    def run_audit() -> RoleEdgeAudit:
+        return audit_role_edges(
+            audited_connection,
+            phase=baseline.phase,
+            bootstrap_owner=baseline.bootstrap_owner,
+            lifecycle_admin=baseline.lifecycle_admin,
+            executor_role=baseline.executor_role,
+            migrator_role=baseline.migrator_role,
+            pinned_system_grantor=baseline.bootstrap_system_grantor,
+        )
+
+    with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
+        with ClientCursor(connection) as cursor:
+            cursor.execute(
+                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(
+                    sql.Identifier(peer_role)
+                )
+            )
+            cursor.execute(
+                sql.SQL("REVOKE neon_superuser FROM {}").format(
+                    sql.Identifier(baseline.lifecycle_admin)
+                )
+            )
+            cursor.execute(
+                sql.SQL("GRANT neon_superuser TO {}").format(
+                    sql.Identifier(peer_role)
+                )
+            )
+    try:
+        try:
+            run_audit()
+        except ChronosProductionError as error:
+            if str(error) != "CHRONOS_ROLE_EDGE_AUDIT_FAILED":
+                raise
+        else:
+            raise RuntimeError("CHRONOS_CI_NEON_PLATFORM_ORPHAN_DESCENDANT_ACCEPTED")
+    finally:
+        with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
+            with ClientCursor(connection) as cursor:
+                cursor.execute(
+                    sql.SQL("REVOKE neon_superuser FROM {}").format(
+                        sql.Identifier(peer_role)
+                    )
+                )
+                cursor.execute(
+                    sql.SQL("GRANT neon_superuser TO {}").format(
+                        sql.Identifier(baseline.lifecycle_admin)
+                    )
+                )
+                cursor.execute(
+                    sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role))
+                )
+    recovered = run_audit()
+    if (
+        recovered.neon_platform_edge_count != 1
+        or recovered.neon_platform_descendant_count != 1
+    ):
+        raise RuntimeError("CHRONOS_CI_NEON_PLATFORM_AUDIT_DID_NOT_RECOVER")
+
+
 def _assert_global_writer_rejected(
     superuser_url: str,
     *,
@@ -1702,6 +1852,21 @@ def main() -> None:
     assert_executor_cannot_create_role(executor, probe_role="chronos_executor_pre_set_probe_2")
     set_permanent_bootstrap_authority(executor)
     groups_audit = provision_chronos_group_roles(executor, migrator_role=MIGRATOR_ROLE)
+    if (
+        groups_audit.neon_platform_edge_count != 1
+        or groups_audit.neon_platform_descendant_count != 1
+    ):
+        raise RuntimeError("CHRONOS_CI_NEON_PLATFORM_EDGE_NOT_PROVEN")
+    _assert_neon_platform_lifecycle_audit_rejects_descendants(
+        superuser_url,
+        audited_connection=executor,
+        baseline=groups_audit,
+    )
+    _assert_neon_platform_lifecycle_audit_rejects_orphans(
+        superuser_url,
+        audited_connection=executor,
+        baseline=groups_audit,
+    )
     migrator_password = secrets.token_urlsafe(48)
     executor_passwords.append(migrator_password)
     migrator_audit = provision_migrator(
@@ -1844,6 +2009,8 @@ def main() -> None:
         passwords=executor_passwords,
         lifecycle_admin=lease.lifecycle_admin,
     )
+    negative_tests["neon_platform_lifecycle_hostile_descendants"] = "PASS"
+    negative_tests["neon_platform_lifecycle_orphan_descendant"] = "PASS"
     non_superuser_terminal_audit = "NOT_APPLICABLE"
     if profile == PROFILE_NON_SUPERUSER:
         with psycopg.connect(admin_url, connect_timeout=10) as lifecycle_admin_connection:

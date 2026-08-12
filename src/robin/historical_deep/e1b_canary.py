@@ -10,6 +10,8 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from robin.historical_deep.coverage_evidence import canonical_journal_suffix
+
 ALLOWED_STATUSES = {
     "E1B_MEASURED",
     "E1B_MEASURED_PARTIAL",
@@ -181,17 +183,14 @@ def validate_contracts(root: Path) -> tuple[Mapping[str, Any], Mapping[str, Any]
 
 
 def require_selection_ready(root: Path, selection_hash: str) -> None:
-    records = [
-        mapping(json.loads(line), "E1B_LEDGER")
-        for line in (root / "reports/council/decision-ledger.jsonl").read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
     matches = []
-    for record in records:
+    for record in canonical_journal_suffix(root):
         context = record.get("context")
         if (
-            "E1B_SELECTION_READY" in str(record.get("decision"))
+            record.get("record_type") == "DECISION"
+            and record.get("decision") == "PASS_AND_SCALE"
             and isinstance(context, Mapping)
+            and context.get("selection_state") == "E1B_SELECTION_READY"
             and context.get("selection_sha256") == selection_hash
         ):
             matches.append(record)

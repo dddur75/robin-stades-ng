@@ -11,7 +11,10 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from robin.historical_deep.coverage_evidence import PinnedInventoryReader
+from robin.historical_deep.coverage_evidence import (
+    PinnedInventoryReader,
+    canonical_journal_suffix,
+)
 from robin.historical_deep.e2_sample import (
     REPORT_FILENAMES,
     build_reports,
@@ -59,19 +62,32 @@ def _safety(environment: Mapping[str, str]) -> None:
 
 
 def _require_ready(root: Path, selection_hash: str) -> None:
-    records = [
-        mapping(json.loads(line), "E2_LEDGER_RECORD")
-        for line in (root / "reports/council/decision-ledger.jsonl").read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
     ready = [
         record
-        for record in records
-        if "E2_SELECTION_READY" in str(record.get("decision", ""))
-        and mapping(record.get("context", {}), "E2_DECISION_CONTEXT").get("selection_hash") == selection_hash
+        for record in canonical_journal_suffix(root)
+        if record.get("record_type") == "DECISION"
+        and record.get("decision") == "PASS_AND_SCALE"
+        and mapping(record.get("context", {}), "E2_DECISION_CONTEXT").get(
+            "selection_state"
+        )
+        == "E2_SELECTION_READY"
+        and mapping(record.get("context", {}), "E2_DECISION_CONTEXT").get(
+            "selection_hash"
+        )
+        == selection_hash
     ]
     if not ready:
         raise RuntimeError("E2_SELECTION_DECISION_MISSING")
+    if len(ready) != 1:
+        raise RuntimeError("E2_SELECTION_DECISION_NOT_UNIQUE")
+    reviewers = set(
+        sequence(
+            mapping(ready[0]["context"], "E2_DECISION_CONTEXT")["reviewed_by"],
+            "E2_REVIEWERS",
+        )
+    )
+    if not {"DP6", "C2", "DP5"} <= reviewers:
+        raise RuntimeError("E2_SELECTION_REVIEW_KEYS_MISSING")
 
 
 def _validate(root: Path, require_decision: bool) -> tuple[Mapping[str, Any], Mapping[str, Any]]:

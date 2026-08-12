@@ -662,8 +662,16 @@ def test_ci_has_an_isolated_strict_historical_deep_gate() -> None:
     assert job["permissions"] == {"contents": "read"}
     assert int(str(job["timeout-minutes"])) <= 20
     steps = _steps(job)
-    checkout = next(step for step in steps if step.get("uses") == "actions/checkout@v4")
-    assert _mapping(checkout["with"])["persist-credentials"] is False
+    checkout = next(
+        step
+        for step in steps
+        if step.get("uses")
+        == "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+    )
+    assert _mapping(checkout["with"]) == {
+        "persist-credentials": False,
+        "ref": "${{ github.event.pull_request.head.sha || github.sha }}",
+    }
     commands = "\n".join(str(step.get("run", "")) for step in steps)
     required_commands = (
         "python -m pytest -q tests/historical_deep",

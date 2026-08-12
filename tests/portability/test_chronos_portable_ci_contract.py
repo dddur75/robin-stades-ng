@@ -35,6 +35,31 @@ def test_only_canonical_workflow_publishes_required_contexts() -> None:
     assert not (REQUIRED_CONTEXTS & specialized_names)
     assert "tests (${{ matrix.admin-profile }})" in specialized_names
 
+    historical = canonical["jobs"]["historical-deep-quality"]  # type: ignore[index]
+    historical_checkout = historical["steps"][0]  # type: ignore[index]
+    assert historical_checkout["uses"] == (
+        "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+    )
+    assert historical_checkout["with"] == {
+        "persist-credentials": False,
+        "ref": "${{ github.event.pull_request.head.sha || github.sha }}",
+    }
+    historical_commands = "\n".join(
+        str(step.get("run", "")) for step in historical["steps"]  # type: ignore[index]
+    )
+    assert "git checkout" not in historical_commands
+
+    exact_entrypoint = canonical["jobs"]["chronos-exact-workflow-entrypoint"]  # type: ignore[index]
+    exact_commands = "\n".join(
+        str(step.get("run", ""))
+        for step in exact_entrypoint["steps"]  # type: ignore[index]
+    )
+    assert (
+        "test_exact_module_command_with_malformed_run_id_still_writes_report"
+        in exact_commands
+    )
+    assert all("env" not in step for step in exact_entrypoint["steps"])  # type: ignore[index]
+
 
 def test_windows_producer_precedes_linux_consumers() -> None:
     jobs = load("ci.yml")["jobs"]  # type: ignore[index]
@@ -47,6 +72,7 @@ def test_windows_producer_precedes_linux_consumers() -> None:
         "chronos-end-to-end-live-path-replay",
         "chronos-residual-fault-matrix",
         "chronos-exact-workflow-entrypoint",
+        "historical-authority-workflows-disabled",
     }
     assert set(jobs["visual-regression"]["needs"]) == {  # type: ignore[index]
         "frozen-evidence-windows",
@@ -76,7 +102,25 @@ def test_exact_tests_gate_is_fail_closed_on_every_prerequisite() -> None:
     assert "needs.chronos-end-to-end-live-path-replay.result" in serialized
     assert "needs.chronos-residual-fault-matrix.result" in serialized
     assert "needs.chronos-exact-workflow-entrypoint.result" in serialized
-    assert serialized.count('= "success"') == 5
+    assert "needs.historical-authority-workflows-disabled.result" in serialized
+    assert serialized.count('= "success"') == 6
+
+
+def test_historical_authority_workflow_boundary_is_exact_and_fail_closed() -> None:
+    job = load("ci.yml")["jobs"]["historical-authority-workflows-disabled"]  # type: ignore[index]
+    assert job["permissions"] == {"actions": "read", "contents": "read"}
+    serialized = yaml.safe_dump(job)
+    assert "disabled_manually" in serialized
+    commands = "\n".join(str(step.get("run", "")) for step in job["steps"])  # type: ignore[index]
+    for workflow_id, path in {
+        319920551: ".github/workflows/historical-backfill.yml",
+        327137040: ".github/workflows/79-historical-deep-night-controller.yml",
+        327137044: ".github/workflows/81-historical-deep-coverage-proof-export.yml",
+        329278452: ".github/workflows/82-p0-e1b-five-league-canary.yml",
+        329420317: ".github/workflows/83-p0-e2-capability-sample.yml",
+    }.items():
+        assert f"assert_disabled {workflow_id} {path}" in commands
+    assert "actions/workflows/${workflow_id}" in commands
 
 
 def test_specialized_profiles_are_reusable_or_manual_only() -> None:
@@ -99,7 +143,12 @@ def assert_external_actions_are_sha_pinned(value: object) -> None:
 
 def test_cleanroom_workflow_actions_are_sha_pinned() -> None:
     canonical_jobs = load("ci.yml")["jobs"]  # type: ignore[index]
-    for job_name in ("frozen-evidence-windows", "tests", "visual-regression"):
+    for job_name in (
+        "historical-deep-quality",
+        "frozen-evidence-windows",
+        "tests",
+        "visual-regression",
+    ):
         assert_external_actions_are_sha_pinned(canonical_jobs[job_name])  # type: ignore[index]
     assert_external_actions_are_sha_pinned(load("chronos-bootstrap-ci-v3.yml"))
     assert_external_actions_are_sha_pinned(load("chronos-provider-free-canary-v3.yml"))

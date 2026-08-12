@@ -1,13 +1,13 @@
 {
   "schema_version": "chronos-end-to-end-live-path-certification-v1",
-  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
-  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.002",
-  "observed_at": "2026-08-12T18:20:54Z",
+  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012",
+  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011",
+  "observed_at": "2026-08-12T23:19:30Z",
   "repository": "dddur75/robin-stades-ng",
   "base_main_sha": "6140e09cb38b5fecee5da85882aa8a879dbce780",
   "branch": "codex/chronos-residual-defect-extermination-v1",
   "scope": "OFFLINE_CERTIFICATION_BEFORE_ONE_NEW_CONTROLLED_LIVE",
-  "certification_status": "PASS_OFFLINE_FROZEN_EXACT_PATH_TRIPLE_REVIEW",
+  "certification_status": "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI",
   "live_path_call_graph": [
     {
       "component": "GitHub workflow",
@@ -67,7 +67,7 @@
       "external_effect": "eighteen explicit statements, fifteen reads, zero writes, explicit rollback",
       "failure_modes": ["session contract", "wrong target", "unsafe object", "revision", "authority", "remnants"],
       "sanitized_evidence_emitted": true,
-      "tests_covering_it": ["real PG16 eighteen-statement replay for superuser and CREATEROLE profiles", "canonical Neon platform ACL and recursive hostile authority rejection", "fifteen independent noncanonical catalog mutations", "every-ordinal fault injection", "catalog semantics review"]
+      "tests_covering_it": ["real PG16 eighteen-statement replay for superuser and CREATEROLE profiles", "canonical Neon platform ACL plus exact provider edge and recursive hostile authority rejection", "fifteen independent noncanonical catalog mutations", "every-ordinal fault injection", "catalog semantics review"]
     },
     {
       "component": "report and artifact guard",
@@ -97,7 +97,7 @@
     {"stage": "READONLY", "status": "PASS", "proof": "autocommit startup, first explicit BEGIN READ ONLY, session checks and explicit rollback"},
     {"stage": "SSL", "status": "PASS", "proof": "secure URI contract plus pg_stat_ssl=true"},
     {"stage": "REVISION", "status": "PASS", "proof": "locked exact canonical public.alembic_version with one row 0013_historical_evidence_index, exact storage/history fields and no extension dependency"},
-    {"stage": "AUTHORITY", "status": "PASS", "proof": "catalog visibility, role capabilities, exclusive protected-role memberships and direct grantor-compatible ACL proof including constrained Neon platform ACL"},
+    {"stage": "AUTHORITY", "status": "PASS", "proof": "catalog visibility, role capabilities, exclusive protected-role memberships, one optional exact Neon actor edge and direct grantor-compatible ACL proof"},
     {"stage": "RECOVERY", "status": "PASS", "proof": "owner-wide hard capacity, exact target count, retention and bill-free allowance proved separately"},
     {"stage": "REPORT", "status": "PASS", "proof": "closed GO/NO-GO variants, partial PostgreSQL evidence, exact or conservative Neon/PostgreSQL counters and no raw identity"},
     {"stage": "ARTIFACT", "status": "PASS", "proof": "duplicate-key-safe guard, atomic fallback and exact-file guarded upload"}
@@ -150,15 +150,54 @@
   },
   "fault_matrix": {
     "status": "PASS",
-    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
+    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.009",
     "exact_test_file": "tests/activation/test_chronos_end_to_end_live_path_v1.py",
     "workflow_command_result": "364 passed, 1 skipped on Windows for the exact three-file workflow command; GNU timeout case delegated to exact-head Linux CI",
-    "dual_principal_command_result": "15 passed in the separate dual-principal matrix",
-    "domain_regression_result": "481 passed, 1 skipped across the exact eight-file bounded Chronos activation, migration, dual-principal and portability matrix",
+    "dual_principal_command_result": "16 passed in the separate dual-principal matrix; exact-head PG16 profiles additionally execute actor-plus-peer and actor-absent orphan-peer lifecycle-audit rejection, then exact recovery",
+    "domain_regression_result": "483 passed, 1 skipped across the exact eight-file bounded Chronos activation, migration, dual-principal and portability matrix",
+    "historical_deep_command_result": "212 passed with the immutable authority snapshot, strict canonical suffix resolver and no provider access",
+    "legacy_authority_consumer_command_result": "35 passed across E1B and E2 contracts; combined Historical Deep, E1B and E2 run 247 passed",
     "fault_scenarios_collected": 246,
     "fault_scenarios_passed_locally": 245,
     "fault_scenarios_linux_ci_only": 1,
     "linux_timeout_test_required_in_exact_head_ci": true
+  },
+  "exact_head_ci_history": {
+    "failed_run_id": 31634267437,
+    "failed_job_attempt": 1,
+    "head_sha": "42a78d4e1a17b3bf5b04f5f006dde1dad5e0c82a",
+    "conclusion": "FAILURE",
+    "rerun_performed": false,
+    "live_workflow_dispatched": false,
+    "failed_contexts": [
+      "Historical Deep quality",
+      "Chronos exact workflow entrypoint",
+      "Chronos PostgreSQL profile superuser",
+      "Chronos PostgreSQL profile non_superuser_createrole"
+    ],
+    "root_cause_classes": [
+      "immutable historical authority path drift",
+      "reserved GitHub default variable override in CI harness",
+      "canonical Neon provider edge absent from lifecycle classifier"
+    ],
+    "corrective_policy": "ONE_NEW_COMMIT_AND_ONE_CORRECTIVE_NON_FORCE_PUSH_TO_EXISTING_PR_53;FAILED_RUN_MUST_NOT_BE_RERUN"
+  },
+  "corrective_delivery_gate_order": {
+    "current_stage": "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN",
+    "pre_push_boundary_receipt": {
+      "decision_id": "RCV3-20260812-141",
+      "checked_at": "2026-08-12T23:15:39Z",
+      "workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "expected_state": "disabled_manually",
+      "result": "PASS"
+    },
+    "pre_push_external_boundary": "REVALIDATE_WORKFLOW_IDS_319920551_327137040_327137044_329278452_329420317_DISABLED_MANUALLY_OR_ABORT",
+    "next_stage_after_triple_pass": "ONE_CORRECTIVE_LOCAL_COMMIT_AND_NON_FORCE_PUSH_TO_EXISTING_PR_53",
+    "then_required_before_merge": "NEW_EXACT_HEAD_LINUX_CI_GREEN_INCLUDING_BOTH_REAL_PG16_PROFILES_HOSTILE_PROVIDER_TOPOLOGIES_AND_FIVE_WORKFLOW_BOUNDARY_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_IMMEDIATELY_BEFORE_MERGE",
+    "then_required_before_live": "MERGE_COMMIT_THEN_MERGED_MAIN_CI_AND_PAGES_GREEN_THEN_ACTIONS_QUIESCENCE_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_BEFORE_LIVE",
+    "current_push_authorized": true,
+    "current_live_authorized": false,
+    "migration_authorized": false
   },
   "external_contracts": {
     "github_environment_branch_boundary": {
@@ -172,6 +211,92 @@
       "sanitized_observation_sha256": "30504cc1abac7673cdb63f21b1c6228d0b87dfcec889976ec7295835b6a2d239",
       "revalidate_before_dispatch": true
     },
+    "historical_authority_workflow_boundary": {
+      "observed_at": "2026-08-12T22:00:47Z",
+      "repository": "dddur75/robin-stades-ng",
+      "github_actions_enabled": true,
+      "allowed_actions": "all",
+      "repository_r2_secret_names": ["R2_ACCESS_KEY_ID", "R2_ACCOUNT_ID", "R2_BUCKET_NAME", "R2_SECRET_ACCESS_KEY"],
+      "disabled_workflows": [
+        {
+          "workflow_id": 319920551,
+          "path": ".github/workflows/historical-backfill.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-09T18:51:31.000+02:00",
+          "role": "historical_read_caller"
+        },
+        {
+          "workflow_id": 327137040,
+          "path": ".github/workflows/79-historical-deep-night-controller.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:34.000+02:00",
+          "role": "workflow_81_caller"
+        },
+        {
+          "workflow_id": 327137044,
+          "path": ".github/workflows/81-historical-deep-coverage-proof-export.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:36.000+02:00",
+          "historical_ref": "codex/p0-coverage-evidence-ladder-v1",
+          "historical_ref_sha": "52850323de46352d5e913f6da49e859607b87fdf",
+          "historical_ref_protected": false,
+          "council_readiness_consumer": false,
+          "independent_fail_closed_gate": "MISSION_EXPIRED"
+        },
+        {
+          "workflow_id": 329278452,
+          "path": ".github/workflows/82-p0-e1b-five-league-canary.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:37.000+02:00",
+          "historical_ref": "codex/p0-e1b-five-league-capability-canary-v1",
+          "historical_ref_sha": "2d7753e9f83abb0bee718248e639ef8e543f8df5",
+          "historical_ref_protected": false,
+          "council_readiness_consumer": true
+        },
+        {
+          "workflow_id": 329420317,
+          "path": ".github/workflows/83-p0-e2-capability-sample.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:37.000+02:00",
+          "historical_ref": "codex/p0-e2-capability-sample-v1",
+          "historical_ref_sha": "841ae4d850ceba4f6a7dc230ad3c4ce40de80364",
+          "historical_ref_protected": false,
+          "council_readiness_consumer": true
+        }
+      ],
+      "active_workflows_audited_not_consumers": [
+        {"workflow_id": 329594164, "path": ".github/workflows/84-e2-1208603-targeted-diagnostic.yml", "state": "active", "reason": "synthetic-only current workflow without Council readiness consumption"},
+        {"workflow_id": 329838528, "path": ".github/workflows/85-p0-e3-capability-scale.yml", "state": "active", "reason": "immutable GitHub artifact reads with R2_GET_ALLOWED=0 and no Council readiness consumption"}
+      ],
+      "consumer_revocation_scope": "CODE_AS_OF_CORRECTED_REVISION_AND_CANONICAL_SUFFIX_ONLY",
+      "historical_refs_rewritten": false,
+      "external_state_mutated_by_loop53": false,
+      "revalidate_before_corrective_push": true,
+      "revalidate_in_new_exact_head_ci": true,
+      "revalidate_immediately_before_merge": true,
+      "revalidate_before_live": true,
+      "on_state_drift": "FAIL_AND_STOP_NO_PUSH_NO_LIVE_PENDING_SEPARATE_OWNER_AUTHORITY",
+      "sanitized_observation_sha256": "f226731b04491264972a3777d3c60d2a6e174cecbf54854d050edecdd8e83803"
+    },
+    "historical_authority_workflow_policy": {
+      "required_workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "required_state": "disabled_manually",
+      "revalidate": ["BEFORE_CORRECTIVE_PUSH", "IN_NEW_EXACT_HEAD_CI", "IMMEDIATELY_BEFORE_MERGE", "BEFORE_LIVE"],
+      "on_state_drift": "FAIL_AND_STOP_NO_PUSH_NO_MERGE_NO_LIVE_PENDING_SEPARATE_OWNER_AUTHORITY",
+      "authority_matrix_gate": "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED"
+    },
+    "historical_authority_workflow_state_revalidation": {
+      "checked_at": "2026-08-12T22:37:31Z",
+      "repository": "dddur75/robin-stades-ng",
+      "workflows": [
+        {"workflow_id": 319920551, "path": ".github/workflows/historical-backfill.yml", "state": "disabled_manually", "updated_at": "2026-08-09T18:51:31.000+02:00"},
+        {"workflow_id": 327137040, "path": ".github/workflows/79-historical-deep-night-controller.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:34.000+02:00"},
+        {"workflow_id": 327137044, "path": ".github/workflows/81-historical-deep-coverage-proof-export.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:36.000+02:00"},
+        {"workflow_id": 329278452, "path": ".github/workflows/82-p0-e1b-five-league-canary.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:37.000+02:00"},
+        {"workflow_id": 329420317, "path": ".github/workflows/83-p0-e2-capability-sample.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:37.000+02:00"}
+      ],
+      "sanitized_observation_sha256": "6d94da1c5bf52d0740732f5606711cbda3ee7b823f1e225729d1158c528eaf58"
+    },
     "branch_pagination": "SEMANTICALLY_RECONCILED",
     "project_pagination": "SEMANTICALLY_RECONCILED",
     "project_ownership": "ORGANIZATION_SCOPE_PROVEN",
@@ -181,9 +306,9 @@
     "raw_previous_live_envelope": "UNKNOWN_NOT_PRESERVED_AND_NOT_INVENTED"
   },
   "local_validation": {
-    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002",
+    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.009",
     "ruff": "PASS_CHANGED_SCOPE",
-    "mypy_strict": "PASS_9_CHANGED_PRODUCTION_SOURCES_INCLUDING_MIGRATIONS_ENV",
+    "mypy_strict": "PASS_STRICT_ALL_TWELVE_CHANGED_PRODUCTION_SOURCES",
     "bandit": "PASS_ZERO_FINDINGS_CHANGED_PRODUCTION_SCOPE",
     "compileall": "PASS_CHANGED_PRODUCTION_AND_E2E_TEST_SCOPE",
     "secret_scan": "PASS_NO_LITERAL_SECRET_DETECTED",
@@ -210,12 +335,30 @@
     "manifest": "configs/execution/chronos-residual-defect-extermination-v1.json",
     "source_hash": "5f40475be65fa358a2b409edb2f320993596124e2055a1b5056e8641db0ab498",
     "writer": "C0",
-    "triple_keys": ["DP5", "DP6", "C4"]
+    "triple_keys": ["DP5", "DP6", "C4"],
+    "journal_contract": {
+      "immutable_legacy_prefix_through": "RCV3-20260812-136",
+      "legacy_prefix_is_runtime_authority_for_corrected_consumers": false,
+      "consumer_revocation_scope": "CODE_AS_OF_CORRECTED_REVISION_AND_CANONICAL_SUFFIX_ONLY",
+      "historical_git_refs_rewritten": false,
+      "canonical_suffix_starts_at": "RCV3-20260812-137",
+      "allowed_record_types": ["MISSION_AUTHORIZED", "STAGE_STARTED", "STAGE_FINISHED", "DECISION", "FAILURE", "VETO", "REDESIGN"],
+      "allowed_decisions": ["PASS_AND_SCALE", "PASS_AND_HOLD", "FAIL_AND_REDESIGN", "FAIL_AND_STOP", "BLOCKED_EXTERNAL_ACTION"],
+      "future_suffix_enforcement": "FAIL_CLOSED"
+    },
+    "legacy_authority_consumers": {
+      "e1b": "DENY_WITHOUT_CANONICAL_SUFFIX_DECISION_PASS_AND_SCALE_EXACT_SELECTION_STATE_AND_HASH",
+      "e2": "DENY_WITHOUT_CANONICAL_SUFFIX_DECISION_PASS_AND_SCALE_EXACT_SELECTION_STATE_AND_HASH",
+      "replacement_authority_created_by_loop53": false,
+      "reader_constructed_before_authority": false,
+      "historical_workflow_state_precondition": "WORKFLOW_IDS_319920551_327137040_327137044_329278452_329420317_DISABLED_MANUALLY_AT_OBSERVATION_AND_REVALIDATED_BEFORE_CORRECTIVE_PUSH_IN_NEW_EXACT_HEAD_CI_IMMEDIATELY_BEFORE_MERGE_AND_BEFORE_LIVE",
+      "authority_matrix_gate": "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED"
+    }
   },
   "reviews": {
-    "DP5_PLATFORM_SRE": {"verdict": "PASS", "score": 97, "p0": 0, "p1": 0},
-    "DP6_EVIDENCE_DBA": {"verdict": "PASS", "score": 97, "p0": 0, "p1": 0},
-    "C4_SEC_RED": {"verdict": "PASS", "score": 97, "p0": 0, "p1": 0},
+    "DP5_PLATFORM_SRE": {"verdict": "PASS", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+    "DP6_EVIDENCE_DBA": {"verdict": "PASS", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+    "C4_SEC_RED": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
     "minimum_required_score": 95,
     "red_team_question": "If the next live fails, is it likely to reveal a genuinely unknown external property rather than an obvious offline-detectable defect?",
     "answer": "YES"
@@ -238,8 +381,8 @@
     "workflow_dispatches": 0
   },
   "verdicts": [
-    "CHRONOS_END_TO_END_LIVE_PATH_CERTIFIED_OFFLINE_EXACT_PATH",
-    "CHRONOS_RESIDUAL_DEFECT_EXTERMINATION_CLOSED",
+    "CHRONOS_FROZEN_TRIPLE_REVIEW_PASS_CORRECTIVE_PUSH_GATE_OPEN",
+    "CHRONOS_RESIDUAL_DEFECT_EXTERMINATION_V1_OFFLINE_CLOSED_LIVE_PENDING",
     "CHRONOS_EXTERNAL_CONTRACTS_SEMANTICALLY_FAIL_CLOSED",
     "CHRONOS_KNOWN_LIVE_REACHABLE_P0_P1_ZERO",
     "CHRONOS_KNOWN_LIVE_REACHABLE_DEFECTS_ZERO",

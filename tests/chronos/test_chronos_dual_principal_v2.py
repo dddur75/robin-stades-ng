@@ -5,7 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from robin.chronos_role_lifecycle import _grant_bootstrap_authority_schema
+from robin.chronos_role_lifecycle import (
+    _grant_bootstrap_authority_schema,
+    _is_expected_neon_platform_edge,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 LIFECYCLE = ROOT / "src" / "robin" / "chronos_role_lifecycle.py"
@@ -105,6 +108,66 @@ def test_ci_covers_both_lifecycle_admin_profiles() -> None:
     assert "- superuser" in source
     assert "- non_superuser_createrole" in source
     assert "run_chronos_dual_principal_ci_v2.py" in source
+
+
+def test_neon_platform_edge_is_exact_optional_and_recursively_closed() -> None:
+    base: dict[str, object] = {
+        "granted_role": "neon_superuser",
+        "member_role": "lifecycle_admin",
+        "grantor_superuser": True,
+        "granted_authenticatable": False,
+        "member_authenticatable": True,
+        "admin_option": False,
+        "inherit_option": True,
+        "set_option": True,
+        "runtime_set": True,
+        "runtime_usage": True,
+        "member_inherit": True,
+    }
+    for superuser in (False, True):
+        for inherit in (False, True):
+            profile = {
+                **base,
+                "inherit_option": inherit,
+                "runtime_usage": superuser or inherit,
+                "member_inherit": inherit,
+            }
+            assert _is_expected_neon_platform_edge(
+                profile,
+                lifecycle_admin="lifecycle_admin",
+                lifecycle_admin_superuser=superuser,
+                lifecycle_admin_inherit=inherit,
+            )
+    for mutation in (
+        {"granted_role": "hostile_platform_role"},
+        {"grantor_superuser": False},
+        {"granted_authenticatable": True},
+        {"member_authenticatable": False},
+        {"admin_option": True},
+        {"set_option": False},
+        {"inherit_option": False},
+        {"runtime_set": False},
+        {"runtime_usage": False},
+        {"member_inherit": False},
+        {"member_role": "hostile_peer"},
+    ):
+        assert not _is_expected_neon_platform_edge(
+            {**base, **mutation},
+            lifecycle_admin="lifecycle_admin",
+            lifecycle_admin_superuser=True,
+            lifecycle_admin_inherit=True,
+        )
+    source = LIFECYCLE.read_text(encoding="utf-8")
+    assert "actual_neon_platform not in {0, 1}" in source
+    assert "WITH RECURSIVE platform AS" in source
+    assert "neon_platform_descendant_count != actual_neon_platform" in source
+    assert "neon_actor_descendant_count != actual_neon_platform" in source
+    runner = RUNNER.read_text(encoding="utf-8")
+    assert "_assert_neon_platform_lifecycle_audit_rejects_descendants" in runner
+    assert "CHRONOS_CI_NEON_PLATFORM_HOSTILE_DESCENDANT_ACCEPTED" in runner
+    assert "CHRONOS_CI_NEON_PLATFORM_AUDIT_DID_NOT_RECOVER" in runner
+    assert "_assert_neon_platform_lifecycle_audit_rejects_orphans" in runner
+    assert "CHRONOS_CI_NEON_PLATFORM_ORPHAN_DESCENDANT_ACCEPTED" in runner
 
 
 def test_ci_executes_the_complete_readonly_preflight_ledger_before_role_mutation() -> None:

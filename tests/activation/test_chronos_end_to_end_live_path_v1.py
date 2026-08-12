@@ -2012,9 +2012,30 @@ def test_exact_module_command_with_malformed_run_id_still_writes_report(
         check=False,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr
+    guarded = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "scripts.chronos_live_path_artifact_guard_v1",
+            "--report",
+            str(report),
+            "--schema",
+            controlled.REPORT_SCHEMA,
+            "--live-outcome",
+            "success",
+        ],
+        cwd=ROOT,
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert guarded.returncode == 0, guarded.stdout + guarded.stderr
     document = json.loads(report.read_text(encoding="utf-8"))
     assert document["verdict"] == NO_GO_VERDICT
     assert document["failed_gate"] == "invalid:GITHUB_RUN_ID"
+    assert document["reason"] == "RECOVERY_BRANCH_NOT_FEASIBLE"
+    assert set(document["effects"].values()) == {0}
 
 
 def test_wrong_cwd_and_wrong_python_modes_are_detected_offline(tmp_path: Path) -> None:

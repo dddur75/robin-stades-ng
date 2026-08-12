@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import csv
 import gzip
+import hashlib
 import io
 import json
 import re
+import shutil
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
@@ -29,6 +31,7 @@ from robin.historical_deep.coverage_evidence import (
     aggregate_stage,
     build_partition_checkpoint,
     build_partition_plan,
+    canonical_journal_suffix,
     deep_validate_inventory,
     evidence_architecture_fingerprint,
     load_authority,
@@ -45,6 +48,10 @@ from robin.historical_deep.coverage_proof import (
     render_coverage_json,
     write_coverage_artifacts,
 )
+from robin.historical_deep.e1b_canary import (
+    file_sha256_lf,
+    require_selection_ready,
+)
 from robin.historical_deep.gates import GATE_NAMES
 from robin.historical_deep.normalization import canonical_sha256
 from robin.historical_deep.segmented_replay import (
@@ -53,6 +60,8 @@ from robin.historical_deep.segmented_replay import (
     STAGING_PART_SCHEMA_VERSION,
     STAGING_TABLES,
 )
+from scripts import run_p0_e1b_five_league_canary as e1b_runner
+from scripts import run_p0_e2_capability_sample as e2_runner
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_PATH = ROOT / "configs" / "historical-deep-data-harvest-v1.json"
@@ -67,6 +76,266 @@ SOURCE_REVISION = "1" * 40
 EXPORTER_REVISION = "2" * 40
 SOURCE_RUN_TOKEN = "30593227942:1"
 RECORDED_AT = datetime(2026, 7, 31, 12, 0, tzinfo=UTC)
+
+
+def _ledger_hash(record: Mapping[str, object]) -> str:
+    canonical = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    return hashlib.sha256(canonical).hexdigest()
+
+
+def _append_canonical_decision(
+    root: Path,
+    *,
+    decision_id: str,
+    context: Mapping[str, object],
+) -> None:
+    ledger = root / "reports/council/decision-ledger.jsonl"
+    lines = ledger.read_text(encoding="utf-8").splitlines()
+    previous = json.loads(lines[-1])
+    record: dict[str, object] = {
+        "decision_id": decision_id,
+        "record_type": "DECISION",
+        "date": "2026-08-12T22:00:00Z",
+        "proposal": "Synthetic canonical authority fixture.",
+        "objections": [],
+        "proof": [],
+        "decision": "PASS_AND_SCALE",
+        "dissent": None,
+        "responsible": "TEST_ONLY",
+        "context": dict(context),
+        "previous_hash": previous["hash"],
+        "hash_algorithm": "SHA-256",
+    }
+    record["hash"] = _ledger_hash(record)
+    ledger.write_text(
+        "\n".join([*lines, json.dumps(record, ensure_ascii=False, separators=(",", ":"))])
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def test_p0_authority_uses_only_the_exact_historical_matrix_snapshot(
+    tmp_path: Path,
+) -> None:
+    authority = load_authority(
+        ROOT,
+        stage="E1A",
+        now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+    )
+    assert authority.source_config_sha256 == (
+        coverage_evidence_module.HISTORICAL_SOURCE_CONFIG_SHA256
+    )
+    assert authority.mission_sha256 == (
+        coverage_evidence_module.HISTORICAL_MISSION_SHA256
+    )
+    assert authority.mapping_sha256 == (
+        coverage_evidence_module.HISTORICAL_MAPPING_SHA256
+    )
+    current_matrix = ROOT / coverage_evidence_module.HISTORICAL_AUTHORITY_MATRIX_PATH
+    snapshot = (
+        ROOT / coverage_evidence_module.HISTORICAL_AUTHORITY_MATRIX_SNAPSHOT_PATH
+    )
+    assert coverage_evidence_module._lf_sha256(current_matrix) != (
+        coverage_evidence_module.HISTORICAL_AUTHORITY_MATRIX_SHA256
+    )
+    assert coverage_evidence_module._lf_sha256(snapshot) == (
+        coverage_evidence_module.HISTORICAL_AUTHORITY_MATRIX_SHA256
+    )
+
+    shutil.copytree(ROOT / "configs", tmp_path / "configs")
+    temporary_snapshot = (
+        tmp_path / coverage_evidence_module.HISTORICAL_AUTHORITY_MATRIX_SNAPSHOT_PATH
+    )
+    original_snapshot = temporary_snapshot.read_bytes()
+    temporary_snapshot.unlink()
+    with pytest.raises(ValueError, match="P0_CONTRACT_HASH_MISMATCH"):
+        load_authority(
+            tmp_path,
+            stage="E1A",
+            now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+        )
+
+    temporary_snapshot.write_bytes(original_snapshot + b" ")
+    with pytest.raises(ValueError, match="P0_CONTRACT_HASH_MISMATCH"):
+        load_authority(
+            tmp_path,
+            stage="E1A",
+            now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+        )
+
+    temporary_snapshot.write_bytes(original_snapshot)
+    source_path = tmp_path / coverage_evidence_module.SOURCE_CONFIG_PATH
+    mission_path = tmp_path / coverage_evidence_module.MISSION_PATH
+    source = json.loads(source_path.read_text(encoding="utf-8"))
+    source["frozen_at"] = "2026-08-05T07:45:01Z"
+    source_path.write_text(json.dumps(source, indent=2) + "\n", encoding="utf-8")
+    mission = json.loads(mission_path.read_text(encoding="utf-8"))
+    mission["source_hash"] = coverage_evidence_module._lf_sha256(source_path)
+    mission_path.write_text(json.dumps(mission, indent=2) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="P0_CONTRACT_HASH_MISMATCH"):
+        load_authority(
+            tmp_path,
+            stage="E1A",
+            now=datetime(2026, 8, 5, 8, tzinfo=UTC),
+        )
+
+
+def test_canonical_journal_boundary_revokes_legacy_e1b_and_e2_authority(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    suffix = canonical_journal_suffix(ROOT)
+    assert suffix[0]["decision_id"] == "RCV3-20260812-137"
+    assert suffix[0]["record_type"] == "VETO"
+    assert suffix[0]["decision"] == "PASS_AND_HOLD"
+
+    e1b_hash = file_sha256_lf(
+        ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+    )
+    with pytest.raises(ValueError, match="E1B_SELECTION_READY_DECISION_REQUIRED"):
+        require_selection_ready(ROOT, e1b_hash)
+    e2_selection = json.loads(
+        (ROOT / "reports/evidence/e2/e2-selection-manifest-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    with pytest.raises(RuntimeError, match="E2_SELECTION_DECISION_MISSING"):
+        e2_runner._require_ready(ROOT, str(e2_selection["selection_hash"]))
+
+    def unexpected_reader(*args: object, **kwargs: object) -> object:
+        del args, kwargs
+        raise AssertionError("reader must not be constructed before canonical authority")
+
+    monkeypatch.setattr(
+        PinnedInventoryReader,
+        "from_environment",
+        unexpected_reader,
+    )
+    with pytest.raises(ValueError, match="E1B_SELECTION_READY_DECISION_REQUIRED"):
+        e1b_runner._measure(ROOT, tmp_path / "e1b")
+    with pytest.raises(RuntimeError, match="E2_SELECTION_DECISION_MISSING"):
+        e2_runner._measure(ROOT, tmp_path / "e2")
+
+    shutil.copytree(ROOT / "reports", tmp_path / "reports")
+    ledger = tmp_path / "reports/council/decision-ledger.jsonl"
+    lines = ledger.read_text(encoding="utf-8").splitlines()
+    boundary = json.loads(lines[129])
+    boundary["decision"] = "PASS_AND_SCALE"
+    canonical = json.dumps(
+        {key: value for key, value in boundary.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    boundary["hash"] = hashlib.sha256(canonical).hexdigest()
+    lines[129] = json.dumps(boundary, ensure_ascii=False, separators=(",", ":"))
+    ledger.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="COUNCIL_JOURNAL_BOUNDARY_INVALID"):
+        canonical_journal_suffix(tmp_path)
+
+
+def test_canonical_journal_suffix_parser_and_exact_grants_fail_closed(
+    tmp_path: Path,
+) -> None:
+    shutil.copytree(ROOT / "reports", tmp_path / "reports")
+    ledger = tmp_path / "reports/council/decision-ledger.jsonl"
+    original = ledger.read_text(encoding="utf-8").splitlines()
+
+    ledger.write_text("\n".join(original[:129]) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="COUNCIL_JOURNAL_BOUNDARY_MISSING"):
+        canonical_journal_suffix(tmp_path)
+
+    duplicate = original.copy()
+    duplicate[129] = duplicate[129][:-1] + ',"decision":"PASS_AND_HOLD"}'
+    ledger.write_text("\n".join(duplicate) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="COUNCIL_JOURNAL_JSON_INVALID"):
+        canonical_journal_suffix(tmp_path)
+
+    nonfinite = original.copy()
+    nonfinite[129] = nonfinite[129][:-1] + ',"unsafe":NaN}'
+    ledger.write_text("\n".join(nonfinite) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="COUNCIL_JOURNAL_JSON_INVALID"):
+        canonical_journal_suffix(tmp_path)
+
+    tampered = original.copy()
+    tampered[-1] = tampered[-1].replace("PASS_AND_HOLD", "PASS_AND_SCALE", 1)
+    ledger.write_text("\n".join(tampered) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="COUNCIL_JOURNAL_RECORD_HASH_INVALID"):
+        canonical_journal_suffix(tmp_path)
+
+    invalid_suffix = [json.loads(line) for line in original]
+    invalid_suffix[-1]["record_type"] = "EVIDENCE_CORRECTION"
+    invalid_suffix[-1]["hash"] = _ledger_hash(invalid_suffix[-1])
+    ledger.write_text(
+        "\n".join(
+            json.dumps(record, ensure_ascii=False, separators=(",", ":"))
+            for record in invalid_suffix
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="COUNCIL_JOURNAL_CANONICAL_SUFFIX_INVALID"):
+        canonical_journal_suffix(tmp_path)
+
+    ledger.write_text("\n".join(original) + "\n", encoding="utf-8")
+    e1b_hash = file_sha256_lf(
+        ROOT / "reports/evidence/e1b/e1b-selection-manifest-v1.json"
+    )
+    e2_selection = json.loads(
+        (ROOT / "reports/evidence/e2/e2-selection-manifest-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    reviewers = ["DP5", "DP6", "C2"]
+    _append_canonical_decision(
+        tmp_path,
+        decision_id="TEST-E1B-READY-1",
+        context={
+            "selection_state": "E1B_SELECTION_READY",
+            "selection_sha256": e1b_hash,
+            "reviewed_by": reviewers,
+        },
+    )
+    _append_canonical_decision(
+        tmp_path,
+        decision_id="TEST-E2-READY-1",
+        context={
+            "selection_state": "E2_SELECTION_READY",
+            "selection_hash": str(e2_selection["selection_hash"]),
+            "reviewed_by": reviewers,
+        },
+    )
+    require_selection_ready(tmp_path, e1b_hash)
+    e2_runner._require_ready(tmp_path, str(e2_selection["selection_hash"]))
+
+    _append_canonical_decision(
+        tmp_path,
+        decision_id="TEST-E1B-READY-2",
+        context={
+            "selection_state": "E1B_SELECTION_READY",
+            "selection_sha256": e1b_hash,
+            "reviewed_by": reviewers,
+        },
+    )
+    with pytest.raises(ValueError, match="E1B_SELECTION_READY_DECISION_REQUIRED"):
+        require_selection_ready(tmp_path, e1b_hash)
+
+    _append_canonical_decision(
+        tmp_path,
+        decision_id="TEST-E2-READY-2",
+        context={
+            "selection_state": "E2_SELECTION_READY",
+            "selection_hash": str(e2_selection["selection_hash"]),
+            "reviewed_by": reviewers,
+        },
+    )
+    with pytest.raises(RuntimeError, match="E2_SELECTION_DECISION_NOT_UNIQUE"):
+        e2_runner._require_ready(tmp_path, str(e2_selection["selection_hash"]))
 
 
 class MemoryDerivedReader:
