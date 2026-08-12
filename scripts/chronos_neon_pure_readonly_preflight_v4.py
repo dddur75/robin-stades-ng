@@ -12,7 +12,7 @@ import hashlib
 import json
 import os
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -52,6 +52,10 @@ MAX_SQL_STATEMENTS = 25
 EXPECTED_STATEMENT_TIMEOUT_MS = 15_000
 EXPECTED_LOCK_TIMEOUT_MS = 3_000
 BOOTSTRAP_AUTHORITY = "chronos_bootstrap_authority"
+READONLY_STARTUP_OPTIONS = (
+    "-c default_transaction_read_only=on "
+    "-c statement_timeout=15000 -c lock_timeout=3000"
+)
 
 NO_GO_REASONS = frozenset(
     {
@@ -60,6 +64,9 @@ NO_GO_REASONS = frozenset(
         "DIRECT_ENDPOINT_NOT_PROVEN",
         "UNEXPECTED_DATABASE_REVISION",
         "BOOTSTRAP_AUTHORITY_INSUFFICIENT",
+        "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN",
+        "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE",
+        "ENDPOINT_STATE_UNSUPPORTED",
         "RECOVERY_BRANCH_NOT_FEASIBLE",
         "PURCHASE_REQUIRED",
         "SECRET_MISSING",
@@ -161,6 +168,7 @@ class NeonObservation:
     projects_observed: int
     endpoint_projects_inspected: int
     api_get_count: int
+    suspend_timeout_seconds: int = -1
     project_inventory_exhaustive: bool = False
     endpoint_detail_reads: int = 0
     project_detail_reads: int = 0
@@ -787,6 +795,7 @@ def _endpoint_detail(
     project_id: str,
     candidate: Mapping[str, Any],
     target: DirectPostgresTarget,
+    allow_idle: bool = False,
 ) -> dict[str, Any]:
     endpoint = document.get("endpoint")
     if not isinstance(endpoint, dict):
@@ -803,6 +812,14 @@ def _endpoint_detail(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS",
             "endpoint_detail_invalid",
         )
+    accepted_states = {"active", "idle"} if allow_idle else {"active"}
+    current_state = str(detailed.get("current_state", "")).lower()
+    pending_state = detailed.get("pending_state")
+    if allow_idle and current_state not in accepted_states:
+        raise PreflightNoGo(
+            "ENDPOINT_STATE_UNSUPPORTED",
+            "endpoint_state_unsupported",
+        )
     comparisons = (
         (detailed.get("id") == candidate.get("id"), "endpoint_detail_id_mismatch"),
         (
@@ -818,11 +835,11 @@ def _endpoint_detail(
             "endpoint_detail_host_mismatch",
         ),
         (detailed.get("type") == "read_write", "endpoint_detail_type_mismatch"),
-        (detailed.get("current_state") == "active", "endpoint_detail_not_active"),
+        (current_state in accepted_states, "endpoint_detail_not_active"),
         (detailed.get("disabled") is False, "endpoint_detail_disabled"),
         (detailed.get("pooler_enabled") is False, "endpoint_detail_pooled"),
         (
-            detailed.get("pending_state") in (None, "active"),
+            pending_state in (None, current_state),
             "endpoint_detail_transitioning",
         ),
     )
@@ -838,6 +855,8 @@ def _positive_ownership_witness(
     audit: IdentityAudit,
     project_summary: Mapping[str, Any],
     candidate: Mapping[str, Any],
+    *,
+    allow_idle: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
     project_id = _safe_identifier(
         project_summary.get("id", ""), gate="project_pagination_invalid"
@@ -859,6 +878,7 @@ def _positive_ownership_witness(
         project_id=project_id,
         candidate=candidate,
         target=target,
+        allow_idle=allow_idle,
     )
     audit.positive_witness_checks.append("ENDPOINT_DETAIL_CONCORDANT")
 
@@ -922,6 +942,8 @@ def _positive_ownership_witness(
         confirmation.get("branch_id") != branch_id
         or str(confirmation.get("host", "")).lower() != target.host
         or confirmation.get("type") != "read_write"
+        or confirmation.get("disabled") is not False
+        or confirmation.get("pooler_enabled") is not False
     ):
         raise PreflightNoGo(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS",
@@ -934,6 +956,8 @@ def _positive_ownership_witness(
 def _resolve_neon_identity(
     client: NeonReadOnlyClient,
     target: DirectPostgresTarget,
+    *,
+    allow_idle: bool = False,
 ) -> NeonObservation:
     configured = os.getenv("NEON_PROJECT_ID", "").strip()
     audit = IdentityAudit(
@@ -1013,6 +1037,7 @@ def _resolve_neon_identity(
                 audit,
                 project,
                 candidate,
+                allow_idle=allow_idle,
             )
             identity_verdict = "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
         return _finalize_neon_identity(
@@ -1023,6 +1048,7 @@ def _resolve_neon_identity(
             detailed=detailed,
             branches=branches,
             endpoint=endpoint,
+            allow_idle=allow_idle,
         )
     except PreflightNoGo as error:
         if error.sanitized_evidence is not None:
@@ -1046,6 +1072,7 @@ def _finalize_neon_identity(
     detailed: Mapping[str, Any],
     branches: Sequence[Mapping[str, Any]],
     endpoint: Mapping[str, Any],
+    allow_idle: bool = False,
 ) -> NeonObservation:
     project_id = _safe_identifier(detailed.get("id", ""))
     branches_by_id = {
@@ -1072,15 +1099,25 @@ def _finalize_neon_identity(
     project_name = str(detailed.get("name", ""))
     endpoint_state = str(endpoint.get("current_state", "")).lower()
     branch_state = _branch_state(branch)
+    accepted_states = {"active", "idle"} if allow_idle else {"active"}
+    pending_state = endpoint.get("pending_state")
+    if allow_idle and endpoint_state not in accepted_states:
+        raise PreflightNoGo(
+            "ENDPOINT_STATE_UNSUPPORTED",
+            "endpoint_state_unsupported",
+        )
+    endpoint_execution_state_accepted = endpoint_state == "active" or (
+        allow_idle and endpoint_state == "idle"
+    )
     direct = (
         endpoint_host == target.host
         and endpoint_host.endswith(".neon.tech")
         and "pooler" not in endpoint_host
         and str(endpoint.get("type", "")) == "read_write"
-        and endpoint_state == "active"
+        and endpoint_execution_state_accepted
         and endpoint.get("pooler_enabled") is False
         and endpoint.get("disabled") is False
-        and endpoint.get("pending_state") in (None, "active")
+        and pending_state in (None, endpoint_state)
         and str(endpoint.get("project_id", "")) == project_id
     )
     if not direct:
@@ -1107,6 +1144,27 @@ def _finalize_neon_identity(
     parent = branch.get("parent_id")
     parent_id = str(parent) if isinstance(parent, str) and parent else None
     region = str(endpoint.get("region_id", detailed.get("region_id", "")))
+    project_region = str(detailed.get("region_id", ""))
+    endpoint_region = str(endpoint.get("region_id", ""))
+    if project_region and endpoint_region and project_region != endpoint_region:
+        raise PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "project_endpoint_region_mismatch",
+        )
+    suspend_timeout = endpoint.get("suspend_timeout_seconds")
+    if allow_idle:
+        if isinstance(suspend_timeout, bool) or not isinstance(suspend_timeout, int):
+            raise PreflightNoGo(
+                "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN",
+                "suspend_timeout_contract_invalid",
+            )
+        if suspend_timeout < -1 or suspend_timeout > 604_800 or 0 < suspend_timeout < 60:
+            raise PreflightNoGo(
+                "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN",
+                "suspend_timeout_contract_invalid",
+            )
+    elif isinstance(suspend_timeout, bool) or not isinstance(suspend_timeout, int):
+        suspend_timeout = -1
     return NeonObservation(
         identity_path=audit.identity_path,
         identity_verdict=identity_verdict,
@@ -1120,6 +1178,7 @@ def _finalize_neon_identity(
         endpoint_id=endpoint_id,
         endpoint_host=endpoint_host,
         endpoint_state=endpoint_state,
+        suspend_timeout_seconds=suspend_timeout,
         branch_state=branch_state,
         owner_branch_count=len(branches),
         branch_limit=branch_limit,
@@ -1282,19 +1341,25 @@ def _read_authority_inventory(
         ) from None
 
 
-def _inspect_database(database_url: str) -> DatabaseObservation:
+def _inspect_database(
+    database_url: str,
+    *,
+    before_connect: Callable[[], None] | None = None,
+    after_connect: Callable[[], None] | None = None,
+) -> DatabaseObservation:
     statement_count = 0
     safe_database_url, _ = _validated_psycopg_url(database_url)
     try:
+        if before_connect is not None:
+            before_connect()
         with psycopg.connect(
             safe_database_url,
             connect_timeout=10,
-            options=(
-                "-c default_transaction_read_only=on "
-                "-c statement_timeout=15000 -c lock_timeout=3000"
-            ),
+            options=READONLY_STARTUP_OPTIONS,
             row_factory=dict_row,
         ) as connection:
+            if after_connect is not None:
+                after_connect()
             with connection.cursor() as cursor:
                 cursor.execute(SQL_STATEMENTS[0])
                 statement_count += 1
@@ -1393,6 +1458,8 @@ def _github_actions_state(
     repository: str,
     run_id: int,
     main_sha: str,
+    *,
+    workflow_file: str = "chronos-neon-pure-readonly-preflight-v4.yml",
 ) -> tuple[int, int, int]:
     counts: dict[str, int] = {}
     for status in ("queued", "in_progress"):
@@ -1405,7 +1472,7 @@ def _github_actions_state(
         )
     dispatches = _github_get(
         f"/repos/{repository}/actions/workflows/"
-        "chronos-neon-pure-readonly-preflight-v4.yml/runs"
+        f"{workflow_file}/runs"
         "?event=workflow_dispatch&per_page=100"
     )
     runs = dispatches.get("workflow_runs")
@@ -1482,6 +1549,7 @@ def _sanitized_neon(neon: NeonObservation) -> dict[str, object]:
         "endpoint_id_sha256": _fingerprint(neon.endpoint_id),
         "endpoint_host_sha256": _fingerprint(neon.endpoint_host),
         "endpoint_state": neon.endpoint_state,
+        "suspend_timeout_seconds": neon.suspend_timeout_seconds,
         "branch_state": neon.branch_state,
         "owner_branch_count": neon.owner_branch_count,
         "branch_limit": neon.branch_limit,

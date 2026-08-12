@@ -1,0 +1,130 @@
+{
+  "schema_version": "chronos-neon-controlled-idle-wake-readonly-v1",
+  "generated_at": "2026-08-12T04:55:23Z",
+  "repository": "dddur75/robin-stades-ng",
+  "base_sha": "5233e618ebfce1583f454fdbcead96154551da2e",
+  "previous_run": 31560319661,
+  "previous_sha": "5233e618ebfce1583f454fdbcead96154551da2e",
+  "previous_verdict": "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED",
+  "previous_reason": "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+  "previous_gate": "endpoint_detail_not_active",
+  "architecture_change": "SEPARATE_IDENTITY_FROM_EXECUTION_STATE",
+  "architecture_verdict": "NEON_IDENTITY_AND_ENDPOINT_STATE_DECOUPLED",
+  "wake_model": "CONNECTION_TRIGGERED_READONLY_WAKE",
+  "wake_authority": "CONTROLLED_IDLE_TO_ACTIVE_WAKE_BY_READONLY_CONNECTION",
+  "control_plane_start_api_used": false,
+  "NEON_PROJECT_ID_present": false,
+  "NEON_PROJECT_ID_written": false,
+  "official_contract": {
+    "status": "PROVEN",
+    "sources": {
+      "scale_to_zero": "https://neon.com/docs/introduction/scale-to-zero",
+      "manage_computes": "https://neon.com/docs/manage/endpoints/",
+      "connection_reactivates_idle": "https://neon.com/docs/connect/connection-errors",
+      "endpoint_details": "https://api-docs.neon.tech/reference/getprojectendpoint",
+      "direct_vs_pooled": "https://neon.com/docs/connect/connection-pooling",
+      "openapi": "https://neon.com/api_spec/release/v2.json"
+    },
+    "endpoint_states": ["init", "active", "idle"],
+    "accepted_states": ["active", "idle"],
+    "idle_meaning": "SUSPENDED_SCALED_TO_ZERO",
+    "connection_wakes_idle_compute": true,
+    "suspend_timeout_minus_one": "NEVER_SUSPEND",
+    "suspend_timeout_zero": "PLAN_DEFAULT_300_SECONDS",
+    "positive_timeout": "FINITE_SECONDS_BEFORE_AUTOMATIC_SUSPENSION"
+  },
+  "implementation": {
+    "identity_complete_before_wake": true,
+    "positive_identity_while_idle": true,
+    "endpoint_state_classified_after_identity": true,
+    "allowed_endpoint_states": ["active", "idle"],
+    "scale_to_zero_mutated": false,
+    "maximum_preflight_wall_clock_seconds": 120,
+    "minimum_effective_suspend_timeout_seconds": 300,
+    "connection_attempt_limit": 1,
+    "automatic_reconnect": false,
+    "first_explicit_sql": "BEGIN READ ONLY",
+    "startup_read_only": true,
+    "post_preflight_suspend_api": false,
+    "post_preflight_idle_polling": false
+  },
+  "budgets": {
+    "max_neon_gets": 25,
+    "max_neon_mutations": 0,
+    "max_production_postgresql_connections": 1,
+    "max_compute_wake_events": 1,
+    "max_sql_statements": 25,
+    "max_sql_writes": 0,
+    "worst_case_get_formula": "3 project pages + 16 candidate endpoint inventories + 1 endpoint detail + 1 project detail + 3 branch pages + 1 branch endpoint inventory = 25 GET"
+  },
+  "golden_pack": {
+    "fixture": "tests/activation/fixtures/chronos_neon_controlled_idle_wake_readonly_v1_golden_pack.json",
+    "cases": 19,
+    "focused_tests": "108 passed",
+    "idle_identity_before_connection": "PASS",
+    "single_connection_and_no_retry": "PASS",
+    "startup_options_and_first_sql": "PASS",
+    "scale_to_zero_boundary": "PASS",
+    "ten_effect_counters": "PASS"
+  },
+  "local_validation": {
+    "focused_idle_wake_and_v4_regressions": "108 passed",
+    "activation_chronos_council_portability": "400 passed, 12 skipped",
+    "ruff_changed_scope": "PASS",
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "compileall": "PASS",
+    "json_documents": "294 validated",
+    "yaml_documents": "100 validated",
+    "secret_scan": "PASS",
+    "git_diff_check": "PASS",
+    "definitive_validation": "AUTOMATIC_PR_EXACT_HEAD_LINUX_CI"
+  },
+  "reviews": {
+    "DP5_PLATFORM_SRE": {
+      "verdict": "PASS",
+      "score": 99,
+      "p0": 0,
+      "p1": 0,
+      "wrong_endpoint_wake": "NO",
+      "wake_before_identity": "NO",
+      "automatic_reconnect": "NO",
+      "permanent_configuration_change": "NO"
+    },
+    "DP6_EVIDENCE_DBA": {
+      "verdict": "PASS",
+      "score": 99,
+      "p0": 0,
+      "p1": 0,
+      "sql_write_reachable": "NO",
+      "sql_before_begin_read_only": "NO",
+      "unexpected_revision_tolerated": "NO"
+    },
+    "C4_SEC_RED": {
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0,
+      "dsn_redirect": "NO",
+      "idle_identity_bypass": "NO",
+      "second_wake": "NO",
+      "start_api": "NO"
+    }
+  },
+  "pre_merge_effects": {
+    "neon_gets": 0,
+    "neon_mutations": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "compute_wake_events": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "migration_0014": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "secret_updates": 0,
+    "variable_updates": 0
+  },
+  "migration_authorized": false
+}
