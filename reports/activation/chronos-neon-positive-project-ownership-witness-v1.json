@@ -1,0 +1,139 @@
+{
+  "schema_version": "chronos-neon-positive-project-ownership-witness-v1",
+  "generated_at": "2026-08-12T01:45:58Z",
+  "repository": "dddur75/robin-stades-ng",
+  "base_sha": "822c9d3d5cddf70f673f422b29effda8faec5de8",
+  "previous_run": 31540240646,
+  "previous_attempt": 1,
+  "previous_sha": "822c9d3d5cddf70f673f422b29effda8faec5de8",
+  "previous_report_sha256": "e8a78d67dcc044a7ae1eb6f7614473ebde08e85a74d92a6aea4a3fe729ab4d9b",
+  "previous_reason": "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+  "previous_gate": "project_cursor_cycle",
+  "previous_projects_observed": 1,
+  "previous_endpoint_projects_inspected": 0,
+  "new_model": "CANDIDATE_FIRST_POSITIVE_OWNERSHIP_WITNESS",
+  "identity_path": "POSITIVE_ENDPOINT_WITNESS",
+  "identity_proof_mode": "POSITIVE_OWNERSHIP",
+  "project_inventory_exhaustive_on_early_witness": false,
+  "cursor_cycle_guard_removed": false,
+  "NEON_PROJECT_ID_present": false,
+  "NEON_PROJECT_ID_written": false,
+  "official_api_contract": {
+    "status": "PROVEN",
+    "sources": {
+      "list_projects": "https://api-docs.neon.tech/reference/listprojects",
+      "project_details": "https://api-docs.neon.tech/reference/getproject",
+      "list_project_endpoints": "https://api-docs.neon.tech/reference/listprojectendpoints",
+      "endpoint_details": "https://api-docs.neon.tech/reference/getprojectendpoint",
+      "list_branches": "https://api-docs.neon.tech/reference/listprojectbranches",
+      "list_branch_endpoints": "https://api-docs.neon.tech/reference/listprojectbranchendpoints",
+      "openapi": "https://neon.com/api_spec/release/v2.json"
+    },
+    "project_endpoint_inventory_scope": "/projects/{project_id}/endpoints",
+    "endpoint_detail_scope": "/projects/{project_id}/endpoints/{endpoint_id}",
+    "branch_endpoint_scope": "/projects/{project_id}/branches/{branch_id}/endpoints",
+    "project_cursor_response_field": "pagination.cursor",
+    "branch_cursor_response_field": "pagination.next",
+    "global_endpoint_host_uniqueness_documented": false
+  },
+  "implementation": {
+    "candidate_inspection_before_next_project_page": true,
+    "exact_case_normalized_host_match_only": true,
+    "name_age_region_and_position_selection": false,
+    "endpoint_detail_witness": "REQUIRED",
+    "project_detail_witness": "REQUIRED",
+    "default_branch_relationship": "REQUIRED",
+    "branch_endpoint_confirmation": "REQUIRED",
+    "positive_identity_verdict": "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN",
+    "derived_identity_verdict": "NEON_PROJECT_IDENTITY_PROVEN",
+    "no_match_cursor_cycle_verdict": "NEON_PROJECT_IDENTITY_NOT_PROVEN",
+    "automatic_retry": false
+  },
+  "budgets": {
+    "max_neon_gets": 25,
+    "max_project_pages": 3,
+    "max_candidate_endpoint_inventories": 16,
+    "max_branch_pages": 3,
+    "positive_witness_reserved_gets": 6,
+    "worst_case_formula": "3 project pages + 16 candidate endpoint inventories + 1 endpoint detail + 1 project detail + 3 branch pages + 1 branch endpoint inventory = 25 GET"
+  },
+  "golden_pack": {
+    "fixture": "tests/activation/fixtures/chronos_neon_positive_project_ownership_witness_v1_golden_pack.json",
+    "cases": 13,
+    "central_first_page_cursor_not_followed": "PASS",
+    "no_match_cursor_cycle_preserved": "PASS",
+    "candidate_before_continuation_order": "PASS",
+    "order_independent_project_selection": "PASS",
+    "sanitized_identity_and_cursor": "PASS",
+    "focused_tests": "84 passed"
+  },
+  "local_validation": {
+    "activation_chronos_council_portability": "376 passed, 12 skipped",
+    "ruff_changed_scope": "PASS",
+    "ruff_repository_diagnostic": "86 pre-existing legacy findings outside mission scope",
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "compileall": "PASS",
+    "json_documents": "291 validated",
+    "yaml_documents": "99 validated",
+    "secret_scan": "PASS",
+    "absolute_path_scan": "7 passed",
+    "git_diff_check": "PASS",
+    "full_suite": {
+      "completed_once": true,
+      "passed": 1665,
+      "skipped": 23,
+      "failed": 26,
+      "failure_class": "PRE_EXISTING_PHASE_C_WINDOWS_BYTE_IDENTITY_AND_SIZE",
+      "phase_c_crlf_rewrite_performed": false,
+      "definitive_validation": "AUTOMATIC_PR_EXACT_HEAD_LINUX_CI"
+    }
+  },
+  "reviews": {
+    "DP5_PLATFORM_SRE": {
+      "verdict": "PASS",
+      "score": 99,
+      "p0": 0,
+      "p1": 0,
+      "hidden_external_effect_or_wake_suspend": "NO"
+    },
+    "DP6_EVIDENCE_DBA": {
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0,
+      "positive_scoped_ownership_witness_sufficient": "YES",
+      "basis": [
+        "project-scoped endpoint inventory",
+        "endpoint detail under the same project",
+        "project detail and owner concordance",
+        "default branch relationship",
+        "branch-scoped endpoint confirmation"
+      ]
+    },
+    "C4_SEC_RED": {
+      "verdict": "PASS",
+      "score": 98,
+      "p0": 0,
+      "p1": 0,
+      "answers": ["NO", "NO", "NO", "NO", "NO", "NO", "NO", "NO"]
+    }
+  },
+  "pre_merge_effects": {
+    "neon_gets": 0,
+    "neon_mutations": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "secret_updates": 0,
+    "variable_updates": 0,
+    "migration_0014": 0
+  },
+  "verdicts": [
+    "NEON_POSITIVE_PROJECT_OWNERSHIP_CONTRACT_READY",
+    "NEON_PROJECT_CURSOR_CYCLE_GUARD_PRESERVED",
+    "NEON_PROJECT_ID_WRITE_NOT_REQUIRED"
+  ]
+}

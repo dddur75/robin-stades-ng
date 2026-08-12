@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-11T20:07:07Z",
+  "generated_at":"2026-08-12T01:52:58Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -2146,6 +2146,22 @@
       "dataset_lineage_id":"NO_PRODUCTION_DATA_LOCAL_SYNTHETIC_ONLY",
       "status":"VERIFIED",
       "verified_by":["C0","DP5","DP6","C4"]
+    },
+    {
+      "claim_id":"GOV.CHRONOS.NEON.POSITIVE_PROJECT_OWNERSHIP.V1.001",
+      "claim":"The Chronos Neon preflight can prove the DSN target's project identity from a complete candidate-first positive ownership chain across project-scoped endpoint inventory, endpoint detail, project detail, default branch, and branch-scoped endpoint inventory without exhausting the account-wide project list, while preserving project_cursor_cycle refusal when no candidate exists.",
+      "scope":"CHRONOS_NEON_POSITIVE_PROJECT_OWNERSHIP_WITNESS_V1_PRE_CI",
+      "source":"Official Neon API and OpenAPI documentation, 13-case Golden Pack, 84 focused tests, 376 activation/Chronos/Council/portability tests, and DP5, DP6 and C4 read-only reviews",
+      "grain":"one_positive_neon_project_ownership_contract",
+      "temporal_class":"CODE_AND_LOCAL_EXECUTION_AS_OF",
+      "artifact":"reports/activation/chronos-neon-positive-project-ownership-witness-v1.json",
+      "hash":"047f2b6ab5b343c83b1e7e560e29f5220a5490fbfcfd2c18145ed78c3f64f6c4",
+      "code_revision":"822c9d3d5cddf70f673f422b29effda8faec5de8",
+      "execution_id":"local-neon-positive-project-ownership-v1-20260812T015258Z",
+      "scientific_lineage_id":"chronos-neon-positive-project-ownership-v1",
+      "dataset_lineage_id":"NO_PRODUCTION_DATA_LOCAL_SYNTHETIC_ONLY",
+      "status":"VERIFIED",
+      "verified_by":["C0","DP5","DP6","C4"]
     }
   ],
   "decision_nodes":[
@@ -2264,7 +2280,8 @@
     {"decision_id":"RCV3-20260811-120","ledger_record_hash":"d8264054b2766213a48ce095547dfd0058d0307dcd531db398f514f46c491ce6"},
     {"decision_id":"RCV3-20260811-121","ledger_record_hash":"33741e011bb600476dcaf8802378e1a46affc7f06091f9d678fed3e2be19759b"},
     {"decision_id":"RCV3-20260811-122","ledger_record_hash":"e6f32b33506b2ce6fad5187719654d2e8b234cb97980fc1d3ddd44fe16bff07a"},
-    {"decision_id":"RCV3-20260811-123","ledger_record_hash":"2f67846a91f9ae3151c9a91a5de80e81fa726bb8af3149f0f0632f73c5cb47e1"}
+    {"decision_id":"RCV3-20260811-123","ledger_record_hash":"2f67846a91f9ae3151c9a91a5de80e81fa726bb8af3149f0f0632f73c5cb47e1"},
+    {"decision_id":"RCV3-20260812-124","ledger_record_hash":"8afc25cdadefaad09305071df4192ccfed5639a38063140a303812e0248eef8f"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -2569,6 +2586,7 @@
     {"edge_id":"EDGE.300","from_claim_id":"GOV.CHRONOS.NEON.PURE_READONLY.PREFLIGHT.V4.001","to_decision_id":"RCV3-20260811-120","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.301","from_claim_id":"GOV.COUNCIL.APPEND_ONLY.HISTORICAL.PREFIX.V1.001","to_decision_id":"RCV3-20260811-121","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.302","from_claim_id":"GOV.CHRONOS.NEON.SECURE_DSN.CONTRACT.V1.001","to_decision_id":"RCV3-20260811-122","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.303","from_claim_id":"GOV.CHRONOS.NEON.PROJECT_ID.PAGINATION.V1.001","to_decision_id":"RCV3-20260811-123","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.303","from_claim_id":"GOV.CHRONOS.NEON.PROJECT_ID.PAGINATION.V1.001","to_decision_id":"RCV3-20260811-123","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.304","from_claim_id":"GOV.CHRONOS.NEON.POSITIVE_PROJECT_OWNERSHIP.V1.001","to_decision_id":"RCV3-20260812-124","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
