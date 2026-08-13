@@ -1,0 +1,623 @@
+{
+  "as_of": "2026-08-13T15:38:28Z",
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E0025",
+      "AUDIT:E0027",
+      "AUDIT:E2002",
+      "AUDIT:E2003",
+      "AUDIT:E3068"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authority": {
+    "basis": "PROTOCOL_SCOPE_NOT_HISTORICAL_PERFORMANCE",
+    "chronos_scoped_authority": {
+      "global_authority": false,
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT_ONLY",
+      "status": "UNIQUE"
+    },
+    "global_devig_authority": "CONFLICTING",
+    "global_selected_method": null,
+    "roi_used_for_authority": false
+  },
+  "claim_id": "GOV.SCIENTIFIC.YIELD.CONSUMER.INVENTORY.V1.001",
+  "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "consumers": [
+    {
+      "repo_path": "src/robin/backtesting/v3.py",
+      "role": "producer",
+      "status": "CANONICAL"
+    },
+    {
+      "repo_path": "src/robin/backtesting/oos.py",
+      "role": "producer/serializer",
+      "status": "CANONICAL_NULLABLE"
+    },
+    {
+      "repo_path": "src/robin/market_math/truth.py",
+      "role": "definition authority",
+      "status": "CANONICAL"
+    },
+    {
+      "repo_path": "scripts/build_cockpit_snapshot.py",
+      "role": "presentation consumer",
+      "status": "NULL_SAFE_PRESENTATION"
+    },
+    {
+      "repo_path": "scripts/run_oos_backtest.py",
+      "role": "report serializer",
+      "status": "CANONICAL_METADATA"
+    },
+    {
+      "repo_path": "scripts/run_historical_pipeline.py",
+      "role": "historical result consumer",
+      "status": "CANONICAL_METADATA"
+    },
+    {
+      "repo_path": "src/robin/prospective_observatory/prequential_contracts.py",
+      "role": "lineage carrier",
+      "status": "VERSION_METADATA_ONLY"
+    },
+    {
+      "repo_path": "src/robin/shadow/decision.py",
+      "role": "lineage carrier",
+      "status": "VERSION_METADATA_ONLY"
+    },
+    {
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "role": "historical rendered artifact",
+      "status": "PRESERVED_LEGACY_FIXED_1U"
+    },
+    {
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "role": "historical rendered artifact",
+      "status": "PRESERVED_LEGACY_FIXED_1U"
+    }
+  ],
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "b51af4bbaffcedc26e536c40f747cef37b945bebcb6fe535d5b3f9b6a0e3d210",
+  "counts": {
+    "cockpit_data_backtests": 15,
+    "cockpit_data_strategies": 15,
+    "cockpit_expert_backtests": 15,
+    "fixed_staking": 45,
+    "logical_results": 15,
+    "physical_occurrences": 45,
+    "stored_yield_invalidated": 0,
+    "stored_yield_matches_repaired_fixed_1u_roi": 45
+  },
+  "definition": {
+    "profit_per_bet": "profit_units / bets",
+    "profit_per_bet_definition_version": "profit_over_bet_count_v1",
+    "yield": "profit_units / turnover_units",
+    "yield_definition_version": "profit_over_turnover_v1",
+    "zero_turnover": null
+  },
+  "evidence_status": "PROUVÉ",
+  "external_effects": {
+    "api_football_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014": 0,
+    "neon_api_calls": 0,
+    "network_calls": 0,
+    "odds_provider_calls": 0,
+    "production_connections": 0,
+    "production_postgresql_connections": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "generated_at": "2026-08-13T15:38:28Z",
+  "generator": {
+    "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "repo_path": "scripts/build_scientific_truth_reports_v1.py",
+    "sha256": "8d7463e530e9d395894e3fdb0c21a42a95d7c3b92a2b53538f63ca3e38277392"
+  },
+  "grain": "ONE_CONSUMER_OR_ONE_HISTORICAL_FIELD_OCCURRENCE",
+  "historical_occurrences": [
+    {
+      "corrected_fixed_1u_roi": 0.00018324607329843354,
+      "json_pointer": "/deepData/backtests/0",
+      "logical_result_id": "V3-FIXED-001-d1e66e146000",
+      "occurrence_id": "V3-FIXED-001-d1e66e146000-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": 0.00018324607329843354
+    },
+    {
+      "corrected_fixed_1u_roi": 0.00018324607329843354,
+      "json_pointer": "/deepData/strategies/0",
+      "logical_result_id": "V3-FIXED-001-d1e66e146000",
+      "occurrence_id": "V3-FIXED-001-d1e66e146000-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": 0.00018324607329843354
+    },
+    {
+      "corrected_fixed_1u_roi": 0.00018324607329843354,
+      "json_pointer": "/backtests/0",
+      "logical_result_id": "V3-FIXED-001-d1e66e146000",
+      "occurrence_id": "V3-FIXED-001-d1e66e146000-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": 0.00018324607329843354
+    },
+    {
+      "corrected_fixed_1u_roi": -0.02745614035087719,
+      "json_pointer": "/deepData/backtests/1",
+      "logical_result_id": "V3-FIXED-002-7c7f1cb755cd",
+      "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.02745614035087719
+    },
+    {
+      "corrected_fixed_1u_roi": -0.02745614035087719,
+      "json_pointer": "/deepData/strategies/1",
+      "logical_result_id": "V3-FIXED-002-7c7f1cb755cd",
+      "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.02745614035087719
+    },
+    {
+      "corrected_fixed_1u_roi": -0.02745614035087719,
+      "json_pointer": "/backtests/1",
+      "logical_result_id": "V3-FIXED-002-7c7f1cb755cd",
+      "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.02745614035087719
+    },
+    {
+      "corrected_fixed_1u_roi": -0.020192307692307686,
+      "json_pointer": "/deepData/backtests/2",
+      "logical_result_id": "V3-FIXED-003-094aa0013251",
+      "occurrence_id": "V3-FIXED-003-094aa0013251-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.020192307692307686
+    },
+    {
+      "corrected_fixed_1u_roi": -0.020192307692307686,
+      "json_pointer": "/deepData/strategies/2",
+      "logical_result_id": "V3-FIXED-003-094aa0013251",
+      "occurrence_id": "V3-FIXED-003-094aa0013251-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.020192307692307686
+    },
+    {
+      "corrected_fixed_1u_roi": -0.020192307692307686,
+      "json_pointer": "/backtests/2",
+      "logical_result_id": "V3-FIXED-003-094aa0013251",
+      "occurrence_id": "V3-FIXED-003-094aa0013251-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.020192307692307686
+    },
+    {
+      "corrected_fixed_1u_roi": -0.09174242424242424,
+      "json_pointer": "/deepData/backtests/3",
+      "logical_result_id": "V3-FIXED-004-7fd167d6d3fc",
+      "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.09174242424242424
+    },
+    {
+      "corrected_fixed_1u_roi": -0.09174242424242424,
+      "json_pointer": "/deepData/strategies/3",
+      "logical_result_id": "V3-FIXED-004-7fd167d6d3fc",
+      "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.09174242424242424
+    },
+    {
+      "corrected_fixed_1u_roi": -0.09174242424242424,
+      "json_pointer": "/backtests/3",
+      "logical_result_id": "V3-FIXED-004-7fd167d6d3fc",
+      "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.09174242424242424
+    },
+    {
+      "corrected_fixed_1u_roi": -0.12955678670360113,
+      "json_pointer": "/deepData/backtests/4",
+      "logical_result_id": "V3-FIXED-005-2262f787be9a",
+      "occurrence_id": "V3-FIXED-005-2262f787be9a-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.12955678670360113
+    },
+    {
+      "corrected_fixed_1u_roi": -0.12955678670360113,
+      "json_pointer": "/deepData/strategies/4",
+      "logical_result_id": "V3-FIXED-005-2262f787be9a",
+      "occurrence_id": "V3-FIXED-005-2262f787be9a-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.12955678670360113
+    },
+    {
+      "corrected_fixed_1u_roi": -0.12955678670360113,
+      "json_pointer": "/backtests/4",
+      "logical_result_id": "V3-FIXED-005-2262f787be9a",
+      "occurrence_id": "V3-FIXED-005-2262f787be9a-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.12955678670360113
+    },
+    {
+      "corrected_fixed_1u_roi": -0.097557003257329,
+      "json_pointer": "/deepData/backtests/5",
+      "logical_result_id": "V3-FIXED-006-f19ca44559bf",
+      "occurrence_id": "V3-FIXED-006-f19ca44559bf-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.097557003257329
+    },
+    {
+      "corrected_fixed_1u_roi": -0.097557003257329,
+      "json_pointer": "/deepData/strategies/5",
+      "logical_result_id": "V3-FIXED-006-f19ca44559bf",
+      "occurrence_id": "V3-FIXED-006-f19ca44559bf-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.097557003257329
+    },
+    {
+      "corrected_fixed_1u_roi": -0.097557003257329,
+      "json_pointer": "/backtests/5",
+      "logical_result_id": "V3-FIXED-006-f19ca44559bf",
+      "occurrence_id": "V3-FIXED-006-f19ca44559bf-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.097557003257329
+    },
+    {
+      "corrected_fixed_1u_roi": -0.14002577319587628,
+      "json_pointer": "/deepData/backtests/6",
+      "logical_result_id": "V3-FIXED-007-a210cac06ff3",
+      "occurrence_id": "V3-FIXED-007-a210cac06ff3-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.14002577319587628
+    },
+    {
+      "corrected_fixed_1u_roi": -0.14002577319587628,
+      "json_pointer": "/deepData/strategies/6",
+      "logical_result_id": "V3-FIXED-007-a210cac06ff3",
+      "occurrence_id": "V3-FIXED-007-a210cac06ff3-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.14002577319587628
+    },
+    {
+      "corrected_fixed_1u_roi": -0.14002577319587628,
+      "json_pointer": "/backtests/6",
+      "logical_result_id": "V3-FIXED-007-a210cac06ff3",
+      "occurrence_id": "V3-FIXED-007-a210cac06ff3-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.14002577319587628
+    },
+    {
+      "corrected_fixed_1u_roi": -0.18172804532577905,
+      "json_pointer": "/deepData/backtests/7",
+      "logical_result_id": "V3-FIXED-008-ca192767e0ea",
+      "occurrence_id": "V3-FIXED-008-ca192767e0ea-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.18172804532577905
+    },
+    {
+      "corrected_fixed_1u_roi": -0.18172804532577905,
+      "json_pointer": "/deepData/strategies/7",
+      "logical_result_id": "V3-FIXED-008-ca192767e0ea",
+      "occurrence_id": "V3-FIXED-008-ca192767e0ea-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.18172804532577905
+    },
+    {
+      "corrected_fixed_1u_roi": -0.18172804532577905,
+      "json_pointer": "/backtests/7",
+      "logical_result_id": "V3-FIXED-008-ca192767e0ea",
+      "occurrence_id": "V3-FIXED-008-ca192767e0ea-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.18172804532577905
+    },
+    {
+      "corrected_fixed_1u_roi": -0.15914473684210528,
+      "json_pointer": "/deepData/backtests/8",
+      "logical_result_id": "V3-FIXED-009-6f61ab231d03",
+      "occurrence_id": "V3-FIXED-009-6f61ab231d03-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.15914473684210528
+    },
+    {
+      "corrected_fixed_1u_roi": -0.15914473684210528,
+      "json_pointer": "/deepData/strategies/8",
+      "logical_result_id": "V3-FIXED-009-6f61ab231d03",
+      "occurrence_id": "V3-FIXED-009-6f61ab231d03-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.15914473684210528
+    },
+    {
+      "corrected_fixed_1u_roi": -0.15914473684210528,
+      "json_pointer": "/backtests/8",
+      "logical_result_id": "V3-FIXED-009-6f61ab231d03",
+      "occurrence_id": "V3-FIXED-009-6f61ab231d03-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.15914473684210528
+    },
+    {
+      "corrected_fixed_1u_roi": -0.04559796437659033,
+      "json_pointer": "/deepData/backtests/9",
+      "logical_result_id": "V3-FIXED-010-093409ee0a82",
+      "occurrence_id": "V3-FIXED-010-093409ee0a82-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.04559796437659033
+    },
+    {
+      "corrected_fixed_1u_roi": -0.04559796437659033,
+      "json_pointer": "/deepData/strategies/9",
+      "logical_result_id": "V3-FIXED-010-093409ee0a82",
+      "occurrence_id": "V3-FIXED-010-093409ee0a82-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.04559796437659033
+    },
+    {
+      "corrected_fixed_1u_roi": -0.04559796437659033,
+      "json_pointer": "/backtests/9",
+      "logical_result_id": "V3-FIXED-010-093409ee0a82",
+      "occurrence_id": "V3-FIXED-010-093409ee0a82-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.04559796437659033
+    },
+    {
+      "corrected_fixed_1u_roi": -0.017810650887573963,
+      "json_pointer": "/deepData/backtests/10",
+      "logical_result_id": "V3-FIXED-011-e043aacf5662",
+      "occurrence_id": "V3-FIXED-011-e043aacf5662-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.017810650887573963
+    },
+    {
+      "corrected_fixed_1u_roi": -0.017810650887573963,
+      "json_pointer": "/deepData/strategies/10",
+      "logical_result_id": "V3-FIXED-011-e043aacf5662",
+      "occurrence_id": "V3-FIXED-011-e043aacf5662-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.017810650887573963
+    },
+    {
+      "corrected_fixed_1u_roi": -0.017810650887573963,
+      "json_pointer": "/backtests/10",
+      "logical_result_id": "V3-FIXED-011-e043aacf5662",
+      "occurrence_id": "V3-FIXED-011-e043aacf5662-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.017810650887573963
+    },
+    {
+      "corrected_fixed_1u_roi": -0.038708487084870846,
+      "json_pointer": "/deepData/backtests/11",
+      "logical_result_id": "V3-FIXED-012-927eae85f4fe",
+      "occurrence_id": "V3-FIXED-012-927eae85f4fe-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.038708487084870846
+    },
+    {
+      "corrected_fixed_1u_roi": -0.038708487084870846,
+      "json_pointer": "/deepData/strategies/11",
+      "logical_result_id": "V3-FIXED-012-927eae85f4fe",
+      "occurrence_id": "V3-FIXED-012-927eae85f4fe-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.038708487084870846
+    },
+    {
+      "corrected_fixed_1u_roi": -0.038708487084870846,
+      "json_pointer": "/backtests/11",
+      "logical_result_id": "V3-FIXED-012-927eae85f4fe",
+      "occurrence_id": "V3-FIXED-012-927eae85f4fe-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.038708487084870846
+    },
+    {
+      "corrected_fixed_1u_roi": -0.09339233038348083,
+      "json_pointer": "/deepData/backtests/12",
+      "logical_result_id": "V3-FIXED-013-c17f3f47f6a4",
+      "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.09339233038348083
+    },
+    {
+      "corrected_fixed_1u_roi": -0.09339233038348083,
+      "json_pointer": "/deepData/strategies/14",
+      "logical_result_id": "V3-FIXED-013-c17f3f47f6a4",
+      "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.09339233038348083
+    },
+    {
+      "corrected_fixed_1u_roi": -0.09339233038348083,
+      "json_pointer": "/backtests/12",
+      "logical_result_id": "V3-FIXED-013-c17f3f47f6a4",
+      "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.09339233038348083
+    },
+    {
+      "corrected_fixed_1u_roi": -0.04762452107279693,
+      "json_pointer": "/deepData/backtests/13",
+      "logical_result_id": "V3-FIXED-014-05e9e473ad8a",
+      "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.04762452107279693
+    },
+    {
+      "corrected_fixed_1u_roi": -0.04762452107279693,
+      "json_pointer": "/deepData/strategies/15",
+      "logical_result_id": "V3-FIXED-014-05e9e473ad8a",
+      "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.04762452107279693
+    },
+    {
+      "corrected_fixed_1u_roi": -0.04762452107279693,
+      "json_pointer": "/backtests/13",
+      "logical_result_id": "V3-FIXED-014-05e9e473ad8a",
+      "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.04762452107279693
+    },
+    {
+      "corrected_fixed_1u_roi": -0.05784999999999999,
+      "json_pointer": "/deepData/backtests/14",
+      "logical_result_id": "V3-FIXED-015-c48b860927d1",
+      "occurrence_id": "V3-FIXED-015-c48b860927d1-O1",
+      "relation": "PRIMARY_SOURCE_OCCURRENCE",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.05784999999999999
+    },
+    {
+      "corrected_fixed_1u_roi": -0.05784999999999999,
+      "json_pointer": "/deepData/strategies/16",
+      "logical_result_id": "V3-FIXED-015-c48b860927d1",
+      "occurrence_id": "V3-FIXED-015-c48b860927d1-O2",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-data.json",
+      "stored_yield": -0.05784999999999999
+    },
+    {
+      "corrected_fixed_1u_roi": -0.05784999999999999,
+      "json_pointer": "/backtests/14",
+      "logical_result_id": "V3-FIXED-015-c48b860927d1",
+      "occurrence_id": "V3-FIXED-015-c48b860927d1-O3",
+      "relation": "COPY_OF",
+      "repo_path": "cockpit/app/cockpit-expert-data.json",
+      "stored_yield": -0.05784999999999999
+    }
+  ],
+  "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
+  "limitations": [
+    "Text matches of Python generator keyword yield are excluded from metric consumers.",
+    "Historical FIXED objects do not establish variable-stake behavior."
+  ],
+  "loop54_source": {
+    "evidence_ids": [],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1",
+    "manifest_sha256": "f3907663f43fcd72078b6e36e0f40b276478e11e28c72fbfaed9e32af65c34df",
+    "repair_sha": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+    "status": "SEALED_EXTERNAL_EVIDENCE_PACK"
+  },
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "non_claims": [
+    "The 45 stored yield fields are not invalidated; under FIXED 1u they already equal profit/turnover."
+  ],
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP54_REPORTS:E0001",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT",
+    "namespace": "LOOP54_REPORTS"
+  },
+  "report_id": "yield-consumer-inventory-v1",
+  "reproducibility": {
+    "command_evidence_ids": [
+      "LOOP54_REPORTS:E0001"
+    ],
+    "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
+    "input_hashes": [
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/report-metric-propagation.csv",
+        "sha256": "0007df39df35c26c163420ed2afe2a61b58e6d024335101b1284c98d48d5eb97"
+      },
+      {
+        "path": "cockpit/app/cockpit-data.json",
+        "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+      },
+      {
+        "path": "cockpit/app/cockpit-expert-data.json",
+        "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+      }
+    ],
+    "seed": null
+  },
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "reviews": {
+    "data_temporal": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "scientific_statistical": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "security_red_team": "PENDING_INDEPENDENT_FINAL_REVIEW"
+  },
+  "schema_version": "robin-scientific-truth-report-v1",
+  "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+  "scope": "YIELD_FIELD_SEMANTICS_AND_CONSUMERS",
+  "source_code_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "sources": [
+    {
+      "evidence_ids": [
+        "AUDIT:E2002"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/report-metric-propagation.csv",
+      "sha256": "0007df39df35c26c163420ed2afe2a61b58e6d024335101b1284c98d48d5eb97"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "cockpit/app/cockpit-data.json",
+      "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "cockpit/app/cockpit-expert-data.json",
+      "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+    }
+  ],
+  "temporal_class": "STATIC_SOURCE_AND_TRACKED_HISTORICAL_SNAPSHOT",
+  "verdicts": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0026",
+        "AUDIT:E3068"
+      ],
+      "verdict": "ROBIN_YIELD_SEMANTICS_UNAMBIGUOUS"
+    }
+  ],
+  "verified_by": []
+}

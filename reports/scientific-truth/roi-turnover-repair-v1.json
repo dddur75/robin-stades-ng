@@ -1,0 +1,245 @@
+{
+  "as_of": "2026-08-13T15:38:28Z",
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E0023",
+      "AUDIT:E0025",
+      "AUDIT:E0027",
+      "AUDIT:E2001",
+      "AUDIT:E2008",
+      "AUDIT:E3068"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authority": {
+    "basis": "PROTOCOL_SCOPE_NOT_HISTORICAL_PERFORMANCE",
+    "chronos_scoped_authority": {
+      "global_authority": false,
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT_ONLY",
+      "status": "UNIQUE"
+    },
+    "global_devig_authority": "CONFLICTING",
+    "global_selected_method": null,
+    "roi_used_for_authority": false
+  },
+  "claim_id": "EVAL.SCIENTIFIC.ROI.TURNOVER.REPAIR.V1.001",
+  "code_paths": [
+    {
+      "function": "performance_summary",
+      "repo_path": "src/robin/market_math/truth.py",
+      "status": "CANONICAL"
+    },
+    {
+      "function": "run_backtest",
+      "repo_path": "src/robin/backtesting/v3.py",
+      "status": "CANONICAL_DELEGATE"
+    },
+    {
+      "function": "evaluate_walk_forward",
+      "repo_path": "src/robin/backtesting/oos.py",
+      "status": "CANONICAL_DELEGATE"
+    },
+    {
+      "function": "fold summaries",
+      "repo_path": "src/robin/historical_deep/backtest.py",
+      "status": "CANONICAL_DELEGATE"
+    }
+  ],
+  "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "22d522ab7f4f667cfc9d2a86f8ab58e01acbffbfbe5fe3e5ad3d2e9fbda6313a",
+  "definition_versions": {
+    "profit_per_bet": "profit_over_bet_count_v1",
+    "roi": "profit_over_actual_turnover_v1",
+    "turnover": "sum_of_accepted_stakes_v1",
+    "yield": "profit_over_turnover_v1"
+  },
+  "definitions": {
+    "ending_bankroll_units": "starting_bankroll_units + profit_units",
+    "profit_per_bet": "profit_units / bets if bets > 0 else null",
+    "profit_units": "sum(detail.profit)",
+    "roi": "profit_units / turnover_units if turnover_units > 0 else null",
+    "turnover_units": "sum(detail.stake)",
+    "yield": "roi"
+  },
+  "evidence_status": "PROUVÉ",
+  "external_effects": {
+    "api_football_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014": 0,
+    "neon_api_calls": 0,
+    "network_calls": 0,
+    "odds_provider_calls": 0,
+    "production_connections": 0,
+    "production_postgresql_connections": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "generated_at": "2026-08-13T15:38:28Z",
+  "generator": {
+    "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "repo_path": "scripts/build_scientific_truth_reports_v1.py",
+    "sha256": "8d7463e530e9d395894e3fdb0c21a42a95d7c3b92a2b53538f63ca3e38277392"
+  },
+  "grain": "DEFINITION_PLUS_15_LOGICAL_AND_45_PHYSICAL_HISTORICAL_SUMMARIES",
+  "historical_scope": {
+    "logical_results": 15,
+    "maximum_absolute_roi_error": 0.04577382258550142,
+    "minimum_absolute_roi_error": 4.382328364758482e-05,
+    "physical_occurrences": 45,
+    "production_lock_changes": 0,
+    "profit_sign_changes": 0,
+    "promotion_changes": 0,
+    "status_changes": 0,
+    "stored_roi_mismatches": 45,
+    "stored_yield_matches_fixed_1u_turnover_roi": 45
+  },
+  "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
+  "limitations": [
+    "The 15 historical corrections use declared FIXED staking and aggregate bet count; per-bet stakes were not published.",
+    "No de-vig or portfolio replay is inferred from the aggregate objects."
+  ],
+  "loop54_source": {
+    "evidence_ids": [
+      "LOOP54:E0016"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1",
+    "manifest_sha256": "f3907663f43fcd72078b6e36e0f40b276478e11e28c72fbfaed9e32af65c34df",
+    "repair_sha": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+    "status": "SEALED_EXTERNAL_EVIDENCE_PACK"
+  },
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "non_claims": [
+    "Corrected ROI does not validate data lineage, model quality, or profitability.",
+    "Stored historical JSON is preserved and not rewritten."
+  ],
+  "output_metadata_versions": {
+    "decision_threshold_version": "maximum_edge_gte_threshold_v1",
+    "profit_per_bet_definition_version": "profit_over_bet_count_v1",
+    "roi_definition_version": "profit_over_actual_turnover_v1",
+    "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+    "settlement_version": "decimal_odds_net_profit_v1",
+    "staking_version": "fixed_proportional_fractional_kelly_v1",
+    "turnover_definition_version": "sum_of_accepted_stakes_v1",
+    "yield_definition_version": "profit_over_turnover_v1"
+  },
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP54_REPORTS:E0001",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT",
+    "namespace": "LOOP54_REPORTS"
+  },
+  "report_id": "roi-turnover-repair-v1",
+  "reproducibility": {
+    "command_evidence_ids": [
+      "LOOP54_REPORTS:E0001"
+    ],
+    "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
+    "input_hashes": [
+      {
+        "path": "src/robin/market_math/truth.py",
+        "sha256": "7361c1c7e7263130d6410d4b74622024df79fa6b63b404c7e690c28be547048c"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/backtest-v3-historical-roi-replay.csv",
+        "sha256": "4d5af21bd19e1f5850bf4fa043b22abe5899e97ea0101b52e1c73d6c695c942c"
+      },
+      {
+        "path": "cockpit/app/cockpit-data.json",
+        "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+      },
+      {
+        "path": "cockpit/app/cockpit-expert-data.json",
+        "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+      }
+    ],
+    "seed": null
+  },
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "reviews": {
+    "data_temporal": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "scientific_statistical": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "security_red_team": "PENDING_INDEPENDENT_FINAL_REVIEW"
+  },
+  "schema_version": "robin-scientific-truth-report-v1",
+  "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+  "scope": "ROI_TURNOVER_YIELD_AND_PROFIT_PER_BET",
+  "source_code_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "sources": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "repo_or_evidence_path": "src/robin/market_math/truth.py",
+      "sha256": "7361c1c7e7263130d6410d4b74622024df79fa6b63b404c7e690c28be547048c"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/backtest-v3-historical-roi-replay.csv",
+      "sha256": "4d5af21bd19e1f5850bf4fa043b22abe5899e97ea0101b52e1c73d6c695c942c"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "cockpit/app/cockpit-data.json",
+      "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "cockpit/app/cockpit-expert-data.json",
+      "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+    }
+  ],
+  "synthetic_red_proof": {
+    "evidence_ids": [
+      "LOOP54:E0016",
+      "AUDIT:E3068"
+    ],
+    "expected_profit_units": 1.0,
+    "expected_roi": 0.5,
+    "expected_turnover_units": 2.0,
+    "old_roi": 0.3333333333333333,
+    "profits": [
+      2.0,
+      -1.0
+    ],
+    "stakes": [
+      1.0,
+      1.0
+    ]
+  },
+  "temporal_class": "TIME_INVARIANT_ARITHMETIC_WITH_HISTORICAL_AGGREGATES",
+  "verdicts": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0016",
+        "LOOP54:E0026"
+      ],
+      "verdict": "ROBIN_ROI_TURNOVER_DEFINITION_CORRECTED"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0026",
+        "AUDIT:E3068"
+      ],
+      "verdict": "ROBIN_YIELD_SEMANTICS_UNAMBIGUOUS"
+    }
+  ],
+  "verified_by": []
+}

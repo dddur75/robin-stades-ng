@@ -1,0 +1,392 @@
+{
+  "as_of": "2026-08-13T15:38:28Z",
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E0023",
+      "AUDIT:E0025",
+      "AUDIT:E1012",
+      "AUDIT:E2013"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authority": {
+    "basis": "PROTOCOL_SCOPE_NOT_HISTORICAL_PERFORMANCE",
+    "chronos_scoped_authority": {
+      "global_authority": false,
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT_ONLY",
+      "status": "UNIQUE"
+    },
+    "global_devig_authority": "CONFLICTING",
+    "global_selected_method": null,
+    "roi_used_for_authority": false
+  },
+  "claim_id": "GOV.SCIENTIFIC.TRUTH.DEFECT.INVENTORY.V1.001",
+  "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "4f66638e113bf3795a37e0434e4166e68a38c2ceee8ce87d5f3a524d90629581",
+  "counts": {
+    "essential_p2_open": 3,
+    "open_p0": 0,
+    "open_p1": 0,
+    "p0": 0,
+    "p1": 7,
+    "p2": 3,
+    "p3": 0,
+    "total": 10
+  },
+  "defects": [
+    {
+      "component": "backtesting-v3",
+      "consequence": "45 stored FIXED ROI fields differ from turnover ROI",
+      "defect_id": "SCI54-ROI-001",
+      "evidence_ids": [
+        "LOOP54:E0016",
+        "AUDIT:E0023",
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "SCI-002",
+      "line_anchor": "run_backtest performance summary",
+      "original_behavior": "roi=profit/sum(abs(realized_profit))",
+      "repo_path": "src/robin/backtesting/v3.py",
+      "required_behavior": "roi=profit_units/actual_turnover_units",
+      "resolution_claim_ids": [
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.001"
+      ],
+      "resolution_evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "resolved": true,
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE"
+    },
+    {
+      "component": "performance-metadata",
+      "consequence": "metric name could conceal a denominator change",
+      "defect_id": "SCI54-YIELD-002",
+      "evidence_ids": [
+        "AUDIT:E0023",
+        "AUDIT:E0027",
+        "AUDIT:E3068"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "SCI-002",
+      "line_anchor": "performance_summary",
+      "original_behavior": "yield named profit/bet count and diverged under non-unit stakes",
+      "repo_path": "src/robin/market_math/truth.py",
+      "required_behavior": "yield=roi=profit/turnover; profit_per_bet separate",
+      "resolution_claim_ids": [
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.001"
+      ],
+      "resolution_evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "resolved": true,
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE"
+    },
+    {
+      "component": "de-vig-active-paths",
+      "consequence": "same market could yield different decisions across active paths",
+      "defect_id": "SCI54-DEVIG-003",
+      "evidence_ids": [
+        "LOOP54:E0017",
+        "AUDIT:E1012",
+        "AUDIT:E1016",
+        "AUDIT:E1040",
+        "AUDIT:E1044"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "SCI-003",
+      "line_anchor": "devig_probabilities",
+      "original_behavior": "15 mechanisms had divergent method and invalid-market semantics",
+      "repo_path": "src/robin/market_math/devig.py",
+      "required_behavior": "explicit method, version, complete-market contract and deterministic errors",
+      "resolution_claim_ids": [
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.001"
+      ],
+      "resolution_evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "resolved": true,
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE"
+    },
+    {
+      "component": "staking-bankroll",
+      "consequence": "ruin sequences could create negative bankroll or abort a batch",
+      "defect_id": "SCI54-STAKING-004",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "LOOP54-RED-STAKING",
+      "line_anchor": "stake_units",
+      "original_behavior": "fixed stake could exceed remaining bankroll and crash the next bet",
+      "repo_path": "src/robin/market_math/truth.py",
+      "required_behavior": "every stake is bounded by stake cap and current bankroll",
+      "resolution_claim_ids": [
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.001"
+      ],
+      "resolution_evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "resolved": true,
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE"
+    },
+    {
+      "component": "backtest-settlement",
+      "consequence": "corrupt outcomes could change profit and ROI",
+      "defect_id": "SCI54-SETTLEMENT-005",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "LOOP54-RED-TARGET",
+      "line_anchor": "target validation and settlement",
+      "original_behavior": "out-of-domain targets were silently settled as losses",
+      "repo_path": "src/robin/backtesting/v3.py",
+      "required_behavior": "target must belong to the selected market domain",
+      "resolution_claim_ids": [
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.001"
+      ],
+      "resolution_evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "resolved": true,
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE"
+    },
+    {
+      "component": "shadow-decision-identity",
+      "consequence": "accepted and rejected decisions could share one identity",
+      "defect_id": "SCI54-SHADOW-006",
+      "evidence_ids": [
+        "LOOP54:E0026",
+        "AUDIT:E1042"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "LOOP54-RED-SHADOW",
+      "line_anchor": "decision identity and journal append",
+      "original_behavior": "different complete markets could collide and be silently deduplicated",
+      "repo_path": "src/robin/shadow/decision.py",
+      "required_behavior": "full decision input identity plus append conflict/supersession semantics",
+      "resolution_claim_ids": [
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.001"
+      ],
+      "resolution_evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "resolved": true,
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE"
+    },
+    {
+      "component": "prequential-persistence",
+      "consequence": "historical scientific identity could be reinterpreted after a version change",
+      "defect_id": "SCI54-PREQUENT-007",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "LOOP54-DATA-PREQUENTIAL",
+      "line_anchor": "load_predictions",
+      "original_behavior": "reload could publish a reconstructed current hash as persisted identity",
+      "repo_path": "src/robin/prospective_observatory/prequential_persistence.py",
+      "required_behavior": "preserve stored identity and mark legacy scientific lineage not persisted",
+      "resolution_claim_ids": [
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.001"
+      ],
+      "resolution_evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "resolved": true,
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE"
+    },
+    {
+      "component": "point-in-time-lineage",
+      "consequence": "mathematical repair cannot establish causal or point-in-time validity",
+      "defect_id": "SCI54-TEMPORAL-008",
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "TEMPORAL-LINEAGE-OPEN",
+      "line_anchor": "temporal",
+      "original_behavior": "72 audited surfaces lack complete point-in-time proof",
+      "repo_path": "reports/scientific-truth/historical-truth-replay-v1.json",
+      "required_behavior": "availability and as-of lineage must be proven in LOOP55",
+      "resolution_evidence_ids": [],
+      "resolved": false,
+      "severity": "P2",
+      "status": "NOT_IN_SCOPE"
+    },
+    {
+      "component": "historical-decision-replay",
+      "consequence": "only formula repair, not portfolio replay, is supportable",
+      "defect_id": "SCI54-HISTORICAL-009",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E1040"
+      ],
+      "evidence_status": "PROUVÉ",
+      "finding_id": "HISTORICAL-DEVIG-REPLAY-OPEN",
+      "line_anchor": "branches C D1 D2",
+      "original_behavior": "published aggregates contain no per-bet odds, selections or de-vig identity",
+      "repo_path": "reports/scientific-truth/historical-truth-replay-v1.json",
+      "required_behavior": "replay from observation-level frozen inputs under each explicit method",
+      "resolution_evidence_ids": [],
+      "resolved": false,
+      "severity": "P2",
+      "status": "REPLAY_REQUIRED"
+    },
+    {
+      "component": "legacy-prospective-projection",
+      "consequence": "strict replay can fail closed against legacy PostgreSQL state",
+      "defect_id": "SCI54-PROJECTION-010",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROBABLE",
+      "finding_id": "LEGACY-PROJECTION-REBUILD-OPEN",
+      "line_anchor": "strict complete positive-overround projection",
+      "original_behavior": "old SQL projections may include clamped underround or incomplete markets",
+      "repo_path": "scripts/run_prospective_observatory.py",
+      "required_behavior": "separately authorized rebuild or migration with parity evidence",
+      "resolution_evidence_ids": [],
+      "resolved": false,
+      "severity": "P2",
+      "status": "NOT_IN_SCOPE"
+    }
+  ],
+  "evidence_status": "PROUVÉ",
+  "external_effects": {
+    "api_football_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014": 0,
+    "neon_api_calls": 0,
+    "network_calls": 0,
+    "odds_provider_calls": 0,
+    "production_connections": 0,
+    "production_postgresql_connections": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "generated_at": "2026-08-13T15:38:28Z",
+  "generator": {
+    "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "repo_path": "scripts/build_scientific_truth_reports_v1.py",
+    "sha256": "8d7463e530e9d395894e3fdb0c21a42a95d7c3b92a2b53538f63ca3e38277392"
+  },
+  "grain": "ONE_RECORD_PER_REPRODUCED_DEFECT_OR_RESIDUAL_LIMITATION",
+  "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
+  "limitations": [
+    "Historical aggregate repair is not an observation-level decision replay.",
+    "Point-in-time validity remains outside LOOP54 and not proven."
+  ],
+  "loop54_source": {
+    "evidence_ids": [
+      "LOOP54:E0016",
+      "LOOP54:E0017",
+      "LOOP54:E0026"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1",
+    "manifest_sha256": "f3907663f43fcd72078b6e36e0f40b276478e11e28c72fbfaed9e32af65c34df",
+    "repair_sha": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+    "status": "SEALED_EXTERNAL_EVIDENCE_PACK"
+  },
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "non_claims": [
+    "No global de-vig method was selected.",
+    "No historical result is promoted or declared scientifically validated."
+  ],
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP54_REPORTS:E0001",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT",
+    "namespace": "LOOP54_REPORTS"
+  },
+  "report_id": "scientific-truth-defect-inventory-v1",
+  "reproducibility": {
+    "command_evidence_ids": [
+      "LOOP54_REPORTS:E0001"
+    ],
+    "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
+    "input_hashes": [
+      {
+        "path": "src/robin/market_math/truth.py",
+        "sha256": "7361c1c7e7263130d6410d4b74622024df79fa6b63b404c7e690c28be547048c"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/findings.json",
+        "sha256": "7ec533b93c5db97b96c68c9cf99dc42f80206699bd383dff505eceed6b164581"
+      }
+    ],
+    "seed": null
+  },
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "reviews": {
+    "data_temporal": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "scientific_statistical": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "security_red_team": "PENDING_INDEPENDENT_FINAL_REVIEW"
+  },
+  "schema_version": "robin-scientific-truth-report-v1",
+  "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+  "scope": "BOUNDED_SCIENTIFIC_TRUTH_KERNEL_DEFECTS",
+  "severity_definition": {
+    "P0": "temporal leakage proven, false promotable result, or unauthorized write/bet",
+    "P1": "wrong scientific calculation, path inconsistency, or unsupported valid history",
+    "P2": "missing lineage, incomplete diagnostic, or ambiguity needed for replay",
+    "P3": "readability or nonessential cleanup"
+  },
+  "source_code_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "sources": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "repo_or_evidence_path": "src/robin/market_math/truth.py",
+      "sha256": "7361c1c7e7263130d6410d4b74622024df79fa6b63b404c7e690c28be547048c"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0023",
+        "AUDIT:E1012",
+        "AUDIT:E2013"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/findings.json",
+      "sha256": "7ec533b93c5db97b96c68c9cf99dc42f80206699bd383dff505eceed6b164581"
+    }
+  ],
+  "temporal_class": "MIXED_STATIC_AND_BOUNDED_OFFLINE_EXECUTION",
+  "verdicts": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0026",
+        "AUDIT:E2013"
+      ],
+      "verdict": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1_PARTIAL"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "verdict": "PASS_AND_HOLD"
+    }
+  ],
+  "verified_by": []
+}

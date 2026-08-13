@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import ast
+import hashlib
+import json
 import math
+import sys
 from collections.abc import Sequence
 from itertools import permutations
 from pathlib import Path
@@ -31,6 +34,7 @@ from robin.prospective_observatory.prequential_factory import (
     devig_probabilities as prequential_devig,
 )
 from robin.shadow.decision import decide_shadow_bet
+from scripts import build_scientific_truth_reports_v1 as report_builder
 from scripts.run_prospective_observatory import (
     _complete_positive_overround_market,
 )
@@ -136,8 +140,7 @@ def _declared_method_decision(
     return bool(edges[selection] >= threshold), selection
 
 
-def test_same_market_and_same_declared_method_produce_same_decision_across_paths(
-) -> None:
+def test_same_market_and_same_declared_method_produce_same_decision_across_paths() -> None:
     declared_method = "PROPORTIONAL"
     odds = [2.0, 3.2, 4.0]
     model_probabilities = [0.60, 0.25, 0.15]
@@ -212,10 +215,7 @@ def test_devig_properties_and_permutation_invariance(
             method=method,
             outcome_labels=tuple(("HOME", "DRAW", "AWAY")[index] for index in order),
         )
-        restored = tuple(
-            permuted.fair_probabilities[order.index(index)]
-            for index in range(3)
-        )
+        restored = tuple(permuted.fair_probabilities[order.index(index)] for index in range(3))
         assert restored == pytest.approx(baseline.fair_probabilities, abs=1e-12)
 
 
@@ -263,9 +263,7 @@ def test_underround_and_extreme_overround_are_explicitly_reported() -> None:
     shin_two_way = devig_probabilities([1.9, 2.0], method="SHIN")
     assert shin_two_way.method.value == "SHIN"
     assert shin_two_way.effective_method.value == "PROPORTIONAL"
-    assert shin_two_way.fallback_reason == (
-        "SHIN_TWO_OUTCOME_PROPORTIONAL_EQUIVALENCE"
-    )
+    assert shin_two_way.fallback_reason == ("SHIN_TWO_OUTCOME_PROPORTIONAL_EQUIVALENCE")
 
 
 def test_performance_truth_uses_actual_stakes_without_rounding() -> None:
@@ -314,10 +312,7 @@ def test_zero_stake_cap_never_creates_a_zero_turnover_bet() -> None:
 
 
 def test_bankroll_ruin_stops_future_fixed_stakes_without_negative_balance() -> None:
-    rows = [
-        _fixed_roi_row(fixture_id=index, target=2)
-        for index in range(1, 106)
-    ]
+    rows = [_fixed_roi_row(fixture_id=index, target=2) for index in range(1, 106)]
     for row in rows:
         row["kickoff_at"] = "2025-01-01T18:00:00Z"
     result = run_backtest(
@@ -577,14 +572,10 @@ def test_active_paths_do_not_reimplement_margin_removal_inline() -> None:
         "src/robin/historical_deep/backtest.py": {"_market_probability"},
         "src/robin/modeling/reference.py": {"market_probabilities"},
         "src/robin/operations/activation.py": {"normalized_market_probabilities"},
-        "src/robin/prospective_observatory/prequential_factory.py": {
-            "devig_probabilities"
-        },
+        "src/robin/prospective_observatory/prequential_factory.py": {"devig_probabilities"},
         "src/robin/shadow/decision.py": {"decide_shadow_bet"},
         "scripts/run_historical_pipeline.py": {"_market_prediction_rows"},
-        "scripts/run_historical_deep_harvest.py": {
-            "build_cache_only_backtest_input"
-        },
+        "scripts/run_historical_deep_harvest.py": {"build_cache_only_backtest_input"},
         "scripts/run_prospective_observatory.py": {"_odds_rows"},
     }
     violations: list[str] = []
@@ -621,16 +612,288 @@ def test_prospective_projection_accepts_only_complete_positive_overround() -> No
     assert devig.method.value == "PROPORTIONAL"
     assert devig.overround == pytest.approx(0.0625)
 
-    assert _complete_positive_overround_market(
-        "h2h",
-        [
-            {"name": "HOME", "price": 3.0},
-            {"name": "DRAW", "price": 4.0},
-            {"name": "AWAY", "price": 5.0},
-        ],
-    ) is None
+    assert (
+        _complete_positive_overround_market(
+            "h2h",
+            [
+                {"name": "HOME", "price": 3.0},
+                {"name": "DRAW", "price": 4.0},
+                {"name": "AWAY", "price": 5.0},
+            ],
+        )
+        is None
+    )
     assert _complete_positive_overround_market("h2h", complete[:2]) is None
-    assert _complete_positive_overround_market(
-        "h2h",
-        [complete[0], complete[0], complete[2]],
-    ) is None
+    assert (
+        _complete_positive_overround_market(
+            "h2h",
+            [complete[0], complete[0], complete[2]],
+        )
+        is None
+    )
+
+
+REPORT_FILES = {
+    "scientific-truth-defect-inventory-v1.json",
+    "roi-turnover-repair-v1.json",
+    "yield-consumer-inventory-v1.json",
+    "devig-implementation-inventory-v1.json",
+    "devig-canonicalization-v1.json",
+    "decision-path-trace-v1.json",
+    "historical-truth-replay-v1.json",
+    "historical-invalidation-ledger-v1.json",
+}
+
+
+def _report(name: str) -> dict[str, object]:
+    value = json.loads((ROOT / "reports" / "scientific-truth" / name).read_text(encoding="utf-8"))
+    assert isinstance(value, dict)
+    return value
+
+
+def _canonical_hash(value: object) -> str:
+    payload = json.dumps(
+        value,
+        ensure_ascii=False,
+        allow_nan=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _pointer(document: object, pointer: str) -> object:
+    current = document
+    for token in pointer.split("/")[1:]:
+        token = token.replace("~1", "/").replace("~0", "~")
+        if isinstance(current, list):
+            current = current[int(token)]
+        else:
+            assert isinstance(current, dict)
+            current = current[token]
+    return current
+
+
+def _all_evidence_ids(value: object) -> list[str]:
+    found: list[str] = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key.endswith("evidence_ids"):
+                assert isinstance(item, list)
+                found.extend(str(evidence_id) for evidence_id in item)
+            else:
+                found.extend(_all_evidence_ids(item))
+    elif isinstance(value, list):
+        for item in value:
+            found.extend(_all_evidence_ids(item))
+    return found
+
+
+def test_scientific_truth_reports_have_one_deterministic_bounded_envelope() -> None:
+    report_dir = ROOT / "reports" / "scientific-truth"
+    assert {path.name for path in report_dir.glob("*.json")} == REPORT_FILES
+    regenerated = report_builder._build_all()
+    assert set(regenerated) == REPORT_FILES
+    allowed_statuses = {"PROUVÉ", "PROBABLE", "HYPOTHÈSE", "NON VÉRIFIÉ"}
+    for name in sorted(REPORT_FILES):
+        stored = _report(name)
+        assert stored == regenerated[name]
+        assert stored["schema_version"] == "robin-scientific-truth-report-v1"
+        assert stored["mission_id"] == "SCIENTIFIC_TRUTH_KERNEL"
+        assert stored["scientific_kernel_version"] == SCIENTIFIC_KERNEL_VERSION
+        assert stored["evidence_status"] in allowed_statuses
+        assert stored["review_status"] == "PENDING_INDEPENDENT_REVIEW"
+        assert stored["verified_by"] == []
+        assert stored["audit_source"]["manifest_sha256"] == (
+            report_builder.AUDIT_MANIFEST_SHA256
+        )
+        assert stored["loop54_source"]["manifest_sha256"] == (
+            report_builder.LOOP54_MANIFEST_SHA256
+        )
+        assert stored["loop54_source"]["status"] == "SEALED_EXTERNAL_EVIDENCE_PACK"
+        evidence_ids = _all_evidence_ids(stored)
+        assert evidence_ids
+        assert all(
+            evidence_id.startswith(("AUDIT:", "LOOP54:", "LOOP54_REPORTS:"))
+            for evidence_id in evidence_ids
+        )
+        assert stored["reproducibility"]["command_evidence_ids"] == [
+            report_builder.LOOP54_REPORTS_EVIDENCE_ID
+        ]
+        assert stored["report_generation_receipt"] == {
+            "namespace": "LOOP54_REPORTS",
+            "evidence_id": report_builder.LOOP54_REPORTS_EVIDENCE_ID,
+            "logical_root": report_builder.LOOP54_REPORTS_LOGICAL_PATH,
+            "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+        }
+        generation_command = stored["reproducibility"]["generation_command"]
+        assert "--audit-root" in generation_command
+        assert "--loop54-root" in generation_command
+        authority = stored["authority"]
+        assert isinstance(authority, dict)
+        assert authority["global_devig_authority"] == "CONFLICTING"
+        assert authority["global_selected_method"] is None
+        assert authority["roi_used_for_authority"] is False
+        effects = stored["external_effects"]
+        assert isinstance(effects, dict)
+        assert effects and all(value == 0 for value in effects.values())
+        content = {key: value for key, value in stored.items() if key != "content_sha256"}
+        assert stored["content_sha256"] == _canonical_hash(content)
+
+    doc = (ROOT / "docs" / "scientific" / "ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1.md").read_text(
+        encoding="utf-8"
+    )
+    assert "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1_PARTIAL" in doc
+    assert "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1_READY" not in doc
+    assert "TEMPORAL_VALIDITY_NOT_PROVEN" in doc
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["builder", "--audit-root", "audit", "--check"],
+        ["builder", "--loop54-root", "loop54", "--check"],
+    ],
+)
+def test_report_builder_requires_both_evidence_roots(
+    monkeypatch: pytest.MonkeyPatch, argv: list[str]
+) -> None:
+    monkeypatch.setattr(sys, "argv", argv)
+    with pytest.raises(SystemExit) as caught:
+        report_builder.main()
+    assert caught.value.code == 2
+
+
+def test_historical_formula_replay_resolves_15_results_and_45_occurrences() -> None:
+    replay = _report("historical-truth-replay-v1.json")
+    assert replay["replay_type"] == ("FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT")
+    results = replay["results"]
+    assert isinstance(results, list)
+    assert len(results) == 15
+    assert len({item["logical_result_id"] for item in results}) == 15
+    source_documents = {
+        "cockpit/app/cockpit-data.json": json.loads(
+            (ROOT / "cockpit" / "app" / "cockpit-data.json").read_text("utf-8")
+        ),
+        "cockpit/app/cockpit-expert-data.json": json.loads(
+            (ROOT / "cockpit" / "app" / "cockpit-expert-data.json").read_text("utf-8")
+        ),
+    }
+    occurrence_ids: set[str] = set()
+    projection_hashes: set[str] = set()
+    for result in results:
+        projection_hashes.add(result["source_projection_sha256"])
+        assert result["original"]["devig_method"] == "UNKNOWN"
+        assert result["original"]["scientific_kernel_version"] is None
+        assert result["original"]["scientific_identity_status"] == (
+            "LEGACY_UNVERSIONED_NOT_CANONICAL"
+        )
+        assert result["calculation_basis"] == "SUMMARY_FIXED_1U_INFERENCE"
+        assert result["branches"]["C"]["evidence_status"] == "NON VÉRIFIÉ"
+        assert result["branches"]["D1"]["evidence_status"] == "NON VÉRIFIÉ"
+        assert result["branches"]["D2"]["evidence_status"] == "NON VÉRIFIÉ"
+        assert result["branches"]["B"]["turnover_units"] == pytest.approx(
+            result["original"]["bets"]
+        )
+        assert result["branches"]["B"]["roi"] == pytest.approx(
+            result["original"]["profit_units"] / result["original"]["bets"]
+        )
+        assert result["branches"]["B"]["yield"] == pytest.approx(result["branches"]["B"]["roi"])
+        occurrences = result["source_occurrences"]
+        assert len(occurrences) == 3
+        assert [item["relation"] for item in occurrences] == [
+            "PRIMARY_SOURCE_OCCURRENCE",
+            "COPY_OF",
+            "COPY_OF",
+        ]
+        for occurrence in occurrences:
+            occurrence_ids.add(occurrence["occurrence_id"])
+            source = source_documents[occurrence["repo_path"]]
+            object_value = _pointer(source, occurrence["json_pointer"])
+            assert occurrence["source_object_sha256"] == _canonical_hash(object_value)
+            projected = report_builder._source_projection(object_value)
+            assert _canonical_hash(projected) == result["source_projection_sha256"]
+    assert len(occurrence_ids) == 45
+    assert len(projection_hashes) == 15
+    summary = replay["summary"]
+    assert summary["decision_replayed_logical_results"] == 0
+    assert summary["devig_replayed_logical_results"] == 0
+    assert summary["maximum_absolute_roi_change"] == pytest.approx(0.04577382258550142)
+    assert replay["multiplicity"]["tests"] == 7480
+    assert replay["multiplicity"]["survivors"] == 0
+    assert replay["multiplicity"]["machine_q_values"] == [1.0, 1.0, 1.0]
+    assert replay["multiplicity"]["promotion"] is False
+    assert replay["temporal"]["surfaces"] == 72
+    assert replay["temporal"]["proven_surfaces"] == 0
+
+
+def test_historical_invalidation_ledger_is_append_only_and_hash_chained() -> None:
+    ledger = _report("historical-invalidation-ledger-v1.json")
+    records = ledger["records"]
+    assert isinstance(records, list)
+    assert len(records) == 165
+    relations = {relation: 0 for relation in ledger["allowed_relations"]}
+    previous = "0" * 64
+    for sequence, record in enumerate(records, 1):
+        assert record["sequence"] == sequence
+        assert record["previous_record_hash"] == previous
+        body = {key: value for key, value in record.items() if key != "record_hash"}
+        assert record["record_hash"] == _canonical_hash(body)
+        previous = record["record_hash"]
+        relations[record["relation"]] += 1
+        assert record["replacement"]["repo_path"] == (
+            "reports/scientific-truth/historical-truth-replay-v1.json"
+        )
+    assert previous == ledger["chain_tip"]
+    assert relations == {
+        "SUPERSEDED_BY": 45,
+        "COPY_OF": 30,
+        "INVALIDATED_BY_ROI_DEFINITION": 45,
+        "INVALIDATED_BY_DEVIG_METHOD": 0,
+        "TEMPORAL_VALIDITY_NOT_PROVEN": 45,
+    }
+    assert ledger["counts"]["source_artifacts_rewritten"] == 0
+    assert ledger["counts"]["stored_yield_fields_invalidated"] == 0
+
+
+def test_devig_inventory_and_authority_never_select_by_historical_performance() -> None:
+    inventory = _report("devig-implementation-inventory-v1.json")
+    assert inventory["implementation_count"] == 15
+    implementations = inventory["implementations"]
+    assert len({item["implementation_id"] for item in implementations}) == 15
+    assert any(
+        item["implementation_id"] == "shadow_raw_implied_not_devig"
+        and item["audit_method"] == "RAW_IMPLIED_NOT_DEVIG"
+        for item in implementations
+    )
+    canonicalization = _report("devig-canonicalization-v1.json")
+    resolution = canonicalization["protocol_resolution"]
+    assert resolution["verdict"] == "DEVIG_PROTOCOL_CONFLICT"
+    assert resolution["canonical_method"] is None
+    assert resolution["canonical_version"] is None
+    assert resolution["roi_used_for_authority"] is False
+    assert canonicalization["sensitivity_evidence"]["selection_use"] == (
+        "SENSITIVITY_ONLY_NOT_AUTHORITY"
+    )
+    chronos = next(
+        item
+        for item in canonicalization["scope_resolution"]
+        if item["scope"] == "CHRONOS_CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT"
+    )
+    assert chronos["status"] == "UNIQUE"
+
+
+def test_defect_inventory_has_no_open_p0_or_p1_and_preserves_partial_limits() -> None:
+    inventory = _report("scientific-truth-defect-inventory-v1.json")
+    assert inventory["counts"]["open_p0"] == 0
+    assert inventory["counts"]["open_p1"] == 0
+    assert inventory["counts"]["essential_p2_open"] == 3
+    unresolved = [item for item in inventory["defects"] if not item["resolved"]]
+    assert {item["status"] for item in unresolved} == {
+        "NOT_IN_SCOPE",
+        "REPLAY_REQUIRED",
+    }
+    assert any(
+        verdict["verdict"] == "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1_PARTIAL"
+        for verdict in inventory["verdicts"]
+    )

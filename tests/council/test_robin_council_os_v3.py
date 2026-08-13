@@ -357,14 +357,14 @@ def test_scientific_truth_kernel_authority_is_offline_bounded_and_exact() -> Non
     assert mission["writer"] == "C0"
     assert mission["agents"] == ["C0", "C1", "C2", "C4", "DP6", "RP8", "RP9", "A1"]
     allowed_paths = mission["allowed_paths"]
-    assert len(allowed_paths) == len(set(allowed_paths)) == 65
+    assert len(allowed_paths) == len(set(allowed_paths)) == 66
     assert hashlib.sha256(
         json.dumps(
             allowed_paths,
             ensure_ascii=False,
             separators=(",", ":"),
         ).encode()
-    ).hexdigest() == "2ec25476b9e89e181c9f209802f5c3a5a3ca288ce70b7be5e3151b6cbf4d9c6f"
+    ).hexdigest() == "997be4462eb91a78da3b077808314ff4311e4389f4f1d9a86bc7fdf365c26a4d"
     assert mission["delivery_keys"] == {
         "data": ["DP6", "C2"],
         "science": ["C2", "RP8", "RP9", "A1"],
@@ -509,7 +509,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     committed_scope = committed_changed_paths(
         ROOT,
         "6140e09cb38b5fecee5da85882aa8a879dbce780",
-        "HEAD",
+        "1ffeec1cd89e83deda008da39bb22540a70db896",
     )
     assert committed_scope == exact_loop53_paths
 
@@ -909,10 +909,35 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.016"][
         "superseded_by"
     ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"
-    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.009"]["status"] == "PARTIAL"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.009"]["status"] == "SUPERSEDED"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.009"]["superseded_by"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.010"
+    )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.010"]["status"] == "PARTIAL"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.010"]["successor_of"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.009"
+    )
     assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"][
         "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"][
+        "successor_of"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"][
+        "status"
     ] == "PARTIAL"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"][
+        "successor_of"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"
     snapshot = ROOT / "configs/data/p0-coverage-authority-matrix-snapshot-v1.json"
     assert artifact_sha256(snapshot) == (
         "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"

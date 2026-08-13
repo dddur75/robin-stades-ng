@@ -1,0 +1,384 @@
+{
+  "as_of": "2026-08-13T15:38:28Z",
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E1006",
+      "AUDIT:E1036",
+      "AUDIT:E1042"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authority": {
+    "basis": "PROTOCOL_SCOPE_NOT_HISTORICAL_PERFORMANCE",
+    "chronos_scoped_authority": {
+      "global_authority": false,
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT_ONLY",
+      "status": "UNIQUE"
+    },
+    "global_devig_authority": "CONFLICTING",
+    "global_selected_method": null,
+    "roi_used_for_authority": false
+  },
+  "claim_id": "GOV.SCIENTIFIC.DECISION.PATH.TRACE.V1.001",
+  "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "d84016b3f3bb34721c442d77927c2062c66c9ce10289ae91805928672a0f3f46",
+  "dynamic_trace": {
+    "calibration": "IDENTITY_FIXTURE_V1",
+    "cutoff": "2025-02-01T17:00:00Z",
+    "decision": {
+      "accepted": true,
+      "selected_index": 0,
+      "selected_outcome": "HOME"
+    },
+    "devig": {
+      "definition_hash": "265d91ae91f793523180d617a3cbcd90ee95ac483d7fdbfcaa3547868e076684",
+      "devig_effective_method": "PROPORTIONAL",
+      "devig_fallback_reason": null,
+      "effective_method": "PROPORTIONAL",
+      "fair_probabilities": [
+        0.47058823529411764,
+        0.29411764705882354,
+        0.23529411764705882
+      ],
+      "fallback_reason": null,
+      "implied_probabilities": [
+        0.5,
+        0.3125,
+        0.25
+      ],
+      "input_odds": [
+        2.0,
+        3.2,
+        4.0
+      ],
+      "method": "PROPORTIONAL",
+      "outcome_labels": [
+        "HOME",
+        "DRAW",
+        "AWAY"
+      ],
+      "overround": 0.0625,
+      "validation_status": "VALID",
+      "version": "PROPORTIONAL_COMPLETE_MARKET_V1"
+    },
+    "edge": [
+      0.12941176470588234,
+      -0.04411764705882354,
+      -0.08529411764705883
+    ],
+    "evidence_ids": [
+      "LOOP54:E0026",
+      "AUDIT:E2013"
+    ],
+    "fair_probability": [
+      0.47058823529411764,
+      0.29411764705882354,
+      0.23529411764705882
+    ],
+    "features": {
+      "point_in_time_validity": "NOT_PROVEN",
+      "source": "fixture"
+    },
+    "fixture_id": "SCIENTIFIC_TRUTH_KERNEL_BALANCED_1X2_WIN_V1",
+    "input_lineage": "LOCAL_DETERMINISTIC_FIXTURE_ONLY",
+    "model_probability": [
+      0.6,
+      0.25,
+      0.15
+    ],
+    "odds": [
+      2.0,
+      3.2,
+      4.0
+    ],
+    "profit": 1.0,
+    "roi": 1.0,
+    "settlement": {
+      "odds": 2.0,
+      "won": true
+    },
+    "stake": 1.0,
+    "temporal_status": "TEMPORAL_VALIDITY_NOT_PROVEN",
+    "threshold": 0.04,
+    "turnover": 1.0,
+    "yield": 1.0
+  },
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014": 0,
+    "neon_api_calls": 0,
+    "network_calls": 0,
+    "odds_provider_calls": 0,
+    "production_connections": 0,
+    "production_postgresql_connections": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "generated_at": "2026-08-13T15:38:28Z",
+  "generator": {
+    "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "repo_path": "scripts/build_scientific_truth_reports_v1.py",
+    "sha256": "8d7463e530e9d395894e3fdb0c21a42a95d7c3b92a2b53538f63ca3e38277392"
+  },
+  "grain": "ONE_STATIC_LINK_OR_ONE_FIXTURE_EXECUTION",
+  "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
+  "limitations": [
+    "The dynamic trace exercises the shared kernel without any provider or production service.",
+    "Feature availability, provider publication times, as-of joins and all live lineage are not proven.",
+    "Chronos has no active non-test consumer proven in the audited snapshot."
+  ],
+  "loop54_source": {
+    "evidence_ids": [
+      "LOOP54:E0017",
+      "LOOP54:E0026"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1",
+    "manifest_sha256": "f3907663f43fcd72078b6e36e0f40b276478e11e28c72fbfaed9e32af65c34df",
+    "repair_sha": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+    "status": "SEALED_EXTERNAL_EVIDENCE_PACK"
+  },
+  "missing_links": [
+    "provider publication timestamp",
+    "data_available_at for every source",
+    "feature as-of join proof",
+    "live durable state identity",
+    "production connection and runtime trace",
+    "all 72 temporal surfaces"
+  ],
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "non_claims": [
+    "The fixture is not evidence that production data is point-in-time valid.",
+    "The fixture does not certify the scheduled shadow workflow because its quality gate remains closed."
+  ],
+  "path_verdict": "PRODUCTION_DECISION_PATH_STILL_NOT_PROVEN",
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP54_REPORTS:E0001",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT",
+    "namespace": "LOOP54_REPORTS"
+  },
+  "report_id": "decision-path-trace-v1",
+  "reproducibility": {
+    "command_evidence_ids": [
+      "LOOP54_REPORTS:E0001"
+    ],
+    "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
+    "input_hashes": [
+      {
+        "path": "src/robin/market_math/truth.py",
+        "sha256": "7361c1c7e7263130d6410d4b74622024df79fa6b63b404c7e690c28be547048c"
+      },
+      {
+        "path": "src/robin/backtesting/v3.py",
+        "sha256": "664dd747a989bfc09e9fd548615dddeb82ffea168bb78bd429d75e57ccfa75fb"
+      },
+      {
+        "path": "src/robin/shadow/decision.py",
+        "sha256": "c2a961d995361e58cc9894cd5a94780dfebf968f5986b5c89eeead888031062e"
+      }
+    ],
+    "seed": null
+  },
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "reviews": {
+    "data_temporal": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "scientific_statistical": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "security_red_team": "PENDING_INDEPENDENT_FINAL_REVIEW"
+  },
+  "schema_version": "robin-scientific-truth-report-v1",
+  "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+  "scope": "STATIC_ACTIVE_PATH_LINKS_AND_ONE_DETERMINISTIC_OFFLINE_KERNEL_TRACE",
+  "source_code_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "sources": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "repo_or_evidence_path": "src/robin/market_math/truth.py",
+      "sha256": "7361c1c7e7263130d6410d4b74622024df79fa6b63b404c7e690c28be547048c"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0017",
+        "LOOP54:E0026"
+      ],
+      "repo_or_evidence_path": "src/robin/backtesting/v3.py",
+      "sha256": "664dd747a989bfc09e9fd548615dddeb82ffea168bb78bd429d75e57ccfa75fb"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E1042",
+        "LOOP54:E0026"
+      ],
+      "repo_or_evidence_path": "src/robin/shadow/decision.py",
+      "sha256": "c2a961d995361e58cc9894cd5a94780dfebf968f5986b5c89eeead888031062e"
+    }
+  ],
+  "static_links": [
+    {
+      "callee": "robin.market_math.decide_market",
+      "caller": "scripts/run_historical_pipeline.py",
+      "evidence_ids": [
+        "LOOP54:E0017",
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "input_schema": "complete odds + normalized model probabilities + explicit method",
+      "line_anchor": "run_backtest",
+      "link_id": "TRACE-V3-ENTRY",
+      "output_schema": "MarketDecision",
+      "repo_path": "src/robin/backtesting/v3.py",
+      "test": "tests/jalon6/test_scientific_truth_kernel_v1.py",
+      "version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1"
+    },
+    {
+      "callee": "named proportional or Shin implementation",
+      "caller": "decide_market and explicit adapters",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "input_schema": "complete uniquely labelled decimal odds >1",
+      "line_anchor": "devig_probabilities",
+      "link_id": "TRACE-DEVIG",
+      "output_schema": "DevigResult requested/effective/version/hash",
+      "repo_path": "src/robin/market_math/devig.py",
+      "test": "tests/jalon6/test_scientific_truth_kernel_v1.py",
+      "version": "PROPORTIONAL_COMPLETE_MARKET_V1 or LEGACY_SHIN_VAGUE1_V1"
+    },
+    {
+      "callee": "maximum edge with explicit threshold",
+      "caller": "active migrated decision paths",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "input_schema": "DevigResult + model probabilities + threshold",
+      "line_anchor": "decide_market",
+      "link_id": "TRACE-DECISION",
+      "output_schema": "MarketDecision selected outcome and accepted flag",
+      "repo_path": "src/robin/market_math/truth.py",
+      "test": "tests/jalon6/test_scientific_truth_kernel_v1.py",
+      "version": "maximum_edge_gte_threshold_v1"
+    },
+    {
+      "callee": "fixed/proportional/fractional-Kelly stake",
+      "caller": "backtesting V3 and decision adapters",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "input_schema": "probability odds bankroll method fraction cap",
+      "line_anchor": "stake_units",
+      "link_id": "TRACE-STAKING",
+      "output_schema": "nonnegative stake bounded by bankroll and cap",
+      "repo_path": "src/robin/market_math/truth.py",
+      "test": "tests/jalon6/test_scientific_truth_kernel_v1.py",
+      "version": "fixed_proportional_fractional_kelly_v1"
+    },
+    {
+      "callee": "profit turnover ROI yield summary",
+      "caller": "backtesting and settlement paths",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "input_schema": "accepted stake odds boolean outcome",
+      "line_anchor": "settle_profit and performance_summary",
+      "link_id": "TRACE-SETTLEMENT",
+      "output_schema": "profit turnover roi yield profit_per_bet bankroll",
+      "repo_path": "src/robin/market_math/truth.py",
+      "test": "tests/jalon6/test_scientific_truth_kernel_v1.py",
+      "version": "decimal_odds_net_profit_v1"
+    },
+    {
+      "callee": "src/robin/shadow/decision.py",
+      "caller": "scheduled workflow",
+      "evidence_ids": [
+        "AUDIT:E1006",
+        "AUDIT:E1042",
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROBABLE",
+      "input_schema": "durable fixture prediction and complete market snapshots",
+      "limitation": "quality_ok is fail-closed and live lineage is not inspected",
+      "line_anchor": "pre-match shadow decision",
+      "link_id": "TRACE-SHADOW",
+      "output_schema": "append-only shadow decision",
+      "repo_path": "scripts/run_shadow_pipeline.py",
+      "test": "tests/jalon2/test_decisions_pipeline_workflows.py",
+      "version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1"
+    },
+    {
+      "callee": "explicit proportional central adapter",
+      "caller": "scripts/run_prequential_learning_factory.py",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROBABLE",
+      "input_schema": "frozen prediction evidence and complete market",
+      "limitation": "legacy rows expose SCIENTIFIC_LINEAGE_NOT_PERSISTED",
+      "line_anchor": "forecast",
+      "link_id": "TRACE-PREQUENTIAL",
+      "output_schema": "FrozenPredictionRecord with persistent identity status",
+      "repo_path": "src/robin/prospective_observatory/prequential_factory.py",
+      "test": "tests/jalon14/test_prequential_persistence.py",
+      "version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1"
+    },
+    {
+      "callee": "scoped Decimal point-in-time price contract",
+      "caller": "no active non-test consumer proven",
+      "evidence_ids": [
+        "AUDIT:E1012"
+      ],
+      "evidence_status": "NON VÉRIFIÉ",
+      "input_schema": "complete same-receipt CANARY market",
+      "line_anchor": "derive_complete_book_markets",
+      "link_id": "TRACE-CHRONOS",
+      "output_schema": "derived book price rows",
+      "repo_path": "src/robin/prospective_observatory/chronos.py",
+      "test": "tests/chronos/test_chronos_contracts_v1.py",
+      "version": "PROPORTIONAL_COMPLETE_MARKET_V1"
+    }
+  ],
+  "temporal_class": "OFFLINE_FIXTURE_TEMPORAL_VALIDITY_NOT_PROVEN",
+  "verdicts": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0017",
+        "LOOP54:E0026"
+      ],
+      "verdict": "DEVIG_DECISION_PATH_PARITY_PROVEN_BOUNDED_FIXTURES"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E1006",
+        "AUDIT:E1036",
+        "AUDIT:E1042",
+        "AUDIT:E2013"
+      ],
+      "verdict": "PRODUCTION_DECISION_PATH_STILL_NOT_PROVEN"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "verdict": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    }
+  ],
+  "verified_by": []
+}

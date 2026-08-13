@@ -149,6 +149,7 @@
         "src/robin/shadow/decision.py",
         "tests/council/test_robin_council_os_v3.py",
         "tests/historical_deep/test_replay_quality_features_backtest.py",
+        "tests/historical_deep/test_runner.py",
         "tests/hypothesis_intelligence/test_factory.py",
         "tests/jalon11/test_models_statistics.py",
         "tests/jalon11/test_cockpit_matchup_refresh.py",
