@@ -5,10 +5,17 @@ from __future__ import annotations
 import hashlib
 import math
 import statistics
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 import pandas as pd
 
+from robin.market_math import (
+    PROFIT_PER_BET_DEFINITION_VERSION,
+    DevigInputError,
+    DevigMethod,
+    devig_probabilities,
+    kernel_versions,
+)
 from robin.modeling.reference import EloModel, consensus, poisson_probabilities
 
 
@@ -26,12 +33,34 @@ class StrategyResult:
     bets: int
     wins: int
     profit: float
-    roi: float
-    roi_ci_low: float
-    roi_ci_high: float
+    profit_units: float
+    turnover_units: float
+    roi: float | None
+    yield_value: float | None
+    profit_per_bet: float | None
+    profit_per_bet_definition_version: str
+    devig_applied: bool
+    devig_scope: str
+    roi_ci_low: float | None
+    roi_ci_high: float | None
     max_drawdown: float
     status: str
     note: str
+    scientific_kernel_version: str
+    devig_method: str
+    devig_version: str
+    devig_definition_hash: str
+    roi_definition_version: str
+    turnover_definition_version: str
+    yield_definition_version: str
+    decision_threshold_version: str
+    staking_version: str
+    settlement_version: str
+
+    def as_dict(self) -> dict[str, object]:
+        value = asdict(self)
+        value["yield"] = value.pop("yield_value")
+        return value
 
 
 class RollingGoals:
@@ -81,20 +110,27 @@ def _drawdown(profits: list[float]) -> float:
     return worst
 
 
-def _result(name: str, profits: list[float], wins: int, note: str) -> StrategyResult:
+def _result(
+    name: str,
+    profits: list[float],
+    wins: int,
+    note: str,
+    *,
+    devig_method: DevigMethod | str,
+) -> StrategyResult:
     bets = len(profits)
     profit = sum(profits)
-    roi = profit / bets if bets else 0.0
+    roi = profit / bets if bets else None
     standard_error = (
         statistics.stdev(profits) / math.sqrt(bets) if bets >= 2 else 0.0
     )
-    ci_low = roi - 1.96 * standard_error
-    ci_high = roi + 1.96 * standard_error
+    ci_low = roi - 1.96 * standard_error if roi is not None else None
+    ci_high = roi + 1.96 * standard_error if roi is not None else None
     if bets < 100:
         status = "INSUFFICIENT_SAMPLE"
-    elif roi <= 0:
+    elif roi is None or roi <= 0:
         status = "REJECTED_OOS"
-    elif ci_low <= 0:
+    elif ci_low is None or ci_low <= 0:
         status = "INCONCLUSIVE_OOS"
     else:
         status = "CANDIDATE_FOR_SHADOW"
@@ -103,18 +139,42 @@ def _result(name: str, profits: list[float], wins: int, note: str) -> StrategyRe
         bets=bets,
         wins=wins,
         profit=profit,
+        profit_units=profit,
+        turnover_units=float(bets),
         roi=roi,
+        yield_value=roi,
+        profit_per_bet=profit / bets if bets else None,
+        profit_per_bet_definition_version=PROFIT_PER_BET_DEFINITION_VERSION,
+        devig_applied=name in {
+            "value_betting_simple",
+            "value_edge_2pct",
+            "value_edge_6pct",
+            "over_2_5_value",
+        },
+        devig_scope=(
+            "COMPLETE_MARKET"
+            if name
+            in {
+                "value_betting_simple",
+                "value_edge_2pct",
+                "value_edge_6pct",
+                "over_2_5_value",
+            }
+            else "NOT_APPLICABLE"
+        ),
         roi_ci_low=ci_low,
         roi_ci_high=ci_high,
         max_drawdown=_drawdown(profits),
         status=status,
         note=note,
+        **kernel_versions(devig_method),
     )
 
 
 def evaluate_walk_forward(
     frame: pd.DataFrame,
     *,
+    devig_method: DevigMethod | str,
     holdout_season: str = "2025-26",
     min_edge: float = 0.04,
 ) -> list[StrategyResult]:
@@ -186,9 +246,13 @@ def evaluate_walk_forward(
                         _profit(odds[best_model], outcomes[best_model])
                     )
                     wins["seuil_probabilite"] += int(outcomes[best_model])
-                inverse = [1.0 / value for value in odds]
-                margin = sum(inverse)
-                fair = [value / margin for value in inverse]
+                fair = list(
+                    devig_probabilities(
+                        odds,
+                        method=devig_method,
+                        outcome_labels=("HOME", "DRAW", "AWAY"),
+                    ).fair_probabilities
+                )
                 edges = [
                     model_probability - market_probability
                     for model_probability, market_probability in zip(
@@ -219,13 +283,25 @@ def evaluate_walk_forward(
             over_odds = (
                 _as_float(row.pc_o25) if pd.notna(row.pc_o25) else float("nan")
             )
-            if over_odds > 1.0:
+            under_value = getattr(row, "pc_u25", float("nan"))
+            under_odds = (
+                _as_float(under_value) if pd.notna(under_value) else float("nan")
+            )
+            if over_odds > 1.0 and under_odds > 1.0:
                 expected_total = expected_home + expected_away
                 under_probability = sum(
                     _poisson_total(total, expected_total) for total in range(3)
                 )
                 over_probability = 1.0 - under_probability
-                if over_probability - 1.0 / over_odds >= min_edge:
+                try:
+                    totals_fair = devig_probabilities(
+                        [over_odds, under_odds],
+                        method=devig_method,
+                        outcome_labels=("OVER", "UNDER"),
+                    ).fair_probabilities
+                except DevigInputError:
+                    totals_fair = ()
+                if totals_fair and over_probability - totals_fair[0] >= min_edge:
                     over_won = home_goals + away_goals > 2
                     ledgers["over_2_5_value"].append(
                         _profit(over_odds, over_won)
@@ -259,7 +335,13 @@ def evaluate_walk_forward(
         "btts_value": "bloqué : aucune cote BTTS fiable dans le dataset legacy",
     }
     return [
-        _result(name, ledger, wins[name], notes[name])
+        _result(
+            name,
+            ledger,
+            wins[name],
+            notes[name],
+            devig_method=devig_method,
+        )
         for name, ledger in ledgers.items()
     ]
 

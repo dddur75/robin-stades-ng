@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
@@ -21,6 +22,8 @@ from sqlalchemy import Engine, select
 from sqlalchemy.orm import Session
 
 from robin.domain.enums import DataAvailability
+from robin.market_math import DevigInputError
+from robin.market_math import devig_probabilities as kernel_devig
 from robin.prospective_observatory.contracts import canonical_sha256
 from robin.prospective_observatory.feature_snapshots import (
     FEATURE_FAMILIES,
@@ -296,6 +299,7 @@ def _odds_evidence(
         tuple[str, str, datetime],
         dict[str, ProspectiveOddsSnapshotModel],
     ] = defaultdict(dict)
+    invalid_group_keys: set[tuple[str, str, datetime]] = set()
     for row in rows:
         canonical = _canonical_selection(
             market=market,
@@ -304,9 +308,11 @@ def _odds_evidence(
         )
         if canonical is None:
             continue
-        groups[(row.receipt_id, row.bookmaker, _utc(row.observed_at))][
-            canonical
-        ] = row
+        group_key = (row.receipt_id, row.bookmaker, _utc(row.observed_at))
+        if canonical in groups[group_key]:
+            invalid_group_keys.add(group_key)
+            continue
+        groups[group_key][canonical] = row
     expected = (
         {"HOME", "DRAW", "AWAY"}
         if market is PredictionMarket.ONE_X_TWO
@@ -314,14 +320,39 @@ def _odds_evidence(
     )
     candidates: list[OddsEvidence] = []
     for (receipt_id, bookmaker, observed_at), values in groups.items():
-        if set(values) != expected:
+        group_key = (receipt_id, bookmaker, observed_at)
+        if group_key in invalid_group_keys or set(values) != expected:
+            continue
+        decimal_odds = {
+            selection: values[selection].odds
+            for selection in sorted(expected)
+        }
+        try:
+            devig = kernel_devig(
+                decimal_odds.values(),
+                method="PROPORTIONAL",
+                outcome_labels=tuple(decimal_odds),
+            )
+        except DevigInputError:
+            continue
+        stored_margins = tuple(row.margin for row in values.values())
+        if (
+            devig.overround <= 0.0
+            or any(not math.isfinite(margin) for margin in stored_margins)
+            or any(
+                not math.isclose(
+                    margin,
+                    devig.overround,
+                    rel_tol=0.0,
+                    abs_tol=1e-12,
+                )
+                for margin in stored_margins
+            )
+        ):
             continue
         candidates.append(
             OddsEvidence(
-                decimal_odds={
-                    selection: values[selection].odds
-                    for selection in sorted(expected)
-                },
+                decimal_odds=decimal_odds,
                 observed_at=observed_at,
                 snapshot_id="odds-" + canonical_sha256(
                     {
@@ -335,7 +366,7 @@ def _odds_evidence(
                     }
                 ),
                 bookmaker=bookmaker,
-                margin=max(row.margin for row in values.values()),
+                margin=devig.overround,
             )
         )
     if not candidates:
@@ -501,6 +532,7 @@ def _restore_factory(
     factory = PrequentialLearningFactory(
         artifact_repository=artifacts,
         models=models,
+        devig_method="PROPORTIONAL",
     )
     for snapshot in sql.load_snapshots():
         factory.features.append(snapshot)
@@ -1521,6 +1553,7 @@ def run_synthetic_pilot(
     factory = PrequentialLearningFactory(
         artifact_repository=repository,
         models=models,
+        devig_method="PROPORTIONAL",
     )
     reference = next(
         model

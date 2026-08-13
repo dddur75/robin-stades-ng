@@ -27,6 +27,7 @@ from sqlalchemy import MetaData, Table, inspect, select
 from sqlalchemy.engine import Engine
 
 from robin.domain.enums import DataAvailability, DataOrigin
+from robin.market_math import DevigInputError, DevigResult, devig_probabilities
 from robin.prospective_observatory.budgets import (
     MAX_API_FOOTBALL_CALLS_TOTAL,
     MAX_ODDS_API_CREDITS_TOTAL,
@@ -1591,6 +1592,49 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         return SQLAlchemyProjectionSink(self)
 
 
+def _complete_positive_overround_market(
+    provider_market: str,
+    outcomes: list[object],
+) -> tuple[tuple[Mapping[str, object], ...], DevigResult] | None:
+    """Validate one same-receipt market before persisting its margin.
+
+    Underrounds are not bookmaker-margin evidence.  They are rejected instead
+    of being silently clamped to zero, because zero would win the downstream
+    lowest-margin bookmaker tie-break.
+    """
+
+    expected_count = {"h2h": 3, "totals": 2}.get(provider_market)
+    if expected_count is None:
+        return None
+    eligible: list[Mapping[str, object]] = []
+    for outcome in outcomes:
+        if not isinstance(outcome, Mapping):
+            return None
+        if provider_market == "totals":
+            try:
+                point = float(outcome.get("point", 0.0))
+            except (TypeError, ValueError):
+                return None
+            if point != 2.5:
+                continue
+        eligible.append(outcome)
+    if len(eligible) != expected_count:
+        return None
+    labels = tuple(str(outcome.get("name", "")).strip() for outcome in eligible)
+    prices = tuple(outcome.get("price") for outcome in eligible)
+    try:
+        devig = devig_probabilities(
+            prices,
+            method="PROPORTIONAL",
+            outcome_labels=labels,
+        )
+    except DevigInputError:
+        return None
+    if devig.overround <= 0.0:
+        return None
+    return tuple(eligible), devig
+
+
 class SQLAlchemyProjectionSink:
     """Rebuild compact PostgreSQL projections from immutable R2 receipts."""
 
@@ -1926,29 +1970,15 @@ class SQLAlchemyProjectionSink:
                     outcomes = market_value.get("outcomes")
                     if market is None or not isinstance(outcomes, list):
                         continue
-                    prices = [
-                        float(outcome["price"])
-                        for outcome in outcomes
-                        if isinstance(outcome, Mapping)
-                        and isinstance(outcome.get("price"), (int, float))
-                        and float(outcome["price"]) > 1.0
-                        and (
-                            provider_market != "totals"
-                            or float(outcome.get("point", 0.0)) == 2.5
-                        )
-                    ]
-                    margin = max(sum(1.0 / price for price in prices) - 1.0, 0.0)
-                    for outcome in outcomes:
-                        if (
-                            not isinstance(outcome, Mapping)
-                            or not isinstance(outcome.get("price"), (int, float))
-                            or float(outcome["price"]) <= 1.0
-                            or (
-                                provider_market == "totals"
-                                and float(outcome.get("point", 0.0)) != 2.5
-                            )
-                        ):
-                            continue
+                    validated = _complete_positive_overround_market(
+                        provider_market,
+                        outcomes,
+                    )
+                    if validated is None:
+                        continue
+                    eligible_outcomes, devig = validated
+                    margin = devig.overround
+                    for outcome in eligible_outcomes:
                         selection = str(outcome.get("name", "")).strip()
                         if not selection:
                             continue

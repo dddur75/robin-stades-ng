@@ -59,7 +59,12 @@ def _difference_in_means(
 
 
 def test_devigged_market_probabilities_are_valid_and_sum_to_one() -> None:
-    probabilities = devig_1x2(2.0, 3.5, 4.0)
+    probabilities = devig_1x2(
+        2.0,
+        3.5,
+        4.0,
+        devig_method="PROPORTIONAL",
+    )
     assert sum(probabilities) == pytest.approx(1.0)
     assert all(0.0 < value < 1.0 for value in probabilities)
     assert probabilities[0] > probabilities[1] > probabilities[2]
@@ -76,8 +81,8 @@ def test_devigged_market_probabilities_are_valid_and_sum_to_one() -> None:
 def test_devig_rejects_invalid_odds(
     odds: tuple[float, float, float],
 ) -> None:
-    with pytest.raises(ValueError, match="INVALID_1X2_ODDS"):
-        devig_1x2(*odds)
+    with pytest.raises(ValueError, match="DEVIG_ODDS"):
+        devig_1x2(*odds, devig_method="PROPORTIONAL")
 
 
 def test_paired_score_reports_incremental_log_loss_and_brier() -> None:

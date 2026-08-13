@@ -34,6 +34,7 @@ from robin.historical.storage import (
     directory_size,
     write_json_atomic,
 )
+from robin.market_math import DevigMethod, devig_probabilities
 
 PRODUCTION_STATUS = "PRODUCTION_LOCKED"
 PROTOCOL_STATUS = "EXTERNAL_VALIDATION_PROTOCOL_V1_LOCKED"
@@ -865,14 +866,19 @@ def compare_predictions(
     }
 
 
-def devig_market_odds(prices: Sequence[float | None]) -> list[float | None]:
-    """Remove margin only when every observed price is valid; never invent odds."""
+def devig_market_odds(
+    prices: Sequence[float | None],
+    *,
+    devig_method: DevigMethod | str,
+) -> list[float]:
+    """Remove margin through the explicit complete-market truth kernel."""
 
-    if len(prices) < 2 or any(price is None or price <= 1.0 for price in prices):
-        return [None for _ in prices]
-    implied = [1.0 / cast(float, price) for price in prices]
-    total = sum(implied)
-    return [value / total for value in implied]
+    return list(
+        devig_probabilities(
+            prices,
+            method=devig_method,
+        ).fair_probabilities
+    )
 
 
 def profit_concentration(

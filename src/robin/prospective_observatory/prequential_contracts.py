@@ -8,6 +8,7 @@ from enum import StrEnum
 from math import isclose
 from typing import Any
 
+from robin.market_math import kernel_versions
 from robin.prospective_observatory.contracts import canonical_sha256, ensure_utc
 
 SHA256_LENGTH = 64
@@ -283,12 +284,30 @@ class FrozenPredictionRecord:
     odds_snapshot_id: str | None
     code_revision: str
     status: PredictionStatus
+    scientific_kernel_version: str
+    devig_method: str
+    devig_version: str
+    devig_definition_hash: str
+    roi_definition_version: str
+    turnover_definition_version: str
+    yield_definition_version: str
+    decision_threshold_version: str
+    staking_version: str
+    settlement_version: str
     rejection_reason: str | None = None
+    persisted_payload_hash: str | None = None
 
     def __post_init__(self) -> None:
         cutoff = ensure_utc(self.cutoff_at, field="cutoff_at")
         kickoff = ensure_utc(self.kickoff_at, field="kickoff_at")
         predicted = ensure_utc(self.predicted_at, field="predicted_at")
+        expected_kernel = kernel_versions(self.devig_method)
+        actual_kernel = {
+            key: getattr(self, key)
+            for key in expected_kernel
+        }
+        if actual_kernel != expected_kernel:
+            raise ValueError("PREQUENTIAL_SCIENTIFIC_KERNEL_METADATA_INVALID")
         if (
             not self.prediction_id
             or not self.fixture_record_id
@@ -313,13 +332,15 @@ class FrozenPredictionRecord:
                 raise ValueError("REJECTED_PREDICTION_PROBABILITIES_FORBIDDEN")
             if not self.rejection_reason:
                 raise ValueError("PREDICTION_REJECTION_REASON_REQUIRED")
+        if self.persisted_payload_hash is not None and (
+            len(self.persisted_payload_hash) != SHA256_LENGTH
+            or self.persisted_payload_hash
+            not in {self.computed_payload_hash, self.legacy_payload_hash}
+        ):
+            raise ValueError("PREQUENTIAL_PERSISTED_PAYLOAD_HASH_INVALID")
 
-    @property
-    def payload_hash(self) -> str:
-        return canonical_sha256(self.as_dict(include_hash=False))
-
-    def as_dict(self, *, include_hash: bool = True) -> dict[str, object]:
-        value: dict[str, object] = {
+    def _payload_content(self) -> dict[str, object]:
+        return {
             "prediction_id": self.prediction_id,
             "fixture_record_id": self.fixture_record_id,
             "fixture_id": self.fixture_id,
@@ -337,10 +358,53 @@ class FrozenPredictionRecord:
             "odds_snapshot_id": self.odds_snapshot_id,
             "code_revision": self.code_revision,
             "status": self.status.value,
+            "scientific_kernel_version": self.scientific_kernel_version,
+            "devig_method": self.devig_method,
+            "devig_version": self.devig_version,
+            "devig_definition_hash": self.devig_definition_hash,
+            "roi_definition_version": self.roi_definition_version,
+            "turnover_definition_version": self.turnover_definition_version,
+            "yield_definition_version": self.yield_definition_version,
+            "decision_threshold_version": self.decision_threshold_version,
+            "staking_version": self.staking_version,
+            "settlement_version": self.settlement_version,
             "rejection_reason": self.rejection_reason,
         }
+
+    @property
+    def computed_payload_hash(self) -> str:
+        """Hash of the current in-memory scientific payload definition."""
+
+        return canonical_sha256(self._payload_content())
+
+    @property
+    def payload_hash(self) -> str:
+        """Durable identity when loaded, otherwise the current candidate hash."""
+
+        return self.persisted_payload_hash or self.computed_payload_hash
+
+    @property
+    def legacy_payload_hash(self) -> str:
+        """Hash emitted before scientific lineage was added to predictions."""
+
+        payload = self._payload_content()
+        for field_name in kernel_versions(self.devig_method):
+            payload.pop(field_name, None)
+        return canonical_sha256(payload)
+
+    @property
+    def scientific_lineage_status(self) -> str:
+        if self.persisted_payload_hash is None:
+            return "SCIENTIFIC_LINEAGE_DECLARED_IN_MEMORY"
+        if self.persisted_payload_hash == self.computed_payload_hash:
+            return "SCIENTIFIC_LINEAGE_PERSISTED_EXACT"
+        return "SCIENTIFIC_LINEAGE_NOT_PERSISTED"
+
+    def as_dict(self, *, include_hash: bool = True) -> dict[str, object]:
+        value = self._payload_content()
         if include_hash:
             value["payload_hash"] = self.payload_hash
+            value["scientific_lineage_status"] = self.scientific_lineage_status
         return value
 
 

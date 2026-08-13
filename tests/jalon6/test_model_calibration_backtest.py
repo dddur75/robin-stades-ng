@@ -8,12 +8,7 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from robin.backtesting.v3 import (
-    StrategyParameters,
-    devig_probabilities,
-    run_backtest,
-    strategy_sensitivity,
-)
+from robin.backtesting.v3 import StrategyParameters, run_backtest, strategy_sensitivity
 from robin.historical.model_lab import (
     TEAM_FEATURES,
     isotonic_calibrate,
@@ -21,6 +16,7 @@ from robin.historical.model_lab import (
     train_temporal_model,
     validate_tuning_periods,
 )
+from robin.market_math import devig_probabilities
 
 
 def _model_rows() -> list[dict[str, object]]:
@@ -87,8 +83,8 @@ def test_calibrators_return_valid_probability_simplexes() -> None:
 
 
 def test_devig_margin_is_removed() -> None:
-    probabilities = devig_probabilities([2.0, 3.2, 4.0])
-    assert sum(value for value in probabilities if value is not None) == pytest.approx(1.0)
+    result = devig_probabilities([2.0, 3.2, 4.0], method="PROPORTIONAL")
+    assert sum(result.fair_probabilities) == pytest.approx(1.0)
 
 
 def test_strategy_lab_is_oos_only_and_multiple_testing_aware() -> None:
@@ -108,7 +104,11 @@ def test_strategy_lab_is_oos_only_and_multiple_testing_aware() -> None:
         }
         for index in range(1, 21)
     ]
-    results = strategy_sensitivity(predictions, model_version="model_v1")
+    results = strategy_sensitivity(
+        predictions,
+        model_version="model_v1",
+        devig_method="PROPORTIONAL",
+    )
     assert len(results) == 3
     assert all(result["multiple_testing_method"] == "BONFERRONI" for result in results)
     assert all(result["status"] in {"INCONCLUSIVE", "REJECTED"} for result in results)
@@ -133,6 +133,7 @@ def test_backtest_rejects_mixed_historical_and_live_segments() -> None:
                 }
             ],
             StrategyParameters("guard", "1X2", 0.01),
+            devig_method="PROPORTIONAL",
         )
 
 

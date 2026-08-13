@@ -9,6 +9,7 @@ from typing import Any
 from sqlalchemy import Engine, func, inspect, select
 from sqlalchemy.orm import Session
 
+from robin.market_math import kernel_versions
 from robin.prospective_observatory.contracts import canonical_sha256
 from robin.prospective_observatory.prequential_contracts import (
     CutoffName,
@@ -190,7 +191,24 @@ class PrequentialSQLRepository:
             append_only=True,
         )
         with Session(self.engine) as session, session.begin():
-            return _add_exact(session, row)
+            existing = session.get(PrequentialPredictionModel, row.id)
+            if existing is None:
+                session.add(row)
+                session.flush()
+                return True
+            candidate = _exact_values(row)
+            persisted = _exact_values(existing)
+            candidate_hash = candidate.pop("payload_hash")
+            persisted_hash = persisted.pop("payload_hash")
+            if persisted != candidate or persisted_hash not in {
+                candidate_hash,
+                prediction.legacy_payload_hash,
+            }:
+                raise ValueError(
+                    "PREQUENTIAL_SQL_IDEMPOTENCY_CONFLICT:"
+                    "prequential_predictions"
+                )
+            return False
 
     def append_settlement(
         self,
@@ -535,6 +553,8 @@ class PrequentialSQLRepository:
                 code_revision=row.code_revision,
                 status=PredictionStatus(row.status),
                 rejection_reason=row.rejection_reason,
+                persisted_payload_hash=row.payload_hash,
+                **kernel_versions("PROPORTIONAL"),
             )
             for row in rows
         )

@@ -11,6 +11,13 @@ from typing import cast
 
 import numpy as np
 
+from robin.market_math import (
+    DevigInputError,
+    DevigMethod,
+    devig_probabilities,
+    kernel_versions,
+)
+
 TEAM_FEATURES = (
     "elo_difference",
     "home_form_5",
@@ -602,21 +609,29 @@ def _elo_probabilities(row: Mapping[str, object]) -> tuple[float, float, float]:
 
 def _market_probabilities(
     row: Mapping[str, object],
+    *,
+    devig_method: DevigMethod | str,
 ) -> tuple[float, float, float] | None:
     prices = [
         _number(row.get("odds_home")),
         _number(row.get("odds_draw")),
         _number(row.get("odds_away")),
     ]
-    if any(price is None or price <= 1.0 for price in prices):
+    try:
+        result = devig_probabilities(
+            prices,
+            method=devig_method,
+            outcome_labels=("HOME", "DRAW", "AWAY"),
+        )
+    except DevigInputError:
         return None
-    implied = [1.0 / float(price) for price in prices if price is not None]
-    total = sum(implied)
-    return implied[0] / total, implied[1] / total, implied[2] / total
+    return result.fair_probabilities
 
 
 def run_model_lab(
     datasets: Mapping[str, list[dict[str, object]]],
+    *,
+    devig_method: DevigMethod | str,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
     specifications = [
         (
@@ -640,7 +655,13 @@ def run_model_lab(
     team_rows = datasets.get("api_team_pre_match_v1", [])
     for model_name, builder in (
         ("api_elo", _elo_probabilities),
-        ("market_devigged_baseline", _market_probabilities),
+        (
+            "market_devigged_baseline",
+            lambda row: _market_probabilities(
+                row,
+                devig_method=devig_method,
+            ),
+        ),
     ):
         model, model_predictions = _fixed_baseline(
             team_rows,
@@ -718,4 +739,7 @@ def run_model_lab(
                         else "INCONCLUSIVE"
                     ),
                 }
+    metadata = kernel_versions(devig_method)
+    for result in (*models, *predictions):
+        result.update(metadata)
     return models, predictions

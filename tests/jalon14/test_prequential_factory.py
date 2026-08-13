@@ -59,9 +59,25 @@ def _factory() -> tuple[
         PrequentialLearningFactory(
             artifact_repository=repository,
             models=models,
+            devig_method="PROPORTIONAL",
         ),
         repository,
     )
+
+
+def test_prequential_factory_rejects_protocol_not_round_trippable_in_store() -> None:
+    repository = PrequentialArtifactRepository(InMemoryArtifactStore())
+    models = initial_model_versions(
+        created_at=NOW - timedelta(days=100),
+        feature_contract_hash=CONTRACT_HASH,
+        code_revision="test-revision",
+    )
+    with pytest.raises(ValueError, match="PREQUENTIAL_DEVIG_PROTOCOL_UNSUPPORTED"):
+        PrequentialLearningFactory(
+            artifact_repository=repository,
+            models=models,
+            devig_method="SHIN",
+        )
 
 
 def _reference(factory: PrequentialLearningFactory) -> object:

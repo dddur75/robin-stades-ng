@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
@@ -183,7 +184,10 @@ class PriceContract:
 
     def __post_init__(self) -> None:
         if (
-            self.minimum_odds <= 1
+            not math.isfinite(self.minimum_odds)
+            or not math.isfinite(self.maximum_odds)
+            or not math.isfinite(self.maximum_margin)
+            or self.minimum_odds <= 1
             or self.maximum_odds < self.minimum_odds
             or not 0 <= self.maximum_margin <= 1
             or self.cutoff_name not in {"NEAR_KICKOFF", "H-2"}
@@ -261,6 +265,44 @@ class HypothesisRecord:
             raise ValueError("HYPOTHESIS_RECORD_INVALID")
         if self.status is HypothesisStatus.VALIDATED:
             raise ValueError("IMPORTED_HYPOTHESIS_CANNOT_BE_VALIDATED")
+        optional_values = (
+            self.historical_profit,
+            self.historical_roi,
+            self.historical_p_value,
+            self.historical_q_value,
+            self.historical_drawdown,
+        )
+        if any(
+            value is not None and not math.isfinite(value)
+            for value in optional_values
+        ):
+            raise ValueError("HYPOTHESIS_HISTORICAL_METRIC_NOT_FINITE")
+        if (
+            self.historical_p_value is not None
+            and not 0.0 <= self.historical_p_value <= 1.0
+        ) or (
+            self.historical_q_value is not None
+            and not 0.0 <= self.historical_q_value <= 1.0
+        ):
+            raise ValueError("HYPOTHESIS_MULTIPLICITY_METRIC_INVALID")
+        if self.historical_drawdown is not None and self.historical_drawdown < 0.0:
+            raise ValueError("HYPOTHESIS_DRAWDOWN_INVALID")
+        if self.historical_confidence_interval is not None:
+            lower, upper = self.historical_confidence_interval
+            if (
+                not math.isfinite(lower)
+                or not math.isfinite(upper)
+                or lower > upper
+            ):
+                raise ValueError("HYPOTHESIS_CONFIDENCE_INTERVAL_INVALID")
+        positive_ratio = self.historical_walk_forward.get("positive_ratio")
+        if positive_ratio is not None and (
+            isinstance(positive_ratio, bool)
+            or not isinstance(positive_ratio, (int, float))
+            or not math.isfinite(float(positive_ratio))
+            or not 0.0 <= float(positive_ratio) <= 1.0
+        ):
+            raise ValueError("HYPOTHESIS_WALK_FORWARD_RATIO_INVALID")
 
     def as_dict(self, *, include_hash: bool = True) -> dict[str, object]:
         payload = asdict(self)
@@ -364,6 +406,14 @@ class HypothesisObservation:
         observed = utc(self.observed_at, field_name="observed_at")
         if cutoff >= kickoff:
             raise ValueError("HYPOTHESIS_CUTOFF_MUST_PRECEDE_KICKOFF")
+        if self.odds is not None and (
+            not math.isfinite(self.odds) or self.odds <= 1.0
+        ):
+            raise ValueError("HYPOTHESIS_ODDS_INVALID")
+        if self.margin is not None and (
+            not math.isfinite(self.margin) or self.margin < 0.0
+        ):
+            raise ValueError("HYPOTHESIS_MARGIN_INVALID")
         if self.status is ObservationStatus.ELIGIBLE_FROZEN and (
             self.odds is None or self.margin is None or observed > cutoff
         ):
@@ -400,7 +450,23 @@ class HypothesisSettlement:
 
     def __post_init__(self) -> None:
         utc(self.settled_at, field_name="settled_at")
-        if self.result_version < 1 or len(self.result_hash) != SHA256_LENGTH:
+        final = self.result_status == "FINAL"
+        void = self.result_status in {"VOID", "CANCELLED", "ABANDONED"}
+        scores_valid = (
+            type(self.home_goals) is int
+            and type(self.away_goals) is int
+            and self.home_goals >= 0
+            and self.away_goals >= 0
+        )
+        if (
+            type(self.result_version) is not int
+            or self.result_version < 1
+            or len(self.result_hash) != SHA256_LENGTH
+            or not math.isfinite(self.profit_units)
+            or not (final or void)
+            or (final and not scores_valid)
+            or (void and (self.home_goals is not None or self.away_goals is not None))
+        ):
             raise ValueError("HYPOTHESIS_SETTLEMENT_INVALID")
 
     @property

@@ -9,6 +9,16 @@ from datetime import UTC, datetime
 
 import numpy as np
 
+from robin.market_math import (
+    DevigInputError,
+    DevigMethod,
+    decide_market,
+    kernel_versions,
+    performance_summary,
+    settle_profit,
+    stake_units,
+)
+
 
 @dataclass(frozen=True)
 class StrategyParameters:
@@ -29,34 +39,15 @@ def _int(value: object) -> int:
     return int(str(value))
 
 
-def devig_probabilities(prices: Iterable[float | None]) -> list[float | None]:
-    values = list(prices)
-    implied = [
-        1.0 / price if price is not None and price > 1.0 else None
-        for price in values
-    ]
-    total = sum(value for value in implied if value is not None)
-    return [
-        value / total if value is not None and total > 0.0 else None
-        for value in implied
-    ]
-
-
-def _stake(
-    probability: float,
-    odds: float,
-    bankroll: float,
-    parameters: StrategyParameters,
-) -> float:
-    if parameters.staking == "FIXED":
-        return min(1.0, parameters.stake_cap)
-    if parameters.staking == "PROPORTIONAL":
-        return min(bankroll * 0.01, parameters.stake_cap)
-    if parameters.staking == "FRACTIONAL_KELLY":
-        net = odds - 1.0
-        kelly = max((probability * odds - 1.0) / net, 0.0)
-        return min(bankroll * kelly * parameters.kelly_fraction, parameters.stake_cap)
-    raise ValueError(f"staking inconnu: {parameters.staking}")
+def _kickoff_sort_key(row: Mapping[str, object]) -> tuple[datetime, str]:
+    raw = str(row.get("kickoff_at", ""))
+    try:
+        value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError("BACKTEST_KICKOFF_INVALID") from error
+    if value.tzinfo is None:
+        raise ValueError("BACKTEST_KICKOFF_TIMEZONE_REQUIRED")
+    return value.astimezone(UTC), str(row.get("fixture_id", ""))
 
 
 def _confidence_interval(profits: list[float], *, seed: int = 42) -> list[float | None]:
@@ -86,21 +77,27 @@ def run_backtest(
     predictions: Iterable[Mapping[str, object]],
     parameters: StrategyParameters,
     *,
+    devig_method: DevigMethod | str,
     hypotheses_tested: int = 1,
 ) -> dict[str, object]:
     """Exécuter un backtest sur un seul segment explicitement OOS."""
 
-    bankroll = 100.0
+    starting_bankroll = 100.0
+    bankroll = starting_bankroll
     peak = bankroll
     maximum_drawdown = 0.0
     loss_streak = 0
     maximum_loss_streak = 0
     profits: list[float] = []
+    stakes: list[float] = []
     details: list[dict[str, object]] = []
-    for row in sorted(predictions, key=lambda item: str(item.get("kickoff_at", ""))):
+    invalid_market_reasons: dict[str, int] = {}
+    for row in sorted(predictions, key=_kickoff_sort_key):
         if row.get("origin") != "OOS HISTORICAL":
             raise ValueError("BACKTEST_SEGMENT_MIXED")
+        outcome_labels: tuple[str, ...]
         if parameters.market == "1X2":
+            outcome_labels = ("HOME", "DRAW", "AWAY")
             probabilities = [
                 _float(row[f"probability_{label}"])
                 for label in ("home", "draw", "away")
@@ -113,6 +110,7 @@ def run_backtest(
             ]
             target = _int(row["target"])
         elif parameters.market == "OVER_UNDER_2_5":
+            outcome_labels = ("OVER", "UNDER")
             if row.get("probability_over_25") is None:
                 continue
             over_probability = _float(row["probability_over_25"])
@@ -128,55 +126,79 @@ def run_backtest(
             target = _int(row["target_over_25"])
         else:
             raise ValueError(f"marché inconnu: {parameters.market}")
-        market = devig_probabilities(odds)
-        candidates = [
-            (
-                index,
-                probability,
-                price,
-                probability - float(market_probability),
+        if target not in range(len(outcome_labels)):
+            raise ValueError("BACKTEST_TARGET_OUT_OF_RANGE")
+        try:
+            decision = decide_market(
+                odds,
+                probabilities,
+                method=devig_method,
+                threshold=parameters.minimum_edge,
+                minimum_probability=parameters.minimum_probability,
+                outcome_labels=outcome_labels,
             )
-            for index, (probability, price, market_probability) in enumerate(
-                zip(probabilities, odds, market, strict=True)
+        except DevigInputError as error:
+            invalid_market_reasons[error.code] = (
+                invalid_market_reasons.get(error.code, 0) + 1
             )
-            if price is not None and market_probability is not None
-        ]
-        if not candidates:
             continue
-        selection, probability, price, edge = max(
-            candidates,
-            key=lambda candidate: candidate[3],
+        if not decision.accepted:
+            continue
+        selection = decision.selected_index
+        probability = decision.model_probabilities[selection]
+        price_value = odds[selection]
+        if price_value is None:
+            raise AssertionError("DEVIG_ACCEPTED_MISSING_SELECTED_ODDS")
+        price = float(price_value)
+        edge = decision.selected_edge
+        stake = stake_units(
+            probability=probability,
+            odds=price,
+            bankroll_units=bankroll,
+            staking=parameters.staking,
+            kelly_fraction=parameters.kelly_fraction,
+            stake_cap_units=parameters.stake_cap,
         )
-        if (
-            edge < parameters.minimum_edge
-            or probability < parameters.minimum_probability
-        ):
+        if stake <= 0.0:
             continue
-        stake = _stake(probability, price, bankroll, parameters)
-        profit = stake * (price - 1.0) if selection == target else -stake
+        profit = settle_profit(
+            stake_units=stake,
+            odds=price,
+            won=selection == target,
+        )
         bankroll += profit
         peak = max(peak, bankroll)
         maximum_drawdown = max(maximum_drawdown, peak - bankroll)
         loss_streak = loss_streak + 1 if profit < 0 else 0
         maximum_loss_streak = max(maximum_loss_streak, loss_streak)
         profits.append(profit)
+        stakes.append(stake)
         details.append(
             {
                 "fixture_id": row.get("fixture_id"),
                 "selection": selection,
                 "probability": probability,
-                "market_probability": market[selection],
+                "market_probability": decision.devig.fair_probabilities[selection],
                 "odds": price,
                 "edge": edge,
                 "stake": stake,
                 "profit": profit,
                 "bankroll": bankroll,
                 "segment": "BLIND_OOS",
+                "devig_method": decision.devig.method.value,
+                "devig_effective_method": decision.devig.effective_method.value,
+                "devig_fallback_reason": decision.devig.fallback_reason,
+                "devig_version": decision.devig.version,
+                "devig_definition_hash": decision.devig.definition_hash,
             }
         )
     interval = _confidence_interval(profits)
     adjusted_p = _adjusted_p_value(profits, hypotheses_tested)
-    profit = sum(profits)
+    performance = performance_summary(
+        starting_bankroll_units=starting_bankroll,
+        stakes=stakes,
+        profits=profits,
+    )
     status = (
         "REJECTED"
         if interval[1] is not None and float(interval[1]) < 0.0
@@ -184,6 +206,7 @@ def run_backtest(
     )
     return {
         "backtest_version": "api_football_backtest_v3",
+        **kernel_versions(devig_method),
         "strategy": parameters.name,
         "market": parameters.market,
         "parameters": {
@@ -192,12 +215,12 @@ def run_backtest(
             "staking": parameters.staking,
             "kelly_fraction": parameters.kelly_fraction,
             "stake_cap": parameters.stake_cap,
+            "devig_method": kernel_versions(devig_method)["devig_method"],
         },
         "segment": "BLIND_OOS",
-        "bets": len(profits),
-        "profit_units": profit,
-        "roi": profit / sum(abs(value) for value in profits) if profits else None,
-        "yield": profit / len(profits) if profits else None,
+        "invalid_market_rows": sum(invalid_market_reasons.values()),
+        "invalid_market_reasons": invalid_market_reasons,
+        **performance,
         "max_drawdown_units": maximum_drawdown,
         "max_loss_streak": maximum_loss_streak,
         "confidence_interval_per_bet": interval,
@@ -216,6 +239,7 @@ def strategy_sensitivity(
     predictions: Iterable[Mapping[str, object]],
     *,
     model_version: str,
+    devig_method: DevigMethod | str,
     edges: tuple[float, ...] = (0.02, 0.04, 0.06),
 ) -> list[dict[str, object]]:
     rows = [
@@ -229,6 +253,7 @@ def strategy_sensitivity(
                 market="1X2",
                 minimum_edge=edge,
             ),
+            devig_method=devig_method,
             hypotheses_tested=len(edges),
         )
         for edge in edges

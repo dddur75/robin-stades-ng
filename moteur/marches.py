@@ -39,7 +39,7 @@ def issues(row):
     }
 
 
-def prix_et_probas(row):
+def prix_et_probas(row, *, devig_method):
     """Retourne dict token -> (cote, proba_juste, cloture: bool) pour les marches prices,
     + probas justes derivees pour DC. None si cotes absentes."""
     out = {}
@@ -48,7 +48,7 @@ def prix_et_probas(row):
     trio, cloture = (trio_c, True) if all(_ok(c) for c in trio_c) else (
         (trio_p, False) if all(_ok(c) for c in trio_p) else (None, False))
     if trio is not None:
-        p = probas_justes(trio)
+        p = probas_justes(trio, methode=devig_method)
         p_home, p_draw, p_away = p
         est_dom = row["side"] == "home"
         p_self = p_home if est_dom else p_away
@@ -64,7 +64,15 @@ def prix_et_probas(row):
     duo, cl2 = (duo_c, True) if all(_ok(c) for c in duo_c) else (
         (duo_p, False) if all(_ok(c) for c in duo_p) else (None, False))
     if duo is not None:
-        p = probas_justes(duo)
+        # Legacy Shin is mathematically proportional for a two-outcome
+        # market.  Declare the effective protocol explicitly instead of
+        # serializing a silent fallback as SHIN.
+        duo_method = (
+            "PROPORTIONAL"
+            if str(devig_method).strip().upper() == "SHIN"
+            else devig_method
+        )
+        p = probas_justes(duo, methode=duo_method)
         out["O25"] = (duo[0], p[0], cl2)
         out["U25"] = (duo[1], p[1], cl2)
     return out

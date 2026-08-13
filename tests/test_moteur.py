@@ -85,7 +85,7 @@ def test_serie_avant():
 
 
 def test_devig():
-    p = probas_justes([2.10, 3.40, 3.60])
+    p = probas_justes([2.10, 3.40, 3.60], methode="SHIN")
     assert abs(p.sum() - 1) < 1e-9 and p[0] > p[1] > 0
 
 

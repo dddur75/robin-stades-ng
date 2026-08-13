@@ -11,6 +11,11 @@ from random import Random
 from typing import Final
 
 from robin.historical_deep.replay import canonical_sha256
+from robin.market_math import (
+    DevigMethod,
+    kernel_versions,
+    performance_summary,
+)
 
 
 class BacktestMode(StrEnum):
@@ -138,12 +143,7 @@ def _market_probability(row: Mapping[str, object]) -> float | None:
         if not 0.0 < probability < 1.0:
             raise ValueError("BACKTEST_MARKET_PROBABILITY_OUTSIDE_OPEN_UNIT_INTERVAL")
         return probability
-    odds = _float(row, ("odds", "market_odds"), required=False)
-    if odds is None:
-        return None
-    if odds <= 1.0:
-        raise ValueError("BACKTEST_MARKET_ODDS_INVALID")
-    return 1.0 / odds
+    return None
 
 
 def _odds(row: Mapping[str, object]) -> float | None:
@@ -483,6 +483,7 @@ def _fold_result(
     *,
     period: str,
     threshold_candidates: Sequence[float],
+    devig_method: DevigMethod | str,
 ) -> dict[str, object]:
     threshold_evidence = select_threshold_train_only(
         training,
@@ -505,6 +506,7 @@ def _fold_result(
                 "score": _score(row),
                 "threshold": threshold,
                 "selected": profit is not None,
+                "stake_units": 1.0 if profit is not None else None,
                 "profit": profit,
                 "bootstrap_group": group,
                 "target": _target(row),
@@ -521,6 +523,11 @@ def _fold_result(
     if train_max >= test_min:
         raise ValueError(f"BACKTEST_WALK_FORWARD_OVERLAP:{period}")
     bootstrap = grouped_bootstrap(profits, groups) if profits else grouped_bootstrap((), ())
+    performance = performance_summary(
+        starting_bankroll_units=100.0,
+        stakes=[1.0 for _ in profits],
+        profits=profits,
+    )
     return {
         "test_period": period,
         "train_rows": len(training),
@@ -532,9 +539,8 @@ def _fold_result(
         "threshold_evidence": threshold_evidence,
         "model": model_scores,
         "market_baseline": market_scores,
-        "bets": len(profits),
-        "profit_units": sum(profits),
-        "roi": sum(profits) / len(profits) if profits else None,
+        **performance,
+        **kernel_versions(devig_method),
         "grouped_bootstrap": bootstrap,
         "grouped_p_value": _group_p_value(profits, groups) if profits else None,
         "concentration": concentration_audit(profits, groups),
@@ -546,6 +552,7 @@ def _fold_result(
 def run_cache_only_backtest(
     rows: Sequence[Mapping[str, object]],
     *,
+    devig_method: DevigMethod | str,
     threshold_candidates: Sequence[float] = (0.50, 0.55, 0.60, 0.65),
     minimum_train_periods: int = 1,
 ) -> dict[str, object]:
@@ -603,6 +610,7 @@ def run_cache_only_backtest(
                     testing,
                     period=period,
                     threshold_candidates=threshold_candidates,
+                    devig_method=devig_method,
                 )
             )
         all_profits: list[float] = []
@@ -629,6 +637,11 @@ def run_cache_only_backtest(
             else None
         )
         p_values[mode] = combined_p
+        performance = performance_summary(
+            starting_bankroll_units=100.0,
+            stakes=[1.0 for _ in all_profits],
+            profits=all_profits,
+        )
         mode_results[mode] = {
             "mode": mode,
             "rows": len(scoped),
@@ -637,9 +650,8 @@ def run_cache_only_backtest(
             "walk_forward": True,
             "threshold_policy": "TRAIN_ONLY",
             "market_baseline_required": True,
-            "bets": len(all_profits),
-            "profit_units": sum(all_profits),
-            "roi": sum(all_profits) / len(all_profits) if all_profits else None,
+            **performance,
+            **kernel_versions(devig_method),
             "grouped_bootstrap": (
                 grouped_bootstrap(all_profits, all_groups)
                 if all_profits
@@ -669,6 +681,7 @@ def run_cache_only_backtest(
         "production_status": "PRODUCTION_LOCKED",
         "real_bets": False,
         "no_bet_default": True,
+        **kernel_versions(devig_method),
     }
 
 

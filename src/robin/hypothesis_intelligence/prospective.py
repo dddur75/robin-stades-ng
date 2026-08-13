@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from datetime import UTC, datetime
 
 from robin.hypothesis_intelligence.competition_identity import same_competition
@@ -13,6 +14,7 @@ from robin.hypothesis_intelligence.contracts import (
     PriceContract,
     ProspectiveHypothesisContract,
     canonical_sha256,
+    utc,
 )
 from robin.hypothesis_intelligence.registry import (
     J10_REGISTRY_SHA256,
@@ -101,6 +103,10 @@ def evaluate_fixture(
     conditions_snapshot: dict[str, object],
     code_revision: str,
 ) -> HypothesisObservation:
+    if odds is not None and (not math.isfinite(odds) or odds <= 1.0):
+        raise ValueError("HYPOTHESIS_ODDS_INVALID")
+    if margin is not None and (not math.isfinite(margin) or margin < 0.0):
+        raise ValueError("HYPOTHESIS_MARGIN_INVALID")
     cutoff_matches_primary = cutoff_name == contract.primary_price.cutoff_name
     cutoff_matches_secondary = cutoff_name == contract.secondary_price.cutoff_name
     price = contract.primary_price if cutoff_matches_primary else contract.secondary_price
@@ -202,6 +208,24 @@ class HypothesisSettlementRegistry:
     ) -> tuple[HypothesisSettlement, bool]:
         if observation.status is not ObservationStatus.ELIGIBLE_FROZEN:
             raise ValueError("HYPOTHESIS_SETTLEMENT_REQUIRES_FROZEN_OBSERVATION")
+        settled = utc(settled_at, field_name="settled_at")
+        if settled < utc(observation.kickoff_at, field_name="kickoff_at"):
+            raise ValueError("HYPOTHESIS_SETTLEMENT_BEFORE_KICKOFF")
+        if type(result_version) is not int or result_version < 1:
+            raise ValueError("HYPOTHESIS_RESULT_VERSION_INVALID")
+        void_statuses = {"VOID", "CANCELLED", "ABANDONED"}
+        if result_status not in {"FINAL", *void_statuses}:
+            raise ValueError("HYPOTHESIS_RESULT_STATUS_INVALID")
+        if result_status in void_statuses:
+            if home_goals is not None or away_goals is not None:
+                raise ValueError("HYPOTHESIS_VOID_SCORE_MUST_BE_EMPTY")
+        elif (
+            type(home_goals) is not int
+            or type(away_goals) is not int
+            or home_goals < 0
+            or away_goals < 0
+        ):
+            raise ValueError("HYPOTHESIS_FINAL_SCORE_INVALID")
         result_hash = canonical_sha256(
             {
                 "fixture_id": observation.fixture_id,
@@ -216,7 +240,7 @@ class HypothesisSettlementRegistry:
             return versions[-1], False
         if versions and result_version <= versions[-1].result_version:
             raise ValueError("HYPOTHESIS_RESULT_VERSION_MUST_INCREASE")
-        if result_status in {"VOID", "CANCELLED", "ABANDONED"}:
+        if result_status in void_statuses:
             profit = 0.0
         else:
             if home_goals is None or away_goals is None or observation.odds is None:
@@ -242,7 +266,7 @@ class HypothesisSettlementRegistry:
             home_goals=home_goals,
             away_goals=away_goals,
             profit_units=round(profit, 6),
-            settled_at=settled_at,
+            settled_at=settled,
             result_hash=result_hash,
             supersedes=versions[-1].settlement_id if versions else None,
             metrics={

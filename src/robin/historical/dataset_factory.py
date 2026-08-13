@@ -21,6 +21,12 @@ from robin.historical.features import (
 )
 from robin.historical.readiness import observation_dimensions
 from robin.historical.storage import PartitionedParquetStore
+from robin.market_math import (
+    DevigInputError,
+    DevigMethod,
+    devig_probabilities,
+    kernel_versions,
+)
 
 ROLLING_TEAM_STATISTICS = {
     "shots": "Total Shots",
@@ -201,18 +207,12 @@ def _legacy_market_index(legacy: Path) -> dict[tuple[str, str, str], dict[str, o
     return output
 
 
-def _devig(prices: Iterable[float | None]) -> list[float | None]:
-    values = list(prices)
-    implied = [1.0 / value if value is not None and value > 1.0 else None for value in values]
-    total = sum(value for value in implied if value is not None)
-    return [value / total if value is not None and total > 0 else None for value in implied]
-
-
 def build_api_team_pre_match(
     state: Path,
     *,
     seasons: tuple[int, ...],
     legacy_matches: Path,
+    devig_method: DevigMethod | str,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
     """Construire les features avant d'ajouter les statistiques du match cible."""
 
@@ -286,7 +286,21 @@ def build_api_team_pre_match(
             _numeric(market.get("odds_draw")),
             _numeric(market.get("odds_away")),
         ]
-        probabilities = _devig(prices)
+        try:
+            devig = devig_probabilities(
+                prices,
+                method=devig_method,
+                outcome_labels=("HOME", "DRAW", "AWAY"),
+            )
+            probabilities: list[float | None] = list(devig.fair_probabilities)
+            margin: float | None = devig.overround
+            validation_status = devig.validation_status
+            devig_metadata = kernel_versions(devig)
+        except DevigInputError as error:
+            probabilities = [None, None, None]
+            margin = None
+            validation_status = error.code
+            devig_metadata = kernel_versions(devig_method)
         if any(price is not None for price in prices):
             market_rows.append(
                 {
@@ -304,11 +318,9 @@ def build_api_team_pre_match(
                     "implied_home": probabilities[0],
                     "implied_draw": probabilities[1],
                     "implied_away": probabilities[2],
-                    "bookmaker_margin": (
-                        sum(1.0 / price for price in prices if price is not None) - 1.0
-                        if all(price is not None for price in prices)
-                        else None
-                    ),
+                    "bookmaker_margin": margin,
+                    "devig_validation_status": validation_status,
+                    **devig_metadata,
                     "source": market.get("market_source"),
                     "availability_status": "HISTORICAL_CLOSING_MARKET",
                     "quality_status": "JOINED_BY_DATE_AND_CANONICAL_TEAMS",

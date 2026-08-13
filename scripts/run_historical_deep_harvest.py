@@ -82,6 +82,12 @@ from robin.historical_deep.storage import (
     PayloadIntegrityError,
     R2FirstRepository,
 )
+from robin.market_math import (
+    DevigInputError,
+    devig_execution_metadata,
+    devig_probabilities,
+    kernel_versions,
+)
 
 COLLECTION_COMMANDS = frozenset({"census", "fixtures", "players", "injuries"})
 ANALYSIS_COMMANDS = frozenset({"replay", "quality", "features", "backtest", "report"})
@@ -2221,7 +2227,10 @@ def _run_backtest(
             },
             recorded_at=_aware_now(services),
         )
-    result = run_cache_only_backtest(rows)
+    result = run_cache_only_backtest(
+        rows,
+        devig_method="PROPORTIONAL",
+    )
     modes = _mapping(result.get("modes"))
     evaluated_folds = sum(
         len(_sequence(_mapping(mode).get("folds")))
@@ -2325,7 +2334,11 @@ def build_cache_only_backtest_input(
         "fthg",
         "ftag",
         "psh",
+        "psd",
+        "psa",
         "psch",
+        "pscd",
+        "psca",
         "match_id",
     ]
     frame = pd.read_parquet(matches_path, columns=selected_columns)
@@ -2356,11 +2369,30 @@ def build_cache_only_backtest_input(
         kickoff = _match_datetime(record.get("date"))
         home_goals = _optional_number(record.get("fthg"))
         away_goals = _optional_number(record.get("ftag"))
-        odds = _optional_number(record.get("psch")) or _optional_number(
-            record.get("psh")
+        closing_prices = tuple(
+            _optional_number(record.get(field))
+            for field in ("psch", "pscd", "psca")
         )
-        if home_goals is None or away_goals is None or odds is None or odds <= 1:
+        opening_prices = tuple(
+            _optional_number(record.get(field))
+            for field in ("psh", "psd", "psa")
+        )
+        prices = (
+            closing_prices
+            if all(price is not None and price > 1.0 for price in closing_prices)
+            else opening_prices
+        )
+        if home_goals is None or away_goals is None:
             continue
+        try:
+            devig = devig_probabilities(
+                prices,
+                method="PROPORTIONAL",
+                outcome_labels=("HOME", "DRAW", "AWAY"),
+            )
+        except DevigInputError:
+            continue
+        odds = devig.input_odds[0]
 
         home_key = (league, home)
         away_key = (league, away)
@@ -2416,12 +2448,14 @@ def build_cache_only_backtest_input(
                     "kickoff_at": kickoff.isoformat(),
                     "target_fixture_kickoff": kickoff.isoformat(),
                     "model_probability": probability,
-                    "market_probability": 1.0 / odds,
+                    "market_probability": devig.fair_probabilities[0],
                     "odds": odds,
                     "target": int(home_goals > away_goals),
                     "competition": competition_map[league],
                     "source_mode": "TRACKED_CACHE",
                     "provider_calls": 0,
+                    **kernel_versions(devig),
+                    **devig_execution_metadata(devig),
                     "home_form_points_5": home_ppg,
                     "away_form_points_5": away_ppg,
                     "home_goal_difference_5": home_goal_difference,

@@ -115,7 +115,12 @@ def test_statut_workflow_distingue_resultat(
 
 
 def test_baseline_marche_est_deviggee() -> None:
-    values = normalized_market_probabilities([2.0], [4.0], [4.0])
+    values = normalized_market_probabilities(
+        [2.0],
+        [4.0],
+        [4.0],
+        devig_method="PROPORTIONAL",
+    )
     assert values == pytest.approx((0.5, 0.25, 0.25))
     assert sum(values or ()) == pytest.approx(1)
 
@@ -130,7 +135,10 @@ def test_baseline_marche_est_deviggee() -> None:
 def test_baseline_marche_refuse_source_incomplete(
     prices: tuple[list[float], list[float], list[float]],
 ) -> None:
-    assert normalized_market_probabilities(*prices) is None
+    assert normalized_market_probabilities(
+        *prices,
+        devig_method="PROPORTIONAL",
+    ) is None
 
 
 def test_quota_neuf_fenetres_garde_au_moins_20_pourcent() -> None:

@@ -27,6 +27,7 @@ from robin.ingestion.scheduler import (
     window_states,
 )
 from robin.ingestion.snapshot_store import JsonlSnapshotStore
+from robin.market_math import kernel_versions
 from robin.modeling.reference import (
     EloModel,
     consensus,
@@ -534,7 +535,7 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
                 "origin": DataOrigin.DEMO_DATA.value,
                 "provenance": {"fixture": "DEMO DATA", "history": "LEGACY SOURCE"},
             }
-            home_odds = None
+            market_odds = None
             model_disagreement = abs(elo.home - poisson.home) > 0.15
         elif fixture_quotes:
             latest = fixture_quotes[-1]
@@ -553,6 +554,7 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
                 prices["HOME"],
                 prices["DRAW"],
                 prices["AWAY"],
+                devig_method="PROPORTIONAL",
             )
             if baseline is None:
                 blocked.append(
@@ -592,8 +594,12 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
                     "sports_history": "NOT_USED",
                     "source_payload_hash": latest.get("source_payload_hash"),
                 },
+                **kernel_versions("PROPORTIONAL"),
             }
-            home_odds = sum(prices["HOME"]) / len(prices["HOME"])
+            market_odds = {
+                selection: sum(values) / len(values)
+                for selection, values in prices.items()
+            }
             model_disagreement = False
         else:
             blocked.append(
@@ -606,6 +612,7 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
                 }
             )
             continue
+        prediction.update(kernel_versions("PROPORTIONAL"))
         predictions.append(prediction)
         new_predictions += int(
             append_jsonl_once(
@@ -620,8 +627,9 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
                     fixture_id=fixture_id,
                     market_key="1X2",
                     selection="HOME",
-                    odds_decimal=home_odds,
+                    market_odds=market_odds,
                     model_probability=float(prediction["probability_home"]),
+                    devig_method="PROPORTIONAL",
                     strategy_version="value-simple-1.0",
                     quality_ok=False,
                     model_disagreement=model_disagreement,
@@ -648,7 +656,8 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
         "predictions_created": new_predictions,
         "predictions_blocked": len(blocked),
         "decisions_created": new_decisions,
-        "decisions_total": len(journal.read_all()),
+        "decisions_total": len(journal.read_effective()),
+        "decision_records_total": len(journal.read_all()),
         "origin": (
             DataOrigin.DEMO_DATA.value
             if mock
@@ -675,7 +684,7 @@ def post_match_settlement(output: Path, *, mock: bool) -> dict[str, object]:
     run_id = runtime_run_id("settlement")
     decisions = DecisionJournal(
         output / "decisions" / "shadow-decisions.jsonl"
-    ).read_all()
+    ).read_effective()
     eligible = [item for item in decisions if item.get("accepted") is True]
     if not eligible:
         summary = {
@@ -716,7 +725,7 @@ def daily_health(output: Path) -> dict[str, object]:
     snapshots = JsonlSnapshotStore(output / "odds").read_all()
     decisions = DecisionJournal(
         output / "decisions" / "shadow-decisions.jsonl"
-    ).read_all()
+    ).read_effective()
     predictions = read_jsonl(output / "predictions" / "history.jsonl")
     scheduler_rows = read_json(output / "scheduler" / "latest.json", [])
     rejected: dict[str, int] = {}

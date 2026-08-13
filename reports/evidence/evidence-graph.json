@@ -2992,8 +2992,9 @@
       "execution_id":"chronos-loop53-ci-isolation-authority-20260813T080407Z",
       "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
       "dataset_lineage_id":"owner-authority-raw-0a7fedacdfeabd68b1e45a648364d91a8ac0fc3244e772221d0b2663b8937dd1-and-run-31668336473",
-      "status":"PARTIAL",
-      "verified_by":["C0"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.AUTHORIZATION.CHRONOS_LOOP53.009"
     },
     {
       "claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.014",
@@ -3109,8 +3110,9 @@
       "execution_id":"chronos-loop53-ci-isolation-push-gate-revision-20260813T082407Z",
       "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
       "dataset_lineage_id":"reviewed-snapshot-27f150fff626df47c3ecfc51eeb6bd5edb2e9b9fd7d90e15162408e188959f43-and-five-workflow-checkpoint-20260813T082204Z",
-      "status":"PARTIAL",
-      "verified_by":["C0"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"
     },
     {
       "claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.016",
@@ -3127,6 +3129,72 @@
       "dataset_lineage_id":"reviewed-snapshot-27f150fff626df47c3ecfc51eeb6bd5edb2e9b9fd7d90e15162408e188959f43-and-record147",
       "status":"PARTIAL",
       "verified_by":["C0"]
+    },
+    {
+      "claim_id":"GOV.AUTHORIZATION.CHRONOS_LOOP53.009",
+      "claim":"The Loop 53 delivery authorization remains historically bounded while the current mission matrix adds only the separate offline Scientific Truth Kernel mission and preserves all Loop 53 external-effect locks.",
+      "scope":"CHRONOS_LOOP53_AUTHORIZATION_AFTER_SCIENTIFIC_TRUTH_KERNEL_MATRIX_EXTENSION",
+      "source":"mission activation matrix current bytes and immutable Loop 53 delivery authority",
+      "grain":"one_append_only_authorization_revision",
+      "temporal_class":"CODE_LOCAL_AS_OF",
+      "artifact":"configs/agents/mission-activation-matrix-v3.json",
+      "hash":"8d62921c463b33c2f896f9ecbbb9a6edf4f8de801c83635cefdee272bd434c4d",
+      "code_revision":"1ffeec1cd89e83deda008da39bb22540a70db896",
+      "execution_id":"scientific-truth-kernel-precommit1-20260813",
+      "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
+      "dataset_lineage_id":"loop53-authorization-preserved-by-loop54-additive-matrix-revision",
+      "status":"PARTIAL",
+      "verified_by":["C0","DP6"],
+      "successor_of":"GOV.AUTHORIZATION.CHRONOS_LOOP53.008"
+    },
+    {
+      "claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017",
+      "claim":"The Council evidence contract preserves historical Chronos claims while accepting canonical DECISION or STAGE_FINISHED commit-context records for the separately authorized Scientific Truth Kernel mission.",
+      "scope":"COUNCIL_APPEND_ONLY_COMMIT_CONTEXT_REVISION",
+      "source":"Council contract tests current bytes and AGENTS.md canonical record-type policy",
+      "grain":"one_append_only_evidence_policy_revision",
+      "temporal_class":"CODE_LOCAL_AS_OF",
+      "artifact":"tests/council/test_robin_council_os_v3.py",
+      "hash":"78331cfd493c7786786d8071834b3fc51b696a6ace08348d5b57c501ca6c4486",
+      "code_revision":"1ffeec1cd89e83deda008da39bb22540a70db896",
+      "execution_id":"scientific-truth-kernel-precommit1-20260813",
+      "scientific_lineage_id":"robin-council-os-v3.1",
+      "dataset_lineage_id":"append-only-ledger-prefix-through-record147",
+      "status":"PARTIAL",
+      "verified_by":["C0","DP6"],
+      "successor_of":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.016"
+    },
+    {
+      "claim_id":"GOV.AUTHORIZATION.SCIENTIFIC_TRUTH_KERNEL.001",
+      "claim":"LOOP 54 authorizes one offline E1 Scientific Truth Kernel repair from the immutable audited base, with bounded Git delivery and zero Neon, production database, R2, provider, migration, betting or promotion effects.",
+      "scope":"SCIENTIFIC_TRUTH_KERNEL_V1_OFFLINE_E1_AUTHORIZATION",
+      "source":"owner LOOP54 authority and exact eight-field execution manifest",
+      "grain":"one_bounded_offline_mission_authorization",
+      "temporal_class":"MISSION_AUTHORIZATION_AS_OF",
+      "artifact":"configs/execution/scientific-truth-kernel-v1.json",
+      "hash":"7f0030d0c1c56394a0690018243113b687e3e253fa96557c84490c1e490a7b88",
+      "code_revision":"1ffeec1cd89e83deda008da39bb22540a70db896",
+      "execution_id":"scientific-truth-kernel-precommit1-20260813",
+      "scientific_lineage_id":"ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+      "dataset_lineage_id":"owner-authority-bba610364cff4cb0e3b3af6fa35463fb5cbb503a6581b1a0b3a6c5758490ba71",
+      "status":"PARTIAL",
+      "verified_by":["C0","DP6"]
+    },
+    {
+      "claim_id":"SCIENCE.TRUTH_KERNEL.AUTHORITY.V1.001",
+      "claim":"The candidate truth module defines explicit versioned ROI, turnover, yield, decision, staking and settlement semantics; this claim does not prove every call site, temporal validity or delivery readiness.",
+      "scope":"SCIENTIFIC_TRUTH_KERNEL_V1_CORE_DEFINITIONS_CANDIDATE",
+      "source":"candidate truth module plus independent DP5 and DP6 review",
+      "grain":"one_versioned_candidate_definition_module",
+      "temporal_class":"CODE_LOCAL_AS_OF",
+      "artifact":"src/robin/market_math/truth.py",
+      "hash":"7361c1c7e7263130d6410d4b74622024df79fa6b63b404c7e690c28be547048c",
+      "code_revision":"1ffeec1cd89e83deda008da39bb22540a70db896",
+      "execution_id":"scientific-truth-kernel-precommit1-20260813",
+      "scientific_lineage_id":"ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+      "dataset_lineage_id":"synthetic-red-and-targeted-regression-fixtures-only",
+      "status":"PARTIAL",
+      "verified_by":["DP5","DP6"]
     }
   ],
   "decision_nodes":[
@@ -3269,7 +3337,10 @@
     {"decision_id":"RCV3-20260813-144","ledger_record_hash":"9d2624283a753a2d132755f174b8893b8fd7b1b53872f18f24ca92e995ce15e6"},
     {"decision_id":"RCV3-20260813-145","ledger_record_hash":"ce840bece7d35eb2497b1ad302a09b53ebd8302902f60a9ccc8273cb1fc9b09f"},
     {"decision_id":"RCV3-20260813-146","ledger_record_hash":"6bc09723de2e341c357b7a185d66dde6fcd17b5959f293676db3d6d76611b59f"},
-    {"decision_id":"RCV3-20260813-147","ledger_record_hash":"e64ca30e8cb72bed8a519f3164018bb42a16bb11028203cb1ed4ee86905e59c5"}
+    {"decision_id":"RCV3-20260813-147","ledger_record_hash":"e64ca30e8cb72bed8a519f3164018bb42a16bb11028203cb1ed4ee86905e59c5"},
+    {"decision_id":"RCV3-20260813-148","ledger_record_hash":"71a086dbbf42b014b83fd0a02278e3a1cccb5daa75603d40fe33243c26d0b031"},
+    {"decision_id":"RCV3-20260813-149","ledger_record_hash":"bb7c4bd9b82c7f3d37a84b51e92ffca8b109519e69bd7050ddbb74931b87def0"},
+    {"decision_id":"RCV3-20260813-150","ledger_record_hash":"16d52c99a984288d90141f727bfe9e9a1bfd8e5392aff30be0e755e3af6f46f3"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -3675,6 +3746,18 @@
     {"edge_id":"EDGE.401","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.016","to_decision_id":"RCV3-20260813-147","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.402","from_claim_id":"GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001","to_decision_id":"RCV3-20260813-147","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.403","from_claim_id":"GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.014","to_decision_id":"RCV3-20260813-147","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.404","from_claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.016","to_decision_id":"RCV3-20260813-147","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.404","from_claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.016","to_decision_id":"RCV3-20260813-147","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.405","from_claim_id":"GOV.AUTHORIZATION.CHRONOS_LOOP53.009","to_decision_id":"RCV3-20260813-148","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.406","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017","to_decision_id":"RCV3-20260813-148","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.407","from_claim_id":"GOV.AUTHORIZATION.SCIENTIFIC_TRUTH_KERNEL.001","to_decision_id":"RCV3-20260813-148","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.408","from_claim_id":"SCIENCE.TRUTH_KERNEL.AUTHORITY.V1.001","to_decision_id":"RCV3-20260813-148","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.409","from_claim_id":"GOV.AUTHORIZATION.CHRONOS_LOOP53.009","to_decision_id":"RCV3-20260813-149","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.410","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017","to_decision_id":"RCV3-20260813-149","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.411","from_claim_id":"GOV.AUTHORIZATION.SCIENTIFIC_TRUTH_KERNEL.001","to_decision_id":"RCV3-20260813-149","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.412","from_claim_id":"SCIENCE.TRUTH_KERNEL.AUTHORITY.V1.001","to_decision_id":"RCV3-20260813-149","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.413","from_claim_id":"GOV.AUTHORIZATION.CHRONOS_LOOP53.009","to_decision_id":"RCV3-20260813-150","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.414","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017","to_decision_id":"RCV3-20260813-150","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.415","from_claim_id":"GOV.AUTHORIZATION.SCIENTIFIC_TRUTH_KERNEL.001","to_decision_id":"RCV3-20260813-150","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.416","from_claim_id":"SCIENCE.TRUTH_KERNEL.AUTHORITY.V1.001","to_decision_id":"RCV3-20260813-150","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

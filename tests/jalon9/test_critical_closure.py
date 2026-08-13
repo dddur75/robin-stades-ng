@@ -240,12 +240,17 @@ def test_ambiguous_mapping_is_never_used() -> None:
 
 
 def test_margin_and_proportional_devig() -> None:
-    margin, probabilities = proportional_devig([2.0, 4.0, 4.0])
+    margin, probabilities = proportional_devig(
+        [2.0, 4.0, 4.0],
+        devig_method="PROPORTIONAL",
+    )
     assert margin == 0.0
     assert probabilities == [0.5, 0.25, 0.25]
-    invalid_margin, invalid = proportional_devig([2.0, None, 4.0])
-    assert invalid_margin is None
-    assert invalid == [None, None, None]
+    with pytest.raises(ValueError, match="DEVIG_ODDS_MISSING"):
+        proportional_devig(
+            [2.0, None, 4.0],
+            devig_method="PROPORTIONAL",
+        )
 
 
 def test_market_dataset_never_synthesizes_odds() -> None:
@@ -260,7 +265,8 @@ def test_market_dataset_never_synthesizes_odds() -> None:
                 "odds_under_25": None,
                 "quality_status": "OBSERVED",
             }
-        ]
+        ],
+        devig_method="PROPORTIONAL",
     )
     assert rows[0]["market_margin_1x2"] == pytest.approx(1 / 12)
     assert rows[0]["odds_over_25"] is None

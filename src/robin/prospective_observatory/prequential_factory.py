@@ -5,6 +5,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Iterable, Mapping
 
+from robin.market_math import (
+    DevigMethod,
+    kernel_versions,
+    normalize_method,
+)
+from robin.market_math import (
+    devig_probabilities as kernel_devig_probabilities,
+)
 from robin.prospective_observatory.contracts import canonical_sha256, ensure_utc
 from robin.prospective_observatory.feature_snapshots import FeatureSnapshotRegistry
 from robin.prospective_observatory.prequential_contracts import (
@@ -37,6 +45,8 @@ from robin.prospective_observatory.prequential_training import (
 def devig_probabilities(
     market: PredictionMarket,
     decimal_odds: Mapping[str, float],
+    *,
+    devig_method: DevigMethod | str,
 ) -> tuple[dict[str, float], float]:
     expected = (
         ("HOME", "DRAW", "AWAY")
@@ -45,15 +55,21 @@ def devig_probabilities(
     )
     if set(decimal_odds) != set(expected):
         raise ValueError("PREQUENTIAL_ODDS_SELECTIONS_INVALID")
-    if any(value <= 1.0 for value in decimal_odds.values()):
-        raise ValueError("PREQUENTIAL_DECIMAL_ODDS_INVALID")
-    implied = {selection: 1.0 / decimal_odds[selection] for selection in expected}
-    total = sum(implied.values())
-    if total <= 0.0:
-        raise ValueError("PREQUENTIAL_ODDS_IMPLIED_TOTAL_INVALID")
+    result = kernel_devig_probabilities(
+        [decimal_odds[selection] for selection in expected],
+        method=devig_method,
+        outcome_labels=expected,
+    )
     return (
-        {selection: implied[selection] / total for selection in expected},
-        total - 1.0,
+        {
+            selection: probability
+            for selection, probability in zip(
+                expected,
+                result.fair_probabilities,
+                strict=True,
+            )
+        },
+        result.overround,
     )
 
 
@@ -244,6 +260,7 @@ class PrequentialLearningFactory:
         *,
         artifact_repository: PrequentialArtifactRepository,
         models: Iterable[ModelVersion],
+        devig_method: DevigMethod | str,
     ) -> None:
         model_rows = tuple(models)
         keys = {(model.model_id, model.version) for model in model_rows}
@@ -264,6 +281,13 @@ class PrequentialLearningFactory:
         if challenger_scopes != set(ModelScope):
             raise ValueError("PREQUENTIAL_CHALLENGER_SCOPE_INCOMPLETE")
         self.artifact_repository = artifact_repository
+        self.devig_method = normalize_method(devig_method)
+        if self.devig_method is not DevigMethod.PROPORTIONAL:
+            # The current durable prediction schema predates scientific-kernel
+            # metadata.  Loading those rows is reproducible only for the
+            # protocol historically executed by this factory.  Fail closed
+            # instead of accepting a method that the store cannot round-trip.
+            raise ValueError("PREQUENTIAL_DEVIG_PROTOCOL_UNSUPPORTED")
         self.models: dict[tuple[str, str], ModelVersion] = {
             (model.model_id, model.version): model for model in model_rows
         }
@@ -298,7 +322,7 @@ class PrequentialLearningFactory:
                     "market": snapshot.market.value,
                 },
             )
-        return inserted
+        return bool(inserted)
 
     @staticmethod
     def _scope_allows(model: ModelVersion, competition: str) -> bool:
@@ -364,6 +388,7 @@ class PrequentialLearningFactory:
                 market_probabilities, _margin = devig_probabilities(
                     market,
                     decimal_odds,
+                    devig_method=self.devig_method,
                 )
                 if model.role is ModelRole.REFERENCE:
                     probabilities = dict(market_probabilities)
@@ -394,6 +419,7 @@ class PrequentialLearningFactory:
             code_revision=code_revision,
             status=status,
             rejection_reason=rejection_reason,
+            **kernel_versions(self.devig_method),
         )
         stored, inserted = self.predictions.append(prediction)
         if inserted:

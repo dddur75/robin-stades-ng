@@ -77,7 +77,12 @@ def test_poisson_et_dixon_coles_sont_normalises(dixon_coles: bool) -> None:
 
 
 def test_consensus_et_marche_sont_normalises() -> None:
-    market = market_probabilities(2.0, 3.5, 4.0)
+    market = market_probabilities(
+        2.0,
+        3.5,
+        4.0,
+        devig_method="PROPORTIONAL",
+    )
     combined = consensus(market, poisson_probabilities(1.5, 1.0))
     assert market.total == pytest.approx(1.0)
     assert combined.total == pytest.approx(1.0)
