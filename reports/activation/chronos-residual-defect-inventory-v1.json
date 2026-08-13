@@ -1,7 +1,7 @@
 {
   "schema_version": "chronos-residual-defect-inventory-v1",
-  "claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011",
-  "observed_at": "2026-08-12T22:43:33Z",
+  "claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012",
+  "observed_at": "2026-08-13T04:36:21Z",
   "repository": "dddur75/robin-stades-ng",
   "base_main_sha": "6140e09cb38b5fecee5da85882aa8a879dbce780",
   "branch": "codex/chronos-residual-defect-extermination-v1",
@@ -1227,6 +1227,19 @@
       "status": "FIXED"
     },
     {
+      "defect_id": "CHR53-CI-009",
+      "component": "Jalon 10 CI dependency contract",
+      "failure_signature": "exact-head run 31651412900 reached 1981 passed and 21 skipped in both PostgreSQL 16 profiles but failed one repository-wide assertion that still required the historical two-item tests.needs set instead of the six mandatory Chronos gates",
+      "severity": "P1",
+      "reproducible": true,
+      "live_reachable": false,
+      "external_effect_before_failure": "one authorized non-force corrective push and one new exact-head attempt; no rerun, merge, live dispatch, Neon access, production PostgreSQL access or migration",
+      "root_cause": "the bounded Loop 53 matrices did not include the pre-existing Jalon 10 workflow-contract assertion after ci.yml gained four fail-closed prerequisites",
+      "fix_required": "add the exact Jalon 10 contract path to the 41-file mission allowlist and require the exact six-item tests.needs set without weakening any gate; never rerun 31651412900",
+      "test_added": "the corrected Jalon 10 test requires all six exact dependencies and the Council binds the owner-authorized second-and-final corrective push, expanded exact path and failed-run non-rerun rule",
+      "status": "FIXED"
+    },
+    {
       "defect_id": "CHR53-EVIDENCE-001",
       "component": "previous live pagination evidence",
       "failure_signature": "the prior sanitized artifact did not preserve the raw branch pagination envelope",
@@ -1241,11 +1254,11 @@
     }
   ],
   "counts": {
-    "discovered": 93,
-    "fixed": 92,
+    "discovered": 94,
+    "fixed": 93,
     "intentionally_unrecoverable_privacy_boundary": 1,
     "p0_discovered": 12,
-    "p1_discovered": 70,
+    "p1_discovered": 71,
     "p2_discovered": 11,
     "p3_discovered": 0,
     "defects_intentionally_deferred": 0,

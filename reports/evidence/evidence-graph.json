@@ -2720,8 +2720,9 @@
       "execution_id":"chronos-loop53-external-observation-integrity-authority-candidate-20260812T224333Z",
       "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
       "dataset_lineage_id":"preserved-full-boundary-f226731b04491264972a3777d3c60d2a6e174cecbf54854d050edecdd8e83803-and-five-workflow-revalidation-6d94da1c5bf52d0740732f5606711cbda3ee7b823f1e225729d1158c528eaf58",
-      "status":"PARTIAL",
-      "verified_by":["C0"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.AUTHORIZATION.CHRONOS_LOOP53.007"
     },
     {
       "claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.009",
@@ -2872,8 +2873,9 @@
       "execution_id":"chronos-loop53-certification-status-revision-20260812T231930Z",
       "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
       "dataset_lineage_id":"record141-checkpoint-20260812T231539Z",
-      "status":"PARTIAL",
-      "verified_by":["C0"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.013"
     },
     {
       "claim_id":"GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011",
@@ -2888,8 +2890,9 @@
       "execution_id":"chronos-loop53-certification-status-inventory-20260812T231930Z",
       "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
       "dataset_lineage_id":"record141-checkpoint-20260812T231539Z-and-bounded-local-replays",
-      "status":"PARTIAL",
-      "verified_by":["C0"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012"
     },
     {
       "claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012",
@@ -2904,6 +2907,71 @@
       "execution_id":"chronos-loop53-certification-status-20260812T231930Z",
       "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
       "dataset_lineage_id":"record141-checkpoint-20260812T231539Z-and-frozen-triple-review-69b7848a7cf8625b4c252aa7d9d5322c925dfe828488d85cab9097e536f389a8",
+      "status":"SUPERSEDED",
+      "verified_by":["C0"],
+      "superseded_by":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013"
+    },
+    {
+      "claim_id":"GOV.AUTHORIZATION.CHRONOS_LOOP53.007",
+      "claim":"The active owner continuation and default-deny matrix admit exactly the 41-file Loop 53 surface, exactly one second-and-final non-force corrective push to existing PR 53 after failed run 31651412900, no rerun of either failed exact-head run, and no merge, live or migration before their later gates.",
+      "scope":"CHRONOS_LOOP53_EXACT_41_PATH_SECOND_FINAL_CORRECTIVE_PUSH_AUTHORIZATION",
+      "source":"active owner continuation directive, exact 41-path default-deny matrix, fresh DP5/DP6/C4 reviews and five-workflow boundary checkpoint",
+      "grain":"one_exact_second_final_corrective_push_authorization",
+      "temporal_class":"CODE_LOCAL_EXECUTION_AND_EXTERNAL_CONFIGURATION_AS_OF",
+      "artifact":"configs/agents/mission-activation-matrix-v3.json",
+      "hash":"1fe2d062a08b5c5879a268cc3a1181cea1c18a27155a12037438c259df1c193e",
+      "code_revision":"78ad4f7c1a9368f26c070aad209d3ff670b05b47",
+      "execution_id":"chronos-loop53-second-final-authority-20260813T043621Z",
+      "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
+      "dataset_lineage_id":"owner-directive-0b01f6025927c94ce143d62e2afb8471a68c5a0530ac3b0051f20d7ebc02f5fb-and-five-workflow-checkpoint-20260813T043621Z",
+      "status":"PARTIAL",
+      "verified_by":["C0"]
+    },
+    {
+      "claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.013",
+      "claim":"Council binds the exact-six Jalon 10 dependency contract, failed run 31651412900 and its sole root cause, the 41-file scope, fresh DP5/DP6/C4 reviews, the second-final five-workflow checkpoint and append-only record144 without rewriting historical evidence.",
+      "scope":"CHRONOS_LOOP53_SECOND_FINAL_CORRECTIVE_PUSH_GOVERNANCE_REVISION",
+      "source":"failed exact-head run 31651412900, active owner continuation, exact Jalon 10 correction, fresh triple review and append-only DECISION record144",
+      "grain":"one_second_final_corrective_push_governance_revision",
+      "temporal_class":"CODE_LOCAL_EXECUTION_AND_EXTERNAL_CONFIGURATION_AS_OF",
+      "artifact":"tests/council/test_robin_council_os_v3.py",
+      "hash":"ef9d01f55adc4449d438e2adfb33ebd55d9fbe54d74d70d2c4604978836ace96",
+      "code_revision":"78ad4f7c1a9368f26c070aad209d3ff670b05b47",
+      "execution_id":"chronos-loop53-second-final-revision-20260813T043621Z",
+      "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
+      "dataset_lineage_id":"reviewed-snapshot-f7c9119808e6c65a68e352b069873b7834b899b922dcd896466d07fecf5319e0-and-run-31651412900-and-five-workflow-checkpoint-20260813T043621Z",
+      "status":"PARTIAL",
+      "verified_by":["C0"]
+    },
+    {
+      "claim_id":"GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012",
+      "claim":"The second-final pre-push Loop 53 audit inventories 94 residual defects (12 P0, 71 P1, 11 P2, 0 P3), fixes 93, preserves one intentionally unrecoverable non-live privacy boundary and leaves zero open, deferred, live-reachable or untested-stage defect.",
+      "scope":"CHRONOS_RESIDUAL_DEFECT_INVENTORY_V1_SECOND_FINAL_PRE_PUSH",
+      "source":"complete residual audit plus exact-head run 31651412900 sole stale Jalon 10 finding and bounded corrective validation",
+      "grain":"one_second_final_pre_push_complete_residual_defect_inventory",
+      "temporal_class":"CODE_LOCAL_EXECUTION_AND_EXTERNAL_CONFIGURATION_AS_OF",
+      "artifact":"reports/activation/chronos-residual-defect-inventory-v1.json",
+      "hash":"588fd1e08b63a3a45eda93c59be29b6c34f2a6c863725db754ef8a97e6b36c1e",
+      "code_revision":"78ad4f7c1a9368f26c070aad209d3ff670b05b47",
+      "execution_id":"chronos-loop53-second-final-inventory-20260813T043621Z",
+      "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
+      "dataset_lineage_id":"run-31651412900-and-bounded-local-replays-and-five-workflow-checkpoint-20260813T043621Z",
+      "status":"PARTIAL",
+      "verified_by":["C0"]
+    },
+    {
+      "claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013",
+      "claim":"Fresh DP5, DP6 and C4 reviews score 97, 98 and 97 with zero open P0/P1/P2 and red-team YES; after the exact five-workflow checkpoint, exactly one second-and-final corrective push gate is open while merge, live and migration remain held behind new exact-head CI and later stage gates.",
+      "scope":"CHRONOS_END_TO_END_LIVE_PATH_CERTIFICATION_V1_SECOND_FINAL_PUSH_GATE",
+      "source":"fresh triple review, active owner continuation, exact five-workflow revalidation, failed-run causal evidence and bounded local matrices",
+      "grain":"one_second_final_corrective_push_gate_certification",
+      "temporal_class":"CODE_LOCAL_EXECUTION_AND_EXTERNAL_CONFIGURATION_AS_OF",
+      "artifact":"reports/activation/chronos-end-to-end-live-path-certification-v1.json",
+      "hash":"a4c63bb718352f50972359f58fdc4e7724d2bf8c34a91050e8390d4db05ffd0c",
+      "code_revision":"78ad4f7c1a9368f26c070aad209d3ff670b05b47",
+      "execution_id":"chronos-loop53-second-final-certification-20260813T043621Z",
+      "scientific_lineage_id":"chronos-residual-defect-extermination-v1",
+      "dataset_lineage_id":"reviewed-snapshot-f7c9119808e6c65a68e352b069873b7834b899b922dcd896466d07fecf5319e0-and-five-workflow-checkpoint-20260813T043621Z",
       "status":"PARTIAL",
       "verified_by":["C0"]
     }
@@ -3044,7 +3112,8 @@
     {"decision_id":"RCV3-20260812-140","ledger_record_hash":"a0b942c20bf316bb07d60210479e9f56223a35bd0531c691443d1a63c61c1619"},
     {"decision_id":"RCV3-20260812-141","ledger_record_hash":"2e4fcdde78bde9aa593bc57c24250e81f06a40fb54b118c29d79a1de082a833e"},
     {"decision_id":"RCV3-20260812-142","ledger_record_hash":"12a67f9b8c714cb1b525caab4220940ca5981d7274ab39a5fd44b3ca7e2b4d92"},
-    {"decision_id":"RCV3-20260812-143","ledger_record_hash":"d3d25fca55a44452a2ab2aaf9b76049327526facea92fa0b5ce8f37a4736a9ea"}
+    {"decision_id":"RCV3-20260812-143","ledger_record_hash":"d3d25fca55a44452a2ab2aaf9b76049327526facea92fa0b5ce8f37a4736a9ea"},
+    {"decision_id":"RCV3-20260813-144","ledger_record_hash":"9d2624283a753a2d132755f174b8893b8fd7b1b53872f18f24ca92e995ce15e6"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -3430,6 +3499,11 @@
     {"edge_id":"EDGE.381","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.012","to_decision_id":"RCV3-20260812-143","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.382","from_claim_id":"GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001","to_decision_id":"RCV3-20260812-143","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.383","from_claim_id":"GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011","to_decision_id":"RCV3-20260812-143","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.384","from_claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012","to_decision_id":"RCV3-20260812-143","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.384","from_claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012","to_decision_id":"RCV3-20260812-143","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.385","from_claim_id":"GOV.AUTHORIZATION.CHRONOS_LOOP53.007","to_decision_id":"RCV3-20260813-144","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.386","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.013","to_decision_id":"RCV3-20260813-144","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.387","from_claim_id":"GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001","to_decision_id":"RCV3-20260813-144","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.388","from_claim_id":"GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012","to_decision_id":"RCV3-20260813-144","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.389","from_claim_id":"GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013","to_decision_id":"RCV3-20260813-144","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

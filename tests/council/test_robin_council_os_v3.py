@@ -223,12 +223,15 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     )
     delivery = authorization["chronos_loop53_delivery"]
     assert (
-        "ALLOW_ONE_INITIAL_BRANCH_PUSH_AND_EXACTLY_ONE_CORRECTIVE_NON_FORCE_PUSH_"
-        "TO_THE_SAME_EXISTING_PULL_REQUEST_53_AFTER_FAILED_EXACT_HEAD_RUN_31634267437"
+        "ALLOW_ONE_INITIAL_BRANCH_PUSH_ONE_CONSUMED_CORRECTIVE_NON_FORCE_PUSH_"
+        "AFTER_FAILED_EXACT_HEAD_RUN_31634267437_AND_EXACTLY_ONE_SECOND_AND_FINAL_"
+        "CORRECTIVE_NON_FORCE_PUSH_TO_THE_SAME_EXISTING_PULL_REQUEST_53_AFTER_"
+        "FAILED_EXACT_HEAD_RUN_31651412900"
         in delivery
     )
     assert "ALLOW_NO_OTHER_PUSH" in delivery
     assert "FORBID_RERUN_31634267437" in delivery
+    assert "FORBID_RERUN_31651412900" in delivery
     assert "FORBID_SQUASH_REBASE_FORCE_PUSH_AND_BRANCH_DELETE" in delivery
     assert "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED" in delivery
     assert authorization["chronos_loop53_external_authority_boundary"] == (
@@ -284,6 +287,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "tests/council/test_robin_council_os_v3.py",
         "tests/historical_deep/test_coverage_proof_export.py",
         "tests/historical_deep/test_workflow_contracts.py",
+        "tests/jalon10/test_workflows_and_guards.py",
         "tests/portability/test_chronos_portable_ci_contract.py",
     }
     assert set(mission["allowed_paths"]) == exact_loop53_paths
@@ -399,6 +403,13 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011",
         "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012",
     }
+    final_correction_claim_ids = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.007",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.013",
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012",
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013",
+    }
     assert (
         initial_loop53_claim_ids
         | exact_path_loop53_claim_ids
@@ -412,6 +423,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         | final_review_claim_ids
         | push_gate_claim_ids
         | status_gate_claim_ids
+        | final_correction_claim_ids
         <= set(claims)
     )
     assert claims["GOV.AUTHORIZATION.COVERAGE.002"] == {
@@ -442,6 +454,22 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         ),
         "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.001": (
             "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.002"
+        ),
+    }.items():
+        assert claims[old_claim_id]["status"] == "SUPERSEDED"
+        assert claims[old_claim_id]["superseded_by"] == new_claim_id
+    for old_claim_id, new_claim_id in {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.006": (
+            "GOV.AUTHORIZATION.CHRONOS_LOOP53.007"
+        ),
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.012": (
+            "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.013"
+        ),
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011": (
+            "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012"
+        ),
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012": (
+            "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013"
         ),
     }.items():
         assert claims[old_claim_id]["status"] == "SUPERSEDED"
@@ -585,7 +613,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     }.items():
         assert claims[old_claim_id]["status"] == "SUPERSEDED"
         assert claims[old_claim_id]["superseded_by"] == new_claim_id
-    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.006"]["status"] == "PARTIAL"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.006"]["status"] == "SUPERSEDED"
     assert claims["GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.009"][
         "status"
     ] == "SUPERSEDED"
@@ -597,13 +625,17 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     ] == "SUPERSEDED"
     assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.012"][
         "status"
-    ] == "PARTIAL"
+    ] == "SUPERSEDED"
     assert claims["GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011"][
         "status"
-    ] == "PARTIAL"
+    ] == "SUPERSEDED"
     assert claims["GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012"][
         "status"
-    ] == "PARTIAL"
+    ] == "SUPERSEDED"
+    for claim_id in final_correction_claim_ids - {
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001"
+    }:
+        assert claims[claim_id]["status"] == "PARTIAL"
     snapshot = ROOT / "configs/data/p0-coverage-authority-matrix-snapshot-v1.json"
     assert artifact_sha256(snapshot) == (
         "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"
@@ -717,6 +749,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
             "tests/coverage/test_scale_pack_mapping_v2.py",
             "tests/historical_deep/test_coverage_proof_export.py",
             "tests/historical_deep/test_workflow_contracts.py",
+            "tests/jalon10/test_workflows_and_guards.py",
         }
     )
     assert scope_correction["context"]["changed_path_count"] == 33
@@ -1150,6 +1183,121 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     assert {edge["from_claim_id"] for edge in status_gate_edges} == set(
         status_gate_correction["proof"]
     )
+    final_correction = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260813-144"
+    )
+    assert final_correction["record_type"] == "DECISION"
+    assert final_correction["decision"] == "PASS_AND_HOLD"
+    assert set(final_correction["proof"]) == final_correction_claim_ids
+    assert final_correction["context"]["failed_exact_head_run"] == {
+        "attempt": 1,
+        "head_sha": "78ad4f7c1a9368f26c070aad209d3ff670b05b47",
+        "rerun_performed": False,
+        "run_id": 31651412900,
+        "sole_failing_test_per_profile": (
+            "tests/jalon10/test_workflows_and_guards.py::"
+            "test_ci_replays_frozen_jalon10_on_windows_before_linux_checks"
+        ),
+        "profile_results": {
+            "superuser": {
+                "job_id": 94297598361,
+                "passed": 1981,
+                "skipped": 21,
+                "failed": 1,
+                "targeted_postgresql_contracts": "PASS",
+            },
+            "non_superuser_createrole": {
+                "job_id": 94297598907,
+                "passed": 1981,
+                "skipped": 21,
+                "failed": 1,
+                "targeted_postgresql_contracts": "PASS",
+            },
+        },
+        "aggregate_tests_job": {
+            "job_id": 94299546212,
+            "classification": "FAIL_CLOSED_PREREQUISITE_PROPAGATION",
+        },
+    }
+    assert final_correction["context"]["reviewed_snapshot"] == {
+        "aggregate_algorithm": (
+            "SHA256_CONCAT_SORTED_UTF8_PATH_NUL_RAW_FILE_SHA256_DIGEST"
+        ),
+        "aggregate_sha256": (
+            "f7c9119808e6c65a68e352b069873b7834b899b922dcd896466d07fecf5319e0"
+        ),
+        "changed_path_count": 41,
+        "changed_paths_equal_allowed": True,
+        "staged_files": 0,
+        "ledger_tip": (
+            "d3d25fca55a44452a2ab2aaf9b76049327526facea92fa0b5ce8f37a4736a9ea"
+        ),
+        "graph_counts": {"claims": 177, "decision_nodes": 136, "edges": 384},
+    }
+    assert final_correction["context"]["reviews"] == {
+        "DP5": {
+            "verdict": "PASS_AND_HOLD",
+            "score": 97,
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+        },
+        "DP6": {
+            "verdict": "PASS_AND_HOLD",
+            "score": 98,
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+        },
+        "C4": {
+            "verdict": "PASS_AND_HOLD",
+            "score": 97,
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+        },
+    }
+    assert final_correction["context"]["red_team_answer"] == "YES"
+    assert final_correction["context"]["pre_push_external_boundary"] == {
+        "checked_at": "2026-08-13T04:36:21Z",
+        "workflow_ids": expected_workflow_ids,
+        "expected_state": "disabled_manually",
+        "result": "PASS",
+    }
+    assert final_correction["context"]["current_push_authorized"] is True
+    assert final_correction["context"]["second_final_corrective_push"] == {
+        "same_existing_pull_request": 53,
+        "non_force": True,
+        "commit_limit": 1,
+        "push_limit": 1,
+        "all_other_pushes_authorized": False,
+    }
+    assert final_correction["context"]["rerun_31634267437_authorized"] is False
+    assert final_correction["context"]["rerun_31651412900_authorized"] is False
+    assert final_correction["context"]["merge_authorized_now"] is False
+    assert final_correction["context"]["live_authorized_now"] is False
+    assert final_correction["context"]["migration_authorized"] is False
+    assert final_correction["context"]["delivery_effects_since_record_143"] == {
+        "git_remote_non_force_pushes": 1,
+        "github_actions_exact_head_runs": 1,
+        "reruns": 0,
+        "merges": 0,
+    }
+    assert final_correction["context"][
+        "live_or_provider_mutating_effects_since_record_143"
+    ] == 0
+    final_correction_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == final_correction["decision_id"]
+    ]
+    assert {edge["from_claim_id"] for edge in final_correction_edges} == set(
+        final_correction["proof"]
+    )
+    assert all(
+        edge["relation"] == "SUPPORTS" and edge["status"] == "RECORDED"
+        for edge in final_correction_edges
+    )
     certification = load_json(
         "reports/activation/chronos-end-to-end-live-path-certification-v1.json"
     )
@@ -1157,21 +1305,22 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "reports/activation/chronos-residual-defect-inventory-v1.json"
     )
     assert certification["claim_id"] == (
-        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012"
+        "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013"
     )
     assert certification["inventory_claim_id"] == (
-        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011"
+        "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012"
     )
     assert certification["reviews"] == {
+        "prior_snapshot_reviews_applicable": False,
         "DP5_PLATFORM_SRE": {
-            "verdict": "PASS",
-            "score": 98,
+            "verdict": "PASS_AND_HOLD",
+            "score": 97,
             "p0": 0,
             "p1": 0,
             "p2": 0,
         },
         "DP6_EVIDENCE_DBA": {
-            "verdict": "PASS",
+            "verdict": "PASS_AND_HOLD",
             "score": 98,
             "p0": 0,
             "p1": 0,
@@ -1195,16 +1344,17 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "current_push_authorized"
     ] is True
     assert certification["corrective_delivery_gate_order"]["current_stage"] == (
-        "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN"
+        "POST_REVALIDATION_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN"
     )
     assert certification["certification_status"] == (
-        "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI"
+        "POST_REVALIDATION_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN_PENDING_NEW_"
+        "EXACT_HEAD_CI"
     )
     assert certification["corrective_delivery_gate_order"][
-        "pre_push_boundary_receipt"
+        "second_final_corrective_push_receipt"
     ] == {
-        "decision_id": "RCV3-20260812-141",
-        "checked_at": "2026-08-12T23:15:39Z",
+        "decision_id": "RCV3-20260813-144",
+        "checked_at": "2026-08-13T04:36:21Z",
         "workflow_ids": expected_workflow_ids,
         "expected_state": "disabled_manually",
         "result": "PASS",
@@ -1353,9 +1503,14 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     assert certification["local_validation"]["mypy_strict"] == (
         "PASS_STRICT_ALL_TWELVE_CHANGED_PRODUCTION_SOURCES"
     )
-    assert inventory["counts"]["discovered"] == 93
-    assert inventory["counts"]["fixed"] == 92
-    assert inventory["counts"]["p1_discovered"] == 70
+    ci_defect = next(
+        item for item in inventory["defects"] if item["defect_id"] == "CHR53-CI-009"
+    )
+    assert ci_defect["severity"] == "P1"
+    assert ci_defect["status"] == "FIXED"
+    assert inventory["counts"]["discovered"] == 94
+    assert inventory["counts"]["fixed"] == 93
+    assert inventory["counts"]["p1_discovered"] == 71
     assert inventory["counts"]["p2_discovered"] == 11
 
 

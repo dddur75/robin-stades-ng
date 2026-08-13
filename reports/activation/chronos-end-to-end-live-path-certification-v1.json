@@ -1,13 +1,13 @@
 {
   "schema_version": "chronos-end-to-end-live-path-certification-v1",
-  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.012",
-  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.011",
-  "observed_at": "2026-08-12T23:19:30Z",
+  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013",
+  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012",
+  "observed_at": "2026-08-13T04:36:21Z",
   "repository": "dddur75/robin-stades-ng",
   "base_main_sha": "6140e09cb38b5fecee5da85882aa8a879dbce780",
   "branch": "codex/chronos-residual-defect-extermination-v1",
   "scope": "OFFLINE_CERTIFICATION_BEFORE_ONE_NEW_CONTROLLED_LIVE",
-  "certification_status": "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI",
+  "certification_status": "POST_REVALIDATION_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI",
   "live_path_call_graph": [
     {
       "component": "GitHub workflow",
@@ -180,19 +180,45 @@
       "reserved GitHub default variable override in CI harness",
       "canonical Neon provider edge absent from lifecycle classifier"
     ],
-    "corrective_policy": "ONE_NEW_COMMIT_AND_ONE_CORRECTIVE_NON_FORCE_PUSH_TO_EXISTING_PR_53;FAILED_RUN_MUST_NOT_BE_RERUN"
+    "corrective_policy": "FIRST_CORRECTIVE_PUSH_CONSUMED;OWNER_AUTHORIZES_EXACTLY_ONE_SECOND_AND_FINAL_CORRECTIVE_NON_FORCE_PUSH_TO_EXISTING_PR_53_AFTER_FRESH_TRIPLE_REVIEW;FAILED_RUNS_MUST_NOT_BE_RERUN",
+    "second_failed_run": {
+      "run_id": 31651412900,
+      "attempt": 1,
+      "head_sha": "78ad4f7c1a9368f26c070aad209d3ff670b05b47",
+      "conclusion": "FAILURE",
+      "rerun_performed": false,
+      "sole_root_cause": "tests/jalon10/test_workflows_and_guards.py::test_ci_replays_frozen_jalon10_on_windows_before_linux_checks",
+      "repository_wide_results_per_postgresql_profile": "1981 passed, 21 skipped, 1 failed",
+      "failed_profile_jobs": {
+        "superuser": 94297598361,
+        "non_superuser_createrole": 94297598907
+      },
+      "aggregate_tests_job": {
+        "job_id": 94299546212,
+        "failure_class": "FAIL_CLOSED_PREREQUISITE_PROPAGATION_NOT_A_SECOND_ROOT_CAUSE"
+      },
+      "targeted_chronos_and_postgresql_contracts": "PASS",
+      "failure_class": "STALE_EXACT_WORKFLOW_DEPENDENCY_CONTRACT"
+    }
   },
   "corrective_delivery_gate_order": {
-    "current_stage": "POST_REVALIDATION_CORRECTIVE_PUSH_GATE_OPEN",
-    "pre_push_boundary_receipt": {
+    "current_stage": "POST_REVALIDATION_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN",
+    "consumed_first_corrective_push_receipt": {
       "decision_id": "RCV3-20260812-141",
       "checked_at": "2026-08-12T23:15:39Z",
       "workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
       "expected_state": "disabled_manually",
       "result": "PASS"
     },
+    "second_final_corrective_push_receipt": {
+      "decision_id": "RCV3-20260813-144",
+      "checked_at": "2026-08-13T04:36:21Z",
+      "workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "expected_state": "disabled_manually",
+      "result": "PASS"
+    },
     "pre_push_external_boundary": "REVALIDATE_WORKFLOW_IDS_319920551_327137040_327137044_329278452_329420317_DISABLED_MANUALLY_OR_ABORT",
-    "next_stage_after_triple_pass": "ONE_CORRECTIVE_LOCAL_COMMIT_AND_NON_FORCE_PUSH_TO_EXISTING_PR_53",
+    "next_stage_after_triple_pass": "ONE_SECOND_AND_FINAL_CORRECTIVE_LOCAL_COMMIT_AND_NON_FORCE_PUSH_TO_EXISTING_PR_53_AFTER_IMMEDIATE_BOUNDARY_REVALIDATION",
     "then_required_before_merge": "NEW_EXACT_HEAD_LINUX_CI_GREEN_INCLUDING_BOTH_REAL_PG16_PROFILES_HOSTILE_PROVIDER_TOPOLOGIES_AND_FIVE_WORKFLOW_BOUNDARY_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_IMMEDIATELY_BEFORE_MERGE",
     "then_required_before_live": "MERGE_COMMIT_THEN_MERGED_MAIN_CI_AND_PAGES_GREEN_THEN_ACTIONS_QUIESCENCE_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_BEFORE_LIVE",
     "current_push_authorized": true,
@@ -356,8 +382,9 @@
     }
   },
   "reviews": {
-    "DP5_PLATFORM_SRE": {"verdict": "PASS", "score": 98, "p0": 0, "p1": 0, "p2": 0},
-    "DP6_EVIDENCE_DBA": {"verdict": "PASS", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+    "prior_snapshot_reviews_applicable": false,
+    "DP5_PLATFORM_SRE": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
+    "DP6_EVIDENCE_DBA": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
     "C4_SEC_RED": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
     "minimum_required_score": 95,
     "red_team_question": "If the next live fails, is it likely to reveal a genuinely unknown external property rather than an obvious offline-detectable defect?",
@@ -381,7 +408,7 @@
     "workflow_dispatches": 0
   },
   "verdicts": [
-    "CHRONOS_FROZEN_TRIPLE_REVIEW_PASS_CORRECTIVE_PUSH_GATE_OPEN",
+    "CHRONOS_FRESH_TRIPLE_REVIEW_PASS_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN",
     "CHRONOS_RESIDUAL_DEFECT_EXTERMINATION_V1_OFFLINE_CLOSED_LIVE_PENDING",
     "CHRONOS_EXTERNAL_CONTRACTS_SEMANTICALLY_FAIL_CLOSED",
     "CHRONOS_KNOWN_LIVE_REACHABLE_P0_P1_ZERO",
