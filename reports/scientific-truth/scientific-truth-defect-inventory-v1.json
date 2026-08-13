@@ -27,7 +27,7 @@
   "claim_id": "GOV.SCIENTIFIC.TRUTH.DEFECT.INVENTORY.V1.001",
   "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "4f66638e113bf3795a37e0434e4166e68a38c2ceee8ce87d5f3a524d90629581",
+  "content_sha256": "525cc57a9bbdc1c6167371007d2c17317a53031e207bb837861307972d537dff",
   "counts": {
     "essential_p2_open": 3,
     "open_p0": 0,
@@ -289,10 +289,16 @@
   "generated_at": "2026-08-13T15:38:28Z",
   "generator": {
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "8d7463e530e9d395894e3fdb0c21a42a95d7c3b92a2b53538f63ca3e38277392"
+    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
   },
   "grain": "ONE_RECORD_PER_REPRODUCED_DEFECT_OR_RESIDUAL_LIMITATION",
+  "hash_policy": {
+    "audited_windows_checkout_hashes_preserved_separately": true,
+    "external_evidence_pack_files": "SHA256_RAW_BYTES",
+    "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES"
+  },
   "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
   "limitations": [
     "Historical aggregate repair is not an observation-level decision replay.",
@@ -316,14 +322,14 @@
   ],
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0001",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT",
+    "evidence_id": "LOOP54_REPORTS:E0003",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "scientific-truth-defect-inventory-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0001"
+      "LOOP54_REPORTS:E0003"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [

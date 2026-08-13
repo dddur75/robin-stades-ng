@@ -80,7 +80,7 @@
     }
   ],
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "b51af4bbaffcedc26e536c40f747cef37b945bebcb6fe535d5b3f9b6a0e3d210",
+  "content_sha256": "06b79af4db52ea8ebb7600f5777a38753280a43438b81a0c54f79932c079482a",
   "counts": {
     "cockpit_data_backtests": 15,
     "cockpit_data_strategies": 15,
@@ -121,10 +121,16 @@
   "generated_at": "2026-08-13T15:38:28Z",
   "generator": {
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "8d7463e530e9d395894e3fdb0c21a42a95d7c3b92a2b53538f63ca3e38277392"
+    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
   },
   "grain": "ONE_CONSUMER_OR_ONE_HISTORICAL_FIELD_OCCURRENCE",
+  "hash_policy": {
+    "audited_windows_checkout_hashes_preserved_separately": true,
+    "external_evidence_pack_files": "SHA256_RAW_BYTES",
+    "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES"
+  },
   "historical_occurrences": [
     {
       "corrected_fixed_1u_roi": 0.00018324607329843354,
@@ -550,14 +556,14 @@
   ],
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0001",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT",
+    "evidence_id": "LOOP54_REPORTS:E0003",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "yield-consumer-inventory-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0001"
+      "LOOP54_REPORTS:E0003"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [
@@ -567,11 +573,11 @@
       },
       {
         "path": "cockpit/app/cockpit-data.json",
-        "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+        "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
       },
       {
         "path": "cockpit/app/cockpit-expert-data.json",
-        "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+        "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
       }
     ],
     "seed": null
@@ -599,14 +605,14 @@
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-data.json",
-      "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+      "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
     },
     {
       "evidence_ids": [
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-expert-data.json",
-      "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+      "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
     }
   ],
   "temporal_class": "STATIC_SOURCE_AND_TRACKED_HISTORICAL_SNAPSHOT",

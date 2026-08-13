@@ -739,6 +739,11 @@ def test_scientific_truth_reports_have_one_deterministic_bounded_envelope() -> N
         assert effects and all(value == 0 for value in effects.values())
         content = {key: value for key, value in stored.items() if key != "content_sha256"}
         assert stored["content_sha256"] == _canonical_hash(content)
+        assert stored["hash_policy"] == {
+            "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES",
+            "external_evidence_pack_files": "SHA256_RAW_BYTES",
+            "audited_windows_checkout_hashes_preserved_separately": True,
+        }
 
     doc = (ROOT / "docs" / "scientific" / "ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1.md").read_text(
         encoding="utf-8"
@@ -762,6 +767,14 @@ def test_report_builder_requires_both_evidence_roots(
     with pytest.raises(SystemExit) as caught:
         report_builder.main()
     assert caught.value.code == 2
+
+
+def test_report_builder_hashes_repository_text_as_canonical_lf() -> None:
+    for relative, expected in report_builder.REPOSITORY_INPUTS.items():
+        path = ROOT / relative
+        raw = path.read_bytes()
+        assert report_builder._sha256_repository_file(path) == expected
+        assert report_builder._sha256_bytes(raw.replace(b"\r\n", b"\n")) == expected
 
 
 def test_historical_formula_replay_resolves_15_results_and_45_occurrences() -> None:
@@ -808,6 +821,12 @@ def test_historical_formula_replay_resolves_15_results_and_45_occurrences() -> N
         ]
         for occurrence in occurrences:
             occurrence_ids.add(occurrence["occurrence_id"])
+            assert occurrence["source_artifact_hash_representation"] == (
+                "GIT_CANONICAL_LF"
+            )
+            assert occurrence["audited_checkout_artifact_sha256"] == (
+                report_builder.AUDITED_CHECKOUT_INPUTS[occurrence["repo_path"]]
+            )
             source = source_documents[occurrence["repo_path"]]
             object_value = _pointer(source, occurrence["json_pointer"])
             assert occurrence["source_object_sha256"] == _canonical_hash(object_value)

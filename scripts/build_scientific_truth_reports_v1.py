@@ -62,6 +62,10 @@ AUDIT_FILES = {
 }
 
 REPOSITORY_INPUTS = {
+    "cockpit/app/cockpit-data.json": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+    "cockpit/app/cockpit-expert-data.json": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+}
+AUDITED_CHECKOUT_INPUTS = {
     "cockpit/app/cockpit-data.json": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
     "cockpit/app/cockpit-expert-data.json": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
 }
@@ -69,9 +73,9 @@ REPOSITORY_INPUTS = {
 AUDIT_LOGICAL_PATH = "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1"
 LOOP54_LOGICAL_PATH = "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1"
 LOOP54_REPORTS_LOGICAL_PATH = (
-    "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT"
+    "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3"
 )
-LOOP54_REPORTS_EVIDENCE_ID = "LOOP54_REPORTS:E0001"
+LOOP54_REPORTS_EVIDENCE_ID = "LOOP54_REPORTS:E0003"
 GENERATOR_PATH = "scripts/build_scientific_truth_reports_v1.py"
 REPLAY_PATH = "reports/scientific-truth/historical-truth-replay-v1.json"
 
@@ -162,6 +166,11 @@ def _sha256_bytes(value: bytes) -> str:
 
 def _sha256_file(path: Path) -> str:
     return _sha256_bytes(path.read_bytes())
+
+
+def _sha256_repository_file(path: Path) -> str:
+    """Hash tracked text as the canonical LF Git representation."""
+    return _sha256_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
 
 
 def _json_bytes(value: Any) -> bytes:
@@ -298,7 +307,7 @@ def _load_repository_inputs() -> tuple[dict[str, Any], dict[str, Any]]:
     documents: list[dict[str, Any]] = []
     for relative, expected in REPOSITORY_INPUTS.items():
         path = ROOT / relative
-        if _sha256_file(path) != expected:
+        if _sha256_repository_file(path) != expected:
             raise ValueError(f"REPOSITORY_INPUT_HASH_MISMATCH:{relative}")
         value = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(value, dict):
@@ -423,6 +432,10 @@ def _extract_historical_results(
                 "repo_path": "cockpit/app/cockpit-data.json",
                 "json_pointer": f"/deepData/backtests/{index}",
                 "source_artifact_sha256": artifact_hashes["cockpit/app/cockpit-data.json"],
+                "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+                "audited_checkout_artifact_sha256": AUDITED_CHECKOUT_INPUTS[
+                    "cockpit/app/cockpit-data.json"
+                ],
                 "source_object_sha256": _sha256_bytes(_canonical_bytes(raw)),
                 "relation": "PRIMARY_SOURCE_OCCURRENCE",
             },
@@ -431,6 +444,10 @@ def _extract_historical_results(
                 "repo_path": "cockpit/app/cockpit-data.json",
                 "json_pointer": f"/deepData/strategies/{strategy_index}",
                 "source_artifact_sha256": artifact_hashes["cockpit/app/cockpit-data.json"],
+                "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+                "audited_checkout_artifact_sha256": AUDITED_CHECKOUT_INPUTS[
+                    "cockpit/app/cockpit-data.json"
+                ],
                 "source_object_sha256": _sha256_bytes(_canonical_bytes(strategy_item)),
                 "relation": "COPY_OF",
                 "copy_of": f"{result_id}-O1",
@@ -440,6 +457,10 @@ def _extract_historical_results(
                 "repo_path": "cockpit/app/cockpit-expert-data.json",
                 "json_pointer": f"/backtests/{index}",
                 "source_artifact_sha256": artifact_hashes["cockpit/app/cockpit-expert-data.json"],
+                "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+                "audited_checkout_artifact_sha256": AUDITED_CHECKOUT_INPUTS[
+                    "cockpit/app/cockpit-expert-data.json"
+                ],
                 "source_object_sha256": _sha256_bytes(_canonical_bytes(expert_item)),
                 "relation": "COPY_OF",
                 "copy_of": f"{result_id}-O1",
@@ -818,7 +839,7 @@ def _base_report(
     verdicts: list[dict[str, Any]],
 ) -> dict[str, Any]:
     report_id, claim_id = REPORT_SPECS[filename]
-    generator_sha = _sha256_file(ROOT / GENERATOR_PATH)
+    generator_sha = _sha256_repository_file(ROOT / GENERATOR_PATH)
     return {
         "schema_version": "robin-scientific-truth-report-v1",
         "report_id": report_id,
@@ -849,7 +870,13 @@ def _base_report(
         "generator": {
             "repo_path": GENERATOR_PATH,
             "sha256": generator_sha,
+            "hash_representation": "GIT_CANONICAL_LF",
             "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+        },
+        "hash_policy": {
+            "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES",
+            "external_evidence_pack_files": "SHA256_RAW_BYTES",
+            "audited_windows_checkout_hashes_preserved_separately": True,
         },
         "audit_source": _audit_source(evidence_ids),
         "loop54_source": _loop54_source(evidence_ids),
@@ -1062,7 +1089,7 @@ def _build_defect_inventory() -> dict[str, Any]:
         sources=[
             _source(
                 "src/robin/market_math/truth.py",
-                _sha256_file(ROOT / "src/robin/market_math/truth.py"),
+                _sha256_repository_file(ROOT / "src/robin/market_math/truth.py"),
                 ["E0026"],
             ),
             _source(
@@ -1130,7 +1157,7 @@ def _build_roi_report(results: list[dict[str, Any]]) -> dict[str, Any]:
         sources=[
             _source(
                 "src/robin/market_math/truth.py",
-                _sha256_file(ROOT / "src/robin/market_math/truth.py"),
+                _sha256_repository_file(ROOT / "src/robin/market_math/truth.py"),
                 ["E0026"],
             ),
             _source(
@@ -1370,7 +1397,7 @@ def _build_devig_inventory() -> dict[str, Any]:
             ),
             _source(
                 "src/robin/market_math/devig.py",
-                _sha256_file(ROOT / "src/robin/market_math/devig.py"),
+                _sha256_repository_file(ROOT / "src/robin/market_math/devig.py"),
                 ["E0026"],
             ),
         ],
@@ -1435,12 +1462,14 @@ def _build_devig_canonicalization() -> dict[str, Any]:
             ),
             _source(
                 "src/robin/market_math/devig.py",
-                _sha256_file(ROOT / "src/robin/market_math/devig.py"),
+                _sha256_repository_file(ROOT / "src/robin/market_math/devig.py"),
                 ["E0026"],
             ),
             _source(
                 "configs/prices/point-in-time-price-contract-v1.json",
-                _sha256_file(ROOT / "configs/prices/point-in-time-price-contract-v1.json"),
+                _sha256_repository_file(
+                    ROOT / "configs/prices/point-in-time-price-contract-v1.json"
+                ),
                 ["E1012"],
             ),
         ],
@@ -1599,17 +1628,17 @@ def _build_decision_trace() -> dict[str, Any]:
         sources=[
             _source(
                 "src/robin/market_math/truth.py",
-                _sha256_file(ROOT / "src/robin/market_math/truth.py"),
+                _sha256_repository_file(ROOT / "src/robin/market_math/truth.py"),
                 ["E0026"],
             ),
             _source(
                 "src/robin/backtesting/v3.py",
-                _sha256_file(ROOT / "src/robin/backtesting/v3.py"),
+                _sha256_repository_file(ROOT / "src/robin/backtesting/v3.py"),
                 ["E0017", "E0026"],
             ),
             _source(
                 "src/robin/shadow/decision.py",
-                _sha256_file(ROOT / "src/robin/shadow/decision.py"),
+                _sha256_repository_file(ROOT / "src/robin/shadow/decision.py"),
                 ["E1042", "E0026"],
             ),
         ],
@@ -1982,6 +2011,12 @@ def _invalidation_record(
             "repo_path": occurrence["repo_path"],
             "json_pointer": occurrence["json_pointer"],
             "artifact_sha256": occurrence["source_artifact_sha256"],
+            "artifact_hash_representation": occurrence[
+                "source_artifact_hash_representation"
+            ],
+            "audited_checkout_artifact_sha256": occurrence[
+                "audited_checkout_artifact_sha256"
+            ],
             "object_sha256": occurrence["source_object_sha256"],
         },
         "original": original,

@@ -51,7 +51,7 @@
   ],
   "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "22d522ab7f4f667cfc9d2a86f8ab58e01acbffbfbe5fe3e5ad3d2e9fbda6313a",
+  "content_sha256": "a58a663e13a5469e942a27777a1562e8b76a9d5c4f5b4e8e63de3801cef9dbe6",
   "definition_versions": {
     "profit_per_bet": "profit_over_bet_count_v1",
     "roi": "profit_over_actual_turnover_v1",
@@ -89,10 +89,16 @@
   "generated_at": "2026-08-13T15:38:28Z",
   "generator": {
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "8d7463e530e9d395894e3fdb0c21a42a95d7c3b92a2b53538f63ca3e38277392"
+    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
   },
   "grain": "DEFINITION_PLUS_15_LOGICAL_AND_45_PHYSICAL_HISTORICAL_SUMMARIES",
+  "hash_policy": {
+    "audited_windows_checkout_hashes_preserved_separately": true,
+    "external_evidence_pack_files": "SHA256_RAW_BYTES",
+    "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES"
+  },
   "historical_scope": {
     "logical_results": 15,
     "maximum_absolute_roi_error": 0.04577382258550142,
@@ -136,14 +142,14 @@
   },
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0001",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT",
+    "evidence_id": "LOOP54_REPORTS:E0003",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "roi-turnover-repair-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0001"
+      "LOOP54_REPORTS:E0003"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [
@@ -157,11 +163,11 @@
       },
       {
         "path": "cockpit/app/cockpit-data.json",
-        "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+        "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
       },
       {
         "path": "cockpit/app/cockpit-expert-data.json",
-        "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+        "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
       }
     ],
     "seed": null
@@ -196,14 +202,14 @@
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-data.json",
-      "sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20"
+      "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
     },
     {
       "evidence_ids": [
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-expert-data.json",
-      "sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e"
+      "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
     }
   ],
   "synthetic_red_proof": {

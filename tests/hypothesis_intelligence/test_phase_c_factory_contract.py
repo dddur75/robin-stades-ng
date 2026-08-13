@@ -637,7 +637,7 @@ def test_phase_c_evidence_claims_are_bounded_and_recorder_is_idempotent(
         "GOV.PHASE_C.V2.ACTIVATION.HOLD.V1.001",
     }
     ledger_path = ROOT / "reports/council/decision-ledger.jsonl"
-    ledger_bytes = ledger_path.read_bytes()
+    ledger_bytes = ledger_path.read_bytes().replace(b"\r\n", b"\n")
     assert hashlib.sha256(ledger_bytes[:203_268]).hexdigest() == (
         "8b7201434786aff66a0328c3f2a76ab18a1b525315d5bf61a65d21edb0d0470d"
     )
