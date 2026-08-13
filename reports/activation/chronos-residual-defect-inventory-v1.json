@@ -1,7 +1,7 @@
 {
   "schema_version": "chronos-residual-defect-inventory-v1",
-  "claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012",
-  "observed_at": "2026-08-13T04:36:21Z",
+  "claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.014",
+  "observed_at": "2026-08-13T08:14:29Z",
   "repository": "dddur75/robin-stades-ng",
   "base_main_sha": "6140e09cb38b5fecee5da85882aa8a879dbce780",
   "branch": "codex/chronos-residual-defect-extermination-v1",
@@ -1240,6 +1240,32 @@
       "status": "FIXED"
     },
     {
+      "defect_id": "CHR53-CI-010",
+      "component": "Council committed mission scope isolation",
+      "failure_signature": "exact-head run 31668336473 passed every specialized Chronos and PostgreSQL gate but the aggregate tests job restored the byte-validated Windows campaign-summary artifact with CRLF before pytest, causing the Council BASE-versus-worktree scope check to report that runtime mutation as an unauthorized committed path",
+      "severity": "P1",
+      "reproducible": true,
+      "live_reachable": false,
+      "external_effect_before_failure": "one owner-authorized second-final non-force corrective push and exact-head attempt 31668336473; no rerun, merge, live dispatch, Neon access, production PostgreSQL access or migration",
+      "root_cause": "the Council test conflated committed delivery scope with worktree cleanliness by comparing BASE to the current worktree and unioning untracked files after CI intentionally restored verified artifacts",
+      "fix_required": "derive mission scope only from the explicit BASE and HEAD Git tree objects, keep worktree cleanliness as a separate pre-commit contract, preserve exact-set authority, and never add reports/pattern-research/campaign-summary.json to the Loop 53 allowlist",
+      "test_added": "a real temporary Git repository proves BASE-tree versus HEAD-tree scope is invariant under dirty tracked LF/CRLF mutations and an untracked runtime artifact; a campaign-summary regression separately proves HEAD, LF and CRLF worktree bytes produce the same exact committed scope while the former BASE-versus-worktree primitive is demonstrably contaminated",
+      "status": "FIXED"
+    },
+    {
+      "defect_id": "CHR53-EVIDENCE-010",
+      "component": "Council review snapshot provenance",
+      "failure_signature": "append-only record145 labelled intermediate aggregate 779b73e8 as reviewed_substantive_snapshot even though no reviewer issued an opinion on those exact bytes",
+      "severity": "P1",
+      "reproducible": true,
+      "live_reachable": false,
+      "external_effect_before_failure": "none; record145 kept every push, rerun, merge, live dispatch and migration closed",
+      "root_cause": "the pre-suffix aggregate captured after the section-11 assertions was carried into lineage under a reviewed label before the post-suffix frozen review",
+      "fix_required": "preserve record145 byte-for-byte, classify 779b73e8 as UNREVIEWED_PRE_SUFFIX_CANDIDATE that must never support review or push, and append record146 binding the actual frozen record145 aggregate 85a584ed before requesting new reviews",
+      "test_added": "Council pins record145 as immutable, rejects 779b73e8 as review authority, binds the exact 85a584ed frozen aggregate and requires separate record146 successors before any push gate can open",
+      "status": "FIXED"
+    },
+    {
       "defect_id": "CHR53-EVIDENCE-001",
       "component": "previous live pagination evidence",
       "failure_signature": "the prior sanitized artifact did not preserve the raw branch pagination envelope",
@@ -1254,11 +1280,11 @@
     }
   ],
   "counts": {
-    "discovered": 94,
-    "fixed": 93,
+    "discovered": 96,
+    "fixed": 95,
     "intentionally_unrecoverable_privacy_boundary": 1,
     "p0_discovered": 12,
-    "p1_discovered": 71,
+    "p1_discovered": 73,
     "p2_discovered": 11,
     "p3_discovered": 0,
     "defects_intentionally_deferred": 0,

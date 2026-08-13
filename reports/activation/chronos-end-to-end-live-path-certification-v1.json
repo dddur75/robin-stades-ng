@@ -1,13 +1,13 @@
 {
   "schema_version": "chronos-end-to-end-live-path-certification-v1",
-  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.013",
-  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.012",
-  "observed_at": "2026-08-13T04:36:21Z",
+  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.016",
+  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.014",
+  "observed_at": "2026-08-13T08:22:04Z",
   "repository": "dddur75/robin-stades-ng",
   "base_main_sha": "6140e09cb38b5fecee5da85882aa8a879dbce780",
   "branch": "codex/chronos-residual-defect-extermination-v1",
   "scope": "OFFLINE_CERTIFICATION_BEFORE_ONE_NEW_CONTROLLED_LIVE",
-  "certification_status": "POST_REVALIDATION_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI",
+  "certification_status": "POST_REVIEW_FIRST_ADDITIONAL_CI_ISOLATION_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI",
   "live_path_call_graph": [
     {
       "component": "GitHub workflow",
@@ -180,7 +180,7 @@
       "reserved GitHub default variable override in CI harness",
       "canonical Neon provider edge absent from lifecycle classifier"
     ],
-    "corrective_policy": "FIRST_CORRECTIVE_PUSH_CONSUMED;OWNER_AUTHORIZES_EXACTLY_ONE_SECOND_AND_FINAL_CORRECTIVE_NON_FORCE_PUSH_TO_EXISTING_PR_53_AFTER_FRESH_TRIPLE_REVIEW;FAILED_RUNS_MUST_NOT_BE_RERUN",
+    "corrective_policy": "PRIOR_CORRECTIVE_PUSHES_CONSUMED;OWNER_AUTHORIZES_MAXIMUM_TWO_ADDITIONAL_NON_FORCE_PUSHES_TO_EXISTING_PR_53;FIRST_ONLY_FOR_COMMITTED_SCOPE_CI_ISOLATION;SECOND_ONLY_FOR_ONE_DIRECTLY_CONSEQUENTIAL_DETERMINISTIC_FAILURE_NEWLY_UNMASKED_BY_THE_FIRST;FAILED_RUNS_MUST_NOT_BE_RERUN",
     "second_failed_run": {
       "run_id": 31651412900,
       "attempt": 1,
@@ -199,10 +199,56 @@
       },
       "targeted_chronos_and_postgresql_contracts": "PASS",
       "failure_class": "STALE_EXACT_WORKFLOW_DEPENDENCY_CONTRACT"
+    },
+    "third_failed_run": {
+      "run_id": 31668336473,
+      "attempt": 1,
+      "head_sha": "74c0cf8ca6c579d5afafbfdf767b0cf0f982cb0f",
+      "conclusion": "FAILURE",
+      "rerun_performed": false,
+      "sole_root_cause": "tests/council/test_robin_council_os_v3.py::test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it",
+      "repository_wide_result": "1990 passed, 12 skipped, 1 failed",
+      "aggregate_tests_job": 94350863752,
+      "specialized_chronos_and_postgresql_gates": "ELEVEN_SUCCESS",
+      "scientific_manifest_validation": "PASS",
+      "contaminating_path": "reports/pattern-research/campaign-summary.json",
+      "contamination": "RESTORED_WINDOWS_ARTIFACT_CRLF_OVER_LINUX_CHECKOUT_LF_WITH_EQUAL_NORMALIZED_CONTENT",
+      "old_scope_basis": "BASE_VS_WORKTREE",
+      "old_scope_union_untracked": true,
+      "new_scope_basis": "BASE_TREE_VS_HEAD_TREE",
+      "failure_class": "COUNCIL_COMMITTED_SCOPE_TEST_WAS_WORKTREE_CONTAMINATED"
+    }
+  },
+  "review_binding_clarification": {
+    "decision_id": "RCV3-20260813-146",
+    "record145_immutable": true,
+    "record145_mislabelled_field": "reviewed_substantive_snapshot",
+    "intermediate_snapshot": {
+      "aggregate_sha256": "779b73e8447cf7c160c50a2f56bfac94235985277a91d54fff1030e3d1711342",
+      "classification": "UNREVIEWED_PRE_SUFFIX_CANDIDATE",
+      "must_not_support_review_or_push": true
+    },
+    "actual_record145_frozen_snapshot": {
+      "aggregate_algorithm": "SHA256_CONCAT_SORTED_UTF8_PATH_NUL_RAW_FILE_SHA256_DIGEST",
+      "aggregate_sha256": "85a584ed5e8745c5faa61cd4c906584e16e66cce924d1fd35d841a4ca825377e",
+      "changed_path_count": 41,
+      "changed_paths_equal_allowed": true,
+      "staged_files": 0,
+      "untracked_files": 0,
+      "ledger_tip": "ce840bece7d35eb2497b1ad302a09b53ebd8302902f60a9ccc8273cb1fc9b09f",
+      "graph_counts": {"claims": 185, "decision_nodes": 138, "edges": 394}
+    },
+    "c4_finding": {"verdict": "NO_GO", "score": 93, "p0": 0, "p1": 1, "p2": 0, "red_team_answer": "NO"},
+    "current_snapshot_reviews": {
+      "aggregate_sha256": "27f150fff626df47c3ecfc51eeb6bd5edb2e9b9fd7d90e15162408e188959f43",
+      "DP5": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
+      "DP6": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+      "C4": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+      "red_team_answer": "NO"
     }
   },
   "corrective_delivery_gate_order": {
-    "current_stage": "POST_REVALIDATION_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN",
+    "current_stage": "POST_REVIEW_FIRST_ADDITIONAL_CI_ISOLATION_PUSH_GATE_OPEN",
     "consumed_first_corrective_push_receipt": {
       "decision_id": "RCV3-20260812-141",
       "checked_at": "2026-08-12T23:15:39Z",
@@ -217,8 +263,16 @@
       "expected_state": "disabled_manually",
       "result": "PASS"
     },
+    "first_additional_ci_isolation_push_receipt": {
+      "decision_id": "RCV3-20260813-147",
+      "checked_at": "2026-08-13T08:22:04Z",
+      "workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "expected_state": "disabled_manually",
+      "result": "PASS"
+    },
     "pre_push_external_boundary": "REVALIDATE_WORKFLOW_IDS_319920551_327137040_327137044_329278452_329420317_DISABLED_MANUALLY_OR_ABORT",
-    "next_stage_after_triple_pass": "ONE_SECOND_AND_FINAL_CORRECTIVE_LOCAL_COMMIT_AND_NON_FORCE_PUSH_TO_EXISTING_PR_53_AFTER_IMMEDIATE_BOUNDARY_REVALIDATION",
+    "next_stage_after_triple_pass": "ONE_FIRST_ADDITIONAL_CI_ISOLATION_LOCAL_COMMIT_AND_NON_FORCE_PUSH_TO_EXISTING_PR_53_AFTER_IMMEDIATE_BOUNDARY_REVALIDATION",
+    "second_additional_push": "CONDITIONAL_NOT_OPEN_UNLESS_THE_FIRST_NEW_EXACT_HEAD_CI_REVEALS_ONE_DIRECTLY_CONSEQUENTIAL_DETERMINISTIC_FAILURE_IN_PREVIOUSLY_MASKED_STEPS",
     "then_required_before_merge": "NEW_EXACT_HEAD_LINUX_CI_GREEN_INCLUDING_BOTH_REAL_PG16_PROFILES_HOSTILE_PROVIDER_TOPOLOGIES_AND_FIVE_WORKFLOW_BOUNDARY_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_IMMEDIATELY_BEFORE_MERGE",
     "then_required_before_live": "MERGE_COMMIT_THEN_MERGED_MAIN_CI_AND_PAGES_GREEN_THEN_ACTIONS_QUIESCENCE_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_BEFORE_LIVE",
     "current_push_authorized": true,
@@ -332,7 +386,10 @@
     "raw_previous_live_envelope": "UNKNOWN_NOT_PRESERVED_AND_NOT_INVENTED"
   },
   "local_validation": {
-    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.009",
+    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.016",
+    "committed_scope_contract": "PASS_BASE_TREE_VS_HEAD_TREE_EXACT_41_PATHS",
+    "worktree_contamination_regression": "PASS_TRACKED_CRLF_AND_UNTRACKED_RUNTIME_ARTIFACT_EXCLUDED",
+    "campaign_summary_line_endings": "PASS_HEAD_LF_CRLF_SCOPES_IDENTICAL",
     "ruff": "PASS_CHANGED_SCOPE",
     "mypy_strict": "PASS_STRICT_ALL_TWELVE_CHANGED_PRODUCTION_SOURCES",
     "bandit": "PASS_ZERO_FINDINGS_CHANGED_PRODUCTION_SCOPE",
@@ -382,13 +439,14 @@
     }
   },
   "reviews": {
-    "prior_snapshot_reviews_applicable": false,
+    "prior_snapshot_reviews_applicable": true,
+    "reviewed_snapshot_aggregate_sha256": "27f150fff626df47c3ecfc51eeb6bd5edb2e9b9fd7d90e15162408e188959f43",
     "DP5_PLATFORM_SRE": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
     "DP6_EVIDENCE_DBA": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
-    "C4_SEC_RED": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
+    "C4_SEC_RED": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
     "minimum_required_score": 95,
-    "red_team_question": "If the next live fails, is it likely to reveal a genuinely unknown external property rather than an obvious offline-detectable defect?",
-    "answer": "YES"
+    "red_team_question": "Can runtime artifact restoration alter the committed mission scope verdict?",
+    "answer": "NO"
   },
   "pre_merge_external_effects": {
     "neon_gets": 0,
@@ -408,7 +466,9 @@
     "workflow_dispatches": 0
   },
   "verdicts": [
-    "CHRONOS_FRESH_TRIPLE_REVIEW_PASS_SECOND_FINAL_CORRECTIVE_PUSH_GATE_OPEN",
+    "CHRONOS_FRESH_TRIPLE_REVIEW_PASS_FIRST_ADDITIONAL_CI_ISOLATION_PUSH_GATE_OPEN",
+    "COUNCIL_COMMITTED_SCOPE_IS_WORKTREE_INVARIANT",
+    "CAMPAIGN_SUMMARY_RUNTIME_LINE_ENDINGS_DO_NOT_EXPAND_MISSION_SCOPE",
     "CHRONOS_RESIDUAL_DEFECT_EXTERMINATION_V1_OFFLINE_CLOSED_LIVE_PENDING",
     "CHRONOS_EXTERNAL_CONTRACTS_SEMANTICALLY_FAIL_CLOSED",
     "CHRONOS_KNOWN_LIVE_REACHABLE_P0_P1_ZERO",
