@@ -67,7 +67,8 @@ def normalized_market_probabilities(
         )
     except DevigInputError:
         return None
-    return result.fair_probabilities
+    home, draw, away = result.fair_probabilities
+    return home, draw, away
 
 
 @dataclass(frozen=True)

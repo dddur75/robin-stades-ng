@@ -28,11 +28,13 @@ def devig_1x2(
     *,
     devig_method: DevigMethod | str,
 ) -> tuple[float, float, float]:
-    return devig_probabilities(
+    probabilities = devig_probabilities(
         (odds_home, odds_draw, odds_away),
         method=devig_method,
         outcome_labels=("HOME", "DRAW", "AWAY"),
     ).fair_probabilities
+    home, draw, away = probabilities
+    return home, draw, away
 
 
 def _probabilities(row: Mapping[str, object]) -> tuple[float, float, float]:

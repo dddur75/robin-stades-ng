@@ -1621,7 +1621,9 @@ def _complete_positive_overround_market(
     if len(eligible) != expected_count:
         return None
     labels = tuple(str(outcome.get("name", "")).strip() for outcome in eligible)
-    prices = tuple(outcome.get("price") for outcome in eligible)
+    prices = tuple(
+        cast(float | None, outcome.get("price")) for outcome in eligible
+    )
     try:
         devig = devig_probabilities(
             prices,
@@ -1978,7 +1980,11 @@ class SQLAlchemyProjectionSink:
                         continue
                     eligible_outcomes, devig = validated
                     margin = devig.overround
-                    for outcome in eligible_outcomes:
+                    for outcome, odds in zip(
+                        eligible_outcomes,
+                        devig.input_odds,
+                        strict=True,
+                    ):
                         selection = str(outcome.get("name", "")).strip()
                         if not selection:
                             continue
@@ -1991,7 +1997,7 @@ class SQLAlchemyProjectionSink:
                                 "bookmaker": bookmaker,
                                 "market": market,
                                 "selection": selection,
-                                "odds": float(outcome["price"]),
+                                "odds": odds,
                                 "margin": margin,
                                 "observed_at": receipt.observed_at.isoformat(),
                             }
@@ -2003,7 +2009,7 @@ class SQLAlchemyProjectionSink:
                             "bookmaker": bookmaker,
                             "market": market,
                             "selection": selection,
-                            "odds": float(outcome["price"]),
+                            "odds": odds,
                             "margin": margin,
                             "observed_at": receipt.observed_at,
                             "cutoff_at": receipt.cutoff_at,

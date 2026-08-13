@@ -625,7 +625,8 @@ def _market_probabilities(
         )
     except DevigInputError:
         return None
-    return result.fair_probabilities
+    home, draw, away = result.fair_probabilities
+    return home, draw, away
 
 
 def run_model_lab(
