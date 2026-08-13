@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -13,22 +14,22 @@ concurrency:
 jobs:
   preflight:
     name: "Controlled idle wake and read-only database preflight V1"
+    if: ${{ github.run_attempt == 1 }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: chronos-control-plane-production
     env:
       PYTHONPATH: ${{ github.workspace }}/src
     steps:
+      - name: Refuser toute relance
+        shell: bash
+        run: test "$GITHUB_RUN_ATTEMPT" = "1" || exit 1
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12.10"
-          cache: pip
-      - name: Refuser toute relance
-        shell: bash
-        run: test "$GITHUB_RUN_ATTEMPT" = "1" || exit 1
       - name: Installer le runtime borne
         run: >-
           python -m pip install
@@ -40,31 +41,56 @@ jobs:
           python -m pytest -q
           tests/activation/test_chronos_neon_pure_readonly_preflight_v4.py
           tests/activation/test_chronos_neon_controlled_idle_wake_readonly_v1.py
+          tests/activation/test_chronos_end_to_end_live_path_v1.py
       - name: Masquer et verifier les secrets requis
         shell: bash
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
+          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}
         run: |
-          for name in NEON_API_KEY NEON_BOOTSTRAP_DATABASE_URL; do
+          for name in NEON_API_KEY NEON_BOOTSTRAP_DATABASE_URL NEON_PROJECT_ID NEON_ORG_ID; do
             if test -n "${!name:-}"; then
-              echo "::add-mask::${!name}"
-            else
+              value="${!name}"
+              value="${value//'%'/'%25'}"
+              value="${value//$'\r'/'%0D'}"
+              value="${value//$'\n'/'%0A'}"
+              printf '%s\n' "::add-mask::$value"
+            elif test "$name" = NEON_API_KEY || test "$name" = NEON_BOOTSTRAP_DATABASE_URL; then
               echo "SECRET_MISSING:$name"
             fi
           done
       - name: Executer le reveil controle et le preflight read-only
+        id: live_preflight
         shell: bash
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
-          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}
         run: >-
-          timeout --signal=TERM 120s
+          timeout --signal=TERM --kill-after=5s 120s
           python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1
           --report .chronos/reports/chronos-neon-controlled-idle-wake-readonly-v1.json
         working-directory: ${{ github.workspace }}
+      - name: Garantir un rapport sanitise apres toute sortie
+        id: artifact_guard
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
+          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}
+        run: >-
+          python -m scripts.chronos_live_path_artifact_guard_v1
+          --report .chronos/reports/chronos-neon-controlled-idle-wake-readonly-v1.json
+          --live-outcome "${{ steps.live_preflight.outcome }}"
+        working-directory: ${{ github.workspace }}
       - name: Publier uniquement le rapport sanitise
+        if: ${{ always() && steps.artifact_guard.outcome == 'success' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: chronos-neon-controlled-idle-wake-readonly-v1-${{ github.run_id }}

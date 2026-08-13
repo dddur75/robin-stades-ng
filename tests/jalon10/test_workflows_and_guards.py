@@ -107,10 +107,16 @@ def test_ci_replays_frozen_jalon10_on_windows_before_linux_checks() -> None:
 
     assert evidence_job["runs-on"] == "windows-latest"
     assert tests_job["runs-on"] == "ubuntu-latest"
-    assert set(tests_job["needs"]) == {
+    expected_test_needs = {
         "frozen-evidence-windows",
         "chronos-postgresql-profiles",
+        "chronos-end-to-end-live-path-replay",
+        "chronos-residual-fault-matrix",
+        "chronos-exact-workflow-entrypoint",
+        "historical-authority-workflows-disabled",
     }
+    assert len(tests_job["needs"]) == len(expected_test_needs)
+    assert set(tests_job["needs"]) == expected_test_needs
     assert set(visual_job["needs"]) == {"frozen-evidence-windows", "tests"}
 
     evidence_commands = "\n".join(

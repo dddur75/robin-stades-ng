@@ -1,0 +1,480 @@
+{
+  "schema_version": "chronos-end-to-end-live-path-certification-v1",
+  "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.016",
+  "inventory_claim_id": "GOV.CHRONOS.RESIDUAL.DEFECT.INVENTORY.V1.014",
+  "observed_at": "2026-08-13T08:22:04Z",
+  "repository": "dddur75/robin-stades-ng",
+  "base_main_sha": "6140e09cb38b5fecee5da85882aa8a879dbce780",
+  "branch": "codex/chronos-residual-defect-extermination-v1",
+  "scope": "OFFLINE_CERTIFICATION_BEFORE_ONE_NEW_CONTROLLED_LIVE",
+  "certification_status": "POST_REVIEW_FIRST_ADDITIONAL_CI_ISOLATION_PUSH_GATE_OPEN_PENDING_NEW_EXACT_HEAD_CI",
+  "live_path_call_graph": [
+    {
+      "component": "GitHub workflow",
+      "caller": "workflow_dispatch",
+      "input": "exact main run context plus step-scoped secrets",
+      "output": "bounded producer outcome and exact hidden report path",
+      "external_effect": "none before producer",
+      "failure_modes": ["wrong cwd", "wrong module", "missing dependency", "timeout", "nonzero process"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["exact YAML contract", "module --help", "GNU timeout", "subprocess outcome matrix"]
+    },
+    {
+      "component": "GitHub guards",
+      "caller": "run_preflight",
+      "input": "repository, ref, SHA, run id, attempt, step-scoped token, complete one-page workflow runs and refs/heads/main",
+      "output": "current-main SHA, exact dispatch uniqueness and quiescence proof",
+      "external_effect": "bounded GitHub GET only",
+      "failure_modes": ["wrong source", "attempt two", "queued", "in progress", "zero/two dispatches", "malformed API", "unavailable API"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["authenticated isolated transport", "duplicate-key and duplicate-run rejection", "complete-one-page or NO-GO envelope", "stale-main and strict-type tests"]
+    },
+    {
+      "component": "canonical DSN",
+      "caller": "run_preflight and artifact guard",
+      "input": "NEON_BOOTSTRAP_DATABASE_URL and ambient environment names",
+      "output": "direct host, port 5432, database, principal, sslmode and channel binding",
+      "external_effect": "zero",
+      "failure_modes": ["missing", "empty", "malformed", "override", "pooler", "multi-host", "ambient PG variable"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["canonical allowlist", "anti-redirection", "environment binding"]
+    },
+    {
+      "component": "Neon identity and recovery",
+      "caller": "_resolve_neon_identity",
+      "input": "GET-only auth, organization, project, endpoint, branch and count documents",
+      "output": "owner, project, default root branch, direct endpoint, lifecycle, capacity and price proofs",
+      "external_effect": "at most twenty-five GET, zero mutation",
+      "failure_modes": ["pagination ambiguity", "identity duplicate", "transition", "unsupported lifecycle", "capacity", "purchase"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["documented/legacy/adversarial fixtures and opaque OpenAPI maps", "configured and discovered full endpoint witness", "owner-scope and capacity boundaries", "full external-boundary replay"]
+    },
+    {
+      "component": "controlled wake and PostgreSQL inspection",
+      "caller": "controlled.run_preflight",
+      "input": "fully proven direct endpoint and canonical DSN",
+      "output": "one observed or conservatively bounded connection/wake plus exact database evidence",
+      "external_effect": "at most one connection and one possible compute wake; zero retry",
+      "failure_modes": ["DNS", "TLS", "timeout", "refusal", "indeterminate wake", "SQL ordinal failure"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["connect fault matrix", "one-connect invariant", "late-failure conservative counters"]
+    },
+    {
+      "component": "PostgreSQL catalog proof",
+      "caller": "_inspect_database",
+      "input": "one secure connection with read-only startup options",
+      "output": "target, SSL, timeouts, exact 0013, protected-role membership topology, grantor-compatible capabilities and empty remnant inventories",
+      "external_effect": "eighteen explicit statements, fifteen reads, zero writes, explicit rollback",
+      "failure_modes": ["session contract", "wrong target", "unsafe object", "revision", "authority", "remnants"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["real PG16 eighteen-statement replay for superuser and CREATEROLE profiles", "canonical Neon platform ACL plus exact provider edge and recursive hostile authority rejection", "fifteen independent noncanonical catalog mutations", "every-ordinal fault injection", "catalog semantics review"]
+    },
+    {
+      "component": "report and artifact guard",
+      "caller": "producer main then always-run guard",
+      "input": "producer JSON bytes and exact live step outcome",
+      "output": "validated original report or atomic sanitized fallback with observed/conservative Neon and PostgreSQL effect ledgers",
+      "external_effect": "one exact-file artifact upload only after guard success",
+      "failure_modes": ["duplicate key", "deep or malformed JSON", "secret", "wrong source", "contradiction", "serialization", "write failure", "wrong path"],
+      "sanitized_evidence_emitted": true,
+      "tests_covering_it": ["recursive schema and causal mutation matrix", "secret collisions", "python -S and malformed/deep fallback subprocess", "path identity"]
+    }
+  ],
+  "stages": [
+    {"stage": "WORKFLOW", "status": "PASS", "proof": "manual-only dispatch, pinned external actions, bounded job and live timeout, exact guard/upload wiring"},
+    {"stage": "ENTRYPOINT", "status": "PASS", "proof": "python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1 from github.workspace"},
+    {"stage": "IMPORTS", "status": "PASS", "proof": "Python 3.12.10, PYTHONPATH=github.workspace/src and module smoke"},
+    {"stage": "GITHUB_GUARDS", "status": "PASS", "proof": "strict current-main SHA, attempt-one, unique-dispatch and complete one-page quiescence parser"},
+    {"stage": "DSN", "status": "PASS", "proof": "canonical direct Neon DSN and ambient-libpq refusal"},
+    {"stage": "PROJECT", "status": "PASS", "proof": "configured pure identity or exhaustive positive ownership witness"},
+    {"stage": "ENDPOINT", "status": "PASS", "proof": "one global exact direct read-write non-disabled host match"},
+    {"stage": "PROJECT_DETAIL", "status": "PASS", "proof": "owner, plan, PostgreSQL major, branch limit and history contract"},
+    {"stage": "BRANCH", "status": "PASS", "proof": "bounded semantic pagination, exactly one ready default root branch"},
+    {"stage": "BRANCH_ENDPOINT", "status": "PASS", "proof": "branch-scoped endpoint ownership witness"},
+    {"stage": "LIFECYCLE", "status": "PASS", "proof": "active or controlled idle, documented suspension timeout and finite maximum CU >=0.25"},
+    {"stage": "WAKE", "status": "PASS", "proof": "only the first and only direct read-only connection may wake idle compute; no start API"},
+    {"stage": "CONNECTION", "status": "PASS", "proof": "attempts <=1, successes <=1 and retries=0 with conservative uncertain outcome"},
+    {"stage": "READONLY", "status": "PASS", "proof": "autocommit startup, first explicit BEGIN READ ONLY, session checks and explicit rollback"},
+    {"stage": "SSL", "status": "PASS", "proof": "secure URI contract plus pg_stat_ssl=true"},
+    {"stage": "REVISION", "status": "PASS", "proof": "locked exact canonical public.alembic_version with one row 0013_historical_evidence_index, exact storage/history fields and no extension dependency"},
+    {"stage": "AUTHORITY", "status": "PASS", "proof": "catalog visibility, role capabilities, exclusive protected-role memberships, one optional exact Neon actor edge and direct grantor-compatible ACL proof"},
+    {"stage": "RECOVERY", "status": "PASS", "proof": "owner-wide hard capacity, exact target count, retention and bill-free allowance proved separately"},
+    {"stage": "REPORT", "status": "PASS", "proof": "closed GO/NO-GO variants, partial PostgreSQL evidence, exact or conservative Neon/PostgreSQL counters and no raw identity"},
+    {"stage": "ARTIFACT", "status": "PASS", "proof": "duplicate-key-safe guard, atomic fallback and exact-file guarded upload"}
+  ],
+  "budgets": {
+    "maximum_wall_clock_seconds": 120,
+    "maximum_neon_gets": 25,
+    "maximum_neon_mutations": 0,
+    "maximum_postgresql_connection_attempts": 1,
+    "maximum_compute_wake_events": 1,
+    "maximum_sql_statements": 25,
+    "happy_path_sql_statements": 18,
+    "happy_path_sql_reads": 15,
+    "maximum_sql_writes": 0,
+    "automatic_retries": 0,
+    "migration_0014": 0
+  },
+  "offline_replays": {
+    "full_happy_path": {
+      "status": "PASS",
+      "network_boundaries_mocked_only": ["GitHub GET", "Neon GET", "psycopg.connect"],
+      "verdict": "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION",
+      "neon_gets": 9,
+      "postgresql_connection_attempts": 1,
+      "sql_statements": 18,
+      "sql_reads": 15,
+      "sql_writes": 0
+    },
+    "no_go_families": {
+      "status": "PASS",
+      "families": [
+        "GITHUB",
+        "DSN",
+        "PROJECT",
+        "ENDPOINT",
+        "BRANCH",
+        "LIFECYCLE",
+        "CONNECTION",
+        "SQL_SESSION",
+        "REVISION",
+        "AUTHORITY",
+        "RECOVERY",
+        "REPORT",
+        "ARTIFACT"
+      ],
+      "correct_gate": true,
+      "later_effects_absent": true,
+      "sanitized_report_exists": true
+    }
+  },
+  "fault_matrix": {
+    "status": "PASS",
+    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.009",
+    "exact_test_file": "tests/activation/test_chronos_end_to_end_live_path_v1.py",
+    "workflow_command_result": "364 passed, 1 skipped on Windows for the exact three-file workflow command; GNU timeout case delegated to exact-head Linux CI",
+    "dual_principal_command_result": "16 passed in the separate dual-principal matrix; exact-head PG16 profiles additionally execute actor-plus-peer and actor-absent orphan-peer lifecycle-audit rejection, then exact recovery",
+    "domain_regression_result": "483 passed, 1 skipped across the exact eight-file bounded Chronos activation, migration, dual-principal and portability matrix",
+    "historical_deep_command_result": "212 passed with the immutable authority snapshot, strict canonical suffix resolver and no provider access",
+    "legacy_authority_consumer_command_result": "35 passed across E1B and E2 contracts; combined Historical Deep, E1B and E2 run 247 passed",
+    "fault_scenarios_collected": 246,
+    "fault_scenarios_passed_locally": 245,
+    "fault_scenarios_linux_ci_only": 1,
+    "linux_timeout_test_required_in_exact_head_ci": true
+  },
+  "exact_head_ci_history": {
+    "failed_run_id": 31634267437,
+    "failed_job_attempt": 1,
+    "head_sha": "42a78d4e1a17b3bf5b04f5f006dde1dad5e0c82a",
+    "conclusion": "FAILURE",
+    "rerun_performed": false,
+    "live_workflow_dispatched": false,
+    "failed_contexts": [
+      "Historical Deep quality",
+      "Chronos exact workflow entrypoint",
+      "Chronos PostgreSQL profile superuser",
+      "Chronos PostgreSQL profile non_superuser_createrole"
+    ],
+    "root_cause_classes": [
+      "immutable historical authority path drift",
+      "reserved GitHub default variable override in CI harness",
+      "canonical Neon provider edge absent from lifecycle classifier"
+    ],
+    "corrective_policy": "PRIOR_CORRECTIVE_PUSHES_CONSUMED;OWNER_AUTHORIZES_MAXIMUM_TWO_ADDITIONAL_NON_FORCE_PUSHES_TO_EXISTING_PR_53;FIRST_ONLY_FOR_COMMITTED_SCOPE_CI_ISOLATION;SECOND_ONLY_FOR_ONE_DIRECTLY_CONSEQUENTIAL_DETERMINISTIC_FAILURE_NEWLY_UNMASKED_BY_THE_FIRST;FAILED_RUNS_MUST_NOT_BE_RERUN",
+    "second_failed_run": {
+      "run_id": 31651412900,
+      "attempt": 1,
+      "head_sha": "78ad4f7c1a9368f26c070aad209d3ff670b05b47",
+      "conclusion": "FAILURE",
+      "rerun_performed": false,
+      "sole_root_cause": "tests/jalon10/test_workflows_and_guards.py::test_ci_replays_frozen_jalon10_on_windows_before_linux_checks",
+      "repository_wide_results_per_postgresql_profile": "1981 passed, 21 skipped, 1 failed",
+      "failed_profile_jobs": {
+        "superuser": 94297598361,
+        "non_superuser_createrole": 94297598907
+      },
+      "aggregate_tests_job": {
+        "job_id": 94299546212,
+        "failure_class": "FAIL_CLOSED_PREREQUISITE_PROPAGATION_NOT_A_SECOND_ROOT_CAUSE"
+      },
+      "targeted_chronos_and_postgresql_contracts": "PASS",
+      "failure_class": "STALE_EXACT_WORKFLOW_DEPENDENCY_CONTRACT"
+    },
+    "third_failed_run": {
+      "run_id": 31668336473,
+      "attempt": 1,
+      "head_sha": "74c0cf8ca6c579d5afafbfdf767b0cf0f982cb0f",
+      "conclusion": "FAILURE",
+      "rerun_performed": false,
+      "sole_root_cause": "tests/council/test_robin_council_os_v3.py::test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it",
+      "repository_wide_result": "1990 passed, 12 skipped, 1 failed",
+      "aggregate_tests_job": 94350863752,
+      "specialized_chronos_and_postgresql_gates": "ELEVEN_SUCCESS",
+      "scientific_manifest_validation": "PASS",
+      "contaminating_path": "reports/pattern-research/campaign-summary.json",
+      "contamination": "RESTORED_WINDOWS_ARTIFACT_CRLF_OVER_LINUX_CHECKOUT_LF_WITH_EQUAL_NORMALIZED_CONTENT",
+      "old_scope_basis": "BASE_VS_WORKTREE",
+      "old_scope_union_untracked": true,
+      "new_scope_basis": "BASE_TREE_VS_HEAD_TREE",
+      "failure_class": "COUNCIL_COMMITTED_SCOPE_TEST_WAS_WORKTREE_CONTAMINATED"
+    }
+  },
+  "review_binding_clarification": {
+    "decision_id": "RCV3-20260813-146",
+    "record145_immutable": true,
+    "record145_mislabelled_field": "reviewed_substantive_snapshot",
+    "intermediate_snapshot": {
+      "aggregate_sha256": "779b73e8447cf7c160c50a2f56bfac94235985277a91d54fff1030e3d1711342",
+      "classification": "UNREVIEWED_PRE_SUFFIX_CANDIDATE",
+      "must_not_support_review_or_push": true
+    },
+    "actual_record145_frozen_snapshot": {
+      "aggregate_algorithm": "SHA256_CONCAT_SORTED_UTF8_PATH_NUL_RAW_FILE_SHA256_DIGEST",
+      "aggregate_sha256": "85a584ed5e8745c5faa61cd4c906584e16e66cce924d1fd35d841a4ca825377e",
+      "changed_path_count": 41,
+      "changed_paths_equal_allowed": true,
+      "staged_files": 0,
+      "untracked_files": 0,
+      "ledger_tip": "ce840bece7d35eb2497b1ad302a09b53ebd8302902f60a9ccc8273cb1fc9b09f",
+      "graph_counts": {"claims": 185, "decision_nodes": 138, "edges": 394}
+    },
+    "c4_finding": {"verdict": "NO_GO", "score": 93, "p0": 0, "p1": 1, "p2": 0, "red_team_answer": "NO"},
+    "current_snapshot_reviews": {
+      "aggregate_sha256": "27f150fff626df47c3ecfc51eeb6bd5edb2e9b9fd7d90e15162408e188959f43",
+      "DP5": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
+      "DP6": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+      "C4": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+      "red_team_answer": "NO"
+    }
+  },
+  "corrective_delivery_gate_order": {
+    "current_stage": "POST_REVIEW_FIRST_ADDITIONAL_CI_ISOLATION_PUSH_GATE_OPEN",
+    "consumed_first_corrective_push_receipt": {
+      "decision_id": "RCV3-20260812-141",
+      "checked_at": "2026-08-12T23:15:39Z",
+      "workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "expected_state": "disabled_manually",
+      "result": "PASS"
+    },
+    "second_final_corrective_push_receipt": {
+      "decision_id": "RCV3-20260813-144",
+      "checked_at": "2026-08-13T04:36:21Z",
+      "workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "expected_state": "disabled_manually",
+      "result": "PASS"
+    },
+    "first_additional_ci_isolation_push_receipt": {
+      "decision_id": "RCV3-20260813-147",
+      "checked_at": "2026-08-13T08:22:04Z",
+      "workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "expected_state": "disabled_manually",
+      "result": "PASS"
+    },
+    "pre_push_external_boundary": "REVALIDATE_WORKFLOW_IDS_319920551_327137040_327137044_329278452_329420317_DISABLED_MANUALLY_OR_ABORT",
+    "next_stage_after_triple_pass": "ONE_FIRST_ADDITIONAL_CI_ISOLATION_LOCAL_COMMIT_AND_NON_FORCE_PUSH_TO_EXISTING_PR_53_AFTER_IMMEDIATE_BOUNDARY_REVALIDATION",
+    "second_additional_push": "CONDITIONAL_NOT_OPEN_UNLESS_THE_FIRST_NEW_EXACT_HEAD_CI_REVEALS_ONE_DIRECTLY_CONSEQUENTIAL_DETERMINISTIC_FAILURE_IN_PREVIOUSLY_MASKED_STEPS",
+    "then_required_before_merge": "NEW_EXACT_HEAD_LINUX_CI_GREEN_INCLUDING_BOTH_REAL_PG16_PROFILES_HOSTILE_PROVIDER_TOPOLOGIES_AND_FIVE_WORKFLOW_BOUNDARY_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_IMMEDIATELY_BEFORE_MERGE",
+    "then_required_before_live": "MERGE_COMMIT_THEN_MERGED_MAIN_CI_AND_PAGES_GREEN_THEN_ACTIONS_QUIESCENCE_THEN_REVALIDATE_THE_SAME_FIVE_WORKFLOWS_BEFORE_LIVE",
+    "current_push_authorized": true,
+    "current_live_authorized": false,
+    "migration_authorized": false
+  },
+  "external_contracts": {
+    "github_environment_branch_boundary": {
+      "observed_at": "2026-08-12T18:34:00Z",
+      "environment": "chronos-control-plane-production",
+      "protected_branches_only": true,
+      "custom_branch_policies": false,
+      "protected_branches": ["main"],
+      "active_ruleset": "main-trusted-pr-ci-v1",
+      "environment_secret_names": ["NEON_API_KEY", "NEON_BOOTSTRAP_DATABASE_URL"],
+      "sanitized_observation_sha256": "30504cc1abac7673cdb63f21b1c6228d0b87dfcec889976ec7295835b6a2d239",
+      "revalidate_before_dispatch": true
+    },
+    "historical_authority_workflow_boundary": {
+      "observed_at": "2026-08-12T22:00:47Z",
+      "repository": "dddur75/robin-stades-ng",
+      "github_actions_enabled": true,
+      "allowed_actions": "all",
+      "repository_r2_secret_names": ["R2_ACCESS_KEY_ID", "R2_ACCOUNT_ID", "R2_BUCKET_NAME", "R2_SECRET_ACCESS_KEY"],
+      "disabled_workflows": [
+        {
+          "workflow_id": 319920551,
+          "path": ".github/workflows/historical-backfill.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-09T18:51:31.000+02:00",
+          "role": "historical_read_caller"
+        },
+        {
+          "workflow_id": 327137040,
+          "path": ".github/workflows/79-historical-deep-night-controller.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:34.000+02:00",
+          "role": "workflow_81_caller"
+        },
+        {
+          "workflow_id": 327137044,
+          "path": ".github/workflows/81-historical-deep-coverage-proof-export.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:36.000+02:00",
+          "historical_ref": "codex/p0-coverage-evidence-ladder-v1",
+          "historical_ref_sha": "52850323de46352d5e913f6da49e859607b87fdf",
+          "historical_ref_protected": false,
+          "council_readiness_consumer": false,
+          "independent_fail_closed_gate": "MISSION_EXPIRED"
+        },
+        {
+          "workflow_id": 329278452,
+          "path": ".github/workflows/82-p0-e1b-five-league-canary.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:37.000+02:00",
+          "historical_ref": "codex/p0-e1b-five-league-capability-canary-v1",
+          "historical_ref_sha": "2d7753e9f83abb0bee718248e639ef8e543f8df5",
+          "historical_ref_protected": false,
+          "council_readiness_consumer": true
+        },
+        {
+          "workflow_id": 329420317,
+          "path": ".github/workflows/83-p0-e2-capability-sample.yml",
+          "state": "disabled_manually",
+          "updated_at": "2026-08-10T01:27:37.000+02:00",
+          "historical_ref": "codex/p0-e2-capability-sample-v1",
+          "historical_ref_sha": "841ae4d850ceba4f6a7dc230ad3c4ce40de80364",
+          "historical_ref_protected": false,
+          "council_readiness_consumer": true
+        }
+      ],
+      "active_workflows_audited_not_consumers": [
+        {"workflow_id": 329594164, "path": ".github/workflows/84-e2-1208603-targeted-diagnostic.yml", "state": "active", "reason": "synthetic-only current workflow without Council readiness consumption"},
+        {"workflow_id": 329838528, "path": ".github/workflows/85-p0-e3-capability-scale.yml", "state": "active", "reason": "immutable GitHub artifact reads with R2_GET_ALLOWED=0 and no Council readiness consumption"}
+      ],
+      "consumer_revocation_scope": "CODE_AS_OF_CORRECTED_REVISION_AND_CANONICAL_SUFFIX_ONLY",
+      "historical_refs_rewritten": false,
+      "external_state_mutated_by_loop53": false,
+      "revalidate_before_corrective_push": true,
+      "revalidate_in_new_exact_head_ci": true,
+      "revalidate_immediately_before_merge": true,
+      "revalidate_before_live": true,
+      "on_state_drift": "FAIL_AND_STOP_NO_PUSH_NO_LIVE_PENDING_SEPARATE_OWNER_AUTHORITY",
+      "sanitized_observation_sha256": "f226731b04491264972a3777d3c60d2a6e174cecbf54854d050edecdd8e83803"
+    },
+    "historical_authority_workflow_policy": {
+      "required_workflow_ids": [319920551, 327137040, 327137044, 329278452, 329420317],
+      "required_state": "disabled_manually",
+      "revalidate": ["BEFORE_CORRECTIVE_PUSH", "IN_NEW_EXACT_HEAD_CI", "IMMEDIATELY_BEFORE_MERGE", "BEFORE_LIVE"],
+      "on_state_drift": "FAIL_AND_STOP_NO_PUSH_NO_MERGE_NO_LIVE_PENDING_SEPARATE_OWNER_AUTHORITY",
+      "authority_matrix_gate": "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED"
+    },
+    "historical_authority_workflow_state_revalidation": {
+      "checked_at": "2026-08-12T22:37:31Z",
+      "repository": "dddur75/robin-stades-ng",
+      "workflows": [
+        {"workflow_id": 319920551, "path": ".github/workflows/historical-backfill.yml", "state": "disabled_manually", "updated_at": "2026-08-09T18:51:31.000+02:00"},
+        {"workflow_id": 327137040, "path": ".github/workflows/79-historical-deep-night-controller.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:34.000+02:00"},
+        {"workflow_id": 327137044, "path": ".github/workflows/81-historical-deep-coverage-proof-export.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:36.000+02:00"},
+        {"workflow_id": 329278452, "path": ".github/workflows/82-p0-e1b-five-league-canary.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:37.000+02:00"},
+        {"workflow_id": 329420317, "path": ".github/workflows/83-p0-e2-capability-sample.yml", "state": "disabled_manually", "updated_at": "2026-08-10T01:27:37.000+02:00"}
+      ],
+      "sanitized_observation_sha256": "6d94da1c5bf52d0740732f5606711cbda3ee7b823f1e225729d1158c528eaf58"
+    },
+    "branch_pagination": "SEMANTICALLY_RECONCILED",
+    "project_pagination": "SEMANTICALLY_RECONCILED",
+    "project_ownership": "ORGANIZATION_SCOPE_PROVEN",
+    "pooling": "DIRECT_HOSTNAME_AUTHORITATIVE",
+    "scale_to_zero": "DOCUMENTED_TIMEOUT_AND_FINITE_MAXIMUM_CU_CONTRACT_ENFORCED",
+    "postgresql": "PG16_REPOSITORY_CERTIFICATION_ONLY",
+    "raw_previous_live_envelope": "UNKNOWN_NOT_PRESERVED_AND_NOT_INVENTED"
+  },
+  "local_validation": {
+    "claim_id": "GOV.CHRONOS.END_TO_END.LIVE_PATH.CERTIFICATION.V1.016",
+    "committed_scope_contract": "PASS_BASE_TREE_VS_HEAD_TREE_EXACT_41_PATHS",
+    "worktree_contamination_regression": "PASS_TRACKED_CRLF_AND_UNTRACKED_RUNTIME_ARTIFACT_EXCLUDED",
+    "campaign_summary_line_endings": "PASS_HEAD_LF_CRLF_SCOPES_IDENTICAL",
+    "ruff": "PASS_CHANGED_SCOPE",
+    "mypy_strict": "PASS_STRICT_ALL_TWELVE_CHANGED_PRODUCTION_SOURCES",
+    "bandit": "PASS_ZERO_FINDINGS_CHANGED_PRODUCTION_SCOPE",
+    "compileall": "PASS_CHANGED_PRODUCTION_AND_E2E_TEST_SCOPE",
+    "secret_scan": "PASS_NO_LITERAL_SECRET_DETECTED",
+    "git_diff_check": "PASS_NO_WHITESPACE_ERROR_CRLF_WARNINGS_ONLY",
+    "single_full_suite": {
+      "status": "COMPLETED_EXACTLY_ONCE",
+      "passed": 1889,
+      "skipped": 24,
+      "failed": 69,
+      "failure_class": "GOVERNANCE_HASH_CASCADE_AND_PRE_EXISTING_WINDOWS_CRLF_PHASE_C_BYTE_IDENTITY",
+      "rerun_forbidden": true,
+      "definitive_new_delta_validation": "TARGETED_LOCAL_MATRICES_AND_EXACT_HEAD_LINUX_CI"
+    }
+  },
+  "quality_gates": {
+    "known_live_reachable_defects": 0,
+    "known_untested_live_path_stages": 0,
+    "defects_intentionally_deferred": 0,
+    "open_p0": 0,
+    "open_p1": 0
+  },
+  "governance": {
+    "mission_id": "CHRONOS_LOOP53",
+    "manifest": "configs/execution/chronos-residual-defect-extermination-v1.json",
+    "source_hash": "5f40475be65fa358a2b409edb2f320993596124e2055a1b5056e8641db0ab498",
+    "writer": "C0",
+    "triple_keys": ["DP5", "DP6", "C4"],
+    "journal_contract": {
+      "immutable_legacy_prefix_through": "RCV3-20260812-136",
+      "legacy_prefix_is_runtime_authority_for_corrected_consumers": false,
+      "consumer_revocation_scope": "CODE_AS_OF_CORRECTED_REVISION_AND_CANONICAL_SUFFIX_ONLY",
+      "historical_git_refs_rewritten": false,
+      "canonical_suffix_starts_at": "RCV3-20260812-137",
+      "allowed_record_types": ["MISSION_AUTHORIZED", "STAGE_STARTED", "STAGE_FINISHED", "DECISION", "FAILURE", "VETO", "REDESIGN"],
+      "allowed_decisions": ["PASS_AND_SCALE", "PASS_AND_HOLD", "FAIL_AND_REDESIGN", "FAIL_AND_STOP", "BLOCKED_EXTERNAL_ACTION"],
+      "future_suffix_enforcement": "FAIL_CLOSED"
+    },
+    "legacy_authority_consumers": {
+      "e1b": "DENY_WITHOUT_CANONICAL_SUFFIX_DECISION_PASS_AND_SCALE_EXACT_SELECTION_STATE_AND_HASH",
+      "e2": "DENY_WITHOUT_CANONICAL_SUFFIX_DECISION_PASS_AND_SCALE_EXACT_SELECTION_STATE_AND_HASH",
+      "replacement_authority_created_by_loop53": false,
+      "reader_constructed_before_authority": false,
+      "historical_workflow_state_precondition": "WORKFLOW_IDS_319920551_327137040_327137044_329278452_329420317_DISABLED_MANUALLY_AT_OBSERVATION_AND_REVALIDATED_BEFORE_CORRECTIVE_PUSH_IN_NEW_EXACT_HEAD_CI_IMMEDIATELY_BEFORE_MERGE_AND_BEFORE_LIVE",
+      "authority_matrix_gate": "CHRONOS_LOOP53_EXTERNAL_AUTHORITY_BOUNDARY_SATISFIED"
+    }
+  },
+  "reviews": {
+    "prior_snapshot_reviews_applicable": true,
+    "reviewed_snapshot_aggregate_sha256": "27f150fff626df47c3ecfc51eeb6bd5edb2e9b9fd7d90e15162408e188959f43",
+    "DP5_PLATFORM_SRE": {"verdict": "PASS_AND_HOLD", "score": 97, "p0": 0, "p1": 0, "p2": 0},
+    "DP6_EVIDENCE_DBA": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+    "C4_SEC_RED": {"verdict": "PASS_AND_HOLD", "score": 98, "p0": 0, "p1": 0, "p2": 0},
+    "minimum_required_score": 95,
+    "red_team_question": "Can runtime artifact restoration alter the committed mission scope verdict?",
+    "answer": "NO"
+  },
+  "pre_merge_external_effects": {
+    "neon_gets": 0,
+    "neon_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "compute_wake_events": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "migration_0014": 0,
+    "r2_operations": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "secret_updates": 0,
+    "variable_updates": 0,
+    "workflow_dispatches": 0
+  },
+  "verdicts": [
+    "CHRONOS_FRESH_TRIPLE_REVIEW_PASS_FIRST_ADDITIONAL_CI_ISOLATION_PUSH_GATE_OPEN",
+    "COUNCIL_COMMITTED_SCOPE_IS_WORKTREE_INVARIANT",
+    "CAMPAIGN_SUMMARY_RUNTIME_LINE_ENDINGS_DO_NOT_EXPAND_MISSION_SCOPE",
+    "CHRONOS_RESIDUAL_DEFECT_EXTERMINATION_V1_OFFLINE_CLOSED_LIVE_PENDING",
+    "CHRONOS_EXTERNAL_CONTRACTS_SEMANTICALLY_FAIL_CLOSED",
+    "CHRONOS_KNOWN_LIVE_REACHABLE_P0_P1_ZERO",
+    "CHRONOS_KNOWN_LIVE_REACHABLE_DEFECTS_ZERO",
+    "CHRONOS_KNOWN_UNTESTED_LIVE_PATH_STAGES_ZERO"
+  ],
+  "live_authorization": "HELD_UNTIL_EXACT_HEAD_CI_MERGE_GREEN_MAIN_PAGES_QUIESCENCE_AND_ZERO_PRIOR_DISPATCH_ON_NEW_SHA",
+  "migration_authorized": false
+}

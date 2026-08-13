@@ -5,10 +5,15 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import os
 import re
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
+
+import psycopg
+from psycopg import Connection
 
 EXPECTED_REPOSITORY = "dddur75/robin-stades-ng"
 EXPECTED_REF = "refs/heads/main"
@@ -43,6 +48,54 @@ _SAFE_NEON_HOST = re.compile(
 _INVALID_PERCENT_ESCAPE = re.compile(r"%(?![0-9a-fA-F]{2})")
 _SAFE_SSL_MODES = frozenset({"require", "verify-ca", "verify-full"})
 _SAFE_QUERY_KEYS = frozenset({"sslmode", "channel_binding"})
+_LIBPQ_ENVIRONMENT = re.compile(r"^PG[A-Z0-9_]+$")
+
+
+def _is_neon_pooler_host(host: str) -> bool:
+    return host.split(".", 1)[0].endswith("-pooler")
+
+
+def libpq_environment_variable_names(
+    environment: Mapping[str, str] | None = None,
+) -> tuple[str, ...]:
+    """Return only ambient libpq variable names, never their values."""
+
+    source = os.environ if environment is None else environment
+    return tuple(
+        sorted(
+            {
+                name.upper()
+                for name in source
+                if _LIBPQ_ENVIRONMENT.fullmatch(name.upper()) is not None
+            }
+        )
+    )
+
+
+def require_libpq_environment_clean() -> None:
+    if libpq_environment_variable_names():
+        raise ChronosProductionError("CHRONOS_LIBPQ_ENVIRONMENT_FORBIDDEN")
+
+
+def connect_direct_postgres(
+    database_url: str,
+    *,
+    connector: Callable[..., Connection[Any]] = psycopg.connect,
+) -> Connection[Any]:
+    """Open one canonical direct connection without ambient libpq influence."""
+
+    target = validate_direct_postgres_url(database_url)
+    require_libpq_environment_clean()
+    return connector(
+        database_url,
+        host=target.host,
+        port=target.port,
+        dbname=target.database,
+        user=target.username,
+        sslmode=target.sslmode,
+        channel_binding=target.channel_binding,
+        connect_timeout=10,
+    )
 
 
 class ChronosProductionError(RuntimeError):
@@ -78,18 +131,16 @@ class DirectPostgresTarget:
     database: str
     username: str
     sslmode: str
-    channel_binding: str | None = None
+    channel_binding: str | None = "require"
 
     def __post_init__(self) -> None:
         if (
             self.host != self.host.lower()
             or _SAFE_NEON_HOST.fullmatch(self.host) is None
-            or "pooler" in self.host
-            or "-pool" in self.host
-            or ".pool." in self.host
+            or _is_neon_pooler_host(self.host)
         ):
             raise ChronosProductionError("CHRONOS_DIRECT_DATABASE_HOST_INVALID")
-        if not 1 <= self.port <= 65_535:
+        if self.port != 5432:
             raise ChronosProductionError("CHRONOS_DATABASE_URL_INVALID")
         if not self.database or "/" in self.database:
             raise ChronosProductionError("CHRONOS_DATABASE_NAME_INVALID")
@@ -97,7 +148,7 @@ class DirectPostgresTarget:
             raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_MISSING")
         if self.sslmode not in _SAFE_SSL_MODES:
             raise ChronosProductionError("CHRONOS_SSL_REQUIRED")
-        if self.channel_binding not in {None, "require"}:
+        if self.channel_binding != "require":
             raise ChronosProductionError("CHRONOS_CHANNEL_BINDING_REQUIRED")
 
 
@@ -143,10 +194,16 @@ def validate_direct_postgres_url(value: str) -> DirectPostgresTarget:
         raise ChronosProductionError("CHRONOS_DIRECT_DATABASE_HOST_INVALID")
     if "%" in raw_host or _SAFE_NEON_HOST.fullmatch(host) is None:
         raise ChronosProductionError("CHRONOS_DIRECT_DATABASE_HOST_INVALID")
-    if "pooler" in host or "-pool" in host or ".pool." in host:
+    if _is_neon_pooler_host(host):
         raise ChronosProductionError("CHRONOS_POOLED_ENDPOINT_FORBIDDEN")
-    if not username or parsed.password is None or not parsed.password:
+    try:
+        password = unquote(parsed.password or "", errors="strict")
+    except (UnicodeError, ValueError):
+        raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_INVALID") from None
+    if not username or not password:
         raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_MISSING")
+    if len(password) < 8:
+        raise ChronosProductionError("CHRONOS_DATABASE_CREDENTIALS_INVALID")
     if not database or "/" in database:
         raise ChronosProductionError("CHRONOS_DATABASE_NAME_INVALID")
     query: dict[str, str] = {}
@@ -158,13 +215,13 @@ def validate_direct_postgres_url(value: str) -> DirectPostgresTarget:
                 "CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN"
             )
         query[key] = item
-    if set(query) not in ({"sslmode"}, _SAFE_QUERY_KEYS):
+    if set(query) != _SAFE_QUERY_KEYS:
         raise ChronosProductionError("CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN")
     sslmode = query["sslmode"]
     if sslmode not in _SAFE_SSL_MODES:
         raise ChronosProductionError("CHRONOS_SSL_REQUIRED")
     channel_binding = query.get("channel_binding")
-    if channel_binding is not None and channel_binding != "require":
+    if channel_binding != "require":
         raise ChronosProductionError("CHRONOS_CHANNEL_BINDING_REQUIRED")
     return DirectPostgresTarget(
         host=host,
@@ -313,6 +370,7 @@ __all__ = [
     "assert_exact_preflight_binding",
     "build_scoped_database_url",
     "canonical_json_bytes",
+    "connect_direct_postgres",
     "generation_hash",
     "preflight_hash",
     "require_hash",
@@ -320,5 +378,7 @@ __all__ = [
     "require_sha",
     "sign_document",
     "validate_direct_postgres_url",
+    "libpq_environment_variable_names",
+    "require_libpq_environment_clean",
     "verify_signed_document",
 ]

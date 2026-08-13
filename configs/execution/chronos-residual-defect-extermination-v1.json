@@ -1,0 +1,20 @@
+{
+  "mission_id": "CHRONOS_LOOP53",
+  "authorized_stages": ["E1", "E2", "E3A", "E3B", "E4"],
+  "maximum_stage": "E4",
+  "external_effects": [
+    "git_remote_write",
+    "github_pull_request_write",
+    "github_merge_commit",
+    "github_actions_observe",
+    "github_actions_dispatch_exactly_once",
+    "github_actions_sanitized_report_upload_exactly_once",
+    "neon_control_plane_read_only",
+    "neon_compute_wake_at_most_once",
+    "postgresql_read_only_connection_at_most_once"
+  ],
+  "compute_budget": 2000,
+  "time_budget": 172800,
+  "source_hash": "5f40475be65fa358a2b409edb2f320993596124e2055a1b5056e8641db0ab498",
+  "expires_at": "2026-08-14T23:59:59Z"
+}

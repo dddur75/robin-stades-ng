@@ -2,7 +2,17 @@ name: "Chronos Dual-Principal Bootstrap CI V2"
 
 on:
   workflow_call:
+    inputs:
+      checkout_ref:
+        description: "Exact immutable commit to validate"
+        required: true
+        type: string
   workflow_dispatch:
+    inputs:
+      checkout_ref:
+        description: "Exact immutable commit to validate; defaults to the dispatched SHA"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -20,6 +30,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          ref: ${{ inputs.checkout_ref || github.sha }}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
@@ -37,6 +48,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          ref: ${{ inputs.checkout_ref || github.sha }}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
@@ -80,6 +92,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          ref: ${{ inputs.checkout_ref || github.sha }}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
@@ -97,7 +110,7 @@ jobs:
         env:
           ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
           CHRONOS_CI_ADMIN_PROFILE: ${{ matrix.admin-profile }}
-        run: python scripts/run_chronos_dual_principal_ci_v2.py
+        run: python -m scripts.run_chronos_dual_principal_ci_v2
       - name: Valider les huit contrats PostgreSQL 16
         env:
           ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
@@ -125,7 +138,7 @@ jobs:
       - run: python -m pytest -q
       - run: python -m ruff check src/robin scripts tests/chronos tests/activation migrations
       - run: >-
-          python -m mypy --strict
+          python -m mypy --strict --explicit-package-bases
           src/robin/chronos_production.py
           src/robin/chronos_role_lifecycle.py
           scripts/chronos_production_bootstrap_v3.py
@@ -158,6 +171,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          ref: ${{ inputs.checkout_ref || github.sha }}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"

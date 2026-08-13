@@ -1,0 +1,81 @@
+{
+  "schema_version": "chronos-neon-live-contract-structures-v1",
+  "privacy_contract": {
+    "raw_api_keys": false,
+    "raw_dsns": false,
+    "raw_hostnames": false,
+    "raw_cursors": false,
+    "raw_project_branch_endpoint_ids": false,
+    "identities_are_synthetic_or_sha256": true
+  },
+  "fixtures": [
+    {
+      "fixture_id": "documented_cursor_pagination_terminal",
+      "classification": "DOCUMENTED",
+      "endpoint": "List branches",
+      "keys": ["branches", "pagination"],
+      "types": {"branches": "array<object>", "pagination": "object"},
+      "nullability": {"pagination.next": false},
+      "cardinalities": {"branches": "0..10000"},
+      "enum_values": {"pagination.sort_order": ["asc", "desc"]},
+      "pagination_shape": {},
+      "state_shape": ["current_state", "pending_state"]
+    },
+    {
+      "fixture_id": "legacy_cursor_pagination_terminal",
+      "classification": "LEGACY_COMPATIBILITY",
+      "endpoint": "List branches",
+      "keys": ["branches", "pagination"],
+      "pagination_shape": {
+        "next": null,
+        "previous": null,
+        "sort_by": "updated_at",
+        "sort_order": "asc"
+      },
+      "expected": "ACCEPT_WITHOUT_TREATING_AS_CURRENT_OPENAPI"
+    },
+    {
+      "fixture_id": "last_live_sanitized_truncation_observation",
+      "classification": "LIVE_SANITIZED",
+      "source_run": 31587004959,
+      "source_artifact_sha256": "7d3a988f9a7717db898765cb0e32cf1c156e9779317331e383c4059cfc24d46a",
+      "known_keys": ["branches", "pagination"],
+      "unknown_raw_envelope_preserved": false,
+      "failure_gate": "branch_inventory_truncated",
+      "external_effects": {
+        "neon_gets": 5,
+        "neon_mutations": 0,
+        "postgresql_connections": 0,
+        "sql_writes": 0
+      },
+      "note": "The prior artifact did not retain the exact raw pagination keys; no shape is invented."
+    },
+    {
+      "fixture_id": "additive_metadata_forward_compatible",
+      "classification": "ADVERSARIAL_SAFE",
+      "pagination_shape": {
+        "next": "sha256:synthetic-continuation",
+        "previous": null,
+        "sort_by": "updated_at",
+        "sort_order": "asc",
+        "request_id": "synthetic-metadata"
+      },
+      "expected": "ACCEPT"
+    },
+    {
+      "fixture_id": "semantic_continuation_casing_conflict",
+      "classification": "ADVERSARIAL_UNSAFE",
+      "pagination_shape": {"NEXT": "sha256:synthetic-continuation"},
+      "expected": "REJECT_BRANCH_INVENTORY_TRUNCATED"
+    },
+    {
+      "fixture_id": "duplicate_or_conflicting_continuation",
+      "classification": "ADVERSARIAL_UNSAFE",
+      "pagination_shape": {
+        "next": "sha256:synthetic-continuation",
+        "cursor": "sha256:synthetic-conflict"
+      },
+      "expected": "REJECT_BRANCH_INVENTORY_TRUNCATED"
+    }
+  ]
+}

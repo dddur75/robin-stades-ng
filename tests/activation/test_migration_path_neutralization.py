@@ -105,7 +105,7 @@ def test_ordinary_workflows_and_composite_actions_cannot_migrate() -> None:
         assert "neon_bootstrap.py" not in content, path
         assert "MIGRATOR_DATABASE_URL" not in content, path
     assert "alembic upgrade head" not in ci
-    assert ci.count("run_chronos_dual_principal_ci_v2.py") == 1
+    assert ci.count("python -m scripts.run_chronos_dual_principal_ci_v2") == 1
     assert "postgresql+psycopg://robin:robin_ci@localhost" in ci
     assert GUARD in ci
     bootstrap_ci = (WORKFLOW_ROOT / "chronos-bootstrap-ci-v3.yml").read_text(
@@ -114,7 +114,7 @@ def test_ordinary_workflows_and_composite_actions_cannot_migrate() -> None:
     assert "alembic upgrade head" not in bootstrap_ci
     assert (
         bootstrap_ci.count(
-            "run: python scripts/run_chronos_dual_principal_ci_v2.py"
+            "run: python -m scripts.run_chronos_dual_principal_ci_v2"
         )
         == 1
     )

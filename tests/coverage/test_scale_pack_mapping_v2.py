@@ -22,6 +22,12 @@ ROOT = Path(__file__).resolve().parents[2]
 MAPPING_PATH = ROOT / "configs/data/coverage-scale-pack-manifests-v2.json"
 SOURCE_PATH = ROOT / "configs/data/p0-coverage-source-config-v1.json"
 MISSION_PATH = ROOT / "configs/data/p0-coverage-evidence-mission-v1.json"
+CURRENT_AUTHORITY_MATRIX_PATH = (
+    ROOT / "configs/agents/mission-activation-matrix-v3.json"
+)
+HISTORICAL_AUTHORITY_MATRIX_SNAPSHOT_PATH = (
+    ROOT / "configs/data/p0-coverage-authority-matrix-snapshot-v1.json"
+)
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -38,13 +44,24 @@ def mapping() -> dict[str, Any]:
     return load(MAPPING_PATH)
 
 
-def test_source_bindings_pin_current_lf_hashes_and_legacy_v1() -> None:
+def test_source_bindings_pin_historical_lf_hashes_and_legacy_v1() -> None:
     contract = mapping()
     observed = {
-        binding["path"]: lf_sha256(ROOT / binding["path"])
+        binding["path"]: lf_sha256(
+            HISTORICAL_AUTHORITY_MATRIX_SNAPSHOT_PATH
+            if binding["path"] == "configs/agents/mission-activation-matrix-v3.json"
+            else ROOT / binding["path"]
+        )
         for binding in contract["source_bindings"].values()
     }
     validate_source_bindings(contract, observed_hashes=observed)
+    historical_matrix_hash = (
+        "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"
+    )
+    assert lf_sha256(HISTORICAL_AUTHORITY_MATRIX_SNAPSHOT_PATH) == (
+        historical_matrix_hash
+    )
+    assert lf_sha256(CURRENT_AUTHORITY_MATRIX_PATH) != historical_matrix_hash
     assert observed["configs/data/coverage-scale-pack-manifests-v1.json"] == (
         "21ce418bb326e9c9e247ca80e7f9f6936b85ec9fd9d98d0b511dc9ace3c00d64"
     )

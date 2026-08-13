@@ -57,6 +57,34 @@ ABSENCE_NONMEDICAL_KNOWN_VALUES = (
     "personal reason",
     "personal reasons",
 )
+CANONICAL_JOURNAL_BOUNDARY_ID = "RCV3-20260812-137"
+CANONICAL_JOURNAL_BOUNDARY_HASH = (
+    "da9a13824573dcb7b02675df62332da430f28963d8c9c70c92f580f87555fe38"
+)
+CANONICAL_JOURNAL_PREFIX_COUNT = 129
+CANONICAL_JOURNAL_PREFIX_TIP_HASH = (
+    "a882c44b09abba2c28c76411c52ea5e80abe9958dfb6e86a02242fef19ff344f"
+)
+CANONICAL_JOURNAL_RECORD_TYPES = frozenset(
+    {
+        "MISSION_AUTHORIZED",
+        "STAGE_STARTED",
+        "STAGE_FINISHED",
+        "DECISION",
+        "FAILURE",
+        "VETO",
+        "REDESIGN",
+    }
+)
+CANONICAL_JOURNAL_DECISIONS = frozenset(
+    {
+        "PASS_AND_SCALE",
+        "PASS_AND_HOLD",
+        "FAIL_AND_REDESIGN",
+        "FAIL_AND_STOP",
+        "BLOCKED_EXTERNAL_ACTION",
+    }
+)
 ABSENCE_CLASSIFICATION_FRAMEWORK = {
     "version": ABSENCE_CLASSIFICATION_RULE_VERSION,
     "base_lexical_contract_version": "absence-partition-rule-v1",
@@ -118,6 +146,24 @@ MISSION_ACCOUNTING_BASELINE_SCHEMA = "p0-coverage-mission-accounting-baseline-v1
 SOURCE_CONFIG_PATH = Path("configs/data/p0-coverage-source-config-v1.json")
 MISSION_PATH = Path("configs/data/p0-coverage-evidence-mission-v1.json")
 MAPPING_PATH = Path("configs/data/coverage-scale-pack-manifests-v2.json")
+HISTORICAL_AUTHORITY_MATRIX_PATH = Path(
+    "configs/agents/mission-activation-matrix-v3.json"
+)
+HISTORICAL_AUTHORITY_MATRIX_SNAPSHOT_PATH = Path(
+    "configs/data/p0-coverage-authority-matrix-snapshot-v1.json"
+)
+HISTORICAL_AUTHORITY_MATRIX_SHA256 = (
+    "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"
+)
+HISTORICAL_SOURCE_CONFIG_SHA256 = (
+    "52fb07c0549458a04b5253a1171c3e87c6837bef78ad20279257c2a04011d82e"
+)
+HISTORICAL_MISSION_SHA256 = (
+    "d3c9df38ca02a4d7d5feaa0d1561541c26ea6313fb8755d04de5690367c6262f"
+)
+HISTORICAL_MAPPING_SHA256 = (
+    "d702b88c964d64d984cc69d2b297f37fbb74f087347934f8d3eee7a22597409f"
+)
 
 DOMAIN_STAGES = ("E1A", "E1B", "E2", "E3A", "E3B", "E4")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -460,6 +506,73 @@ def _mapping(value: object, *, label: str) -> Mapping[str, object]:
     return value
 
 
+def canonical_journal_suffix(root: Path) -> tuple[Mapping[str, object], ...]:
+    """Validate the immutable legacy prefix and return only canonical authority."""
+
+    path = root / "reports/council/decision-ledger.jsonl"
+    records: list[Mapping[str, object]] = []
+    previous_hash = "0" * 64
+    boundary_index: int | None = None
+    def object_pairs(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        value: dict[str, object] = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError("COUNCIL_JOURNAL_DUPLICATE_KEY")
+            value[key] = item
+        return value
+
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            decoded = json.loads(
+                line,
+                object_pairs_hook=object_pairs,
+                parse_constant=lambda value: (_ for _ in ()).throw(
+                    ValueError(f"COUNCIL_JOURNAL_NONFINITE:{value}")
+                ),
+            )
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise ValueError("COUNCIL_JOURNAL_JSON_INVALID") from exc
+        record = _mapping(decoded, label="COUNCIL_JOURNAL_RECORD")
+        if record.get("previous_hash") != previous_hash:
+            raise ValueError("COUNCIL_JOURNAL_PREVIOUS_HASH_INVALID")
+        if record.get("hash_algorithm") != "SHA-256":
+            raise ValueError("COUNCIL_JOURNAL_HASH_ALGORITHM_INVALID")
+        canonical = json.dumps(
+            {key: item for key, item in record.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        observed_hash = record.get("hash")
+        if not isinstance(observed_hash, str) or hashlib.sha256(canonical).hexdigest() != observed_hash:
+            raise ValueError("COUNCIL_JOURNAL_RECORD_HASH_INVALID")
+        records.append(record)
+        previous_hash = observed_hash
+        if record.get("decision_id") == CANONICAL_JOURNAL_BOUNDARY_ID:
+            if boundary_index is not None:
+                raise ValueError("COUNCIL_JOURNAL_BOUNDARY_DUPLICATE")
+            boundary_index = len(records) - 1
+            if (
+                boundary_index != CANONICAL_JOURNAL_PREFIX_COUNT
+                or record.get("previous_hash") != CANONICAL_JOURNAL_PREFIX_TIP_HASH
+                or observed_hash != CANONICAL_JOURNAL_BOUNDARY_HASH
+            ):
+                raise ValueError("COUNCIL_JOURNAL_BOUNDARY_INVALID")
+
+    if boundary_index is None:
+        raise ValueError("COUNCIL_JOURNAL_BOUNDARY_MISSING")
+    suffix = records[boundary_index:]
+    if any(
+        record.get("record_type") not in CANONICAL_JOURNAL_RECORD_TYPES
+        or record.get("decision") not in CANONICAL_JOURNAL_DECISIONS
+        for record in suffix
+    ):
+        raise ValueError("COUNCIL_JOURNAL_CANONICAL_SUFFIX_INVALID")
+    return tuple(suffix)
+
+
 def _sequence(value: object, *, label: str) -> Sequence[object]:
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         return value
@@ -531,6 +644,35 @@ def _bounded_gzip(data: bytes, *, limit: int, label: str) -> bytes:
 
 def _lf_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
+def _historical_contract_hash_matches(
+    root: Path,
+    *,
+    relative: Path,
+    expected: str,
+    source_sha: str,
+    mission_sha: str,
+    mapping_sha: str,
+) -> bool:
+    """Resolve only the one content-addressed authority snapshot frozen by P0 v1."""
+
+    current = root / relative
+    if current.is_file() and _lf_sha256(current) == expected:
+        return True
+    historical_tuple = (
+        relative == HISTORICAL_AUTHORITY_MATRIX_PATH
+        and expected == HISTORICAL_AUTHORITY_MATRIX_SHA256
+        and source_sha == HISTORICAL_SOURCE_CONFIG_SHA256
+        and mission_sha == HISTORICAL_MISSION_SHA256
+        and mapping_sha == HISTORICAL_MAPPING_SHA256
+    )
+    snapshot = root / HISTORICAL_AUTHORITY_MATRIX_SNAPSHOT_PATH
+    return bool(
+        historical_tuple
+        and snapshot.is_file()
+        and _lf_sha256(snapshot) == HISTORICAL_AUTHORITY_MATRIX_SHA256
+    )
 
 
 def _signed(value: Mapping[str, object], *, field: str) -> dict[str, object]:
@@ -1366,7 +1508,14 @@ def load_authority(
         contract = _mapping(binding, label="P0_SOURCE_CONTRACT")
         relative = Path(_text(contract.get("path"), label="P0_CONTRACT_PATH"))
         expected = _sha(contract.get("file_sha256_lf"), label="P0_CONTRACT_HASH")
-        if _lf_sha256(root / relative) != expected:
+        if not _historical_contract_hash_matches(
+            root,
+            relative=relative,
+            expected=expected,
+            source_sha=source_sha,
+            mission_sha=mission_sha,
+            mapping_sha=mapping_sha,
+        ):
             raise ValueError(f"P0_CONTRACT_HASH_MISMATCH:{relative.as_posix()}")
     denominator_binding = _mapping(
         contracts.get("denominator"),

@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -111,6 +111,8 @@ class RoleEdgeAudit:
     runtime_to_lifecycle_admin_path_count: int
     executor_role_count: int
     executor_membership_count: int
+    neon_platform_edge_count: int
+    neon_platform_descendant_count: int
 
     def report(self) -> dict[str, Any]:
         return {
@@ -137,6 +139,10 @@ class RoleEdgeAudit:
             ),
             "executor_role_count": self.executor_role_count,
             "executor_membership_count": self.executor_membership_count,
+            "neon_platform_edge_count": self.neon_platform_edge_count,
+            "neon_platform_descendant_count": (
+                self.neon_platform_descendant_count
+            ),
         }
 
 
@@ -409,9 +415,22 @@ def provision_permanent_bootstrap_authority(
                     (AUTHORITY_MARKER,),
                 )
         cursor.execute(
-            sql.SQL(
-                "GRANT USAGE, CREATE ON SCHEMA public TO {} WITH GRANT OPTION"
-            ).format(sql.Identifier(authority))
+            "SELECT owner.rolname, pg_catalog.pg_has_role("
+            "CURRENT_USER,n.nspowner,'SET') FROM pg_catalog.pg_namespace n "
+            "JOIN pg_catalog.pg_roles owner ON owner.oid=n.nspowner "
+            "WHERE n.nspname='public'"
+        )
+        schema_owner = cursor.fetchone()
+        if schema_owner is None:
+            raise ChronosProductionError("CHRONOS_PUBLIC_SCHEMA_OWNER_MISSING")
+        schema_owner_name = str(schema_owner[0])
+        can_set_schema_owner = bool(schema_owner[1])
+        _grant_bootstrap_authority_schema(
+            cursor,
+            authority=authority,
+            lifecycle_admin=lifecycle_admin,
+            schema_owner_name=schema_owner_name,
+            can_set_schema_owner=can_set_schema_owner,
         )
         cursor.execute(
             sql.SQL(
@@ -439,6 +458,32 @@ def provision_permanent_bootstrap_authority(
         lifecycle_admin,
         lifecycle_admin_superuser,
     )
+
+
+def _grant_bootstrap_authority_schema(
+    cursor: Any,
+    *,
+    authority: str,
+    lifecycle_admin: str,
+    schema_owner_name: str,
+    can_set_schema_owner: bool,
+) -> None:
+    """Grant schema ACLs without masking a failed GRANT with RESET ROLE."""
+
+    switched_to_schema_owner = (
+        schema_owner_name != lifecycle_admin and can_set_schema_owner
+    )
+    if switched_to_schema_owner:
+        cursor.execute(
+            sql.SQL("SET LOCAL ROLE {}").format(sql.Identifier(schema_owner_name))
+        )
+    cursor.execute(
+        sql.SQL(
+            "GRANT USAGE, CREATE ON SCHEMA public TO {} WITH GRANT OPTION"
+        ).format(sql.Identifier(authority))
+    )
+    if switched_to_schema_owner:
+        cursor.execute("RESET ROLE")
 
 
 def _executor_names(connection: Connection[Any]) -> list[str]:
@@ -1626,7 +1671,7 @@ def _membership_rows(
             "grantor.rolsuper,m.admin_option,m.inherit_option,m.set_option,"
             "pg_catalog.pg_has_role(member.oid,granted.oid,'USAGE'),"
             "pg_catalog.pg_has_role(member.oid,granted.oid,'SET'),"
-            "member.rolcanlogin "
+            "member.rolcanlogin,granted.rolcanlogin,member.rolinherit "
             "FROM pg_catalog.pg_auth_members m "
             "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
             "JOIN pg_catalog.pg_roles member ON member.oid=m.member "
@@ -1650,9 +1695,36 @@ def _membership_rows(
             "runtime_usage": bool(row[7]),
             "runtime_set": bool(row[8]),
             "member_authenticatable": bool(row[9]),
+            "granted_authenticatable": bool(row[10]),
+            "member_inherit": bool(row[11]),
         }
         for row in rows
     ]
+
+
+def _is_expected_neon_platform_edge(
+    row: Mapping[str, Any],
+    *,
+    lifecycle_admin: str,
+    lifecycle_admin_superuser: bool,
+    lifecycle_admin_inherit: bool,
+) -> bool:
+    """Recognize the one provider-managed membership that Neon actors require."""
+
+    return bool(
+        row["granted_role"] == "neon_superuser"
+        and row["member_role"] == lifecycle_admin
+        and row["grantor_superuser"] is True
+        and not row["granted_authenticatable"]
+        and row["member_authenticatable"]
+        and not row["admin_option"]
+        and row["inherit_option"] is lifecycle_admin_inherit
+        and row["set_option"]
+        and row["runtime_set"]
+        and row["runtime_usage"]
+        is (lifecycle_admin_superuser or lifecycle_admin_inherit)
+        and row["member_inherit"] is lifecycle_admin_inherit
+    )
 
 
 def audit_role_edges(
@@ -1706,13 +1778,15 @@ def audit_role_edges(
         )
     with connection.cursor() as cursor:
         cursor.execute(
-            "SELECT rolsuper FROM pg_catalog.pg_roles WHERE rolname=%s",
+            "SELECT rolsuper,rolinherit,rolcanlogin FROM pg_catalog.pg_roles "
+            "WHERE rolname=%s",
             (lifecycle_admin,),
         )
         lifecycle_state = cursor.fetchone()
-    if lifecycle_state is None:
+    if lifecycle_state is None or not bool(lifecycle_state[2]):
         raise ChronosProductionError("CHRONOS_LIFECYCLE_ADMIN_MISSING")
     lifecycle_admin_superuser = bool(lifecycle_state[0])
+    lifecycle_admin_inherit = bool(lifecycle_state[1])
     names = sorted(
         active_groups
         | active_runtime
@@ -1826,6 +1900,12 @@ def audit_role_edges(
             and row["inherit_option"] is False
             and row["set_option"] is True
         )
+        is_neon_platform = _is_expected_neon_platform_edge(
+            row,
+            lifecycle_admin=lifecycle_admin,
+            lifecycle_admin_superuser=lifecycle_admin_superuser,
+            lifecycle_admin_inherit=lifecycle_admin_inherit,
+        )
         if is_functional:
             classification = "EXPECTED_RUNTIME_GROUP_EDGE"
             reason = "exact functional group inheritance without ADMIN or SET"
@@ -1844,6 +1924,9 @@ def audit_role_edges(
         elif is_executor_set:
             classification = "EXPECTED_EXECUTOR_SET_EDGE"
             reason = "temporary SET-only delegation to the NOLOGIN authority"
+        elif is_neon_platform:
+            classification = "EXPECTED_NEON_PLATFORM_EDGE"
+            reason = "single provider-managed Neon actor membership"
         else:
             forbidden += 1
         runtime_effective = bool(row["runtime_usage"] or row["runtime_set"])
@@ -1879,6 +1962,11 @@ def audit_role_edges(
             }
         )
 
+    actual_neon_platform = sum(
+        edge["classification"] == "EXPECTED_NEON_PLATFORM_EDGE"
+        for edge in classified
+    )
+    expected_neon_platform = 1 if actual_neon_platform == 1 else 0
     expected_count = (
         len(active_groups)
         + len(active_migrator)
@@ -1889,6 +1977,7 @@ def audit_role_edges(
             if executor_role is None
             else 1 + (0 if lifecycle_admin_superuser else 1)
         )
+        + expected_neon_platform
     )
     expected_functional = len(active_runtime)
     actual_functional = sum(
@@ -1936,17 +2025,39 @@ def audit_role_edges(
             (BOOTSTRAP_EXECUTOR_PREFIX + "%", BOOTSTRAP_EXECUTOR_PREFIX + "%"),
         )
         executor_memberships = cursor.fetchone()
+        cursor.execute(
+            "WITH RECURSIVE platform AS (SELECT oid FROM pg_catalog.pg_roles "
+            "WHERE rolname='neon_superuser'), descendants(member) AS ("
+            "SELECT membership.member FROM pg_catalog.pg_auth_members membership "
+            "JOIN platform ON platform.oid=membership.roleid UNION SELECT "
+            "nested.member FROM pg_catalog.pg_auth_members nested "
+            "JOIN descendants prior ON nested.roleid=prior.member) "
+            "SELECT (SELECT count(*) FROM descendants),"
+            "(SELECT count(*) FROM descendants JOIN pg_catalog.pg_roles role "
+            "ON role.oid=descendants.member WHERE role.rolname=%s)",
+            (lifecycle_admin,),
+        )
+        platform_descendants = cursor.fetchone()
     runtime_to_authority = 0 if path_counts is None else int(path_counts[0])
     runtime_to_lifecycle = 0 if path_counts is None else int(path_counts[1])
     executor_role_count = 0 if executor_roles is None else int(executor_roles[0])
     executor_membership_count = (
         0 if executor_memberships is None else int(executor_memberships[0])
     )
+    neon_platform_descendant_count = (
+        0 if platform_descendants is None else int(platform_descendants[0])
+    )
+    neon_actor_descendant_count = (
+        0 if platform_descendants is None else int(platform_descendants[1])
+    )
     if (
         len(classified) != expected_count
         or actual_functional != expected_functional
         or actual_external != expected_external
         or actual_executor != expected_executor
+        or actual_neon_platform not in {0, 1}
+        or neon_platform_descendant_count != actual_neon_platform
+        or neon_actor_descendant_count != actual_neon_platform
         or forbidden
         or runtime_effective_bootstrap
         or migrator_runtime
@@ -1974,6 +2085,8 @@ def audit_role_edges(
         runtime_to_lifecycle_admin_path_count=runtime_to_lifecycle,
         executor_role_count=executor_role_count,
         executor_membership_count=executor_membership_count,
+        neon_platform_edge_count=actual_neon_platform,
+        neon_platform_descendant_count=neon_platform_descendant_count,
     )
 
 
