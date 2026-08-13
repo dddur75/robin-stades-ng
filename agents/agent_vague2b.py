@@ -128,7 +128,10 @@ def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
     matchs, feats, holdout, _ = preparer(data_dir, cfg)
     atomes = [c for c in feats.columns if c.isupper()]
     feats = vue_adverse(feats, atomes)
-    feats = calcul_issues_et_prix(feats).reset_index(drop=True)
+    feats = calcul_issues_et_prix(
+        feats,
+        devig_method="SHIN",
+    ).reset_index(drop=True)
     cellule, force_ok = assigner_cellules(feats, cfg2)
     tokens = cfg2["marches_canoniques"]["self"] + cfg2["marches_canoniques"]["neutres"]
     marches_neutres = set(cfg2["marches_canoniques"]["neutres"])

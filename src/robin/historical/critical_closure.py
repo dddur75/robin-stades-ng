@@ -26,6 +26,12 @@ from robin.historical.storage import (
     directory_size,
     write_json_atomic,
 )
+from robin.market_math import (
+    DevigInputError,
+    DevigMethod,
+    devig_probabilities,
+    kernel_versions,
+)
 
 PRODUCTION_STATUS = "PRODUCTION_LOCKED"
 PINNACLE_DEGRADED_FROM = date(2025, 7, 23)
@@ -482,31 +488,46 @@ def match_market_fixtures(
     return matched, report
 
 
-def proportional_devig(odds: Iterable[float | None]) -> tuple[float | None, list[float | None]]:
-    values = list(odds)
-    if any(value is None or value <= 0 for value in values):
-        return None, [None for _ in values]
-    present = cast(list[float], values)
-    implied = [1.0 / value for value in present]
-    overround = sum(implied)
-    if overround <= 0:
-        return None, [None for _ in values]
-    return overround - 1.0, [value / overround for value in implied]
+def proportional_devig(
+    odds: Iterable[float | None],
+    *,
+    devig_method: DevigMethod | str,
+) -> tuple[float, list[float]]:
+    """Compatibility surface delegating to the strict shared kernel."""
+
+    result = devig_probabilities(odds, method=devig_method)
+    if result.method is not DevigMethod.PROPORTIONAL:
+        raise ValueError("PROPORTIONAL_DEVIG_ADAPTER_METHOD_MISMATCH")
+    return result.overround, list(result.fair_probabilities)
 
 
 def build_historical_market_dataset(
     rows: Iterable[dict[str, object]],
+    *,
+    devig_method: DevigMethod | str,
 ) -> list[dict[str, object]]:
     output: list[dict[str, object]] = []
     for row in rows:
-        margin, devig = proportional_devig(
+        def safe_devig(
+            odds: tuple[float | None, ...],
+        ) -> tuple[float | None, list[float | None], str]:
+            try:
+                margin, probabilities = proportional_devig(
+                    odds,
+                    devig_method=devig_method,
+                )
+                return margin, list(probabilities), "VALID"
+            except DevigInputError as error:
+                return None, [None for _ in odds], error.code
+
+        margin, devig, validation_1x2 = safe_devig(
             (
                 cast(float | None, row.get("odds_home")),
                 cast(float | None, row.get("odds_draw")),
                 cast(float | None, row.get("odds_away")),
             )
         )
-        totals_margin, totals_devig = proportional_devig(
+        totals_margin, totals_devig, validation_totals = safe_devig(
             (
                 cast(float | None, row.get("odds_over_25")),
                 cast(float | None, row.get("odds_under_25")),
@@ -522,6 +543,9 @@ def build_historical_market_dataset(
                 "de_vig_away": devig[2],
                 "de_vig_over_25": totals_devig[0],
                 "de_vig_under_25": totals_devig[1],
+                "devig_validation_1x2": validation_1x2,
+                "devig_validation_totals": validation_totals,
+                **kernel_versions(devig_method),
                 "quality": row.get("quality_status"),
             }
         )

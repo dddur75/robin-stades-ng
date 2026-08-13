@@ -132,6 +132,16 @@ _PREVIEW_FIELDS = {
         }
     ),
 }
+
+
+def optional_metric_percent(value: object) -> float | None:
+    """Convert a defined ratio for presentation without inventing zero."""
+
+    if value is None:
+        return None
+    return round(float(value) * 100.0, 2)
+
+
 _PREVIEW_REQUIRED_FIELDS = {
     "fixtures.next": frozenset(
         {
@@ -5004,9 +5014,9 @@ def main() -> None:
         {
             **item,
             "origin": "LEGACY SOURCE",
-            "roiPct": round(item.get("roi", 0) * 100, 2),
-            "ciLowPct": round(item.get("roi_ci_low", 0) * 100, 2),
-            "ciHighPct": round(item.get("roi_ci_high", 0) * 100, 2),
+            "roiPct": optional_metric_percent(item.get("roi")),
+            "ciLowPct": optional_metric_percent(item.get("roi_ci_low")),
+            "ciHighPct": optional_metric_percent(item.get("roi_ci_high")),
         }
         for item in oos
     ]

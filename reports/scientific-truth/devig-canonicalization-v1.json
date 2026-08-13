@@ -1,0 +1,400 @@
+{
+  "as_of": "2026-08-13T15:38:28Z",
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E1012",
+      "AUDIT:E1016",
+      "AUDIT:E1027",
+      "AUDIT:E1030",
+      "AUDIT:E1035",
+      "AUDIT:E1040",
+      "AUDIT:E1044"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authority": {
+    "basis": "PROTOCOL_SCOPE_NOT_HISTORICAL_PERFORMANCE",
+    "chronos_scoped_authority": {
+      "global_authority": false,
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT_ONLY",
+      "status": "UNIQUE"
+    },
+    "global_devig_authority": "CONFLICTING",
+    "global_selected_method": null,
+    "roi_used_for_authority": false
+  },
+  "caller_bindings": [
+    {
+      "caller": "moteur/devig.py:19,31",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_CENTRAL_ADAPTER"
+    },
+    {
+      "caller": "moteur/devig.py:12",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_CENTRAL_ADAPTER"
+    },
+    {
+      "caller": "src/robin/operations/activation.py:44",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_CENTRAL_PROTOCOL"
+    },
+    {
+      "caller": "src/robin/deep_football/models.py:24",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_CENTRAL_ADAPTER"
+    },
+    {
+      "caller": "src/robin/backtesting/v3.py:76,132",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "LOCAL_FORMULA_REMOVED_CENTRAL_DECISION"
+    },
+    {
+      "caller": "src/robin/historical/dataset_factory.py:210,290",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "LOCAL_FORMULA_REMOVED_CENTRAL_PROTOCOL"
+    },
+    {
+      "caller": "src/robin/historical/external_validation.py:869",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_CENTRAL_ADAPTER"
+    },
+    {
+      "caller": "src/robin/historical/critical_closure.py:491",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_STRICT_CENTRAL_ADAPTER"
+    },
+    {
+      "caller": "src/robin/historical/model_lab.py:610",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_CENTRAL_PROTOCOL"
+    },
+    {
+      "caller": "src/robin/modeling/reference.py:170",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_CENTRAL_ADAPTER"
+    },
+    {
+      "caller": "src/robin/prospective_observatory/prequential_factory.py:45",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "EXPLICIT_PROPORTIONAL_ONLY_CENTRAL_ADAPTER"
+    },
+    {
+      "caller": "scripts/run_historical_pipeline.py:1471,1488",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "INLINE_FORMULA_REMOVED_CENTRAL_PROTOCOL"
+    },
+    {
+      "caller": "src/robin/backtesting/oos.py:174,250,297",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "INLINE_FORMULA_REMOVED_CENTRAL_PROTOCOL"
+    },
+    {
+      "caller": "src/robin/shadow/decision.py:80,130",
+      "declared_method": "EXPLICIT_OR_SCOPED",
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "reason": "COMPLETE_MARKET_CENTRAL_DECISION_WITH_EXECUTION_LINEAGE"
+    }
+  ],
+  "claim_id": "EVAL.SCIENTIFIC.DEVIG.CANONICALIZATION.V1.001",
+  "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "dff8b4b658573ad5e0ef8ac0afcc79a51b2ed60e96c3f9d6a64a8f566786c1b4",
+  "evidence_status": "PROUVÉ",
+  "external_effects": {
+    "api_football_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014": 0,
+    "neon_api_calls": 0,
+    "network_calls": 0,
+    "odds_provider_calls": 0,
+    "production_connections": 0,
+    "production_postgresql_connections": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "generated_at": "2026-08-13T15:38:28Z",
+  "generator": {
+    "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "hash_representation": "GIT_CANONICAL_LF",
+    "repo_path": "scripts/build_scientific_truth_reports_v1.py",
+    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
+  },
+  "grain": "ONE_METHOD_SPEC_OR_AUTHORITY_SCOPE",
+  "hash_policy": {
+    "audited_windows_checkout_hashes_preserved_separately": true,
+    "external_evidence_pack_files": "SHA256_RAW_BYTES",
+    "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES"
+  },
+  "historical_replay_requirement": {
+    "evidence_ids": [
+      "AUDIT:E0025",
+      "AUDIT:E1040"
+    ],
+    "methods": [
+      "PROPORTIONAL",
+      "SHIN"
+    ],
+    "no_winner_designation": true,
+    "reason": "published 15-result aggregates omit method identity and per-bet inputs",
+    "status": "REPLAY_REQUIRED"
+  },
+  "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
+  "limitations": [
+    "No repository-global ex-ante protocol resolves legacy Shin and modern proportional authorities.",
+    "The OOS and synthetic divergence evidence measures sensitivity and cannot select a winner."
+  ],
+  "loop54_source": {
+    "evidence_ids": [],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1",
+    "manifest_sha256": "f3907663f43fcd72078b6e36e0f40b276478e11e28c72fbfaed9e32af65c34df",
+    "repair_sha": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+    "status": "SEALED_EXTERNAL_EVIDENCE_PACK"
+  },
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "non_claims": [
+    "The explicit API is not a declaration that proportional is globally canonical.",
+    "Chronos scoped authority is not generalized beyond complete same-receipt CANARY markets."
+  ],
+  "parity_cases": [
+    {
+      "evidence_ids": [
+        "LOOP54:E0017",
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "fixture": "balanced_1x2_proportional",
+      "result": "PASS"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "fixture": "complete_shadow_market_identity",
+      "result": "PASS"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "evidence_status": "PROUVÉ",
+      "fixture": "invalid_missing_duplicate_nonfinite_odds",
+      "result": "PASS_FAIL_CLOSED"
+    }
+  ],
+  "protocol_resolution": {
+    "authority_reviewers": [
+      "DP5",
+      "DP6",
+      "C4"
+    ],
+    "canonical_method": null,
+    "canonical_version": null,
+    "evidence_ids": [
+      "AUDIT:E1012",
+      "AUDIT:E1016",
+      "AUDIT:E1035",
+      "AUDIT:E1040",
+      "AUDIT:E1044"
+    ],
+    "rationale": "legacy Shin and proportional authorities overlap without one global ex-ante scope decision; ROI is prohibited as tie-breaker",
+    "roi_used_for_authority": false,
+    "verdict": "DEVIG_PROTOCOL_CONFLICT"
+  },
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP54_REPORTS:E0003",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
+    "namespace": "LOOP54_REPORTS"
+  },
+  "report_id": "devig-canonicalization-v1",
+  "reproducibility": {
+    "command_evidence_ids": [
+      "LOOP54_REPORTS:E0003"
+    ],
+    "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
+    "input_hashes": [
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/devig-documentation-vs-execution.csv",
+        "sha256": "3543c3fc6f27de15b72e6dfa6ffe4e83d4f3156cd690e2fbee8d0d22764ed345"
+      },
+      {
+        "path": "src/robin/market_math/devig.py",
+        "sha256": "761ca00cf608816cf3499e552a578e5f1de6dabec52ec3658b23e2b44f8de62a"
+      },
+      {
+        "path": "configs/prices/point-in-time-price-contract-v1.json",
+        "sha256": "5fb2bf9d5359fad32ee819bcce613316ada1122ed3750e16796eb5e87b054a2d"
+      }
+    ],
+    "seed": null
+  },
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "reviews": {
+    "data_temporal": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "scientific_statistical": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "security_red_team": "PENDING_INDEPENDENT_FINAL_REVIEW"
+  },
+  "schema_version": "robin-scientific-truth-report-v1",
+  "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+  "scope": "DEVIG_PROTOCOL_REGISTRY_AUTHORITY_AND_SCOPED_RESOLUTION",
+  "scope_resolution": [
+    {
+      "method": null,
+      "scope": "REPOSITORY_GLOBAL",
+      "status": "CONFLICTING"
+    },
+    {
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CHRONOS_CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT",
+      "status": "UNIQUE"
+    },
+    {
+      "method": "LEGACY_SHIN_VAGUE1_V1",
+      "scope": "LEGACY_VAGUE1_REPLAY_3WAY",
+      "status": "UNIQUE_OBSERVED_LEGACY"
+    },
+    {
+      "method": null,
+      "scope": "UNDER_SPECIFIED_HISTORICAL_ARTIFACTS",
+      "status": "NONE"
+    }
+  ],
+  "sensitivity_evidence": {
+    "evidence_ids": [
+      "AUDIT:E1040",
+      "AUDIT:E1044"
+    ],
+    "oos_bet_no_bet_divergences": 51,
+    "oos_complete_markets": 1563,
+    "selection_use": "SENSITIVITY_ONLY_NOT_AUTHORITY",
+    "synthetic_bet_no_bet_divergence_rate": 0.1011,
+    "synthetic_markets": 20000
+  },
+  "shared_contract": {
+    "complete_market": true,
+    "invalid_policy": "DETERMINISTIC_FAIL_CLOSED",
+    "label_uniqueness": true,
+    "missing_method": "ERROR",
+    "no_silent_fallback": true,
+    "normalization_tolerance": 1e-12,
+    "odds_gt_1": true,
+    "unknown_method": "ERROR"
+  },
+  "source_code_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "sources": [
+    {
+      "evidence_ids": [
+        "AUDIT:E1012",
+        "AUDIT:E1035"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/devig-documentation-vs-execution.csv",
+      "sha256": "3543c3fc6f27de15b72e6dfa6ffe4e83d4f3156cd690e2fbee8d0d22764ed345"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "repo_or_evidence_path": "src/robin/market_math/devig.py",
+      "sha256": "761ca00cf608816cf3499e552a578e5f1de6dabec52ec3658b23e2b44f8de62a"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E1012"
+      ],
+      "repo_or_evidence_path": "configs/prices/point-in-time-price-contract-v1.json",
+      "sha256": "5fb2bf9d5359fad32ee819bcce613316ada1122ed3750e16796eb5e87b054a2d"
+    }
+  ],
+  "supported_methods": [
+    {
+      "completeness": "COMPLETE_LABELLED_MARKET_REQUIRED",
+      "definition_hash": "265d91ae91f793523180d617a3cbcd90ee95ac483d7fdbfcaa3547868e076684",
+      "formula": "q_i=1/odds_i; p_i=q_i/sum(q)",
+      "invalid_policy": "RAISE_DEVIG_INPUT_ERROR",
+      "method_id": "PROPORTIONAL",
+      "version": "PROPORTIONAL_COMPLETE_MARKET_V1"
+    },
+    {
+      "completeness": "COMPLETE_LABELLED_MARKET_REQUIRED",
+      "definition_hash": "3ff94a3daf36b0995717522ed3605bf0754d799705df028414043587b7375367",
+      "effective_method_policy": "TWO_OUTCOME_OR_UNDERROUND_PROPORTIONAL_WITH_EXPLICIT_REASON",
+      "formula": "LEGACY_SHIN_FIXED_POINT_Z_WITH_FROZEN_BOUNDS",
+      "invalid_policy": "RAISE_DEVIG_INPUT_ERROR",
+      "method_id": "SHIN",
+      "version": "LEGACY_SHIN_VAGUE1_V1"
+    }
+  ],
+  "temporal_class": "VERSIONED_PROTOCOL_DECISION",
+  "verdicts": [
+    {
+      "evidence_ids": [
+        "AUDIT:E1035",
+        "AUDIT:E1040",
+        "AUDIT:E1044"
+      ],
+      "verdict": "DEVIG_PROTOCOL_CONFLICT"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0017",
+        "LOOP54:E0026"
+      ],
+      "verdict": "DEVIG_DECISION_PATH_PARITY_PROVEN_BOUNDED_FIXTURES"
+    }
+  ],
+  "verified_by": []
+}

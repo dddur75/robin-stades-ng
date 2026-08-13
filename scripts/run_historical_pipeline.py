@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import os
 import subprocess
 import time
@@ -108,6 +107,13 @@ from robin.historical.storage import (
     write_json_atomic,
 )
 from robin.ingestion.raw_store import LocalRawStore
+from robin.market_math import (
+    DevigInputError,
+    DevigMethod,
+    devig_execution_metadata,
+    devig_probabilities,
+    kernel_versions,
+)
 from robin.providers.api_football import ApiFootballProvider
 from robin.storage.database import build_engine
 from robin.storage.historical_schema import (
@@ -1265,6 +1271,7 @@ def command_datasets(args: argparse.Namespace) -> None:
         args.state,
         seasons=seasons,
         legacy_matches=ROOT / "data" / "matches.parquet",
+        devig_method="PROPORTIONAL",
     )
     manifests: list[dict[str, object]] = []
     for name, rows, policy in (
@@ -1376,7 +1383,10 @@ def command_model_lab(args: argparse.Namespace) -> None:
     datasets = {name: _dataset_rows(args.state, name) for name in dataset_names}
     if not datasets["api_team_pre_match_v1"]:
         raise RuntimeError("MODEL_LAB_BLOCKED_GATE_A")
-    models, predictions = run_model_lab(datasets)
+    models, predictions = run_model_lab(
+        datasets,
+        devig_method="PROPORTIONAL",
+    )
     for model in models:
         write_json_atomic(
             args.state / "models" / f"{model['model_version']}.json",
@@ -1429,6 +1439,7 @@ def command_strategy_lab(args: argparse.Namespace) -> None:
             strategy_sensitivity(
                 predictions,
                 model_version=model_version,
+                devig_method="PROPORTIONAL",
             )
         )
     for result in results:
@@ -1459,6 +1470,8 @@ def command_strategy_lab(args: argparse.Namespace) -> None:
 
 def _market_prediction_rows(
     rows: list[dict[str, object]],
+    *,
+    devig_method: DevigMethod | str,
 ) -> list[dict[str, object]]:
     predictions: list[dict[str, object]] = []
     for row in rows:
@@ -1469,18 +1482,16 @@ def _market_prediction_rows(
             row.get("odds_draw"),
             row.get("odds_away"),
         ]
+        if label is None or season not in {2024, 2025}:
+            continue
         try:
-            implied = [1.0 / float(str(price)) for price in prices]
-        except (TypeError, ValueError, ZeroDivisionError):
+            devig = devig_probabilities(
+                prices,
+                method=devig_method,
+                outcome_labels=("HOME", "DRAW", "AWAY"),
+            )
+        except DevigInputError:
             continue
-        if (
-            label is None
-            or season not in {2024, 2025}
-            or min(implied) <= 0.0
-            or any(not math.isfinite(value) for value in implied)
-        ):
-            continue
-        total = sum(implied)
         predictions.append(
             {
                 "fixture_id": row["fixture_id"],
@@ -1489,15 +1500,17 @@ def _market_prediction_rows(
                 "target": label,
                 "model_version": "market_devigged_baseline_v1",
                 "dataset_version": "api_market_baseline_v1",
-                "probability_home": implied[0] / total,
-                "probability_draw": implied[1] / total,
-                "probability_away": implied[2] / total,
+                "probability_home": devig.fair_probabilities[0],
+                "probability_draw": devig.fair_probabilities[1],
+                "probability_away": devig.fair_probabilities[2],
                 "market_snapshot": row.get("market_source", ""),
                 "temporal_policy": "PRE_MATCH_CUTOFF",
                 "odds_home": row.get("odds_home"),
                 "odds_draw": row.get("odds_draw"),
                 "odds_away": row.get("odds_away"),
                 "origin": "EXPOSED_HISTORICAL_OOS",
+                **kernel_versions(devig),
+                **devig_execution_metadata(devig),
             }
         )
     return predictions
@@ -1579,7 +1592,10 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
         ),
         "poisson_score": score_model_predictions(team_rows, method="POISSON"),
         "dixon_coles_score": score_model_predictions(team_rows, method="DIXON_COLES"),
-        "market_devigged": _market_prediction_rows(team_rows),
+        "market_devigged": _market_prediction_rows(
+            team_rows,
+            devig_method="PROPORTIONAL",
+        ),
     }
     if player_rows:
         model_inputs["player_pre_lineup_crossfit"] = temporal_discriminative_predictions(
@@ -1771,6 +1787,7 @@ def command_strategy_lab_v2(args: argparse.Namespace) -> None:
                 strategy_sensitivity(
                     model_rows,
                     model_version=model_version,
+                    devig_method="PROPORTIONAL",
                     edges=(0.03, 0.05, 0.07),
                 )
             )
@@ -1794,6 +1811,7 @@ def command_strategy_lab_v2(args: argparse.Namespace) -> None:
                             market="OVER_UNDER_2_5",
                             minimum_edge=edge,
                         ),
+                        devig_method="PROPORTIONAL",
                         hypotheses_tested=3,
                     )
                 )

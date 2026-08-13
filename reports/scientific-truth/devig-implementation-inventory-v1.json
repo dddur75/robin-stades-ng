@@ -1,0 +1,443 @@
+{
+  "as_of": "2026-08-13T15:38:28Z",
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E1012",
+      "AUDIT:E1016",
+      "AUDIT:E1027",
+      "AUDIT:E1030",
+      "AUDIT:E1035",
+      "AUDIT:E1040",
+      "AUDIT:E1044"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authority": {
+    "basis": "PROTOCOL_SCOPE_NOT_HISTORICAL_PERFORMANCE",
+    "chronos_scoped_authority": {
+      "global_authority": false,
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT_ONLY",
+      "status": "UNIQUE"
+    },
+    "global_devig_authority": "CONFLICTING",
+    "global_selected_method": null,
+    "roi_used_for_authority": false
+  },
+  "claim_id": "GOV.SCIENTIFIC.DEVIG.IMPLEMENTATION.INVENTORY.V1.001",
+  "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "conflict": {
+    "decision_changes_proven": true,
+    "evidence_ids": [
+      "AUDIT:E1040",
+      "AUDIT:E1044"
+    ],
+    "global_authority": "CONFLICTING",
+    "shin_and_proportional_coexist": true
+  },
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "213d192ba0745bf8b63fcbb0a1716b17722dca483c6a4336b3433e6521323659",
+  "evidence_status": "PROUVÉ",
+  "external_effects": {
+    "api_football_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014": 0,
+    "neon_api_calls": 0,
+    "network_calls": 0,
+    "odds_provider_calls": 0,
+    "production_connections": 0,
+    "production_postgresql_connections": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "generated_at": "2026-08-13T15:38:28Z",
+  "generator": {
+    "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "hash_representation": "GIT_CANONICAL_LF",
+    "repo_path": "scripts/build_scientific_truth_reports_v1.py",
+    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
+  },
+  "grain": "ONE_AUDITED_IMPLEMENTATION_OR_DECISION_PROBABILITY_MECHANISM",
+  "hash_policy": {
+    "audited_windows_checkout_hashes_preserved_separately": true,
+    "external_evidence_pack_files": "SHA256_RAW_BYTES",
+    "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES"
+  },
+  "historical_method_counts": {
+    "PROPORTIONAL_OR_PROPORTIONAL_VARIANT": 13,
+    "RAW_IMPLIED_NOT_DEVIG": 1,
+    "SHIN_DECLARED_DEFAULT": 1
+  },
+  "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
+  "implementation_count": 15,
+  "implementations": [
+    {
+      "audit_call_sites": [
+        "moteur/marches.py",
+        "agents/agent_backtest.py",
+        "agents/agent_confrontation.py"
+      ],
+      "audit_dynamic_path": "legacy Vague1 historical backtest",
+      "audit_function": "probas_justes -> devig_shin",
+      "audit_invalid_input_policy": "dispatcher returned None for nonfinite or odds<=1",
+      "audit_line_range": "11-40",
+      "audit_method": "SHIN",
+      "audit_output_contract": "normalized float ndarray or None",
+      "audit_repo_path": "moteur/devig.py",
+      "audit_tests": [
+        "tests/test_moteur.py"
+      ],
+      "current_anchor": "moteur/devig.py:19,31",
+      "current_disposition": "EXPLICIT_CENTRAL_ADAPTER",
+      "implementation_id": "legacy_shin_default"
+    },
+    {
+      "audit_call_sites": [
+        "moteur/devig.py"
+      ],
+      "audit_dynamic_path": "counterfactual and legacy Shin fallback",
+      "audit_function": "devig_proportionnel",
+      "audit_invalid_input_policy": "no direct validation",
+      "audit_line_range": "6-8",
+      "audit_method": "PROPORTIONAL",
+      "audit_output_contract": "float ndarray",
+      "audit_repo_path": "moteur/devig.py",
+      "audit_tests": [],
+      "current_anchor": "moteur/devig.py:12",
+      "current_disposition": "EXPLICIT_CENTRAL_ADAPTER",
+      "implementation_id": "legacy_proportional"
+    },
+    {
+      "audit_call_sites": [
+        "scripts/run_shadow_pipeline.py"
+      ],
+      "audit_dynamic_path": "scheduled pre-match shadow prediction",
+      "audit_function": "normalized_market_probabilities",
+      "audit_invalid_input_policy": "None for missing lists or arithmetic mean <=1",
+      "audit_line_range": "42-66",
+      "audit_method": "AVERAGE_ODDS_THEN_PROPORTIONAL",
+      "audit_output_contract": "three-float tuple or None",
+      "audit_repo_path": "src/robin/operations/activation.py",
+      "audit_tests": [
+        "tests/jalon3/test_live_activation.py"
+      ],
+      "current_anchor": "src/robin/operations/activation.py:44",
+      "current_disposition": "EXPLICIT_CENTRAL_PROTOCOL",
+      "implementation_id": "operations_activation"
+    },
+    {
+      "audit_call_sites": [],
+      "audit_dynamic_path": "test-only; no non-test caller found",
+      "audit_function": "devig_1x2",
+      "audit_invalid_input_policy": "raise for nonfinite or odds<=1",
+      "audit_line_range": "23-37",
+      "audit_method": "PROPORTIONAL",
+      "audit_output_contract": "MatchProbabilities",
+      "audit_repo_path": "src/robin/deep_football/models.py",
+      "audit_tests": [
+        "tests/jalon11/test_models_statistics.py"
+      ],
+      "current_anchor": "src/robin/deep_football/models.py:24",
+      "current_disposition": "EXPLICIT_CENTRAL_ADAPTER",
+      "implementation_id": "deep_football"
+    },
+    {
+      "audit_call_sites": [
+        "src/robin/backtesting/v3.py:run_backtest"
+      ],
+      "audit_dynamic_path": "run_backtest",
+      "audit_function": "devig_probabilities",
+      "audit_invalid_input_policy": "missing or odds<=1 became None and remaining outcomes were renormalized",
+      "audit_line_range": "32-42",
+      "audit_method": "PARTIAL_MARKET_PROPORTIONAL",
+      "audit_output_contract": "list with available subset summing to one",
+      "audit_repo_path": "src/robin/backtesting/v3.py",
+      "audit_tests": [
+        "tests/jalon6/test_model_calibration_backtest.py"
+      ],
+      "current_anchor": "src/robin/backtesting/v3.py:76,132",
+      "current_disposition": "LOCAL_FORMULA_REMOVED_CENTRAL_DECISION",
+      "implementation_id": "backtesting_v3"
+    },
+    {
+      "audit_call_sites": [
+        "src/robin/historical/dataset_factory.py"
+      ],
+      "audit_dynamic_path": "historical API-team dataset builder",
+      "audit_function": "_devig",
+      "audit_invalid_input_policy": "missing or odds<=1 became None and available outcomes were renormalized",
+      "audit_line_range": "204-208",
+      "audit_method": "PARTIAL_MARKET_PROPORTIONAL",
+      "audit_output_contract": "tuple with optional outcomes",
+      "audit_repo_path": "src/robin/historical/dataset_factory.py",
+      "audit_tests": [
+        "tests/jalon6/test_dataset_and_player_features.py"
+      ],
+      "current_anchor": "src/robin/historical/dataset_factory.py:210,290",
+      "current_disposition": "LOCAL_FORMULA_REMOVED_CENTRAL_PROTOCOL",
+      "implementation_id": "historical_dataset_factory"
+    },
+    {
+      "audit_call_sites": [],
+      "audit_dynamic_path": "test-only static caller found",
+      "audit_function": "devig_market_odds",
+      "audit_invalid_input_policy": "all None for missing or odds<=1",
+      "audit_line_range": "868-875",
+      "audit_method": "PROPORTIONAL_COMPLETE_MARKET",
+      "audit_output_contract": "list or all None",
+      "audit_repo_path": "src/robin/historical/external_validation.py",
+      "audit_tests": [
+        "tests/jalon8/test_external_validation.py"
+      ],
+      "current_anchor": "src/robin/historical/external_validation.py:869",
+      "current_disposition": "EXPLICIT_CENTRAL_ADAPTER",
+      "implementation_id": "historical_external_validation"
+    },
+    {
+      "audit_call_sites": [
+        "src/robin/historical/critical_closure.py"
+      ],
+      "audit_dynamic_path": "historical market dataset builder",
+      "audit_function": "proportional_devig",
+      "audit_invalid_input_policy": "rejected missing or odds<=0 but admitted 0<odds<=1",
+      "audit_line_range": "485-494",
+      "audit_method": "PROPORTIONAL_COMPLETE_MARKET",
+      "audit_output_contract": "margin plus optional probabilities",
+      "audit_repo_path": "src/robin/historical/critical_closure.py",
+      "audit_tests": [
+        "tests/jalon9/test_critical_closure.py"
+      ],
+      "current_anchor": "src/robin/historical/critical_closure.py:491",
+      "current_disposition": "EXPLICIT_STRICT_CENTRAL_ADAPTER",
+      "implementation_id": "historical_critical_closure"
+    },
+    {
+      "audit_call_sites": [
+        "src/robin/historical/model_lab.py"
+      ],
+      "audit_dynamic_path": "market-devigged baseline model",
+      "audit_function": "_market_probabilities",
+      "audit_invalid_input_policy": "None for missing or odds<=1",
+      "audit_line_range": "603-615",
+      "audit_method": "PROPORTIONAL_COMPLETE_1X2",
+      "audit_output_contract": "three-float ndarray or None",
+      "audit_repo_path": "src/robin/historical/model_lab.py",
+      "audit_tests": [
+        "tests/jalon6/test_model_calibration_backtest.py"
+      ],
+      "current_anchor": "src/robin/historical/model_lab.py:610",
+      "current_disposition": "EXPLICIT_CENTRAL_PROTOCOL",
+      "implementation_id": "historical_model_lab"
+    },
+    {
+      "audit_call_sites": [],
+      "audit_dynamic_path": "test-only static caller found",
+      "audit_function": "market_probabilities",
+      "audit_invalid_input_policy": "no local validation",
+      "audit_line_range": "169-178",
+      "audit_method": "PROPORTIONAL_1X2",
+      "audit_output_contract": "MatchProbabilities or validation exception",
+      "audit_repo_path": "src/robin/modeling/reference.py",
+      "audit_tests": [
+        "tests/jalon2/test_migration_models.py"
+      ],
+      "current_anchor": "src/robin/modeling/reference.py:170",
+      "current_disposition": "EXPLICIT_CENTRAL_ADAPTER",
+      "implementation_id": "modeling_reference"
+    },
+    {
+      "audit_call_sites": [
+        "src/robin/prospective_observatory/prequential_factory.py"
+      ],
+      "audit_dynamic_path": "prequential reference forecast",
+      "audit_function": "devig_probabilities",
+      "audit_invalid_input_policy": "raise for wrong selection set or odds<=1",
+      "audit_line_range": "37-57",
+      "audit_method": "PROPORTIONAL_EXACT_SELECTION_SET",
+      "audit_output_contract": "probability mapping plus overround",
+      "audit_repo_path": "src/robin/prospective_observatory/prequential_factory.py",
+      "audit_tests": [
+        "tests/jalon14/test_prequential_factory.py"
+      ],
+      "current_anchor": "src/robin/prospective_observatory/prequential_factory.py:45",
+      "current_disposition": "EXPLICIT_PROPORTIONAL_ONLY_CENTRAL_ADAPTER",
+      "implementation_id": "prequential_factory"
+    },
+    {
+      "audit_call_sites": [
+        "Chronos materialization contract"
+      ],
+      "audit_dynamic_path": "Chronos CANARY point-in-time price derivation",
+      "audit_function": "derive_complete_book_markets",
+      "audit_invalid_input_policy": "drop incomplete, invalid, underround or overround>6% markets",
+      "audit_line_range": "556-630",
+      "audit_method": "PROPORTIONAL_COMPLETE_SAME_RECEIPT",
+      "audit_output_contract": "derived price rows or empty tuple",
+      "audit_repo_path": "src/robin/prospective_observatory/chronos.py",
+      "audit_tests": [
+        "tests/chronos/test_chronos_contracts_v1.py"
+      ],
+      "current_anchor": "src/robin/prospective_observatory/chronos.py:556-630",
+      "current_disposition": "FROZEN_SCOPED_DECIMAL_AUTHORITY_UNCHANGED",
+      "implementation_id": "chronos_complete_market"
+    },
+    {
+      "audit_call_sites": [
+        "scripts/run_historical_pipeline.py"
+      ],
+      "audit_dynamic_path": "historical scientific arena baseline",
+      "audit_function": "_market_prediction_rows",
+      "audit_invalid_input_policy": "skipped conversion/nonfinite but admitted some odds<=1",
+      "audit_line_range": "1460-1503",
+      "audit_method": "PROPORTIONAL_COMPLETE_1X2_INLINE",
+      "audit_output_contract": "prediction rows or skipped market",
+      "audit_repo_path": "scripts/run_historical_pipeline.py",
+      "audit_tests": [
+        "tests/jalon6/test_scientific_truth_kernel_v1.py"
+      ],
+      "current_anchor": "scripts/run_historical_pipeline.py:1471,1488",
+      "current_disposition": "INLINE_FORMULA_REMOVED_CENTRAL_PROTOCOL",
+      "implementation_id": "historical_pipeline_inline"
+    },
+    {
+      "audit_call_sites": [
+        "src/robin/backtesting/oos.py"
+      ],
+      "audit_dynamic_path": "OOS value strategies",
+      "audit_function": "evaluate_walk_forward inline normalization",
+      "audit_invalid_input_policy": "skip unless all three odds were present and >1",
+      "audit_line_range": "185-198",
+      "audit_method": "PROPORTIONAL_COMPLETE_1X2_INLINE",
+      "audit_output_contract": "local fair-probability list",
+      "audit_repo_path": "src/robin/backtesting/oos.py",
+      "audit_tests": [
+        "tests/jalon6/test_scientific_truth_kernel_v1.py"
+      ],
+      "current_anchor": "src/robin/backtesting/oos.py:174,250,297",
+      "current_disposition": "INLINE_FORMULA_REMOVED_CENTRAL_PROTOCOL",
+      "implementation_id": "backtesting_oos_inline"
+    },
+    {
+      "audit_call_sites": [
+        "scripts/run_shadow_pipeline.py"
+      ],
+      "audit_dynamic_path": "scheduled pre-match shadow decision",
+      "audit_function": "decide_shadow_bet",
+      "audit_invalid_input_policy": "truthiness only; negative admitted",
+      "audit_line_range": "54-118",
+      "audit_method": "RAW_IMPLIED_NOT_DEVIG",
+      "audit_output_contract": "single raw implied probability",
+      "audit_repo_path": "src/robin/shadow/decision.py",
+      "audit_tests": [
+        "tests/jalon2/test_decisions_pipeline_workflows.py"
+      ],
+      "current_anchor": "src/robin/shadow/decision.py:80,130",
+      "current_disposition": "COMPLETE_MARKET_CENTRAL_DECISION_WITH_EXECUTION_LINEAGE",
+      "implementation_id": "shadow_raw_implied_not_devig"
+    }
+  ],
+  "limitations": [
+    "The inventory preserves the 15 audited mechanisms; the new central kernel is a repair authority, not a sixteenth historical mechanism.",
+    "Chronos remains a separate Decimal implementation frozen to its exact CANARY scope."
+  ],
+  "loop54_source": {
+    "evidence_ids": [],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1",
+    "manifest_sha256": "f3907663f43fcd72078b6e36e0f40b276478e11e28c72fbfaed9e32af65c34df",
+    "repair_sha": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+    "status": "SEALED_EXTERNAL_EVIDENCE_PACK"
+  },
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "non_claims": [
+    "Inventory membership does not confer global authority.",
+    "The raw implied shadow mechanism was not de-vig and is retained to expose the historical decision basis."
+  ],
+  "post_audit_kernel": {
+    "historical_implementation_count_increment": 0,
+    "repo_path": "src/robin/market_math/devig.py",
+    "role": "EXPLICIT_VERSIONED_EXECUTION_AUTHORITY",
+    "supported_methods": [
+      "PROPORTIONAL",
+      "SHIN"
+    ]
+  },
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP54_REPORTS:E0003",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
+    "namespace": "LOOP54_REPORTS"
+  },
+  "report_id": "devig-implementation-inventory-v1",
+  "reproducibility": {
+    "command_evidence_ids": [
+      "LOOP54_REPORTS:E0003"
+    ],
+    "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
+    "input_hashes": [
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/devig-implementations.csv",
+        "sha256": "8a50263f82413775aeb823df0530ad749b2c6b15edd87fe0dbe0fd8614cae1ab"
+      },
+      {
+        "path": "src/robin/market_math/devig.py",
+        "sha256": "761ca00cf608816cf3499e552a578e5f1de6dabec52ec3658b23e2b44f8de62a"
+      }
+    ],
+    "seed": null
+  },
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "reviews": {
+    "data_temporal": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "scientific_statistical": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "security_red_team": "PENDING_INDEPENDENT_FINAL_REVIEW"
+  },
+  "schema_version": "robin-scientific-truth-report-v1",
+  "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+  "scope": "AUDITED_15_DEVIG_AND_RAW_IMPLIED_MECHANISMS",
+  "source_code_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "sources": [
+    {
+      "evidence_ids": [
+        "AUDIT:E1012",
+        "AUDIT:E1016"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/devig-implementations.csv",
+      "sha256": "8a50263f82413775aeb823df0530ad749b2c6b15edd87fe0dbe0fd8614cae1ab"
+    },
+    {
+      "evidence_ids": [
+        "LOOP54:E0026"
+      ],
+      "repo_or_evidence_path": "src/robin/market_math/devig.py",
+      "sha256": "761ca00cf608816cf3499e552a578e5f1de6dabec52ec3658b23e2b44f8de62a"
+    }
+  ],
+  "temporal_class": "STATIC_SOURCE_AT_AUDITED_AND_REPAIR_REVISIONS",
+  "verdicts": [
+    {
+      "evidence_ids": [
+        "AUDIT:E1012",
+        "AUDIT:E1016"
+      ],
+      "verdict": "DEVIG_IMPLEMENTATION_INVENTORY_15_PROVEN"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E1035",
+        "AUDIT:E1040"
+      ],
+      "verdict": "DEVIG_PROTOCOL_CONFLICT"
+    }
+  ],
+  "verified_by": []
+}

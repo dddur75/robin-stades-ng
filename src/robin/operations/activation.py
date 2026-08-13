@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 
+from robin.market_math import DevigInputError, DevigMethod, devig_probabilities
+
 WORKFLOW_SUCCESS_NO_DATA = "WORKFLOW_SUCCESS_NO_DATA"
 WORKFLOW_SUCCESS_LIVE_DATA = "WORKFLOW_SUCCESS_LIVE_DATA"
 WORKFLOW_PARTIAL = "WORKFLOW_PARTIAL"
@@ -43,6 +45,8 @@ def normalized_market_probabilities(
     home_prices: Sequence[float],
     draw_prices: Sequence[float],
     away_prices: Sequence[float],
+    *,
+    devig_method: DevigMethod | str,
 ) -> tuple[float, float, float] | None:
     """Calculer une baseline marché dé-viggée à partir de cotes réelles."""
 
@@ -55,15 +59,16 @@ def normalized_market_probabilities(
     )
     if any(price <= 1 for price in prices):
         return None
-    implied = tuple(1 / price for price in prices)
-    total = sum(implied)
-    if total <= 0:
+    try:
+        result = devig_probabilities(
+            prices,
+            method=devig_method,
+            outcome_labels=("HOME", "DRAW", "AWAY"),
+        )
+    except DevigInputError:
         return None
-    return (
-        implied[0] / total,
-        implied[1] / total,
-        implied[2] / total,
-    )
+    home, draw, away = result.fair_probabilities
+    return home, draw, away
 
 
 @dataclass(frozen=True)

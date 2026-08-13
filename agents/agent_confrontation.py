@@ -21,6 +21,7 @@ from agents.agent_backtest import charger_config, charger_derbys, vue_adverse
 from moteur.features import construire
 from moteur.devig import probas_justes
 from moteur.stats import wilson_ci
+from robin.market_math import kernel_versions
 
 BOOKS = ["pinnacle", "winamax_fr", "unibet_fr"]
 N_VERDICT = 150
@@ -70,7 +71,14 @@ def dernier_snapshot(rows):
     return src[src["snapshot_ts"] == src["snapshot_ts"].max()]
 
 
-def prix_pour(rows_evt, marche, ligne_cible, team_api=None):
+def prix_pour(
+    rows_evt,
+    marche,
+    ligne_cible,
+    team_api=None,
+    *,
+    devig_method,
+):
     """Retourne {book: (cote, juste, ligne, phase)} pour le sens Over/Yes/team-Over."""
     r = rows_evt[rows_evt["market"] == marche]
     if team_api is not None and "description" in r:
@@ -86,7 +94,14 @@ def prix_pour(rows_evt, marche, ligne_cible, team_api=None):
             oui = rb[rb["outcome"].str.lower() == "yes"]["price"]
             non = rb[rb["outcome"].str.lower() == "no"]["price"]
             if len(oui) and len(non):
-                p = probas_justes([float(oui.iloc[0]), float(non.iloc[0])])
+                p = probas_justes(
+                    [float(oui.iloc[0]), float(non.iloc[0])],
+                    methode=(
+                        "PROPORTIONAL"
+                        if str(devig_method).strip().upper() == "SHIN"
+                        else devig_method
+                    ),
+                )
                 out[book] = (float(oui.iloc[0]), float(p[0]) if p is not None else None,
                              None, rb["phase"].iloc[0])
             continue
@@ -100,7 +115,14 @@ def prix_pour(rows_evt, marche, ligne_cible, team_api=None):
         if len(over):
             juste = None
             if len(under):
-                p = probas_justes([float(over.iloc[0]), float(under.iloc[0])])
+                p = probas_justes(
+                    [float(over.iloc[0]), float(under.iloc[0])],
+                    methode=(
+                        "PROPORTIONAL"
+                        if str(devig_method).strip().upper() == "SHIN"
+                        else devig_method
+                    ),
+                )
                 juste = float(p[0]) if p is not None else None
             out[book] = (float(over.iloc[0]), juste, float(ligne), rl["phase"].iloc[0])
     return out
@@ -232,7 +254,13 @@ def main(data_dir="data", rapport_dir="rapports", maintenant=None):
                     team_api = None
                     if token_self:
                         team_api = ev["home_api"] if team_fd == ev["home_fd"] else ev["away_api"]
-                    prix = prix_pour(rows_evt, cand["marche_api"], cand["ligne_cible"], team_api)
+                    prix = prix_pour(
+                        rows_evt,
+                        cand["marche_api"],
+                        cand["ligne_cible"],
+                        team_api,
+                        devig_method="SHIN",
+                    )
                     pin = prix.get("pinnacle", (None, None, cand["ligne_cible"], None))
                     ligne = pin[2] if pin[2] is not None else next(
                         (v[2] for v in prix.values() if v[2] is not None), cand["ligne_cible"])
@@ -244,7 +272,8 @@ def main(data_dir="data", rapport_dir="rapports", maintenant=None):
                         prix_pinnacle=pin[0], juste_pinnacle=pin[1],
                         prix_winamax=prix.get("winamax_fr", (None,))[0],
                         prix_unibet=prix.get("unibet_fr", (None,))[0],
-                        emis_ts=now.isoformat(), regle=False, issue=None, gain_pin=None, gain_fr=None))
+                        emis_ts=now.isoformat(), regle=False, issue=None, gain_pin=None, gain_fr=None,
+                        **kernel_versions("PROPORTIONAL")))
                     deja.add(cle)
                     if not token_self:
                         break
@@ -287,7 +316,13 @@ def main(data_dir="data", rapport_dir="rapports", maintenant=None):
 
 def _rapport_vide(rapport_dir, message):
     with open(os.path.join(rapport_dir, "RAPPORT_CONFRONTATION.md"), "w", encoding="utf-8") as f:
-        f.write(f"# RAPPORT CONFRONTATION\n\n{message}\n")
+        metadata = kernel_versions("PROPORTIONAL")
+        f.write(
+            f"# RAPPORT CONFRONTATION\n\n"
+            f"Noyau: {metadata['scientific_kernel_version']} / "
+            f"de-vig {metadata['devig_method']} {metadata['devig_version']}\n\n"
+            f"{message}\n"
+        )
 
 
 def _rapport(rapport_dir, journal, evts, arch, candidats, non_apparies, now):
@@ -296,6 +331,12 @@ def _rapport(rapport_dir, journal, evts, arch, candidats, non_apparies, now):
          f"verdict par candidat a N regles >= {N_VERDICT}", "",
          f"Evenements archives apparies : {len(evts)} · signaux emis : {len(journal)} · "
          f"regles : {int(journal['regle'].sum()) if len(journal) else 0}", ""]
+    metadata = kernel_versions("PROPORTIONAL")
+    L.insert(
+        4,
+        f"Noyau : {metadata['scientific_kernel_version']} / "
+        f"de-vig {metadata['devig_method']} {metadata['devig_version']}",
+    )
     if len(journal):
         fut = journal[pd.to_datetime(journal["commence"], utc=True) > now].sort_values("commence")
         if len(fut):

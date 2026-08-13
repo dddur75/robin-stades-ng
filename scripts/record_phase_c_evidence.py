@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from copy import deepcopy
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -526,6 +527,7 @@ def main() -> None:
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
     if not isinstance(graph, dict):
         raise TypeError("EVIDENCE_GRAPH_OBJECT_REQUIRED")
+    original_graph = deepcopy(graph)
     existing_generated_at = graph.get("generated_at")
     if not isinstance(existing_generated_at, str):
         raise TypeError("EVIDENCE_GRAPH_GENERATED_AT_REQUIRED")
@@ -535,7 +537,7 @@ def main() -> None:
         or _canonical_hash(historical_edges) != HISTORICAL_EDGES_CANONICAL_SHA256
     ):
         raise RuntimeError("PHASE_C_HISTORICAL_EDGE_PREFIX_MISMATCH")
-    ledger_bytes = LEDGER.read_bytes()
+    ledger_bytes = LEDGER.read_bytes().replace(b"\r\n", b"\n")
     if (
         len(ledger_bytes) < HISTORICAL_LEDGER_PREFIX_BYTES
         or hashlib.sha256(
@@ -821,6 +823,8 @@ def main() -> None:
     graph["decision_nodes"] = preserved_nodes
     graph["edges"] = historical_edges + expected_tail_edges + extension_edges
     graph["generated_at"] = existing_generated_at if extension_edges else GENERATED_AT
+    if graph == original_graph:
+        return
     GRAPH.write_text(_compact_json(graph) + "\n", encoding="utf-8", newline="\n")
 
 

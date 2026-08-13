@@ -8,11 +8,14 @@ import argparse, os, sys, json
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+REPOSITORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPOSITORY_ROOT)
+sys.path.insert(0, os.path.join(REPOSITORY_ROOT, "src"))
 from moteur.features import construire
 from moteur.marches import issues, prix_et_probas, TOKENS
 from moteur.stats import wilson_ci, z_vs_probas, p_value_bilaterale, benjamini_hochberg, roi_flat
 from agents.vague1_spec import VAGUE1
+from robin.market_math import kernel_versions
 import yaml
 
 ETAGE2_PRIX = {"WIN_SELF", "WIN_ADV", "O25", "U25"}
@@ -68,12 +71,15 @@ def vue_adverse(feats, atomes):
     return feats.merge(adv, on=["match_id", "side"], how="left")
 
 
-def calcul_issues_et_prix(feats):
+def calcul_issues_et_prix(feats, *, devig_method):
     iss = pd.DataFrame([issues(r) for r in feats[["gf", "ga", "ht_gf", "ht_ga", "cartons_tot"]].to_dict("records")],
                        index=feats.index)
     cols_prix = ["side", "psch", "pscd", "psca", "psh", "psd", "psa",
                  "pc_o25", "pc_u25", "p_o25", "p_u25"]
-    prix = [prix_et_probas(r) for r in feats.reindex(columns=cols_prix).to_dict("records")]
+    prix = [
+        prix_et_probas(r, devig_method=devig_method)
+        for r in feats.reindex(columns=cols_prix).to_dict("records")
+    ]
     nouvelles = {}
     for tok in ETAGE2_PRIX | ETAGE2_FAIR:
         nouvelles["cote__" + tok] = [p.get(tok, (None, None, None))[0] for p in prix]
@@ -194,7 +200,15 @@ def verdicts(res, q_fdr):
             return "N_TROP_FAIBLE"
         if not r["fdr"]:
             return "BRUIT"
-        if r["etage"] == "2" and r["delta"] > 0 and r["n"] >= N_MIN_VERDICT and r["saisons_pos"] >= max(2, int(np.ceil(2 * r["saisons_tot"] / 3))):
+        if (
+            r["etage"] == "2"
+            and r["delta"] > 0
+            and pd.notna(r.get("roi_lo"))
+            and float(r["roi_lo"]) > 0.0
+            and r["n"] >= N_MIN_VERDICT
+            and r["saisons_pos"]
+            >= max(2, int(np.ceil(2 * r["saisons_tot"] / 3)))
+        ):
             return "CANDIDAT_VALIDE_E2"
         if r["n"] >= N_MIN_VERDICT:
             return "SIGNAL_" + ("E2" if r["etage"] != "1" else "E1")
@@ -210,6 +224,11 @@ def rapport_markdown(res, chemin, meta, famille="VAGUE1"):
               f"saisons {meta['saisons']} · holdout exclu : {meta['holdout']} ({meta['n_holdout_exclus']} matchs scelles)",
               f"**Protocole** : FDR Benjamini-Hochberg q={meta['q_fdr']} sur {meta['n_tests']} tests · "
               f"N min rapport {N_MIN_RAPPORT} · N min verdict {N_MIN_VERDICT} · xG : {'oui' if meta['xg'] else 'non (Tier A seul)'}",
+              "",
+              f"**Noyau scientifique** : {meta['scientific_kernel_version']} / "
+              f"de-vig {meta['devig_method']} {meta['devig_version']} / "
+              f"ROI {meta['roi_definition_version']}",
+              f"**Protocoles par marche** : {meta['market_devig_protocols']}",
               "",
               "> AUCUN PARI REEL. Etage 2 = juge par la cloture Pinnacle de-viggee (ROI a mise plate).",
               "> Etage 2* = proba juste derivee du 1X2, prix du marche non archive (pas de ROI).",
@@ -258,15 +277,29 @@ def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
     xg_dispo = feats.attrs.get("xg_dispo", False)
     atomes = [c for c in feats.columns if c.isupper()]
     feats = vue_adverse(feats, atomes)
-    feats = calcul_issues_et_prix(feats)
+    feats = calcul_issues_et_prix(feats, devig_method="SHIN")
     bases = taux_de_base(feats)
     res = evaluer(feats, bases, xg_dispo)
     n_tests = int((res["n"] >= N_MIN_RAPPORT).sum())
     res = verdicts(res, q_fdr)
+    scientific_metadata = kernel_versions("SHIN")
+    market_devig_protocols = {
+        "1X2": kernel_versions("SHIN"),
+        "OVER_UNDER_2_5": kernel_versions("PROPORTIONAL"),
+    }
+    for field, value in scientific_metadata.items():
+        res[field] = value
+    res["devig_scope"] = "1X2"
+    totals_mask = res["marche"].isin({"O25", "U25"})
+    for field, value in kernel_versions("PROPORTIONAL").items():
+        res.loc[totals_mask, field] = value
+    res.loc[totals_mask, "devig_scope"] = "OVER_UNDER_2_5"
     meta = dict(n_matchs=len(matchs), n_ligues=matchs["league"].nunique(),
                 saisons=f"{matchs['season'].min()} → {matchs['season'].max()}",
                 holdout=sorted(holdout), n_holdout_exclus=n_exclus,
-                q_fdr=q_fdr, n_tests=n_tests, xg=xg_dispo)
+                q_fdr=q_fdr, n_tests=n_tests, xg=xg_dispo,
+                market_devig_protocols=market_devig_protocols,
+                **scientific_metadata)
     os.makedirs(rapport_dir, exist_ok=True)
     res.to_csv(os.path.join(rapport_dir, f"resultats_{famille.lower()}.csv"), index=False)
     rapport_markdown(res, os.path.join(rapport_dir, f"RAPPORT_{famille}.md"), meta, famille)

@@ -237,6 +237,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "GOVERNANCE",
         "PR26",
         "CHRONOS_LOOP53",
+        "SCIENTIFIC_TRUTH_KERNEL",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -315,12 +316,66 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "GOVERNANCE",
         "PR26",
         "CHRONOS_LOOP53",
+        "SCIENTIFIC_TRUTH_KERNEL",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
     ]
     assert schema["$defs"]["fact"]["additionalProperties"] is False
     assert schema["$defs"]["risk"]["additionalProperties"] is False
+
+
+def test_scientific_truth_kernel_authority_is_offline_bounded_and_exact() -> None:
+    matrix = load_json("configs/agents/mission-activation-matrix-v3.json")
+    manifest = load_json("configs/execution/scientific-truth-kernel-v1.json")
+    assert set(manifest) == {
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "external_effects",
+        "compute_budget",
+        "time_budget",
+        "source_hash",
+        "expires_at",
+    }
+    assert manifest["mission_id"] == "SCIENTIFIC_TRUTH_KERNEL"
+    assert manifest["authorized_stages"] == ["E1"]
+    assert manifest["maximum_stage"] == "E1"
+    assert manifest["compute_budget"] == 2000
+    assert manifest["time_budget"] == 172800
+    assert manifest["external_effects"] == [
+        "git_remote_write_non_force",
+        "github_pull_request_write",
+        "github_merge_commit",
+        "github_actions_observe",
+    ]
+    assert manifest["source_hash"] == (
+        "bba610364cff4cb0e3b3af6fa35463fb5cbb503a6581b1a0b3a6c5758490ba71"
+    )
+    mission = matrix["missions"]["SCIENTIFIC_TRUTH_KERNEL"]
+    assert mission["scale_ceiling"] == manifest["maximum_stage"]
+    assert mission["writer"] == "C0"
+    assert mission["agents"] == ["C0", "C1", "C2", "C4", "DP6", "RP8", "RP9", "A1"]
+    allowed_paths = mission["allowed_paths"]
+    assert len(allowed_paths) == len(set(allowed_paths)) == 68
+    assert hashlib.sha256(
+        json.dumps(
+            allowed_paths,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest() == "939e255aacb69b576eb990310781daf2522a10c633ef4b4a5f6db7836e5aab72"
+    assert mission["delivery_keys"] == {
+        "data": ["DP6", "C2"],
+        "science": ["C2", "RP8", "RP9", "A1"],
+        "security": ["C4", "C1"],
+    }
+    assert "NEON_API_CALLS_0" in matrix["authorization"][
+        "scientific_truth_kernel_effect_budget"
+    ]
+    assert "FORBID_FORCE_PUSH" in matrix["authorization"][
+        "scientific_truth_kernel_delivery"
+    ]
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:
@@ -454,7 +509,7 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     committed_scope = committed_changed_paths(
         ROOT,
         "6140e09cb38b5fecee5da85882aa8a879dbce780",
-        "HEAD",
+        "1ffeec1cd89e83deda008da39bb22540a70db896",
     )
     assert committed_scope == exact_loop53_paths
 
@@ -837,9 +892,70 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
         "status"
     ] == "SUPERSEDED"
     for claim_id in ci_isolation_push_gate_claim_ids - {
-        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001"
+        "GOV.CHRONOS.NEON.CONTROLLED.WORKFLOW.LOOP53.001",
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.008",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.016",
     }:
         assert claims[claim_id]["status"] == "PARTIAL"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.008"]["status"] == (
+        "SUPERSEDED"
+    )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.008"]["superseded_by"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.009"
+    )
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.016"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.016"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.009"]["status"] == "SUPERSEDED"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.009"]["superseded_by"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.010"
+    )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.010"]["status"] == (
+        "SUPERSEDED"
+    )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.010"]["successor_of"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.009"
+    )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.010"]["superseded_by"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.011"
+    )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.011"]["status"] == "PARTIAL"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.011"]["successor_of"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.010"
+    )
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"][
+        "successor_of"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"][
+        "status"
+    ] == "SUPERSEDED"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"][
+        "successor_of"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.018"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"][
+        "status"
+    ] == "PARTIAL"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"][
+        "successor_of"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"
     snapshot = ROOT / "configs/data/p0-coverage-authority-matrix-snapshot-v1.json"
     assert artifact_sha256(snapshot) == (
         "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"
@@ -2149,9 +2265,15 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
         assert hashlib.sha256(canonical).hexdigest() == record["hash"]
         previous_hash = record["hash"]
 
-    precommit = [record for record in records if record["record_type"] == "PRE_COMMIT"]
-    assert precommit
-    context = precommit[-1]["context"]
+    commit_context_records = [
+        record
+        for record in records
+        if record["record_type"] in {"DECISION", "STAGE_FINISHED"}
+        and isinstance(record.get("context"), dict)
+        and record["context"].get("commit_context") is True
+    ]
+    assert commit_context_records
+    context = commit_context_records[-1]["context"]
     assert context is not None
     assert {
         "worktree",

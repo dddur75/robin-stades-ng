@@ -1,0 +1,15 @@
+{
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "authorized_stages": ["E1"],
+  "maximum_stage": "E1",
+  "external_effects": [
+    "git_remote_write_non_force",
+    "github_pull_request_write",
+    "github_merge_commit",
+    "github_actions_observe"
+  ],
+  "compute_budget": 2000,
+  "time_budget": 172800,
+  "source_hash": "bba610364cff4cb0e3b3af6fa35463fb5cbb503a6581b1a0b3a6c5758490ba71",
+  "expires_at": "2026-08-15T23:59:59Z"
+}

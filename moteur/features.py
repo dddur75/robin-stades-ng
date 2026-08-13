@@ -8,7 +8,6 @@ STRICTEMENT anterieurs. Verifie par tests/test_moteur.py::test_anti_lookahead.
 import numpy as np
 import pandas as pd
 from .classement import passe_enjeu
-from .devig import probas_justes
 
 
 # ---------- helpers series ----------

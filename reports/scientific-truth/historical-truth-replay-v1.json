@@ -1,0 +1,3097 @@
+{
+  "as_of": "2026-08-13T15:38:28Z",
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E0025",
+      "AUDIT:E1040",
+      "AUDIT:E1044",
+      "AUDIT:E2013",
+      "AUDIT:E3046"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authority": {
+    "basis": "PROTOCOL_SCOPE_NOT_HISTORICAL_PERFORMANCE",
+    "chronos_scoped_authority": {
+      "global_authority": false,
+      "method": "PROPORTIONAL_COMPLETE_MARKET_V1",
+      "scope": "CANARY_POINT_IN_TIME_COMPLETE_SAME_RECEIPT_ONLY",
+      "status": "UNIQUE"
+    },
+    "global_devig_authority": "CONFLICTING",
+    "global_selected_method": null,
+    "roi_used_for_authority": false
+  },
+  "claim_id": "REPLAY.SCIENTIFIC.HISTORICAL.TRUTH.V1.001",
+  "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "3baebe6789fff897bb105180f2f4d5e48a1a4c8765d1029ced37674640bed934",
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014": 0,
+    "neon_api_calls": 0,
+    "network_calls": 0,
+    "odds_provider_calls": 0,
+    "production_connections": 0,
+    "production_postgresql_connections": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "generated_at": "2026-08-13T15:38:28Z",
+  "generator": {
+    "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
+    "hash_representation": "GIT_CANONICAL_LF",
+    "repo_path": "scripts/build_scientific_truth_reports_v1.py",
+    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
+  },
+  "grain": "ONE_LOGICAL_RESULT_WITH_THREE_PHYSICAL_OCCURRENCES",
+  "hash_policy": {
+    "audited_windows_checkout_hashes_preserved_separately": true,
+    "external_evidence_pack_files": "SHA256_RAW_BYTES",
+    "tracked_repository_text": "SHA256_GIT_CANONICAL_LF_BYTES"
+  },
+  "historical_verdict": "HISTORICAL_DECISION_AND_DEVIG_REPLAY_STILL_REQUIRED",
+  "immutable_audit_base_revision": "1ffeec1cd89e83deda008da39bb22540a70db896",
+  "limitations": [
+    "Branches C, D1 and D2 cannot be reconstructed because the 15 published summaries omit per-bet odds, selections and method identity.",
+    "Branch B is a formula replay from stored profit and declared FIXED 1u bet count, not a decision replay.",
+    "The temporal census is reused from the immutable audited revision and is not a new certification of the repair revision."
+  ],
+  "loop54_source": {
+    "evidence_ids": [],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1",
+    "manifest_sha256": "f3907663f43fcd72078b6e36e0f40b276478e11e28c72fbfaed9e32af65c34df",
+    "repair_sha": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+    "status": "SEALED_EXTERNAL_EVIDENCE_PACK"
+  },
+  "mission_id": "SCIENTIFIC_TRUTH_KERNEL",
+  "multiplicity": {
+    "atomic_tests": 300,
+    "clean_independent_holdout": "NON VÉRIFIÉ",
+    "eligible_pairs": 3590,
+    "evidence_ids": [
+      "AUDIT:E3046"
+    ],
+    "historical_status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING",
+    "live_observations": 0,
+    "machine_discoveries": 3,
+    "machine_q_values": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pair_tests": 7180,
+    "promotion": false,
+    "prospective_status": "PROSPECTIVE_FROZEN",
+    "survivors": 0,
+    "tests": 7480,
+    "triple_search_locked": true
+  },
+  "non_claims": [
+    "No repaired result is scientifically validated, profitable, promotable or point-in-time valid.",
+    "Physical copies are not counted as independent experiments.",
+    "No new hypothesis or survivor was generated."
+  ],
+  "oos_devig_sensitivity": {
+    "bet_no_bet_divergent_markets": 51,
+    "eligible_complete_markets": 1563,
+    "evidence_ids": [
+      "AUDIT:E1040"
+    ],
+    "full_decision_divergent_markets": 75,
+    "status": "REUSED_AUDIT_REPLAY_NOT_METHOD_AUTHORITY"
+  },
+  "replay_type": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP54_REPORTS:E0003",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
+    "namespace": "LOOP54_REPORTS"
+  },
+  "report_id": "historical-truth-replay-v1",
+  "reproducibility": {
+    "command_evidence_ids": [
+      "LOOP54_REPORTS:E0003"
+    ],
+    "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
+    "input_hashes": [
+      {
+        "path": "cockpit/app/cockpit-data.json",
+        "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
+      },
+      {
+        "path": "cockpit/app/cockpit-expert-data.json",
+        "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/backtest-v3-historical-roi-replay.csv",
+        "sha256": "4d5af21bd19e1f5850bf4fa043b22abe5899e97ea0101b52e1c73d6c695c942c"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/hypothesis-search-space.csv",
+        "sha256": "882021641f80359d732533419567b1da4dc9cd722dc491097bdb9eac673dfb63"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/hypothesis-selection-history.csv",
+        "sha256": "9433cad0313c298b5b987fcaa4396ad38e13b881839c078139c47c3b26628f9a"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/historical-survivor-replay.csv",
+        "sha256": "a6aa6b29c95eaa8b3dfd62326b3e754d5a222a4e3162e8550cf83f79d1aca920"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/dataset-lineage.csv",
+        "sha256": "a7497c74dd2c32ffa91997cf8dcfb882b2e64d046e5c0375246dd866122c985b"
+      },
+      {
+        "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/time-fields.csv",
+        "sha256": "8c09e249b937ae62ea374be87bcb0ece9c2d8f41ae0d22077c35be9e5b14e3a8"
+      }
+    ],
+    "seed": null
+  },
+  "results": [
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 382,
+        "new_profit_units": 0.07000000000000162,
+        "new_roi": 0.00018324607329843354,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 382.0,
+        "new_yield": 0.00018324607329843354,
+        "old_bets": 382,
+        "old_profit_units": 0.07000000000000162,
+        "old_roi": 0.00013942278965084872,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": 0.00018324607329843354
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": 0.07000000000000162,
+          "roi": 0.00013942278965084872,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": 0.00018324607329843354
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": 0.07000000000000162,
+          "roi": 0.00018324607329843354,
+          "selection_ids_hash": null,
+          "turnover_units": 382.0,
+          "yield": 0.00018324607329843354
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-001-d1e66e146000",
+      "original": {
+        "bets": 382,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": 0.07000000000000162,
+        "promotion": "NO_PROMOTION",
+        "roi": 0.00013942278965084872,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": 0.00018324607329843354
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 1,
+        "stored_roi_rank": 1
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 382,
+        "corrected_roi": 0.00018324607329843354,
+        "corrected_yield": 0.00018324607329843354,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": 0.07000000000000162,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": 0.00013942278965084872,
+        "stored_yield": 0.00018324607329843354,
+        "strategy": "api_elo_v1_1x2_edge_0.02",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 382.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "c37f8b75f460d13ff66c063337fabd7149869c6b8ddcfcac35436b5f3c38b514",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/0",
+          "occurrence_id": "V3-FIXED-001-d1e66e146000-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "f12ae594dadc8becd7a4c277cdf94ed069aec8d9c7fcff7621f32cd2a4e63707"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-001-d1e66e146000-O1",
+          "json_pointer": "/deepData/strategies/0",
+          "occurrence_id": "V3-FIXED-001-d1e66e146000-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "dc80aa01b1056bd35ba034329a7363d5c6ce86b78885cd7d1baff88efbf2e398"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-001-d1e66e146000-O1",
+          "json_pointer": "/backtests/0",
+          "occurrence_id": "V3-FIXED-001-d1e66e146000-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "f12ae594dadc8becd7a4c277cdf94ed069aec8d9c7fcff7621f32cd2a4e63707"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 382,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": 0.07000000000000162,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": 0.00013942278965084872,
+        "stored_yield": 0.00018324607329843354,
+        "strategy": "api_elo_v1_1x2_edge_0.02"
+      },
+      "source_projection_sha256": "d1e66e146000529135a8ef612fe29ab9889dcc86a4025ece4541a13a17fdee24",
+      "strategy": "api_elo_v1_1x2_edge_0.02",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 342,
+        "new_profit_units": -9.389999999999999,
+        "new_roi": -0.02745614035087719,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 342.0,
+        "new_yield": -0.02745614035087719,
+        "old_bets": 342,
+        "old_profit_units": -9.389999999999999,
+        "old_roi": -0.02093132119212679,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.02745614035087719
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -9.389999999999999,
+          "roi": -0.02093132119212679,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.02745614035087719
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -9.389999999999999,
+          "roi": -0.02745614035087719,
+          "selection_ids_hash": null,
+          "turnover_units": 342.0,
+          "yield": -0.02745614035087719
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-002-7c7f1cb755cd",
+      "original": {
+        "bets": 342,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -9.389999999999999,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.02093132119212679,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.02745614035087719
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 4,
+        "stored_roi_rank": 4
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 342,
+        "corrected_roi": -0.02745614035087719,
+        "corrected_yield": -0.02745614035087719,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -9.389999999999999,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.02093132119212679,
+        "stored_yield": -0.02745614035087719,
+        "strategy": "api_elo_v1_1x2_edge_0.04",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 342.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "f697f49bbea81b404c749b188b8f8b9ea6455e55f007cf9a410005555c17f642",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/1",
+          "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "bc8170a3e13ab36bdcc340d4e205855a01a359f20fe79ffbf84ee07f3857d65c"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-002-7c7f1cb755cd-O1",
+          "json_pointer": "/deepData/strategies/1",
+          "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "08b20477bd6a1726f26f4c261c2ff9036e5af91a97e13420f107643a3360af30"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-002-7c7f1cb755cd-O1",
+          "json_pointer": "/backtests/1",
+          "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "bc8170a3e13ab36bdcc340d4e205855a01a359f20fe79ffbf84ee07f3857d65c"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 342,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -9.389999999999999,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.02093132119212679,
+        "stored_yield": -0.02745614035087719,
+        "strategy": "api_elo_v1_1x2_edge_0.04"
+      },
+      "source_projection_sha256": "7c7f1cb755cd13e8ca3541de24da0115dee09fc20644b5586dc17deb311a0a35",
+      "strategy": "api_elo_v1_1x2_edge_0.04",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 260,
+        "new_profit_units": -5.249999999999998,
+        "new_roi": -0.020192307692307686,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 260.0,
+        "new_yield": -0.020192307692307686,
+        "old_bets": 260,
+        "old_profit_units": -5.249999999999998,
+        "old_roi": -0.01505376344086021,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.020192307692307686
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -5.249999999999998,
+          "roi": -0.01505376344086021,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.020192307692307686
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -5.249999999999998,
+          "roi": -0.020192307692307686,
+          "selection_ids_hash": null,
+          "turnover_units": 260.0,
+          "yield": -0.020192307692307686
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-003-094aa0013251",
+      "original": {
+        "bets": 260,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -5.249999999999998,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.01505376344086021,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.020192307692307686
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 3,
+        "stored_roi_rank": 3
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 260,
+        "corrected_roi": -0.020192307692307686,
+        "corrected_yield": -0.020192307692307686,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -5.249999999999998,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.01505376344086021,
+        "stored_yield": -0.020192307692307686,
+        "strategy": "api_elo_v1_1x2_edge_0.06",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 260.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "2ec5a35803c8909501c613192b22feef3283b576fa86db20aa60eb162c3ee426",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/2",
+          "occurrence_id": "V3-FIXED-003-094aa0013251-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "bad98dc1ce77c1652806b6b749ef46a6ceb954d78064e1a667f6117d933273cf"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-003-094aa0013251-O1",
+          "json_pointer": "/deepData/strategies/2",
+          "occurrence_id": "V3-FIXED-003-094aa0013251-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "7850a620842fc07e04f599d38f869e85ce78642a350a2fe27a8c56f3e1aac07a"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-003-094aa0013251-O1",
+          "json_pointer": "/backtests/2",
+          "occurrence_id": "V3-FIXED-003-094aa0013251-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "bad98dc1ce77c1652806b6b749ef46a6ceb954d78064e1a667f6117d933273cf"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 260,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -5.249999999999998,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.01505376344086021,
+        "stored_yield": -0.020192307692307686,
+        "strategy": "api_elo_v1_1x2_edge_0.06"
+      },
+      "source_projection_sha256": "094aa0013251c9e38ee09a3cb4f7dfcf0ea53cd6b8dbe5c9db87cb1816c906ba",
+      "strategy": "api_elo_v1_1x2_edge_0.06",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 396,
+        "new_profit_units": -36.33,
+        "new_roi": -0.09174242424242424,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 396.0,
+        "new_yield": -0.09174242424242424,
+        "old_bets": 396,
+        "old_profit_units": -36.33,
+        "old_roi": -0.06514605411802679,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.09174242424242424
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -36.33,
+          "roi": -0.06514605411802679,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.09174242424242424
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -36.33,
+          "roi": -0.09174242424242424,
+          "selection_ids_hash": null,
+          "turnover_units": 396.0,
+          "yield": -0.09174242424242424
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-004-7fd167d6d3fc",
+      "original": {
+        "bets": 396,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -36.33,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.06514605411802679,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.09174242424242424
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 9,
+        "stored_roi_rank": 9
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 396,
+        "corrected_roi": -0.09174242424242424,
+        "corrected_yield": -0.09174242424242424,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -36.33,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.06514605411802679,
+        "stored_yield": -0.09174242424242424,
+        "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.02",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 396.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "d796c014a98d77359bb04cb9adc23b99435bd3218dc8608bcc83a6c463c1b843",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/3",
+          "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "bb716be3eb29e5bda539fcca0e964bf2c6ee78983c04db13d6c3af999fc19092"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-004-7fd167d6d3fc-O1",
+          "json_pointer": "/deepData/strategies/3",
+          "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "c70f28c73e91779a9da3df7c13bf5e279e379176bdc3c356dce1309c99a42bf4"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-004-7fd167d6d3fc-O1",
+          "json_pointer": "/backtests/3",
+          "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "bb716be3eb29e5bda539fcca0e964bf2c6ee78983c04db13d6c3af999fc19092"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 396,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -36.33,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.06514605411802679,
+        "stored_yield": -0.09174242424242424,
+        "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.02"
+      },
+      "source_projection_sha256": "7fd167d6d3fc9cfe35ea2f980dfe0a6541a0383cb5c82a6b4de21ac0502a997e",
+      "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.02",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 361,
+        "new_profit_units": -46.77,
+        "new_roi": -0.12955678670360113,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 361.0,
+        "new_yield": -0.12955678670360113,
+        "old_bets": 361,
+        "old_profit_units": -46.77,
+        "old_roi": -0.09184454961412329,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.12955678670360113
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -46.77,
+          "roi": -0.09184454961412329,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.12955678670360113
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -46.77,
+          "roi": -0.12955678670360113,
+          "selection_ids_hash": null,
+          "turnover_units": 361.0,
+          "yield": -0.12955678670360113
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-005-2262f787be9a",
+      "original": {
+        "bets": 361,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -46.77,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.09184454961412329,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.12955678670360113
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 12,
+        "stored_roi_rank": 12
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 361,
+        "corrected_roi": -0.12955678670360113,
+        "corrected_yield": -0.12955678670360113,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -46.77,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.09184454961412329,
+        "stored_yield": -0.12955678670360113,
+        "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.04",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 361.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "5f285c80204987290059605090d6c6fd5b7ff95c2efa01f506cebae8c20c11b4",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/4",
+          "occurrence_id": "V3-FIXED-005-2262f787be9a-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "b94d9d88e7be492144a335de42990e84670167c11ec3b35635eb50ead35cb417"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-005-2262f787be9a-O1",
+          "json_pointer": "/deepData/strategies/4",
+          "occurrence_id": "V3-FIXED-005-2262f787be9a-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "cfe410ca1f21962349d2f165333aee2713e0984b2eaaad690a5ba5f4e2184eb6"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-005-2262f787be9a-O1",
+          "json_pointer": "/backtests/4",
+          "occurrence_id": "V3-FIXED-005-2262f787be9a-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "b94d9d88e7be492144a335de42990e84670167c11ec3b35635eb50ead35cb417"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 361,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -46.77,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.09184454961412329,
+        "stored_yield": -0.12955678670360113,
+        "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.04"
+      },
+      "source_projection_sha256": "2262f787be9a7c609d13dd658829ffb1216f87b16f62f974cc7bc795ba6c64f8",
+      "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.04",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 307,
+        "new_profit_units": -29.95,
+        "new_roi": -0.097557003257329,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 307.0,
+        "new_yield": -0.097557003257329,
+        "old_bets": 307,
+        "old_profit_units": -29.95,
+        "old_roi": -0.06775251668363307,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.097557003257329
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -29.95,
+          "roi": -0.06775251668363307,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.097557003257329
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -29.95,
+          "roi": -0.097557003257329,
+          "selection_ids_hash": null,
+          "turnover_units": 307.0,
+          "yield": -0.097557003257329
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-006-f19ca44559bf",
+      "original": {
+        "bets": 307,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -29.95,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.06775251668363307,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.097557003257329
+      },
+      "ranking": {
+        "changed": true,
+        "repaired_roi_rank": 11,
+        "stored_roi_rank": 10
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 307,
+        "corrected_roi": -0.097557003257329,
+        "corrected_yield": -0.097557003257329,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -29.95,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.06775251668363307,
+        "stored_yield": -0.097557003257329,
+        "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.06",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 307.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "e3a1e305a63c3cae77bc7186e7cb093adabd8f4733d7506e47b190dc274aeee1",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/5",
+          "occurrence_id": "V3-FIXED-006-f19ca44559bf-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "2dfd642d94553db0b7f8c2709cfcc37368c7726963617b709f2265ffe9942966"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-006-f19ca44559bf-O1",
+          "json_pointer": "/deepData/strategies/5",
+          "occurrence_id": "V3-FIXED-006-f19ca44559bf-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "e6b64c0272bd6c6c266565a04f9bfe25ecd15ac960494228a6a9cb49cdacbb1a"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-006-f19ca44559bf-O1",
+          "json_pointer": "/backtests/5",
+          "occurrence_id": "V3-FIXED-006-f19ca44559bf-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "2dfd642d94553db0b7f8c2709cfcc37368c7726963617b709f2265ffe9942966"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 307,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -29.95,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.06775251668363307,
+        "stored_yield": -0.097557003257329,
+        "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.06"
+      },
+      "source_projection_sha256": "f19ca44559bf02be41865c6afe7b44445dcc83ec6e9b08809b3cd156f9c9e830",
+      "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.06",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 388,
+        "new_profit_units": -54.33,
+        "new_roi": -0.14002577319587628,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 388.0,
+        "new_yield": -0.14002577319587628,
+        "old_bets": 388,
+        "old_profit_units": -54.33,
+        "old_roi": -0.10296207857183468,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.14002577319587628
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -54.33,
+          "roi": -0.10296207857183468,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.14002577319587628
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -54.33,
+          "roi": -0.14002577319587628,
+          "selection_ids_hash": null,
+          "turnover_units": 388.0,
+          "yield": -0.14002577319587628
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-007-a210cac06ff3",
+      "original": {
+        "bets": 388,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -54.33,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.10296207857183468,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.14002577319587628
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 13,
+        "stored_roi_rank": 13
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 388,
+        "corrected_roi": -0.14002577319587628,
+        "corrected_yield": -0.14002577319587628,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -54.33,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.10296207857183468,
+        "stored_yield": -0.14002577319587628,
+        "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.02",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 388.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "5a629d440edc4ec251891eb80e9698c7b77f5c7e0c8a491f37f5e3724f3f0d6d",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/6",
+          "occurrence_id": "V3-FIXED-007-a210cac06ff3-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "ac5944febfa8541dd9f90a77ba60bc47c358dcb065f8735ca317240d011d8169"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-007-a210cac06ff3-O1",
+          "json_pointer": "/deepData/strategies/6",
+          "occurrence_id": "V3-FIXED-007-a210cac06ff3-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "5a6e7665c02b2bfd5d2a6a44b5329f943c0cd6b66afdf8cc75b894ac702195ae"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-007-a210cac06ff3-O1",
+          "json_pointer": "/backtests/6",
+          "occurrence_id": "V3-FIXED-007-a210cac06ff3-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "ac5944febfa8541dd9f90a77ba60bc47c358dcb065f8735ca317240d011d8169"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 388,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -54.33,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.10296207857183468,
+        "stored_yield": -0.14002577319587628,
+        "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.02"
+      },
+      "source_projection_sha256": "a210cac06ff35379871105aeb5ddcb6e5fdd0ed73349096b0336bcb79590644e",
+      "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.02",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 353,
+        "new_profit_units": -64.15,
+        "new_roi": -0.18172804532577905,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 353.0,
+        "new_yield": -0.18172804532577905,
+        "old_bets": 353,
+        "old_profit_units": -64.15,
+        "old_roi": -0.13595422274027763,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.18172804532577905
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -64.15,
+          "roi": -0.13595422274027763,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.18172804532577905
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -64.15,
+          "roi": -0.18172804532577905,
+          "selection_ids_hash": null,
+          "turnover_units": 353.0,
+          "yield": -0.18172804532577905
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-008-ca192767e0ea",
+      "original": {
+        "bets": 353,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -64.15,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.13595422274027763,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.18172804532577905
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 15,
+        "stored_roi_rank": 15
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 353,
+        "corrected_roi": -0.18172804532577905,
+        "corrected_yield": -0.18172804532577905,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -64.15,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.13595422274027763,
+        "stored_yield": -0.18172804532577905,
+        "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.04",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 353.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "fca00625495e26e821f27a74a4b0fea5c4701c688e0e892d64385e481c4eb0fe",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/7",
+          "occurrence_id": "V3-FIXED-008-ca192767e0ea-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "9ab71562d1649e8174ca94f2364c8bb55e1e7516840f752fa781f450960b0c50"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-008-ca192767e0ea-O1",
+          "json_pointer": "/deepData/strategies/7",
+          "occurrence_id": "V3-FIXED-008-ca192767e0ea-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "df759928507ec6c3261710b4c7bbde537285e564a1bece26e18bcbee5f7d4508"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-008-ca192767e0ea-O1",
+          "json_pointer": "/backtests/7",
+          "occurrence_id": "V3-FIXED-008-ca192767e0ea-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "9ab71562d1649e8174ca94f2364c8bb55e1e7516840f752fa781f450960b0c50"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 353,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -64.15,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.13595422274027763,
+        "stored_yield": -0.18172804532577905,
+        "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.04"
+      },
+      "source_projection_sha256": "ca192767e0eadfd226928fe13f270b3c566ffba0c14ef1faf38578380350403f",
+      "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.04",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 304,
+        "new_profit_units": -48.38,
+        "new_roi": -0.15914473684210528,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 304.0,
+        "new_yield": -0.15914473684210528,
+        "old_bets": 304,
+        "old_profit_units": -48.38,
+        "old_roi": -0.11753559107915068,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.15914473684210528
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -48.38,
+          "roi": -0.11753559107915068,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.15914473684210528
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -48.38,
+          "roi": -0.15914473684210528,
+          "selection_ids_hash": null,
+          "turnover_units": 304.0,
+          "yield": -0.15914473684210528
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-009-6f61ab231d03",
+      "original": {
+        "bets": 304,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -48.38,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.11753559107915068,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.15914473684210528
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 14,
+        "stored_roi_rank": 14
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 304,
+        "corrected_roi": -0.15914473684210528,
+        "corrected_yield": -0.15914473684210528,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -48.38,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.11753559107915068,
+        "stored_yield": -0.15914473684210528,
+        "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.06",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 304.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "03947fba314c84e6b58e4eeab406c6092c515a3b8f1a3299cbfb9a1422eda2d5",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/8",
+          "occurrence_id": "V3-FIXED-009-6f61ab231d03-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "cb8197c8d50a147363609e32634ac5889808ba44b7324a8ad0a899cf0d4dd71f"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-009-6f61ab231d03-O1",
+          "json_pointer": "/deepData/strategies/8",
+          "occurrence_id": "V3-FIXED-009-6f61ab231d03-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "b444afbddd06cd5b04b08c04c54e1bfe3f22fd84eec6f60effe31c7b2944185d"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-009-6f61ab231d03-O1",
+          "json_pointer": "/backtests/8",
+          "occurrence_id": "V3-FIXED-009-6f61ab231d03-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "cb8197c8d50a147363609e32634ac5889808ba44b7324a8ad0a899cf0d4dd71f"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 304,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -48.38,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.11753559107915068,
+        "stored_yield": -0.15914473684210528,
+        "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.06"
+      },
+      "source_projection_sha256": "6f61ab231d0398a4c6978d91f2ca3297de461880ed99d66023dc9798c1b07492",
+      "strategy": "api_post_lineup_simulated_multinomial_v1_1x2_edge_0.06",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 393,
+        "new_profit_units": -17.92,
+        "new_roi": -0.04559796437659033,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 393.0,
+        "new_yield": -0.04559796437659033,
+        "old_bets": 393,
+        "old_profit_units": -17.92,
+        "old_roi": -0.0349945321043587,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.04559796437659033
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -17.92,
+          "roi": -0.0349945321043587,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.04559796437659033
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -17.92,
+          "roi": -0.04559796437659033,
+          "selection_ids_hash": null,
+          "turnover_units": 393.0,
+          "yield": -0.04559796437659033
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-010-093409ee0a82",
+      "original": {
+        "bets": 393,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -17.92,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.0349945321043587,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.04559796437659033
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 6,
+        "stored_roi_rank": 6
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 393,
+        "corrected_roi": -0.04559796437659033,
+        "corrected_yield": -0.04559796437659033,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -17.92,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.0349945321043587,
+        "stored_yield": -0.04559796437659033,
+        "strategy": "api_team_multinomial_v1_1x2_edge_0.02",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 393.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "e4eef31828554015a4b621fd1b3d57e0292310ae640b17b3d9dd2ddfb74b6736",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/9",
+          "occurrence_id": "V3-FIXED-010-093409ee0a82-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "dcd696887503cf92eb8c3cf9283ea33e59fb43f94ba9e9973360b822daf5226b"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-010-093409ee0a82-O1",
+          "json_pointer": "/deepData/strategies/9",
+          "occurrence_id": "V3-FIXED-010-093409ee0a82-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "1b659b397c7ee8a5cee748f133808f0a95bb4aea8e8ef0be5622cef785c895e8"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-010-093409ee0a82-O1",
+          "json_pointer": "/backtests/9",
+          "occurrence_id": "V3-FIXED-010-093409ee0a82-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "dcd696887503cf92eb8c3cf9283ea33e59fb43f94ba9e9973360b822daf5226b"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 393,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -17.92,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.0349945321043587,
+        "stored_yield": -0.04559796437659033,
+        "strategy": "api_team_multinomial_v1_1x2_edge_0.02"
+      },
+      "source_projection_sha256": "093409ee0a8287c6a770c50b9c3300d107f26c7d27445e311d6c76f27a5a30f3",
+      "strategy": "api_team_multinomial_v1_1x2_edge_0.02",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 338,
+        "new_profit_units": -6.02,
+        "new_roi": -0.017810650887573963,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 338.0,
+        "new_yield": -0.017810650887573963,
+        "old_bets": 338,
+        "old_profit_units": -6.02,
+        "old_roi": -0.013378372372105426,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.017810650887573963
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -6.02,
+          "roi": -0.013378372372105426,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.017810650887573963
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -6.02,
+          "roi": -0.017810650887573963,
+          "selection_ids_hash": null,
+          "turnover_units": 338.0,
+          "yield": -0.017810650887573963
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-011-e043aacf5662",
+      "original": {
+        "bets": 338,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -6.02,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.013378372372105426,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.017810650887573963
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 2,
+        "stored_roi_rank": 2
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 338,
+        "corrected_roi": -0.017810650887573963,
+        "corrected_yield": -0.017810650887573963,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -6.02,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.013378372372105426,
+        "stored_yield": -0.017810650887573963,
+        "strategy": "api_team_multinomial_v1_1x2_edge_0.04",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 338.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "713f29cc140448c0c8743482e69043ca5eaa5ab47cec2b48d8d6a2eeda80ee7f",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/10",
+          "occurrence_id": "V3-FIXED-011-e043aacf5662-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "3acc8442df76300caa8247f6e625a70ee171d138de91771d591b3c239e65317f"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-011-e043aacf5662-O1",
+          "json_pointer": "/deepData/strategies/10",
+          "occurrence_id": "V3-FIXED-011-e043aacf5662-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "c77f15552435183d681de3da09c3cf1d456d5e8c78471840c78889f3270431cf"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-011-e043aacf5662-O1",
+          "json_pointer": "/backtests/10",
+          "occurrence_id": "V3-FIXED-011-e043aacf5662-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "3acc8442df76300caa8247f6e625a70ee171d138de91771d591b3c239e65317f"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 338,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -6.02,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.013378372372105426,
+        "stored_yield": -0.017810650887573963,
+        "strategy": "api_team_multinomial_v1_1x2_edge_0.04"
+      },
+      "source_projection_sha256": "e043aacf5662001e5f594aa9087e967f48c9159e75956fbde778665ee7bd9b39",
+      "strategy": "api_team_multinomial_v1_1x2_edge_0.04",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 271,
+        "new_profit_units": -10.489999999999998,
+        "new_roi": -0.038708487084870846,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 271.0,
+        "new_yield": -0.038708487084870846,
+        "old_bets": 271,
+        "old_profit_units": -10.489999999999998,
+        "old_roi": -0.029017177948051226,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.038708487084870846
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -10.489999999999998,
+          "roi": -0.029017177948051226,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.038708487084870846
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -10.489999999999998,
+          "roi": -0.038708487084870846,
+          "selection_ids_hash": null,
+          "turnover_units": 271.0,
+          "yield": -0.038708487084870846
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-012-927eae85f4fe",
+      "original": {
+        "bets": 271,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -10.489999999999998,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.029017177948051226,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.038708487084870846
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 5,
+        "stored_roi_rank": 5
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 271,
+        "corrected_roi": -0.038708487084870846,
+        "corrected_yield": -0.038708487084870846,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -10.489999999999998,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.029017177948051226,
+        "stored_yield": -0.038708487084870846,
+        "strategy": "api_team_multinomial_v1_1x2_edge_0.06",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 271.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "c09bccdb1110b6feba900b8f0eb8c0a461cb7477561a2ddb896172a2d97f7827",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/11",
+          "occurrence_id": "V3-FIXED-012-927eae85f4fe-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "63b8377fdafaf80252a755e109750ed9e2db78d947624538d6064e9ebb9bfcc7"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-012-927eae85f4fe-O1",
+          "json_pointer": "/deepData/strategies/11",
+          "occurrence_id": "V3-FIXED-012-927eae85f4fe-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "1964e3dff0d95100f9e8d23a584d8f4504205ea048ddbd1485dffbcd2c847cca"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-012-927eae85f4fe-O1",
+          "json_pointer": "/backtests/11",
+          "occurrence_id": "V3-FIXED-012-927eae85f4fe-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "63b8377fdafaf80252a755e109750ed9e2db78d947624538d6064e9ebb9bfcc7"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 271,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -10.489999999999998,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.029017177948051226,
+        "stored_yield": -0.038708487084870846,
+        "strategy": "api_team_multinomial_v1_1x2_edge_0.06"
+      },
+      "source_projection_sha256": "927eae85f4fea589c4f0565dcfd67140f6a3be10f56404d0bac63930ee53db77",
+      "strategy": "api_team_multinomial_v1_1x2_edge_0.06",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 339,
+        "new_profit_units": -31.66,
+        "new_roi": -0.09339233038348083,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 339.0,
+        "new_yield": -0.09339233038348083,
+        "old_bets": 339,
+        "old_profit_units": -31.66,
+        "old_roi": -0.0794798413415675,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.09339233038348083
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -31.66,
+          "roi": -0.0794798413415675,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.09339233038348083
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -31.66,
+          "roi": -0.09339233038348083,
+          "selection_ids_hash": null,
+          "turnover_units": 339.0,
+          "yield": -0.09339233038348083
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-013-c17f3f47f6a4",
+      "original": {
+        "bets": 339,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -31.66,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.0794798413415675,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.09339233038348083
+      },
+      "ranking": {
+        "changed": true,
+        "repaired_roi_rank": 10,
+        "stored_roi_rank": 11
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 339,
+        "corrected_roi": -0.09339233038348083,
+        "corrected_yield": -0.09339233038348083,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -31.66,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.0794798413415675,
+        "stored_yield": -0.09339233038348083,
+        "strategy": "market_devigged_baseline_v1_1x2_edge_0.02",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 339.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "6f65c2de03c7b679ac0479a455c96b042b5b1b37c53bbfdeb85cabbc7dd5f7c1",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/12",
+          "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "af74b8b5a383ff1390e6ea26a1fa82544eb0001408e96bac3f99e225a7d24f72"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-013-c17f3f47f6a4-O1",
+          "json_pointer": "/deepData/strategies/14",
+          "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "abd889e001ba13d7782976a48b80ca2f67527ca329115168c2634e91f344d93c"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-013-c17f3f47f6a4-O1",
+          "json_pointer": "/backtests/12",
+          "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "af74b8b5a383ff1390e6ea26a1fa82544eb0001408e96bac3f99e225a7d24f72"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 339,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -31.66,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.0794798413415675,
+        "stored_yield": -0.09339233038348083,
+        "strategy": "market_devigged_baseline_v1_1x2_edge_0.02"
+      },
+      "source_projection_sha256": "c17f3f47f6a4d8697eb48d7b9a128380c404df94a009f66026490e5912af84b2",
+      "strategy": "market_devigged_baseline_v1_1x2_edge_0.02",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 261,
+        "new_profit_units": -12.43,
+        "new_roi": -0.04762452107279693,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 261.0,
+        "new_yield": -0.04762452107279693,
+        "old_bets": 261,
+        "old_profit_units": -12.43,
+        "old_roi": -0.04121762774811818,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.04762452107279693
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -12.43,
+          "roi": -0.04121762774811818,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.04762452107279693
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -12.43,
+          "roi": -0.04762452107279693,
+          "selection_ids_hash": null,
+          "turnover_units": 261.0,
+          "yield": -0.04762452107279693
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-014-05e9e473ad8a",
+      "original": {
+        "bets": 261,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -12.43,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.04121762774811818,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.04762452107279693
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 7,
+        "stored_roi_rank": 7
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 261,
+        "corrected_roi": -0.04762452107279693,
+        "corrected_yield": -0.04762452107279693,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -12.43,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.04121762774811818,
+        "stored_yield": -0.04762452107279693,
+        "strategy": "market_devigged_baseline_v1_1x2_edge_0.04",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 261.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "e724acbce2efcb245798bb0b4b1dd0f36a4f3fed6d9a2bd7a0e5546373219f7c",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/13",
+          "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "653c4ce1251e55dce11a834dc700279cd550819dbf3669268840bf530ae1812f"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-014-05e9e473ad8a-O1",
+          "json_pointer": "/deepData/strategies/15",
+          "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "3ed3749d7ea99afb5787f117a9568c5db16e0588f6c814c0cc5b03481444f1b6"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-014-05e9e473ad8a-O1",
+          "json_pointer": "/backtests/13",
+          "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "653c4ce1251e55dce11a834dc700279cd550819dbf3669268840bf530ae1812f"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 261,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -12.43,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.04121762774811818,
+        "stored_yield": -0.04762452107279693,
+        "strategy": "market_devigged_baseline_v1_1x2_edge_0.04"
+      },
+      "source_projection_sha256": "05e9e473ad8a72eb154c7c901f6f73148cdb552e8ebd0e099c526cdc2683a95c",
+      "strategy": "market_devigged_baseline_v1_1x2_edge_0.04",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "attribution": {
+        "classification": "METRIC_ONLY_CHANGE_FOR_SUMMARY_ONLY",
+        "decision_changes": "NON VÉRIFIÉ",
+        "new_bets": 200,
+        "new_profit_units": -11.569999999999999,
+        "new_roi": -0.05784999999999999,
+        "new_selections": "NOT_REPLAYED",
+        "new_turnover_units": 200.0,
+        "new_yield": -0.05784999999999999,
+        "old_bets": 200,
+        "old_profit_units": -11.569999999999999,
+        "old_roi": -0.05345839301390749,
+        "old_selections": "NOT_PUBLISHED",
+        "old_turnover_units": null,
+        "old_yield": -0.05784999999999999
+      },
+      "branches": {
+        "A": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025"
+          ],
+          "evidence_status": "PROUVÉ",
+          "label": "STORED_ARTIFACT_REPRODUCTION_ONLY",
+          "method": "UNKNOWN",
+          "profit_units": -11.569999999999999,
+          "roi": -0.05345839301390749,
+          "selection_ids_hash": null,
+          "turnover_units": null,
+          "yield": -0.05784999999999999
+        },
+        "B": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E0025",
+            "AUDIT:E2008"
+          ],
+          "evidence_status": "PROBABLE",
+          "label": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
+          "method": "UNKNOWN",
+          "profit_units": -11.569999999999999,
+          "roi": -0.05784999999999999,
+          "selection_ids_hash": null,
+          "turnover_units": 200.0,
+          "yield": -0.05784999999999999
+        },
+        "C": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "ALTERNATE_DEVIG_OLD_ROI",
+          "method": "ALTERNATE_EXPLICIT_METHOD",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D1": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_PROPORTIONAL",
+          "method": "PROPORTIONAL",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        },
+        "D2": {
+          "bet_ids_hash": null,
+          "evidence_ids": [
+            "AUDIT:E1040"
+          ],
+          "evidence_status": "NON VÉRIFIÉ",
+          "label": "CORRECT_ROI_PLUS_SHIN",
+          "method": "SHIN",
+          "metrics": null,
+          "reason": "PER_BET_ODDS_AND_DECISIONS_NOT_PUBLISHED",
+          "selection_ids_hash": null
+        }
+      },
+      "calculation_basis": "SUMMARY_FIXED_1U_INFERENCE",
+      "evidence_ids": [
+        "AUDIT:E0025",
+        "AUDIT:E2008"
+      ],
+      "evidence_status": "PROBABLE",
+      "logical_result_id": "V3-FIXED-015-c48b860927d1",
+      "original": {
+        "bets": 200,
+        "devig_method": "UNKNOWN",
+        "devig_version": "UNKNOWN",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -11.569999999999999,
+        "promotion": "NO_PROMOTION",
+        "roi": -0.05345839301390749,
+        "scientific_identity_status": "LEGACY_UNVERSIONED_NOT_CANONICAL",
+        "scientific_kernel_version": null,
+        "status": "INCONCLUSIVE",
+        "turnover_units": null,
+        "yield": -0.05784999999999999
+      },
+      "ranking": {
+        "changed": false,
+        "repaired_roi_rank": 8,
+        "stored_roi_rank": 8
+      },
+      "repair_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 200,
+        "corrected_roi": -0.05784999999999999,
+        "corrected_yield": -0.05784999999999999,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -11.569999999999999,
+        "promotion": "NO_PROMOTION",
+        "repair_status": "INVALIDATE_STORED_ROI_PRESERVE_PROFIT_VOLUME_SIGN_AND_LOCK",
+        "roi_definition_version": "profit_over_actual_turnover_v1",
+        "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.05345839301390749,
+        "stored_yield": -0.05784999999999999,
+        "strategy": "market_devigged_baseline_v1_1x2_edge_0.06",
+        "turnover_definition_version": "sum_of_accepted_stakes_v1",
+        "turnover_units": 200.0,
+        "yield_definition_version": "profit_over_turnover_v1"
+      },
+      "repair_projection_sha256": "ddcfa11a86672fb735c511280fc98399d55f4f2748eabc0ade503da9a38ee09a",
+      "source_occurrences": [
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "json_pointer": "/deepData/backtests/14",
+          "occurrence_id": "V3-FIXED-015-c48b860927d1-O1",
+          "relation": "PRIMARY_SOURCE_OCCURRENCE",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "f65994a25abb1b96a5008520fbc31819edf1cda8a725ed882e0ae3d213e66e2a"
+        },
+        {
+          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "copy_of": "V3-FIXED-015-c48b860927d1-O1",
+          "json_pointer": "/deepData/strategies/16",
+          "occurrence_id": "V3-FIXED-015-c48b860927d1-O2",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_object_sha256": "82c9d9ba0ca3a9c33d7e59f5009924022f3df925f363a23ee06f615efa1d53a9"
+        },
+        {
+          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "copy_of": "V3-FIXED-015-c48b860927d1-O1",
+          "json_pointer": "/backtests/14",
+          "occurrence_id": "V3-FIXED-015-c48b860927d1-O3",
+          "relation": "COPY_OF",
+          "repo_path": "cockpit/app/cockpit-expert-data.json",
+          "source_artifact_hash_representation": "GIT_CANONICAL_LF",
+          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_object_sha256": "f65994a25abb1b96a5008520fbc31819edf1cda8a725ed882e0ae3d213e66e2a"
+        }
+      ],
+      "source_projection": {
+        "backtest_version": "api_football_backtest_v3",
+        "bets": 200,
+        "market": "1X2",
+        "production_status": "PRODUCTION_LOCKED",
+        "profit_units": -11.569999999999999,
+        "promotion": "NO_PROMOTION",
+        "segment": "BLIND_OOS",
+        "staking": "FIXED",
+        "status": "INCONCLUSIVE",
+        "stored_roi": -0.05345839301390749,
+        "stored_yield": -0.05784999999999999,
+        "strategy": "market_devigged_baseline_v1_1x2_edge_0.06"
+      },
+      "source_projection_sha256": "c48b860927d1bccc91199c1fbcddbc19aa85118082f069baa94c2f298ef77326",
+      "strategy": "market_devigged_baseline_v1_1x2_edge_0.06",
+      "temporal_validity": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    }
+  ],
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "reviews": {
+    "data_temporal": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "scientific_statistical": "PENDING_INDEPENDENT_FINAL_REVIEW",
+    "security_red_team": "PENDING_INDEPENDENT_FINAL_REVIEW"
+  },
+  "schema_version": "robin-scientific-truth-report-v1",
+  "scientific_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1",
+  "scope": "15_LOGICAL_V3_FIXED_SUMMARIES_AND_45_TRACKED_OCCURRENCES",
+  "source_code_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
+  "source_inventory": {
+    "copies": 30,
+    "logical_results": 15,
+    "physical_occurrences": 45,
+    "primary_source_occurrences": 15,
+    "stored_roi_mismatches": 45,
+    "stored_yield_matches_repaired_fixed_1u_roi": 45
+  },
+  "sources": [
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "cockpit/app/cockpit-data.json",
+      "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "cockpit/app/cockpit-expert-data.json",
+      "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/backtest-v3-historical-roi-replay.csv",
+      "sha256": "4d5af21bd19e1f5850bf4fa043b22abe5899e97ea0101b52e1c73d6c695c942c"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E3046"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/hypothesis-search-space.csv",
+      "sha256": "882021641f80359d732533419567b1da4dc9cd722dc491097bdb9eac673dfb63"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E3046"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/hypothesis-selection-history.csv",
+      "sha256": "9433cad0313c298b5b987fcaa4396ad38e13b881839c078139c47c3b26628f9a"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E3046"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/historical-survivor-replay.csv",
+      "sha256": "a6aa6b29c95eaa8b3dfd62326b3e754d5a222a4e3162e8550cf83f79d1aca920"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/dataset-lineage.csv",
+      "sha256": "a7497c74dd2c32ffa91997cf8dcfb882b2e64d046e5c0375246dd866122c985b"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "repo_or_evidence_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/time-fields.csv",
+      "sha256": "8c09e249b937ae62ea374be87bcb0ece9c2d8f41ae0d22077c35be9e5b14e3a8"
+    }
+  ],
+  "summary": {
+    "decision_replayed_logical_results": 0,
+    "devig_replayed_logical_results": 0,
+    "formula_replayed_logical_results": 15,
+    "formula_replayed_physical_occurrences": 45,
+    "historical_status_changes": 0,
+    "maximum_absolute_roi_change": 0.04577382258550142,
+    "median_absolute_roi_change": 0.010603432272231636,
+    "metric_only_summary_changes": 15,
+    "portfolio_changes_proven": 0,
+    "profit_sign_changes": 0,
+    "promotion_changes": 0,
+    "rank_changes": [
+      {
+        "changed": true,
+        "logical_result_id": "V3-FIXED-006-f19ca44559bf",
+        "repaired_roi_rank": 11,
+        "stored_roi_rank": 10,
+        "strategy": "api_player_pre_lineup_multinomial_v1_1x2_edge_0.06"
+      },
+      {
+        "changed": true,
+        "logical_result_id": "V3-FIXED-013-c17f3f47f6a4",
+        "repaired_roi_rank": 10,
+        "stored_roi_rank": 11,
+        "strategy": "market_devigged_baseline_v1_1x2_edge_0.02"
+      }
+    ]
+  },
+  "synthetic_devig_sensitivity": {
+    "bet_no_bet_divergence_rate": 0.1011,
+    "evidence_ids": [
+      "AUDIT:E1044"
+    ],
+    "full_decision_divergence_rate": 0.2146,
+    "markets": 20000,
+    "seed": 20260813,
+    "status": "SENSITIVITY_ONLY_NOT_METHOD_AUTHORITY"
+  },
+  "temporal": {
+    "absent": 8,
+    "canonical_timestamp_fields": 720,
+    "evidence_ids": [
+      "AUDIT:E2013"
+    ],
+    "external_unobserved": 37,
+    "file_materialized": 27,
+    "proven_surfaces": 0,
+    "surfaces": 72,
+    "verdict": "TEMPORAL_VALIDITY_NOT_PROVEN"
+  },
+  "temporal_class": "HISTORICAL_AGGREGATE_TEMPORAL_VALIDITY_NOT_PROVEN",
+  "verdicts": [
+    {
+      "evidence_ids": [
+        "AUDIT:E0025"
+      ],
+      "verdict": "ROBIN_HISTORICAL_FORMULA_REPAIR_VERSIONED_PARTIAL"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E1040"
+      ],
+      "verdict": "HISTORICAL_DECISION_AND_DEVIG_REPLAY_STILL_REQUIRED"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "verdict": "TEMPORAL_VALIDITY_NOT_PROVEN"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E3046"
+      ],
+      "verdict": "MULTIPLE_TESTING_REMAINS_FAIL_CLOSED"
+    }
+  ],
+  "verified_by": []
+}

@@ -105,6 +105,7 @@ def _factory_records() -> tuple[
     factory = PrequentialLearningFactory(
         artifact_repository=repository,
         models=models,
+        devig_method="PROPORTIONAL",
     )
     values: dict[str, object] = {
         family: None for family in FEATURE_FAMILIES
@@ -226,6 +227,101 @@ def test_sql_repository_is_idempotent_and_replay_is_identical(
     assert first.provider_calls == 0
     assert first.predictions == first.settlements == 1
     assert first.ledger_events == len(factory.ledger.events)
+
+
+def test_legacy_prediction_hash_restores_without_mutation_or_conflict(
+    tmp_path: Path,
+) -> None:
+    engine, _ = _upgrade(tmp_path)
+    _seed_fixture(engine)
+    sql = PrequentialSQLRepository(engine)
+    factory, snapshot, prediction, _ = _factory_records()
+    for model in factory.models.values():
+        sql.append_model(model)
+    sql.append_snapshot(snapshot)
+    table = sa.Table(
+        "prequential_predictions",
+        sa.MetaData(),
+        autoload_with=engine,
+    )
+    model_table = sa.Table(
+        "prequential_model_versions",
+        sa.MetaData(),
+        autoload_with=engine,
+    )
+    with engine.begin() as connection:
+        model_row_id = connection.scalar(
+            sa.select(model_table.c.id).where(
+                model_table.c.model_id == prediction.model_id,
+                model_table.c.model_version == prediction.model_version,
+            )
+        )
+        connection.execute(
+            table.insert().values(
+                id=prediction.prediction_id,
+                prediction_id=prediction.prediction_id,
+                fixture_record_id=prediction.fixture_record_id,
+                fixture_id=prediction.fixture_id,
+                competition=prediction.competition,
+                market=prediction.market.value,
+                cutoff_name=prediction.cutoff_name.value,
+                cutoff_at=prediction.cutoff_at,
+                kickoff_at=prediction.kickoff_at,
+                predicted_at=prediction.predicted_at,
+                model_version_id=model_row_id,
+                model_id=prediction.model_id,
+                model_version=prediction.model_version,
+                feature_snapshot_id=prediction.feature_snapshot_id,
+                probabilities=prediction.probabilities,
+                market_probabilities=prediction.market_probabilities,
+                odds_snapshot_id=prediction.odds_snapshot_id,
+                code_revision=prediction.code_revision,
+                payload_hash=prediction.legacy_payload_hash,
+                status=prediction.status.value,
+                rejection_reason=prediction.rejection_reason,
+                append_only=True,
+            )
+        )
+    assert sql.append_prediction(prediction) is False
+    with engine.connect() as connection:
+        assert connection.scalar(
+            sa.select(table.c.payload_hash).where(
+                table.c.id == prediction.prediction_id
+            )
+        ) == prediction.legacy_payload_hash
+    loaded = sql.load_predictions()[0]
+    assert loaded.legacy_payload_hash == prediction.legacy_payload_hash
+    assert loaded.payload_hash == prediction.legacy_payload_hash
+    assert loaded.computed_payload_hash == prediction.payload_hash
+    assert loaded.scientific_lineage_status == "SCIENTIFIC_LINEAGE_NOT_PERSISTED"
+    assert loaded.as_dict()["payload_hash"] == prediction.legacy_payload_hash
+
+
+def test_prediction_loader_rejects_unknown_persisted_hash(tmp_path: Path) -> None:
+    engine, _ = _upgrade(tmp_path)
+    _seed_fixture(engine)
+    sql = PrequentialSQLRepository(engine)
+    factory, snapshot, prediction, _ = _factory_records()
+    for model in factory.models.values():
+        sql.append_model(model)
+    sql.append_snapshot(snapshot)
+    assert sql.append_prediction(prediction) is True
+    table = sa.Table(
+        "prequential_predictions",
+        sa.MetaData(),
+        autoload_with=engine,
+    )
+    with engine.begin() as connection:
+        connection.exec_driver_sql(
+            "DROP TRIGGER trg_prequential_predictions_append_only_update"
+        )
+        connection.execute(
+            table.update()
+            .where(table.c.id == prediction.prediction_id)
+            .values(payload_hash="f" * 64)
+        )
+    with pytest.raises(ValueError, match="PREQUENTIAL_PERSISTED_PAYLOAD_HASH_INVALID"):
+        sql.load_predictions()
 
 
 def test_database_guards_reject_update_and_delete(tmp_path: Path) -> None:

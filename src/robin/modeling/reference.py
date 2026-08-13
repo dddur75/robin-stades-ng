@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from robin.domain.enums import QualityStatus
 from robin.domain.temporal import require_utc
+from robin.market_math import DevigMethod, devig_probabilities
 
 
 class MatchProbabilities(BaseModel):
@@ -166,13 +167,22 @@ def estimate_expected_goals(
     )
 
 
-def market_probabilities(home: float, draw: float, away: float) -> MatchProbabilities:
-    inverses = [1.0 / home, 1.0 / draw, 1.0 / away]
-    total = sum(inverses)
+def market_probabilities(
+    home: float,
+    draw: float,
+    away: float,
+    *,
+    devig_method: DevigMethod | str,
+) -> MatchProbabilities:
+    fair = devig_probabilities(
+        (home, draw, away),
+        method=devig_method,
+        outcome_labels=("HOME", "DRAW", "AWAY"),
+    ).fair_probabilities
     return MatchProbabilities(
-        home=inverses[0] / total,
-        draw=inverses[1] / total,
-        away=inverses[2] / total,
+        home=fair[0],
+        draw=fair[1],
+        away=fair[2],
         expected_home_goals=0.0,
         expected_away_goals=0.0,
     )

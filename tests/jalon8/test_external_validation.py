@@ -273,10 +273,17 @@ def test_paired_comparison_exposes_uncertainty() -> None:
 
 
 def test_market_devig_never_invents_missing_prices() -> None:
-    assert devig_market_odds([2.0, 3.0, 4.0]) == pytest.approx(
+    assert devig_market_odds(
+        [2.0, 3.0, 4.0],
+        devig_method="PROPORTIONAL",
+    ) == pytest.approx(
         [0.4615384615, 0.3076923077, 0.2307692308]
     )
-    assert devig_market_odds([2.0, None, 4.0]) == [None, None, None]
+    with pytest.raises(ValueError, match="DEVIG_ODDS_MISSING"):
+        devig_market_odds(
+            [2.0, None, 4.0],
+            devig_method="PROPORTIONAL",
+        )
 
 
 def test_profit_concentration_blocks_single_league_or_match() -> None:

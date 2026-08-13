@@ -319,7 +319,15 @@ def rank_hypotheses(
     records: tuple[HypothesisRecord, ...],
 ) -> tuple[Ranking, ...]:
     eligible = tuple(item for item in records if item.historical_roi is not None)
-    roi = _rank(eligible, lambda item: item.historical_roi or -1e9, reverse=True)
+    roi = _rank(
+        eligible,
+        lambda item: (
+            item.historical_roi
+            if item.historical_roi is not None
+            else -1e9
+        ),
+        reverse=True,
+    )
     support = _rank(eligible, lambda item: item.historical_support, reverse=True)
     uncertainty = _rank(
         eligible,
@@ -337,7 +345,11 @@ def rank_hypotheses(
     )
     drawdown = _rank(
         eligible,
-        lambda item: item.historical_drawdown or 1e9,
+        lambda item: (
+            item.historical_drawdown
+            if item.historical_drawdown is not None
+            else 1e9
+        ),
         reverse=False,
     )
     stability = _rank(
@@ -358,7 +370,12 @@ def rank_hypotheses(
             if item.team_concentration and item.team_concentration.get("passed") is not True
             else 0.0
         )
-        q_penalty = 1.0 if (item.historical_q_value or 1.0) > 0.05 else 0.0
+        q_value = (
+            item.historical_q_value
+            if item.historical_q_value is not None
+            else 1.0
+        )
+        q_penalty = 1.0 if q_value > 0.05 else 0.0
         complexity_penalty = min(len(item.conditions) / 4, 1.0)
 
         def normalized(rank: int) -> float:

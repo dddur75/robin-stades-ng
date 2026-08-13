@@ -26,8 +26,9 @@ def test_decision_candidate_reste_strictement_simulee() -> None:
         fixture_id="f1",
         market_key="1X2",
         selection="HOME",
-        odds_decimal=2.2,
+        market_odds={"HOME": 2.2, "DRAW": 3.5, "AWAY": 3.8},
         model_probability=0.52,
+        devig_method="PROPORTIONAL",
         strategy_version="value-1",
         quality_ok=True,
     )
@@ -40,13 +41,16 @@ def test_decision_candidate_reste_strictement_simulee() -> None:
 @pytest.mark.parametrize(
     ("arguments", "reason"),
     [
-        ({"odds_decimal": None}, RejectionCode.MISSING_ODDS),
+        ({"market_odds": None}, RejectionCode.MISSING_ODDS),
         ({"quality_ok": False}, RejectionCode.QUALITY_BLOCKED),
         ({"stale": True}, RejectionCode.STALE_DATA),
         ({"model_disagreement": True}, RejectionCode.MODEL_DISAGREEMENT),
         ({"exposure_ok": False}, RejectionCode.EXPOSURE_LIMIT),
         (
-            {"odds_decimal": 1.5, "model_probability": 0.5},
+            {
+                "market_odds": {"HOME": 1.5, "DRAW": 4.0, "AWAY": 6.0},
+                "model_probability": 0.5,
+            },
             RejectionCode.INSUFFICIENT_EDGE,
         ),
     ],
@@ -59,8 +63,9 @@ def test_codes_rejet_normalises(
         "fixture_id": "f1",
         "market_key": "1X2",
         "selection": "HOME",
-        "odds_decimal": 2.2,
+        "market_odds": {"HOME": 2.2, "DRAW": 3.5, "AWAY": 3.8},
         "model_probability": 0.52,
+        "devig_method": "PROPORTIONAL",
         "strategy_version": "value-1",
         "quality_ok": True,
     }
@@ -71,20 +76,122 @@ def test_codes_rejet_normalises(
     assert decision.suggested_stake == 0
 
 
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("model_probability", float("nan"), "SHADOW_MODEL_PROBABILITY_INVALID"),
+        ("bankroll", -1.0, "SHADOW_BANKROLL_INVALID"),
+        ("min_edge", -0.1, "SHADOW_EDGE_THRESHOLD_INVALID"),
+        ("min_edge", 1.1, "SHADOW_EDGE_THRESHOLD_INVALID"),
+    ],
+)
+def test_shadow_decision_rejects_invalid_numeric_inputs(
+    field: str,
+    value: float,
+    message: str,
+) -> None:
+    values: dict[str, object] = {
+        "fixture_id": "fixture-invalid",
+        "market_key": "1X2",
+        "selection": "HOME",
+        "market_odds": {"HOME": 2.0, "DRAW": 3.2, "AWAY": 4.0},
+        "model_probability": 0.6,
+        "devig_method": "PROPORTIONAL",
+        "strategy_version": "truth-kernel-v1",
+        "quality_ok": True,
+        "bankroll": 100.0,
+    }
+    values[field] = value
+    with pytest.raises(ValueError, match=message):
+        decide_shadow_bet(**cast(Any, values))
+
+
 def test_journal_decision_est_idempotent(tmp_path: Path) -> None:
     journal = DecisionJournal(tmp_path / "decisions.jsonl")
     decision = decide_shadow_bet(
         fixture_id="f1",
         market_key="1X2",
         selection="HOME",
-        odds_decimal=None,
+        market_odds=None,
         model_probability=0.5,
+        devig_method="PROPORTIONAL",
         strategy_version="value-1",
         quality_ok=False,
     )
     assert journal.append(decision)
     assert not journal.append(decision)
     assert len(journal.read_all()) == 1
+
+
+def test_shadow_identity_covers_full_market_and_supersedes_business_state(
+    tmp_path: Path,
+) -> None:
+    journal = DecisionJournal(tmp_path / "decisions.jsonl")
+    base: dict[str, object] = {
+        "fixture_id": "f-market",
+        "market_key": "1X2",
+        "selection": "HOME",
+        "market_odds": {"HOME": 2.2, "DRAW": 3.5, "AWAY": 3.8},
+        "model_probability": 0.52,
+        "devig_method": "PROPORTIONAL",
+        "strategy_version": "value-1",
+        "quality_ok": True,
+        "prediction_id": "prediction-market",
+    }
+    first = decide_shadow_bet(**cast(Any, base))
+    changed = decide_shadow_bet(
+        **cast(Any, {**base, "market_odds": {"HOME": 2.2, "DRAW": 10.0, "AWAY": 10.0}})
+    )
+    assert first.decision_id != changed.decision_id
+    assert first.decision_business_key == changed.decision_business_key
+    assert first.accepted is True
+    assert changed.accepted is False
+    assert journal.append(first) is True
+    assert journal.append(changed) is True
+    assert len(journal.read_all()) == 2
+    assert [item["decision_id"] for item in journal.read_effective()] == [
+        changed.decision_id
+    ]
+
+
+def test_shadow_journal_supersedes_legacy_uuid_without_double_counting(
+    tmp_path: Path,
+) -> None:
+    journal = DecisionJournal(tmp_path / "decisions.jsonl")
+    decision = decide_shadow_bet(
+        fixture_id="f-legacy",
+        market_key="1X2",
+        selection="HOME",
+        market_odds={"HOME": 2.2, "DRAW": 3.5, "AWAY": 3.8},
+        model_probability=0.52,
+        devig_method="PROPORTIONAL",
+        strategy_version="value-1",
+        quality_ok=True,
+    )
+    legacy = {
+        "decision_id": decision.legacy_decision_id,
+        "fixture_id": "f-legacy",
+        "market_key": "1X2",
+        "selection": "HOME",
+        "odds_decimal": 2.2,
+        "model_probability": 0.52,
+        "implied_probability": 1.0 / 2.2,
+        "edge": 0.52 - 1.0 / 2.2,
+        "strategy_version": "value-1",
+        "quality_status": "PASSED",
+        "uncertainty_status": "NORMAL",
+        "suggested_stake": 10.0,
+        "accepted": True,
+        "primary_reason": None,
+        "secondary_reasons": [],
+        "decided_at": "2026-07-24T11:34:16Z",
+        "simulation": True,
+    }
+    journal.path.write_text(json.dumps(legacy) + "\n", encoding="utf-8")
+    assert journal.append(decision) is True
+    assert len(journal.read_all()) == 2
+    assert len(journal.read_effective()) == 1
+    assert journal.read_effective()[0]["decision_id"] == decision.decision_id
 
 
 def test_pipeline_mock_complet_ne_se_fait_jamais_passer_pour_du_live(
@@ -157,7 +264,9 @@ def test_oos_walk_forward_ne_produit_pas_de_statut_production() -> None:
             "pc_o25": [1.9] * 12,
         }
     )
-    results = evaluate_walk_forward(frame)
+    results = evaluate_walk_forward(frame, devig_method="PROPORTIONAL")
     assert len(results) == 11
     assert all("PRODUCTION" not in result.status for result in results)
+    assert all(result.as_dict()["devig_method"] == "PROPORTIONAL" for result in results)
+    assert all("yield" in result.as_dict() for result in results)
     assert next(item for item in results if item.strategy == "btts_value").bets == 0

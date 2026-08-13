@@ -806,7 +806,11 @@ def test_tracked_backtest_builder_uses_strictly_prior_features(
                 "fthg": 2 if day % 2 else 0,
                 "ftag": 1,
                 "psh": 2.0,
+                "psd": 3.4,
+                "psa": 4.0,
                 "psch": 1.9,
+                "pscd": 3.4,
+                "psca": 4.0,
                 "match_id": f"2022-{day}",
             }
             for day in (1, 8, 15)
@@ -821,7 +825,11 @@ def test_tracked_backtest_builder_uses_strictly_prior_features(
                 "fthg": 1,
                 "ftag": 0,
                 "psh": 2.1,
+                "psd": 3.4,
+                "psa": 4.0,
                 "psch": 2.0,
+                "pscd": 3.4,
+                "psca": 4.0,
                 "match_id": f"2023-{day}",
             }
             for day in (1, 8, 15)
@@ -1508,7 +1516,11 @@ def test_backtest_builder_isolates_leagues_and_same_kickoff_state(
             "fthg": home_goals,
             "ftag": away_goals,
             "psh": 2.0,
+            "psd": 3.4,
+            "psa": 4.0,
             "psch": 2.0,
+            "pscd": 3.4,
+            "psca": 4.0,
             "match_id": match_id,
         }
 

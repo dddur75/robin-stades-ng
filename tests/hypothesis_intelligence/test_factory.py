@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -28,7 +29,68 @@ from robin.hypothesis_intelligence.registry import (
     J10_RESULT_HASH,
     J10_TOP_IDS,
     owner_registry,
+    rank_hypotheses,
 )
+
+
+def test_zero_roi_drawdown_and_q_value_remain_real_values_in_ranking() -> None:
+    records = _top_records()
+    zero = replace(
+        records[0],
+        historical_roi=0.0,
+        historical_drawdown=0.0,
+        historical_q_value=0.0,
+    )
+    negative = replace(
+        records[1],
+        historical_roi=-0.1,
+        historical_drawdown=1.0,
+        historical_q_value=1.0,
+    )
+    ranking = {item.hypothesis_id: item for item in rank_hypotheses((zero, negative))}
+    missing_q = replace(zero, historical_q_value=None)
+    missing_q_ranking = {
+        item.hypothesis_id: item
+        for item in rank_hypotheses((missing_q, negative))
+    }
+    assert ranking[zero.hypothesis_id].raw_roi_rank == 1
+    assert ranking[zero.hypothesis_id].drawdown_rank == 1
+    assert ranking[zero.hypothesis_id].overall_exploratory_priority == pytest.approx(
+        missing_q_ranking[zero.hypothesis_id].overall_exploratory_priority + 3.0
+    )
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("historical_roi", float("nan"), "HYPOTHESIS_HISTORICAL_METRIC_NOT_FINITE"),
+        ("historical_q_value", float("inf"), "HYPOTHESIS_HISTORICAL_METRIC_NOT_FINITE"),
+        ("historical_drawdown", -1.0, "HYPOTHESIS_DRAWDOWN_INVALID"),
+    ],
+)
+def test_hypothesis_metrics_fail_closed_before_ranking(
+    field: str,
+    value: float,
+    message: str,
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        replace(_top_records()[0], **{field: value})
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -0.1, 1.1])
+def test_walk_forward_ratio_fails_closed_before_ranking(value: float) -> None:
+    with pytest.raises(ValueError, match="HYPOTHESIS_WALK_FORWARD_RATIO_INVALID"):
+        replace(
+            _top_records()[0],
+            historical_walk_forward={"positive_ratio": value},
+        )
+
+
+@pytest.mark.parametrize("field", ["minimum_odds", "maximum_odds", "maximum_margin"])
+def test_price_contract_rejects_non_finite_boundaries(field: str) -> None:
+    contract = freeze_top_three(_top_records())[0].primary_price
+    with pytest.raises(ValueError, match="HYPOTHESIS_PRICE_CONTRACT_INVALID"):
+        replace(contract, **{field: float("nan")})
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORTS = ROOT / "reports" / "hypothesis-intelligence"
@@ -344,6 +406,24 @@ def test_eligibility_fails_closed(
     assert observation.status_reason == reason
 
 
+@pytest.mark.parametrize(
+    ("overrides", "message"),
+    [
+        ({"odds": float("nan")}, "HYPOTHESIS_ODDS_INVALID"),
+        ({"odds": float("inf")}, "HYPOTHESIS_ODDS_INVALID"),
+        ({"odds": 1.0}, "HYPOTHESIS_ODDS_INVALID"),
+        ({"margin": float("nan")}, "HYPOTHESIS_MARGIN_INVALID"),
+        ({"margin": -0.01}, "HYPOTHESIS_MARGIN_INVALID"),
+    ],
+)
+def test_prospective_prices_reject_non_finite_or_impossible_values(
+    overrides: dict[str, object],
+    message: str,
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        _observation(**overrides)
+
+
 def test_settlement_is_shadow_only_idempotent_and_versioned_on_correction() -> None:
     registry = HypothesisSettlementRegistry()
     settled_at = datetime(2026, 8, 15, 21, tzinfo=UTC)
@@ -405,6 +485,68 @@ def test_settlement_is_shadow_only_idempotent_and_versioned_on_correction() -> N
         settled_at=settled_at,
     )
     assert void.profit_units == 0
+
+
+@pytest.mark.parametrize(
+    ("status", "home", "away", "message"),
+    [
+        ("UNKNOWN", 1, 0, "HYPOTHESIS_RESULT_STATUS_INVALID"),
+        ("FINAL", -1, 0, "HYPOTHESIS_FINAL_SCORE_INVALID"),
+        ("FINAL", True, 0, "HYPOTHESIS_FINAL_SCORE_INVALID"),
+        ("VOID", 0, 0, "HYPOTHESIS_VOID_SCORE_MUST_BE_EMPTY"),
+    ],
+)
+def test_settlement_rejects_invalid_status_and_scores(
+    status: str,
+    home: object,
+    away: object,
+    message: str,
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        HypothesisSettlementRegistry().settle(
+            _observation(),
+            result_status=status,
+            home_goals=home,  # type: ignore[arg-type]
+            away_goals=away,  # type: ignore[arg-type]
+            result_version=1,
+            settled_at=datetime(2026, 8, 15, 21, tzinfo=UTC),
+        )
+
+
+@pytest.mark.parametrize("version", [True, 1.5, float("nan"), float("inf")])
+def test_settlement_rejects_non_integer_result_version(version: object) -> None:
+    with pytest.raises(ValueError, match="HYPOTHESIS_RESULT_VERSION_INVALID"):
+        HypothesisSettlementRegistry().settle(
+            _observation(),
+            result_status="FINAL",
+            home_goals=1,
+            away_goals=0,
+            result_version=version,  # type: ignore[arg-type]
+            settled_at=datetime(2026, 8, 15, 21, tzinfo=UTC),
+        )
+
+
+def test_settlement_cannot_precede_kickoff_but_allows_exact_boundary() -> None:
+    observation = _observation()
+    with pytest.raises(ValueError, match="HYPOTHESIS_SETTLEMENT_BEFORE_KICKOFF"):
+        HypothesisSettlementRegistry().settle(
+            observation,
+            result_status="FINAL",
+            home_goals=1,
+            away_goals=0,
+            result_version=1,
+            settled_at=observation.kickoff_at - timedelta(microseconds=1),
+        )
+    settlement, inserted = HypothesisSettlementRegistry().settle(
+        observation,
+        result_status="FINAL",
+        home_goals=1,
+        away_goals=0,
+        result_version=1,
+        settled_at=observation.kickoff_at,
+    )
+    assert inserted is True
+    assert settlement.settled_at == observation.kickoff_at
 
 
 def test_ledger_is_hash_chained_and_automatic_validation_is_forbidden() -> None:

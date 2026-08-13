@@ -9,6 +9,11 @@ import pytest
 from scripts import build_cockpit_snapshot
 
 
+def test_undefined_scientific_ratio_stays_null_in_cockpit_presentation() -> None:
+    assert build_cockpit_snapshot.optional_metric_percent(None) is None
+    assert build_cockpit_snapshot.optional_metric_percent(0.125) == 12.5
+
+
 def test_matchup_snapshot_preserves_campaign_and_preregistration_proof() -> None:
     matchup = build_cockpit_snapshot.build_matchup_lab()
 

@@ -40,7 +40,10 @@ def execute(
     fixtures = historical_fixture_facts(state)
     raw_market = parse_archived_market_files(state)
     matched, matching = match_market_fixtures(raw_market, fixtures)
-    dataset = build_historical_market_dataset(matched)
+    dataset = build_historical_market_dataset(
+        matched,
+        devig_method="PROPORTIONAL",
+    )
     writes = write_market_datasets(state, dataset)
     gates = market_gates(dataset, fixtures)
     team_audits = {

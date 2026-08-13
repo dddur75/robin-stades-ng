@@ -481,7 +481,7 @@ def test_cache_only_backtest_separates_modes_and_uses_train_only_thresholds() ->
             target=1,
         )
     )
-    result = run_cache_only_backtest(rows)
+    result = run_cache_only_backtest(rows, devig_method="PROPORTIONAL")
 
     assert result["provider_calls"] == 0
     assert result["promotion"] == "NO_PROMOTION"
@@ -500,7 +500,10 @@ def test_cache_only_backtest_separates_modes_and_uses_train_only_thresholds() ->
     assert result["multiple_testing_method"] == "BENJAMINI_HOCHBERG"
 
     with pytest.raises(ValueError, match="BACKTEST_PROVIDER_CALL_FORBIDDEN"):
-        run_cache_only_backtest([{**rows[0], "provider_calls": 1}])
+        run_cache_only_backtest(
+            [{**rows[0], "provider_calls": 1}],
+            devig_method="PROPORTIONAL",
+        )
 
 
 def test_grouped_bootstrap_and_fdr_are_deterministic() -> None:

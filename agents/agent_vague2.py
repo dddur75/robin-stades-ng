@@ -76,7 +76,7 @@ def main(data_dir="data", rapport_dir="rapports", config="config/ligues.yaml",
     matchs, feats, holdout, _ = preparer(data_dir, cfg)
     atomes = [c for c in feats.columns if c.isupper()]
     feats = vue_adverse(feats, atomes)
-    feats = calcul_issues_et_prix(feats)
+    feats = calcul_issues_et_prix(feats, devig_method="SHIN")
     bases = taux_de_base(feats)
     noms, mats, tokens, ISS, BASE, VALID, TIER = preparer_matrices(feats, cfg2, bases)
 

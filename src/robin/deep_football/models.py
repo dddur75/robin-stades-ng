@@ -7,6 +7,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from robin.deep_football.datasets import exact_pairing
+from robin.market_math import DevigMethod, devig_probabilities
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,17 +25,16 @@ def devig_1x2(
     odds_home: float,
     odds_draw: float,
     odds_away: float,
+    *,
+    devig_method: DevigMethod | str,
 ) -> tuple[float, float, float]:
-    odds = (float(odds_home), float(odds_draw), float(odds_away))
-    if any(not math.isfinite(value) or value <= 1.0 for value in odds):
-        raise ValueError("INVALID_1X2_ODDS")
-    implied = tuple(1.0 / value for value in odds)
-    total = sum(implied)
-    return (
-        implied[0] / total,
-        implied[1] / total,
-        implied[2] / total,
-    )
+    probabilities = devig_probabilities(
+        (odds_home, odds_draw, odds_away),
+        method=devig_method,
+        outcome_labels=("HOME", "DRAW", "AWAY"),
+    ).fair_probabilities
+    home, draw, away = probabilities
+    return home, draw, away
 
 
 def _probabilities(row: Mapping[str, object]) -> tuple[float, float, float]:
