@@ -14,7 +14,10 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 
-from robin.historical.features import build_team_feature_rows
+from robin.historical.features import (
+    TEMPORAL_VALIDITY_NOT_PROVEN,
+    build_team_feature_rows,
+)
 from robin.historical.model_lab import (
     TEAM_FEATURES,
     _fit_multinomial,
@@ -350,7 +353,7 @@ def external_team_rows(
                 "away_team_id": row["away_team"],
                 "home_team_name": home_name,
                 "away_team_name": away_name,
-                "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH",
+                "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
                 "raw_payload_hash": raw_hashes[fixture_id],
                 "market_source": "",
             }
@@ -474,6 +477,8 @@ def build_league_readiness(state: Path) -> dict[str, object]:
                 "team_identity_rate": team_identity_rate,
                 "provenance_rate": provenance_rate,
                 "temporal_errors": 0,
+                "temporal_validity": TEMPORAL_VALIDITY_NOT_PROVEN,
+                "promotion_status": "BLOCKED_BY_TEMPORALITY",
             },
             "PLAYER_GATE": {
                 "status": (
@@ -506,9 +511,12 @@ def build_league_readiness(state: Path) -> dict[str, object]:
             },
         }
         gates["EXTERNAL_VALIDATION_GATE"] = {
-            "status": "PARTIAL" if team_ready else "BLOCKED_BY_COVERAGE",
-            "ready_components": ["TEAM"] if team_ready else [],
-            "blocked_components": ["PLAYER", "LINEUP", "MARKET"],
+            "status": (
+                "BLOCKED_BY_TEMPORALITY" if team_ready else "BLOCKED_BY_COVERAGE"
+            ),
+            "ready_components": [],
+            "research_only_components": ["TEAM"] if team_ready else [],
+            "blocked_components": ["TEMPORALITY", "PLAYER", "LINEUP", "MARKET"],
         }
         competitions.append(
             {
@@ -531,7 +539,7 @@ def build_league_readiness(state: Path) -> dict[str, object]:
                 "market_over_under_25": 0,
                 "null_rate": 0.0,
                 "quality": "PASSED" if team_ready else "PARTIAL",
-                "temporality": "PASSED",
+                "temporality": TEMPORAL_VALIDITY_NOT_PROVEN,
                 "gates": gates,
             }
         )
@@ -594,13 +602,16 @@ def write_external_dataset(
         "coverage": 1.0 if rows else 0.0,
         "excluded_rows": 0,
         "quality": "PASSED" if rows else "BLOCKED_BY_COVERAGE",
-        "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH",
+        "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
         "source": ["API-FOOTBALL HISTORICAL"],
         "hash": hashlib.sha256(content).hexdigest(),
         "code_revision": code_revision,
         "generated_at": datetime.now(UTC).isoformat(),
         "partitions": partitions,
-        "status": "EXTERNAL_DATASET_READY" if rows else "BLOCKED_BY_COVERAGE",
+        "status": (
+            "BLOCKED_BY_TEMPORALITY" if rows else "BLOCKED_BY_COVERAGE"
+        ),
+        "scientific_use": "RESEARCH_ONLY_NO_CANDIDATE",
         "production_status": PRODUCTION_STATUS,
     }
     write_json_atomic(state / "external" / "datasets" / f"{name}.json", manifest)
@@ -657,7 +668,7 @@ def _predict_fixed_model(
                 "probability_draw": float(probabilities[1]),
                 "probability_away": float(probabilities[2]),
                 "market_snapshot": "",
-                "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH",
+                "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
                 "fit_scope": fit_scope,
                 "fit_seasons": sorted(
                     {int(str(item["season"])) for item in train_rows}
@@ -927,7 +938,7 @@ def _score_predictions(
         prediction["competition"] = competition
         prediction["model_version"] = f"{competition.lower().replace(' ', '_')}_{method.lower()}_v1"
         prediction["market_snapshot"] = ""
-        prediction["temporal_policy"] = "HISTORICAL_POINT_IN_TIME_PRE_MATCH"
+        prediction["temporal_policy"] = TEMPORAL_VALIDITY_NOT_PROVEN
         prediction["production_status"] = PRODUCTION_STATUS
     return predictions
 
@@ -1087,11 +1098,17 @@ def build_preseason_package(
         for item in comparisons
         if item.get("status") == "EXTERNAL_VALIDATION_PASSED"
     ]
-    status = PACKAGE_FROZEN if all_external_gates_ready else PACKAGE_WAITING
+    # These legacy manifests contain hashes, but no repository-verified source
+    # receipts binding availability to the pre-match cutoff.  Until that proof
+    # type and its repository verifier exist, no mapping supplied here can make
+    # a candidate package point-in-time valid.
+    temporal_validity_proven = False
+    package_ready = all_external_gates_ready and temporal_validity_proven
+    status = PACKAGE_FROZEN if package_ready else PACKAGE_WAITING
     package: dict[str, object] = {
         "package": "PRESEASON_SHADOW_PACKAGE_V1",
         "status": status,
-        "model_versions": candidates if all_external_gates_ready else [],
+        "model_versions": candidates if package_ready else [],
         "feature_versions": ["TEAM_FEATURES_V1"],
         "dataset_versions": [
             str(item["dataset_version"]) for item in dataset_manifests
@@ -1123,6 +1140,8 @@ def build_preseason_package(
         },
         "code_revision": code_revision,
         "generated_at": generated_at,
+        "temporal_validity": TEMPORAL_VALIDITY_NOT_PROVEN,
+        "promotion_status": "BLOCKED_BY_TEMPORALITY",
         "NO_BET_DEFAULT": True,
         "REAL_BETS": False,
         "PRODUCTION_LOCKED": True,
@@ -1390,7 +1409,7 @@ def run_external_validation(
         "quota_consumed": 0,
         "production_status": PRODUCTION_STATUS,
     }
-    all_gates_ready = all(
+    coverage_gates_ready = all(
         all(
             cast(Mapping[str, Mapping[str, object]], audit["gates"])[gate][
                 "status"
@@ -1400,6 +1419,11 @@ def run_external_validation(
         )
         for audit in competition_audits
     )
+    temporal_validity_proven = all(
+        audit.get("temporality") == "POINT_IN_TIME_VERIFIED_FROM_SOURCE_RECEIPTS"
+        for audit in competition_audits
+    )
+    all_gates_ready = coverage_gates_ready and temporal_validity_proven
     package = build_preseason_package(
         protocol_hash=str(protocol["protocol_hash"]),
         dataset_manifests=dataset_manifests,

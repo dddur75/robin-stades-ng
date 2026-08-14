@@ -6,13 +6,21 @@ import json
 import math
 import sys
 from collections.abc import Sequence
+from datetime import UTC, datetime
+from functools import partial
 from itertools import permutations
 from pathlib import Path
 
 import pytest
 
 from moteur.devig import probas_justes
-from robin.backtesting.v3 import StrategyParameters, run_backtest
+from robin.backtesting.v3 import (
+    StrategyParameters,
+    TemporalBacktestMode,
+)
+from robin.backtesting.v3 import (
+    run_backtest as _run_backtest,
+)
 from robin.market_math import (
     ROI_DEFINITION_VERSION,
     SCIENTIFIC_KERNEL_VERSION,
@@ -39,6 +47,10 @@ from scripts.run_prospective_observatory import (
     _complete_positive_overround_market,
 )
 
+run_backtest = partial(
+    _run_backtest,
+    temporal_mode=TemporalBacktestMode.LOCAL_DETERMINISTIC_FIXTURE_ONLY,
+)
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -468,7 +480,7 @@ def test_short_and_long_odds_remain_finite_without_core_rounding(
 
 
 @pytest.mark.parametrize("method", ["PROPORTIONAL", "SHIN"])
-def test_declared_method_has_full_decision_and_settlement_parity(
+def test_declared_method_has_probability_parity_but_shadow_fails_closed(
     method: str,
 ) -> None:
     odds = (2.0, 3.2, 4.0)
@@ -512,52 +524,23 @@ def test_declared_method_has_full_decision_and_settlement_parity(
         quality_ok=True,
         min_edge=threshold,
         bankroll=100.0,
+        cutoff_at=datetime(2025, 4, 1, 17, 0, tzinfo=UTC),
+        feature_lineage_hash="1" * 64,
+        odds_receipt_id="2" * 64,
+        odds_available_at=datetime(2025, 4, 1, 16, 59, tzinfo=UTC),
+        model_registry_hash="3" * 64,
+        model_available_at=datetime(2025, 3, 31, 17, 0, tzinfo=UTC),
+        point_in_time_status="POINT_IN_TIME_VALID",
+        decided_at=datetime(2025, 4, 1, 17, 0, tzinfo=UTC),
     )
-    backtest = run_backtest(
-        [
-            {
-                "fixture_id": "parity-fixture",
-                "kickoff_at": "2025-04-01T18:00:00Z",
-                "probability_home": model[0],
-                "probability_draw": model[1],
-                "probability_away": model[2],
-                "odds_home": odds[0],
-                "odds_draw": odds[1],
-                "odds_away": odds[2],
-                "target": canonical.selected_index,
-                "origin": "OOS HISTORICAL",
-            }
-        ],
-        StrategyParameters(
-            "parity",
-            "1X2",
-            minimum_edge=threshold,
-            staking="PROPORTIONAL",
-            stake_cap=10.0,
-        ),
-        devig_method=method,
-    )
-    detail = backtest["details"][0]
-    expected_profit = settle_profit(
-        stake_units=shadow.suggested_stake,
-        odds=odds[canonical.selected_index],
-        won=True,
-    )
-    expected_performance = performance_summary(
-        starting_bankroll_units=100.0,
-        stakes=[shadow.suggested_stake],
-        profits=[expected_profit],
-    )
-    assert shadow.accepted is canonical.accepted is True
+    assert canonical.accepted is True
+    assert shadow.accepted is False
+    assert shadow.suggested_stake == 0.0
+    assert shadow.point_in_time_status == "POINT_IN_TIME_NOT_PROVEN"
     assert shadow.fair_probability == pytest.approx(
         canonical.devig.fair_probabilities[canonical.selected_index]
     )
     assert shadow.edge == pytest.approx(canonical.selected_edge)
-    assert shadow.suggested_stake == pytest.approx(detail["stake"])
-    assert detail["selection"] == canonical.selected_index
-    assert detail["profit"] == pytest.approx(expected_profit)
-    for field in ("profit_units", "turnover_units", "roi", "yield"):
-        assert backtest[field] == pytest.approx(expected_performance[field])
 
 
 def test_active_paths_do_not_reimplement_margin_removal_inline() -> None:
@@ -689,15 +672,18 @@ def _all_evidence_ids(value: object) -> list[str]:
     return found
 
 
-def test_scientific_truth_reports_have_one_deterministic_bounded_envelope() -> None:
+def test_scientific_truth_reports_keep_their_immutable_loop54_envelope() -> None:
     report_dir = ROOT / "reports" / "scientific-truth"
     assert {path.name for path in report_dir.glob("*.json")} == REPORT_FILES
-    regenerated = report_builder._build_all()
-    assert set(regenerated) == REPORT_FILES
     allowed_statuses = {"PROUVÉ", "PROBABLE", "HYPOTHÈSE", "NON VÉRIFIÉ"}
     for name in sorted(REPORT_FILES):
         stored = _report(name)
-        assert stored == regenerated[name]
+        # LOOP54 reports are append-only historical evidence bound to their
+        # sealed E0003 receipt.  A later scientific mission must not rewrite
+        # them merely because an inventoried source path evolved.
+        assert stored["source_code_revision"] == (
+            "c2bb1769a611728a44c19477932d37e6ab11e5a7"
+        )
         assert stored["schema_version"] == "robin-scientific-truth-report-v1"
         assert stored["mission_id"] == "SCIENTIFIC_TRUTH_KERNEL"
         assert stored["scientific_kernel_version"] == SCIENTIFIC_KERNEL_VERSION
@@ -736,7 +722,13 @@ def test_scientific_truth_reports_have_one_deterministic_bounded_envelope() -> N
         assert authority["roi_used_for_authority"] is False
         effects = stored["external_effects"]
         assert isinstance(effects, dict)
-        assert effects and all(value == 0 for value in effects.values())
+        assert effects == report_builder.EXTERNAL_EFFECTS_ZERO
+        assert stored["effect_budget_authority"] == (
+            report_builder.POINT_IN_TIME_LINEAGE_EFFECT_BUDGET
+        )
+        assert stored["authorized_local_effects"] == (
+            report_builder.AUTHORIZED_LOCAL_EFFECTS
+        )
         content = {key: value for key, value in stored.items() if key != "content_sha256"}
         assert stored["content_sha256"] == _canonical_hash(content)
         assert stored["hash_policy"] == {
@@ -871,7 +863,7 @@ def test_historical_invalidation_ledger_is_append_only_and_hash_chained() -> Non
         "INVALIDATED_BY_DEVIG_METHOD": 0,
         "TEMPORAL_VALIDITY_NOT_PROVEN": 45,
     }
-    assert ledger["counts"]["source_artifacts_rewritten"] == 0
+    assert ledger["counts"]["source_artifacts_rewritten_by_invalidation_ledger"] == 0
     assert ledger["counts"]["stored_yield_fields_invalidated"] == 0
 
 

@@ -12810,13 +12810,13 @@
       "source": [
         "API-FOOTBALL HISTORICAL"
       ],
-      "status": "API_TEAM_DATASET_READY",
+      "status": "BLOCKED_BY_TEMPORALITY",
       "target": "1X2_AND_TOTAL_2_5",
       "targets": [
         "1X2",
         "OVER_UNDER_2_5"
       ],
-      "temporal_policy": "HISTORICAL POINT-IN-TIME"
+      "temporal_policy": "TEMPORAL_VALIDITY_NOT_PROVEN"
     },
     "datasetReadiness": {
       "competition": "Ligue 1",
@@ -12955,7 +12955,7 @@
               "null_rate": 0.202235,
               "rows_received": 667,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 0,
@@ -12975,7 +12975,7 @@
               "null_rate": 0.052901,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -12986,7 +12986,7 @@
               "null_rate": 0,
               "rows_received": 20,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 1,
@@ -13074,7 +13074,7 @@
               "null_rate": 0.212082,
               "rows_received": 638,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 0,
@@ -13094,7 +13094,7 @@
               "null_rate": 0.03413,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -13105,7 +13105,7 @@
               "null_rate": 0,
               "rows_received": 20,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 0.734211,
@@ -13193,7 +13193,7 @@
               "null_rate": 0.215808,
               "rows_received": 740,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 0,
@@ -13213,7 +13213,7 @@
               "null_rate": 0.018771,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -13224,7 +13224,7 @@
               "null_rate": 0,
               "rows_received": 21,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 1,
@@ -13312,7 +13312,7 @@
               "null_rate": 0.226735,
               "rows_received": 784,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 1,
@@ -13323,7 +13323,7 @@
               "null_rate": 0.002375,
               "rows_received": 21,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "standings_snapshots": {
               "coverage": 1,
@@ -13334,7 +13334,7 @@
               "null_rate": 0.018771,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -13345,7 +13345,7 @@
               "null_rate": 0,
               "rows_received": 21,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 1,
@@ -13433,7 +13433,7 @@
               "null_rate": 0.249468,
               "rows_received": 788,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 1,
@@ -13444,7 +13444,7 @@
               "null_rate": 0.002252,
               "rows_received": 20,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "standings_snapshots": {
               "coverage": 1,
@@ -13455,7 +13455,7 @@
               "null_rate": 0.017065,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -13466,7 +13466,7 @@
               "null_rate": 0,
               "rows_received": 20,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 1,
@@ -13554,7 +13554,7 @@
               "null_rate": 0.278289,
               "rows_received": 860,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 1,
@@ -13565,7 +13565,7 @@
               "null_rate": 0.002597,
               "rows_received": 19,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "standings_snapshots": {
               "coverage": 1,
@@ -13576,7 +13576,7 @@
               "null_rate": 0.015152,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -13587,7 +13587,7 @@
               "null_rate": 0,
               "rows_received": 19,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 1,
@@ -13675,7 +13675,7 @@
               "null_rate": 0.310481,
               "rows_received": 920,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 1,
@@ -13686,7 +13686,7 @@
               "null_rate": 0.002233,
               "rows_received": 19,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "standings_snapshots": {
               "coverage": 1,
@@ -13697,7 +13697,7 @@
               "null_rate": 0.015152,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -13708,7 +13708,7 @@
               "null_rate": 0,
               "rows_received": 19,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 1,
@@ -13796,7 +13796,7 @@
               "null_rate": 0.213123,
               "rows_received": 780,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "squads": {
               "coverage": 1,
@@ -13807,7 +13807,7 @@
               "null_rate": 0.000596,
               "rows_received": 21,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "standings_snapshots": {
               "coverage": 1,
@@ -13818,7 +13818,7 @@
               "null_rate": 0.015152,
               "rows_received": 1,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             },
             "teams": {
               "coverage": 1,
@@ -13829,7 +13829,7 @@
               "null_rate": 0,
               "rows_received": 21,
               "status": "AVAILABLE",
-              "temporality": "POINT_IN_TIME_SAFE"
+              "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
             }
           },
           "fixture_coverage": 1,
@@ -13853,7 +13853,7 @@
         "quality": "PASSED",
         "rows": 1534,
         "sha256": "367f8d3f70d5bde8c693da71e5608019435ffe81c277615ca10c99d8499f188a",
-        "status": "API_MARKET_BASELINE_READY",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "temporalPolicy": "HISTORICAL_CLOSING_MARKET",
         "version": "api_market_baseline_v1"
       },
@@ -13864,7 +13864,7 @@
         "quality": "PASSED",
         "rows": 51589,
         "sha256": "b5507a298ddb33d50d64d56afd143234a25646a7e245c9d2250ff38b7560d731",
-        "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "temporalPolicy": "POST_MATCH_ONLY",
         "version": "api_player_match_facts_v1"
       },
@@ -13875,7 +13875,7 @@
         "quality": "PASSED",
         "rows": 2058,
         "sha256": "9bb644722563b2bd2a137732bf04a1a74662dc1c92f5e94ea0255b55bcd6e86e",
-        "status": "API_PLAYER_DATASET_READY",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "temporalPolicy": "PRE_LINEUP",
         "version": "api_player_pre_lineup_v1"
       },
@@ -13886,7 +13886,7 @@
         "quality": "PASSED",
         "rows": 1297,
         "sha256": "f2da79c6a193a69d9c96d0ba65595883644970016f17e0c1d6b9732313cda0cd",
-        "status": "POST_LINEUP_SIMULATED_READY",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "temporalPolicy": "POST_LINEUP_SIMULATED",
         "version": "api_post_lineup_simulated_v1"
       },
@@ -13897,8 +13897,8 @@
         "quality": "PASSED",
         "rows": 2058,
         "sha256": "288307b59a5b65b1247dd12bb6f4070908218a0011250b176ee915acdfd3bf4b",
-        "status": "API_TEAM_DATASET_READY",
-        "temporalPolicy": "HISTORICAL POINT-IN-TIME",
+        "status": "BLOCKED_BY_TEMPORALITY",
+        "temporalPolicy": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "version": "api_team_pre_match_v1"
       },
       {
@@ -13908,7 +13908,7 @@
         "quality": "PASSED",
         "rows": 905344,
         "sha256": "32ee24fdc6541829c0ed126604db2de405c9b1983477641462955afbe21f58ec",
-        "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "temporalPolicy": "PRE_LINEUP",
         "version": "player_feature_store_v1"
       }
@@ -15217,22 +15217,22 @@
       {
         "leakageRisk": "LOW",
         "name": "minutes_joueur_5",
-        "origin": "HISTORICAL POINT-IN-TIME",
-        "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "version": "v1"
       },
       {
         "leakageRisk": "LOW",
         "name": "force_onze",
-        "origin": "HISTORICAL POINT-IN-TIME",
-        "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "version": "v1"
       },
       {
         "leakageRisk": "LOW",
         "name": "continuite_onze",
-        "origin": "HISTORICAL POINT-IN-TIME",
-        "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
+        "status": "BLOCKED_BY_TEMPORALITY",
         "version": "v1"
       }
     ],
@@ -16815,7 +16815,7 @@
     },
     "origins": [
       "LIVE SHADOW",
-      "HISTORICAL POINT-IN-TIME",
+      "TEMPORAL_VALIDITY_NOT_PROVEN",
       "HISTORICAL SIMULATED",
       "OOS HISTORICAL",
       "LEGACY SOURCE",
@@ -16886,13 +16886,13 @@
             ],
             "teamCount": 27
           },
-          "estimatedAvailability": "after priority A (~0.05 d)",
+          "estimatedAvailability": "unknown - point-in-time source required",
           "identities": "VERIFIED",
           "name": "Effectifs",
           "quality": "PASSED",
-          "reason": "per-match as-of and identity validation is still required",
-          "status": "TESTING",
-          "temporality": "POINT_IN_TIME_SAFE"
+          "reason": "repository-verified point-in-time receipts are unavailable",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
         },
         {
           "coverage": {
@@ -16925,13 +16925,13 @@
             ],
             "teamCount": 359
           },
-          "estimatedAvailability": "after priority A (~0.05 d)",
+          "estimatedAvailability": "unknown - point-in-time source required",
           "identities": "VERIFIED",
           "name": "Joueurs",
           "quality": "PASSED",
-          "reason": "multi-season player dimension is available",
-          "status": "COMPUTABLE",
-          "temporality": "POINT_IN_TIME_SAFE"
+          "reason": "repository-verified point-in-time receipts are unavailable",
+          "status": "BLOCKED_BY_TEMPORALITY",
+          "temporality": "TEMPORAL_VALIDITY_NOT_PROVEN"
         },
         {
           "coverage": {
@@ -17319,7 +17319,7 @@
         "id": 404,
         "minutes": 1918,
         "name": "B. Oczipka",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Defender",
         "rating": "6.480769"
       },
@@ -17331,7 +17331,7 @@
         "id": 410,
         "minutes": 2673,
         "name": "D. Caligiuri",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "7.027272"
       },
@@ -17343,7 +17343,7 @@
         "id": 416,
         "minutes": 1682,
         "name": "S. Rudy",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "6.824000"
       },
@@ -17355,7 +17355,7 @@
         "id": 975,
         "minutes": 1071,
         "name": "J. Baumgartlinger",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "7.033333"
       },
@@ -17367,7 +17367,7 @@
         "id": 976,
         "minutes": 789,
         "name": "K. Bellarabi",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Attacker",
         "rating": "6.754545"
       },
@@ -17379,7 +17379,7 @@
         "id": 24801,
         "minutes": 1294,
         "name": "J. Hector",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Defender",
         "rating": "7.071428"
       },
@@ -17391,7 +17391,7 @@
         "id": 25029,
         "minutes": 723,
         "name": "S. Schipplock",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Attacker",
         "rating": "6.625925"
       },
@@ -17403,7 +17403,7 @@
         "id": 25298,
         "minutes": 2047,
         "name": "A. Hahn",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "6.865517"
       },
@@ -17415,7 +17415,7 @@
         "id": 25302,
         "minutes": 268,
         "name": "J. Morávek",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "6.480000"
       },
@@ -17427,7 +17427,7 @@
         "id": 25315,
         "minutes": 3033,
         "name": "T. Gebre Selassie",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Defender",
         "rating": "6.823529"
       },
@@ -17439,7 +17439,7 @@
         "id": 25333,
         "minutes": 720,
         "name": "R. Jarstein",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Goalkeeper",
         "rating": "6.787500"
       },
@@ -17451,7 +17451,7 @@
         "id": 25344,
         "minutes": 1071,
         "name": "M. Plattenhardt",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Defender",
         "rating": "6.781250"
       },
@@ -17463,7 +17463,7 @@
         "id": 25640,
         "minutes": 1846,
         "name": "T. Strobl",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "6.640740"
       },
@@ -17475,7 +17475,7 @@
         "id": 26251,
         "minutes": 0,
         "name": "F. Kath",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Attacker",
         "rating": null
       },
@@ -17487,7 +17487,7 @@
         "id": 26258,
         "minutes": 1289,
         "name": "N. Petersen",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Attacker",
         "rating": "6.609375"
       },
@@ -17499,7 +17499,7 @@
         "id": 41582,
         "minutes": 69,
         "name": "Tiago Dantas",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "7.300000"
       },
@@ -17511,7 +17511,7 @@
         "id": 174933,
         "minutes": 32,
         "name": "M. Cissé",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": "6.350000"
       },
@@ -17523,7 +17523,7 @@
         "id": 191230,
         "minutes": 0,
         "name": "R. Vita",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Defender",
         "rating": null
       },
@@ -17535,7 +17535,7 @@
         "id": 203074,
         "minutes": 1,
         "name": "V. Pavlidis",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Defender",
         "rating": null
       },
@@ -17547,7 +17547,7 @@
         "id": 203385,
         "minutes": 5,
         "name": "M. Maden",
-        "origin": "HISTORICAL POINT-IN-TIME",
+        "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
         "position": "Midfielder",
         "rating": null
       }

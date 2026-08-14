@@ -2396,8 +2396,8 @@ def build_player_readiness(
         else "after priority A"
     )
     specifications = [
-        ("Effectifs", ("squads",), "POINT_IN_TIME_SAFE"),
-        ("Joueurs", ("players",), "POINT_IN_TIME_SAFE"),
+        ("Effectifs", ("squads",), "TEMPORAL_VALIDITY_NOT_PROVEN"),
+        ("Joueurs", ("players",), "TEMPORAL_VALIDITY_NOT_PROVEN"),
         ("Minutes", ("fixture_player_statistics",), "POST_MATCH_LAG_REQUIRED"),
         (
             "Statistiques joueurs par match",
@@ -2474,9 +2474,12 @@ def build_player_readiness(
         if quality_status not in {"PASSED", "WARNING"}:
             status = "BLOCKED_BY_QUALITY"
             reason = f"historical quality is {quality_status}"
-        elif temporality == "HISTORICAL_NON_POINT_IN_TIME":
+        elif temporality in {
+            "HISTORICAL_NON_POINT_IN_TIME",
+            "TEMPORAL_VALIDITY_NOT_PROVEN",
+        }:
             status = "BLOCKED_BY_TEMPORALITY"
-            reason = "point-in-time injury snapshots are unavailable"
+            reason = "repository-verified point-in-time receipts are unavailable"
         elif len(seasons) < 2:
             status = "BLOCKED_BY_COVERAGE"
             reason = "fewer than two verified common seasons"
@@ -4320,7 +4323,7 @@ def build_deep_data() -> dict[str, Any]:
                     "rating": games.get("rating"),
                     "goals": goals.get("total"),
                     "assists": goals.get("assists"),
-                    "origin": "HISTORICAL POINT-IN-TIME",
+                    "origin": "TEMPORAL_VALIDITY_NOT_PROVEN",
                 }
             )
         if players:
@@ -4608,7 +4611,7 @@ def build_deep_data() -> dict[str, Any]:
                 "name": name,
                 "version": "v1",
                 "status": (
-                    "PLAYER_FEATURE_FACTORY_ACTIVE"
+                    "BLOCKED_BY_TEMPORALITY"
                     if readiness.get("gates", {}).get("B", {}).get("passed")
                     and name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
                     else "BLOCKED_BY_COVERAGE"
@@ -4619,7 +4622,7 @@ def build_deep_data() -> dict[str, Any]:
                 ),
                 "leakageRisk": "LOW",
                 "origin": (
-                    "HISTORICAL POINT-IN-TIME"
+                    "TEMPORAL_VALIDITY_NOT_PROVEN"
                     if readiness.get("gates", {}).get("B", {}).get("passed")
                     and name in {"minutes_joueur_5", "force_onze", "continuite_onze"}
                     else "NO OUTPUT"
@@ -4763,7 +4766,7 @@ def build_deep_data() -> dict[str, Any]:
         },
         "origins": [
             "LIVE SHADOW",
-            "HISTORICAL POINT-IN-TIME",
+            "TEMPORAL_VALIDITY_NOT_PROVEN",
             "HISTORICAL SIMULATED",
             "OOS HISTORICAL",
             "LEGACY SOURCE",

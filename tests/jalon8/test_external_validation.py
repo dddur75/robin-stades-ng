@@ -26,6 +26,7 @@ from robin.historical.external_validation import (
     strategy_lab_v3_protocol,
     write_immutable_json,
 )
+from robin.historical.features import TEMPORAL_VALIDITY_NOT_PROVEN
 from robin.historical.scientific_arena import storage_guard
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -81,7 +82,7 @@ def _fixture_row(
         "season": season,
         "payload": json.dumps(payload),
         "raw_payload_hash": f"hash-{competition}-{season}-{index}",
-        "availability_status": "POINT_IN_TIME_SAFE",
+        "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
     }
 
 
@@ -146,7 +147,7 @@ def _prediction(
         "probability_draw": (1.0 - probability_home) / 2.0,
         "probability_away": (1.0 - probability_home) / 2.0,
         "market_snapshot": "",
-        "temporal_policy": "HISTORICAL_POINT_IN_TIME_PRE_MATCH",
+        "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
     }
 
 
@@ -214,7 +215,12 @@ def test_multileague_gates_measure_only_observed_coverage(tmp_path: Path) -> Non
         assert gates["LINEUP_GATE"]["status"] == "BLOCKED_BY_COVERAGE"
         assert gates["MARKET_GATE"]["status"] == "UNAVAILABLE"
         assert gates["MARKET_GATE"]["invented_prices"] == 0
-        assert gates["EXTERNAL_VALIDATION_GATE"]["status"] == "PARTIAL"
+        assert item["temporality"] == TEMPORAL_VALIDITY_NOT_PROVEN
+        assert gates["TEAM_GATE"]["promotion_status"] == "BLOCKED_BY_TEMPORALITY"
+        assert (
+            gates["EXTERNAL_VALIDATION_GATE"]["status"]
+            == "BLOCKED_BY_TEMPORALITY"
+        )
 
 
 def test_standardization_is_per_competition_without_targets() -> None:
@@ -320,6 +326,32 @@ def test_preseason_package_waits_honestly_for_external_gates() -> None:
     assert package["model_versions"] == []
 
 
+def test_preseason_package_rejects_ready_claim_without_receipt_repository_proof() -> None:
+    package = build_preseason_package(
+        protocol_hash="protocol",
+        dataset_manifests=[
+            {
+                "dataset_version": "pl_team_pre_match_v1",
+                "hash": "dataset",
+                "temporal_policy": "POINT_IN_TIME_SAFE",
+            }
+        ],
+        comparisons=[
+            {
+                "comparison_id": "self-declared-candidate",
+                "status": "EXTERNAL_VALIDATION_PASSED",
+            }
+        ],
+        code_revision="commit",
+        generated_at="2026-07-25T00:00:00+00:00",
+        all_external_gates_ready=True,
+    )
+    assert package["status"] == PACKAGE_WAITING
+    assert package["model_versions"] == []
+    assert package["temporal_validity"] == TEMPORAL_VALIDITY_NOT_PROVEN
+    assert package["promotion_status"] == "BLOCKED_BY_TEMPORALITY"
+
+
 def test_storage_warning_and_pause_are_not_bypassed() -> None:
     assert storage_guard(749_999_999)["status"] == "SAFE"
     assert storage_guard(750_000_000)["status"] == "WARNING"
@@ -342,6 +374,11 @@ def test_full_external_run_is_cache_only_and_gate_honest(tmp_path: Path) -> None
     assert result["real_bets"] is False
     assert result["production_status"] == PRODUCTION_STATUS
     assert len(result["datasets"]) == 5
+    assert all(
+        item["status"] == "BLOCKED_BY_TEMPORALITY"
+        and item["temporal_policy"] == TEMPORAL_VALIDITY_NOT_PROVEN
+        for item in result["datasets"]
+    )
     assert {
         item["dataset_version"]  # type: ignore[index]
         for item in result["datasets"]  # type: ignore[union-attr]
@@ -416,3 +453,14 @@ def test_cockpit_exposes_external_gates_without_secrets() -> None:
     assert '"externalValidation"' in builder
     assert "DATABASE_URL" not in cockpit
     assert "API_FOOTBALL_KEY" not in cockpit
+
+
+def test_served_cockpit_artifacts_do_not_promote_unreceipted_history() -> None:
+    for path in (
+        ROOT / "cockpit" / "app" / "cockpit-data.json",
+        ROOT / "cockpit" / "app" / "cockpit-expert-data.json",
+    ):
+        content = path.read_text(encoding="utf-8")
+        assert "POINT_IN_TIME_SAFE" not in content
+        assert "HISTORICAL POINT-IN-TIME" not in content
+        assert "TEMPORAL_VALIDITY_NOT_PROVEN" in content

@@ -1,0 +1,310 @@
+{
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E2013"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "c07f9ff50773c7475604532a5aa1ad08762a7c2ec467ddeacfdea9fd57a770a9",
+  "counts": {
+    "e2013_surfaces": 72,
+    "historical_receipt_objects_observed": 0,
+    "historically_point_in_time_proven_surfaces": 0,
+    "historically_receipt_bounded_surfaces": 0,
+    "raw_observation_fk_schema_surfaces": 2,
+    "receipt_anchor_schema_surfaces": 1,
+    "receipt_child_fk_schema_surfaces": 6
+  },
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "business_data_network_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
+    "neon_api_calls": 0,
+    "new_database_migrations": 0,
+    "odds_provider_calls": 0,
+    "persistent_local_database_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "social_publications": 0
+  },
+  "historical_artifacts_not_receipts": [
+    {
+      "path": "reports/closure/phase-c-v2-source-evidence/source-export-receipt-v2.json",
+      "reason": "zero-network deterministic export execution receipt, not a source-data receipt"
+    },
+    {
+      "path": "reports/closure/phase-c-v2-source-evidence/source-evidence-manifest-v2.json",
+      "reason": "hash-pinned reconstruction whose availability is explicitly proxy-based"
+    },
+    {
+      "path": "reports/evidence/e2/e2-selection-manifest-v1.json",
+      "reason": "receipt hashes and object keys are references without local receipt bytes or response_received_at"
+    }
+  ],
+  "immutable_review_base_revision": "71833964e5d7ba7f5882bfff49b39d567fd5473b",
+  "inference_policy": {
+    "forbidden": [
+      "filesystem_mtime",
+      "git_time",
+      "event_time",
+      "kickoff_time",
+      "record_order"
+    ],
+    "rule": "No robin_first_observed_at may be synthesized from these values."
+  },
+  "limitations": [
+    "Repository-backed tests prove bounded local receipt bytes, not active production capture.",
+    "The E2013 historical receipt-object denominator remains zero after the prospective repair."
+  ],
+  "loop55_source": {
+    "candidate_source": {
+      "aggregate_sha256": "c105c2a5d7729fa5d132be339e3b5525ce21acea6c16ef13bc6e3f9d7ed49aaa",
+      "excluded_path_count": 15,
+      "included_path_count": 65,
+      "manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "outside_allowlist_count": 0
+    },
+    "evidence_ids": [
+      "LOOP55:E0001",
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0005",
+      "LOOP55:E0006"
+    ],
+    "green_proof": "LOOP55:E0004",
+    "historical_superseded_proofs": [
+      "LOOP55:E0002",
+      "LOOP55:E0003"
+    ],
+    "invalid_harness_receipt": {
+      "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0005",
+      "proof_status": "NOT_PROOF"
+    },
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1",
+    "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+    "namespace": "LOOP55",
+    "red_proof": "LOOP55:E0001",
+    "source_authority_sha256": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
+    "static_validation": "LOOP55:E0006"
+  },
+  "mission_id": "POINT_IN_TIME_LINEAGE",
+  "mission_status": "ROBIN_POINT_IN_TIME_LINEAGE_V1_PARTIAL",
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_status": "NO_PROMOTION",
+  "receipt_contract": {
+    "append_only": true,
+    "content_addressed": true,
+    "fields": [
+      "receipt_id",
+      "source_name",
+      "request_identity",
+      "payload_sha256",
+      "source_published_at",
+      "robin_first_observed_at",
+      "robin_ingested_at",
+      "capture_code_revision",
+      "storage_identity",
+      "availability_status",
+      "supersedes_receipt_id"
+    ],
+    "repository_bytes_reverified_before_forecast": true,
+    "self_declared_sha_looking_mapping_rejected": true,
+    "utc_aware": true
+  },
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP55_REPORTS:E0004",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V3",
+    "namespace": "LOOP55_REPORTS"
+  },
+  "report_id": "source-receipt-inventory-v1",
+  "reproducibility": {
+    "builder": "scripts/build_temporal_lineage_reports_v1.py",
+    "command_evidence_ids": [
+      "LOOP55_REPORTS:E0004"
+    ],
+    "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED"
+  },
+  "schema_capabilities": [
+    {
+      "status": "RAW_OBSERVATION_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_bookmaker_quotes"
+    },
+    {
+      "status": "RECEIPT_ANCHOR_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_capture_receipts"
+    },
+    {
+      "status": "RAW_OBSERVATION_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_fixtures"
+    },
+    {
+      "status": "RECEIPT_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_prospective_formations"
+    },
+    {
+      "status": "RECEIPT_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_prospective_injuries"
+    },
+    {
+      "status": "RECEIPT_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_prospective_lineups"
+    },
+    {
+      "status": "RECEIPT_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_prospective_odds_snapshots"
+    },
+    {
+      "status": "RECEIPT_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_prospective_payload_index"
+    },
+    {
+      "status": "RECEIPT_FK_SCHEMA_ONLY_UNOBSERVED",
+      "surface_id": "postgres_prospective_player_status"
+    }
+  ],
+  "schema_version": "robin-temporal-lineage-report-v1",
+  "sources": [
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/commands/E2013.json",
+      "sha256": "ff800a5dd943df5c6e076a92c8acbba77c6db567b8aa3aec1f65571559581884"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/dataset-lineage.csv",
+      "sha256": "a7497c74dd2c32ffa91997cf8dcfb882b2e64d046e5c0375246dd866122c985b"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/dataset-quality.csv",
+      "sha256": "dcd627455e767a80fe9658a07d1140c791d8fe6da850f622ee3279de9fdc64a0"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/phase13-14-lineage-summary.json",
+      "sha256": "fbdb417dc739b3d334df5bfa232a15b13db73ab88bcf0171d864d6990cd7a231"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/time-fields.csv",
+      "sha256": "8c09e249b937ae62ea374be87bcb0ece9c2d8f41ae0d22077c35be9e5b14e3a8"
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/temporal/lineage.py",
+      "sha256": "b66429fe515f82b7d516fb162dc697ac416d1a8006cd6550565415de142b3f32",
+      "symbols": [
+        "SourceReceipt"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/prospective_observatory/feature_snapshots.py",
+      "sha256": "6d7ecfdf52068e4c29ea089550af1d38851fcb49ae4492d4309553acf4493f66",
+      "symbols": [
+        "persist_source_receipt",
+        "verify_source_receipt_artifact"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/prospective_observatory/prequential_contracts.py",
+      "sha256": "d54fca01b0c05c6a311ada343688563733acbefb0ee2056e1f03d071ca6a5d0b",
+      "symbols": [
+        "source_receipt_from_provenance"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/storage/models.py",
+      "sha256": "70a8b0de789422dfa02698af2c6177bf5acdb4f2cc1e2a991dc0f2d820aa12e4",
+      "symbols": [
+        "raw_observations",
+        "fixtures",
+        "bookmaker_quotes"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/storage/prospective_models.py",
+      "sha256": "622b2b2eca8c038620affd58ab3bc66b8be3cef738ec5a4feda67507f6231ab0",
+      "symbols": [
+        "capture_receipts"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "migrations/versions/0009_jalon12_prospective_observatory.py",
+      "sha256": "57bfa0dd52543a57b2e073784eedf8a9abb99ca81408457dc1cce52b9bdf07e6",
+      "symbols": []
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_pit_closure.py",
+      "sha256": "8ab81ce3ef5a03a32246742d7fed63115f1eeb01e284e2d56ff5ed9359364dfd",
+      "symbols": [
+        "test_odds_requires_receipt_index_window_r2_and_ties_fail_closed",
+        "test_source_receipt_rejects_cross_family_odds_capture_as_team_projection",
+        "test_source_receipt_rejects_backdated_market_closure_for_late_materialization"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "sha256": "755813ed92e0947c9b6a351e659fb29945abd6e7cf09cc7d247ea69fe47fc2b3",
+      "symbols": [
+        "test_self_declared_receipt_and_late_ingestion_fail_closed",
+        "test_forecast_reverifies_source_receipt_bytes",
+        "test_feature_snapshot_rejects_receipt_payload_value_mismatch",
+        "test_feature_snapshot_rejects_receipts_from_another_fixture"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "sha256": "0ca855c9aaa1666719f644f492b5426f6ec9064182dff18372d80b8c420c0a4e",
+      "symbols": [
+        "test_asof_rejects_valid_looking_self_declared_receipt_mapping"
+      ]
+    }
+  ],
+  "status": "PARTIAL",
+  "storage_status": "NO_NEW_MIGRATION_REQUIRED_FOR_COVERED_PATHS",
+  "verdict": "ROBIN_SOURCE_RECEIPT_INVENTORY_COMPLETE_HISTORICAL_RECEIPTS_NOT_OBSERVED"
+}

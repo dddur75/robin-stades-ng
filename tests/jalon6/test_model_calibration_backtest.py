@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import partial
 from pathlib import Path
 
 import duckdb
@@ -8,7 +9,16 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from robin.backtesting.v3 import StrategyParameters, run_backtest, strategy_sensitivity
+from robin.backtesting.v3 import (
+    StrategyParameters,
+    TemporalBacktestMode,
+)
+from robin.backtesting.v3 import (
+    run_backtest as _run_backtest,
+)
+from robin.backtesting.v3 import (
+    strategy_sensitivity as _strategy_sensitivity,
+)
 from robin.historical.model_lab import (
     TEAM_FEATURES,
     isotonic_calibrate,
@@ -17,6 +27,15 @@ from robin.historical.model_lab import (
     validate_tuning_periods,
 )
 from robin.market_math import devig_probabilities
+
+run_backtest = partial(
+    _run_backtest,
+    temporal_mode=TemporalBacktestMode.LOCAL_DETERMINISTIC_FIXTURE_ONLY,
+)
+strategy_sensitivity = partial(
+    _strategy_sensitivity,
+    temporal_mode=TemporalBacktestMode.LOCAL_DETERMINISTIC_FIXTURE_ONLY,
+)
 
 
 def _model_rows() -> list[dict[str, object]]:
@@ -67,6 +86,25 @@ def test_temporal_model_and_calibration_are_reproducible() -> None:
     assert first["selected_calibration"] in {"none", "sigmoid", "isotonic"}
     assert first["oos_metrics"]["matches"] == 90
     assert {prediction["season"] for prediction in predictions} == {2024, 2025}
+    assert {
+        prediction["availability_status"] for prediction in predictions
+    } == {"TEMPORAL_VALIDITY_NOT_PROVEN"}
+
+
+def test_temporal_model_downgrades_caller_supplied_positive_policy() -> None:
+    rows = _model_rows()
+    for row in rows:
+        row["temporal_policy"] = "POINT_IN_TIME_SAFE"
+    _, predictions = train_temporal_model(
+        rows,
+        model_name="forged_policy_model",
+        dataset_name="api_team_pre_match_v1",
+        features=TEAM_FEATURES,
+    )
+    assert predictions
+    assert {
+        prediction["availability_status"] for prediction in predictions
+    } == {"TEMPORAL_VALIDITY_NOT_PROVEN"}
 
 
 def test_calibrators_return_valid_probability_simplexes() -> None:

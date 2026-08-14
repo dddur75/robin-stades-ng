@@ -238,6 +238,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "PR26",
         "CHRONOS_LOOP53",
         "SCIENTIFIC_TRUTH_KERNEL",
+        "POINT_IN_TIME_LINEAGE",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -317,6 +318,7 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "PR26",
         "CHRONOS_LOOP53",
         "SCIENTIFIC_TRUTH_KERNEL",
+        "POINT_IN_TIME_LINEAGE",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -376,6 +378,201 @@ def test_scientific_truth_kernel_authority_is_offline_bounded_and_exact() -> Non
     assert "FORBID_FORCE_PUSH" in matrix["authorization"][
         "scientific_truth_kernel_delivery"
     ]
+
+
+def test_point_in_time_lineage_authority_is_offline_bounded_and_exact() -> None:
+    matrix = load_json("configs/agents/mission-activation-matrix-v3.json")
+    manifest = load_json(
+        "configs/execution/point-in-time-lineage-closure-v1.json"
+    )
+    assert set(manifest) == {
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "external_effects",
+        "compute_budget",
+        "time_budget",
+        "source_hash",
+        "expires_at",
+    }
+    assert manifest["mission_id"] == "POINT_IN_TIME_LINEAGE"
+    assert manifest["authorized_stages"] == ["E1"]
+    assert manifest["maximum_stage"] == "E1"
+    assert manifest["compute_budget"] == 2000
+    assert manifest["time_budget"] == 172800
+    assert manifest["external_effects"] == [
+        "git_remote_write_non_force",
+        "github_pull_request_write",
+        "github_merge_commit",
+        "github_actions_observe",
+    ]
+    assert manifest["source_hash"] == (
+        "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454"
+    )
+    assert manifest["expires_at"] == "2026-08-17T23:59:59Z"
+
+    mission = matrix["missions"]["POINT_IN_TIME_LINEAGE"]
+    assert set(mission) == {
+        "agents",
+        "writer",
+        "allowed_paths",
+        "scale_ceiling",
+        "delivery_keys",
+    }
+    assert mission["scale_ceiling"] == manifest["maximum_stage"]
+    assert mission["writer"] == "C0"
+    assert mission["agents"] == [
+        "C0",
+        "C1",
+        "C2",
+        "C4",
+        "DP5",
+        "DP6",
+        "RP8",
+        "RP9",
+        "A1",
+    ]
+    allowed_paths = mission["allowed_paths"]
+    assert allowed_paths == sorted(allowed_paths)
+    assert len(allowed_paths) == len(set(allowed_paths)) == 98
+    assert hashlib.sha256(
+        json.dumps(
+            allowed_paths,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest() == "a4bf119bbc488af3eef1192847923f65b2dfee4532f3e2f44c732cd3095ce997"
+    assert all(
+        path
+        and path == path.strip()
+        and not path.startswith(("/", "./"))
+        and "\\" not in path
+        and ":" not in path
+        and not Path(path).is_absolute()
+        and all(part not in {"", ".", ".."} for part in path.split("/"))
+        and not any(marker in path for marker in ("*", "?", "[", "]"))
+        for path in allowed_paths
+    )
+    assert not any(
+        path.casefold().startswith(
+            (".github/workflows/", "migrations/", "src/robin/storage/")
+        )
+        for path in allowed_paths
+    )
+    assert mission["delivery_keys"] == {
+        "data": ["DP6", "C2"],
+        "platform": ["DP5"],
+        "science": ["C2", "RP8", "RP9", "A1"],
+        "security": ["C4", "C1"],
+    }
+    authorization = matrix["authorization"]
+    assert authorization["point_in_time_lineage_effect_budget"] == (
+        "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;"
+        "POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;"
+        "PRODUCTION_SQL_WRITES_0;"
+        "LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;"
+        "LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;"
+        "LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;"
+        "PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;"
+        "EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;"
+        "PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;"
+        "LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;"
+        "NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;"
+        "ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;"
+        "SOCIAL_PUBLICATIONS_0"
+    )
+    assert authorization["point_in_time_lineage_delivery"] == (
+        "ALLOW_ONE_INITIAL_NON_FORCE_PUSH_PLUS_MAXIMUM_THREE_DIRECTLY_"
+        "CONSEQUENTIAL_NON_FORCE_CORRECTIVE_PUSHES_FOR_DETERMINISTIC_CI_"
+        "FAILURES_TEMPORAL_CONTRACT_DEFECTS_TEST_FIXTURE_DEFECTS_REPORT_"
+        "EVIDENCE_CONSISTENCY_OR_CROSS_PLATFORM_LINE_ENDINGS;ALLOW_ONE_"
+        "DRAFT_PULL_REQUEST_TITLED_ROBIN_POINT_IN_TIME_LINEAGE_CLOSURE_V1;"
+        "ALLOW_MERGE_COMMIT_ONLY_AFTER_EXACT_HEAD_CI_GREEN_THREE_INDEPENDENT_"
+        "REVIEWS_P0_ZERO_P1_ZERO_SCORE_AT_LEAST_95_THREADS_ZERO_FUTURE_"
+        "MUTATION_MATRIX_PASS_PROSPECTIVE_FAIL_CLOSED_PASS_HISTORICAL_"
+        "LIMITATIONS_EXPLICIT_AND_MERGEABLE_CLEAN;FORBID_FORCE_PUSH_REBASE_"
+        "SQUASH_ADMIN_BYPASS_BRANCH_DELETE_LIVE_WORKFLOW_DISPATCH_PRODUCTION_"
+        "ACCESS_AND_NEW_DATABASE_MIGRATION"
+    )
+    assert authorization["point_in_time_lineage_storage_gate"] == (
+        "IF_DURABLE_POINT_IN_TIME_PROOF_REQUIRES_ANY_SCHEMA_CHANGE_OR_DATABASE_"
+        "MIGRATION_THEN_RECORD_TEMPORAL_STORAGE_MIGRATION_REQUIRED_SET_ROBIN_"
+        "POINT_IN_TIME_LINEAGE_V1_PARTIAL_ALLOW_ONLY_EXISTING_REPORT_AND_DOC_"
+        "DESIGN_EVIDENCE_AND_FAIL_AND_STOP_BEFORE_SCHEMA_CODE_BUSINESS_CODE_"
+        "MERGE_PROMOTION_OR_PRODUCTION_USE"
+    )
+    assert authorization["point_in_time_lineage_base"] == (
+        "REQUIRE_EXACT_BASE_71833964E5D7BA7F5882BFFF49B39D567FD5473B_AND_"
+        "BRANCH_CODEX_POINT_IN_TIME_LINEAGE_CLOSURE_V1;ON_BASE_DRIFT_TOUCHING_"
+        "TEMPORAL_DECISION_PATHS_FAIL_AND_STOP"
+    )
+    assert authorization["mission_manifest_external_effects"] == (
+        "MUST_NOT_OVERRIDE_THIS_AUTHORIZATION_MATRIX"
+    )
+
+    expected_record157_proof = [
+        "GOV.SCIENTIFIC.TRUTH.DEFECT.INVENTORY.V1.003",
+        "EVAL.SCIENTIFIC.ROI.TURNOVER.REPAIR.V1.003",
+        "GOV.SCIENTIFIC.YIELD.CONSUMER.INVENTORY.V1.003",
+        "GOV.SCIENTIFIC.DEVIG.IMPLEMENTATION.INVENTORY.V1.003",
+        "EVAL.SCIENTIFIC.DEVIG.CANONICALIZATION.V1.003",
+        "GOV.SCIENTIFIC.DECISION.PATH.TRACE.V1.003",
+        "REPLAY.SCIENTIFIC.HISTORICAL.TRUTH.V1.003",
+        "GOV.SCIENTIFIC.HISTORICAL.INVALIDATION.LEDGER.V1.003",
+        "SCIENCE.TRUTH_KERNEL.REGRESSION.V1.003",
+        "SCIENCE.TRUTH_KERNEL.REPORTS.RECEIPT.V1.003",
+        "SECURITY.SCIENTIFIC.TRUTH_KERNEL.ZERO_EFFECTS.V1.003",
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.012",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.021",
+        "SCIENCE.TRUTH_KERNEL.CROSS_PLATFORM.HASHING.V1.002",
+        "SCIENCE.TRUTH_KERNEL.MODEL_LAB.DEVIG.ARITY.TYPE.V1.002",
+        "SCIENCE.TRUTH_KERNEL.PROSPECTIVE.DEVIG.PRICE.TYPE.V1.002",
+        "GOV.AUTHORIZATION.POINT_IN_TIME_LINEAGE.001",
+        "GOV.TEMPORAL.DEFECT.INVENTORY.V1.001",
+        "GOV.TEMPORAL.SURFACE.INVENTORY.V1.001",
+        "SCIENCE.TEMPORAL.AVAILABILITY.CONTRACT.V1.001",
+        "GOV.TEMPORAL.SOURCE.RECEIPT.INVENTORY.V1.001",
+        "EVAL.TEMPORAL.ASOF.JOIN.AUDIT.V1.001",
+        "EVAL.TEMPORAL.TEST.COVERAGE.V1.001",
+        "EVAL.TEMPORAL.FUTURE.MUTATION.MATRIX.V1.001",
+        "GOV.TEMPORAL.DECISION.LINEAGE.TRACE.V1.001",
+        "REPLAY.TEMPORAL.HISTORICAL.POINT_IN_TIME.V1.001",
+        "GOV.TEMPORAL.INVALIDATION.LEDGER.V1.001",
+        "SCIENCE.POINT_IN_TIME_LINEAGE.REGRESSION.V1.001",
+        "SCIENCE.POINT_IN_TIME_LINEAGE.REPORTS.RECEIPT.V1.001",
+        "SECURITY.POINT_IN_TIME_LINEAGE.ZERO_EFFECTS.V1.001",
+    ]
+    graph = load_json("reports/evidence/evidence-graph.json")
+    ledger = [
+        json.loads(line)
+        for line in (ROOT / "reports/council/decision-ledger.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+    record157 = next(
+        record for record in ledger if record["decision_id"] == "RCV3-20260814-157"
+    )
+    assert record157["decision"] == "PASS_AND_HOLD"
+    assert record157["context"]["candidate_context"] is True
+    assert record157["context"]["commit_context"] is False
+    assert record157["proof"] == expected_record157_proof
+    assert next(
+        node
+        for node in graph["decision_nodes"]
+        if node["decision_id"] == record157["decision_id"]
+    )["ledger_record_hash"] == record157["hash"]
+    record157_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == record157["decision_id"]
+    ]
+    assert [edge["edge_id"] for edge in record157_edges] == [
+        f"EDGE.{index}" for index in range(485, 515)
+    ]
+    assert [edge["from_claim_id"] for edge in record157_edges] == (
+        expected_record157_proof
+    )
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:
@@ -922,10 +1119,32 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.010"]["superseded_by"] == (
         "GOV.AUTHORIZATION.CHRONOS_LOOP53.011"
     )
-    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.011"]["status"] == "PARTIAL"
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.011"]["status"] == (
+        "SUPERSEDED"
+    )
     assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.011"]["successor_of"] == (
         "GOV.AUTHORIZATION.CHRONOS_LOOP53.010"
     )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.011"]["superseded_by"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.012"
+    )
+    def assert_append_only_partial_tail(start_claim_id: str) -> str:
+        current_claim_id = start_claim_id
+        visited: set[str] = set()
+        while claims[current_claim_id]["status"] == "SUPERSEDED":
+            assert current_claim_id not in visited
+            visited.add(current_claim_id)
+            successor_id = claims[current_claim_id]["superseded_by"]
+            assert successor_id in claims
+            assert claims[successor_id]["successor_of"] == current_claim_id
+            current_claim_id = successor_id
+        assert claims[current_claim_id]["status"] == "PARTIAL"
+        assert "superseded_by" not in claims[current_claim_id]
+        return current_claim_id
+
+    assert assert_append_only_partial_tail(
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.011"
+    ).startswith("GOV.AUTHORIZATION.CHRONOS_LOOP53.")
     assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.017"][
         "status"
     ] == "SUPERSEDED"
@@ -952,10 +1171,16 @@ def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it
     ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"
     assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"][
         "status"
-    ] == "PARTIAL"
+    ] == "SUPERSEDED"
     assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"][
         "successor_of"
     ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.019"
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.021"
+    assert assert_append_only_partial_tail(
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.020"
+    ).startswith("GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.")
     snapshot = ROOT / "configs/data/p0-coverage-authority-matrix-snapshot-v1.json"
     assert artifact_sha256(snapshot) == (
         "52306f04d9e751b8bf32ffff6f6517e5b090754ef789a59276ac75af30d64266"

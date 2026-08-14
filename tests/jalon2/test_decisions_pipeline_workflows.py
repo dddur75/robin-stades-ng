@@ -1,4 +1,5 @@
 import json
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
 
@@ -20,8 +21,23 @@ from scripts.run_shadow_pipeline import (
     pre_match_shadow,
 )
 
+PIT_DECIDED_AT = datetime(2026, 7, 24, 12, tzinfo=UTC)
 
-def test_decision_candidate_reste_strictement_simulee() -> None:
+
+def _pit_lineage() -> dict[str, object]:
+    return {
+        "cutoff_at": PIT_DECIDED_AT,
+        "feature_lineage_hash": "1" * 64,
+        "odds_receipt_id": "2" * 64,
+        "odds_available_at": PIT_DECIDED_AT - timedelta(minutes=1),
+        "model_registry_hash": "3" * 64,
+        "model_available_at": PIT_DECIDED_AT - timedelta(days=1),
+        "point_in_time_status": "POINT_IN_TIME_VALID",
+        "decided_at": PIT_DECIDED_AT,
+    }
+
+
+def test_shadow_self_declared_temporal_scalars_never_enable_stake() -> None:
     decision = decide_shadow_bet(
         fixture_id="f1",
         market_key="1X2",
@@ -31,11 +47,46 @@ def test_decision_candidate_reste_strictement_simulee() -> None:
         devig_method="PROPORTIONAL",
         strategy_version="value-1",
         quality_ok=True,
+        **_pit_lineage(),
     )
-    assert decision.accepted
+    assert decision.accepted is False
     assert decision.simulation
-    assert decision.suggested_stake == 10
-    assert decision.primary_reason is None
+    assert decision.suggested_stake == 0
+    assert decision.primary_reason is RejectionCode.INSUFFICIENT_DATA
+    assert decision.point_in_time_status == "POINT_IN_TIME_NOT_PROVEN"
+    assert decision.cutoff_at == PIT_DECIDED_AT
+    assert decision.feature_lineage_hash == "1" * 64
+    assert decision.odds_receipt_id == "2" * 64
+
+
+def test_shadow_hashes_unverified_lineage_but_never_promotes_it() -> None:
+    baseline = decide_shadow_bet(
+        fixture_id="f-lineage",
+        market_key="1X2",
+        selection="HOME",
+        market_odds={"HOME": 2.2, "DRAW": 3.5, "AWAY": 3.8},
+        model_probability=0.52,
+        devig_method="PROPORTIONAL",
+        strategy_version="value-1",
+        quality_ok=True,
+        **_pit_lineage(),
+    )
+    changed = decide_shadow_bet(
+        fixture_id="f-lineage",
+        market_key="1X2",
+        selection="HOME",
+        market_odds={"HOME": 2.2, "DRAW": 3.5, "AWAY": 3.8},
+        model_probability=0.52,
+        devig_method="PROPORTIONAL",
+        strategy_version="value-1",
+        quality_ok=True,
+        **{**_pit_lineage(), "feature_lineage_hash": "9" * 64},
+    )
+    assert baseline.decision_input_hash != changed.decision_input_hash
+    assert baseline.decision_id != changed.decision_id
+    assert baseline.accepted is changed.accepted is False
+    assert baseline.point_in_time_status == "POINT_IN_TIME_NOT_PROVEN"
+    assert changed.point_in_time_status == "POINT_IN_TIME_NOT_PROVEN"
 
 
 @pytest.mark.parametrize(
@@ -137,6 +188,7 @@ def test_shadow_identity_covers_full_market_and_supersedes_business_state(
         "strategy_version": "value-1",
         "quality_ok": True,
         "prediction_id": "prediction-market",
+        **_pit_lineage(),
     }
     first = decide_shadow_bet(**cast(Any, base))
     changed = decide_shadow_bet(
@@ -144,8 +196,9 @@ def test_shadow_identity_covers_full_market_and_supersedes_business_state(
     )
     assert first.decision_id != changed.decision_id
     assert first.decision_business_key == changed.decision_business_key
-    assert first.accepted is True
+    assert first.accepted is False
     assert changed.accepted is False
+    assert first.point_in_time_status == "POINT_IN_TIME_NOT_PROVEN"
     assert journal.append(first) is True
     assert journal.append(changed) is True
     assert len(journal.read_all()) == 2
@@ -215,6 +268,41 @@ def test_pipeline_mock_complet_ne_se_fait_jamais_passer_pour_du_live(
     assert payload[0]["origin"] == "DEMO DATA"
 
 
+def test_settlement_ignores_forged_accepted_shadow_journal(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output = tmp_path / "shadow"
+    journal = DecisionJournal(output / "decisions" / "shadow-decisions.jsonl")
+    journal.path.write_text(
+        json.dumps(
+            {
+                "decision_id": "legacy-forged-accepted",
+                "fixture_id": "fixture-forged",
+                "accepted": True,
+                "point_in_time_status": "POINT_IN_TIME_VALID",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    calls = 0
+
+    def forbidden_provider(*_args: object, **_kwargs: object) -> object:
+        nonlocal calls
+        calls += 1
+        raise AssertionError("provider must not be called for unverified journal rows")
+
+    monkeypatch.setattr("scripts.run_shadow_pipeline.provider", forbidden_provider)
+    result = post_match_settlement(output, mock=False)
+
+    assert result["status"] == "WORKFLOW_SUCCESS_NO_DATA"
+    assert result["eligible_decisions"] == 0
+    assert result["unverified_accepted_decisions_ignored"] == 1
+    assert result["calls_consumed"] == 0
+    assert calls == 0
+
+
 def test_configuration_shadow_verrouille_paris_reels() -> None:
     root = Path(__file__).resolve().parents[2]
     config = yaml.safe_load((root / "configs" / "shadow_v1.yaml").read_text("utf-8"))
@@ -269,4 +357,10 @@ def test_oos_walk_forward_ne_produit_pas_de_statut_production() -> None:
     assert all("PRODUCTION" not in result.status for result in results)
     assert all(result.as_dict()["devig_method"] == "PROPORTIONAL" for result in results)
     assert all("yield" in result.as_dict() for result in results)
+    assert all(
+        result.as_dict()["point_in_time_status"] == "POINT_IN_TIME_NOT_PROVEN"
+        and result.as_dict()["promotion"] == "NO_PROMOTION"
+        and result.as_dict()["production_status"] == "PRODUCTION_LOCKED"
+        for result in results
+    )
     assert next(item for item in results if item.strategy == "btts_value").bets == 0

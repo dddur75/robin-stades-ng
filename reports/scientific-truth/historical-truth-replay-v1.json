@@ -25,20 +25,32 @@
     "global_selected_method": null,
     "roi_used_for_authority": false
   },
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
   "claim_id": "REPLAY.SCIENTIFIC.HISTORICAL.TRUTH.V1.001",
   "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "3baebe6789fff897bb105180f2f4d5e48a1a4c8765d1029ced37674640bed934",
+  "content_sha256": "e5db0d2c8ccc8e2bc6f5ab118baa10533c212f18559a2ef2d5f0bc3093adfbf6",
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
   "evidence_status": "PROBABLE",
   "external_effects": {
     "api_football_calls": 0,
+    "business_data_network_calls": 0,
     "live_workflow_dispatches": 0,
-    "migration_0014": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
     "neon_api_calls": 0,
-    "network_calls": 0,
+    "new_database_migrations": 0,
     "odds_provider_calls": 0,
-    "production_connections": 0,
+    "persistent_local_database_mutations": 0,
     "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
     "promotions": 0,
     "provider_calls": 0,
     "purchases": 0,
@@ -46,15 +58,14 @@
     "real_bets": 0,
     "recovery_branch_creations": 0,
     "role_creations": 0,
-    "sql_reads": 0,
-    "sql_writes": 0
+    "social_publications": 0
   },
   "generated_at": "2026-08-13T15:38:28Z",
   "generator": {
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
     "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
+    "sha256": "f8e0e6746cc247bed16ba25f2f0eca5d2d0c6bc8e4cad91c08be7340da5c0d1d"
   },
   "grain": "ONE_LOGICAL_RESULT_WITH_THREE_PHYSICAL_OCCURRENCES",
   "hash_policy": {
@@ -116,24 +127,24 @@
   "replay_type": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0003",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
+    "evidence_id": "LOOP54_REPORTS:E0006",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V6",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "historical-truth-replay-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0003"
+      "LOOP54_REPORTS:E0006"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [
       {
         "path": "cockpit/app/cockpit-data.json",
-        "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
+        "sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc"
       },
       {
         "path": "cockpit/app/cockpit-expert-data.json",
-        "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
+        "sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63"
       },
       {
         "path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/backtest-v3-historical-roi-replay.csv",
@@ -298,35 +309,35 @@
       "repair_projection_sha256": "c37f8b75f460d13ff66c063337fabd7149869c6b8ddcfcac35436b5f3c38b514",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/0",
           "occurrence_id": "V3-FIXED-001-d1e66e146000-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "f12ae594dadc8becd7a4c277cdf94ed069aec8d9c7fcff7621f32cd2a4e63707"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-001-d1e66e146000-O1",
           "json_pointer": "/deepData/strategies/0",
           "occurrence_id": "V3-FIXED-001-d1e66e146000-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "dc80aa01b1056bd35ba034329a7363d5c6ce86b78885cd7d1baff88efbf2e398"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-001-d1e66e146000-O1",
           "json_pointer": "/backtests/0",
           "occurrence_id": "V3-FIXED-001-d1e66e146000-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "f12ae594dadc8becd7a4c277cdf94ed069aec8d9c7fcff7621f32cd2a4e63707"
         }
       ],
@@ -483,35 +494,35 @@
       "repair_projection_sha256": "f697f49bbea81b404c749b188b8f8b9ea6455e55f007cf9a410005555c17f642",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/1",
           "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "bc8170a3e13ab36bdcc340d4e205855a01a359f20fe79ffbf84ee07f3857d65c"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-002-7c7f1cb755cd-O1",
           "json_pointer": "/deepData/strategies/1",
           "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "08b20477bd6a1726f26f4c261c2ff9036e5af91a97e13420f107643a3360af30"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-002-7c7f1cb755cd-O1",
           "json_pointer": "/backtests/1",
           "occurrence_id": "V3-FIXED-002-7c7f1cb755cd-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "bc8170a3e13ab36bdcc340d4e205855a01a359f20fe79ffbf84ee07f3857d65c"
         }
       ],
@@ -668,35 +679,35 @@
       "repair_projection_sha256": "2ec5a35803c8909501c613192b22feef3283b576fa86db20aa60eb162c3ee426",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/2",
           "occurrence_id": "V3-FIXED-003-094aa0013251-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "bad98dc1ce77c1652806b6b749ef46a6ceb954d78064e1a667f6117d933273cf"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-003-094aa0013251-O1",
           "json_pointer": "/deepData/strategies/2",
           "occurrence_id": "V3-FIXED-003-094aa0013251-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "7850a620842fc07e04f599d38f869e85ce78642a350a2fe27a8c56f3e1aac07a"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-003-094aa0013251-O1",
           "json_pointer": "/backtests/2",
           "occurrence_id": "V3-FIXED-003-094aa0013251-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "bad98dc1ce77c1652806b6b749ef46a6ceb954d78064e1a667f6117d933273cf"
         }
       ],
@@ -853,35 +864,35 @@
       "repair_projection_sha256": "d796c014a98d77359bb04cb9adc23b99435bd3218dc8608bcc83a6c463c1b843",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/3",
           "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "bb716be3eb29e5bda539fcca0e964bf2c6ee78983c04db13d6c3af999fc19092"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-004-7fd167d6d3fc-O1",
           "json_pointer": "/deepData/strategies/3",
           "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "c70f28c73e91779a9da3df7c13bf5e279e379176bdc3c356dce1309c99a42bf4"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-004-7fd167d6d3fc-O1",
           "json_pointer": "/backtests/3",
           "occurrence_id": "V3-FIXED-004-7fd167d6d3fc-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "bb716be3eb29e5bda539fcca0e964bf2c6ee78983c04db13d6c3af999fc19092"
         }
       ],
@@ -1038,35 +1049,35 @@
       "repair_projection_sha256": "5f285c80204987290059605090d6c6fd5b7ff95c2efa01f506cebae8c20c11b4",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/4",
           "occurrence_id": "V3-FIXED-005-2262f787be9a-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "b94d9d88e7be492144a335de42990e84670167c11ec3b35635eb50ead35cb417"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-005-2262f787be9a-O1",
           "json_pointer": "/deepData/strategies/4",
           "occurrence_id": "V3-FIXED-005-2262f787be9a-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "cfe410ca1f21962349d2f165333aee2713e0984b2eaaad690a5ba5f4e2184eb6"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-005-2262f787be9a-O1",
           "json_pointer": "/backtests/4",
           "occurrence_id": "V3-FIXED-005-2262f787be9a-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "b94d9d88e7be492144a335de42990e84670167c11ec3b35635eb50ead35cb417"
         }
       ],
@@ -1223,35 +1234,35 @@
       "repair_projection_sha256": "e3a1e305a63c3cae77bc7186e7cb093adabd8f4733d7506e47b190dc274aeee1",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/5",
           "occurrence_id": "V3-FIXED-006-f19ca44559bf-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "2dfd642d94553db0b7f8c2709cfcc37368c7726963617b709f2265ffe9942966"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-006-f19ca44559bf-O1",
           "json_pointer": "/deepData/strategies/5",
           "occurrence_id": "V3-FIXED-006-f19ca44559bf-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "e6b64c0272bd6c6c266565a04f9bfe25ecd15ac960494228a6a9cb49cdacbb1a"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-006-f19ca44559bf-O1",
           "json_pointer": "/backtests/5",
           "occurrence_id": "V3-FIXED-006-f19ca44559bf-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "2dfd642d94553db0b7f8c2709cfcc37368c7726963617b709f2265ffe9942966"
         }
       ],
@@ -1408,35 +1419,35 @@
       "repair_projection_sha256": "5a629d440edc4ec251891eb80e9698c7b77f5c7e0c8a491f37f5e3724f3f0d6d",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/6",
           "occurrence_id": "V3-FIXED-007-a210cac06ff3-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "ac5944febfa8541dd9f90a77ba60bc47c358dcb065f8735ca317240d011d8169"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-007-a210cac06ff3-O1",
           "json_pointer": "/deepData/strategies/6",
           "occurrence_id": "V3-FIXED-007-a210cac06ff3-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "5a6e7665c02b2bfd5d2a6a44b5329f943c0cd6b66afdf8cc75b894ac702195ae"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-007-a210cac06ff3-O1",
           "json_pointer": "/backtests/6",
           "occurrence_id": "V3-FIXED-007-a210cac06ff3-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "ac5944febfa8541dd9f90a77ba60bc47c358dcb065f8735ca317240d011d8169"
         }
       ],
@@ -1593,35 +1604,35 @@
       "repair_projection_sha256": "fca00625495e26e821f27a74a4b0fea5c4701c688e0e892d64385e481c4eb0fe",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/7",
           "occurrence_id": "V3-FIXED-008-ca192767e0ea-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "9ab71562d1649e8174ca94f2364c8bb55e1e7516840f752fa781f450960b0c50"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-008-ca192767e0ea-O1",
           "json_pointer": "/deepData/strategies/7",
           "occurrence_id": "V3-FIXED-008-ca192767e0ea-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "df759928507ec6c3261710b4c7bbde537285e564a1bece26e18bcbee5f7d4508"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-008-ca192767e0ea-O1",
           "json_pointer": "/backtests/7",
           "occurrence_id": "V3-FIXED-008-ca192767e0ea-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "9ab71562d1649e8174ca94f2364c8bb55e1e7516840f752fa781f450960b0c50"
         }
       ],
@@ -1778,35 +1789,35 @@
       "repair_projection_sha256": "03947fba314c84e6b58e4eeab406c6092c515a3b8f1a3299cbfb9a1422eda2d5",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/8",
           "occurrence_id": "V3-FIXED-009-6f61ab231d03-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "cb8197c8d50a147363609e32634ac5889808ba44b7324a8ad0a899cf0d4dd71f"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-009-6f61ab231d03-O1",
           "json_pointer": "/deepData/strategies/8",
           "occurrence_id": "V3-FIXED-009-6f61ab231d03-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "b444afbddd06cd5b04b08c04c54e1bfe3f22fd84eec6f60effe31c7b2944185d"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-009-6f61ab231d03-O1",
           "json_pointer": "/backtests/8",
           "occurrence_id": "V3-FIXED-009-6f61ab231d03-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "cb8197c8d50a147363609e32634ac5889808ba44b7324a8ad0a899cf0d4dd71f"
         }
       ],
@@ -1963,35 +1974,35 @@
       "repair_projection_sha256": "e4eef31828554015a4b621fd1b3d57e0292310ae640b17b3d9dd2ddfb74b6736",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/9",
           "occurrence_id": "V3-FIXED-010-093409ee0a82-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "dcd696887503cf92eb8c3cf9283ea33e59fb43f94ba9e9973360b822daf5226b"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-010-093409ee0a82-O1",
           "json_pointer": "/deepData/strategies/9",
           "occurrence_id": "V3-FIXED-010-093409ee0a82-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "1b659b397c7ee8a5cee748f133808f0a95bb4aea8e8ef0be5622cef785c895e8"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-010-093409ee0a82-O1",
           "json_pointer": "/backtests/9",
           "occurrence_id": "V3-FIXED-010-093409ee0a82-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "dcd696887503cf92eb8c3cf9283ea33e59fb43f94ba9e9973360b822daf5226b"
         }
       ],
@@ -2148,35 +2159,35 @@
       "repair_projection_sha256": "713f29cc140448c0c8743482e69043ca5eaa5ab47cec2b48d8d6a2eeda80ee7f",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/10",
           "occurrence_id": "V3-FIXED-011-e043aacf5662-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "3acc8442df76300caa8247f6e625a70ee171d138de91771d591b3c239e65317f"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-011-e043aacf5662-O1",
           "json_pointer": "/deepData/strategies/10",
           "occurrence_id": "V3-FIXED-011-e043aacf5662-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "c77f15552435183d681de3da09c3cf1d456d5e8c78471840c78889f3270431cf"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-011-e043aacf5662-O1",
           "json_pointer": "/backtests/10",
           "occurrence_id": "V3-FIXED-011-e043aacf5662-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "3acc8442df76300caa8247f6e625a70ee171d138de91771d591b3c239e65317f"
         }
       ],
@@ -2333,35 +2344,35 @@
       "repair_projection_sha256": "c09bccdb1110b6feba900b8f0eb8c0a461cb7477561a2ddb896172a2d97f7827",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/11",
           "occurrence_id": "V3-FIXED-012-927eae85f4fe-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "63b8377fdafaf80252a755e109750ed9e2db78d947624538d6064e9ebb9bfcc7"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-012-927eae85f4fe-O1",
           "json_pointer": "/deepData/strategies/11",
           "occurrence_id": "V3-FIXED-012-927eae85f4fe-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "1964e3dff0d95100f9e8d23a584d8f4504205ea048ddbd1485dffbcd2c847cca"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-012-927eae85f4fe-O1",
           "json_pointer": "/backtests/11",
           "occurrence_id": "V3-FIXED-012-927eae85f4fe-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "63b8377fdafaf80252a755e109750ed9e2db78d947624538d6064e9ebb9bfcc7"
         }
       ],
@@ -2518,35 +2529,35 @@
       "repair_projection_sha256": "6f65c2de03c7b679ac0479a455c96b042b5b1b37c53bbfdeb85cabbc7dd5f7c1",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/12",
           "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "af74b8b5a383ff1390e6ea26a1fa82544eb0001408e96bac3f99e225a7d24f72"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-013-c17f3f47f6a4-O1",
           "json_pointer": "/deepData/strategies/14",
           "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "abd889e001ba13d7782976a48b80ca2f67527ca329115168c2634e91f344d93c"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-013-c17f3f47f6a4-O1",
           "json_pointer": "/backtests/12",
           "occurrence_id": "V3-FIXED-013-c17f3f47f6a4-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "af74b8b5a383ff1390e6ea26a1fa82544eb0001408e96bac3f99e225a7d24f72"
         }
       ],
@@ -2703,35 +2714,35 @@
       "repair_projection_sha256": "e724acbce2efcb245798bb0b4b1dd0f36a4f3fed6d9a2bd7a0e5546373219f7c",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/13",
           "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "653c4ce1251e55dce11a834dc700279cd550819dbf3669268840bf530ae1812f"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-014-05e9e473ad8a-O1",
           "json_pointer": "/deepData/strategies/15",
           "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "3ed3749d7ea99afb5787f117a9568c5db16e0588f6c814c0cc5b03481444f1b6"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-014-05e9e473ad8a-O1",
           "json_pointer": "/backtests/13",
           "occurrence_id": "V3-FIXED-014-05e9e473ad8a-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "653c4ce1251e55dce11a834dc700279cd550819dbf3669268840bf530ae1812f"
         }
       ],
@@ -2888,35 +2899,35 @@
       "repair_projection_sha256": "ddcfa11a86672fb735c511280fc98399d55f4f2748eabc0ade503da9a38ee09a",
       "source_occurrences": [
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "json_pointer": "/deepData/backtests/14",
           "occurrence_id": "V3-FIXED-015-c48b860927d1-O1",
           "relation": "PRIMARY_SOURCE_OCCURRENCE",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "f65994a25abb1b96a5008520fbc31819edf1cda8a725ed882e0ae3d213e66e2a"
         },
         {
-          "audited_checkout_artifact_sha256": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
+          "audited_checkout_artifact_sha256": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
           "copy_of": "V3-FIXED-015-c48b860927d1-O1",
           "json_pointer": "/deepData/strategies/16",
           "occurrence_id": "V3-FIXED-015-c48b860927d1-O2",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
+          "source_artifact_sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
           "source_object_sha256": "82c9d9ba0ca3a9c33d7e59f5009924022f3df925f363a23ee06f615efa1d53a9"
         },
         {
-          "audited_checkout_artifact_sha256": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+          "audited_checkout_artifact_sha256": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
           "copy_of": "V3-FIXED-015-c48b860927d1-O1",
           "json_pointer": "/backtests/14",
           "occurrence_id": "V3-FIXED-015-c48b860927d1-O3",
           "relation": "COPY_OF",
           "repo_path": "cockpit/app/cockpit-expert-data.json",
           "source_artifact_hash_representation": "GIT_CANONICAL_LF",
-          "source_artifact_sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+          "source_artifact_sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
           "source_object_sha256": "f65994a25abb1b96a5008520fbc31819edf1cda8a725ed882e0ae3d213e66e2a"
         }
       ],
@@ -2963,14 +2974,14 @@
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-data.json",
-      "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
+      "sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc"
     },
     {
       "evidence_ids": [
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-expert-data.json",
-      "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
+      "sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63"
     },
     {
       "evidence_ids": [

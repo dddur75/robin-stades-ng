@@ -11,7 +11,7 @@ import time
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from uuid import uuid4
 
 import pandas as pd
@@ -38,9 +38,9 @@ from robin.historical.dataset_factory import (
     write_dataset,
 )
 from robin.historical.features import (
+    TEMPORAL_VALIDITY_NOT_PROVEN,
     assert_temporal_integrity,
     build_team_feature_rows,
-    dataset_manifest,
 )
 from robin.historical.forecast import build_complete_forecast
 from robin.historical.model_lab import (
@@ -103,6 +103,7 @@ from robin.historical.storage import (
     HistoricalBundleStore,
     PartitionedParquetStore,
     directory_size,
+    load_dataset_snapshot,
     storage_inventory,
     write_json_atomic,
 )
@@ -240,7 +241,7 @@ class HistoricalRunner:
     def ingest(
         self,
         endpoint: str,
-        params: dict[str, object],
+        params: Mapping[str, object],
         *,
         competition: str,
         competition_id: int,
@@ -280,7 +281,7 @@ class HistoricalRunner:
                     "\n".join(page_hashes).encode("ascii")
                 ).hexdigest()
         else:
-            result = self._fetch(clean_endpoint, params)
+            result = self._fetch(clean_endpoint, dict(params))
             records = result.records
             status = (
                 "COMPLETED" if result.http_status is None or result.http_status < 400 else "FAILED"
@@ -585,8 +586,8 @@ def build_observed_forecast(state: Path) -> dict[str, object]:
     base = scenarios["base"]
     if not isinstance(base, dict):
         raise RuntimeError("COMPLETE_FORECAST_BASE_ABSENT")
-    daily_calls = int(complete["calls_per_day"])
-    total_call_projection = int(complete["calls_remaining_base"])
+    daily_calls = int(str(complete["calls_per_day"]))
+    total_call_projection = int(str(complete["calls_remaining_base"]))
     uncompressed_file_projection = int(
         total_call_projection * max(float(throughput["payloads_per_task"]) / 25.08, 1) * 2
     )
@@ -781,7 +782,7 @@ def command_pilot(args: argparse.Namespace) -> None:
         "fixtures": fixtures_report["rows_received"],
         "endpoints": runner.endpoint_reports,
         "normalized_rows": sum(
-            int(report["normalized_rows"]) for report in runner.endpoint_reports
+            int(str(report["normalized_rows"])) for report in runner.endpoint_reports
         ),
         "raw_compressed_bytes": raw_bytes,
         "parquet_bytes": parquet_bytes,
@@ -1278,12 +1279,12 @@ def command_datasets(args: argparse.Namespace) -> None:
         (
             "api_team_pre_match_v1",
             team_rows,
-            "HISTORICAL POINT-IN-TIME",
+            TEMPORAL_VALIDITY_NOT_PROVEN,
         ),
         (
             "api_market_baseline_v1",
             market_rows,
-            "HISTORICAL_CLOSING_MARKET",
+            TEMPORAL_VALIDITY_NOT_PROVEN,
         ),
     ):
         manifest = write_dataset(
@@ -1303,7 +1304,7 @@ def command_datasets(args: argparse.Namespace) -> None:
             name="api_player_match_facts_v1",
             rows=facts,
             code_revision=git_revision(),
-            temporal_policy="POST_MATCH_ONLY",
+            temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
         )
         write_json_atomic(
             args.state / "datasets" / "api_player_match_facts_v1.json",
@@ -1315,16 +1316,16 @@ def command_datasets(args: argparse.Namespace) -> None:
             team_rows=team_rows,
             seasons=player_seasons,
         )
-        for name, rows, policy in (
-            ("player_feature_store_v1", feature_rows, "PRE_LINEUP"),
-            ("api_player_pre_lineup_v1", pre_rows, "PRE_LINEUP"),
+        for name, rows in (
+            ("player_feature_store_v1", feature_rows),
+            ("api_player_pre_lineup_v1", pre_rows),
         ):
             manifest = write_dataset(
                 args.state,
                 name=name,
                 rows=rows,
                 code_revision=git_revision(),
-                temporal_policy=policy,
+                temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
             )
             write_json_atomic(args.state / "datasets" / f"{name}.json", manifest)
             manifests.append(manifest)
@@ -1334,7 +1335,7 @@ def command_datasets(args: argparse.Namespace) -> None:
                 name="api_post_lineup_simulated_v1",
                 rows=post_rows,
                 code_revision=git_revision(),
-                temporal_policy="POST_LINEUP_SIMULATED",
+                temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
             )
             write_json_atomic(
                 args.state / "datasets" / "api_post_lineup_simulated_v1.json",
@@ -1362,15 +1363,22 @@ def command_datasets(args: argparse.Namespace) -> None:
 
 
 def _dataset_rows(state: Path, dataset_name: str) -> list[dict[str, object]]:
-    root = state / "derived"
-    rows: list[dict[str, object]] = []
-    for path in sorted(root.rglob("*.parquet")):
-        if f"entity_type={dataset_name}" not in path.as_posix():
-            continue
-        rows.extend(
-            {str(key): value for key, value in record.items() if key != "_record_hash"}
-            for record in pd.read_parquet(path).to_dict(orient="records")
-        )
+    manifest_path = state / "datasets" / f"{dataset_name}.json"
+    if not manifest_path.is_file():
+        return []
+    manifest = read_json(manifest_path, {})
+    if not isinstance(manifest, Mapping):
+        raise RuntimeError("DATASET_SNAPSHOT_MANIFEST_INVALID")
+    rows = load_dataset_snapshot(
+        state,
+        manifest,
+        expected_dataset_name=dataset_name,
+    )
+    dataset_hash = str(manifest["sha256"])
+    dataset_version = str(manifest["dataset_version"])
+    for row in rows:
+        row["dataset_hash"] = dataset_hash
+        row.setdefault("dataset_version", dataset_version)
     return rows
 
 
@@ -1387,25 +1395,40 @@ def command_model_lab(args: argparse.Namespace) -> None:
         datasets,
         devig_method="PROPORTIONAL",
     )
+    dataset_hashes = {
+        name: str(read_json(args.state / "datasets" / f"{name}.json", {})["sha256"])
+        for name, rows in datasets.items()
+        if rows
+    }
     for model in models:
+        source_dataset = str(model.get("dataset", ""))
+        model["dataset_hash"] = dataset_hashes.get(source_dataset)
         write_json_atomic(
             args.state / "models" / f"{model['model_version']}.json",
             model,
         )
-    store = PartitionedParquetStore(args.state / "derived")
-    prediction_partitions: list[dict[str, object]] = []
-    for model_version in sorted({str(row["model_version"]) for row in predictions}):
-        model_rows = [row for row in predictions if row["model_version"] == model_version]
-        for season in sorted({int(row["season"]) for row in model_rows}):
-            prediction_partitions.append(
-                store.write_records(
-                    [row for row in model_rows if int(row["season"]) == season],
-                    competition="Ligue-1",
-                    season=season,
-                    entity_type="api_model_predictions_v1",
-                    dataset_version=model_version,
-                )
-            )
+    for prediction in predictions:
+        source_dataset = str(
+            prediction.get("dataset_version", "api_team_pre_match_v1")
+        )
+        prediction["source_dataset_hash"] = dataset_hashes.get(source_dataset)
+        prediction["source_temporal_policy"] = prediction.get(
+            "availability_status",
+            prediction.get("temporal_policy"),
+        )
+        prediction["availability_status"] = TEMPORAL_VALIDITY_NOT_PROVEN
+        prediction["temporal_policy"] = TEMPORAL_VALIDITY_NOT_PROVEN
+    prediction_manifest = write_dataset(
+        args.state,
+        name="api_model_predictions_v1",
+        rows=predictions,
+        code_revision=git_revision(),
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    write_json_atomic(
+        args.state / "datasets" / "api_model_predictions_v1.json",
+        prediction_manifest,
+    )
     result = {
         "status": "PLAYER_MODEL_TESTING",
         "models": [
@@ -1419,7 +1442,8 @@ def command_model_lab(args: argparse.Namespace) -> None:
             for model in models
         ],
         "predictions": len(predictions),
-        "partitions": prediction_partitions,
+        "prediction_dataset_hash": prediction_manifest["sha256"],
+        "partitions": prediction_manifest["partitions"],
         "provider_calls": 0,
         "quota_consumed": 0,
         "production_status": "PRODUCTION_LOCKED",
@@ -1477,11 +1501,14 @@ def _market_prediction_rows(
     for row in rows:
         label = model_target(row)
         season = int(str(row.get("season", 0)))
-        prices = [
-            row.get("odds_home"),
-            row.get("odds_draw"),
-            row.get("odds_away"),
-        ]
+        prices = cast(
+            list[float | None],
+            [
+                row.get("odds_home"),
+                row.get("odds_draw"),
+                row.get("odds_away"),
+            ],
+        )
         if label is None or season not in {2024, 2025}:
             continue
         try:
@@ -1500,11 +1527,18 @@ def _market_prediction_rows(
                 "target": label,
                 "model_version": "market_devigged_baseline_v1",
                 "dataset_version": "api_market_baseline_v1",
+                "source_dataset_hash": row.get("dataset_hash"),
                 "probability_home": devig.fair_probabilities[0],
                 "probability_draw": devig.fair_probabilities[1],
                 "probability_away": devig.fair_probabilities[2],
                 "market_snapshot": row.get("market_source", ""),
-                "temporal_policy": "PRE_MATCH_CUTOFF",
+                "temporal_policy": row.get(
+                    "temporal_policy",
+                    row.get(
+                        "availability_status",
+                        TEMPORAL_VALIDITY_NOT_PROVEN,
+                    ),
+                ),
                 "odds_home": row.get("odds_home"),
                 "odds_draw": row.get("odds_draw"),
                 "odds_away": row.get("odds_away"),
@@ -1523,7 +1557,13 @@ def _paired_cutoff(
         {
             **row,
             "market_snapshot": str(row.get("market_snapshot", "")),
-            "temporal_policy": "PRE_MATCH_CUTOFF",
+            "temporal_policy": row.get(
+                "temporal_policy",
+                row.get(
+                    "availability_status",
+                    TEMPORAL_VALIDITY_NOT_PROVEN,
+                ),
+            ),
         }
         for row in rows
     ]
@@ -1533,8 +1573,20 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
     """Run Jalon 7 without provider calls, using only durable restored datasets."""
 
     state = args.state
-    manifests = [read_json(path, {}) for path in sorted((state / "datasets").glob("*.json"))]
-    manifests = [item for item in manifests if isinstance(item, Mapping)]
+    arena_dataset_names = (
+        "api_team_pre_match_v1",
+        "api_market_baseline_v1",
+        "api_player_pre_lineup_v1",
+        "api_post_lineup_simulated_v1",
+    )
+    manifests: list[Mapping[str, object]] = []
+    for name in arena_dataset_names:
+        item = read_json(state / "datasets" / f"{name}.json", {})
+        if not item:
+            continue
+        if not isinstance(item, Mapping):
+            raise RuntimeError("DATASET_SNAPSHOT_MANIFEST_INVALID")
+        manifests.append(item)
     cache_key = arena_cache_key(manifests, code_revision=git_revision())
     run_path = state / "models" / "jalon7-arena-run.json"
     cached = read_json(run_path, {})
@@ -1661,6 +1713,9 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
     if player_rows:
         controls.append(random_lineup_control(player_rows))
     all_predictions = [row for rows in calibrated.values() for row in rows]
+    for prediction in all_predictions:
+        prediction["availability_status"] = TEMPORAL_VALIDITY_NOT_PROVEN
+        prediction["temporal_policy"] = TEMPORAL_VALIDITY_NOT_PROVEN
     leaderboard = [
         prediction_leaderboard_row(name, rows)
         for name, rows in sorted(calibrated.items())
@@ -1701,20 +1756,17 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
         for name, rows in calibrated.items()
         if name in {"poisson_score", "dixon_coles_score"}
     ]
-    store = PartitionedParquetStore(state / "derived")
-    partitions: list[dict[str, object]] = []
-    for model_version in sorted({str(row["model_version"]) for row in all_predictions}):
-        model_rows = [row for row in all_predictions if str(row["model_version"]) == model_version]
-        for season in sorted({int(str(row["season"])) for row in model_rows}):
-            partitions.append(
-                store.write_records(
-                    [row for row in model_rows if int(str(row["season"])) == season],
-                    competition="Ligue-1",
-                    season=season,
-                    entity_type="scientific_arena_predictions_v1",
-                    dataset_version=model_version,
-                )
-            )
+    prediction_manifest = write_dataset(
+        state,
+        name="scientific_arena_predictions_v1",
+        rows=all_predictions,
+        code_revision=git_revision(),
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    write_json_atomic(
+        state / "datasets" / "scientific_arena_predictions_v1.json",
+        prediction_manifest,
+    )
     guard = storage_guard(directory_size(state))
     result: dict[str, object] = {
         "status": "MODEL_ARENA_ACTIVE",
@@ -1751,7 +1803,8 @@ def command_scientific_arena(args: argparse.Namespace) -> None:
             "player": "PLAYER_INCREMENTAL_VALUE_INCONCLUSIVE",
             "post_lineup": "POST_LINEUP_NO_INCREMENTAL_VALUE",
         },
-        "partitions": partitions,
+        "prediction_dataset_hash": prediction_manifest["sha256"],
+        "partitions": prediction_manifest["partitions"],
         "storage": guard,
         "live_candidates": 0,
         "provider_calls": 0,
@@ -1843,39 +1896,22 @@ def command_features(args: argparse.Namespace) -> None:
     if canonical_audit and canonical_audit.get("status") != "PASSED":
         raise RuntimeError("FEATURE_FACTORY_BLOCKED_CANONICAL_CARDINALITY")
     frame = pd.read_parquet(ROOT / "data" / "matches.parquet")
-    records = frame.to_dict(orient="records")
+    records = cast(list[dict[str, Any]], frame.to_dict(orient="records"))
     rows = build_team_feature_rows(records)
-    assert_temporal_integrity(rows)
-    manifest = dataset_manifest(
-        rows,
+    assert_temporal_integrity(rows, allow_unproven_historical=True)
+    manifest = write_dataset(
+        args.state,
         name="team_baseline_v1",
-        code_version=git_revision(),
+        rows=rows,
+        code_revision=git_revision(),
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
     )
-    store = PartitionedParquetStore(args.state / "derived")
-    partitions: list[dict[str, object]] = []
-    for season in sorted({int(row["season"]) for row in rows}):
-        season_rows = [row for row in rows if int(row["season"]) == season]
-        partitions.append(
-            store.write_records(
-                season_rows,
-                competition="legacy-multi-league",
-                season=season,
-                entity_type="team_features",
-                dataset_version="team_baseline_v1",
-            )
-        )
-    manifest["partitions"] = partitions
-    manifest["status"] = "FEATURE_FACTORY_ACTIVE"
     write_json_atomic(args.state / "datasets" / "team_baseline_v1.json", manifest)
     print(json.dumps(manifest, ensure_ascii=False, sort_keys=True))
 
 
 def _derived_rows(state: Path) -> list[dict[str, object]]:
-    rows: list[dict[str, object]] = []
-    for path in (state / "derived").rglob("*.parquet"):
-        for record in pd.read_parquet(path).to_dict(orient="records"):
-            rows.append({str(key): value for key, value in record.items()})
-    return rows
+    return _dataset_rows(state, "team_baseline_v1")
 
 
 def command_train(args: argparse.Namespace) -> None:

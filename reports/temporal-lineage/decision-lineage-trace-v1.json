@@ -1,0 +1,263 @@
+{
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E2013"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
+  "bounded_trace": {
+    "decision": "shadow decision hash includes supplied temporal lineage identities, while unverified runtime lineage remains POINT_IN_TIME_NOT_PROVEN with zero stake",
+    "feature": "frozen snapshot reconstructs a content-addressed receipt for every non-missing family; forecast rereads repository bytes",
+    "model": "created_at and training_cutoff are bounded before forecast",
+    "odds": "asof_select excludes receipt-backed odds available after cutoff",
+    "scope": "LOCAL_DETERMINISTIC_TEST_ONLY",
+    "source": "bounded repository-backed receipts plus raw R2 reread",
+    "status": "PASS_BOUNDED_LAB"
+  },
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "1cb47b845378e31f347abad1c9c35344cdc698f409f1465c57f5f55716536166",
+  "devig": {
+    "effective_method_recorded": true,
+    "global_method_selected": false,
+    "status": "DEVIG_PROTOCOL_CONFLICT"
+  },
+  "durability": {
+    "prequential_feature_provenance_json_and_r2": true,
+    "prequential_odds_snapshot_receipt_chain": true,
+    "production_runtime_trace": false,
+    "shadow_decision_append_only_jsonl": true,
+    "status": "NO_NEW_MIGRATION_REQUIRED_FOR_COVERED_PATHS"
+  },
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "business_data_network_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
+    "neon_api_calls": 0,
+    "new_database_migrations": 0,
+    "odds_provider_calls": 0,
+    "persistent_local_database_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "social_publications": 0
+  },
+  "immutable_review_base_revision": "71833964e5d7ba7f5882bfff49b39d567fd5473b",
+  "limitations": [
+    "Q5 is a bounded fail-closed result against repository-backed and valid-looking self-declared provenance; it is not positive production PIT proof.",
+    "Self-declared shadow scalars still produce no bet and POINT_IN_TIME_NOT_PROVEN until an active runtime binds repository-verified receipts."
+  ],
+  "loop55_source": {
+    "candidate_source": {
+      "aggregate_sha256": "c105c2a5d7729fa5d132be339e3b5525ce21acea6c16ef13bc6e3f9d7ed49aaa",
+      "excluded_path_count": 15,
+      "included_path_count": 65,
+      "manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "outside_allowlist_count": 0
+    },
+    "evidence_ids": [
+      "LOOP55:E0001",
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0005",
+      "LOOP55:E0006"
+    ],
+    "green_proof": "LOOP55:E0004",
+    "historical_superseded_proofs": [
+      "LOOP55:E0002",
+      "LOOP55:E0003"
+    ],
+    "invalid_harness_receipt": {
+      "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0005",
+      "proof_status": "NOT_PROOF"
+    },
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1",
+    "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+    "namespace": "LOOP55",
+    "red_proof": "LOOP55:E0001",
+    "source_authority_sha256": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
+    "static_validation": "LOOP55:E0006"
+  },
+  "mission_id": "POINT_IN_TIME_LINEAGE",
+  "mission_status": "ROBIN_POINT_IN_TIME_LINEAGE_V1_PARTIAL",
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_status": "NO_PROMOTION",
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP55_REPORTS:E0004",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V3",
+    "namespace": "LOOP55_REPORTS"
+  },
+  "report_id": "decision-lineage-trace-v1",
+  "reproducibility": {
+    "builder": "scripts/build_temporal_lineage_reports_v1.py",
+    "command_evidence_ids": [
+      "LOOP55_REPORTS:E0004"
+    ],
+    "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED"
+  },
+  "review_questions": [
+    {
+      "answer": "NO",
+      "evidence_ref": "test_late_arriving_pre_cutoff_event_is_excluded_when_observed_after_cutoff",
+      "question": "Can a late-arriving pre-cutoff event influence an earlier decision?",
+      "question_id": "Q1",
+      "scope": "NO_IN_COVERED_PATHS_GLOBAL_PATH_PARTIAL"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "tests/temporal/test_point_in_time_lineage_v1.py::test_append_change_delete_and_reorder_future_rows_leave_past_team_features_exact",
+      "question": "Can a future value mutation change a past feature hash?",
+      "question_id": "Q2",
+      "scope": "NO_IN_COVERED_TEAM_FEATURE_BUILDER"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "test_future_value_mutation_does_not_change_past_decision_hash",
+      "question": "Can a future value mutation change a past decision hash?",
+      "question_id": "Q3",
+      "scope": "NO_IN_COVERED_ASOF_SHADOW_TRACE"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "src/robin/temporal/lineage.py",
+      "question": "Can event_at substitute for available_at?",
+      "question_id": "Q4",
+      "scope": "NO_BY_TEMPORAL_CONTRACT"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "tests/jalon14/test_prequential_factory.py::test_self_declared_receipt_and_late_ingestion_fail_closed",
+      "question": "Can a self-declared observed_at pass without a receipt?",
+      "question_id": "Q5",
+      "scope": "NO_IN_BOUNDED_REPOSITORY_BACKED_PROVENANCE_GLOBAL_RUNTIME_PARTIAL"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "tests/jalon14/test_prequential_factory.py::test_factory_rejects_content_addressed_snapshot_with_unknown_availability",
+      "question": "Can an unknown availability input be used with only a warning?",
+      "question_id": "Q6",
+      "scope": "NO_IN_BOUNDED_PREQUENTIAL_GATE_CONTRACT_GLOBAL_RUNTIME_PARTIAL"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "test_model_created_after_cutoff_is_rejected",
+      "question": "Can a model created after cutoff be used?",
+      "question_id": "Q7",
+      "scope": "NO_IN_COVERED_PREQUENTIAL_FORECAST"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "test_future_value_mutation_does_not_change_past_decision_hash",
+      "question": "Can an odds snapshot observed after cutoff be selected?",
+      "question_id": "Q8",
+      "scope": "NO_IN_COVERED_ASOF_SELECTION"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "AUDIT:E2013",
+      "question": "Can a historical reconstructed timestamp be labelled proven?",
+      "question_id": "Q9",
+      "scope": "NO_BY_E2013_CLASSIFICATION_POLICY"
+    },
+    {
+      "answer": "NO",
+      "evidence_ref": "AUDIT:E2013",
+      "question": "Can a prospective valid contract falsely revalidate all history?",
+      "question_id": "Q10",
+      "scope": "NO_BY_SEPARATE_HISTORICAL_AND_PROSPECTIVE_VERDICTS"
+    }
+  ],
+  "review_summary": {
+    "answers_no": 10,
+    "questions": 10
+  },
+  "schema_version": "robin-temporal-lineage-report-v1",
+  "sources": [
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/temporal/lineage.py",
+      "sha256": "b66429fe515f82b7d516fb162dc697ac416d1a8006cd6550565415de142b3f32",
+      "symbols": [
+        "TemporalDecisionLineage"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/shadow/decision.py",
+      "sha256": "d8da880b6d12e9c81625da0dce2b2f1e042fcb4799babaa9b616fbc2412eb67e",
+      "symbols": [
+        "ShadowDecision",
+        "decide_shadow_bet"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/prospective_observatory/prequential_contracts.py",
+      "sha256": "d54fca01b0c05c6a311ada343688563733acbefb0ee2056e1f03d071ca6a5d0b",
+      "symbols": [
+        "FeatureSnapshot"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/prospective_observatory/prequential_factory.py",
+      "sha256": "d824b2e1241481fcfdec37ce9624bbed57b25828e1087e8d0ba0a97cc83f287b",
+      "symbols": [
+        "PrequentialLearningFactory.forecast"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "sha256": "0ca855c9aaa1666719f644f492b5426f6ec9064182dff18372d80b8c420c0a4e",
+      "symbols": []
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "sha256": "755813ed92e0947c9b6a351e659fb29945abd6e7cf09cc7d247ea69fe47fc2b3",
+      "symbols": [
+        "test_self_declared_receipt_and_late_ingestion_fail_closed",
+        "test_forecast_reverifies_source_receipt_bytes",
+        "test_feature_snapshot_rejects_receipt_payload_value_mismatch",
+        "test_feature_snapshot_rejects_receipts_from_another_fixture",
+        "test_factory_rejects_content_addressed_snapshot_with_unknown_availability"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_pit_closure.py",
+      "sha256": "8ab81ce3ef5a03a32246742d7fed63115f1eeb01e284e2d56ff5ed9359364dfd",
+      "symbols": [
+        "test_odds_requires_receipt_index_window_r2_and_ties_fail_closed",
+        "test_source_receipt_rejects_cross_family_odds_capture_as_team_projection",
+        "test_source_receipt_rejects_backdated_market_closure_for_late_materialization"
+      ]
+    }
+  ],
+  "status": "PARTIAL",
+  "verdict": "PRODUCTION_DECISION_PATH_POINT_IN_TIME_STILL_NOT_PROVEN"
+}

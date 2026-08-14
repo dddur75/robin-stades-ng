@@ -7,13 +7,14 @@ import json
 import math
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-from datetime import datetime
+from itertools import groupby
 from pathlib import Path
 from typing import cast
 
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier  # type: ignore[import-untyped]
 
+from robin.historical.features import TEMPORAL_VALIDITY_NOT_PROVEN, _utc_datetime
 from robin.historical.model_lab import (
     LINEUP_FEATURES,
     PLAYER_FEATURES,
@@ -201,7 +202,11 @@ def validate_exact_pairing(
     for fixture_id in shared:
         left = challenger_by_fixture[fixture_id]
         right = reference_by_fixture[fixture_id]
-        if _pair_key(left) != _pair_key(right):
+        if (
+            _pair_key(left) != _pair_key(right)
+            or left.get("source_dataset_hash", left.get("dataset_hash"))
+            != right.get("source_dataset_hash", right.get("dataset_hash"))
+        ):
             raise ValueError(f"PAIRED_PROTOCOL_MISMATCH:{fixture_id}")
         pairs.append((left, right))
     if not pairs:
@@ -259,13 +264,12 @@ def grouped_bootstrap(
 
 
 def _iso_group(row: Mapping[str, object]) -> str:
-    raw = str(row.get("kickoff_at", ""))
-    try:
-        instant = datetime.fromisoformat(raw.replace("Z", "+00:00"))
-        iso = instant.isocalendar()
-        return f"{int(str(row['season']))}:{iso.year}-W{iso.week:02d}"
-    except (TypeError, ValueError):
-        return f"{int(str(row.get('season', 0)))}:UNKNOWN"
+    instant = _utc_datetime(
+        row.get("kickoff_at"),
+        field_name="paired_prediction_kickoff_at",
+    )
+    iso = instant.isocalendar()
+    return f"{int(str(row['season']))}:{iso.year}-W{iso.week:02d}"
 
 
 def paired_model_comparison(
@@ -387,9 +391,17 @@ def prediction_leaderboard_row(
     calibrations = sorted(
         {str(row.get("calibration", "NONE")) for row in rows}
     )
+    dataset_hashes = {
+        str(row.get("source_dataset_hash", row.get("dataset_hash")))
+        for row in rows
+        if row.get("source_dataset_hash", row.get("dataset_hash")) is not None
+    }
+    if len(dataset_hashes) > 1:
+        raise ValueError("PREDICTION_DATASET_HASH_MISMATCH")
     return {
         "model": name,
         "dataset": str(rows[0].get("dataset_version", "")),
+        "dataset_hash": next(iter(dataset_hashes), None),
         "sample": len(rows),
         "metrics": _metrics(probabilities, labels),
         "calibration": ",".join(calibrations),
@@ -542,27 +554,48 @@ def _rolling_goal_rates(
     history_for: dict[str, list[float]] = defaultdict(list)
     history_against: dict[str, list[float]] = defaultdict(list)
     rates: list[tuple[float, float]] = []
-    for row in sorted(rows, key=lambda item: str(item.get("kickoff_at", ""))):
-        home = str(row.get("home_team_id", row.get("home_team", "")))
-        away = str(row.get("away_team_id", row.get("away_team", "")))
-        home_for = history_for[home][-10:]
-        away_for = history_for[away][-10:]
-        home_against = history_against[home][-10:]
-        away_against = history_against[away][-10:]
-        home_rate = (
-            (float(np.mean(home_for)) + float(np.mean(away_against))) / 2.0
-            if home_for and away_against
-            else 1.45
-        )
-        away_rate = (
-            (float(np.mean(away_for)) + float(np.mean(home_against))) / 2.0
-            if away_for and home_against
-            else 1.15
-        )
-        rates.append((max(home_rate, 0.15), max(away_rate, 0.15)))
-        home_goals = _number(row.get("target_home_goals"))
-        away_goals = _number(row.get("target_away_goals"))
-        if home_goals is not None and away_goals is not None:
+    ordered = sorted(
+        rows,
+        key=lambda item: (
+            _utc_datetime(
+                item.get("kickoff_at"),
+                field_name="score_model_kickoff_at",
+            ),
+            str(item.get("fixture_id", "")),
+        ),
+    )
+    grouped = groupby(
+        ordered,
+        key=lambda item: _utc_datetime(
+            item.get("kickoff_at"),
+            field_name="score_model_kickoff_at",
+        ),
+    )
+    for _, batch_items in grouped:
+        pending: list[tuple[str, str, float, float]] = []
+        for row in batch_items:
+            home = str(row.get("home_team_id", row.get("home_team", "")))
+            away = str(row.get("away_team_id", row.get("away_team", "")))
+            home_for = history_for[home][-10:]
+            away_for = history_for[away][-10:]
+            home_against = history_against[home][-10:]
+            away_against = history_against[away][-10:]
+            home_rate = (
+                (float(np.mean(home_for)) + float(np.mean(away_against))) / 2.0
+                if home_for and away_against
+                else 1.45
+            )
+            away_rate = (
+                (float(np.mean(away_for)) + float(np.mean(home_against))) / 2.0
+                if away_for and home_against
+                else 1.15
+            )
+            rates.append((max(home_rate, 0.15), max(away_rate, 0.15)))
+            home_goals = _number(row.get("target_home_goals"))
+            away_goals = _number(row.get("target_away_goals"))
+            if home_goals is not None and away_goals is not None:
+                pending.append((home, away, home_goals, away_goals))
+        for home, away, home_goals, away_goals in pending:
             history_for[home].append(home_goals)
             history_against[home].append(away_goals)
             history_for[away].append(away_goals)
@@ -576,7 +609,16 @@ def score_model_predictions(
     method: str,
     seasons: Iterable[int] = (2024, 2025),
 ) -> list[dict[str, object]]:
-    ordered = sorted(rows, key=lambda item: str(item.get("kickoff_at", "")))
+    ordered = sorted(
+        rows,
+        key=lambda item: (
+            _utc_datetime(
+                item.get("kickoff_at"),
+                field_name="score_model_kickoff_at",
+            ),
+            str(item.get("fixture_id", "")),
+        ),
+    )
     rates = _rolling_goal_rates(ordered)
     allowed = set(seasons)
     predictions: list[dict[str, object]] = []
@@ -596,9 +638,13 @@ def score_model_predictions(
                 "kickoff_at": row["kickoff_at"],
                 "target": label,
                 "model_version": f"{method.lower()}_score_v1",
-                "dataset_version": "api_team_pre_match_v1",
+                "dataset_version": row.get(
+                    "dataset_version",
+                    "api_team_pre_match_v1",
+                ),
+                "source_dataset_hash": row.get("dataset_hash"),
                 "market_snapshot": row.get("market_source", ""),
-                "temporal_policy": row.get("temporal_policy", "HISTORICAL POINT-IN-TIME"),
+                "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
                 "odds_home": row.get("odds_home"),
                 "odds_draw": row.get("odds_draw"),
                 "odds_away": row.get("odds_away"),
@@ -627,11 +673,16 @@ def temporal_discriminative_predictions(
 ) -> list[dict[str, object]]:
     """Walk forward: each evaluated season is fitted exclusively on earlier seasons."""
 
-    eligible = [
-        dict(row)
-        for row in rows
-        if target(row) is not None and int(str(row.get("season", 0))) >= 2020
-    ]
+    eligible: list[dict[str, object]] = []
+    for row in rows:
+        if target(row) is None or int(str(row.get("season", 0))) < 2020:
+            continue
+        candidate = dict(row)
+        candidate["kickoff_at"] = _utc_datetime(
+            row.get("kickoff_at"),
+            field_name="model_decision_kickoff_at",
+        ).isoformat()
+        eligible.append(candidate)
     seasons = set(evaluation_seasons)
     predictions: list[dict[str, object]] = []
     for season in sorted(seasons):
@@ -681,11 +732,12 @@ def temporal_discriminative_predictions(
                     "target": cast(int, target(row)),
                     "model_version": model_version or f"{model_family.lower()}_walk_forward_v1",
                     "dataset_version": row.get("dataset_version", "api_team_pre_match_v1"),
+                    "source_dataset_hash": row.get("dataset_hash"),
                     "probability_home": float(values[0]),
                     "probability_draw": float(values[1]),
                     "probability_away": float(values[2]),
                     "market_snapshot": row.get("market_source", ""),
-                    "temporal_policy": "PRE_MATCH_CUTOFF",
+                    "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
                     "odds_home": row.get("odds_home"),
                     "odds_draw": row.get("odds_draw"),
                     "odds_away": row.get("odds_away"),

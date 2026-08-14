@@ -1,0 +1,220 @@
+{
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E2013"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "audited_paths": [
+    {
+      "path": "src/robin/temporal/lineage.py",
+      "rule": "latest receipt-backed available_at <= cutoff; conflicting payloads at the latest time fail closed",
+      "status": "PASS_BOUNDED_LAB",
+      "symbol": "asof_select"
+    },
+    {
+      "path": "src/robin/prospective_observatory/prequential_contracts.py",
+      "rule": "each non-missing family requires receipt and payload identities and available_at <= cutoff",
+      "status": "PASS_BOUNDED_LAB",
+      "symbol": "FeatureSnapshot.__post_init__"
+    },
+    {
+      "path": "scripts/run_prequential_learning_factory.py",
+      "rule": "registered_at <= as_of with contradiction detection",
+      "status": "PARTIAL_TIMESTAMP_NOT_RECEIPT_BACKED",
+      "symbol": "_latest_fixtures"
+    },
+    {
+      "path": "scripts/run_prequential_learning_factory.py",
+      "rule": "created_at <= cutoff plus exact feature contract hash",
+      "status": "PARTIAL_MODEL_ARTIFACT_RECEIPT_NOT_PERSISTED",
+      "symbol": "_current_models"
+    },
+    {
+      "path": "src/robin/shadow/decision.py",
+      "rule": "POINT_IN_TIME_VALID requires complete lineage persisted in append-only JSONL; missing lineage rejects acceptance",
+      "status": "PARTIAL_ACTIVE_RUNTIME_RECEIPT_BINDING_NOT_PROVEN",
+      "symbol": "decide_shadow_bet"
+    },
+    {
+      "path": "scripts/run_shadow_pipeline.py",
+      "rule": "active runtime end-to-end receipt-backed as-of join",
+      "status": "NOT_PROVEN",
+      "symbol": "collect_odds/pre_match_shadow"
+    },
+    {
+      "path": "src/robin/historical/features.py",
+      "rule": "historical rolling inputs receipt-backed at cutoff",
+      "status": "NOT_PROVEN",
+      "symbol": "build_team_feature_rows"
+    }
+  ],
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
+  "boundary_contract": {
+    "available_at_equal_cutoff": "ADMISSIBLE",
+    "available_at_missing": "POINT_IN_TIME_INPUT_NOT_PROVEN",
+    "available_at_post_cutoff": "EXCLUDED",
+    "contradictory_latest_payloads": "ASOF_JOIN_AMBIGUOUS"
+  },
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "bccc1e8589fa4142543fcd8a329bd382ef5ac1d024563aaee871b5ecdc3cd968",
+  "counts": {
+    "NOT_PROVEN": 2,
+    "PARTIAL_ACTIVE_RUNTIME_RECEIPT_BINDING_NOT_PROVEN": 1,
+    "PARTIAL_MODEL_ARTIFACT_RECEIPT_NOT_PERSISTED": 1,
+    "PARTIAL_TIMESTAMP_NOT_RECEIPT_BACKED": 1,
+    "PASS_BOUNDED_LAB": 2
+  },
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "business_data_network_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
+    "neon_api_calls": 0,
+    "new_database_migrations": 0,
+    "odds_provider_calls": 0,
+    "persistent_local_database_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "social_publications": 0
+  },
+  "immutable_review_base_revision": "71833964e5d7ba7f5882bfff49b39d567fd5473b",
+  "limitations": [
+    "The canonical primitive is proven only by bounded local tests.",
+    "Not every active historical, shadow and rolling-window caller has been migrated to the primitive.",
+    "No production runtime trace or database snapshot was used."
+  ],
+  "loop55_source": {
+    "candidate_source": {
+      "aggregate_sha256": "c105c2a5d7729fa5d132be339e3b5525ce21acea6c16ef13bc6e3f9d7ed49aaa",
+      "excluded_path_count": 15,
+      "included_path_count": 65,
+      "manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "outside_allowlist_count": 0
+    },
+    "evidence_ids": [
+      "LOOP55:E0001",
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0005",
+      "LOOP55:E0006"
+    ],
+    "green_proof": "LOOP55:E0004",
+    "historical_superseded_proofs": [
+      "LOOP55:E0002",
+      "LOOP55:E0003"
+    ],
+    "invalid_harness_receipt": {
+      "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0005",
+      "proof_status": "NOT_PROOF"
+    },
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1",
+    "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+    "namespace": "LOOP55",
+    "red_proof": "LOOP55:E0001",
+    "source_authority_sha256": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
+    "static_validation": "LOOP55:E0006"
+  },
+  "mission_id": "POINT_IN_TIME_LINEAGE",
+  "mission_status": "ROBIN_POINT_IN_TIME_LINEAGE_V1_PARTIAL",
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_status": "NO_PROMOTION",
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP55_REPORTS:E0004",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V3",
+    "namespace": "LOOP55_REPORTS"
+  },
+  "report_id": "asof-join-audit-v1",
+  "reproducibility": {
+    "builder": "scripts/build_temporal_lineage_reports_v1.py",
+    "command_evidence_ids": [
+      "LOOP55_REPORTS:E0004"
+    ],
+    "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED"
+  },
+  "schema_version": "robin-temporal-lineage-report-v1",
+  "sources": [
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/temporal/lineage.py",
+      "sha256": "b66429fe515f82b7d516fb162dc697ac416d1a8006cd6550565415de142b3f32",
+      "symbols": [
+        "asof_select"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/prospective_observatory/prequential_contracts.py",
+      "sha256": "d54fca01b0c05c6a311ada343688563733acbefb0ee2056e1f03d071ca6a5d0b",
+      "symbols": [
+        "FeatureSnapshot.__post_init__"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "scripts/run_prequential_learning_factory.py",
+      "sha256": "43bec82cb2b28e46a957a948bf69ebb26a90eaca4e72e12d131a50193c7f24b6",
+      "symbols": [
+        "_latest_fixtures"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "scripts/run_prequential_learning_factory.py",
+      "sha256": "43bec82cb2b28e46a957a948bf69ebb26a90eaca4e72e12d131a50193c7f24b6",
+      "symbols": [
+        "_current_models"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/shadow/decision.py",
+      "sha256": "d8da880b6d12e9c81625da0dce2b2f1e042fcb4799babaa9b616fbc2412eb67e",
+      "symbols": [
+        "decide_shadow_bet"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "scripts/run_shadow_pipeline.py",
+      "sha256": "1abf89d9ce83e0b557461ec37ef0029784cc30005a9ae1bff105a27c7e91b3c5",
+      "symbols": [
+        "collect_odds/pre_match_shadow"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/historical/features.py",
+      "sha256": "73a3d2103182358e93dcf18ba998c2016bc70bf452ba14424dce127f100f8f10",
+      "symbols": [
+        "build_team_feature_rows"
+      ]
+    }
+  ],
+  "status": "PARTIAL",
+  "storage_status": "NO_NEW_MIGRATION_REQUIRED_FOR_COVERED_PATHS",
+  "verdict": "ROBIN_ASOF_JOIN_FAIL_CLOSED"
+}

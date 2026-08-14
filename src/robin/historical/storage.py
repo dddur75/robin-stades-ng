@@ -7,13 +7,15 @@ import hashlib
 import json
 import re
 import tarfile
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
 from robin.providers.base import PayloadBackend
+
+DATASET_SNAPSHOT_SCHEMA_VERSION = "historical-dataset-snapshot-v1"
 
 
 class GzipPayloadBackend(PayloadBackend):
@@ -49,6 +51,36 @@ class GzipPayloadBackend(PayloadBackend):
 def canonical_record_hash(record: dict[str, object]) -> str:
     payload = json.dumps(
         record,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _is_sha256(value: object) -> bool:
+    return isinstance(value, str) and len(value) == 64 and all(
+        character in "0123456789abcdef" for character in value
+    )
+
+
+def _record_hashes_sha256(record_hashes: Iterable[str]) -> str:
+    payload = json.dumps(
+        list(record_hashes),
+        separators=(",", ":"),
+    ).encode("ascii")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _snapshot_indices_sha256(indices: Iterable[int]) -> str:
+    payload = json.dumps(list(indices), separators=(",", ":")).encode("ascii")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _canonical_rows_sha256(rows: Iterable[Mapping[str, object]]) -> str:
+    payload = json.dumps(
+        [dict(row) for row in rows],
         ensure_ascii=False,
         sort_keys=True,
         separators=(",", ":"),
@@ -132,6 +164,126 @@ class PartitionedParquetStore:
             "sha256": digest,
         }
 
+    def snapshot_partition_path(
+        self,
+        *,
+        competition: object,
+        season: object,
+        entity_type: object,
+        dataset_version: object,
+        snapshot_sha256: str,
+    ) -> Path:
+        if not _is_sha256(snapshot_sha256):
+            raise ValueError("DATASET_SNAPSHOT_SHA256_INVALID")
+        base = self.partition_path(
+            competition=competition,
+            season=season,
+            entity_type=entity_type,
+            dataset_version=dataset_version,
+        )
+        return base.parent / f"snapshot_sha256={snapshot_sha256}" / base.name
+
+    def write_snapshot_records(
+        self,
+        records: Iterable[dict[str, object]],
+        *,
+        competition: object,
+        season: object,
+        entity_type: object,
+        dataset_version: object,
+        snapshot_sha256: str,
+        snapshot_indices: Iterable[int],
+    ) -> dict[str, object]:
+        """Write one immutable partition addressed by the complete snapshot hash."""
+
+        path = self.snapshot_partition_path(
+            competition=competition,
+            season=season,
+            entity_type=entity_type,
+            dataset_version=dataset_version,
+            snapshot_sha256=snapshot_sha256,
+        )
+        originals = [dict(record) for record in records]
+        indices = list(snapshot_indices)
+        if (
+            len(indices) != len(originals)
+            or any(index < 0 for index in indices)
+            or len(indices) != len(set(indices))
+        ):
+            raise ValueError("DATASET_SNAPSHOT_ROW_INDICES_INVALID")
+        incoming = [_tabular(record) for record in originals]
+        for index, original, record in zip(
+            indices,
+            originals,
+            incoming,
+            strict=True,
+        ):
+            record["_snapshot_row_index"] = index
+            record["_snapshot_row_json"] = json.dumps(
+                original,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+                default=str,
+            )
+            record["_record_hash"] = canonical_record_hash(original)
+        incoming_hashes = [str(record["_record_hash"]) for record in incoming]
+        hashes_sha256 = _record_hashes_sha256(incoming_hashes)
+        if path.exists():
+            existing = pd.read_parquet(path)
+            existing_hashes = (
+                [str(value) for value in existing["_record_hash"].tolist()]
+                if "_record_hash" in existing.columns
+                else []
+            )
+            existing_payloads = (
+                [str(value) for value in existing["_snapshot_row_json"].tolist()]
+                if "_snapshot_row_json" in existing.columns
+                else []
+            )
+            existing_indices = (
+                [int(value) for value in existing["_snapshot_row_index"].tolist()]
+                if "_snapshot_row_index" in existing.columns
+                else []
+            )
+            incoming_payloads = [str(record["_snapshot_row_json"]) for record in incoming]
+            try:
+                existing_payload_hashes: list[str] = []
+                for payload in existing_payloads:
+                    restored = json.loads(payload)
+                    if not isinstance(restored, dict):
+                        raise ValueError("snapshot row is not an object")
+                    existing_payload_hashes.append(canonical_record_hash(restored))
+            except (TypeError, ValueError) as exc:
+                raise RuntimeError("DATASET_SNAPSHOT_IMMUTABLE_VIOLATION") from exc
+            if (
+                existing_hashes != incoming_hashes
+                or existing_payloads != incoming_payloads
+                or existing_indices != indices
+                or existing_payload_hashes != existing_hashes
+            ):
+                raise RuntimeError("DATASET_SNAPSHOT_IMMUTABLE_VIOLATION")
+            inserted = 0
+            duplicates_avoided = len(incoming)
+        else:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame(incoming).to_parquet(path, index=False)
+            inserted = len(incoming)
+            duplicates_avoided = 0
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        return {
+            "path": path.as_posix(),
+            "rows": len(incoming),
+            "inserted": inserted,
+            "duplicates_avoided": duplicates_avoided,
+            "bytes": path.stat().st_size,
+            "sha256": digest,
+            "records_sha256": hashes_sha256,
+            "row_indices_sha256": _snapshot_indices_sha256(indices),
+            "snapshot_sha256": snapshot_sha256,
+            "immutable": True,
+        }
+
     def validate(self) -> list[str]:
         failures: list[str] = []
         for path in self.root.rglob("*.parquet"):
@@ -141,6 +293,107 @@ class PartitionedParquetStore:
             elif bool(frame["_record_hash"].duplicated().any()):
                 failures.append(f"{path}: doublons de hash")
         return failures
+
+
+def load_dataset_snapshot(
+    state_root: Path,
+    manifest: Mapping[str, object],
+    *,
+    expected_dataset_name: str,
+) -> list[dict[str, object]]:
+    """Load only the immutable partitions named by one exact dataset manifest."""
+
+    if manifest.get("snapshot_schema_version") != DATASET_SNAPSHOT_SCHEMA_VERSION:
+        raise RuntimeError("DATASET_SNAPSHOT_SCHEMA_INVALID")
+    if manifest.get("dataset_name") != expected_dataset_name:
+        raise RuntimeError("DATASET_SNAPSHOT_NAME_MISMATCH")
+    if manifest.get("dataset_version") != expected_dataset_name:
+        raise RuntimeError("DATASET_SNAPSHOT_VERSION_MISMATCH")
+    snapshot_sha256 = manifest.get("sha256")
+    if not _is_sha256(snapshot_sha256):
+        raise RuntimeError("DATASET_SNAPSHOT_SHA256_INVALID")
+    if manifest.get("immutable") is not True:
+        raise RuntimeError("DATASET_SNAPSHOT_NOT_IMMUTABLE")
+    partitions = manifest.get("partitions")
+    if not isinstance(partitions, list):
+        raise RuntimeError("DATASET_SNAPSHOT_PARTITIONS_INVALID")
+
+    state = state_root.resolve()
+    derived_root = (state / "derived").resolve()
+    seen_paths: set[Path] = set()
+    indexed_rows: list[tuple[int, dict[str, object]]] = []
+    for item in partitions:
+        if not isinstance(item, Mapping):
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_INVALID")
+        relative_text = item.get("path")
+        if not isinstance(relative_text, str) or not relative_text:
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_PATH_INVALID")
+        relative = Path(relative_text)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_PATH_INVALID")
+        path = (state / relative).resolve()
+        if derived_root not in path.parents or path in seen_paths:
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_SCOPE_INVALID")
+        seen_paths.add(path)
+        if (
+            f"entity_type={expected_dataset_name}" not in path.parts
+            or f"dataset_version={_safe_partition(expected_dataset_name)}"
+            not in path.parts
+            or f"snapshot_sha256={snapshot_sha256}" not in path.parts
+            or item.get("snapshot_sha256") != snapshot_sha256
+            or item.get("immutable") is not True
+        ):
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_IDENTITY_MISMATCH")
+        if not path.is_file():
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_MISSING")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != item.get("sha256"):
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_HASH_MISMATCH")
+        frame = pd.read_parquet(path)
+        if (
+            len(frame) != item.get("rows")
+            or "_record_hash" not in frame.columns
+            or "_snapshot_row_json" not in frame.columns
+            or "_snapshot_row_index" not in frame.columns
+        ):
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_ROWS_MISMATCH")
+        record_hashes = [str(value) for value in frame["_record_hash"].tolist()]
+        if (
+            not all(_is_sha256(value) for value in record_hashes)
+            or _record_hashes_sha256(record_hashes) != item.get("records_sha256")
+        ):
+            raise RuntimeError("DATASET_SNAPSHOT_RECORD_HASH_MISMATCH")
+        row_indices = [int(value) for value in frame["_snapshot_row_index"].tolist()]
+        if (
+            len(row_indices) != len(set(row_indices))
+            or _snapshot_indices_sha256(row_indices)
+            != item.get("row_indices_sha256")
+        ):
+            raise RuntimeError("DATASET_SNAPSHOT_ROW_INDICES_INVALID")
+        for record in frame.to_dict(orient="records"):
+            try:
+                restored = json.loads(str(record["_snapshot_row_json"]))
+            except (TypeError, ValueError) as exc:
+                raise RuntimeError("DATASET_SNAPSHOT_ROW_PAYLOAD_INVALID") from exc
+            if (
+                not isinstance(restored, dict)
+                or canonical_record_hash(restored) != str(record["_record_hash"])
+            ):
+                raise RuntimeError("DATASET_SNAPSHOT_RECORD_HASH_MISMATCH")
+            indexed_rows.append(
+                (
+                    int(record["_snapshot_row_index"]),
+                    {str(key): value for key, value in restored.items()},
+                )
+            )
+    indexed_rows.sort(key=lambda item: item[0])
+    if [index for index, _ in indexed_rows] != list(range(len(indexed_rows))):
+        raise RuntimeError("DATASET_SNAPSHOT_ROW_INDICES_INVALID")
+    rows = [row for _, row in indexed_rows]
+    if len(rows) != manifest.get("rows"):
+        raise RuntimeError("DATASET_SNAPSHOT_TOTAL_ROWS_MISMATCH")
+    if _canonical_rows_sha256(rows) != snapshot_sha256:
+        raise RuntimeError("DATASET_SNAPSHOT_CONTENT_HASH_MISMATCH")
+    return rows
 
 
 def directory_size(root: Path) -> int:

@@ -6,9 +6,17 @@ from pathlib import Path
 import pytest
 
 from robin.historical import dataset_factory
-from robin.historical.dataset_factory import build_player_feature_datasets
-from robin.historical.features import build_team_feature_rows
+from robin.historical.dataset_factory import (
+    build_player_feature_datasets,
+    write_dataset,
+)
+from robin.historical.features import (
+    TEMPORAL_VALIDITY_NOT_PROVEN,
+    build_team_feature_rows,
+)
 from robin.historical.normalization import availability_for_endpoint
+from robin.historical.storage import load_dataset_snapshot, write_json_atomic
+from scripts.run_historical_pipeline import _dataset_rows
 
 
 def test_target_match_cannot_feed_its_own_team_features() -> None:
@@ -135,7 +143,8 @@ def test_target_lineup_is_only_available_in_simulated_dataset(
     target_post = next(row for row in post if row["fixture_id"] == 2)
     assert target_pre["home_expected_formation"] is None
     assert target_post["home_confirmed_formation"] == "4-3-3"
-    assert target_post["temporal_policy"] == "POST_LINEUP_SIMULATED"
+    assert target_post["temporal_policy"] == TEMPORAL_VALIDITY_NOT_PROVEN
+    assert target_post["feature_cutoff_stage"] == "POST_LINEUP_SIMULATED"
 
 
 def test_missing_player_values_never_become_zero() -> None:
@@ -195,3 +204,133 @@ def test_injuries_without_historical_timestamp_remain_excluded() -> None:
         availability_for_endpoint("injuries").value
         == "HISTORICAL_NON_POINT_IN_TIME"
     )
+
+
+def _snapshot_row(fixture_id: int, *, season: int = 2024) -> dict[str, object]:
+    return {
+        "fixture_id": fixture_id,
+        "competition": "Ligue 1",
+        "season": season,
+        "kickoff_at": f"{season}-01-{fixture_id:02d}T18:00:00+00:00",
+        "as_of_time": f"{season}-01-{fixture_id:02d}T18:00:00+00:00",
+        "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
+        "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
+        "source": "LOCAL_TEST_FIXTURE",
+    }
+
+
+def test_dataset_snapshot_is_immutable_content_addressed_and_exactly_loaded(
+    tmp_path: Path,
+) -> None:
+    first_rows = [_snapshot_row(1)]
+    first = write_dataset(
+        tmp_path,
+        name="api_team_pre_match_v1",
+        rows=first_rows,
+        code_revision="one",
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    second_rows = [_snapshot_row(2)]
+    second = write_dataset(
+        tmp_path,
+        name="api_team_pre_match_v1",
+        rows=second_rows,
+        code_revision="two",
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    assert first["sha256"] != second["sha256"]
+    assert first["partitions"][0]["path"] != second["partitions"][0]["path"]  # type: ignore[index]
+    assert load_dataset_snapshot(
+        tmp_path,
+        first,
+        expected_dataset_name="api_team_pre_match_v1",
+    ) == first_rows
+    assert load_dataset_snapshot(
+        tmp_path,
+        second,
+        expected_dataset_name="api_team_pre_match_v1",
+    ) == second_rows
+    write_json_atomic(
+        tmp_path / "datasets" / "api_team_pre_match_v1.json",
+        second,
+    )
+    loaded = _dataset_rows(tmp_path, "api_team_pre_match_v1")
+    assert [row["fixture_id"] for row in loaded] == [2]
+    assert {row["dataset_hash"] for row in loaded} == {second["sha256"]}
+
+
+def test_identical_historical_rows_produce_byte_stable_scientific_manifest(
+    tmp_path: Path,
+) -> None:
+    rows = [_snapshot_row(1), _snapshot_row(2)]
+    first = write_dataset(
+        tmp_path,
+        name="api_team_pre_match_v1",
+        rows=rows,
+        code_revision="same-revision",
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    second = write_dataset(
+        tmp_path,
+        name="api_team_pre_match_v1",
+        rows=rows,
+        code_revision="same-revision",
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    assert first == second
+    assert first["generated_at"] is None
+    assert first["generated_at_status"] == (
+        "NOT_RECORDED_IN_SCIENTIFIC_IDENTITY"
+    )
+
+
+def test_snapshot_loader_preserves_manifest_row_order_across_partitions(
+    tmp_path: Path,
+) -> None:
+    rows = [
+        _snapshot_row(1, season=2025),
+        _snapshot_row(2, season=2024),
+        _snapshot_row(3, season=2025),
+    ]
+    manifest = write_dataset(
+        tmp_path,
+        name="api_team_pre_match_v1",
+        rows=rows,
+        code_revision="one",
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    assert load_dataset_snapshot(
+        tmp_path,
+        manifest,
+        expected_dataset_name="api_team_pre_match_v1",
+    ) == rows
+
+
+def test_dataset_loader_fails_closed_on_partition_or_manifest_tampering(
+    tmp_path: Path,
+) -> None:
+    manifest = write_dataset(
+        tmp_path,
+        name="api_team_pre_match_v1",
+        rows=[_snapshot_row(1)],
+        code_revision="one",
+        temporal_policy=TEMPORAL_VALIDITY_NOT_PROVEN,
+    )
+    tampered_manifest = dict(manifest)
+    tampered_manifest["sha256"] = "f" * 64
+    with pytest.raises(RuntimeError, match="PARTITION_IDENTITY_MISMATCH"):
+        load_dataset_snapshot(
+            tmp_path,
+            tampered_manifest,
+            expected_dataset_name="api_team_pre_match_v1",
+        )
+
+    partition = manifest["partitions"][0]  # type: ignore[index]
+    partition_path = tmp_path / str(partition["path"])
+    partition_path.write_bytes(partition_path.read_bytes() + b"tamper")
+    with pytest.raises(RuntimeError, match="PARTITION_HASH_MISMATCH"):
+        load_dataset_snapshot(
+            tmp_path,
+            manifest,
+            expected_dataset_name="api_team_pre_match_v1",
+        )

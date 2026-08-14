@@ -11,6 +11,8 @@ from typing import Any
 
 import pandas as pd
 
+from robin.historical.features import TEMPORAL_VALIDITY_NOT_PROVEN
+
 REGULAR_PREFIX = "Regular Season"
 TERMINAL_EXCLUSIONS = {"CANC", "ABD", "INT", "SUSP"}
 
@@ -267,13 +269,7 @@ def _season_report(
                 if exact_elevens
                 else None
             ),
-            "temporality": (
-                "HISTORICAL_NON_POINT_IN_TIME"
-                if entity == "injuries"
-                else "POST_MATCH_LAG_REQUIRED"
-                if fixture_scoped
-                else "POINT_IN_TIME_SAFE"
-            ),
+            "temporality": TEMPORAL_VALIDITY_NOT_PROVEN,
         }
     team_identity_rate = (
         sum(value is not None for value in all_team_ids) / len(all_team_ids)
@@ -359,13 +355,14 @@ def build_multiseason_readiness(
         ),
         -1,
     )
-    gate_a_passed = (
+    gate_a_data_ready = (
         len(canonical_seasons) >= 5
         and team_identity >= 0.995
         and provenance_complete
         and temporal_errors == 0
         and critical_duplicates == 0
     )
+    gate_a_passed = False
 
     player_seasons: list[dict[str, Any]] = []
     lineup_seasons: list[dict[str, Any]] = []
@@ -397,7 +394,7 @@ def build_multiseason_readiness(
         )
         for report in player_seasons
     )
-    gate_b_passed = (
+    gate_b_data_ready = (
         len(player_seasons) >= 4
         and player_identity >= 0.99
         and minutes_coherence >= 0.99
@@ -416,18 +413,26 @@ def build_multiseason_readiness(
         )
         for report in lineup_seasons
     )
-    gate_c_passed = (
+    gate_c_data_ready = (
         len(lineup_seasons) >= 3
         and lineup_identity >= 0.99
         and exact_elevens >= 0.99
         and quality_passed
     )
+    gate_b_passed = False
+    gate_c_passed = False
     gate_d_passed = False
     gates = {
         "A": {
             "name": "API_TEAM_DATASET",
             "passed": gate_a_passed,
-            "status": "API_TEAM_DATASET_READY" if gate_a_passed else "BLOCKED_BY_COVERAGE",
+            "data_quality_passed": gate_a_data_ready,
+            "status": (
+                "BLOCKED_BY_TEMPORALITY"
+                if gate_a_data_ready
+                else "BLOCKED_BY_COVERAGE"
+            ),
+            "temporal_validity": TEMPORAL_VALIDITY_NOT_PROVEN,
             "eligible_seasons": [int(report["season"]) for report in canonical_seasons],
             "canonical_seasons": len(canonical_seasons),
             "team_identity_rate": team_identity,
@@ -438,7 +443,13 @@ def build_multiseason_readiness(
         "B": {
             "name": "API_PLAYER_DATASET",
             "passed": gate_b_passed,
-            "status": "API_PLAYER_DATASET_READY" if gate_b_passed else "BLOCKED_BY_COVERAGE",
+            "data_quality_passed": gate_b_data_ready,
+            "status": (
+                "BLOCKED_BY_TEMPORALITY"
+                if gate_b_data_ready
+                else "BLOCKED_BY_COVERAGE"
+            ),
+            "temporal_validity": TEMPORAL_VALIDITY_NOT_PROVEN,
             "eligible_seasons": [
                 int(str(report["season"])) for report in player_seasons
             ],
@@ -449,11 +460,13 @@ def build_multiseason_readiness(
         "C": {
             "name": "POST_LINEUP_SIMULATED",
             "passed": gate_c_passed,
+            "data_quality_passed": gate_c_data_ready,
             "status": (
-                "POST_LINEUP_SIMULATED_READY"
-                if gate_c_passed
+                "BLOCKED_BY_TEMPORALITY"
+                if gate_c_data_ready
                 else "BLOCKED_BY_COVERAGE"
             ),
+            "temporal_validity": TEMPORAL_VALIDITY_NOT_PROVEN,
             "eligible_seasons": [
                 int(str(report["season"])) for report in lineup_seasons
             ],

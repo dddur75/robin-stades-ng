@@ -65,7 +65,10 @@ def availability_for_endpoint(endpoint: str) -> AvailabilityStatus:
         return AvailabilityStatus.POST_MATCH_ONLY
     if normalized in {"injuries", "transfers"}:
         return AvailabilityStatus.HISTORICAL_NON_POINT_IN_TIME
-    return AvailabilityStatus.POINT_IN_TIME_SAFE
+    # Endpoint identity does not establish when Robin first observed a payload.
+    # Historical rows without a verified receipt therefore stay non-PIT even
+    # for nominally pre-match entities such as squads, players, or fixtures.
+    return AvailabilityStatus.HISTORICAL_NON_POINT_IN_TIME
 
 
 def normalize_records(

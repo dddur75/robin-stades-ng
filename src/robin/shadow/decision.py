@@ -19,6 +19,10 @@ from robin.market_math import (
     devig_probabilities,
     kernel_versions,
 )
+from robin.temporal.lineage import (
+    TEMPORAL_CONTRACT_VERSION,
+    parse_utc,
+)
 
 DECISION_NAMESPACE = UUID("8e34b21f-b7e4-4b95-9f8a-8ae742bbf96f")
 
@@ -75,6 +79,14 @@ class ShadowDecision(BaseModel):
     simulation: bool = True
     origin: str = "DEMO DATA"
     prediction_id: str | None = None
+    cutoff_at: datetime | None = None
+    feature_lineage_hash: str | None = None
+    odds_receipt_id: str | None = None
+    odds_available_at: datetime | None = None
+    model_registry_hash: str | None = None
+    model_available_at: datetime | None = None
+    temporal_contract_version: str = TEMPORAL_CONTRACT_VERSION
+    point_in_time_status: str = "POINT_IN_TIME_NOT_PROVEN"
 
 
 def decide_shadow_bet(
@@ -94,6 +106,15 @@ def decide_shadow_bet(
     bankroll: float = 1000.0,
     origin: str = "DEMO DATA",
     prediction_id: str | None = None,
+    cutoff_at: datetime | None = None,
+    feature_lineage_hash: str | None = None,
+    odds_receipt_id: str | None = None,
+    odds_available_at: datetime | None = None,
+    model_registry_hash: str | None = None,
+    model_available_at: datetime | None = None,
+    temporal_contract_version: str = TEMPORAL_CONTRACT_VERSION,
+    point_in_time_status: str = "POINT_IN_TIME_NOT_PROVEN",
+    decided_at: datetime | None = None,
 ) -> ShadowDecision:
     if (
         not math.isfinite(model_probability)
@@ -105,6 +126,25 @@ def decide_shadow_bet(
         raise ValueError("SHADOW_EDGE_THRESHOLD_INVALID")
     if not math.isfinite(bankroll) or bankroll < 0.0:
         raise ValueError("SHADOW_BANKROLL_INVALID")
+    decision_time = parse_utc(decided_at or datetime.now(UTC), field="decided_at")
+    # Scalar hashes/timestamps, and even content-addressed in-memory dataclasses,
+    # do not prove that the referenced evidence exists in an append-only receipt
+    # repository.  Shadow has no repository binding yet, so promotion remains
+    # fail-closed regardless of a caller's self-declared temporal status.
+    effective_point_in_time_status = "POINT_IN_TIME_NOT_PROVEN"
+    normalized_cutoff = (
+        parse_utc(cutoff_at, field="cutoff_at") if cutoff_at is not None else None
+    )
+    normalized_odds_available = (
+        parse_utc(odds_available_at, field="odds_available_at")
+        if odds_available_at is not None
+        else None
+    )
+    normalized_model_available = (
+        parse_utc(model_available_at, field="model_available_at")
+        if model_available_at is not None
+        else None
+    )
     reasons: list[RejectionCode] = []
     version_metadata = kernel_versions(devig_method)
     expected = (
@@ -144,6 +184,7 @@ def decide_shadow_bet(
     )
     if not quality_ok:
         reasons.append(RejectionCode.QUALITY_BLOCKED)
+    reasons.append(RejectionCode.INSUFFICIENT_DATA)
     if stale:
         reasons.append(RejectionCode.STALE_DATA)
     if model_disagreement:
@@ -203,6 +244,28 @@ def decide_shadow_bet(
         "min_edge": min_edge,
         "bankroll": bankroll,
         "origin": origin,
+        "temporal_lineage": {
+            "requested_point_in_time_status": point_in_time_status,
+            "effective_point_in_time_status": effective_point_in_time_status,
+            "cutoff_at": (
+                normalized_cutoff.isoformat() if normalized_cutoff is not None else None
+            ),
+            "feature_lineage_hash": feature_lineage_hash,
+            "odds_receipt_id": odds_receipt_id,
+            "odds_available_at": (
+                normalized_odds_available.isoformat()
+                if normalized_odds_available is not None
+                else None
+            ),
+            "model_registry_hash": model_registry_hash,
+            "model_available_at": (
+                normalized_model_available.isoformat()
+                if normalized_model_available is not None
+                else None
+            ),
+            "temporal_contract_version": temporal_contract_version,
+            "repository_verified": False,
+        },
     }
     decision_input_hash = hashlib.sha256(
         json.dumps(
@@ -234,10 +297,18 @@ def decide_shadow_bet(
         accepted=accepted,
         primary_reason=reasons[0] if reasons else None,
         secondary_reasons=tuple(reasons[1:]),
-        decided_at=datetime.now(UTC),
+        decided_at=decision_time,
         simulation=True,
         origin=origin,
         prediction_id=prediction_id,
+        cutoff_at=normalized_cutoff,
+        feature_lineage_hash=feature_lineage_hash,
+        odds_receipt_id=odds_receipt_id,
+        odds_available_at=normalized_odds_available,
+        model_registry_hash=model_registry_hash,
+        model_available_at=normalized_model_available,
+        temporal_contract_version=temporal_contract_version,
+        point_in_time_status=effective_point_in_time_status,
     )
 
 

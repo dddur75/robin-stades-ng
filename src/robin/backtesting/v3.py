@@ -6,6 +6,7 @@ import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from enum import StrEnum
 
 import numpy as np
 
@@ -18,6 +19,11 @@ from robin.market_math import (
     settle_profit,
     stake_units,
 )
+
+
+class TemporalBacktestMode(StrEnum):
+    REQUIRE_POINT_IN_TIME = "REQUIRE_POINT_IN_TIME"
+    LOCAL_DETERMINISTIC_FIXTURE_ONLY = "LOCAL_DETERMINISTIC_FIXTURE_ONLY"
 
 
 @dataclass(frozen=True)
@@ -79,6 +85,7 @@ def run_backtest(
     *,
     devig_method: DevigMethod | str,
     hypotheses_tested: int = 1,
+    temporal_mode: TemporalBacktestMode | str = TemporalBacktestMode.REQUIRE_POINT_IN_TIME,
 ) -> dict[str, object]:
     """Exécuter un backtest sur un seul segment explicitement OOS."""
 
@@ -92,9 +99,25 @@ def run_backtest(
     stakes: list[float] = []
     details: list[dict[str, object]] = []
     invalid_market_reasons: dict[str, int] = {}
+    temporal_rejection_reasons: dict[str, int] = {}
+    temporal_admissible_rows = 0
+    try:
+        validated_temporal_mode = TemporalBacktestMode(temporal_mode)
+    except ValueError as error:
+        raise ValueError("BACKTEST_TEMPORAL_MODE_INVALID") from error
     for row in sorted(predictions, key=_kickoff_sort_key):
         if row.get("origin") != "OOS HISTORICAL":
             raise ValueError("BACKTEST_SEGMENT_MIXED")
+        if validated_temporal_mode is TemporalBacktestMode.REQUIRE_POINT_IN_TIME:
+            # Historical rows currently carry only self-declared scalar hashes.
+            # Until an adapter can re-read and bind the feature, odds, and model
+            # artifacts, none of those rows may be promoted to point-in-time.
+            reason = "POINT_IN_TIME_RECEIPT_VERIFIER_REQUIRED"
+            temporal_rejection_reasons[reason] = (
+                temporal_rejection_reasons.get(reason, 0) + 1
+            )
+            continue
+        temporal_admissible_rows += 1
         outcome_labels: tuple[str, ...]
         if parameters.market == "1X2":
             outcome_labels = ("HOME", "DRAW", "AWAY")
@@ -190,6 +213,12 @@ def run_backtest(
                 "devig_fallback_reason": decision.devig.fallback_reason,
                 "devig_version": decision.devig.version,
                 "devig_definition_hash": decision.devig.definition_hash,
+                "point_in_time_status": (
+                    "LOCAL_DETERMINISTIC_FIXTURE_ONLY"
+                    if validated_temporal_mode
+                    is TemporalBacktestMode.LOCAL_DETERMINISTIC_FIXTURE_ONLY
+                    else "POINT_IN_TIME_NOT_PROVEN"
+                ),
             }
         )
     interval = _confidence_interval(profits)
@@ -220,6 +249,16 @@ def run_backtest(
         "segment": "BLIND_OOS",
         "invalid_market_rows": sum(invalid_market_reasons.values()),
         "invalid_market_reasons": invalid_market_reasons,
+        "temporal_validation_mode": validated_temporal_mode.value,
+        "temporal_admissible_rows": temporal_admissible_rows,
+        "temporal_rejected_rows": sum(temporal_rejection_reasons.values()),
+        "temporal_rejection_reasons": temporal_rejection_reasons,
+        "point_in_time_status": (
+            "LOCAL_DETERMINISTIC_FIXTURE_ONLY"
+            if validated_temporal_mode
+            is TemporalBacktestMode.LOCAL_DETERMINISTIC_FIXTURE_ONLY
+            else "POINT_IN_TIME_NOT_PROVEN"
+        ),
         **performance,
         "max_drawdown_units": maximum_drawdown,
         "max_loss_streak": maximum_loss_streak,
@@ -241,6 +280,7 @@ def strategy_sensitivity(
     model_version: str,
     devig_method: DevigMethod | str,
     edges: tuple[float, ...] = (0.02, 0.04, 0.06),
+    temporal_mode: TemporalBacktestMode | str = TemporalBacktestMode.REQUIRE_POINT_IN_TIME,
 ) -> list[dict[str, object]]:
     rows = [
         row for row in predictions if str(row.get("model_version")) == model_version
@@ -255,6 +295,15 @@ def strategy_sensitivity(
             ),
             devig_method=devig_method,
             hypotheses_tested=len(edges),
+            temporal_mode=temporal_mode,
         )
         for edge in edges
     ]
+
+
+__all__ = [
+    "StrategyParameters",
+    "TemporalBacktestMode",
+    "run_backtest",
+    "strategy_sensitivity",
+]

@@ -26,6 +26,13 @@
     "global_selected_method": null,
     "roi_used_for_authority": false
   },
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
   "claim_id": "EVAL.SCIENTIFIC.ROI.TURNOVER.REPAIR.V1.001",
   "code_paths": [
     {
@@ -51,7 +58,7 @@
   ],
   "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "a58a663e13a5469e942a27777a1562e8b76a9d5c4f5b4e8e63de3801cef9dbe6",
+  "content_sha256": "88cca008786269674747a0a789b6f803173f5c88fd4a17a6d720ef7cc2b5bb25",
   "definition_versions": {
     "profit_per_bet": "profit_over_bet_count_v1",
     "roi": "profit_over_actual_turnover_v1",
@@ -66,16 +73,21 @@
     "turnover_units": "sum(detail.stake)",
     "yield": "roi"
   },
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
   "evidence_status": "PROUVÉ",
   "external_effects": {
     "api_football_calls": 0,
+    "business_data_network_calls": 0,
     "live_workflow_dispatches": 0,
-    "migration_0014": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
     "neon_api_calls": 0,
-    "network_calls": 0,
+    "new_database_migrations": 0,
     "odds_provider_calls": 0,
-    "production_connections": 0,
+    "persistent_local_database_mutations": 0,
     "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
     "promotions": 0,
     "provider_calls": 0,
     "purchases": 0,
@@ -83,15 +95,14 @@
     "real_bets": 0,
     "recovery_branch_creations": 0,
     "role_creations": 0,
-    "sql_reads": 0,
-    "sql_writes": 0
+    "social_publications": 0
   },
   "generated_at": "2026-08-13T15:38:28Z",
   "generator": {
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
     "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "262e40d3e7b6faa896c16a61356ed3a7f984844fe0c76f753aba12123eefd397"
+    "sha256": "f8e0e6746cc247bed16ba25f2f0eca5d2d0c6bc8e4cad91c08be7340da5c0d1d"
   },
   "grain": "DEFINITION_PLUS_15_LOGICAL_AND_45_PHYSICAL_HISTORICAL_SUMMARIES",
   "hash_policy": {
@@ -142,14 +153,14 @@
   },
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0003",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3",
+    "evidence_id": "LOOP54_REPORTS:E0006",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V6",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "roi-turnover-repair-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0003"
+      "LOOP54_REPORTS:E0006"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [
@@ -163,11 +174,11 @@
       },
       {
         "path": "cockpit/app/cockpit-data.json",
-        "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
+        "sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc"
       },
       {
         "path": "cockpit/app/cockpit-expert-data.json",
-        "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
+        "sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63"
       }
     ],
     "seed": null
@@ -202,14 +213,14 @@
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-data.json",
-      "sha256": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36"
+      "sha256": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc"
     },
     {
       "evidence_ids": [
         "AUDIT:E0025"
       ],
       "repo_or_evidence_path": "cockpit/app/cockpit-expert-data.json",
-      "sha256": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57"
+      "sha256": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63"
     }
   ],
   "synthetic_red_proof": {

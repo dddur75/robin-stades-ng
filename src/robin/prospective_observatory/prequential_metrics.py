@@ -116,6 +116,34 @@ def _calibration_error(
     )
 
 
+def _latest_scores(
+    scores: Iterable[PredictionScore],
+    *,
+    frozen_prediction_ids: set[str],
+) -> tuple[PredictionScore, ...]:
+    by_prediction: dict[str, list[PredictionScore]] = defaultdict(list)
+    for score in scores:
+        if score.prediction_id in frozen_prediction_ids:
+            by_prediction[score.prediction_id].append(score)
+    latest: list[PredictionScore] = []
+    for prediction_id, candidates in by_prediction.items():
+        latest_at = max(candidate.scored_at for candidate in candidates)
+        exact_head = tuple(
+            candidate
+            for candidate in candidates
+            if candidate.scored_at == latest_at
+        )
+        if len({candidate.score_hash for candidate in exact_head}) != 1:
+            raise ValueError("PREQUENTIAL_SCORE_HEAD_AMBIGUOUS")
+        latest.append(
+            min(
+                exact_head,
+                key=lambda candidate: (candidate.score_id, prediction_id),
+            )
+        )
+    return tuple(sorted(latest, key=lambda score: score.prediction_id))
+
+
 def aggregate_metrics(
     *,
     predictions: Iterable[FrozenPredictionRecord],
@@ -127,7 +155,10 @@ def aggregate_metrics(
         for prediction in predictions
         if prediction.status is PredictionStatus.FROZEN
     }
-    scored = tuple(score for score in scores if score.prediction_id in frozen)
+    scored = _latest_scores(
+        scores,
+        frozen_prediction_ids=set(frozen),
+    )
     calibration_rows: list[tuple[float, bool]] = []
     for score in scored:
         prediction = frozen[score.prediction_id]
@@ -188,17 +219,25 @@ def segmented_metrics(
     scores: Iterable[PredictionScore],
     missingness_by_prediction: Mapping[str, Mapping[str, bool]] | None = None,
 ) -> tuple[dict[str, object], ...]:
-    prediction_rows = tuple(predictions)
-    by_id = {prediction.prediction_id: prediction for prediction in prediction_rows}
+    prediction_rows = tuple(
+        prediction
+        for prediction in predictions
+        if prediction.status is PredictionStatus.FROZEN
+    )
+    by_id = {
+        prediction.prediction_id: prediction
+        for prediction in prediction_rows
+    }
     groups: dict[
         tuple[str, str, str, str, str, str],
         list[PredictionScore],
     ] = defaultdict(list)
-    for score in scores:
-        prediction = by_id.get(score.prediction_id)
-        if prediction is None:
-            continue
-        month = score.scored_at.strftime("%Y-%m")
+    prediction_groups: dict[
+        tuple[str, str, str, str, str, str],
+        list[FrozenPredictionRecord],
+    ] = defaultdict(list)
+    for prediction in prediction_rows:
+        month = prediction.predicted_at.strftime("%Y-%m")
         key = (
             prediction.competition,
             prediction.market.value,
@@ -207,16 +246,26 @@ def segmented_metrics(
             prediction.model_version,
             month,
         )
+        prediction_groups[key].append(prediction)
+        groups[key]
+    for score in _latest_scores(
+        scores,
+        frozen_prediction_ids=set(by_id),
+    ):
+        prediction = by_id[score.prediction_id]
+        key = (
+            prediction.competition,
+            prediction.market.value,
+            prediction.cutoff_name.value,
+            prediction.model_id,
+            prediction.model_version,
+            prediction.predicted_at.strftime("%Y-%m"),
+        )
         groups[key].append(score)
     output: list[dict[str, object]] = []
     for key, group_scores in sorted(groups.items()):
         competition, market, cutoff, model_id, model_version, month = key
-        prediction_ids = {score.prediction_id for score in group_scores}
-        group_predictions = tuple(
-            prediction
-            for prediction in prediction_rows
-            if prediction.prediction_id in prediction_ids
-        )
+        group_predictions = tuple(prediction_groups[key])
         output.append(
             {
                 "competition": competition,

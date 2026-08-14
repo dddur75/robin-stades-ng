@@ -13,7 +13,7 @@ import json
 import math
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from robin.market_math import (
     DECISION_THRESHOLD_VERSION,
@@ -35,6 +35,7 @@ from robin.market_math import (
 ROOT = Path(__file__).resolve().parents[1]
 REPORT_DIR = ROOT / "reports" / "scientific-truth"
 DOC_PATH = ROOT / "docs" / "scientific" / "ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1.md"
+MISSION_MATRIX_PATH = ROOT / "configs" / "agents" / "mission-activation-matrix-v3.json"
 
 AUDITED_REVISION = "1ffeec1cd89e83deda008da39bb22540a70db896"
 AUDITED_TREE = "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
@@ -62,20 +63,20 @@ AUDIT_FILES = {
 }
 
 REPOSITORY_INPUTS = {
-    "cockpit/app/cockpit-data.json": "269dc665549f2ed69b87d71a7be732e327d1e0275b3e8cffbf6d6736b850db36",
-    "cockpit/app/cockpit-expert-data.json": "1600eadca2ffb91df829b4f0faab2d13b628f0914a2dc5a3c416227a59220e57",
+    "cockpit/app/cockpit-data.json": "76767aa84d6937dd77504e06d449b85f160daba23289738987fee140ef0fb4dc",
+    "cockpit/app/cockpit-expert-data.json": "129e6e4b0a40c548efe60a591c17b248c41ff8bb208dcdaeaf01f3bfa65acc63",
 }
 AUDITED_CHECKOUT_INPUTS = {
-    "cockpit/app/cockpit-data.json": "5abeed0bc029e80f24a39aa4de0ac6da67e44c61c1389b7e7b1353a4354f3c20",
-    "cockpit/app/cockpit-expert-data.json": "3b5651f7718daa5019b56523e5669da31b9f4a40a2528645bc0ebb0628b3af1e",
+    "cockpit/app/cockpit-data.json": "6719eb18b37c81998104008c224475dafd54840eecbd366714f61a1a116859cf",
+    "cockpit/app/cockpit-expert-data.json": "49370b0180658dfebc7476cb6d0eaaa16e79ed49504a413f29a60023bfa9e8fe",
 }
 
 AUDIT_LOGICAL_PATH = "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1"
 LOOP54_LOGICAL_PATH = "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1"
 LOOP54_REPORTS_LOGICAL_PATH = (
-    "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V3"
+    "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V6"
 )
-LOOP54_REPORTS_EVIDENCE_ID = "LOOP54_REPORTS:E0003"
+LOOP54_REPORTS_EVIDENCE_ID = "LOOP54_REPORTS:E0006"
 GENERATOR_PATH = "scripts/build_scientific_truth_reports_v1.py"
 REPLAY_PATH = "reports/scientific-truth/historical-truth-replay-v1.json"
 
@@ -129,25 +130,64 @@ REPORT_SPECS = {
     ),
 }
 
+POINT_IN_TIME_LINEAGE_EFFECT_BUDGET = (
+    "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;"
+    "POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;"
+    "PRODUCTION_SQL_WRITES_0;"
+    "LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;"
+    "LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;"
+    "LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;"
+    "PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;"
+    "EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;"
+    "PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;"
+    "LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;"
+    "NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;"
+    "ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;"
+    "SOCIAL_PUBLICATIONS_0"
+)
+
 EXTERNAL_EFFECTS_ZERO = {
-    "network_calls": 0,
-    "neon_api_calls": 0,
-    "provider_calls": 0,
     "api_football_calls": 0,
-    "odds_provider_calls": 0,
-    "production_connections": 0,
-    "production_postgresql_connections": 0,
-    "sql_reads": 0,
-    "sql_writes": 0,
-    "r2_operations": 0,
+    "business_data_network_calls": 0,
     "live_workflow_dispatches": 0,
-    "migration_0014": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
+    "neon_api_calls": 0,
+    "new_database_migrations": 0,
+    "odds_provider_calls": 0,
+    "persistent_local_database_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
     "recovery_branch_creations": 0,
     "role_creations": 0,
-    "purchases": 0,
-    "real_bets": 0,
-    "promotions": 0,
+    "social_publications": 0,
 }
+
+AUTHORIZED_LOCAL_EFFECTS = {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": (
+        "BOUNDED_TEST_BOOTSTRAP_ALLOWED"
+    ),
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+}
+
+
+def _verify_effect_budget_authority() -> None:
+    try:
+        matrix = json.loads(MISSION_MATRIX_PATH.read_text(encoding="utf-8"))
+        authority = matrix["authorization"]["point_in_time_lineage_effect_budget"]
+    except (KeyError, TypeError, json.JSONDecodeError) as error:
+        raise ValueError("POINT_IN_TIME_LINEAGE_EFFECT_BUDGET_INVALID") from error
+    if authority != POINT_IN_TIME_LINEAGE_EFFECT_BUDGET:
+        raise ValueError("POINT_IN_TIME_LINEAGE_EFFECT_BUDGET_MISMATCH")
 
 
 def _canonical_bytes(value: Any) -> bytes:
@@ -226,7 +266,13 @@ def _bind_resolution_claims(value: Any) -> Any:
 
 
 def _with_content_hash(document: dict[str, Any]) -> dict[str, Any]:
-    result = _bind_resolution_claims(_namespace_evidence_ids(dict(document)))
+    namespaced = _namespace_evidence_ids(dict(document))
+    if not isinstance(namespaced, dict):
+        raise TypeError("SCIENTIFIC_REPORT_DOCUMENT_NOT_OBJECT")
+    bound = _bind_resolution_claims(namespaced)
+    if not isinstance(bound, dict):
+        raise TypeError("SCIENTIFIC_REPORT_DOCUMENT_NOT_OBJECT")
+    result = cast(dict[str, Any], bound)
     result["content_hash_algorithm"] = "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256"
     result["content_sha256"] = _sha256_bytes(_canonical_bytes(result))
     return result
@@ -357,7 +403,11 @@ def _extract_historical_results(
     backtests = deep.get("backtests")
     strategies = deep.get("strategies")
     expert_backtests = expert.get("backtests")
-    if not all(isinstance(items, list) for items in (backtests, strategies, expert_backtests)):
+    if not isinstance(backtests, list):
+        raise TypeError("HISTORICAL_SURFACE_NOT_ARRAY")
+    if not isinstance(strategies, list):
+        raise TypeError("HISTORICAL_SURFACE_NOT_ARRAY")
+    if not isinstance(expert_backtests, list):
         raise TypeError("HISTORICAL_SURFACE_NOT_ARRAY")
     if len(backtests) != 15 or len(expert_backtests) != 15:
         raise ValueError("HISTORICAL_RESULT_COUNT_DRIFT")
@@ -907,7 +957,9 @@ def _base_report(
         },
         "review_status": "PENDING_INDEPENDENT_REVIEW",
         "verified_by": [],
+        "effect_budget_authority": POINT_IN_TIME_LINEAGE_EFFECT_BUDGET,
         "external_effects": dict(EXTERNAL_EFFECTS_ZERO),
+        "authorized_local_effects": dict(AUTHORIZED_LOCAL_EFFECTS),
         "limitations": limitations,
         "non_claims": non_claims,
         "verdicts": verdicts,
@@ -2161,7 +2213,7 @@ def _build_invalidation_ledger(
             "DEVIG invalidation is not asserted per result because the original method was not serialized.",
         ],
         non_claims=[
-            "The ledger does not delete or rewrite either cockpit source artifact.",
+            "The invalidation-ledger operation does not delete or rewrite either cockpit source artifact; LOOP55 separately corrects temporal presentation labels in the current cockpit artifacts without changing the stored formula results.",
             "SUPERSEDED_BY means versioned formula replacement, not scientific validation.",
         ],
         verdicts=[
@@ -2188,7 +2240,7 @@ def _build_invalidation_ledger(
                 **{key.lower(): value for key, value in expected.items()},
                 "logical_results": 15,
                 "physical_occurrences": 45,
-                "source_artifacts_rewritten": 0,
+                "source_artifacts_rewritten_by_invalidation_ledger": 0,
                 "stored_yield_fields_invalidated": 0,
                 "promotions": 0,
             },
@@ -2297,7 +2349,7 @@ La correction ci-dessous est un **`FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_S
 |---|---:|---:|---:|---:|---:|
 {chr(10).join(table_rows)}
 
-Les 45 champs ROI sont invalidés append-only ; les 45 yields ne le sont pas, car ils égalaient déjà `profit/bets` sous FIXED 1u. Aucun JSON cockpit historique n'est réécrit. Le plus grand écart absolu est `0.04577382258550142`; aucun signe de profit, statut `INCONCLUSIVE`, verrou `PRODUCTION_LOCKED` ou `NO_PROMOTION` ne change.
+Les 45 champs ROI sont invalidés append-only ; les 45 yields ne le sont pas, car ils égalaient déjà `profit/bets` sous FIXED 1u. Le ledger d'invalidation ne réécrit pas les résultats cockpit. LOOP55 corrige séparément leurs labels de temporalité dans les artefacts courants, sans changer les résultats de formule stockés. Le plus grand écart absolu est `0.04577382258550142`; aucun signe de profit, statut `INCONCLUSIVE`, verrou `PRODUCTION_LOCKED` ou `NO_PROMOTION` ne change.
 
 ## L'autorité de-vig reste conflictuelle
 
@@ -2402,6 +2454,7 @@ def main() -> int:
         help="Fail if tracked reports differ from deterministic regeneration.",
     )
     args = parser.parse_args()
+    _verify_effect_budget_authority()
     _verify_audit_root(args.audit_root)
     _verify_loop54_root(args.loop54_root)
     reports = _build_all()
@@ -2417,7 +2470,9 @@ def main() -> int:
                 "physical_occurrences": 45,
                 "invalidation_records": 165,
                 "global_verdict": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1_PARTIAL",
+                "effect_budget_authority": POINT_IN_TIME_LINEAGE_EFFECT_BUDGET,
                 "external_effects": EXTERNAL_EFFECTS_ZERO,
+                "authorized_local_effects": AUTHORIZED_LOCAL_EFFECTS,
             },
             ensure_ascii=False,
             sort_keys=True,

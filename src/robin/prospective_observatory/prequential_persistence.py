@@ -11,6 +11,9 @@ from sqlalchemy.orm import Session
 
 from robin.market_math import kernel_versions
 from robin.prospective_observatory.contracts import canonical_sha256
+from robin.prospective_observatory.feature_snapshots import (
+    feature_snapshot_record_id,
+)
 from robin.prospective_observatory.prequential_contracts import (
     CutoffName,
     FeatureSnapshot,
@@ -28,6 +31,9 @@ from robin.prospective_observatory.prequential_contracts import (
     PrequentialLedgerEvent,
     TrainingDecision,
     VerifiedFixtureResult,
+    prediction_record_id,
+    score_record_id,
+    settlement_record_id,
 )
 from robin.storage.prequential_models import (
     PREQUENTIAL_TABLES,
@@ -40,6 +46,7 @@ from robin.storage.prequential_models import (
     PrequentialPredictionScoreModel,
     PrequentialTrainingRunModel,
 )
+from robin.temporal.lineage import thaw_json
 
 
 def _exact_values(instance: object) -> dict[str, object]:
@@ -139,10 +146,10 @@ class PrequentialSQLRepository:
             created_at=snapshot.created_at,
             feature_contract_version=snapshot.feature_contract_version,
             feature_contract_hash=snapshot.feature_contract_hash,
-            values=snapshot.values,
-            missingness=snapshot.missingness,
-            provenance=snapshot.provenance,
-            quality=snapshot.quality,
+            values=thaw_json(snapshot.values),
+            missingness=thaw_json(snapshot.missingness),
+            provenance=thaw_json(snapshot.provenance),
+            quality=thaw_json(snapshot.quality),
             snapshot_hash=snapshot.snapshot_hash,
             code_revision=snapshot.code_revision,
             r2_manifest_key=snapshot.r2_manifest_key,
@@ -181,8 +188,8 @@ class PrequentialSQLRepository:
             model_id=prediction.model_id,
             model_version=prediction.model_version,
             feature_snapshot_id=prediction.feature_snapshot_id,
-            probabilities=prediction.probabilities,
-            market_probabilities=prediction.market_probabilities,
+            probabilities=thaw_json(prediction.probabilities),
+            market_probabilities=thaw_json(prediction.market_probabilities),
             odds_snapshot_id=prediction.odds_snapshot_id,
             code_revision=prediction.code_revision,
             payload_hash=prediction.payload_hash,
@@ -351,9 +358,11 @@ class PrequentialSQLRepository:
             feature_snapshot_ids=(
                 list(manifest.feature_snapshot_ids) if manifest else []
             ),
-            hyperparameters=dict(manifest.hyperparameters) if manifest else {},
+            hyperparameters=(
+                thaw_json(manifest.hyperparameters) if manifest else {}
+            ),
             training_metrics=(
-                dict(manifest.training_metrics) if manifest else {}
+                thaw_json(manifest.training_metrics) if manifest else {}
             ),
             code_revision=code_revision,
             promotion_status="PROMOTION_LOCKED",
@@ -401,7 +410,7 @@ class PrequentialSQLRepository:
                     model_id=event.model_id,
                     model_version=event.model_version,
                     evidence_hashes=list(event.evidence_hashes),
-                    details=event.details,
+                    details=thaw_json(event.details),
                     previous_hash=event.previous_hash,
                     record_hash=event.event_hash,
                     production_status=event.production_status,
@@ -449,8 +458,11 @@ class PrequentialSQLRepository:
                 )
             )
         by_id = {row.id: row for row in rows}
-        return tuple(
-            ModelVersion(
+        models: list[ModelVersion] = []
+        for row in rows:
+            if row.parent_version_id is not None and row.parent_version_id not in by_id:
+                raise ValueError("PREQUENTIAL_PARENT_MODEL_VERSION_MISSING")
+            model = ModelVersion(
                 model_id=row.model_id,
                 scope=ModelScope(row.scope),
                 role=ModelRole(row.role),
@@ -472,8 +484,13 @@ class PrequentialSQLRepository:
                     else None
                 ),
             )
-            for row in rows
-        )
+            if (
+                model.registry_hash != row.registry_hash
+                or _model_row_id(model) != row.id
+            ):
+                raise ValueError("PREQUENTIAL_MODEL_REGISTRY_HASH_MISMATCH")
+            models.append(model)
+        return tuple(models)
 
     def load_snapshots(self) -> tuple[FeatureSnapshot, ...]:
         with Session(self.engine) as session:
@@ -485,8 +502,9 @@ class PrequentialSQLRepository:
                     )
                 )
             )
-        return tuple(
-            FeatureSnapshot(
+        snapshots: list[FeatureSnapshot] = []
+        for row in rows:
+            snapshot = FeatureSnapshot(
                 snapshot_id=row.snapshot_id,
                 fixture_record_id=row.fixture_record_id,
                 fixture_id=row.fixture_id,
@@ -510,8 +528,28 @@ class PrequentialSQLRepository:
                 supersedes_id=row.supersedes_id,
                 status=row.status,
             )
-            for row in rows
-        )
+            if (
+                snapshot.snapshot_hash != row.snapshot_hash
+                or snapshot.snapshot_id != row.id
+                or snapshot.snapshot_id
+                != feature_snapshot_record_id(
+                    fixture_record_id=snapshot.fixture_record_id,
+                    fixture_id=snapshot.fixture_id,
+                    market=snapshot.market,
+                    cutoff_name=snapshot.cutoff_name,
+                    cutoff_at=snapshot.cutoff_at,
+                    feature_contract_version=snapshot.feature_contract_version,
+                    feature_contract_hash=snapshot.feature_contract_hash,
+                    values=snapshot.values,
+                    missingness=snapshot.missingness,
+                    provenance=snapshot.provenance,
+                    quality=snapshot.quality,
+                    supersedes_id=snapshot.supersedes_id,
+                )
+            ):
+                raise ValueError("PREQUENTIAL_FEATURE_SNAPSHOT_HASH_MISMATCH")
+            snapshots.append(snapshot)
+        return tuple(snapshots)
 
     def load_predictions(self) -> tuple[FrozenPredictionRecord, ...]:
         with Session(self.engine) as session:
@@ -523,8 +561,9 @@ class PrequentialSQLRepository:
                     )
                 )
             )
-        return tuple(
-            FrozenPredictionRecord(
+        predictions: list[FrozenPredictionRecord] = []
+        for row in rows:
+            prediction = FrozenPredictionRecord(
                 prediction_id=row.prediction_id,
                 fixture_record_id=row.fixture_record_id,
                 fixture_id=row.fixture_id,
@@ -556,8 +595,20 @@ class PrequentialSQLRepository:
                 persisted_payload_hash=row.payload_hash,
                 **kernel_versions("PROPORTIONAL"),
             )
-            for row in rows
-        )
+            if (
+                prediction.prediction_id != row.id
+                or prediction.prediction_id
+                != prediction_record_id(
+                    fixture_record_id=prediction.fixture_record_id,
+                    cutoff_name=prediction.cutoff_name,
+                    market=prediction.market,
+                    model_id=prediction.model_id,
+                    model_version=prediction.model_version,
+                )
+            ):
+                raise ValueError("PREQUENTIAL_PREDICTION_ID_MISMATCH")
+            predictions.append(prediction)
+        return tuple(predictions)
 
     def load_settlements(
         self,
@@ -571,8 +622,9 @@ class PrequentialSQLRepository:
                     )
                 )
             )
-        return tuple(
-            FixtureSettlementRecord(
+        settlements: list[FixtureSettlementRecord] = []
+        for row in rows:
+            settlement = FixtureSettlementRecord(
                 settlement_id=row.settlement_id,
                 result=VerifiedFixtureResult(
                     fixture_record_id=row.fixture_record_id,
@@ -590,8 +642,19 @@ class PrequentialSQLRepository:
                 effective_status=PredictionStatus(row.effective_status),
                 supersedes_id=row.supersedes_id,
             )
-            for row in rows
-        )
+            if (
+                settlement.result.result_hash != row.result_hash
+                or settlement.settlement_hash != row.settlement_hash
+                or settlement.settlement_id != row.id
+                or settlement.settlement_id
+                != settlement_record_id(
+                    settlement.result,
+                    supersedes_id=settlement.supersedes_id,
+                )
+            ):
+                raise ValueError("PREQUENTIAL_SETTLEMENT_HASH_MISMATCH")
+            settlements.append(settlement)
+        return tuple(settlements)
 
     def load_scores(self) -> tuple[PredictionScore, ...]:
         with Session(self.engine) as session:
@@ -603,8 +666,9 @@ class PrequentialSQLRepository:
                     )
                 )
             )
-        return tuple(
-            PredictionScore(
+        scores: list[PredictionScore] = []
+        for row in rows:
+            score = PredictionScore(
                 score_id=row.score_id,
                 prediction_id=row.prediction_id,
                 settlement_id=row.settlement_id,
@@ -621,8 +685,18 @@ class PrequentialSQLRepository:
                 accurate=row.accurate,
                 reference_log_loss_delta=row.reference_log_loss_delta,
             )
-            for row in rows
-        )
+            if (
+                score.score_hash != row.score_hash
+                or score.score_id != row.id
+                or score.score_id
+                != score_record_id(
+                    prediction_id=score.prediction_id,
+                    settlement_id=score.settlement_id,
+                )
+            ):
+                raise ValueError("PREQUENTIAL_SCORE_HASH_MISMATCH")
+            scores.append(score)
+        return tuple(scores)
 
     def load_events(self) -> tuple[PrequentialLedgerEvent, ...]:
         with Session(self.engine) as session:
@@ -633,8 +707,9 @@ class PrequentialSQLRepository:
                     )
                 )
             )
-        return tuple(
-            PrequentialLedgerEvent(
+        events: list[PrequentialLedgerEvent] = []
+        for row in rows:
+            event = PrequentialLedgerEvent(
                 event_id=row.event_id,
                 sequence_no=row.sequence_no,
                 kind=PrequentialEventKind(row.kind),
@@ -644,14 +719,16 @@ class PrequentialSQLRepository:
                 model_id=row.model_id,
                 model_version=row.model_version,
                 evidence_hashes=tuple(str(value) for value in row.evidence_hashes),
-                details=dict(row.details),
+                details=row.details,
                 previous_hash=row.previous_hash,
                 production_status=row.production_status,
                 real_bets=row.real_bets,
                 promoted=row.promoted,
             )
-            for row in rows
-        )
+            if event.event_hash != row.record_hash or event.event_id != row.id:
+                raise ValueError("PREQUENTIAL_LEDGER_EVENT_HASH_MISMATCH")
+            events.append(event)
+        return tuple(events)
 
     def replay_rows(self) -> dict[str, list[dict[str, object]]]:
         model_types = (

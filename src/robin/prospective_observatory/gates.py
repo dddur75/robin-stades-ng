@@ -94,6 +94,38 @@ def _independent_capture_count(
     )
 
 
+def _receipt_evidence(
+    observations: tuple[GateObservation, ...],
+) -> dict[str, object]:
+    return {
+        "receipt_hashes": sorted(
+            {item.receipt.receipt_hash for item in observations}
+        )
+    }
+
+
+def _latest_receipt_observations(
+    observations: tuple[GateObservation, ...],
+) -> tuple[GateObservation, ...] | None:
+    latest_time = max(
+        item.receipt.response_received_at for item in observations
+    )
+    latest_at_time = tuple(
+        item
+        for item in observations
+        if item.receipt.response_received_at == latest_time
+    )
+    hashes = {item.receipt.receipt_hash for item in latest_at_time}
+    if len(hashes) != 1:
+        return None
+    receipt_hash = next(iter(hashes))
+    return tuple(
+        item
+        for item in latest_at_time
+        if item.receipt.receipt_hash == receipt_hash
+    )
+
+
 def _blocked(
     gate: GateName,
     fixture_id: str,
@@ -119,7 +151,8 @@ def _blocked(
             observations=_independent_capture_count(observations),
             reason="NO_RESPONSE_RECEIVED_BEFORE_CUTOFF",
             evidence={
-                "late_observations": _independent_capture_count(observations)
+                "late_observations": _independent_capture_count(observations),
+                **_receipt_evidence(observations),
             },
         )
     if require_identity and any(not item.identity_ok for item in temporal):
@@ -129,7 +162,7 @@ def _blocked(
             status=GateStatus.BLOCKED_BY_IDENTITY,
             observations=_independent_capture_count(temporal),
             reason="IDENTITY_NOT_CANONICAL",
-            evidence={},
+            evidence=_receipt_evidence(temporal),
         )
     return None
 
@@ -163,7 +196,10 @@ def evaluate_player_gate(
             status=GateStatus.BLOCKED_BY_COVERAGE,
             observations=len(distinct_captures),
             reason="THREE_PRIOR_CAPTURES_REQUIRED",
-            evidence={"minimum_captures": minimum_captures},
+            evidence={
+                "minimum_captures": minimum_captures,
+                **_receipt_evidence(temporal),
+            },
         )
     if any(not bool(item.projection.get("players")) for item in temporal):
         return GateEvaluation(
@@ -172,7 +208,7 @@ def evaluate_player_gate(
             status=GateStatus.INVALID_PAYLOAD,
             observations=_independent_capture_count(temporal),
             reason="PLAYER_LIST_MISSING",
-            evidence={},
+            evidence=_receipt_evidence(temporal),
         )
     return GateEvaluation(
         gate=GateName.PROSPECTIVE_PLAYER_GATE,
@@ -180,7 +216,10 @@ def evaluate_player_gate(
         status=GateStatus.PASSED,
         observations=len(distinct_captures),
         reason="PLAYER_CAPTURE_POLICY_SATISFIED",
-        evidence={"distinct_captures": len(distinct_captures)},
+        evidence={
+            "distinct_captures": len(distinct_captures),
+            **_receipt_evidence(temporal),
+        },
     )
 
 
@@ -211,6 +250,7 @@ def evaluate_injury_gate(
             evidence={
                 "empty_captures": observations_count,
                 "meaning": "NO_PROVIDER_REPORTED_INJURY_AT_CAPTURE_TIME",
+                **_receipt_evidence(temporal),
             },
         )
     valid = tuple(
@@ -227,7 +267,7 @@ def evaluate_injury_gate(
             status=GateStatus.INVALID_PAYLOAD,
             observations=_independent_capture_count(temporal),
             reason="INJURY_PLAYER_STATUS_OR_SOURCE_MISSING",
-            evidence={},
+            evidence=_receipt_evidence(temporal),
         )
     return GateEvaluation(
         gate=GateName.PROSPECTIVE_INJURY_GATE,
@@ -235,7 +275,10 @@ def evaluate_injury_gate(
         status=GateStatus.PASSED,
         observations=_independent_capture_count(valid),
         reason="INJURY_OBSERVED_BEFORE_CUTOFF",
-        evidence={"identified_injuries": len(valid)},
+        evidence={
+            "identified_injuries": len(valid),
+            **_receipt_evidence(tuple(valid)),
+        },
     )
 
 
@@ -252,15 +295,17 @@ def evaluate_lineup_gate(
     if blocked is not None:
         return blocked
     temporal = _pre_cutoff(selected)
-    latest_receipt = max(
-        temporal,
-        key=lambda item: item.receipt.response_received_at,
-    ).receipt
-    latest = tuple(
-        item
-        for item in temporal
-        if item.receipt.receipt_hash == latest_receipt.receipt_hash
-    )
+    latest = _latest_receipt_observations(temporal)
+    if latest is None:
+        return GateEvaluation(
+            gate=GateName.PROSPECTIVE_LINEUP_GATE,
+            fixture_id=fixture_id,
+            status=GateStatus.INVALID_PAYLOAD,
+            observations=_independent_capture_count(temporal),
+            reason="CONFLICTING_EQUAL_TIME_RECEIPTS",
+            evidence=_receipt_evidence(temporal),
+        )
+    latest_receipt = latest[0].receipt
     teams: dict[str, list[object]] = {}
     for item in latest:
         team_id = str(item.projection.get("team_id", "")).strip()
@@ -284,6 +329,7 @@ def evaluate_lineup_gate(
             evidence={
                 "complete_teams": len(valid_teams),
                 "expected_teams": 2,
+                **_receipt_evidence(latest),
             },
         )
     return GateEvaluation(
@@ -292,7 +338,11 @@ def evaluate_lineup_gate(
         status=GateStatus.PASSED,
         observations=_independent_capture_count(temporal),
         reason="BOTH_COMPLETE_LINEUPS_RECEIVED_BEFORE_KICKOFF",
-        evidence={"teams": 2, "starter_count_per_team": 11},
+        evidence={
+            "teams": 2,
+            "starter_count_per_team": 11,
+            **_receipt_evidence(latest),
+        },
     )
 
 
@@ -320,15 +370,17 @@ def evaluate_formation_gate(
     if blocked is not None:
         return blocked
     temporal = _pre_cutoff(selected)
-    latest_receipt = max(
-        temporal,
-        key=lambda item: item.receipt.response_received_at,
-    ).receipt
-    latest = tuple(
-        item
-        for item in temporal
-        if item.receipt.receipt_hash == latest_receipt.receipt_hash
-    )
+    latest = _latest_receipt_observations(temporal)
+    if latest is None:
+        return GateEvaluation(
+            gate=GateName.PROSPECTIVE_FORMATION_GATE,
+            fixture_id=fixture_id,
+            status=GateStatus.INVALID_PAYLOAD,
+            observations=_independent_capture_count(temporal),
+            reason="CONFLICTING_EQUAL_TIME_RECEIPTS",
+            evidence=_receipt_evidence(temporal),
+        )
+    latest_receipt = latest[0].receipt
     valid: dict[str, str] = {}
     for item in latest:
         team_id = str(item.projection.get("team_id", "")).strip()
@@ -352,7 +404,11 @@ def evaluate_formation_gate(
             status=GateStatus.INVALID_PAYLOAD,
             observations=_independent_capture_count(temporal),
             reason="BOTH_TEAM_FORMATIONS_NOT_NORMALIZABLE",
-            evidence={"complete_teams": len(valid), "expected_teams": 2},
+            evidence={
+                "complete_teams": len(valid),
+                "expected_teams": 2,
+                **_receipt_evidence(latest),
+            },
         )
     return GateEvaluation(
         gate=GateName.PROSPECTIVE_FORMATION_GATE,
@@ -360,7 +416,10 @@ def evaluate_formation_gate(
         status=GateStatus.PASSED,
         observations=_independent_capture_count(temporal),
         reason="BOTH_FORMATIONS_NORMALIZED_AFTER_LINEUP_GATE",
-        evidence={"formations": dict(sorted(valid.items()))},
+        evidence={
+            "formations": dict(sorted(valid.items())),
+            **_receipt_evidence(latest),
+        },
     )
 
 
@@ -407,7 +466,7 @@ def evaluate_market_gate(
             status=GateStatus.INVALID_PAYLOAD,
             observations=_independent_capture_count(temporal),
             reason="EXACT_ODDS_BOOKMAKER_MARGIN_OR_OBSERVED_AT_MISSING",
-            evidence={},
+            evidence=_receipt_evidence(temporal),
         )
     return GateEvaluation(
         gate=GateName.PROSPECTIVE_MARKET_GATE,
@@ -415,7 +474,10 @@ def evaluate_market_gate(
         status=GateStatus.PASSED,
         observations=_independent_capture_count(tuple(valid)),
         reason="MARKET_SNAPSHOT_MATCHED_WITHOUT_AMBIGUITY",
-        evidence={"snapshots": len(valid)},
+        evidence={
+            "snapshots": len(valid),
+            **_receipt_evidence(tuple(valid)),
+        },
     )
 
 
