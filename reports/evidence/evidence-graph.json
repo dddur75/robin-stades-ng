@@ -3518,7 +3518,8 @@
     {"decision_id":"RCV3-20260814-160","ledger_record_hash":"980ad9ace331d18fccfe45b469775ee5c618ae958f764587eb16570e0ef0ec99"},
     {"decision_id":"RCV3-20260814-161","ledger_record_hash":"4c549c5170700cd657218e15076ab9af3874ff913abbd2ca18e48c93996a878e"},
     {"decision_id":"RCV3-20260814-162","ledger_record_hash":"2502baf4a34e89b6fd79348b6f1aa03e82f6546c523b4be0b607f7b3eba15f7c"},
-    {"decision_id":"RCV3-20260814-163","ledger_record_hash":"89c46b82ffe1629a5435202a7e514ed81fb10eea0ce79f63508d89ee09f70324"}
+    {"decision_id":"RCV3-20260814-163","ledger_record_hash":"89c46b82ffe1629a5435202a7e514ed81fb10eea0ce79f63508d89ee09f70324"},
+    {"decision_id":"RCV3-20260814-164","ledger_record_hash":"2e765400e0085528e301b02c410fd18538fb773b29a8ba00547d2261d11ce006"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -4149,6 +4150,21 @@
     {"edge_id":"EDGE.626","from_claim_id":"SECURITY.POINT_IN_TIME_LINEAGE.ZERO_EFFECTS.V1.004","to_decision_id":"RCV3-20260814-163","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.627","from_claim_id":"CI.POINT_IN_TIME_LINEAGE.EXACT_HEAD.RUN1.V1.001","to_decision_id":"RCV3-20260814-163","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.628","from_claim_id":"EVAL.POINT_IN_TIME_LINEAGE.COCKPIT.PRESENTATION.CONSISTENCY.V1.001","to_decision_id":"RCV3-20260814-163","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.629","from_claim_id":"GOV.EVIDENCE.AVAILABILITY.POINT_IN_TIME_LINEAGE.V1.001","to_decision_id":"RCV3-20260814-163","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.629","from_claim_id":"GOV.EVIDENCE.AVAILABILITY.POINT_IN_TIME_LINEAGE.V1.001","to_decision_id":"RCV3-20260814-163","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.630","from_claim_id":"GOV.AUTHORIZATION.CHRONOS_LOOP53.016","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.631","from_claim_id":"GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.025","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.632","from_claim_id":"GOV.AUTHORIZATION.POINT_IN_TIME_LINEAGE.005","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.633","from_claim_id":"SCIENCE.TRUTH_KERNEL.REPORTS.RECEIPT.V1.006","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.634","from_claim_id":"SECURITY.SCIENTIFIC.TRUTH_KERNEL.ZERO_EFFECTS.V1.006","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.635","from_claim_id":"SCIENCE.POINT_IN_TIME_LINEAGE.REPORTS.RECEIPT.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.636","from_claim_id":"SECURITY.POINT_IN_TIME_LINEAGE.ZERO_EFFECTS.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.637","from_claim_id":"EVAL.POINT_IN_TIME_LINEAGE.COCKPIT.PRESENTATION.CONSISTENCY.V1.001","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.638","from_claim_id":"GOV.EVIDENCE.AVAILABILITY.POINT_IN_TIME_LINEAGE.V1.001","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.639","from_claim_id":"GOV.TEMPORAL.DEFECT.INVENTORY.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.640","from_claim_id":"GOV.TEMPORAL.SURFACE.INVENTORY.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.641","from_claim_id":"SCIENCE.TEMPORAL.AVAILABILITY.CONTRACT.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.642","from_claim_id":"EVAL.TEMPORAL.FUTURE.MUTATION.MATRIX.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.643","from_claim_id":"GOV.TEMPORAL.DECISION.LINEAGE.TRACE.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.644","from_claim_id":"REPLAY.TEMPORAL.HISTORICAL.POINT_IN_TIME.V1.004","to_decision_id":"RCV3-20260814-164","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
