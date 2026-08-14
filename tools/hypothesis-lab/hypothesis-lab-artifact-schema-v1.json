@@ -1,0 +1,3044 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://robin-des-stades.invalid/schemas/hypothesis-lab-artifact-v1.json",
+  "title": "Robin Hypothesis Lab V1 artefacts",
+  "oneOf": [
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonEnvelope"
+        },
+        {
+          "$ref": "#/$defs/universeReport"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonEnvelope"
+        },
+        {
+          "$ref": "#/$defs/familyMapReport"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonEnvelope"
+        },
+        {
+          "$ref": "#/$defs/deduplicationReport"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonEnvelope"
+        },
+        {
+          "$ref": "#/$defs/scorecardReport"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonEnvelope"
+        },
+        {
+          "$ref": "#/$defs/experimentReport"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonEnvelope"
+        },
+        {
+          "$ref": "#/$defs/negativeControlReport"
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  ],
+  "$defs": {
+    "commonEnvelope": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "report_id",
+        "catalogue_version",
+        "immutable_base_revision",
+        "truth_kernel_version",
+        "point_in_time_contract_version",
+        "status_labels",
+        "status",
+        "external_effects",
+        "content_hash_algorithm",
+        "content_sha256",
+        "reproducibility"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "report_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogue_version": {
+          "const": "ROBIN_HYPOTHESIS_CATALOGUE_V1"
+        },
+        "immutable_base_revision": {
+          "const": "6cb8de636890959bd2ddb7e1c791a2eb04ee8763"
+        },
+        "truth_kernel_version": {
+          "const": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1"
+        },
+        "point_in_time_contract_version": {
+          "const": "robin-point-in-time-lineage-v1"
+        },
+        "status_labels": {
+          "$ref": "#/$defs/statusLabels"
+        },
+        "status": {
+          "$ref": "#/$defs/safetyStatus"
+        },
+        "external_effects": {
+          "$ref": "#/$defs/zeroExternalEffects"
+        },
+        "content_hash_algorithm": {
+          "const": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256"
+        },
+        "content_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "reproducibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "builder",
+            "command",
+            "source",
+            "source_sha256",
+            "raw_candidate_source",
+            "raw_candidate_source_sha256",
+            "portfolio_source",
+            "portfolio_source_sha256",
+            "deterministic",
+            "wall_clock_timestamp_included"
+          ],
+          "properties": {
+            "builder": {
+              "const": "tools/hypothesis-lab/build_catalogue.py"
+            },
+            "command": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source": {
+              "const": "tools/hypothesis-lab/catalogue-source-v1.json"
+            },
+            "source_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "deterministic": {
+              "const": true
+            },
+            "wall_clock_timestamp_included": {
+              "const": false
+            },
+            "raw_candidate_source": {
+              "const": "tools/hypothesis-lab/raw-candidates-v1.json"
+            },
+            "raw_candidate_source_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "portfolio_source": {
+              "const": "tools/hypothesis-lab/portfolio-strata-v1.json"
+            },
+            "portfolio_source_sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        }
+      }
+    },
+    "statusLabels": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "EXPLORATORY"
+        },
+        {
+          "const": "UNVALIDATED"
+        },
+        {
+          "const": "NO_PROMOTION"
+        },
+        {
+          "const": "NO_BET"
+        }
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "safetyStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "research_status",
+        "validation_status",
+        "promotion_status",
+        "betting_status"
+      ],
+      "properties": {
+        "research_status": {
+          "const": "EXPLORATORY"
+        },
+        "validation_status": {
+          "const": "UNVALIDATED"
+        },
+        "promotion_status": {
+          "const": "NO_PROMOTION"
+        },
+        "betting_status": {
+          "const": "NO_BET"
+        }
+      }
+    },
+    "hypothesisStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lifecycle_status",
+        "scientific_status",
+        "research_status",
+        "validation_status",
+        "promotion_status",
+        "betting_status",
+        "status_reason"
+      ],
+      "properties": {
+        "lifecycle_status": {
+          "enum": [
+            "DISCOVERED",
+            "DATA_GATE_BLOCKED"
+          ]
+        },
+        "scientific_status": {
+          "const": "NOT_TESTED"
+        },
+        "research_status": {
+          "const": "EXPLORATORY"
+        },
+        "validation_status": {
+          "const": "UNVALIDATED"
+        },
+        "promotion_status": {
+          "const": "NO_PROMOTION"
+        },
+        "betting_status": {
+          "const": "NO_BET"
+        },
+        "status_reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "zeroExternalEffects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider_calls",
+        "neon_api_calls",
+        "production_postgresql_connections",
+        "production_sql_reads",
+        "production_sql_writes",
+        "r2_operations",
+        "live_workflow_dispatches",
+        "purchases",
+        "real_bets",
+        "promotions",
+        "social_publications"
+      ],
+      "properties": {
+        "provider_calls": {
+          "const": 0
+        },
+        "neon_api_calls": {
+          "const": 0
+        },
+        "production_postgresql_connections": {
+          "const": 0
+        },
+        "production_sql_reads": {
+          "const": 0
+        },
+        "production_sql_writes": {
+          "const": 0
+        },
+        "r2_operations": {
+          "const": 0
+        },
+        "live_workflow_dispatches": {
+          "const": 0
+        },
+        "purchases": {
+          "const": 0
+        },
+        "real_bets": {
+          "const": 0
+        },
+        "promotions": {
+          "const": 0
+        },
+        "social_publications": {
+          "const": 0
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyStringArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "nonEmptyObject": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "devigComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "market",
+        "devig_method",
+        "devig_version",
+        "devig_definition_hash"
+      ],
+      "properties": {
+        "market": {
+          "enum": [
+            "1X2",
+            "OVER_UNDER_2_5",
+            "BTTS",
+            "ASIAN_HANDICAP"
+          ]
+        },
+        "devig_method": {
+          "type": "string"
+        },
+        "devig_version": {
+          "type": "string"
+        },
+        "devig_definition_hash": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "devig_method": {
+              "const": "PROPORTIONAL"
+            },
+            "devig_version": {
+              "const": "PROPORTIONAL_COMPLETE_MARKET_V1"
+            },
+            "devig_definition_hash": {
+              "const": "265d91ae91f793523180d617a3cbcd90ee95ac483d7fdbfcaa3547868e076684"
+            }
+          }
+        },
+        {
+          "properties": {
+            "devig_method": {
+              "const": "SHIN"
+            },
+            "devig_version": {
+              "const": "LEGACY_SHIN_VAGUE1_V1"
+            },
+            "devig_definition_hash": {
+              "const": "3ff94a3daf36b0995717522ed3605bf0754d799705df028414043587b7375367"
+            }
+          }
+        }
+      ]
+    },
+    "devigBranch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branch_id",
+        "components"
+      ],
+      "properties": {
+        "branch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/devigComponent"
+          }
+        }
+      }
+    },
+    "devigProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_status",
+        "mode",
+        "branches",
+        "branch_results_aggregated",
+        "selection_rule",
+        "missing_method_policy",
+        "two_outcome_rule"
+      ],
+      "properties": {
+        "authority_status": {
+          "const": "DEVIG_PROTOCOL_CONFLICT"
+        },
+        "mode": {
+          "const": "PARALLEL_NON_AGGREGATED_BRANCHES"
+        },
+        "branches": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/devigBranch"
+          }
+        },
+        "branch_results_aggregated": {
+          "const": false
+        },
+        "selection_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "missing_method_policy": {
+          "const": "FAIL_CLOSED"
+        },
+        "two_outcome_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dataDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset",
+        "role",
+        "analysis_usage",
+        "receipt_backed",
+        "snapshot_resolution",
+        "historical_point_in_time_status",
+        "required_before_execution",
+        "temporal_admissibility",
+        "eligible_as_pre_cutoff_predictor",
+        "result_available_at_required",
+        "settlement_receipt_required"
+      ],
+      "properties": {
+        "dataset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_backed": {
+          "const": true
+        },
+        "snapshot_resolution": {
+          "enum": [
+            "NOT_YET_MATERIALIZED",
+            "SOURCE_CONTRACT_ABSENT"
+          ]
+        },
+        "historical_point_in_time_status": {
+          "const": "POINT_IN_TIME_NOT_PROVEN"
+        },
+        "required_before_execution": {
+          "const": true
+        },
+        "role": {
+          "enum": [
+            "FEATURE",
+            "ODDS",
+            "METADATA",
+            "TARGET",
+            "LABEL"
+          ]
+        },
+        "analysis_usage": {
+          "enum": [
+            "PRE_CUTOFF_PREDICTOR",
+            "PRIMARY_MODEL_OUTCOME",
+            "PRIMARY_OR_SECONDARY_SETTLED_OUTCOME",
+            "SECONDARY_METRIC_LABEL_ONLY"
+          ]
+        },
+        "temporal_admissibility": {
+          "enum": [
+            "available_at <= cutoff_at and robin_ingested_at <= cutoff_at",
+            "cutoff_at < available_at <= target_window_end and robin_ingested_at <= target_window_end",
+            "result_available_at >= event_at and settlement_receipt_at >= result_available_at"
+          ]
+        },
+        "eligible_as_pre_cutoff_predictor": {
+          "type": "boolean"
+        },
+        "result_available_at_required": {
+          "type": "boolean"
+        },
+        "settlement_receipt_required": {
+          "type": "boolean"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "role": {
+              "enum": ["FEATURE", "ODDS", "METADATA"]
+            },
+            "analysis_usage": {
+              "const": "PRE_CUTOFF_PREDICTOR"
+            },
+            "temporal_admissibility": {
+              "const": "available_at <= cutoff_at and robin_ingested_at <= cutoff_at"
+            },
+            "eligible_as_pre_cutoff_predictor": {
+              "const": true
+            },
+            "result_available_at_required": {
+              "const": false
+            },
+            "settlement_receipt_required": {
+              "const": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "TARGET"
+            },
+            "analysis_usage": {
+              "const": "PRIMARY_MODEL_OUTCOME"
+            },
+            "temporal_admissibility": {
+              "const": "cutoff_at < available_at <= target_window_end and robin_ingested_at <= target_window_end"
+            },
+            "eligible_as_pre_cutoff_predictor": {
+              "const": false
+            },
+            "result_available_at_required": {
+              "const": false
+            },
+            "settlement_receipt_required": {
+              "const": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "LABEL"
+            },
+            "analysis_usage": {
+              "enum": [
+                "PRIMARY_OR_SECONDARY_SETTLED_OUTCOME",
+                "SECONDARY_METRIC_LABEL_ONLY"
+              ]
+            },
+            "temporal_admissibility": {
+              "const": "result_available_at >= event_at and settlement_receipt_at >= result_available_at"
+            },
+            "eligible_as_pre_cutoff_predictor": {
+              "const": false
+            },
+            "result_available_at_required": {
+              "const": true
+            },
+            "settlement_receipt_required": {
+              "const": true
+            }
+          }
+        }
+      ]
+    },
+    "pointInTime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "event_at",
+        "available_at",
+        "cutoff_at",
+        "predictor_receipt_backed_sources_required",
+        "post_cutoff_target_receipt_backed_sources_required",
+        "post_cutoff_target_admissibility",
+        "post_cutoff_target_receipt_fields_required",
+        "label_receipt_backed_sources_required",
+        "predictor_receipt_fields_required",
+        "label_receipt_fields_required",
+        "label_admissibility",
+        "historical_evidence_status",
+        "prospective_observability_status",
+        "prospective_observability_reason",
+        "data_forbidden_before_cutoff",
+        "future_mutation_test"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "robin-point-in-time-lineage-v1"
+        },
+        "event_at": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fixture",
+            "covariates",
+            "availability_proof"
+          ],
+          "properties": {
+            "fixture": {
+              "const": "kickoff_at"
+            },
+            "covariates": {
+              "const": "business event time from the source payload"
+            },
+            "availability_proof": {
+              "const": false
+            }
+          }
+        },
+        "available_at": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "derivation",
+            "event_at_substitution_forbidden"
+          ],
+          "properties": {
+            "required": {
+              "const": true
+            },
+            "derivation": {
+              "const": "max(trusted source_published_at, robin_first_observed_at)"
+            },
+            "event_at_substitution_forbidden": {
+              "const": true
+            }
+          }
+        },
+        "cutoff_at": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cutoff_id",
+            "legacy_alias",
+            "rule",
+            "admissibility",
+            "boundary_equality_allowed"
+          ],
+          "properties": {
+            "cutoff_id": {
+              "enum": [
+                "H2",
+                "H24"
+              ]
+            },
+            "legacy_alias": {
+              "enum": [
+                "H-2",
+                "H-24"
+              ]
+            },
+            "rule": {
+              "enum": [
+                "kickoff_at - PT2H",
+                "kickoff_at - PT24H"
+              ]
+            },
+            "admissibility": {
+              "const": "available_at <= cutoff_at and robin_ingested_at <= cutoff_at"
+            },
+            "boundary_equality_allowed": {
+              "const": true
+            }
+          }
+        },
+        "predictor_receipt_backed_sources_required": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "post_cutoff_target_receipt_backed_sources_required": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "post_cutoff_target_admissibility": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "rule",
+                "target_window_id",
+                "target_window_end_rule",
+                "eligible_as_pre_cutoff_predictor"
+              ],
+              "properties": {
+                "rule": {
+                  "const": "cutoff_at < available_at <= target_window_end and robin_ingested_at <= target_window_end"
+                },
+                "target_window_id": {
+                  "enum": [
+                    "H1",
+                    "H2"
+                  ]
+                },
+                "target_window_end_rule": {
+                  "enum": [
+                    "kickoff_at - PT1H + PT5M",
+                    "kickoff_at - PT2H + PT5M"
+                  ]
+                },
+                "eligible_as_pre_cutoff_predictor": {
+                  "const": false
+                }
+              }
+            }
+          ]
+        },
+        "post_cutoff_target_receipt_fields_required": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": false,
+              "maxItems": 0
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "const": "receipt_id"
+                },
+                {
+                  "const": "source_name"
+                },
+                {
+                  "const": "request_identity"
+                },
+                {
+                  "const": "payload_sha256"
+                },
+                {
+                  "const": "source_published_at"
+                },
+                {
+                  "const": "robin_first_observed_at"
+                },
+                {
+                  "const": "robin_ingested_at"
+                },
+                {
+                  "const": "capture_code_revision"
+                },
+                {
+                  "const": "storage_identity"
+                },
+                {
+                  "const": "availability_status"
+                },
+                {
+                  "const": "supersedes_receipt_id"
+                },
+                {
+                  "const": "target_window_id"
+                },
+                {
+                  "const": "target_window_end"
+                }
+              ],
+              "items": false,
+              "minItems": 13,
+              "maxItems": 13
+            }
+          ]
+        },
+        "label_receipt_backed_sources_required": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "append-only settled current-fixture outcome labels"
+            }
+          ],
+          "items": false,
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "predictor_receipt_fields_required": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "receipt_id"
+            },
+            {
+              "const": "source_name"
+            },
+            {
+              "const": "request_identity"
+            },
+            {
+              "const": "payload_sha256"
+            },
+            {
+              "const": "source_published_at"
+            },
+            {
+              "const": "robin_first_observed_at"
+            },
+            {
+              "const": "robin_ingested_at"
+            },
+            {
+              "const": "capture_code_revision"
+            },
+            {
+              "const": "storage_identity"
+            },
+            {
+              "const": "availability_status"
+            },
+            {
+              "const": "supersedes_receipt_id"
+            }
+          ],
+          "items": false,
+          "minItems": 11,
+          "maxItems": 11
+        },
+        "label_receipt_fields_required": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "receipt_id"
+            },
+            {
+              "const": "source_name"
+            },
+            {
+              "const": "request_identity"
+            },
+            {
+              "const": "payload_sha256"
+            },
+            {
+              "const": "source_published_at"
+            },
+            {
+              "const": "robin_first_observed_at"
+            },
+            {
+              "const": "robin_ingested_at"
+            },
+            {
+              "const": "capture_code_revision"
+            },
+            {
+              "const": "storage_identity"
+            },
+            {
+              "const": "availability_status"
+            },
+            {
+              "const": "supersedes_receipt_id"
+            },
+            {
+              "const": "result_available_at"
+            },
+            {
+              "const": "settlement_receipt_at"
+            }
+          ],
+          "items": false,
+          "minItems": 13,
+          "maxItems": 13
+        },
+        "label_admissibility": {
+          "const": "result_available_at >= event_at and settlement_receipt_at >= result_available_at"
+        },
+        "historical_evidence_status": {
+          "const": "POINT_IN_TIME_NOT_PROVEN"
+        },
+        "prospective_observability_status": {
+          "enum": [
+            "PROSPECTIVE_CAPTURE_REQUIRED",
+            "DATA_NOT_PROSPECTIVELY_OBSERVABLE"
+          ]
+        },
+        "prospective_observability_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_forbidden_before_cutoff": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "current fixture result and settlement"
+            },
+            {
+              "const": "current fixture post-match xG, shots, cards and events"
+            },
+            {
+              "const": "any source payload first received after cutoff_at"
+            },
+            {
+              "const": "any corrected or newer provider version first received after cutoff_at"
+            },
+            {
+              "const": "any model or calibration artifact created after predicted_at"
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "future_mutation_test": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mutations",
+            "required_invariant",
+            "failure_policy"
+          ],
+          "properties": {
+            "mutations": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "const": "append future row"
+                },
+                {
+                  "const": "change future value"
+                },
+                {
+                  "const": "delete future row"
+                },
+                {
+                  "const": "reorder future rows"
+                },
+                {
+                  "const": "receive retroactive correction after cutoff"
+                }
+              ],
+              "items": false,
+              "minItems": 5,
+              "maxItems": 5
+            },
+            "required_invariant": {
+              "const": "eligibility hash, feature snapshot hash and protocol decision for every earlier cutoff remain byte-identical"
+            },
+            "failure_policy": {
+              "const": "FAIL_CLOSED_POINT_IN_TIME_INPUT_NOT_PROVEN"
+            }
+          }
+        }
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hypothesis_id",
+        "catalogue_ordinal",
+        "semantic_core_hash",
+        "protocol_variant_hash",
+        "concept_key",
+        "title",
+        "intuition",
+        "assumed_causal_mechanism",
+        "market",
+        "population",
+        "unit_of_analysis",
+        "required_variables",
+        "required_data",
+        "temporal_cutoff",
+        "devig_protocol",
+        "truth_kernel_version",
+        "eligibility_condition",
+        "null_hypothesis",
+        "expected_effect",
+        "primary_metric",
+        "secondary_metrics",
+        "minimum_sample_size",
+        "multiplicity_family",
+        "statistical_correction",
+        "holdout",
+        "walk_forward",
+        "league_holdout",
+        "season_holdout",
+        "adversarial_slices",
+        "falsification_criterion",
+        "abandonment_criterion",
+        "compute_cost",
+        "data_dependencies",
+        "point_in_time",
+        "topic_tags",
+        "prior_art_refs",
+        "prior_art_usage",
+        "first_portfolio_candidate",
+        "priority_score_preview",
+        "status",
+        "estimand_hash",
+        "estimand_signature",
+        "assertion_hash",
+        "falsification_contract",
+        "operational_definition",
+        "portfolio_stratum_id",
+        "portfolio_order",
+        "portfolio_selection_evidence"
+      ],
+      "properties": {
+        "hypothesis_id": {
+          "type": "string",
+          "pattern": "^RDS-HYP-V1-[0-9A-F]{16}$"
+        },
+        "catalogue_ordinal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 150
+        },
+        "semantic_core_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "protocol_variant_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "concept_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intuition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assumed_causal_mechanism": {
+          "type": "string",
+          "minLength": 1
+        },
+        "market": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "population": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit_of_analysis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_variables": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "required_data": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "temporal_cutoff": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "devig_protocol": {
+          "$ref": "#/$defs/devigProtocol"
+        },
+        "truth_kernel_version": {
+          "const": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1"
+        },
+        "eligibility_condition": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "null_hypothesis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_effect": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "primary_metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "secondary_metrics": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "minimum_sample_size": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "multiplicity_family": {
+          "type": "string",
+          "pattern": "^FAMILY_[A-Z0-9_]+$"
+        },
+        "statistical_correction": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "holdout": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "walk_forward": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "league_holdout": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "season_holdout": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "adversarial_slices": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "falsification_criterion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "abandonment_criterion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compute_cost": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "data_dependencies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/dataDependency"
+          }
+        },
+        "point_in_time": {
+          "$ref": "#/$defs/pointInTime"
+        },
+        "topic_tags": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "prior_art_refs": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "prior_art_usage": {
+          "const": "IDENTITY_AND_SCOPE_ONLY_NO_RESULT_IMPORT"
+        },
+        "first_portfolio_candidate": {
+          "type": "boolean"
+        },
+        "priority_score_preview": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "status": {
+          "$ref": "#/$defs/hypothesisStatus"
+        },
+        "estimand_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "estimand_signature": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "assertion_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "falsification_contract": {
+          "$ref": "#/$defs/falsificationContract"
+        },
+        "operational_definition": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "portfolio_stratum_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^PORTFOLIO_[A-Z0-9_]+$"
+        },
+        "portfolio_order": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "portfolio_selection_evidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/nonEmptyObject"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "universeReport": {
+      "type": "object",
+      "required": [
+        "scope",
+        "candidate_generation",
+        "source_contracts",
+        "hypotheses"
+      ],
+      "properties": {
+        "report_id": {
+          "const": "hypothesis-universe-v1"
+        },
+        "schema_version": {
+          "const": "robin-hypothesis-universe-v1"
+        },
+        "scope": {
+          "const": "DESIGN_ONLY_NO_SPORTING_RESULT"
+        },
+        "candidate_generation": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "source_contracts": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "hypotheses": {
+          "type": "array",
+          "minItems": 80,
+          "maxItems": 150,
+          "items": {
+            "$ref": "#/$defs/hypothesis"
+          }
+        }
+      }
+    },
+    "familyRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family_id",
+        "label",
+        "purpose",
+        "hypothesis_count",
+        "hypothesis_ids",
+        "maximum_primary_tests",
+        "branch_count_per_hypothesis",
+        "correction",
+        "protocol_freeze",
+        "promotion_rule",
+        "research_stage_rule"
+      ],
+      "properties": {
+        "family_id": {
+          "type": "string",
+          "pattern": "^FAMILY_[A-Z0-9_]+$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hypothesis_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "hypothesis_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^RDS-HYP-V1-[0-9A-F]{16}$"
+          }
+        },
+        "maximum_primary_tests": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "branch_count_per_hypothesis": {
+          "const": 2
+        },
+        "correction": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "protocol_freeze": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promotion_rule": {
+          "const": "NO_PROMOTION_ALWAYS"
+        },
+        "research_stage_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "familyMapReport": {
+      "type": "object",
+      "required": [
+        "family_assignment_rule",
+        "global_multiplicity",
+        "families"
+      ],
+      "properties": {
+        "report_id": {
+          "const": "hypothesis-family-map-v1"
+        },
+        "schema_version": {
+          "const": "robin-hypothesis-family-map-v1"
+        },
+        "family_assignment_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "global_multiplicity": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "families": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/familyRow"
+          }
+        }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "seed_question_hash",
+        "generation_lens",
+        "formulation",
+        "normalized_formulation",
+        "decision",
+        "reason",
+        "canonical_hypothesis_id",
+        "estimand_hash",
+        "assertion_hash",
+        "semantic_core_hash"
+      ],
+      "properties": {
+        "candidate_id": {
+          "type": "string",
+          "pattern": "^RDS-RAW-V1-[0-9A-F]{16}$"
+        },
+        "seed_question_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "generation_lens": {
+          "enum": [
+            "MECHANISM_FORMULATION",
+            "OBSERVABLE_ESTIMAND_FORMULATION",
+            "FALSIFICATION_FORMULATION"
+          ]
+        },
+        "formulation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "normalized_formulation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision": {
+          "enum": [
+            "RETAINED_CLUSTER_REPRESENTATIVE",
+            "MERGED_EQUIVALENT_FORMULATION"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_hypothesis_id": {
+          "type": "string",
+          "pattern": "^RDS-HYP-V1-[0-9A-F]{16}$"
+        },
+        "estimand_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "assertion_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "semantic_core_hash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "cluster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estimand_hash",
+        "estimand_signature",
+        "assertion_hashes",
+        "canonical_hypothesis_id",
+        "representative_candidate_id",
+        "candidate_ids",
+        "candidate_count",
+        "seed_question_hashes",
+        "generation_lenses",
+        "adjudication",
+        "canonical_id_assigned_after_clustering"
+      ],
+      "properties": {
+        "estimand_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "estimand_signature": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "assertion_hashes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "canonical_hypothesis_id": {
+          "type": "string",
+          "pattern": "^RDS-HYP-V1-[0-9A-F]{16}$"
+        },
+        "representative_candidate_id": {
+          "type": "string",
+          "pattern": "^RDS-RAW-V1-[0-9A-F]{16}$"
+        },
+        "candidate_ids": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 30,
+          "items": {
+            "type": "string",
+            "pattern": "^RDS-RAW-V1-[0-9A-F]{16}$"
+          }
+        },
+        "candidate_count": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 30
+        },
+        "seed_question_hashes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "generation_lenses": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "FALSIFICATION_FORMULATION"
+            },
+            {
+              "const": "MECHANISM_FORMULATION"
+            },
+            {
+              "const": "OBSERVABLE_ESTIMAND_FORMULATION"
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "adjudication": {
+          "const": "SEMANTICALLY_EQUIVALENT_FORMULATIONS_ONE_FROZEN_ESTIMAND"
+        },
+        "canonical_id_assigned_after_clustering": {
+          "const": true
+        }
+      }
+    },
+    "deduplicationReport": {
+      "type": "object",
+      "required": [
+        "generation_counts",
+        "normalization",
+        "identity_policy",
+        "candidates",
+        "clusters"
+      ],
+      "properties": {
+        "report_id": {
+          "const": "hypothesis-deduplication-v1"
+        },
+        "schema_version": {
+          "const": "robin-hypothesis-deduplication-v1"
+        },
+        "generation_counts": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "normalization": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "identity_policy": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "candidates": {
+          "type": "array",
+          "minItems": 200,
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/candidate"
+          }
+        },
+        "clusters": {
+          "type": "array",
+          "minItems": 80,
+          "maxItems": 150,
+          "items": {
+            "$ref": "#/$defs/cluster"
+          }
+        }
+      }
+    },
+    "scoreEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hypothesis_id",
+        "multiplicity_family",
+        "components",
+        "total",
+        "rationale_codes",
+        "selected_for_first_25",
+        "selection_note",
+        "historical_roi_used",
+        "score_rank"
+      ],
+      "properties": {
+        "hypothesis_id": {
+          "type": "string",
+          "pattern": "^RDS-HYP-V1-[0-9A-F]{16}$"
+        },
+        "multiplicity_family": {
+          "type": "string",
+          "pattern": "^FAMILY_[A-Z0-9_]+$"
+        },
+        "components": {
+          "$ref": "#/$defs/scoreComponents"
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "rationale_codes": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "selected_for_first_25": {
+          "type": "boolean"
+        },
+        "selection_note": {
+          "type": "string",
+          "minLength": 1
+        },
+        "historical_roi_used": {
+          "const": false
+        },
+        "score_rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 150
+        }
+      }
+    },
+    "scoreComponents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mechanistic_plausibility",
+        "data_availability",
+        "point_in_time_provability",
+        "statistical_power",
+        "originality",
+        "cross_league_stability",
+        "falsifiability",
+        "compute_cost",
+        "strategic_value"
+      ],
+      "properties": {
+        "mechanistic_plausibility": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "data_availability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "point_in_time_provability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "statistical_power": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "originality": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "cross_league_stability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "falsifiability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "compute_cost": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "strategic_value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    },
+    "scorecardReport": {
+      "type": "object",
+      "required": [
+        "rubric",
+        "selection_policy",
+        "entries"
+      ],
+      "properties": {
+        "report_id": {
+          "const": "hypothesis-priority-scorecard-v1"
+        },
+        "schema_version": {
+          "const": "robin-hypothesis-priority-scorecard-v1"
+        },
+        "rubric": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "selection_policy": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 80,
+          "maxItems": 150,
+          "items": {
+            "$ref": "#/$defs/scoreEntry"
+          }
+        }
+      }
+    },
+    "powerDesign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "sporting_results_used",
+        "design_method",
+        "simulator",
+        "formula_test_mapping",
+        "signed_design_alternatives",
+        "data_generating_process",
+        "test_mapping",
+        "decision_algorithm",
+        "target_power",
+        "power_interval",
+        "simulation_replicates_per_candidate_n",
+        "prng",
+        "seed_derivation",
+        "master_seed",
+        "candidate_eligible_units",
+        "acceptance_rule",
+        "execution_gate",
+        "selected_eligible_units",
+        "estimated_power",
+        "design_contract_hash"
+      ],
+      "properties": {
+        "status": {
+          "const": "PREDECLARED_MODEL_SPECIFIC_POWER_DESIGN_NOT_RUN"
+        },
+        "sporting_results_used": {
+          "const": false
+        },
+        "design_method": {
+          "enum": [
+            "AUTOREGRESSIVE_SLOPE_MONTE_CARLO",
+            "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+            "FROZEN_SPLINE_SCALAR_CONTRAST_MONTE_CARLO",
+            "LOG_VARIANCE_SCALAR_CONTRAST_MONTE_CARLO",
+            "PAIRED_CLUSTERED_GAUSSIAN_MONTE_CARLO"
+          ]
+        },
+        "simulator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "definition_hash",
+            "definition"
+          ],
+          "properties": {
+            "version": {
+              "const": "ROBIN_HYPOTHESIS_POWER_SIMULATOR_V1"
+            },
+            "definition_hash": {
+              "$ref": "#/$defs/sha256"
+            },
+            "definition": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "version",
+                "numeric_policy",
+                "supported_design_classes",
+                "entrypoints",
+                "algorithm_steps"
+              ],
+              "properties": {
+                "version": {
+                  "const": "ROBIN_HYPOTHESIS_POWER_SIMULATOR_V1"
+                },
+                "numeric_policy": {
+                  "const": "IEEE754_BINARY64_CANONICAL_JSON_NO_NAN"
+                },
+                "supported_design_classes": {
+                  "type": "array",
+                  "minItems": 5,
+                  "maxItems": 5,
+                  "uniqueItems": true,
+                  "items": {
+                    "enum": [
+                      "AUTOREGRESSIVE_SLOPE_MONTE_CARLO",
+                      "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+                      "FROZEN_SPLINE_SCALAR_CONTRAST_MONTE_CARLO",
+                      "LOG_VARIANCE_SCALAR_CONTRAST_MONTE_CARLO",
+                      "PAIRED_CLUSTERED_GAUSSIAN_MONTE_CARLO"
+                    ]
+                  }
+                },
+                "entrypoints": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "latent_seed",
+                    "branch_transform_seed",
+                    "generate",
+                    "branch_outcome_transform",
+                    "fit",
+                    "replicate",
+                    "simulation",
+                    "multiplicity",
+                    "branch_decision",
+                    "power_lower_bound"
+                  ],
+                  "properties": {
+                    "latent_seed": {
+                      "const": "derive_power_latent_seed"
+                    },
+                    "branch_transform_seed": {
+                      "const": "derive_power_branch_transform_seed"
+                    },
+                    "generate": {
+                      "const": "generate_power_sample"
+                    },
+                    "branch_outcome_transform": {
+                      "const": "transform_power_branch_outcomes"
+                    },
+                    "fit": {
+                      "const": "fit_power_branch"
+                    },
+                    "replicate": {
+                      "const": "run_power_replicate"
+                    },
+                    "simulation": {
+                      "const": "run_power_simulation"
+                    },
+                    "multiplicity": {
+                      "const": "benjamini_hochberg_q_values"
+                    },
+                    "branch_decision": {
+                      "const": "evaluate_power_replicate"
+                    },
+                    "power_lower_bound": {
+                      "const": "wilson_lower_bound"
+                    }
+                  }
+                },
+                "algorithm_steps": {
+                  "type": "array",
+                  "minItems": 12,
+                  "maxItems": 12,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "formula_test_mapping": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "model_formula",
+            "link",
+            "estimator_family",
+            "error_distribution",
+            "variance_model",
+            "outcome_transformation",
+            "standardization",
+            "scalar_primary_contrast",
+            "test_statistic"
+          ],
+          "properties": {
+            "model_formula": {
+              "type": "string",
+              "minLength": 1
+            },
+            "link": {
+              "type": "string",
+              "minLength": 1
+            },
+            "estimator_family": {
+              "type": "string",
+              "minLength": 1
+            },
+            "error_distribution": {
+              "type": "string",
+              "minLength": 1
+            },
+            "variance_model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "outcome_transformation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "standardization": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scalar_primary_contrast": {
+              "type": "string",
+              "minLength": 1
+            },
+            "test_statistic": {
+              "const": "TWO_SIDED_CLUSTER_ROBUST_WALD_SCALAR_CONTRAST"
+            }
+          }
+        },
+        "signed_design_alternatives": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "number",
+            "minimum": -1,
+            "maximum": 1,
+            "not": {
+              "const": 0
+            }
+          }
+        },
+        "data_generating_process": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "design_matrix",
+            "coefficient_generation",
+            "cluster_process",
+            "outcome_equation",
+            "outcome_postprocessing",
+            "effect_injection_parameter",
+            "effect_values",
+            "null_value",
+            "branch_transform",
+            "missingness",
+            "holdout_generation"
+          ],
+          "properties": {
+            "design_matrix": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "design_class",
+                "latent_variables",
+                "columns",
+                "fixture_invariant_columns",
+                "within_fixture_columns",
+                "observation_expansion",
+                "primary_contrast",
+                "rank_policy",
+                "reference_level_policy"
+              ],
+              "properties": {
+                "design_class": {
+                  "enum": [
+                    "ADJUSTED_INTERCEPT",
+                    "AUTOREGRESSIVE_SLOPE_MINUS_ONE",
+                    "BINARY_MAIN_EFFECT",
+                    "CATEGORICAL_THREE_LEVEL_CONTRAST",
+                    "CONTINUOUS_SLOPE",
+                    "FROZEN_SPLINE_CONTRAST",
+                    "JOINT_BINARY_INTERACTION",
+                    "MUTUALLY_EXCLUSIVE_BINARY_CONTRAST",
+                    "PAIRED_DIFFERENCE_INTERCEPT"
+                  ]
+                },
+                "latent_variables": {
+                  "type": "array",
+                  "maxItems": 8,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "name",
+                      "distribution",
+                      "scope"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "distribution": {
+                        "enum": [
+                          "STANDARD_NORMAL",
+                          "BERNOULLI",
+                          "CATEGORICAL",
+                          "BALANCED_CATEGORICAL",
+                          "ALTERNATING_BINARY",
+                          "HOME_AWAY_BINARY",
+                          "FIXTURE_SYMMETRIC_STANDARD_NORMAL_ORDER_STATISTICS",
+                          "PAIRED_OPPOSITE_STANDARD_NORMAL"
+                        ]
+                      },
+                      "scope": {
+                        "enum": [
+                          "FIXTURE",
+                          "WITHIN_FIXTURE"
+                        ]
+                      },
+                      "repeat_rows": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 5
+                      },
+                      "prevalence": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "exclusiveMaximum": 1
+                      },
+                      "levels": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 8,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "probabilities": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 8,
+                        "items": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "block_size": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "normalization": {
+                        "const": "ZERO_SUM_ZERO_MEDIAN_UNIT_ROOT_MEAN_SQUARE"
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "scope": {
+                              "const": "WITHIN_FIXTURE"
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "repeat_rows"
+                          ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "distribution": {
+                              "const": "BERNOULLI"
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "prevalence"
+                          ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "distribution": {
+                              "const": "CATEGORICAL"
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "levels",
+                            "probabilities"
+                          ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "distribution": {
+                              "const": "BALANCED_CATEGORICAL"
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "levels",
+                            "block_size"
+                          ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "distribution": {
+                              "const": "FIXTURE_SYMMETRIC_STANDARD_NORMAL_ORDER_STATISTICS"
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "normalization"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "columns": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "name",
+                      "expression"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "expression": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "operator"
+                        ],
+                        "properties": {
+                          "operator": {
+                            "enum": [
+                              "CONSTANT",
+                              "IDENTITY",
+                              "LEVEL_IS",
+                              "LEVEL_IN",
+                              "HINGE",
+                              "PRODUCT"
+                            ]
+                          },
+                          "value": {
+                            "type": "number"
+                          },
+                          "variable": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "level": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "levels": {
+                            "$ref": "#/$defs/nonEmptyStringArray"
+                          },
+                          "variables": {
+                            "$ref": "#/$defs/nonEmptyStringArray"
+                          },
+                          "knot": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "fixture_invariant_columns": {
+                  "$ref": "#/$defs/nonEmptyStringArray"
+                },
+                "within_fixture_columns": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "observation_expansion": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "cluster_unit",
+                    "rows_per_fixture",
+                    "row_order",
+                    "axis_cardinalities",
+                    "fixture_latent_policy",
+                    "within_fixture_latent_policy",
+                    "fixture_latent_variables",
+                    "within_fixture_latent_variables"
+                  ],
+                  "properties": {
+                    "cluster_unit": {
+                      "const": "fixture"
+                    },
+                    "rows_per_fixture": {
+                      "enum": [
+                        1,
+                        2,
+                        4,
+                        5
+                      ]
+                    },
+                    "row_order": {
+                      "enum": [
+                        "FIXTURE_SINGLE_ROW",
+                        "BOOKMAKER_WITHIN_FIXTURE",
+                        "TEAM_WITHIN_FIXTURE",
+                        "TEAM_THEN_HALF_WITHIN_FIXTURE"
+                      ]
+                    },
+                    "axis_cardinalities": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 1,
+                      "properties": {
+                        "FIXTURE": {
+                          "const": 1
+                        },
+                        "BOOKMAKER": {
+                          "const": 5
+                        },
+                        "TEAM": {
+                          "const": 2
+                        },
+                        "HALF": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    "fixture_latent_policy": {
+                      "const": "DRAW_ONCE_AND_CACHE_PER_FIXTURE"
+                    },
+                    "within_fixture_latent_policy": {
+                      "const": "CACHE_BY_DECLARED_REPEAT_ROWS_THEN_SEQUENCE"
+                    },
+                    "fixture_latent_variables": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "within_fixture_latent_variables": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                "primary_contrast": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "parameter_name",
+                    "weights",
+                    "null_value"
+                  ],
+                  "properties": {
+                    "parameter_name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "weights": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 32,
+                      "items": {
+                        "type": "number"
+                      }
+                    },
+                    "null_value": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "rank_policy": {
+                  "const": "FAIL_CLOSED_IF_XTX_NOT_FULL_RANK"
+                },
+                "reference_level_policy": {
+                  "const": "FIRST_DECLARED_LEVEL_IS_REFERENCE"
+                }
+              }
+            },
+            "coefficient_generation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "primary_rule",
+                "adjustment_rule",
+                "contrast_identity",
+                "injection_space",
+                "calibration_rule"
+              ],
+              "properties": {
+                "primary_rule": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "adjustment_rule": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contrast_identity": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "injection_space": {
+                  "enum": [
+                    "RAW_LINEAR_PREDICTOR",
+                    "FINAL_POSTPROCESSED_OUTCOME_CONTRAST"
+                  ]
+                },
+                "calibration_rule": {
+                  "enum": [
+                    "IDENTITY_NO_OUTCOME_POSTPROCESSING",
+                    "PRIMARY_EXPOSURE_HAS_ZERO_SUM_ZERO_MEDIAN_UNIT_RMS_WITHIN_FIXTURE;FIXTURE_MEDIAN_CENTERING_IS_ORTHOGONAL_TO_PRIMARY_CONTRAST"
+                  ]
+                }
+              }
+            },
+            "cluster_process": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "cluster_unit",
+                "allocation_rule",
+                "mean_cluster_size",
+                "intraclass_correlation",
+                "random_intercept_variance",
+                "idiosyncratic_error_variance",
+                "random_intercept_postprocessing"
+              ],
+              "properties": {
+                "cluster_unit": {
+                  "const": "fixture"
+                },
+                "allocation_rule": {
+                  "const": "complete fixture clusters only; partial fixtures fail closed"
+                },
+                "mean_cluster_size": {
+                  "enum": [
+                    1,
+                    2,
+                    4,
+                    5
+                  ]
+                },
+                "intraclass_correlation": {
+                  "const": 0.05
+                },
+                "random_intercept_variance": {
+                  "const": 0.05
+                },
+                "idiosyncratic_error_variance": {
+                  "const": 0.95
+                },
+                "random_intercept_postprocessing": {
+                  "enum": [
+                    "CANCELLED_EXACTLY_BY_FIXTURE_MEDIAN_CENTERING",
+                    "RETAINED_IN_TRANSFORMED_OUTCOME"
+                  ]
+                }
+              }
+            },
+            "outcome_equation": {
+              "const": "transformed_Y=X@beta(alternative,contrast,null_value)+fixture_random_intercept+epsilon"
+            },
+            "outcome_postprocessing": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "outcome_construct",
+                "common_outcome_rule",
+                "branch_outcome_rule",
+                "branch_application_order",
+                "random_intercept_effect"
+              ],
+              "properties": {
+                "outcome_construct": {
+                  "enum": [
+                    "BOOK_DEVIATION_FROM_SAME_FIXTURE_MEDIAN",
+                    "DECLARED_TRANSFORMED_OUTCOME"
+                  ]
+                },
+                "common_outcome_rule": {
+                  "enum": [
+                    "FIXTURE_MEDIAN_ZERO",
+                    "NONE"
+                  ]
+                },
+                "branch_outcome_rule": {
+                  "enum": [
+                    "FIXTURE_MEDIAN_ZERO",
+                    "NONE"
+                  ]
+                },
+                "branch_application_order": {
+                  "const": "AFTER_BRANCH_MEASUREMENT_NOISE"
+                },
+                "random_intercept_effect": {
+                  "enum": [
+                    "COMMON_SHIFT_CANCELS_EXACTLY",
+                    "COMMON_SHIFT_RETAINED"
+                  ]
+                }
+              }
+            },
+            "effect_injection_parameter": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effect_values": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "number"
+              }
+            },
+            "null_value": {
+              "type": "number"
+            },
+            "branch_transform": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "latent_fixture_rows_shared",
+                "standardized_measurement_noise_sd",
+                "seed_scope"
+              ],
+              "properties": {
+                "latent_fixture_rows_shared": {
+                  "const": true
+                },
+                "standardized_measurement_noise_sd": {
+                  "const": 0.02
+                },
+                "seed_scope": {
+                  "const": "BRANCH_TRANSFORM_ONLY"
+                }
+              }
+            },
+            "missingness": {
+              "const": "NONE"
+            },
+            "holdout_generation": {
+              "const": "independent final 20 percent with unchanged DGP"
+            }
+          }
+        },
+        "test_mapping": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "interval_method",
+            "confidence_level",
+            "raw_p_value",
+            "classification_contract"
+          ],
+          "properties": {
+            "interval_method": {
+              "type": "string",
+              "minLength": 1
+            },
+            "confidence_level": {
+              "const": 0.95
+            },
+            "raw_p_value": {
+              "const": "two-sided Wald p-value for scalar primary contrast"
+            },
+            "classification_contract": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "claim_type",
+                "orientation",
+                "minimum_effect",
+                "target_q"
+              ],
+              "properties": {
+                "claim_type": {
+                  "enum": [
+                    "SIGNED_MINIMUM",
+                    "ABSOLUTE_MINIMUM"
+                  ]
+                },
+                "orientation": {
+                  "enum": [
+                    "POSITIVE",
+                    "NEGATIVE",
+                    "UNSIGNED"
+                  ]
+                },
+                "minimum_effect": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "target_q": {
+                  "const": 0.05
+                }
+              }
+            }
+          }
+        },
+        "decision_algorithm": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "branch_ids",
+            "branch_latent_draw_policy",
+            "branch_results_aggregated",
+            "family_primary_test_count",
+            "global_primary_test_count",
+            "null_companion_p_value_dgp",
+            "family_correction",
+            "global_correction",
+            "reported_q_value",
+            "replicate_success",
+            "negative_control_alarm_policy"
+          ],
+          "properties": {
+            "branch_ids": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "branch_latent_draw_policy": {
+              "const": "COMMON_LATENT_FIXTURES_SEPARATE_DEVIG_TRANSFORMS"
+            },
+            "branch_results_aggregated": {
+              "const": false
+            },
+            "family_primary_test_count": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "global_primary_test_count": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "null_companion_p_value_dgp": {
+              "const": "INDEPENDENT_UNIFORM_0_1"
+            },
+            "family_correction": {
+              "const": "BENJAMINI_HOCHBERG_STEP_UP"
+            },
+            "global_correction": {
+              "const": "BENJAMINI_HOCHBERG_STEP_UP"
+            },
+            "reported_q_value": {
+              "const": "max(family_q,global_q)"
+            },
+            "replicate_success": {
+              "const": "EVERY_DECLARED_DEVIG_BRANCH_CLASSIFIED_SUPPORTED"
+            },
+            "negative_control_alarm_policy": {
+              "const": "ANY_ALARM_INVALIDATES_THE_DESIGN_REPLICATE"
+            }
+          }
+        },
+        "target_power": {
+          "const": 0.8
+        },
+        "power_interval": {
+          "const": "TWO_SIDED_95_PERCENT_WILSON_BINOMIAL"
+        },
+        "simulation_replicates_per_candidate_n": {
+          "const": 10000
+        },
+        "prng": {
+          "const": "SHA256_COUNTER_BOX_MULLER_V1"
+        },
+        "seed_derivation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "common_latent",
+            "branch_transform"
+          ],
+          "properties": {
+            "common_latent": {
+              "const": "first_64_bits(SHA256('LATENT'|master_seed|n|replicate_index))"
+            },
+            "branch_transform": {
+              "const": "first_64_bits(SHA256('BRANCH_TRANSFORM'|latent_seed|branch_id))"
+            }
+          }
+        },
+        "master_seed": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "candidate_eligible_units": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "acceptance_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "execution_gate": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selected_eligible_units": {
+          "type": "null"
+        },
+        "estimated_power": {
+          "type": "null"
+        },
+        "design_contract_hash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "experiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "experiment_id",
+        "hypothesis_id",
+        "title",
+        "multiplicity_family",
+        "protocol_frozen",
+        "freeze_status",
+        "execution_status",
+        "execution_authority",
+        "dataset_required",
+        "expected_snapshot_id",
+        "devig_protocol",
+        "thresholds",
+        "minimum_sample",
+        "model_specific_power_design",
+        "holdout",
+        "walk_forward",
+        "league_holdout",
+        "season_holdout",
+        "go_no_go",
+        "compute_budget",
+        "human_time_hours",
+        "main_risk",
+        "negative_control_ids",
+        "point_in_time",
+        "status",
+        "protocol_hash",
+        "portfolio_stratum_id",
+        "portfolio_order",
+        "operational_definition",
+        "falsification_contract"
+      ],
+      "properties": {
+        "experiment_id": {
+          "type": "string",
+          "pattern": "^RDS-EXP-V1-[0-9]{3}$"
+        },
+        "hypothesis_id": {
+          "type": "string",
+          "pattern": "^RDS-HYP-V1-[0-9A-F]{16}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "multiplicity_family": {
+          "type": "string",
+          "pattern": "^FAMILY_[A-Z0-9_]+$"
+        },
+        "protocol_frozen": {
+          "const": true
+        },
+        "freeze_status": {
+          "const": "FROZEN_BEFORE_EXECUTION"
+        },
+        "execution_status": {
+          "const": "NOT_RUN"
+        },
+        "execution_authority": {
+          "const": "NOT_AUTHORIZED_IN_THIS_MISSION"
+        },
+        "dataset_required": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "expected_snapshot_id": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "devig_protocol": {
+          "$ref": "#/$defs/devigProtocol"
+        },
+        "thresholds": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "minimum_sample": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "model_specific_power_design": {
+          "$ref": "#/$defs/powerDesign"
+        },
+        "holdout": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "walk_forward": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "league_holdout": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "season_holdout": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "go_no_go": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "compute_budget": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "human_time_hours": {
+          "type": "number",
+          "minimum": 0
+        },
+        "main_risk": {
+          "type": "string",
+          "minLength": 1
+        },
+        "negative_control_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^RDS-NC-V1-[0-9]{3}$"
+          }
+        },
+        "point_in_time": {
+          "$ref": "#/$defs/pointInTime"
+        },
+        "status": {
+          "$ref": "#/$defs/safetyStatus"
+        },
+        "protocol_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "portfolio_stratum_id": {
+          "type": "string",
+          "pattern": "^PORTFOLIO_[A-Z0-9_]+$"
+        },
+        "portfolio_order": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25
+        },
+        "operational_definition": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "falsification_contract": {
+          "$ref": "#/$defs/falsificationContract"
+        }
+      }
+    },
+    "experimentReport": {
+      "type": "object",
+      "required": [
+        "portfolio_size",
+        "family_distribution",
+        "protocol_state",
+        "experiments"
+      ],
+      "properties": {
+        "report_id": {
+          "const": "first-25-experiment-protocols-v1"
+        },
+        "schema_version": {
+          "const": "robin-first-25-experiment-protocols-v1"
+        },
+        "portfolio_size": {
+          "const": 25
+        },
+        "family_distribution": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "protocol_state": {
+          "const": "FROZEN_DESIGN_NOT_RUN"
+        },
+        "experiments": {
+          "type": "array",
+          "minItems": 25,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/experiment"
+          }
+        }
+      }
+    },
+    "negativeControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "control_id",
+        "title",
+        "category",
+        "control_type",
+        "replicate_seeds",
+        "construction",
+        "expected_null_behavior",
+        "alarm_criterion",
+        "execution_status",
+        "devig_rule",
+        "point_in_time_rule",
+        "status",
+        "assignment_scope",
+        "frozen_alarm_rule"
+      ],
+      "properties": {
+        "control_id": {
+          "type": "string",
+          "pattern": "^RDS-NC-V1-[0-9]{3}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        },
+        "control_type": {
+          "enum": [
+            "DETERMINISTIC_GUARD",
+            "STOCHASTIC_REPLICATE"
+          ]
+        },
+        "replicate_seeds": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "construction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_null_behavior": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alarm_criterion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "execution_status": {
+          "const": "NOT_RUN"
+        },
+        "devig_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "point_in_time_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/safetyStatus"
+        },
+        "assignment_scope": {
+          "enum": [
+            "FACTORY_WIDE",
+            "EXPERIMENT_PROTOCOL"
+          ]
+        },
+        "frozen_alarm_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "negativeControlReport": {
+      "type": "object",
+      "required": [
+        "control_count",
+        "required_categories",
+        "controls",
+        "factory_stop_rules",
+        "execution_authority",
+        "factory_wide_control_ids"
+      ],
+      "properties": {
+        "report_id": {
+          "const": "negative-control-plan-v1"
+        },
+        "schema_version": {
+          "const": "robin-negative-control-plan-v1"
+        },
+        "control_count": {
+          "const": 9
+        },
+        "required_categories": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "controls": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "items": {
+            "$ref": "#/$defs/negativeControl"
+          }
+        },
+        "factory_stop_rules": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "execution_authority": {
+          "const": "PLAN_ONLY_NOT_AUTHORIZED_TO_RUN"
+        },
+        "factory_wide_control_ids": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "RDS-NC-V1-005"
+            },
+            {
+              "const": "RDS-NC-V1-006"
+            },
+            {
+              "const": "RDS-NC-V1-008"
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "falsificationContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_type",
+        "orientation",
+        "estimand_definition",
+        "effect_scale",
+        "minimum_effect",
+        "confidence_level",
+        "interval_method",
+        "target_q",
+        "boundary_equality_rule",
+        "invalidity_rule",
+        "branch_rule",
+        "supported_inequality",
+        "falsified_inequality",
+        "inconclusive_inequality"
+      ],
+      "properties": {
+        "claim_type": {
+          "enum": [
+            "SIGNED_MINIMUM",
+            "ABSOLUTE_MINIMUM"
+          ]
+        },
+        "orientation": {
+          "enum": [
+            "POSITIVE",
+            "NEGATIVE",
+            "UNSIGNED"
+          ]
+        },
+        "estimand_definition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effect_scale": {
+          "const": "STANDARDIZED_EFFECT"
+        },
+        "minimum_effect": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "confidence_level": {
+          "const": 0.95
+        },
+        "interval_method": {
+          "enum": [
+            "CLUSTER_ROBUST_MULTINOMIAL_DELTA_METHOD",
+            "LEAGUE_SEASON_CLUSTER_ROBUST_BLOCK_BOOTSTRAP",
+            "FIXTURE_CLUSTER_ROBUST_SANDWICH"
+          ]
+        },
+        "target_q": {
+          "const": 0.05
+        },
+        "boundary_equality_rule": {
+          "const": "support_bound_equality_included;falsification_bound_equality_inconclusive"
+        },
+        "invalidity_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch_rule": {
+          "const": "classify each de-vig branch separately; never average or pick the better branch"
+        },
+        "supported_inequality": {
+          "type": "string",
+          "minLength": 1
+        },
+        "falsified_inequality": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inconclusive_inequality": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "claim_type": {
+                "const": "SIGNED_MINIMUM"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "orientation": {
+                "enum": [
+                  "POSITIVE",
+                  "NEGATIVE"
+                ]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "orientation": {
+                "const": "UNSIGNED"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
