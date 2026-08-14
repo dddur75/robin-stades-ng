@@ -41,13 +41,17 @@ La source normative est `AUDIT:E2013`, épinglée par les identifiants suivants 
 - arbre Git : `d751c18ea6233ab59ffeb07c3a38453212a9dd87`;
 - base immuable de revue LOOP 55 : `71833964e5d7ba7f5882bfff49b39d567fd5473b`.
 
-Le pack LOOP55 final est scellé par le manifest
-`07e3e8eeb62329bf0b79b1e0b5026a79f20c55e1aa122c4edb4b073999a8fd22`.
+Le pack correctif LOOP55 V2 est scellé par le manifest
+`3dc8d864d2e3c88f820b9d8044534e46fd1afb5856f7fec1e1b2e05e3c6303f7`.
 Son autorité source est
 `ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454`;
-son manifest candidat lie 65 chemins inclus par l’agrégat
-`dc75c24432852fa80cc41b89fba545f9b61b4905f7c9cddb9c823d911a88b05f`,
-avec 15 sorties détachées sur 80 chemins modifiés et 0 chemin hors des 98 autorisés.
+son manifest candidat lie 55 chemins inclus par l’agrégat
+`a0322568fe62250130d3ff469a73d91b3f300b9ba30d78504fff4a61cc5677c7`,
+avec 26 sorties détachées sur 81 chemins modifiés et 0 chemin hors des 99 autorisés.
+Le pack V1 précédemment référencé (`58fcc690…`, candidat `d153ea4a…`) a été
+écrasé localement pendant la correction et ses octets ne sont plus disponibles :
+il est conservé comme référence historique invalidée, jamais comme preuve active ou
+reconstruite. V2 le remplace explicitement sans réécrire cette perte.
 
 L’inventaire conserve les 72 lignes de `dataset-lineage.csv` et les 720 lignes de
 `time-fields.csv`, soit exactement dix mappings temporels par surface. Les états de
@@ -193,21 +197,26 @@ transforment pas le chemin de production non couvert en preuve globale.
 Le générateur `scripts/build_temporal_lineage_reports_v1.py` exige explicitement
 `--audit-root` et `--loop55-root`. Il échoue si le manifest, la révision, l’arbre ou
 les fichiers E2013 ne correspondent pas aux hashes épinglés, mais aussi si le pack
-LOOP55 scellé, ses six commandes, l’une de ses 23 empreintes ou l’un des 65 fichiers
+LOOP55 V2 scellé, ses dix commandes, l’une de ses 35 empreintes ou l’un des 55 fichiers
 candidats inclus dérive. Les
 preuves sont séparées : `AUDIT:E2013` décrit l’inventaire historique immuable,
 `LOOP55:E0001` conserve les cinq tests rouges pré-correctif, `LOOP55:E0002` porte
 les 579 régressions bornées historiques et `LOOP55:E0003` leur validation statique,
 toutes deux remplacées comme preuve active. `LOOP55:E0004` porte les 730 régressions
-finales et `LOOP55:E0006` la validation statique finale. `LOOP55:E0005` est conservé
+finales et `LOOP55:E0006` la validation statique finale. `LOOP55:E0007` conserve
+l’échec CI exact-head déterministe qui a déclenché le correctif; `LOOP55:E0009`
+prouve la régénération locale de la présentation et `LOOP55:E0010` le contrat
+d’autorité 99, le modèle de présentation, Ruff Council et le contrôle du diff.
+`LOOP55:E0005` est conservé
 immuablement comme `INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF`; il ne contribue à
-aucun verdict positif. Le
+aucun verdict positif. `LOOP55:E0008` est également conservé comme harness correctif
+invalide et non comme preuve. Le
 générateur n’infère jamais un reçu depuis un mtime, un commit, un temps d’événement
 ou l’ordre des lignes.
 
 Chaque rapport déclare sans cycle le futur reçu détaché
-`LOOP55_REPORTS:E0003`, sous
-`audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V2`. Aucun hash du
+`LOOP55_REPORTS:E0006`, sous
+`audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V5`. Aucun hash du
 manifest détaché n’est embarqué dans les rapports; le claim correspondant du graphe
 de preuve lie ce manifest après génération. Ce reçu détaché lie le builder, ce
 document, les dix JSON et leur test de validation report-only.

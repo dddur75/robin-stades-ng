@@ -434,14 +434,14 @@ def test_point_in_time_lineage_authority_is_offline_bounded_and_exact() -> None:
     ]
     allowed_paths = mission["allowed_paths"]
     assert allowed_paths == sorted(allowed_paths)
-    assert len(allowed_paths) == len(set(allowed_paths)) == 98
+    assert len(allowed_paths) == len(set(allowed_paths)) == 99
     assert hashlib.sha256(
         json.dumps(
             allowed_paths,
             ensure_ascii=False,
             separators=(",", ":"),
         ).encode()
-    ).hexdigest() == "a4bf119bbc488af3eef1192847923f65b2dfee4532f3e2f44c732cd3095ce997"
+    ).hexdigest() == "5603e112b5e442b452ade81d46c3452ee835f07ffaeb3fdb64163f3902275c41"
     assert all(
         path
         and path == path.strip()

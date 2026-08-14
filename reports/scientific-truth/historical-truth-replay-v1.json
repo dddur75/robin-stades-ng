@@ -35,7 +35,7 @@
   "claim_id": "REPLAY.SCIENTIFIC.HISTORICAL.TRUTH.V1.001",
   "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "e5db0d2c8ccc8e2bc6f5ab118baa10533c212f18559a2ef2d5f0bc3093adfbf6",
+  "content_sha256": "a542aa94a79f3f580048c7e2d3a1ac6fc2d540b5d6810f0adb2923c65e5b6455",
   "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
   "evidence_status": "PROBABLE",
   "external_effects": {
@@ -65,7 +65,7 @@
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
     "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "f8e0e6746cc247bed16ba25f2f0eca5d2d0c6bc8e4cad91c08be7340da5c0d1d"
+    "sha256": "293aae5c2da5b26dc3843a364c40b80d8414989514488bb6521271b8e1d851f1"
   },
   "grain": "ONE_LOGICAL_RESULT_WITH_THREE_PHYSICAL_OCCURRENCES",
   "hash_policy": {
@@ -127,14 +127,14 @@
   "replay_type": "FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_STAKE_BET_COUNT",
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0006",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V6",
+    "evidence_id": "LOOP54_REPORTS:E0007",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V7",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "historical-truth-replay-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0006"
+      "LOOP54_REPORTS:E0007"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [

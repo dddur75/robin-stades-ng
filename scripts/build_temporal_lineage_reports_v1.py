@@ -24,21 +24,21 @@ BASE_REVISION = "71833964e5d7ba7f5882bfff49b39d567fd5473b"
 AUDIT_TARGET_REVISION = "1ffeec1cd89e83deda008da39bb22540a70db896"
 AUDIT_TARGET_TREE = "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
 AUDIT_MANIFEST_SHA256 = "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476"
-LOOP54_REPLAY_SHA256 = "782ffe26a2a7fd1d4f10d3ea12075781c06d22e63b87c2763272f5ca8fc01987"
-LOOP55_MANIFEST_SHA256 = "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835"
+LOOP54_REPLAY_SHA256 = "626fafd9d1cf7743aa7e87656fba59dcb42b25db11fa12254067a5407ad5abf5"
+LOOP55_MANIFEST_SHA256 = "3dc8d864d2e3c88f820b9d8044534e46fd1afb5856f7fec1e1b2e05e3c6303f7"
 LOOP55_SOURCE_AUTHORITY_SHA256 = (
     "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454"
 )
 LOOP55_CANDIDATE_SOURCE_MANIFEST_SHA256 = (
-    "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa"
+    "1a12c73bdbd955560b1aeebc7d8eba94bd9cb66dff08b988a46f1f8145803e87"
 )
 LOOP55_CANDIDATE_SOURCE_AGGREGATE_SHA256 = (
-    "c105c2a5d7729fa5d132be339e3b5525ce21acea6c16ef13bc6e3f9d7ed49aaa"
+    "a0322568fe62250130d3ff469a73d91b3f300b9ba30d78504fff4a61cc5677c7"
 )
-LOOP55_CHANGED_PATH_COUNT = 80
-LOOP55_INCLUDED_PATH_COUNT = 65
-LOOP55_EXCLUDED_PATH_COUNT = 15
-LOOP55_ALLOWED_PATH_COUNT = 98
+LOOP55_CHANGED_PATH_COUNT = 81
+LOOP55_INCLUDED_PATH_COUNT = 55
+LOOP55_EXCLUDED_PATH_COUNT = 26
+LOOP55_ALLOWED_PATH_COUNT = 99
 LOOP55_EVIDENCE_IDS = (
     "E0001",
     "E0002",
@@ -46,16 +46,24 @@ LOOP55_EVIDENCE_IDS = (
     "E0004",
     "E0005",
     "E0006",
+    "E0007",
+    "E0008",
+    "E0009",
+    "E0010",
 )
-LOOP55_FINGERPRINT_COUNT = 23
-LOOP55_EXIT_CODES = (1, 0, 0, 0, 1, 0)
+LOOP55_FINGERPRINT_COUNT = 35
+LOOP55_EXIT_CODES = (1, 0, 0, 0, 1, 0, 0, 1, 0, 0)
 LOOP55_CLASSIFICATIONS = (
     "EXPECTED_RED_NEGATIVE_CONTROL",
-    "HISTORICAL_BOUNDED_PASS_SUPERSEDED_BY_E0004",
-    "HISTORICAL_STATIC_PASS_SUPERSEDED_BY_E0006",
-    "FINAL_BOUNDED_PASS",
+    "HISTORICAL_PRE_CORRECTION_BOUNDED_PASS",
+    "HISTORICAL_PRE_CORRECTION_STATIC_PASS",
+    "HISTORICAL_PRE_CORRECTION_FULL_BOUNDED_PASS_COMPONENT_NOT_EXACT_V2_PROOF",
     "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
-    "FINAL_STATIC_PASS",
+    "HISTORICAL_PRE_CORRECTION_FULL_STATIC_PASS_COMPONENT_NOT_EXACT_V2_PROOF",
+    "EXACT_HEAD_CI_DETERMINISTIC_FAILURE_TRIGGER",
+    "INVALID_CORRECTIVE_HARNESS_PATH_RETAINED_NOT_PROOF",
+    "CORRECTIVE_PRESENTATION_ARTIFACT_LOCAL_PASS",
+    "CORRECTIVE_AUTHORITY_AND_PRESENTATION_CONTRACT_LOCAL_PASS",
 )
 
 AUDIT_FILES = {
@@ -431,11 +439,15 @@ def _candidate_path_is_detached(relative: str) -> bool:
         relative
         in {
             "docs/scientific/ROBIN-POINT-IN-TIME-LINEAGE-V1.md",
+            "docs/scientific/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1.md",
             "reports/council/decision-ledger.jsonl",
             "reports/evidence/evidence-graph.json",
+            "scripts/build_scientific_truth_reports_v1.py",
             "scripts/build_temporal_lineage_reports_v1.py",
+            "tests/jalon6/test_scientific_truth_kernel_v1.py",
             "tests/temporal/test_temporal_lineage_reports_v1.py",
         }
+        or relative.startswith("reports/scientific-truth/")
         or relative.startswith("reports/temporal-lineage/")
     )
 
@@ -570,7 +582,7 @@ def _verify_loop55_root(loop55_root: Path, repo_root: Path) -> Path:
         raise ValueError("PINNED_LOOP55_MANIFEST_HASH_MISMATCH")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if (
-        manifest.get("evidence_pack_id") != "ROBIN-POINT-IN-TIME-LINEAGE-V1"
+        manifest.get("evidence_pack_id") != "ROBIN-POINT-IN-TIME-LINEAGE-V2"
         or manifest.get("namespace") != "LOOP55"
         or manifest.get("base_revision") != BASE_REVISION
         or tuple(manifest.get("evidence_ids", ())) != LOOP55_EVIDENCE_IDS
@@ -589,11 +601,15 @@ def _verify_loop55_root(loop55_root: Path, repo_root: Path) -> Path:
     green_proof = manifest.get("green_proof")
     if green_proof != {
         "bounded_evidence_id": "E0004",
+        "corrective_local_validation_evidence_id": "E0009",
+        "corrective_authority_validation_evidence_id": "E0010",
+        "exact_head_ci_failure_evidence_id": "E0007",
         "historical_bounded_evidence_id": "E0002",
         "historical_static_evidence_id": "E0003",
+        "invalid_corrective_harness_evidence_id": "E0008",
         "invalid_harness_evidence_id": "E0005",
         "static_validation_evidence_id": "E0006",
-        "status": "PASS",
+        "status": "CORRECTIVE_LOCAL_PROOF_ONLY_PENDING_FULL_POST_APPEND_VALIDATION",
     }:
         raise ValueError("PINNED_LOOP55_PROOF_ROLES_MISMATCH")
     if _sha256_file(sums_path) != manifest.get("sha256sums_sha256"):
@@ -701,19 +717,45 @@ def _loop55_source() -> dict[str, Any]:
             "outside_allowlist_count": 0,
         },
         "evidence_ids": [f"LOOP55:{item}" for item in LOOP55_EVIDENCE_IDS],
-        "green_proof": "LOOP55:E0004",
-        "historical_superseded_proofs": ["LOOP55:E0002", "LOOP55:E0003"],
+        "historical_pre_correction_bounded_component_proof": "LOOP55:E0004",
+        "corrective_artifact_proof": "LOOP55:E0009",
+        "exact_head_ci_failure_trigger": "LOOP55:E0007",
+        "corrective_authority_validation_proof": "LOOP55:E0010",
+        "historical_pre_correction_component_proofs": [
+            "LOOP55:E0002",
+            "LOOP55:E0003",
+            "LOOP55:E0004",
+            "LOOP55:E0006",
+        ],
         "invalid_harness_receipt": {
             "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
             "evidence_id": "LOOP55:E0005",
             "proof_status": "NOT_PROOF",
         },
-        "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1",
+        "invalid_corrective_harness_receipt": {
+            "classification": (
+                "INVALID_CORRECTIVE_HARNESS_PATH_RETAINED_NOT_PROOF"
+            ),
+            "evidence_id": "LOOP55:E0008",
+            "proof_status": "NOT_PROOF",
+        },
+        "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V2",
         "manifest_sha256": LOOP55_MANIFEST_SHA256,
         "namespace": "LOOP55",
         "red_proof": "LOOP55:E0001",
         "source_authority_sha256": LOOP55_SOURCE_AUTHORITY_SHA256,
-        "static_validation": "LOOP55:E0006",
+        "supersedes_unavailable_pack": {
+            "candidate_aggregate_status": (
+                "CANONICAL_DIGEST_REPRODUCIBLE_BUT_INSUFFICIENT_FOR_BYTE_EXACT_RESTORATION"
+            ),
+            "candidate_manifest_sha256": (
+                "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa"
+            ),
+            "manifest_sha256": (
+                "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835"
+            ),
+            "status": "LOST_OVERWRITTEN_NOT_AVAILABLE",
+        },
     }
 
 
@@ -748,14 +790,14 @@ def _base_report(
         "promotion_status": "NO_PROMOTION",
         "report_generation_receipt": {
             "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-            "evidence_id": "LOOP55_REPORTS:E0004",
-            "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V3",
+            "evidence_id": "LOOP55_REPORTS:E0006",
+            "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V5",
             "namespace": "LOOP55_REPORTS",
         },
         "report_id": report_id,
         "reproducibility": {
             "builder": "scripts/build_temporal_lineage_reports_v1.py",
-            "command_evidence_ids": ["LOOP55_REPORTS:E0004"],
+            "command_evidence_ids": ["LOOP55_REPORTS:E0006"],
             "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED",
         },
         "schema_version": "robin-temporal-lineage-report-v1",
@@ -2178,7 +2220,7 @@ def _parser() -> argparse.ArgumentParser:
         "--loop55-root",
         type=Path,
         required=True,
-        help="Exact sealed ROBIN-POINT-IN-TIME-LINEAGE-V1 evidence root.",
+        help="Exact sealed ROBIN-POINT-IN-TIME-LINEAGE-V2 evidence root.",
     )
     parser.add_argument("--check", action="store_true", help="Fail if committed reports differ.")
     parser.add_argument("--output-dir", type=Path, default=None)

@@ -118,43 +118,69 @@ def test_exact_report_set_and_shared_deterministic_envelope() -> None:
             "target_tree": AUDIT_TARGET_TREE,
         }
         assert document["loop55_source"] == {
-                "candidate_source": {
-                    "aggregate_sha256": (
-                        "c105c2a5d7729fa5d132be339e3b5525ce21acea6c16ef13bc6e3f9d7ed49aaa"
-                    ),
-                    "excluded_path_count": 15,
-                    "included_path_count": 65,
-                    "manifest_sha256": (
-                        "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa"
-                    ),
+            "candidate_source": {
+                "aggregate_sha256": (
+                    "a0322568fe62250130d3ff469a73d91b3f300b9ba30d78504fff4a61cc5677c7"
+                ),
+                "excluded_path_count": 26,
+                "included_path_count": 55,
+                "manifest_sha256": (
+                    "1a12c73bdbd955560b1aeebc7d8eba94bd9cb66dff08b988a46f1f8145803e87"
+                ),
                 "outside_allowlist_count": 0,
             },
+            "corrective_artifact_proof": "LOOP55:E0009",
+            "corrective_authority_validation_proof": "LOOP55:E0010",
             "evidence_ids": [f"LOOP55:{item}" for item in LOOP55_EVIDENCE_IDS],
-            "green_proof": "LOOP55:E0004",
-            "historical_superseded_proofs": ["LOOP55:E0002", "LOOP55:E0003"],
+            "exact_head_ci_failure_trigger": "LOOP55:E0007",
+            "historical_pre_correction_bounded_component_proof": "LOOP55:E0004",
+            "historical_pre_correction_component_proofs": [
+                "LOOP55:E0002",
+                "LOOP55:E0003",
+                "LOOP55:E0004",
+                "LOOP55:E0006",
+            ],
+            "invalid_corrective_harness_receipt": {
+                "classification": (
+                    "INVALID_CORRECTIVE_HARNESS_PATH_RETAINED_NOT_PROOF"
+                ),
+                "evidence_id": "LOOP55:E0008",
+                "proof_status": "NOT_PROOF",
+            },
             "invalid_harness_receipt": {
                 "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
                 "evidence_id": "LOOP55:E0005",
                 "proof_status": "NOT_PROOF",
             },
-            "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1",
+            "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V2",
             "manifest_sha256": LOOP55_MANIFEST_SHA256,
             "namespace": "LOOP55",
             "red_proof": "LOOP55:E0001",
             "source_authority_sha256": LOOP55_SOURCE_AUTHORITY_SHA256,
-            "static_validation": "LOOP55:E0006",
+            "supersedes_unavailable_pack": {
+                "candidate_aggregate_status": (
+                    "CANONICAL_DIGEST_REPRODUCIBLE_BUT_INSUFFICIENT_FOR_BYTE_EXACT_RESTORATION"
+                ),
+                "candidate_manifest_sha256": (
+                    "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa"
+                ),
+                "manifest_sha256": (
+                    "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835"
+                ),
+                "status": "LOST_OVERWRITTEN_NOT_AVAILABLE",
+            },
         }
         assert document["report_generation_receipt"] == {
             "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-            "evidence_id": "LOOP55_REPORTS:E0004",
+            "evidence_id": "LOOP55_REPORTS:E0006",
             "logical_root": (
-                "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V3"
+                "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V5"
             ),
             "namespace": "LOOP55_REPORTS",
         }
         assert document["reproducibility"] == {
             "builder": "scripts/build_temporal_lineage_reports_v1.py",
-            "command_evidence_ids": ["LOOP55_REPORTS:E0004"],
+            "command_evidence_ids": ["LOOP55_REPORTS:E0006"],
             "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED",
         }
 

@@ -58,7 +58,7 @@
   ],
   "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "88cca008786269674747a0a789b6f803173f5c88fd4a17a6d720ef7cc2b5bb25",
+  "content_sha256": "76d34abcbafed0fdcc060118d2848c75bad234b07ef06a2be34ecc50c7c01f32",
   "definition_versions": {
     "profit_per_bet": "profit_over_bet_count_v1",
     "roi": "profit_over_actual_turnover_v1",
@@ -102,7 +102,7 @@
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
     "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "f8e0e6746cc247bed16ba25f2f0eca5d2d0c6bc8e4cad91c08be7340da5c0d1d"
+    "sha256": "293aae5c2da5b26dc3843a364c40b80d8414989514488bb6521271b8e1d851f1"
   },
   "grain": "DEFINITION_PLUS_15_LOGICAL_AND_45_PHYSICAL_HISTORICAL_SUMMARIES",
   "hash_policy": {
@@ -153,14 +153,14 @@
   },
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0006",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V6",
+    "evidence_id": "LOOP54_REPORTS:E0007",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V7",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "roi-turnover-repair-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0006"
+      "LOOP54_REPORTS:E0007"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [

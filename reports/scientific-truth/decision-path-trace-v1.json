@@ -33,7 +33,7 @@
   "claim_id": "GOV.SCIENTIFIC.DECISION.PATH.TRACE.V1.001",
   "commit1_revision": "c2bb1769a611728a44c19477932d37e6ab11e5a7",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "de612e432bcbfeb2fc559b78265187a6a3166041b25b5715cbfcddb0e794d0e9",
+  "content_sha256": "aabc0fbfd8e83605cbc7c0e46de387ec9e78c6a0f01fa8c7f45422084e1be7dc",
   "dynamic_trace": {
     "calibration": "IDENTITY_FIXTURE_V1",
     "cutoff": "2025-02-01T17:00:00Z",
@@ -144,7 +144,7 @@
     "deterministic_timestamp_source": "COMMIT1_COMMIT_TIME_UTC",
     "hash_representation": "GIT_CANONICAL_LF",
     "repo_path": "scripts/build_scientific_truth_reports_v1.py",
-    "sha256": "f8e0e6746cc247bed16ba25f2f0eca5d2d0c6bc8e4cad91c08be7340da5c0d1d"
+    "sha256": "293aae5c2da5b26dc3843a364c40b80d8414989514488bb6521271b8e1d851f1"
   },
   "grain": "ONE_STATIC_LINK_OR_ONE_FIXTURE_EXECUTION",
   "hash_policy": {
@@ -184,14 +184,14 @@
   "path_verdict": "PRODUCTION_DECISION_PATH_STILL_NOT_PROVEN",
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP54_REPORTS:E0006",
-    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V6",
+    "evidence_id": "LOOP54_REPORTS:E0007",
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-TRUTH-KERNEL-V1-REPORTS-RECEIPT-V7",
     "namespace": "LOOP54_REPORTS"
   },
   "report_id": "decision-path-trace-v1",
   "reproducibility": {
     "command_evidence_ids": [
-      "LOOP54_REPORTS:E0006"
+      "LOOP54_REPORTS:E0007"
     ],
     "generation_command": "python -m scripts.build_scientific_truth_reports_v1 --audit-root <verified-audit-pack-root> --loop54-root <verified-loop54-pack-root> --check",
     "input_hashes": [

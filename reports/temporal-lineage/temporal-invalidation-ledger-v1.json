@@ -18,7 +18,7 @@
   },
   "chain_tip": "9981c8bc071d09953728e361e176414dbefff937cbc908a0178242ac9a88c5e5",
   "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
-  "content_sha256": "ae3eb5cddfb85367f34b9dc02af9381613d81738d2e929a74dcc0592e68f4ef8",
+  "content_sha256": "7d33c33bc26af64b58cb0c913ed1a76f2b483f4414218f3de76ebc2679aefbad",
   "counts": {
     "logical_results": 15,
     "physical_occurrences": 45,
@@ -53,36 +53,55 @@
   "immutable_review_base_revision": "71833964e5d7ba7f5882bfff49b39d567fd5473b",
   "loop55_source": {
     "candidate_source": {
-      "aggregate_sha256": "c105c2a5d7729fa5d132be339e3b5525ce21acea6c16ef13bc6e3f9d7ed49aaa",
-      "excluded_path_count": 15,
-      "included_path_count": 65,
-      "manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "aggregate_sha256": "a0322568fe62250130d3ff469a73d91b3f300b9ba30d78504fff4a61cc5677c7",
+      "excluded_path_count": 26,
+      "included_path_count": 55,
+      "manifest_sha256": "1a12c73bdbd955560b1aeebc7d8eba94bd9cb66dff08b988a46f1f8145803e87",
       "outside_allowlist_count": 0
     },
+    "corrective_artifact_proof": "LOOP55:E0009",
+    "corrective_authority_validation_proof": "LOOP55:E0010",
     "evidence_ids": [
       "LOOP55:E0001",
       "LOOP55:E0002",
       "LOOP55:E0003",
       "LOOP55:E0004",
       "LOOP55:E0005",
+      "LOOP55:E0006",
+      "LOOP55:E0007",
+      "LOOP55:E0008",
+      "LOOP55:E0009",
+      "LOOP55:E0010"
+    ],
+    "exact_head_ci_failure_trigger": "LOOP55:E0007",
+    "historical_pre_correction_bounded_component_proof": "LOOP55:E0004",
+    "historical_pre_correction_component_proofs": [
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
       "LOOP55:E0006"
     ],
-    "green_proof": "LOOP55:E0004",
-    "historical_superseded_proofs": [
-      "LOOP55:E0002",
-      "LOOP55:E0003"
-    ],
+    "invalid_corrective_harness_receipt": {
+      "classification": "INVALID_CORRECTIVE_HARNESS_PATH_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0008",
+      "proof_status": "NOT_PROOF"
+    },
     "invalid_harness_receipt": {
       "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
       "evidence_id": "LOOP55:E0005",
       "proof_status": "NOT_PROOF"
     },
-    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1",
-    "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V2",
+    "manifest_sha256": "3dc8d864d2e3c88f820b9d8044534e46fd1afb5856f7fec1e1b2e05e3c6303f7",
     "namespace": "LOOP55",
     "red_proof": "LOOP55:E0001",
     "source_authority_sha256": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
-    "static_validation": "LOOP55:E0006"
+    "supersedes_unavailable_pack": {
+      "candidate_aggregate_status": "CANONICAL_DIGEST_REPRODUCIBLE_BUT_INSUFFICIENT_FOR_BYTE_EXACT_RESTORATION",
+      "candidate_manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+      "status": "LOST_OVERWRITTEN_NOT_AVAILABLE"
+    }
   },
   "mission_id": "POINT_IN_TIME_LINEAGE",
   "mission_status": "ROBIN_POINT_IN_TIME_LINEAGE_V1_PARTIAL",
@@ -317,22 +336,22 @@
   ],
   "report_generation_receipt": {
     "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
-    "evidence_id": "LOOP55_REPORTS:E0004",
-    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V3",
+    "evidence_id": "LOOP55_REPORTS:E0006",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V5",
     "namespace": "LOOP55_REPORTS"
   },
   "report_id": "temporal-invalidation-ledger-v1",
   "reproducibility": {
     "builder": "scripts/build_temporal_lineage_reports_v1.py",
     "command_evidence_ids": [
-      "LOOP55_REPORTS:E0004"
+      "LOOP55_REPORTS:E0006"
     ],
     "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED"
   },
   "schema_version": "robin-temporal-lineage-report-v1",
   "source": {
     "path": "reports/scientific-truth/historical-truth-replay-v1.json",
-    "sha256": "782ffe26a2a7fd1d4f10d3ea12075781c06d22e63b87c2763272f5ca8fc01987"
+    "sha256": "626fafd9d1cf7743aa7e87656fba59dcb42b25db11fa12254067a5407ad5abf5"
   },
   "status": "VERIFIED",
   "verdict": "ROBIN_TEMPORAL_INVALIDATION_LEDGER_APPEND_ONLY"
