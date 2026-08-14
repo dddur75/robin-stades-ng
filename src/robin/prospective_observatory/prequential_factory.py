@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+import math
 from datetime import datetime
 from typing import Iterable, Mapping
 
@@ -14,7 +16,11 @@ from robin.market_math import (
     devig_probabilities as kernel_devig_probabilities,
 )
 from robin.prospective_observatory.contracts import canonical_sha256, ensure_utc
-from robin.prospective_observatory.feature_snapshots import FeatureSnapshotRegistry
+from robin.prospective_observatory.feature_snapshots import (
+    FEATURE_FAMILIES,
+    FeatureSnapshotRegistry,
+    verify_feature_snapshot_artifact,
+)
 from robin.prospective_observatory.prequential_contracts import (
     FIVE_LEAGUE_NAMES,
     PROMOTION_LOCKED,
@@ -32,14 +38,26 @@ from robin.prospective_observatory.prequential_contracts import (
     PrequentialLedgerEvent,
     TrainingDecision,
     VerifiedFixtureResult,
+    complete_injuries_feature,
+    complete_lineup_feature,
+    durable_required_feature_gates,
+    feature_fixture_kickoff,
+    feature_team_ids,
+    prediction_record_id,
 )
-from robin.prospective_observatory.prequential_settlement import SettlementRegistry
+from robin.prospective_observatory.prequential_settlement import (
+    SettlementRegistry,
+    verify_result_observation_artifact,
+)
 from robin.prospective_observatory.prequential_storage import (
     PrequentialArtifactRepository,
 )
 from robin.prospective_observatory.prequential_training import (
+    challenger_probabilities_from_artifact,
+    eligible_training_examples,
     train_challenger_if_eligible,
 )
+from robin.temporal.lineage import parse_utc
 
 
 def devig_probabilities(
@@ -71,6 +89,90 @@ def devig_probabilities(
         },
         result.overround,
     )
+
+
+def _verified_snapshot_odds(
+    *,
+    snapshot: object,
+    market: PredictionMarket,
+    decimal_odds: Mapping[str, float],
+    odds_snapshot_id: str | None,
+) -> tuple[dict[str, float], str]:
+    """Bind the odds used by a forecast to its verified feature snapshot."""
+    if not hasattr(snapshot, "values") or not hasattr(snapshot, "provenance"):
+        raise ValueError("PREQUENTIAL_ODDS_SNAPSHOT_LINEAGE_MISMATCH")
+    values = snapshot.values
+    provenance = snapshot.provenance
+    market_values = values.get("market")
+    market_provenance = provenance.get("market")
+    if not isinstance(market_values, Mapping) or not isinstance(
+        market_provenance, Mapping
+    ):
+        raise ValueError("PREQUENTIAL_ODDS_SNAPSHOT_LINEAGE_MISMATCH")
+    stored_odds = market_values.get("decimal_odds")
+    stored_snapshot_id = market_provenance.get("odds_snapshot_id")
+    if (
+        not isinstance(stored_odds, Mapping)
+        or not isinstance(stored_snapshot_id, str)
+        or not stored_snapshot_id
+        or odds_snapshot_id != stored_snapshot_id
+    ):
+        raise ValueError("PREQUENTIAL_ODDS_SNAPSHOT_LINEAGE_MISMATCH")
+    expected = (
+        ("HOME", "DRAW", "AWAY")
+        if market is PredictionMarket.ONE_X_TWO
+        else ("OVER", "UNDER")
+    )
+    if set(stored_odds) != set(expected) or set(decimal_odds) != set(expected):
+        raise ValueError("PREQUENTIAL_ODDS_VALUES_LINEAGE_MISMATCH")
+    verified: dict[str, float] = {}
+    for selection in expected:
+        stored_value = stored_odds[selection]
+        supplied_value = decimal_odds[selection]
+        if (
+            isinstance(stored_value, bool)
+            or not isinstance(stored_value, (int, float))
+            or isinstance(supplied_value, bool)
+            or not isinstance(supplied_value, (int, float))
+        ):
+            raise ValueError("PREQUENTIAL_ODDS_VALUES_LINEAGE_MISMATCH")
+        stored_float = float(stored_value)
+        supplied_float = float(supplied_value)
+        if (
+            not math.isfinite(stored_float)
+            or not math.isfinite(supplied_float)
+            or stored_float != supplied_float
+        ):
+            raise ValueError("PREQUENTIAL_ODDS_VALUES_LINEAGE_MISMATCH")
+        verified[selection] = stored_float
+    return verified, stored_snapshot_id
+
+
+def _required_gate_feature_available(snapshot: object, family: str) -> bool:
+    if not hasattr(snapshot, "missingness") or not hasattr(snapshot, "values"):
+        return False
+    if snapshot.missingness.get(family, True):
+        return False
+    value = snapshot.values.get(family)
+    if family == "team":
+        return feature_team_ids(value) is not None
+    if family == "lineup":
+        expected_team_ids = feature_team_ids(snapshot.values.get("team"))
+        return bool(
+            expected_team_ids is not None
+            and complete_lineup_feature(
+                value,
+                expected_team_ids=expected_team_ids,
+            )
+        )
+    if family == "injuries":
+        return complete_injuries_feature(value)
+    if family == "market":
+        return value is not None
+    # The remaining families do not yet have a canonical, family-specific gate
+    # projection.  Refuse to promote even a non-empty payload until that
+    # semantic validator exists; generic truthiness is not temporal evidence.
+    return False
 
 
 def initial_model_versions(
@@ -159,6 +261,7 @@ class HashChainedPrequentialLedger:
         model_version: str | None = None,
         details: Mapping[str, object] | None = None,
     ) -> PrequentialLedgerEvent:
+        recorded_at = ensure_utc(recorded_at, field="recorded_at")
         previous_hash = (
             self._events[-1].event_hash if self._events else "0" * 64
         )
@@ -266,13 +369,31 @@ class PrequentialLearningFactory:
         keys = {(model.model_id, model.version) for model in model_rows}
         if len(keys) != len(model_rows):
             raise ValueError("PREQUENTIAL_MODEL_VERSION_DUPLICATED")
-        reference_scopes = {
-            model.scope
-            for model in model_rows
-            if model.role is ModelRole.REFERENCE
-        }
-        if reference_scopes != set(ModelScope):
+        references = tuple(
+            model for model in model_rows if model.role is ModelRole.REFERENCE
+        )
+        reference_scopes = {model.scope for model in references}
+        if (
+            len(references) != len(ModelScope)
+            or reference_scopes != set(ModelScope)
+        ):
             raise ValueError("PREQUENTIAL_REFERENCE_SCOPE_INCOMPLETE")
+        for model in references:
+            expected = next(
+                candidate
+                for candidate in initial_model_versions(
+                    created_at=model.created_at,
+                    feature_contract_hash=model.feature_contract_hash,
+                    code_revision=model.code_revision,
+                )
+                if candidate.role is ModelRole.REFERENCE
+                and candidate.scope is model.scope
+            )
+            if model != expected:
+                # The reference algorithm is an embedded immutable artifact.
+                # Re-derive its exact identity instead of trusting a
+                # caller-supplied 64-hex token or self-hashed registry row.
+                raise ValueError("PREQUENTIAL_REFERENCE_MODEL_ROOT_INVALID")
         challenger_scopes = {
             model.scope
             for model in model_rows
@@ -304,6 +425,7 @@ class PrequentialLearningFactory:
 
         if not isinstance(snapshot, FeatureSnapshot):
             raise TypeError("FEATURE_SNAPSHOT_REQUIRED")
+        verify_feature_snapshot_artifact(self.artifact_repository, snapshot)
         inserted = self.features.append(snapshot)
         event_exists = any(
             event.kind is PrequentialEventKind.FEATURE_SNAPSHOT_FROZEN
@@ -357,49 +479,204 @@ class PrequentialLearningFactory:
             raise ValueError("PREQUENTIAL_MODEL_SCOPE_MISMATCH")
         predicted = ensure_utc(predicted_at, field="predicted_at")
         cutoff = ensure_utc(cutoff_at, field="cutoff_at")
-        identity = canonical_sha256(
-            {
-                "fixture_record_id": fixture_record_id,
-                "cutoff": cutoff_name.value,
-                "market": market.value,
-                "model_id": model_id,
-                "model_version": model_version,
-            }
+        kickoff = ensure_utc(kickoff_at, field="kickoff_at")
+        # Fixture identity/team evidence is a non-optional causal input.  A
+        # caller can add stricter gates but cannot remove this base contract.
+        required_gate_names = {"fixture", *required_gates}
+        if decimal_odds is not None:
+            required_gate_names.add("market")
+        if model.created_at > predicted:
+            raise ValueError("MODEL_NOT_AVAILABLE_AT_CUTOFF")
+        if model.training_cutoff is not None and model.training_cutoff > predicted:
+            raise ValueError("MODEL_NOT_AVAILABLE_AT_CUTOFF")
+        snapshot = (
+            self.features.get(feature_snapshot_id)
+            if feature_snapshot_id is not None
+            else None
         )
-        prediction_id = f"prediction-{identity}"
+        if feature_snapshot_id is not None and snapshot is None:
+            raise ValueError("PREQUENTIAL_FEATURE_SNAPSHOT_NOT_FOUND")
+        if snapshot is not None:
+            # Re-read the immutable snapshot and every source receipt from the
+            # artifact store at the decision boundary.  A dataclass carrying
+            # plausible hashes is not sufficient evidence for a forecast.
+            verify_feature_snapshot_artifact(self.artifact_repository, snapshot)
+            if snapshot.created_at > predicted:
+                raise ValueError("PREQUENTIAL_FEATURE_SNAPSHOT_AFTER_PREDICTION")
+            if (
+                snapshot.fixture_record_id != fixture_record_id
+                or snapshot.fixture_id != fixture_id
+                or snapshot.competition != competition
+                or snapshot.market is not market
+                or snapshot.cutoff_name is not cutoff_name
+                or snapshot.cutoff_at != cutoff
+            ):
+                raise ValueError("PREQUENTIAL_FEATURE_SNAPSHOT_LINEAGE_MISMATCH")
+            if model.feature_contract_hash != snapshot.feature_contract_hash:
+                raise ValueError("PREQUENTIAL_FEATURE_CONTRACT_MISMATCH")
+        declared_optional_gates = (
+            set(durable_required_feature_gates(snapshot.quality))
+            if snapshot is not None
+            else set()
+        )
+        required_gate_names.update(declared_optional_gates)
+        prediction_id = prediction_record_id(
+            fixture_record_id=fixture_record_id,
+            cutoff_name=cutoff_name,
+            market=market,
+            model_id=model_id,
+            model_version=model_version,
+        )
         status = PredictionStatus.FROZEN
         rejection_reason: str | None = None
         probabilities: dict[str, float] = {}
         market_probabilities: dict[str, float] | None = None
+        verified_odds: dict[str, float] | None = None
+        verified_odds_snapshot_id: str | None = None
         if predicted > cutoff:
             status = PredictionStatus.REJECTED_LATE
             rejection_reason = "PREDICTION_CUTOFF_EXCEEDED"
         else:
-            missing_gates = sorted(
-                gate for gate in required_gates if not gate_statuses.get(gate, False)
-            )
-            if missing_gates:
-                status = PredictionStatus.REJECTED_MISSING_GATE
-                rejection_reason = "MISSING_GATES:" + ",".join(missing_gates)
-            elif decimal_odds is None:
+            effective_gate_statuses = dict(gate_statuses)
+            for gate in required_gate_names:
+                feature_family = (
+                    "team"
+                    if gate == "fixture"
+                    else gate
+                    if gate in FEATURE_FAMILIES
+                    else None
+                )
+                # A caller-supplied boolean is never sufficient evidence for a
+                # required data gate.  Every recognised gate must project to a
+                # repository-verified, non-missing feature family.  Market is
+                # implicitly requested whenever odds are supplied, so its
+                # caller flag defaults to true only after that evidence check.
+                gate_is_durable = gate in {"fixture", "market"} or (
+                    gate in declared_optional_gates
+                )
+                feature_available = bool(
+                    gate_is_durable
+                    and feature_family is not None
+                    and snapshot is not None
+                    and _required_gate_feature_available(snapshot, feature_family)
+                )
+                if gate == "fixture":
+                    # A team receipt proves identities only when it also
+                    # attests the exact scheduled kickoff used to derive this
+                    # prediction cutoff. SQL fixture scalars alone are not a
+                    # positive point-in-time fixture receipt.
+                    team_projection = (
+                        snapshot.values.get("team")
+                        if snapshot is not None
+                        else None
+                    )
+                    feature_available = bool(
+                        feature_available
+                        and isinstance(team_projection, Mapping)
+                        and feature_fixture_kickoff(team_projection) == kickoff
+                        and team_projection.get("competition") == competition
+                    )
+                effective_gate_statuses[gate] = bool(
+                    feature_available
+                    and effective_gate_statuses.get(gate, gate == "market")
+                )
+            if decimal_odds is None:
                 status = PredictionStatus.NO_ODDS_REFERENCE
                 rejection_reason = "NO_ADMISSIBLE_ODDS_BEFORE_CUTOFF"
             else:
-                market_probabilities, _margin = devig_probabilities(
-                    market,
-                    decimal_odds,
-                    devig_method=self.devig_method,
+                missing_gates = sorted(
+                    gate
+                    for gate in required_gate_names
+                    if not effective_gate_statuses.get(gate, False)
                 )
-                if model.role is ModelRole.REFERENCE:
-                    probabilities = dict(market_probabilities)
-                elif model.status is ModelStatus.INSUFFICIENT_TRAINING_SUPPORT:
+                if missing_gates:
                     status = PredictionStatus.REJECTED_MISSING_GATE
-                    rejection_reason = "INSUFFICIENT_TRAINING_SUPPORT"
-                elif challenger_probabilities is None:
-                    status = PredictionStatus.REJECTED_MISSING_GATE
-                    rejection_reason = "CHALLENGER_PROBABILITIES_UNAVAILABLE"
+                    rejection_reason = "MISSING_GATES:" + ",".join(missing_gates)
                 else:
-                    probabilities = dict(challenger_probabilities)
+                    if snapshot is None:
+                        raise ValueError(
+                            "PREQUENTIAL_ODDS_SNAPSHOT_LINEAGE_MISMATCH"
+                        )
+                    verified_odds, verified_odds_snapshot_id = (
+                        _verified_snapshot_odds(
+                            snapshot=snapshot,
+                            market=market,
+                            decimal_odds=decimal_odds,
+                            odds_snapshot_id=odds_snapshot_id,
+                        )
+                    )
+                    market_probabilities, _margin = devig_probabilities(
+                        market,
+                        verified_odds,
+                        devig_method=self.devig_method,
+                    )
+                    if model.role is ModelRole.REFERENCE:
+                        probabilities = dict(market_probabilities)
+                    elif model.status is ModelStatus.INSUFFICIENT_TRAINING_SUPPORT:
+                        status = PredictionStatus.REJECTED_MISSING_GATE
+                        rejection_reason = "INSUFFICIENT_TRAINING_SUPPORT"
+                    else:
+                        if model.artifact_r2_key is None:
+                            raise ValueError(
+                                "PREQUENTIAL_CHALLENGER_ARTIFACT_REQUIRED"
+                            )
+                        artifact = json.loads(
+                            self.artifact_repository.read_verified(
+                                model.artifact_r2_key,
+                                model.artifact_sha256,
+                            )
+                        )
+                        if not isinstance(artifact, Mapping) or artifact.get(
+                            "schema_version"
+                        ) != "prequential-challenger-artifact-v1":
+                            raise ValueError(
+                                "PREQUENTIAL_CHALLENGER_ARTIFACT_INVALID"
+                            )
+                        artifact_cutoff = parse_utc(
+                            str(artifact.get("training_cutoff", "")),
+                            field="challenger_artifact_training_cutoff",
+                        )
+                        training_manifest_hash = str(
+                            artifact.get("training_manifest_hash", "")
+                        )
+                        if (
+                            model.training_cutoff is None
+                            or artifact_cutoff != model.training_cutoff
+                            or artifact_cutoff > predicted
+                            or len(training_manifest_hash) != 64
+                            or any(
+                                character not in "0123456789abcdef"
+                                for character in training_manifest_hash
+                            )
+                            or artifact.get("promotion_status")
+                            != PROMOTION_LOCKED
+                        ):
+                            raise ValueError(
+                                "PREQUENTIAL_CHALLENGER_ARTIFACT_TIME_MISMATCH"
+                            )
+                        expected_challenger = (
+                            challenger_probabilities_from_artifact(
+                                artifact,
+                                market,
+                            )
+                        )
+                        if challenger_probabilities is not None and (
+                            set(challenger_probabilities)
+                            != set(expected_challenger)
+                            or any(
+                                not math.isclose(
+                                    float(challenger_probabilities[label]),
+                                    probability,
+                                    rel_tol=0.0,
+                                    abs_tol=1e-15,
+                                )
+                                for label, probability in expected_challenger.items()
+                            )
+                        ):
+                            raise ValueError(
+                                "PREQUENTIAL_CHALLENGER_PROBABILITY_MISMATCH"
+                            )
+                        probabilities = expected_challenger
         prediction = FrozenPredictionRecord(
             prediction_id=prediction_id,
             fixture_record_id=fixture_record_id,
@@ -407,15 +684,15 @@ class PrequentialLearningFactory:
             competition=competition,
             market=market,
             cutoff_name=cutoff_name,
-            cutoff_at=cutoff_at,
-            kickoff_at=kickoff_at,
-            predicted_at=predicted_at,
+            cutoff_at=cutoff,
+            kickoff_at=kickoff,
+            predicted_at=predicted,
             model_id=model_id,
             model_version=model_version,
             feature_snapshot_id=feature_snapshot_id,
             probabilities=probabilities,
             market_probabilities=market_probabilities,
-            odds_snapshot_id=odds_snapshot_id,
+            odds_snapshot_id=verified_odds_snapshot_id,
             code_revision=code_revision,
             status=status,
             rejection_reason=rejection_reason,
@@ -449,6 +726,35 @@ class PrequentialLearningFactory:
         *,
         settled_at: datetime,
     ) -> tuple[FixtureSettlementRecord, tuple[PredictionScore, ...], bool]:
+        result_provider_identity = verify_result_observation_artifact(
+            self.artifact_repository,
+            result,
+        )
+        expected_provider_identities: set[tuple[str, str]] = set()
+        for prediction in self.predictions.predictions:
+            if (
+                prediction.status is not PredictionStatus.FROZEN
+                or prediction.fixture_record_id != result.fixture_record_id
+                or prediction.fixture_id != result.fixture_id
+                or prediction.feature_snapshot_id is None
+            ):
+                continue
+            snapshot = self.features.get(prediction.feature_snapshot_id)
+            team_projection = (
+                snapshot.values.get("team") if snapshot is not None else None
+            )
+            if not isinstance(team_projection, Mapping):
+                continue
+            provider = str(team_projection.get("provider", "")).strip()
+            provider_fixture_id = str(
+                team_projection.get("provider_fixture_id", "")
+            ).strip()
+            if provider and provider_fixture_id:
+                expected_provider_identities.add(
+                    (provider, provider_fixture_id)
+                )
+        if expected_provider_identities != {result_provider_identity}:
+            raise ValueError("PREQUENTIAL_RESULT_FIXTURE_IDENTITY_MISMATCH")
         settlement, scores, inserted = self.settlements.settle(
             result,
             predictions=self.predictions.predictions,
@@ -488,6 +794,8 @@ class PrequentialLearningFactory:
                 for prediction in self.predictions.predictions:
                     if (
                         prediction.fixture_id == result.fixture_id
+                        and prediction.fixture_record_id
+                        == result.fixture_record_id
                         and prediction.model_id.startswith("reference-")
                     ):
                         model = self.models[
@@ -516,12 +824,55 @@ class PrequentialLearningFactory:
         previous = self.models.get((model_id, previous_version))
         if previous is None:
             raise ValueError("PREQUENTIAL_CHALLENGER_MODEL_MISSING")
+        cutoff = ensure_utc(training_cutoff, field="training_cutoff")
+        expected_competition = FIVE_LEAGUE_NAMES.get(previous.scope)
+        candidate_snapshots = tuple(
+            snapshot
+            for snapshot in self.features.snapshots
+            if snapshot.created_at <= snapshot.cutoff_at < cutoff
+            and (
+                expected_competition is None
+                or snapshot.competition == expected_competition
+            )
+        )
+        candidate_settlements = tuple(
+            settlement
+            for settlement in self.settlements.settlements
+            if settlement.settled_at < cutoff
+            and (
+                expected_competition is None
+                or settlement.result.competition == expected_competition
+            )
+        )
+        selected_examples = eligible_training_examples(
+            settlements=candidate_settlements,
+            snapshots=candidate_snapshots,
+            training_cutoff=cutoff,
+            required_feature_contract_hash=previous.feature_contract_hash,
+        )
+        selected_snapshot_ids = {
+            example.snapshot_id for example in selected_examples
+        }
+        selected_settlement_ids = {
+            example.settlement_id for example in selected_examples
+        }
+        for snapshot in candidate_snapshots:
+            if snapshot.snapshot_id not in selected_snapshot_ids:
+                continue
+            verify_feature_snapshot_artifact(self.artifact_repository, snapshot)
+        for settlement in candidate_settlements:
+            if settlement.settlement_id not in selected_settlement_ids:
+                continue
+            verify_result_observation_artifact(
+                self.artifact_repository,
+                settlement.result,
+            )
         decision = train_challenger_if_eligible(
             repository=self.artifact_repository,
             previous_model=previous,
-            settlements=self.settlements.settlements,
-            snapshots=self.features.snapshots,
-            training_cutoff=training_cutoff,
+            settlements=candidate_settlements,
+            snapshots=candidate_snapshots,
+            training_cutoff=cutoff,
             code_revision=code_revision,
             last_training_at=last_training_at,
         )
@@ -533,11 +884,15 @@ class PrequentialLearningFactory:
                     "eligible": decision.eligible_fixtures,
                     "leagues": decision.represented_leagues,
                     "reason": decision.reason,
+                    "model_id": model_id,
+                    "previous_version": previous_version,
+                    "training_cutoff": cutoff.isoformat(),
+                    "code_revision": code_revision,
                 }
             )
             self.ledger.append(
                 kind=PrequentialEventKind.TRAINING_DEFERRED,
-                recorded_at=training_cutoff,
+                recorded_at=cutoff,
                 stream_key=f"model:{model_id}",
                 model_id=model_id,
                 model_version=previous_version,

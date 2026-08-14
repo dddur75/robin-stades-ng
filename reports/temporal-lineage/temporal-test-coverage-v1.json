@@ -1,0 +1,386 @@
+{
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E2013"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "336ab418290178deabb93a3a322050aa19ead9fabd6503f7ef0746fa00fa94b4",
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "business_data_network_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
+    "neon_api_calls": 0,
+    "new_database_migrations": 0,
+    "odds_provider_calls": 0,
+    "persistent_local_database_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "social_publications": 0
+  },
+  "feature_builder_coverage": {
+    "covered_decision_relevant_loc": 920,
+    "covered_symbols": [
+      {
+        "first_line": 502,
+        "last_line": 577,
+        "loc": 76,
+        "path": "src/robin/temporal/lineage.py",
+        "symbol": "asof_select"
+      },
+      {
+        "first_line": 556,
+        "last_line": 700,
+        "loc": 145,
+        "path": "src/robin/prospective_observatory/feature_snapshots.py",
+        "symbol": "freeze_feature_snapshot"
+      },
+      {
+        "first_line": 298,
+        "last_line": 342,
+        "loc": 45,
+        "path": "scripts/run_prequential_learning_factory.py",
+        "symbol": "_latest_fixtures"
+      },
+      {
+        "first_line": 454,
+        "last_line": 721,
+        "loc": 268,
+        "path": "src/robin/prospective_observatory/prequential_factory.py",
+        "symbol": "PrequentialLearningFactory.forecast"
+      },
+      {
+        "first_line": 92,
+        "last_line": 312,
+        "loc": 221,
+        "path": "src/robin/shadow/decision.py",
+        "symbol": "decide_shadow_bet"
+      },
+      {
+        "first_line": 79,
+        "last_line": 190,
+        "loc": 112,
+        "path": "src/robin/historical/features.py",
+        "symbol": "build_team_feature_rows"
+      },
+      {
+        "first_line": 551,
+        "last_line": 603,
+        "loc": 53,
+        "path": "src/robin/historical/scientific_arena.py",
+        "symbol": "_rolling_goal_rates"
+      }
+    ],
+    "method": "AST function or method span for the bounded audited symbol list; not global line coverage",
+    "uncovered_decision_relevant_loc": 1103,
+    "uncovered_symbols": [
+      {
+        "first_line": 220,
+        "last_line": 364,
+        "loc": 145,
+        "path": "src/robin/historical/dataset_factory.py",
+        "symbol": "build_api_team_pre_match"
+      },
+      {
+        "first_line": 670,
+        "last_line": 861,
+        "loc": 192,
+        "path": "src/robin/historical/dataset_factory.py",
+        "symbol": "build_player_feature_datasets"
+      },
+      {
+        "first_line": 82,
+        "last_line": 274,
+        "loc": 193,
+        "path": "src/robin/backtesting/v3.py",
+        "symbol": "run_backtest"
+      },
+      {
+        "first_line": 270,
+        "last_line": 459,
+        "loc": 190,
+        "path": "scripts/run_shadow_pipeline.py",
+        "symbol": "collect_odds"
+      },
+      {
+        "first_line": 462,
+        "last_line": 680,
+        "loc": 219,
+        "path": "scripts/run_shadow_pipeline.py",
+        "symbol": "pre_match_shadow"
+      },
+      {
+        "first_line": 683,
+        "last_line": 723,
+        "loc": 41,
+        "path": "scripts/run_shadow_pipeline.py",
+        "symbol": "post_match_settlement"
+      },
+      {
+        "first_line": 540,
+        "last_line": 621,
+        "loc": 82,
+        "path": "scripts/run_historical_pipeline.py",
+        "symbol": "build_observed_forecast"
+      },
+      {
+        "first_line": 1891,
+        "last_line": 1910,
+        "loc": 20,
+        "path": "scripts/run_historical_pipeline.py",
+        "symbol": "command_features"
+      },
+      {
+        "first_line": 1917,
+        "last_line": 1926,
+        "loc": 10,
+        "path": "scripts/run_historical_pipeline.py",
+        "symbol": "command_train"
+      },
+      {
+        "first_line": 1929,
+        "last_line": 1939,
+        "loc": 11,
+        "path": "scripts/run_historical_pipeline.py",
+        "symbol": "command_backtest"
+      }
+    ]
+  },
+  "immutable_review_base_revision": "71833964e5d7ba7f5882bfff49b39d567fd5473b",
+  "limitations": [
+    "A declarative flag test is not counted as adversarial value mutation evidence.",
+    "The initial five-test red output is sealed separately as LOOP55:E0001 and is not part of the historical E2013 audit root.",
+    "Covered LOC is a bounded symbol inventory and is not point-in-time proof by itself.",
+    "This is not an exhaustive keyword inventory of every repository test mentioning lookahead, leakage, future, cutoff, as_of, observed_at, available_at, stale, late or training_cutoff."
+  ],
+  "loop55_source": {
+    "candidate_source": {
+      "aggregate_sha256": "a0322568fe62250130d3ff469a73d91b3f300b9ba30d78504fff4a61cc5677c7",
+      "excluded_path_count": 26,
+      "included_path_count": 55,
+      "manifest_sha256": "1a12c73bdbd955560b1aeebc7d8eba94bd9cb66dff08b988a46f1f8145803e87",
+      "outside_allowlist_count": 0
+    },
+    "corrective_artifact_proof": "LOOP55:E0009",
+    "corrective_authority_validation_proof": "LOOP55:E0010",
+    "evidence_ids": [
+      "LOOP55:E0001",
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0005",
+      "LOOP55:E0006",
+      "LOOP55:E0007",
+      "LOOP55:E0008",
+      "LOOP55:E0009",
+      "LOOP55:E0010"
+    ],
+    "exact_head_ci_failure_trigger": "LOOP55:E0007",
+    "historical_pre_correction_bounded_component_proof": "LOOP55:E0004",
+    "historical_pre_correction_component_proofs": [
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0006"
+    ],
+    "invalid_corrective_harness_receipt": {
+      "classification": "INVALID_CORRECTIVE_HARNESS_PATH_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0008",
+      "proof_status": "NOT_PROOF"
+    },
+    "invalid_harness_receipt": {
+      "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0005",
+      "proof_status": "NOT_PROOF"
+    },
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V2",
+    "manifest_sha256": "3dc8d864d2e3c88f820b9d8044534e46fd1afb5856f7fec1e1b2e05e3c6303f7",
+    "namespace": "LOOP55",
+    "red_proof": "LOOP55:E0001",
+    "source_authority_sha256": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
+    "supersedes_unavailable_pack": {
+      "candidate_aggregate_status": "CANONICAL_DIGEST_REPRODUCIBLE_BUT_INSUFFICIENT_FOR_BYTE_EXACT_RESTORATION",
+      "candidate_manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+      "status": "LOST_OVERWRITTEN_NOT_AVAILABLE"
+    }
+  },
+  "mission_id": "POINT_IN_TIME_LINEAGE",
+  "mission_status": "ROBIN_POINT_IN_TIME_LINEAGE_V1_PARTIAL",
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_status": "NO_PROMOTION",
+  "red_phase_evidence": "LOOP55:E0001",
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP55_REPORTS:E0006",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V5",
+    "namespace": "LOOP55_REPORTS"
+  },
+  "report_id": "temporal-test-coverage-v1",
+  "repository_receipt_tests": [
+    {
+      "path": "tests/jalon14/test_prequential_pit_closure.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_odds_requires_receipt_index_window_r2_and_ties_fail_closed"
+    },
+    {
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_self_declared_receipt_and_late_ingestion_fail_closed"
+    },
+    {
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_asof_rejects_valid_looking_self_declared_receipt_mapping"
+    },
+    {
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_forecast_reverifies_source_receipt_bytes"
+    },
+    {
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_feature_snapshot_rejects_receipt_payload_value_mismatch"
+    },
+    {
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_feature_snapshot_rejects_receipts_from_another_fixture"
+    },
+    {
+      "path": "tests/jalon14/test_prequential_pit_closure.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_source_receipt_rejects_cross_family_odds_capture_as_team_projection"
+    },
+    {
+      "path": "tests/jalon14/test_prequential_pit_closure.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_source_receipt_rejects_backdated_market_closure_for_late_materialization"
+    }
+  ],
+  "reproducibility": {
+    "builder": "scripts/build_temporal_lineage_reports_v1.py",
+    "command_evidence_ids": [
+      "LOOP55_REPORTS:E0006"
+    ],
+    "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED"
+  },
+  "schema_version": "robin-temporal-lineage-report-v1",
+  "sources": [
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "sha256": "0ca855c9aaa1666719f644f492b5426f6ec9064182dff18372d80b8c420c0a4e",
+      "symbols": [
+        "test_late_arriving_pre_cutoff_event_is_excluded_when_observed_after_cutoff",
+        "test_future_value_mutation_does_not_change_past_feature_snapshot",
+        "test_future_value_mutation_does_not_change_past_decision_hash",
+        "test_missing_availability_receipt_fails_closed",
+        "test_model_created_after_cutoff_is_rejected",
+        "test_asof_rejects_valid_looking_self_declared_receipt_mapping"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon7/test_scientific_arena.py",
+      "sha256": "e4b56bf06e64e7cb2e734ab3af3246a3a21121a9cfc185e98baca67d039150e0",
+      "symbols": [
+        "test_equal_kickoff_score_rates_do_not_depend_on_peer_result"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_pit_closure.py",
+      "sha256": "8ab81ce3ef5a03a32246742d7fed63115f1eeb01e284e2d56ff5ed9359364dfd",
+      "symbols": [
+        "test_odds_requires_receipt_index_window_r2_and_ties_fail_closed",
+        "test_source_receipt_rejects_cross_family_odds_capture_as_team_projection",
+        "test_source_receipt_rejects_backdated_market_closure_for_late_materialization"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "sha256": "755813ed92e0947c9b6a351e659fb29945abd6e7cf09cc7d247ea69fe47fc2b3",
+      "symbols": [
+        "test_self_declared_receipt_and_late_ingestion_fail_closed",
+        "test_forecast_reverifies_source_receipt_bytes",
+        "test_feature_snapshot_rejects_receipt_payload_value_mismatch",
+        "test_feature_snapshot_rejects_receipts_from_another_fixture"
+      ]
+    }
+  ],
+  "status": "PARTIAL",
+  "summary": {
+    "adversarial_value_mutation_tests": 2,
+    "boundary_tests": 2,
+    "immutability_alias_mutation_tests": 1,
+    "mandatory_tests": 5,
+    "mandatory_tests_present": 5,
+    "mutation_matrix_cases_passed": 25,
+    "repository_receipt_boundary_tests": 8,
+    "uncovered_active_symbols": 10
+  },
+  "tests": [
+    {
+      "category": "ADVERSARIAL_VALUE_MUTATION",
+      "component": "prospective fixture version selection",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_late_arriving_pre_cutoff_event_is_excluded_when_observed_after_cutoff"
+    },
+    {
+      "category": "IMMUTABILITY_ALIAS_MUTATION",
+      "component": "prequential feature snapshot input alias after freeze",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_future_value_mutation_does_not_change_past_feature_snapshot"
+    },
+    {
+      "category": "ADVERSARIAL_VALUE_MUTATION",
+      "component": "as-of odds selection and shadow decision hash",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_future_value_mutation_does_not_change_past_decision_hash"
+    },
+    {
+      "category": "BOUNDARY_TEST",
+      "component": "receipt-backed feature provenance",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_missing_availability_receipt_fails_closed"
+    },
+    {
+      "category": "BOUNDARY_TEST",
+      "component": "prequential model availability",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "status": "PASS_IN_TARGETED_SUITE",
+      "test": "test_model_created_after_cutoff_is_rejected"
+    }
+  ],
+  "verdict": "ROBIN_TEMPORAL_TEST_COVERAGE_PARTIAL"
+}

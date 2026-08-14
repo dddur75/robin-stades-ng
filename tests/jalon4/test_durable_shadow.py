@@ -264,6 +264,48 @@ def test_stage_capture_payload_et_fixture(tmp_path: Path) -> None:
     assert int(result["records"]) >= 3
 
 
+def test_stage_never_promotes_unverified_accepted_shadow_row(tmp_path: Path) -> None:
+    state = minimal_state(tmp_path)
+    decision_path = state / "decisions" / "shadow-decisions.jsonl"
+    decision_path.parent.mkdir(parents=True)
+    decision_path.write_text(
+        json.dumps(
+            {
+                "decision_id": "legacy-forged-accepted",
+                "fixture_id": "fixture-forged",
+                "accepted": True,
+                "suggested_stake": 10,
+                "point_in_time_status": "POINT_IN_TIME_VALID",
+                "decided_at": NOW.isoformat(),
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    result = stage(state, tmp_path / "outbox", "123")
+    bundle = read_bundle(Path(str(result["bundle"])))
+    records = bundle["records"]
+    assert isinstance(records, list)
+    assert not any(
+        isinstance(item, dict) and item.get("kind") == "shadow_bets"
+        for item in records
+    )
+    rejected = [
+        item
+        for item in records
+        if isinstance(item, dict)
+        and item.get("kind") == "rejected_bets"
+        and item.get("business_key") == "legacy-forged-accepted"
+    ]
+    assert len(rejected) == 1
+    payload = rejected[0]["payload"]
+    assert isinstance(payload, dict)
+    assert payload["accepted"] is False
+    assert payload["suggested_stake"] == 0
+    assert payload["primary_reason"] == "POINT_IN_TIME_RECEIPT_VERIFIER_REQUIRED"
+
+
 def test_stage_detecte_payload_corrompu(tmp_path: Path) -> None:
     state = minimal_state(tmp_path)
     payload = next((state / "raw" / "payloads").rglob("*.bin"))

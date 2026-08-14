@@ -27,7 +27,7 @@ from sqlalchemy import MetaData, Table, inspect, select
 from sqlalchemy.engine import Engine
 
 from robin.domain.enums import DataAvailability, DataOrigin
-from robin.market_math import DevigInputError, DevigResult, devig_probabilities
+from robin.market_math import DevigResult
 from robin.prospective_observatory.budgets import (
     MAX_API_FOOTBALL_CALLS_TOTAL,
     MAX_ODDS_API_CREDITS_TOTAL,
@@ -74,6 +74,8 @@ from robin.prospective_observatory.r2 import (
     ObjectStore,
     ProspectiveR2Repository,
     StoredCapture,
+    complete_positive_overround_market,
+    project_odds_rows,
 )
 from robin.prospective_observatory.replay import (
     InMemoryProjectionSink,
@@ -1534,8 +1536,10 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 "reason": evaluation.reason,
                 "evidence": evidence,
                 "evidence_hash": evidence_hash,
-                "cutoff_at": fixture[1].kickoff_at
-                - timedelta(microseconds=1),
+                # The gate proves only what was materialized by this actual
+                # evaluation instant.  Fixture kickoff-minus-one-microsecond
+                # is a sporting boundary, not evidence that the gate existed.
+                "cutoff_at": evaluated_at,
                 "evaluated_at": evaluated_at,
                 "code_revision": code_revision,
                 "append_only": True,
@@ -1603,38 +1607,29 @@ def _complete_positive_overround_market(
     lowest-margin bookmaker tie-break.
     """
 
-    expected_count = {"h2h": 3, "totals": 2}.get(provider_market)
-    if expected_count is None:
-        return None
-    eligible: list[Mapping[str, object]] = []
-    for outcome in outcomes:
-        if not isinstance(outcome, Mapping):
-            return None
-        if provider_market == "totals":
-            try:
-                point = float(outcome.get("point", 0.0))
-            except (TypeError, ValueError):
-                return None
-            if point != 2.5:
-                continue
-        eligible.append(outcome)
-    if len(eligible) != expected_count:
-        return None
-    labels = tuple(str(outcome.get("name", "")).strip() for outcome in eligible)
-    prices = tuple(
-        cast(float | None, outcome.get("price")) for outcome in eligible
-    )
-    try:
-        devig = devig_probabilities(
-            prices,
-            method="PROPORTIONAL",
-            outcome_labels=labels,
-        )
-    except DevigInputError:
-        return None
-    if devig.overround <= 0.0:
-        return None
-    return tuple(eligible), devig
+    return complete_positive_overround_market(provider_market, outcomes)
+
+
+def _projection_records(
+    projection: Mapping[str, object],
+) -> tuple[Mapping[str, object], ...]:
+    data = projection.get("data")
+    if isinstance(data, Mapping) and isinstance(data.get("value"), list):
+        data = data["value"]
+    if isinstance(data, list):
+        return tuple(item for item in data if isinstance(item, Mapping))
+    if isinstance(data, Mapping):
+        return (data,)
+    return ()
+
+
+def _project_odds_rows(
+    receipt: CaptureReceipt,
+    projection: Mapping[str, object],
+) -> tuple[dict[str, object], ...]:
+    """Derive the exact compact odds rows from immutable capture bytes."""
+
+    return project_odds_rows(receipt, projection)
 
 
 class SQLAlchemyProjectionSink:
@@ -1794,14 +1789,7 @@ class SQLAlchemyProjectionSink:
 
     @staticmethod
     def _records(projection: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
-        data = projection.get("data")
-        if isinstance(data, Mapping) and isinstance(data.get("value"), list):
-            data = data["value"]
-        if isinstance(data, list):
-            return tuple(item for item in data if isinstance(item, Mapping))
-        if isinstance(data, Mapping):
-            return (data,)
-        return ()
+        return _projection_records(projection)
 
     def _player_rows(
         self,
@@ -1949,85 +1937,17 @@ class SQLAlchemyProjectionSink:
         projection: Mapping[str, object],
     ) -> bool:
         inserted = False
-        receipt_id = _stable_id("receipt", receipt.receipt_hash)
-        for event in self._records(projection):
-            bookmakers = event.get("bookmakers")
-            if not isinstance(bookmakers, list):
-                continue
-            for bookmaker_value in bookmakers:
-                if not isinstance(bookmaker_value, Mapping):
-                    continue
-                bookmaker = str(bookmaker_value.get("key", "")).strip()
-                markets = bookmaker_value.get("markets")
-                if not bookmaker or not isinstance(markets, list):
-                    continue
-                for market_value in markets:
-                    if not isinstance(market_value, Mapping):
-                        continue
-                    provider_market = str(market_value.get("key", ""))
-                    market = {
-                        "h2h": "1X2",
-                        "totals": "OVER_UNDER_2_5",
-                    }.get(provider_market)
-                    outcomes = market_value.get("outcomes")
-                    if market is None or not isinstance(outcomes, list):
-                        continue
-                    validated = _complete_positive_overround_market(
-                        provider_market,
-                        outcomes,
-                    )
-                    if validated is None:
-                        continue
-                    eligible_outcomes, devig = validated
-                    margin = devig.overround
-                    for outcome, odds in zip(
-                        eligible_outcomes,
-                        devig.input_odds,
-                        strict=True,
-                    ):
-                        selection = str(outcome.get("name", "")).strip()
-                        if not selection:
-                            continue
-                        key = (
-                            f"{receipt.receipt_hash}:{bookmaker}:"
-                            f"{market}:{selection}"
-                        )
-                        snapshot_hash = canonical_sha256(
-                            {
-                                "bookmaker": bookmaker,
-                                "market": market,
-                                "selection": selection,
-                                "odds": odds,
-                                "margin": margin,
-                                "observed_at": receipt.observed_at.isoformat(),
-                            }
-                        )
-                        values = {
-                            "id": _stable_id("odds", key),
-                            "receipt_id": receipt_id,
-                            "fixture_id": receipt.fixture_id,
-                            "bookmaker": bookmaker,
-                            "market": market,
-                            "selection": selection,
-                            "odds": odds,
-                            "margin": margin,
-                            "observed_at": receipt.observed_at,
-                            "cutoff_at": receipt.cutoff_at,
-                            "fixture_match_status": "MATCHED_EXACT",
-                            "snapshot_hash": snapshot_hash,
-                            "code_revision": receipt.code_revision,
-                            "append_only": True,
-                        }
-                        inserted |= self.state._insert_exact(
-                            "prospective_odds_snapshots",
-                            key_values={
-                                "receipt_id": receipt_id,
-                                "bookmaker": bookmaker,
-                                "market": market,
-                                "selection": selection,
-                            },
-                            values=values,
-                        )
+        for values in _project_odds_rows(receipt, projection):
+            inserted |= self.state._insert_exact(
+                "prospective_odds_snapshots",
+                key_values={
+                    "receipt_id": values["receipt_id"],
+                    "bookmaker": values["bookmaker"],
+                    "market": values["market"],
+                    "selection": values["selection"],
+                },
+                values=values,
+            )
         return inserted
 
     def insert_capture(

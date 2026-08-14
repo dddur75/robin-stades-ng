@@ -7,7 +7,7 @@ import json
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -628,7 +628,7 @@ def pre_match_shadow(output: Path, *, mock: bool) -> dict[str, object]:
                     market_key="1X2",
                     selection="HOME",
                     market_odds=market_odds,
-                    model_probability=float(prediction["probability_home"]),
+                    model_probability=float(cast(Any, prediction["probability_home"])),
                     devig_method="PROPORTIONAL",
                     strategy_version="value-simple-1.0",
                     quality_ok=False,
@@ -685,7 +685,13 @@ def post_match_settlement(output: Path, *, mock: bool) -> dict[str, object]:
     decisions = DecisionJournal(
         output / "decisions" / "shadow-decisions.jsonl"
     ).read_effective()
-    eligible = [item for item in decisions if item.get("accepted") is True]
+    claimed_accepted = sum(item.get("accepted") is True for item in decisions)
+    # The legacy shadow journal has no repository-backed verifier capable of
+    # re-deriving a decision's feature, odds and model inputs.  An `accepted`
+    # scalar (including one in a legacy or tampered row) therefore never
+    # authorises a provider result call.  Keep the settlement lane closed until
+    # such a verifier is injected at this boundary.
+    eligible: list[dict[str, object]] = []
     if not eligible:
         summary = {
             "run_id": run_id,
@@ -694,6 +700,7 @@ def post_match_settlement(output: Path, *, mock: bool) -> dict[str, object]:
             "results_received": 0,
             "settled": 0,
             "eligible_decisions": 0,
+            "unverified_accepted_decisions_ignored": claimed_accepted,
             "calls_consumed": 0,
             "message": "aucune décision shadow éligible et terminée",
             "finished_at": datetime.now(UTC).isoformat(),
@@ -732,7 +739,7 @@ def daily_health(output: Path) -> dict[str, object]:
     for decision in decisions:
         reason = str(decision.get("primary_reason") or "ACCEPTED")
         rejected[reason] = rejected.get(reason, 0) + 1
-    health = {
+    health: dict[str, object] = {
         "generated_at": datetime.now(UTC).isoformat(),
         "status": "WARNING" if not snapshots else "PASSED",
         "pipeline_runs": len(runs),
@@ -799,9 +806,11 @@ def daily_health(output: Path) -> dict[str, object]:
             for run in runs
         ),
         silent_losses=0,
-        quota_used=int(quota_used) if quota_used is not None else 0,
+        quota_used=int(cast(Any, quota_used)) if quota_used is not None else 0,
         quota_remaining=(
-            int(quota_remaining) if quota_remaining is not None else 20_000
+            int(cast(Any, quota_remaining))
+            if quota_remaining is not None
+            else 20_000
         ),
         quota_limit=20_000,
     )
@@ -830,8 +839,8 @@ def daily_health(output: Path) -> dict[str, object]:
     (report_dir / "matchday.md").write_text(
         render_matchday_report(
             metrics,
-            fixture_count=int(metrics["fixtures"]),
-            settled_count=int(metrics["settlements"]),
+            fixture_count=int(cast(Any, metrics["fixtures"])),
+            settled_count=int(cast(Any, metrics["settlements"])),
         ),
         encoding="utf-8",
     )

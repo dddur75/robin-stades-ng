@@ -15,6 +15,8 @@ from typing import Any
 import pandas as pd
 
 from robin.historical.features import (
+    TEMPORAL_VALIDITY_NOT_PROVEN,
+    _utc_datetime,
     assert_temporal_integrity,
     build_team_feature_rows,
     dataset_manifest,
@@ -109,12 +111,16 @@ def canonical_fixture_facts(
             away = teams.get("away", {})
             if not isinstance(home, Mapping) or not isinstance(away, Mapping):
                 continue
+            kickoff = _utc_datetime(
+                fixture.get("date"),
+                field_name="fixture_kickoff_at",
+            )
             facts.append(
                 {
                     "fixture_id": int(fixture["id"]),
                     "competition": "Ligue 1",
                     "season": season,
-                    "kickoff_at": str(fixture.get("date")),
+                    "kickoff_at": kickoff.isoformat(),
                     "home_team_id": home.get("id"),
                     "away_team_id": away.get("id"),
                     "home_team": home.get("name"),
@@ -130,7 +136,10 @@ def canonical_fixture_facts(
     unique = {_integer(fact["fixture_id"]): fact for fact in facts}
     return sorted(
         unique.values(),
-        key=lambda fact: (str(fact["kickoff_at"]), _integer(fact["fixture_id"])),
+        key=lambda fact: (
+            _utc_datetime(fact["kickoff_at"], field_name="fixture_kickoff_at"),
+            _integer(fact["fixture_id"]),
+        ),
     )
 
 
@@ -203,6 +212,7 @@ def _legacy_market_index(legacy: Path) -> dict[tuple[str, str, str], dict[str, o
             "odds_under_25": _numeric(row.get("pc_u25") or row.get("p_u25")),
             "market_source": "Football-Data.co.uk / LEGACY SOURCE",
             "market_temporal_status": "HISTORICAL_CLOSING_MARKET",
+            "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
         }
     return output
 
@@ -244,7 +254,30 @@ def build_api_team_pre_match(
     )
     rows: list[dict[str, object]] = []
     market_rows: list[dict[str, object]] = []
+    pending_statistics: list[tuple[int, int, int]] = []
+    current_kickoff: datetime | None = None
+
+    def apply_pending_statistics() -> None:
+        for pending_fixture_id, pending_home_id, pending_away_id in pending_statistics:
+            for pending_team_id in (pending_home_id, pending_away_id):
+                current = statistics.get(
+                    (pending_fixture_id, pending_team_id),
+                    {},
+                )
+                for statistic_name in ROLLING_TEAM_STATISTICS:
+                    histories[pending_team_id][statistic_name].append(
+                        current.get(statistic_name)
+                    )
+
     for fixture in fixtures:
+        kickoff = _utc_datetime(
+            fixture["kickoff_at"],
+            field_name="fixture_kickoff_at",
+        )
+        if current_kickoff is not None and kickoff != current_kickoff:
+            apply_pending_statistics()
+            pending_statistics.clear()
+        current_kickoff = kickoff
         fixture_id = _integer(fixture["fixture_id"])
         home_id = _integer(fixture["home_team_id"])
         away_id = _integer(fixture["away_team_id"])
@@ -257,7 +290,7 @@ def build_api_team_pre_match(
                 "away_team_id": away_id,
                 "home_team_name": fixture["home_team"],
                 "away_team_name": fixture["away_team"],
-                "temporal_policy": "HISTORICAL POINT-IN-TIME",
+                "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
             }
         )
         for feature in ROLLING_TEAM_STATISTICS:
@@ -268,9 +301,6 @@ def build_api_team_pre_match(
                 row[f"away_{feature}_{window}"] = _mean(
                     list(histories[away_id][feature])[-window:]
                 )
-        kickoff = datetime.fromisoformat(
-            str(fixture["kickoff_at"]).replace("Z", "+00:00")
-        )
         market = markets.get(
             (
                 kickoff.date().isoformat(),
@@ -322,15 +352,15 @@ def build_api_team_pre_match(
                     "devig_validation_status": validation_status,
                     **devig_metadata,
                     "source": market.get("market_source"),
-                    "availability_status": "HISTORICAL_CLOSING_MARKET",
+                    "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
+                    "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
+                    "market_temporal_status": "HISTORICAL_CLOSING_MARKET",
                     "quality_status": "JOINED_BY_DATE_AND_CANONICAL_TEAMS",
                 }
             )
-        for team_id in (home_id, away_id):
-            current = statistics.get((fixture_id, team_id), {})
-            for feature in ROLLING_TEAM_STATISTICS:
-                histories[team_id][feature].append(current.get(feature))
-    assert_temporal_integrity(rows)
+        pending_statistics.append((fixture_id, home_id, away_id))
+    apply_pending_statistics()
+    assert_temporal_integrity(rows, allow_unproven_historical=True)
     return rows, market_rows
 
 
@@ -452,12 +482,21 @@ def _feature_values(
     history: Sequence[Mapping[str, object]],
     kickoff: datetime,
 ) -> dict[str, object]:
-    previous = sorted(history, key=lambda row: str(row["kickoff_at"]))
+    previous = sorted(
+        history,
+        key=lambda row: _utc_datetime(
+            row["kickoff_at"],
+            field_name="player_history_kickoff_at",
+        ),
+    )
     minutes = [_numeric(row.get("minutes")) for row in previous]
     recent_five = previous[-5:]
     recent_ten = previous[-10:]
     last_kickoff = (
-        datetime.fromisoformat(str(previous[-1]["kickoff_at"]).replace("Z", "+00:00"))
+        _utc_datetime(
+            previous[-1]["kickoff_at"],
+            field_name="player_history_kickoff_at",
+        )
         if previous
         else None
     )
@@ -478,8 +517,9 @@ def _feature_values(
             for row in previous
             if (
                 kickoff
-                - datetime.fromisoformat(
-                    str(row["kickoff_at"]).replace("Z", "+00:00")
+                - _utc_datetime(
+                    row["kickoff_at"],
+                    field_name="player_history_kickoff_at",
                 )
             ).days
             <= days
@@ -650,10 +690,17 @@ def build_player_feature_datasets(
     feature_rows: list[dict[str, object]] = []
     pre_rows: list[dict[str, object]] = []
     post_rows: list[dict[str, object]] = []
-    for team_row in sorted(team_rows, key=lambda row: str(row["kickoff_at"])):
+    for team_row in sorted(
+        team_rows,
+        key=lambda row: _utc_datetime(
+            row["kickoff_at"],
+            field_name="team_feature_kickoff_at",
+        ),
+    ):
         fixture_id = _integer(team_row["fixture_id"])
-        kickoff = datetime.fromisoformat(
-            str(team_row["kickoff_at"]).replace("Z", "+00:00")
+        kickoff = _utc_datetime(
+            team_row["kickoff_at"],
+            field_name="team_feature_kickoff_at",
         )
         summaries: dict[int, dict[str, object]] = {}
         expected_rosters: dict[int, list[int]] = {}
@@ -692,7 +739,9 @@ def build_player_feature_datasets(
                             "value": value,
                             "source": "API-FOOTBALL HISTORICAL",
                             "quality_status": "CALCULATED_FROM_PRIOR_FIXTURES",
-                            "availability_status": "PRE_LINEUP",
+                            "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
+                            "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
+                            "feature_cutoff_stage": "PRE_LINEUP",
                             "leakage_risk": "LAG_ENFORCED",
                             "calculated_at": kickoff.isoformat(),
                             "season": team_row["season"],
@@ -757,7 +806,8 @@ def build_player_feature_datasets(
             {
                 "dataset_name": "api_player_pre_lineup_v1",
                 "dataset_version": "api_player_pre_lineup_v1",
-                "temporal_policy": "PRE_LINEUP",
+                "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
+                "feature_cutoff_stage": "PRE_LINEUP",
                 **{f"home_expected_{key}": value for key, value in expected_home.items()},
                 **{f"away_expected_{key}": value for key, value in expected_away.items()},
             }
@@ -771,8 +821,9 @@ def build_player_feature_datasets(
                 {
                     "dataset_name": "api_post_lineup_simulated_v1",
                     "dataset_version": "api_post_lineup_simulated_v1",
-                    "temporal_policy": "POST_LINEUP_SIMULATED",
-                    "availability_status": "HISTORICAL SIMULATED",
+                    "temporal_policy": TEMPORAL_VALIDITY_NOT_PROVEN,
+                    "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
+                    "feature_cutoff_stage": "POST_LINEUP_SIMULATED",
                     **{
                         f"home_confirmed_{key}": value
                         for key, value in confirmed_home.items()
@@ -818,45 +869,69 @@ def write_dataset(
     code_revision: str,
     temporal_policy: str,
 ) -> dict[str, object]:
-    store = PartitionedParquetStore(state / "derived")
-    partitions: list[dict[str, object]] = []
-    for season in sorted({_integer(row["season"]) for row in rows}):
-        season_rows = [row for row in rows if _integer(row["season"]) == season]
-        partitions.append(
-            store.write_records(
-                season_rows,
-                competition="Ligue-1",
-                season=season,
-                entity_type=name,
-                dataset_version=name,
-            )
-        )
     manifest = dataset_manifest(
         rows,
         name=name,
         code_version=code_revision,
         policy=temporal_policy,
     )
+    snapshot_sha256 = str(manifest["sha256"])
+    store = PartitionedParquetStore(state / "derived")
+    partitions: list[dict[str, object]] = []
+    indexed_rows = list(enumerate(rows))
+    for season in sorted({_integer(row["season"]) for row in rows}):
+        season_items = [
+            (index, row)
+            for index, row in indexed_rows
+            if _integer(row["season"]) == season
+        ]
+        partition = store.write_snapshot_records(
+            [row for _, row in season_items],
+            competition="Ligue-1",
+            season=season,
+            entity_type=name,
+            dataset_version=name,
+            snapshot_sha256=snapshot_sha256,
+            snapshot_indices=[index for index, _ in season_items],
+        )
+        partition_path = Path(str(partition["path"])).resolve()
+        try:
+            partition["path"] = partition_path.relative_to(state.resolve()).as_posix()
+        except ValueError as exc:
+            raise RuntimeError("DATASET_SNAPSHOT_PARTITION_SCOPE_INVALID") from exc
+        # Local write outcomes (inserted/duplicate counts) are operational
+        # receipts, not part of the immutable scientific manifest.  Retaining
+        # only content-addressed fields makes a replay of identical rows
+        # produce the exact same manifest.
+        partitions.append(
+            {
+                key: partition[key]
+                for key in (
+                    "path",
+                    "rows",
+                    "bytes",
+                    "sha256",
+                    "records_sha256",
+                    "row_indices_sha256",
+                    "snapshot_sha256",
+                    "immutable",
+                )
+            }
+        )
     manifest.update(
         {
+            "snapshot_schema_version": "historical-dataset-snapshot-v1",
+            "immutable": True,
             "fixtures": len({row.get("fixture_id") for row in rows}),
             "targets": ["1X2", "OVER_UNDER_2_5"],
             "excluded_rows": 0,
             "source": sorted({str(row.get("source", "API-FOOTBALL HISTORICAL")) for row in rows}),
             "generated_at": manifest.pop("created_at"),
+            "generated_at_status": "NOT_RECORDED_IN_SCIENTIFIC_IDENTITY",
             "code_revision": manifest.pop("code_version"),
             "partitions": partitions,
-            "status": (
-                "POST_LINEUP_SIMULATED_READY"
-                if name == "api_post_lineup_simulated_v1"
-                else "API_PLAYER_DATASET_READY"
-                if name == "api_player_pre_lineup_v1"
-                else "PLAYER_FEATURE_FACTORY_ACTIVE"
-                if name in {"player_feature_store_v1", "api_player_match_facts_v1"}
-                else "API_MARKET_BASELINE_READY"
-                if name == "api_market_baseline_v1"
-                else "API_TEAM_DATASET_READY"
-            ),
+            "production_status": "PRODUCTION_LOCKED",
+            "status": "BLOCKED_BY_TEMPORALITY",
         }
     )
     return manifest

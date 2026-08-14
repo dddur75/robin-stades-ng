@@ -316,7 +316,7 @@ class CaptureContext(FrozenContract):
     code_revision: str = Field(min_length=1, max_length=80)
     event_time: datetime | None = None
     provider_updated_at: datetime | None = None
-    materialized_at: datetime | None = None
+    materialized_at: datetime
 
     @model_validator(mode="after")
     def validate_context(self) -> Self:
@@ -328,17 +328,35 @@ class CaptureContext(FrozenContract):
         observed_at = ensure_utc(self.observed_at, field="observed_at")
         cutoff_at = ensure_utc(self.cutoff_at, field="cutoff_at")
         kickoff_at = ensure_utc(self.kickoff_at, field="kickoff_at")
-        for field_name in ("event_time", "provider_updated_at", "materialized_at"):
+        normalized_optional: dict[str, datetime | None] = {}
+        for field_name in ("event_time", "provider_updated_at"):
             value = getattr(self, field_name)
-            if value is not None:
-                ensure_utc(value, field=field_name)
+            normalized_optional[field_name] = (
+                ensure_utc(value, field=field_name) if value is not None else None
+            )
+        materialized_at = ensure_utc(
+            self.materialized_at,
+            field="materialized_at",
+        )
         if requested_at > response_at or response_at > observed_at:
             raise ValueError("CAPTURE_REQUEST_RESPONSE_OBSERVATION_ORDER_INVALID")
+        if materialized_at < observed_at:
+            raise ValueError("CAPTURE_MATERIALIZED_BEFORE_OBSERVATION")
         if cutoff_at >= kickoff_at:
             raise ValueError("CAPTURE_CUTOFF_MUST_PRECEDE_KICKOFF")
         if (self.window_id is None) != (self.window_label == "REGISTRY"):
             raise ValueError("CAPTURE_REGISTRY_WINDOW_REFERENCE_INCONSISTENT")
         _validate_source_endpoint(self.source_endpoint)
+        for field_name, value in {
+            "requested_at": requested_at,
+            "response_received_at": response_at,
+            "observed_at": observed_at,
+            "cutoff_at": cutoff_at,
+            "kickoff_at": kickoff_at,
+            "materialized_at": materialized_at,
+            **normalized_optional,
+        }.items():
+            object.__setattr__(self, field_name, value)
         return self
 
 
@@ -428,8 +446,17 @@ class CaptureReceipt(FrozenContract):
         )
         cutoff_at = ensure_utc(self.cutoff_at, field="cutoff_at")
         kickoff_at = ensure_utc(self.kickoff_at, field="kickoff_at")
+        observed_at = ensure_utc(self.observed_at, field="observed_at")
+        materialized_at = ensure_utc(
+            self.materialized_at,
+            field="materialized_at",
+        )
+        if not (
+            response_at <= observed_at <= materialized_at <= cutoff_at < kickoff_at
+        ):
+            return False
         if self.window_id is None:
-            return response_at < cutoff_at < kickoff_at
+            return True
         opens_at = _window_opens_at_from_receipt(
             window_id=self.window_id,
             window_label=self.window_label,
@@ -437,7 +464,7 @@ class CaptureReceipt(FrozenContract):
         )
         return (
             opens_at is not None
-            and opens_at <= response_at < cutoff_at < kickoff_at
+            and opens_at <= response_at
         )
 
     @property

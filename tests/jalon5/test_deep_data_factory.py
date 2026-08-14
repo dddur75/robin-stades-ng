@@ -8,13 +8,16 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pytest
 import requests
 import yaml
 
 from robin.domain.enums import DataAvailability, DataOrigin
 from robin.historical.features import (
+    TEMPORAL_VALIDITY_NOT_PROVEN,
     assert_temporal_integrity,
     build_team_feature_rows,
+    dataset_manifest,
 )
 from robin.historical.modeling import backtest_fixed_stake, train_elo_baseline
 from robin.historical.normalization import normalize_records
@@ -319,7 +322,7 @@ def test_normalisation_ne_transforme_pas_absence_en_zero() -> None:
         ingestion_run_id="run",
         raw_payload_hash="a" * 64,
     )
-    assert rows[0]["availability_status"] == "POINT_IN_TIME_SAFE"
+    assert rows[0]["availability_status"] == "HISTORICAL_NON_POINT_IN_TIME"
     assert rows[0]["payload"]["statistics"][0]["goals"] is None  # type: ignore[index]
 
 
@@ -352,7 +355,127 @@ def test_features_nutilisent_jamais_le_resultat_du_match_cible() -> None:
     assert original_rows[0]["home_elo"] == changed_rows[0]["home_elo"]
     assert original_rows[0]["home_form_5"] == changed_rows[0]["home_form_5"]
     assert original_rows[1]["home_elo"] != changed_rows[1]["home_elo"]
-    assert_temporal_integrity(original_rows)
+    assert_temporal_integrity(original_rows, allow_unproven_historical=True)
+    with pytest.raises(ValueError, match="feature non sûre"):
+        assert_temporal_integrity(original_rows)
+
+
+def test_historical_integrity_rejects_self_declared_receipt_scalars() -> None:
+    forged = {
+        "fixture_id": "forged",
+        "kickoff_at": "2026-08-14T18:00:00+00:00",
+        "as_of_time": "2026-08-14T17:00:00+00:00",
+        "availability_status": "POINT_IN_TIME_SAFE",
+        "receipt_id": "a" * 64,
+        "payload_sha256": "b" * 64,
+        "available_at": "2026-08-14T16:00:00+00:00",
+    }
+    with pytest.raises(
+        ValueError,
+        match="POINT_IN_TIME_RECEIPT_VERIFIER_REQUIRED",
+    ):
+        assert_temporal_integrity((forged,))
+
+
+def test_dataset_manifest_downgrades_self_declared_point_in_time_rows() -> None:
+    manifest = dataset_manifest(
+        (
+            {
+                "fixture_id": "forged",
+                "competition": "Ligue 1",
+                "season": 2025,
+                "availability_status": "POINT_IN_TIME_SAFE",
+            },
+        ),
+        name="forged",
+        code_version="test",
+        policy="POINT_IN_TIME_SAFE",
+    )
+    assert manifest["temporal_policy"] == TEMPORAL_VALIDITY_NOT_PROVEN
+    assert manifest["point_in_time_rows"] == 0
+    assert manifest["overclaimed_point_in_time_rows"] == 1
+
+
+def test_features_rejettent_un_timestamp_de_decision_sans_timezone() -> None:
+    with pytest.raises(ValueError, match="DECISION_TIMESTAMP_UTC_REQUIRED"):
+        build_team_feature_rows(
+            [
+                {
+                    "match_id": "naive",
+                    "league": "F1",
+                    "season": "2024-25",
+                    "date": "2024-08-01T18:00:00",
+                    "home": "A",
+                    "away": "B",
+                    "fthg": 1,
+                    "ftag": 0,
+                }
+            ]
+        )
+
+
+def test_equal_kickoff_team_rows_share_identical_prior_state() -> None:
+    matches = [
+        {
+            "match_id": "seed",
+            "league": "F1",
+            "season": "2024-25",
+            "date": "2024-08-01T18:00:00Z",
+            "home": "A",
+            "away": "B",
+            "fthg": 2,
+            "ftag": 0,
+        },
+        {
+            "match_id": "same-1",
+            "league": "F1",
+            "season": "2024-25",
+            "date": "2024-08-08T18:00:00Z",
+            "home": "A",
+            "away": "C",
+            "fthg": 9,
+            "ftag": 0,
+        },
+        {
+            "match_id": "same-2",
+            "league": "F1",
+            "season": "2024-25",
+            "date": "2024-08-08T18:00:00+00:00",
+            "home": "A",
+            "away": "D",
+            "fthg": 0,
+            "ftag": 9,
+        },
+    ]
+    rows = {row["fixture_id"]: row for row in build_team_feature_rows(matches)}
+    assert rows["same-1"]["home_elo"] == rows["same-2"]["home_elo"]
+    assert rows["same-1"]["home_form_5"] == rows["same-2"]["home_form_5"]
+    assert rows["same-1"]["home_goals_for_5"] == rows["same-2"]["home_goals_for_5"]
+
+
+def test_legacy_rows_and_closing_odds_are_not_labeled_point_in_time_safe() -> None:
+    [row] = build_team_feature_rows(
+        [
+            {
+                "match_id": "legacy",
+                "league": "F1",
+                "season": "2024-25",
+                "date": "2024-08-01T18:00:00Z",
+                "home": "A",
+                "away": "B",
+                "fthg": 1,
+                "ftag": 0,
+                "psch": 2.0,
+                "pscd": 3.2,
+                "psca": 4.0,
+            }
+        ]
+    )
+    assert row["availability_status"] == TEMPORAL_VALIDITY_NOT_PROVEN
+    assert row["temporal_policy"] == TEMPORAL_VALIDITY_NOT_PROVEN
+    assert row["market_temporal_status"] == (
+        "HISTORICAL_CLOSING_MARKET_NOT_POINT_IN_TIME_PROVEN"
+    )
 
 
 def test_saison_oos_ne_regle_pas_les_parametres_du_modele() -> None:
@@ -550,6 +673,46 @@ def test_prevision_et_readiness_reposent_sur_letat_courant(
         "playerCount",
         "nullRate",
     } <= set(coverage)
+
+
+def test_cockpit_player_families_require_repository_verified_receipts(
+    tmp_path: Path,
+) -> None:
+    state = tmp_path / "historical"
+    for entity in ("squads", "players"):
+        for season in (2024, 2025):
+            partition = (
+                state
+                / "parquet"
+                / "competition=Ligue-1"
+                / f"season={season}"
+                / f"entity_type={entity}"
+                / "dataset_version=api-football-v3"
+                / "part-00000.parquet"
+            )
+            partition.parent.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame(
+                [
+                    {
+                        "payload": json.dumps(
+                            {
+                                "team": {"id": 85},
+                                "player": {"id": season},
+                            }
+                        )
+                    }
+                ]
+            ).to_parquet(partition, index=False)
+
+    readiness = build_player_readiness(
+        state,
+        {"status": "PASSED"},
+        {"eta_priority_a_base": 0.0},
+    )
+    by_name = {item["name"]: item for item in readiness["families"]}
+    for name in ("Effectifs", "Joueurs"):
+        assert by_name[name]["temporality"] == TEMPORAL_VALIDITY_NOT_PROVEN
+        assert by_name[name]["status"] == "BLOCKED_BY_TEMPORALITY"
 
 
 def test_readiness_relie_la_fixture_aux_parametres_bruts(

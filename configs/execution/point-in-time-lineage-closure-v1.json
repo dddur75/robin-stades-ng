@@ -1,0 +1,15 @@
+{
+  "mission_id": "POINT_IN_TIME_LINEAGE",
+  "authorized_stages": ["E1"],
+  "maximum_stage": "E1",
+  "external_effects": [
+    "git_remote_write_non_force",
+    "github_pull_request_write",
+    "github_merge_commit",
+    "github_actions_observe"
+  ],
+  "compute_budget": 2000,
+  "time_budget": 172800,
+  "source_hash": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
+  "expires_at": "2026-08-17T23:59:59Z"
+}

@@ -11,6 +11,7 @@ from typing import cast
 
 import numpy as np
 
+from robin.historical.features import TEMPORAL_VALIDITY_NOT_PROVEN
 from robin.market_math import (
     DevigInputError,
     DevigMethod,
@@ -446,10 +447,7 @@ def train_temporal_model(
             "odds_over_25": row.get("odds_over_25"),
             "odds_under_25": row.get("odds_under_25"),
             "origin": "OOS HISTORICAL",
-            "availability_status": row.get(
-                "temporal_policy",
-                "HISTORICAL POINT-IN-TIME",
-            ),
+            "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
         }
         for row, probabilities, label in zip(
             oos_rows,
@@ -584,7 +582,7 @@ def _fixed_baseline(
             "odds_over_25": row.get("odds_over_25"),
             "odds_under_25": row.get("odds_under_25"),
             "origin": "OOS HISTORICAL",
-            "availability_status": "HISTORICAL POINT-IN-TIME",
+            "availability_status": TEMPORAL_VALIDITY_NOT_PROVEN,
         }
         for (row, _), probabilities, label in zip(
             oos_pairs,

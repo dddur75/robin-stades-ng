@@ -8,13 +8,15 @@ import gzip
 import hashlib
 import json
 import re
+import uuid
 import zlib
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Protocol, runtime_checkable
+from typing import Protocol, cast, runtime_checkable
 from urllib.parse import quote
 
+from robin.market_math import DevigInputError, DevigResult, devig_probabilities
 from robin.prospective_observatory.contracts import (
     R2_SCHEMA_VERSION,
     CaptureContext,
@@ -31,6 +33,243 @@ R2_RECOVERY_NAMESPACE = "prospective-deep-data-recovery"
 R2_RECOVERY_SCHEMA_VERSION = "prospective-receipt-recovery-intent-v1"
 R2_BUDGET_NAMESPACE = "prospective-deep-budget"
 R2_BUDGET_SCHEMA_VERSION = "prospective-provider-budget-v1"
+
+
+def complete_positive_overround_market(
+    provider_market: str,
+    outcomes: list[object],
+) -> tuple[tuple[Mapping[str, object], ...], DevigResult] | None:
+    expected_count = {"h2h": 3, "totals": 2}.get(provider_market)
+    if expected_count is None:
+        return None
+    eligible: list[Mapping[str, object]] = []
+    for outcome in outcomes:
+        if not isinstance(outcome, Mapping):
+            return None
+        if provider_market == "totals":
+            try:
+                point = float(outcome.get("point", 0.0))
+            except (TypeError, ValueError):
+                return None
+            if point != 2.5:
+                continue
+        eligible.append(outcome)
+    if len(eligible) != expected_count:
+        return None
+    labels = tuple(str(outcome.get("name", "")).strip() for outcome in eligible)
+    prices = tuple(
+        cast(float | None, outcome.get("price")) for outcome in eligible
+    )
+    try:
+        devig = devig_probabilities(
+            prices,
+            method="PROPORTIONAL",
+            outcome_labels=labels,
+        )
+    except DevigInputError:
+        return None
+    if devig.overround <= 0.0:
+        return None
+    return tuple(eligible), devig
+
+
+def _normalized_capture_payload(payload: object) -> object:
+    if not isinstance(payload, Mapping):
+        return payload
+    contract_keys = {
+        "raw_payload_kind",
+        "raw_provider_payload",
+        "normalized_family_records",
+    }
+    present = contract_keys & set(payload)
+    if not present:
+        return payload
+    if present != contract_keys:
+        raise ValueError("R2_CAPTURE_CONTRACT_INCOMPLETE")
+    if payload["raw_payload_kind"] not in {
+        "PROVIDER_RESPONSE_ENVELOPE",
+        "CANONICAL_PROVIDER_RECORDS",
+    }:
+        raise ValueError("R2_CAPTURE_RAW_KIND_INVALID")
+    return payload["normalized_family_records"]
+
+
+def _raw_provider_records(raw_payload: object) -> list[dict[str, object]]:
+    if isinstance(raw_payload, list):
+        return [
+            dict(record)
+            for record in raw_payload
+            if isinstance(record, Mapping)
+        ]
+    if not isinstance(raw_payload, Mapping):
+        return []
+    response = raw_payload.get("response")
+    if isinstance(response, list):
+        return [
+            dict(record) for record in response if isinstance(record, Mapping)
+        ]
+    if set(raw_payload) == {"home", "away"}:
+        return [
+            record
+            for side in ("home", "away")
+            for record in _raw_provider_records(raw_payload[side])
+        ]
+    return [dict(raw_payload)]
+
+
+def operational_odds_replay_projection(
+    receipt: CaptureReceipt,
+    payload: object,
+) -> Mapping[str, object]:
+    if receipt.family is not CaptureFamily.ODDS:
+        raise ValueError("R2_ODDS_RECEIPT_REQUIRED")
+    normalized = _normalized_capture_payload(payload)
+    if isinstance(payload, Mapping) and "raw_payload_kind" in payload:
+        raw = payload["raw_provider_payload"]
+        raw_kind = payload["raw_payload_kind"]
+        if raw_kind == "CANONICAL_PROVIDER_RECORDS":
+            candidates = (
+                [dict(raw)]
+                if isinstance(raw, Mapping) and isinstance(normalized, list)
+                else raw
+            )
+            if canonical_sha256(candidates) != canonical_sha256(normalized):
+                raise ValueError("R2_RAW_NORMALIZATION_MISMATCH")
+            normalized = candidates
+        else:
+            records = _raw_provider_records(raw)
+            normalized_records = (
+                normalized if isinstance(normalized, list) else []
+            )
+            matching = [
+                record
+                for record in records
+                if any(
+                    canonical_sha256(record) == canonical_sha256(candidate)
+                    for candidate in normalized_records
+                )
+            ]
+            if len(normalized_records) != 1 or len(matching) != 1:
+                raise ValueError("R2_RAW_NORMALIZATION_MISMATCH")
+            normalized = matching
+    return {
+        "fixture_id": receipt.fixture_id,
+        "family": receipt.family.value,
+        "observed_at": receipt.observed_at.isoformat(),
+        "payload_sha256": receipt.payload_sha256,
+        "data": normalized,
+    }
+
+
+def _projection_records(
+    projection: Mapping[str, object],
+) -> tuple[Mapping[str, object], ...]:
+    data = projection.get("data")
+    if isinstance(data, Mapping) and isinstance(data.get("value"), list):
+        data = data["value"]
+    if isinstance(data, list):
+        return tuple(item for item in data if isinstance(item, Mapping))
+    if isinstance(data, Mapping):
+        return (data,)
+    return ()
+
+
+def project_odds_rows(
+    receipt: CaptureReceipt,
+    projection: Mapping[str, object],
+) -> tuple[dict[str, object], ...]:
+    rows: list[dict[str, object]] = []
+    receipt_id = str(
+        uuid.uuid5(
+            uuid.NAMESPACE_URL,
+            f"robin:j12:receipt:{receipt.receipt_hash}",
+        )
+    )
+    for event in _projection_records(projection):
+        bookmakers = event.get("bookmakers")
+        if not isinstance(bookmakers, list):
+            continue
+        for bookmaker_value in bookmakers:
+            if not isinstance(bookmaker_value, Mapping):
+                continue
+            bookmaker = str(bookmaker_value.get("key", "")).strip()
+            markets = bookmaker_value.get("markets")
+            if not bookmaker or not isinstance(markets, list):
+                continue
+            for market_value in markets:
+                if not isinstance(market_value, Mapping):
+                    continue
+                provider_market = str(market_value.get("key", ""))
+                market = {
+                    "h2h": "1X2",
+                    "totals": "OVER_UNDER_2_5",
+                }.get(provider_market)
+                outcomes = market_value.get("outcomes")
+                if market is None or not isinstance(outcomes, list):
+                    continue
+                validated = complete_positive_overround_market(
+                    provider_market,
+                    outcomes,
+                )
+                if validated is None:
+                    continue
+                eligible_outcomes, devig = validated
+                for outcome, odds in zip(
+                    eligible_outcomes,
+                    devig.input_odds,
+                    strict=True,
+                ):
+                    selection = str(outcome.get("name", "")).strip()
+                    if not selection:
+                        continue
+                    key = (
+                        f"{receipt.receipt_hash}:{bookmaker}:"
+                        f"{market}:{selection}"
+                    )
+                    row_id = str(
+                        uuid.uuid5(
+                            uuid.NAMESPACE_URL,
+                            f"robin:j12:odds:{key}",
+                        )
+                    )
+                    snapshot_hash = canonical_sha256(
+                        {
+                            "bookmaker": bookmaker,
+                            "market": market,
+                            "selection": selection,
+                            "odds": odds,
+                            "margin": devig.overround,
+                            "observed_at": receipt.observed_at.isoformat(),
+                        }
+                    )
+                    rows.append(
+                        {
+                            "id": row_id,
+                            "receipt_id": receipt_id,
+                            "fixture_id": receipt.fixture_id,
+                            "bookmaker": bookmaker,
+                            "market": market,
+                            "selection": selection,
+                            "odds": odds,
+                            "margin": devig.overround,
+                            "observed_at": receipt.observed_at,
+                            "cutoff_at": receipt.cutoff_at,
+                            "fixture_match_status": "MATCHED_EXACT",
+                            "snapshot_hash": snapshot_hash,
+                            "code_revision": receipt.code_revision,
+                            "append_only": True,
+                        }
+                    )
+    return tuple(
+        sorted(
+            rows,
+            key=lambda value: (
+                str(value["bookmaker"]),
+                str(value["market"]),
+                str(value["selection"]),
+            ),
+        )
+    )
 
 
 class AppendOnlyViolation(RuntimeError):
@@ -369,7 +608,7 @@ class ProspectiveR2Repository:
         payload_sha256 = hashlib.sha256(canonical_payload).hexdigest()
         compressed = gzip.compress(canonical_payload, compresslevel=9, mtime=0)
         payload_key, receipt_key = deterministic_r2_keys(context, payload_sha256)
-        materialized_at = context.materialized_at or context.response_received_at
+        materialized_at = context.materialized_at
         receipt = CaptureReceipt(
             window_id=context.window_id,
             window_label=context.window_label,

@@ -1,0 +1,427 @@
+{
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E2013"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "f8b2cdc8c6fd0ea5679b6920ab580a961b4fc32975e45ee02574282e89155c95",
+  "counts": {
+    "open_p0": 0,
+    "open_p1": 0,
+    "open_p2": 8,
+    "resolved_p1": 7,
+    "total": 15
+  },
+  "defects": [
+    {
+      "defect_id": "PIT55-001",
+      "evidence_refs": [
+        "AUDIT:E2013"
+      ],
+      "required_repair": "Capture immutable receipt-backed availability prospectively; retain historical UNKNOWN/RECONSTRUCTED classifications.",
+      "severity": "P2",
+      "status": "OPEN_IRREVERSIBLE_HISTORICAL_GAP",
+      "summary": "All 72 E2013 surfaces lack sufficient historical point-in-time proof."
+    },
+    {
+      "defect_id": "PIT55-002",
+      "evidence_refs": [
+        "src/robin/shadow/decision.py:310"
+      ],
+      "required_repair": "Route every active shadow caller through complete receipt-backed lineage and retain the existing append-only JSONL regression.",
+      "severity": "P2",
+      "status": "OPEN_ACTIVE_PATH_COVERAGE_GAP",
+      "summary": "ShadowDecision can persist cutoff, receipt, model and feature lineage in append-only JSONL, but the active runtime path is not proven end to end."
+    },
+    {
+      "defect_id": "PIT55-003",
+      "evidence_refs": [
+        "scripts/run_prequential_learning_factory.py:_odds_evidence"
+      ],
+      "required_repair": "Retain the tested snapshot-to-capture-receipt and R2 verification chain; add full prediction replay coverage before a global claim.",
+      "severity": "P2",
+      "status": "OPEN_END_TO_END_REPLAY_COVERAGE_GAP",
+      "summary": "The covered prequential path resolves odds_snapshot_id through receipt-linked snapshots and immutable R2 evidence, but global replay remains unproven."
+    },
+    {
+      "defect_id": "PIT55-004",
+      "evidence_refs": [
+        "reports/temporal-lineage/temporal-test-coverage-v1.json"
+      ],
+      "required_repair": "Add value-mutation tests for the remaining active dataset builders, backtest orchestration and full shadow runtime paths before any promotion claim.",
+      "severity": "P2",
+      "status": "OPEN_COVERAGE_GAP",
+      "summary": "Historical feature and rolling-rate builders are covered, but other decision-relevant dataset, backtest and shadow runtime symbols remain outside the bounded mutation proof."
+    },
+    {
+      "defect_id": "PIT55-005",
+      "evidence_refs": [
+        "reports/temporal-lineage/future-mutation-matrix-v1.json"
+      ],
+      "required_repair": "Bind and verify the calibration artifact receipt in an observed active runtime trace before any global point-in-time claim; retain the bounded model-bundle mutation regression.",
+      "severity": "P2",
+      "status": "OPEN_ACTIVE_RUNTIME_CALIBRATION_RECEIPT_GAP",
+      "summary": "The bounded model-bundle test rejects calibration identity created after cutoff, but no observed production runtime proves its calibration artifact receipt and availability."
+    },
+    {
+      "defect_id": "PIT55-013",
+      "evidence_refs": [
+        "src/robin/prospective_observatory/prequential_metrics.py",
+        "reports/temporal-lineage/temporal-contract-v1.json"
+      ],
+      "required_repair": "Persist an exact metric_definition_version with metric rows before any aggregation across code revisions; retain the report-bound formulas meanwhile.",
+      "severity": "P2",
+      "status": "OPEN_METRIC_DEFINITION_PERSISTENCE_GAP",
+      "summary": "Log-loss, normalized Brier, flattened 10-bin ECE, coverage, missingness and reference-delta formulas are source-hashed and documented, but durable metric rows do not carry their definition version."
+    },
+    {
+      "defect_id": "PIT55-014",
+      "evidence_refs": [
+        "src/robin/historical/dataset_factory.py::build_player_feature_datasets"
+      ],
+      "required_repair": "Batch every player-history update sharing the same kickoff before exposing any peer row to the next fixture, then add equal-kickoff permutation tests.",
+      "severity": "P2",
+      "status": "OPEN_HISTORICAL_EQUAL_KICKOFF_BATCHING_GAP",
+      "summary": "Player feature datasets still update fixture-by-fixture at an equal kickoff; outputs remain TEMPORAL_VALIDITY_NOT_PROVEN and the builder is not counted as PIT-covered."
+    },
+    {
+      "defect_id": "PIT55-015",
+      "evidence_refs": [
+        "scripts/run_historical_pipeline.py::_dataset_rows",
+        "scripts/run_historical_pipeline.py::command_backtest"
+      ],
+      "required_repair": "Bind the loaded dataset snapshot hash to the model and command input in one immutable read transaction; reject a current-pointer change before backtest/model-lab/arena consumption.",
+      "severity": "P2",
+      "status": "OPEN_HISTORICAL_POINTER_BINDING_GAP",
+      "summary": "Historical current-manifest pointers and rows can be read at different instants; outputs remain non-promotable, but exact dataset-to-model replay is not proven."
+    },
+    {
+      "defect_id": "PIT55-006",
+      "evidence_refs": [
+        "test_late_arriving_pre_cutoff_event_is_excluded_when_observed_after_cutoff"
+      ],
+      "required_repair": "None in the covered selector; preserve regression.",
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE",
+      "summary": "Late fixture revision could otherwise replace the pre-cutoff fixture version."
+    },
+    {
+      "defect_id": "PIT55-007",
+      "evidence_refs": [
+        "tests/jalon14/test_prequential_pit_closure.py::test_odds_requires_receipt_index_window_r2_and_ties_fail_closed",
+        "tests/jalon14/test_prequential_factory.py::test_self_declared_receipt_and_late_ingestion_fail_closed",
+        "tests/temporal/test_point_in_time_lineage_v1.py::test_asof_rejects_valid_looking_self_declared_receipt_mapping",
+        "tests/jalon14/test_prequential_factory.py::test_forecast_reverifies_source_receipt_bytes",
+        "tests/jalon14/test_prequential_factory.py::test_feature_snapshot_rejects_receipt_payload_value_mismatch",
+        "tests/jalon14/test_prequential_factory.py::test_feature_snapshot_rejects_receipts_from_another_fixture",
+        "tests/jalon14/test_prequential_pit_closure.py::test_source_receipt_rejects_cross_family_odds_capture_as_team_projection",
+        "tests/jalon14/test_prequential_pit_closure.py::test_source_receipt_rejects_backdated_market_closure_for_late_materialization"
+      ],
+      "required_repair": "Preserve the repository-backed receipt, mapping-tamper, late-ingestion and byte-reread regressions; obtain an observed active-runtime trace before any global claim.",
+      "severity": "P1",
+      "status": "RESOLVED_BOUNDED_REPOSITORY_RECEIPT_FAIL_CLOSED",
+      "summary": "Valid-looking self-declared mappings, tampered receipt identities, post-cutoff ingestion and missing repository bytes fail closed in bounded tests; this is not positive production PIT proof."
+    },
+    {
+      "defect_id": "PIT55-008",
+      "evidence_refs": [
+        "test_model_created_after_cutoff_is_rejected"
+      ],
+      "required_repair": "None in the covered forecast; preserve regression.",
+      "severity": "P1",
+      "status": "RESOLVED_IN_CODE",
+      "summary": "A model created after cutoff could otherwise be selected."
+    },
+    {
+      "defect_id": "PIT55-009",
+      "evidence_refs": [
+        "tests/jalon2/test_decisions_pipeline_workflows.py::test_shadow_self_declared_temporal_scalars_never_enable_stake",
+        "tests/jalon6/test_scientific_truth_kernel_v1.py::test_declared_method_has_probability_parity_but_shadow_fails_closed"
+      ],
+      "required_repair": "Preserve the no-bet regressions and append-only JSONL lineage; bind the active shadow runtime to repository-verified receipts before any PIT-valid claim.",
+      "severity": "P1",
+      "status": "RESOLVED_FAIL_CLOSED_NO_PIT_PROOF",
+      "summary": "Self-declared shadow scalars cannot authorize a stake: the decision remains rejected, zero-stake and POINT_IN_TIME_NOT_PROVEN; this closes betting fail-open, not PIT provenance."
+    },
+    {
+      "defect_id": "PIT55-010",
+      "evidence_refs": [
+        "tests/jalon5/test_deep_data_factory.py::test_normalisation_ne_transforme_pas_absence_en_zero",
+        "tests/jalon5/test_deep_data_factory.py::test_legacy_rows_and_closing_odds_are_not_labeled_point_in_time_safe",
+        "tests/jalon6/test_readiness_gates.py::test_eligible_unreceipted_data_stays_blocked_by_temporality"
+      ],
+      "required_repair": "Preserve UNKNOWN/TEMPORAL_VALIDITY_NOT_PROVEN classifications and the promotion gates; capture immutable receipts prospectively.",
+      "severity": "P1",
+      "status": "RESOLVED_FAIL_CLOSED_NO_HISTORICAL_RECLASSIFICATION",
+      "summary": "Normalization, endpoint availability and closing odds cannot turn unreceipted legacy rows into point-in-time-safe inputs; otherwise apparently eligible data could bypass temporality gates."
+    },
+    {
+      "defect_id": "PIT55-011",
+      "evidence_refs": [
+        "tests/jalon8/test_external_validation.py::test_multileague_gates_measure_only_observed_coverage",
+        "tests/jalon8/test_external_validation.py::test_preseason_package_rejects_ready_claim_without_receipt_repository_proof",
+        "tests/jalon8/test_external_validation.py::test_full_external_run_is_cache_only_and_gate_honest"
+      ],
+      "required_repair": "Preserve research-only/BLOCKED_BY_TEMPORALITY status and require repository receipt proof before any external-ready package claim.",
+      "severity": "P1",
+      "status": "RESOLVED_FAIL_CLOSED_NO_EXTERNAL_READY_CLAIM",
+      "summary": "External coverage flags cannot make unreceipted datasets or predictions ready: the package remains WAITING with no model versions even when declarative gates say ready."
+    },
+    {
+      "defect_id": "PIT55-012",
+      "evidence_refs": [
+        "tests/jalon5/test_deep_data_factory.py::test_cockpit_player_families_require_repository_verified_receipts"
+      ],
+      "required_repair": "Preserve repository-receipt requirements for cockpit squad and player families; do not infer PIT safety from season coverage.",
+      "severity": "P1",
+      "status": "RESOLVED_FAIL_CLOSED_NO_COCKPIT_PIT_CLAIM",
+      "summary": "Squad and player cockpit families remain TEMPORAL_VALIDITY_NOT_PROVEN and BLOCKED_BY_TEMPORALITY even with two seasons of coverage unless repository receipts are verified."
+    }
+  ],
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "business_data_network_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
+    "neon_api_calls": 0,
+    "new_database_migrations": 0,
+    "odds_provider_calls": 0,
+    "persistent_local_database_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "social_publications": 0
+  },
+  "immutable_review_base_revision": "71833964e5d7ba7f5882bfff49b39d567fd5473b",
+  "limitations": [
+    "RESOLVED_FAIL_CLOSED statuses close named fail-open regressions only; they do not reclassify legacy data or prove production PIT capture.",
+    "Eight P2 evidence, coverage, formula-version, equal-kickoff, pointer-binding and irreversible-history gaps remain open."
+  ],
+  "loop55_source": {
+    "candidate_source": {
+      "aggregate_sha256": "a0322568fe62250130d3ff469a73d91b3f300b9ba30d78504fff4a61cc5677c7",
+      "excluded_path_count": 26,
+      "included_path_count": 55,
+      "manifest_sha256": "1a12c73bdbd955560b1aeebc7d8eba94bd9cb66dff08b988a46f1f8145803e87",
+      "outside_allowlist_count": 0
+    },
+    "corrective_artifact_proof": "LOOP55:E0009",
+    "corrective_authority_validation_proof": "LOOP55:E0010",
+    "evidence_ids": [
+      "LOOP55:E0001",
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0005",
+      "LOOP55:E0006",
+      "LOOP55:E0007",
+      "LOOP55:E0008",
+      "LOOP55:E0009",
+      "LOOP55:E0010"
+    ],
+    "exact_head_ci_failure_trigger": "LOOP55:E0007",
+    "historical_pre_correction_bounded_component_proof": "LOOP55:E0004",
+    "historical_pre_correction_component_proofs": [
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0006"
+    ],
+    "invalid_corrective_harness_receipt": {
+      "classification": "INVALID_CORRECTIVE_HARNESS_PATH_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0008",
+      "proof_status": "NOT_PROOF"
+    },
+    "invalid_harness_receipt": {
+      "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0005",
+      "proof_status": "NOT_PROOF"
+    },
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V2",
+    "manifest_sha256": "3dc8d864d2e3c88f820b9d8044534e46fd1afb5856f7fec1e1b2e05e3c6303f7",
+    "namespace": "LOOP55",
+    "red_proof": "LOOP55:E0001",
+    "source_authority_sha256": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
+    "supersedes_unavailable_pack": {
+      "candidate_aggregate_status": "CANONICAL_DIGEST_REPRODUCIBLE_BUT_INSUFFICIENT_FOR_BYTE_EXACT_RESTORATION",
+      "candidate_manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+      "status": "LOST_OVERWRITTEN_NOT_AVAILABLE"
+    }
+  },
+  "mission_id": "POINT_IN_TIME_LINEAGE",
+  "mission_status": "ROBIN_POINT_IN_TIME_LINEAGE_V1_PARTIAL",
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_status": "NO_PROMOTION",
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP55_REPORTS:E0006",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V5",
+    "namespace": "LOOP55_REPORTS"
+  },
+  "report_id": "temporal-defect-inventory-v1",
+  "reproducibility": {
+    "builder": "scripts/build_temporal_lineage_reports_v1.py",
+    "command_evidence_ids": [
+      "LOOP55_REPORTS:E0006"
+    ],
+    "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED"
+  },
+  "schema_version": "robin-temporal-lineage-report-v1",
+  "sources": [
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/commands/E2013.json",
+      "sha256": "ff800a5dd943df5c6e076a92c8acbba77c6db567b8aa3aec1f65571559581884"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/dataset-lineage.csv",
+      "sha256": "a7497c74dd2c32ffa91997cf8dcfb882b2e64d046e5c0375246dd866122c985b"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/dataset-quality.csv",
+      "sha256": "dcd627455e767a80fe9658a07d1140c791d8fe6da850f622ee3279de9fdc64a0"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/phase13-14-lineage-summary.json",
+      "sha256": "fbdb417dc739b3d334df5bfa232a15b13db73ab88bcf0171d864d6990cd7a231"
+    },
+    {
+      "evidence_ids": [
+        "AUDIT:E2013"
+      ],
+      "logical_path": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1/tables/time-fields.csv",
+      "sha256": "8c09e249b937ae62ea374be87bcb0ece9c2d8f41ae0d22077c35be9e5b14e3a8"
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/shadow/decision.py",
+      "sha256": "d8da880b6d12e9c81625da0dce2b2f1e042fcb4799babaa9b616fbc2412eb67e",
+      "symbols": [
+        "DecisionJournal"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "src/robin/prospective_observatory/feature_snapshots.py",
+      "sha256": "6d7ecfdf52068e4c29ea089550af1d38851fcb49ae4492d4309553acf4493f66",
+      "symbols": [
+        "freeze_feature_snapshot",
+        "persist_source_receipt",
+        "verify_feature_snapshot_artifact",
+        "verify_source_receipt_artifact"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "scripts/run_prequential_learning_factory.py",
+      "sha256": "43bec82cb2b28e46a957a948bf69ebb26a90eaca4e72e12d131a50193c7f24b6",
+      "symbols": [
+        "_odds_evidence"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "sha256": "0ca855c9aaa1666719f644f492b5426f6ec9064182dff18372d80b8c420c0a4e",
+      "symbols": []
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "sha256": "755813ed92e0947c9b6a351e659fb29945abd6e7cf09cc7d247ea69fe47fc2b3",
+      "symbols": [
+        "test_self_declared_receipt_and_late_ingestion_fail_closed",
+        "test_forecast_reverifies_source_receipt_bytes"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_pit_closure.py",
+      "sha256": "8ab81ce3ef5a03a32246742d7fed63115f1eeb01e284e2d56ff5ed9359364dfd",
+      "symbols": [
+        "test_odds_requires_receipt_index_window_r2_and_ties_fail_closed"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon2/test_decisions_pipeline_workflows.py",
+      "sha256": "5ae876ceb11d3c31eae095eb789b9622f9760fc589eac60d0e4d63acf8876e73",
+      "symbols": [
+        "test_shadow_self_declared_temporal_scalars_never_enable_stake"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon5/test_deep_data_factory.py",
+      "sha256": "8ad7c83f86281c1857f8e83895358eb14f9182148b39371a42b114e424508f34",
+      "symbols": [
+        "test_normalisation_ne_transforme_pas_absence_en_zero",
+        "test_legacy_rows_and_closing_odds_are_not_labeled_point_in_time_safe",
+        "test_cockpit_player_families_require_repository_verified_receipts"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon6/test_readiness_gates.py",
+      "sha256": "79971a3bccc855d642cf8810b39d2af8f08f4bebcf15e01a094abfef2c5dff24",
+      "symbols": [
+        "test_eligible_unreceipted_data_stays_blocked_by_temporality"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon6/test_scientific_truth_kernel_v1.py",
+      "sha256": "1e9068aba359037a1e6468a9d3695ebde5098e96dc6bc4645c099ed986416d9c",
+      "symbols": [
+        "test_declared_method_has_probability_parity_but_shadow_fails_closed"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon8/test_external_validation.py",
+      "sha256": "cf358477aba9f612c0fddffbbae67c1c1a82628979c187f9f7e78d2b04a59bc9",
+      "symbols": [
+        "test_multileague_gates_measure_only_observed_coverage",
+        "test_preseason_package_rejects_ready_claim_without_receipt_repository_proof",
+        "test_full_external_run_is_cache_only_and_gate_honest"
+      ]
+    }
+  ],
+  "status": "PARTIAL",
+  "storage_status": "NO_NEW_MIGRATION_REQUIRED_FOR_COVERED_PATHS",
+  "verdict": "TEMPORAL_DEFECTS_P0_P1_CLOSED_P2_HISTORY_AND_COVERAGE_OPEN"
+}

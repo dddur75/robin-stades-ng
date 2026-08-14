@@ -45,6 +45,7 @@ class StrategyResult:
     roi_ci_high: float | None
     max_drawdown: float
     status: str
+    diagnostic_status: str
     note: str
     scientific_kernel_version: str
     devig_method: str
@@ -56,6 +57,9 @@ class StrategyResult:
     decision_threshold_version: str
     staking_version: str
     settlement_version: str
+    point_in_time_status: str
+    promotion: str
+    production_status: str
 
     def as_dict(self) -> dict[str, object]:
         value = asdict(self)
@@ -134,6 +138,11 @@ def _result(
         status = "INCONCLUSIVE_OOS"
     else:
         status = "CANDIDATE_FOR_SHADOW"
+    # This legacy frame has event timestamps but no immutable availability
+    # receipts.  Its diagnostics remain useful, but it cannot nominate a
+    # candidate until an observation-level point-in-time replay exists.
+    diagnostic_status = status
+    status = "TEMPORAL_VALIDITY_NOT_PROVEN"
     return StrategyResult(
         strategy=name,
         bets=bets,
@@ -166,7 +175,11 @@ def _result(
         roi_ci_high=ci_high,
         max_drawdown=_drawdown(profits),
         status=status,
+        diagnostic_status=diagnostic_status,
         note=note,
+        point_in_time_status="POINT_IN_TIME_NOT_PROVEN",
+        promotion="NO_PROMOTION",
+        production_status="PRODUCTION_LOCKED",
         **kernel_versions(devig_method),
     )
 

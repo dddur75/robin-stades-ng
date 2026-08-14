@@ -2,14 +2,23 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import StrEnum
-from math import isclose
-from typing import Any
+from math import isclose, isfinite
+from typing import Any, cast
 
 from robin.market_math import kernel_versions
 from robin.prospective_observatory.contracts import canonical_sha256, ensure_utc
+from robin.temporal.lineage import (
+    TEMPORAL_CONTRACT_VERSION,
+    SourceReceipt,
+    TemporalProofLevel,
+    freeze_json,
+    parse_utc,
+    thaw_json,
+)
 
 SHA256_LENGTH = 64
 PRODUCTION_LOCKED = "PRODUCTION_LOCKED"
@@ -19,6 +28,33 @@ PROMOTION_LOCKED = "PROMOTION_LOCKED"
 class CutoffName(StrEnum):
     H_2 = "H-2"
     NEAR_KICKOFF = "NEAR_KICKOFF"
+
+
+CUTOFF_MINUTES_BEFORE_KICKOFF = {
+    CutoffName.H_2: 120,
+    CutoffName.NEAR_KICKOFF: 1,
+}
+
+_DURABLE_OPTIONAL_FEATURE_GATES = {"injuries", "lineup"}
+
+
+def durable_required_feature_gates(quality: object) -> tuple[str, ...]:
+    """Read optional gates whose contract is persisted in snapshot quality."""
+
+    if not isinstance(quality, Mapping):
+        raise ValueError("FEATURE_REQUIRED_GATES_CONTRACT_INVALID")
+    raw = quality.get("required_gates", ())
+    if not isinstance(raw, (list, tuple)) or any(
+        not isinstance(value, str) or not value.strip() for value in raw
+    ):
+        raise ValueError("FEATURE_REQUIRED_GATES_CONTRACT_INVALID")
+    values = tuple(value.strip() for value in raw)
+    if (
+        values != tuple(sorted(set(values)))
+        or any(value not in _DURABLE_OPTIONAL_FEATURE_GATES for value in values)
+    ):
+        raise ValueError("FEATURE_REQUIRED_GATES_CONTRACT_INVALID")
+    return values
 
 
 class PredictionMarket(StrEnum):
@@ -100,9 +136,223 @@ def _market_selections(market: PredictionMarket) -> tuple[str, ...]:
     return ("OVER", "UNDER")
 
 
+def feature_team_ids(value: object) -> tuple[str, str] | None:
+    """Return one coherent home/away identity pair, or fail closed."""
+
+    if not isinstance(value, Mapping):
+        return None
+    pairs: list[tuple[str, str]] = []
+    for home_key, away_key in (
+        ("home", "away"),
+        ("home_team_id", "away_team_id"),
+    ):
+        home_raw = value.get(home_key)
+        away_raw = value.get(away_key)
+        if home_raw is None and away_raw is None:
+            continue
+        if not isinstance(home_raw, str) or not isinstance(away_raw, str):
+            return None
+        home = home_raw.strip()
+        away = away_raw.strip()
+        if not home or not away or home == away:
+            return None
+        pairs.append((home, away))
+    if not pairs or any(pair != pairs[0] for pair in pairs[1:]):
+        return None
+    return pairs[0]
+
+
+def feature_fixture_kickoff(value: object) -> datetime | None:
+    """Return the receipt-bound fixture kickoff embedded in a team projection."""
+
+    if not isinstance(value, Mapping):
+        return None
+    kickoff_raw = value.get("kickoff_at")
+    if not isinstance(kickoff_raw, str) or not kickoff_raw.strip():
+        return None
+    try:
+        return parse_utc(kickoff_raw, field="feature_fixture_kickoff")
+    except ValueError:
+        return None
+
+
+def complete_lineup_feature(
+    value: object,
+    *,
+    expected_team_ids: tuple[str, str],
+) -> bool:
+    """Validate two expected teams and twenty-two globally unique starters."""
+
+    candidate: object = value
+    if isinstance(candidate, Mapping):
+        candidate = candidate.get("teams", candidate.get("lineups", candidate))
+    entries: list[tuple[str, object]] = []
+    if isinstance(candidate, Mapping):
+        entries = [(str(team_id).strip(), roster) for team_id, roster in candidate.items()]
+    elif isinstance(candidate, (list, tuple)):
+        for item in candidate:
+            if not isinstance(item, Mapping):
+                return False
+            team_id = str(item.get("team_id", "")).strip()
+            roster = item.get("starters", item.get("starter_ids"))
+            entries.append((team_id, roster))
+    else:
+        return False
+    if (
+        len(entries) != 2
+        or {team_id for team_id, _ in entries} != set(expected_team_ids)
+    ):
+        return False
+    all_player_ids: list[str] = []
+    for team_id, roster in entries:
+        if not team_id or not isinstance(roster, (list, tuple)) or len(roster) != 11:
+            return False
+        identities = [str(player_id).strip() for player_id in roster]
+        if any(not player_id for player_id in identities) or len(set(identities)) != 11:
+            return False
+        all_player_ids.extend(identities)
+    return len(set(all_player_ids)) == 22
+
+
+def complete_injuries_feature(value: object) -> bool:
+    """Validate a canonical injury collection; an attested empty list is valid."""
+
+    if not isinstance(value, (list, tuple)):
+        return False
+    player_ids: list[str] = []
+    for item in value:
+        if not isinstance(item, Mapping):
+            return False
+        player_id = str(item.get("player_id", "")).strip()
+        status = str(item.get("status", "")).strip()
+        if not player_id or not status:
+            return False
+        player_ids.append(player_id)
+    return len(player_ids) == len(set(player_ids))
+
+
+def prediction_record_id(
+    *,
+    fixture_record_id: str,
+    cutoff_name: CutoffName,
+    market: PredictionMarket,
+    model_id: str,
+    model_version: str,
+) -> str:
+    return "prediction-" + canonical_sha256(
+        {
+            "fixture_record_id": fixture_record_id,
+            "cutoff": cutoff_name.value,
+            "market": market.value,
+            "model_id": model_id,
+            "model_version": model_version,
+        }
+    )
+
+
+def settlement_record_id(
+    result: VerifiedFixtureResult,
+    *,
+    supersedes_id: str | None,
+) -> str:
+    return "settlement-" + canonical_sha256(
+        {
+            "fixture_record_id": result.fixture_record_id,
+            "fixture_id": result.fixture_id,
+            "result_hash": result.result_hash,
+            "supersedes_id": supersedes_id,
+        }
+    )
+
+
+def score_record_id(*, prediction_id: str, settlement_id: str) -> str:
+    return "score-" + canonical_sha256(
+        {
+            "prediction_id": prediction_id,
+            "settlement_id": settlement_id,
+        }
+    )
+
+
+def source_receipt_from_provenance(
+    evidence: Mapping[str, object],
+) -> SourceReceipt:
+    """Rebuild and validate the complete content-addressed source receipt."""
+
+    required = (
+        "receipt_id",
+        "source_name",
+        "request_identity",
+        "payload_sha256",
+        "robin_first_observed_at",
+        "robin_ingested_at",
+        "capture_code_revision",
+        "storage_identity",
+        "source_identity",
+        "availability_status",
+        "available_at",
+    )
+    if any(key not in evidence for key in required):
+        raise ValueError("FEATURE_PROVENANCE_SOURCE_RECEIPT_REQUIRED")
+    try:
+        availability_status = TemporalProofLevel(
+            str(evidence["availability_status"])
+        )
+    except ValueError as error:
+        raise ValueError("FEATURE_PROVENANCE_AVAILABILITY_NOT_ATTESTED") from error
+    source_published_raw = evidence.get("source_published_at")
+    source_published_at = (
+        parse_utc(str(source_published_raw), field="source_published_at")
+        if source_published_raw is not None
+        else None
+    )
+    event_raw = evidence.get("event_at")
+    event_at = (
+        parse_utc(str(event_raw), field="event_at")
+        if event_raw is not None
+        else None
+    )
+    supersedes_raw = evidence.get("supersedes_receipt_id")
+    receipt = SourceReceipt(
+        receipt_id=str(evidence["receipt_id"]),
+        source_name=str(evidence["source_name"]),
+        request_identity=str(evidence["request_identity"]),
+        payload_sha256=str(evidence["payload_sha256"]),
+        source_published_at=source_published_at,
+        robin_first_observed_at=parse_utc(
+            str(evidence["robin_first_observed_at"]),
+            field="robin_first_observed_at",
+        ),
+        robin_ingested_at=parse_utc(
+            str(evidence["robin_ingested_at"]),
+            field="robin_ingested_at",
+        ),
+        capture_code_revision=str(evidence["capture_code_revision"]),
+        storage_identity=str(evidence["storage_identity"]),
+        availability_status=availability_status,
+        supersedes_receipt_id=(
+            str(supersedes_raw) if supersedes_raw is not None else None
+        ),
+        event_at=event_at,
+    )
+    if str(evidence["source_identity"]) != receipt.storage_identity:
+        raise ValueError("FEATURE_PROVENANCE_STORAGE_IDENTITY_MISMATCH")
+    if parse_utc(str(evidence["available_at"]), field="available_at") != (
+        receipt.available_at
+    ):
+        raise ValueError("FEATURE_PROVENANCE_AVAILABLE_AT_INVALID")
+    observed_raw = evidence.get("observed_at")
+    if observed_raw is not None and parse_utc(
+        str(observed_raw),
+        field="observed_at",
+    ) != receipt.robin_first_observed_at:
+        raise ValueError("FEATURE_PROVENANCE_OBSERVED_AT_MISMATCH")
+    return receipt
+
+
 def validate_probabilities(
     market: PredictionMarket,
-    probabilities: dict[str, float],
+    probabilities: Mapping[str, float],
 ) -> None:
     expected = set(_market_selections(market))
     if set(probabilities) != expected:
@@ -150,6 +400,9 @@ class ModelVersion:
             and self.status is not ModelStatus.ACTIVE
         ):
             raise ValueError("PREQUENTIAL_REFERENCE_STATUS_INVALID")
+        object.__setattr__(self, "created_at", created)
+        if self.training_cutoff is not None:
+            object.__setattr__(self, "training_cutoff", cutoff)
 
     @property
     def registry_hash(self) -> str:
@@ -216,19 +469,111 @@ class FeatureSnapshot:
             or created > cutoff
         ):
             raise ValueError("PREQUENTIAL_FEATURE_SNAPSHOT_INVALID")
+        expected_provenance_families = {
+            family
+            for family, missing in self.missingness.items()
+            if not missing
+        }
+        if set(self.provenance) != expected_provenance_families:
+            raise ValueError("FEATURE_PROVENANCE_FAMILY_SET_INVALID")
+        declared_optional_gates = durable_required_feature_gates(self.quality)
+        if any(self.missingness.get(gate, True) for gate in declared_optional_gates):
+            raise ValueError("FEATURE_REQUIRED_GATE_VALUE_MISSING")
         for family, missing in self.missingness.items():
+            if missing and family in self.provenance:
+                raise ValueError(
+                    "FEATURE_PROVENANCE_FOR_MISSING_FAMILY_FORBIDDEN"
+                )
             if missing and self.values.get(family) not in (None, {}, [], ()):
                 raise ValueError("MISSING_FEATURE_MUST_NOT_BE_ZERO_FILLED")
-        for evidence in self.provenance.values():
-            observed = evidence.get("observed_at")
-            if not isinstance(observed, str):
-                raise ValueError("FEATURE_PROVENANCE_OBSERVED_AT_REQUIRED")
-            observed_at = ensure_utc(
-                datetime.fromisoformat(observed.replace("Z", "+00:00")),
-                field="observed_at",
-            )
-            if observed_at > cutoff:
+            if not missing and self.values.get(family) is None:
+                raise ValueError("AVAILABLE_FEATURE_VALUE_REQUIRED")
+            if not missing and family == "team":
+                team_value = self.values.get(family)
+                if feature_team_ids(team_value) is None:
+                    raise ValueError("AVAILABLE_TEAM_FEATURE_INVALID")
+                if (
+                    not isinstance(team_value, Mapping)
+                    or team_value.get("competition") != self.competition
+                    or feature_fixture_kickoff(team_value)
+                    != cutoff
+                    + timedelta(
+                        minutes=CUTOFF_MINUTES_BEFORE_KICKOFF[self.cutoff_name]
+                    )
+                    or not str(team_value.get("provider", "")).strip()
+                    or not str(
+                        team_value.get("provider_fixture_id", "")
+                    ).strip()
+                ):
+                    raise ValueError(
+                        "AVAILABLE_TEAM_FIXTURE_PROJECTION_INVALID"
+                    )
+            if not missing and family == "lineup":
+                expected_team_ids = feature_team_ids(self.values.get("team"))
+                if expected_team_ids is None or not complete_lineup_feature(
+                    self.values.get(family),
+                    expected_team_ids=expected_team_ids,
+                ):
+                    raise ValueError("AVAILABLE_LINEUP_FEATURE_INVALID")
+            if not missing and family == "injuries":
+                if not complete_injuries_feature(self.values.get(family)):
+                    raise ValueError("AVAILABLE_INJURIES_FEATURE_INVALID")
+            if not missing and family == "market":
+                market_value = self.values.get(family)
+                decimal_odds = (
+                    market_value.get("decimal_odds")
+                    if isinstance(market_value, Mapping)
+                    else None
+                )
+                expected_selections = set(_market_selections(self.market))
+                if (
+                    not isinstance(decimal_odds, Mapping)
+                    or set(decimal_odds) != expected_selections
+                    or any(
+                        not isinstance(odd, (int, float))
+                        or isinstance(odd, bool)
+                        or not isfinite(float(odd))
+                        or float(odd) <= 1.0
+                        for odd in decimal_odds.values()
+                    )
+                ):
+                    raise ValueError("AVAILABLE_MARKET_FEATURE_INVALID")
+        for family, missing in self.missingness.items():
+            if missing:
+                continue
+            evidence = self.provenance.get(family)
+            if not isinstance(evidence, Mapping):
+                raise ValueError(f"FEATURE_PROVENANCE_REQUIRED:{family}")
+            receipt = source_receipt_from_provenance(evidence)
+            if receipt.available_at > cutoff:
                 raise ValueError("FEATURE_PROVENANCE_AFTER_CUTOFF")
+            if receipt.robin_ingested_at > cutoff:
+                raise ValueError("FEATURE_PROVENANCE_INGESTED_AFTER_CUTOFF")
+            if (
+                receipt.available_at > created
+                or receipt.robin_ingested_at > created
+            ):
+                raise ValueError("FEATURE_PROVENANCE_AFTER_SNAPSHOT_CREATION")
+        frozen_values = freeze_json(self.values)
+        frozen_missingness = freeze_json(self.missingness)
+        frozen_provenance = freeze_json(self.provenance)
+        frozen_quality = freeze_json(self.quality)
+        if not all(
+            isinstance(value, dict) or hasattr(value, "items")
+            for value in (
+                frozen_values,
+                frozen_missingness,
+                frozen_provenance,
+                frozen_quality,
+            )
+        ):
+            raise ValueError("PREQUENTIAL_FEATURE_SNAPSHOT_JSON_INVALID")
+        object.__setattr__(self, "cutoff_at", cutoff)
+        object.__setattr__(self, "created_at", created)
+        object.__setattr__(self, "values", frozen_values)
+        object.__setattr__(self, "missingness", frozen_missingness)
+        object.__setattr__(self, "provenance", frozen_provenance)
+        object.__setattr__(self, "quality", frozen_quality)
 
     @property
     def snapshot_hash(self) -> str:
@@ -252,10 +597,10 @@ class FeatureSnapshot:
             "created_at": self.created_at.isoformat(),
             "feature_contract_version": self.feature_contract_version,
             "feature_contract_hash": self.feature_contract_hash,
-            "values": self.values,
-            "missingness": self.missingness,
-            "provenance": self.provenance,
-            "quality": self.quality,
+            "values": thaw_json(self.values),
+            "missingness": thaw_json(self.missingness),
+            "provenance": thaw_json(self.provenance),
+            "quality": thaw_json(self.quality),
             "code_revision": self.code_revision,
             "supersedes_id": self.supersedes_id,
             "status": self.status,
@@ -263,6 +608,26 @@ class FeatureSnapshot:
         if include_storage:
             value["r2_manifest_key"] = self.r2_manifest_key
         return value
+
+    def storage_manifest(self) -> dict[str, object]:
+        """Exact content-addressed manifest persisted in the artifact store."""
+
+        return {
+            "schema_version": "prequential-feature-snapshot-v1",
+            **self.as_manifest(include_storage=False),
+        }
+
+    @property
+    def temporal_lineage_hash(self) -> str:
+        return canonical_sha256(
+            {
+                "temporal_contract_version": TEMPORAL_CONTRACT_VERSION,
+                "fixture_record_id": self.fixture_record_id,
+                "cutoff_at": self.cutoff_at.isoformat(),
+                "feature_contract_hash": self.feature_contract_hash,
+                "provenance": thaw_json(self.provenance),
+            }
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -279,8 +644,8 @@ class FrozenPredictionRecord:
     model_id: str
     model_version: str
     feature_snapshot_id: str | None
-    probabilities: dict[str, float]
-    market_probabilities: dict[str, float] | None
+    probabilities: Mapping[str, float]
+    market_probabilities: Mapping[str, float] | None
     odds_snapshot_id: str | None
     code_revision: str
     status: PredictionStatus
@@ -322,6 +687,10 @@ class FrozenPredictionRecord:
         if self.status is PredictionStatus.FROZEN:
             if predicted > cutoff:
                 raise ValueError("PREQUENTIAL_PREDICTION_AFTER_CUTOFF")
+            if kickoff - cutoff != timedelta(
+                minutes=CUTOFF_MINUTES_BEFORE_KICKOFF[self.cutoff_name]
+            ):
+                raise ValueError("PREQUENTIAL_CUTOFF_POLICY_MISMATCH")
             if self.feature_snapshot_id is None:
                 raise ValueError("PREQUENTIAL_FEATURE_SNAPSHOT_REQUIRED")
             validate_probabilities(self.market, self.probabilities)
@@ -332,6 +701,30 @@ class FrozenPredictionRecord:
                 raise ValueError("REJECTED_PREDICTION_PROBABILITIES_FORBIDDEN")
             if not self.rejection_reason:
                 raise ValueError("PREDICTION_REJECTION_REASON_REQUIRED")
+        object.__setattr__(self, "cutoff_at", cutoff)
+        object.__setattr__(self, "kickoff_at", kickoff)
+        object.__setattr__(self, "predicted_at", predicted)
+        frozen_probabilities = freeze_json(self.probabilities)
+        frozen_market_probabilities = (
+            freeze_json(self.market_probabilities)
+            if self.market_probabilities is not None
+            else None
+        )
+        if not isinstance(frozen_probabilities, Mapping) or (
+            frozen_market_probabilities is not None
+            and not isinstance(frozen_market_probabilities, Mapping)
+        ):
+            raise ValueError("PREQUENTIAL_PREDICTION_JSON_INVALID")
+        object.__setattr__(
+            self,
+            "probabilities",
+            cast(Mapping[str, float], frozen_probabilities),
+        )
+        object.__setattr__(
+            self,
+            "market_probabilities",
+            cast(Mapping[str, float] | None, frozen_market_probabilities),
+        )
         if self.persisted_payload_hash is not None and (
             len(self.persisted_payload_hash) != SHA256_LENGTH
             or self.persisted_payload_hash
@@ -353,8 +746,8 @@ class FrozenPredictionRecord:
             "model_id": self.model_id,
             "model_version": self.model_version,
             "feature_snapshot_id": self.feature_snapshot_id,
-            "probabilities": self.probabilities,
-            "market_probabilities": self.market_probabilities,
+            "probabilities": thaw_json(self.probabilities),
+            "market_probabilities": thaw_json(self.market_probabilities),
             "odds_snapshot_id": self.odds_snapshot_id,
             "code_revision": self.code_revision,
             "status": self.status.value,
@@ -449,6 +842,8 @@ class VerifiedFixtureResult:
             self.home_goals is not None or self.away_goals is not None
         ):
             raise ValueError("NON_SCORE_RESULT_MUST_NOT_HAVE_SCORE")
+        object.__setattr__(self, "kickoff_at", kickoff)
+        object.__setattr__(self, "verified_at", verified)
 
     @property
     def result_hash(self) -> str:
@@ -478,13 +873,24 @@ class FixtureSettlementRecord:
 
     def __post_init__(self) -> None:
         settled = ensure_utc(self.settled_at, field="settled_at")
+        expected_effective_status = (
+            PredictionStatus.SETTLED
+            if self.result.status
+            in {FixtureResultStatus.FINISHED, FixtureResultStatus.CORRECTED}
+            else PredictionStatus.VOID
+            if self.result.status
+            in {FixtureResultStatus.CANCELLED, FixtureResultStatus.ABANDONED}
+            else None
+        )
         if (
             not self.settlement_id
             or settled < self.result.verified_at
             or self.effective_status
             not in {PredictionStatus.SETTLED, PredictionStatus.VOID}
+            or self.effective_status is not expected_effective_status
         ):
             raise ValueError("PREQUENTIAL_SETTLEMENT_INVALID")
+        object.__setattr__(self, "settled_at", settled)
 
     @property
     def settlement_hash(self) -> str:
@@ -518,15 +924,30 @@ class PredictionScore:
     reference_log_loss_delta: float | None = None
 
     def __post_init__(self) -> None:
-        ensure_utc(self.scored_at, field="scored_at")
+        scored = ensure_utc(self.scored_at, field="scored_at")
+        expected_outcomes = set(_market_selections(self.market))
         if (
             not self.score_id
             or not self.prediction_id
             or not self.settlement_id
+            or self.outcome not in expected_outcomes
+            or not isinstance(self.accurate, bool)
+            or isinstance(self.log_loss, bool)
+            or isinstance(self.brier_score, bool)
+            or not isfinite(self.log_loss)
+            or not isfinite(self.brier_score)
             or self.log_loss < 0
             or self.brier_score < 0
+            or (
+                self.reference_log_loss_delta is not None
+                and (
+                    isinstance(self.reference_log_loss_delta, bool)
+                    or not isfinite(self.reference_log_loss_delta)
+                )
+            )
         ):
             raise ValueError("PREQUENTIAL_SCORE_INVALID")
+        object.__setattr__(self, "scored_at", scored)
 
     @property
     def score_hash(self) -> str:
@@ -582,6 +1003,17 @@ class TrainingDatasetManifest:
             or len(self.fixture_ids) != len(self.settlement_ids)
         ):
             raise ValueError("TRAINING_DATASET_MANIFEST_INVALID")
+        frozen_hyperparameters = freeze_json(self.hyperparameters)
+        frozen_metrics = freeze_json(self.training_metrics)
+        if not isinstance(frozen_hyperparameters, Mapping) or not isinstance(
+            frozen_metrics,
+            Mapping,
+        ):
+            raise ValueError("TRAINING_DATASET_JSON_INVALID")
+        object.__setattr__(self, "created_at", created)
+        object.__setattr__(self, "training_cutoff", cutoff)
+        object.__setattr__(self, "hyperparameters", frozen_hyperparameters)
+        object.__setattr__(self, "training_metrics", frozen_metrics)
 
     @property
     def manifest_hash(self) -> str:
@@ -597,8 +1029,8 @@ class TrainingDatasetManifest:
             "competitions": list(self.competitions),
             "feature_snapshot_ids": list(self.feature_snapshot_ids),
             "feature_contract_hash": self.feature_contract_hash,
-            "hyperparameters": self.hyperparameters,
-            "training_metrics": self.training_metrics,
+            "hyperparameters": thaw_json(self.hyperparameters),
+            "training_metrics": thaw_json(self.training_metrics),
             "code_revision": self.code_revision,
         }
         if include_storage:
@@ -627,14 +1059,14 @@ class PrequentialLedgerEvent:
     model_id: str | None
     model_version: str | None
     evidence_hashes: tuple[str, ...]
-    details: dict[str, Any] = field(default_factory=dict)
+    details: Mapping[str, Any] = field(default_factory=dict)
     previous_hash: str = "0" * SHA256_LENGTH
     production_status: str = PRODUCTION_LOCKED
     real_bets: bool = False
     promoted: bool = False
 
     def __post_init__(self) -> None:
-        ensure_utc(self.recorded_at, field="recorded_at")
+        recorded_at = ensure_utc(self.recorded_at, field="recorded_at")
         _require_sha256(self.previous_hash, field_name="previous")
         for evidence_hash in self.evidence_hashes:
             _require_sha256(evidence_hash, field_name="evidence")
@@ -647,6 +1079,11 @@ class PrequentialLedgerEvent:
             or self.promoted
         ):
             raise ValueError("PREQUENTIAL_LEDGER_EVENT_INVALID")
+        frozen_details = freeze_json(self.details)
+        if not isinstance(frozen_details, Mapping):
+            raise ValueError("PREQUENTIAL_LEDGER_EVENT_DETAILS_INVALID")
+        object.__setattr__(self, "recorded_at", recorded_at)
+        object.__setattr__(self, "details", frozen_details)
 
     @property
     def event_hash(self) -> str:
@@ -661,7 +1098,7 @@ class PrequentialLedgerEvent:
                 "model_id": self.model_id,
                 "model_version": self.model_version,
                 "evidence_hashes": list(self.evidence_hashes),
-                "details": self.details,
+                "details": thaw_json(self.details),
                 "previous_hash": self.previous_hash,
                 "production_status": self.production_status,
                 "real_bets": self.real_bets,
@@ -700,5 +1137,15 @@ __all__ = [
     "TrainingDatasetManifest",
     "TrainingDecision",
     "VerifiedFixtureResult",
+    "complete_injuries_feature",
+    "complete_lineup_feature",
+    "CUTOFF_MINUTES_BEFORE_KICKOFF",
+    "durable_required_feature_gates",
+    "feature_fixture_kickoff",
+    "feature_team_ids",
+    "source_receipt_from_provenance",
+    "prediction_record_id",
+    "score_record_id",
+    "settlement_record_id",
     "validate_probabilities",
 ]

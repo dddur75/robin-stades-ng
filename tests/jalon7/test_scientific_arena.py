@@ -22,6 +22,7 @@ from robin.historical.scientific_arena import (
     reliability_curve,
     score_distribution,
     score_market_probabilities,
+    score_model_predictions,
     select_cross_fitted_calibration,
     stable_hash,
     storage_guard,
@@ -254,6 +255,7 @@ def test_walk_forward_fit_seasons_are_strictly_earlier() -> None:
             "target_away_goals": 0 if index % 3 == 0 else 1 if index % 3 == 1 else 2,
             "elo_difference": float(index - 3),
             "dataset_version": "test_v1",
+            "temporal_policy": "POINT_IN_TIME_SAFE",
         }
         for season in (2020, 2021, 2022)
         for index in range(6)
@@ -269,6 +271,81 @@ def test_walk_forward_fit_seasons_are_strictly_earlier() -> None:
         max(row["fit_seasons"]) < int(str(row["season"]))
         for row in output
     )
+    assert {
+        row["temporal_policy"] for row in output
+    } == {"TEMPORAL_VALIDITY_NOT_PROVEN"}
+
+
+def test_walk_forward_rejects_naive_model_decision_timestamp() -> None:
+    rows = [
+        {
+            "fixture_id": f"{season}",
+            "season": season,
+            "kickoff_at": f"{season}-01-01T12:00:00",
+            "target_home_goals": 1,
+            "target_away_goals": 0,
+            "elo_difference": 1.0,
+        }
+        for season in (2020, 2021)
+    ]
+    with pytest.raises(ValueError, match="MODEL_DECISION_KICKOFF_AT_UTC_REQUIRED"):
+        temporal_discriminative_predictions(
+            rows,
+            model_family="MULTINOMIAL",
+            features=("elo_difference",),
+            evaluation_seasons=(2021,),
+        )
+
+
+def test_equal_kickoff_score_rates_do_not_depend_on_peer_result() -> None:
+    base = [
+        {
+            "fixture_id": "seed-a",
+            "season": 2023,
+            "kickoff_at": "2023-01-01T12:00:00Z",
+            "home_team_id": "A",
+            "away_team_id": "B",
+            "target_home_goals": 2,
+            "target_away_goals": 0,
+        },
+        {
+            "fixture_id": "same-a",
+            "season": 2024,
+            "kickoff_at": "2024-01-01T12:00:00Z",
+            "home_team_id": "A",
+            "away_team_id": "C",
+            "target_home_goals": 9,
+            "target_away_goals": 0,
+        },
+        {
+            "fixture_id": "same-b",
+            "season": 2024,
+            "kickoff_at": "2024-01-01T12:00:00+00:00",
+            "home_team_id": "A",
+            "away_team_id": "D",
+            "target_home_goals": 0,
+            "target_away_goals": 9,
+        },
+    ]
+    for row in base:
+        row["temporal_policy"] = "POINT_IN_TIME_SAFE"
+    predictions = {
+        str(row["fixture_id"]): row
+        for row in score_model_predictions(base, method="POISSON", seasons=(2024,))
+    }
+    assert predictions["same-a"]["home_rate"] == predictions["same-b"]["home_rate"]
+    assert {
+        row["temporal_policy"] for row in predictions.values()
+    } == {"TEMPORAL_VALIDITY_NOT_PROVEN"}
+
+
+def test_pairing_rejects_different_source_dataset_hashes() -> None:
+    left = prediction(1, (0.7, 0.2, 0.1))
+    right = prediction(1, (0.6, 0.3, 0.1))
+    left["source_dataset_hash"] = "a" * 64
+    right["source_dataset_hash"] = "b" * 64
+    with pytest.raises(ValueError, match="PAIRED_PROTOCOL_MISMATCH"):
+        validate_exact_pairing([left], [right])
 
 
 @pytest.mark.parametrize(

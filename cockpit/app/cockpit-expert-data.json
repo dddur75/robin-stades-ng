@@ -7,7 +7,7 @@
       "quality": "PASSED",
       "rows": 1534,
       "sha256": "367f8d3f70d5bde8c693da71e5608019435ffe81c277615ca10c99d8499f188a",
-      "status": "API_MARKET_BASELINE_READY",
+      "status": "BLOCKED_BY_TEMPORALITY",
       "temporalPolicy": "HISTORICAL_CLOSING_MARKET",
       "version": "api_market_baseline_v1"
     },
@@ -18,7 +18,7 @@
       "quality": "PASSED",
       "rows": 51589,
       "sha256": "b5507a298ddb33d50d64d56afd143234a25646a7e245c9d2250ff38b7560d731",
-      "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+      "status": "BLOCKED_BY_TEMPORALITY",
       "temporalPolicy": "POST_MATCH_ONLY",
       "version": "api_player_match_facts_v1"
     },
@@ -29,7 +29,7 @@
       "quality": "PASSED",
       "rows": 2058,
       "sha256": "9bb644722563b2bd2a137732bf04a1a74662dc1c92f5e94ea0255b55bcd6e86e",
-      "status": "API_PLAYER_DATASET_READY",
+      "status": "BLOCKED_BY_TEMPORALITY",
       "temporalPolicy": "PRE_LINEUP",
       "version": "api_player_pre_lineup_v1"
     },
@@ -40,7 +40,7 @@
       "quality": "PASSED",
       "rows": 1297,
       "sha256": "f2da79c6a193a69d9c96d0ba65595883644970016f17e0c1d6b9732313cda0cd",
-      "status": "POST_LINEUP_SIMULATED_READY",
+      "status": "BLOCKED_BY_TEMPORALITY",
       "temporalPolicy": "POST_LINEUP_SIMULATED",
       "version": "api_post_lineup_simulated_v1"
     },
@@ -51,8 +51,8 @@
       "quality": "PASSED",
       "rows": 2058,
       "sha256": "288307b59a5b65b1247dd12bb6f4070908218a0011250b176ee915acdfd3bf4b",
-      "status": "API_TEAM_DATASET_READY",
-      "temporalPolicy": "HISTORICAL POINT-IN-TIME",
+      "status": "BLOCKED_BY_TEMPORALITY",
+      "temporalPolicy": "TEMPORAL_VALIDITY_NOT_PROVEN",
       "version": "api_team_pre_match_v1"
     },
     {
@@ -62,7 +62,7 @@
       "quality": "PASSED",
       "rows": 905344,
       "sha256": "32ee24fdc6541829c0ed126604db2de405c9b1983477641462955afbe21f58ec",
-      "status": "PLAYER_FEATURE_FACTORY_ACTIVE",
+      "status": "BLOCKED_BY_TEMPORALITY",
       "temporalPolicy": "PRE_LINEUP",
       "version": "player_feature_store_v1"
     }

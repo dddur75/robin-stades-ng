@@ -22,6 +22,11 @@ from robin.prospective_observatory import (
     temporal_admissibility,
 )
 from robin.prospective_observatory.contracts import RetryDisposition
+from robin.prospective_observatory.gates import (
+    GateObservation,
+    GateStatus,
+    evaluate_lineup_gate,
+)
 from robin.prospective_observatory.r2 import AppendOnlyViolation
 
 NOW = datetime(2026, 7, 27, 12, tzinfo=UTC)
@@ -211,6 +216,61 @@ def test_registry_capture_has_no_fictitious_due_window() -> None:
     )
     assert stored.receipt.window_id is None
     assert stored.receipt.window_label == "REGISTRY"
+
+
+def test_receipt_materialized_after_cutoff_is_never_temporally_admissible() -> None:
+    cutoff = KICKOFF - timedelta(minutes=50)
+    observed = cutoff - timedelta(seconds=1)
+    repository = ProspectiveR2Repository(InMemoryObjectStore())
+    base_context = _context(observed_at=observed, cutoff_at=cutoff)
+    late_context = CaptureContext.model_validate(
+        {
+            **base_context.model_dump(),
+            "materialized_at": cutoff + timedelta(seconds=1),
+        }
+    )
+    stored = repository.capture(
+        payload={"response": [{"team": 1}]},
+        context=late_context,
+    )
+    assert stored.receipt.temporally_admissible is False
+
+
+def test_capture_rejects_materialization_before_observation() -> None:
+    observed = KICKOFF - timedelta(hours=1)
+    context = _context(
+        observed_at=observed,
+        cutoff_at=KICKOFF - timedelta(minutes=50),
+    )
+    with pytest.raises(ValueError, match="MATERIALIZED_BEFORE_OBSERVATION"):
+        CaptureContext.model_validate(
+            {
+                **context.model_dump(),
+                "materialized_at": observed - timedelta(seconds=1),
+            }
+        )
+
+
+def test_conflicting_equal_time_lineup_receipts_fail_closed() -> None:
+    repository = ProspectiveR2Repository(InMemoryObjectStore())
+    context = _context(
+        observed_at=KICKOFF - timedelta(hours=1),
+        cutoff_at=KICKOFF - timedelta(minutes=50),
+    )
+    first = repository.capture(payload={"version": 1}, context=context).receipt
+    second = repository.capture(payload={"version": 2}, context=context).receipt
+    evaluation = evaluate_lineup_gate(
+        first.fixture_id,
+        (
+            GateObservation(first, {"team_id": "home", "starters": list(range(11))}),
+            GateObservation(second, {"team_id": "away", "starters": list(range(11, 22))}),
+        ),
+    )
+    assert evaluation.status is GateStatus.INVALID_PAYLOAD
+    assert evaluation.reason == "CONFLICTING_EQUAL_TIME_RECEIPTS"
+    assert evaluation.evidence["receipt_hashes"] == sorted(
+        (first.receipt_hash, second.receipt_hash)
+    )
 
 
 def test_physical_response_identity_handles_global_odds_batches() -> None:

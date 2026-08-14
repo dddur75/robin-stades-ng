@@ -55,6 +55,7 @@ def _capture(
         quality_status=AvailabilityStatus.CAPTURED,
         provider_calls=1,
         code_revision="revision-j12",
+        materialized_at=observed_at,
     )
     stored = ProspectiveR2Repository(InMemoryObjectStore()).capture(
         payload=payload,

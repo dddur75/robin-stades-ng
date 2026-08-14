@@ -158,17 +158,23 @@ def _state(tmp_path: Path) -> Path:
     return state
 
 
-def test_all_non_injury_gates_pass_on_eligible_data(tmp_path: Path) -> None:
+def test_eligible_unreceipted_data_stays_blocked_by_temporality(tmp_path: Path) -> None:
     report = build_multiseason_readiness(
         _state(tmp_path),
         seasons=tuple(range(2020, 2025)),
     )
     gates = report["gates"]
-    assert gates["A"]["passed"] is True
-    assert gates["B"]["passed"] is True
-    assert gates["C"]["passed"] is True
+    assert gates["A"]["data_quality_passed"] is True
+    assert gates["B"]["data_quality_passed"] is True
+    assert gates["C"]["data_quality_passed"] is True
+    assert gates["A"]["passed"] is False
+    assert gates["B"]["passed"] is False
+    assert gates["C"]["passed"] is False
+    assert gates["A"]["status"] == "BLOCKED_BY_TEMPORALITY"
+    assert gates["B"]["status"] == "BLOCKED_BY_TEMPORALITY"
+    assert gates["C"]["status"] == "BLOCKED_BY_TEMPORALITY"
     assert gates["D"]["status"] == "BLOCKED_BY_TEMPORALITY"
-    assert report["status"] == "DATA_FACTORY_READY"
+    assert report["status"] == "WAITING_FOR_BACKFILL_GATES"
 
 
 def test_stale_quality_proof_blocks_gate_a(tmp_path: Path) -> None:

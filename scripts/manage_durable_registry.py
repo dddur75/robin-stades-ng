@@ -242,12 +242,22 @@ def state_records(state: Path, run: Mapping[str, object]) -> list[DurableRecord]
                 provenance=str(item.get("origin", "LIVE SOURCE")),
             )
         )
-        target = "shadow_bets" if item.get("accepted") is True else "rejected_bets"
+        # A legacy JSONL `accepted` flag is not repository-backed temporal
+        # evidence.  Preserve the original row in candidate_bets for audit, but
+        # fail closed in the durable projection so it can never materialise as
+        # a shadow bet or be consumed as an eligible decision.
+        durable_payload = {
+            **item,
+            "accepted": False,
+            "suggested_stake": 0,
+            "primary_reason": "POINT_IN_TIME_RECEIPT_VERIFIER_REQUIRED",
+            "durable_eligibility": "REJECTED_UNVERIFIED_SHADOW_DECISION",
+        }
         records.append(
             record(
-                target,
+                "rejected_bets",
                 decision_id,
-                item,
+                durable_payload,
                 run_id=run_id,
                 observed_at=iso(item.get("decided_at"), now),
                 provenance=str(item.get("origin", "LIVE SOURCE")),

@@ -40,7 +40,7 @@ La correction ci-dessous est un **`FORMULA_REPLAY_FROM_STORED_PROFIT_AND_FIXED_S
 | market_devigged_baseline_v1_1x2_edge_0.04 | 261 | -12.43 | -0.0412176277481 | -0.0476245210728 | 0.00640689332468 |
 | market_devigged_baseline_v1_1x2_edge_0.06 | 200 | -11.57 | -0.0534583930139 | -0.05785 | 0.00439160698609 |
 
-Les 45 champs ROI sont invalidés append-only ; les 45 yields ne le sont pas, car ils égalaient déjà `profit/bets` sous FIXED 1u. Aucun JSON cockpit historique n'est réécrit. Le plus grand écart absolu est `0.04577382258550142`; aucun signe de profit, statut `INCONCLUSIVE`, verrou `PRODUCTION_LOCKED` ou `NO_PROMOTION` ne change.
+Les 45 champs ROI sont invalidés append-only ; les 45 yields ne le sont pas, car ils égalaient déjà `profit/bets` sous FIXED 1u. Le ledger d'invalidation ne réécrit pas les résultats cockpit. LOOP55 corrige séparément leurs labels de temporalité dans les artefacts courants, sans changer les résultats de formule stockés. Le plus grand écart absolu est `0.04577382258550142`; aucun signe de profit, statut `INCONCLUSIVE`, verrou `PRODUCTION_LOCKED` ou `NO_PROMOTION` ne change.
 
 ## L'autorité de-vig reste conflictuelle
 

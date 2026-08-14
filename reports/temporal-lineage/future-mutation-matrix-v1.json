@@ -1,0 +1,402 @@
+{
+  "audit_source": {
+    "evidence_ids": [
+      "AUDIT:E2013"
+    ],
+    "logical_root": "audit-evidence/ROBIN-SCIENTIFIC-AUDIT-V1",
+    "manifest_sha256": "38559704269d4e31b9406fc3ca90a8d8ba3fa4c16b0e8e8a89eaeaeaef6e5476",
+    "target_sha": "1ffeec1cd89e83deda008da39bb22540a70db896",
+    "target_tree": "d751c18ea6233ab59ffeb07c3a38453212a9dd87"
+  },
+  "authorized_local_effects": {
+    "ephemeral_ci_postgresql_test_service": "ALLOWED",
+    "local_temporary_sqlite_migration_executions": "BOUNDED_TEST_BOOTSTRAP_ALLOWED",
+    "local_temporary_sqlite_path_constraint": "PYTEST_TMP_PATH_OR_OS_TEMP",
+    "local_temporary_sqlite_reads": "TESTS_AND_OFFLINE_REPLAY_ONLY",
+    "local_temporary_sqlite_writes": "TESTS_AND_OFFLINE_REPLAY_ONLY"
+  },
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "6e7525d1a142b9b2d2d5cb50247a1ca6c1625db3a89e23cb40cd25738c041733",
+  "counts": {
+    "not_covered": 0,
+    "partial": 0,
+    "pass": 25,
+    "required_cases": 25
+  },
+  "effect_budget_authority": "BUSINESS_DATA_NETWORK_CALLS_0;NEON_API_CALLS_0;POSTGRESQL_PRODUCTION_CONNECTIONS_0;PRODUCTION_SQL_READS_0;PRODUCTION_SQL_WRITES_0;LOCAL_TEMPORARY_SQLITE_READS_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_WRITES_ALLOWED_FOR_TESTS_AND_OFFLINE_REPLAY_ONLY;LOCAL_TEMPORARY_SQLITE_MUST_USE_PYTEST_TMP_PATH_OR_OS_TEMP;PERSISTENT_LOCAL_DATABASE_MUTATIONS_0;EPHEMERAL_CI_POSTGRESQL_TEST_SERVICE_ALLOWED;R2_OPERATIONS_0;PROVIDER_CALLS_0;API_FOOTBALL_CALLS_0;ODDS_PROVIDER_CALLS_0;LIVE_WORKFLOW_DISPATCHES_0;MIGRATION_0014_0;NEW_DATABASE_MIGRATIONS_0;RECOVERY_BRANCH_CREATIONS_0;ROLE_CREATIONS_0;PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0",
+  "evidence_status": "PROBABLE",
+  "external_effects": {
+    "api_football_calls": 0,
+    "business_data_network_calls": 0,
+    "live_workflow_dispatches": 0,
+    "migration_0014_production_applications": 0,
+    "migration_0014_source_changes": 0,
+    "neon_api_calls": 0,
+    "new_database_migrations": 0,
+    "odds_provider_calls": 0,
+    "persistent_local_database_mutations": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "recovery_branch_creations": 0,
+    "role_creations": 0,
+    "social_publications": 0
+  },
+  "immutable_review_base_revision": "71833964e5d7ba7f5882bfff49b39d567fd5473b",
+  "limitations": [
+    "PASS applies only to the named bounded test and component.",
+    "All 25 required mutation classes are executed, but this is not coverage of every decision-relevant repository symbol.",
+    "The calibration case covers the current model-bound calibration identity; no independently executed calibrator exists on the covered prospective path.",
+    "The out-of-order ingestion case is the explicit post-cutoff ingestion branch of its named repository-backed receipt test."
+  ],
+  "loop55_source": {
+    "candidate_source": {
+      "aggregate_sha256": "a0322568fe62250130d3ff469a73d91b3f300b9ba30d78504fff4a61cc5677c7",
+      "excluded_path_count": 26,
+      "included_path_count": 55,
+      "manifest_sha256": "1a12c73bdbd955560b1aeebc7d8eba94bd9cb66dff08b988a46f1f8145803e87",
+      "outside_allowlist_count": 0
+    },
+    "corrective_artifact_proof": "LOOP55:E0009",
+    "corrective_authority_validation_proof": "LOOP55:E0010",
+    "evidence_ids": [
+      "LOOP55:E0001",
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0005",
+      "LOOP55:E0006",
+      "LOOP55:E0007",
+      "LOOP55:E0008",
+      "LOOP55:E0009",
+      "LOOP55:E0010"
+    ],
+    "exact_head_ci_failure_trigger": "LOOP55:E0007",
+    "historical_pre_correction_bounded_component_proof": "LOOP55:E0004",
+    "historical_pre_correction_component_proofs": [
+      "LOOP55:E0002",
+      "LOOP55:E0003",
+      "LOOP55:E0004",
+      "LOOP55:E0006"
+    ],
+    "invalid_corrective_harness_receipt": {
+      "classification": "INVALID_CORRECTIVE_HARNESS_PATH_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0008",
+      "proof_status": "NOT_PROOF"
+    },
+    "invalid_harness_receipt": {
+      "classification": "INVALID_HARNESS_COMMAND_RETAINED_NOT_PROOF",
+      "evidence_id": "LOOP55:E0005",
+      "proof_status": "NOT_PROOF"
+    },
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V2",
+    "manifest_sha256": "3dc8d864d2e3c88f820b9d8044534e46fd1afb5856f7fec1e1b2e05e3c6303f7",
+    "namespace": "LOOP55",
+    "red_proof": "LOOP55:E0001",
+    "source_authority_sha256": "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454",
+    "supersedes_unavailable_pack": {
+      "candidate_aggregate_status": "CANONICAL_DIGEST_REPRODUCIBLE_BUT_INSUFFICIENT_FOR_BYTE_EXACT_RESTORATION",
+      "candidate_manifest_sha256": "d153ea4a1bdaf49399bad5e2eef73cd155951dfae42bc1fd31477851c94d9ffa",
+      "manifest_sha256": "58fcc690534f719c80bb4ac00cddd08d8fd1cf29ffb25c0ca6a34b0c82c70835",
+      "status": "LOST_OVERWRITTEN_NOT_AVAILABLE"
+    }
+  },
+  "matrix_execution_status": "PASS",
+  "mission_id": "POINT_IN_TIME_LINEAGE",
+  "mission_status": "ROBIN_POINT_IN_TIME_LINEAGE_V1_PARTIAL",
+  "production_status": "PRODUCTION_LOCKED",
+  "promotion_status": "NO_PROMOTION",
+  "records": [
+    {
+      "case_id": "PIT-MUTATION-01",
+      "mutation": "future row appended",
+      "status": "PASS",
+      "test": "test_append_change_delete_and_reorder_future_rows_leave_past_team_features_exact",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-02",
+      "mutation": "future row value changed",
+      "status": "PASS",
+      "test": "test_append_change_delete_and_reorder_future_rows_leave_past_team_features_exact",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-03",
+      "mutation": "future row deleted",
+      "status": "PASS",
+      "test": "test_append_change_delete_and_reorder_future_rows_leave_past_team_features_exact",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-04",
+      "mutation": "past event received late",
+      "status": "PASS",
+      "test": "test_late_arriving_pre_cutoff_event_is_excluded_when_observed_after_cutoff",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-05",
+      "mutation": "retroactive correction received late",
+      "status": "PASS",
+      "test": "test_late_retroactive_correction_and_newer_provider_version_are_excluded",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-06",
+      "mutation": "same event with newer provider version",
+      "status": "PASS",
+      "test": "test_late_retroactive_correction_and_newer_provider_version_are_excluded",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-07",
+      "mutation": "missing available_at",
+      "status": "PASS",
+      "test": "test_missing_availability_receipt_fails_closed",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-08",
+      "mutation": "naive datetime",
+      "status": "PASS",
+      "test": "test_naive_dst_fold_and_date_only_temporal_keys_are_rejected",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-09",
+      "mutation": "timezone offset",
+      "status": "PASS",
+      "test": "test_equivalent_timezone_offsets_have_one_receipt_identity",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-10",
+      "mutation": "DST transition",
+      "status": "PASS",
+      "test": "test_naive_dst_fold_and_date_only_temporal_keys_are_rejected",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-11",
+      "mutation": "date-only truncation",
+      "status": "PASS",
+      "test": "test_naive_dst_fold_and_date_only_temporal_keys_are_rejected",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-12",
+      "mutation": "identical available_at tie",
+      "status": "PASS",
+      "test": "test_asof_equal_time_tie_is_deterministic_or_fails_closed",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-13",
+      "mutation": "out-of-order ingestion",
+      "status": "PASS",
+      "test": "test_self_declared_receipt_and_late_ingestion_fail_closed",
+      "test_path": "tests/jalon14/test_prequential_factory.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-14",
+      "mutation": "duplicate payload",
+      "status": "PASS",
+      "test": "test_duplicate_and_repeated_payload_receipts_are_order_invariant",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-15",
+      "mutation": "same payload received twice",
+      "status": "PASS",
+      "test": "test_duplicate_and_repeated_payload_receipts_are_order_invariant",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-16",
+      "mutation": "provider timestamp before receipt",
+      "status": "PASS",
+      "test": "test_provider_publication_order_and_clock_skew_are_conservative",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-17",
+      "mutation": "provider timestamp after receipt",
+      "status": "PASS",
+      "test": "test_provider_publication_order_and_clock_skew_are_conservative",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-18",
+      "mutation": "clock-skew contradiction",
+      "status": "PASS",
+      "test": "test_provider_publication_order_and_clock_skew_are_conservative",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-19",
+      "mutation": "current fixture accidentally included in rolling window",
+      "status": "PASS",
+      "test": "test_current_fixture_result_is_not_in_peer_rolling_window",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-20",
+      "mutation": "future fixture accidentally included in team history",
+      "status": "PASS",
+      "test": "test_append_change_delete_and_reorder_future_rows_leave_past_team_features_exact",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-21",
+      "mutation": "result data accidentally joined before kickoff",
+      "status": "PASS",
+      "test": "test_finished_result_verified_before_kickoff_is_rejected",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-22",
+      "mutation": "lineup received after cutoff",
+      "status": "PASS",
+      "test": "test_lineup_received_after_cutoff_is_rejected",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-23",
+      "mutation": "odds snapshot received after cutoff",
+      "status": "PASS",
+      "test": "test_future_value_mutation_does_not_change_past_decision_hash",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-24",
+      "mutation": "model trained after cutoff",
+      "status": "PASS",
+      "test": "test_model_created_after_cutoff_is_rejected",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    },
+    {
+      "case_id": "PIT-MUTATION-25",
+      "mutation": "calibration artifact created after cutoff",
+      "status": "PASS",
+      "test": "test_calibration_artifact_created_after_cutoff_is_rejected_with_model_bundle",
+      "test_path": "tests/temporal/test_point_in_time_lineage_v1.py"
+    }
+  ],
+  "report_generation_receipt": {
+    "binding": "DETACHED_MANIFEST_CLAIM_IN_EVIDENCE_GRAPH",
+    "evidence_id": "LOOP55_REPORTS:E0006",
+    "logical_root": "audit-evidence/ROBIN-POINT-IN-TIME-LINEAGE-V1-REPORTS-RECEIPT-V5",
+    "namespace": "LOOP55_REPORTS"
+  },
+  "report_id": "future-mutation-matrix-v1",
+  "reproducibility": {
+    "builder": "scripts/build_temporal_lineage_reports_v1.py",
+    "command_evidence_ids": [
+      "LOOP55_REPORTS:E0006"
+    ],
+    "mode": "DUAL_PINNED_ROOTS_FAIL_CLOSED"
+  },
+  "schema_version": "robin-temporal-lineage-report-v1",
+  "sources": [
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/temporal/test_point_in_time_lineage_v1.py",
+      "sha256": "0ca855c9aaa1666719f644f492b5426f6ec9064182dff18372d80b8c420c0a4e",
+      "symbols": [
+        "test_append_change_delete_and_reorder_future_rows_leave_past_team_features_exact",
+        "test_asof_equal_time_tie_is_deterministic_or_fails_closed",
+        "test_asof_rejects_valid_looking_self_declared_receipt_mapping",
+        "test_available_at_equal_cutoff_is_admissible_but_after_cutoff_is_not",
+        "test_calibration_artifact_created_after_cutoff_is_rejected_with_model_bundle",
+        "test_current_fixture_result_is_not_in_peer_rolling_window",
+        "test_duplicate_and_repeated_payload_receipts_are_order_invariant",
+        "test_equivalent_timezone_offsets_have_one_receipt_identity",
+        "test_finished_result_verified_before_kickoff_is_rejected",
+        "test_future_value_mutation_does_not_change_past_decision_hash",
+        "test_future_value_mutation_does_not_change_past_feature_snapshot",
+        "test_historical_backtest_rejects_self_declared_point_in_time_scalars",
+        "test_historical_backtest_without_receipt_lineage_produces_no_decision",
+        "test_late_arriving_pre_cutoff_event_is_excluded_when_observed_after_cutoff",
+        "test_late_retroactive_correction_and_newer_provider_version_are_excluded",
+        "test_lineup_received_after_cutoff_is_rejected",
+        "test_missing_availability_receipt_fails_closed",
+        "test_model_created_after_cutoff_is_rejected",
+        "test_naive_dst_fold_and_date_only_temporal_keys_are_rejected",
+        "test_provider_publication_order_and_clock_skew_are_conservative",
+        "test_receipt_available_at_is_conservative_and_event_time_never_substitutes",
+        "test_shadow_without_complete_temporal_lineage_defaults_to_no_bet",
+        "test_source_receipt_rejects_non_content_addressed_identifier",
+        "test_structural_decision_lineage_cannot_claim_point_in_time_valid"
+      ]
+    },
+    {
+      "evidence_status": "PROUVÉ",
+      "path": "tests/jalon14/test_prequential_factory.py",
+      "sha256": "755813ed92e0947c9b6a351e659fb29945abd6e7cf09cc7d247ea69fe47fc2b3",
+      "symbols": [
+        "test_absent_market_is_not_invented",
+        "test_available_lineup_must_match_teams_and_have_22_unique_players",
+        "test_available_team_identity_must_be_distinct_and_coherent",
+        "test_challenger_forecast_rederives_probabilities_from_model_artifact",
+        "test_eligible_training_creates_new_challenger_and_blocks_promotion",
+        "test_factory_registration_and_training_reverify_durable_artifacts",
+        "test_factory_rejects_content_addressed_snapshot_with_unknown_availability",
+        "test_factory_rejects_receipted_empty_team_marked_available",
+        "test_factory_rejects_receipted_null_feature_marked_available",
+        "test_factory_settlement_requires_immutable_result_observation",
+        "test_feature_snapshot_is_deeply_immutable_and_r2_exact",
+        "test_feature_snapshot_rejects_receipt_payload_value_mismatch",
+        "test_feature_snapshot_rejects_receipts_from_another_fixture",
+        "test_fixture_gate_cannot_override_missing_team_receipt",
+        "test_fixture_gate_requires_receipt_bound_exact_competition",
+        "test_fixture_gate_requires_receipt_bound_exact_kickoff",
+        "test_forecast_and_settlement_require_exact_point_in_time_lineage",
+        "test_forecast_binds_used_odds_values_and_identity_to_verified_snapshot",
+        "test_forecast_reverifies_source_receipt_bytes",
+        "test_frozen_prediction_cannot_be_replaced_or_mutated",
+        "test_frozen_prediction_probabilities_are_recursively_immutable",
+        "test_frozen_prediction_rejects_noncanonical_cutoff_horizon",
+        "test_future_duplicate_completion_cannot_invalidate_past_settlement",
+        "test_initial_registry_prepares_reference_and_challenger_for_all_scopes",
+        "test_initial_settlement_rejects_noncanonical_result_chain",
+        "test_late_prediction_and_missing_gate_are_append_only_rejections",
+        "test_metrics_are_segmented_without_roi",
+        "test_missing_feature_is_null_and_post_cutoff_provenance_is_rejected",
+        "test_non_final_result_is_rejected_and_final_settlement_is_idempotent",
+        "test_prediction_before_cutoff_is_frozen_for_both_markets_and_cutoffs",
+        "test_prequential_factory_rejects_protocol_not_round_trippable_in_store",
+        "test_prequential_ledger_event_details_are_recursively_immutable",
+        "test_reference_model_rejects_self_declared_artifact_hash",
+        "test_required_feature_gate_cannot_override_missing_receipt",
+        "test_required_injuries_gate_rejects_scalar_and_accepts_attested_empty_set",
+        "test_required_lineup_gate_rejects_receipted_empty_projection",
+        "test_segment_coverage_uses_every_frozen_prediction_as_denominator",
+        "test_self_declared_receipt_and_late_ingestion_fail_closed",
+        "test_settlement_rejects_correction_reusing_same_observation",
+        "test_settlement_rejects_provider_completion_after_settlement_time",
+        "test_settlement_rejects_result_for_different_provider_fixture",
+        "test_settlement_requires_exact_frozen_fixture_projection",
+        "test_settlement_requires_provider_guard_and_completion_chain",
+        "test_snapshot_rejects_future_provenance_for_missing_family",
+        "test_training_before_settlement_and_under_threshold_are_deferred",
+        "test_training_dataset_contains_only_settled_past_and_two_markets",
+        "test_training_deduplicates_ordered_logical_fixture_revisions",
+        "test_training_does_not_fallback_when_latest_logical_revision_is_unsettled",
+        "test_training_fails_closed_on_exact_logical_revision_tie",
+        "test_training_ignores_unselected_future_artifact_corruption",
+        "test_training_rejects_future_parent_or_last_training_boundary",
+        "test_training_rejects_incompatible_logical_head_contract_without_fallback",
+        "test_training_uses_linked_snapshot_chain_head_with_earlier_cutoff",
+        "test_void_and_corrected_results_create_new_linked_versions"
+      ]
+    }
+  ],
+  "status": "PARTIAL",
+  "verdict": "ADVERSARIAL_FUTURE_MUTATION_INVARIANCE_PARTIAL"
+}
