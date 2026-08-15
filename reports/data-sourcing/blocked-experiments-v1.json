@@ -1,0 +1,643 @@
+{
+  "experiments": [
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-001",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-002",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-003",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-004",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-005",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-006",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-007",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-008",
+      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
+      ],
+      "priority": "P0",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "A",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+    },
+    {
+      "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-009",
+      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "EXP009_INTERMEDIATE_WINDOWS_NOT_FROZEN",
+        "EXP009_PROTOCOL_SUCCESSOR_REQUIRED_BEFORE_EXECUTION"
+      ],
+      "priority": "P0_DESIGN_GATE",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "C",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "amend protocol and/or pass empirical totals/timestamp canary before scale"
+    },
+    {
+      "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-010",
+      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "TOTALS_COVERAGE_TO_BE_PROVEN",
+        "MARKET_LEVEL_TIMESTAMP_PRESENCE_AND_PAIRING_TO_BE_EMPIRICALLY_PROVEN",
+        "EXP010_RECEIPT_TIME_VS_MARKET_LAST_UPDATE_CLOCK_SEMANTICS_AND_H24_H2_DEPENDENCY_MUST_BE_FROZEN"
+      ],
+      "priority": "P0_DESIGN_GATE",
+      "source_candidates": [
+        "The Odds API current",
+        "official fixture authority",
+        "Source 2 fixture+settlement"
+      ],
+      "supportability_category": "C",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "amend protocol and/or pass empirical totals/timestamp canary before scale"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-011",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "XG_XGA_OR_STRENGTH_SOURCE_NOT_ACTIVATED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks Football core + contracted xG add-on",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-012",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "XG_XGA_OR_STRENGTH_SOURCE_NOT_ACTIVATED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks Football core + contracted xG add-on",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-013",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "XG_XGA_OR_STRENGTH_SOURCE_NOT_ACTIVATED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks Football core + contracted xG add-on",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-014",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "VERSIONED_VENUE_PROMOTION_DERBY_REGISTRIES_NOT_MATERIALIZED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks Football core",
+        "Wikidata revisioned venue coordinates",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-015",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "VERSIONED_VENUE_PROMOTION_DERBY_REGISTRIES_NOT_MATERIALIZED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "official league promotion/competition publications",
+        "Sportmonks Football core"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-016",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "TOTALS_COVERAGE_TO_BE_PROVEN",
+        "VERSIONED_VENUE_PROMOTION_DERBY_REGISTRIES_NOT_MATERIALIZED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "versioned preseason derby registry",
+        "The Odds API event odds",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-017",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "MULTI_COMPETITION_CALENDAR_AND_COMPLETION_RECEIPTS_NOT_MATERIALIZED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks multi-competition fixtures/results",
+        "Wikidata revisioned venue coordinates"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-018",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "MULTI_COMPETITION_CALENDAR_AND_COMPLETION_RECEIPTS_NOT_MATERIALIZED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks multi-competition fixtures/results",
+        "Wikidata revisioned venue coordinates"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-019",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "MULTI_COMPETITION_CALENDAR_AND_COMPLETION_RECEIPTS_NOT_MATERIALIZED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks multi-competition fixtures/results",
+        "Wikidata revisioned venue coordinates"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Unknown until an admissible coach-claims source exists",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-020",
+      "legal_risk": "No effective-at, versioned, receipt-backed coach source identified",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "DATA_NOT_PROSPECTIVELY_OBSERVABLE_COACH_EFFECTIVE_AT"
+      ],
+      "priority": "P2",
+      "source_candidates": [
+        "NO_ADMISSIBLE_VERSIONED_COACH_EFFECTIVE_AT_PIPELINE_IDENTIFIED"
+      ],
+      "supportability_category": "D",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "identify and contract a versioned coach effective-at source; otherwise remain blocked"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-021",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "XG_XGA_OR_STRENGTH_SOURCE_NOT_ACTIVATED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks tables/results",
+        "contracted xG/strength derivation",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Supplementary provider/add-on quote plus odds capture; exact cost not frozen",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-022",
+      "legal_risk": "Contracted redistribution/retention and source-specific field rights require review",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "XG_XGA_OR_STRENGTH_SOURCE_NOT_ACTIVATED"
+      ],
+      "priority": "P1",
+      "source_candidates": [
+        "Sportmonks tables/results",
+        "contracted xG/strength derivation",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "B",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "complete A plus contract and materialize the named enrichment source"
+    },
+    {
+      "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-023",
+      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "TOTALS_COVERAGE_TO_BE_PROVEN",
+        "MARKET_LEVEL_TIMESTAMP_PRESENCE_AND_PAIRING_TO_BE_EMPIRICALLY_PROVEN"
+      ],
+      "priority": "P0_DESIGN_GATE",
+      "source_candidates": [
+        "The Odds API event odds",
+        "official fixture authority",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "C",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "amend protocol and/or pass empirical totals/timestamp canary before scale"
+    },
+    {
+      "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-024",
+      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "TOTALS_COVERAGE_TO_BE_PROVEN"
+      ],
+      "priority": "P0_DESIGN_GATE",
+      "source_candidates": [
+        "The Odds API event odds",
+        "official fixture authority",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "C",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "amend protocol and/or pass empirical totals/timestamp canary before scale"
+    },
+    {
+      "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
+      "execution_status": "NOT_RUN",
+      "experiment_id": "RDS-EXP-V1-025",
+      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "missing_data_or_contract": [
+        "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
+        "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
+        "TOTALS_COVERAGE_TO_BE_PROVEN"
+      ],
+      "priority": "P0_DESIGN_GATE",
+      "source_candidates": [
+        "The Odds API event odds",
+        "official fixture authority",
+        "Source 2 settlement"
+      ],
+      "supportability_category": "C",
+      "temporal_proof_required": [
+        "raw payload SHA-256 and canonical receipt",
+        "available_at=max(trusted source_published_at, robin_first_observed_at)",
+        "robin_ingested_at no later than predictor cutoff",
+        "distinct settled label receipt after event"
+      ],
+      "unblock_action": "amend protocol and/or pass empirical totals/timestamp canary before scale"
+    }
+  ],
+  "schema_version": "robin-blocked-experiments-v1",
+  "status": [
+    "DESIGN_ONLY",
+    "NOT_ACTIVATED",
+    "NOT_AUTHORIZED",
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET"
+  ],
+  "summary": {
+    "category_counts": {
+      "A": 8,
+      "B": 11,
+      "C": 5,
+      "D": 1
+    },
+    "execution_ready_now": 0,
+    "experiments": 25,
+    "universal_blockers": [
+      "no receipt-backed odds corpus materialized",
+      "no approved fixture+settlement Source 2",
+      "minimum samples not reached",
+      "no execution authorization"
+    ]
+  }
+}

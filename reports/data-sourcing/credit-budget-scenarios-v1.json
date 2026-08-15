@@ -1,0 +1,520 @@
+{
+  "annualization_method": {
+    "active_months": 10,
+    "active_weeks": 44,
+    "cross_window_coalescence": "Not assumed in annual scenarios; this avoids optimistic savings. Exact-horizon schedule does allow valid interval intersections.",
+    "important_limit": "Kickoff-group counts are conservative extrapolations from the confirmed horizon, not final season call counts.",
+    "official_full_season_fixtures": 1752,
+    "official_matchdays": 182,
+    "peak_month_factor": 1.25,
+    "planned_kickoff_groups_per_window": 1362
+  },
+  "pricing_access_date": "2026-08-15",
+  "provider": {
+    "bulk_odds_credit_formula": "requested markets × requested regions",
+    "event_odds_credit_formula": "unique markets returned × regions; empty response not charged",
+    "explicit_bookmaker_equivalence": "each started block of 10 bookmakers counts as one region",
+    "free_endpoints": [
+      "/v4/sports",
+      "/v4/sports/{sport}/events"
+    ],
+    "impersonator_domain_forbidden": "theoddsapi.com",
+    "monthly_reset": "first day of each month",
+    "name": "The Odds API",
+    "official_domain": "the-odds-api.com",
+    "plans_usd_per_month": [
+      {
+        "credits": 500,
+        "historical": false,
+        "name": "Starter",
+        "price_usd": 0
+      },
+      {
+        "credits": 20000,
+        "historical": true,
+        "name": "20K",
+        "price_usd": 30
+      },
+      {
+        "credits": 100000,
+        "historical": true,
+        "name": "100K",
+        "price_usd": 59
+      },
+      {
+        "credits": 5000000,
+        "historical": true,
+        "name": "5M",
+        "price_usd": 119
+      },
+      {
+        "credits": 15000000,
+        "historical": true,
+        "name": "15M",
+        "price_usd": 249
+      }
+    ],
+    "public_rate_limit": "No numeric requests-per-second limit published; HTTP 429 is documented.",
+    "quota_headers": [
+      "x-requests-remaining",
+      "x-requests-used",
+      "x-requests-last"
+    ]
+  },
+  "scenarios": [
+    {
+      "additional_ungroupable_calls": {
+        "calls": 0,
+        "credits": 0,
+        "detail": null
+      },
+      "annual_credits": 612,
+      "calls_after_grouping": 612,
+      "calls_before_grouping": 918,
+      "calls_per_active_month": 62,
+      "calls_per_active_week": 13.91,
+      "calls_per_calendar_week_annualized": 11.77,
+      "calls_saved": 306,
+      "credits_before_grouping": 918,
+      "credits_per_active_month": 62,
+      "credits_per_active_week": 13.91,
+      "credits_saved": 306,
+      "execution_note": "No protocol is executable from a budget alone; receipts, labels, source contracts, minimum sample and authorization remain required.",
+      "free_plan_compatible": true,
+      "label": "Ligue 1, h2h, minimal H24/H2/H1",
+      "league_codes": [
+        "L1"
+      ],
+      "lowest_public_plan_fitting_peak_plus_reserve": "Starter 500",
+      "note": null,
+      "paid_plan_compatible": true,
+      "peak_month_calls_proxy": 77,
+      "peak_month_credits_proxy": 77,
+      "protocol_capture_surface_candidates": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008"
+      ],
+      "protocols_enabled": [],
+      "safety_reserve": {
+        "credits_on_peak_month": 16,
+        "monthly_capacity_required": 93,
+        "rate": 0.2
+      },
+      "scenario_id": "S0",
+      "window_market_pattern": [
+        {
+          "market_count": 1,
+          "window_id": "H24"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H2"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H1"
+        }
+      ]
+    },
+    {
+      "additional_ungroupable_calls": {
+        "calls": 0,
+        "credits": 0,
+        "detail": null
+      },
+      "annual_credits": 1224,
+      "calls_after_grouping": 612,
+      "calls_before_grouping": 918,
+      "calls_per_active_month": 62,
+      "calls_per_active_week": 13.91,
+      "calls_per_calendar_week_annualized": 11.77,
+      "calls_saved": 306,
+      "credits_before_grouping": 1836,
+      "credits_per_active_month": 123,
+      "credits_per_active_week": 27.82,
+      "credits_saved": 612,
+      "execution_note": "No protocol is executable from a budget alone; receipts, labels, source contracts, minimum sample and authorization remain required.",
+      "free_plan_compatible": true,
+      "label": "Ligue 1, h2h+totals at every minimal window",
+      "league_codes": [
+        "L1"
+      ],
+      "lowest_public_plan_fitting_peak_plus_reserve": "Starter 500",
+      "note": "Coverage comparison only: totals-derived candidates remain conditional on paired 2.5 coverage; bulk odds cannot support EXP010/EXP023 market skew.",
+      "paid_plan_compatible": true,
+      "peak_month_calls_proxy": 77,
+      "peak_month_credits_proxy": 153,
+      "protocol_capture_surface_candidates": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008",
+        "RDS-EXP-V1-016",
+        "RDS-EXP-V1-024",
+        "RDS-EXP-V1-025"
+      ],
+      "protocols_enabled": [],
+      "safety_reserve": {
+        "credits_on_peak_month": 31,
+        "monthly_capacity_required": 184,
+        "rate": 0.2
+      },
+      "scenario_id": "S1",
+      "window_market_pattern": [
+        {
+          "market_count": 2,
+          "window_id": "H24"
+        },
+        {
+          "market_count": 2,
+          "window_id": "H2"
+        },
+        {
+          "market_count": 2,
+          "window_id": "H1"
+        }
+      ]
+    },
+    {
+      "additional_ungroupable_calls": {
+        "calls": 918,
+        "credits": 1836,
+        "detail": "One combined event-odds h2h+totals call per fixture at H24, H2 and H1; bulk h2h only at H12/H6."
+      },
+      "annual_credits": 2244,
+      "calls_after_grouping": 1326,
+      "calls_before_grouping": 1530,
+      "calls_per_active_month": 133,
+      "calls_per_active_week": 30.14,
+      "calls_per_calendar_week_annualized": 25.5,
+      "calls_saved": 204,
+      "credits_before_grouping": 2448,
+      "credits_per_active_month": 225,
+      "credits_per_active_week": 51.0,
+      "credits_saved": 204,
+      "execution_note": "No protocol is executable from a budget alone; receipts, labels, source contracts, minimum sample and authorization remain required.",
+      "free_plan_compatible": true,
+      "label": "Ligue 1, all necessary windows with event-specific synchronization",
+      "league_codes": [
+        "L1"
+      ],
+      "lowest_public_plan_fitting_peak_plus_reserve": "Starter 500",
+      "note": "H12/H6 are design candidates only; event-specific calls enforce EXP010 H24/H2 and EXP023 H2/H1 clock observability.",
+      "paid_plan_compatible": true,
+      "peak_month_calls_proxy": 166,
+      "peak_month_credits_proxy": 281,
+      "protocol_capture_surface_candidates": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008",
+        "RDS-EXP-V1-009",
+        "RDS-EXP-V1-010",
+        "RDS-EXP-V1-023",
+        "RDS-EXP-V1-024",
+        "RDS-EXP-V1-025",
+        "RDS-EXP-V1-016"
+      ],
+      "protocols_enabled": [],
+      "safety_reserve": {
+        "credits_on_peak_month": 57,
+        "monthly_capacity_required": 338,
+        "rate": 0.2
+      },
+      "scenario_id": "S2",
+      "window_market_pattern": [
+        {
+          "market_count": 1,
+          "window_id": "H12"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H6"
+        }
+      ]
+    },
+    {
+      "additional_ungroupable_calls": {
+        "calls": 0,
+        "credits": 0,
+        "detail": null
+      },
+      "annual_credits": 1524,
+      "calls_after_grouping": 1524,
+      "calls_before_grouping": 2058,
+      "calls_per_active_month": 153,
+      "calls_per_active_week": 34.64,
+      "calls_per_calendar_week_annualized": 29.31,
+      "calls_saved": 534,
+      "credits_before_grouping": 2058,
+      "credits_per_active_month": 153,
+      "credits_per_active_week": 34.64,
+      "credits_saved": 534,
+      "execution_note": "No protocol is executable from a budget alone; receipts, labels, source contracts, minimum sample and authorization remain required.",
+      "free_plan_compatible": true,
+      "label": "Ligue 1 + Premier League, h2h minimal",
+      "league_codes": [
+        "L1",
+        "EPL"
+      ],
+      "lowest_public_plan_fitting_peak_plus_reserve": "Starter 500",
+      "note": null,
+      "paid_plan_compatible": true,
+      "peak_month_calls_proxy": 191,
+      "peak_month_credits_proxy": 191,
+      "protocol_capture_surface_candidates": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008"
+      ],
+      "protocols_enabled": [],
+      "safety_reserve": {
+        "credits_on_peak_month": 39,
+        "monthly_capacity_required": 230,
+        "rate": 0.2
+      },
+      "scenario_id": "S3",
+      "window_market_pattern": [
+        {
+          "market_count": 1,
+          "window_id": "H24"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H2"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H1"
+        }
+      ]
+    },
+    {
+      "additional_ungroupable_calls": {
+        "calls": 0,
+        "credits": 0,
+        "detail": null
+      },
+      "annual_credits": 4086,
+      "calls_after_grouping": 4086,
+      "calls_before_grouping": 5256,
+      "calls_per_active_month": 409,
+      "calls_per_active_week": 92.86,
+      "calls_per_calendar_week_annualized": 78.58,
+      "calls_saved": 1170,
+      "credits_before_grouping": 5256,
+      "credits_per_active_month": 409,
+      "credits_per_active_week": 92.86,
+      "credits_saved": 1170,
+      "execution_note": "No protocol is executable from a budget alone; receipts, labels, source contracts, minimum sample and authorization remain required.",
+      "free_plan_compatible": false,
+      "label": "Five leagues, h2h minimal",
+      "league_codes": [
+        "L1",
+        "EPL",
+        "LL",
+        "BL",
+        "SA"
+      ],
+      "lowest_public_plan_fitting_peak_plus_reserve": "20K ($30/month)",
+      "note": null,
+      "paid_plan_compatible": true,
+      "peak_month_calls_proxy": 511,
+      "peak_month_credits_proxy": 511,
+      "protocol_capture_surface_candidates": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008"
+      ],
+      "protocols_enabled": [],
+      "safety_reserve": {
+        "credits_on_peak_month": 103,
+        "monthly_capacity_required": 614,
+        "rate": 0.2
+      },
+      "scenario_id": "S4",
+      "window_market_pattern": [
+        {
+          "market_count": 1,
+          "window_id": "H24"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H2"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H1"
+        }
+      ]
+    },
+    {
+      "additional_ungroupable_calls": {
+        "calls": 150,
+        "credits": 300,
+        "detail": "5 canary fixtures × H24/H2/H1 × 10 active months; combined event-odds h2h+totals, ungroupable by event ID."
+      },
+      "annual_credits": 4386,
+      "calls_after_grouping": 4236,
+      "calls_before_grouping": 5406,
+      "calls_per_active_month": 424,
+      "calls_per_active_week": 96.27,
+      "calls_per_calendar_week_annualized": 81.46,
+      "calls_saved": 1170,
+      "credits_before_grouping": 5556,
+      "credits_per_active_month": 439,
+      "credits_per_active_week": 99.68,
+      "credits_saved": 1170,
+      "execution_note": "No protocol is executable from a budget alone; receipts, labels, source contracts, minimum sample and authorization remain required.",
+      "free_plan_compatible": false,
+      "label": "Five leagues h2h systematic + five-fixture/month event-odds totals canary",
+      "league_codes": [
+        "L1",
+        "EPL",
+        "LL",
+        "BL",
+        "SA"
+      ],
+      "lowest_public_plan_fitting_peak_plus_reserve": "20K ($30/month)",
+      "note": "Canary covers EXP010 H24/H2 and EXP023 H2/H1. /events discovery is free and excluded.",
+      "paid_plan_compatible": true,
+      "peak_month_calls_proxy": 530,
+      "peak_month_credits_proxy": 549,
+      "protocol_capture_surface_candidates": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008",
+        "RDS-EXP-V1-010",
+        "RDS-EXP-V1-023",
+        "RDS-EXP-V1-024",
+        "RDS-EXP-V1-025"
+      ],
+      "protocols_enabled": [],
+      "safety_reserve": {
+        "credits_on_peak_month": 110,
+        "monthly_capacity_required": 659,
+        "rate": 0.2
+      },
+      "scenario_id": "S5",
+      "window_market_pattern": [
+        {
+          "market_count": 1,
+          "window_id": "H24"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H2"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H1"
+        }
+      ]
+    },
+    {
+      "additional_ungroupable_calls": {
+        "calls": 5256,
+        "credits": 10512,
+        "detail": "One combined event-odds h2h+totals call per fixture at H24, H2 and H1; bulk h2h only at H12/H6."
+      },
+      "annual_credits": 13236,
+      "calls_after_grouping": 7980,
+      "calls_before_grouping": 8760,
+      "calls_per_active_month": 798,
+      "calls_per_active_week": 181.36,
+      "calls_per_calendar_week_annualized": 153.46,
+      "calls_saved": 780,
+      "credits_before_grouping": 14016,
+      "credits_per_active_month": 1324,
+      "credits_per_active_week": 300.82,
+      "credits_saved": 780,
+      "execution_note": "No protocol is executable from a budget alone; receipts, labels, source contracts, minimum sample and authorization remain required.",
+      "free_plan_compatible": false,
+      "label": "Five leagues, full event-specific synchronization coverage",
+      "league_codes": [
+        "L1",
+        "EPL",
+        "LL",
+        "BL",
+        "SA"
+      ],
+      "lowest_public_plan_fitting_peak_plus_reserve": "20K ($30/month)",
+      "note": "Includes EXP010 H24/H2 and EXP023 H2/H1 market-level clocks. 20% reserve is applied to the peak-month proxy; exact future kickoffs must replace extrapolation before purchase.",
+      "paid_plan_compatible": true,
+      "peak_month_calls_proxy": 998,
+      "peak_month_credits_proxy": 1655,
+      "protocol_capture_surface_candidates": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008",
+        "RDS-EXP-V1-009",
+        "RDS-EXP-V1-010",
+        "RDS-EXP-V1-023",
+        "RDS-EXP-V1-024",
+        "RDS-EXP-V1-025",
+        "RDS-EXP-V1-016"
+      ],
+      "protocols_enabled": [],
+      "safety_reserve": {
+        "credits_on_peak_month": 331,
+        "monthly_capacity_required": 1986,
+        "rate": 0.2
+      },
+      "scenario_id": "S6",
+      "window_market_pattern": [
+        {
+          "market_count": 1,
+          "window_id": "H12"
+        },
+        {
+          "market_count": 1,
+          "window_id": "H6"
+        }
+      ]
+    }
+  ],
+  "schema_version": "robin-credit-budget-scenarios-v1",
+  "status": [
+    "DESIGN_ONLY",
+    "NOT_ACTIVATED",
+    "NOT_AUTHORIZED",
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET"
+  ]
+}

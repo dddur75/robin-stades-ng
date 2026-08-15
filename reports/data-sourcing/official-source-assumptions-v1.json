@@ -1,0 +1,376 @@
+{
+  "analysis_dates": {
+    "public_sources_accessed": "2026-08-15"
+  },
+  "calendar_assumptions": {
+    "annualization": "44 active weeks, 10 active months, peak proxy 1.25× active-month average",
+    "included_exact_or_display_time_fixtures": {
+      "BL": 9,
+      "EPL": 20,
+      "L1": 18,
+      "LL": 10,
+      "SA": 10
+    },
+    "laliga_limit": "display-time timezone interpretation must be independently re-confirmed before scheduling",
+    "non_final_kickoff_policy": "refresh from official sources; KICKOFF_TIME_TO_BE_CONFIRMED until exact timezone-aware publication",
+    "official_full_season_fixture_counts": {
+      "BL": 306,
+      "EPL": 380,
+      "L1": 306,
+      "LL": 380,
+      "SA": 380
+    },
+    "planning_groups_per_matchday": {
+      "BL": 5,
+      "EPL": 8,
+      "L1": 6,
+      "LL": 10,
+      "SA": 8
+    }
+  },
+  "design_assumptions": {
+    "annual_grouping": "planning groups are extrapolated and do not assume cross-window coincidences",
+    "exp009": "Only the count four is frozen. H12/H6 are a selected candidate, not a protocol fact.",
+    "exp010": "The source exposes provider market-level last_update, but PR57 calls the exposure receipt-time skew and its dependency names H24/H2. Clock semantics and required windows must be amended before execution.",
+    "h1": "Scheduler uses a conservative ±5-minute guard, but PR57 lacks a formal lower bound/latest-nearest rule; amendment is mandatory.",
+    "h2_roles": "H2 is PREDICTOR for most protocols and a separately bound TARGET for EXP006; a neutral raw receipt never grants TARGET data to that experiment's feature path.",
+    "minimal_windows": [
+      "H24",
+      "H2",
+      "H1"
+    ],
+    "pilot": "all 18 Ligue 1 J1/J2 fixtures; five canary fixtures; no data call in this mission"
+  },
+  "git_authority": {
+    "baseline": "6cb8de636890959bd2ddb7e1c791a2eb04ee8763",
+    "convergence_manifest_sha256": "269f4066b13e88f4397aecd6f1a3d7ba154dc8468415581ce0f6b8922f1537b4",
+    "current_main_merged": "72e6cd625f7668fdcc095e63a847b6e7e9cf860f",
+    "pr56_initial_head": "81211569f7f5ae1139a4be50b90c643a00d3fdd6",
+    "pr56_state_at_generation": "OPEN_DRAFT_MAIN_MERGED",
+    "pr57_final_head": "ccaaff94b4b4a3bdec9ec2738efbebba3fe23d43",
+    "pr57_final_head_is_second_parent": true,
+    "pr57_head_changed": false,
+    "pr57_initial_head": "ccaaff94b4b4a3bdec9ec2738efbebba3fe23d43",
+    "pr57_merge_parents": [
+      "6cb8de636890959bd2ddb7e1c791a2eb04ee8763",
+      "ccaaff94b4b4a3bdec9ec2738efbebba3fe23d43"
+    ],
+    "pr57_merge_sha": "124bad7b2bd8ca5aaee6770f0a5a3a0c947692b1",
+    "pr57_protocol_content_sha256": "317355fa5d55696d8ea6538aad62737b0ea9583e4614b74644903d3f87a7e0e5",
+    "pr58_final_head": "bdb5be144ee0f6e9cf33b446f32a1808ada74de1",
+    "repository": "dddur75/robin-stades-ng"
+  },
+  "legal_caveats": [
+    "The Odds API public terms allow analytics/apps but forbid resale/repackaging/redistribution as a standalone data product.",
+    "Public terms do not state a raw-payload retention duration; written confirmation is a pilot stop gate.",
+    "Official calendars are used for internal source mapping and derived timing, not bulk republication.",
+    "Provider accuracy/freshness is not warranted; runtime mapping and operator verification remain required."
+  ],
+  "official_sources": [
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API official domain",
+      "source_id": "odds_home",
+      "supports": [
+        "public plans",
+        "monthly credits"
+      ],
+      "url": "https://the-odds-api.com/"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API v4 official documentation",
+      "source_id": "odds_v4",
+      "supports": [
+        "endpoint costs",
+        "schemas",
+        "quota headers",
+        "market timestamps"
+      ],
+      "url": "https://the-odds-api.com/liveapi/guides/v4/"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API official market guide",
+      "source_id": "odds_markets",
+      "supports": [
+        "totals availability warning"
+      ],
+      "url": "https://the-odds-api.com/sports-odds-data/betting-markets.html"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API official update-interval guide",
+      "source_id": "odds_intervals",
+      "supports": [
+        "prematch refresh intervals"
+      ],
+      "url": "https://the-odds-api.com/sports-odds-data/update-intervals.html"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API official account FAQ",
+      "source_id": "odds_faq",
+      "supports": [
+        "monthly reset"
+      ],
+      "url": "https://the-odds-api.com/manage/faqs.html"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API official error guide",
+      "source_id": "odds_errors",
+      "supports": [
+        "quota exhaustion",
+        "HTTP 429"
+      ],
+      "url": "https://the-odds-api.com/liveapi/guides/v4/api-error-codes.html"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API public terms",
+      "source_id": "odds_terms",
+      "supports": [
+        "analytics use",
+        "standalone redistribution prohibition",
+        "no accuracy warranty"
+      ],
+      "url": "https://the-odds-api.com/terms-and-conditions.html"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API privacy notice",
+      "source_id": "odds_privacy",
+      "supports": [
+        "public legal context"
+      ],
+      "url": "https://the-odds-api.com/privacy.html"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "The Odds API official impersonation warning",
+      "source_id": "odds_warning",
+      "supports": [
+        "the-odds-api.com is the only official domain"
+      ],
+      "url": "https://the-odds-api.com/impersonation-warning.html"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Sportmonks official Football API page",
+      "source_id": "sportmonks_core",
+      "supports": [
+        "fixture/result provider candidate",
+        "plan-dependent structured coverage"
+      ],
+      "url": "https://www.sportmonks.com/football-api/"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Sportmonks official plans page",
+      "source_id": "sportmonks_pricing",
+      "supports": [
+        "candidate pricing requiring re-verification before purchase"
+      ],
+      "url": "https://www.sportmonks.com/football-api/plans-pricing/"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Sportmonks terms of service",
+      "source_id": "sportmonks_terms",
+      "supports": [
+        "commercial/storage conditions",
+        "raw resale prohibition"
+      ],
+      "url": "https://www.sportmonks.com/terms-of-service/"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Wikidata data-access documentation",
+      "source_id": "wikidata_access",
+      "supports": [
+        "revision-addressed venue geography candidate"
+      ],
+      "url": "https://www.wikidata.org/wiki/Wikidata:Data_access"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Wikidata licensing page",
+      "source_id": "wikidata_licence",
+      "supports": [
+        "CC0 structured data"
+      ],
+      "url": "https://www.wikidata.org/wiki/Wikidata:Licensing"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Ligue 1 / LFP",
+      "source_id": "ligue1_calendar",
+      "supports": [
+        "2026-27 calendar",
+        "306 fixtures"
+      ],
+      "url": "https://ligue1.com/fr/articles/l1_article_5284-"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "LFP calendar PDF",
+      "source_id": "ligue1_pdf",
+      "supports": [
+        "34 matchdays",
+        "fixture pairs"
+      ],
+      "url": "https://s3.eu-west-1.amazonaws.com/image.mpg/L1MD_2627_CALENDRIER.pdf"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Ligue 1 / LFP",
+      "source_id": "ligue1_times",
+      "supports": [
+        "exact J1-J2 kickoff times"
+      ],
+      "url": "https://ligue1.com/fr/articles/l1_article_5435-programmation-tv-des-2-premieres-journees-de-ligue-1-mcdonald-s-2627"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Premier League",
+      "source_id": "premier_league",
+      "supports": [
+        "380 fixtures",
+        "published kickoff times",
+        "subject-to-change caveat"
+      ],
+      "url": "https://www.premierleague.com/en/news/4675097/all-380-fixtures-for-202627-premier-league-season"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "RFEF",
+      "source_id": "laliga_rfef",
+      "supports": [
+        "2026-27 Primera Division calendar",
+        "380 fixtures"
+      ],
+      "url": "https://rfef.es/es/noticias/calendario-completo-primera-division-temporada-202627"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "RFEF",
+      "source_id": "laliga_pdf",
+      "supports": [
+        "38 matchdays",
+        "fixture pairs"
+      ],
+      "url": "https://rfef.es/sites/default/files/2026-06/Campeonato_de_Primera_Division_0.pdf"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "LaLiga",
+      "source_id": "laliga_times",
+      "supports": [
+        "published display times",
+        "mutable schedule"
+      ],
+      "url": "https://www.laliga.com/calendar-2026-2027/laliga-easports"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "DFL / Bundesliga",
+      "source_id": "bundesliga_calendar",
+      "supports": [
+        "306 fixtures",
+        "2026-27 fixture list"
+      ],
+      "url": "https://www.bundesliga.com/en/bundesliga/news/2026-27-fixture-lists-now-available-38068"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "DFL",
+      "source_id": "bundesliga_pdf",
+      "supports": [
+        "numbered fixtures 1-306",
+        "matchday structure"
+      ],
+      "url": "https://media.dfl.de/sites/3/2026/07/EN_eFyJmg6k_Bundesliga_Fixture-List_2026_27.pdf"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "DFL / Bundesliga",
+      "source_id": "bundesliga_times",
+      "supports": [
+        "confirmed J1-J4 kickoff times"
+      ],
+      "url": "https://www.bundesliga.com/en/bundesliga/news/confirmed-kick-off-times-dates-2026-27-fixtures-23955"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Lega Serie A",
+      "source_id": "serie_a_calendar",
+      "supports": [
+        "2026-27 calendar",
+        "380 fixtures"
+      ],
+      "url": "https://www.legaseriea.it/serie-a/news/calendario-della-serie-a-enilive-2026-27"
+    },
+    {
+      "accessed_at": "2026-08-15",
+      "authority": "Lega Serie A official communication 208",
+      "source_id": "serie_a_times",
+      "supports": [
+        "exact J1-J5 kickoff times",
+        "conditional fixtures caveat"
+      ],
+      "url": "https://images.legaseriea.it/image/private/fl_attachment/prd/czailts3apyt3kuxjran.pdf"
+    }
+  ],
+  "provenance_boundary": {
+    "deterministic_reproduction_scope": "Pinned Git authorities plus embedded, dated public facts produce the same repository reports byte-for-byte.",
+    "does_not_claim": "Immutable provenance of live official web-page bytes; no web payload is committed.",
+    "external_pack": {
+      "manifest_sha256_reference": "269f4066b13e88f4397aecd6f1a3d7ba154dc8468415581ce0f6b8922f1537b4",
+      "repository_evidence": "NOT_COMMITTED_BY_MISSION_RULE",
+      "status": "EXTERNAL_INPUT_NOT_REPRODUCIBLE_FROM_REPOSITORY"
+    }
+  },
+  "provider_facts": {
+    "bulk_odds_cost": "requested market count × requested region count",
+    "forbidden_impostor_domain": "https://theoddsapi.com/",
+    "market_sync_field": "bookmakers[].markets[].last_update",
+    "market_sync_grain": "bookmaker_market",
+    "market_sync_observation": "The official event-odds schema exposes last_update at market level under each bookmaker; the bulk odds schema also exposes bookmaker-level last_update.",
+    "market_sync_official_proof": "https://the-odds-api.com/liveapi/guides/v4/",
+    "market_sync_semantics": "provider freshness for a bookmaker-market pair; real paired h2h/totals coverage remains to be measured",
+    "market_synchronization_verdict": "MARKET_SYNCHRONIZATION_OBSERVABLE_DESIGN_ONLY",
+    "official_domain_only": "https://the-odds-api.com/",
+    "public_pricing": {
+      "100K": {
+        "monthly_credits": 100000,
+        "monthly_usd": 59
+      },
+      "15M": {
+        "monthly_credits": 15000000,
+        "monthly_usd": 249
+      },
+      "20K": {
+        "monthly_credits": 20000,
+        "monthly_usd": 30
+      },
+      "5M": {
+        "monthly_credits": 5000000,
+        "monthly_usd": 119
+      },
+      "starter_monthly_credits": 500
+    },
+    "retention_verdict": "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
+    "totals_verdict": "TOTALS_COVERAGE_TO_BE_PROVEN"
+  },
+  "schema_version": "robin-assumptions-and-official-sources-v1",
+  "status": [
+    "DESIGN_ONLY",
+    "NOT_ACTIVATED",
+    "NOT_AUTHORIZED",
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET"
+  ]
+}

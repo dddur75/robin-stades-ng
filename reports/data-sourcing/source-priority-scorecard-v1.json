@@ -1,0 +1,1352 @@
+{
+  "schema_version": "1.0.0",
+  "generated_from": "robin-source-candidate-inventory-v1",
+  "source_inventory_fingerprint": "e955e5b1ab24adf1c7232785712d75c29863540426eca595fd79080ba2540432",
+  "source_count": 23,
+  "costs_verified_at": "2026-08-14",
+  "class_counts": {
+    "A": 1,
+    "B": 4,
+    "C": 5,
+    "D": 13
+  },
+  "weights": {
+    "temporal_proof": 20,
+    "scientific_value": 20,
+    "coverage": 15,
+    "stability": 10,
+    "quality": 10,
+    "legality_licence": 10,
+    "cost": 5,
+    "maintenance": 5,
+    "integration": 5
+  },
+  "scoring_method": "sum of nine bounded integer criteria; deterministic tie-break by source_id",
+  "hard_gate": "Class D remains excluded regardless of numerical score.",
+  "ranked_sources": [
+    {
+      "source_id": "the-odds-api-current",
+      "name": "The Odds API v4 current odds",
+      "source_class": "C",
+      "total": 94,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 5,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Provider update times plus Robin first-observed receipts can bound every snapshot.",
+        "scientific_value": "Directly measures price level, movement and cross-bookmaker disagreement.",
+        "coverage": "Broad leagues and main/additional markets, with variable bookmaker-level availability.",
+        "stability": "Versioned v4 and mature documentation; live coverage remains dynamic.",
+        "quality": "Raw bookmaker quotes and update times are inspectable; gaps must fail closed.",
+        "legality_licence": "Commercial analytics allowed, but no raw resale and retention should be reconfirmed.",
+        "cost": "The 500-credit Starter tier supports the bounded recommended schedule.",
+        "maintenance": "Mapping and quota monitoring are modest but continuous.",
+        "integration": "Repository already contains Odds API contracts/evidence, reducing mapping work."
+      }
+    },
+    {
+      "source_id": "sportmonks-premium-odds",
+      "name": "Sportmonks Premium Odds Feed",
+      "source_class": "C",
+      "total": 89,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 8,
+        "cost": 1,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Per-change update times plus receipts provide strong bounds.",
+        "scientific_value": "Opening, every change, rich markets and bookmaker dispersion.",
+        "coverage": "Strong within purchased leagues and market availability.",
+        "stability": "Commercial feed and versioned documentation.",
+        "quality": "TXOdds depth and per-odd updates are strong.",
+        "legality_licence": "Commercial use/storage available under paid terms, no raw resale.",
+        "cost": "Minimum combined monthly cost is material.",
+        "maintenance": "Seven-day retention requires reliable automation.",
+        "integration": "Structured IDs help, but a new adapter is needed."
+      }
+    },
+    {
+      "source_id": "open-meteo-prospective-forecast",
+      "name": "Open-Meteo prospective forecast capture",
+      "source_class": "C",
+      "total": 87,
+      "scores": {
+        "temporal_proof": 19,
+        "scientific_value": 17,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 4,
+        "maintenance": 3,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Explicit run plus receipt can establish availability.",
+        "scientific_value": "Forecast-as-known avoids realized-weather leakage.",
+        "coverage": "Global.",
+        "stability": "Well-documented but models change.",
+        "quality": "Multiple reputable numerical models.",
+        "legality_licence": "Clear attribution/data rights with service-plan condition.",
+        "cost": "Free pilot, paid commercial use.",
+        "maintenance": "Venue/model-cycle monitoring.",
+        "integration": "New weather/venue pipeline required."
+      }
+    },
+    {
+      "source_id": "api-football-v3",
+      "name": "API-Football v3",
+      "source_class": "D",
+      "total": 85,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 18,
+        "coverage": 15,
+        "stability": 8,
+        "quality": 8,
+        "legality_licence": 4,
+        "cost": 5,
+        "maintenance": 4,
+        "integration": 5
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective Robin receipts can bound mutable endpoints; archive alone cannot.",
+        "scientific_value": "Covers several high-value missing availability fields.",
+        "coverage": "Very broad advertised competition/endpoint coverage.",
+        "stability": "Versioned API and mature documentation.",
+        "quality": "Coverage varies and needs empirical validation.",
+        "legality_licence": "Underlying publication rights are expressly not granted.",
+        "cost": "A small free plan exists.",
+        "maintenance": "Many endpoint cells and identities require monitoring.",
+        "integration": "Repository already contains an API-Football adapter/coverage contract."
+      }
+    },
+    {
+      "source_id": "sportmonks-football-core",
+      "name": "Sportmonks Football API core",
+      "source_class": "C",
+      "total": 85,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 18,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 8,
+        "legality_licence": 8,
+        "cost": 2,
+        "maintenance": 4,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective receipts can bind API states; historical first visibility remains plan/endpoint dependent.",
+        "scientific_value": "Rich contextual fields complement odds.",
+        "coverage": "Very broad, with economical five-league selection.",
+        "stability": "Commercial versioned provider.",
+        "quality": "Structured and deep but requires field-level coverage audit.",
+        "legality_licence": "Commercial derivation/storage clearer than many rivals; raw resale excluded.",
+        "cost": "Affordable but not free and not activated.",
+        "maintenance": "Provider mapping and entitlements require work.",
+        "integration": "New provider adapter would be required."
+      }
+    },
+    {
+      "source_id": "met-norway-locationforecast",
+      "name": "MET Norway Locationforecast 2.0",
+      "source_class": "C",
+      "total": 84,
+      "scores": {
+        "temporal_proof": 19,
+        "scientific_value": 8,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 8,
+        "legality_licence": 10,
+        "cost": 5,
+        "maintenance": 5,
+        "integration": 5
+      },
+      "score_rationales": {
+        "temporal_proof": "HTTP/source times plus Robin receipt can bound forecasts prospectively.",
+        "scientific_value": "Weather is useful but secondary to odds/player availability.",
+        "coverage": "Global point forecast.",
+        "stability": "Official versioned service with deprecation notices.",
+        "quality": "National meteorological provider.",
+        "legality_licence": "Commercial CC BY terms are explicit.",
+        "cost": "Free public service.",
+        "maintenance": "Caching/headers are clear and modest.",
+        "integration": "Standard GeoJSON and no credential."
+      }
+    },
+    {
+      "source_id": "open-meteo-single-runs-archive",
+      "name": "Open-Meteo Single Runs API archive",
+      "source_class": "B",
+      "total": 84,
+      "scores": {
+        "temporal_proof": 13,
+        "scientific_value": 18,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 4,
+        "maintenance": 4,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Individual runs are addressable, but run means initialization, delay is only typical, and no immutable historical availability log or contemporaneous Robin receipt was found.",
+        "scientific_value": "Preserves issued forecast runs rather than realized post-match conditions, with availability uncertainty.",
+        "coverage": "Global coordinate coverage spans all target venues.",
+        "stability": "Documented models and API, with explicit cycle changes.",
+        "quality": "Reputable model sources and explicit run identity, not publication identity.",
+        "legality_licence": "CC BY data terms are clear; service plan depends on commercial status.",
+        "cost": "Evaluation is free and public commercial starting price is moderate.",
+        "maintenance": "Model-cycle, availability and venue mapping need monitoring.",
+        "integration": "Coordinate/time joins are straightforward but venue lineage is new."
+      }
+    },
+    {
+      "source_id": "the-odds-api-historical",
+      "name": "The Odds API historical snapshots",
+      "source_class": "B",
+      "total": 83,
+      "scores": {
+        "temporal_proof": 14,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 1,
+        "maintenance": 3,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Snapshot labels/navigation are strong as-of semantics, but documented retroactive error correction means a later response cannot prove identical historical bytes without a contemporaneous receipt.",
+        "scientific_value": "Dense odds trajectories support closing-line and movement analysis when mutation risk is acknowledged.",
+        "coverage": "Broad but only from mid-2020 and variable by sport/bookmaker/market.",
+        "stability": "Documented archive and versioned API, with retroactive corrections possible.",
+        "quality": "Snapshot grid and bookmaker timestamps are auditable, while corrected errors can change past values.",
+        "legality_licence": "Analytics allowed under terms; bulk retention still merits written confirmation.",
+        "cost": "Paid access and 10-credit historical multiplier make recovery expensive.",
+        "maintenance": "Era-specific coverage, mutation detection and mapping require regular work.",
+        "integration": "Current repository concepts already align with its identities and markets."
+      }
+    },
+    {
+      "source_id": "sportradar-soccer",
+      "name": "Sportradar Soccer API / historical data",
+      "source_class": "D",
+      "total": 82,
+      "scores": {
+        "temporal_proof": 19,
+        "scientific_value": 20,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 10,
+        "legality_licence": 5,
+        "cost": 0,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Enterprise feeds can carry strong timestamps.",
+        "scientific_value": "Broad deep official-grade data.",
+        "coverage": "Very broad competitions/feeds.",
+        "stability": "Enterprise versioning.",
+        "quality": "High.",
+        "legality_licence": "Only a custom contract would define rights.",
+        "cost": "No public price and likely disproportionate.",
+        "maintenance": "Procurement/tier mapping is heavy.",
+        "integration": "New enterprise integration."
+      }
+    },
+    {
+      "source_id": "wikidata-revisioned-venue-geography",
+      "name": "Wikidata revisioned venue geography",
+      "source_class": "A",
+      "total": 82,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 15,
+        "coverage": 14,
+        "stability": 8,
+        "quality": 6,
+        "legality_licence": 10,
+        "cost": 5,
+        "maintenance": 3,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Revision IDs/times reconstruct historical assertions.",
+        "scientific_value": "Venue geography enables auditable travel distances.",
+        "coverage": "Global but incomplete at match-specific venue grain.",
+        "stability": "Persistent Q IDs with revision history.",
+        "quality": "Community data needs authoritative cross-checks.",
+        "legality_licence": "CC0 is explicit.",
+        "cost": "No monetary fee.",
+        "maintenance": "Entity and neutral-venue reconciliation is material.",
+        "integration": "JSON/dump access is standard, but new mappings are required."
+      }
+    },
+    {
+      "source_id": "stats-perform-opta",
+      "name": "Stats Perform Opta data feeds",
+      "source_class": "D",
+      "total": 80,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 20,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 10,
+        "legality_licence": 5,
+        "cost": 0,
+        "maintenance": 1,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Commercial feeds likely provide strong event timing, subject to contract.",
+        "scientific_value": "Elite event and derived metrics.",
+        "coverage": "Very broad.",
+        "stability": "Enterprise provider.",
+        "quality": "High-quality Opta lineage.",
+        "legality_licence": "Rights unknown until contract.",
+        "cost": "No public price and likely disproportionate.",
+        "maintenance": "Procurement/custom feed work is high.",
+        "integration": "New proprietary integration."
+      }
+    },
+    {
+      "source_id": "noaa-ncei-isd",
+      "name": "NOAA NCEI Integrated Surface Database",
+      "source_class": "D",
+      "total": 79,
+      "scores": {
+        "temporal_proof": 15,
+        "scientific_value": 16,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 8,
+        "legality_licence": 7,
+        "cost": 5,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective Robin receipts can bound daily publication; old observations lack first-observed evidence.",
+        "scientific_value": "Independent observed-weather benchmark.",
+        "coverage": "Large global network.",
+        "stability": "Long-running archive/common format.",
+        "quality": "Provider QC with station-level heterogeneity.",
+        "legality_licence": "NOAA is open but international record provenance is not fully resolved.",
+        "cost": "Free.",
+        "maintenance": "Station mapping/QC is heavy.",
+        "integration": "Fixed-width/station workflow is new."
+      }
+    },
+    {
+      "source_id": "betfair-historical-data",
+      "name": "Betfair Historical Data",
+      "source_class": "D",
+      "total": 77,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 12,
+        "stability": 9,
+        "quality": 10,
+        "legality_licence": 2,
+        "cost": 0,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Published-time stream is excellent.",
+        "scientific_value": "Exchange movements are highly informative.",
+        "coverage": "Market dependent and not a bookmaker consensus feed.",
+        "stability": "Mature documented format.",
+        "quality": "Raw exchange updates are precise.",
+        "legality_licence": "No Robin commercial licence.",
+        "cost": "Purchase/custom licensing unknown and disallowed here.",
+        "maintenance": "Large stream and market decoding.",
+        "integration": "New high-volume format/identity layer."
+      }
+    },
+    {
+      "source_id": "football-data-org-v4",
+      "name": "football-data.org v4",
+      "source_class": "D",
+      "total": 76,
+      "scores": {
+        "temporal_proof": 16,
+        "scientific_value": 16,
+        "coverage": 11,
+        "stability": 8,
+        "quality": 8,
+        "legality_licence": 5,
+        "cost": 4,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective receipts can bind states; lastUpdated is not first-publication proof.",
+        "scientific_value": "Useful context and baseline odds.",
+        "coverage": "Five target leagues on free tier, fewer deep fields.",
+        "stability": "Versioned v4 and long-running service.",
+        "quality": "Typed resources and stable IDs.",
+        "legality_licence": "Durable commercial/model rights are unclear.",
+        "cost": "Free entry but deeper/history tiers cost.",
+        "maintenance": "Token, tier and mutable-record handling.",
+        "integration": "Clean REST JSON and stable IDs."
+      }
+    },
+    {
+      "source_id": "statsbomb-open-data",
+      "name": "StatsBomb Open Data",
+      "source_class": "D",
+      "total": 75,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 20,
+        "coverage": 8,
+        "stability": 7,
+        "quality": 10,
+        "legality_licence": 0,
+        "cost": 5,
+        "maintenance": 3,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Release lineage is strong but match-time availability is not universally proven.",
+        "scientific_value": "Elite event/xG/lineup detail.",
+        "coverage": "Selected competition-seasons only.",
+        "stability": "Git-versioned but irregular/provider-controlled.",
+        "quality": "High-quality structured event data.",
+        "legality_licence": "Commercial/derived exploitation is prohibited.",
+        "cost": "Free download.",
+        "maintenance": "Structured JSON is manageable.",
+        "integration": "Known schema but incompatible rights."
+      }
+    },
+    {
+      "source_id": "football-data-co-uk",
+      "name": "Football-Data.co.uk historical archive",
+      "source_class": "D",
+      "total": 72,
+      "scores": {
+        "temporal_proof": 8,
+        "scientific_value": 19,
+        "coverage": 13,
+        "stability": 7,
+        "quality": 7,
+        "legality_licence": 3,
+        "cost": 5,
+        "maintenance": 5,
+        "integration": 5
+      },
+      "score_rationales": {
+        "temporal_proof": "Opening/closing labels exist but no row-level published/observed timestamp.",
+        "scientific_value": "Long results and odds baseline supports benchmark research.",
+        "coverage": "Many leagues/seasons but fields vary substantially.",
+        "stability": "Long-running site with documented bookmaker regime changes.",
+        "quality": "Useful values with missingness and provider caveats.",
+        "legality_licence": "No clear commercial retention/reuse grant.",
+        "cost": "Public download is free.",
+        "maintenance": "Simple CSVs offset by era/name drift.",
+        "integration": "Robin already uses this schema and provider mapping."
+      }
+    },
+    {
+      "source_id": "open-meteo-historical-reanalysis",
+      "name": "Open-Meteo Historical Weather API reanalysis",
+      "source_class": "B",
+      "total": 72,
+      "scores": {
+        "temporal_proof": 8,
+        "scientific_value": 13,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 3,
+        "maintenance": 3,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Valid time is known but original pre-match availability is not the modeled concept.",
+        "scientific_value": "Good realized-weather control, not forecast information.",
+        "coverage": "Global and long historical reach.",
+        "stability": "Mature model archives.",
+        "quality": "High-quality reanalysis with revisions/interpolation caveat.",
+        "legality_licence": "Clear CC BY data licence and conditional service terms.",
+        "cost": "Commercial historical access is paid.",
+        "maintenance": "Model and coordinate joins require monitoring.",
+        "integration": "Standard coordinate/time series JSON."
+      }
+    },
+    {
+      "source_id": "openfootball-results",
+      "name": "OpenFootball public-domain results repositories",
+      "source_class": "B",
+      "total": 70,
+      "scores": {
+        "temporal_proof": 11,
+        "scientific_value": 14,
+        "coverage": 13,
+        "stability": 6,
+        "quality": 6,
+        "legality_licence": 10,
+        "cost": 5,
+        "maintenance": 2,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Git versions aid replay but do not prove pre-kickoff first availability.",
+        "scientific_value": "Fixtures support baselines, standings, form and rest.",
+        "coverage": "Broad countries with uneven season completeness.",
+        "stability": "Open repositories persist, but updates are volunteer-driven.",
+        "quality": "Requires reconciliation and completeness checks.",
+        "legality_licence": "CC0 is explicit.",
+        "cost": "Free.",
+        "maintenance": "Name-based joins are labor-intensive.",
+        "integration": "Plain text/JSON is easy but lacks Robin IDs."
+      }
+    },
+    {
+      "source_id": "pinnacle-api",
+      "name": "Pinnacle API",
+      "source_class": "D",
+      "total": 65,
+      "scores": {
+        "temporal_proof": 16,
+        "scientific_value": 18,
+        "coverage": 10,
+        "stability": 7,
+        "quality": 9,
+        "legality_licence": 1,
+        "cost": 0,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Approved prospective polling could be receipted, but no open archive.",
+        "scientific_value": "Sharp-market line is valuable.",
+        "coverage": "Access dependent.",
+        "stability": "General API closure is a major regime break.",
+        "quality": "Direct bookmaker data.",
+        "legality_licence": "No approved Robin access and scraping prohibited.",
+        "cost": "Bespoke cost/access unknown.",
+        "maintenance": "Eligibility risk is high.",
+        "integration": "Existing old fields do not guarantee current access."
+      }
+    },
+    {
+      "source_id": "meteostat",
+      "name": "Meteostat bulk/API weather",
+      "source_class": "D",
+      "total": 59,
+      "scores": {
+        "temporal_proof": 10,
+        "scientific_value": 13,
+        "coverage": 14,
+        "stability": 5,
+        "quality": 6,
+        "legality_licence": 1,
+        "cost": 5,
+        "maintenance": 2,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Measurement time is not first-publication time.",
+        "scientific_value": "Observed weather has validation value.",
+        "coverage": "Broad stations.",
+        "stability": "Bulk format is beta.",
+        "quality": "Model filling/provenance needs controls.",
+        "legality_licence": "Official sources contradict each other.",
+        "cost": "Public files are free.",
+        "maintenance": "Station mapping and licence resolution are heavy.",
+        "integration": "CSV/Parquet is standard."
+      }
+    },
+    {
+      "source_id": "fbref",
+      "name": "FBref statistics",
+      "source_class": "D",
+      "total": 53,
+      "scores": {
+        "temporal_proof": 4,
+        "scientific_value": 18,
+        "coverage": 14,
+        "stability": 6,
+        "quality": 8,
+        "legality_licence": 0,
+        "cost": 3,
+        "maintenance": 0,
+        "integration": 0
+      },
+      "score_rationales": {
+        "temporal_proof": "Pages do not provide first-observed lineage.",
+        "scientific_value": "Rich stats/xG.",
+        "coverage": "Broad.",
+        "stability": "HTML structures can change.",
+        "quality": "Generally strong aggregation.",
+        "legality_licence": "Predictive/automated use is expressly restricted.",
+        "cost": "Free browsing is irrelevant to lawful automation.",
+        "maintenance": "Prohibited use makes maintenance score zero.",
+        "integration": "No authorized integration."
+      }
+    },
+    {
+      "source_id": "clubelo",
+      "name": "ClubElo ratings",
+      "source_class": "D",
+      "total": 51,
+      "scores": {
+        "temporal_proof": 6,
+        "scientific_value": 16,
+        "coverage": 12,
+        "stability": 3,
+        "quality": 7,
+        "legality_licence": 0,
+        "cost": 5,
+        "maintenance": 1,
+        "integration": 1
+      },
+      "score_rationales": {
+        "temporal_proof": "Rating dates lack publication receipts.",
+        "scientific_value": "Independent Elo prior is useful but reproducible in-house.",
+        "coverage": "Broad European clubs.",
+        "stability": "Programmatic interface not verified.",
+        "quality": "Method has value but provenance is limited.",
+        "legality_licence": "No reuse grant found.",
+        "cost": "Browsing free.",
+        "maintenance": "HTML/name reconciliation is high.",
+        "integration": "No stable verified API."
+      }
+    },
+    {
+      "source_id": "transfermarkt-availability",
+      "name": "Transfermarkt injuries and suspensions",
+      "source_class": "D",
+      "total": 46,
+      "scores": {
+        "temporal_proof": 4,
+        "scientific_value": 16,
+        "coverage": 12,
+        "stability": 6,
+        "quality": 6,
+        "legality_licence": 0,
+        "cost": 2,
+        "maintenance": 0,
+        "integration": 0
+      },
+      "score_rationales": {
+        "temporal_proof": "Page dates do not prove first availability.",
+        "scientific_value": "Player availability is a major missing signal.",
+        "coverage": "Broad pages.",
+        "stability": "Established site but HTML is mutable.",
+        "quality": "Editorial timing/accuracy needs validation.",
+        "legality_licence": "Automated extraction is prohibited.",
+        "cost": "Manual browsing cannot support the corpus.",
+        "maintenance": "No acceptable automated workflow.",
+        "integration": "No authorized integration."
+      }
+    }
+  ],
+  "top_5_global": [
+    {
+      "source_id": "the-odds-api-current",
+      "name": "The Odds API v4 current odds",
+      "source_class": "C",
+      "total": 94,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 5,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Provider update times plus Robin first-observed receipts can bound every snapshot.",
+        "scientific_value": "Directly measures price level, movement and cross-bookmaker disagreement.",
+        "coverage": "Broad leagues and main/additional markets, with variable bookmaker-level availability.",
+        "stability": "Versioned v4 and mature documentation; live coverage remains dynamic.",
+        "quality": "Raw bookmaker quotes and update times are inspectable; gaps must fail closed.",
+        "legality_licence": "Commercial analytics allowed, but no raw resale and retention should be reconfirmed.",
+        "cost": "The 500-credit Starter tier supports the bounded recommended schedule.",
+        "maintenance": "Mapping and quota monitoring are modest but continuous.",
+        "integration": "Repository already contains Odds API contracts/evidence, reducing mapping work."
+      }
+    },
+    {
+      "source_id": "sportmonks-premium-odds",
+      "name": "Sportmonks Premium Odds Feed",
+      "source_class": "C",
+      "total": 89,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 8,
+        "cost": 1,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Per-change update times plus receipts provide strong bounds.",
+        "scientific_value": "Opening, every change, rich markets and bookmaker dispersion.",
+        "coverage": "Strong within purchased leagues and market availability.",
+        "stability": "Commercial feed and versioned documentation.",
+        "quality": "TXOdds depth and per-odd updates are strong.",
+        "legality_licence": "Commercial use/storage available under paid terms, no raw resale.",
+        "cost": "Minimum combined monthly cost is material.",
+        "maintenance": "Seven-day retention requires reliable automation.",
+        "integration": "Structured IDs help, but a new adapter is needed."
+      }
+    },
+    {
+      "source_id": "open-meteo-prospective-forecast",
+      "name": "Open-Meteo prospective forecast capture",
+      "source_class": "C",
+      "total": 87,
+      "scores": {
+        "temporal_proof": 19,
+        "scientific_value": 17,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 4,
+        "maintenance": 3,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Explicit run plus receipt can establish availability.",
+        "scientific_value": "Forecast-as-known avoids realized-weather leakage.",
+        "coverage": "Global.",
+        "stability": "Well-documented but models change.",
+        "quality": "Multiple reputable numerical models.",
+        "legality_licence": "Clear attribution/data rights with service-plan condition.",
+        "cost": "Free pilot, paid commercial use.",
+        "maintenance": "Venue/model-cycle monitoring.",
+        "integration": "New weather/venue pipeline required."
+      }
+    },
+    {
+      "source_id": "sportmonks-football-core",
+      "name": "Sportmonks Football API core",
+      "source_class": "C",
+      "total": 85,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 18,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 8,
+        "legality_licence": 8,
+        "cost": 2,
+        "maintenance": 4,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective receipts can bind API states; historical first visibility remains plan/endpoint dependent.",
+        "scientific_value": "Rich contextual fields complement odds.",
+        "coverage": "Very broad, with economical five-league selection.",
+        "stability": "Commercial versioned provider.",
+        "quality": "Structured and deep but requires field-level coverage audit.",
+        "legality_licence": "Commercial derivation/storage clearer than many rivals; raw resale excluded.",
+        "cost": "Affordable but not free and not activated.",
+        "maintenance": "Provider mapping and entitlements require work.",
+        "integration": "New provider adapter would be required."
+      }
+    },
+    {
+      "source_id": "met-norway-locationforecast",
+      "name": "MET Norway Locationforecast 2.0",
+      "source_class": "C",
+      "total": 84,
+      "scores": {
+        "temporal_proof": 19,
+        "scientific_value": 8,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 8,
+        "legality_licence": 10,
+        "cost": 5,
+        "maintenance": 5,
+        "integration": 5
+      },
+      "score_rationales": {
+        "temporal_proof": "HTTP/source times plus Robin receipt can bound forecasts prospectively.",
+        "scientific_value": "Weather is useful but secondary to odds/player availability.",
+        "coverage": "Global point forecast.",
+        "stability": "Official versioned service with deprecation notices.",
+        "quality": "National meteorological provider.",
+        "legality_licence": "Commercial CC BY terms are explicit.",
+        "cost": "Free public service.",
+        "maintenance": "Caching/headers are clear and modest.",
+        "integration": "Standard GeoJSON and no credential."
+      }
+    }
+  ],
+  "top_3_historical": [
+    {
+      "source_id": "open-meteo-single-runs-archive",
+      "name": "Open-Meteo Single Runs API archive",
+      "source_class": "B",
+      "total": 84,
+      "scores": {
+        "temporal_proof": 13,
+        "scientific_value": 18,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 4,
+        "maintenance": 4,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Individual runs are addressable, but run means initialization, delay is only typical, and no immutable historical availability log or contemporaneous Robin receipt was found.",
+        "scientific_value": "Preserves issued forecast runs rather than realized post-match conditions, with availability uncertainty.",
+        "coverage": "Global coordinate coverage spans all target venues.",
+        "stability": "Documented models and API, with explicit cycle changes.",
+        "quality": "Reputable model sources and explicit run identity, not publication identity.",
+        "legality_licence": "CC BY data terms are clear; service plan depends on commercial status.",
+        "cost": "Evaluation is free and public commercial starting price is moderate.",
+        "maintenance": "Model-cycle, availability and venue mapping need monitoring.",
+        "integration": "Coordinate/time joins are straightforward but venue lineage is new."
+      }
+    },
+    {
+      "source_id": "the-odds-api-historical",
+      "name": "The Odds API historical snapshots",
+      "source_class": "B",
+      "total": 83,
+      "scores": {
+        "temporal_proof": 14,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 1,
+        "maintenance": 3,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Snapshot labels/navigation are strong as-of semantics, but documented retroactive error correction means a later response cannot prove identical historical bytes without a contemporaneous receipt.",
+        "scientific_value": "Dense odds trajectories support closing-line and movement analysis when mutation risk is acknowledged.",
+        "coverage": "Broad but only from mid-2020 and variable by sport/bookmaker/market.",
+        "stability": "Documented archive and versioned API, with retroactive corrections possible.",
+        "quality": "Snapshot grid and bookmaker timestamps are auditable, while corrected errors can change past values.",
+        "legality_licence": "Analytics allowed under terms; bulk retention still merits written confirmation.",
+        "cost": "Paid access and 10-credit historical multiplier make recovery expensive.",
+        "maintenance": "Era-specific coverage, mutation detection and mapping require regular work.",
+        "integration": "Current repository concepts already align with its identities and markets."
+      }
+    },
+    {
+      "source_id": "wikidata-revisioned-venue-geography",
+      "name": "Wikidata revisioned venue geography",
+      "source_class": "A",
+      "total": 82,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 15,
+        "coverage": 14,
+        "stability": 8,
+        "quality": 6,
+        "legality_licence": 10,
+        "cost": 5,
+        "maintenance": 3,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Revision IDs/times reconstruct historical assertions.",
+        "scientific_value": "Venue geography enables auditable travel distances.",
+        "coverage": "Global but incomplete at match-specific venue grain.",
+        "stability": "Persistent Q IDs with revision history.",
+        "quality": "Community data needs authoritative cross-checks.",
+        "legality_licence": "CC0 is explicit.",
+        "cost": "No monetary fee.",
+        "maintenance": "Entity and neutral-venue reconciliation is material.",
+        "integration": "JSON/dump access is standard, but new mappings are required."
+      }
+    }
+  ],
+  "top_3_prospective": [
+    {
+      "source_id": "the-odds-api-current",
+      "name": "The Odds API v4 current odds",
+      "source_class": "C",
+      "total": 94,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 5,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Provider update times plus Robin first-observed receipts can bound every snapshot.",
+        "scientific_value": "Directly measures price level, movement and cross-bookmaker disagreement.",
+        "coverage": "Broad leagues and main/additional markets, with variable bookmaker-level availability.",
+        "stability": "Versioned v4 and mature documentation; live coverage remains dynamic.",
+        "quality": "Raw bookmaker quotes and update times are inspectable; gaps must fail closed.",
+        "legality_licence": "Commercial analytics allowed, but no raw resale and retention should be reconfirmed.",
+        "cost": "The 500-credit Starter tier supports the bounded recommended schedule.",
+        "maintenance": "Mapping and quota monitoring are modest but continuous.",
+        "integration": "Repository already contains Odds API contracts/evidence, reducing mapping work."
+      }
+    },
+    {
+      "source_id": "sportmonks-premium-odds",
+      "name": "Sportmonks Premium Odds Feed",
+      "source_class": "C",
+      "total": 89,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 14,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 8,
+        "cost": 1,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Per-change update times plus receipts provide strong bounds.",
+        "scientific_value": "Opening, every change, rich markets and bookmaker dispersion.",
+        "coverage": "Strong within purchased leagues and market availability.",
+        "stability": "Commercial feed and versioned documentation.",
+        "quality": "TXOdds depth and per-odd updates are strong.",
+        "legality_licence": "Commercial use/storage available under paid terms, no raw resale.",
+        "cost": "Minimum combined monthly cost is material.",
+        "maintenance": "Seven-day retention requires reliable automation.",
+        "integration": "Structured IDs help, but a new adapter is needed."
+      }
+    },
+    {
+      "source_id": "open-meteo-prospective-forecast",
+      "name": "Open-Meteo prospective forecast capture",
+      "source_class": "C",
+      "total": 87,
+      "scores": {
+        "temporal_proof": 19,
+        "scientific_value": 17,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 9,
+        "legality_licence": 9,
+        "cost": 4,
+        "maintenance": 3,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Explicit run plus receipt can establish availability.",
+        "scientific_value": "Forecast-as-known avoids realized-weather leakage.",
+        "coverage": "Global.",
+        "stability": "Well-documented but models change.",
+        "quality": "Multiple reputable numerical models.",
+        "legality_licence": "Clear attribution/data rights with service-plan condition.",
+        "cost": "Free pilot, paid commercial use.",
+        "maintenance": "Venue/model-cycle monitoring.",
+        "integration": "New weather/venue pipeline required."
+      }
+    }
+  ],
+  "excluded_sources": [
+    {
+      "source_id": "api-football-v3",
+      "name": "API-Football v3",
+      "source_class": "D",
+      "total": 85,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 18,
+        "coverage": 15,
+        "stability": 8,
+        "quality": 8,
+        "legality_licence": 4,
+        "cost": 5,
+        "maintenance": 4,
+        "integration": 5
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective Robin receipts can bound mutable endpoints; archive alone cannot.",
+        "scientific_value": "Covers several high-value missing availability fields.",
+        "coverage": "Very broad advertised competition/endpoint coverage.",
+        "stability": "Versioned API and mature documentation.",
+        "quality": "Coverage varies and needs empirical validation.",
+        "legality_licence": "Underlying publication rights are expressly not granted.",
+        "cost": "A small free plan exists.",
+        "maintenance": "Many endpoint cells and identities require monitoring.",
+        "integration": "Repository already contains an API-Football adapter/coverage contract."
+      }
+    },
+    {
+      "source_id": "sportradar-soccer",
+      "name": "Sportradar Soccer API / historical data",
+      "source_class": "D",
+      "total": 82,
+      "scores": {
+        "temporal_proof": 19,
+        "scientific_value": 20,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 10,
+        "legality_licence": 5,
+        "cost": 0,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Enterprise feeds can carry strong timestamps.",
+        "scientific_value": "Broad deep official-grade data.",
+        "coverage": "Very broad competitions/feeds.",
+        "stability": "Enterprise versioning.",
+        "quality": "High.",
+        "legality_licence": "Only a custom contract would define rights.",
+        "cost": "No public price and likely disproportionate.",
+        "maintenance": "Procurement/tier mapping is heavy.",
+        "integration": "New enterprise integration."
+      }
+    },
+    {
+      "source_id": "stats-perform-opta",
+      "name": "Stats Perform Opta data feeds",
+      "source_class": "D",
+      "total": 80,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 20,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 10,
+        "legality_licence": 5,
+        "cost": 0,
+        "maintenance": 1,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Commercial feeds likely provide strong event timing, subject to contract.",
+        "scientific_value": "Elite event and derived metrics.",
+        "coverage": "Very broad.",
+        "stability": "Enterprise provider.",
+        "quality": "High-quality Opta lineage.",
+        "legality_licence": "Rights unknown until contract.",
+        "cost": "No public price and likely disproportionate.",
+        "maintenance": "Procurement/custom feed work is high.",
+        "integration": "New proprietary integration."
+      }
+    },
+    {
+      "source_id": "noaa-ncei-isd",
+      "name": "NOAA NCEI Integrated Surface Database",
+      "source_class": "D",
+      "total": 79,
+      "scores": {
+        "temporal_proof": 15,
+        "scientific_value": 16,
+        "coverage": 15,
+        "stability": 9,
+        "quality": 8,
+        "legality_licence": 7,
+        "cost": 5,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective Robin receipts can bound daily publication; old observations lack first-observed evidence.",
+        "scientific_value": "Independent observed-weather benchmark.",
+        "coverage": "Large global network.",
+        "stability": "Long-running archive/common format.",
+        "quality": "Provider QC with station-level heterogeneity.",
+        "legality_licence": "NOAA is open but international record provenance is not fully resolved.",
+        "cost": "Free.",
+        "maintenance": "Station mapping/QC is heavy.",
+        "integration": "Fixed-width/station workflow is new."
+      }
+    },
+    {
+      "source_id": "betfair-historical-data",
+      "name": "Betfair Historical Data",
+      "source_class": "D",
+      "total": 77,
+      "scores": {
+        "temporal_proof": 20,
+        "scientific_value": 20,
+        "coverage": 12,
+        "stability": 9,
+        "quality": 10,
+        "legality_licence": 2,
+        "cost": 0,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Published-time stream is excellent.",
+        "scientific_value": "Exchange movements are highly informative.",
+        "coverage": "Market dependent and not a bookmaker consensus feed.",
+        "stability": "Mature documented format.",
+        "quality": "Raw exchange updates are precise.",
+        "legality_licence": "No Robin commercial licence.",
+        "cost": "Purchase/custom licensing unknown and disallowed here.",
+        "maintenance": "Large stream and market decoding.",
+        "integration": "New high-volume format/identity layer."
+      }
+    },
+    {
+      "source_id": "football-data-org-v4",
+      "name": "football-data.org v4",
+      "source_class": "D",
+      "total": 76,
+      "scores": {
+        "temporal_proof": 16,
+        "scientific_value": 16,
+        "coverage": 11,
+        "stability": 8,
+        "quality": 8,
+        "legality_licence": 5,
+        "cost": 4,
+        "maintenance": 4,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Prospective receipts can bind states; lastUpdated is not first-publication proof.",
+        "scientific_value": "Useful context and baseline odds.",
+        "coverage": "Five target leagues on free tier, fewer deep fields.",
+        "stability": "Versioned v4 and long-running service.",
+        "quality": "Typed resources and stable IDs.",
+        "legality_licence": "Durable commercial/model rights are unclear.",
+        "cost": "Free entry but deeper/history tiers cost.",
+        "maintenance": "Token, tier and mutable-record handling.",
+        "integration": "Clean REST JSON and stable IDs."
+      }
+    },
+    {
+      "source_id": "statsbomb-open-data",
+      "name": "StatsBomb Open Data",
+      "source_class": "D",
+      "total": 75,
+      "scores": {
+        "temporal_proof": 18,
+        "scientific_value": 20,
+        "coverage": 8,
+        "stability": 7,
+        "quality": 10,
+        "legality_licence": 0,
+        "cost": 5,
+        "maintenance": 3,
+        "integration": 4
+      },
+      "score_rationales": {
+        "temporal_proof": "Release lineage is strong but match-time availability is not universally proven.",
+        "scientific_value": "Elite event/xG/lineup detail.",
+        "coverage": "Selected competition-seasons only.",
+        "stability": "Git-versioned but irregular/provider-controlled.",
+        "quality": "High-quality structured event data.",
+        "legality_licence": "Commercial/derived exploitation is prohibited.",
+        "cost": "Free download.",
+        "maintenance": "Structured JSON is manageable.",
+        "integration": "Known schema but incompatible rights."
+      }
+    },
+    {
+      "source_id": "football-data-co-uk",
+      "name": "Football-Data.co.uk historical archive",
+      "source_class": "D",
+      "total": 72,
+      "scores": {
+        "temporal_proof": 8,
+        "scientific_value": 19,
+        "coverage": 13,
+        "stability": 7,
+        "quality": 7,
+        "legality_licence": 3,
+        "cost": 5,
+        "maintenance": 5,
+        "integration": 5
+      },
+      "score_rationales": {
+        "temporal_proof": "Opening/closing labels exist but no row-level published/observed timestamp.",
+        "scientific_value": "Long results and odds baseline supports benchmark research.",
+        "coverage": "Many leagues/seasons but fields vary substantially.",
+        "stability": "Long-running site with documented bookmaker regime changes.",
+        "quality": "Useful values with missingness and provider caveats.",
+        "legality_licence": "No clear commercial retention/reuse grant.",
+        "cost": "Public download is free.",
+        "maintenance": "Simple CSVs offset by era/name drift.",
+        "integration": "Robin already uses this schema and provider mapping."
+      }
+    },
+    {
+      "source_id": "pinnacle-api",
+      "name": "Pinnacle API",
+      "source_class": "D",
+      "total": 65,
+      "scores": {
+        "temporal_proof": 16,
+        "scientific_value": 18,
+        "coverage": 10,
+        "stability": 7,
+        "quality": 9,
+        "legality_licence": 1,
+        "cost": 0,
+        "maintenance": 2,
+        "integration": 2
+      },
+      "score_rationales": {
+        "temporal_proof": "Approved prospective polling could be receipted, but no open archive.",
+        "scientific_value": "Sharp-market line is valuable.",
+        "coverage": "Access dependent.",
+        "stability": "General API closure is a major regime break.",
+        "quality": "Direct bookmaker data.",
+        "legality_licence": "No approved Robin access and scraping prohibited.",
+        "cost": "Bespoke cost/access unknown.",
+        "maintenance": "Eligibility risk is high.",
+        "integration": "Existing old fields do not guarantee current access."
+      }
+    },
+    {
+      "source_id": "meteostat",
+      "name": "Meteostat bulk/API weather",
+      "source_class": "D",
+      "total": 59,
+      "scores": {
+        "temporal_proof": 10,
+        "scientific_value": 13,
+        "coverage": 14,
+        "stability": 5,
+        "quality": 6,
+        "legality_licence": 1,
+        "cost": 5,
+        "maintenance": 2,
+        "integration": 3
+      },
+      "score_rationales": {
+        "temporal_proof": "Measurement time is not first-publication time.",
+        "scientific_value": "Observed weather has validation value.",
+        "coverage": "Broad stations.",
+        "stability": "Bulk format is beta.",
+        "quality": "Model filling/provenance needs controls.",
+        "legality_licence": "Official sources contradict each other.",
+        "cost": "Public files are free.",
+        "maintenance": "Station mapping and licence resolution are heavy.",
+        "integration": "CSV/Parquet is standard."
+      }
+    },
+    {
+      "source_id": "fbref",
+      "name": "FBref statistics",
+      "source_class": "D",
+      "total": 53,
+      "scores": {
+        "temporal_proof": 4,
+        "scientific_value": 18,
+        "coverage": 14,
+        "stability": 6,
+        "quality": 8,
+        "legality_licence": 0,
+        "cost": 3,
+        "maintenance": 0,
+        "integration": 0
+      },
+      "score_rationales": {
+        "temporal_proof": "Pages do not provide first-observed lineage.",
+        "scientific_value": "Rich stats/xG.",
+        "coverage": "Broad.",
+        "stability": "HTML structures can change.",
+        "quality": "Generally strong aggregation.",
+        "legality_licence": "Predictive/automated use is expressly restricted.",
+        "cost": "Free browsing is irrelevant to lawful automation.",
+        "maintenance": "Prohibited use makes maintenance score zero.",
+        "integration": "No authorized integration."
+      }
+    },
+    {
+      "source_id": "clubelo",
+      "name": "ClubElo ratings",
+      "source_class": "D",
+      "total": 51,
+      "scores": {
+        "temporal_proof": 6,
+        "scientific_value": 16,
+        "coverage": 12,
+        "stability": 3,
+        "quality": 7,
+        "legality_licence": 0,
+        "cost": 5,
+        "maintenance": 1,
+        "integration": 1
+      },
+      "score_rationales": {
+        "temporal_proof": "Rating dates lack publication receipts.",
+        "scientific_value": "Independent Elo prior is useful but reproducible in-house.",
+        "coverage": "Broad European clubs.",
+        "stability": "Programmatic interface not verified.",
+        "quality": "Method has value but provenance is limited.",
+        "legality_licence": "No reuse grant found.",
+        "cost": "Browsing free.",
+        "maintenance": "HTML/name reconciliation is high.",
+        "integration": "No stable verified API."
+      }
+    },
+    {
+      "source_id": "transfermarkt-availability",
+      "name": "Transfermarkt injuries and suspensions",
+      "source_class": "D",
+      "total": 46,
+      "scores": {
+        "temporal_proof": 4,
+        "scientific_value": 16,
+        "coverage": 12,
+        "stability": 6,
+        "quality": 6,
+        "legality_licence": 0,
+        "cost": 2,
+        "maintenance": 0,
+        "integration": 0
+      },
+      "score_rationales": {
+        "temporal_proof": "Page dates do not prove first availability.",
+        "scientific_value": "Player availability is a major missing signal.",
+        "coverage": "Broad pages.",
+        "stability": "Established site but HTML is mutable.",
+        "quality": "Editorial timing/accuracy needs validation.",
+        "legality_licence": "Automated extraction is prohibited.",
+        "cost": "Manual browsing cannot support the corpus.",
+        "maintenance": "No acceptable automated workflow.",
+        "integration": "No authorized integration."
+      }
+    }
+  ]
+}

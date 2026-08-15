@@ -1,0 +1,194 @@
+{
+  "schema_version": "1.0.0",
+  "report_id": "robin-temporal-evidence-gap-v1",
+  "repository_base_sha": "6cb8de636890959bd2ddb7e1c791a2eb04ee8763",
+  "assessed_at": "2026-08-14T17:30:00Z",
+  "verdict": "HISTORICAL_RECEIPT_BACKED_CORPUS_NOT_RECOVERED",
+  "observed_state": {
+    "temporal_surfaces": 72,
+    "materialized_local_surfaces": 27,
+    "absent_surfaces": 8,
+    "external_unobserved_postgresql_surfaces": 37,
+    "strict_point_in_time_proven_surfaces": 0,
+    "receipt_bounded_surfaces": 0,
+    "historical_receipt_objects_observed": 0,
+    "historical_logical_results": 15,
+    "historical_physical_result_occurrences": 45,
+    "historical_point_in_time_replayable_results": 0,
+    "materialized_e2013_observations": 104254,
+    "reconstructed_not_proven_observations": 11401,
+    "unknown_observations": 92853,
+    "global_observation_denominator": "UNKNOWN_NOT_ENUMERABLE"
+  },
+  "timestamp_gap_matrix": [
+    {
+      "field": "event_time",
+      "historical_state": "PARTIAL",
+      "evidence": "Legacy match date and some fixture/event times exist, often date-only or sanitized.",
+      "scientific_consequence": "Supports ordering at coarse grain but not source availability or intraday quote ordering."
+    },
+    {
+      "field": "source_published_at",
+      "historical_state": "NOT_OBSERVED",
+      "evidence": "No source receipt object provides a trusted per-observation publisher timestamp.",
+      "scientific_consequence": "Provider-side revisions cannot be bounded historically."
+    },
+    {
+      "field": "robin_first_observed_at",
+      "historical_state": "NOT_OBSERVED",
+      "evidence": "Zero historical receipt objects; external summaries are not local receipt bytes.",
+      "scientific_consequence": "Robin cannot prove an input was visible before a prediction cutoff."
+    },
+    {
+      "field": "robin_ingested_at",
+      "historical_state": "NOT_OBSERVED_FOR_SOURCE_DATA",
+      "evidence": "Some export execution times exist, but they record later reconstruction/export rather than original source ingestion.",
+      "scientific_consequence": "Ingestion lag and revision chronology are unknowable."
+    },
+    {
+      "field": "available_at",
+      "historical_state": "NOT_DERIVABLE",
+      "evidence": "Required trusted source publication and/or Robin first-observed values are absent.",
+      "scientific_consequence": "All historical feature cutoffs must fail closed."
+    },
+    {
+      "field": "payload_sha256",
+      "historical_state": "PARTIAL_REFERENCE_ONLY",
+      "evidence": "Local derived files and manifests have hashes; many source payload hashes point to absent external bytes.",
+      "scientific_consequence": "Hash identity without payload-plus-receipt bytes cannot prove availability."
+    },
+    {
+      "field": "capture_code_revision",
+      "historical_state": "PARTIAL_CAPABILITY_ONLY",
+      "evidence": "Repository revisions and schemas exist, but are not bound to historical raw source captures.",
+      "scientific_consequence": "Historical extraction semantics are not fully replayable."
+    },
+    {
+      "field": "licence_status",
+      "historical_state": "INCOMPLETE",
+      "evidence": "Upstream rights for legacy/externally referenced provider bytes are not receipt-bound.",
+      "scientific_consequence": "Technical recovery alone cannot authorize reuse."
+    }
+  ],
+  "family_gaps": [
+    {
+      "family": "fixtures_results",
+      "historical_volume": "36,423 local legacy matches plus reconstructed bundles",
+      "temporal_status": "B: event chronology useful; source availability unproved",
+      "priority": "retain as non-PIT benchmark and prospective identity seed"
+    },
+    {
+      "family": "odds_opening_closing",
+      "historical_volume": "Up to 34,674 opening and 34,755 closing complete legacy 1X2 rows; O/U coverage lower",
+      "temporal_status": "B: semantic labels only, no exact publication/observation time",
+      "priority": "do not interpret labels as exact cutoff evidence"
+    },
+    {
+      "family": "odds_intraday_market_movements_dispersion",
+      "historical_volume": "No local snapshot corpus; 86-row ledger is empty and no odds_*.parquet exists",
+      "temporal_status": "MISSING",
+      "priority": "first prospective receipt-backed capture"
+    },
+    {
+      "family": "standings_form_rest",
+      "historical_volume": "Derivable from dated results",
+      "temporal_status": "B unless computation cutoff and prior-fixture availability are enforced",
+      "priority": "derive deterministically from admitted fixtures only"
+    },
+    {
+      "family": "team_statistics_referees",
+      "historical_volume": "Partial legacy fields and sanitized Phase C facts",
+      "temporal_status": "B/reconstructed-not-proven; large missingness, including 26,172 missing referees",
+      "priority": "prospective receipts before model promotion"
+    },
+    {
+      "family": "xg_lineups_coaches",
+      "historical_volume": "Some external/sanitized references; data/xg.parquet absent",
+      "temporal_status": "NOT LOCALLY RECEIPT-BACKED",
+      "priority": "do not substitute restricted StatsBomb/FBref data"
+    },
+    {
+      "family": "injuries_suspensions",
+      "historical_volume": "No lawful structured local corpus",
+      "temporal_status": "MISSING",
+      "priority": "defer until licensed provider and observed-at contract exist; never scrape Transfermarkt"
+    },
+    {
+      "family": "travel",
+      "historical_volume": "No audited match-venue revision corpus",
+      "temporal_status": "RECOVERABLE from revisioned Wikidata plus match-specific venue overrides",
+      "priority": "secondary after odds; preserve QID/revision/coordinate receipts"
+    },
+    {
+      "family": "weather",
+      "historical_volume": "No local forecast-as-issued corpus",
+      "temporal_status": "Open-Meteo Single Runs is B: runs are addressable but historical public availability is not strictly proven; no local forecast-as-issued corpus exists",
+      "priority": "use issued forecasts, never realized/reanalysis weather as a pre-match substitute"
+    }
+  ],
+  "forbidden_temporal_inferences": [
+    "Do not synthesize robin_first_observed_at from filesystem mtime, Git commit/author time, row order, match date or kickoff.",
+    "Do not equate source lastUpdated, forecast valid time or model initialization with public availability without documented semantics and a receipt.",
+    "Do not treat opening/closing labels as exact observation timestamps.",
+    "Do not treat an export receipt, manifest hash or external object key as a source-data receipt.",
+    "Do not use realized weather or reanalysis as forecast-as-known information.",
+    "Do not upgrade RECONSTRUCTED_NOT_PROVEN data to point-in-time evidence."
+  ],
+  "candidate_receipt_contract": {
+    "contract_id": "loop55-compatible-source-receipt-candidate-v1",
+    "implementation_status": "SPECIFICATION_ONLY_NO_ROBIN_CODE_CHANGE",
+    "required_fields": {
+      "source_name": {"type": "string", "rule": "canonical logical product, not merely publisher"},
+      "source_url": {"type": "string", "rule": "official endpoint/documented object URL; no secret/query credential"},
+      "request_identity": {"type": "object", "rule": "canonical method, path and sorted non-secret parameters/headers sufficient to replay"},
+      "payload_sha256": {"type": "string", "format": "lowercase hex sha256", "rule": "hash exact immutable response bytes before parsing"},
+      "source_published_at": {"type": ["string", "null"], "format": "UTC RFC3339", "rule": "only trusted provider-defined publication/update semantics; null otherwise"},
+      "robin_first_observed_at": {"type": "string", "format": "UTC RFC3339", "rule": "set at receipt of response bytes by Robin-controlled clock; immutable"},
+      "robin_ingested_at": {"type": "string", "format": "UTC RFC3339", "rule": "time immutable bytes and receipt are durably admitted"},
+      "available_at": {"type": "string", "format": "UTC RFC3339", "rule": "max(trusted source_published_at when present, robin_first_observed_at); never earlier than either"},
+      "schema_fingerprint": {"type": "string", "format": "lowercase hex sha256", "rule": "hash canonical ordered field/type/nullability description"},
+      "capture_code_revision": {"type": "string", "rule": "immutable Git commit or content digest of capture code"},
+      "licence_status": {"type": "string", "enum": ["APPROVED", "APPROVED_WITH_ATTRIBUTION", "REVIEW_REQUIRED", "PROHIBITED"], "rule": "versioned legal decision linked to reviewed terms"},
+      "snapshot_candidate_id": {"type": "string", "rule": "collision-resistant deterministic ID bound to source/request/payload/first-observed"}
+    },
+    "recommended_optional_fields": ["http_status", "response_headers_allowlist", "payload_bytes", "schema_version", "provider_entity_ids", "fixture_id", "market_keys", "bookmaker_keys", "storage_object_identity", "terms_url", "terms_checked_at"],
+    "invariants": [
+      "payload_sha256 must match stored immutable bytes.",
+      "robin_first_observed_at <= robin_ingested_at.",
+      "available_at >= robin_first_observed_at.",
+      "available_at >= source_published_at when source_published_at is non-null and trusted.",
+      "An observation is admissible only when available_at <= feature_cutoff_at.",
+      "Missing or untrusted availability fields fail closed.",
+      "A later payload for the same request creates a new snapshot_candidate_id; it never overwrites an earlier receipt."
+    ]
+  },
+  "recovery_order_if_separately_authorized": [
+    {
+      "order": 1,
+      "target": "nominally expiring external artifacts",
+      "reason": "Committed metadata names 2026-08-23 and 2026-11-01 expiry windows.",
+      "condition": "Retrieve payload and receipt bytes together by exact object identity and verify hashes."
+    },
+    {
+      "order": 2,
+      "target": "one frozen receipt-plus-payload pair per external source family",
+      "reason": "Small decisive test of bounded recoverability.",
+      "condition": "No production/secret access without explicit new authority."
+    },
+    {
+      "order": 3,
+      "target": "append-only prospective odds snapshots",
+      "reason": "Cannot be reconstructed later and directly closes the highest-value gap.",
+      "condition": "Activate only after approval; recommendation in separate report."
+    }
+  ],
+  "acceptance_criteria_for_any_future_historical_claim": [
+    "The scoped observation denominator is fixed.",
+    "Every admitted source item has byte-exact payload and receipt verification.",
+    "request_identity and capture_code_revision are immutable and replayable.",
+    "available_at is no later than the decision/feature cutoff for every joined observation.",
+    "All absent, external-unobserved and lost items are recovered or explicitly excluded.",
+    "Representative point-in-time replay yields identical hashes and features with zero future-mutation defects.",
+    "Licence status permits the intended storage, derived analysis and commercial posture."
+  ]
+}
