@@ -4,7 +4,7 @@
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-001",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -22,13 +22,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-002",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -46,13 +46,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-003",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -70,13 +70,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-004",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -94,13 +94,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-005",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -118,13 +118,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-006",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -142,13 +142,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-007",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -166,13 +166,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Odds capture fits S0/S2 planning; Source 2 cost TBD",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-008",
-      "legal_risk": "The Odds API raw-retention permission and Source 2 licence require written approval",
+      "legal_risk": "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED"
@@ -190,13 +190,13 @@
         "robin_ingested_at no later than predictor cutoff",
         "distinct settled label receipt after event"
       ],
-      "unblock_action": "close retention + Source 2, freeze missing target rules, then run receipt canary"
+      "unblock_action": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization"
     },
     {
       "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-009",
-      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "legal_risk": "Internal 30-day pilot policy required; provider timestamp is not proven bookmaker-native and wider retention remains unauthorized",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
@@ -222,7 +222,7 @@
       "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-010",
-      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "legal_risk": "Internal 30-day pilot policy required; provider timestamp is not proven bookmaker-native and wider retention remains unauthorized",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
@@ -541,7 +541,7 @@
       "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-023",
-      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "legal_risk": "Internal 30-day pilot policy required; provider timestamp is not proven bookmaker-native and wider retention remains unauthorized",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
@@ -567,7 +567,7 @@
       "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-024",
-      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "legal_risk": "Internal 30-day pilot policy required; provider timestamp is not proven bookmaker-native and wider retention remains unauthorized",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",
@@ -592,7 +592,7 @@
       "cost": "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment",
       "execution_status": "NOT_RUN",
       "experiment_id": "RDS-EXP-V1-025",
-      "legal_risk": "Raw-retention approval required; provider timestamp is not proven bookmaker-native",
+      "legal_risk": "Internal 30-day pilot policy required; provider timestamp is not proven bookmaker-native and wider retention remains unauthorized",
       "missing_data_or_contract": [
         "NO_MATERIALIZED_RECEIPT_BACKED_CAPTURE",
         "NO_SETTLEMENT_LABEL_SOURCE_SELECTED",

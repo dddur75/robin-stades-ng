@@ -1,0 +1,40 @@
+{
+  "artifact": "internal-retention-policy-v1",
+  "policy": {
+    "authorized_scope": "bounded research pilot",
+    "automated_deletion_required": true,
+    "derived_data_retained": true,
+    "explicit_provider_retention_authorization_claimed": false,
+    "full_season_permanent_raw_archive_allowed": false,
+    "legal_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
+    "normalized_observations_retained": true,
+    "policy_id": "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1",
+    "public_raw_endpoint_allowed": false,
+    "purpose": "internal analytics only",
+    "raw_sha256_retained": true,
+    "raw_storage": "local non-synchronised",
+    "raw_ttl_days": 30,
+    "redistribution_allowed": false,
+    "resale_allowed": false
+  },
+  "public_terms_review": {
+    "compatible_use": "internal analytical tool without raw redistribution",
+    "interpretation": "INTERNAL_RISK_DECISION_NOT_EXPLICIT_PROVIDER_AUTHORIZATION",
+    "official_domain_warning_url": "https://the-odds-api.com/impersonation-warning.html",
+    "prohibited_use": "standalone resale, repackaging, or redistribution of raw data",
+    "public_raw_retention_duration": "NOT_STATED",
+    "reviewed_at": "2026-08-15",
+    "terms_url": "https://the-odds-api.com/terms-and-conditions.html"
+  },
+  "schema_version": "robin-capture-harness-artifacts-v1",
+  "stop_conditions": [
+    "RAW_TTL_DELETION_FAILURE",
+    "SYNCHRONIZED_OR_GIT_STORAGE",
+    "RAW_REDISTRIBUTION_OR_PUBLIC_ENDPOINT",
+    "SECRET_EXPOSURE",
+    "SCOPE_BEYOND_BOUNDED_RESEARCH_PILOT",
+    "FULL_SEASON_OR_PERMANENT_RAW_ARCHIVE_REQUESTED",
+    "PUBLIC_TERMS_BECOME_INCOMPATIBLE"
+  ],
+  "verdict": "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1_RECORDED"
+}

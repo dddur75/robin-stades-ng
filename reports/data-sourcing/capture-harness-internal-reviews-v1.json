@@ -1,0 +1,79 @@
+{
+  "artifact": "capture-harness-internal-reviews-v1",
+  "reviewed_patch_id": "a71be6504a299c6a77e5b1c50f22a00915849d4c",
+  "schema_version": "robin-capture-harness-internal-reviews-v1",
+  "review_contract": "configs/agents/agent-report-schema-v3.json",
+  "reviews": [
+    {
+      "agent_id": "DP6",
+      "axis": "DATA_RECEIPT_AND_POINT_IN_TIME_LINEAGE",
+      "confidence": 0.99,
+      "mission_id": "POINT_IN_TIME_LINEAGE",
+      "open_p0": 0,
+      "open_p1": 0,
+      "recommended_action": "PASS",
+      "verified": [
+        "raw intake receipt precedes raw persistence and is linked by final receipts",
+        "receipt, manifest, normalized bytes, timestamps and mappings are identity-bound",
+        "mapping revisions and the exhaustive mapping set are bound to snapshot identity",
+        "budget and TTL ledgers fail closed under the staged adversarial tests",
+        "offline replay cannot emit PROVEN on a lineage divergence"
+      ],
+      "residual_risks": [
+        "local ledgers have no external anchor",
+        "a trusted real observation clock remains a pre-live requirement"
+      ]
+    },
+    {
+      "agent_id": "C4",
+      "axis": "SECURITY_SECRET_AND_NETWORK",
+      "confidence": 0.98,
+      "mission_id": "POINT_IN_TIME_LINEAGE",
+      "open_p0": 0,
+      "open_p1": 0,
+      "recommended_action": "PASS_AND_HOLD",
+      "verified": [
+        "LIVE_CANARY enum and string inputs fail closed before secret access",
+        "direct and composite validation exceptions do not serialize the sentinel secret",
+        "persistent budget reservations survive a new store and are file-locked",
+        "capture and TTL share one inter-process store lock",
+        "no provider transport or network import exists in the capture package"
+      ],
+      "residual_risks": [
+        "OS-backed sync-root verification remains a pre-live gate",
+        "a future transport must enforce a streaming payload-size limit and network policy"
+      ]
+    },
+    {
+      "agent_id": "C1",
+      "axis": "LEGAL_RISK_AND_RETENTION",
+      "confidence": 0.98,
+      "mission_id": "POINT_IN_TIME_LINEAGE",
+      "open_p0": 0,
+      "open_p1": 0,
+      "recommended_action": "PASS_AND_HOLD",
+      "verified": [
+        "the policy is an internal non-zero-risk bounded-pilot decision",
+        "no explicit provider retention authorization is claimed",
+        "resale, redistribution and a public raw endpoint remain forbidden",
+        "raw TTL remains exactly 30 days with write-ahead deletion evidence",
+        "permanent and full-season raw archives remain forbidden"
+      ],
+      "residual_risks": [
+        "public terms state no raw retention duration",
+        "scheduled TTL orchestration and alerting remain pre-live requirements"
+      ]
+    }
+  ],
+  "aggregate": {
+    "independent_review_count": 3,
+    "open_p0": 0,
+    "open_p1": 0,
+    "verdict": "PASS_AND_HOLD_OFFLINE_DRAFT_ONLY"
+  },
+  "live_canary_authorized": false,
+  "provider_calls": 0,
+  "credits_consumed": 0,
+  "promotions": 0,
+  "bets": 0
+}

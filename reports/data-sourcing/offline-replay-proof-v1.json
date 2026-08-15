@@ -1,0 +1,40 @@
+{
+  "artifact": "offline-replay-proof-v1",
+  "fixture_path": "tests/capture/fixtures/synthetic-odds-responses-v1.json",
+  "fixture_provenance": "ENTIRELY_SYNTHETIC_NO_PROVIDER_PAYLOAD",
+  "network_calls": 0,
+  "normalized_sha256": "50d032a7f6f53f55a2b495005e5d10e8610f50e11adbe1ccae148dc98d93d3ca",
+  "observation_count": 5,
+  "provider_calls": 0,
+  "raw_hash_verified_before_parse": true,
+  "raw_payload_sha256": "98270fbef1d77646fdd345856eb73b9d6d976a4b555cc69f27f564317a647299",
+  "real_canary_compatibility": {
+    "captures_admitted": 2,
+    "external_canary_reference": "LA_LIGA_OPENING_NIGHT_CANARY_20260815",
+    "external_evidence_pack_sha256": "75c83d644dd54b49fd259430a7903497ac75d5ccd311bdae2d4196c7af199ab0",
+    "network_calls": 0,
+    "provider_calls": 0,
+    "provider_secret_reads": 0,
+    "real_raw_payloads_committed": false,
+    "verdict": "ROBIN_REAL_PAYLOAD_OFFLINE_REPLAY_PROVEN"
+  },
+  "receipt_id": "4b7589b9c827048a1eae298a6dd222d74b8e90ac5a3e71860fe4bbf85df31cc4",
+  "replay": {
+    "byte_identical": true,
+    "deterministic": true,
+    "network_calls": 0,
+    "normalized_sha256": "50d032a7f6f53f55a2b495005e5d10e8610f50e11adbe1ccae148dc98d93d3ca",
+    "observation_count": 5,
+    "provider_calls": 0,
+    "raw_hash_verified_before_parse": true,
+    "raw_payload_sha256": "98270fbef1d77646fdd345856eb73b9d6d976a4b555cc69f27f564317a647299",
+    "receipt_id": "4b7589b9c827048a1eae298a6dd222d74b8e90ac5a3e71860fe4bbf85df31cc4",
+    "snapshot_id": "c5623c2510fb1db69d7ff1682453293fab16d2b18a7c3af204d62ba6b174a286",
+    "verdict": "ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN"
+  },
+  "schema_fingerprint_sha256": "8c5ff38f8bda6fa503a2a78b54015f7eadace2f3c01f04987f7071093fc6c25a",
+  "schema_version": "robin-capture-harness-artifacts-v1",
+  "secret_sentinel_occurrences_in_outputs": 0,
+  "snapshot_id": "c5623c2510fb1db69d7ff1682453293fab16d2b18a7c3af204d62ba6b174a286",
+  "verdict": "ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN"
+}

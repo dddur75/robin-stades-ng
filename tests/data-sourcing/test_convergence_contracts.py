@@ -183,7 +183,24 @@ def test_pilot_is_bounded_and_not_authorized() -> None:
         "H2H_SYSTEMATIC_PLUS_TOTALS_PILOT",
         "TOTALS_AFTER_COVERAGE_THRESHOLD",
     ]
-    assert pilot["retention"]["status"] == "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED"
+    assert pilot["retention"] == {
+        "status": "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1",
+        "authorized_scope": "bounded research pilot",
+        "purpose": "internal analytics only",
+        "raw_storage": "local non-synchronised",
+        "raw_ttl_days": 30,
+        "normalized_observations_retained": True,
+        "raw_sha256_retained": True,
+        "derived_data_retained": True,
+        "automated_deletion_required": True,
+        "resale_allowed": False,
+        "redistribution_allowed": False,
+        "public_raw_endpoint_allowed": False,
+        "full_season_permanent_raw_archive_allowed": False,
+        "explicit_provider_retention_authorization_claimed": False,
+        "legal_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
+        "stop_rule": "Stop if the 30-day raw TTL, automated deletion, local non-synchronised boundary, or internal-only boundary cannot be enforced.",
+    }
     assert {
         "DESIGN_ONLY",
         "NOT_AUTHORIZED",
@@ -208,7 +225,9 @@ def test_official_provider_assumptions_fail_closed() -> None:
     assert provider["market_synchronization_verdict"] == (
         "MARKET_SYNCHRONIZATION_OBSERVABLE_DESIGN_ONLY"
     )
-    assert provider["retention_verdict"] == ("RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED")
+    assert provider["retention_verdict"] == "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1"
+    assert provider["retention_scope"] == "BOUNDED_RESEARCH_PILOT_ONLY"
+    assert provider["explicit_provider_retention_authorization_claimed"] is False
     scope = convergence["reproducibility_scope"]
     assert scope["verdict"] == "DATA_HYPOTHESIS_CONVERGENCE_REPRODUCIBLE"
     assert "does_not_prove" in scope
@@ -226,6 +245,12 @@ def test_official_provider_assumptions_fail_closed() -> None:
         "real_bets": 0,
         "workflow_live_dispatches": 0,
     }
+    assert convergence["gates"]["raw_payload_retention"] == (
+        "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1"
+    )
+    assert convergence["gates"]["raw_payload_retention_scope"] == (
+        "BOUNDED_RESEARCH_PILOT_ONLY"
+    )
 
 
 def test_s6_capacity_and_current_recommendation_are_canonical() -> None:
