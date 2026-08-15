@@ -97,6 +97,49 @@ def test_ci_includes_jalon10_migrations_and_secret_scan() -> None:
     assert "scripts/check_no_secrets.py" in text
 
 
+def test_ci_repository_wide_tests_job_preserves_exact_timeout_and_scope() -> None:
+    path = ROOT / ".github" / "workflows" / "ci.yml"
+    workflow = yaml.safe_load(path.read_text("utf-8"))
+
+    assert "tests" in workflow["jobs"]
+    tests_job = workflow["jobs"]["tests"]
+    assert tests_job["timeout-minutes"] == 40
+    assert set(tests_job["needs"]) == {
+        "frozen-evidence-windows",
+        "chronos-postgresql-profiles",
+        "chronos-end-to-end-live-path-replay",
+        "chronos-residual-fault-matrix",
+        "chronos-exact-workflow-entrypoint",
+        "historical-authority-workflows-disabled",
+    }
+
+    steps_by_name = {
+        step["name"]: step for step in tests_job["steps"] if "name" in step
+    }
+    assert steps_by_name["Installer les dependances"]["run"].splitlines() == [
+        "python -m pip install -r requirements.txt",
+        "python -m pip install --no-deps -e .",
+    ]
+    assert steps_by_name["Executer les tests"]["run"] == "python -m pytest -q"
+
+    pytest_commands = "\n".join(
+        str(step.get("run", ""))
+        for step in tests_job["steps"]
+        if "python -m pytest -q" in str(step.get("run", ""))
+    )
+    for required_test_path in (
+        "tests/chronos/test_chronos_postgresql_v2.py",
+        "tests/jalon4",
+        "tests/jalon5",
+        "tests/jalon6",
+        "tests/jalon7",
+        "tests/jalon8",
+        "tests/jalon9",
+        "tests/jalon14",
+    ):
+        assert required_test_path in pytest_commands
+
+
 def test_ci_replays_frozen_jalon10_on_windows_before_linux_checks() -> None:
     path = ROOT / ".github" / "workflows" / "ci.yml"
     workflow = yaml.safe_load(path.read_text("utf-8"))
